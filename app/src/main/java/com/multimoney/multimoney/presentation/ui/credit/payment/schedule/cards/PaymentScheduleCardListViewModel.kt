@@ -86,7 +86,7 @@ class PaymentScheduleCardListViewModel @Inject constructor(
         encodeData(
             card
         )
-        }/$paymentDate/${false}/${Screen.HomeScreen.route}/${false}/$identification",
+        }/$paymentDate/${true}/${Screen.HomeScreen.route}/${false}/$identification",
         popTo = Screen.PaymentScheduleCardListScreen.route
     )
 

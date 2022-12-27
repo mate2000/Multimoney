@@ -85,7 +85,11 @@ fun ValidateOTPScreen(
             }
         }
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate )
+        viewModel.executeNavigation(
+            onPopBackStack = onPopBackStack,
+            onNavigate = onNavigate,
+            onPopAndNavigate = onPopAndNavigate
+        )
         requestOTP(viewModel)
     }
 
@@ -127,27 +131,34 @@ fun ValidateOTPScreen(
             }.onMessage {
                 viewModel.onUIEvent(
                     ValidateOTPViewModel.UIEvent.OnFailureWithDialog(false,
-                    DialogParameters(
-                        titleResource = R.string.sign_up_email_blocked_dialog_title,
-                        description = viewModel.userBlockedForMaxAttend,
-                        isActive = mutableStateOf(true),
-                        positiveResource = R.string.contact,
-                        negativeResource = R.string.cancel,
-                        negativeAction = {
-                            viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnNavigateTLogOut)
-                        },
-                        positiveAction = {
-                            viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnOpenWhatsappLink(context,whatsAppLink))
-                        }
-                    )))
+                        DialogParameters(
+                            titleResource = R.string.sign_up_email_blocked_dialog_title,
+                            description = viewModel.userBlockedForMaxAttend,
+                            isActive = mutableStateOf(true),
+                            positiveResource = R.string.contact,
+                            negativeResource = R.string.cancel,
+                            negativeAction = {
+                                viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnNavigateTLogOut)
+                            },
+                            positiveAction = {
+                                viewModel.onUIEvent(
+                                    ValidateOTPViewModel.UIEvent.OnOpenWhatsappLink(
+                                        context,
+                                        whatsAppLink
+                                    )
+                                )
+                            }
+                        )))
             }.onFailure {
-                ValidateOTPViewModel.UIEvent.OnFailureWithDialog(false,
+                ValidateOTPViewModel.UIEvent.OnFailureWithDialog(
+                    false,
                     DialogParameters(
                         titleResource = R.string.something_went_wrong,
                         description = it.getError() ?: "",
                         isActive = mutableStateOf(true),
                         positiveResource = R.string.button_continue,
-                    ))
+                    )
+                )
 
             }.onLoading {
                 viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnLoadingValueChange(true))
@@ -167,7 +178,7 @@ fun ValidateOTPScreen(
             }
         }
     }
-    
+
     //full screen dialog
     if (viewModel.uiState.isAlertResultVisible) {
         AlertResult(
@@ -234,12 +245,15 @@ fun ValidateOTPContent(viewModel: ValidateOTPViewModel) {
                 .constrainAs(headerText) {
                     top.linkTo(titleText.bottom)
                 },
-            text = stringResource(id = viewModel.uiState.enterTheCodeTextResource,viewModel.uiState.destination?: ""),
+            text = stringResource(
+                id = viewModel.uiState.enterTheCodeTextResource,
+                viewModel.uiState.destination ?: ""
+            ),
             style = Typography.body2
         )
 
         when (viewModel.uiState.messageStatus) {
-            OTPMessageStatus.RESEND_OTP, OTPMessageStatus.RESEND_OTP_AGAIN, null -> {
+            OTPMessageStatus.RESEND_OTP, OTPMessageStatus.RESEND_OTP_AGAIN -> {
                 ClickableText(
                     text = AnnotatedString(stringResource(id = R.string.profile_otp_resend)),
                     modifier = Modifier
@@ -274,6 +288,14 @@ fun ValidateOTPContent(viewModel: ValidateOTPViewModel) {
                     }
                 )
             }
+            else -> {
+                Text(
+                    text = stringResource(id = R.string.empty),
+                    modifier = Modifier.constrainAs(statusText) {
+                        top.linkTo(headerText.bottom, margin = 12.dp)
+                    }
+                )
+            }
         }
 
         OtpTextField(
@@ -303,7 +325,10 @@ fun ValidateOTPContent(viewModel: ValidateOTPViewModel) {
                 top.linkTo(otpField.bottom)
             }) {
             Text(
-                text = stringResource(id = viewModel.uiState.statusTextResource,viewModel.uiState.remainingTimeText),
+                text = stringResource(
+                    id = viewModel.uiState.statusTextResource,
+                    viewModel.uiState.remainingTimeText
+                ),
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(top = 32.dp)

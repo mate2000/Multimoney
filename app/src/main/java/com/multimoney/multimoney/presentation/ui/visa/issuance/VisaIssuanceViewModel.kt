@@ -12,6 +12,7 @@ import com.multimoney.multimoney.presentation.navigation.EMAIL
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALANCE_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_INFORMATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
@@ -40,6 +41,7 @@ class VisaIssuanceViewModel @Inject constructor(
     private var email: String = ""
     private var phone: String = ""
     private var cardInformation: CardInformation? = null
+    var availableBalanceLabel: String? = null
 
     init {
         idBrand = savedStateHandle.get<Int>(ID_BRAND) ?: 0
@@ -48,6 +50,7 @@ class VisaIssuanceViewModel @Inject constructor(
         email = savedStateHandle.get<String>(EMAIL) ?: ""
         phone = savedStateHandle.get<String>(PHONE_NUMBER) ?: ""
         cardInformation = savedStateHandle.get<CardInformation>(CARD_INFORMATION)
+        availableBalanceLabel = savedStateHandle[AVAILABLE_BALANCE_LABEL]
         getTextResources()
     }
 
@@ -107,7 +110,7 @@ class VisaIssuanceViewModel @Inject constructor(
                 encodeData(
                     cardInformation
                 )
-                }",
+                }/$availableBalanceLabel",
                 Screen.VisaIssuanceScreen.route
             )
         }

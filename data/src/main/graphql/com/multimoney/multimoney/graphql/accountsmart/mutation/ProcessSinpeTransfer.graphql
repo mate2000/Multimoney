@@ -18,21 +18,21 @@ mutation ProcessSinpeTransfer(
 ){
     sinpeTransfer(
         sinpeTransferInput: {
-            pkUsuario: $pkUser,
-            identification: $identification,
-            originCustomerIdentification: $originCustomerIdentification,
-            ibanAccountOrigin: $ibanAccountOrigin,
-            originCustomerName: $originCustomerName,
-            idCurrencyOrigin: $idCurrencyOrigin,
-            ibanAccountDestination: $ibanAccountDestination,
-            destinationCustomerIdentification: $destinationCustomerIdentification,
-            destionationCustomerName: $destinationCustomerName,
-            idCurrencyDestination: $idCurrencyDestination,
-            reasonOfTransfer: $reasonOfTransfer,
-            tYPE: $type,
-            amountToTransfer: $amountToTransfer,
-            exchangeRate: $exchangeRate,
-            idBrand: $idBrand,
+            pkUsuario: $pkUser
+            identification: $identification
+            originCustomerIdentification: $originCustomerIdentification
+            ibanAccountOrigin: $ibanAccountOrigin
+            originCustomerName: $originCustomerName
+            idCurrencyOrigin: $idCurrencyOrigin
+            ibanAccountDestination: $ibanAccountDestination
+            destinationCustomerIdentification: $destinationCustomerIdentification
+            destionationCustomerName: $destinationCustomerName
+            idCurrencyDestination: $idCurrencyDestination
+            reasonOfTransfer: $reasonOfTransfer
+            tYPE: $type
+            amountToTransfer: $amountToTransfer
+            exchangeRate: $exchangeRate
+            idBrand: $idBrand
             user: $user
         }
     ) {

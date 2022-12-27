@@ -33,19 +33,7 @@ import androidx.compose.ui.unit.toSize
 import com.multimoney.domain.model.credit.CreditCatalogOption
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
-import com.multimoney.multimoney.presentation.theme.DefaultWhite
-import com.multimoney.multimoney.presentation.theme.GrayScale300
-import com.multimoney.multimoney.presentation.theme.GrayScale400
-import com.multimoney.multimoney.presentation.theme.GrayScale500
-import com.multimoney.multimoney.presentation.theme.GrayScale600
-import com.multimoney.multimoney.presentation.theme.GrayScale700
-import com.multimoney.multimoney.presentation.theme.GrayScale800
-import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.theme.Primary300
-import com.multimoney.multimoney.presentation.theme.Primary400
-import com.multimoney.multimoney.presentation.theme.Primary500
-import com.multimoney.multimoney.presentation.theme.SemanticNegative500
-import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.theme.*
 import com.multimoney.multimoney.presentation.util.gesture.detectTapAndPressUnconsumed
 
 @Composable
@@ -81,7 +69,7 @@ fun CustomDropdown(
                 textColor = DefaultWhite
             }
             enabled -> {
-                iconTintColor = Primary400
+                iconTintColor = GrayScale400
                 textColor = DefaultWhite
             }
             else -> {
@@ -100,7 +88,7 @@ fun CustomDropdown(
                 textColor = GrayScale800
             }
             enabled -> {
-                iconTintColor = Primary500
+                iconTintColor = GrayScale400
                 textColor = GrayScale600
             }
             else -> {

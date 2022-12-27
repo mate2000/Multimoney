@@ -25,14 +25,18 @@ import com.multimoney.multimoney.presentation.navigation.EMAIL
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALANCE_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_INFORMATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnGetAndroidId
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnGoToNextScreen
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnNavigateToNextScreen
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnStartNovoTokenization
+import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnAlertButtonClick
+import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnAlertCloseClick
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.YEAR_FORMAT
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -62,6 +66,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
 
     // Stateless
     var currentStep = 0
+    var numAttemptsToStartTokenization: Int = 0
 
     // arguments
     var idBrand: Int = 0
@@ -71,6 +76,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
     var email: String = ""
     var cardInformation: CardInformation? = null
     var androidId: String = ""
+    var availableBalanceLabel: String? = null
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -79,6 +85,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         email = savedStateHandle.get<String>(EMAIL) ?: ""
         phone = savedStateHandle.get<String>(PHONE_NUMBER) ?: ""
         cardInformation = savedStateHandle.get<CardInformation>(CARD_INFORMATION)
+        availableBalanceLabel = savedStateHandle[AVAILABLE_BALANCE_LABEL]
     }
 
     private fun startTokenizationProcess() {
@@ -94,13 +101,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
                     },
                     onErrorEnrollDevice = {
                         mmCountDownTimer.resumeTimer()
-                        // todo handle novo sdk error
-                        uiState = uiState.copy(
-                            openDialog = DialogParameters(
-                                isActive = mutableStateOf(true),
-                                description = "ED ${it.message} ${it.code?.toString()}"
-                            )
-                        )
+                        handleErrorResult()
                     }
                 )
             } else {
@@ -120,14 +121,8 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
             cardExpirationMonth = expirationDate?.first() ?: "",
             cardExpirationYear = getExpirationYear(expirationDate?.last() ?: ""),
             onErrorEnrollPan = {
-                // todo handle novo sdk error
                 mmCountDownTimer.resumeTimer()
-                uiState = uiState.copy(
-                    openDialog = DialogParameters(
-                        isActive = mutableStateOf(true),
-                        description = "EP ${it.message} ${it.code?.toString()}"
-                    )
-                )
+                handleErrorResult()
             },
             onSuccessEnrollPan = {
                 mmCountDownTimer.resumeTimer()
@@ -135,6 +130,15 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
                 createWallet(walletId)
             }
         )
+    }
+
+    private fun handleErrorResult() {
+        if (numAttemptsToStartTokenization < MAX_NUMBER_ATTEMPTS_TO_START_TOKENIZATION) {
+            setErrorAlertResult()
+            numAttemptsToStartTokenization++
+        } else {
+            onNavigateToHomeMultimoneyVisa()
+        }
     }
 
     private fun getExpirationYear(yearChunked: String): String {
@@ -311,11 +315,48 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         }
     }
 
+    private fun onNavigateToHomeMultimoneyVisa() =
+        popAndNavigateTo(
+            "${Screen.VisaCardScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
+                encodeData(
+                    cardInformation
+                )
+            }/$availableBalanceLabel",
+            Screen.VisaTokenizationWaitingScreen.route
+        )
+
+    private fun onAlertButtonClick() {
+        uiState = uiState.copy(
+            isAlertResultVisible = false
+        )
+        startTokenizationProcess()
+    }
+
+    private fun setErrorAlertResult() {
+        uiState = uiState.copy(
+            isAlertResultVisible = true,
+            isAlertResultSuccess = false,
+            alertResultIconResource = R.drawable.ic_error_symbol,
+            alertResultTitleResource = R.string.card_tokenization_error_title,
+            alertResultDescriptionResource = when (idBrand) {
+                Brand.Guatemala.id -> R.string.card_tokenization_error_description_gt
+                else -> R.string.card_tokenization_error_description_sv_cr
+            },
+            alertResultButtonResource = R.string.link
+        )
+    }
+
     data class UIState(
         // Fields
         val icon: Int = R.drawable.ic_novo_waiting_smartphone,
         val description: AnnotatedString = buildAnnotatedString {},
-        val openDialog: DialogParameters = DialogParameters()
+        val openDialog: DialogParameters = DialogParameters(),
+        val isAlertResultSuccess: Boolean = true,
+        val isAlertResultVisible: Boolean = false,
+        val alertResultIconResource: Int = 0,
+        val alertResultTitleResource: Int = R.string.empty,
+        val alertResultDescriptionResource: Int = R.string.empty,
+        val alertResultButtonResource: Int = R.string.empty
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -324,6 +365,8 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
             is OnGoToNextScreen -> goToNextScreen(event.context, event.color)
             is OnStartNovoTokenization -> startTokenizationProcess()
             is OnGetAndroidId -> androidId = event.androidId
+            is OnAlertButtonClick -> onAlertButtonClick()
+            is OnAlertCloseClick -> onNavigateToHomeMultimoneyVisa()
         }
     }
 
@@ -331,6 +374,8 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         data class OnNavigateToNextScreen(val screen: String) : UIEvent()
         data class OnGoToNextScreen(val context: Context, val color: Color) : UIEvent()
         object OnStartNovoTokenization : UIEvent()
+        object OnAlertButtonClick : UIEvent()
+        object OnAlertCloseClick : UIEvent()
         data class OnGetAndroidId(val androidId: String) : UIEvent()
     }
 
@@ -344,5 +389,6 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         const val YEAR_START_INDEX = 0
         const val YEAR_END_INDEX = 2
         const val EMPTY_PHONE = "+1"
+        const val MAX_NUMBER_ATTEMPTS_TO_START_TOKENIZATION = 1
     }
 }

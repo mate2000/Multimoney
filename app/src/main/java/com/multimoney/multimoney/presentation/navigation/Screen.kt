@@ -262,7 +262,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // VisaNavGraph
     object VisaIssuanceScreen : Screen(
-        "visa_issuance_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$PHONE_NUMBER}/{$CARD_INFORMATION}",
+        "visa_issuance_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$PHONE_NUMBER}/{$CARD_INFORMATION}/{$AVAILABLE_BALANCE_LABEL}",
         "visa_issuance_screen"
     )
 
@@ -272,7 +272,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object VisaTokenizationWaitingScreen : Screen(
-        "visa_tokenization_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$PHONE_NUMBER}/{$CARD_INFORMATION}",
+        "visa_tokenization_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$PHONE_NUMBER}/{$CARD_INFORMATION}/{$AVAILABLE_BALANCE_LABEL}",
         "visa_tokenization_screen"
     )
 

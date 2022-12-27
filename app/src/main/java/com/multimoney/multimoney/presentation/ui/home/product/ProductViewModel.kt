@@ -323,7 +323,7 @@ class ProductViewModel @Inject constructor(
             encodeData(
                 balanceCredit?.balanceCardInformation?.cardInformation
             )
-            }"
+            }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}"
         )
 
     private fun onNavigateToHomeMultimoneyVisa() =

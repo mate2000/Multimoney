@@ -21,6 +21,7 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.uielement.PhoneTextField
@@ -132,7 +133,7 @@ fun SignUpPhoneScreen(
             modifier = Modifier.padding(top = 12.dp),
             leadingIcon = drawable.ic_information,
             text = stringResource(id = string.sign_up_phone_information),
-            textStyle = Typography.subtitle2.copy(color = MultimoneyTheme.colors.textInformation)
+            textStyle = Typography.subtitle2.copy(color = WhiteTransparency90)
         )
 
         // Fields

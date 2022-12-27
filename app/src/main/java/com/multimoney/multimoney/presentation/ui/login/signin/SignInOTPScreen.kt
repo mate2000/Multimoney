@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -20,21 +21,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.amplifyframework.core.Amplify
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TOTAL_DIGITS
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
@@ -44,7 +47,6 @@ import com.multimoney.multimoney.presentation.uielement.OtpTextField
 import com.multimoney.multimoney.presentation.uielement.SystemBroadcastReceiver
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.catalog.OTPMessageStatus
 
 @Preview
 @Composable
@@ -74,7 +76,9 @@ fun SignInOTPScreen(
             onNavigate = onNavigate,
             onPopAndNavigate = onPopAndNavigate
         )
-        requestOTP(viewModel)
+        viewModel.onUIEvent(
+            SignInOTPViewModel.UIEvent.OnCallMutationRequestChangeDevice
+        )
     }
 
     BackHandler {
@@ -106,6 +110,13 @@ fun SignInOTPScreen(
     }
 
     LaunchedEffect(true) {
+        viewModel.onUIEvent(
+            SignInOTPViewModel.UIEvent.OnInitializeTimer(
+                SignInOTPViewModel.PHASE_ONE,
+                SignInOTPViewModel.TIMER_DURATION
+            )
+        )
+
 //        viewModel.onCallMutationSendPinProcessEvent.collect { event ->
 //            event.onSuccess {
 //                viewModel.apply {
@@ -181,7 +192,7 @@ fun SignInOTPContent(viewModel: SignInOTPViewModel) {
             .background(MultimoneyTheme.colors.background)
             .fillMaxSize()
     ) {
-        val (topNavBar, otpField, timerText, titleText, headerText, continueButton, statusText) = createRefs()
+        val (topNavBar, otpField, titleText, headerText, timerText, continueButton, statusText) = createRefs()
 
         TopNavBar(
             modifier = Modifier.constrainAs(topNavBar) {
@@ -214,54 +225,6 @@ fun SignInOTPContent(viewModel: SignInOTPViewModel) {
             style = Typography.body2
         )
 
-        when (viewModel.uiState.messageStatus) {
-            OTPMessageStatus.RESEND_OTP, OTPMessageStatus.RESEND_OTP_AGAIN -> {
-                ClickableText(
-                    text = AnnotatedString(stringResource(id = R.string.profile_otp_resend)),
-                    modifier = Modifier
-                        .padding(top = 16.dp, start = 16.dp)
-                        .constrainAs(statusText) {
-                            top.linkTo(headerText.bottom, margin = 12.dp)
-                        }
-                        .fillMaxWidth(),
-                    style = Typography.body2.copy(
-                        textDecoration = TextDecoration.Underline,
-                        color = MultimoneyTheme.colors.textLink
-                    ),
-                    onClick = {
-                        requestOTP(viewModel)
-                    }
-                )
-            }
-            OTPMessageStatus.COULD_NOT_VERIFY_ID -> {
-                ClickableText(
-                    text = AnnotatedString(stringResource(id = R.string.profile_couldnt_verify_identity)),
-                    modifier = Modifier
-                        .padding(top = 16.dp, start = 16.dp)
-                        .constrainAs(statusText) {
-                            top.linkTo(headerText.bottom, margin = 12.dp)
-                        }
-                        .fillMaxWidth(),
-                    style = Typography.body2.copy(
-                        color = MultimoneyTheme.colors.textAlertColor
-                    ),
-                    onClick = {
-                        requestOTP(viewModel)
-                    }
-                )
-            }
-            else -> {
-                Text(
-                    text = stringResource(id = R.string.empty),
-                    modifier = Modifier.constrainAs(statusText) {
-                        top.linkTo(
-                            headerText.bottom,
-                            margin = 12.dp
-                        )
-                    }
-                )
-            }
-        }
 
         OtpTextField(
             value = viewModel.uiState.otp,
@@ -275,7 +238,7 @@ fun SignInOTPContent(viewModel: SignInOTPViewModel) {
                 .fillMaxWidth()
                 .padding(top = 32.dp)
                 .constrainAs(otpField) {
-                    top.linkTo(statusText.bottom)
+                    top.linkTo(headerText.bottom)
                 },
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.sign_up_otp_code_required),
@@ -283,25 +246,68 @@ fun SignInOTPContent(viewModel: SignInOTPViewModel) {
             errorMessage = stringResource(id = viewModel.uiState.otpError.second)
         )
 
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .constrainAs(timerText) {
-                top.linkTo(otpField.bottom)
-            }) {
-            Text(
-                text = stringResource(
-                    id = viewModel.uiState.statusTextResource,
-                    viewModel.uiState.remainingTimeText
+
+        when (viewModel.uiState.phaseCount) {
+            SignUpOtpViewModel.PHASE_ONE, SignUpOtpViewModel.PHASE_THREE, SignUpOtpViewModel.PHASE_FIVE -> {
+                Row(
+                    modifier = Modifier
+                        .constrainAs(timerText) {
+                            top.linkTo(otpField.bottom, margin = 12.dp)
+                        }
+                ) {
+                    Text(
+                        text = stringResource(id = viewModel.getPhaseResourceString()),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(start = 16.dp, top = 32.dp),
+                        style = Typography.body2.copy(color = MultimoneyTheme.colors.textSubhead)
+                    )
+                    Text(
+                        text = viewModel.uiState.remainingTimeText,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .padding(top = 32.dp)
+                            .width(45.dp),
+                        style = Typography.body2.copy(
+                            color = MultimoneyTheme.colors.timerColor,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    )
+                    Text(
+                        text = stringResource(id = R.string.sign_up_otp_expiration_time_phase_seconds),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(top = 32.dp),
+                        style = Typography.body2.copy(color = MultimoneyTheme.colors.textSubhead)
+                    )
+                }
+            }
+            SignUpOtpViewModel.PHASE_TWO, SignUpOtpViewModel.PHASE_FOUR -> ClickableText(
+                text = AnnotatedString(stringResource(id = viewModel.getPhaseResourceString())),
+                modifier = Modifier
+                    .padding(start = 16.dp, top = 32.dp)
+                    .constrainAs(timerText) { top.linkTo(otpField.bottom, margin = 12.dp) },
+                style = Typography.body2.copy(
+                    textDecoration = TextDecoration.Underline,
+                    color = MultimoneyTheme.colors.textLink
                 ),
+                onClick = {
+                    viewModel.onUIEvent(
+                        SignInOTPViewModel.UIEvent.OnResendOTP
+                    )
+                }
+            )
+            else -> Text(
+                text = buildAnnotatedString {
+                    withStyle(
+                        style = Typography.body2.toSpanStyle()
+                            .copy(color = SemanticNegative500)
+                    ) {
+                        append(stringResource(id = viewModel.getPhaseResourceString()))
+                    }
+                },
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .padding(top = 32.dp)
-                    .fillMaxWidth(),
-                style = Typography.body2.copy(
-                    color = MultimoneyTheme.colors.timerColor,
-                    fontWeight = FontWeight.SemiBold
-                )
+                    .padding(start = 16.dp, top = 32.dp)
+                    .constrainAs(timerText) { top.linkTo(otpField.bottom, margin = 12.dp) }
             )
         }
 
@@ -321,22 +327,4 @@ fun SignInOTPContent(viewModel: SignInOTPViewModel) {
             }
         )
     }
-}
-
-fun requestOTP(viewModel: SignInOTPViewModel) {
-    viewModel.onUIEvent(
-        SignInOTPViewModel.UIEvent.OnCallMutationRequestChangeDevice
-    )
-//    viewModel.onUIEvent(
-//        SignInOTPViewModel.UIEvent.OnCallMutationSendPinProcess(
-//            viewModel.uiState.identification ?: "",
-//            viewModel.uiState.firstName ?: "",
-//            viewModel.uiState.email ?: "",
-//            viewModel.uiState.phoneNumber ?: "",
-//            viewModel.uiState.sendMethod ?: "",
-//            viewModel.uiState.pkUser ?: "",
-//            viewModel.uiState.idBrand ?: 0,
-//            viewModel.uiState.email ?: ""
-//        )
-//    )
 }

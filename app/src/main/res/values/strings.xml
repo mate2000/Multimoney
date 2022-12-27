@@ -97,6 +97,8 @@
     <string name="sign_in_session_open_here_close_another" translatable="false">Al ingresar aquí, cerrarás la sesión que se encuentra abierta en otro dispositivo</string>
     <string name="sign_in_dialog_exit_button" translatable="false">Salir</string>
     <string name="sign_in_dialog_sign_in_here_button" translatable="false">Iniciar sesión aquí</string>
+    <string name="sign_in_otp_wrong_code" translatable="false">Código de verificación incorrecto</string>
+    <string name="sign_in_otp_expired_code" translatable="false">Código de verificación ha expirado</string>
 
 
     <!-- Sign Up General-->
@@ -106,8 +108,6 @@
     <string name="sign_up_close_dialog_negative_button_text" translatable="false">Cancelar</string>
     <string name="sign_in_error_alert_dialog" translatable="false">Parece que hubo un error</string>
     <string name="sign_in_error_alert_dialog_button" translatable="false">Ir al inicio</string>
-
-
 
 
 

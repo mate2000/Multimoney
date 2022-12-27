@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.login.signin
 
-import android.util.Log
 import androidx.biometric.BiometricPrompt
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -9,7 +8,6 @@ import androidx.compose.runtime.setValue
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewModelScope
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.util.CognitoJWTParser
-import com.amplifyframework.auth.AuthChannelEventName
 import com.amplifyframework.auth.AuthException
 import com.amplifyframework.auth.AuthUserAttribute
 import com.amplifyframework.auth.AuthUserAttributeKey
@@ -17,8 +15,6 @@ import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
 import com.amplifyframework.auth.cognito.options.AWSCognitoAuthSignInOptions
 import com.amplifyframework.auth.result.AuthSessionResult
 import com.amplifyframework.core.Amplify
-import com.amplifyframework.core.InitializationStatus
-import com.amplifyframework.hub.HubChannel
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -67,14 +63,12 @@ class SignInViewModel @Inject constructor(
     private var forceDeviceChange = false
 
 
-
-
     private fun onStart(
         deviceId: String,
         ipAddress: String,
         deviceName: String,
         deviceType: String,
-        forceDeviceChange : Boolean
+        forceDeviceChange: Boolean
     ) {
         this.deviceId = deviceId
         this.ipAddress = ipAddress
@@ -390,7 +384,10 @@ class SignInViewModel @Inject constructor(
 
     private fun onNavigateToOTPScreen(
     ) {
-        popAndNavigateTo("${Screen.SignInOTPScreen.baseRoute}/${uiState.userEmail}/${uiState.userPassword}/$deviceId/$uniqueId/$ipAddress/$deviceType/$deviceName/$appVersion/$deviceBrand/$deviceModel/$isEmulator",Screen.SignInOTPScreen.baseRoute)
+        popAndNavigateTo(
+            "${Screen.SignInOTPScreen.baseRoute}/${uiState.userEmail}/${uiState.userPassword}/$deviceId/$uniqueId/$ipAddress/$deviceType/$deviceName/$appVersion/$deviceBrand/$deviceModel/$isEmulator",
+            Screen.SignInOTPScreen.baseRoute
+        )
     }
 
     data class UIState(
@@ -498,7 +495,6 @@ class SignInViewModel @Inject constructor(
         const val DEVICE_NAME = "DeviceName"
         const val IP_ADDRESS = "IpAddress"
         const val FORCE = "Force"
-        const val SESSION_ACTIVE_ERROR_CODE = "2706"
+        const val SESSION_ACTIVE_ERROR_CODE = "2885"
     }
-
 }

@@ -1,19 +1,10 @@
 package com.multimoney.multimoney.presentation.ui.login.signin
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.amazonaws.mobileconnectors.cognitoidentityprovider.util.CognitoJWTParser
-import com.amplifyframework.auth.AuthUserAttribute
-import com.amplifyframework.auth.AuthUserAttributeKey
-import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
-import com.amplifyframework.auth.cognito.options.AWSCognitoAuthSignInOptions
-import com.amplifyframework.auth.result.AuthSessionResult
-import com.amplifyframework.core.Amplify
-import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.security.MutationChangeDeviceUseCase
 import com.multimoney.domain.interaction.security.MutationRequestChangeDeviceUseCase
 import com.multimoney.domain.model.util.onFailure
@@ -36,7 +27,7 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.UNIQUE_ID
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel
 import com.multimoney.multimoney.presentation.util.OTP_MESSAGE_REGEX
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OTPMessageStatus
@@ -50,7 +41,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
-import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -60,10 +50,9 @@ import kotlin.time.DurationUnit
 
 @HiltViewModel
 class SignInOTPViewModel @Inject constructor(
-    private val dataStorePreferences: DataStorePreferences,
     private val mutationRequestChangeDeviceUseCase: MutationRequestChangeDeviceUseCase,
     private val mutationChangeDeviceUseCase: MutationChangeDeviceUseCase,
-    private val savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle
 ) : BaseViewModel(false) {
 
     private var email: String = ""
@@ -96,25 +85,9 @@ class SignInOTPViewModel @Inject constructor(
         isEmulator = savedStateHandle[IS_EMULATOR] ?: ""
     }
 
-    private fun onRequestChangeDevice() = executeUseCase {
-        mutationRequestChangeDeviceUseCase.invoke(email = email).collectLatest { result ->
-            result.onSuccess {
-                if (it.status == SUCCESS_STATUS) {
-
-                }
-            }.onFailure {
-
-            }.onMessage {
-
-            }.onLoading {
-
-            }
-        }
-    }
-
     private fun initializeTimer(
-        phaseCount: Int?,
-        totalTime: Long = ValidateOTPViewModel.TIMER_DURATION
+        phaseCount: Int,
+        totalTime: Long = TIMER_DURATION
     ) {
         val newRemainingTime = totalTime.seconds
         uiState = uiState.copy(
@@ -161,22 +134,46 @@ class SignInOTPViewModel @Inject constructor(
 
     private fun onTimerFinish() {
         val newRemainingTime =
-            uiState.remainingTime.plus(ValidateOTPViewModel.TIMER_DURATION.seconds)
+            uiState.remainingTime.plus(TIMER_DURATION.seconds)
         uiState = uiState.copy(
             isTimerRunning = false,
             remainingTime = newRemainingTime,
-            remainingTimeText = newRemainingTime.format()
+            remainingTimeText = newRemainingTime.format(),
+            phaseCount = uiState.phaseCount.plus(1)
+
         )
         updateMessageStatus()
     }
 
+    private fun resend() {
+        uiState = uiState.copy(
+            isTimerRunning = true,
+            phaseCount = uiState.phaseCount.plus(1)
+        )
+    }
+
+    private fun getPhaseAction() {
+        when (uiState.phaseCount) {
+            SignUpOtpViewModel.PHASE_TWO, SignUpOtpViewModel.PHASE_FOUR -> resend()
+        }
+    }
+
+
+    fun getPhaseResourceString() = when (uiState.phaseCount) {
+        PHASE_ONE -> R.string.sign_up_otp_expiration_time_phase_one
+        PHASE_THREE -> R.string.sign_up_otp_expiration_time_phase_three
+        PHASE_TWO, PHASE_FOUR -> R.string.profile_otp_resend
+        PHASE_FIVE -> R.string.sign_up_otp_expiration_time_phase_three
+        else -> R.string.profile_couldnt_verify_identity
+    }
+
     private fun updateMessageStatus() {
         when (uiState.phaseCount) {
-            ValidateOTPViewModel.PHASE_ONE -> uiState =
+            PHASE_ONE -> uiState =
                 uiState.copy(messageStatus = OTPMessageStatus.RESEND_OTP)
-            ValidateOTPViewModel.PHASE_TWO -> uiState =
+            PHASE_TWO -> uiState =
                 uiState.copy(messageStatus = OTPMessageStatus.RESEND_OTP_AGAIN)
-            ValidateOTPViewModel.PHASE_THREE, null ->
+            PHASE_THREE ->
                 uiState =
                     uiState.copy(messageStatus = OTPMessageStatus.COULD_NOT_VERIFY_ID)
         }
@@ -200,25 +197,18 @@ class SignInOTPViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun onStart() {
-
-    }
-
     private fun onCallMutationRequestChangeDevice() = executeUseCase {
         mutationRequestChangeDeviceUseCase.invoke(email).collectLatest { result ->
             result.onSuccess {
-                if (it.status == SUCCESS_STATUS) {
-                    uiState = uiState.copy(isLoading = false)
-                    Log.e("success ", it.toString())
-                }
+                getPhaseAction()
+                onExecuteTimer()
+                uiState = uiState.copy(isLoading = false)
             }.onFailure {
                 uiState = uiState.copy(isAlertResultVisible = false, isLoading = false)
-                Log.e("failure ", it.toString())
             }.onMessage {
-                uiState = uiState.copy(isLoading = false)
-                Log.e("message ", it.toString())
+                uiState = uiState.copy(isAlertResultVisible = false, isLoading = false)
             }.onLoading {
-                Log.e("loading ", "Loading")
+                uiState = uiState.copy(isLoading = true)
             }
         }
     }
@@ -227,24 +217,29 @@ class SignInOTPViewModel @Inject constructor(
     private fun onCallMutationChangeDevice() = executeUseCase {
         mutationChangeDeviceUseCase.invoke(email, uiState.otp).collectLatest { result ->
             result.onSuccess {
-
-                onNavigateToLogin()
-                if (it.status == SUCCESS_STATUS) {
-                    uiState = uiState.copy(isLoading = false)
-                    Log.e("success ", it.toString())
+                uiState = uiState.copy(isLoading = false)
+                when (it.status) {
+                    SUCCESS_STATUS -> {
+                        onNavigateToLogin()
+                    }
+                    WRONG_CODE -> {
+                        uiState =
+                            uiState.copy(otpError = Pair(true, R.string.sign_in_otp_wrong_code))
+                    }
+                    EXPIRED_CODE -> {
+                        uiState =
+                            uiState.copy(otpError = Pair(true, R.string.sign_in_otp_expired_code))
+                    }
                 }
-            }.onFailure {
-                onNavigateToLogin()
 
+            }.onFailure {
                 uiState = uiState.copy(isAlertResultVisible = true, isLoading = false)
-                Log.e("failure ", it.toString())
 
             }.onMessage {
                 uiState = uiState.copy(isLoading = false)
-                Log.e("message ", it.toString())
+
             }.onLoading {
                 uiState = uiState.copy(isLoading = true)
-                Log.e("loading ", "Loading")
             }
         }
     }
@@ -256,34 +251,14 @@ class SignInOTPViewModel @Inject constructor(
         )
     }
 
-   
-
-    private fun cognitoError() {
-//        uiState = uiState.copy(
-//            userEmailError = Pair(true, R.string.error_empty),
-//            userPasswordError = Pair(true, R.string.sign_in_validation),
-//            isLoading = false
-//        )
-    }
-
     private fun onNavigateToLogin() = popAndNavigateTo(
-        route = Screen.SignInScreen.baseRoute.plus(getNavParam(FORCE_CHANGE_DEVICE,true)),
+        route = Screen.SignInScreen.baseRoute.plus(getNavParam(FORCE_CHANGE_DEVICE, true)),
         popTo = Screen.SignInOTPScreen.route
     )
 
-    private suspend fun saveUserData(
-        session: AWSCognitoAuthSession,
-        authUserAttribute: List<AuthUserAttribute>
-    ) {
-        val payload = CognitoJWTParser.getPayload(session.userPoolTokens.value?.idToken)
-        dataStorePreferences.setUserName("${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value.orEmpty()} ${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.familyName() }?.value.orEmpty()}")
-        dataStorePreferences.setAuthToken(session.userPoolTokens.value?.idToken ?: "")
-        dataStorePreferences.setIdBrand(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_ID_BRAND))
-        dataStorePreferences.setPkUser(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_PK_USER))
-        dataStorePreferences.setIdentification(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_IDENTIFICATION))
-        dataStorePreferences.setUserEmail(email)
+    private fun onResendOTP() {
+        onCallMutationRequestChangeDevice()
     }
-
 
     data class UIState(
 
@@ -296,7 +271,7 @@ class SignInOTPViewModel @Inject constructor(
         val otpError: Pair<Boolean, Int> = Pair(false, R.string.sign_up_otp_code_not_valid),
         val isTimerRunning: Boolean = false,
         // Interactions
-        val phaseCount: Int? = null,
+        val phaseCount: Int = PHASE_ONE,
         val messageStatus: OTPMessageStatus? = null,
         val remainingTime: Duration = ValidateOTPViewModel.TIMER_DURATION.seconds,
         val remainingTimeText: String = remainingTime.format(),
@@ -306,31 +281,41 @@ class SignInOTPViewModel @Inject constructor(
         val alertTextResource: Int = R.string.empty,
         val enterTheCodeTextResource: Int = R.string.empty,
         val statusTextResource: Int = R.string.empty,
-
-        )
+    )
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is UIEvent.OnStart -> onStart()
             is UIEvent.OnCallMutationRequestChangeDevice -> onCallMutationRequestChangeDevice()
             is UIEvent.OnNavigateBack -> onNavigateBack()
             is UIEvent.OnValidateOTP -> onCallMutationChangeDevice()
             is UIEvent.OnOTPValueChange -> onOtpValueChange(event.otp)
+            is UIEvent.OnInitializeTimer -> initializeTimer(event.phaseCount, event.time)
+            is UIEvent.OnResendOTP -> onResendOTP()
+
         }
     }
 
     sealed class UIEvent {
-        object OnStart : UIEvent()
+
         object OnCallMutationRequestChangeDevice : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnValidateOTP : UIEvent()
         data class OnOTPValueChange(val otp: String) : UIEvent()
+        data class OnInitializeTimer(val phaseCount: Int, val time: Long) : UIEvent()
+        object OnResendOTP : UIEvent()
     }
 
     companion object {
         const val SUCCESS_STATUS = 0
-        const val WRONG_CODE = "2708"
+        const val WRONG_CODE = 2887
+        const val EXPIRED_CODE = 2886
         const val TOTAL_DIGITS = 6
-
+        const val TIMER_DURATION = 3L
+        const val PHASE_ONE = 1
+        const val PHASE_TWO = 2
+        const val PHASE_THREE = 3
+        const val PHASE_FOUR = 4
+        const val PHASE_FIVE = 5
+        const val PHASE_SIX = 6
     }
 }

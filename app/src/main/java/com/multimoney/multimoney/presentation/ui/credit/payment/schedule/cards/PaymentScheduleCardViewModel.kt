@@ -79,7 +79,7 @@ class PaymentScheduleCardViewModel @Inject constructor(
     }
 
     private fun getClientCardVisaDirect() = when {
-        isEditBankAccount || previousScreen == Screen.PaymentVoucherScreen.baseRoute -> // TODO change to new voucher
+        isEditBankAccount || previousScreen == Screen.PaymentCardVoucherScreen.baseRoute ->
             uiState =
                 uiState.copy(
                     cardVisaDirect = savedStateHandle[CLIENT_CARD_VISA_DIRECT]
@@ -210,8 +210,8 @@ class PaymentScheduleCardViewModel @Inject constructor(
 
     private fun onNavigateBack() = when (previousScreen) {
         Screen.HomeBNScreen.baseRoute -> onNavigateBackHome(false)
-        Screen.PaymentVoucherScreen.baseRoute -> navigateBack( // TODO Navigate to new Voucher
-            popTo = Screen.PaymentVoucherScreen.route, // TODO Navigate to new Voucher
+        Screen.PaymentCardVoucherScreen.baseRoute -> navigateBack(
+            popTo = Screen.PaymentCardVoucherScreen.route,
             isRestart = false
         )
         else -> onNavigateBackHome(true)

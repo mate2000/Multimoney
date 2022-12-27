@@ -96,7 +96,7 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
                 encodeData(
                     cardInformation
                 )
-                }"
+                }/$availableBalanceLabel"
             )
             is OnOpenDialogConfirmToStartTokenizationProcess -> uiState = uiState.copy(
                 dialogParameters = DialogParameters(

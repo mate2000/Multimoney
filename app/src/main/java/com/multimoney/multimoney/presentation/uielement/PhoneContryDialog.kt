@@ -89,6 +89,7 @@ fun PhoneCountryDialog(
     showCountryFlag: Boolean = true,
     pickedCountry: (CountryData) -> Unit = {},
     countryCodeTextColor: Color = MultimoneyTheme.colors.text,
+    dropdownArrowColor: Color = Color.White,
     dialogAppBarColor: Color = MultimoneyTheme.colors.primary,
     dialogAppBarTextColor: Color = DefaultWhite,
     dialogFocusedBorderColorSearch: Color = MultimoneyTheme.colors.primary,
@@ -130,7 +131,11 @@ fun PhoneCountryDialog(
                     style = Typography.body2.copy(color = countryCodeTextColor)
                 )
                 if (showCountryFlag) {
-                    Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null)
+                    Icon(
+                        imageVector = Icons.Default.ArrowDropDown,
+                        contentDescription = null,
+                        tint = dropdownArrowColor
+                    )
                 }
             }
         }

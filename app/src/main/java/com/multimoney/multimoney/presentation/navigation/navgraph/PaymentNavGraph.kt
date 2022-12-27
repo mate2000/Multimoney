@@ -255,7 +255,7 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                     type = NavType.IntType
                 },
                 navArgument(CLIENT_CARD_VISA_DIRECT) {
-                    type = ClientBankAccountNavType()
+                    type = CardVDNavType()
                 },
                 navArgument(IS_EDIT_BANK_ACCOUNT) {
                     type = NavType.BoolType
@@ -558,11 +558,16 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 }
             )
         ) {
-            PaymentVoucherVDScreen(onPopAndNavigate = {
-                navController.navigate(it.route) {
-                    popUpTo(it.popTo) { inclusive = true }
+            PaymentVoucherVDScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
                 }
-            })
+            )
         }
     }
 }

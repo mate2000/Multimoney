@@ -21,6 +21,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.MINIMUM_PAYMENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.MINIMUM_PAYMENT_LABEL
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnCallQueryGetClientCards
@@ -29,8 +30,8 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCar
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnNavigateBackHome
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class PaymentCardListViewModel @Inject constructor(
@@ -54,6 +55,7 @@ class PaymentCardListViewModel @Inject constructor(
     private var minimumPaymentLabel: String? = null
     private var maximumPayment: Float? = null
     private var maximumPaymentLabel: String = ""
+    private var paymentDate: String? = ""
 
     init {
         user = savedStateHandle[USER] ?: ""
@@ -67,6 +69,7 @@ class PaymentCardListViewModel @Inject constructor(
         minimumPaymentLabel = savedStateHandle[MINIMUM_PAYMENT_LABEL]
         maximumPayment = savedStateHandle[MAXIMUM_PAYMENT]
         maximumPaymentLabel = savedStateHandle[MAXIMUM_PAYMENT_LABEL] ?: ""
+        paymentDate = savedStateHandle[PAYMENT_DATE] ?: ""
     }
 
     private fun onCallQueryGetClientCardsUseCase() {
@@ -103,7 +106,7 @@ class PaymentCardListViewModel @Inject constructor(
         navigateTo(
             route = "${Screen.PaymentAmountCardsScreen.baseRoute}/$idBrand/$identification/$user/${
             encodeData(cardSelected)
-            }/$creditNumber/$idClient/$idLoanClient/$minimumPayment/$minimumPaymentLabel/$maximumPayment/$maximumPaymentLabel/$idCurrency"
+            }/$creditNumber/$idClient/$idLoanClient/$minimumPayment/$minimumPaymentLabel/$maximumPayment/$maximumPaymentLabel/$idCurrency/$paymentDate"
         )
 
     private fun onNavigateBack() =

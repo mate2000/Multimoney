@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -57,6 +56,7 @@ import com.multimoney.multimoney.presentation.util.shape.DottedShape
 
 @Composable
 fun PaymentVoucherVDScreen(
+    onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: PaymentCardVoucherViewModel = hiltViewModel()
 ) {
@@ -64,7 +64,7 @@ fun PaymentVoucherVDScreen(
     var capturingViewBounds by remember { mutableStateOf<Rect?>(null) }
 
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
+        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate, onNavigate = onNavigate)
     }
 
     Column(

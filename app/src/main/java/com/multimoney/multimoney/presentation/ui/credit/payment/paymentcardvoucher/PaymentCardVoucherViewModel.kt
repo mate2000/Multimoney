@@ -8,14 +8,15 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
-import com.multimoney.multimoney.presentation.navigation.navgraph.CURRENCY_SYMBOL
 import com.multimoney.multimoney.presentation.navigation.navgraph.CURRENT_AMOUNT_VALUE
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOMATIC_PAYMENT_CHECKED
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.REFERENCE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentcardvoucher.PaymentCardVoucherViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentcardvoucher.PaymentCardVoucherViewModel.UIEvent.OnScheduleAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentcardvoucher.PaymentCardVoucherViewModel.UIEvent.OnSharedVoucherImage
@@ -44,6 +45,7 @@ class PaymentCardVoucherViewModel @Inject constructor(
     private var idClient: Int = 0
     private var idLoanClient: Int = 0
     private var identification: String? = null
+    private var paymentDate: String? = ""
 
     init {
         referenceNumber = savedStateHandle[REFERENCE_NUMBER] ?: ""
@@ -57,6 +59,7 @@ class PaymentCardVoucherViewModel @Inject constructor(
         isAutomaticProgrammedPaymentChecked = savedStateHandle[IS_AUTOMATIC_PAYMENT_CHECKED]
         currentDate = getCurrentDate(Calendar.getInstance().time)
         currentTime = getCurrentTime(Calendar.getInstance().time)
+        paymentDate = savedStateHandle[PAYMENT_DATE] ?: ""
     }
 
     private fun onShareVoucherImage(
@@ -73,9 +76,13 @@ class PaymentCardVoucherViewModel @Inject constructor(
         )
     }
 
-    private fun onScheduleAutomaticPayment() {
-        // todo schedule payment.
-    }
+    private fun onScheduleAutomaticPayment() = navigateTo(
+        route = "${Screen.PaymentScheduleCardScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/${
+        encodeData(
+            card
+        )
+        }/$paymentDate/${false}/${Screen.PaymentCardVoucherScreen.baseRoute}/${false}/$identification"
+    )
 
     fun onUIEvent(event: UIEvent) {
         when (event) {

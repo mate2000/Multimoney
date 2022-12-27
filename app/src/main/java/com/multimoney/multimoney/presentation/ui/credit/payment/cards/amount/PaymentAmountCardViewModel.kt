@@ -32,11 +32,11 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.MINIMUM_PAYMENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.MINIMUM_PAYMENT_LABEL
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel
-import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnAlertResultButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnAlertResultRightButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnAmountValueChange
@@ -79,6 +79,7 @@ class PaymentAmountCardViewModel @Inject constructor(
     private var alertResultTitle: String = ""
     private var payCreditVisa: PayCreditVisaDirect? = null
     private var idCurrency: Int? = null
+    private var paymentDate: String? = ""
 
     init {
         user = savedStateHandle[USER] ?: ""
@@ -92,6 +93,7 @@ class PaymentAmountCardViewModel @Inject constructor(
         minimumPaymentLabel = savedStateHandle[MINIMUM_PAYMENT_LABEL] ?: ""
         maximumPayment = savedStateHandle[MAXIMUM_PAYMENT] ?: 0.00F
         maximumPaymentLabel = savedStateHandle[MAXIMUM_PAYMENT_LABEL] ?: ""
+        paymentDate = savedStateHandle[PAYMENT_DATE] ?: ""
         onInitializeInteractionValues()
     }
 
@@ -166,7 +168,7 @@ class PaymentAmountCardViewModel @Inject constructor(
             encodeData(
                 uiState.card
             )
-            }/${getCurrentAmountFormatted()}/${uiState.isAutomaticProgrammedPaymentChecked}/${payCreditVisa?.referenceAuthorization}",
+            }/${getCurrentAmountFormatted()}/${uiState.isAutomaticProgrammedPaymentChecked}/${payCreditVisa?.referenceAuthorization}/$paymentDate",
             Screen.PaymentAmountCardsScreen.route
         )
     }

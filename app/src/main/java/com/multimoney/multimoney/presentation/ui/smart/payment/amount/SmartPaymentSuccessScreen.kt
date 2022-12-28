@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -43,6 +44,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomButtonType.Primary
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.SmartPaymentInfoItem
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
+import com.multimoney.multimoney.presentation.uielement.VoucherCurrencyExchangeInfo
 import com.multimoney.multimoney.presentation.util.shape.DottedShape
 
 @Composable
@@ -100,6 +102,17 @@ fun SmartPaymentSuccessScreen(
                 title = stringResource(string.smart_payment_reference_number_label),
                 subtitle = viewModel.uiState.referenceNumber
             )
+
+            if (viewModel.shouldDisplayExchange) {
+                Spacer(modifier = Modifier.height(32.dp))
+                VoucherCurrencyExchangeInfo(
+                    leftTitleResource = string.payment_amount_bottom_sheet_exchange_type,
+                    rightTitleResource = string.payment_amount_bottom_sheet_amount_to_debit,
+                    exchangeRateText = viewModel.uiState.exchangeRateLabel,
+                    convertedAmountText = viewModel.uiState.exchangeRateLabel
+                )
+
+            }
 
             SmartPaymentInfoItem(
                 modifier = Modifier

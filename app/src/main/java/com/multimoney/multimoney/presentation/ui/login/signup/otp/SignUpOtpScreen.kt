@@ -37,9 +37,7 @@ import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
-import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.theme.SemanticNegative500
-import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.theme.*
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.PHONE_HARDCODED
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.BaseEvent.OnFormValidateCompleted
@@ -252,7 +250,7 @@ fun SignUpOtpScreen(
         )
 
         Text(
-            style = Typography.body2.copy(color = MultimoneyTheme.colors.textSubhead),
+            style = Typography.body2.copy(color = WhiteTransparency70),
             text = stringResource(id = R.string.sign_up_otp_subtitle),
             textAlign = TextAlign.Start,
             modifier = Modifier

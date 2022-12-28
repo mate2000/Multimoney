@@ -6,6 +6,8 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -15,9 +17,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.domain.model.util.onFailure
-import com.multimoney.domain.model.util.onLoading
-import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -83,24 +82,27 @@ fun TermsAndConditionsContent(viewModel: TermsAndConditionsViewModel) {
             )
 
             if (viewModel.uiState.termsAndConditionsSigned?.items != null && viewModel.uiState.termsAndConditionsSigned?.items?.isNotEmpty() == true) {
-                viewModel.uiState.termsAndConditionsSigned?.items?.onEach { item ->
-                    val title = stringResource(id = viewModel.getStringResource(item.type))
-                    CustomInfoButton(
-                        startIcon = null,
-                        title = title,
-                        subtitle = parseApiDateToTermsAndConditionsDateTime(item.dateSigned),
-                        subtitle2 = item.version,
-                        onClick = {
-                            viewModel.onUIEvent(
-                                TermsAndConditionsViewModel.UIEvent.OnTermsAndConditionsClicked(
-                                    title,
-                                    item.html,
-                                    item.version,
-                                    item.dateSigned
+                LazyColumn() {
+                    items(viewModel.uiState.termsAndConditionsSigned!!.items) { terms ->
+                        val title = stringResource(id = viewModel.getStringResource(terms.type))
+                        CustomInfoButton(
+                            modifier = Modifier.padding(bottom = 16.dp),
+                            startIcon = null,
+                            title = title,
+                            subtitle = parseApiDateToTermsAndConditionsDateTime(terms.dateSigned),
+                            subtitle2 = terms.version,
+                            onClick = {
+                                viewModel.onUIEvent(
+                                    TermsAndConditionsViewModel.UIEvent.OnTermsAndConditionsClicked(
+                                        title,
+                                        terms.html,
+                                        terms.version,
+                                        terms.dateSigned
+                                    )
                                 )
-                            )
-                        }
-                    )
+                            }
+                        )
+                    }
                 }
             }
         }

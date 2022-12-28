@@ -35,7 +35,9 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueVisible
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SmartAddressFields
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.BaseEvent
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnCallQueryProfessionUseCase
@@ -59,12 +61,23 @@ fun SmartCrSalaryScreen(
 ) {
     val focusManager = LocalFocusManager.current
 
-    LaunchedEffect(key1 = true) {
-        viewModel.onUIEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
+    LaunchedEffect(true) {
+        sourceIncomeSharedViewModel.baseEvent.collect { event ->
+            when (event) {
+                is BaseEvent.OnFormValidateCompleted -> sharedViewModel.onUIEvent(
+                    OnContinueEnable(event.isFormValid && viewModel.isFormValid())
+                )
+            }
+        }
     }
 
     LaunchedEffect(true) {
-        sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid()))
+        viewModel.onUIEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
+        sharedViewModel.onUIEvent(
+            OnContinueEnable(
+                viewModel.isFormValid() && sourceIncomeSharedViewModel.isFormValid()
+            )
+        )
         sharedViewModel.onUIEvent(OnContinueVisible(true))
 
         viewModel.onUIEvent(
@@ -81,7 +94,13 @@ fun SmartCrSalaryScreen(
                         OnCallMutationUpdateGlobalRequestUseCase(
                             accountSmartData = sharedViewModel.accountSmartData?.copy(
                                 idEconomicActivity = SourceIncomeOptionType.FormalSalariedCr.id.toLong(),
-                                idProfessionType = viewModel.uiState.professionSmartList.find { it?.name == viewModel.uiState.profession }?.id,
+                                idProfessionType = viewModel.uiState.professionSmartList.find {
+                                    it?.name == viewModel.uiState.profession
+                                }?.id,
+                                idJobLevel1 = sourceIncomeSharedViewModel.uiState.divisionOneSelected?.id?.toLongOrNull(),
+                                idJobLevel2 = sourceIncomeSharedViewModel.uiState.divisionTwoSelected?.id?.toLongOrNull(),
+                                idJobLevel3 = sourceIncomeSharedViewModel.uiState.divisionThreeSelected?.id?.toLongOrNull(),
+                                fullJobAddress = sourceIncomeSharedViewModel.uiState.address,
                                 income = viewModel.uiState.paymentAmount.toFloat()
                             )
                         )
@@ -96,7 +115,7 @@ fun SmartCrSalaryScreen(
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormValidateCompleted -> sharedViewModel.onUIEvent(
-                    OnContinueEnable(event.isFormValid)
+                    OnContinueEnable(event.isFormValid && sourceIncomeSharedViewModel.isFormValid())
                 )
             }
         }
@@ -172,6 +191,13 @@ fun SmartCrSalaryScreen(
             },
             labelText = stringResource(id = string.smart_account_formal_select_profession),
             placeHolder = stringResource(id = string.select)
+        )
+
+        SmartAddressFields(
+            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel,
+            user = sharedViewModel.user,
+            idBrand = sharedViewModel.idBrandAsInt,
+            focusManager = focusManager
         )
     }
 }

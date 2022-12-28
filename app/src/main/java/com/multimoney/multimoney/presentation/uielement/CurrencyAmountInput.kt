@@ -51,7 +51,6 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency30
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
-import com.multimoney.multimoney.presentation.util.isValidAmountLength
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -192,11 +191,9 @@ fun CurrencyAmountInput(
             keyboardActions = keyboardActions,
             onValueChange = {
                 activity?.onUserInteraction()
-                if (it.isValidAmountLength()) {
-                    onValueChange(it)
-                    textDebounce.value = it
-                    if (isRequired) emptyError = it.isEmpty()
-                }
+                onValueChange(it)
+                textDebounce.value = it
+                if (isRequired) emptyError = it.isEmpty()
             },
             placeholder = {
                 Text(

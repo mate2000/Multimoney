@@ -47,14 +47,14 @@ fun CustomCardVisaVertical(
 
     val textStyleSubtitle = TextStyle(
         fontFamily = forzaFontFamily,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.ExtraBold,
         fontSize = 12.sp,
         letterSpacing = (4).sp
     )
 
     val textStyleBody = TextStyle(
         fontFamily = forzaFontFamily,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.ExtraBold,
         fontSize = 10.sp,
         letterSpacing = (1.5).sp
     )

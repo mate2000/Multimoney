@@ -141,8 +141,7 @@ fun PaymentSuccessContent(viewModel: SavingAmountViewModel) {
                     )
                     Text(
                         modifier = Modifier.fillMaxWidth(),
-                        text = viewModel.uiState.currency +
-                                viewModel.uiState.currentAmountValueString.collectAsState().value,
+                        text = viewModel.getFormattedAmount(),
                         style = Typography.h4.copy(fontWeight = FontWeight.W600),
                         color = MultimoneyTheme.colors.text,
                         textAlign = TextAlign.Center

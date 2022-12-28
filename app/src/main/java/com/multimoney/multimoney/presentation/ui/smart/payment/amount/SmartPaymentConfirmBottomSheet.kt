@@ -12,7 +12,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,18 +24,14 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.CURRENCY_SEPARATOR
-import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnCallProcessSinpeTransfer
-import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnCallProcessTransferVisaToSmart
+import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnCallProcessTransfer
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.CustomModalBottomSheet
 import com.multimoney.multimoney.presentation.uielement.ExchangeTotalLabel
-import com.multimoney.multimoney.presentation.util.getCurrencyFromId
+import com.multimoney.multimoney.presentation.util.CARD_NUMBER_LAST_DIGITS
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
-import com.multimoney.multimoney.presentation.util.getMaskedVisa
-import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
 import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -62,9 +57,7 @@ fun SmartPaymentConfirmBottomSheet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp),
-                text = viewModel.uiState.currency + viewModel.uiState.currentAmountValueString.collectAsState().value?.stringToDoubleFormat(
-                    CURRENCY_SEPARATOR.toString()
-                ),
+                text = viewModel.getFormattedAmount(),
                 style = Typography.h4.copy(fontWeight = FontWeight.W600),
                 color = MultimoneyTheme.colors.text,
                 textAlign = TextAlign.Center
@@ -79,13 +72,7 @@ fun SmartPaymentConfirmBottomSheet(
                 modifier = Modifier
                     .padding(top = 16.dp)
                     .fillMaxWidth(),
-                text = stringResource(
-                    id = if (viewModel.idBrand == Brand.CostaRica.id) {
-                        R.string.smart_payment_amount_bottom_sheet_from_card_CR
-                    } else {
-                        R.string.smart_payment_amount_bottom_sheet_from_card
-                    }
-                ),
+                text = stringResource(viewModel.sheetSubtitle),
                 style = Typography.body2.copy(fontWeight = FontWeight.W600),
                 color = MultimoneyTheme.colors.text,
                 textAlign = TextAlign.Start
@@ -94,11 +81,7 @@ fun SmartPaymentConfirmBottomSheet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(78.dp),
-                startIcon = if (viewModel.idBrand == Brand.CostaRica.id) {
-                    viewModel.ibanCurrency?.id?.getCurrencyFromId()?.accountIcon
-                } else {
-                    R.drawable.ic_visa_card_item
-                },
+                startIcon = viewModel.originIcon,
                 title = viewModel.bankDetail,
                 subtitle = if (viewModel.idBrand == Brand.CostaRica.id) {
                     getMaskedAccountIban(
@@ -106,9 +89,9 @@ fun SmartPaymentConfirmBottomSheet(
                         stringResource(id = R.string.payment_account_masked_text)
                     )
                 } else {
-                    getMaskedVisa(
-                        cardNumber = viewModel.maskedCardNumber,
-                        maskedText = stringResource(R.string.visa_card_masked_number)
+                    stringResource(
+                        R.string.visa_card_masked_number,
+                        viewModel.maskedCardNumber.takeLast(CARD_NUMBER_LAST_DIGITS)
                     )
                 },
                 endIcon = null,
@@ -155,11 +138,7 @@ fun SmartPaymentConfirmBottomSheet(
                     .fillMaxWidth()
                     .height(48.dp),
                 onClick = {
-                    if (viewModel.idBrand == Brand.CostaRica.id) {
-                        viewModel.onUIEvent(OnCallProcessSinpeTransfer)
-                    } else {
-                        viewModel.onUIEvent(OnCallProcessTransferVisaToSmart)
-                    }
+                    viewModel.onUIEvent(OnCallProcessTransfer)
                 },
                 text = stringResource(id = R.string.button_continue),
                 buttonType = PrimaryPrimary,

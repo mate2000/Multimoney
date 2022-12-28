@@ -153,6 +153,7 @@ data class MultimoneyColors(
     val textSuccess: Color,
     val dividerWhite16: Color,
     val dividerWhite30: Color,
+    val dividerWhite40: Color,
     val circularProgressIndicator: Color,
     val timerColor: Color,
     val iconColor: Color,
@@ -185,7 +186,7 @@ data class MultimoneyColors(
     val cryptoWalletGainsColor: Color,
     val cryptoActionButtonEnable: Color,
     val cryptoActionButtonDisable: Color,
-    val fullTransparency: Color = Color.Transparent,
+    val fullTransparency: Color = Color.Transparent
 )
 
 val DarkColorPalette = MultimoneyColors(
@@ -206,6 +207,7 @@ val DarkColorPalette = MultimoneyColors(
     textSuccess = SemanticPositive400,
     dividerWhite16 = WhiteTransparency16,
     dividerWhite30 = WhiteTransparency30,
+    dividerWhite40 = WhiteTransparency40,
     circularProgressIndicator = DefaultWhite,
     timerColor = DefaultWhite,
     iconColor = WhiteTransparency90,
@@ -237,7 +239,7 @@ val DarkColorPalette = MultimoneyColors(
     cryptoLossesColor = SemanticNegative400,
     cryptoActionButtonEnable = Primary400,
     cryptoActionButtonDisable = GrayScale400,
-    cryptoWalletGainsColor = Tertiary400,
+    cryptoWalletGainsColor = Tertiary400
 )
 
 val LightColorPalette = MultimoneyColors(
@@ -258,6 +260,7 @@ val LightColorPalette = MultimoneyColors(
     textSuccess = SemanticPositive400,
     dividerWhite16 = WhiteTransparency16,
     dividerWhite30 = WhiteTransparency30,
+    dividerWhite40 = WhiteTransparency40,
     circularProgressIndicator = Primary500,
     timerColor = DefaultBlack,
     iconColor = GrayScale800,
@@ -289,7 +292,7 @@ val LightColorPalette = MultimoneyColors(
     cryptoLossesColor = SemanticNegative500,
     cryptoActionButtonEnable = Primary500,
     cryptoActionButtonDisable = GrayScale500,
-    cryptoWalletGainsColor = Tertiary600,
+    cryptoWalletGainsColor = Tertiary600
 )
 
 val LocalMultimoneyColors = staticCompositionLocalOf {

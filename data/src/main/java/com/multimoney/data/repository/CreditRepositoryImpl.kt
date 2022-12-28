@@ -353,13 +353,15 @@ class CreditRepositoryImpl @Inject constructor(
         user: String,
         idBrand: Int,
         idClient: Int,
-        idLoanClient: Int
+        idLoanClient: Int,
+        process: String
     ): Flow<MultimoneyResult<List<ClientBankAccount?>?>> = fetchData(
         apolloCall = graphqlApi.queryGetClientBankAccount(
             user,
             idBrand,
             idClient,
-            idLoanClient
+            idLoanClient,
+            process
         ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())

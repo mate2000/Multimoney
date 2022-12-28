@@ -1,10 +1,11 @@
-query GetClientBankAccount($user: String!, $idBrand: Int!, $idClient: Long!, $idLoanClient: Long! ){
+query GetClientBankAccount($user: String!, $idBrand: Int!, $idClient: Long!, $idLoanClient: Long!, $process: String!){
     getClientBankAccount(
         getClientBankAccountInput: {
             user: $user
             idBrand: $idBrand
             idClient: $idClient
-            idLoanClient: $idLoanClient
+            idLoanClient: $idLoanClient,
+            process: $process
         }
     ) {
         id

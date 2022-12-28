@@ -101,7 +101,7 @@
 
     <!-- Sign Up Email -->
     <string name="sign_up_email_header" translatable="false">Ingresá tu correo electrónico</string>
-    <string name="sign_up_email_title" translatable="false">¡Nos alegra \ntenerte aquí!</string>
+    <string name="sign_up_email_title" translatable="false">¡Nos emociona\nque estés acá!</string>
     <string name="sign_up_email_required" translatable="false">Correo electrónico requerido</string>
     <string name="sign_up_email_placeholder" translatable="false">nombre@email.com</string>
     <string name="sign_up_email_not_valid" translatable="false">Correo electrónico inválido</string>
@@ -112,7 +112,7 @@
     <string name="sign_up_email_blocked_dialog_description" translatable="false">Tu usuario ha sido bloqueado porque no hemos podido verificar tu número de teléfono. \nContactá a servicio al cliente</string>
 
     <!-- Sign Up Phone -->
-    <string name="sign_up_phone_title" translatable="false">¿Cuál es tu número de \nteléfono personal?</string>
+    <string name="sign_up_phone_title" translatable="false">¿Cuál es tu número de teléfono celular?</string>
     <string name="sign_up_phone_information" translatable="false">Lo registramos por motivos de seguridad</string>
     <string name="sign_up_phone_label_phone" translatable="false">Celular</string>
     <string name="sign_up_phone_required" translatable="false">Número de celular requerido</string>
@@ -143,10 +143,10 @@
     <!-- Sign Up Personal Data -->
     <string name="sign_up_personal_data_id_not_valid" translatable="false">Número de %s inválido</string>
     <string name="sign_up_personal_data_id_required" translatable="false">Número de %s requerido</string>
-    <string name="sign_up_personal_data_nationality_header" translatable="false">¿Cuáles son tus datos personales?</string>
-    <string name="sign_up_personal_data_nationality" translatable="false">Nacionalidad</string>
+    <string name="sign_up_personal_data_nationality_header" translatable="false">Esto solo tomará unos minutos</string>
+    <string name="sign_up_personal_data_nationality" translatable="false">¿De dónde es tu identificación?</string>
     <string name="sign_up_personal_data_nationality_placeholder" translatable="false">Selecciona tu país</string>
-    <string name="sign_up_personal_data_document_label" translatable="false">Documento de identidad</string>
+    <string name="sign_up_personal_data_document_label" translatable="false">¿Qué tipo de documento de identidad tienes?</string>
     <string name="sign_up_personal_data_document_hint" translatable="false">Selecciona tu documento </string>
     <string name="sign_up_personal_data_document_number_label" translatable="false">Número de identificación</string>
     <string name="sign_up_personal_data_names" translatable="false">Nombre(s)</string>
@@ -200,8 +200,7 @@
     <string name="sign_up_id_validation_three" translatable="false">Tomarás una fotografía de tu rostro, no utilices lentes u otros accesorios</string>
 
     <!-- Sign Up Complete -->
-    <string name="sign_up_complete_title" translatable="false">Estamos felices\nde tenerte en</string>
-    <string name="sign_up_complete_subtitle" translatable="false">Multimoney</string>
+    <string name="sign_up_complete_title" translatable="false">¡Felices finanzas!\nBienvenid@ a Multimoney</string>
 
     <!-- Biometric Dialog -->
     <string name="biometric_dialog_title" translatable="false">¿Inicia sesión con tu biométrica?</string>
@@ -264,6 +263,11 @@
     <string name="card_issuance_error_title" translatable="false">No hemos podido activar tu tarjeta</string>
     <string name="card_issuance_error_description_gt" translatable="false">Inténtalo más tarde</string>
     <string name="card_issuance_error_description" translatable="false">Intentálo más tarde</string>
+
+    <!-- Card Tokenization Error -->
+    <string name="card_tokenization_error_title" translatable="false">Hubo un error al\nvincular tu tarjeta</string>
+    <string name="card_tokenization_error_description_sv_cr" translatable="false">Para realizar compras en\ncomercios necesitás vincularla a tu teléfono</string>
+    <string name="card_tokenization_error_description_gt" translatable="false">Para realizar compras en\ncomercios necesitas vincularla a tu teléfono</string>
 
     <!-- Home Product -->
     <string name="home_product_not_approved_title" translatable="false">Gana ahorrando smart</string>
@@ -341,6 +345,9 @@
     <string name="profile_change_phone_title" translatable="false">Cambiar teléfono</string>
     <string name="profile_change_phone_check_format_template" translatable="false">Revisar formato. Debe tener %1$s digitos </string>
     <string name="profile_change_email_title" translatable="false">Cambiar correo electrónico</string>
+    <string name="profile_change_email_enter_new" translatable="false">Nuevo correo electrónico</string>
+    <string name="profile_change_email_enter_new_confirmation" translatable="false">Confirmar nuevo correo electrónico</string>
+
     <string name="profile_identity_verification" translatable="false">Verificación de identidad</string>
     <string name="profile_where_do_you_want_to_receive_the_code_gt" translatable="false">¿Dónde quieres recibir el código?</string>
     <string name="profile_where_do_you_want_to_receive_the_code" translatable="false">¿Dónde querés recibir el código?</string>
@@ -366,6 +373,7 @@
     <string name="profile_phone_number_changed_toast" translatable="false">Número de teléfono modificado</string>
     <string name="profile_email_changed_toast" translatable="false">Correo electrónico modificado</string>
     <string name="profile_otp_resend" translatable="false">Reenviar código</string>
+    <string name="profile_password_requirement_max_three_characters_or_number_consecutive" translatable="false">No más de tres caracteres iguales consecutivos ya sean numéricos o alfabéticos</string>
     <string name="profile_couldnt_verify_identity" translatable="false">No hemos podido verificar tu identidad</string>
     <string name="profile_error_phone_code_not_valid" translatable="false">Código de verificación inválido</string>
     <string name="profile_new_email" translatable="false">Nuevo correo electrónico</string>
@@ -373,6 +381,7 @@
     <string name="profile_change_email_button" translatable="false">Cambiar correo electrónico</string>
     <string name="profile_we_will_send_you_a_code_to_your_email" translatable="false">Te enviaremos un código de verificación para confirmar tu nuevo correo</string>
     <string name="profile_email_check_format_error" translatable="false">Revisa formato. Debe contener "@" y "."</string>
+    <string name="profile_email_not_equal_than_previous_error" translatable="false">El correo electrónico ingresado debe ser distinto al actual </string>
     <string name="profile_emails_does_not_match_error" translatable="false">Los correos electrónicos no coinciden</string>
     <string name="profile_sure_to_deactivate_biometrics_gt" translatable="false">¿Estás seguro que quieres desactivar tus biométricos?</string>
     <string name="profile_sure_to_deactivate_biometrics" translatable="false">¿Estás seguro que querés desactivar tus biométricos?</string>
@@ -1067,6 +1076,13 @@
     <string name="payment_amount_card_bottom_sheet_amount_automatic_checkbox" translatable="false">Programar pago automático</string>
     <string name="payment_amount_card_bottom_sheet_button" translatable="false">Realizar abono</string>
     <string name="payment_amount_card_bottom_sheet_enable_automatic_payment" translatable="false">Programar pago automático</string>
+
+    <!-- Payment Voucher Visa direct -->
+    <string name="payment_voucher_vd_success_label" translatable="false">¡Transacción exitosa!</string>
+    <string name="payment_voucher_vd_amount" translatable="false">Has abonado</string>
+    <string name="payment_voucher_vd_from_label" translatable="false">Desde</string>
+    <string name="payment_voucher_vd_origin_account_label" translatable="false">Cuenta de origen</string>
+    <string name="payment_voucher_vd_origin_reference_number_label" translatable="false">N° de referencia</string>
 
     <!-- Payment method -->
     <string name="payment_method_title" translatable="false">Selecciona el método de ahorro</string>

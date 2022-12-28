@@ -3,7 +3,6 @@ package com.multimoney.multimoney.presentation.ui.crypto.market
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,32 +16,40 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.crypto.MarketCryptoCoin
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.MarketCurrencyItem
+import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreenViewModel.UIEvent.OnGetAvailableListOfCryptoCoins
 import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreenViewModel.UIEvent.OnGetUserInfo
 import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreenViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreenViewModel.UIEvent.OnGetAvailableListOfCryptoCoins
 import com.multimoney.multimoney.presentation.uielement.CustomButton
+import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.uielement.CustomSelector
 import com.multimoney.multimoney.presentation.uielement.Size
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import kotlinx.coroutines.launch
 
 @Composable
 fun MarketScreen(
@@ -73,39 +80,74 @@ fun MarketScreenContent(
     marketViewModel: MarketScreenViewModel = hiltViewModel()
 ) {
 
+    val state = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        skipHalfExpanded = true
+    )
+    val coroutineScope = rememberCoroutineScope()
     val searchQuery = remember { mutableStateOf("") }
+    val selectedFilter = remember { mutableStateOf(MarketFilter.Price.value) }
 
-    ModalBottomSheetLayout(sheetContent = { FilterBottomSheet() }) {
-        Column(modifier = Modifier.fillMaxSize().background(MultimoneyTheme.colors.background)) {
-            TopNavBar(
-                isRightButtonVisible = false,
-                leftButtonIcon = R.drawable.ic_arrow_left,
-                onLeftButtonClick = { marketViewModel.onUIEvent(OnNavigateBack) }
-            )
-            MarketHeader()
-            CustomOutlinedTextField(
-                modifier = Modifier.padding(
-                    top = 8.dp,
-                    bottom = 16.dp,
-                    start = 16.dp,
-                    end = 16.dp
-                ),
-                value = searchQuery.value,
-                keyboardActions = KeyboardActions.Default,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                leadingIcon = R.drawable.ic_search,
-                placeHolder = stringResource(id = R.string.crypto_wallet_search_crypto_currency),
-            )
-            FilterSection()
-            ListOfCoinsSection(
-                availableCryptoCoins =
-                marketViewModel.uiState.availableCryptoCoins?.availableCryptoCoins ?: emptyList(),
-            )
-            /*if (marketViewModel.uiState.isLoading) {
-                MarketSkeleton()
-            } else {
+    val crListOfCryptoCoin =
+        marketViewModel.uiState.availableCryptoCoins?.availableCryptoCoins ?: emptyList()
+    val svListOfCryptoCoins = marketViewModel.uiState.availableCryptoCoins
+        ?.availableCryptoCoins?.filter { it.baseAsset == SV_DEFAULT_BASE_ASSET } ?: emptyList()
 
-            }*/
+    Column(modifier = Modifier.background(MultimoneyTheme.colors.background)) {
+        TopNavBar(
+            isRightButtonVisible = false,
+            onLeftButtonClick = { marketViewModel.onUIEvent(OnNavigateBack) }
+        )
+        ModalBottomSheetLayout(
+            sheetState = state,
+            sheetContent = {
+                FilterBottomSheet(
+                    filterQuery = selectedFilter,
+                    onSelectFilterClick = {
+                        selectedFilter.value = it
+                        coroutineScope.launch {
+                            state.hide()
+                        }
+                    },
+                    onCancelClick = {
+                        coroutineScope.launch {
+                            state.hide()
+                        }
+                    }
+                )
+            }
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MultimoneyTheme.colors.background)
+                    .padding(16.dp)
+            ) {
+                MarketHeader()
+                if (marketViewModel.uiState.idBrand == Brand.CostaRica.id) {
+                    CustomOutlinedTextField(
+                        modifier = Modifier,
+                        value = searchQuery.value,
+                        isRequired = false,
+                        onValueChange = { searchQuery.value = it },
+                        keyboardActions = KeyboardActions.Default,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                        leadingIcon = R.drawable.ic_search,
+                        placeHolder = stringResource(id = R.string.crypto_wallet_search_crypto_currency),
+                    )
+                    FilterSection(selectedFilter = selectedFilter, sheetState = state)
+                }
+                if (marketViewModel.uiState.isLoading) {
+                    MarketSkeleton()
+                } else {
+                    ListOfCoinsSection(
+                        availableCryptoCoins = if (marketViewModel.uiState.idBrand == Brand.CostaRica.id)
+                            crListOfCryptoCoin else svListOfCryptoCoins,
+                        searchQuery = searchQuery,
+                        selectedFilter = selectedFilter,
+                    )
+                }
+            }
         }
     }
 }
@@ -125,15 +167,26 @@ fun MarketHeader() {
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun FilterSection() {
+private fun FilterSection(
+    selectedFilter: MutableState<String>,
+    sheetState: ModalBottomSheetState
+) {
+
+    val coroutineScope = rememberCoroutineScope()
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp, bottom = 24.dp),
+            .padding(bottom = 24.dp),
         horizontalArrangement = Arrangement.End
     ) {
-        CoinFilter(remember {mutableStateOf("Price") })
+        CoinFilter(
+            filterQuery = selectedFilter,
+            onFilterClick = {
+                coroutineScope.launch { sheetState.show() }
+            }
+        )
     }
 }
 
@@ -144,10 +197,13 @@ fun CoinFilter(
 ) {
 
     CustomInformativeChip(
+        modifier = Modifier.padding(top = 16.dp),
         text = filterQuery.value,
-        textStyle = Typography.body2,
+        textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.text),
         shape = CircleShape,
+        background = MultimoneyTheme.colors.creditDetailBackground,
         startIcon = R.drawable.ic_dropdown_open,
+        startIconTint = MultimoneyTheme.colors.textLink,
         size = Size.Small,
         onClick = onFilterClick
     )
@@ -155,35 +211,83 @@ fun CoinFilter(
 
 @Composable
 fun FilterBottomSheet(
-    onSelectFilterClick: () -> Unit = {},
+    onSelectFilterClick: (String) -> Unit = {},
+    filterQuery: MutableState<String>,
     onCancelClick: () -> Unit = {}
 ) {
 
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Row(horizontalArrangement = Arrangement.SpaceBetween) {
+    val filters = listOf(MarketFilter.AZ, MarketFilter.Price)
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MultimoneyTheme.colors.background)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             CustomButton(
-                text = "Cancelar",
+                buttonType = CustomButtonType.PrimaryQuaternaryUnderLined,
+                text = stringResource(id = R.string.market_cancel_filter),
                 onClick = onCancelClick,
             )
             CustomButton(
-                text = "Seleccionar",
-                onClick = onSelectFilterClick,
+                buttonType = CustomButtonType.PrimaryQuaternaryUnderLined,
+                text = stringResource(id = R.string.market_select_filter),
+                onClick = {
+                    onSelectFilterClick(filterQuery.value)
+                },
             )
         }
-        Divider()
-        Box(contentAlignment = Alignment.Center) {
-            //select filter section
+        Divider(color = MultimoneyTheme.colors.dividerDefaultColor)
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            items(filters.reversed()) { filter ->
+
+                CustomSelector(
+                    text = filter.value,
+                    selected = filter.value == filterQuery.value,
+                    onOptionSelected = {
+                        filterQuery.value = filter.value
+                    }
+                )
+            }
         }
     }
 }
 
+enum class MarketFilter(val value: String) {
+    Price(PRICE_FILTER_VALUE),
+    AZ(AZ_FILTER_VALUE)
+}
+
 @Composable
 fun ListOfCoinsSection(
-    availableCryptoCoins: List<MarketCryptoCoin> = emptyList()
+    availableCryptoCoins: List<MarketCryptoCoin> = emptyList(),
+    searchQuery: MutableState<String>,
+    selectedFilter: MutableState<String>
 ) {
 
+    val filteredListByQuery =
+        if (availableCryptoCoins.isNotEmpty()) availableCryptoCoins.filter { cryptoCoin ->
+            cryptoCoin.description.contains(searchQuery.value, true)
+                    || cryptoCoin.baseAsset.contains(searchQuery.value, true)
+        } else emptyList()
+
+    val filteredList = if (selectedFilter.value == MarketFilter.AZ.value) {
+        filteredListByQuery.sortedBy { it.baseAsset }
+    } else {
+        filteredListByQuery.sortedByDescending { it.currentPrice.toString().toDouble() }
+    }
+
     LazyColumn {
-        items(availableCryptoCoins) { cryptoCoin ->
+        items(filteredList) { cryptoCoin ->
             MarketCurrencyItem(
                 imageUrl = cryptoCoin.url_image,
                 descriptionCurrency = cryptoCoin.description,
@@ -194,3 +298,7 @@ fun ListOfCoinsSection(
         }
     }
 }
+
+const val SV_DEFAULT_BASE_ASSET = "BTC"
+const val PRICE_FILTER_VALUE = "Precio"
+const val AZ_FILTER_VALUE = "A-Z"

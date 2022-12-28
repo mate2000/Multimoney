@@ -32,27 +32,15 @@ fun WalletSkeleton() {
                     .padding(horizontal = 8.dp, vertical = 16.dp),
                 radius = 24.dp
             )
-            ShimmerItemView(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(88.dp)
-                    .padding(horizontal = 8.dp, vertical = 16.dp),
-                radius = 24.dp
-            )
-            ShimmerItemView(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(88.dp)
-                    .padding(horizontal = 8.dp, vertical = 16.dp),
-                radius = 24.dp
-            )
-            ShimmerItemView(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(88.dp)
-                    .padding(horizontal = 8.dp, vertical = 16.dp),
-                radius = 24.dp
-            )
+            repeat(3) {
+                ShimmerItemView(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(88.dp)
+                        .padding(horizontal = 8.dp, vertical = 16.dp),
+                    radius = 24.dp
+                )
+            }
         }
     }
 }

@@ -124,6 +124,7 @@ fun HomeWallet(
                             end = 16.dp
                         ),
                         value = searchQuery.value,
+                        isRequired = false,
                         onValueChange = { searchQuery.value = it },
                         keyboardActions = KeyboardActions.Default,
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),

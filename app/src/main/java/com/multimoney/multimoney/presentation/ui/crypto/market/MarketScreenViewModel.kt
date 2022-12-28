@@ -44,6 +44,7 @@ class MarketScreenViewModel @Inject constructor(
                 result.onSuccess { availableCryptoCoins ->
                     availableCryptoCoins.let {
                         uiState = uiState.copy(
+                            isLoading = false,
                             availableCryptoCoins = it
                         )
                     }

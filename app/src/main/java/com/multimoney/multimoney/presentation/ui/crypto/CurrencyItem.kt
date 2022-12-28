@@ -162,7 +162,9 @@ fun MarketCurrencyItem(
                         contentDescription = null
                     )
                     Column(
-                        modifier = Modifier.wrapContentWidth()
+                        modifier = Modifier
+                            .wrapContentWidth()
+                            .padding(start = 16.dp)
                     ) {
                         Text(
                             text = descriptionCurrency,

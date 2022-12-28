@@ -1014,6 +1014,9 @@
 
     <!--Crypto Market-->
     <string name="market_header_title" translatable="false">Mercado</string>
+    <string name="market_search_crypto_currency" translatable="false">Buscar Criptomonedas</string>
+    <string name="market_select_filter" translatable="false">Seleccionar</string>
+    <string name="market_cancel_filter" translatable="false">Cancelar</string>
     <string name="market_filter_crypto_az_label" translatable="false">A-Z</string>
     <string name="market_filter_crypto_price_label" translatable="false">Precio</string>
 

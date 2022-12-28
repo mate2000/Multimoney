@@ -18,11 +18,13 @@ fun getPickedDateAsString(year: Int, month: Int, day: Int, dateFormat: String): 
 }
 
 fun getFormatDateByString(date: String, formatOne: String, formatTwo: String): String {
+    if (date.isBlank()) return ""
+
     val simpleDateFormat = SimpleDateFormat(formatOne, Locale.getDefault())
     val formattedDate = simpleDateFormat.parse(date)
-    val simpleDateFormatTow = SimpleDateFormat(formatTwo, Locale.getDefault())
+    val simpleDateFormatTwo = SimpleDateFormat(formatTwo, Locale.getDefault())
     return formattedDate?.let {
-        simpleDateFormatTow.format(formattedDate)
+        simpleDateFormatTwo.format(formattedDate)
     } ?: run {
         ""
     }
@@ -60,7 +62,7 @@ fun getCardDateFormat(
 }
 
 fun getDayFromString(date: String?, format: SimpleDateFormat): String {
-    return if (date.isNullOrEmpty().not()) {
+    return if (date.isNullOrBlank().not()) {
         val dateFormatted = format.parse(date)
         dateFormatted?.let {
             DAY_FORMAT.format(dateFormatted)

@@ -379,7 +379,9 @@ fun ProductContent(
     Column(modifier = modifier) {
         HorizontalPager(
             count = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
-            modifier = Modifier.padding(top = 8.dp),
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .weight(1f),
             state = state
         ) { page ->
             when (viewModel.uiState.productPageList?.get(page)?.product) {
@@ -405,7 +407,7 @@ fun ProductContent(
                 selectedIndex = state.currentPage,
                 selectedColor = GrayScale200,
                 unSelectedColor = GrayScale600,
-                modifier = Modifier.size(10.dp)
+                dotSize = 10.dp
             )
         }
     }

@@ -9,6 +9,7 @@ interface QueryGetClientBankAccountUseCase {
         user: String,
         idBrand: Int,
         idClient: Int,
-        idLoan: Int
+        idLoan: Int,
+        process: String
     ): Flow<MultimoneyResult<List<ClientBankAccount?>?>>
 }

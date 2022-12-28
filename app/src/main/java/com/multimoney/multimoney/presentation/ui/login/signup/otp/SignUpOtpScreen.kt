@@ -252,7 +252,7 @@ fun SignUpOtpScreen(
         )
 
         Text(
-            style = Typography.body2.copy(color = MultimoneyTheme.colors.textSubhead),
+            style = Typography.body2.copy(color = MultimoneyTheme.colors.subTitleText),
             text = stringResource(id = R.string.sign_up_otp_subtitle),
             textAlign = TextAlign.Start,
             modifier = Modifier

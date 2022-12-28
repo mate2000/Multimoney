@@ -1081,6 +1081,13 @@
     <string name="payment_method_transfer" translatable="false">Transferencia bancaria</string>
     <string name="payment_method_visa" translatable="false">Tarjeta Visa</string>
 
+    <!-- Payment sending type -->
+    <string name="payment_select_sending_type_title" translatable="false">Enviar dinero a</string>
+    <string name="payment_select_sending_type_my_contacts" translatable="false">Mis contactos</string>
+    <string name="payment_select_sending_type_iban_accounts" translatable="false">Cuentas IBAN</string>
+    <string name="payment_select_sending_type_smart_account_dollars" translatable="false">Mi cuenta Smart Dólares</string>
+    <string name="payment_select_sending_type_smart_account_colones" translatable="false">Mi cuenta Smart Colones</string>
+
     <!-- Payment Account -->
     <string name="payment_account_title" translatable="false">Seleccioná la cuenta con la que querés ahorrar</string>
     <string name="payment_account_colon" translatable="false">Multimoney Smart | Colones</string>

@@ -31,14 +31,15 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.document.Smar
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnProfessionChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnValidateForm
-import com.multimoney.multimoney.presentation.util.API_DATE_FORMAT
+import com.multimoney.multimoney.presentation.util.ISO_8601_API_FORMAT_PATTERN
+import com.multimoney.multimoney.presentation.util.YEAR_MONTH_DAY_PATTERN
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.getDayFromString
+import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import com.multimoney.multimoney.presentation.util.onBirthDateAgeValidation
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
 import javax.inject.Inject
-import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class SmartDocumentViewModel @Inject constructor(
@@ -207,10 +208,10 @@ class SmartDocumentViewModel @Inject constructor(
         emitBaseEvent(
             BaseEvent.OnFormValidateCompleted(
                 isFormValid = uiState.gender.isNotBlank() &&
-                        uiState.birthdate.isNotBlank() &&
-                        uiState.civilState.isNotBlank() &&
-                        uiState.profession.isNotBlank() &&
-                        uiState.expirationDate.isNotBlank() && !uiState.birthdateErrorStatus
+                    uiState.birthdate.isNotBlank() &&
+                    uiState.civilState.isNotBlank() &&
+                    uiState.profession.isNotBlank() &&
+                    uiState.expirationDate.isNotBlank() && !uiState.birthdateErrorStatus
             )
         )
     }
@@ -225,8 +226,20 @@ class SmartDocumentViewModel @Inject constructor(
      */
     private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
         uiState = uiState.copy(
-            birthdate = getDayFromString(accountSmartData?.birthday, API_DATE_FORMAT),
-            expirationDate = getDayFromString(accountSmartData?.expirationDate, API_DATE_FORMAT)
+            birthdate = accountSmartData?.birthday?.let {
+                getFormatDateByString(
+                    it,
+                    ISO_8601_API_FORMAT_PATTERN,
+                    YEAR_MONTH_DAY_PATTERN
+                )
+            } ?: "",
+            expirationDate = accountSmartData?.expirationDate?.let {
+                getFormatDateByString(
+                    it,
+                    ISO_8601_API_FORMAT_PATTERN,
+                    YEAR_MONTH_DAY_PATTERN
+                )
+            } ?: ""
         )
         onGenderChange(accountSmartData?.strGenre.orEmpty())
         onCivilStateChange(accountSmartData?.strMaritalStatus.orEmpty())
@@ -280,11 +293,6 @@ class SmartDocumentViewModel @Inject constructor(
     }
 
     sealed class UIEvent {
-        data class OnStart(
-            val userCompletedDialogDescription: String,
-            val linkWhatsapp: String,
-            val blockedMessage: String
-        ) : UIEvent()
 
         data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
         data class OnBirthDateValueChange(val date: String, val pickedDate: LocalDate) : UIEvent()
@@ -305,7 +313,10 @@ class SmartDocumentViewModel @Inject constructor(
 
         data class OnCallQueryCivilStatusUseCase(val user: String, val idBrand: Int) : UIEvent()
         data class OnCallQueryProfessionUseCase(val user: String, val idBrand: Int) : UIEvent()
-        data class OnLoadCurrentStepData(val accountSmartData: AccountSmartData?) : UIEvent()
+        data class OnLoadCurrentStepData(
+            val accountSmartData: AccountSmartData?
+        ) : UIEvent()
+
         object OnValidateForm : UIEvent()
     }
 

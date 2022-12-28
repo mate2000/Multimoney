@@ -113,6 +113,7 @@ class ProductViewModel @Inject constructor(
     var isExpiredTitle = R.string.home_product_expiration
     var smartMovementsList: List<SmartMovementsResult> = emptyList()
     var creditMovements: List<CreditMovementsResult> = emptyList()
+    var smartAccount : SmartAccountID? = null
 
     private fun onSetUserData(
         idBrand: String,
@@ -669,8 +670,17 @@ class ProductViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateToSendMoneyScreen() {
-        // todo add navigation to send money screen
+    private fun onNavigateToSendMoneyScreen(account: Account?) {
+        smartAccount = SmartAccountID(
+            account?.tokenNumber,
+            account?.idCurrencyAccount,
+            account?.accountNumber
+        )
+        if (uiState.idBrand == Brand.CostaRica.id.toString()) {
+            navigateTo(
+                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${pkUser}/${uiState.idBrand}/${identification}/${encodeData(smartAccount)}"
+            )
+        }
     }
 
     private fun onCreateMultimoneyVisa(onLoadingValueChange: (isLoading: Boolean) -> Unit) {
@@ -817,7 +827,7 @@ class ProductViewModel @Inject constructor(
                 onIntent = uiEvent.onIntent
             )
             is OnNavigateToPaymentProcess -> onNavigateToPaymentScreen()
-            is OnNavigateToSendMoneyFlow -> onNavigateToSendMoneyScreen()
+            is OnNavigateToSendMoneyFlow -> onNavigateToSendMoneyScreen(uiEvent.account)
             is OnNavigateToHomeMultimoneyVisa -> onNavigateToHomeMultimoneyVisa()
             is OnNavigateToPaymentSmartFlow -> onSmartAccountCardClick(uiEvent.account, uiEvent.onLoadingValueChange)
             is OnNavigateToProfileScreen -> onNavigateToProfileScreen()
@@ -894,12 +904,12 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToProfileScreen : UIEvent()
         object OnNavigateToHomeMultimoneyVisa : UIEvent()
         object OnNavigateToDisbursement : UIEvent()
-        object OnNavigateToSendMoneyFlow : UIEvent()
         data class OnNavigateToPaymentSmartFlow(
             val account: Account?,
             val onLoadingValueChange: (isLoading: Boolean) -> Unit
         ) : UIEvent()
 
+        data class OnNavigateToSendMoneyFlow(val account: Account?) : UIEvent()
         data class OnNavigateToSmartMovements(val accountToken: String) : UIEvent()
         object OnNavigateToCreditMovementsScreen : UIEvent()
         object OnNavigateToGtSvNonPreApproved : UIEvent()

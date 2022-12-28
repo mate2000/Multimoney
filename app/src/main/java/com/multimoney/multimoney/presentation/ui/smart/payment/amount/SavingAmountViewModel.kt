@@ -183,7 +183,7 @@ class SavingAmountViewModel @Inject constructor(
                     uiState = uiState.copy(
                         isLoading = false,
                         exchangeRate = rate?.exchangeRate ?: 0.0,
-                        exchangeConvertedAmount = rate?.amount ?: 0.0,
+                        exchangeConvertedAmount = rate?.convertedAmount ?: 0.0,
                         exchangeRateLabel = rate?.exchangeRateLabel ?: "0.0",
                         convertedAmountLabel = rate?.convertedAmountLabel ?: "0.0"
                     )
@@ -273,7 +273,12 @@ class SavingAmountViewModel @Inject constructor(
                 idCurrencyDestination = smartCurrency?.id.toString(),
                 reasonOfTransfer = DEFAULT_DESCRIPTION,
                 transferType = SmartSinpeTransferType.REQUEST,
-                amountToTransfer = uiState.currentAmountValueString.value?.toDoubleOrNull() ?: 0.0,
+                amountToTransfer = if (shouldDisplayExchange) {
+                    // Using this value cause endpoint expects amount in the same currency of the account
+                    uiState.exchangeConvertedAmount.toDouble()
+                } else {
+                    uiState.currentAmountValueString.value?.toDoubleOrNull() ?: 0.0
+                },
                 exchangeRate = uiState.exchangeRate,
                 idBrand = idBrand,
                 user = userName
@@ -494,7 +499,7 @@ class SavingAmountViewModel @Inject constructor(
     }
 
     companion object {
-        const val DEFAULT_DESCRIPTION = "Déposito a cuenta Smart"
+        const val DEFAULT_DESCRIPTION = "Depósito a cuenta Smart"
         const val ID_NOT_APPLICABLE = -1
         const val NOT_APPLICABLE = "NA"
         const val ONE_SECOND = 1000L

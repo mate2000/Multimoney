@@ -1155,4 +1155,19 @@
 
     <!-- Smart Transfer Iban -->
     <string name="smart_iban_transfer_title" translatable="false">Cuentas registradas</string>
+
+    <!-- Card Preferences -->
+    <string name="card_preferences_title" translatable="false">Preferencias de tarjeta</string>
+    <string name="card_preferences_linked_card_title" translatable="false">Tarjeta vinculada</string>
+    <string name="card_preferences_unlinked_card_title" translatable="false">Tarjeta desvinculada</string>
+    <string name="card_preferences_linked_card_description" translatable="false">Al desvincular tu tarjeta no podrás\nrealizar ninguna transacción con\nMultimoney Visa</string>
+    <string name="card_preferences_linked_card_dialog_title" translatable="false">Vincular tarjeta</string>
+    <string name="card_preferences_linked_card_dialog_description" translatable="false">¿Estás seguro que deseás vincular tu tarjeta a este dispositivo?</string>
+    <string name="card_preferences_linked_card_dialog_positive_button" translatable="false">Vincular</string>
+    <string name="card_preferences_linked_card_dialog_negative_button" translatable="false">Cancelar</string>
+    <string name="card_preferences_unlinked_card_dialog_title" translatable="false">Desvincular tarjeta</string>
+    <string name="card_preferences_unlinked_card_dialog_description" translatable="false">¿Estás seguro que deseás desvincular tu tarjeta?</string>
+    <string name="card_preferences_unlinked_card_dialog_positive_button" translatable="false">Desvincular</string>
+    <string name="card_preferences_unlinked_card_dialog_negative_button" translatable="false">Cancelar</string>
+
 </resources>

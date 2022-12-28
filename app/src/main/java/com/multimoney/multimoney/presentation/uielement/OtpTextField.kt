@@ -216,12 +216,12 @@ fun OtpTextField(
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.Center,
         ) {
             (0 until digits).map { index ->
                 OutlinedTextField(
                     modifier = Modifier
-                        .padding(horizontal = 12.dp)
+                        .padding(horizontal = 6.dp)
                         .size(56.dp)
                         .bringIntoViewRequester(bringIntoViewRequester)
                         .onFocusChanged {

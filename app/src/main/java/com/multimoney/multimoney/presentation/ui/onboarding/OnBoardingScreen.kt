@@ -109,7 +109,7 @@ fun OnBoardingScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 24.dp, bottom = 80.dp)
-                    .weight(0.11f, false),
+                    .weight(0.13f, true),
                 style = TextStyle(
                     color = MultimoneyTheme.colors.onBoardingSubText,
                     fontSize = 20.sp

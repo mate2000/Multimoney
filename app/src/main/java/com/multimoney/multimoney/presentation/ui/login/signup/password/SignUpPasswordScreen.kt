@@ -176,7 +176,7 @@ fun SignUpPasswordScreen(
         Text(
             text = buildAnnotatedString {
                 withStyle(
-                    style = Typography.h5.toSpanStyle()
+                    style = Typography.h6.toSpanStyle()
                         .copy(
                             color = MultimoneyTheme.colors.labelText,
                             fontWeight = FontWeight.SemiBold

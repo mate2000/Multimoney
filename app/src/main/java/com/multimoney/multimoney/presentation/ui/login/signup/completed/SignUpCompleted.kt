@@ -68,23 +68,17 @@ fun SignUpCompleted(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CustomImage(
-            drawableResource = drawable.ic_logo_multimoney,
+            drawableResource = drawable.ic_logo_multimoney2,
             modifier = Modifier
                 .wrapContentSize()
-                .size(64.dp, 64.dp)
+                .size(200.dp, 72.dp)
         )
         Text(
             text = stringResource(id = R.string.sign_up_complete_title),
             modifier = Modifier.padding(top = 32.dp),
-            style = Typography.h5.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.text,
+            style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.titleText,
             textAlign = TextAlign.Center
-        )
-        Text(
-            text = stringResource(id = R.string.sign_up_complete_subtitle),
-            modifier = Modifier.padding(top = 12.dp),
-            style = Typography.h4.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.textLink
         )
     }
 

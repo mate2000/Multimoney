@@ -1,7 +1,7 @@
 package com.multimoney.domain.repository
 
-import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
 import androidx.paging.PagingData
+import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
 import com.multimoney.domain.model.accountsmart.AddressesLevel
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.CivilStatusResult
@@ -85,36 +85,37 @@ interface SmartAccountRepository {
     suspend fun mutationGlobalRequest(
         pkUser: Int,
         status: Int,
-        idProfessionType: Int,
-        idCivilStatusType: Long,
-        birthday: String,
-        expirationDate: String,
-        idGender: Long,
-        companyName: String,
-        aboutCompany: String,
-        idAddressLevel1: Long,
-        idAddressLevel2: Long,
-        idAddressLevel3: Long,
-        positionJob: String,
-        idEconomicActivity: Long,
-        income: Double,
-        addressDetail: String,
-        fullJobAddress: String,
         user: String,
         idBrand: Int,
-        currentStep: String,
-        institutionPension: String,
-        specifiesIncomeSource: String,
-        beneficiaries: List<Beneficiary>,
-        entrepreneurship: String,
-        legalID: String,
-        isActivityOfArt15: Boolean,
-        isUSCitizen: Boolean,
-        isPEP: Boolean,
-        isUSTaxPayer: Boolean,
-        isTaxPayer: Boolean,
-        idJobLevel2: Long,
-        idJobLevel3: Long
+        idProfessionType: Int?,
+        idCivilStatusType: Long?,
+        birthday: String?,
+        expirationDate: String?,
+        idGender: Long?,
+        companyName: String?,
+        aboutCompany: String?,
+        idAddressLevel1: Long?,
+        idAddressLevel2: Long?,
+        idAddressLevel3: Long?,
+        positionJob: String?,
+        idEconomicActivity: Long?,
+        income: Double?,
+        addressDetail: String?,
+        fullJobAddress: String?,
+        currentStep: String?,
+        institutionPension: String?,
+        specifiesIncomeSource: String?,
+        beneficiaries: List<Beneficiary>?,
+        entrepreneurship: String?,
+        legalID: String?,
+        isActivityOfArt15: Boolean?,
+        isUSCitizen: Boolean?,
+        isPEP: Boolean?,
+        isUSTaxPayer: Boolean?,
+        isTaxPayer: Boolean?,
+        idJobLevel1: Long?,
+        idJobLevel2: Long?,
+        idJobLevel3: Long?
     ): Flow<MultimoneyResult<GlobalRequest?>>
 
     suspend fun mutationSaveAutomatedSmartAccount(

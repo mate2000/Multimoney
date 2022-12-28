@@ -1167,6 +1167,7 @@
 
     <!-- Smart Transfer Iban -->
     <string name="smart_iban_transfer_title" translatable="false">Cuentas registradas</string>
+    <string name="smart_iban_transfer_send_money" translatable="false">Enviar dinero</string>
 
     <!-- Smart Payment Sheet-->
     <string name="smart_payment_sheet_title" translatable="false">Monto a enviar</string>

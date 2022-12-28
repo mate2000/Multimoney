@@ -93,11 +93,14 @@ fun OnBoardingScreen(
                 textAlign = TextAlign.Left,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 40.dp)
-                    .weight(0.13f),
-                style = Typography.h4.copy(
+                    .padding(top = 30.dp)
+                    .weight(
+                        0.12f, false
+                    ),
+                style = TextStyle(
+                    fontSize = 48.sp,
                     color = MultimoneyTheme.colors.onBoardingTitleText,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.Bold
                 )
             )
             Text(
@@ -105,8 +108,12 @@ fun OnBoardingScreen(
                 textAlign = TextAlign.Left,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(0.11f),
-                style = Typography.h6.copy(color = MultimoneyTheme.colors.onBoardingSubText)
+                    .padding(top = 24.dp, bottom = 80.dp)
+                    .weight(0.11f, false),
+                style = TextStyle(
+                    color = MultimoneyTheme.colors.onBoardingSubText,
+                    fontSize = 20.sp
+                )
             )
             CustomButton(
                 modifier = Modifier
@@ -130,7 +137,7 @@ fun OnBoardingScreen(
                     textAlign = TextAlign.Left,
                     modifier = Modifier.wrapContentSize(),
                     fontFamily = PoppinsFontFamily,
-                    fontWeight = FontWeight.SemiBold,
+                    fontWeight = FontWeight.Bold,
                     color = Color.White,
                     fontSize = 14.sp
                 )

@@ -69,12 +69,12 @@
     <string name="error_button_try_later" translatable="false">Intentar más tarde</string>
 
     <!-- OnBoarding -->
-    <string name="onboarding_step_one_title" translatable="false">Invertí de forma Smart</string>
-    <string name="onboarding_step_one_sub_title" translatable="false">Ganá hasta 7\%; de interés anual con tu cuenta Multimoney Smart.</string>
-    <string name="onboarding_step_two_title" translatable="false">Tu crédito sin papeleos</string>
-    <string name="onboarding_step_two_sub_title" translatable="false">Con sólo tu identificación consigue hasta [moneda] [monto máx] en minutos.</string>
-    <string name="onboarding_step_three_title" translatable="false">Hacé tu inversión en cripto</string>
-    <string name="onboarding_step_three_sub_title" translatable="false">Comprá y vendé cripto de forma simple y rápida.</string>
+    <string name="onboarding_step_one_title" translatable="false">Multiplicá tus ahorros</string>
+    <string name="onboarding_step_one_sub_title" translatable="false">Ganá 3.5% de interés anual.</string>
+    <string name="onboarding_step_two_title" translatable="false">Tu crédito en 5 minutos</string>
+    <string name="onboarding_step_two_sub_title" translatable="false">Recibí hasta [moneda] [monto máx] con solo tu identificación.</string>
+    <string name="onboarding_step_three_title" translatable="false">Invierte en cripto</string>
+    <string name="onboarding_step_three_sub_title" translatable="false">Comprá, vendé y transferí cripto de forma simple y segura.</string>
     <string name="onboarding_account_already_created" translatable="false">Ya tengo cuenta</string>
 
     <!-- Sign In -->

@@ -55,7 +55,7 @@ fun VisaCardScreen(
             .background(MultimoneyTheme.colors.background)
             .fillMaxSize()
     ) {
-        if (true/*viewModel.deviceHasNFC()*/) {
+        if (viewModel.deviceHasNFC()) {
             TopNavBar(
                 rightButtonIcon = R.drawable.ic_gear,
                 onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },

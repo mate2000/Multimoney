@@ -999,6 +999,7 @@
     <string name="crypto_wallet_header_title" translatable="false">Mi portafolio</string>
     <string name="crypto_wallet_balance_section_label" translatable="false">Balance</string>
     <string name="crypto_wallet_search_crypto_currency" translatable="false">Buscar Criptomoneda</string>
+    <string name="crypto_wallet_show_all_coins" translatable="false">Ver Todas</string>
     <string name="crypto_gains_symbol" translatable="false">+</string>
     <string name="crypto_losses_symbol" translatable="false">-</string>
 
@@ -1145,6 +1146,7 @@
     <!-- Currency Item -->
     <string name="currency_item_dollar_symbol" translatable="false">$%2s</string>
     <string name="currency_item_description" translatable="false">%1$s (%2$s)</string>
+    <string name="currency_item_gain_or_losses_description" translatable="false">%1s$%2s (%3s\%%)</string>
     <string name="currency_item_percent_invested" translatable="false">%1$s\%%</string>
 
     <!-- Smart Transfer Iban -->

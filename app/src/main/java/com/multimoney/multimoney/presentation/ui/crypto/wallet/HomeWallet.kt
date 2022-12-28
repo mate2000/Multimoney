@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -20,6 +22,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
@@ -32,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -81,9 +85,12 @@ fun HomeWallet(
         walletViewModel.onUIEvent(OnSetDateRange(FilterDateByDays.YESTERDAY.days))
     }
 
-    BackHandler { walletViewModel.onUIEvent(OnNavigateBack) }
     val isFocused = remember { mutableStateOf(false) }
     val searchQuery = remember { mutableStateOf("") }
+    BackHandler {
+        if (isFocused.value.not()) walletViewModel.onUIEvent(OnNavigateBack)
+        else isFocused.value = isFocused.value.not()
+    }
 
     Scaffold(
         modifier = Modifier
@@ -92,22 +99,48 @@ fun HomeWallet(
         backgroundColor = MultimoneyTheme.colors.background,
         topBar = {
             AnimatedVisibility(visible = isFocused.value) {
-                CustomOutlinedTextField(
-                    modifier = Modifier.padding(
-                        top = 8.dp,
-                        bottom = 24.dp,
-                        start = 16.dp,
-                        end = 16.dp
-                    ),
-                    value = searchQuery.value,
-                    keyboardActions = KeyboardActions.Default,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                    leadingIcon = R.drawable.ic_search,
-                    trailingIcon = R.drawable.ic_close,
-                    trailingIconAction = { searchQuery.value = "" },
-                    trailingIconActionEnabled = true,
-                    placeHolder = stringResource(id = R.string.crypto_wallet_search_crypto_currency),
-                )
+                Column {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .padding(vertical = 8.dp),
+                        horizontalArrangement = Arrangement.End,
+                    ) {
+                        IconButton(onClick = { isFocused.value = isFocused.value.not() }) {
+                            Icon(
+                                modifier = Modifier.size(32.dp),
+                                painter = painterResource(id = R.drawable.ic_close),
+                                tint = MultimoneyTheme.colors.textLink,
+                                contentDescription = ""
+                            )
+                        }
+                    }
+                    CustomOutlinedTextField(
+                        modifier = Modifier.padding(
+                            top = 8.dp,
+                            bottom = 24.dp,
+                            start = 16.dp,
+                            end = 16.dp
+                        ),
+                        value = searchQuery.value,
+                        onValueChange = { searchQuery.value = it },
+                        keyboardActions = KeyboardActions.Default,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                        leadingIconComposable = {
+                            Icon(
+                                modifier = Modifier.size(16.dp),
+                                painter = painterResource(id = R.drawable.ic_search),
+                                tint = it,
+                                contentDescription = "",
+                            )
+                        },
+                        trailingIcon = R.drawable.ic_close,
+                        trailingIconAction = { searchQuery.value = "" },
+                        trailingIconActionEnabled = true,
+                        placeHolder = stringResource(id = R.string.crypto_wallet_search_crypto_currency),
+                    )
+                }
             }
         },
         bottomBar = {
@@ -169,9 +202,7 @@ fun HomeWalletContent(
         AnimatedVisibility(isFocused.value.not()) {
             Column {
                 TopNavBar(
-                    isRightButtonVisible = isFocused.value.not(),
-                    rightButtonIcon = R.drawable.ic_close_bottom_sheet,
-                    onRightButtonClick = { isFocused.value = isFocused.value.not() },
+                    isRightButtonVisible = false,
                     onLeftButtonClick = { walletViewModel.onUIEvent(OnNavigateBack) },
                 )
                 WalletHeader()
@@ -250,12 +281,20 @@ fun BalanceSection(
         )
         Text(
             modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
-            text = "\$${globalCryptoBalance.roundToTwoDecimalPlacesWithoutNegatives()}",
+            text = stringResource(
+                id = R.string.currency_item_dollar_symbol,
+                globalCryptoBalance.roundToTwoDecimalPlacesWithoutNegatives()
+            ),
             style = Typography.h4.copy(color = MultimoneyTheme.colors.text)
         )
         Text(
             modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
-            text = "${gainsOrLossesSymbol}\$${gainsOrLosses.roundToTwoDecimalPlacesWithoutNegatives()} (${percentage.roundToTwoDecimalPlaces()}%)",
+            text = stringResource(
+                id = R.string.currency_item_gain_or_losses_description,
+                gainsOrLossesSymbol,
+                gainsOrLosses.roundToTwoDecimalPlacesWithoutNegatives(),
+                percentage.roundToTwoDecimalPlaces()
+            ),
             style = Typography.body2.copy(color = graphicColor)
         )
     }
@@ -272,25 +311,31 @@ fun MyCoinsSection(
         it.asset.contains(searchQuery.value) || it.descriptionCurrency.contains(searchQuery.value)
     } ?: emptyList() else balanceCryptoAccount?.items ?: emptyList()
 
-    Column(
+    Row(
         modifier = Modifier
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp, vertical = 16.dp)
+            .padding(end = 16.dp, start = 16.dp, top = 8.dp)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier = Modifier
-                .padding(horizontal = 4.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                textAlign = TextAlign.Start,
-                text = stringResource(id = R.string.crypto_currencies),
-                style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.labelText
-            )
-            if (isFocused.value.not()) {
+        Text(
+            textAlign = TextAlign.Start,
+            text = stringResource(id = R.string.crypto_currencies),
+            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.labelText
+        )
+        if (isFocused.value.not()) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextButton(onClick = { isFocused.value = isFocused.value.not() }) {
+                    Text(
+                        textAlign = TextAlign.End,
+                        text = stringResource(id = R.string.crypto_wallet_show_all_coins),
+                        style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
+                        color = MultimoneyTheme.colors.textLink
+                    )
+                }
                 IconButton(onClick = { isFocused.value = isFocused.value.not() }) {
                     Icon(
                         imageVector = Icons.Filled.Search,
@@ -300,6 +345,12 @@ fun MyCoinsSection(
                 }
             }
         }
+    }
+    Column(
+        modifier = Modifier
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp, vertical = 16.dp)
+    ) {
 
         filteredList.forEach { item ->
             CurrencyItem(

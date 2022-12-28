@@ -103,6 +103,21 @@ fun getPreviousDate(daysToSubtract: Long): String {
     return date.toString()
 }
 
+fun getPreviousDate(dateFilter: FilterDate = FilterDate.YESTERDAY): String {
+    val date = LocalDate.now()
+    when(dateFilter) {
+        FilterDate.YESTERDAY -> date.minusDays(1)
+        FilterDate.LAST_7_DAYS -> date.minusDays(7)
+        FilterDate.LAST_30_DAYS -> date.minusDays(30)
+        FilterDate.LAST_90_DAYS -> date.minusDays(90)
+        FilterDate.LAST_180_DAYS -> date.minusDays(180)
+        FilterDate.LAST_365_DAYS -> date.minusDays(365)
+    }
+
+    val formatters: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    return date.format(formatters)
+}
+
 fun getCurrentDate(time: Date): String {
     return BAR_DIVIDER_FORMAT.format(time)
 }
@@ -149,6 +164,15 @@ enum class FilterDateByDays(val days: Long, val time: String, val timeAbv: Strin
     LAST_90_DAYS(90, "3 Meses", "3M"),
     LAST_180_DAYS(180, "6 Meses", "6M"),
     LAST_365_DAYS(365, "Año", "A"),
+}
+
+enum class FilterDate {
+    YESTERDAY,
+    LAST_7_DAYS,
+    LAST_30_DAYS,
+    LAST_90_DAYS,
+    LAST_180_DAYS,
+    LAST_365_DAYS
 }
 
 const val YEAR_MONTH_DAY_PATTERN = "yyyy-mm-dd"

@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.crypto.market
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,6 +36,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.MarketCurrencyItem
 import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreenViewModel.UIEvent.OnGetUserInfo
 import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreenViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreenViewModel.UIEvent.OnGetAvailableListOfCryptoCoins
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
@@ -58,6 +60,7 @@ fun MarketScreen(
         )
 
         marketViewModel.onUIEvent(OnGetUserInfo)
+        marketViewModel.onUIEvent(OnGetAvailableListOfCryptoCoins)
     }
 
     BackHandler { marketViewModel.onUIEvent(OnNavigateBack) }
@@ -73,7 +76,7 @@ fun MarketScreenContent(
     val searchQuery = remember { mutableStateOf("") }
 
     ModalBottomSheetLayout(sheetContent = { FilterBottomSheet() }) {
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize().background(MultimoneyTheme.colors.background)) {
             TopNavBar(
                 isRightButtonVisible = false,
                 leftButtonIcon = R.drawable.ic_arrow_left,
@@ -94,11 +97,15 @@ fun MarketScreenContent(
                 placeHolder = stringResource(id = R.string.crypto_wallet_search_crypto_currency),
             )
             FilterSection()
-            if (marketViewModel.uiState.isLoading) {
+            ListOfCoinsSection(
+                availableCryptoCoins =
+                marketViewModel.uiState.availableCryptoCoins?.availableCryptoCoins ?: emptyList(),
+            )
+            /*if (marketViewModel.uiState.isLoading) {
                 MarketSkeleton()
             } else {
-                ListOfCoinsSection()
-            }
+
+            }*/
         }
     }
 }
@@ -126,7 +133,7 @@ private fun FilterSection() {
             .padding(start = 16.dp, end = 16.dp, bottom = 24.dp),
         horizontalArrangement = Arrangement.End
     ) {
-        CoinFilter(remember {mutableStateOf("") })
+        CoinFilter(remember {mutableStateOf("Price") })
     }
 }
 

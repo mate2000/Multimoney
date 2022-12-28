@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -71,12 +72,19 @@ fun CurrencyItem(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = stringResource(id = R.string.currency_item_description, descriptionCurrency, asset),
+                            text = stringResource(
+                                id = R.string.currency_item_description,
+                                descriptionCurrency,
+                                asset
+                            ),
                             style = Typography.body2,
                             color = MultimoneyTheme.colors.labelText
                         )
                         Text(
-                            text = stringResource(id = R.string.currency_item_dollar_symbol, balanceDollars),
+                            text = stringResource(
+                                id = R.string.currency_item_dollar_symbol,
+                                balanceDollars
+                            ),
                             style = Typography.body2,
                             color = MultimoneyTheme.colors.labelText
                         )
@@ -88,13 +96,19 @@ fun CurrencyItem(
                     ) {
                         Row {
                             Text(
-                                text = stringResource(id = R.string.currency_item_dollar_symbol, priceOfTheDay),
+                                text = stringResource(
+                                    id = R.string.currency_item_dollar_symbol,
+                                    priceOfTheDay
+                                ),
                                 style = Typography.caption,
                                 color = WhiteTransparency60
                             )
                             Text(
                                 modifier = Modifier.padding(start = 8.dp),
-                                text = stringResource(id = R.string.currency_item_percent_invested, percentageInvestedCurrency),
+                                text = stringResource(
+                                    id = R.string.currency_item_percent_invested,
+                                    percentageInvestedCurrency
+                                ),
                                 style = Typography.caption,
                                 color = SemanticPositive400
                             )
@@ -136,23 +150,19 @@ fun MarketCurrencyItem(
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp)
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Image(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .align(Alignment.CenterVertically),
-                    painter = rememberAsyncImagePainter(model = imageUrl),
-                    contentDescription = null
-                )
-                Column(
-                    modifier = Modifier
-                        .padding(start = 16.dp)
-                        .fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                Row {
+                    Image(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .align(Alignment.CenterVertically),
+                        painter = rememberAsyncImagePainter(model = imageUrl),
+                        contentDescription = null
+                    )
+                    Column(
+                        modifier = Modifier.wrapContentWidth()
                     ) {
                         Text(
                             text = descriptionCurrency,
@@ -165,29 +175,30 @@ fun MarketCurrencyItem(
                             color = MultimoneyTheme.colors.labelText
                         )
                     }
-                    Row(
-                        modifier = Modifier
-                            .padding(top = 2.dp)
-                            .fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+                }
+                Row {
+                    Column(
+                        modifier = Modifier.wrapContentWidth(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.End
                     ) {
-                        Row {
-                            Text(
-                                text = stringResource(id = R.string.currency_item_dollar_symbol, currentPrice),
-                                style = Typography.caption,
-                                color = WhiteTransparency60
-                            )
-                            Text(
-                                modifier = Modifier.padding(start = 8.dp),
-                                text = stringResource(id = R.string.currency_item_percent_invested, percentChange),
-                                style = Typography.caption,
-                                color = SemanticPositive400
-                            )
-                        }
-                        /*Text(
-                            text = "$available $asset",
+                        Text(
+                            text = stringResource(
+                                id = R.string.currency_item_dollar_symbol,
+                                currentPrice
+                            ),
                             style = Typography.caption,
                             color = WhiteTransparency60
-                        )*/
+                        )
+                        Text(
+                            modifier = Modifier.padding(start = 8.dp),
+                            text = stringResource(
+                                id = R.string.currency_item_percent_invested,
+                                percentChange
+                            ),
+                            style = Typography.caption,
+                            color = SemanticPositive400
+                        )
                     }
                 }
             }

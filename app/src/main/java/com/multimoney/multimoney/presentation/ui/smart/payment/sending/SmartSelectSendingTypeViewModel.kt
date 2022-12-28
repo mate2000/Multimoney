@@ -1,8 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.smart.payment.sending
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.multimoney.R
@@ -23,12 +20,8 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
-    // uiState
-    var uiState by mutableStateOf(UIState())
-        private set
-
     // Stateless
-    var smartAccount : SmartAccountID? = null
+    var smartAccount: SmartAccountID? = null
     var pkUser: String = ""
     var identification: String = ""
     var idClient: Int = 0
@@ -51,7 +44,7 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         }
     }
 
-    fun getTitleSmartAccountResource() : Int? {
+    fun getTitleSmartAccountResource(): Int? {
         val result = when (smartAccount?.currencyID?.getCurrencyFromId()?.value) {
             CurrencyType.Dollar.value -> {
                 R.string.payment_select_sending_type_smart_account_dollars
@@ -66,7 +59,7 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         return result
     }
 
-    fun getIconSmartAccountResource() : Int? {
+    fun getIconSmartAccountResource(): Int? {
         val result = when (smartAccount?.currencyID?.getCurrencyFromId()?.value) {
             CurrencyType.Dollar.value -> {
                 R.drawable.ic_sending_dollar
@@ -99,9 +92,6 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
             isRestart = false
         )
     }
-    data class UIState(
-        val idBrand: String = ""
-    )
 
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()

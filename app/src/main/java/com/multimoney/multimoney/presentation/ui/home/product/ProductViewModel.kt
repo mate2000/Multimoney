@@ -676,11 +676,9 @@ class ProductViewModel @Inject constructor(
             account?.idCurrencyAccount,
             account?.accountNumber
         )
-        if (uiState.idBrand == Brand.CostaRica.id.toString()) {
-            navigateTo(
-                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${pkUser}/${uiState.idBrand}/${identification}/${encodeData(smartAccount)}"
-            )
-        }
+        navigateTo(
+            "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${pkUser}/${uiState.idBrand}/${identification}/${encodeData(smartAccount)}"
+        )
     }
 
     private fun onCreateMultimoneyVisa(onLoadingValueChange: (isLoading: Boolean) -> Unit) {

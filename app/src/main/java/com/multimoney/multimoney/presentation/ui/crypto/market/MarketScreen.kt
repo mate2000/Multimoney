@@ -240,7 +240,7 @@ fun FilterBottomSheet(
                 },
             )
         }
-        Divider(color = MultimoneyTheme.colors.dividerDefaultColor)
+        Divider(color = MultimoneyTheme.colors.dividerWhite30)
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()

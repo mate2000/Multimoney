@@ -209,12 +209,6 @@ fun SignInScreen(
                 .fillMaxWidth()
                 .height(48.dp),
             onClick = {
-                Log.e("IP ADDRESS ", getIpAddress(fragmentActivity))
-                Log.e("DEVICEID", getDeviceId(fragmentActivity))
-                Log.e("PHONE_MODEL", getDeviceModel())
-                Log.e("PHONE_BRAND", getDeviceBrand())
-                Log.e("APP_VERSION", getAppVersion())
-                Log.e("IS_EMULATOR", checkIfEmulator().toString())
                 viewModel.navigateTo(route = "${Screen.SignUpScreen.baseRoute}/".plus(0))
             },
             buttonType = PrimaryTertiaryUnderLined

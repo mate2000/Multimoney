@@ -109,6 +109,9 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
         }
         composable(route = Screen.SignInOTPScreen.route) {
             SignInOTPScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }

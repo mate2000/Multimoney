@@ -21,6 +21,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnAvailableAmountClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigatePreferences
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateToVisaTokenizationScreen
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnOpenDialogConfirmToStartTokenizationProcess
 import com.multimoney.multimoney.presentation.util.NfcHelper
@@ -56,6 +57,8 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
         callNovoGetFavoriteCard()
     }
 
+    fun deviceHasNFC() = nfcHelper.isNfcSupported()
+
     private fun onAvailableAmountClick() {
         uiState = uiState.copy(
             dialogParameters = DialogParameters(
@@ -74,7 +77,7 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
 
     private fun callNovoGetFavoriteCard() {
         uiState = uiState.copy(
-            isNfcAvailable = nfcHelper.isNfcSupported(),
+            isNfcAvailable = deviceHasNFC(),
             isCardTokenize = NovoVTS.getFavoriteCard() != NOVO_CARD_TOKEN_EMPTY && NovoVTS.getFavoriteCard() != NOVO_CARD_TOKEN_EMPTY_TWO
         )
     }
@@ -90,6 +93,7 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
+            is OnNavigatePreferences -> navigateTo(Screen.VisaPreferencesScreen.baseRoute)
             is OnAvailableAmountClick -> onAvailableAmountClick()
             is OnNavigateToVisaTokenizationScreen -> navigateTo(
                 "${Screen.VisaTokenizationWaitingScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
@@ -115,6 +119,7 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
 
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()
+        object OnNavigatePreferences : UIEvent()
         object OnAvailableAmountClick : UIEvent()
         object OnNavigateToVisaTokenizationScreen : UIEvent()
         object OnOpenDialogConfirmToStartTokenizationProcess : UIEvent()

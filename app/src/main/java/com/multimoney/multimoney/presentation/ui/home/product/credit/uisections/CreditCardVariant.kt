@@ -149,8 +149,14 @@ fun CardGtSvCreditRejected(
                 }
             )
             Text(
+                text = wording?.textOne?.filter { wording.textOne != notDefinedValue } ?: "",
+                modifier = Modifier.padding(top = 20.dp),
+                style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+                color = MultimoneyTheme.colors.creditNotApprovedText
+            )
+            Text(
                 text = wording?.textTwo?.filter { wording.textTwo != notDefinedValue } ?: "",
-                modifier = Modifier.padding(top = 14.dp),
+                modifier = Modifier.padding(top = 4.dp),
                 style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                 color = MultimoneyTheme.colors.text
             )

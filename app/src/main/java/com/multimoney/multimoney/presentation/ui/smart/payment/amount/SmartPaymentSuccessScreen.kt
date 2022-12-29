@@ -183,7 +183,7 @@ fun SmartPaymentSuccessScreen(
                         iconModifier = Modifier
                             .height(24.dp)
                             .width(24.dp),
-                        title = stringResource(R.string.smart_payment_card_bank_label),
+                        title = stringResource(R.string.smart_payment_origin_account_label),
                         subtitle = stringResource(
                             R.string.visa_card_masked_number,
                             viewModel.maskedCardNumber.takeLast(4)

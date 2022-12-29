@@ -11,6 +11,7 @@ import com.multimoney.domain.model.accountsmart.GlobalRequest
 import com.multimoney.domain.model.accountsmart.Nationalities
 import com.multimoney.domain.model.accountsmart.Professions
 import com.multimoney.domain.model.accountsmart.RelationshipData
+import com.multimoney.domain.model.accountsmart.SaveSinpeAccount
 import com.multimoney.domain.model.accountsmart.SaveSmartAccount
 import com.multimoney.domain.model.accountsmart.SinpeAccountResult
 import com.multimoney.domain.model.accountsmart.SmartMovement
@@ -175,4 +176,16 @@ interface SmartAccountRepository {
         idDestinationCurrency: String,
         amount: Double
     ): Flow<MultimoneyResult<ExchangeRateResult?>>
+
+    suspend fun mutationManageSinpeAccountSave(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        accountNumber: String,
+        idCurrency: Long,
+        nameAccount: String,
+        country: String,
+        idAccount: Long?,
+        option: String?,
+    ): Flow<MultimoneyResult<SaveSinpeAccount?>>
 }

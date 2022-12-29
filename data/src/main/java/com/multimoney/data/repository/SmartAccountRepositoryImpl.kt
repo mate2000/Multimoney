@@ -18,6 +18,7 @@ import com.multimoney.domain.model.accountsmart.GlobalRequest
 import com.multimoney.domain.model.accountsmart.Nationalities
 import com.multimoney.domain.model.accountsmart.Professions
 import com.multimoney.domain.model.accountsmart.RelationshipData
+import com.multimoney.domain.model.accountsmart.SaveSinpeAccount
 import com.multimoney.domain.model.accountsmart.SaveSmartAccount
 import com.multimoney.domain.model.accountsmart.SinpeAccountResult
 import com.multimoney.domain.model.accountsmart.SmartMovement
@@ -27,8 +28,8 @@ import com.multimoney.domain.model.accountsmart.VisaSmartPayment
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.SmartAccountRepository
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class SmartAccountRepositoryImpl @Inject constructor(
     private val graphqlApi: GraphqlApi
@@ -385,4 +386,31 @@ class SmartAccountRepositoryImpl @Inject constructor(
             }
         )
     }
+
+    override suspend fun mutationManageSinpeAccountSave(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        accountNumber: String,
+        idCurrency: Long,
+        nameAccount: String,
+        country: String,
+        idAccount: Long?,
+        option: String?,
+    ): Flow<MultimoneyResult<SaveSinpeAccount?>> = fetchData(
+        apolloCall = graphqlApi.mutationManageSinpeAccountSave(
+            user,
+            idBrand,
+            identification,
+            accountNumber,
+            idCurrency,
+            nameAccount,
+            country,
+            idAccount,
+            option
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
 }

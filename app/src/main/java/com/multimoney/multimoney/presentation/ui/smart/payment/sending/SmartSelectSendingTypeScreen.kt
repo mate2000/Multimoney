@@ -55,7 +55,7 @@ fun SmartSelectSendingTypeScreen(
             onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
             isRightButtonVisible = false
         )
-        SendingTypeOptions(
+        SendingTypeOptionsContainer(
             sendingTypeOptions = {
                 when (viewModel.uiState.idBrand) {
                     // These sending options should be available only for CR
@@ -88,7 +88,7 @@ fun SmartSelectSendingTypeScreen(
 }
 
 @Composable
-fun SendingTypeOptions(
+fun SendingTypeOptionsContainer(
     sendingTypeOptions: @Composable () -> Unit
 ) {
     Column(Modifier.padding(horizontal = 16.dp)) {

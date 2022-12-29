@@ -223,16 +223,15 @@ class ProductViewModel @Inject constructor(
             navigateTo("${Screen.SmartPaymentMethodScreenSV.baseRoute}/$smartIds")
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             val infoCredit = uiState.userStatus?.infoCredit
-            val smartIds = encodeData(
-                balanceCredit?.balanceAccountSmart?.map {
-                    SmartAccountID(
-                        tokenAccount = it?.tokenNumber,
-                        currencyID = it?.idCurrencyAccount,
-                        accountNumber = it?.accountNumber ?: ""
-                    )
-                }
-            )
-            navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/$smartIds/$email/${uiState.idBrand}/$identification/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
+            val smartIds = encodeData(balanceCredit?.balanceAccountSmart?.map {
+                SmartAccountID(
+                    tokenAccount = it?.tokenNumber,
+                    currencyID = it?.idCurrencyAccount,
+                    accountNumber = it?.accountNumber ?: "",
+                    ibanAccountNumber = it?.ibanAccountNumber
+                )
+            })
+            navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/${smartIds}/$email/${uiState.idBrand}/$identification/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
         }
     }
 
@@ -655,7 +654,8 @@ class ProductViewModel @Inject constructor(
         val smartIds = SmartAccountID(
             tokenAccount = account?.tokenNumber,
             currencyID = account?.idCurrencyAccount,
-            accountNumber = account?.accountNumber
+            accountNumber = account?.accountNumber,
+            ibanAccountNumber = account?.ibanAccountNumber
         )
         navigateTo(
             route = "${Screen.SmartPaymentAccountScreenCR.baseRoute}/$email/${uiState.idBrand}/$identification/${Screen.HomeScreen.route}/$idClient/" +

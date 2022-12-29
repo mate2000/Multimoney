@@ -905,7 +905,9 @@
     <string name="smart_payment_amount_bottom_sheet_my_smart_account" translatable="false">Mi cuenta Smart | %s</string>
     <string name="smart_payment_amount_bottom_sheet_title" translatable="false">Monto a ahorrar</string>
     <string name="smart_payment_amount_bottom_sheet_from_card" translatable="false">Desde la tarjeta</string>
+    <string name="smart_payment_amount_bottom_sheet_from_card_CR" translatable="false">Desde la cuenta</string>
     <string name="smart_payment_amount_bottom_sheet_to" translatable="false">Hacia</string>
+    <string name="smart_payment_exchange_equivalent" translatable="false">Equivalente a %s</string>
 
     <!-- Payment Amount Error -->
     <string name="payment_amount_error_button" translatable="false">Ir al inicio</string>

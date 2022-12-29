@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -63,44 +64,120 @@ fun CardNonPreApprovedCredit(
     Column(
         modifier = Modifier
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
-            .fillMaxWidth()
-            .wrapContentHeight()
+            .fillMaxSize()
             .clickable {
                 action()
-            }
+            },
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
-            text = stringResource(id = string.home_product_gt_sv_non_pre_approved_credit_title),
-            modifier = Modifier.padding(top = 14.dp),
-            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.text
-        )
-        Text(
-            text = stringResource(
-                id = when (idBrand) {
-                    Brand.ElSalvador.id -> string.home_product_sv_non_pre_approved_credit_description
-                    else -> string.home_product_gt_non_pre_approved_credit_description
+        Column {
+            Text(
+                text = stringResource(id = string.home_product_gt_sv_non_pre_approved_credit_title),
+                modifier = Modifier.padding(top = 14.dp),
+                style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+                color = MultimoneyTheme.colors.text
+            )
+            Text(
+                text = stringResource(
+                    id = when (idBrand) {
+                        Brand.ElSalvador.id -> string.home_product_sv_non_pre_approved_credit_description
+                        else -> string.home_product_gt_non_pre_approved_credit_description
+                    }
+                ),
+                modifier = Modifier.padding(top = 8.dp),
+                style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                color = MultimoneyTheme.colors.text
+            )
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            CustomImage(
+                drawableResource = drawable.ic_chevron_up
+            )
+            Text(
+                text = stringResource(id = string.home_product_gt_sv_non_pre_approved_credit_action),
+                modifier = Modifier
+                    .padding(bottom = 12.dp),
+                style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
+                color = MultimoneyTheme.colors.text,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+/**
+ * Composable to handle the status credit rejected
+ */
+@Composable
+@Preview
+fun CardGtSvCreditRejected(
+    wording: Wording? = Wording(
+        textOne = "",
+        textTwo = "",
+        cTA = "",
+        display = false
+    ),
+    action: () -> Unit = {}
+) {
+    val notDefinedValue = stringResource(id = string.not_defined)
+    Column(
+        modifier = Modifier
+            .padding(top = 12.dp, start = 24.dp, end = 24.dp)
+            .fillMaxSize()
+            .clickable {
+                action()
+            },
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column {
+            CustomInformativeChip(
+                text = stringResource(id = string.home_my_products_title_credit),
+                textStyle = Typography.body2.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    color = MultimoneyTheme.colors.text
+                ),
+                modifier = Modifier.padding(top = 12.dp),
+                shape = RoundedCornerShape(12.dp),
+                background = if (isSystemInDarkTheme()) {
+                    BlackTransparency20
+                } else {
+                    WhiteTransparency10
                 }
-            ),
-            modifier = Modifier.padding(top = 8.dp),
-            style = Typography.caption,
-            color = MultimoneyTheme.colors.text
-        )
-        CustomImage(
+            )
+            Text(
+                text = wording?.textOne?.filter { wording.textOne != notDefinedValue } ?: "",
+                modifier = Modifier.padding(top = 20.dp),
+                style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+                color = MultimoneyTheme.colors.creditNotApprovedText
+            )
+            Text(
+                text = wording?.textTwo?.filter { wording.textTwo != notDefinedValue } ?: "",
+                modifier = Modifier.padding(top = 4.dp),
+                style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                color = MultimoneyTheme.colors.text
+            )
+        }
+        Column(
             modifier = Modifier
-                .padding(top = 40.dp)
-                .align(Alignment.CenterHorizontally),
-            drawableResource = drawable.ic_chevron_up
-        )
-        Text(
-            text = stringResource(id = string.home_product_gt_sv_non_pre_approved_credit_action),
-            modifier = Modifier
-                .padding(bottom = 12.dp)
-                .align(Alignment.CenterHorizontally),
-            style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.text,
-            textAlign = TextAlign.Center
-        )
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            CustomImage(
+                drawableResource = drawable.ic_chevron_up
+            )
+            Text(
+                text = stringResource(id = string.home_product_gt_with_out_credit_action),
+                modifier = Modifier
+                    .padding(bottom = 12.dp),
+                style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
+                color = MultimoneyTheme.colors.text,
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }
 
@@ -364,7 +441,7 @@ fun OngoingCredit(
                 color = MultimoneyTheme.colors.text
             )
         } else {
-            Spacer(modifier = Modifier.padding(bottom = 44.dp))
+            Spacer(modifier = Modifier.padding(bottom = 30.dp))
         }
         CustomRoundedLinearProgress(
             progress = viewModel.productProgress,

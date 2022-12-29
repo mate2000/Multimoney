@@ -172,6 +172,10 @@ import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.MutationActivatedCardAutomaticDebitUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationActivatedCardAutomaticDebitUseCaseImpl
+import com.multimoney.domain.interaction.virtualcard.MutationCardBlockingUseCase
+import com.multimoney.domain.interaction.virtualcard.MutationCardBlockingUseCaseImpl
+import com.multimoney.domain.interaction.virtualcard.MutationCardUnblockingUseCase
+import com.multimoney.domain.interaction.virtualcard.MutationCardUnblockingUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.MutationPayCreditVDUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationPayCreditVDUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCase
@@ -630,6 +634,16 @@ class InteractionModule {
     @Singleton
     fun provideMutationActivatedCardAutomaticDebitUseCase(virtualCardRepository: VirtualCardRepository): MutationActivatedCardAutomaticDebitUseCase =
         MutationActivatedCardAutomaticDebitUseCaseImpl(virtualCardRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationCardBlockingUseCase(virtualCardRepository: VirtualCardRepository): MutationCardBlockingUseCase =
+        MutationCardBlockingUseCaseImpl(virtualCardRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationCardUnblockingUseCase(virtualCardRepository: VirtualCardRepository): MutationCardUnblockingUseCase =
+        MutationCardUnblockingUseCaseImpl(virtualCardRepository)
 
     // Profile
 

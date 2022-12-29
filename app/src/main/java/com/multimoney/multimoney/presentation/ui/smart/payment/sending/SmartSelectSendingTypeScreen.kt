@@ -128,6 +128,33 @@ fun SendingTypeOptions(
                         onClick = onIBANAccountsClick
                     )
                 }
+                // These options should be available only for SV
+                Brand.ElSalvador.id -> {
+                    CustomInfoButton(
+                        title = stringResource(id = R.string.payment_select_sending_type_to_smart_accounts),
+                        modifier = sendingTypeOptionModifier,
+                        endIcon = R.drawable.ic_right_chevron,
+                        startIcon = R.drawable.ic_sending_dollar,
+                        onEndIconClick = { },
+                        onClick = { }
+                    )
+                    CustomInfoButton(
+                        title = stringResource(id = R.string.payment_select_sending_type_other_bank_accounts),
+                        modifier = sendingTypeOptionModifier,
+                        endIcon = R.drawable.ic_right_chevron,
+                        startIcon = R.drawable.ic_sending_iban_account,
+                        onEndIconClick = { },
+                        onClick = { }
+                    )
+                    CustomInfoButton(
+                        title = stringResource(id = R.string.payment_select_sending_type_transfer_365_mobile),
+                        modifier = sendingTypeOptionModifier,
+                        endIcon = R.drawable.ic_right_chevron,
+                        startIcon = R.drawable.ic_sending_transfer_365_mobile,
+                        onEndIconClick = { },
+                        onClick = { }
+                    )
+                }
             }
         }
     }

@@ -38,6 +38,7 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         pkUser = savedStateHandle[PK_USER] ?: ""
         identification = savedStateHandle[IDENTIFICATION] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
+        uiState = uiState.copy(idBrand = idBrand)
     }
 
 

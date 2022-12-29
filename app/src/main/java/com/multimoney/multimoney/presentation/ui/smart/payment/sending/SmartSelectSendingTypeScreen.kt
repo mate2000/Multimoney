@@ -38,6 +38,11 @@ fun SmartSelectSendingTypeScreen(
         }
     }
 
+    // Creating a common modifier for sending options
+    val sendingTypeOptionModifier = Modifier
+        .fillMaxWidth()
+        .padding(top = 12.dp)
+
     Column(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)
@@ -48,12 +53,27 @@ fun SmartSelectSendingTypeScreen(
             isRightButtonVisible = false
         )
         SendingTypeOptions(
-            uiState = viewModel.uiState,
-            onMyContactsClick = { viewModel.onUIEvent(OnMyContactsSelected)},
-            onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected)},
-            onIBANAccountsClick = { viewModel.onUIEvent(OnIBANAccountSelected)},
-            smartAccountTitle = viewModel.getTitleSmartAccountResource(),
-            smartAccountStartIcon = viewModel.getIconSmartAccountResource()
+            sendingTypeOptions = {
+                when (viewModel.uiState.idBrand) {
+                    // These sending options should be available only for CR
+                    Brand.CostaRica.id -> {
+                        SendingTypeOptionsCR(
+                            modifier = sendingTypeOptionModifier,
+                            onMyContactsClick = { viewModel.onUIEvent(OnMyContactsSelected)},
+                            onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected)},
+                            onIBANAccountsClick = { viewModel.onUIEvent(OnIBANAccountSelected)},
+                            smartAccountTitle = viewModel.getTitleSmartAccountResource(),
+                            smartAccountStartIcon = viewModel.getIconSmartAccountResource()
+                        )
+                    }
+                    // These options should be available only for SV
+                    Brand.ElSalvador.id -> {
+                        SendingTypeOptionsSV(
+                            modifier = sendingTypeOptionModifier
+                        )
+                    }
+                }
+            }
         )
     }
     BackHandler { viewModel.onUIEvent(OnNavigateBack) }
@@ -61,19 +81,8 @@ fun SmartSelectSendingTypeScreen(
 
 @Composable
 fun SendingTypeOptions(
-    uiState: SmartSelectSendingTypeViewModel.UIState,
-    onMyContactsClick: () -> Unit,
-    onMySmartAccountClick: () -> Unit,
-    onIBANAccountsClick: () -> Unit,
-    smartAccountTitle: Int?,
-    smartAccountStartIcon: Int?
+    sendingTypeOptions: @Composable () -> Unit
 ) {
-
-    // Creating a common modifier for sending options
-    val sendingTypeOptionModifier = Modifier
-        .fillMaxWidth()
-        .padding(top = 12.dp)
-
     Column(Modifier.padding(horizontal = 16.dp)) {
         Text(
             modifier = Modifier.padding(top = 32.dp),
@@ -82,80 +91,89 @@ fun SendingTypeOptions(
                 fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.text
             )
         )
-        uiState.idBrand.apply {
-            // Sending option for both SV and CR and title changes depending on idBrand
-            CustomInfoButton(
-                title = stringResource(
-                    when (this) {
-                        Brand.ElSalvador.id -> R.string.payment_select_sending_type_favorites_sv
-                        Brand.CostaRica.id -> R.string.payment_select_sending_type_favorites_cr
-                        else -> R.string.payment_select_sending_type_favorites_cr
-                    }
-                ),
-                modifier = sendingTypeOptionModifier,
-                endIcon = R.drawable.ic_right_chevron,
-                startIcon = R.drawable.ic_sending_favorites,
-                onEndIconClick = onMyContactsClick,
-                onClick = onMyContactsClick
-            )
-            when (this) {
-                // These sending options should be available only for CR
-                Brand.CostaRica.id -> {
-                    CustomInfoButton(
-                        title = stringResource(R.string.payment_select_sending_type_my_contacts),
-                        modifier = sendingTypeOptionModifier,
-                        endIcon = R.drawable.ic_right_chevron,
-                        startIcon = R.drawable.ic_sending_contact,
-                        onEndIconClick = onMyContactsClick,
-                        onClick = onMyContactsClick
-                    )
-                    smartAccountTitle?.let {
-                        CustomInfoButton(
-                            title = stringResource(id = it),
-                            modifier = sendingTypeOptionModifier,
-                            endIcon = R.drawable.ic_right_chevron,
-                            startIcon = smartAccountStartIcon,
-                            onEndIconClick = onMySmartAccountClick,
-                            onClick = onMySmartAccountClick
-                        )
-                    }
-                    CustomInfoButton(
-                        title = stringResource(R.string.payment_select_sending_type_iban_accounts),
-                        modifier = sendingTypeOptionModifier,
-                        endIcon = R.drawable.ic_right_chevron,
-                        startIcon = R.drawable.ic_sending_iban_account,
-                        onEndIconClick = onIBANAccountsClick,
-                        onClick = onIBANAccountsClick
-                    )
-                }
-                // These options should be available only for SV
-                Brand.ElSalvador.id -> {
-                    CustomInfoButton(
-                        title = stringResource(id = R.string.payment_select_sending_type_to_smart_accounts),
-                        modifier = sendingTypeOptionModifier,
-                        endIcon = R.drawable.ic_right_chevron,
-                        startIcon = R.drawable.ic_sending_dollar,
-                        onEndIconClick = { },
-                        onClick = { }
-                    )
-                    CustomInfoButton(
-                        title = stringResource(id = R.string.payment_select_sending_type_other_bank_accounts),
-                        modifier = sendingTypeOptionModifier,
-                        endIcon = R.drawable.ic_right_chevron,
-                        startIcon = R.drawable.ic_sending_iban_account,
-                        onEndIconClick = { },
-                        onClick = { }
-                    )
-                    CustomInfoButton(
-                        title = stringResource(id = R.string.payment_select_sending_type_transfer_365_mobile),
-                        modifier = sendingTypeOptionModifier,
-                        endIcon = R.drawable.ic_right_chevron,
-                        startIcon = R.drawable.ic_sending_transfer_365_mobile,
-                        onEndIconClick = { },
-                        onClick = { }
-                    )
-                }
-            }
-        }
+        sendingTypeOptions()
     }
+}
+
+@Composable
+fun SendingTypeOptionsCR (
+    modifier: Modifier,
+    onMyContactsClick: () -> Unit,
+    onMySmartAccountClick: () -> Unit,
+    onIBANAccountsClick: () -> Unit,
+    smartAccountTitle: Int?,
+    smartAccountStartIcon: Int?,
+) {
+    CustomInfoButton(
+        title = stringResource(R.string.payment_select_sending_type_favorites_cr),
+        modifier = modifier,
+        endIcon = R.drawable.ic_right_chevron,
+        startIcon = R.drawable.ic_sending_favorites,
+        onEndIconClick = {  },
+        onClick = {  }
+    )
+    CustomInfoButton(
+        title = stringResource(R.string.payment_select_sending_type_my_contacts),
+        modifier = modifier,
+        endIcon = R.drawable.ic_right_chevron,
+        startIcon = R.drawable.ic_sending_contact,
+        onEndIconClick = onMyContactsClick,
+        onClick = onMyContactsClick
+    )
+    smartAccountTitle?.let {
+        CustomInfoButton(
+            title = stringResource(id = it),
+            modifier = modifier,
+            endIcon = R.drawable.ic_right_chevron,
+            startIcon = smartAccountStartIcon,
+            onEndIconClick = onMySmartAccountClick,
+            onClick = onMySmartAccountClick
+        )
+    }
+    CustomInfoButton(
+        title = stringResource(R.string.payment_select_sending_type_iban_accounts),
+        modifier = modifier,
+        endIcon = R.drawable.ic_right_chevron,
+        startIcon = R.drawable.ic_sending_iban_account,
+        onEndIconClick = onIBANAccountsClick,
+        onClick = onIBANAccountsClick
+    )
+}
+
+@Composable
+fun SendingTypeOptionsSV(
+    modifier: Modifier
+) {
+    CustomInfoButton(
+        title = stringResource(R.string.payment_select_sending_type_favorites_sv),
+        modifier = modifier,
+        endIcon = R.drawable.ic_right_chevron,
+        startIcon = R.drawable.ic_sending_favorites,
+        onEndIconClick = {  },
+        onClick = {  }
+    )
+    CustomInfoButton(
+        title = stringResource(id = R.string.payment_select_sending_type_to_smart_accounts),
+        modifier = modifier,
+        endIcon = R.drawable.ic_right_chevron,
+        startIcon = R.drawable.ic_sending_dollar,
+        onEndIconClick = { },
+        onClick = { }
+    )
+    CustomInfoButton(
+        title = stringResource(id = R.string.payment_select_sending_type_other_bank_accounts),
+        modifier = modifier,
+        endIcon = R.drawable.ic_right_chevron,
+        startIcon = R.drawable.ic_sending_iban_account,
+        onEndIconClick = { },
+        onClick = { }
+    )
+    CustomInfoButton(
+        title = stringResource(id = R.string.payment_select_sending_type_transfer_365_mobile),
+        modifier = modifier,
+        endIcon = R.drawable.ic_right_chevron,
+        startIcon = R.drawable.ic_sending_transfer_365_mobile,
+        onEndIconClick = { },
+        onClick = { }
+    )
 }

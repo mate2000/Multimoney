@@ -83,6 +83,7 @@ fun SendingTypeOptions(
             )
         )
         uiState.idBrand.apply {
+            // Sending option for both SV and CR and title changes depending on idBrand
             CustomInfoButton(
                 title = stringResource(
                     when (this) {
@@ -98,6 +99,7 @@ fun SendingTypeOptions(
                 onClick = onMyContactsClick
             )
             when (this) {
+                // These sending options should be available only for CR
                 Brand.CostaRica.id -> {
                     CustomInfoButton(
                         title = stringResource(R.string.payment_select_sending_type_my_contacts),

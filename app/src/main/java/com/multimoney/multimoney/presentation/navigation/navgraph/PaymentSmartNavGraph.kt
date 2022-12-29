@@ -25,6 +25,7 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPayme
 import com.multimoney.multimoney.presentation.ui.smart.payment.options.SmartPaymentOptionsScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.sending.SmartSelectSendingTypeScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.transfer.SavingMethodTransferScreen
+import com.multimoney.multimoney.presentation.ui.smart.transfer.register.SmartTransferRegisterIbanScreen
 
 const val MASKED_CARD = "masked_card"
 const val BANK_DETAIL = "bank_detail"
@@ -199,6 +200,32 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
                         PREVIOUS_IS_RESTART,
                         it.isRestart
                     )
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
+        }
+
+        composable(
+            route = Screen.SmartTransferRegisterIbanScreen.route,
+            arguments = listOf(
+                navArgument(ID_CLIENT) { type = NavType.StringType },
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(IDENTIFICATION) { type = NavType.StringType },
+                navArgument(PREVIOUS_SCREEN) { type = NavType.StringType },
+                navArgument(ID_CLIENT) { type = NavType.IntType },
+                navArgument(ID_CURRENCY) { type = NavType.IntType },
+            )
+        ) {
+            SmartTransferRegisterIbanScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,

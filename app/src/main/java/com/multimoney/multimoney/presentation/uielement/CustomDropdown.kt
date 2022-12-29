@@ -165,45 +165,67 @@ fun CustomDropdown(
             enabled = false
         )
 
-        /*
-        * Show Popup when dropdown is expanded to fill background with black transparent color
-        * Popup is used to not break the view hierarchy
-        */
-        if (expanded) {
-            Popup {
-                Box(modifier = Modifier
-                    .background(BlackTransparency70)
-                    .fillMaxSize())
-            }
-        }
+        CustomHighlightDropdown(
+            expanded = expanded,
+            items = items,
+            onValueChange = onValueChange,
+            modifier = Modifier
+                .width(with(LocalDensity.current) { textFieldSize.width.toDp() })
+                .pointerInput(Unit) {
+                    detectTapAndPressUnconsumed(onTap = {
+                        activity?.onUserInteraction()
+                    })
+                },
+            onDismissRequest = { expanded = false }
+        )
+    }
+}
 
-        MaterialTheme(shapes = MaterialTheme.shapes.copy(medium = RoundedCornerShape(16.dp))) {
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                modifier = Modifier
-                    .width(with(LocalDensity.current) { textFieldSize.width.toDp() })
-                    .background(ComplementaryBlack3)
-                    .pointerInput(Unit) {
-                        detectTapAndPressUnconsumed(onTap = {
-                            activity?.onUserInteraction()
-                        })
-                    },
-                offset = DpOffset(0.dp, 10.dp)
-            ) {
-                items.forEach { label ->
-                    DropdownMenuItem(onClick = {
-                        expanded = false
-                        onValueChange(label)
-                    }) {
-                        Text(
-                            text = label,
-                            style = Typography.body2.copy(
-                                color = MultimoneyTheme.colors.text,
-                                fontWeight = FontWeight.Normal
-                            )
+/**
+ * Dropdown Menu with an opaque background in the entire screen to highlight
+ * item list, this element uses a default 10.dp top offset to have a
+ * separation with the superior element
+ */
+@Composable
+fun CustomHighlightDropdown(
+    items: List<String>,
+    onValueChange: (newText: String) -> Unit = {},
+    onDismissRequest: () -> Unit,
+    modifier: Modifier,
+    expanded: Boolean,
+) {
+    /*
+    * Show Popup when dropdown is expanded to fill background with black transparent color
+    * Popup is used to not break the view hierarchy
+    */
+    if (expanded) {
+        Popup {
+            Box(modifier = Modifier
+                .background(BlackTransparency70)
+                .fillMaxSize())
+        }
+    }
+
+    MaterialTheme(shapes = MaterialTheme.shapes.copy(medium = RoundedCornerShape(16.dp))) {
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = onDismissRequest,
+            modifier = modifier
+                .background(ComplementaryBlack3),
+            offset = DpOffset(0.dp, 10.dp)
+        ) {
+            items.forEach { label ->
+                DropdownMenuItem(onClick = {
+                    onDismissRequest()
+                    onValueChange(label)
+                }) {
+                    Text(
+                        text = label,
+                        style = Typography.body2.copy(
+                            color = MultimoneyTheme.colors.text,
+                            fontWeight = FontWeight.Normal
                         )
-                    }
+                    )
                 }
             }
         }

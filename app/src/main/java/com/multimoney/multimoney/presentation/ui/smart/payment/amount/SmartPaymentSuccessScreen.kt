@@ -108,8 +108,8 @@ fun SmartPaymentSuccessScreen(
                 VoucherCurrencyExchangeInfo(
                     leftTitleResource = string.payment_amount_bottom_sheet_exchange_type,
                     rightTitleResource = string.payment_amount_bottom_sheet_amount_to_debit,
-                    exchangeRateText = viewModel.uiState.exchangeRateLabel,
-                    convertedAmountText = viewModel.uiState.exchangeRateLabel
+                    exchangeRateText = viewModel.getExchangeRateFormatted(),
+                    convertedAmountText = viewModel.getConvertedAmountFormatted()
                 )
 
             }

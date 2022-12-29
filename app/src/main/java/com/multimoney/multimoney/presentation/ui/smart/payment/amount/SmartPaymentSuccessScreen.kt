@@ -15,7 +15,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -72,8 +71,7 @@ fun SmartPaymentSuccessScreen(
                 string.smart_payment_you_saved_on_your_smart_account,
                 viewModel.uiState.currency
             ),
-            amount = viewModel.uiState.currency +
-                viewModel.uiState.currentAmountValueString.collectAsState().value,
+            amount = viewModel.getFormattedAmount(),
             fromToText = stringResource(string.smart_payment_from_label),
             buttonText = stringResource(string.smart_payment_make_another_payment),
             onButtonClick = { viewModel.onUIEvent(OnNavigateBack) }

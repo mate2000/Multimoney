@@ -58,8 +58,6 @@ import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomDatePicker
-import com.multimoney.multimoney.presentation.util.getCurrencySymbolValue
-import com.multimoney.multimoney.presentation.util.transformation.getMoneyText
 
 @Composable
 fun NonPreApprovedScreen(

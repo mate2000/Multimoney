@@ -6588,6 +6588,8 @@ type Wording {
   textTwo: String!
 
   cTA: String!
+
+  display: Boolean!
 }
 
 type VirtualcardConfigurationType {

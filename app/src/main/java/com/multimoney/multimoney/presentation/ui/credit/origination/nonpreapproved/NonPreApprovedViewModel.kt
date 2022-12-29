@@ -20,7 +20,16 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.*
+import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
+import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_STATUS
+import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
+import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateMinusYears
@@ -233,9 +242,8 @@ class NonPreApprovedViewModel @Inject constructor(
 
     private fun onContinueClick(focusManager: FocusManager) {
         focusManager.clearFocus()
-        //onSaveAdditionalQuestions()
-        //onCallMutationSaveCreditFlowStep()
-        setErrorAlertResult()
+        onSaveAdditionalQuestions()
+        onCallMutationSaveCreditFlowStep()
     }
 
     private fun onSaveAdditionalQuestions() {
@@ -296,9 +304,8 @@ class NonPreApprovedViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess {
                 uiState = uiState.copy(isLoading = false)
-                //navigateBack(isRestart = true)
                 if (it?.rejectedBlaze?.not() == false) {
-                    setSuccessAlertResult(it.products?.firstOrNull()?.maximumDisbursement ?: "25,000")
+                    setSuccessAlertResult(it.products?.firstOrNull()?.maximumDisbursement ?: "")
                 } else {
                     setErrorAlertResult()
                 }
@@ -327,7 +334,7 @@ class NonPreApprovedViewModel @Inject constructor(
                 "${idUserRequest ?: 0}/${firstName ?: ""}/" +
                 "${lastName ?: ""}/${statusOnfido ?: ""}/" +
                 "${statusEvicertia ?: ""}/${idPrint ?: 0}",
-        popTo = Screen.HomeScreen.route
+        popTo = Screen.NonPreApprovedScreen.route
     )
 
     private fun setSuccessAlertResult(amount: String) {
@@ -364,7 +371,7 @@ class NonPreApprovedViewModel @Inject constructor(
         val employmentSituationSelected: CreditCatalogOption? = null,
         val paymentAmount: String = "",
         val maxDisbursementAmount: String = "",
-        val isContinueEnabled: Boolean = true,
+        val isContinueEnabled: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         val isLoading: Boolean = false,
         val isAlertResultSuccess: Boolean = true,

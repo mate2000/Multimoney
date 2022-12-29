@@ -175,19 +175,17 @@ fun CreditContent(viewModel: ProductViewModel) {
             CreditStatus.CREDIT_REJECTED.status -> {
                 when (viewModel.uiState.idBrand) {
                     Brand.Guatemala.id.toString(), Brand.ElSalvador.id.toString() -> {
-                        CustomProductBackground(
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp),
-                            type = Primary
-                        ) {
-                            /*CardGtSvCreditRejected(action = {
-                                // todo define de flow to open
-                            })*/
-                            CardNonPreApprovedCredit(
-                                idBrand = viewModel.uiState.idBrand.toInt(),
-                                action = {
-                                    viewModel.onUIEvent(OnNavigateToGtSvNonPreApproved)
-                                })
+                        if (viewModel.uiState.userStatus?.infoCredit?.wording?.display == true) {
+                            CustomProductBackground(
+                                modifier = Modifier
+                                    .padding(horizontal = 16.dp),
+                                type = Primary
+                            ) {
+                                CardGtSvCreditRejected(
+                                    action = {},
+                                    wording = viewModel.uiState.userStatus?.infoCredit?.wording
+                                )
+                            }
                         }
                     }
                     else -> Unit

@@ -114,7 +114,16 @@ fun CardNonPreApprovedCredit(
  */
 @Composable
 @Preview
-fun CardGtSvCreditRejected(action: () -> Unit = {}) {
+fun CardGtSvCreditRejected(
+    wording: Wording? = Wording(
+        textOne = "",
+        textTwo = "",
+        cTA = "",
+        display = false
+    ),
+    action: () -> Unit = {}
+) {
+    val notDefinedValue = stringResource(id = string.not_defined)
     Column(
         modifier = Modifier
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
@@ -140,7 +149,7 @@ fun CardGtSvCreditRejected(action: () -> Unit = {}) {
                 }
             )
             Text(
-                text = stringResource(id = string.home_product_gt_sv_credit_rejected_title),
+                text = wording?.textTwo?.filter { wording.textTwo != notDefinedValue } ?: "",
                 modifier = Modifier.padding(top = 14.dp),
                 style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                 color = MultimoneyTheme.colors.text

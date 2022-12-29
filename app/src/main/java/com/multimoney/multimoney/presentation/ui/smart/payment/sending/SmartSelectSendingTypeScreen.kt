@@ -47,6 +47,7 @@ fun SmartSelectSendingTypeScreen(
             isRightButtonVisible = false
         )
         SendingTypeOptions(
+            uiState = viewModel.uiState,
             onMyContactsClick = { viewModel.onUIEvent(OnMyContactsSelected)},
             onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected)},
             onIBANAccountsClick = { viewModel.onUIEvent(OnIBANAccountSelected)},
@@ -59,6 +60,7 @@ fun SmartSelectSendingTypeScreen(
 
 @Composable
 fun SendingTypeOptions(
+    uiState: SmartSelectSendingTypeViewModel.UIState,
     onMyContactsClick: () -> Unit,
     onMySmartAccountClick: () -> Unit,
     onIBANAccountsClick: () -> Unit,

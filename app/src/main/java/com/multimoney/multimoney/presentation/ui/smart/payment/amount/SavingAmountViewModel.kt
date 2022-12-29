@@ -51,6 +51,7 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Dollar
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SuggestedAmount
 import com.multimoney.multimoney.presentation.util.catalog.SuggestionOrder
+import com.multimoney.multimoney.presentation.util.formattedTwoDecimalsNumber
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getCurrentTime
@@ -58,6 +59,8 @@ import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import com.multimoney.multimoney.presentation.util.workers.startTimedNotification
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.Calendar
+import javax.inject.Inject
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -65,8 +68,6 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-import java.util.*
-import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class, FlowPreview::class)
@@ -410,10 +411,15 @@ class SavingAmountViewModel @Inject constructor(
             CURRENCY_SEPARATOR.toString()
         )
 
+    
+    fun getConvertedAmountFormatted() = "${ibanCurrency?.id?.getCurrencyFromId()?.symbol}${
+        uiState.exchangeConvertedAmount.formattedTwoDecimalsNumber().toString()
+            .stringToDoubleFormat(CURRENCY_SEPARATOR.toString())
+    }"
+    
     private fun onNavigateToHome() {
         navigateBack(
-            popTo = Screen.HomeScreen.route,
-            isRestart = true
+            popTo = Screen.HomeScreen.route, isRestart = true
         )
     }
 

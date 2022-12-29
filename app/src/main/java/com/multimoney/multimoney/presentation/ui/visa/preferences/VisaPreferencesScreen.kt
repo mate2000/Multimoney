@@ -41,7 +41,6 @@ fun VisaPreferencesScreen(
     // Navigation
     LaunchedEffect(true) {
         viewModel.apply {
-            // onUIEvent(OnGetClientCardVisaDirect)
             executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
         }
     }

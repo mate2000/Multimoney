@@ -30,7 +30,9 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueVisible
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SmartAddressFields
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.BaseEvent
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessinpartnership.OwnBusinessInPartnershipViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessinpartnership.OwnBusinessInPartnershipViewModel.UIEvent.OnBusinessActivityChange
@@ -50,14 +52,24 @@ fun OwnBusinessInPartnershipScreen(
     sharedViewModel: SmartViewModel = hiltViewModel(),
     sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel()
 ) {
-
-    LaunchedEffect(key1 = true) {
-        viewModel.onUIEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
+    LaunchedEffect(true) {
+        sourceIncomeSharedViewModel.baseEvent.collect { event ->
+            when (event) {
+                is BaseEvent.OnFormValidateCompleted -> sharedViewModel.onUIEvent(
+                    OnContinueEnable(event.isFormValid && viewModel.isFormValid())
+                )
+            }
+        }
     }
 
     LaunchedEffect(key1 = true) {
+        viewModel.onUIEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
         sharedViewModel.onUIEvent(OnContinueVisible(true))
-        sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid()))
+        sharedViewModel.onUIEvent(
+            OnContinueEnable(
+                viewModel.isFormValid() && sourceIncomeSharedViewModel.isFormValid()
+            )
+        )
 
         sharedViewModel.onUIEvent(
             OnSetNavigation(
@@ -69,9 +81,12 @@ fun OwnBusinessInPartnershipScreen(
                                 income = viewModel.uiState.businessIncome.toFloat(),
                                 legalID = viewModel.uiState.businessIdentification,
                                 entrepreneurship = viewModel.uiState.businessActivity,
-                                currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep)
+                                currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep),
+                                idJobLevel1 = sourceIncomeSharedViewModel.uiState.divisionOneSelected?.id?.toLongOrNull(),
+                                idJobLevel2 = sourceIncomeSharedViewModel.uiState.divisionTwoSelected?.id?.toLongOrNull(),
+                                idJobLevel3 = sourceIncomeSharedViewModel.uiState.divisionThreeSelected?.id?.toLongOrNull(),
+                                fullJobAddress = sourceIncomeSharedViewModel.uiState.address
                             )
-
                         )
                     )
                 },
@@ -83,13 +98,18 @@ fun OwnBusinessInPartnershipScreen(
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormValidateCompleted -> sharedViewModel.onUIEvent(
-                    OnContinueEnable(event.isFormValid)
+                    OnContinueEnable(event.isFormValid && sourceIncomeSharedViewModel.isFormValid())
                 )
             }
         }
     }
 
-    OwnBusinessOnPersonalBasisContent(viewModel, sharedViewModel.idBrandAsInt, sharedViewModel.user)
+    OwnBusinessOnPersonalBasisContent(
+        viewModel,
+        sourceIncomeSharedViewModel,
+        sharedViewModel.idBrandAsInt,
+        sharedViewModel.user
+    )
 
     BackHandler {
         sourceIncomeSharedViewModel.onUIEvent(
@@ -103,6 +123,7 @@ fun OwnBusinessInPartnershipScreen(
 @Composable
 fun OwnBusinessOnPersonalBasisContent(
     viewModel: OwnBusinessInPartnershipViewModel,
+    sourceIncomeSharedViewModel: SourceIncomeViewModel,
     idBrand: Int,
     user: String
 ) {
@@ -127,9 +148,7 @@ fun OwnBusinessOnPersonalBasisContent(
             value = viewModel.uiState.businessActivity,
             onValueChange = {
                 viewModel.onUIEvent(
-                    OnBusinessActivityChange(
-                        it
-                    )
+                    OnBusinessActivityChange(it)
                 )
             },
             labelText = stringResource(R.string.smart_business_personal_basis_activity_label),
@@ -151,9 +170,7 @@ fun OwnBusinessOnPersonalBasisContent(
             value = viewModel.uiState.businessIncome,
             onValueChange = {
                 viewModel.onUIEvent(
-                    OnIncomeAmountChange(
-                        it
-                    )
+                    OnIncomeAmountChange(it)
                 )
             },
             labelText = stringResource(R.string.credit_monthly_income_income_label),
@@ -196,16 +213,20 @@ fun OwnBusinessOnPersonalBasisContent(
             placeHolder = stringResource(R.string.smart_business_personal_basis_identification_placeholder),
             customTransformation = formatBusinessIdentification(),
             isError = viewModel.uiState.identificationError.first,
-            errorMessage = viewModel.uiState.identificationValidationError ?: stringResource(viewModel.uiState.identificationError.second),
+            errorMessage = viewModel.uiState.identificationValidationError ?: stringResource(
+                viewModel.uiState.identificationError.second
+            ),
             showInfo = viewModel.uiState.identificationLoading.first,
             infoMessage = stringResource(viewModel.uiState.identificationLoading.second),
             isSuccess = viewModel.uiState.identificationSuccess.first,
             successMessage = stringResource(viewModel.uiState.identificationSuccess.second),
-            isRequiredMessage = stringResource(R.string.smart_business_personal_basis_identification_required_message)
+            isRequiredMessage = stringResource(R.string.smart_business_personal_basis_identification_required_message),
+            enabled = !viewModel.uiState.isLoading
         )
         if (viewModel.uiState.identificationSuccess.first) {
             Text(
-                text = viewModel.uiState.companyName ?: stringResource(R.string.smart_business_personal_basis_company_name_not_found),
+                text = viewModel.uiState.companyName
+                    ?: stringResource(R.string.smart_business_personal_basis_company_name_not_found),
                 color = MultimoneyTheme.colors.text,
                 modifier = Modifier
                     .padding(start = 5.dp)
@@ -213,5 +234,11 @@ fun OwnBusinessOnPersonalBasisContent(
                 style = Typography.caption
             )
         }
+        SmartAddressFields(
+            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel,
+            user = user,
+            idBrand = idBrand,
+            focusManager = focusManager
+        )
     }
 }

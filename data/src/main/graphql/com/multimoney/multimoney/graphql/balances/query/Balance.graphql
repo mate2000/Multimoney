@@ -48,6 +48,8 @@ query Balance(
         limite_credito_label
         moneda_Default
         plazo
+        aplica_Debito_Aut
+        debito_Aut_Activo
     }
     balanceAccountSmart(
         checkAccountInput:{

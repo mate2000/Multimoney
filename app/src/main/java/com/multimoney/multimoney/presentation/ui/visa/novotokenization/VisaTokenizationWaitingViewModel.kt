@@ -1,8 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.visa.novotokenization
 
 import android.content.Context
-import android.provider.Settings
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -27,28 +25,30 @@ import com.multimoney.multimoney.presentation.navigation.EMAIL
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALANCE_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_INFORMATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnGetAndroidId
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnGoToNextScreen
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnNavigateToNextScreen
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnStartNovoTokenization
+import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnAlertButtonClick
+import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnAlertCloseClick
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
+import com.multimoney.multimoney.presentation.util.YEAR_FORMAT
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.getDateFormat
 import com.multimoney.multimoney.presentation.util.getDeviceManufacture
+import com.multimoney.multimoney.util.NovoHelper
 import com.novopayment.sdk.vts.NovoVTS
-import com.novopayment.sdk.vts.NovoVTS.ResponseListener
-import com.novopayment.sdk.vts.model.DataEnrollDevice
-import com.novopayment.sdk.vts.model.EnrollFlow.GREEN
-import com.novopayment.sdk.vts.model.ExpirationDate
-import com.novopayment.sdk.vts.model.NovoError
-import com.novopayment.sdk.vts.model.NovoResponse
-import com.novopayment.sdk.vts.model.VtsCard
-import com.novopayment.sdk.vts.network.request.EnrollPanData
-import com.novopayment.sdk.vts.network.request.EnrollPanUserInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -56,6 +56,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val dataStorePreferences: DataStorePreferences,
     private val mmCountDownTimer: MMCountDownTimer,
+    private val novoHelper: NovoHelper,
     private val mutationUserPhoneMobileSaveUseCase: MutationUserPhoneMobileSaveUseCase
 ) : BaseViewModel(false) {
 
@@ -65,75 +66,84 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
 
     // Stateless
     var currentStep = 0
+    var numAttemptsToStartTokenization: Int = 0
 
     // arguments
     var idBrand: Int = 0
     var pkUser: Long = 0
+    var identification: String = ""
     var phone = ""
-    var novoDeviceId: String = ""
     var email: String = ""
     var cardInformation: CardInformation? = null
+    var androidId: String = ""
+    var availableBalanceLabel: String? = null
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
+        identification = savedStateHandle[IDENTIFICATION] ?: ""
         pkUser = savedStateHandle.get<Long>(PK_USER) ?: 0
         email = savedStateHandle.get<String>(EMAIL) ?: ""
         phone = savedStateHandle.get<String>(PHONE_NUMBER) ?: ""
         cardInformation = savedStateHandle.get<CardInformation>(CARD_INFORMATION)
+        availableBalanceLabel = savedStateHandle[AVAILABLE_BALANCE_LABEL]
     }
 
     private fun startTokenizationProcess() {
-        mmCountDownTimer.stopTimer()
-        if (NovoVTS.isDeviceEnrolled().not()) {
-            NovoVTS.enrollDevice(
-                object : ResponseListener<String> {
-                    override fun onError(error: NovoError) {
+        executeUseCase {
+            delay(HALF_SECOND)
+            mmCountDownTimer.stopTimer()
+            if (NovoVTS.isDeviceEnrolled().not()) {
+                novoHelper.novoEnrollDevice(
+                    identification,
+                    EMPTY_PHONE,
+                    onSuccessEnrollDevice = {
+                        callNovoEnrollPan(it.data)
+                    },
+                    onErrorEnrollDevice = {
                         mmCountDownTimer.resumeTimer()
-                        // todo handle novo sdk error
-                        Log.d("MM_NOVO_ENROLL_DEVICE_ERROR", error.message ?: "")
-                        Log.d("MM_NOVO_ENROLL_DEVICE_ERROR", error.code.toString())
+                        handleErrorResult()
                     }
-
-                    override fun onFinish(response: NovoResponse<String>) {
-                        mmCountDownTimer.resumeTimer()
-                        novoDeviceId = response.data
-                        callNovoEnrollPan(novoDeviceId)
-                    }
-                },
-                DataEnrollDevice(pkUser.toString(), phone)
-            )
-        } else {
-            callNovoEnrollPan(novoDeviceId)
+                )
+            } else {
+                callNovoEnrollPan(NovoVTS.getWalletAccountNumber())
+            }
         }
     }
 
     private fun callNovoEnrollPan(walletId: String) {
         val expirationDate = cardInformation?.expDate?.chunked(EXPIRATION_DATE_CHUCKS_LIMIT)
-        NovoVTS.enrollPan(
-            object : ResponseListener<VtsCard> {
-                override fun onError(error: NovoError) {
-                    // todo handle novo sdk error
-                    mmCountDownTimer.resumeTimer()
-                    Log.d("MM_NOVO_ENROLL_PAN_ERROR", error.message ?: "")
-                    Log.d("MM_NOVO_ENROLL_PAN_ERROR", error.code.toString())
-                }
-
-                override fun onFinish(response: NovoResponse<VtsCard>) {
-                    mmCountDownTimer.resumeTimer()
-                    NovoVTS.setFavoriteCard(response.data.vProvisionedToken)
-                    createWallet(walletId = walletId)
-                }
+        novoHelper.novoEnrollPan(
+            identification = identification,
+            email = email,
+            accountNumber = cardInformation?.cardNumber ?: "",
+            cardName = cardInformation?.holderName ?: "",
+            cardCvv = cardInformation?.cValidation ?: "",
+            cardExpirationMonth = expirationDate?.first() ?: "",
+            cardExpirationYear = getExpirationYear(expirationDate?.last() ?: ""),
+            onErrorEnrollPan = {
+                mmCountDownTimer.resumeTimer()
+                handleErrorResult()
             },
-            enrollPanUserInfo = EnrollPanUserInfo(pkUser.toString(), email),
-            enrollPanData = EnrollPanData(
-                cardInformation?.cardNumber ?: "",
-                cardInformation?.holderName ?: "",
-                cardInformation?.cValidation ?: "",
-                ExpirationDate(expirationDate?.first() ?: "", expirationDate?.last() ?: "")
-            ),
-            enrollFlow = GREEN,
-            withTermsAndConditions = false
+            onSuccessEnrollPan = {
+                mmCountDownTimer.resumeTimer()
+                NovoVTS.setFavoriteCard(it.data.vProvisionedToken)
+                createWallet(walletId)
+            }
         )
+    }
+
+    private fun handleErrorResult() {
+        if (numAttemptsToStartTokenization < MAX_NUMBER_ATTEMPTS_TO_START_TOKENIZATION) {
+            setErrorAlertResult()
+            numAttemptsToStartTokenization++
+        } else {
+            onNavigateToHomeMultimoneyVisa()
+        }
+    }
+
+    private fun getExpirationYear(yearChunked: String): String {
+        val currentYear = getDateFormat(Date(), YEAR_FORMAT)
+        return "${currentYear.substring(YEAR_START_INDEX, YEAR_END_INDEX)}$yearChunked"
     }
 
     /**
@@ -147,7 +157,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
                 "",
                 getDeviceManufacture(),
                 pkUser,
-                Settings.Secure.ANDROID_ID,
+                androidId,
                 email
             ).collectLatest { result ->
                 result.onSuccess {
@@ -162,7 +172,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
                 }.onMessage {
                     uiState = uiState.copy(
                         openDialog = DialogParameters(
-                            description = it?.message ?: "",
+                            descriptionResource = R.string.error,
                             isActive = mutableStateOf(true)
                         )
                     )
@@ -178,14 +188,14 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
                 walletId,
                 getDeviceManufacture(),
                 pkUser,
-                Settings.Secure.ANDROID_ID,
+                androidId,
                 email
             ).collectLatest { result ->
                 result.onSuccess {
                     uiState = uiState.copy(
                         openDialog = DialogParameters(
                             titleResource = R.string.success,
-                            description = "La tarjeta fue tokenizada exitosamente",
+                            descriptionResource = R.string.visa_card_success_message_label,
                             isActive = mutableStateOf(true)
                         )
                     )
@@ -199,7 +209,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
                 }.onMessage {
                     uiState = uiState.copy(
                         openDialog = DialogParameters(
-                            description = it?.message ?: "",
+                            descriptionResource = R.string.error,
                             isActive = mutableStateOf(true)
                         )
                     )
@@ -305,11 +315,48 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         }
     }
 
+    private fun onNavigateToHomeMultimoneyVisa() =
+        popAndNavigateTo(
+            "${Screen.VisaCardScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
+                encodeData(
+                    cardInformation
+                )
+            }/$availableBalanceLabel",
+            Screen.VisaTokenizationWaitingScreen.route
+        )
+
+    private fun onAlertButtonClick() {
+        uiState = uiState.copy(
+            isAlertResultVisible = false
+        )
+        startTokenizationProcess()
+    }
+
+    private fun setErrorAlertResult() {
+        uiState = uiState.copy(
+            isAlertResultVisible = true,
+            isAlertResultSuccess = false,
+            alertResultIconResource = R.drawable.ic_error_symbol,
+            alertResultTitleResource = R.string.card_tokenization_error_title,
+            alertResultDescriptionResource = when (idBrand) {
+                Brand.Guatemala.id -> R.string.card_tokenization_error_description_gt
+                else -> R.string.card_tokenization_error_description_sv_cr
+            },
+            alertResultButtonResource = R.string.link
+        )
+    }
+
     data class UIState(
         // Fields
         val icon: Int = R.drawable.ic_novo_waiting_smartphone,
         val description: AnnotatedString = buildAnnotatedString {},
-        val openDialog: DialogParameters = DialogParameters()
+        val openDialog: DialogParameters = DialogParameters(),
+        val isAlertResultSuccess: Boolean = true,
+        val isAlertResultVisible: Boolean = false,
+        val alertResultIconResource: Int = 0,
+        val alertResultTitleResource: Int = R.string.empty,
+        val alertResultDescriptionResource: Int = R.string.empty,
+        val alertResultButtonResource: Int = R.string.empty
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -317,6 +364,9 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
             is OnNavigateToNextScreen -> navigateToNextScreen(event.screen)
             is OnGoToNextScreen -> goToNextScreen(event.context, event.color)
             is OnStartNovoTokenization -> startTokenizationProcess()
+            is OnGetAndroidId -> androidId = event.androidId
+            is OnAlertButtonClick -> onAlertButtonClick()
+            is OnAlertCloseClick -> onNavigateToHomeMultimoneyVisa()
         }
     }
 
@@ -324,6 +374,9 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         data class OnNavigateToNextScreen(val screen: String) : UIEvent()
         data class OnGoToNextScreen(val context: Context, val color: Color) : UIEvent()
         object OnStartNovoTokenization : UIEvent()
+        object OnAlertButtonClick : UIEvent()
+        object OnAlertCloseClick : UIEvent()
+        data class OnGetAndroidId(val androidId: String) : UIEvent()
     }
 
     companion object {
@@ -332,5 +385,10 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         const val STEP_TWO = 2
         const val TIME_TO_WAITING_NOVO_STEP = 10000L
         const val EXPIRATION_DATE_CHUCKS_LIMIT = 2
+        const val HALF_SECOND = 500L
+        const val YEAR_START_INDEX = 0
+        const val YEAR_END_INDEX = 2
+        const val EMPTY_PHONE = "+1"
+        const val MAX_NUMBER_ATTEMPTS_TO_START_TOKENIZATION = 1
     }
 }

@@ -15,6 +15,7 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS_DESCRIPTION
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LATITUDE
@@ -47,12 +48,12 @@ class PaymentPointsViewModel @Inject constructor(
 
     // Stateless
     var idBrand: Int? = null
-    private var paymentAmount: String? = ""
+    private var paymentAmountLabel: String? = ""
     private var creditNumber: String? = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
-        paymentAmount = savedStateHandle[PAYMENT_AMOUNT] ?: ""
+        paymentAmountLabel = savedStateHandle[PAYMENT_AMOUNT_LABEL] ?: ""
         creditNumber = savedStateHandle[CREDIT_NUMBER] ?: ""
     }
 
@@ -65,7 +66,14 @@ class PaymentPointsViewModel @Inject constructor(
         pointLongitude: String
     ) = navigateTo(
         route = Screen.PaymentLocationDetailsScreen.baseRoute
-            .plus(getNavParam(POINT_NAME, pointName))
+            .plus(
+                getNavParam(POINT_NAME,
+                    URLEncoder.encode(
+                        pointName,
+                        StandardCharsets.UTF_8.name()
+                    )
+                )
+            )
             .plus(
                 getNavParam(
                     POINT_ADDRESS,
@@ -75,11 +83,18 @@ class PaymentPointsViewModel @Inject constructor(
                     )
                 )
             )
-            .plus(getNavParam(POINT_ADDRESS_DESCRIPTION, pointAddressDescription))
+            .plus(
+                getNavParam(POINT_ADDRESS_DESCRIPTION,
+                    URLEncoder.encode(
+                        pointAddressDescription,
+                        StandardCharsets.UTF_8.name()
+                    )
+                )
+            )
             .plus(getNavParam(POINT_SCHEDULE, pointSchedule))
             .plus(getNavParam(POINT_LATITUDE, pointLatitude))
             .plus(getNavParam(POINT_LONGITUDE, pointLongitude))
-            .plus(getNavParam(PAYMENT_AMOUNT, paymentAmount))
+            .plus(getNavParam(PAYMENT_AMOUNT, paymentAmountLabel))
             .plus(getNavParam(CREDIT_NUMBER, creditNumber))
             .plus(getNavParam(ID_BRAND, idBrand))
     )

@@ -7,11 +7,12 @@ import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.smartaccount.mapToDomain
 import com.multimoney.data.mapper.smartaccount.mapToDomainModel
 import com.multimoney.data.networking.GraphqlApi
-import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
 import com.multimoney.data.paging.SmartMovementsPagingSource
+import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
 import com.multimoney.domain.model.accountsmart.AddressesLevel
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.CivilStatusResult
+import com.multimoney.domain.model.accountsmart.ExchangeRateResult
 import com.multimoney.domain.model.accountsmart.GeneralEconomicActivityResult
 import com.multimoney.domain.model.accountsmart.GlobalRequest
 import com.multimoney.domain.model.accountsmart.Nationalities
@@ -22,6 +23,7 @@ import com.multimoney.domain.model.accountsmart.SinpeAccountResult
 import com.multimoney.domain.model.accountsmart.SmartMovement
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.accountsmart.StepByStep
+import com.multimoney.domain.model.accountsmart.VisaSmartPayment
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.SmartAccountRepository
@@ -169,36 +171,37 @@ class SmartAccountRepositoryImpl @Inject constructor(
     override suspend fun mutationGlobalRequest(
         pkUser: Int,
         status: Int,
-        idProfessionType: Int,
-        idCivilStatusType: Long,
-        birthday: String,
-        expirationDate: String,
-        idGender: Long,
-        companyName: String,
-        aboutCompany: String,
-        idAddressLevel1: Long,
-        idAddressLevel2: Long,
-        idAddressLevel3: Long,
-        positionJob: String,
-        idEconomicActivity: Long,
-        income: Double,
-        addressDetail: String,
-        fullJobAddress: String,
         user: String,
         idBrand: Int,
-        currentStep: String,
-        institutionPension: String,
-        specifiesIncomeSource: String,
-        beneficiaries: List<Beneficiary>,
-        entrepreneurship: String,
-        legalID: String,
-        isActivityOfArt15: Boolean,
-        isUSCitizen: Boolean,
-        isPEP: Boolean,
-        isUSTaxPayer: Boolean,
-        isTaxPayer: Boolean,
-        idJobLevel2: Long,
-        idJobLevel3: Long
+        idProfessionType: Int?,
+        idCivilStatusType: Long?,
+        birthday: String?,
+        expirationDate: String?,
+        idGender: Long?,
+        companyName: String?,
+        aboutCompany: String?,
+        idAddressLevel1: Long?,
+        idAddressLevel2: Long?,
+        idAddressLevel3: Long?,
+        positionJob: String?,
+        idEconomicActivity: Long?,
+        income: Double?,
+        addressDetail: String?,
+        fullJobAddress: String?,
+        currentStep: String?,
+        institutionPension: String?,
+        specifiesIncomeSource: String?,
+        beneficiaries: List<Beneficiary>?,
+        entrepreneurship: String?,
+        legalID: String?,
+        isActivityOfArt15: Boolean?,
+        isUSCitizen: Boolean?,
+        isPEP: Boolean?,
+        isUSTaxPayer: Boolean?,
+        isTaxPayer: Boolean?,
+        idJobLevel1: Long?,
+        idJobLevel2: Long?,
+        idJobLevel3: Long?
     ): Flow<MultimoneyResult<GlobalRequest?>> = fetchData(
         apolloCall = graphqlApi.mutationGlobalRequest(
             pkUser = pkUser,
@@ -231,6 +234,7 @@ class SmartAccountRepositoryImpl @Inject constructor(
             isPEP = isPEP,
             isUSTaxPayer = isUSTaxPayer,
             isTaxPayer = isTaxPayer,
+            idJobLevel1 = idJobLevel1,
             idJobLevel2 = idJobLevel2,
             idJobLevel3 = idJobLevel3
         ),
@@ -253,6 +257,32 @@ class SmartAccountRepositoryImpl @Inject constructor(
             apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
         )
     }
+
+    override suspend fun mutationProcessTransferVisaToSmartVD(
+        idCard: Long,
+        tokenNumber: Long,
+        identification: String,
+        amount: String,
+        currency: Int,
+        description: String,
+        cardMasked: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<VisaSmartPayment?>> =
+        fetchData(
+            apolloCall = graphqlApi.mutationProcessTransferVisaToSmartVD(
+                idCard,
+                tokenNumber,
+                identification,
+                amount,
+                currency,
+                description,
+                cardMasked,
+                user,
+                idBrand
+            ),
+            apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
+        )
 
     /**
      * fetch the list of the source of income catalog for the account smart flow
@@ -286,7 +316,9 @@ class SmartAccountRepositoryImpl @Inject constructor(
             apolloCall = graphqlApi.subscriptionAccountSmartContractEvent(
                 idBrand,
                 idRequestSys
-            ), apolloCallMapper = { data -> Success(data?.mapToDomain()) })
+            ),
+            apolloCallMapper = { data -> Success(data?.mapToDomain()) }
+        )
     }
 
     override suspend fun mutationInitialRequestSmartAccount(
@@ -299,9 +331,11 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 pkUser,
                 idBrand,
                 user
-            ), apolloCallMapper = { data ->
+            ),
+            apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
-            })
+            }
+        )
     }
 
     override suspend fun querySinpeAccount(
@@ -320,8 +354,35 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 country,
                 idAccount,
                 accountNumber
-            ), apolloCallMapper = { data ->
+            ),
+            apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
-            })
+            }
+        )
+    }
+
+    override suspend fun querySmartExchangeRate(
+        user: String,
+        identification: String,
+        idBrand: Int,
+        abbreviation: String,
+        idOriginCurrency: String,
+        idDestinationCurrency: String,
+        amount: Double
+    ): Flow<MultimoneyResult<ExchangeRateResult?>> {
+        return fetchData(
+            apolloCall = graphqlApi.querySmartExchangeRate(
+                user = user,
+                identification = identification,
+                idBrand = idBrand,
+                abbreviation = abbreviation,
+                idOriginCurrency = idOriginCurrency,
+                idDestinationCurrency = idDestinationCurrency,
+                amount = amount
+            ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
     }
 }

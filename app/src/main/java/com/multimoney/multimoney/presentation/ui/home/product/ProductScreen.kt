@@ -61,6 +61,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartPaymentAccountScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartPaymentMethodScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNoVoConfig
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCryptoWallet
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditContent
@@ -145,7 +146,7 @@ fun ProductScreen(
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnMiniCardsClicked(event.flow))
                 }
                 is HomeViewModel.BaseEvent.OnEditAutomaticPaymentEvent -> {
-                    viewModel.onUIEvent(OnNavigateToScheduleAutomaticPaymentScreen)
+                    viewModel.onUIEvent(OnNavigateToScheduleAutomaticPaymentScreen(true))
                 }
                 is HomeViewModel.BaseEvent.OnDeleteAutomaticPaymentEvent -> {
                     viewModel.onUIEvent(
@@ -377,15 +378,18 @@ fun ProductContent(
     Column(modifier = modifier) {
         HorizontalPager(
             count = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
-            modifier = Modifier.padding(top = 8.dp),
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .weight(1f),
             state = state
-        ) {
-            when (viewModel.uiState.productPageList?.get(currentPage)?.product) {
+        ) { page ->
+            when (viewModel.uiState.productPageList?.get(page)?.product) {
                 ProductType.Credit.value -> CreditContent(viewModel = viewModel)
-                ProductType.Smart.value -> SmartContent(viewModel = viewModel, currentPage)
+                ProductType.Smart.value -> SmartContent(viewModel = viewModel, page)
                 ProductType.Crypto.value -> CryptoContent(
                     userStatus = viewModel.uiState.userStatus,
                     cryptoBalance = viewModel.balanceCredit?.balanceCryptoAccount,
+                    cryptoEmptyState = viewModel.uiState.userStatus?.infoCrypto?.profileEnable ?: false,
                     openActionEnable = !sharedViewModel.uiState.forceIsExpanded,
                     clientBalanceHistory = sharedViewModel.uiState.cryptoHistoricalBalance,
                     openCryptoHomeAction = { sharedViewModel.onUIEvent(OnMyProductClick(true)) },
@@ -402,7 +406,7 @@ fun ProductContent(
                 selectedIndex = state.currentPage,
                 selectedColor = GrayScale200,
                 unSelectedColor = GrayScale600,
-                modifier = Modifier.size(10.dp)
+                dotSize = 10.dp
             )
         }
     }
@@ -465,12 +469,15 @@ fun ProductFooterExpanded(
                 ProductType.Smart.value -> SmartFooterExpanded(
                     viewModel = viewModel,
                     currentPage
-                )
+                ) {
+                    sharedViewModel.onUIEvent(UIEvent.OnLoadingValueChanged(it))
+                }
                 ProductType.Crypto.value -> CryptoFooterExpanded(
                     userStatus = viewModel.uiState.userStatus,
                     balance = viewModel.balanceCredit,
+                    idBrand = viewModel.uiState.idBrand,
                     actionMarket = { /* todo send to all coins screen*/ },
-                    actionWallet = { /*todo send to "my wallet"*/ },
+                    actionWallet = { viewModel.onUIEvent(OnNavigateToCryptoWallet) },
                     noBalanceAction = {
                         when (viewModel.uiState.idBrand) {
                             Brand.CostaRica.id.toString() -> {

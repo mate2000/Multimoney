@@ -125,7 +125,8 @@ class DisbursementAccountViewModel @Inject constructor(
                 user = user,
                 idBrand = idBrand,
                 idClient = idClient,
-                idLoan = idLoanClient.toInt()
+                idLoan = idLoanClient.toInt(),
+                process = DISBURSEMENT_PROCESS
             ).collectLatest { result ->
                 result.onSuccess { clientBankAccountList ->
                     onUIEvent(OnLoadingValueChange(false))
@@ -389,5 +390,7 @@ class DisbursementAccountViewModel @Inject constructor(
         private const val LOAN_FORM_HARDCODED =
             "Transferencia" // TODO Change to Transferencia-PEX depending on preferences user previously selected (new HU)
         const val MAX_ACCOUNT_NUMBER = 3
+        private const val DISBURSEMENT_PROCESS =
+            "DESEMBOLSO"
     }
 }

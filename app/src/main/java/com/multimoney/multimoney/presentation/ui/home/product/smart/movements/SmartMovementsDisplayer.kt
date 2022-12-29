@@ -68,7 +68,7 @@ fun SmartMovementDisplayer(
                 ),
                 contentDescription = "",
                 tint = Color.Unspecified,
-                modifier = Modifier.padding(end = 4.dp)
+                modifier = Modifier.padding(end = 4.dp, bottom = 6.dp)
             )
             Text(
                 text = stringResource(currencySymbol) + move.amount.toString()

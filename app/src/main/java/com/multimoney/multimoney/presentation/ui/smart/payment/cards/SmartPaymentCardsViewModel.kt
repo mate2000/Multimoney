@@ -4,28 +4,39 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCase
+import com.multimoney.domain.model.accountsmart.IbanAccountID
+import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.IBAN_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.SMART_IDS
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
-import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnAddCard
-import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnCallQueryGetClientCards
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnCardSelected
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Colon
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Dollar
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SmartPaymentCardsViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
+    private val dataStorePreferences: DataStorePreferences,
     private val queryListCards: QueryListCardVDUseCase
 ) : BaseViewModel(true) {
     // uiState
@@ -33,22 +44,42 @@ class SmartPaymentCardsViewModel @Inject constructor(
         private set
 
     // Stateless
-    private var user: String = savedStateHandle[USER] ?: ""
-    private var idBrand: Int = savedStateHandle[ID_BRAND] ?: 0
-    private var identification: String? = savedStateHandle[IDENTIFICATION] ?: ""
+    private var user: String = ""
+    private var idBrand: Int = 0
+    private var identification: String = ""
+    private var idCurrency: Int = 0
+    private var tokenNumber: Long = 0
+    private var smartAccount: SmartAccountID? = null
+    var currency: String = ""
+
+    private fun onStart() {
+        viewModelScope.launch {
+            idCurrency = savedStateHandle[ID_CURRENCY] ?: 0
+            tokenNumber = savedStateHandle[ACCOUNT_TOKEN] ?: 0
+            user = dataStorePreferences.getUserName().first()
+            idBrand = dataStorePreferences.getIdBrand().first().toInt()
+            identification = dataStorePreferences.getIdentification().first()
+            smartAccount = savedStateHandle[SMART_IDS]
+            currency = if (idCurrency == Dollar.id) Dollar.symbol else Colon.symbol
+            onCallQueryGetClientCardsUseCase()
+        }
+    }
 
     private fun onCallQueryGetClientCardsUseCase() {
         executeUseCase {
             queryListCards.invoke(
                 user = user,
                 idBrand = idBrand,
-                identification = identification ?: ""
+                identification = identification
             ).collectLatest { result ->
                 result.onSuccess { cardsList ->
                     uiState = uiState.copy(
                         isLoading = false,
                         cardVDList = cardsList ?: emptyList()
                     )
+                    if (cardsList.isNullOrEmpty()) {
+                        onAddCard()
+                    }
                 }.onFailure {
                     uiState = uiState.copy(
                         isLoading = false,
@@ -65,40 +96,40 @@ class SmartPaymentCardsViewModel @Inject constructor(
     }
 
     private fun onCardSelected(cardSelected: CardVisaDirect) {
-        navigateTo("${Screen.SmartSavingAmount.baseRoute}/$idBrand/${cardSelected.idCard}?$USER=$user?$IDENTIFICATION=$identification")
+        val ibanAccount = encodeData(IbanAccountID())
+        navigateTo(
+            "${Screen.SmartPaymentSavingAmount.baseRoute}/${encodeData(smartAccount)}?$IBAN_ACCOUNT=$ibanAccount/${cardSelected.idCard}" +
+                    "/${Screen.SmartPaymentCardsScreenSV.baseRoute}/${cardSelected.cardMaskedNumber}/${cardSelected.detail}"
+        )
     }
 
     private fun onAddCard() {
-        // For testing, using this to open the add saving amount TODO change to add card navigation
-        navigateTo("${Screen.SmartSavingAmount.baseRoute}/$idBrand/1?$USER=$user?$IDENTIFICATION=$identification")
+        // TODO change to add card navigation
     }
 
-    // todo navigate back to previous payment flow screen
     private fun onNavigateBack() =
-        navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
+        navigateBack(popTo = Screen.SmartPaymentMethodScreenSV.route, isRestart = false)
 
     data class UIState(
         // Interactions
         val cardVDList: List<CardVisaDirect?> = emptyList(),
         val isLoading: Boolean = false,
-        val openDialog: DialogParameters = DialogParameters(),
-        val isVisaAnimationVisible: Boolean = false
+        val openDialog: DialogParameters = DialogParameters()
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnNavigateBack -> onNavigateBack()
-            is OnCallQueryGetClientCards -> onCallQueryGetClientCardsUseCase()
             is OnCardSelected -> onCardSelected(uiEvent.cardSelected)
             is OnAddCard -> onAddCard()
+            is OnStart -> onStart()
         }
     }
 
     sealed class UIEvent {
-        class OnCardSelected(val cardSelected: CardVisaDirect) : UIEvent()
-        object OnCallQueryGetClientCards : UIEvent()
+        data class OnCardSelected(val cardSelected: CardVisaDirect) : UIEvent()
         object OnAddCard : UIEvent()
-
         object OnNavigateBack : UIEvent()
+        object OnStart : UIEvent()
     }
 }

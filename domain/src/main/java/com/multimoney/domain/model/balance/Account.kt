@@ -11,5 +11,5 @@ data class Account(
     val totalInterest: String?,
     val tokenNumber: String?,
     val movements: List<SmartMovement> = emptyList(),
-    val month : String?
+    val idCurrencyAccount: Int?
 )

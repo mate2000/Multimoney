@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.payment.accounts
+package com.multimoney.multimoney.presentation.ui.smart.payment.options
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -16,22 +16,23 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountViewModel.UIEvent.OnColonSelected
-import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.payment.options.SmartPaymentOptionsViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.payment.options.SmartPaymentOptionsViewModel.UIEvent.OnSmartAccountSelected
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 
 @Composable
-fun SmartPaymentAccountScreen(
+fun SmartPaymentOptionsScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-    viewModel: SmartPaymentAccountViewModel = hiltViewModel()
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
+    viewModel: SmartPaymentOptionsViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
+        viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
     }
 
     Column(
@@ -44,8 +45,7 @@ fun SmartPaymentAccountScreen(
             isRightButtonVisible = false
         )
         PaymentOptions(
-            onColonClick = { viewModel.onUIEvent(OnColonSelected) },
-            onDollarClick = { viewModel.onUIEvent(OnColonSelected) }
+            onAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected(it)) }
         )
     }
 
@@ -64,13 +64,12 @@ fun SmartPaymentAccountScreen(
 
 @Composable
 fun PaymentOptions(
-    onColonClick: () -> Unit,
-    onDollarClick: () -> Unit
+    onAccountClick: (CurrencyType) -> Unit
 ) {
     Column(Modifier.padding(horizontal = 16.dp)) {
         Text(
             modifier = Modifier.padding(top = 32.dp),
-            text = stringResource(R.string.payment_account_title),
+            text = stringResource(R.string.payment_options_title_cr),
             style = Typography.h5.copy(
                 fontWeight = FontWeight.SemiBold,
                 color = MultimoneyTheme.colors.text
@@ -83,7 +82,7 @@ fun PaymentOptions(
                 .padding(top = 12.dp),
             endIcon = R.drawable.ic_right_chevron,
             startIcon = R.drawable.ic_payment_colon,
-            onClick = onColonClick
+            onClick = { onAccountClick(CurrencyType.Colon) }
         )
 
         CustomInfoButton(
@@ -93,7 +92,7 @@ fun PaymentOptions(
                 .padding(top = 12.dp),
             endIcon = R.drawable.ic_right_chevron,
             startIcon = R.drawable.ic_payment_dollar,
-            onClick = onDollarClick
+            onClick = { onAccountClick(CurrencyType.Dollar) }
         )
     }
 }

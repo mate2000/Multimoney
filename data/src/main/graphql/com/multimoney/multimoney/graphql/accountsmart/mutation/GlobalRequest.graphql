@@ -1,44 +1,47 @@
 mutation GlobalRequest(
-    $pkUser: Long!,
-    $status: Int!,
-    $idProfessionType: Int!,
-    $idAddressLevel1: Long!,
-    $idAddressLevel2: Long!,
-    $birthdate: DateTime!,
-    $expirationDate: DateTime!,
-    $idGenre: Long!,
-    $idMaritalStatus: Long!,
-    $nameCompany: String,
-    $aboutCompany: String!,
-    $institutionPension: String!,
-    $idAddressLevel3: Long!,
-    $positionJob: String!
-    $idEconomicActivity: Long!,
-    $income: Float!,
-    $addressDetail: String!,
-    $fullJobAddress: String!,
-    $user: String!,
-    $idBrand: Int!,
-    $currentStep: String!,
-    $specifiesIncomeSource: String!,
-    $entrepreneurship: String!,
-    $legalID: String!
-    $isActivityOfArt15: Boolean!
-    $isUSCitizen: Boolean!
-    $isPEP: Boolean!
-    $isUSTaxPayer: Boolean!
-    $isTaxPayer: Boolean!,
-    $listBeneficiaries: [BeneficiaryRequestDtoInput!],
-    $idJobLevel2: Long!
-    $idJobLevel3: Long!
+    $pkUser: Long!
+    $status: Int!
+    $user: String!
+    $idBrand: Int!
+    $idProfessionType: Int
+    $idAddressLevel1: Long
+    $idAddressLevel2: Long
+    $birthdate: DateTime
+    $expirationDate: DateTime
+    $idGenre: Long
+    $idMaritalStatus: Long
+    $nameCompany: String
+    $aboutCompany: String
+    $institutionPension: String
+    $idAddressLevel3: Long
+    $positionJob: String
+    $idEconomicActivity: Long
+    $income: Float
+    $addressDetail: String
+    $fullJobAddress: String
+    $currentStep: String
+    $specifiesIncomeSource: String
+    $entrepreneurship: String
+    $legalID: String
+    $isActivityOfArt15: Boolean
+    $isUSCitizen: Boolean
+    $isPEP: Boolean
+    $isUSTaxPayer: Boolean
+    $isTaxPayer: Boolean
+    $listBeneficiaries: [BeneficiaryRequestDtoInput!]
+    $idJobLevel1: Long
+    $idJobLevel2: Long
+    $idJobLevel3: Long
 ) {
     globalRequest(globalRequestInput: {
         pkUser: $pkUser
         status: $status
+        user: $user
+        idBrand: $idBrand
         idProfessionType: $idProfessionType,
-        birthdate:$birthdate,
-        expirationDate:$expirationDate,
-        idGenre:$idGenre,
+        birthdate: $birthdate,
+        expirationDate: $expirationDate,
+        idGenre: $idGenre,
         idMaritalStatus: $idMaritalStatus,
         institutionPesion: $institutionPension,
         nameCompany: $nameCompany,
@@ -51,8 +54,6 @@ mutation GlobalRequest(
         income : $income
         addressDetail: $addressDetail
         fullJobAddress: $fullJobAddress
-        user: $user
-        idBrand: $idBrand
         currentStep: $currentStep
         specifiesIncomeSource: $specifiesIncomeSource
         entrepreneurship: $entrepreneurship
@@ -63,6 +64,7 @@ mutation GlobalRequest(
         isUSTaxPayer: $isUSTaxPayer
         isTaxPayer: $isTaxPayer
         listBeneficiaries: $listBeneficiaries
+        idJobLevel1: $idJobLevel1
         idJobLevel2: $idJobLevel2
         idJobLevel3: $idJobLevel3
     }) {

@@ -45,6 +45,12 @@ class ChangeEmailViewModel @Inject constructor(
         navigateTo("${Screen.ProfileVerifyIdentityEmailScreen.baseRoute}/${uiState.idClient}/${FieldToChange.EMAIL.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.newEmail}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
     }
 
+
+    private fun isNewEmailEqualTanPrevious(newEmail: String): Boolean {
+        return newEmail == uiState.email
+    }
+
+
     private fun isFormValid() {
         uiState = when {
             uiState.newEmail?.isBlank() == true -> {
@@ -61,6 +67,15 @@ class ChangeEmailViewModel @Inject constructor(
             }
             uiState.newEmail.equals(uiState.newEmailConfirmation).not() -> {
                 uiState.copy(isButtonEnabled = false)
+            }
+            uiState.newEmail.equals(uiState.email) or uiState.newEmailConfirmation.equals(uiState.email) -> {
+                uiState.copy(
+                    isButtonEnabled = false,
+                    userEmailError = Pair(
+                        true,
+                        R.string.profile_email_not_equal_than_previous_error
+                    )
+                )
             }
             else -> {
                 uiState.copy(isButtonEnabled = true)
@@ -140,7 +155,7 @@ class ChangeEmailViewModel @Inject constructor(
             is ChangeEmailViewModel.UIEvent.OnValidateUserEmailConfirmation -> isUserEmailConfirmationValid()
             is ChangeEmailViewModel.UIEvent.OnContinueButtonClicked -> onContinueButtonClicked()
             is ChangeEmailViewModel.UIEvent.OnNavigateBack -> navigateBack(
-                Screen.HomeScreen.route,
+                Screen.ProfilePersonalInfoScreen.route,
                 false
             )
         }

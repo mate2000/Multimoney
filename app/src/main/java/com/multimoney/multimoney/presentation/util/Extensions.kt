@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.provider.Settings.Secure
 import androidx.compose.ui.graphics.Color
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
@@ -18,10 +19,10 @@ import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.Cas
 import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.TransferBank
 import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.VisaDirect
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeType
-import java.util.Locale
-import kotlin.time.Duration
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
+import java.util.Locale
+import kotlin.time.Duration
 
 fun Context.openWhatsAppDeepLink(link: String, onFailure: () -> Unit = {}) {
     try {
@@ -188,12 +189,29 @@ fun getDeviceManufacture(): String = (
     }
     ).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
 
+fun Context.getAndroidId(): String {
+    return Secure.getString(
+        this.contentResolver,
+        Secure.ANDROID_ID
+    )
+}
+
 fun Char.isValidAmountCharacter() =
     this.isDigit() || this == DECIMAL_SEPARATOR
 
 fun String.filterInvalidAmountInput() = this.filter { it.isValidAmountCharacter() }
 
+fun Double.roundToTwoDecimalPlaces() = String.format("%.2f", this)
+
+fun Double.roundToTwoDecimalPlacesWithoutNegatives() = String.format("%.2f", this).replace("-", "")
+
+/**
+ * split a string by whitespace character ' '
+ */
+fun String.splitByWhiteSpace() = split(WHITE_SPACE_SEPARATOR)
+
 private const val HEX_FORMAT = "#%02x%02x%02x"
 private const val SPECIAL_CHARACTER_REGEX = "[!\"#\$%&'()*+,-./:;\\\\<=>?@^_`{|}~]"
 private const val NUMBER_REGEX = "[0-9]"
 private const val DECIMAL_SEPARATOR = '.'
+private const val WHITE_SPACE_SEPARATOR = ' '

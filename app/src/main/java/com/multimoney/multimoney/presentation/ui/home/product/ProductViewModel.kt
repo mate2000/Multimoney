@@ -503,7 +503,10 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToGtSvNonPreApproved() =
         navigateTo(
-            route = "${Screen.NonPreApprovedScreen.baseRoute}/$pkUser/$email/${uiState.idBrand}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}"
+            "${Screen.NonPreApprovedScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
+                    "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/${uiState.userStatus?.infoUser?.firstName}/" +
+                    "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
+                    "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0}"
         )
 
     fun getCreditBalanceLabel(balanceCredit: List<BalanceCredit?>?): String {

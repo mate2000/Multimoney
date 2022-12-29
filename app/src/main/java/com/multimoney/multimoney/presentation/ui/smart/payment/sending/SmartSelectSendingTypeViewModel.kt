@@ -1,5 +1,8 @@
 package com.multimoney.multimoney.presentation.ui.smart.payment.sending
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.multimoney.R
@@ -26,6 +29,9 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     var identification: String = ""
     var idClient: Int = 0
     var idBrand: Int = 0
+
+    var uiState by mutableStateOf(UIState())
+        private set
 
     init {
         smartAccount = savedStateHandle[SMART_IDS]
@@ -92,6 +98,11 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
             isRestart = false
         )
     }
+
+    data class UIState(
+        //Fields
+        val idBrand: Int? = null,
+    )
 
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()

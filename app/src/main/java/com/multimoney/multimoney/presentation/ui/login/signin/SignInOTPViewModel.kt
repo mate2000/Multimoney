@@ -126,6 +126,7 @@ class SignInOTPViewModel @Inject constructor(
     }
 
     private fun isTimerTick() = uiState.remainingTime.inWholeSeconds > 0 && uiState.isTimerRunning
+
     private fun onTimerTick() {
         val newRemainingTime = uiState.remainingTime.minus(ValidateOTPViewModel.TIMER_DELAY.seconds)
         uiState = uiState.copy(
@@ -340,5 +341,6 @@ class SignInOTPViewModel @Inject constructor(
         const val PHASE_FOUR = 4
         const val PHASE_FIVE = 5
         const val PHASE_SIX = 6
+        const val FOUR_DIGITS = 4
     }
 }

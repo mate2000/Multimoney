@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.login.signin
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -46,11 +45,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.capitalized
-import com.multimoney.multimoney.presentation.util.checkIfEmulator
-import com.multimoney.multimoney.presentation.util.getAppVersion
-import com.multimoney.multimoney.presentation.util.getDeviceBrand
 import com.multimoney.multimoney.presentation.util.getDeviceId
-import com.multimoney.multimoney.presentation.util.getDeviceModel
 import com.multimoney.multimoney.presentation.util.getDeviceName
 import com.multimoney.multimoney.presentation.util.getDeviceType
 import com.multimoney.multimoney.presentation.util.getIpAddress

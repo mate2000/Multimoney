@@ -3,7 +3,6 @@ package com.multimoney.multimoney.presentation.ui.login.signin
 
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts

@@ -164,7 +164,7 @@ class SignInViewModel @Inject constructor(
     }
 
     private fun isSessionActiveOnAnotherDevice(exception: AuthException): Boolean {
-        return exception.cause?.message?.contains(""""code":"$SESSION_ACTIVE_ERROR_CODE"""") == true
+        return exception.cause?.message?.contains(""""$CODE_KEYWORD":"$SESSION_ACTIVE_ERROR_CODE"""") == true
     }
 
     private fun onCloseDialog() {
@@ -495,5 +495,6 @@ class SignInViewModel @Inject constructor(
         const val IP_ADDRESS = "IpAddress"
         const val FORCE = "Force"
         const val SESSION_ACTIVE_ERROR_CODE = "2885"
+        const val CODE_KEYWORD = "code"
     }
 }

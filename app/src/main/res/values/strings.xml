@@ -28,6 +28,8 @@
     <string name="understood" translatable="false">Entendido</string>
     <string name="activate" translatable="false">Activar</string>
     <string name="locked" translatable="false">Bloquear</string>
+    <string name="unlocked" translatable="false">Desbloquear</string>
+    <string name="pay" translatable="false">Pagar</string>
     <string name="see_data" translatable="false">Ver datos</string>
     <string name="link" translatable="false">Vincular</string>
     <string name="shared" translatable="false">Compartir</string>
@@ -680,6 +682,24 @@
     <string name="visa_card_dialog_title" translatable="false">Vincular tarjeta</string>
     <string name="visa_card_dialog_description" translatable="false">¿Estás seguro que deseas vincular tu tarjeta a este dispositivo?</string>
     <string name="visa_card_success_message_label" translatable="false">La tarjeta fue tokenizada exitosamente</string>
+    <string name="visa_card_password_message_title" translatable="false">Validación de identidad</string>
+    <string name="visa_card_password_message_subtitle" translatable="false">No es posible validar tu identidad con biometricos.</string>
+    <string name="visa_card_password_message_try_with_password" translatable="false">Intentar con contraseña</string>
+    <string name="visa_card_password_title" translatable="false">Ver datos de mi tarjeta</string>
+    <string name="visa_card_password_error" translatable="false">Contraseña inválida</string>
+    <string name="visa_card_password_button" translatable="false">Confirmar</string>
+    <string name="visa_card_biometric_dialog_title" translatable="false">Validación de identidad</string>
+    <string name="visa_card_biometric_dialog_subtitle" translatable="false">Utilice su biometría para visualizar los datos de tu tarjeta.</string>
+    <string name="visa_card_unblock_without_nfc_dialog_title" translatable="false">Desbloquear tarjeta</string>
+    <string name="visa_card_unblock_without_nfc_dialog_subtitle" translatable="false">Al desbloquear tu tarjeta podrás hacer pagos online.</string>
+    <string name="visa_card_unblock_with_nfc_dialog_title" translatable="false">Desbloquear tarjeta</string>
+    <string name="visa_card_unblock_with_nfc_dialog_subtitle" translatable="false">Al desbloquear tu tarjeta podrás hacer pagos online y compras en comercio.</string>
+    <string name="visa_card_unblock_not_allowed_dialog_title" translatable="false">¡Oh no! No puedes desbloquear tu tarjeta</string>
+    <string name="visa_card_unblock_not_allowed_dialog_subtitle" translatable="false">Contáctate con servicio al cliente para desbloquear tu tarjeta.</string>
+    <string name="visa_card_block_dialog_title" translatable="false">Estás bloqueando tu tarjeta digital Multimoney Visa</string>
+    <string name="visa_card_block_dialog_subtitle" translatable="false">Si bloqueás la tarjeta no podrás realizar pagos online. Podrás desbloquearla después si lo deseás, y será al instante.</string>
+    <string name="visa_card_block_disclaimer" translatable="false">Desbloqueá tu tarjeta para usar tu Multimoney Visa.</string>
+
 
     <!-- visa tokenization waiting -->
     <string name="visa_tokenization_waiting_description_one_bold" translatable="false">100% libre de plástico.</string>

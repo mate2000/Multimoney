@@ -7,6 +7,8 @@ import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Message
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.model.virtualcard.AutomaticCardDebit
+import com.multimoney.domain.model.virtualcard.CardBlocking
+import com.multimoney.domain.model.virtualcard.CardUnblocking
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.domain.model.virtualcard.PayCreditVisaDirect
 import com.multimoney.domain.repository.VirtualCardRepository
@@ -79,6 +81,58 @@ class VirtualCardRepositoryImpl @Inject constructor(
             idLoanClient = idLoanClient,
             idCard = idCard,
             cardMasked = cardMasked
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun mutationCardBlocking(
+        blockType: String,
+        observations: String,
+        clientId: Int,
+        userApp: String,
+        cardToken: String,
+        source: String,
+        idLoan: Int,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<CardBlocking?>> = fetchData(
+        apolloCall = graphqlApi.mutationCardBlocking(
+            blockType,
+            observations,
+            clientId,
+            userApp,
+            cardToken,
+            source,
+            idLoan,
+            user,
+            idBrand
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun mutationCardUnblocking(
+        observations: String,
+        clientId: Int,
+        userApp: String,
+        cardToken: String,
+        source: String,
+        idLoan: Int,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<CardUnblocking?>> = fetchData(
+        apolloCall = graphqlApi.mutationCardUnblocking(
+            observations,
+            clientId,
+            userApp,
+            cardToken,
+            source,
+            idLoan,
+            user,
+            idBrand
         ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())

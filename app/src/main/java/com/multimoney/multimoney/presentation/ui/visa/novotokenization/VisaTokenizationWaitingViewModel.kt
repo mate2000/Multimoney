@@ -13,7 +13,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.MutationUserPhoneMobileSaveUseCase
-import com.multimoney.domain.model.balance.CardInformation
+import com.multimoney.domain.model.balance.BalanceCardInformation
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
@@ -24,8 +24,10 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALANCE_LABEL
-import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_INFORMATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_INFORMATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -72,9 +74,11 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
     var identification: String = ""
     var phone = ""
     var email: String = ""
-    var cardInformation: CardInformation? = null
+    var balanceCardInformation: BalanceCardInformation? = null
     var androidId: String = ""
     var availableBalanceLabel: String? = null
+    private var idClient: Int = 0
+    private var idLoanClient: Int = 0
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -82,8 +86,10 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         pkUser = savedStateHandle.get<Long>(PK_USER) ?: 0
         email = savedStateHandle.get<String>(EMAIL) ?: ""
         phone = savedStateHandle.get<String>(PHONE_NUMBER) ?: ""
-        cardInformation = savedStateHandle.get<CardInformation>(CARD_INFORMATION)
+        balanceCardInformation = savedStateHandle.get<BalanceCardInformation>(BALANCE_CARD_INFORMATION)
         availableBalanceLabel = savedStateHandle[AVAILABLE_BALANCE_LABEL]
+        idClient = savedStateHandle[ID_CLIENT] ?: 0
+        idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: 0
     }
 
     private fun startTokenizationProcess() {
@@ -109,13 +115,13 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
     }
 
     private fun callNovoEnrollPan(walletId: String) {
-        val expirationDate = cardInformation?.expDate?.chunked(EXPIRATION_DATE_CHUCKS_LIMIT)
+        val expirationDate = balanceCardInformation?.cardInformation?.expDate?.chunked(EXPIRATION_DATE_CHUCKS_LIMIT)
         novoHelper.novoEnrollPan(
             identification = identification,
             email = email,
-            accountNumber = cardInformation?.cardNumber ?: "",
-            cardName = cardInformation?.holderName ?: "",
-            cardCvv = cardInformation?.cValidation ?: "",
+            accountNumber = balanceCardInformation?.cardInformation?.cardNumber ?: "",
+            cardName = balanceCardInformation?.cardInformation?.holderName ?: "",
+            cardCvv = balanceCardInformation?.cardInformation?.cValidation ?: "",
             cardExpirationMonth = expirationDate?.first() ?: "",
             cardExpirationYear = getExpirationYear(expirationDate?.last() ?: ""),
             onErrorEnrollPan = {
@@ -301,9 +307,9 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         popAndNavigateTo(
             "${Screen.VisaCardScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
             encodeData(
-                cardInformation
+                balanceCardInformation
             )
-            }/$availableBalanceLabel",
+            }/$availableBalanceLabel/$idClient/$idLoanClient",
             Screen.VisaTokenizationWaitingScreen.route
         )
 

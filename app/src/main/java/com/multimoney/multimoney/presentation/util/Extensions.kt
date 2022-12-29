@@ -211,6 +211,18 @@ fun Double.roundToTwoDecimalPlaces() = String.format("%.2f", this)
 
 fun Double.roundToTwoDecimalPlacesWithoutNegatives() = String.format("%.2f", this).replace("-", "")
 
+fun String.getCardNumberOne() = this.substring(0, 4)
+fun String.getCardNumberTwo() = this.substring(4, 8)
+fun String.getCardNumberThree() = this.substring(8, 12)
+fun String.getCardNumberFour() = this.substring(12, 16)
+fun String.formatExpirationDate() = if (this.length == 3) {
+    this.plus("0").plus(this.first()).plus("/").plus(this.takeLast(2))
+} else if (this.length == 4) {
+    this.take(2).plus("/").plus(this.takeLast(2))
+} else {
+    this
+}
+
 /**
  * split a string by whitespace character ' '
  */

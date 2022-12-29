@@ -35,7 +35,6 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnPhoneNumberValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnPhoneVerifiedChanged
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnPreviousStep
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnClickDropdown
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSecondLastNameValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSecondNameValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSetNavigation
@@ -220,19 +219,12 @@ class SignUpViewModel @Inject constructor(
         this.previousStep = previousStep
     }
 
-    private fun onBlurScreen(isBlurScreen: Boolean) {
-        uiState = uiState.copy(
-            isBlurScreen = isBlurScreen
-        )
-    }
-
     data class UIState(
         // Interactions
         val currentStep: Int = SignUpStep.One.id,
         val isCloseVisible: Boolean = false,
         val isContinueEnabled: Boolean = false,
         val isLoading: Boolean = false,
-        val isBlurScreen: Boolean = false,
         val openDialog: DialogParameters = DialogParameters()
     )
 
@@ -289,7 +281,6 @@ class SignUpViewModel @Inject constructor(
             is OnOpenSplashComeBack -> navigateToSplashComeBack(event.step)
             is OnPhoneVerifiedChanged -> isPhoneVerified = event.isPhoneVerified
             is OnOnFidoVerifiedChanged -> isOnFidoVerified = event.isOnFidoVerified
-            is OnClickDropdown -> onBlurScreen(event.isBlurScreen)
         }
     }
 
@@ -340,7 +331,6 @@ class SignUpViewModel @Inject constructor(
         data class OnOpenSplashComeBack(val step: Int) : UIEvent()
         data class OnPhoneVerifiedChanged(val isPhoneVerified: Boolean) : UIEvent()
         data class OnOnFidoVerifiedChanged(val isOnFidoVerified: Boolean) : UIEvent()
-        data class OnClickDropdown(val isBlurScreen: Boolean) : UIEvent()
 
         object OnNextStep : UIEvent()
         object OnPreviousStep : UIEvent()

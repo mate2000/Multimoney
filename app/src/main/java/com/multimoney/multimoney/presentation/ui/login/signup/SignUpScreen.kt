@@ -70,12 +70,6 @@ fun SignUpScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .alpha(
-                if (viewModel.uiState.isBlurScreen)
-                    0.10f
-                else
-                    1f
-            )
             .background(MultimoneyTheme.colors.background)
     ) {
         Column {

@@ -101,11 +101,7 @@
 
     <!-- Sign Up Email -->
     <string name="sign_up_email_header" translatable="false">Ingresá tu correo electrónico</string>
-<<<<<<< HEAD
     <string name="sign_up_email_title" translatable="false">¡Nos emociona \nque estés acá!</string>
-=======
-    <string name="sign_up_email_title" translatable="false">¡Nos emociona\nque estés acá!</string>
->>>>>>> 2bc419234063aa5059447f5ebb5669cfac9ad128
     <string name="sign_up_email_required" translatable="false">Correo electrónico requerido</string>
     <string name="sign_up_email_placeholder" translatable="false">nombre@email.com</string>
     <string name="sign_up_email_not_valid" translatable="false">Correo electrónico inválido</string>
@@ -116,11 +112,7 @@
     <string name="sign_up_email_blocked_dialog_description" translatable="false">Tu usuario ha sido bloqueado porque no hemos podido verificar tu número de teléfono. \nContactá a servicio al cliente</string>
 
     <!-- Sign Up Phone -->
-<<<<<<< HEAD
     <string name="sign_up_phone_title" translatable="false">¿Cuál es tu número de \nteléfono celular?</string>
-=======
-    <string name="sign_up_phone_title" translatable="false">¿Cuál es tu número de teléfono celular?</string>
->>>>>>> 2bc419234063aa5059447f5ebb5669cfac9ad128
     <string name="sign_up_phone_information" translatable="false">Lo registramos por motivos de seguridad</string>
     <string name="sign_up_phone_label_phone" translatable="false">Teléfono</string>
     <string name="sign_up_phone_required" translatable="false">Número de celular requerido</string>

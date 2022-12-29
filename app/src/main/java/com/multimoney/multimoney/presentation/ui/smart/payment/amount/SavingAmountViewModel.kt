@@ -410,12 +410,13 @@ class SavingAmountViewModel @Inject constructor(
         uiState.currency + uiState.currentAmountValueString.value?.stringToDoubleFormat(
             CURRENCY_SEPARATOR.toString()
         )
+
     
     fun getConvertedAmountFormatted() = "${ibanCurrency?.id?.getCurrencyFromId()?.symbol}${
         uiState.exchangeConvertedAmount.formattedTwoDecimalsNumber().toString()
             .stringToDoubleFormat(CURRENCY_SEPARATOR.toString())
     }"
-
+    
     private fun onNavigateToHome() {
         navigateBack(
             popTo = Screen.HomeScreen.route, isRestart = true

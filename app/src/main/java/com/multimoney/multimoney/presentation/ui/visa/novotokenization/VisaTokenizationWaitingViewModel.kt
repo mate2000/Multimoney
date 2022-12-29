@@ -11,8 +11,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
-import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.MutationUserPhoneMobileSaveUseCase
 import com.multimoney.domain.model.balance.CardInformation
@@ -31,12 +29,14 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnGetAndroidId
-import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnGoToNextScreen
-import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnNavigateToNextScreen
-import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnStartNovoTokenization
+import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.BaseEvent.OnOpenTapAndPayConfig
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnAlertButtonClick
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnAlertCloseClick
+import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnGetAndroidId
+import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnGoToNextScreen
+import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnNavigateToHomeVisa
+import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnShowSuccessTokenizationScreen
+import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnStartNovoTokenization
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.YEAR_FORMAT
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -47,14 +47,12 @@ import com.novopayment.sdk.vts.NovoVTS
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
 class VisaTokenizationWaitingViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val dataStorePreferences: DataStorePreferences,
     private val mmCountDownTimer: MMCountDownTimer,
     private val novoHelper: NovoHelper,
     private val mutationUserPhoneMobileSaveUseCase: MutationUserPhoneMobileSaveUseCase
@@ -192,13 +190,11 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
                 email
             ).collectLatest { result ->
                 result.onSuccess {
-                    uiState = uiState.copy(
-                        openDialog = DialogParameters(
-                            titleResource = R.string.success,
-                            descriptionResource = R.string.visa_card_success_message_label,
-                            isActive = mutableStateOf(true)
-                        )
-                    )
+                    if (NovoVTS.isDefaultPaymentService().not()) {
+                        emitBaseEvent(OnOpenTapAndPayConfig)
+                    } else {
+                        uiState = uiState.copy(showSuccessTokenizationScreen = true)
+                    }
                 }.onFailure {
                     uiState = uiState.copy(
                         openDialog = DialogParameters(
@@ -301,26 +297,12 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         }
     }
 
-    private fun navigateToNextScreen(screen: String) {
-        viewModelScope.launch {
-            dataStorePreferences.isOnBoardingEnabled(false)
-            popAndNavigateTo(
-                route = if (screen == Screen.SignUpScreen.baseRoute) {
-                    "$screen/".plus(0)
-                } else {
-                    screen
-                },
-                popTo = Screen.OnBoardingScreen.route
-            )
-        }
-    }
-
     private fun onNavigateToHomeMultimoneyVisa() =
         popAndNavigateTo(
             "${Screen.VisaCardScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
-                encodeData(
-                    cardInformation
-                )
+            encodeData(
+                cardInformation
+            )
             }/$availableBalanceLabel",
             Screen.VisaTokenizationWaitingScreen.route
         )
@@ -346,6 +328,13 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         )
     }
 
+    fun getDescriptionTokenizationSuccess() =
+        if (idBrand == Brand.Guatemala.id) {
+            R.string.visa_tokenization_success_description_gt
+        } else {
+            R.string.visa_tokenization_success_description
+        }
+
     data class UIState(
         // Fields
         val icon: Int = R.drawable.ic_novo_waiting_smartphone,
@@ -356,27 +345,34 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         val alertResultIconResource: Int = 0,
         val alertResultTitleResource: Int = R.string.empty,
         val alertResultDescriptionResource: Int = R.string.empty,
-        val alertResultButtonResource: Int = R.string.empty
+        val alertResultButtonResource: Int = R.string.empty,
+        val showSuccessTokenizationScreen: Boolean = false
     )
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is OnNavigateToNextScreen -> navigateToNextScreen(event.screen)
             is OnGoToNextScreen -> goToNextScreen(event.context, event.color)
             is OnStartNovoTokenization -> startTokenizationProcess()
             is OnGetAndroidId -> androidId = event.androidId
             is OnAlertButtonClick -> onAlertButtonClick()
             is OnAlertCloseClick -> onNavigateToHomeMultimoneyVisa()
+            is OnShowSuccessTokenizationScreen -> uiState = uiState.copy(showSuccessTokenizationScreen = true)
+            is OnNavigateToHomeVisa -> onNavigateToHomeMultimoneyVisa()
         }
     }
 
     sealed class UIEvent {
-        data class OnNavigateToNextScreen(val screen: String) : UIEvent()
         data class OnGoToNextScreen(val context: Context, val color: Color) : UIEvent()
         object OnStartNovoTokenization : UIEvent()
         object OnAlertButtonClick : UIEvent()
         object OnAlertCloseClick : UIEvent()
         data class OnGetAndroidId(val androidId: String) : UIEvent()
+        object OnShowSuccessTokenizationScreen : UIEvent()
+        object OnNavigateToHomeVisa : UIEvent()
+    }
+
+    sealed class BaseEvent {
+        object OnOpenTapAndPayConfig : BaseEvent()
     }
 
     companion object {

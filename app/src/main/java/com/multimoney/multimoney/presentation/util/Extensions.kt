@@ -1,9 +1,11 @@
 package com.multimoney.multimoney.presentation.util
 
 import android.content.ActivityNotFoundException
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.nfc.cardemulation.CardEmulation
 import android.os.Build
 import android.provider.Settings.Secure
 import androidx.compose.ui.graphics.Color
@@ -22,6 +24,7 @@ import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.Cas
 import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.TransferBank
 import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.VisaDirect
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeType
+import com.novopayment.sdk.vts.module.payment.apdu.PaymentService
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import java.util.Locale
@@ -212,6 +215,16 @@ fun Double.roundToTwoDecimalPlacesWithoutNegatives() = String.format("%.2f", thi
  * split a string by whitespace character ' '
  */
 fun String.splitByWhiteSpace() = split(WHITE_SPACE_SEPARATOR)
+
+fun Context.getTapAndPayIntent(): Intent {
+    val intent = Intent(CardEmulation.ACTION_CHANGE_DEFAULT)
+    intent.putExtra(CardEmulation.EXTRA_CATEGORY, CardEmulation.CATEGORY_PAYMENT)
+    intent.putExtra(
+        CardEmulation.EXTRA_SERVICE_COMPONENT,
+        ComponentName(this, PaymentService::class.java)
+    )
+    return intent
+}
 
 fun String.addTextStyleToTextPortion(textToStyle: String, style: TextStyle): AnnotatedString {
     val fullText = this

@@ -716,7 +716,7 @@ type Mutation {
   """
   Security
   """
-  requestchangeDevice(requestChangeDeviceInputType: ChangeDeviceDtoInput!): ResponseApi!
+  requestchangeDevice(requestChangeDeviceInputType: ChangeDeviceDtoInput!): UserValidation!
 
   """
   Security
@@ -1709,6 +1709,8 @@ type CreditOffer {
   products: [PRODUCTO!]
 
   rejectedBlaze: Boolean!
+
+  isCrosseling: Boolean
 }
 
 input CreditOfferDtoInput {
@@ -2813,6 +2815,10 @@ type UserValidation {
   idIdentification: Int
 
   strIdIdentification: String
+
+  idClient: Long
+
+  isNewUser: Boolean
 
   status: Int
 
@@ -5800,6 +5806,8 @@ type CreditInfo {
   infoPreApprove: CreditPreApproveInfo
 
   wording: Wording
+
+  createDate: DateTime
 }
 
 type AppUser {
@@ -6670,6 +6678,8 @@ type Wording {
   textTwo: String!
 
   cTA: String!
+
+  display: Boolean
 }
 
 type VirtualcardConfigurationType {

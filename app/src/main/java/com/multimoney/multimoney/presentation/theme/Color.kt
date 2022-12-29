@@ -93,6 +93,7 @@ val ComplementaryGray2 = Color(0x99FFFFFF)
 val ComplementaryGray5 = Color(0x0DFFFFFF)
 val ComplementaryBlack = Color(0xFF212121)
 val ComplementaryBlack2 = Color(0xFF161616)
+val ComplementaryBlack3 = Color(0xFF1B1B1B)
 
 // WhiteTransparency
 val WhiteTransparency5 = Color(0xFFFFFFFF).copy(alpha = 0.05f)
@@ -144,6 +145,8 @@ data class MultimoneyColors(
     val onBoardingTitleText: Color,
     val onBoardingSubText: Color,
     val loginTitleText: Color,
+    val subTitleText: Color,
+    val titleText: Color,
     val textLink: Color,
     val textInformation: Color,
     val textSubhead: Color,
@@ -195,6 +198,8 @@ val DarkColorPalette = MultimoneyColors(
     onBoardingTitleText = WhiteTransparency90,
     onBoardingSubText = WhiteTransparency90,
     loginTitleText = WhiteTransparency90,
+    titleText = WhiteTransparency90,
+    subTitleText = WhiteTransparency70,
     textLink = Primary400,
     textInformation = SemanticInformative400,
     textSubhead = GrayScale600,
@@ -245,6 +250,8 @@ val LightColorPalette = MultimoneyColors(
     onBoardingTitleText = WhiteTransparency90,
     onBoardingSubText = WhiteTransparency90,
     loginTitleText = WhiteTransparency90,
+    titleText = WhiteTransparency90,
+    subTitleText = WhiteTransparency70,
     textLink = Primary400,
     textInformation = SemanticInformative400,
     textSubhead = GrayScale600,

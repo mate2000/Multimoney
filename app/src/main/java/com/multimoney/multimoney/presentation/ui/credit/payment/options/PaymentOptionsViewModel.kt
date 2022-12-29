@@ -14,11 +14,13 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.MINIMUM_PAYMENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.MINIMUM_PAYMENT_LABEL
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_METHOD
 import com.multimoney.multimoney.presentation.navigation.navgraph.TRANSFER_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
@@ -50,6 +52,8 @@ class PaymentOptionsViewModel @Inject constructor(savedStateHandle: SavedStateHa
     private var maximumPaymentLabel: String = ""
     private var idClient: Int? = null
     private var idLoanClient: Int? = null
+    private var idCurrency: Int? = null
+    private var paymentDate: String? = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -63,6 +67,8 @@ class PaymentOptionsViewModel @Inject constructor(savedStateHandle: SavedStateHa
         maximumPaymentLabel = savedStateHandle[MAXIMUM_PAYMENT_LABEL] ?: ""
         idClient = savedStateHandle[ID_CLIENT]
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT]
+        idCurrency = savedStateHandle[ID_CURRENCY]
+        paymentDate = savedStateHandle[PAYMENT_DATE] ?: ""
         uiState = uiState.copy(paymentMethodList = savedStateHandle.get<Array<PaymentMethod>>(PAYMENT_METHOD)?.toList())
     }
 
@@ -81,7 +87,7 @@ class PaymentOptionsViewModel @Inject constructor(savedStateHandle: SavedStateHa
             PaymentMethodType.TransferBank.value ->
                 "${Screen.PaymentOptionsTransferScreen.baseRoute}/$idBrand/$creditNumber/${encodeData(transferAccount)}"
             PaymentMethodType.VisaDirect.value -> {
-                "${Screen.PaymentCardsListScreen.baseRoute}/$idBrand/$identification/$user/$creditNumber/$idClient/$idLoanClient/$minimumPayment/$minimumPaymentLabel/$maximumPayment/$maximumPaymentLabel"
+                "${Screen.PaymentCardsListScreen.baseRoute}/$idBrand/$identification/$user/$creditNumber/$idClient/$idLoanClient/$minimumPayment/$minimumPaymentLabel/$maximumPayment/$maximumPaymentLabel/$idCurrency/$paymentDate"
             }
             else -> {
                 "${Screen.PaymentPointsScreen.baseRoute}/$idBrand/$creditNumber/$minimumPaymentLabel"

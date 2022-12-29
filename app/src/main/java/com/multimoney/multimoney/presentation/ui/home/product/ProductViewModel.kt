@@ -113,6 +113,7 @@ class ProductViewModel @Inject constructor(
     var isExpiredTitle = R.string.home_product_expiration
     var smartMovementsList: List<SmartMovementsResult> = emptyList()
     var creditMovements: List<CreditMovementsResult> = emptyList()
+    var smartAccount : SmartAccountID? = null
 
     private fun onSetUserData(
         idBrand: String,
@@ -222,14 +223,16 @@ class ProductViewModel @Inject constructor(
             navigateTo("${Screen.SmartPaymentMethodScreenSV.baseRoute}/$smartIds")
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             val infoCredit = uiState.userStatus?.infoCredit
-            val smartIds = encodeData(balanceCredit?.balanceAccountSmart?.map {
-                SmartAccountID(
-                    tokenAccount = it?.tokenNumber,
-                    currencyID = it?.idCurrencyAccount,
-                    accountNumber = it?.accountNumber ?: ""
-                )
-            })
-            navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/${smartIds}/$email/${uiState.idBrand}/$identification/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
+            val smartIds = encodeData(
+                balanceCredit?.balanceAccountSmart?.map {
+                    SmartAccountID(
+                        tokenAccount = it?.tokenNumber,
+                        currencyID = it?.idCurrencyAccount,
+                        accountNumber = it?.accountNumber ?: ""
+                    )
+                }
+            )
+            navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/$smartIds/$email/${uiState.idBrand}/$identification/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
         }
     }
 
@@ -255,8 +258,11 @@ class ProductViewModel @Inject constructor(
         } else {
             "${Screen.PaymentOptionsScreen.baseRoute}/${uiState.idBrand}/${balanceCredit?.getFirstCredit()?.creditNumber}/${
             encodeData(configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true })
-            }/${encodeData(configurationVersion?.configuration?.credit?.transferAccount)}" +
-                "/${balanceCredit?.getFirstSummary()?.minPayment}/${balanceCredit?.getFirstSummary()?.minPaymentLabel}/${balanceCredit?.getFirstSummary()?.currentBalance}/${balanceCredit?.getFirstSummary()?.currentBalanceLabel}/$identification/$email/$idClient/${infoCredit?.idLoanClient}"
+            }/${encodeData(configurationVersion?.configuration?.credit?.transferAccount)}/" +
+                "${balanceCredit?.getFirstSummary()?.minPayment}/${balanceCredit?.getFirstSummary()?.minPaymentLabel}/" +
+                "${balanceCredit?.getFirstSummary()?.currentBalance}/${balanceCredit?.getFirstSummary()?.currentBalanceLabel}/" +
+                "$identification/$email/$idClient/${infoCredit?.idLoanClient}/${balanceCredit?.getFirstSummary()?.idCurrency}/" +
+                "${balanceCredit?.getFirstSummary()?.paymentDate}"
         }
         navigateTo(route)
     }
@@ -323,7 +329,7 @@ class ProductViewModel @Inject constructor(
             encodeData(
                 balanceCredit?.balanceCardInformation?.cardInformation
             )
-            }"
+            }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}"
         )
 
     private fun onNavigateToHomeMultimoneyVisa() =
@@ -589,39 +595,40 @@ class ProductViewModel @Inject constructor(
         )
     }
 
-    private fun callQueryBalanceUseCase(account: Account?, onLoadingValueChange: (isLoading: Boolean) -> Unit) = executeUseCase {
-        queryListSinpeAccountUseCaseImpl.invoke(
-            user = email,
-            identification = identification ?: "",
-            idBrand = uiState.idBrand.toInt(),
-            country = "",
-            idAccount = 0,
-            accountNumber = ""
-        ).collectLatest { result ->
-            result.onSuccess { accountList ->
-                onLoadingValueChange(false)
-                if (accountList?.data?.isEmpty() == true) {
-                    navigateToAddIbanAccount()
-                } else {
-                    accountList?.data?.let {
-                        navigateToSmartAccount(account = account, clientBankAccounts = it)
+    private fun callQueryBalanceUseCase(account: Account?, onLoadingValueChange: (isLoading: Boolean) -> Unit) =
+        executeUseCase {
+            queryListSinpeAccountUseCaseImpl.invoke(
+                user = email,
+                identification = identification ?: "",
+                idBrand = uiState.idBrand.toInt(),
+                country = "",
+                idAccount = 0,
+                accountNumber = ""
+            ).collectLatest { result ->
+                result.onSuccess { accountList ->
+                    onLoadingValueChange(false)
+                    if (accountList?.data?.isEmpty() == true) {
+                        navigateToAddIbanAccount()
+                    } else {
+                        accountList?.data?.let {
+                            navigateToSmartAccount(account = account, clientBankAccounts = it)
+                        }
                     }
                 }
-            }
-            result.onFailure {
-                onLoadingValueChange(false)
-                uiState = uiState.copy(
-                    openDialog = DialogParameters(
-                        description = it.getError().toString(),
-                        isActive = mutableStateOf(true)
+                result.onFailure {
+                    onLoadingValueChange(false)
+                    uiState = uiState.copy(
+                        openDialog = DialogParameters(
+                            description = it.getError().toString(),
+                            isActive = mutableStateOf(true)
+                        )
                     )
-                )
-            }
-            result.onLoading {
-                onLoadingValueChange(true)
+                }
+                result.onLoading {
+                    onLoadingValueChange(true)
+                }
             }
         }
-    }
 
     // This function opens the flow from the smart card
     private fun onSmartAccountCardClick(
@@ -652,7 +659,7 @@ class ProductViewModel @Inject constructor(
         )
         navigateTo(
             route = "${Screen.SmartPaymentAccountScreenCR.baseRoute}/$email/${uiState.idBrand}/$identification/${Screen.HomeScreen.route}/$idClient/" +
-                    "${infoCredit?.idLoanClient}/${encodeData(clientBankAccounts)}/${encodeData(smartIds)}"
+                "${infoCredit?.idLoanClient}/${encodeData(clientBankAccounts)}/${encodeData(smartIds)}"
         )
     }
 
@@ -663,8 +670,17 @@ class ProductViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateToSendMoneyScreen() {
-        // todo add navigation to send money screen
+    private fun onNavigateToSendMoneyScreen(account: Account?) {
+        smartAccount = SmartAccountID(
+            account?.tokenNumber,
+            account?.idCurrencyAccount,
+            account?.accountNumber
+        )
+        if (uiState.idBrand == Brand.CostaRica.id.toString()) {
+            navigateTo(
+                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${pkUser}/${uiState.idBrand}/${identification}/${encodeData(smartAccount)}"
+            )
+        }
     }
 
     private fun onCreateMultimoneyVisa(onLoadingValueChange: (isLoading: Boolean) -> Unit) {
@@ -811,7 +827,7 @@ class ProductViewModel @Inject constructor(
                 onIntent = uiEvent.onIntent
             )
             is OnNavigateToPaymentProcess -> onNavigateToPaymentScreen()
-            is OnNavigateToSendMoneyFlow -> onNavigateToSendMoneyScreen()
+            is OnNavigateToSendMoneyFlow -> onNavigateToSendMoneyScreen(uiEvent.account)
             is OnNavigateToHomeMultimoneyVisa -> onNavigateToHomeMultimoneyVisa()
             is OnNavigateToPaymentSmartFlow -> onSmartAccountCardClick(uiEvent.account, uiEvent.onLoadingValueChange)
             is OnNavigateToProfileScreen -> onNavigateToProfileScreen()
@@ -888,11 +904,12 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToProfileScreen : UIEvent()
         object OnNavigateToHomeMultimoneyVisa : UIEvent()
         object OnNavigateToDisbursement : UIEvent()
-        object OnNavigateToSendMoneyFlow : UIEvent()
         data class OnNavigateToPaymentSmartFlow(
             val account: Account?,
             val onLoadingValueChange: (isLoading: Boolean) -> Unit
         ) : UIEvent()
+
+        data class OnNavigateToSendMoneyFlow(val account: Account?) : UIEvent()
         data class OnNavigateToSmartMovements(val accountToken: String) : UIEvent()
         object OnNavigateToCreditMovementsScreen : UIEvent()
         object OnNavigateToGtSvNonPreApproved : UIEvent()

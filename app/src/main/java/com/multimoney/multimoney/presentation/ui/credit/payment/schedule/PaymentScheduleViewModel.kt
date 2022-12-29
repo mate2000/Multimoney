@@ -90,7 +90,8 @@ class PaymentScheduleViewModel @Inject constructor(
             user = user,
             idBrand = idBrand,
             idClient = idClient,
-            idLoan = idLoanClient
+            idLoan = idLoanClient,
+            process = ""
         ).collectLatest { result ->
             getBankAccountAttempts++
             result.onSuccess { clientBankAccountList ->

@@ -172,7 +172,7 @@ fun SignUpEmailScreen(
                 withStyle(
                     style = Typography.h4.toSpanStyle()
                         .copy(
-                            color = MultimoneyTheme.colors.text,
+                            color = MultimoneyTheme.colors.titleText,
                             fontWeight = FontWeight.SemiBold
                         )
                 ) {

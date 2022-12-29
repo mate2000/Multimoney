@@ -14,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -81,6 +82,22 @@ fun SendingTypeOptions(
                 fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.text
             )
         )
+        uiState.idBrand.apply {
+            CustomInfoButton(
+                title = stringResource(
+                    when (this) {
+                        Brand.ElSalvador.id -> R.string.payment_select_sending_type_favorites_sv
+                        Brand.CostaRica.id -> R.string.payment_select_sending_type_favorites_cr
+                        else -> R.string.payment_select_sending_type_favorites_cr
+                    }
+                ),
+                modifier = sendingTypeOptionModifier,
+                endIcon = R.drawable.ic_right_chevron,
+                startIcon = R.drawable.ic_sending_favorites,
+                onEndIconClick = onMyContactsClick,
+                onClick = onMyContactsClick
+            )
+        }
         CustomInfoButton(
             title = stringResource(R.string.payment_select_sending_type_my_contacts),
             modifier = sendingTypeOptionModifier,

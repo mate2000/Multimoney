@@ -924,7 +924,9 @@
     <string name="smart_payment_amount_bottom_sheet_my_smart_account" translatable="false">Mi cuenta Smart | %s</string>
     <string name="smart_payment_amount_bottom_sheet_title" translatable="false">Monto a ahorrar</string>
     <string name="smart_payment_amount_bottom_sheet_from_card" translatable="false">Desde la tarjeta</string>
+    <string name="smart_payment_amount_bottom_sheet_from_card_CR" translatable="false">Desde la cuenta</string>
     <string name="smart_payment_amount_bottom_sheet_to" translatable="false">Hacia</string>
+    <string name="smart_payment_exchange_equivalent" translatable="false">Equivalente a %s</string>
 
     <!-- Payment Amount Error -->
     <string name="payment_amount_error_button" translatable="false">Ir al inicio</string>
@@ -1100,6 +1102,13 @@
     <string name="payment_method_title" translatable="false">Selecciona el método de ahorro</string>
     <string name="payment_method_transfer" translatable="false">Transferencia bancaria</string>
     <string name="payment_method_visa" translatable="false">Tarjeta Visa</string>
+
+    <!-- Payment sending type -->
+    <string name="payment_select_sending_type_title" translatable="false">Enviar dinero a</string>
+    <string name="payment_select_sending_type_my_contacts" translatable="false">Mis contactos</string>
+    <string name="payment_select_sending_type_iban_accounts" translatable="false">Cuentas IBAN</string>
+    <string name="payment_select_sending_type_smart_account_dollars" translatable="false">Mi cuenta Smart Dólares</string>
+    <string name="payment_select_sending_type_smart_account_colones" translatable="false">Mi cuenta Smart Colones</string>
 
     <!-- Payment Account -->
     <string name="payment_account_title" translatable="false">Seleccioná la cuenta con la que querés ahorrar</string>

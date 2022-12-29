@@ -115,7 +115,7 @@ fun SmartPaymentSuccessScreen(
                     ) {
                         Text(
                             text = stringResource(R.string.smart_payment_success),
-                            modifier = Modifier.padding(top = 16.dp),
+                            modifier = Modifier.padding(top = 32.dp),
                             style = Typography.subtitle1.copy(fontWeight = FontWeight.SemiBold),
                             color = MultimoneyTheme.colors.text
                         )
@@ -206,7 +206,7 @@ fun SmartPaymentSuccessScreen(
                         VoucherCurrencyExchangeInfo(
                             leftTitleResource = R.string.payment_amount_bottom_sheet_exchange_type,
                             rightTitleResource = R.string.payment_amount_bottom_sheet_amount_to_debit,
-                            exchangeRateText = viewModel.getExchangeRateFormatted(),
+                            exchangeRateText = viewModel.uiState.exchangeRateLabel,
                             convertedAmountText = viewModel.getConvertedAmountFormatted()
                         )
                     }
@@ -222,7 +222,7 @@ fun SmartPaymentSuccessScreen(
                         title = viewModel.uiState.currentDate,
                         rightSubtitle = viewModel.uiState.currentTime
                     )
-
+                    Spacer(modifier = Modifier.height(32.dp))
                 }
             }
         }

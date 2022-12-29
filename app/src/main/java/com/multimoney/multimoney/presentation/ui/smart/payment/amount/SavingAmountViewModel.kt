@@ -67,8 +67,6 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-import java.util.*
-import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class, FlowPreview::class)
@@ -408,11 +406,7 @@ class SavingAmountViewModel @Inject constructor(
         uiState.currency + uiState.currentAmountValueString.value?.stringToDoubleFormat(
             CURRENCY_SEPARATOR.toString()
         )
-
-    fun getExchangeRateFormatted() =
-        "${idCurrency.getCurrencyFromId().symbol ?: ""}${uiState.exchangeRate.toString().stringToDoubleFormat(CURRENCY_SEPARATOR.toString())
-        }"
-
+    
     fun getConvertedAmountFormatted() = "${ibanCurrency?.id?.getCurrencyFromId()?.symbol}${
         uiState.exchangeConvertedAmount.formattedTwoDecimalsNumber().toString()
             .stringToDoubleFormat(CURRENCY_SEPARATOR.toString())

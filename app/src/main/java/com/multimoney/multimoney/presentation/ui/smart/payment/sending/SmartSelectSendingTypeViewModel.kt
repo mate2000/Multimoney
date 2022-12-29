@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.payment.sending
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -48,6 +49,9 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
             is UIEvent.OnMyContactsSelected -> onNavigateToMyContacts()
             is UIEvent.OnSmartAccountSelected -> onNavigateToSmartAccount()
             is UIEvent.OnIBANAccountSelected -> onNavigateToIBANAccount()
+            is UIEvent.OnMyFavoritesSelected -> onNavigateToMyFavorites()
+            is UIEvent.OnOtherBankAccountsSelected -> onNavigateToOtherBankAccounts()
+            is UIEvent.OnTransfer365MobileSelected -> onNavigateToTransfer365Mobile()
         }
     }
 
@@ -93,6 +97,18 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         // TODO navigate to HU REV-1445
     }
 
+    private fun onNavigateToMyFavorites() {
+        // TODO navigate to [tba]
+    }
+
+    private fun onNavigateToOtherBankAccounts() {
+        // TODO navigate to HU REV-1458
+    }
+
+    private fun onNavigateToTransfer365Mobile() {
+        // TODO navigate to HU REV-1458
+    }
+
     private fun onNavigateBack() {
         navigateBack(
             popTo = Screen.HomeScreen.route,
@@ -110,5 +126,8 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         object OnMyContactsSelected : UIEvent()
         object OnSmartAccountSelected : UIEvent()
         object OnIBANAccountSelected : UIEvent()
+        object OnMyFavoritesSelected : UIEvent()
+        object OnOtherBankAccountsSelected : UIEvent()
+        object OnTransfer365MobileSelected : UIEvent()
     }
 }

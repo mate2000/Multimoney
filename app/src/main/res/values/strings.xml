@@ -1085,6 +1085,9 @@
     <string name="payment_select_sending_type_title" translatable="false">Enviar dinero a</string>
     <string name="payment_select_sending_type_favorites_cr" translatable="false">Mis favoritos</string>
     <string name="payment_select_sending_type_favorites_sv" translatable="false">A mis favoritos</string>
+    <string name="payment_select_sending_type_to_smart_accounts" translatable="false">A cuentas Smart</string>
+    <string name="payment_select_sending_type_other_bank_accounts" translatable="false">Cuentas de otros bancos</string>
+    <string name="payment_select_sending_type_transfer_365_mobile" translatable="false">Transfer 365 móvil</string>
     <string name="payment_select_sending_type_my_contacts" translatable="false">Mis contactos</string>
     <string name="payment_select_sending_type_iban_accounts" translatable="false">Cuentas IBAN</string>
     <string name="payment_select_sending_type_smart_account_dollars" translatable="false">Mi cuenta Smart Dólares</string>

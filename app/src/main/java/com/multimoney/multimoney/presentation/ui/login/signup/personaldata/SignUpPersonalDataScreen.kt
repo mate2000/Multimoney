@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.login.signup.personaldata
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,6 +32,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNationalityValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnClickDropdown
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnGetCountriesSuccess
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnCallQueryGetCountry
@@ -177,6 +179,9 @@ fun SignUpPersonalDataScreen(
                 .focusable(false)
                 .padding(top = 16.dp),
             items = viewModel.uiState.countryList,
+            onClick = {
+                sharedViewModel.onUIEvent(OnClickDropdown(true))
+            },
             onValueChange = { value ->
                 viewModel.onUIEvent(
                     OnNationalityChange(

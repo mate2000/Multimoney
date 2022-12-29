@@ -1111,6 +1111,10 @@
     <string name="crypto_currencies" translatable="false">Mis monedas</string>
     <string name="crypto_currencies_see_all" translatable="false">Ver todas</string>
 
+    <!--Crypto Movements-->
+    <string name="crypto_movements" translatable="false">Mis movimientos</string>
+    <string name="crypto_movements_see_all" translatable="false">Ver todos</string>
+
     <!-- Disbursement Voucher -->
     <string name="disbursement_voucher_title_chooser" translatable="false">Voucher</string>
     <string name="disbursement_voucher_schedule_payment" translatable="false">Programar pago automático</string>

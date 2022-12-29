@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
@@ -17,10 +15,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.crypto.CryptoCurrencyMovementItem
+import com.multimoney.multimoney.presentation.util.MAX_CRYPTO_ITEMS
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -28,33 +29,38 @@ fun CryptoMovementsSection(
     onShowAllClick: () -> Unit,
     cryptoMovements: Flow<PagingData<CryptoCurrencyMovement>>
 ) {
+    val movements = cryptoMovements.collectAsLazyPagingItems()
 
-    Column(modifier = Modifier
-        .verticalScroll(rememberScrollState())
-        .padding(horizontal = 16.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(horizontal = 4.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+    if (movements.itemCount != EMPTY_PAGING_DATA) {
+        Column(
+            modifier = Modifier.padding(horizontal = 16.dp)
         ) {
-            Text(
-                textAlign = TextAlign.Start,
-                text = stringResource(id = R.string.crypto_currencies),
-                style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.labelText
-            )
-            TextButton(onClick = onShowAllClick) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
-                    textAlign = TextAlign.End,
-                    text = stringResource(id = R.string.crypto_currencies_see_all),
-                    style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                    color = MultimoneyTheme.colors.textLink
+                    textAlign = TextAlign.Start,
+                    text = stringResource(id = R.string.crypto_movements),
+                    style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                    color = MultimoneyTheme.colors.labelText
                 )
+                TextButton(onClick = onShowAllClick) {
+                    Text(
+                        textAlign = TextAlign.End,
+                        text = stringResource(id = R.string.crypto_movements_see_all),
+                        style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
+                        color = MultimoneyTheme.colors.textLink
+                    )
+                }
+            }
+
+            repeat(MAX_CRYPTO_ITEMS) {
+                CryptoCurrencyMovementItem(cryptoCurrencyMovement = movements[it])
             }
         }
-
     }
 }
+
+const val EMPTY_PAGING_DATA = 0

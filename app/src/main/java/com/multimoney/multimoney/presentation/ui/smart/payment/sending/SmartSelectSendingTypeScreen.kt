@@ -67,6 +67,12 @@ fun SendingTypeOptions(
     smartAccountTitle: Int?,
     smartAccountStartIcon: Int?
 ) {
+
+    // Creating a common modifier for sending options
+    val sendingTypeOptionModifier = Modifier
+        .fillMaxWidth()
+        .padding(top = 12.dp)
+
     Column(Modifier.padding(horizontal = 16.dp)) {
         Text(
             modifier = Modifier.padding(top = 32.dp),
@@ -77,9 +83,7 @@ fun SendingTypeOptions(
         )
         CustomInfoButton(
             title = stringResource(R.string.payment_select_sending_type_my_contacts),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 12.dp),
+            modifier = sendingTypeOptionModifier,
             endIcon = R.drawable.ic_right_chevron,
             startIcon = R.drawable.ic_sending_contact,
             onEndIconClick = onMyContactsClick,
@@ -88,9 +92,7 @@ fun SendingTypeOptions(
         smartAccountTitle?.let {
             CustomInfoButton(
                 title = stringResource(id = it),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 12.dp),
+                modifier = sendingTypeOptionModifier,
                 endIcon = R.drawable.ic_right_chevron,
                 startIcon = smartAccountStartIcon,
                 onEndIconClick = onMySmartAccountClick,
@@ -99,9 +101,7 @@ fun SendingTypeOptions(
         }
         CustomInfoButton(
             title = stringResource(R.string.payment_select_sending_type_iban_accounts),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 12.dp),
+            modifier = sendingTypeOptionModifier,
             endIcon = R.drawable.ic_right_chevron,
             startIcon = R.drawable.ic_sending_iban_account,
             onEndIconClick = onIBANAccountsClick,

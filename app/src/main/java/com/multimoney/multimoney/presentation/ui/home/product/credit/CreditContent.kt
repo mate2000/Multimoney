@@ -15,7 +15,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToGtSvNonPreApproved
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardCreditFirmedAndOnfidoPending
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardNonPreApprovedCredit
-import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardGTWithoutCredit
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardGtSvCreditRejected
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardWithCreditInProcess
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditPreApproved
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessCreateAccountFailure
@@ -175,14 +175,17 @@ fun CreditContent(viewModel: ProductViewModel) {
             CreditStatus.CREDIT_REJECTED.status -> {
                 when (viewModel.uiState.idBrand) {
                     Brand.Guatemala.id.toString(), Brand.ElSalvador.id.toString() -> {
-                        CustomProductBackground(
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp),
-                            type = Primary
-                        ) {
-                            CardGTWithoutCredit(action = {
-                                // todo define de flow to open
-                            })
+                        if (viewModel.uiState.userStatus?.infoCredit?.wording?.display == true) {
+                            CustomProductBackground(
+                                modifier = Modifier
+                                    .padding(horizontal = 16.dp),
+                                type = Primary
+                            ) {
+                                CardGtSvCreditRejected(
+                                    action = {},
+                                    wording = viewModel.uiState.userStatus?.infoCredit?.wording
+                                )
+                            }
                         }
                     }
                     else -> Unit

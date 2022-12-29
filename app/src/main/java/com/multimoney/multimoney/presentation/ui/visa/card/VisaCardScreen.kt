@@ -29,6 +29,7 @@ import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIE
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnBlockUnblockCardClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnInitializeBiometricPrompt
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigatePreferences
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnOpenDialogConfirmToStartTokenizationProcess
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnSeeDataClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnStart
@@ -84,18 +85,21 @@ fun VisaCardScreen(
             .background(MultimoneyTheme.colors.background)
             .fillMaxSize()
     ) {
-        TopNavBar(
-            rightButtonIcon = R.drawable.ic_gear,
-            onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
-            onRightButtonClick = {
-                // TODO: Execute action when implemented
-                Toast.makeText(
-                    context,
-                    "TBD3",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-        )
+        if (viewModel.deviceHasNFC()) {
+            TopNavBar(
+                rightButtonIcon = R.drawable.ic_gear,
+                onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
+                onRightButtonClick = {
+                    viewModel.onUIEvent(OnNavigatePreferences)
+                }
+            )
+        } else {
+            TopNavBar(
+                onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
+                isRightButtonVisible = false
+            )
+        }
+
         CustomCardVisaVertical(
             modifier = Modifier
                 .padding(start = 16.dp, end = 16.dp, top = 42.dp, bottom = 16.dp)

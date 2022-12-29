@@ -294,6 +294,7 @@
     <string name="home_product_gt_non_pre_approved_credit_description" translatable="false">Contesta estas preguntas para conocer si aplicas para un crédito.</string>
     <string name="home_product_gt_sv_non_pre_approved_credit_action" translatable="false">Contestar preguntas</string>
     <string name="home_product_gt_with_out_credit_title" translatable="false">Conoce nuestras opciones\nde crédito</string>
+    <string name="home_product_gt_sv_credit_rejected_title" translatable="false">Lamentablemente no podemos\ndarte un crédito en este momento</string>
     <string name="home_smart_product_process_accept_contract_description" translatable="false">Estamos terminando de validar tus datos. Pronto te informaremos del proceso.</string>
     <string name="home_product_gt_with_out_credit_description" translatable="false">Comunicate con nosotros para brindarte más información de tu solicitud de crédito.</string>
     <string name="home_product_gt_with_out_credit_action" translatable="false">Contactar a un asesor</string>
@@ -606,6 +607,12 @@
     <string name="non_pre_approved_additional_questions_income_label" translatable="false">Ingreso mensual</string>
     <string name="non_pre_approved_additional_questions_income_placeholder" translatable="false">%s 000</string>
     <string name="non_pre_approved_additional_questions_employment_situation_label" translatable="false">Situación laboral</string>
+    <string name="non_pre_approved_additional_questions_success_alert_result_title" translatable="false">¡Tienes %1s%2s pre aprobados!</string>
+    <string name="non_pre_approved_additional_questions_success_alert_result_description" translatable="false">Solicita tu dinero y recíbelo en menos de 10 minutos</string>
+    <string name="non_pre_approved_additional_questions_error_alert_result_title" translatable="false">Lo sentimos, no hay opciones de crédito</string>
+    <string name="non_pre_approved_additional_questions_error_alert_result_description" translatable="false">Comunícate con nosotros si tienes consultas</string>
+    <string name="non_pre_approved_additional_questions_processing_alert_result_label" translatable="false">Procesando datos...</string>
+    <string name="non_pre_approved_additional_questions_request_button_label" translatable="false">Solicitar</string>
 
 
     <!-- Generate Document -->
@@ -1188,4 +1195,19 @@
 
     <!-- Smart Transfer Iban -->
     <string name="smart_iban_transfer_title" translatable="false">Cuentas registradas</string>
+
+    <!-- Card Preferences -->
+    <string name="card_preferences_title" translatable="false">Preferencias de tarjeta</string>
+    <string name="card_preferences_linked_card_title" translatable="false">Tarjeta vinculada</string>
+    <string name="card_preferences_unlinked_card_title" translatable="false">Tarjeta desvinculada</string>
+    <string name="card_preferences_linked_card_description" translatable="false">Al desvincular tu tarjeta no podrás\nrealizar ninguna transacción con\nMultimoney Visa</string>
+    <string name="card_preferences_linked_card_dialog_title" translatable="false">Vincular tarjeta</string>
+    <string name="card_preferences_linked_card_dialog_description" translatable="false">¿Estás seguro que deseás vincular tu tarjeta a este dispositivo?</string>
+    <string name="card_preferences_linked_card_dialog_positive_button" translatable="false">Vincular</string>
+    <string name="card_preferences_linked_card_dialog_negative_button" translatable="false">Cancelar</string>
+    <string name="card_preferences_unlinked_card_dialog_title" translatable="false">Desvincular tarjeta</string>
+    <string name="card_preferences_unlinked_card_dialog_description" translatable="false">¿Estás seguro que deseás desvincular tu tarjeta?</string>
+    <string name="card_preferences_unlinked_card_dialog_positive_button" translatable="false">Desvincular</string>
+    <string name="card_preferences_unlinked_card_dialog_negative_button" translatable="false">Cancelar</string>
+
 </resources>

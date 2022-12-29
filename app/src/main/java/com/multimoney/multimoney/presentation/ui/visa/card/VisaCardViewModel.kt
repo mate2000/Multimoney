@@ -43,6 +43,7 @@ import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIE
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnHidePasswordBottomSheet
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnInitializeBiometricPrompt
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigatePreferences
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateToVisaTokenizationScreen
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnOpenDialogConfirmToStartTokenizationProcess
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnPasswordChange
@@ -182,6 +183,8 @@ class VisaCardViewModel @Inject constructor(
         }
     }
 
+    fun deviceHasNFC() = nfcHelper.isNfcSupported()
+
     private fun onAvailableAmountClick() {
         uiState = uiState.copy(
             dialogParameters = DialogParameters(
@@ -200,7 +203,7 @@ class VisaCardViewModel @Inject constructor(
 
     private fun callNovoGetFavoriteCard() {
         uiState = uiState.copy(
-            isNfcAvailable = nfcHelper.isNfcSupported(),
+            isNfcAvailable = deviceHasNFC(),
             isCardTokenize = NovoVTS.getFavoriteCard() != NOVO_CARD_TOKEN_EMPTY && NovoVTS.getFavoriteCard() != NOVO_CARD_TOKEN_EMPTY_TWO
         )
     }
@@ -438,6 +441,7 @@ class VisaCardViewModel @Inject constructor(
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnNavigateBack -> navigateBack(Screen.HomeScreen.route, isNavigateBackRefresh)
+            is OnNavigatePreferences -> navigateTo(Screen.VisaPreferencesScreen.baseRoute)
             is OnAvailableAmountClick -> onAvailableAmountClick()
             is OnNavigateToVisaTokenizationScreen -> navigateTo(
                 "${Screen.VisaTokenizationWaitingScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
@@ -485,6 +489,7 @@ class VisaCardViewModel @Inject constructor(
 
         data class OnSeeDataClick(val fragmentActivity: FragmentActivity) : UIEvent()
         object OnNavigateBack : UIEvent()
+        object OnNavigatePreferences : UIEvent()
         object OnAvailableAmountClick : UIEvent()
         object OnNavigateToVisaTokenizationScreen : UIEvent()
         object OnOpenDialogConfirmToStartTokenizationProcess : UIEvent()

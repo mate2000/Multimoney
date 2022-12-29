@@ -9,6 +9,9 @@ import android.nfc.cardemulation.CardEmulation
 import android.os.Build
 import android.provider.Settings.Secure
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
@@ -221,6 +224,20 @@ fun Context.getTapAndPayIntent(): Intent {
         ComponentName(this, PaymentService::class.java)
     )
     return intent
+}
+
+fun String.addTextStyleToTextPortion(textToStyle: String, style: TextStyle): AnnotatedString {
+    val fullText = this
+    val startIndex = fullText.indexOf(textToStyle)
+    val endIndex = startIndex + textToStyle.length
+    return buildAnnotatedString {
+        append(fullText)
+        addStyle(
+            style = style.toSpanStyle(),
+            start = startIndex,
+            end = endIndex
+        )
+    }
 }
 
 private const val HEX_FORMAT = "#%02x%02x%02x"

@@ -345,6 +345,9 @@
     <string name="profile_change_phone_title" translatable="false">Cambiar teléfono</string>
     <string name="profile_change_phone_check_format_template" translatable="false">Revisar formato. Debe tener %1$s digitos </string>
     <string name="profile_change_email_title" translatable="false">Cambiar correo electrónico</string>
+    <string name="profile_change_email_enter_new" translatable="false">Nuevo correo electrónico</string>
+    <string name="profile_change_email_enter_new_confirmation" translatable="false">Confirmar nuevo correo electrónico</string>
+
     <string name="profile_identity_verification" translatable="false">Verificación de identidad</string>
     <string name="profile_where_do_you_want_to_receive_the_code_gt" translatable="false">¿Dónde quieres recibir el código?</string>
     <string name="profile_where_do_you_want_to_receive_the_code" translatable="false">¿Dónde querés recibir el código?</string>
@@ -378,6 +381,7 @@
     <string name="profile_change_email_button" translatable="false">Cambiar correo electrónico</string>
     <string name="profile_we_will_send_you_a_code_to_your_email" translatable="false">Te enviaremos un código de verificación para confirmar tu nuevo correo</string>
     <string name="profile_email_check_format_error" translatable="false">Revisa formato. Debe contener "@" y "."</string>
+    <string name="profile_email_not_equal_than_previous_error" translatable="false">El correo electrónico ingresado debe ser distinto al actual </string>
     <string name="profile_emails_does_not_match_error" translatable="false">Los correos electrónicos no coinciden</string>
     <string name="profile_sure_to_deactivate_biometrics_gt" translatable="false">¿Estás seguro que quieres desactivar tus biométricos?</string>
     <string name="profile_sure_to_deactivate_biometrics" translatable="false">¿Estás seguro que querés desactivar tus biométricos?</string>
@@ -906,7 +910,9 @@
     <string name="smart_payment_amount_bottom_sheet_my_smart_account" translatable="false">Mi cuenta Smart | %s</string>
     <string name="smart_payment_amount_bottom_sheet_title" translatable="false">Monto a ahorrar</string>
     <string name="smart_payment_amount_bottom_sheet_from_card" translatable="false">Desde la tarjeta</string>
+    <string name="smart_payment_amount_bottom_sheet_from_card_CR" translatable="false">Desde la cuenta</string>
     <string name="smart_payment_amount_bottom_sheet_to" translatable="false">Hacia</string>
+    <string name="smart_payment_exchange_equivalent" translatable="false">Equivalente a %s</string>
 
     <!-- Payment Amount Error -->
     <string name="payment_amount_error_button" translatable="false">Ir al inicio</string>
@@ -1082,6 +1088,13 @@
     <string name="payment_method_title" translatable="false">Selecciona el método de ahorro</string>
     <string name="payment_method_transfer" translatable="false">Transferencia bancaria</string>
     <string name="payment_method_visa" translatable="false">Tarjeta Visa</string>
+
+    <!-- Payment sending type -->
+    <string name="payment_select_sending_type_title" translatable="false">Enviar dinero a</string>
+    <string name="payment_select_sending_type_my_contacts" translatable="false">Mis contactos</string>
+    <string name="payment_select_sending_type_iban_accounts" translatable="false">Cuentas IBAN</string>
+    <string name="payment_select_sending_type_smart_account_dollars" translatable="false">Mi cuenta Smart Dólares</string>
+    <string name="payment_select_sending_type_smart_account_colones" translatable="false">Mi cuenta Smart Colones</string>
 
     <!-- Payment Account -->
     <string name="payment_account_title" translatable="false">Seleccioná la cuenta con la que querés ahorrar</string>

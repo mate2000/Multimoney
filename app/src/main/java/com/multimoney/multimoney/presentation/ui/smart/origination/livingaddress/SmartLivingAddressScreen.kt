@@ -24,36 +24,31 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
-import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.Companion.STEP_BY_STEP_EVENT_DELAY
-import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressViewModel.UIEvent.OnLoadCurrentStepData
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import kotlinx.coroutines.delay
 
 @Composable
-fun SmartLivAddressScreen(
+fun SmartLivingAddressScreen(
     viewModel: SmartLivAddressViewModel = hiltViewModel(),
     sharedViewModel: SmartViewModel = hiltViewModel()
 ) {
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
 
-    LaunchedEffect(key1 = true) {
-        delay(STEP_BY_STEP_EVENT_DELAY)
-        viewModel.onUIEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
+    LaunchedEffect(key1 = sharedViewModel.accountSmartData) {
+        viewModel.onUIEvent(
+            SmartLivAddressViewModel.UIEvent.OnGetUserData(
+                accountSmartData = sharedViewModel.accountSmartData,
+                user = sharedViewModel.user,
+                idBrand = sharedViewModel.idBrandAsInt
+            )
+        )
     }
 
     LaunchedEffect(true) {
         sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true))
         sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueEnable(viewModel.isFormValid()))
-
-        viewModel.onUIEvent(
-            SmartLivAddressViewModel.UIEvent.OnGetUserData(
-                pkUser = sharedViewModel.pkUser,
-                user = sharedViewModel.user,
-                idBrand = sharedViewModel.idBrand.toInt()
-            )
-        )
 
         sharedViewModel.onUIEvent(
             SmartViewModel.UIEvent.OnSetNavigation(
@@ -67,6 +62,9 @@ fun SmartLivAddressScreen(
                                     ?: 0,
                                 idAddressLevel3 = viewModel.uiState.divisionThreeSelected?.id?.toLong()
                                     ?: 0,
+                                strAddressLevel1 = viewModel.uiState.divisionOneSelected?.name,
+                                strAddressLevel2 = viewModel.uiState.divisionTwoSelected?.name,
+                                strAddressLevel3 = viewModel.uiState.divisionThreeSelected?.name,
                                 addressDetail = viewModel.uiState.address,
                                 currentStep = SmartSteps.Search.getNameById(
                                     sharedViewModel.uiState.currentStep
@@ -104,6 +102,16 @@ fun SmartLivAddressScreen(
         }
     }
 
+    if (viewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            message = viewModel.uiState.openDialog.description.ifBlank {
+                stringResource(R.string.error)
+            },
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+        )
+    }
+
     Column(
         modifier = Modifier
             .padding(horizontal = 16.dp)
@@ -115,7 +123,7 @@ fun SmartLivAddressScreen(
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText
         )
-        if (sharedViewModel.idBrand.toInt() != Brand.ElSalvador.id) {
+        if (sharedViewModel.idBrandAsInt != Brand.ElSalvador.id) {
             CustomDropdown(
                 modifier = Modifier
                     .fillMaxWidth()

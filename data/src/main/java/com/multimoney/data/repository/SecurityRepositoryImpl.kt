@@ -25,9 +25,9 @@ import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Message
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.SecurityRepository
+import kotlinx.coroutines.flow.Flow
 import java.io.Serializable
 import javax.inject.Inject
-import kotlinx.coroutines.flow.Flow
 
 class SecurityRepositoryImpl @Inject constructor(
     private val graphqlApi: GraphqlApi
@@ -45,7 +45,14 @@ class SecurityRepositoryImpl @Inject constructor(
                 user
             ),
             apolloCallMapper = { data ->
-                Success(data.mapToDomainModel())
+                if (
+                    data.getCompanyNameByIdentification.status == null ||
+                    data.getCompanyNameByIdentification.status == 0
+                ) {
+                    Success(data.mapToDomainModel())
+                } else {
+                    Message(data.mapToDomainModel())
+                }
             }
         )
 
@@ -316,7 +323,13 @@ class SecurityRepositoryImpl @Inject constructor(
         user: String,
         idBrand: Int
     ) = fetchData(
-        apolloCall = graphqlApi.queryValidateAccount(account, identification, queryType, user, idBrand),
+        apolloCall = graphqlApi.queryValidateAccount(
+            account,
+            identification,
+            queryType,
+            user,
+            idBrand
+        ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }

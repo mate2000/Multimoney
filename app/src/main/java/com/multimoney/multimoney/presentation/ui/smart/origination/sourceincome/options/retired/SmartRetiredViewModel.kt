@@ -33,7 +33,7 @@ class SmartRetiredViewModel : BaseViewModel(true) {
      */
     private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
         accountSmartData?.let {
-            onInstitutionValueChange(it.institutionPension)
+            onInstitutionValueChange(it.institutionPension ?: "")
             onAmountValueChange(it.income.toString())
         }
     }

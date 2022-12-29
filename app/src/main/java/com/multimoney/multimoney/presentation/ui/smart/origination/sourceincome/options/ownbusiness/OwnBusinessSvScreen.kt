@@ -29,14 +29,15 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueVisible
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SmartAddressFields
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.BaseEvent
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.OwnBusinessViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.OwnBusinessViewModel.UIEvent.OnCompanyDescriptionChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.OwnBusinessViewModel.UIEvent.OnCompanyNameChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.OwnBusinessViewModel.UIEvent.OnLoadCurrentStepData
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.OwnBusinessViewModel.UIEvent.OnMonthlyIncomeChange
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.transformation.formatDecimalMoney
@@ -46,17 +47,26 @@ import com.multimoney.multimoney.presentation.util.transformation.formatDecimalM
 fun SmartOwnBusinessSvScreen(
     viewModel: OwnBusinessViewModel = hiltViewModel(),
     sharedViewModel: SmartViewModel = hiltViewModel(),
-    sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel(),
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {}
+    sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel()
 ) {
-
-    LaunchedEffect(key1 = true) {
-        viewModel.onUIEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
+    LaunchedEffect(true) {
+        sourceIncomeSharedViewModel.baseEvent.collect { event ->
+            when (event) {
+                is BaseEvent.OnFormValidateCompleted -> sharedViewModel.onUIEvent(
+                    OnContinueEnable(event.isFormValid && viewModel.isFormValid())
+                )
+            }
+        }
     }
 
     LaunchedEffect(true) {
-        sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid()))
+        viewModel.onUIEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
         sharedViewModel.onUIEvent(OnContinueVisible(true))
+        sharedViewModel.onUIEvent(
+            OnContinueEnable(
+                viewModel.isFormValid() && sourceIncomeSharedViewModel.isFormValid()
+            )
+        )
 
         sharedViewModel.onUIEvent(
             OnSetNavigation(
@@ -68,7 +78,10 @@ fun SmartOwnBusinessSvScreen(
                                 companyName = viewModel.uiState.companyNameValue,
                                 aboutCompany = viewModel.uiState.companyDescriptionValue,
                                 income = viewModel.uiState.monthlyIncomeValue.toFloat(),
-                                currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep)
+                                currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep),
+                                idJobLevel2 = sourceIncomeSharedViewModel.uiState.divisionTwoSelected?.id?.toLongOrNull(),
+                                idJobLevel3 = sourceIncomeSharedViewModel.uiState.divisionThreeSelected?.id?.toLongOrNull(),
+                                fullJobAddress = sourceIncomeSharedViewModel.uiState.address
                             )
                         )
                     )
@@ -82,12 +95,17 @@ fun SmartOwnBusinessSvScreen(
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormValidateCompleted -> sharedViewModel.onUIEvent(
-                    OnContinueEnable(event.isFormValid)
+                    OnContinueEnable(event.isFormValid && sourceIncomeSharedViewModel.isFormValid())
                 )
             }
         }
     }
-    SmartOwnBusinessSvContent(viewModel, sharedViewModel)
+    SmartOwnBusinessSvContent(
+        viewModel,
+        sourceIncomeSharedViewModel,
+        sharedViewModel.user,
+        sharedViewModel.idBrandAsInt
+    )
 
     // return to the main options screen whenever tapping on native back button from the device
     BackHandler { sourceIncomeSharedViewModel.goBackToMainOptions() }
@@ -96,7 +114,9 @@ fun SmartOwnBusinessSvScreen(
 @Composable
 fun SmartOwnBusinessSvContent(
     viewModel: OwnBusinessViewModel,
-    sharedViewModel: SmartViewModel
+    sourceIncomeSharedViewModel: SourceIncomeViewModel,
+    user: String,
+    idBrand: Int
 ) {
     val focusManager = LocalFocusManager.current
     Column(
@@ -166,14 +186,21 @@ fun SmartOwnBusinessSvContent(
             leadingIcon = R.drawable.ic_money_gray,
             placeHolder = stringResource(
                 id = R.string.smart_own_business_monthly_income_placeholder,
-                stringResource(sharedViewModel.idBrandAsInt.getCurrencySymbol())
+                stringResource(idBrand.getCurrencySymbol())
             ),
             customTransformation = formatDecimalMoney(
                 stringResource(
-                    sharedViewModel.idBrandAsInt.getCurrencySymbol()
+                    idBrand.getCurrencySymbol()
                 )
             ),
             modifier = Modifier.padding(top = 16.dp)
+        )
+
+        SmartAddressFields(
+            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel,
+            user = user,
+            idBrand = idBrand,
+            focusManager = focusManager
         )
     }
 }

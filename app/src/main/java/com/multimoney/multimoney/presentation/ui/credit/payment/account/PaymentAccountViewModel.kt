@@ -89,7 +89,8 @@ class PaymentAccountViewModel @Inject constructor(
                 user = user,
                 idBrand = idBrand,
                 idClient = idClient,
-                idLoan = idLoanClient
+                idLoan = idLoanClient,
+                process = ""
             ).collectLatest { result ->
                 result.onSuccess { clientBankAccountList ->
                     uiState = uiState.copy(

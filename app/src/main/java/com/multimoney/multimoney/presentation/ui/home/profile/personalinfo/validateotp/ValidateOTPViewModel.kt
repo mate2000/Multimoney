@@ -12,11 +12,11 @@ import com.multimoney.data.util.catalog.FieldToChange
 import com.multimoney.domain.interaction.security.MutationChangeEmailUseCase
 import com.multimoney.domain.interaction.security.MutationChangePhoneUseCase
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
-import com.multimoney.domain.interaction.security.MutationValidateOTPUseCase
+import com.multimoney.domain.interaction.security.QueryValidatePinUseCase
 import com.multimoney.domain.model.security.ChangeEmail
 import com.multimoney.domain.model.security.ChangePhone
 import com.multimoney.domain.model.security.SendPinProcess
-import com.multimoney.domain.model.security.ValidateOTP
+import com.multimoney.domain.model.security.ValidatePin
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -47,12 +47,6 @@ import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.LocalDateTime
-import java.util.regex.Pattern
-import javax.inject.Inject
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -62,12 +56,18 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.LocalDateTime
+import java.util.regex.Pattern
+import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit
 
 @HiltViewModel
 class ValidateOTPViewModel @Inject constructor(
     private val dataStorePreferences: DataStorePreferences,
     private val mutationSendPinProcessUseCase: MutationSendPinProcessUseCase,
-    private val mutationValidateOTPUseCase: MutationValidateOTPUseCase,
+    private val queryValidatePinUseCase: QueryValidatePinUseCase,
     private val mutationChangePhoneUseCase: MutationChangePhoneUseCase,
     private val mutationChangeEmailUseCase: MutationChangeEmailUseCase,
     private val cognitoHelper: CognitoHelper,
@@ -270,9 +270,17 @@ class ValidateOTPViewModel @Inject constructor(
     }
 
     private fun onValidateOTP(email: String?, otp: String) = executeUseCase {
-        mutationValidateOTPUseCase.invoke(email.toString(), otp).collectLatest {
-            processValidateOTPResult(it)
-        }
+        queryValidatePinUseCase.invoke(
+            idBrand = uiState.idBrand ?: 0,
+            appSource = APP_SOURCE,
+            pkUser = uiState.pkUser ?: "",
+            pinSecurity = uiState.otp,
+            telephone = uiState.phoneNumber,
+            userCreate = uiState.userName ?: ""
+        )
+            .collectLatest { result ->
+                processValidateOTPResult(result)
+            }
     }
 
     private fun onChangePhone(identification: String, phone: String, pkUser: String, idBrand: Int) =
@@ -337,7 +345,7 @@ class ValidateOTPViewModel @Inject constructor(
             .onLoading { uiState = uiState.copy(isLoading = true) }
     }
 
-    private fun processValidateOTPResult(result: MultimoneyResult<ValidateOTP?>) {
+    private fun processValidateOTPResult(result: MultimoneyResult<ValidatePin?>) {
         result.onSuccess {
             when (uiState.changingField) {
                 FieldToChange.PHONE.value -> {
@@ -486,5 +494,7 @@ class ValidateOTPViewModel @Inject constructor(
         const val TOTAL_DIGITS = 4
         const val TIMER_DURATION = 0L
         const val TIMER_DELAY = 1L
+        const val APP_SOURCE = 2
+
     }
 }

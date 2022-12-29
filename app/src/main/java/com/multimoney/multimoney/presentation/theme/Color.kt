@@ -60,6 +60,7 @@ val SemanticInformative700 = Color(0xFF003380)
 val SemanticInformative800 = Color(0xFF001433)
 
 // Semantic Negative
+val SemanticNegative300 = Color(0xFFF8B9B9)
 val SemanticNegative400 = Color(0xFFF37C7C)
 val SemanticNegative500 = Color(0xFFE91616)
 
@@ -92,6 +93,7 @@ val ComplementaryGray2 = Color(0x99FFFFFF)
 val ComplementaryGray5 = Color(0x0DFFFFFF)
 val ComplementaryBlack = Color(0xFF212121)
 val ComplementaryBlack2 = Color(0xFF161616)
+val ComplementaryBlack3 = Color(0xFF1B1B1B)
 
 // WhiteTransparency
 val WhiteTransparency5 = Color(0xFFFFFFFF).copy(alpha = 0.05f)
@@ -142,6 +144,9 @@ data class MultimoneyColors(
     val text: Color,
     val onBoardingTitleText: Color,
     val onBoardingSubText: Color,
+    val loginTitleText: Color,
+    val subTitleText: Color,
+    val titleText: Color,
     val textLink: Color,
     val textInformation: Color,
     val textSubhead: Color,
@@ -192,6 +197,9 @@ val DarkColorPalette = MultimoneyColors(
     text = DefaultWhite,
     onBoardingTitleText = WhiteTransparency90,
     onBoardingSubText = WhiteTransparency80,
+    loginTitleText = WhiteTransparency90,
+    titleText = WhiteTransparency90,
+    subTitleText = WhiteTransparency70,
     textLink = Primary400,
     textInformation = SemanticInformative400,
     textSubhead = GrayScale600,
@@ -241,6 +249,9 @@ val LightColorPalette = MultimoneyColors(
     text = DefaultWhite,
     onBoardingTitleText = WhiteTransparency90,
     onBoardingSubText = WhiteTransparency80,
+    loginTitleText = WhiteTransparency90,
+    titleText = WhiteTransparency90,
+    subTitleText = WhiteTransparency70,
     textLink = Primary400,
     textInformation = SemanticInformative400,
     textSubhead = GrayScale600,

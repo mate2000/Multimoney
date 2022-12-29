@@ -31,7 +31,9 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueVisible
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SmartAddressFields
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.BaseEvent
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome.OtherIncomeViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome.OtherIncomeViewModel.UIEvent.OnIncomeAmountChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome.OtherIncomeViewModel.UIEvent.OnIncomeSourceChange
@@ -48,14 +50,24 @@ fun OtherIncomeScreen(
     sharedViewModel: SmartViewModel = hiltViewModel(),
     sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel()
 ) {
-
     LaunchedEffect(true) {
-        viewModel.onUIEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
+        sourceIncomeSharedViewModel.baseEvent.collect { event ->
+            when (event) {
+                is BaseEvent.OnFormValidateCompleted -> sharedViewModel.onUIEvent(
+                    OnContinueEnable(event.isFormValid && viewModel.isFormValid())
+                )
+            }
+        }
     }
 
     LaunchedEffect(key1 = true) {
+        viewModel.onUIEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
         sharedViewModel.onUIEvent(OnContinueVisible(true))
-        sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid()))
+        sharedViewModel.onUIEvent(
+            OnContinueEnable(
+                (viewModel.isFormValid() && sourceIncomeSharedViewModel.isFormValid())
+            )
+        )
 
         sharedViewModel.onUIEvent(
             OnSetNavigation(
@@ -68,7 +80,11 @@ fun OtherIncomeScreen(
                                 } else SourceIncomeOptionType.OtherSV.id.toLong(),
                                 income = viewModel.uiState.incomeAmount.toFloat(),
                                 specifiesIncomeSource = viewModel.uiState.incomeSource,
-                                currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep)
+                                currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep),
+                                idJobLevel1 = sourceIncomeSharedViewModel.uiState.divisionOneSelected?.id?.toLongOrNull(),
+                                idJobLevel2 = sourceIncomeSharedViewModel.uiState.divisionTwoSelected?.id?.toLongOrNull(),
+                                idJobLevel3 = sourceIncomeSharedViewModel.uiState.divisionThreeSelected?.id?.toLongOrNull(),
+                                fullJobAddress = sourceIncomeSharedViewModel.uiState.address
                             )
                         )
                     )
@@ -81,13 +97,18 @@ fun OtherIncomeScreen(
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormValidateCompleted -> sharedViewModel.onUIEvent(
-                    OnContinueEnable(event.isFormValid)
+                    OnContinueEnable(event.isFormValid && sourceIncomeSharedViewModel.isFormValid())
                 )
             }
         }
     }
 
-    OtherIncomeContent(viewModel, sharedViewModel.idBrandAsInt)
+    OtherIncomeContent(
+        viewModel,
+        sourceIncomeSharedViewModel,
+        sharedViewModel.user,
+        sharedViewModel.idBrandAsInt
+    )
 
     BackHandler {
         sourceIncomeSharedViewModel.onUIEvent(
@@ -99,7 +120,12 @@ fun OtherIncomeScreen(
 }
 
 @Composable
-fun OtherIncomeContent(viewModel: OtherIncomeViewModel, idBrand: Int) {
+fun OtherIncomeContent(
+    viewModel: OtherIncomeViewModel,
+    sourceIncomeSharedViewModel: SourceIncomeViewModel,
+    user: String,
+    idBrand: Int
+) {
     val focusManager = LocalFocusManager.current
     val currencySymbol = stringResource(idBrand.getCurrencySymbol())
     Column(
@@ -115,6 +141,7 @@ fun OtherIncomeContent(viewModel: OtherIncomeViewModel, idBrand: Int) {
                 color = MultimoneyTheme.colors.text
             )
         )
+
         CustomOutlinedTextField(
             modifier = Modifier.padding(top = 24.dp),
             value = viewModel.uiState.incomeSource,
@@ -155,6 +182,13 @@ fun OtherIncomeContent(viewModel: OtherIncomeViewModel, idBrand: Int) {
             leadingIcon = R.drawable.ic_money_gray,
             customTransformation = formatDecimalMoney(currencySymbol),
             isRequiredMessage = stringResource(R.string.smart_own_business_monthly_income_required)
+        )
+
+        SmartAddressFields(
+            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel,
+            user = user,
+            idBrand = idBrand,
+            focusManager = focusManager
         )
     }
 }

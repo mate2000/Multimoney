@@ -28,7 +28,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
-import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnCallInFidoToken
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnConfigureOnFidoSdk
@@ -122,7 +121,7 @@ class SmartOnfidoViewModel @Inject constructor(
                 names,
                 lastNames,
                 identification,
-                getApplicationId(),
+                BuildConfig.APPLICATION_ID,
                 Brand.CostaRica.id,
                 user
             ).collectLatest { result ->
@@ -145,20 +144,12 @@ class SmartOnfidoViewModel @Inject constructor(
                 names,
                 lastNames,
                 identification,
-                getApplicationId(),
+                BuildConfig.APPLICATION_ID,
                 Brand.CostaRica.id,
                 user
             ).collectLatest { result ->
                 onFidoTokenEvent.emit(result)
             }
-        }
-    }
-
-    private fun getApplicationId(): String {
-        return if (BuildConfig.DEBUG) {
-            BuildConfig.ONFIDO_APPLICATION_ID
-        } else {
-            BuildConfig.APPLICATION_ID
         }
     }
 
@@ -233,15 +224,12 @@ class SmartOnfidoViewModel @Inject constructor(
     }
 
     private fun navigateToCorrectScreen() {
-        val signDocumentStep = if (idBrand == Brand.ElSalvador.id) {
-            VALIDATE_IDENTITY.value
-        } else {
+        val signDocumentStep =
             if (evicertiaStatus.lowercase() == SmartOnFidoOrFirmStatus.FIRMED.status.lowercase()) {
                 VALIDATE_IDENTITY.value
             } else {
                 GENERATE_DOCUMENT_STEP.value
             }
-        }
         onNavigateToSignDocumentScreen(signDocumentStep)
     }
 
@@ -283,7 +271,8 @@ class SmartOnfidoViewModel @Inject constructor(
             is OnContinueEnable -> uiState = uiState.copy(isContinueEnabled = event.isEnable)
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
             is OnNavigateToHome -> onNavigateToHome()
-            is OnFailureWithDialog -> uiState = uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
+            is OnFailureWithDialog -> uiState =
+                uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnOpenOnfidoSdk -> onOpenOnfidoSdk(event.onOpenOnfidoSdk)
         }
     }
@@ -322,7 +311,9 @@ class SmartOnfidoViewModel @Inject constructor(
         object OnCloseClick : UIEvent()
         object OnContinueClick : UIEvent()
         data class OnContinueEnable(val isEnable: Boolean) : UIEvent()
-        data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) : UIEvent()
+        data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) :
+            UIEvent()
+
         data class OnOpenOnfidoSdk(val onOpenOnfidoSdk: () -> Unit) : UIEvent()
     }
 

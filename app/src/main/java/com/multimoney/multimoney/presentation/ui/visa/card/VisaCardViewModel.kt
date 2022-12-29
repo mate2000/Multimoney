@@ -16,6 +16,7 @@ import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALANCE_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_INFORMATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnAvailableAmountClick
@@ -38,6 +39,7 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
     // Stateless
     private var idBrand: Int = 0
     private var pkUser: Long = 0
+    var identification: String = ""
     private var email: String = ""
     private var phone: String = ""
     private var cardInformation: CardInformation? = null
@@ -46,6 +48,7 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
     init {
         idBrand = savedStateHandle.get<Int>(ID_BRAND)?.toInt() ?: 0
         pkUser = savedStateHandle.get<Long>(PK_USER) ?: 0
+        identification = savedStateHandle[IDENTIFICATION] ?: ""
         email = savedStateHandle.get<String>(EMAIL) ?: ""
         phone = savedStateHandle.get<String>(PHONE_NUMBER) ?: ""
         cardInformation = savedStateHandle.get<CardInformation>(CARD_INFORMATION)
@@ -56,6 +59,7 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
     private fun onAvailableAmountClick() {
         uiState = uiState.copy(
             dialogParameters = DialogParameters(
+                titleResource = string.empty,
                 descriptionResource = when (idBrand) {
                     ElSalvador.id -> string.visa_card_sv_dialog_description_available
                     CostaRica.id -> string.visa_card_cr_dialog_description_available
@@ -71,7 +75,7 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
     private fun callNovoGetFavoriteCard() {
         uiState = uiState.copy(
             isNfcAvailable = nfcHelper.isNfcSupported(),
-            isCardTokenize = NovoVTS.getFavoriteCard() != NOVO_CARD_TOKEN_EMPTY
+            isCardTokenize = NovoVTS.getFavoriteCard() != NOVO_CARD_TOKEN_EMPTY && NovoVTS.getFavoriteCard() != NOVO_CARD_TOKEN_EMPTY_TWO
         )
     }
 
@@ -88,11 +92,11 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
             is OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
             is OnAvailableAmountClick -> onAvailableAmountClick()
             is OnNavigateToVisaTokenizationScreen -> navigateTo(
-                "${Screen.VisaTokenizationWaitingScreen.baseRoute}/$idBrand/$pkUser/$email/$phone/${
+                "${Screen.VisaTokenizationWaitingScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
                 encodeData(
                     cardInformation
                 )
-                }"
+                }/$availableBalanceLabel"
             )
             is OnOpenDialogConfirmToStartTokenizationProcess -> uiState = uiState.copy(
                 dialogParameters = DialogParameters(
@@ -117,6 +121,7 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
     }
 
     companion object {
-        const val NOVO_CARD_TOKEN_EMPTY = "-1"
+        const val NOVO_CARD_TOKEN_EMPTY = ""
+        const val NOVO_CARD_TOKEN_EMPTY_TWO = "-1"
     }
 }

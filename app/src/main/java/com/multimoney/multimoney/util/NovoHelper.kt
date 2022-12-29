@@ -28,47 +28,47 @@ class NovoHelper @Inject constructor() {
     }
 
     fun novoEnrollDevice(
-        pkUser: Int,
+        identification: String,
         phone: String,
         onSuccessEnrollDevice: (response: NovoResponse<String>) -> Unit,
         onErrorEnrollDevice: (error: NovoError) -> Unit
     ) {
         NovoVTS.enrollDevice(
             object : ResponseListener<String> {
-                override fun onError(novoError: NovoError) {
-                    onErrorEnrollDevice(novoError)
+                override fun onError(error: NovoError) {
+                    onErrorEnrollDevice(error)
                 }
 
                 override fun onFinish(response: NovoResponse<String>) {
                     onSuccessEnrollDevice(response)
                 }
             },
-            DataEnrollDevice(pkUser.toString(), phone)
+            DataEnrollDevice(identification, phone)
         )
     }
 
     fun novoEnrollPan(
-        pkUser: Int,
+        identification: String,
         email: String,
         accountNumber: String,
         cardName: String,
         cardCvv: String,
         cardExpirationMonth: String,
         cardExpirationYear: String,
-        onSuccessEnrollDevice: (response: NovoResponse<VtsCard>) -> Unit,
-        onErrorEnrollDevice: (error: NovoError) -> Unit
+        onSuccessEnrollPan: (response: NovoResponse<VtsCard>) -> Unit,
+        onErrorEnrollPan: (error: NovoError) -> Unit
     ) {
         NovoVTS.enrollPan(
             object : ResponseListener<VtsCard> {
                 override fun onError(error: NovoError) {
-                    onErrorEnrollDevice(error)
+                    onErrorEnrollPan(error)
                 }
 
                 override fun onFinish(response: NovoResponse<VtsCard>) {
-                    onSuccessEnrollDevice(response)
+                    onSuccessEnrollPan(response)
                 }
             },
-            enrollPanUserInfo = EnrollPanUserInfo(pkUser.toString(), email),
+            enrollPanUserInfo = EnrollPanUserInfo(identification, email),
             enrollPanData = EnrollPanData(
                 accountNumber,
                 cardName,

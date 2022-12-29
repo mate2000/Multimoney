@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.payment.amount
 
+import android.view.View
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -60,12 +61,72 @@ fun SmartPaymentSuccessScreen(
                 viewModel.onUIEvent(OnNavigateHome)
             }
         )
-        PaymentSuccessContent(viewModel)
+        PaymentSuccessContent(
+            onShareClick = { view, bounds ->
+                viewModel.onUIEvent(
+                    OnShareVoucherImage(view, bounds)
+                )
+            },
+            savePayText = stringResource(
+                string.smart_payment_you_saved_on_your_smart_account,
+                viewModel.uiState.currency
+            ),
+            amount = viewModel.getFormattedAmount(),
+            fromToText = stringResource(string.smart_payment_from_label),
+            buttonText = stringResource(string.smart_payment_make_another_payment),
+            onButtonClick = { viewModel.onUIEvent(OnNavigateBack) }
+        ) {
+            SmartPaymentInfoItem(
+                modifier = Modifier.padding(start = 21.dp, top = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                icon = drawable.ic_visa_card_item,
+                iconModifier = Modifier
+                    .height(24.dp)
+                    .width(24.dp),
+                title = stringResource(string.smart_payment_card_bank_label),
+                subtitle = stringResource(
+                    string.visa_card_masked_number,
+                    viewModel.maskedCardNumber.takeLast(4)
+                )
+            )
+
+            SmartPaymentInfoItem(
+                modifier = Modifier.padding(start = 21.dp, top = 32.dp),
+                verticalAlignment = Alignment.Top,
+                icon = drawable.ic_receipt,
+                iconModifier = Modifier
+                    .height(24.dp)
+                    .width(24.dp),
+                title = stringResource(string.smart_payment_reference_number_label),
+                subtitle = viewModel.uiState.referenceNumber
+            )
+
+            SmartPaymentInfoItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 21.dp, top = 32.dp, end = 32.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                icon = drawable.ic_calendar,
+                iconModifier = Modifier
+                    .height(24.dp)
+                    .width(24.dp),
+                title = viewModel.uiState.currentDate,
+                rightSubtitle = viewModel.uiState.currentTime
+            )
+        }
     }
 }
 
 @Composable
-fun PaymentSuccessContent(viewModel: SavingAmountViewModel) {
+fun PaymentSuccessContent(
+    onShareClick: (view: View, bounds: Rect) -> Unit,
+    savePayText: String,
+    amount: String,
+    fromToText: String,
+    buttonText: String,
+    onButtonClick: () -> Unit,
+    items: @Composable () -> Unit
+) {
     val view = LocalView.current
     var capturingViewBounds by remember { mutableStateOf<Rect?>(null) }
 
@@ -76,7 +137,8 @@ fun PaymentSuccessContent(viewModel: SavingAmountViewModel) {
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Box(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(start = 16.dp, end = 16.dp, top = 16.dp)
                 .onGloballyPositioned {
                     capturingViewBounds = it.boundsInRoot()
@@ -104,12 +166,7 @@ fun PaymentSuccessContent(viewModel: SavingAmountViewModel) {
                     CustomButton(
                         onClick = {
                             capturingViewBounds?.let { bounds ->
-                                viewModel.onUIEvent(
-                                    OnShareVoucherImage(
-                                        view,
-                                        bounds
-                                    )
-                                )
+                                onShareClick(view, bounds)
                             }
                         },
                         text = stringResource(string.smart_payment_share_button),
@@ -129,17 +186,14 @@ fun PaymentSuccessContent(viewModel: SavingAmountViewModel) {
                         buttonType = PrimaryTertiary
                     )
                     Text(
-                        text = stringResource(
-                            string.smart_payment_you_saved_on_your_smart_account,
-                            viewModel.uiState.currency
-                        ),
+                        text = savePayText,
                         modifier = Modifier.padding(top = 12.dp),
                         style = Typography.body1,
                         color = MultimoneyTheme.colors.text
                     )
                     Text(
                         modifier = Modifier.fillMaxWidth(),
-                        text = viewModel.uiState.currency + viewModel.uiState.currentAmountValueString,
+                        text = amount,
                         style = Typography.h4.copy(fontWeight = FontWeight.W600),
                         color = MultimoneyTheme.colors.text,
                         textAlign = TextAlign.Center
@@ -156,49 +210,18 @@ fun PaymentSuccessContent(viewModel: SavingAmountViewModel) {
                         )
                 )
                 Text(
-                    text = stringResource(string.smart_payment_from_label),
+                    text = fromToText,
                     modifier = Modifier.padding(start = 21.dp, top = 16.dp),
                     style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
                     color = MultimoneyTheme.colors.labelText
                 )
-
-                SmartPaymentInfoItem(
-                    modifier = Modifier.padding(start = 21.dp, top = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    icon = drawable.ic_visa_card_item,
-                    iconModifier = Modifier.height(24.dp).width(24.dp),
-                    title = stringResource(string.smart_payment_card_bank_label),
-                    subtitle = stringResource(
-                        string.visa_card_masked_number,
-                        viewModel.maskedCardNumber.takeLast(4)
-                    )
-                )
-
-                SmartPaymentInfoItem(
-                    modifier = Modifier.padding(start = 21.dp, top = 32.dp),
-                    verticalAlignment = Alignment.Top,
-                    icon = drawable.ic_receipt,
-                    iconModifier = Modifier.height(24.dp).width(24.dp),
-                    title = stringResource(string.smart_payment_reference_number_label),
-                    subtitle = viewModel.uiState.referenceNumber
-                )
-
-                SmartPaymentInfoItem(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 21.dp, top = 32.dp, end = 32.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    icon = drawable.ic_calendar,
-                    iconModifier = Modifier.height(24.dp).width(24.dp),
-                    title = viewModel.uiState.currentDate,
-                    rightSubtitle = viewModel.uiState.currentTime
-                )
+                items()
             }
         }
 
         CustomButton(
-            onClick = { viewModel.onUIEvent(OnNavigateBack) },
-            text = stringResource(string.smart_payment_make_another_payment),
+            onClick = onButtonClick,
+            text = buttonText,
             modifier = Modifier
                 .padding(
                     start = 16.dp,

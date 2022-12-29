@@ -52,15 +52,11 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnOpenDialogValueChange
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnPreviousStep
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
-import com.multimoney.multimoney.presentation.util.ISO_8601_API_FORMAT_PATTERN
-import com.multimoney.multimoney.presentation.util.YEAR_MONTH_DAY_PATTERN
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OverridePreviousAction
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.getCurrentDateString
-import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
-import timber.log.Timber
+import javax.inject.Inject
 
 @OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
@@ -101,6 +97,7 @@ class SmartViewModel @Inject constructor(
         accountSmartData = AccountSmartData(
             pkUser = pkUser,
             idBrand = idBrandAsInt,
+            status = 0,
             user = user
         )
     }
@@ -113,7 +110,6 @@ class SmartViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { stepByStep ->
                 stepByStep?.let {
-                    Timber.d( "callQueryStepByStepUseCase(): $it")
                     navigateToScreenOnStepFetched(it)
                 }
                 onUIEvent(OnLoadingValueChange(false))
@@ -218,50 +214,39 @@ class SmartViewModel @Inject constructor(
     private fun callMutationGlobalRequestUseCase(isLastStep: Boolean = false) = executeUseCase(
         action = {
             mutationGlobalRequestUseCase.invoke(
-                pkUser = accountSmartData?.pkUser?.toInt() ?: 0,
+                pkUser = accountSmartData?.pkUser?.toIntOrNull() ?: 0,
                 status = accountSmartData?.status ?: 0,
-                idProfessionType = accountSmartData?.idProfessionType ?: 0,
-                idAddressLevel1 = accountSmartData?.idAddressLevel1 ?: 0,
-                idAddressLevel2 = accountSmartData?.idAddressLevel2 ?: 0,
-                idAddressLevel3 = accountSmartData?.idAddressLevel3 ?: 0,
-                positionJob = accountSmartData?.positionJob ?: "",
-                idEconomicActivity = accountSmartData?.idEconomicActivity ?: 0,
-                income = accountSmartData?.income?.toDouble() ?: 0.0,
-                addressDetail = accountSmartData?.addressDetail ?: "",
                 user = accountSmartData?.user ?: "",
                 idBrand = accountSmartData?.idBrand ?: 0,
-                currentStep = accountSmartData?.currentStep ?: "",
-                idCivilStatusType = accountSmartData?.idCivilStatusType ?: 0,
-                birthday = accountSmartData?.birthday?.ifEmpty {
-                    getFormatDateByString(
-                        getCurrentDateString(),
-                        YEAR_MONTH_DAY_PATTERN,
-                        ISO_8601_API_FORMAT_PATTERN
-                    )
-                }.orEmpty(),
-                expirationDate = accountSmartData?.expirationDate?.ifEmpty {
-                    getFormatDateByString(
-                        getCurrentDateString(),
-                        YEAR_MONTH_DAY_PATTERN,
-                        ISO_8601_API_FORMAT_PATTERN
-                    )
-                }.orEmpty(),
-                idGender = accountSmartData?.idGender ?: 0,
-                companyName = accountSmartData?.companyName.orEmpty(),
-                fullJobAddress = accountSmartData?.fullJobAddress.orEmpty(),
-                aboutCompany = accountSmartData?.aboutCompany.orEmpty(),
-                institutionPension = accountSmartData?.institutionPension.orEmpty(),
-                specifiesIncomeSource = accountSmartData?.specifiesIncomeSource ?: "",
-                entrepreneurship = accountSmartData?.entrepreneurship ?: "",
-                legalID = accountSmartData?.legalID ?: "",
-                isActivityOfArt15 = accountSmartData?.isActivityOfArt15 ?: false,
-                isUSCitizen = accountSmartData?.isUSCitizen ?: false,
-                isPEP = accountSmartData?.isPEP ?: false,
-                isUSTaxPayer = accountSmartData?.isUSTaxPayer ?: false,
-                isTaxPayer = accountSmartData?.isTaxPayer ?: false,
-                beneficiaries = accountSmartData?.listBeneficiaries.orEmpty(),
-                idJobLevel2 = accountSmartData?.idJobLevel2 ?: 0,
-                idJobLevel3 = accountSmartData?.idJobLevel3 ?: 0
+                currentStep = accountSmartData?.currentStep,
+                birthday = accountSmartData?.birthday,
+                idGender = accountSmartData?.idGender,
+                idCivilStatusType = accountSmartData?.idCivilStatusType,
+                idProfessionType = accountSmartData?.idProfessionType,
+                expirationDate = accountSmartData?.expirationDate,
+                idAddressLevel1 = accountSmartData?.idAddressLevel1,
+                idAddressLevel2 = accountSmartData?.idAddressLevel2,
+                idAddressLevel3 = accountSmartData?.idAddressLevel3,
+                addressDetail = accountSmartData?.addressDetail,
+                idEconomicActivity = accountSmartData?.idEconomicActivity,
+                income = accountSmartData?.income?.toDouble(),
+                positionJob = accountSmartData?.positionJob,
+                companyName = accountSmartData?.companyName,
+                aboutCompany = accountSmartData?.aboutCompany,
+                institutionPension = accountSmartData?.institutionPension,
+                specifiesIncomeSource = accountSmartData?.specifiesIncomeSource,
+                entrepreneurship = accountSmartData?.entrepreneurship,
+                idJobLevel1 = accountSmartData?.idJobLevel1,
+                idJobLevel2 = accountSmartData?.idJobLevel2,
+                idJobLevel3 = accountSmartData?.idJobLevel3,
+                fullJobAddress = accountSmartData?.fullJobAddress,
+                beneficiaries = accountSmartData?.listBeneficiaries,
+                isActivityOfArt15 = accountSmartData?.isActivityOfArt15,
+                isUSCitizen = accountSmartData?.isUSCitizen,
+                isPEP = accountSmartData?.isPEP,
+                isUSTaxPayer = accountSmartData?.isUSTaxPayer,
+                isTaxPayer = accountSmartData?.isTaxPayer,
+                legalID = accountSmartData?.legalID
             ).collectLatest { result ->
                 result.onSuccess {
                     if (isLastStep) {
@@ -403,6 +388,10 @@ class SmartViewModel @Inject constructor(
         }
     }
 
+    private fun overridePreviousAction(overridePreviousAction: (() -> Unit)?) {
+        this.overridePreviousAction = overridePreviousAction
+    }
+
     private fun navigateBackToHome() {
         popAndNavigateTo(
             route = Screen.HomeScreen.route,
@@ -423,7 +412,7 @@ class SmartViewModel @Inject constructor(
 
     private fun navigateToOnfido() {
         popAndNavigateTo(
-            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idSysRequest/$globalRequestId/${URL_EMPTY}",
+            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idSysRequest/$globalRequestId/$URL_EMPTY",
             Screen.SmartScreen.route
         )
     }
@@ -522,6 +511,7 @@ class SmartViewModel @Inject constructor(
             is OnCallMutationInitialRequest -> callMutationInitialRequestUseCase()
             is OnOnFidoVerifiedChanged -> isOnFidoVerified = event.isOnFidoVerified
             is OnCallSaveAutomatedSmartAccount -> onCallMutationSaveSmartAccount(event.accountSmartData)
+            is OverridePreviousAction -> overridePreviousAction(event.action)
         }
     }
 
@@ -563,6 +553,8 @@ class SmartViewModel @Inject constructor(
         object OnClickBottomSheet : UIEvent()
 
         object OnCallMutationInitialRequest : UIEvent()
+
+        data class OverridePreviousAction(val action: (() -> Unit)?) : UIEvent()
     }
 
     companion object {
@@ -571,6 +563,5 @@ class SmartViewModel @Inject constructor(
         const val DEFAULT_ID_BRAND_ERROR = -1
         const val URL_EMPTY = "url"
         const val STEP_BY_STEP_EVENT_DELAY = 1500L
-        const val ONE_SEC_DELAY = 1000L
     }
 }

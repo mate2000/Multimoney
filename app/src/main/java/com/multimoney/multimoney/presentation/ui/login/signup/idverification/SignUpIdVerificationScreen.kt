@@ -22,6 +22,7 @@ import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.BuildConfig
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -129,7 +130,7 @@ fun SignUpIdVerificationScreen(
             SignUpIdVerificationViewModel.UIEvent.OnCallInFidoToken(
                 sharedViewModel.idBrand,
                 sharedViewModel.userData,
-                context.packageName
+                BuildConfig.APPLICATION_ID
             )
         )
     }

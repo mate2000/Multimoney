@@ -32,7 +32,9 @@ fun CustomCardVisaVertical(
     cardNumberFour: String = "",
     date: String = "",
     cvv: String = "",
-    isTextVisible: Boolean = false
+    holderName: String = "",
+    isTextVisible: Boolean = false,
+    isBlocked: Boolean = false
 ) {
     val forzaFontFamily = FontFamily(
         Font(font.forza)
@@ -47,14 +49,14 @@ fun CustomCardVisaVertical(
 
     val textStyleSubtitle = TextStyle(
         fontFamily = forzaFontFamily,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.ExtraBold,
         fontSize = 12.sp,
         letterSpacing = (4).sp
     )
 
     val textStyleBody = TextStyle(
         fontFamily = forzaFontFamily,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.ExtraBold,
         fontSize = 10.sp,
         letterSpacing = (1.5).sp
     )
@@ -68,6 +70,7 @@ fun CustomCardVisaVertical(
     ConstraintLayout(modifier) {
         val (
             backgroundRef,
+            blockedRef,
             cardNumberOneRef,
             cardNumberTwoRef,
             cardNumberThreeRef,
@@ -75,10 +78,17 @@ fun CustomCardVisaVertical(
             dateLabelRef,
             dateRef,
             cvvLabelRef,
-            cvvRef
+            cvvRef,
+            holderNameRef
         ) = createRefs()
         Image(
-            painter = painterResource(R.drawable.ic_mm_visa),
+            painter = painterResource(
+                if (isBlocked) {
+                    R.drawable.ic_mm_visa_blocked
+                } else {
+                    R.drawable.ic_mm_visa
+                }
+            ),
             contentDescription = "",
             contentScale = ContentScale.FillWidth,
             modifier = Modifier.constrainAs(backgroundRef) {
@@ -89,6 +99,21 @@ fun CustomCardVisaVertical(
                 width = Dimension.fillToConstraints
             }
         )
+        if (isBlocked) {
+            Image(
+                painter = painterResource(R.drawable.ic_card_blocked),
+                contentDescription = "",
+                contentScale = ContentScale.Inside,
+                modifier = Modifier.constrainAs(blockedRef) {
+                    top.linkTo(backgroundRef.top)
+                    bottom.linkTo(backgroundRef.bottom)
+                    start.linkTo(backgroundRef.start)
+                    end.linkTo(backgroundRef.end)
+                    width = Dimension.wrapContent
+                    height = Dimension.wrapContent
+                }
+            )
+        }
         if (isTextVisible) {
             Text(
                 text = cardNumberOne,
@@ -144,8 +169,8 @@ fun CustomCardVisaVertical(
                 textAlign = TextAlign.Start,
                 modifier = Modifier
                     .constrainAs(dateLabelRef) {
-                        bottom.linkTo(backgroundRef.bottom, margin = 16.dp)
-                        start.linkTo(parent.start, margin = 15.dp)
+                        bottom.linkTo(holderNameRef.top, margin = 7.dp)
+                        start.linkTo(parent.start, margin = 16.dp)
                     }
             )
             Text(
@@ -167,7 +192,7 @@ fun CustomCardVisaVertical(
                 textAlign = TextAlign.Start,
                 modifier = Modifier
                     .constrainAs(cvvLabelRef) {
-                        bottom.linkTo(backgroundRef.bottom, margin = 16.dp)
+                        bottom.linkTo(holderNameRef.top, margin = 7.dp)
                         start.linkTo(dateRef.end, margin = 32.dp)
                     }
             )
@@ -181,6 +206,17 @@ fun CustomCardVisaVertical(
                         start.linkTo(cvvLabelRef.end, margin = 12.dp)
                         top.linkTo(cvvLabelRef.top)
                         bottom.linkTo(cvvLabelRef.bottom)
+                    }
+            )
+            Text(
+                text = holderName,
+                color = textColor,
+                style = textStyleBody,
+                textAlign = TextAlign.Start,
+                modifier = Modifier
+                    .constrainAs(holderNameRef) {
+                        bottom.linkTo(backgroundRef.bottom, margin = 16.dp)
+                        start.linkTo(parent.start, margin = 16.dp)
                     }
             )
         }

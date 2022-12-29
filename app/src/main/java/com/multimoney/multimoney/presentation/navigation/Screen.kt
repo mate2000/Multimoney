@@ -3,8 +3,8 @@ package com.multimoney.multimoney.presentation.navigation
 import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.AMOUNT_ORIGINAL_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALANCE_LABEL
+import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_INFORMATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.BANK_DETAIL
-import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_INFORMATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_CARD_VISA_DIRECT
@@ -228,7 +228,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // Non Pre-Approved Screen
     object NonPreApprovedScreen : Screen(
-        "non_pre_approved_screen/{$PK_USER}/{$EMAIL}/{$ID_BRAND}/{$ID_USER_REQUEST}",
+        "non_pre_approved_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$ONFIDO_STATUS}/{$EVICERTIA_STATUS}/{$SIGN_DOCUMENT_ID_PRINT}",
         "non_pre_approved_screen"
     )
 
@@ -278,18 +278,23 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // VisaNavGraph
     object VisaIssuanceScreen : Screen(
-        "visa_issuance_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$PHONE_NUMBER}/{$CARD_INFORMATION}/{$AVAILABLE_BALANCE_LABEL}",
+        "visa_issuance_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$PHONE_NUMBER}/{$BALANCE_CARD_INFORMATION}/{$AVAILABLE_BALANCE_LABEL}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
         "visa_issuance_screen"
     )
 
     object VisaCardScreen : Screen(
-        "visa_card_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$PHONE_NUMBER}/{$CARD_INFORMATION}/{$AVAILABLE_BALANCE_LABEL}",
+        "visa_card_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$PHONE_NUMBER}/{$BALANCE_CARD_INFORMATION}/{$AVAILABLE_BALANCE_LABEL}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
         "visa_card_screen"
     )
 
     object VisaTokenizationWaitingScreen : Screen(
-        "visa_tokenization_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$PHONE_NUMBER}/{$CARD_INFORMATION}/{$AVAILABLE_BALANCE_LABEL}",
+        "visa_tokenization_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$PHONE_NUMBER}/{$BALANCE_CARD_INFORMATION}/{$AVAILABLE_BALANCE_LABEL}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
         "visa_tokenization_screen"
+    )
+
+    object VisaPreferencesScreen : Screen(
+        "visa_preferences_screen",
+        "visa_preferences_screen"
     )
 
     // Bottom Navigation
@@ -432,6 +437,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object SmartPaymentSavingAmount : Screen(
         "smart_payment_saving_amount_screen/{$SMART_IDS}?$IBAN_ACCOUNT={$IBAN_ACCOUNT}/{$ID_VISA_CARD}/{$PREVIOUS_SCREEN}/{$MASKED_CARD}/{$BANK_DETAIL}",
         "smart_payment_saving_amount_screen"
+    )
+
+    object SmartSelectSendingTypeScreen : Screen(
+        "smart_select_sending_type_screen/{$PK_USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$SMART_IDS}",
+        "smart_select_sending_type_screen"
     )
 
     // TestNavGraph Screens

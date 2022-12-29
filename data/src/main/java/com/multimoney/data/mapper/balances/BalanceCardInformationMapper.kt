@@ -26,7 +26,8 @@ private fun BalanceCardInformationQuery.BalanceCardInformation.mapToDomainModel(
         interestRate = tASA_INTERES,
         term = pLAZO,
         fullName = nOMBRE_COMPLETO,
-        remission = rEMISION
+        remission = rEMISION,
+        status = eSTADO
     )
 
 fun BalanceCardInformationQuery.Data.mapToDomainModel() = balanceCardInformation?.mapToDomainModel()

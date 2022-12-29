@@ -8,7 +8,7 @@ sealed class Brand(val id: Int, val iban: String,val countryCode : String) {
     object Search {
         fun getIdBrandByNationality(nationality: String?): Int {
             return when (nationality) {
-                Nationalities.ElSalvador.name.lowercase() -> ElSalvador.id
+                Nationalities.ElSalvadorDui.name.lowercase() -> ElSalvador.id
                 Nationalities.Guatemala.name.lowercase() -> Guatemala.id
                 Nationalities.CostaRicaId.name.lowercase() -> CostaRica.id
                 else -> 0

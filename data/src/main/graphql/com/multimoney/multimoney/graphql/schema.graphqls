@@ -2817,6 +2817,10 @@ type UserValidation {
 
   strIdIdentification: String
 
+  idClient: Long
+
+  isNewUser: Boolean
+
   status: Int
 
   message: String

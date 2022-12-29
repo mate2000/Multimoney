@@ -179,14 +179,18 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
         composable(
             route = Screen.NonPreApprovedScreen.route,
             arguments = listOf(
+                navArgument(CREDIT_STEP) { type = NavType.IntType },
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(PK_USER) { type = NavType.IntType },
-                navArgument(ID_USER_REQUEST) { type = NavType.IntType }
+                navArgument(ID_USER_REQUEST) { type = NavType.IntType },
+                navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType }
             )
         ) {
             NonPreApprovedScreen(
-                onNavigate = {
-                    navController.navigate(it.route)
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
                 },
                 onPopBackStack = {
                     navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)

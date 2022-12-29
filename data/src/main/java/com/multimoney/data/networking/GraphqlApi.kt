@@ -58,6 +58,7 @@ import com.multimoney.data.networking.graphql.apollomodel.OcupationsQuery
 import com.multimoney.data.networking.graphql.apollomodel.EmploymentSituationQuery
 import com.multimoney.data.networking.graphql.apollomodel.ExchangeRateQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetAvailableListOfCryptoCoinsQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetCryptoMovementsQuery
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoCheckProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoIntialProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.PayCreditVDMutation
@@ -96,7 +97,6 @@ import com.multimoney.data.networking.graphql.apollomodel.type.BeneficiaryReques
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.credit.CreditInfoQuestion
 import com.multimoney.domain.model.credit.DestinyAccount
-import com.multimoney.domain.model.crypto.GetListOfAvailableCryptoCoins
 import javax.inject.Inject
 
 class GraphqlApi @Inject constructor(
@@ -1360,6 +1360,29 @@ class GraphqlApi @Inject constructor(
             GetAvailableListOfCryptoCoinsQuery(
                 user,
                 idBrand
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryGetCryptoCurrencyMovements(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        market: String,
+        order_time_begin: Any,
+        order_time_end: Any,
+        pagination_limit: Int,
+        pagination_offset: Int
+    ): ApolloCall<GetCryptoMovementsQuery.Data> =
+        apolloAuthorizedClient.query(
+            GetCryptoMovementsQuery(
+                user,
+                idBrand,
+                identification,
+                market,
+                order_time_begin,
+                order_time_end,
+                pagination_limit,
+                pagination_offset
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

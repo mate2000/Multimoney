@@ -1,8 +1,9 @@
 package com.multimoney.domain.repository
 
+import androidx.paging.PagingData
+import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
 import com.multimoney.domain.model.crypto.GetHistoricalClientBalance
 import com.multimoney.domain.model.crypto.GetListOfAvailableCryptoCoins
-import com.multimoney.domain.model.crypto.MarketCryptoCoin
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
@@ -21,4 +22,14 @@ interface CryptoRepository {
         user: String,
         idBrand: Int
     ): Flow<MultimoneyResult<GetListOfAvailableCryptoCoins?>>
+
+    suspend fun getCryptoCurrencyMovements(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        market: String,
+        order_time_begin: Any,
+        order_time_end: Any,
+        pagination_limit: Int
+    ): Flow<PagingData<CryptoCurrencyMovement>>
 }

@@ -120,6 +120,8 @@ import com.multimoney.domain.interaction.credit.QueryEmploymentSituationUseCase
 import com.multimoney.domain.interaction.credit.QueryEmploymentSituationUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUseCase
 import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUseCaseImpl
+import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCase
+import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCase
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCaseImpl
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
@@ -613,6 +615,11 @@ class InteractionModule {
     @Singleton
     fun provideQueryGetAvailableListOfCryptoCoins(cryptoRepository: CryptoRepository): GetAvailableListOfCryptoCoinsUseCase =
         GetAvailableListOfCryptoCoinsUseCaseImpl(cryptoRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryGetCryptoMovements(cryptoRepository: CryptoRepository): GetCryptoCurrencyMovementsUseCase =
+        GetCryptoCurrencyMovementsUseCaseImpl(cryptoRepository)
 
     // Virtual Card
 

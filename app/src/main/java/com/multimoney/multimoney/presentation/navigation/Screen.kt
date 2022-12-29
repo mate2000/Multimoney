@@ -438,4 +438,9 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "crypto_market_screen/{$USER}/{$ID_BRAND}",
         "crypto_market_screen"
     )
+
+    object CryptoMovementsScreen: Screen(
+        "crypto_movements_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
+        "crypto_movements_screen"
+    )
 }

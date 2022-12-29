@@ -1,8 +1,13 @@
 package com.multimoney.data.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.crypto.mapToDomainModel
 import com.multimoney.data.networking.GraphqlApi
+import com.multimoney.data.paging.CryptoMovementsPagingSource
+import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
 import com.multimoney.domain.model.crypto.GetHistoricalClientBalance
 import com.multimoney.domain.model.crypto.GetListOfAvailableCryptoCoins
 import com.multimoney.domain.model.util.MultimoneyResult
@@ -42,4 +47,29 @@ class CryptoRepositoryImpl @Inject constructor(
         apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
     )
 
+    override suspend fun getCryptoCurrencyMovements(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        market: String,
+        order_time_begin: Any,
+        order_time_end: Any,
+        pagination_limit: Int
+    ): Flow<PagingData<CryptoCurrencyMovement>> {
+        return Pager(
+            config = PagingConfig(pagination_limit),
+            pagingSourceFactory = {
+                CryptoMovementsPagingSource(
+                    graphqlApi,
+                    user,
+                    idBrand,
+                    identification,
+                    market,
+                    order_time_begin,
+                    order_time_end,
+                    pagination_limit
+                )
+            }
+        ).flow
+    }
 }

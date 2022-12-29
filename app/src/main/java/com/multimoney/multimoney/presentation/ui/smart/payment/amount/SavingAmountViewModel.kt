@@ -56,6 +56,7 @@ import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getCurrentTime
 import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
+import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import com.multimoney.multimoney.presentation.util.workers.startTimedNotification
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.Calendar
@@ -321,21 +322,24 @@ class SavingAmountViewModel @Inject constructor(
     }
 
     private fun onAmountChanged(newAmount: String) {
-        val suggestions =
-            listOf(uiState.minSuggestion, uiState.mediumSuggestion, uiState.maxSuggestion)
-        val possibleSuggestion = suggestions.find { suggestion -> suggestion.value == newAmount }
-        uiState = if (possibleSuggestion != null) {
-            uiState.currentAmountValueString.value = newAmount
-            uiState.copy(
-                suggestedAmountSelected = possibleSuggestion,
-                enableButton = newAmount.toDouble() > 0
-            )
-        } else {
-            uiState.currentAmountValueString.value = newAmount
-            uiState.copy(
-                suggestedAmountSelected = null,
-                enableButton = newAmount.isNotEmpty() && newAmount.toDouble() > 0
-            )
+        if (validateDecimalIncome(newAmount)) {
+            val suggestions =
+                listOf(uiState.minSuggestion, uiState.mediumSuggestion, uiState.maxSuggestion)
+            val possibleSuggestion =
+                suggestions.find { suggestion -> suggestion.value == newAmount }
+            uiState = if (possibleSuggestion != null) {
+                uiState.currentAmountValueString.value = newAmount
+                uiState.copy(
+                    suggestedAmountSelected = possibleSuggestion,
+                    enableButton = newAmount.toDouble() > 0
+                )
+            } else {
+                uiState.currentAmountValueString.value = newAmount
+                uiState.copy(
+                    suggestedAmountSelected = null,
+                    enableButton = newAmount.isNotEmpty() && newAmount.toDouble() > 0
+                )
+            }
         }
     }
 

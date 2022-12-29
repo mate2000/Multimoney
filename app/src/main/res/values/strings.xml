@@ -693,6 +693,12 @@
     <string name="visa_tokenization_waiting_description_three_gt" translatable="false">\no con los datos de tu tarjeta</string>
     <string name="visa_tokenization_waiting_loading_label" translatable="false">Activando tu tarjeta…</string>
 
+    <!-- visa tokenization success -->
+    <string name="visa_tokenization_success_title" translatable="false">¡Hemos finalizado!</string>
+    <string name="visa_tokenization_success_description" translatable="false">Ya podés utilizar tu Multimoney Visa para realizar compras online y en comercios</string>
+    <string name="visa_tokenization_success_description_gt" translatable="false">Ya puedes utilizar tu Multimoney Visa para realizar compras online y en comercios</string>
+    <string name="visa_tokenization_success_button_action" translatable="false">Ver Multimoney Visa</string>
+
     <!-- Credit Loading -->
     <string name="credit_glad_to_see_you" translatable="false">¡Nos alegra que regresés!</string>
     <string name="credit_glad_to_see_you_gt" translatable="false">¡Nos alegra que regreses!</string>

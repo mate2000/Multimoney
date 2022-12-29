@@ -364,7 +364,7 @@ fun OngoingCredit(
                 color = MultimoneyTheme.colors.text
             )
         } else {
-            Spacer(modifier = Modifier.padding(bottom = 44.dp))
+            Spacer(modifier = Modifier.padding(bottom = 30.dp))
         }
         CustomRoundedLinearProgress(
             progress = viewModel.productProgress,

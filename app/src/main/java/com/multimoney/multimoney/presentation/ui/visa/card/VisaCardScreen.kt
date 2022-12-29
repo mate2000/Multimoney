@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.visa.card
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,7 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnBlockUnblockCardClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnInitializeBiometricPrompt
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnOpenDialogConfirmToStartTokenizationProcess
@@ -98,14 +100,15 @@ fun VisaCardScreen(
             modifier = Modifier
                 .padding(start = 16.dp, end = 16.dp, top = 42.dp, bottom = 16.dp)
                 .fillMaxWidth(),
-
+            isBlocked = viewModel.uiState.isCardBlocked,
             isTextVisible = viewModel.uiState.isCardTextVisible,
-            cardNumberOne = viewModel.cardInformation?.cardNumber?.getCardNumberOne() ?: "",
-            cardNumberTwo = viewModel.cardInformation?.cardNumber?.getCardNumberTwo() ?: "",
-            cardNumberThree = viewModel.cardInformation?.cardNumber?.getCardNumberThree() ?: "",
-            cardNumberFour = viewModel.cardInformation?.cardNumber?.getCardNumberFour() ?: "",
-            date = viewModel.cardInformation?.expDate?.formatExpirationDate() ?: "",
-            cvv = viewModel.cardInformation?.cValidation ?: ""
+            cardNumberOne = viewModel.balanceCardInformation?.cardInformation?.cardNumber?.getCardNumberOne() ?: "",
+            cardNumberTwo = viewModel.balanceCardInformation?.cardInformation?.cardNumber?.getCardNumberTwo() ?: "",
+            cardNumberThree = viewModel.balanceCardInformation?.cardInformation?.cardNumber?.getCardNumberThree() ?: "",
+            cardNumberFour = viewModel.balanceCardInformation?.cardInformation?.cardNumber?.getCardNumberFour() ?: "",
+            date = viewModel.balanceCardInformation?.cardInformation?.expDate?.formatExpirationDate() ?: "",
+            cvv = viewModel.balanceCardInformation?.cardInformation?.cValidation ?: "",
+            holderName = viewModel.balanceCardInformation?.cardInformation?.holderName ?: ""
         )
         Row(
             modifier = Modifier
@@ -143,6 +146,20 @@ fun VisaCardScreen(
                         .padding(end = 8.dp),
                     icon = R.drawable.ic_link,
                     text = stringResource(id = R.string.link),
+                    enabled = viewModel.uiState.isCardBlocked.not(),
+                    onClick = {
+                        viewModel.onUIEvent(OnOpenDialogConfirmToStartTokenizationProcess)
+                    }
+                )
+            } else if (viewModel.uiState.isNfcAvailable && viewModel.uiState.isCardTokenize) {
+                CustomButtonBig(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .padding(end = 8.dp),
+                    icon = R.drawable.ic_pay,
+                    text = stringResource(id = R.string.pay),
+                    enabled = viewModel.uiState.isCardBlocked.not(),
                     onClick = {
                         viewModel.onUIEvent(OnOpenDialogConfirmToStartTokenizationProcess)
                     }
@@ -164,16 +181,21 @@ fun VisaCardScreen(
                     .weight(1f)
                     .fillMaxWidth()
                     .padding(end = 8.dp),
-                icon = R.drawable.ic_locked,
-                text = stringResource(id = R.string.locked),
+                icon = viewModel.uiState.blockUnblockButtonIcon,
+                text = stringResource(id = viewModel.uiState.blockUnblockButtonText),
                 onClick = {
-                    // TODO: Execute action when implemented
-                    Toast.makeText(
-                        context,
-                        "TBD3",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    viewModel.onUIEvent(OnBlockUnblockCardClick)
                 }
+            )
+        }
+        if (viewModel.uiState.isCardBlocked) {
+            CustomInformativeChip(
+                text = stringResource(id = string.visa_card_block_disclaimer),
+                textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.textInformation),
+                modifier = Modifier.padding(vertical = 24.dp, horizontal = 16.dp),
+                startIcon = R.drawable.ic_information,
+                startIconTint = MultimoneyTheme.colors.textInformation,
+                size = Large
             )
         }
     }
@@ -185,6 +207,10 @@ fun VisaCardScreen(
     )
 
     LoadingIndicator(viewModel.uiState.isLoading)
+
+    BackHandler {
+        viewModel.onUIEvent(OnNavigateBack)
+    }
 
     if (viewModel.uiState.dialogParameters.isActive.value) {
         CustomDialog(

@@ -196,7 +196,7 @@ fun SignUpPersonalDataScreen(
         )
         when (viewModel.uiState.nationalityValue) {
             Nationalities.CostaRicaId.country -> SignUpPersonalDataCrScreen()
-            Nationalities.ElSalvador.country -> SignUpPersonalDataSvScreen()
+            Nationalities.ElSalvadorDui.country -> SignUpPersonalDataSvScreen()
             Nationalities.Guatemala.country -> SignUpPersonalDataGtScreen()
         }
     }

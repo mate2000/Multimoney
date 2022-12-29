@@ -42,6 +42,7 @@ fun CustomDropdown(
     items: List<String>,
     value: String,
     onValueChange: (newText: String) -> Unit = {},
+    onClick: () -> Unit = {},
     labelText: String,
     placeHolder: String?,
     isError: Boolean = false,
@@ -120,6 +121,7 @@ fun CustomDropdown(
                 }
                 .clickable {
                     expanded = !expanded
+                    onClick()
                 },
             colors = TextFieldDefaults.textFieldColors(
                 backgroundColor = backgroundColor,

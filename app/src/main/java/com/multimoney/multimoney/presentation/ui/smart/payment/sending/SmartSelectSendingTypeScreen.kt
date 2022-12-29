@@ -97,32 +97,36 @@ fun SendingTypeOptions(
                 onEndIconClick = onMyContactsClick,
                 onClick = onMyContactsClick
             )
+            when (this) {
+                Brand.CostaRica.id -> {
+                    CustomInfoButton(
+                        title = stringResource(R.string.payment_select_sending_type_my_contacts),
+                        modifier = sendingTypeOptionModifier,
+                        endIcon = R.drawable.ic_right_chevron,
+                        startIcon = R.drawable.ic_sending_contact,
+                        onEndIconClick = onMyContactsClick,
+                        onClick = onMyContactsClick
+                    )
+                    smartAccountTitle?.let {
+                        CustomInfoButton(
+                            title = stringResource(id = it),
+                            modifier = sendingTypeOptionModifier,
+                            endIcon = R.drawable.ic_right_chevron,
+                            startIcon = smartAccountStartIcon,
+                            onEndIconClick = onMySmartAccountClick,
+                            onClick = onMySmartAccountClick
+                        )
+                    }
+                    CustomInfoButton(
+                        title = stringResource(R.string.payment_select_sending_type_iban_accounts),
+                        modifier = sendingTypeOptionModifier,
+                        endIcon = R.drawable.ic_right_chevron,
+                        startIcon = R.drawable.ic_sending_iban_account,
+                        onEndIconClick = onIBANAccountsClick,
+                        onClick = onIBANAccountsClick
+                    )
+                }
+            }
         }
-        CustomInfoButton(
-            title = stringResource(R.string.payment_select_sending_type_my_contacts),
-            modifier = sendingTypeOptionModifier,
-            endIcon = R.drawable.ic_right_chevron,
-            startIcon = R.drawable.ic_sending_contact,
-            onEndIconClick = onMyContactsClick,
-            onClick = onMyContactsClick
-        )
-        smartAccountTitle?.let {
-            CustomInfoButton(
-                title = stringResource(id = it),
-                modifier = sendingTypeOptionModifier,
-                endIcon = R.drawable.ic_right_chevron,
-                startIcon = smartAccountStartIcon,
-                onEndIconClick = onMySmartAccountClick,
-                onClick = onMySmartAccountClick
-            )
-        }
-        CustomInfoButton(
-            title = stringResource(R.string.payment_select_sending_type_iban_accounts),
-            modifier = sendingTypeOptionModifier,
-            endIcon = R.drawable.ic_right_chevron,
-            startIcon = R.drawable.ic_sending_iban_account,
-            onEndIconClick = onIBANAccountsClick,
-            onClick = onIBANAccountsClick
-        )
     }
 }

@@ -23,6 +23,7 @@ import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIE
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateToVisaTokenizationScreen
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnOpenDialogConfirmToStartTokenizationProcess
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnStartPaymentProcess
 import com.multimoney.multimoney.presentation.util.NfcHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.novopayment.sdk.vts.NovoVTS
@@ -79,6 +80,14 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
         )
     }
 
+    private fun startPaymentProcess() {
+        if (NovoVTS.isDefaultPaymentService()) {
+            // todo start Payment Process
+        } else {
+
+        }
+    }
+
     data class UIState(
         // Interactions
         val isTextVisible: Boolean = false,
@@ -110,6 +119,7 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
                     isActive = mutableStateOf(true)
                 )
             )
+            is OnStartPaymentProcess -> startPaymentProcess()
         }
     }
 
@@ -118,6 +128,7 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
         object OnAvailableAmountClick : UIEvent()
         object OnNavigateToVisaTokenizationScreen : UIEvent()
         object OnOpenDialogConfirmToStartTokenizationProcess : UIEvent()
+        object OnStartPaymentProcess : UIEvent()
     }
 
     companion object {

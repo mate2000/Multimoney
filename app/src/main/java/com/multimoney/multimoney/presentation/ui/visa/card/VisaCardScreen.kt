@@ -23,6 +23,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnOpenDialogConfirmToStartTokenizationProcess
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnStartPaymentProcess
 import com.multimoney.multimoney.presentation.uielement.CustomButtonBig
 import com.multimoney.multimoney.presentation.uielement.CustomCardVisaVertical
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -110,6 +111,18 @@ fun VisaCardScreen(
                     text = stringResource(id = R.string.link),
                     onClick = {
                         viewModel.onUIEvent(OnOpenDialogConfirmToStartTokenizationProcess)
+                    }
+                )
+            } else {
+                CustomButtonBig(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .padding(end = 8.dp),
+                    icon = R.drawable.ic_money,
+                    text = stringResource(id = R.string.pay),
+                    onClick = {
+                        viewModel.onUIEvent(OnStartPaymentProcess)
                     }
                 )
             }

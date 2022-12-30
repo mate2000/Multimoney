@@ -14,8 +14,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS_DESCRIPTION
-import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LATITUDE
-import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LONGITUDE
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_SCHEDULE
 import com.multimoney.multimoney.presentation.ui.credit.payment.location.LocationDetailsViewModel.UIEvent.OnCloseScreenClick
@@ -40,8 +38,6 @@ class LocationDetailsViewModel @Inject constructor(
     var pointAddress: String = ""
     var pointAddressDescription: String = ""
     var pointSchedule: String = ""
-    var pointLatitude: String = ""
-    var pointLongitude: String = ""
     var paymentAmount: String = ""
     var creditNumber: String = ""
     var idBrand: Int = 0
@@ -51,8 +47,6 @@ class LocationDetailsViewModel @Inject constructor(
         pointAddress = savedStateHandle[POINT_ADDRESS] ?: ""
         pointAddressDescription = savedStateHandle[POINT_ADDRESS_DESCRIPTION] ?: ""
         pointSchedule = savedStateHandle[POINT_SCHEDULE] ?: ""
-        pointLatitude = savedStateHandle[POINT_LATITUDE] ?: ""
-        pointLongitude = savedStateHandle[POINT_LONGITUDE] ?: ""
         paymentAmount = savedStateHandle[PAYMENT_AMOUNT] ?: ""
         creditNumber = savedStateHandle[CREDIT_NUMBER] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -72,8 +66,8 @@ class LocationDetailsViewModel @Inject constructor(
     private fun onNavigateBack() =
         navigateBack(popTo = Screen.PaymentPointsScreen.route, isRestart = false)
 
-    private fun onNavigateMapsClick(context: Context, latitude: String, longitude: String) {
-        context.openMapsLink(latitude, longitude)
+    private fun onNavigateMapsClick(context: Context, locationAddress: String) {
+        context.openMapsLink(locationAddress)
     }
 
     private fun onCloseScreen() {
@@ -101,8 +95,7 @@ class LocationDetailsViewModel @Inject constructor(
             is OnStart -> onStart()
             is OnNavigateMapsClick -> onNavigateMapsClick(
                 event.context,
-                event.latitude,
-                event.longitude
+                event.locationAddress
             )
             OnCloseScreenClick -> onCloseScreen()
             OnNavigateBack -> onNavigateBack()
@@ -116,8 +109,7 @@ class LocationDetailsViewModel @Inject constructor(
         object OnCloseScreenClick : UIEvent()
         data class OnNavigateMapsClick(
             val context: Context,
-            val latitude: String,
-            val longitude: String
+            val locationAddress: String
         ) : UIEvent()
 
         object OnDialogPositiveButtonClick : UIEvent()

@@ -18,6 +18,7 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.smart.payment.sending.SmartSelectSendingTypeViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.payment.sending.SmartSelectSendingTypeViewModel.UIEvent.OnIBANAccountSelected
 import com.multimoney.multimoney.presentation.ui.smart.payment.sending.SmartSelectSendingTypeViewModel.UIEvent.OnMyContactsSelected
 import com.multimoney.multimoney.presentation.ui.smart.payment.sending.SmartSelectSendingTypeViewModel.UIEvent.OnMyFavoritesSelected
@@ -52,8 +53,8 @@ fun SmartSelectSendingTypeScreen(
             .fillMaxSize()
     ) {
         TopNavBar(
-            onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
-            isRightButtonVisible = false
+            isLeftButtonVisible = false,
+            onRightButtonClick = { viewModel.onUIEvent(OnCloseClick) }
         )
         SendingTypeOptionsContainer(
             sendingTypeOptions = {

@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.smart.payment.sending
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -45,6 +44,7 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
+            is UIEvent.OnCloseClick -> onNavigateToHome()
             is OnNavigateBack -> onNavigateBack()
             is UIEvent.OnMyContactsSelected -> onNavigateToMyContacts()
             is UIEvent.OnSmartAccountSelected -> onNavigateToSmartAccount()
@@ -85,6 +85,9 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         return result
     }
 
+    private fun onNavigateToHome() =
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true)
+
     private fun onNavigateToIBANAccount() {
         // TODO navigate to HU REV-1423
     }
@@ -122,6 +125,7 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     )
 
     sealed class UIEvent {
+        object OnCloseClick : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnMyContactsSelected : UIEvent()
         object OnSmartAccountSelected : UIEvent()

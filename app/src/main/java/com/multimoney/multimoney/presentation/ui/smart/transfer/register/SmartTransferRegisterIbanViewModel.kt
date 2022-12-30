@@ -19,15 +19,14 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAccountViewModel
 import com.multimoney.multimoney.presentation.util.capitalized
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -58,7 +57,6 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
     private var identification: String?
     private var previousScreen: String?
     private var idClient: Int?
-    private var idCurrency: Int?
 
     init {
         user = savedStateHandle[USER]
@@ -66,7 +64,6 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
         identification = savedStateHandle[IDENTIFICATION]
         previousScreen = savedStateHandle[PREVIOUS_SCREEN]
         idClient = savedStateHandle[ID_CLIENT]
-        idCurrency = savedStateHandle[ID_CURRENCY]
     }
 
     private fun onQueryDocumentList() {
@@ -267,7 +264,7 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
             idBrand = idBrand ?: Brand.CostaRica.id,
             identification = uiState.documentNumber,
             accountNumber = Brand.CostaRica.iban.plus(uiState.ibanAccountNumber),
-            idCurrency = idCurrency?.toLong() ?: 0L,
+            idCurrency = validateAccount?.currency?.getCurrencyFromId()?.id?.toLong() ?: 0,
             nameAccount = uiState.favoriteName.ifBlank { user ?: "" },
             country = Brand.CostaRica.countryCode,
             idAccount = null,

@@ -33,7 +33,6 @@ import com.multimoney.multimoney.presentation.theme.GrayScale400
 import com.multimoney.multimoney.presentation.theme.GrayScale500
 import com.multimoney.multimoney.presentation.theme.GrayScale700
 import com.multimoney.multimoney.presentation.theme.GrayScale800
-import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Primary200
 import com.multimoney.multimoney.presentation.theme.Primary400
 import com.multimoney.multimoney.presentation.theme.Primary500
@@ -95,7 +94,7 @@ fun CustomButton(
                 textColor = if (enable) {
                     GrayScale800
                 } else {
-                    GrayScale400
+                    GrayScale500
                 }
                 arrowIconTint = if (enable) {
                     GrayScale800
@@ -115,7 +114,7 @@ fun CustomButton(
                 textColor = if (enable) {
                     GrayScale800
                 } else {
-                    GrayScale400
+                    GrayScale500
                 }
                 arrowIconTint = if (enable) {
                     GrayScale800
@@ -247,7 +246,7 @@ fun CustomButton(
                         GrayScale700
                     },
                     disabledBackgroundColor = GrayScale700,
-                    disabledContentColor = GrayScale700,
+                    disabledContentColor = GrayScale700
                 )
                 textColor = DefaultWhite
                 arrowIconTint = if (enable) {
@@ -263,7 +262,7 @@ fun CustomButton(
                         DefaultWhite
                     },
                     disabledBackgroundColor = DefaultWhite,
-                    disabledContentColor = GrayScale400,
+                    disabledContentColor = GrayScale400
                 )
                 textColor = DefaultBlack
                 arrowIconTint = if (enable) {

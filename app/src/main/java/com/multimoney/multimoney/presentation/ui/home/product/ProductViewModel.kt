@@ -579,6 +579,7 @@ class ProductViewModel @Inject constructor(
             QuickActionFlow.ACTIVATE_MM_VISA.flow -> onCreateMultimoneyVisa(onLoadingValueChange)
             QuickActionFlow.PAY_FEE.flow -> onNavigateToPaymentScreen()
             QuickActionFlow.SAVE_SMART.flow -> onNavigateToSmartSave()
+            QuickActionFlow.SEND_MONEY.flow -> onNavigateToSendMoneyScreenQuickAction()
         }
     }
 
@@ -668,6 +669,22 @@ class ProductViewModel @Inject constructor(
         navigateTo(
             route = "${Screen.AddIbanAccountScreen.baseRoute}/$email/${uiState.idBrand}/$identification/${Screen.PaymentAccountScreen.baseRoute}/$idClient/${infoCredit?.idLoanClient}"
         )
+    }
+
+    private fun onNavigateToSendMoneyScreenQuickAction() {
+        if (uiState.idBrand == Brand.ElSalvador.id.toString()) {
+            val account = balanceCredit?.balanceAccountSmart?.first()
+            smartAccount = SmartAccountID(
+                account?.tokenNumber,
+                account?.idCurrencyAccount,
+                account?.accountNumber
+            )
+            navigateTo(
+                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${pkUser}/${uiState.idBrand}/${identification}/${encodeData(smartAccount)}"
+            )
+        } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
+            // TODO navigate to account selection screen HU [tba]
+        }
     }
 
     private fun onNavigateToSendMoneyScreen(account: Account?) {

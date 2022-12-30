@@ -14,6 +14,7 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CryptoAccountStatus
 import com.multimoney.domain.model.balance.Account
 import com.multimoney.domain.model.balance.Balance
+import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.ButtonsSection
@@ -29,7 +30,8 @@ fun CryptoFooterExpanded(
     actionMarket: () -> Unit,
     actionWallet: () -> Unit,
     noBalanceAction: () -> Unit,
-    hasBalanceAction: () -> Unit
+    hasBalanceAction: () -> Unit,
+    currencyItemClick: (BalanceCryptoAccountItems) -> Unit
 ) {
     if (userStatus?.infoCrypto?.status == CryptoAccountStatus.ACTIVE.status) {
         CryptoFooterExpandedContent(
@@ -39,7 +41,8 @@ fun CryptoFooterExpanded(
             actionMarket,
             actionWallet,
             noBalanceAction,
-            hasBalanceAction
+            hasBalanceAction,
+            currencyItemClick
         )
     }
 }
@@ -52,7 +55,8 @@ fun CryptoFooterExpandedContent(
     actionMarket: () -> Unit,
     actionWallet: () -> Unit,
     noBalanceAction: () -> Unit,
-    hasBalanceAction: () -> Unit
+    hasBalanceAction: () -> Unit,
+    currencyItemClick: (BalanceCryptoAccountItems) -> Unit
 ) {
 
     val smartBalanceAvailable = verifyIfHasSmartBalance(balance?.balanceAccountSmart)
@@ -87,7 +91,10 @@ fun CryptoFooterExpandedContent(
                 if (!it) {
                     NoticeSection()
                 } else {
-                    CryptoCurrencies(items = balance?.balanceCryptoAccount?.items)
+                    CryptoCurrencies(
+                        itemClick = currencyItemClick,
+                        items = balance?.balanceCryptoAccount?.items
+                    )
                 }
             }
         }

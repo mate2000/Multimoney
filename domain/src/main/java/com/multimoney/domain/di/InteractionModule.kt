@@ -118,6 +118,10 @@ import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventU
 import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventUseCaseImpl
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCase
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCaseImpl
+import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyHistoryUseCase
+import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCase
+import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCaseImpl
+import com.multimoney.domain.interaction.crypto.GetCryptoPriceHistoryUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCase
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCaseImpl
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
@@ -640,4 +644,14 @@ class InteractionModule {
     @Singleton
     fun provideQueryTermsAndConditionsSigned(profileRepository: ProfileRepository): QueryTermsAndConditionsSignedUseCase =
         QueryTermsAndConditionsSignedUseCaseImpl(profileRepository)
+
+    @Provides
+    @Singleton
+    fun provideGetCryptoMovementUseCase(cryptoRepository: CryptoRepository): GetCryptoCurrencyMovementsUseCase =
+        GetCryptoCurrencyMovementsUseCaseImpl(cryptoRepository)
+
+    @Provides
+    @Singleton
+    fun provideGetCryptoHistoryPrice(cryptoRepository: CryptoRepository) : GetCryptoCurrencyHistoryUseCase =
+        GetCryptoPriceHistoryUseCaseImpl(cryptoRepository)
 }

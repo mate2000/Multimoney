@@ -1137,10 +1137,16 @@
     <string name="profile_help_error_button_label" translatable="false">Regresar</string>
 
     <!-- Currency Item -->
-    <string name="currency_item_dollar_symbol" translatable="false">$%2s</string>
+    <string name="currency_item_dollar_symbol" translatable="false">$%1s</string>
     <string name="currency_item_description" translatable="false">%1$s (%2$s)</string>
     <string name="currency_item_percent_invested" translatable="false">%1$s\%%</string>
 
     <!-- Smart Transfer Iban -->
     <string name="smart_iban_transfer_title" translatable="false">Cuentas registradas</string>
+
+    <!-- Currency Detail Screen -->
+    <string name="currency_detail_title" translatable="false">Inversión en %s</string>
+    <string name="currency_detail_daily_invest" translatable="false">Hoy %1$s (%2$s)</string>
+    <string name="currency_detail_my_movements" translatable="false">Mis movimientos</string>
+    <string name="currency_detail_see_all" translatable="false">Ver todas</string>
 </resources>

@@ -25,11 +25,13 @@ import com.multimoney.multimoney.presentation.util.MAX_CRYPTO_ITEMS
 
 @Composable
 fun CryptoCurrencies(
-    items: List<BalanceCryptoAccountItems>?
+    items: List<BalanceCryptoAccountItems>?,
+    itemClick: (BalanceCryptoAccountItems) -> Unit
 ) {
-    Column(modifier = Modifier
-        .verticalScroll(rememberScrollState())
-        .padding(horizontal = 16.dp)
+    Column(
+        modifier = Modifier
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp)
     ) {
         Row(
             modifier = Modifier
@@ -54,15 +56,16 @@ fun CryptoCurrencies(
             }
         }
         items?.let {
-            it.take(MAX_CRYPTO_ITEMS).forEach{ item ->
+            it.take(MAX_CRYPTO_ITEMS).forEach { item ->
                 CurrencyItem(
-                    imageUrl = item.url_image,
-                    descriptionCurrency = item.descriptionCurrency,
-                    asset = item.asset,
-                    balanceDollars = item.balanceDollars,
-                    priceOfTheDay = item.priceOfTheDay,
-                    percentageInvestedCurrency = item.percentageInvestedCurrency,
-                    available = item.available
+                    imageUrl = item.url_image ?: "",
+                    descriptionCurrency = item.descriptionCurrency ?: "",
+                    asset = item.asset ?: "",
+                    balanceDollars = item.balanceDollars ?: 0.0,
+                    priceOfTheDay = item.priceOfTheDay ?: 0.0,
+                    percentageInvestedCurrency = item.percentageInvestedCurrency ?: "",
+                    available = item.available ?: 0.0,
+                    onClick = { itemClick(item) }
                 )
             }
         }

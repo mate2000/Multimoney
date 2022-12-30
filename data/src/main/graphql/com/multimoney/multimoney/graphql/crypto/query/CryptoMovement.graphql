@@ -1,0 +1,44 @@
+query GetCryptoCurrencyMovement(
+    $user: String!,
+    $idBrand: Int!,
+    $identification: String!,
+    $market: String!,
+    $startDate: DateTime!,
+    $endDate: DateTime!
+){
+    cryptoCurrencyMovement(cryptoMovementInput: {
+        user: $user,
+        idBrand: $idBrand,
+        identification: $identification,
+        market: $market,
+        order_time_begin: $startDate,
+        order_time_end: $endDate,
+        pagination_limit: 100
+        pagination_offset: 0
+    }
+    ) {
+        globalBalance,
+        investedBalance,
+        percentageInvested,
+        total_count,
+        items {
+            id,
+            profile_id,
+            side,
+            market,
+            type,
+            base_amount,
+            price,
+            quote_amount,
+            created_at,
+            modified_at,
+            amount_filled,
+            volume_weighted_average_price,
+            dateCreated,
+            decriptionMovement,
+            abbreviationCurrency,
+            held,
+            month_limit_exceeded
+        }
+    }
+}

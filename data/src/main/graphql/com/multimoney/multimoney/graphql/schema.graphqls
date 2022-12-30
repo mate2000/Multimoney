@@ -419,17 +419,17 @@ type Query {
   """
   Security
   """
-  saveRegisterCoreLog(saveRegisterCoreLogDto: SaveRegisterCoreLogDtoInput!): SaveRegisterCoreLog!
-
-  """
-  Security
-  """
   quickActions(quickActionsInput: QuickActionsDtoInput!): [QuickActions!]!
 
   """
   Security
   """
   userPhoneMobileGet(userPhoneMobileGetInput: UserPhoneMobileGetDtoInput!): UserEventMobile!
+
+  """
+  Security
+  """
+  countryPhoneCodes(getCountryPhone: GetCountryPhoneCodeDtoInput!): [GetCountryPhoneCode!]!
 
   """
   VirtualCard
@@ -738,6 +738,11 @@ type Mutation {
   Security
   """
   userPhoneMobileSave(userPhoneMobileSaveInput: UserPhoneMobileSaveDtoInput!): UserEventMobile!
+
+  """
+  Security
+  """
+  saveRegisterCoreLog(saveRegisterCoreLogDto: SaveRegisterCoreLogDtoInput!): SaveRegisterCoreLog!
 
   """
   VirtualCard
@@ -2939,26 +2944,6 @@ input GetCompanyNameByIdentificationDtoInput {
   user: String
 }
 
-type SaveRegisterCoreLog {
-  status: Int
-
-  message: String
-
-  detail: String
-}
-
-input SaveRegisterCoreLogDtoInput {
-  process: String!
-
-  parameters: String!
-
-  result: String!
-
-  idBrand: Int
-
-  user: String
-}
-
 type QuickActions {
   idIcono: String!
 
@@ -3030,6 +3015,18 @@ input UserPhoneMobileGetDtoInput {
 
   pkUser: Long!
 
+  idBrand: Int
+
+  user: String
+}
+
+type GetCountryPhoneCode {
+  country: String!
+
+  code: Int!
+}
+
+input GetCountryPhoneCodeDtoInput {
   idBrand: Int
 
   user: String
@@ -4873,6 +4870,26 @@ input UserPhoneMobileSaveDtoInput {
   user: String
 }
 
+type SaveRegisterCoreLog {
+  status: Int
+
+  message: String
+
+  detail: String
+}
+
+input SaveRegisterCoreLogDtoInput {
+  process: String!
+
+  parameters: String!
+
+  result: String!
+
+  idBrand: Int
+
+  user: String
+}
+
 type CreateCard {
   idCard: Long!
 
@@ -5237,6 +5254,12 @@ type CardUnblocking {
   msg: String!
 
   processedAt: String!
+
+  status: Int
+
+  message: String
+
+  detail: String
 }
 
 input CardUnblockingDtoInput {

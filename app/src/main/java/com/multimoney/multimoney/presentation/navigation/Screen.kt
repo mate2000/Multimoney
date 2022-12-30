@@ -11,6 +11,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_CARD_VI
 import com.multimoney.multimoney.presentation.navigation.navgraph.COMING_FROM_CRYPTO
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
+import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.CURRENT_AMOUNT_VALUE
 import com.multimoney.multimoney.presentation.navigation.navgraph.DISBURSEMENT_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
@@ -422,5 +423,10 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object CryptoWalletScreen : Screen(
         "crypto_wallet_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$GLOBAL_CRYPTO_BALANCE}",
         "crypto_wallet_screen"
+    )
+
+    object CryptoCurrencyMovementsScreen : Screen(
+        "crypto_currency_movements_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}/{$ITEM_CRYPTO_CURRENCY}",
+        "crypto_currency_movements_screen"
     )
 }

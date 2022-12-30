@@ -72,7 +72,7 @@ fun SignInScreen(
             onUIEvent(
                 OnStart(
                     getDeviceId(fragmentActivity),
-                    getIpAddress(fragmentActivity),
+                    getIpAddress(fragmentActivity) ?: "",
                     getDeviceName(fragmentActivity) ?: "",
                     getDeviceType(fragmentActivity).value ?: "",
                     forceChangeDevice

@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -453,7 +453,7 @@ fun OngoingCredit(
             Text(
                 text = stringResource(
                     id = R.string.home_product_remaining,
-                    viewModel.balanceCredit?.getFirstSummary()?.currentBalanceLabel.toString()
+                    viewModel.getCreditBalanceLabel(viewModel.balanceCredit?.balanceCredit)
                 ),
                 modifier = Modifier.padding(top = 4.dp),
                 style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
@@ -491,7 +491,7 @@ fun OngoingCredit(
                     color = MultimoneyTheme.colors.text
                 )
                 Text(
-                    text = viewModel.balanceCredit?.getFirstSummary()?.monthlyQuotaLabel.toString(),
+                    text = viewModel.getQuota(viewModel.balanceCredit?.balanceCredit),
                     modifier = Modifier.padding(top = 4.dp),
                     style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                     color = MultimoneyTheme.colors.text

@@ -63,7 +63,7 @@ fun PaymentScheduleAccountContent(
     ) {
         TopNavBar(
             onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
-            isRightButtonVisible = false
+            isRightButtonVisible = true
         )
         Text(
             modifier = Modifier.padding(top = 50.dp, start = 16.dp, end = 16.dp),

@@ -93,7 +93,7 @@ fun PaymentScheduleContent(
             Column {
                 TopNavBar(
                     onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
-                    isRightButtonVisible = false
+                    onRightButtonClick = { viewModel.onUIEvent(OnAlertCloseClick) }
                 )
                 CustomInformativeText(
                     modifier = Modifier.fillMaxWidth().padding(top = 34.dp, start = 7.dp, end = 16.dp),

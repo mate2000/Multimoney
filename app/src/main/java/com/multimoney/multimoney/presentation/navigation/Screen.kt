@@ -3,8 +3,8 @@ package com.multimoney.multimoney.presentation.navigation
 import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.AMOUNT_ORIGINAL_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALANCE_LABEL
+import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_INFORMATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.BANK_DETAIL
-import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_INFORMATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_CARD_VISA_DIRECT
@@ -46,8 +46,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_METHOD
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS_DESCRIPTION
-import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LATITUDE
-import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LONGITUDE
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_SCHEDULE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
@@ -271,17 +269,17 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // VisaNavGraph
     object VisaIssuanceScreen : Screen(
-        "visa_issuance_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$PHONE_NUMBER}/{$CARD_INFORMATION}/{$AVAILABLE_BALANCE_LABEL}",
+        "visa_issuance_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$PHONE_NUMBER}/{$BALANCE_CARD_INFORMATION}/{$AVAILABLE_BALANCE_LABEL}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
         "visa_issuance_screen"
     )
 
     object VisaCardScreen : Screen(
-        "visa_card_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$PHONE_NUMBER}/{$CARD_INFORMATION}/{$AVAILABLE_BALANCE_LABEL}",
+        "visa_card_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$PHONE_NUMBER}/{$BALANCE_CARD_INFORMATION}/{$AVAILABLE_BALANCE_LABEL}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
         "visa_card_screen"
     )
 
     object VisaTokenizationWaitingScreen : Screen(
-        "visa_tokenization_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$PHONE_NUMBER}/{$CARD_INFORMATION}/{$AVAILABLE_BALANCE_LABEL}",
+        "visa_tokenization_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$PHONE_NUMBER}/{$BALANCE_CARD_INFORMATION}/{$AVAILABLE_BALANCE_LABEL}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
         "visa_tokenization_screen"
     )
 
@@ -375,7 +373,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object PaymentLocationDetailsScreen : Screen(
-        "payment_location_details_screen?$POINT_NAME={$POINT_NAME}?$POINT_ADDRESS={$POINT_ADDRESS}?$POINT_ADDRESS_DESCRIPTION={$POINT_ADDRESS_DESCRIPTION}?$POINT_SCHEDULE={$POINT_SCHEDULE}?$POINT_LATITUDE={$POINT_LATITUDE}?$POINT_LONGITUDE={$POINT_LONGITUDE}?$PAYMENT_AMOUNT={$PAYMENT_AMOUNT}?$CREDIT_NUMBER={$CREDIT_NUMBER}?$ID_BRAND={$ID_BRAND}",
+        "payment_location_details_screen?$POINT_NAME={$POINT_NAME}?$POINT_ADDRESS={$POINT_ADDRESS}?$POINT_ADDRESS_DESCRIPTION={$POINT_ADDRESS_DESCRIPTION}?$POINT_SCHEDULE={$POINT_SCHEDULE}?$PAYMENT_AMOUNT={$PAYMENT_AMOUNT}?$CREDIT_NUMBER={$CREDIT_NUMBER}?$ID_BRAND={$ID_BRAND}",
         "payment_location_details_screen"
     )
 

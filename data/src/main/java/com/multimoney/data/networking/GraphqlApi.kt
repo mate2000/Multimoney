@@ -16,7 +16,9 @@ import com.multimoney.data.networking.graphql.apollomodel.AddressLevel3Query
 import com.multimoney.data.networking.graphql.apollomodel.BalanceCardInformationQuery
 import com.multimoney.data.networking.graphql.apollomodel.BalanceQuery
 import com.multimoney.data.networking.graphql.apollomodel.BanksAndRegularExpressionQuery
+import com.multimoney.data.networking.graphql.apollomodel.CardBlockingNVMutation
 import com.multimoney.data.networking.graphql.apollomodel.CardIssuanceNVQuery
+import com.multimoney.data.networking.graphql.apollomodel.CardUnblockingNVMutation
 import com.multimoney.data.networking.graphql.apollomodel.CatalogTypeIndentificationQuery
 import com.multimoney.data.networking.graphql.apollomodel.ChangeEmailMutation
 import com.multimoney.data.networking.graphql.apollomodel.ChangePhoneMutation
@@ -1484,6 +1486,53 @@ class GraphqlApi @Inject constructor(
             cardMasked = cardMasked
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationCardBlocking(
+        blockType: String,
+        observations: String,
+        clientId: Int,
+        userApp: String,
+        cardToken: String,
+        source: String,
+        idLoan: Int,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<CardBlockingNVMutation.Data> = apolloAuthorizedClient.mutation(
+        CardBlockingNVMutation(
+            blockType = blockType,
+            observations = observations,
+            clientId = clientId,
+            userApp = userApp,
+            cardToken = cardToken,
+            source = source,
+            idLoan = idLoan,
+            user = user,
+            idBrand = idBrand
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationCardUnblocking(
+        observations: String,
+        clientId: Int,
+        userApp: String,
+        cardToken: String,
+        source: String,
+        idLoan: Int,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<CardUnblockingNVMutation.Data> = apolloAuthorizedClient.mutation(
+        CardUnblockingNVMutation(
+            observations = observations,
+            clientId = clientId,
+            userApp = userApp,
+            cardToken = cardToken,
+            source = source,
+            idLoan = idLoan,
+            user = user,
+            idBrand = idBrand
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
     // Profile sections
 
     fun queryCountryContact(

@@ -161,9 +161,9 @@ fun SmartDocumentScreen(
         Text(
             text = buildAnnotatedString {
                 withStyle(
-                    style = Typography.h4.toSpanStyle()
+                    style = Typography.h6.toSpanStyle()
                         .copy(
-                            color = MultimoneyTheme.colors.text,
+                            color = MultimoneyTheme.colors.labelText,
                             fontWeight = FontWeight.SemiBold
                         )
                 ) {

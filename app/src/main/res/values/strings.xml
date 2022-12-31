@@ -1029,6 +1029,13 @@
     <string name="market_filter_crypto_az_label" translatable="false">A-Z</string>
     <string name="market_filter_crypto_price_label" translatable="false">Precio</string>
 
+    <!--Crypto Market Details-->
+    <string name="market_details_button_history" translatable="false">Historia</string>
+    <string name="market_details_button_news" translatable="false">Noticias</string>
+    <string name="market_details_button_show_more" translatable="false">Ver Más</string>
+    <string name="market_details_button_show_less" translatable="false">Ver Menos</string>
+    <string name="market_details_button_read_more" translatable="false">Leer más</string>
+
     <!-- Evicertia screen -->
     <string name="smart_evicertia_missing_signature_title_card" translatable="false">¡Solo falta tu firma!</string>
     <string name="smart_evicertia_missing_signature_subtitle_card" translatable="false">Firmá el contrato para que podás empezar a invertir de forma Smart</string>
@@ -1184,9 +1191,11 @@
 
     <!-- Currency Item -->
     <string name="currency_item_dollar_symbol" translatable="false">$%2s</string>
+    <string name="currency_item_inside_parenthesis" translatable="false">(%1s)</string>
     <string name="currency_item_description" translatable="false">%1$s (%2$s)</string>
     <string name="currency_item_gain_or_losses_description" translatable="false">%1s$%2s (%3s\%%)</string>
     <string name="currency_item_percent_invested" translatable="false">%1$s\%%</string>
+    <string name="currency_item_percent_invested_with_symbol" translatable="false">%1s%2$s\%%</string>
 
     <!-- Smart Transfer Iban -->
     <string name="smart_iban_transfer_title" translatable="false">Cuentas registradas</string>

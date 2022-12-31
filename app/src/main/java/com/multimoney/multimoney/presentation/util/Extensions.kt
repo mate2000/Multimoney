@@ -24,6 +24,9 @@ import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.Vis
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeType
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
+import java.net.URLDecoder
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import java.util.Locale
 import kotlin.time.Duration
 
@@ -207,6 +210,14 @@ fun String.filterInvalidAmountInput() = this.filter { it.isValidAmountCharacter(
 fun Double.roundToTwoDecimalPlaces() = String.format("%.2f", this)
 
 fun Double.roundToTwoDecimalPlacesWithoutNegatives() = String.format("%.2f", this).replace("-", "")
+
+fun String.encodeURLToUTF(): String {
+    return URLEncoder.encode(this, StandardCharsets.UTF_8.toString())
+}
+
+fun String.decodeURLFromUTF(): String {
+    return URLDecoder.decode(this, StandardCharsets.UTF_8.toString())
+}
 
 /**
  * split a string by whitespace character ' '

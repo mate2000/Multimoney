@@ -64,7 +64,7 @@ fun CryptoMovementsScreen(
 }
 
 @Composable
-fun CryptoMovementsScreenContent(
+private fun CryptoMovementsScreenContent(
     cryptoMovements: Flow<PagingData<CryptoCurrencyMovement>>,
     onBackPressed: () -> Unit
 ) {
@@ -96,7 +96,7 @@ fun CryptoMovementsScreenContent(
 }
 
 @Composable
-fun HeaderSection() {
+private fun HeaderSection() {
 
     Row(
         modifier = Modifier
@@ -114,7 +114,7 @@ fun HeaderSection() {
 }
 
 @Composable
-fun MovementsListSection(
+private fun MovementsListSection(
     cryptoMovements: LazyPagingItems<CryptoCurrencyMovement>
 ) {
 

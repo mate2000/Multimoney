@@ -82,7 +82,7 @@ fun HomeWallet(
 
         walletViewModel.onUIEvent(OnGetUserInfo)
         walletViewModel.onUIEvent(OnGetBalanceClient)
-        walletViewModel.onUIEvent(OnSetDateRange(FilterDateByDays.YESTERDAY.days))
+        walletViewModel.onUIEvent(OnSetDateRange(FilterDateByDays.YESTERDAY.time))
     }
 
     val isFocused = remember { mutableStateOf(false) }
@@ -193,7 +193,7 @@ fun HomeWalletContent(
     val isInGainOrLoss = gainsOrLosses >= 0
     val graphicColor = if (isInGainOrLoss)
         MultimoneyTheme.colors.cryptoWalletGainsColor else MultimoneyTheme.colors.cryptoLossesColor
-    var selectedDateRange by remember { mutableStateOf(FilterDateByDays.YESTERDAY.days) }
+    var selectedDateRange by remember { mutableStateOf(FilterDateByDays.YESTERDAY.time) }
 
     Column(
         modifier = modifier,

@@ -107,7 +107,7 @@ fun getPreviousDate(daysToSubtract: Long): String {
 
 fun getPreviousDate(dateFilter: FilterDate = FilterDate.YESTERDAY): String {
     val date = LocalDate.now()
-    when(dateFilter) {
+    when (dateFilter) {
         FilterDate.YESTERDAY -> date.minusDays(1)
         FilterDate.LAST_7_DAYS -> date.minusDays(7)
         FilterDate.LAST_30_DAYS -> date.minusDays(30)
@@ -117,6 +117,15 @@ fun getPreviousDate(dateFilter: FilterDate = FilterDate.YESTERDAY): String {
     }
 
     val formatters: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    return date.format(formatters)
+}
+
+fun getCurrentDateWithMonthName(): String {
+    val date = LocalDate.now()
+    val formatters: DateTimeFormatter = DateTimeFormatter.ofPattern(
+        DAY_MONTH_NAME_YEAR_FORMAT,
+        Locale(SPANISH_LOCALE)
+    )
     return date.format(formatters)
 }
 
@@ -159,13 +168,21 @@ fun parseApiDateToTermsAndConditionsDateTime(date: String?): String {
     }
 }
 
-enum class FilterDateByDays(val days: Long, val time: String, val timeAbv: String) {
-    YESTERDAY(1, "Dia", "D"),
-    LAST_7_DAYS(7, "Semana", "S"),
-    LAST_30_DAYS(30, "Mes", "M"),
-    LAST_90_DAYS(90, "3 Meses", "3M"),
-    LAST_180_DAYS(180, "6 Meses", "6M"),
-    LAST_365_DAYS(365, "Año", "A"),
+enum class FilterDateByDays(
+    val time: Long,
+    val timeDescription: String,
+    val timeDescriptionExtended: String,
+    val timeAbv: String,
+    val timeAbvExtended: String,
+    val dataPoints: Long
+) {
+    HOUR(24, "Hora", "1 Hora", "H", "1H",60),
+    YESTERDAY(1, "Dia", "1 Dia", "D", "1D",24),
+    LAST_7_DAYS(7, "Semana", "1 Semana", "S", "1S",7),
+    LAST_30_DAYS(30, "Mes", "1 Mes", "M", "1M",30),
+    LAST_90_DAYS(90, "Meses", "3 Meses", "3M", "3M",90),
+    LAST_180_DAYS(180, "Meses", "6 Meses", "6M", "6M",180),
+    LAST_365_DAYS(365, "Año", "1 Año", "A", "1A",365),
 }
 
 enum class FilterDate {
@@ -187,7 +204,9 @@ const val BIRTH_DATE_MIN_MONTH = 0
 const val BIRTH_DATE_MIN_DAY = 1
 const val EIGHTEEN_YEARS_VALUE = 18
 const val ONE_HUNDRED_TWENTY_YEARS_VALUE = 120
+const val SPANISH_LOCALE = "es"
 
+val DAY_MONTH_NAME_YEAR_FORMAT = "dd 'de' MMMM 'de' yyyy"
 val YEAR_FORMAT = SimpleDateFormat(YEAR_PATTER, Locale.getDefault())
 val DAY_FORMAT = SimpleDateFormat(DAY_PATTERN, Locale.getDefault())
 val API_DATE_FORMAT = SimpleDateFormat(ISO_8601_API_FORMAT_PATTERN, Locale.getDefault())
@@ -196,4 +215,5 @@ val BAR_DIVIDER_FORMAT = SimpleDateFormat("dd | MM | yyyy", Locale.getDefault())
 val SHORT_TIME_FORMAT = SimpleDateFormat("hh:mm a", Locale.getDefault())
 val BAR_DIVIDER_FORMAT_YEAR_TWO_DIGITS = SimpleDateFormat("dd | MM | yy", Locale.getDefault())
 val DATE_TIME_DOCUMENTS_FORMAT = DateTimeFormatter.ofPattern("ddMMyyHHmmss")
-val API_DATE_AND_TIME_FORMAT = SimpleDateFormat(YEAR_MONTH_DAY_AND_TIME_BAR_FORMAT, Locale.getDefault())
+val API_DATE_AND_TIME_FORMAT =
+    SimpleDateFormat(YEAR_MONTH_DAY_AND_TIME_BAR_FORMAT, Locale.getDefault())

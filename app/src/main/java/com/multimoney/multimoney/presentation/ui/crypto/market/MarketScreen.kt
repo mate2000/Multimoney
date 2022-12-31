@@ -41,6 +41,8 @@ import com.multimoney.multimoney.presentation.ui.crypto.MarketCurrencyItem
 import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreenViewModel.UIEvent.OnGetAvailableListOfCryptoCoins
 import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreenViewModel.UIEvent.OnGetUserInfo
 import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreenViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreenViewModel.UIEvent.OnNavigateToCurrencyDetails
+import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreenViewModel.UIEvent.OnSetAssetBeforeNavigation
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
@@ -49,6 +51,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomSelector
 import com.multimoney.multimoney.presentation.uielement.Size
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.encodeURLToUTF
 import kotlinx.coroutines.launch
 
 @Composable
@@ -145,6 +148,15 @@ fun MarketScreenContent(
                             crListOfCryptoCoin else svListOfCryptoCoins,
                         searchQuery = searchQuery,
                         selectedFilter = selectedFilter,
+                        onCurrencyItemClick = { cryptoCurrency ->
+                            marketViewModel.onUIEvent(OnSetAssetBeforeNavigation(
+                                asset = cryptoCurrency.baseAsset,
+                                description = cryptoCurrency.description,
+                                currentPrice = cryptoCurrency.currentPrice.toString().toFloat(),
+                                urlImage = cryptoCurrency.url_image.encodeURLToUTF()
+                            ))
+                            marketViewModel.onUIEvent(OnNavigateToCurrencyDetails)
+                        }
                     )
                 }
             }
@@ -215,9 +227,6 @@ fun FilterBottomSheet(
     filterQuery: MutableState<String>,
     onCancelClick: () -> Unit = {}
 ) {
-
-    val filters = listOf(MarketFilter.AZ, MarketFilter.Price)
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -248,7 +257,7 @@ fun FilterBottomSheet(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            items(filters.reversed()) { filter ->
+            items(MarketFilter.values()) { filter ->
 
                 CustomSelector(
                     text = filter.value,
@@ -271,7 +280,8 @@ enum class MarketFilter(val value: String) {
 fun ListOfCoinsSection(
     availableCryptoCoins: List<MarketCryptoCoin> = emptyList(),
     searchQuery: MutableState<String>,
-    selectedFilter: MutableState<String>
+    selectedFilter: MutableState<String>,
+    onCurrencyItemClick: (MarketCryptoCoin) -> Unit
 ) {
 
     val filteredListByQuery =
@@ -292,8 +302,10 @@ fun ListOfCoinsSection(
                 imageUrl = cryptoCoin.url_image,
                 descriptionCurrency = cryptoCoin.description,
                 asset = cryptoCoin.baseAsset,
+                amountChange = cryptoCoin.amountchange,
                 percentChange = cryptoCoin.percentChange.toDouble(),
-                currentPrice = cryptoCoin.currentPrice.toString().toDouble()
+                currentPrice = cryptoCoin.currentPrice.toString().toDouble(),
+                onCurrencyItemClick = { onCurrencyItemClick(cryptoCoin) }
             )
         }
     }

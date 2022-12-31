@@ -58,7 +58,9 @@ import com.multimoney.data.networking.graphql.apollomodel.OcupationsQuery
 import com.multimoney.data.networking.graphql.apollomodel.EmploymentSituationQuery
 import com.multimoney.data.networking.graphql.apollomodel.ExchangeRateQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetAvailableListOfCryptoCoinsQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetCryptoCurrencyNewsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCryptoMovementsQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetHistoricalCurrencyPricesQuery
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoCheckProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoIntialProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.PayCreditVDMutation
@@ -98,6 +100,10 @@ import com.multimoney.data.networking.graphql.apollomodel.type.BeneficiaryReques
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.credit.CreditInfoQuestion
 import com.multimoney.domain.model.credit.DestinyAccount
+import com.multimoney.domain.model.crypto.CryptoCurrencyNews
+import com.multimoney.domain.model.crypto.GetHistoricalCurrencyPrices
+import com.multimoney.domain.model.util.MultimoneyResult
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GraphqlApi @Inject constructor(
@@ -1384,6 +1390,42 @@ class GraphqlApi @Inject constructor(
                 order_time_end,
                 pagination_limit,
                 pagination_offset
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryCurrencyHistoricalPrices(
+        market: String,
+        max_data_points: Long,
+        range_begin: String,
+        range_end: String,
+        pagination_limit: Int,
+        pagination_offset: Int,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<GetHistoricalCurrencyPricesQuery.Data> =
+        apolloAuthorizedClient.query(
+            GetHistoricalCurrencyPricesQuery(
+                market,
+                max_data_points,
+                range_begin,
+                range_end,
+                pagination_limit,
+                pagination_offset,
+                user,
+                idBrand
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryCurrencyNews(
+        baseAsset: String,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<GetCryptoCurrencyNewsQuery.Data> =
+        apolloAuthorizedClient.query(
+            GetCryptoCurrencyNewsQuery(
+                baseAsset,
+                user,
+                idBrand
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

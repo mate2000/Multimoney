@@ -113,7 +113,7 @@ class ProductViewModel @Inject constructor(
     var isExpiredTitle = R.string.home_product_expiration
     var smartMovementsList: List<SmartMovementsResult> = emptyList()
     var creditMovements: List<CreditMovementsResult> = emptyList()
-    var smartAccount : SmartAccountID? = null
+    var smartAccount: SmartAccountID? = null
 
     private fun onSetUserData(
         idBrand: String,
@@ -223,15 +223,17 @@ class ProductViewModel @Inject constructor(
             navigateTo("${Screen.SmartPaymentMethodScreenSV.baseRoute}/$smartIds")
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             val infoCredit = uiState.userStatus?.infoCredit
-            val smartIds = encodeData(balanceCredit?.balanceAccountSmart?.map {
-                SmartAccountID(
-                    tokenAccount = it?.tokenNumber,
-                    currencyID = it?.idCurrencyAccount,
-                    accountNumber = it?.accountNumber ?: "",
-                    ibanAccountNumber = it?.ibanAccountNumber
-                )
-            })
-            navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/${smartIds}/$email/${uiState.idBrand}/$identification/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
+            val smartIds = encodeData(
+                balanceCredit?.balanceAccountSmart?.map {
+                    SmartAccountID(
+                        tokenAccount = it?.tokenNumber,
+                        currencyID = it?.idCurrencyAccount,
+                        accountNumber = it?.accountNumber ?: "",
+                        ibanAccountNumber = it?.ibanAccountNumber
+                    )
+                }
+            )
+            navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/$smartIds/$email/${uiState.idBrand}/$identification/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
         }
     }
 
@@ -331,14 +333,16 @@ class ProductViewModel @Inject constructor(
             }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}/$idClient/${uiState.userStatus?.infoCredit?.idLoanClient ?: 0}"
         )
 
-    private fun onNavigateToHomeMultimoneyVisa() =
+    private fun onNavigateToHomeMultimoneyVisa() {
+        val infoCredit = uiState.userStatus?.infoCredit
         navigateTo(
             "${Screen.VisaCardScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/${uiState.userStatus?.infoUser?.phone}/${
             encodeData(
                 balanceCredit?.balanceCardInformation
             )
-            }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}/$idClient/${uiState.userStatus?.infoCredit?.idLoanClient ?: 0}"
+            }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}/$idClient/${infoCredit?.idLoanClient ?: 0}"
         )
+    }
 
     private fun onNavigateToProfileScreen() {
         navigateTo("${Screen.ProfileScreen.baseRoute}/$idClient/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/$email/${uiState.userStatus?.infoUser?.phone}/$identification/$pkUser/${uiState.userStatus?.infoUser?.userName}")
@@ -504,9 +508,9 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToGtSvNonPreApproved() =
         navigateTo(
             "${Screen.NonPreApprovedScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
-                    "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/${uiState.userStatus?.infoUser?.firstName}/" +
-                    "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
-                    "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0}"
+                "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/${uiState.userStatus?.infoUser?.firstName}/" +
+                "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
+                "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0}"
         )
 
     fun getCreditBalanceLabel(balanceCredit: List<BalanceCredit?>?): String {
@@ -681,7 +685,7 @@ class ProductViewModel @Inject constructor(
         )
         if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             navigateTo(
-                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${pkUser}/${uiState.idBrand}/${identification}/${encodeData(smartAccount)}"
+                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$pkUser/${uiState.idBrand}/$identification/${encodeData(smartAccount)}"
             )
         }
     }

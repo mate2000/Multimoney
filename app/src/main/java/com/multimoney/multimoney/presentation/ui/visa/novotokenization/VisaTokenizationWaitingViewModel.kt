@@ -29,7 +29,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
-import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.BaseEvent.OnOpenTapAndPayConfig
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnAlertButtonClick
@@ -304,14 +303,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
     }
 
     private fun onNavigateToHomeMultimoneyVisa() =
-        popAndNavigateTo(
-            "${Screen.VisaCardScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
-            encodeData(
-                balanceCardInformation
-            )
-            }/$availableBalanceLabel/$idClient/$idLoanClient",
-            Screen.VisaTokenizationWaitingScreen.route
-        )
+        navigateBack(popTo = Screen.VisaCardScreen.route, isRestart = true)
 
     private fun onAlertButtonClick() {
         uiState = uiState.copy(

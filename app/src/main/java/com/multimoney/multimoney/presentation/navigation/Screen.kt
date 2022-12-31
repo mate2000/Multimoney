@@ -277,7 +277,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object VisaPreferencesScreen : Screen(
-        "visa_preferences_screen",
+        "visa_preferences_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$USER}/{$PHONE_NUMBER}/{$BALANCE_CARD_INFORMATION}/{$AVAILABLE_BALANCE_LABEL}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
         "visa_preferences_screen"
     )
 

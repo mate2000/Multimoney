@@ -40,6 +40,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnAvailableAmountClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnBlockUnblockCardClick
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnCallNovoGetFavoriteCard
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnHidePasswordBottomSheet
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnInitializeBiometricPrompt
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
@@ -441,7 +442,15 @@ class VisaCardViewModel @Inject constructor(
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnNavigateBack -> navigateBack(Screen.HomeScreen.route, isNavigateBackRefresh)
-            is OnNavigatePreferences -> navigateTo(Screen.VisaPreferencesScreen.baseRoute)
+            is OnCallNovoGetFavoriteCard -> callNovoGetFavoriteCard()
+            is OnNavigatePreferences -> navigateTo(
+                "${Screen.VisaPreferencesScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
+                encodeData(
+                    balanceCardInformation
+                )
+                }/$availableBalanceLabel/$idClient/$idLoanClient"
+
+            )
             is OnAvailableAmountClick -> onAvailableAmountClick()
             is OnNavigateToVisaTokenizationScreen -> navigateTo(
                 "${Screen.VisaTokenizationWaitingScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
@@ -492,6 +501,7 @@ class VisaCardViewModel @Inject constructor(
         object OnNavigatePreferences : UIEvent()
         object OnAvailableAmountClick : UIEvent()
         object OnNavigateToVisaTokenizationScreen : UIEvent()
+        object OnCallNovoGetFavoriteCard : UIEvent()
         object OnOpenDialogConfirmToStartTokenizationProcess : UIEvent()
         object OnHidePasswordBottomSheet : UIEvent()
         object OnTryWithPassword : UIEvent()

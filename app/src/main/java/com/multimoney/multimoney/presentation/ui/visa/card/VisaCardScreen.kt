@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.visa.card
 
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -51,6 +50,7 @@ import com.multimoney.multimoney.presentation.util.getCardNumberTwo
 @Preview
 @OptIn(ExperimentalMaterialApi::class)
 fun VisaCardScreen(
+    isRestart: Boolean = true,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
@@ -61,6 +61,16 @@ fun VisaCardScreen(
     val fragmentActivity = LocalContext.current as FragmentActivity
 
     // Navigation
+
+    viewModel.apply {
+        isOnRestart = isRestart
+        LaunchedEffect(isOnRestart) {
+            if (isOnRestart) {
+                onUIEvent(UIEvent.OnCallNovoGetFavoriteCard)
+                isOnRestart = false
+            }
+        }
+    }
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(

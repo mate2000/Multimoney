@@ -29,19 +29,20 @@ import com.multimoney.multimoney.presentation.ui.visa.preferences.VisaPreference
 import com.multimoney.multimoney.presentation.ui.visa.preferences.VisaPreferencesViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomSwitchButton
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 fun VisaPreferencesScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: VisaPreferencesViewModel = hiltViewModel()
 ) {
     // Navigation
     LaunchedEffect(true) {
         viewModel.apply {
-            executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
+            executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
         }
     }
 
@@ -106,6 +107,7 @@ fun VisaPreferencesContent(
             onNegativeAction = viewModel.uiState.openDialog.negativeAction
         )
     }
+    LoadingIndicator(viewModel.uiState.isLoading)
 }
 
 @Composable

@@ -683,7 +683,8 @@ class ProductViewModel @Inject constructor(
                 "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${pkUser}/${uiState.idBrand}/${identification}/${encodeData(smartAccount)}"
             )
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
-            // TODO navigate to account selection screen HU [tba]
+            // TODO navigate to account selection screen HU [tbd]
+            emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
         }
     }
 
@@ -975,6 +976,7 @@ class ProductViewModel @Inject constructor(
 
     sealed class BaseEvent {
         object OnShowCardIssuanceError : BaseEvent()
+        object OnShowTbdToastEvent: BaseEvent()
     }
 
     companion object {

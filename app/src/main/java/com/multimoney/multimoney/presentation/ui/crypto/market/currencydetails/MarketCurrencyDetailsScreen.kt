@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
@@ -48,6 +49,8 @@ import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.M
 import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnGetCurrencyNews
 import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnSetPreviousInfo
+import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnOpenCryptoNew
+import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoActionsSection
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
@@ -57,7 +60,7 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.calculateGainLosesMarketDetails
 import com.multimoney.multimoney.presentation.util.calculatePercentageMarketDetails
 import com.multimoney.multimoney.presentation.util.decodeURLFromUTF
-import com.multimoney.multimoney.presentation.util.getCurrentDateWithMonthName
+import com.multimoney.multimoney.presentation.util.openIntent
 import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlaces
 import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlacesWithoutNegatives
 
@@ -68,6 +71,8 @@ fun MarketCurrencyDetailsScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
 ) {
+
+    val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
         marketCurrencyDetailsViewModel.executeNavigation(
@@ -96,6 +101,27 @@ fun MarketCurrencyDetailsScreen(
                 OnGetCurrencyHistoricalPrices(daysToSubtract = dateFilter)
             )
         },
+        onOpenCryptoNew = { link ->
+            marketCurrencyDetailsViewModel.onUIEvent(OnOpenCryptoNew(
+                link = link,
+                openCryptoNew = { openCryptoNew ->
+                    context.openIntent(openCryptoNew) {
+                        marketCurrencyDetailsViewModel.onUIEvent(OnFailureWithDialog(
+                            isLoading = true,
+                            dialogParameters = marketCurrencyDetailsViewModel.defaultDialogParameters.copy(
+                                isActive = mutableStateOf(true)
+                            )
+                        ))
+                    }
+                },
+                onFailureWithDialog = { isLoading, dialogParameters ->
+                    marketCurrencyDetailsViewModel.onUIEvent(OnFailureWithDialog(
+                        isLoading = isLoading,
+                        dialogParameters = dialogParameters
+                    ))
+                }
+            ))
+        },
         onBackPressed = { marketCurrencyDetailsViewModel.onUIEvent(OnNavigateBack) },
     )
 }
@@ -109,6 +135,7 @@ fun MarketCurrencyDetailsScreenContent(
     currentPrice: Double,
     urlImage: String,
     onDateFilterSelected: (Long) -> Unit = {},
+    onOpenCryptoNew: (String) -> Unit = {},
     onBackPressed: () -> Unit = {}
 ) {
     val selected = remember { mutableStateOf(true) }
@@ -178,7 +205,10 @@ fun MarketCurrencyDetailsScreenContent(
             if (selected.value) {
                 HistorySection(information = currencyNews?.information ?: "")
             } else {
-                NewsSection(currencyNews = currencyNews?.result ?: emptyList())
+                NewsSection(
+                    currencyNews = currencyNews?.result ?: emptyList(),
+                    onOpenCryptoNew = onOpenCryptoNew
+                )
             }
         }
     }
@@ -290,7 +320,10 @@ fun MarketDetailsButtonsSection(
 }
 
 @Composable
-fun NewsSection(currencyNews: List<New>) {
+fun NewsSection(
+    currencyNews: List<New>,
+    onOpenCryptoNew: (String) -> Unit
+) {
 
     LazyColumn(
         modifier = Modifier
@@ -308,10 +341,6 @@ fun NewsSection(currencyNews: List<New>) {
                     .padding(vertical = 16.dp),
             ) {
                 Text(
-                    text = getCurrentDateWithMonthName(),
-                    style = Typography.subtitle2.copy(color = MultimoneyTheme.colors.textSubhead)
-                )
-                Text(
                     modifier = Modifier.padding(vertical = 16.dp),
                     text = new.title,
                     style = Typography.subtitle1.copy(
@@ -324,7 +353,7 @@ fun NewsSection(currencyNews: List<New>) {
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    TextButton(onClick = { /*todo go to provided link*/ }) {
+                    TextButton(onClick = { onOpenCryptoNew(new.link) }) {
                         Text(
                             text = stringResource(id = R.string.market_details_button_read_more),
                             style = Typography.subtitle1.copy(color = MultimoneyTheme.colors.textLink),

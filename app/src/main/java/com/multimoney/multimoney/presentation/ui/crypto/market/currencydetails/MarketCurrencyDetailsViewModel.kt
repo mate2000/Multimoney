@@ -1,5 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,6 +14,7 @@ import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.CRYPTO_ASSET
 import com.multimoney.multimoney.presentation.navigation.CURRENT_CRYPTO_PRICE
@@ -38,6 +41,9 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
 
     var uiState by mutableStateOf(UiState())
         private set
+
+    //stateless
+    val defaultDialogParameters = DialogParameters(descriptionResource = R.string.something_went_wrong)
 
     private fun setPreviousInfo() {
         uiState = uiState.copy(
@@ -102,6 +108,24 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
         }
     }
 
+    private fun openCryptoNew(
+        link: String,
+        openCryptoNew: (Intent) -> Unit,
+        onFailureWithDialog: (isActive: Boolean, dialogParameters: DialogParameters) -> Unit
+    ) {
+        try {
+            val uri = Uri.parse(link)
+            val intent = Intent(Intent.ACTION_VIEW, uri)
+            openCryptoNew(intent)
+
+        } catch (e: NullPointerException) {
+            onFailureWithDialog(
+                false,
+                defaultDialogParameters.copy(isActive = mutableStateOf(true))
+            )
+        }
+    }
+
     private fun onFailure(error: HttpError) {
         uiState = uiState.copy(
             isLoading = false,
@@ -134,6 +158,15 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
                 dataPoints = event.dataPoints,
                 daysToSubtract = event.daysToSubtract
             )
+            is UIEvent.OnOpenCryptoNew -> openCryptoNew(
+                event.link,
+                event.openCryptoNew,
+                event.onFailureWithDialog
+            )
+            is UIEvent.OnFailureWithDialog -> uiState = uiState.copy(
+                isLoading = event.isLoading,
+                openDialog = event.dialogParameters
+            )
         }
     }
 
@@ -144,6 +177,15 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
         data class OnGetCurrencyHistoricalPrices(
             val dataPoints: Long = MAXIMUM_DATA_POINTS,
             val daysToSubtract: Long = FilterDateByDays.YESTERDAY.time
+        ) : UIEvent()
+        data class OnOpenCryptoNew(
+            val link: String,
+            val openCryptoNew: (Intent) -> Unit,
+            val onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
+        ) : UIEvent()
+        data class OnFailureWithDialog(
+            val isLoading: Boolean,
+            val dialogParameters: DialogParameters
         ) : UIEvent()
     }
 }

@@ -120,15 +120,6 @@ fun getPreviousDate(dateFilter: FilterDate = FilterDate.YESTERDAY): String {
     return date.format(formatters)
 }
 
-fun getCurrentDateWithMonthName(): String {
-    val date = LocalDate.now()
-    val formatters: DateTimeFormatter = DateTimeFormatter.ofPattern(
-        DAY_MONTH_NAME_YEAR_FORMAT,
-        Locale(SPANISH_LOCALE)
-    )
-    return date.format(formatters)
-}
-
 fun getCurrentDate(time: Date): String {
     return BAR_DIVIDER_FORMAT.format(time)
 }
@@ -206,7 +197,6 @@ const val EIGHTEEN_YEARS_VALUE = 18
 const val ONE_HUNDRED_TWENTY_YEARS_VALUE = 120
 const val SPANISH_LOCALE = "es"
 
-val DAY_MONTH_NAME_YEAR_FORMAT = "dd 'de' MMMM 'de' yyyy"
 val YEAR_FORMAT = SimpleDateFormat(YEAR_PATTER, Locale.getDefault())
 val DAY_FORMAT = SimpleDateFormat(DAY_PATTERN, Locale.getDefault())
 val API_DATE_FORMAT = SimpleDateFormat(ISO_8601_API_FORMAT_PATTERN, Locale.getDefault())

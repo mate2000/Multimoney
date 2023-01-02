@@ -1,7 +1,8 @@
 package com.multimoney.multimoney.presentation.ui.visa.card
 
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,13 +28,15 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnBlockUnblockCardClick
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnHandleTapAndPayIntentResult
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnInitializeBiometricPrompt
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigatePreferences
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnOpenDialogConfirmToStartTokenizationProcess
-import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnStartPaymentProcess
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnSeeDataClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnStartPaymentProcess
+import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.BaseEvent.OnOpenTapAndPayConfig
 import com.multimoney.multimoney.presentation.uielement.CustomButtonBig
 import com.multimoney.multimoney.presentation.uielement.CustomCardVisaVertical
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -47,6 +50,7 @@ import com.multimoney.multimoney.presentation.util.getCardNumberFour
 import com.multimoney.multimoney.presentation.util.getCardNumberOne
 import com.multimoney.multimoney.presentation.util.getCardNumberThree
 import com.multimoney.multimoney.presentation.util.getCardNumberTwo
+import com.multimoney.multimoney.presentation.util.getTapAndPayIntent
 
 @Composable
 @Preview
@@ -60,6 +64,10 @@ fun VisaCardScreen(
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val fragmentActivity = LocalContext.current as FragmentActivity
+
+    val launch = rememberLauncherForActivityResult(contract = StartActivityForResult(), onResult = { result ->
+        viewModel.onUIEvent(OnHandleTapAndPayIntentResult(result))
+    })
 
     // Navigation
     LaunchedEffect(true) {
@@ -80,6 +88,16 @@ fun VisaCardScreen(
             biometricPromptNegative = stringResource(id = string.cancel)
         )
     )
+
+    LaunchedEffect(true) {
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                OnOpenTapAndPayConfig -> {
+                    launch.launch(context.getTapAndPayIntent())
+                }
+            }
+        }
+    }
 
     Column(
         modifier = Modifier

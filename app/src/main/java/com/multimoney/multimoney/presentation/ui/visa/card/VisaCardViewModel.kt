@@ -1,5 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.visa.card
 
+import android.app.Activity
+import androidx.activity.result.ActivityResult
 import androidx.biometric.BiometricPrompt
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
@@ -40,20 +42,22 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnAvailableAmountClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnBlockUnblockCardClick
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnHandleTapAndPayIntentResult
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnHidePasswordBottomSheet
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnInitializeBiometricPrompt
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigatePreferences
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateToVisaTokenizationScreen
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnOpenDialogConfirmToStartTokenizationProcess
-import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnStartPaymentProcess
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnPasswordChange
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnPasswordConfirmClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnPasswordForgotPassword
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnSeeDataClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnShowPasswordBottomSheet
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnStartPaymentProcess
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnTryWithPassword
+import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.BaseEvent.OnOpenTapAndPayConfig
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.NfcHelper
 import com.multimoney.multimoney.presentation.util.catalog.CardType
@@ -213,6 +217,15 @@ class VisaCardViewModel @Inject constructor(
         if (NovoVTS.isDefaultPaymentService()) {
             // todo start Payment Process
         } else {
+            emitBaseEvent(OnOpenTapAndPayConfig)
+        }
+    }
+
+    private fun onHandleTapAndPayIntentResult(result: ActivityResult) {
+        if (result.resultCode == Activity.RESULT_OK) {
+            // todo start Payment Process
+        } else {
+            // show dialog to explain why we need that the user define as a default the multimoney wallet
         }
     }
 
@@ -452,9 +465,9 @@ class VisaCardViewModel @Inject constructor(
             is OnAvailableAmountClick -> onAvailableAmountClick()
             is OnNavigateToVisaTokenizationScreen -> navigateTo(
                 "${Screen.VisaTokenizationWaitingScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
-                    encodeData(
-                        balanceCardInformation
-                    )
+                encodeData(
+                    balanceCardInformation
+                )
                 }/$availableBalanceLabel/$idClient/$idLoanClient"
             )
             is OnOpenDialogConfirmToStartTokenizationProcess -> uiState = uiState.copy(
@@ -484,6 +497,7 @@ class VisaCardViewModel @Inject constructor(
             is OnPasswordForgotPassword -> onPasswordForgotPassword()
             is OnTryWithPassword -> onTryWithPassword()
             is OnBlockUnblockCardClick -> onBlockUnblockCardClick()
+            is OnHandleTapAndPayIntentResult -> onHandleTapAndPayIntentResult(uiEvent.result)
         }
     }
 
@@ -509,6 +523,11 @@ class VisaCardViewModel @Inject constructor(
         data class OnPasswordChange(val value: String) : UIEvent()
         object OnPasswordConfirmClick : UIEvent()
         object OnPasswordForgotPassword : UIEvent()
+        data class OnHandleTapAndPayIntentResult(val result: ActivityResult) : UIEvent()
+    }
+
+    sealed class BaseEvent {
+        object OpenTapAndPayConfig : BaseEvent()
     }
 
     companion object {

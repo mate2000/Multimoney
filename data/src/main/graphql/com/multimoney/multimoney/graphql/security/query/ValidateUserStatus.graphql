@@ -28,6 +28,7 @@ query ValidateUserStatus($pkUser: Long!, $identification: String!, $user: String
                 textOne
                 textTwo
                 cTA
+                display
             }
         }
         infoCredit {
@@ -52,6 +53,7 @@ query ValidateUserStatus($pkUser: Long!, $identification: String!, $user: String
                 textOne
                 textTwo
                 cTA
+                display
             }
         }
         infoVirtualCard {
@@ -70,6 +72,7 @@ query ValidateUserStatus($pkUser: Long!, $identification: String!, $user: String
                 textOne
                 textTwo
                 cTA
+                display
             }
         }
         infoCrypto {
@@ -80,6 +83,7 @@ query ValidateUserStatus($pkUser: Long!, $identification: String!, $user: String
                 textOne
                 textTwo
                 cTA
+                display
             }
         }
     }

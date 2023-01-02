@@ -108,7 +108,7 @@ private fun ChangePhoneScreenContent(viewModel: ChangeEmailViewModel) {
                 keyboardActions = KeyboardActions(onNext = {
                     focusManager.moveFocus(FocusDirection.Down)
                 }),
-                labelText = stringResource(id = R.string.sign_up_email_header),
+                labelText = stringResource(id = R.string.profile_change_email_enter_new),
                 placeHolder = stringResource(id = R.string.sign_up_email_placeholder),
                 modifier = Modifier.padding(top = 24.dp),
                 isRequired = true,
@@ -133,7 +133,7 @@ private fun ChangePhoneScreenContent(viewModel: ChangeEmailViewModel) {
                 keyboardActions = KeyboardActions(onDone = {
                     focusManager.clearFocus()
                 }),
-                labelText = stringResource(id = R.string.sign_up_email_header),
+                labelText = stringResource(id = R.string.profile_change_email_enter_new_confirmation),
                 placeHolder = stringResource(id = R.string.sign_up_email_placeholder),
                 modifier = Modifier.padding(top = 24.dp),
                 isRequired = true,

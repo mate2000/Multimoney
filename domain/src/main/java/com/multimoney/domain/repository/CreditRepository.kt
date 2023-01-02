@@ -190,7 +190,8 @@ interface CreditRepository {
         user: String,
         idBrand: Int,
         idClient: Int,
-        idLoanClient: Int
+        idLoanClient: Int,
+        process: String
     ): Flow<MultimoneyResult<List<ClientBankAccount?>?>>
 
     suspend fun queryBanksAndRegularExpression(

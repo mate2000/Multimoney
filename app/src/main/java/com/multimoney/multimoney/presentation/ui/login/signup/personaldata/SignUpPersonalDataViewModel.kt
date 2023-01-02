@@ -6,7 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Nationalities.CostaRicaDimex
 import com.multimoney.data.util.catalog.Nationalities.CostaRicaId
-import com.multimoney.data.util.catalog.Nationalities.ElSalvador
+import com.multimoney.data.util.catalog.Nationalities.ElSalvadorDui
+import com.multimoney.data.util.catalog.Nationalities.ElSalvadorCarne
 import com.multimoney.data.util.catalog.Nationalities.Guatemala
 import com.multimoney.domain.interaction.security.MutationUserValidationUseCase
 import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCase
@@ -38,6 +39,8 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnUserDataValidationSuccess
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnValidateDocument
 import com.multimoney.multimoney.presentation.util.catalog.CrDocuments
+import com.multimoney.multimoney.presentation.util.catalog.SvDocuments
+import com.multimoney.multimoney.presentation.util.validCarne
 import com.multimoney.multimoney.presentation.util.validDui
 import com.multimoney.multimoney.presentation.util.validId
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -72,7 +75,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private fun isFormValid() = emitBaseEvent(
         OnFormValidateCompleted(
             when (uiState.nationalityValue) {
-                ElSalvador.country -> uiState.personalDocumentValue.isNotBlank() && (uiState.personalDocumentValue.length == ElSalvador.documentSize) && !uiState.personalIdError.first && uiState.firstNameValue.isNotBlank() && uiState.firstLastNameValue.isNotBlank()
+                ElSalvadorDui.country -> uiState.personalDocumentValue.isNotBlank() && (uiState.personalDocumentValue.length == ElSalvadorDui.documentSize) && !uiState.personalIdError.first && uiState.firstNameValue.isNotBlank() && uiState.firstLastNameValue.isNotBlank()
                 Guatemala.country -> uiState.personalDocumentValue.isNotBlank() && (uiState.personalDocumentValue.length == Guatemala.documentSize) && !uiState.personalIdError.first && uiState.firstNameValue.isNotBlank() && uiState.firstLastNameValue.isNotBlank()
                 CostaRicaId.country -> uiState.personalDocumentValue.isNotBlank() &&
                     (uiState.personalDocumentValue.length == CostaRicaId.documentSize || uiState.personalDocumentValue.length == CostaRicaDimex.documentSize) &&
@@ -131,6 +134,21 @@ class SignUpPersonalDataViewModel @Inject constructor(
             cleanUIForIdentification()
             isFormValid()
         }
+    }
+
+    private fun validateSvDocument(
+        personalDocumentValue: String
+    ): Pair<Boolean, Int> {
+        val status = if (uiState.identificationValueType == SvDocuments.DuiDocument.document) {
+            validDui(personalDocumentValue)
+        } else {
+            validCarne(
+                sizeRequired = ElSalvadorCarne.documentSize,
+                errorMessage = R.string.sign_up_personal_data_id_not_valid,
+                personalDocumentValue.length
+            )
+        }
+        return status
     }
 
     private fun validateCrDocument(
@@ -441,7 +459,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
             personalIdError = if (uiState.personalDocumentValue.isNotBlank()) {
                 when (uiState.nationalityValue) {
                     CostaRicaId.country -> validateCrDocument(email ?: "")
-                    ElSalvador.country -> validDui(uiState.personalDocumentValue)
+                    ElSalvadorDui.country -> validateSvDocument(uiState.personalDocumentValue)
                     else -> validId(
                         Guatemala.documentSize,
                         R.string.sign_up_personal_data_id_not_valid,

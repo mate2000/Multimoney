@@ -33,6 +33,7 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueVisible
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OverridePreviousAction
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.Companion.CR_PAGE_ONE
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.Companion.CR_PAGE_TWO
@@ -53,13 +54,12 @@ fun SmartFactaScreen(
     sharedViewModel: SmartViewModel = hiltViewModel(),
     viewModel: SmartFactaViewModel = hiltViewModel()
 ) {
-
-    LaunchedEffect(true) {
+    LaunchedEffect(sharedViewModel.accountSmartData) {
         viewModel.onUiEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
     }
 
     LaunchedEffect(key1 = true) {
-        sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid(sharedViewModel.idBrandAsInt)))
+        sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid()))
         sharedViewModel.onUIEvent(
             OnSetNavigation(
                 nextAction = {
@@ -105,7 +105,7 @@ fun SmartFactaScreen(
                         }
                     }
                     CR_PAGE_TWO -> {
-                        ContentTwoCR(viewModel)
+                        ContentTwoCR(viewModel, sharedViewModel)
                         sharedViewModel.onUIEvent(OnContinueVisible(true))
                     }
                 }
@@ -137,12 +137,10 @@ fun ContentSV(
             options = optionsCitizen,
             onOptionSelected = {
                 viewModel.onUiEvent(
-                    OnIsUSCitizenChange(
-                        it == optionsCitizen.first(),
-                        Brand.ElSalvador.id
-                    )
+                    OnIsUSCitizenChange(it == optionsCitizen.first(), Brand.ElSalvador.id)
                 )
-            }
+            },
+            optionSelected = if (viewModel.uiState.isUSCitizen == true) optionsCitizen[0] else optionsCitizen[1]
         )
 
         Text(
@@ -154,8 +152,11 @@ fun ContentSV(
         CustomRadioButtonsLayout(
             options = optionsPep,
             onOptionSelected = {
-                viewModel.onUiEvent(OnIsPEPChange(it == optionsPep.first(), Brand.ElSalvador.id))
-            }
+                viewModel.onUiEvent(
+                    OnIsPEPChange(it == optionsPep.first(), Brand.ElSalvador.id)
+                )
+            },
+            optionSelected = if (viewModel.uiState.isPEP == true) optionsPep[0] else optionsPep[1]
         )
     }
 }
@@ -207,12 +208,10 @@ fun ContentOneCR(
                 options = optionsYesNo,
                 onOptionSelected = {
                     viewModel.onUiEvent(
-                        OnIsActivityOfArt15Change(
-                            it == optionsYesNo.first(),
-                            Brand.CostaRica.id
-                        )
+                        OnIsActivityOfArt15Change(it == optionsYesNo.first(), Brand.CostaRica.id)
                     )
-                }
+                },
+                optionSelected = if (viewModel.uiState.isActivityOfArt15 == true) optionsYesNo[0] else optionsYesNo[1]
             )
 
             Text(
@@ -224,26 +223,33 @@ fun ContentOneCR(
             CustomRadioButtonsLayout(
                 options = optionsPep,
                 onOptionSelected = {
-                    viewModel.onUiEvent(OnIsPEPChange(it == optionsPep.first(), Brand.CostaRica.id))
-                }
+                    viewModel.onUiEvent(
+                        OnIsPEPChange(it == optionsPep.first(), Brand.CostaRica.id)
+                    )
+                },
+                optionSelected = if (viewModel.uiState.isPEP == true) optionsPep[0] else optionsPep[1]
             )
         }
         CustomButton(
             onClick = { viewModel.onUiEvent(OnCrGoPageTwo) },
             text = stringResource(id = R.string.button_continue),
             modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
+                .padding(bottom = 32.dp, top = 16.dp)
                 .fillMaxWidth()
                 .height(48.dp),
             buttonType = PrimaryPrimary,
             enable = viewModel.uiState.isActivityOfArt15 != null && viewModel.uiState.isPEP != null
         )
     }
+    sharedViewModel.onUIEvent(
+        OverridePreviousAction(null)
+    )
 }
 
 @Composable
 fun ContentTwoCR(
     viewModel: SmartFactaViewModel,
+    sharedViewModel: SmartViewModel,
     modifier: Modifier = Modifier
 ) {
     val options = stringArrayResource(R.array.options_yes_no).toList()
@@ -259,8 +265,11 @@ fun ContentTwoCR(
         CustomRadioButtonsLayout(
             options = options,
             onOptionSelected = {
-                viewModel.onUiEvent(OnIsUSTaxPayerChange(it == options.first(), Brand.CostaRica.id))
-            }
+                viewModel.onUiEvent(
+                    OnIsUSTaxPayerChange(it == options.first(), Brand.CostaRica.id)
+                )
+            },
+            optionSelected = if (viewModel.uiState.isUSTaxPayer == true) options[0] else options[1]
         )
 
         Text(
@@ -272,12 +281,17 @@ fun ContentTwoCR(
         CustomRadioButtonsLayout(
             options = options,
             onOptionSelected = {
-                viewModel.onUiEvent(OnIsTaxPayerChange(it == options.first(), Brand.CostaRica.id))
-            }
+                viewModel.onUiEvent(
+                    OnIsTaxPayerChange(it == options.first(), Brand.CostaRica.id)
+                )
+            },
+            optionSelected = if (viewModel.uiState.isTaxPayer == true) options[0] else options[1]
         )
     }
-    BackHandler {
-        viewModel.onUiEvent(OnCrGoPageOne)
-    }
+    sharedViewModel.onUIEvent(
+        OverridePreviousAction { viewModel.onUiEvent(OnCrGoPageOne) }
+    )
+    BackHandler { viewModel.onUiEvent(OnCrGoPageOne) }
 }
+
 const val INFO_TAG = "info"

@@ -7,8 +7,8 @@ import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.smartaccount.mapToDomain
 import com.multimoney.data.mapper.smartaccount.mapToDomainModel
 import com.multimoney.data.networking.GraphqlApi
-import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
 import com.multimoney.data.paging.SmartMovementsPagingSource
+import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
 import com.multimoney.domain.model.accountsmart.AddressesLevel
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.CivilStatusResult
@@ -20,12 +20,14 @@ import com.multimoney.domain.model.accountsmart.Professions
 import com.multimoney.domain.model.accountsmart.RelationshipData
 import com.multimoney.domain.model.accountsmart.SaveSmartAccount
 import com.multimoney.domain.model.accountsmart.SinpeAccountResult
+import com.multimoney.domain.model.accountsmart.SinpeTransferResult
 import com.multimoney.domain.model.accountsmart.SmartMovement
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.accountsmart.StepByStep
 import com.multimoney.domain.model.accountsmart.VisaSmartPayment
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Success
+import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
 import com.multimoney.domain.repository.SmartAccountRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -171,36 +173,37 @@ class SmartAccountRepositoryImpl @Inject constructor(
     override suspend fun mutationGlobalRequest(
         pkUser: Int,
         status: Int,
-        idProfessionType: Int,
-        idCivilStatusType: Long,
-        birthday: String,
-        expirationDate: String,
-        idGender: Long,
-        companyName: String,
-        aboutCompany: String,
-        idAddressLevel1: Long,
-        idAddressLevel2: Long,
-        idAddressLevel3: Long,
-        positionJob: String,
-        idEconomicActivity: Long,
-        income: Double,
-        addressDetail: String,
-        fullJobAddress: String,
         user: String,
         idBrand: Int,
-        currentStep: String,
-        institutionPension: String,
-        specifiesIncomeSource: String,
-        beneficiaries: List<Beneficiary>,
-        entrepreneurship: String,
-        legalID: String,
-        isActivityOfArt15: Boolean,
-        isUSCitizen: Boolean,
-        isPEP: Boolean,
-        isUSTaxPayer: Boolean,
-        isTaxPayer: Boolean,
-        idJobLevel2: Long,
-        idJobLevel3: Long
+        idProfessionType: Int?,
+        idCivilStatusType: Long?,
+        birthday: String?,
+        expirationDate: String?,
+        idGender: Long?,
+        companyName: String?,
+        aboutCompany: String?,
+        idAddressLevel1: Long?,
+        idAddressLevel2: Long?,
+        idAddressLevel3: Long?,
+        positionJob: String?,
+        idEconomicActivity: Long?,
+        income: Double?,
+        addressDetail: String?,
+        fullJobAddress: String?,
+        currentStep: String?,
+        institutionPension: String?,
+        specifiesIncomeSource: String?,
+        beneficiaries: List<Beneficiary>?,
+        entrepreneurship: String?,
+        legalID: String?,
+        isActivityOfArt15: Boolean?,
+        isUSCitizen: Boolean?,
+        isPEP: Boolean?,
+        isUSTaxPayer: Boolean?,
+        isTaxPayer: Boolean?,
+        idJobLevel1: Long?,
+        idJobLevel2: Long?,
+        idJobLevel3: Long?
     ): Flow<MultimoneyResult<GlobalRequest?>> = fetchData(
         apolloCall = graphqlApi.mutationGlobalRequest(
             pkUser = pkUser,
@@ -233,6 +236,7 @@ class SmartAccountRepositoryImpl @Inject constructor(
             isPEP = isPEP,
             isUSTaxPayer = isUSTaxPayer,
             isTaxPayer = isTaxPayer,
+            idJobLevel1 = idJobLevel1,
             idJobLevel2 = idJobLevel2,
             idJobLevel3 = idJobLevel3
         ),
@@ -314,7 +318,9 @@ class SmartAccountRepositoryImpl @Inject constructor(
             apolloCall = graphqlApi.subscriptionAccountSmartContractEvent(
                 idBrand,
                 idRequestSys
-            ), apolloCallMapper = { data -> Success(data?.mapToDomain()) })
+            ),
+            apolloCallMapper = { data -> Success(data?.mapToDomain()) }
+        )
     }
 
     override suspend fun mutationInitialRequestSmartAccount(
@@ -375,6 +381,49 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 idOriginCurrency = idOriginCurrency,
                 idDestinationCurrency = idDestinationCurrency,
                 amount = amount
+            ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+    }
+
+    override suspend fun mutationProcessSinpeTransfer(
+        pkUser: Int,
+        identification: String,
+        originCustomerIdentification: String,
+        ibanAccountOrigin: String,
+        originCustomerName: String,
+        idCurrencyOrigin: String,
+        ibanAccountDestination: String,
+        destinationCustomerIdentification: String,
+        destinationCustomerName: String,
+        idCurrencyDestination: String,
+        reasonOfTransfer: String,
+        transferType: SmartSinpeTransferType,
+        amountToTransfer: Double,
+        exchangeRate: Double,
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<SinpeTransferResult?>> {
+        return fetchData(
+            apolloCall = graphqlApi.mutationProcessSinpeTransfer(
+                pkUser = pkUser,
+                identification = identification,
+                originCustomerIdentification = originCustomerIdentification,
+                ibanAccountOrigin = ibanAccountOrigin,
+                originCustomerName = originCustomerName,
+                idCurrencyOrigin = idCurrencyOrigin,
+                ibanAccountDestination = ibanAccountDestination,
+                destinationCustomerIdentification = destinationCustomerIdentification,
+                destinationCustomerName = destinationCustomerName,
+                idCurrencyDestination = idCurrencyDestination,
+                reasonOfTransfer = reasonOfTransfer,
+                type = transferType.type,
+                amountToTransfer = amountToTransfer,
+                exchangeRate = exchangeRate,
+                idBrand = idBrand,
+                user = user
             ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())

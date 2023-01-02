@@ -52,7 +52,7 @@ import com.multimoney.multimoney.presentation.util.ISO_8601_API_FORMAT_PATTERN
 import com.multimoney.multimoney.presentation.util.YEAR_MONTH_DAY_PATTERN
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import com.multimoney.multimoney.presentation.util.getPickedDateAsString
-import java.time.LocalDate
+import com.multimoney.multimoney.presentation.util.toLocalDate
 import java.util.Calendar
 import java.util.Date
 
@@ -209,7 +209,7 @@ fun SmartDocumentScreen(
                         viewModel.onUIEvent(
                             OnBirthDateValueChange(
                                 date,
-                                LocalDate.of(year, month, day)
+                                calendarValidation.toLocalDate()
                             )
                         )
                     },

@@ -89,17 +89,17 @@ fun SmartTransferIbanScreen(
 @Composable
 fun PaymentOptions(viewModel: SmartTransferIbanViewModel = hiltViewModel()) {
     LazyColumn(modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp)) {
-        items(viewModel.uiState.sinpeAccountList ?: listOf()) { account ->
+        items(viewModel.uiState.sinpeAccountList) { account ->
             CustomInfoButton(
                 title = account?.nameAccount ?: "",
                 subtitle = stringResource(
                     id = string.smart_account_beneficiary_content,
                     account?.bank ?: "",
                     "${
-                        getMaskedAccountIban(
-                            account?.sinpeAccount ?: "",
-                            stringResource(id = string.payment_account_masked_text)
-                        )
+                    getMaskedAccountIban(
+                        account?.sinpeAccount ?: "",
+                        stringResource(id = string.payment_account_masked_text)
+                    )
                     }%"
                 ),
                 modifier = Modifier
@@ -108,7 +108,7 @@ fun PaymentOptions(viewModel: SmartTransferIbanViewModel = hiltViewModel()) {
                 endIcon = drawable.ic_options,
                 startIcon = account?.currencyId?.getCurrencyFromId()?.accountIcon,
                 onClick = {
-
+                    // todo: navigate to send money
                 }
             )
         }

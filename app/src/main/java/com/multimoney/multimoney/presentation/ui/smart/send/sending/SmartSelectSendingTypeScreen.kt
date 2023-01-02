@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.payment.sending
+package com.multimoney.multimoney.presentation.ui.smart.send.sending
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -17,10 +17,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.smart.payment.sending.SmartSelectSendingTypeViewModel.UIEvent.OnIBANAccountSelected
-import com.multimoney.multimoney.presentation.ui.smart.payment.sending.SmartSelectSendingTypeViewModel.UIEvent.OnMyContactsSelected
-import com.multimoney.multimoney.presentation.ui.smart.payment.sending.SmartSelectSendingTypeViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.smart.payment.sending.SmartSelectSendingTypeViewModel.UIEvent.OnSmartAccountSelected
+import com.multimoney.multimoney.presentation.ui.smart.send.sending.SmartSelectSendingTypeViewModel.UIEvent.OnIBANAccountSelected
+import com.multimoney.multimoney.presentation.ui.smart.send.sending.SmartSelectSendingTypeViewModel.UIEvent.OnMyContactsSelected
+import com.multimoney.multimoney.presentation.ui.smart.send.sending.SmartSelectSendingTypeViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.send.sending.SmartSelectSendingTypeViewModel.UIEvent.OnSmartAccountSelected
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -47,9 +47,9 @@ fun SmartSelectSendingTypeScreen(
             isRightButtonVisible = false
         )
         SendingTypeOptions(
-            onMyContactsClick = { viewModel.onUIEvent(OnMyContactsSelected)},
-            onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected)},
-            onIBANAccountsClick = { viewModel.onUIEvent(OnIBANAccountSelected)},
+            onMyContactsClick = { viewModel.onUIEvent(OnMyContactsSelected) },
+            onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected) },
+            onIBANAccountsClick = { viewModel.onUIEvent(OnIBANAccountSelected) },
             smartAccountTitle = viewModel.getTitleSmartAccountResource(),
             smartAccountStartIcon = viewModel.getIconSmartAccountResource()
         )
@@ -70,7 +70,8 @@ fun SendingTypeOptions(
             modifier = Modifier.padding(top = 32.dp),
             text = stringResource(R.string.payment_select_sending_type_title),
             style = Typography.h5.copy(
-                fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.text
+                fontWeight = FontWeight.SemiBold,
+                color = MultimoneyTheme.colors.text
             )
         )
         CustomInfoButton(

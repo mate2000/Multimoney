@@ -59,8 +59,6 @@ import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import com.multimoney.multimoney.presentation.util.workers.startTimedNotification
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.Calendar
-import javax.inject.Inject
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -68,6 +66,8 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import java.util.Calendar
+import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class, FlowPreview::class)
@@ -77,7 +77,7 @@ class SavingAmountViewModel @Inject constructor(
     private val querySmartExchangeRateUseCase: QuerySmartExchangeRateUseCase,
     private val processSinpeTransferUseCase: MutationProcessSinpeTransferUseCase,
     private val shareHelper: ShareHelper,
-    private val dataStorePreferences: DataStorePreferences,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())
@@ -90,8 +90,8 @@ class SavingAmountViewModel @Inject constructor(
     private var userName: String = ""
     private var idCurrency: Int = 0
     private var tokenNumber: Long = 0
-    private var smartAccount: SmartAccountID? = null
-    private var ibanAccount: IbanAccountID? = null
+    var smartAccount: SmartAccountID? = null
+    var ibanAccount: IbanAccountID? = null
     var smartCurrency: CurrencyType? = Dollar
     var ibanCurrency: CurrencyType? = null
     var idBrand: Int = 0
@@ -277,7 +277,7 @@ class SavingAmountViewModel @Inject constructor(
                 transferType = SmartSinpeTransferType.REQUEST,
                 amountToTransfer = if (shouldDisplayExchange) {
                     // Using this value cause endpoint expects amount in the same currency of the account
-                    uiState.exchangeConvertedAmount.toDouble()
+                    uiState.exchangeConvertedAmount
                 } else {
                     uiState.currentAmountValueString.value?.toDoubleOrNull() ?: 0.0
                 },
@@ -411,15 +411,15 @@ class SavingAmountViewModel @Inject constructor(
             CURRENCY_SEPARATOR.toString()
         )
 
-    
     fun getConvertedAmountFormatted() = "${ibanCurrency?.id?.getCurrencyFromId()?.symbol}${
-        uiState.exchangeConvertedAmount.formattedTwoDecimalsNumber().toString()
-            .stringToDoubleFormat(CURRENCY_SEPARATOR.toString())
+    uiState.exchangeConvertedAmount.formattedTwoDecimalsNumber().toString()
+        .stringToDoubleFormat(CURRENCY_SEPARATOR.toString())
     }"
-    
+
     private fun onNavigateToHome() {
         navigateBack(
-            popTo = Screen.HomeScreen.route, isRestart = true
+            popTo = Screen.HomeScreen.route,
+            isRestart = true
         )
     }
 

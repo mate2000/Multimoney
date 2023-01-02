@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.payment.sending
+package com.multimoney.multimoney.presentation.ui.smart.send.sending
 
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.domain.model.accountsmart.SmartAccountID
@@ -9,7 +9,10 @@ import com.multimoney.multimoney.presentation.navigation.SMART_IDS
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
-import com.multimoney.multimoney.presentation.ui.smart.payment.sending.SmartSelectSendingTypeViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.send.sending.SmartSelectSendingTypeViewModel.UIEvent.OnIBANAccountSelected
+import com.multimoney.multimoney.presentation.ui.smart.send.sending.SmartSelectSendingTypeViewModel.UIEvent.OnMyContactsSelected
+import com.multimoney.multimoney.presentation.ui.smart.send.sending.SmartSelectSendingTypeViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.send.sending.SmartSelectSendingTypeViewModel.UIEvent.OnSmartAccountSelected
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,13 +37,12 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         idBrand = savedStateHandle[ID_BRAND] ?: 0
     }
 
-
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnNavigateBack -> onNavigateBack()
-            is UIEvent.OnMyContactsSelected -> onNavigateToMyContacts()
-            is UIEvent.OnSmartAccountSelected -> onNavigateToSmartAccount()
-            is UIEvent.OnIBANAccountSelected -> onNavigateToIBANAccount()
+            is OnMyContactsSelected -> onNavigateToMyContacts()
+            is OnSmartAccountSelected -> onNavigateToSmartAccount()
+            is OnIBANAccountSelected -> onNavigateToIBANAccount()
         }
     }
 

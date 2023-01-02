@@ -1,4 +1,6 @@
-package com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount
+@file:OptIn(ExperimentalMaterialApi::class)
+
+package com.multimoney.multimoney.presentation.ui.smart.send.iban.amount
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -12,10 +14,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -31,22 +35,24 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel
-import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnAmountValueChange
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnContinueClick
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnNavigateHome
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnRetryTransfer
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnTryLater
+import com.multimoney.multimoney.presentation.ui.smart.send.iban.amount.SmartTransferAmountViewModel.UIEvent.OnAmountValueChange
+import com.multimoney.multimoney.presentation.ui.smart.send.iban.amount.SmartTransferAmountViewModel.UIEvent.OnCallProcessSinpeTransfer
+import com.multimoney.multimoney.presentation.ui.smart.send.iban.amount.SmartTransferAmountViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.smart.send.iban.amount.SmartTransferAmountViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.send.iban.amount.SmartTransferAmountViewModel.UIEvent.OnNavigateHome
+import com.multimoney.multimoney.presentation.ui.smart.send.iban.amount.SmartTransferAmountViewModel.UIEvent.OnRetryTransfer
+import com.multimoney.multimoney.presentation.ui.smart.send.iban.amount.SmartTransferAmountViewModel.UIEvent.OnTryLater
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CurrencyAmountInput
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.LoadingMultiMoney
+import com.multimoney.multimoney.presentation.uielement.SmartPaymentBottomSheet
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.filterInvalidAmountInput
+import com.multimoney.multimoney.presentation.util.getFullMaskedAccountIban
 import com.multimoney.multimoney.presentation.util.transformation.CurrencyDoubleTransformation
 
 @Composable
@@ -93,7 +99,7 @@ fun SmartTransferAmountScreen(
         }
     } else {
         SmartTransferAmountContent(viewModel)
-        // Todo add confirmation sheet
+        SmartTransferBottomSheet(viewModel)
         BackHandler {
             viewModel.onUIEvent(OnNavigateBack)
         }
@@ -134,7 +140,7 @@ fun SmartTransferAmountContent(viewModel: SmartTransferAmountViewModel = hiltVie
                 CurrencyAmountInput(
                     modifier = Modifier.padding(top = 24.dp),
                     value = viewModel.uiState.currentAmountValueString.collectAsState().value,
-                    placeHolder = SavingAmountViewModel.SAVING_PLACEHOLDER_COLON,
+                    placeHolder = stringResource(viewModel.uiState.placeholder),
                     onValueChange = {
                         viewModel.onUIEvent(OnAmountValueChange(it.filterInvalidAmountInput()))
                     },
@@ -166,4 +172,36 @@ fun SmartTransferAmountContent(viewModel: SmartTransferAmountViewModel = hiltVie
             )
         }
     }
+}
+
+@Composable
+private fun SmartTransferBottomSheet(viewModel: SmartTransferAmountViewModel) {
+    SmartPaymentBottomSheet(
+        coroutineScope = rememberCoroutineScope(),
+        modalBottomSheetState = viewModel.uiState.bottomSheetState,
+        saveSendTitleResource = R.string.smart_payment_sheet_title,
+        amount = viewModel.getFormattedAmount(),
+        exchangedAmount = if (viewModel.shouldDisplayExchange) viewModel.uiState.exchangeRateLabel else null,
+        fromLabel = stringResource(R.string.smart_payment_sheet_from_account),
+        fromTitle = stringResource(
+            R.string.smart_payment_amount_bottom_sheet_my_smart_account,
+            viewModel.smartCurrency?.symbol ?: ""
+        ),
+        fromSubtitle = stringResource(
+            R.string.iban_masked_account_number,
+            viewModel.smartAccount?.ibanAccountNumber ?: ""
+        ),
+        fromIcon = R.drawable.ic_multimoney_smart,
+        toLabel = stringResource(R.string.smart_payment_sheet_to_account),
+        toTitle = viewModel.ibanAccount?.nameAccount ?: "",
+        toSubtitle = getFullMaskedAccountIban(
+            viewModel.ibanAccount?.bank ?: "",
+            viewModel.ibanAccount?.sinpeAccount ?: "",
+            stringResource(R.string.payment_account_masked_text)
+        ),
+        toIcon = R.drawable.ic_bank_account_dollar,
+        motive = "Pago de producto", // todo viewModel.uiState.motive,
+        buttonText = stringResource(R.string.payment_amount_bottom_sheet_send_button),
+        buttonAction = { viewModel.onUIEvent(OnCallProcessSinpeTransfer) }
+    )
 }

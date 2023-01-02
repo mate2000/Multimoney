@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.payment.method
+package com.multimoney.multimoney.presentation.ui.smart.payment.methodsv
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -10,9 +10,9 @@ import com.multimoney.multimoney.presentation.navigation.SMART_IDS
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIState
-import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnTransferSelected
-import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnVisaSelected
+import com.multimoney.multimoney.presentation.ui.smart.payment.methodsv.SmartPaymentMethodViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.payment.methodsv.SmartPaymentMethodViewModel.UIEvent.OnTransferSelected
+import com.multimoney.multimoney.presentation.ui.smart.payment.methodsv.SmartPaymentMethodViewModel.UIEvent.OnVisaSelected
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

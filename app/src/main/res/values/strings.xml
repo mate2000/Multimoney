@@ -52,7 +52,7 @@
         <item>Si</item>
         <item>No</item>
     </string-array>
-    <string name="colons" translatable="false">Colenes</string>
+    <string name="colons" translatable="false">Colones</string>
     <string name="dollars" translatable="false">Doláres</string>
     <string name="quetzales" translatable="false">Quetzales</string>
     <string name="detail" translatable="false">Detalle</string>
@@ -768,6 +768,7 @@
     <string name="iban_account_loading" translatable="false">Verificando cuenta...</string>
     <string name="iban_account_error" translatable="false">Revisa formato. Debe tener 20 dígitos</string>
     <string name="iban_dialog_message" translatable="false">¿Estás seguro que querés editar tu cuenta IBAN?</string>
+    <string name="iban_masked_account_number" translatable="false">CR••••%s</string>
 
     <!-- Payment Voucher -->
     <string name="payment_voucher_title_chooser" translatable="false">Voucher</string>
@@ -930,7 +931,8 @@
     <string name="payment_amount_bottom_sheet_account" translatable="false">Desde tu cuenta</string>
     <string name="payment_amount_bottom_sheet_exchange_type" translatable="false">Tipo de cambio</string>
     <string name="payment_amount_bottom_sheet_amount_to_debit" translatable="false">Monto a debitar</string>
-    <string name="payment_amount_bottom_sheet_button" translatable="false">Realizar pago</string>
+    <string name="payment_amount_bottom_sheet_pay_button" translatable="false">Realizar pago</string>
+    <string name="payment_amount_bottom_sheet_send_button" translatable="false">Realizar envío</string>
     <string name="payment_amount_bottom_sheet_process_payment_description_label" translatable="false">Pago unica moneda desde App</string>
     <string name="payment_amount_bottom_sheet_enable_automatic_payment" translatable="false">Programar pago automático</string>
 

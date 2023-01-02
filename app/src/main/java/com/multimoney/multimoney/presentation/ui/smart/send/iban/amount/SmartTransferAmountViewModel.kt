@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount
+package com.multimoney.multimoney.presentation.ui.smart.send.iban.amount
 
 import android.content.Context
 import android.view.View
@@ -24,20 +24,22 @@ import com.multimoney.multimoney.presentation.navigation.SMART_IDS
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.CURRENCY_SEPARATOR
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnAmountValueChange
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnCallProcessSinpeTransfer
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnContinueClick
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnFailureWithDialog
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnNavigateHome
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnRetryTransfer
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnShareVoucherImage
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnTryLater
+import com.multimoney.multimoney.presentation.ui.smart.send.iban.amount.SmartTransferAmountViewModel.UIEvent.OnAmountValueChange
+import com.multimoney.multimoney.presentation.ui.smart.send.iban.amount.SmartTransferAmountViewModel.UIEvent.OnCallProcessSinpeTransfer
+import com.multimoney.multimoney.presentation.ui.smart.send.iban.amount.SmartTransferAmountViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.smart.send.iban.amount.SmartTransferAmountViewModel.UIEvent.OnFailureWithDialog
+import com.multimoney.multimoney.presentation.ui.smart.send.iban.amount.SmartTransferAmountViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.send.iban.amount.SmartTransferAmountViewModel.UIEvent.OnNavigateHome
+import com.multimoney.multimoney.presentation.ui.smart.send.iban.amount.SmartTransferAmountViewModel.UIEvent.OnRetryTransfer
+import com.multimoney.multimoney.presentation.ui.smart.send.iban.amount.SmartTransferAmountViewModel.UIEvent.OnShareVoucherImage
+import com.multimoney.multimoney.presentation.ui.smart.send.iban.amount.SmartTransferAmountViewModel.UIEvent.OnTryLater
 import com.multimoney.multimoney.presentation.util.ShareHelper
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
+import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
 import com.multimoney.multimoney.presentation.util.workers.startTimedNotification
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
@@ -51,7 +53,7 @@ import javax.inject.Inject
 class SmartTransferAmountViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val querySmartExchangeRateUseCase: QuerySmartExchangeRateUseCase,
-    private val shareHelper: ShareHelper,
+    private val shareHelper: ShareHelper
 ) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(SavingAmountViewModel.UIState())
@@ -62,8 +64,8 @@ class SmartTransferAmountViewModel @Inject constructor(
     private var identification: String = ""
     private var user: String = ""
     private var idCurrency: Int = 0
-    private var smartAccount: SmartAccountID? = null
-    private var ibanAccount: IbanAccountID? = null
+    var smartAccount: SmartAccountID? = null
+    var ibanAccount: IbanAccountID? = null
     var smartCurrency: CurrencyType? = CurrencyType.Dollar
     var ibanCurrency: CurrencyType? = null
     var shouldDisplayExchange: Boolean = false
@@ -85,7 +87,7 @@ class SmartTransferAmountViewModel @Inject constructor(
         idOriginCurrency: String,
         idDestinationCurrency: String
     ) = executeUseCase {
-        uiState.currentAmountValueString.debounce(SavingAmountViewModel.TWO_SECONDS).collectLatest {
+        uiState.currentAmountValueString.debounce(SavingAmountViewModel.ONE_SECOND).collectLatest {
             querySmartExchangeRateUseCase.invoke(
                 user = user,
                 idBrand = idBrand,
@@ -175,6 +177,11 @@ class SmartTransferAmountViewModel @Inject constructor(
                 openDialog = dialogParameters
             )
     }
+
+    fun getFormattedAmount() =
+        uiState.currency + uiState.currentAmountValueString.value?.stringToDoubleFormat(
+            CURRENCY_SEPARATOR.toString()
+        )
 
     private fun onNavigateToHome() {
         navigateBack(

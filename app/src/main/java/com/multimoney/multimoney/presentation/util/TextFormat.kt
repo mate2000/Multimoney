@@ -31,7 +31,12 @@ fun String.stringToIntegerFormat(separator: String? = null): String =
     if (isNotEmpty() && isValidAmount() && separator == null) {
         DecimalFormat(INTEGER_FORMAT).format(toDouble())
     } else if (isNotEmpty() && isValidAmount() && separator != null) {
-        DecimalFormat(INTEGER_FORMAT.replace(INTEGER_FORMAT_SEPARATOR, separator)).format(toDouble())
+        DecimalFormat(
+            INTEGER_FORMAT.replace(
+                INTEGER_FORMAT_SEPARATOR,
+                separator
+            )
+        ).format(toDouble())
     } else {
         this
     }
@@ -60,15 +65,21 @@ fun String.capitalized(): String {
 }
 
 fun getMaskedAccount(accountNumber: String, maskedText: String) =
-    accountNumber.take(ACCOUNT_FIRST_DIGITS).plus(maskedText).plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
+    accountNumber.take(ACCOUNT_FIRST_DIGITS).plus(maskedText)
+        .plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
 
 fun getMaskedVisa(cardNumber: String, maskedText: String) =
-    cardNumber.take(CARD_NUMBER_LAST_DIGITS).plus(maskedText).plus(cardNumber.takeLast(ACCOUNT_LAST_DIGITS))
+    cardNumber.take(CARD_NUMBER_LAST_DIGITS).plus(maskedText)
+        .plus(cardNumber.takeLast(ACCOUNT_LAST_DIGITS))
 
 fun getMaskedAccountIban(accountNumber: String, maskedText: String) =
     Brand.CostaRica.iban.plus(
-        accountNumber.take(ACCOUNT_IBAN_FIRST_DIGITS).plus(maskedText).plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
+        accountNumber.take(ACCOUNT_IBAN_FIRST_DIGITS).plus(maskedText)
+            .plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
     )
+
+fun getFullMaskedAccountIban(accountBank: String, accountNumber: String, maskedText: String) =
+    accountBank.plus(" | " + getMaskedAccountIban(accountNumber, maskedText))
 
 const val ACCOUNT_IBAN_FIRST_DIGITS = 0
 const val ACCOUNT_FIRST_DIGITS = 2

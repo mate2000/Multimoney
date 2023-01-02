@@ -90,26 +90,32 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
 
     private fun onNavigateToIBANAccount() {
         // TODO navigate to HU REV-1423
+        emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
     }
 
     private fun onNavigateToSmartAccount() {
         // TODO navigate to HU REV-1431
+        emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
     }
 
     private fun onNavigateToMyContacts() {
         // TODO navigate to HU REV-1445
+        emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
     }
 
     private fun onNavigateToMyFavorites() {
-        // TODO navigate to [tba]
+        // TODO navigate to [tbd]
+        emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
     }
 
     private fun onNavigateToOtherBankAccounts() {
         // TODO navigate to HU REV-1458
+        emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
     }
 
     private fun onNavigateToTransfer365Mobile() {
         // TODO navigate to HU REV-1458
+        emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
     }
 
     private fun onNavigateBack() {
@@ -134,4 +140,9 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         object OnOtherBankAccountsSelected : UIEvent()
         object OnTransfer365MobileSelected : UIEvent()
     }
+
+    sealed class BaseEvent {
+        object OnShowTbdToastEvent : BaseEvent()
+    }
+
 }

@@ -794,6 +794,8 @@
     <string name="smart_payment_share_button" translatable="false">Compartir</string>
     <string name="smart_payment_make_another_payment" translatable="false">Hacer otro ahorro</string>
     <string name="smart_payment_card_bank_label" translatable="false">Tarjeta Banco</string>
+    <string name="smart_payment_you_sent" translatable="false">Has enviado</string>
+    <string name="smart_payment_to_account" translatable="false">Hacia la cuenta</string>
 
     <!-- Smart Card -->
     <string name="smart_card_balance" translatable="false">Saldo</string>

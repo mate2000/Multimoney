@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.payment.amount
+package com.multimoney.multimoney.presentation.ui.smart.send.iban.amount
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -15,16 +15,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnNavigateHome
-import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnShareVoucherImage
+import com.multimoney.multimoney.presentation.ui.smart.send.iban.amount.SmartTransferAmountViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.send.iban.amount.SmartTransferAmountViewModel.UIEvent.OnNavigateHome
+import com.multimoney.multimoney.presentation.ui.smart.send.iban.amount.SmartTransferAmountViewModel.UIEvent.OnShareVoucherImage
 import com.multimoney.multimoney.presentation.uielement.PaymentSuccessResult
 import com.multimoney.multimoney.presentation.uielement.SmartPaymentInfoItem
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 
 @Composable
-fun SmartPaymentSuccessScreen(
-    viewModel: SavingAmountViewModel
+fun SmartTransferSuccessScreen(
+    viewModel: SmartTransferAmountViewModel
 ) {
     Column(
         modifier = Modifier
@@ -45,26 +45,26 @@ fun SmartPaymentSuccessScreen(
                 )
             },
             savePayText = stringResource(
-                R.string.smart_payment_you_saved_on_your_smart_account,
+                R.string.smart_payment_you_sent,
                 viewModel.uiState.currency
             ),
             amount = viewModel.uiState.currency +
                 viewModel.uiState.currentAmountValueString.collectAsState().value,
-            fromToText = stringResource(R.string.smart_payment_from_label),
+            fromToText = stringResource(R.string.smart_payment_to_account),
             buttonText = stringResource(R.string.smart_payment_make_another_payment),
             onButtonClick = { viewModel.onUIEvent(OnNavigateBack) }
         ) {
             SmartPaymentInfoItem(
                 modifier = Modifier.padding(start = 21.dp, top = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                icon = R.drawable.ic_visa_card_item,
+                icon = R.drawable.ic_bank_account,
                 iconModifier = Modifier
                     .height(24.dp)
                     .width(24.dp),
-                title = stringResource(R.string.smart_payment_card_bank_label),
+                title = stringResource(R.string.smart_payment_origin_account_label),
                 subtitle = stringResource(
                     R.string.visa_card_masked_number,
-                    viewModel.maskedCardNumber.takeLast(4)
+                    viewModel.ibanAccount?.bank ?: ""
                 )
             )
 
@@ -92,8 +92,17 @@ fun SmartPaymentSuccessScreen(
                     title = stringResource(R.string.payment_amount_bottom_sheet_exchange_type),
                     subtitle = viewModel.uiState.exchangeRateLabel,
                     rightTitle = stringResource(R.string.payment_amount_bottom_sheet_amount_to_debit),
-                    rightSubtitle = viewModel.getConvertedAmountFormatted(),
+                    rightSubtitle = viewModel.uiState.convertedAmountLabel,
                     showVerticalDivision = true
+                )
+            }
+
+            // Add motive condition
+            if (true) {
+                SmartPaymentInfoItem(
+                    title = stringResource(R.string.smart_payment_motive),
+                    icon = R.drawable.ic_notebook_motive,
+                    subtitle = "Transferencia cena ayer" // viewModel.uiState.motive
                 )
             }
 

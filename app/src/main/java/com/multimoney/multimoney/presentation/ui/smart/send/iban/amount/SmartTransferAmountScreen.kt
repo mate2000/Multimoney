@@ -93,7 +93,7 @@ fun SmartTransferAmountScreen(
             viewModel.onUIEvent(OnNavigateHome)
         }
     } else if (viewModel.uiState.paymentSuccess) {
-        // Todo add success screen
+        SmartTransferSuccessScreen(viewModel)
         BackHandler {
             viewModel.onUIEvent(OnNavigateHome)
         }
@@ -174,6 +174,7 @@ fun SmartTransferAmountContent(viewModel: SmartTransferAmountViewModel = hiltVie
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun SmartTransferBottomSheet(viewModel: SmartTransferAmountViewModel) {
     SmartPaymentBottomSheet(

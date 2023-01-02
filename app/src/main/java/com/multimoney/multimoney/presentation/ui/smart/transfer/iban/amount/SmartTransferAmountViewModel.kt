@@ -10,21 +10,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Rect
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.multimoney.domain.interaction.accountsmart.QuerySmartExchangeRateUseCase
-import com.multimoney.domain.model.accountsmart.IbanAccountID
-import com.multimoney.domain.model.accountsmart.SmartAccountID
-import com.multimoney.domain.model.util.onFailure
-import com.multimoney.domain.model.util.onLoading
-import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.IBAN_ACCOUNT
-import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.SMART_IDS
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
-import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel
+import com.multimoney.multimoney.presentation.ui.smart.SmartEditAmountHelper
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnAmountValueChange
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnCallProcessSinpeTransfer
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnContinueClick
@@ -33,93 +24,75 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.Smar
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnNavigateHome
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnRetryTransfer
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnShareVoucherImage
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnTryLater
 import com.multimoney.multimoney.presentation.util.ShareHelper
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.getCurrencyFromId
-import com.multimoney.multimoney.presentation.util.workers.startTimedNotification
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-@OptIn(ExperimentalMaterialApi::class, FlowPreview::class)
+@OptIn(ExperimentalMaterialApi::class)
 class SmartTransferAmountViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val querySmartExchangeRateUseCase: QuerySmartExchangeRateUseCase,
     private val shareHelper: ShareHelper,
+    val editAmountHelper: SmartEditAmountHelper
 ) : BaseViewModel(true) {
 
-    var uiState by mutableStateOf(SavingAmountViewModel.UIState())
+    var uiState by mutableStateOf(UIState())
         private set
 
     // stateless
-    private var idBrand: Int = 0
-    private var identification: String = ""
-    private var user: String = ""
-    private var idCurrency: Int = 0
-    private var smartAccount: SmartAccountID? = null
-    private var ibanAccount: IbanAccountID? = null
-    var smartCurrency: CurrencyType? = CurrencyType.Dollar
-    var ibanCurrency: CurrencyType? = null
-    var shouldDisplayExchange: Boolean = false
+    var fromSmartLabel: Int = R.string.smart_iban_transfer_smart_account_colon
 
-    init {
-        user = savedStateHandle[USER] ?: ""
-        idBrand = savedStateHandle[ID_BRAND] ?: 0
-        smartAccount = savedStateHandle[SMART_IDS]
-        ibanAccount = savedStateHandle[IBAN_ACCOUNT]
-        smartCurrency = smartAccount?.currencyID?.getCurrencyFromId()
-        ibanCurrency = ibanAccount?.currencyId?.getCurrencyFromId()
-        shouldDisplayExchange = smartCurrency == ibanCurrency
-        identification = savedStateHandle[IDENTIFICATION] ?: ""
-    }
-
-    private fun getSmartExchangeRate(
-        user: String,
-        identification: String,
-        idOriginCurrency: String,
-        idDestinationCurrency: String
-    ) = executeUseCase {
-        uiState.currentAmountValueString.debounce(SavingAmountViewModel.TWO_SECONDS).collectLatest {
-            querySmartExchangeRateUseCase.invoke(
-                user = user,
-                idBrand = idBrand,
-                abbreviation = ibanCurrency?.disbursementValue ?: "",
-                identification = identification,
-                idOriginCurrency = idOriginCurrency,
-                idDestinationCurrency = idDestinationCurrency,
-                amount = it?.toDoubleOrNull() ?: 0.0
-            ).collectLatest { result ->
-                result.onSuccess { rate ->
-                    uiState = uiState.copy(
-                        isLoading = false,
-                        exchangeRate = rate?.exchangeRate ?: 0.0,
-                        exchangeConvertedAmount = rate?.amount ?: 0.0,
-                        exchangeRateLabel = rate?.exchangeRateLabel ?: "0.0",
-                        convertedAmountLabel = rate?.convertedAmountLabel ?: "0.0"
-                    )
-                }
-                result.onFailure {
-                    onUIEvent(
-                        OnFailureWithDialog(
-                            isLoading = false,
-                            dialogParameters = DialogParameters(isActive = mutableStateOf(true))
-                        )
-                    )
-                }
-                result.onLoading { uiState = uiState.copy(isLoading = true) }
+    private fun onStart() {
+        viewModelScope.launch {
+            editAmountHelper.onStart()
+            fromSmartLabel = if (editAmountHelper.smartCurrency == CurrencyType.Colon) {
+                R.string.smart_iban_transfer_smart_account_colon
+            } else {
+                R.string.smart_iban_transfer_smart_account_dolar
+            }
+            uiState = uiState.copy(
+                currency = editAmountHelper.smartCurrency?.symbol ?: CurrencyType.Dollar.symbol,
+                placeholder = if (editAmountHelper.smartCurrency == CurrencyType.Dollar) R.string.smart_dollar_placeholder else R.string.smart_colon_placeholder
+            )
+            if (editAmountHelper.shouldDisplayExchange) {
+                getExchangeOnCompleted()
             }
         }
     }
 
+    private fun getExchangeOnCompleted() = executeUseCase {
+        editAmountHelper.getSmartExchangeRate(
+            currentAmount = uiState.currentAmountValueString.toDoubleOrNull() ?: 0.0,
+            onFailure = {
+                onFailureWithDialog(
+                    false,
+                    DialogParameters(isActive = mutableStateOf(true))
+                )
+            },
+            onLoading = {
+                uiState = uiState.copy(isLoading = true)
+            },
+            onSuccess = { rate ->
+                uiState = uiState.copy(
+                    isLoading = false,
+                    exchangeRate = rate?.exchangeRate ?: 0.0,
+                    exchangeConvertedAmount = rate?.amount ?: 0.0,
+                    exchangeRateLabel = rate?.exchangeRateLabel ?: "0.0",
+                    convertedAmountLabel = rate?.convertedAmountLabel ?: "0.0"
+                )
+            }
+        )
+    }
+
     private fun onAmountChanged(newAmount: String) {
-        uiState.currentAmountValueString.value = newAmount
         uiState = uiState.copy(
+            currentAmountValueString = newAmount,
             enableButton = newAmount.isNotEmpty() && newAmount.toDouble() > 0
         )
     }
@@ -143,31 +116,6 @@ class SmartTransferAmountViewModel @Inject constructor(
         onCallProcessSinpeTransfer()
     }
 
-    private fun onTryLater(
-        notificationTitle: String,
-        notificationBody: String,
-        notificationSmallIcon: Int,
-        context: Context
-    ) {
-        startTimedNotification(
-            context,
-            notificationTitle,
-            notificationBody,
-            notificationSmallIcon
-        )
-        navigateBack(
-            popTo = Screen.HomeScreen.route,
-            isRestart = true
-        )
-    }
-
-    private fun onShareVoucherImage(
-        view: View,
-        capturingBounds: Rect
-    ) {
-        shareHelper.sharedScreenShot(view, capturingBounds)
-    }
-
     private fun onFailureWithDialog(isLoading: Boolean, dialogParameters: DialogParameters) {
         uiState =
             uiState.copy(
@@ -184,14 +132,13 @@ class SmartTransferAmountViewModel @Inject constructor(
     }
 
     private fun onNavigateBack() {
-        navigateBack(popTo = Screen.TransferIbanAccountScreen.route, isRestart = false)
+        navigateBack(popTo = Screen.SmartTransferIbanAccountScreen.route, isRestart = false)
     }
 
     data class UIState(
-        // Interactions
         val currency: String = "",
+        val currentAmountValueString: String = "",
         val motive: String = "",
-        val currentAmountValueString: MutableStateFlow<String?> = MutableStateFlow(null),
         val enableButton: Boolean = false,
         val isLoading: Boolean = false,
         val exchangeRate: Double = 0.0,
@@ -214,7 +161,10 @@ class SmartTransferAmountViewModel @Inject constructor(
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnNavigateBack -> onNavigateBack()
+            is OnStart -> onStart()
             is OnAmountValueChange -> onAmountChanged(uiEvent.value)
+            is UIEvent.OnAmountCompleted -> getExchangeOnCompleted()
+            is UIEvent.OnMotiveChange -> uiState = uiState.copy(motive = uiEvent.value)
             is OnContinueClick -> onContinueClick()
             is OnCallProcessSinpeTransfer -> onCallProcessSinpeTransfer()
             is OnFailureWithDialog -> onFailureWithDialog(
@@ -222,20 +172,26 @@ class SmartTransferAmountViewModel @Inject constructor(
                 uiEvent.dialogParameters
             )
             is OnRetryTransfer -> onRetryTransfer()
-            is OnTryLater -> onTryLater(
+            is OnTryLater -> editAmountHelper.onTryLater(
                 uiEvent.notificationTitle,
                 uiEvent.notificationBody,
                 uiEvent.notificationSmallIcon,
                 uiEvent.context
-            )
+            ) { onNavigateToHome() }
             is OnNavigateHome -> onNavigateToHome()
-            is OnShareVoucherImage -> onShareVoucherImage(uiEvent.view, uiEvent.capturingBounds)
+            is OnShareVoucherImage -> editAmountHelper.onShareVoucherImage(
+                uiEvent.view,
+                uiEvent.capturingBounds
+            )
         }
     }
 
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()
+        object OnStart : UIEvent()
         data class OnAmountValueChange(val value: String) : UIEvent()
+        data class OnAmountCompleted(val value: String) : UIEvent()
+        data class OnMotiveChange(val value: String) : UIEvent()
         object OnContinueClick : UIEvent()
         object OnCallProcessSinpeTransfer : UIEvent()
         object OnRetryTransfer : UIEvent()

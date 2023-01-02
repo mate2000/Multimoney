@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.transfer.iban
+package com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -20,10 +20,9 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.SmartTransferIbanViewModel.UIEvent.OnAddAccountClick
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.SmartTransferIbanViewModel.UIEvent.OnCallQueryListSinpeAccountUseCaseImpl
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.SmartTransferIbanViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnAddAccountClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnCallQueryListSinpeAccountUseCaseImpl
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiary
 import com.multimoney.multimoney.presentation.uielement.CustomDialog

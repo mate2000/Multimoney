@@ -1202,6 +1202,10 @@
     <!-- Smart Transfer Iban -->
     <string name="smart_iban_transfer_title" translatable="false">Cuentas registradas</string>
     <string name="smart_iban_transfer_send_money" translatable="false">Enviar dinero</string>
+    <string name="smart_iban_transfer_from_account" translatable="false">Desde mi cuenta %s</string>
+    <string name="smart_iban_transfer_motive_label" translatable="false">Motivo</string>
+    <string name="smart_iban_transfer_smart_account_colon" translatable="false">Smart Colones %s</string>
+    <string name="smart_iban_transfer_smart_account_dolar" translatable="false">Smart Dolares %s</string>
 
     <!-- Card Preferences -->
     <string name="card_preferences_title" translatable="false">Preferencias de tarjeta</string>

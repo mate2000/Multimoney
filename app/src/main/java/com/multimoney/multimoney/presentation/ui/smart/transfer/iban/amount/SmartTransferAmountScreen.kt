@@ -2,52 +2,34 @@ package com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel
-import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnAmountCompleted
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnAmountValueChange
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnMotiveChange
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnNavigateHome
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnRetryTransfer
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnTryLater
 import com.multimoney.multimoney.presentation.uielement.AlertResult
-import com.multimoney.multimoney.presentation.uielement.CurrencyAmountInput
-import com.multimoney.multimoney.presentation.uielement.CustomButton
-import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.LoadingMultiMoney
+import com.multimoney.multimoney.presentation.uielement.SmartAmountContent
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
+import com.multimoney.multimoney.presentation.util.CARD_NUMBER_LAST_DIGITS
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.filterInvalidAmountInput
-import com.multimoney.multimoney.presentation.util.transformation.CurrencyDoubleTransformation
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
+import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 
 @Composable
 fun SmartTransferAmountScreen(
@@ -56,7 +38,10 @@ fun SmartTransferAmountScreen(
 ) {
     val context = LocalContext.current
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopBackStack = onPopBackStack)
+        viewModel.apply {
+            executeNavigation(onPopBackStack = onPopBackStack)
+            onUIEvent(OnStart)
+        }
     }
 
     if (viewModel.uiState.showLoadingScreen) {
@@ -105,7 +90,6 @@ fun SmartTransferAmountScreen(
 @Composable
 @Preview
 fun SmartTransferAmountContent(viewModel: SmartTransferAmountViewModel = hiltViewModel()) {
-    val focusManager = LocalFocusManager.current
     Column(
         modifier = Modifier.background(MultimoneyTheme.colors.background)
     ) {
@@ -113,57 +97,33 @@ fun SmartTransferAmountContent(viewModel: SmartTransferAmountViewModel = hiltVie
             isRightButtonVisible = false,
             onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) }
         )
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .background(MultimoneyTheme.colors.background)
-                .padding(start = 16.dp, end = 16.dp, bottom = 24.dp),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column {
-                Text(
-                    modifier = Modifier.padding(top = 30.dp),
-                    text = stringResource(id = R.string.smart_iban_transfer_send_money),
-                    style = Typography.h6.copy(
-                        fontWeight = FontWeight.SemiBold,
-                        color = MultimoneyTheme.colors.labelText
-                    ),
-                    textAlign = TextAlign.Left
-                )
-                CurrencyAmountInput(
-                    modifier = Modifier.padding(top = 24.dp),
-                    value = viewModel.uiState.currentAmountValueString.collectAsState().value,
-                    placeHolder = SavingAmountViewModel.SAVING_PLACEHOLDER_COLON,
-                    onValueChange = {
-                        viewModel.onUIEvent(OnAmountValueChange(it.filterInvalidAmountInput()))
-                    },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(onDone = {
-                        focusManager.clearFocus()
-                    }),
-                    isRequired = true,
-                    customTransformation = CurrencyDoubleTransformation(
-                        viewModel.uiState.currency,
-                        CreditAmountViewModel.CURRENCY_SEPARATOR
+        SmartAmountContent(
+            titleId = R.string.smart_iban_transfer_send_money,
+            originAccountSubtitle = stringResource(
+                id = viewModel.fromSmartLabel,
+                if (viewModel.editAmountHelper.smartCurrency == CurrencyType.Colon) {
+                    getMaskedAccountIban(
+                        viewModel.editAmountHelper.maskedCardNumber,
+                        stringResource(id = R.string.payment_account_masked_text)
                     )
-                )
-            }
-            CustomButton(
-                modifier = Modifier
-                    .height(48.dp)
-                    .fillMaxWidth(),
-                onClick = {
-                    focusManager.clearFocus()
-                    viewModel.onUIEvent(OnContinueClick)
-                },
-                text = stringResource(id = R.string.button_continue),
-                buttonType = CustomButtonType.PrimaryPrimary,
-                enable = viewModel.uiState.enableButton
-            )
-        }
+                } else {
+                    stringResource(
+                        R.string.visa_card_masked_number,
+                        viewModel.editAmountHelper.maskedCardNumber.takeLast(CARD_NUMBER_LAST_DIGITS)
+                    )
+                }
+            ),
+            currentAmount = viewModel.uiState.currentAmountValueString,
+            amountPlaceHolderId = viewModel.uiState.placeholder,
+            onAmountChange = {
+                viewModel.onUIEvent(OnAmountValueChange(it))
+            },
+            onDebounceValidation = { viewModel.onUIEvent(OnAmountCompleted(it)) },
+            currency = viewModel.uiState.currency,
+            shouldDisplayExchange = viewModel.editAmountHelper.shouldDisplayExchange,
+            onContinueClick = { viewModel.onUIEvent(OnContinueClick) },
+            enableButton = viewModel.uiState.enableButton,
+            onMotiveChange = { viewModel.onUIEvent(OnMotiveChange(it)) }
+        )
     }
 }

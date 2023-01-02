@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.payment.sending
+package com.multimoney.multimoney.presentation.ui.smart.transfer.iban.sending
 
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.domain.model.accountsmart.SmartAccountID
@@ -8,8 +8,12 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.SMART_IDS
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
-import com.multimoney.multimoney.presentation.ui.smart.payment.sending.SmartSelectSendingTypeViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.sending.SmartSelectSendingTypeViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -75,7 +79,9 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     }
 
     private fun onNavigateToIBANAccount() {
-        // TODO navigate to HU REV-1423
+        navigateTo(
+            "${Screen.SmartTransferIbanAccountScreen.baseRoute}/$pkUser/$idBrand/$identification/${Screen.SmartSelectSendingTypeScreen.baseRoute}/$idClient"
+        )
     }
 
     private fun onNavigateToSmartAccount() {

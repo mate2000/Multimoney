@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.payment.sending
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -36,9 +38,19 @@ fun SmartSelectSendingTypeScreen(
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: SmartSelectSendingTypeViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
+        }
+    }
+
+    LaunchedEffect(key1 = true) {
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                is SmartSelectSendingTypeViewModel.BaseEvent.OnShowTbdToastEvent -> Toast.makeText(context, "TBD", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

@@ -50,6 +50,7 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCa
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnMyProductClick
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnMyProductPageChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.BaseEvent.OnShowCardIssuanceError
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.BaseEvent.OnShowTbdToastEvent
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.DEFAULT_PRODUCT_PAGES
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCreateMultimoneyVisa
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnDeleteAutomaticPayment
@@ -122,6 +123,7 @@ fun ProductScreen(
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnShowCardIssuanceError -> sharedViewModel.onUIEvent(UIEvent.OnShowCardIssuanceError)
+                is OnShowTbdToastEvent -> Toast.makeText(context, "TBD", Toast.LENGTH_SHORT).show()
             }
         }
     }

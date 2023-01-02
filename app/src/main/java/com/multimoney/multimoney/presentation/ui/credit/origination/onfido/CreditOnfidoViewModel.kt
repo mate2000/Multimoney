@@ -120,7 +120,7 @@ class CreditOnfidoViewModel @Inject constructor(
                 names,
                 lastNames,
                 identification,
-                getApplicationId(),
+                BuildConfig.APPLICATION_ID,
                 Brand.CostaRica.id,
                 user
             ).collectLatest { result ->
@@ -146,20 +146,12 @@ class CreditOnfidoViewModel @Inject constructor(
                 names,
                 lastNames,
                 identification,
-                getApplicationId(),
+                BuildConfig.APPLICATION_ID,
                 Brand.CostaRica.id,
                 user
             ).collectLatest { result ->
                 onFidoTokenEvent.emit(result)
             }
-        }
-    }
-
-    private fun getApplicationId(): String {
-        return if (BuildConfig.DEBUG) {
-            BuildConfig.ONFIDO_APPLICATION_ID
-        } else {
-            BuildConfig.APPLICATION_ID
         }
     }
 

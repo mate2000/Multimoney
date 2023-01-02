@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.transfer.iban
+package com.multimoney.multimoney.presentation.ui.smart.payment.iban
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,10 +17,10 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.SmartTransferIbanViewModel.UIEvent.OnAccountClick
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.SmartTransferIbanViewModel.UIEvent.OnAddAccountClick
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.SmartTransferIbanViewModel.UIEvent.OnCallQueryListSinpeAccountUseCaseImpl
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.SmartTransferIbanViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.payment.iban.SmartTransferIbanViewModel.UIEvent.OnAccountClick
+import com.multimoney.multimoney.presentation.ui.smart.payment.iban.SmartTransferIbanViewModel.UIEvent.OnAddAccountClick
+import com.multimoney.multimoney.presentation.ui.smart.payment.iban.SmartTransferIbanViewModel.UIEvent.OnCallQueryListSinpeAccountUseCaseImpl
+import com.multimoney.multimoney.presentation.ui.smart.payment.iban.SmartTransferIbanViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest

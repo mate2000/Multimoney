@@ -4,6 +4,8 @@ import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCa
 import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationInitialRequestUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationInitialUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.MutationProcessSinpeTransferUseCase
+import com.multimoney.domain.interaction.accountsmart.MutationProcessSinpeTransferUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationProcessTransferVisaToSmartVDUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationProcessTransferVisaToSmartVDUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCase
@@ -170,6 +172,10 @@ import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.MutationActivatedCardAutomaticDebitUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationActivatedCardAutomaticDebitUseCaseImpl
+import com.multimoney.domain.interaction.virtualcard.MutationCardBlockingUseCase
+import com.multimoney.domain.interaction.virtualcard.MutationCardBlockingUseCaseImpl
+import com.multimoney.domain.interaction.virtualcard.MutationCardUnblockingUseCase
+import com.multimoney.domain.interaction.virtualcard.MutationCardUnblockingUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.MutationPayCreditVDUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationPayCreditVDUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCase
@@ -541,6 +547,11 @@ class InteractionModule {
 
     @Provides
     @Singleton
+    fun provideMutationProcessSinpeTransferUseCase(smartAccountRepository: SmartAccountRepository): MutationProcessSinpeTransferUseCase =
+        MutationProcessSinpeTransferUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
     fun provideQueryAddressLevelOneUseCase(smartAccountRepository: SmartAccountRepository): QueryAddressLevelOneUseCase =
         QueryAddressLevelOneUseCaseImpl(smartAccountRepository)
 
@@ -623,6 +634,16 @@ class InteractionModule {
     @Singleton
     fun provideMutationActivatedCardAutomaticDebitUseCase(virtualCardRepository: VirtualCardRepository): MutationActivatedCardAutomaticDebitUseCase =
         MutationActivatedCardAutomaticDebitUseCaseImpl(virtualCardRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationCardBlockingUseCase(virtualCardRepository: VirtualCardRepository): MutationCardBlockingUseCase =
+        MutationCardBlockingUseCaseImpl(virtualCardRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationCardUnblockingUseCase(virtualCardRepository: VirtualCardRepository): MutationCardUnblockingUseCase =
+        MutationCardUnblockingUseCaseImpl(virtualCardRepository)
 
     // Profile
 

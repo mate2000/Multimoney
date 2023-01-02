@@ -16,7 +16,9 @@ import com.multimoney.data.networking.graphql.apollomodel.AddressLevel3Query
 import com.multimoney.data.networking.graphql.apollomodel.BalanceCardInformationQuery
 import com.multimoney.data.networking.graphql.apollomodel.BalanceQuery
 import com.multimoney.data.networking.graphql.apollomodel.BanksAndRegularExpressionQuery
+import com.multimoney.data.networking.graphql.apollomodel.CardBlockingNVMutation
 import com.multimoney.data.networking.graphql.apollomodel.CardIssuanceNVQuery
+import com.multimoney.data.networking.graphql.apollomodel.CardUnblockingNVMutation
 import com.multimoney.data.networking.graphql.apollomodel.CatalogTypeIndentificationQuery
 import com.multimoney.data.networking.graphql.apollomodel.ChangeEmailMutation
 import com.multimoney.data.networking.graphql.apollomodel.ChangePhoneMutation
@@ -63,6 +65,7 @@ import com.multimoney.data.networking.graphql.apollomodel.PayCreditVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.PaymentAmountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProccessPaymentListMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProcessCreditExtensionDetailMutation
+import com.multimoney.data.networking.graphql.apollomodel.ProcessSinpeTransferMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProcessTransferVisaToSmartVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProfessionSmartQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProfessionsQuery
@@ -1405,6 +1408,53 @@ class GraphqlApi @Inject constructor(
             cardMasked = cardMasked
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationCardBlocking(
+        blockType: String,
+        observations: String,
+        clientId: Int,
+        userApp: String,
+        cardToken: String,
+        source: String,
+        idLoan: Int,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<CardBlockingNVMutation.Data> = apolloAuthorizedClient.mutation(
+        CardBlockingNVMutation(
+            blockType = blockType,
+            observations = observations,
+            clientId = clientId,
+            userApp = userApp,
+            cardToken = cardToken,
+            source = source,
+            idLoan = idLoan,
+            user = user,
+            idBrand = idBrand
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationCardUnblocking(
+        observations: String,
+        clientId: Int,
+        userApp: String,
+        cardToken: String,
+        source: String,
+        idLoan: Int,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<CardUnblockingNVMutation.Data> = apolloAuthorizedClient.mutation(
+        CardUnblockingNVMutation(
+            observations = observations,
+            clientId = clientId,
+            userApp = userApp,
+            cardToken = cardToken,
+            source = source,
+            idLoan = idLoan,
+            user = user,
+            idBrand = idBrand
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
     // Profile sections
 
     fun queryCountryContact(
@@ -1480,6 +1530,45 @@ class GraphqlApi @Inject constructor(
                 pkUser = pkUser,
                 currentFlow = currentFlow,
                 identification = identification
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationProcessSinpeTransfer(
+        pkUser: Int,
+        identification: String,
+        originCustomerIdentification: String,
+        ibanAccountOrigin: String,
+        originCustomerName: String,
+        idCurrencyOrigin: String,
+        ibanAccountDestination: String,
+        destinationCustomerIdentification: String,
+        destinationCustomerName: String,
+        idCurrencyDestination: String,
+        reasonOfTransfer: String,
+        type: String,
+        amountToTransfer: Double,
+        exchangeRate: Double,
+        idBrand: Int,
+        user: String
+    ): ApolloCall<ProcessSinpeTransferMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            ProcessSinpeTransferMutation(
+                pkUser = pkUser,
+                identification = identification,
+                originCustomerIdentification = originCustomerIdentification,
+                ibanAccountOrigin = ibanAccountOrigin,
+                originCustomerName = originCustomerName,
+                idCurrencyOrigin = idCurrencyOrigin,
+                ibanAccountDestination = ibanAccountDestination,
+                destinationCustomerIdentification = destinationCustomerIdentification,
+                destinationCustomerName = destinationCustomerName,
+                idCurrencyDestination = idCurrencyDestination,
+                reasonOfTransfer = reasonOfTransfer,
+                type = type,
+                amountToTransfer = amountToTransfer,
+                exchangeRate = exchangeRate,
+                idBrand = idBrand,
+                user = user
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

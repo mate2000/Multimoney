@@ -28,6 +28,8 @@
     <string name="understood" translatable="false">Entendido</string>
     <string name="activate" translatable="false">Activar</string>
     <string name="locked" translatable="false">Bloquear</string>
+    <string name="unlocked" translatable="false">Desbloquear</string>
+    <string name="pay" translatable="false">Pagar</string>
     <string name="see_data" translatable="false">Ver datos</string>
     <string name="link" translatable="false">Vincular</string>
     <string name="shared" translatable="false">Compartir</string>
@@ -50,11 +52,12 @@
         <item>Si</item>
         <item>No</item>
     </string-array>
-    <string name="colons" translatable="false">Colenes</string>
+    <string name="colons" translatable="false">Colones</string>
     <string name="dollars" translatable="false">Doláres</string>
     <string name="quetzales" translatable="false">Quetzales</string>
     <string name="detail" translatable="false">Detalle</string>
     <string name="success" translatable="false">Exito</string>
+    <string name="motive" translatable="false">Motivo</string>
 
     <string name="content_description_more_info" translatable="false">Más información</string>
 
@@ -69,12 +72,12 @@
     <string name="error_button_try_later" translatable="false">Intentar más tarde</string>
 
     <!-- OnBoarding -->
-    <string name="onboarding_step_one_title" translatable="false">Invertí de forma Smart</string>
-    <string name="onboarding_step_one_sub_title" translatable="false">Ganá hasta 7\%; de interés anual con tu cuenta Multimoney Smart.</string>
-    <string name="onboarding_step_two_title" translatable="false">Tu crédito sin papeleos</string>
-    <string name="onboarding_step_two_sub_title" translatable="false">Con sólo tu identificación consigue hasta [moneda] [monto máx] en minutos.</string>
-    <string name="onboarding_step_three_title" translatable="false">Hacé tu inversión en cripto</string>
-    <string name="onboarding_step_three_sub_title" translatable="false">Comprá y vendé cripto de forma simple y rápida.</string>
+    <string name="onboarding_step_one_title" translatable="false">Multiplicá tus ahorros</string>
+    <string name="onboarding_step_one_sub_title" translatable="false">Ganá 3.5% de interés anual.</string>
+    <string name="onboarding_step_two_title" translatable="false">Tu crédito en 5 minutos</string>
+    <string name="onboarding_step_two_sub_title" translatable="false">Recibí hasta [moneda] [monto máx] con solo tu identificación.</string>
+    <string name="onboarding_step_three_title" translatable="false">Invierte en cripto</string>
+    <string name="onboarding_step_three_sub_title" translatable="false">Comprá, vendé y transferí cripto de forma simple y segura.</string>
     <string name="onboarding_account_already_created" translatable="false">Ya tengo cuenta</string>
 
     <!-- Sign In -->
@@ -292,6 +295,7 @@
     <string name="home_product_gt_non_pre_approved_credit_description" translatable="false">Contesta estas preguntas para conocer si aplicas para un crédito.</string>
     <string name="home_product_gt_sv_non_pre_approved_credit_action" translatable="false">Contestar preguntas</string>
     <string name="home_product_gt_with_out_credit_title" translatable="false">Conoce nuestras opciones\nde crédito</string>
+    <string name="home_product_gt_sv_credit_rejected_title" translatable="false">Lamentablemente no podemos\ndarte un crédito en este momento</string>
     <string name="home_smart_product_process_accept_contract_description" translatable="false">Estamos terminando de validar tus datos. Pronto te informaremos del proceso.</string>
     <string name="home_product_gt_with_out_credit_description" translatable="false">Comunicate con nosotros para brindarte más información de tu solicitud de crédito.</string>
     <string name="home_product_gt_with_out_credit_action" translatable="false">Contactar a un asesor</string>
@@ -604,6 +608,12 @@
     <string name="non_pre_approved_additional_questions_income_label" translatable="false">Ingreso mensual</string>
     <string name="non_pre_approved_additional_questions_income_placeholder" translatable="false">%s 000</string>
     <string name="non_pre_approved_additional_questions_employment_situation_label" translatable="false">Situación laboral</string>
+    <string name="non_pre_approved_additional_questions_success_alert_result_title" translatable="false">¡Tienes %1s%2s pre aprobados!</string>
+    <string name="non_pre_approved_additional_questions_success_alert_result_description" translatable="false">Solicita tu dinero y recíbelo en menos de 10 minutos</string>
+    <string name="non_pre_approved_additional_questions_error_alert_result_title" translatable="false">Lo sentimos, no hay opciones de crédito</string>
+    <string name="non_pre_approved_additional_questions_error_alert_result_description" translatable="false">Comunícate con nosotros si tienes consultas</string>
+    <string name="non_pre_approved_additional_questions_processing_alert_result_label" translatable="false">Procesando datos...</string>
+    <string name="non_pre_approved_additional_questions_request_button_label" translatable="false">Solicitar</string>
 
 
     <!-- Generate Document -->
@@ -673,6 +683,24 @@
     <string name="visa_card_dialog_title" translatable="false">Vincular tarjeta</string>
     <string name="visa_card_dialog_description" translatable="false">¿Estás seguro que deseas vincular tu tarjeta a este dispositivo?</string>
     <string name="visa_card_success_message_label" translatable="false">La tarjeta fue tokenizada exitosamente</string>
+    <string name="visa_card_password_message_title" translatable="false">Validación de identidad</string>
+    <string name="visa_card_password_message_subtitle" translatable="false">No es posible validar tu identidad con biometricos.</string>
+    <string name="visa_card_password_message_try_with_password" translatable="false">Intentar con contraseña</string>
+    <string name="visa_card_password_title" translatable="false">Ver datos de mi tarjeta</string>
+    <string name="visa_card_password_error" translatable="false">Contraseña inválida</string>
+    <string name="visa_card_password_button" translatable="false">Confirmar</string>
+    <string name="visa_card_biometric_dialog_title" translatable="false">Validación de identidad</string>
+    <string name="visa_card_biometric_dialog_subtitle" translatable="false">Utilice su biometría para visualizar los datos de tu tarjeta.</string>
+    <string name="visa_card_unblock_without_nfc_dialog_title" translatable="false">Desbloquear tarjeta</string>
+    <string name="visa_card_unblock_without_nfc_dialog_subtitle" translatable="false">Al desbloquear tu tarjeta podrás hacer pagos online.</string>
+    <string name="visa_card_unblock_with_nfc_dialog_title" translatable="false">Desbloquear tarjeta</string>
+    <string name="visa_card_unblock_with_nfc_dialog_subtitle" translatable="false">Al desbloquear tu tarjeta podrás hacer pagos online y compras en comercio.</string>
+    <string name="visa_card_unblock_not_allowed_dialog_title" translatable="false">¡Oh no! No puedes desbloquear tu tarjeta</string>
+    <string name="visa_card_unblock_not_allowed_dialog_subtitle" translatable="false">Contáctate con servicio al cliente para desbloquear tu tarjeta.</string>
+    <string name="visa_card_block_dialog_title" translatable="false">Estás bloqueando tu tarjeta digital Multimoney Visa</string>
+    <string name="visa_card_block_dialog_subtitle" translatable="false">Si bloqueás la tarjeta no podrás realizar pagos online. Podrás desbloquearla después si lo deseás, y será al instante.</string>
+    <string name="visa_card_block_disclaimer" translatable="false">Desbloqueá tu tarjeta para usar tu Multimoney Visa.</string>
+
 
     <!-- visa tokenization waiting -->
     <string name="visa_tokenization_waiting_description_one_bold" translatable="false">100% libre de plástico.</string>
@@ -685,6 +713,12 @@
     <string name="visa_tokenization_waiting_description_three_bold_gt" translatable="false">Puedes pagar con tu teléfono</string>
     <string name="visa_tokenization_waiting_description_three_gt" translatable="false">\no con los datos de tu tarjeta</string>
     <string name="visa_tokenization_waiting_loading_label" translatable="false">Activando tu tarjeta…</string>
+
+    <!-- visa tokenization success -->
+    <string name="visa_tokenization_success_title" translatable="false">¡Hemos finalizado!</string>
+    <string name="visa_tokenization_success_description" translatable="false">Ya podés utilizar tu Multimoney Visa para realizar compras online y en comercios</string>
+    <string name="visa_tokenization_success_description_gt" translatable="false">Ya puedes utilizar tu Multimoney Visa para realizar compras online y en comercios</string>
+    <string name="visa_tokenization_success_button_action" translatable="false">Ver Multimoney Visa</string>
 
     <!-- Credit Loading -->
     <string name="credit_glad_to_see_you" translatable="false">¡Nos alegra que regresés!</string>
@@ -734,6 +768,7 @@
     <string name="iban_account_loading" translatable="false">Verificando cuenta...</string>
     <string name="iban_account_error" translatable="false">Revisa formato. Debe tener 20 dígitos</string>
     <string name="iban_dialog_message" translatable="false">¿Estás seguro que querés editar tu cuenta IBAN?</string>
+    <string name="iban_masked_account_number" translatable="false">CR••••%s</string>
 
     <!-- Payment Voucher -->
     <string name="payment_voucher_title_chooser" translatable="false">Voucher</string>
@@ -899,7 +934,8 @@
     <string name="payment_amount_bottom_sheet_account" translatable="false">Desde tu cuenta</string>
     <string name="payment_amount_bottom_sheet_exchange_type" translatable="false">Tipo de cambio</string>
     <string name="payment_amount_bottom_sheet_amount_to_debit" translatable="false">Monto a debitar</string>
-    <string name="payment_amount_bottom_sheet_button" translatable="false">Realizar pago</string>
+    <string name="payment_amount_bottom_sheet_pay_button" translatable="false">Realizar pago</string>
+    <string name="payment_amount_bottom_sheet_send_button" translatable="false">Realizar envío</string>
     <string name="payment_amount_bottom_sheet_process_payment_description_label" translatable="false">Pago unica moneda desde App</string>
     <string name="payment_amount_bottom_sheet_enable_automatic_payment" translatable="false">Programar pago automático</string>
 
@@ -907,7 +943,9 @@
     <string name="smart_payment_amount_bottom_sheet_my_smart_account" translatable="false">Mi cuenta Smart | %s</string>
     <string name="smart_payment_amount_bottom_sheet_title" translatable="false">Monto a ahorrar</string>
     <string name="smart_payment_amount_bottom_sheet_from_card" translatable="false">Desde la tarjeta</string>
+    <string name="smart_payment_amount_bottom_sheet_from_card_CR" translatable="false">Desde la cuenta</string>
     <string name="smart_payment_amount_bottom_sheet_to" translatable="false">Hacia</string>
+    <string name="smart_payment_exchange_equivalent" translatable="false">Equivalente a %s</string>
 
     <!-- Payment Amount Error -->
     <string name="payment_amount_error_button" translatable="false">Ir al inicio</string>
@@ -1084,6 +1122,13 @@
     <string name="payment_method_transfer" translatable="false">Transferencia bancaria</string>
     <string name="payment_method_visa" translatable="false">Tarjeta Visa</string>
 
+    <!-- Payment sending type -->
+    <string name="payment_select_sending_type_title" translatable="false">Enviar dinero a</string>
+    <string name="payment_select_sending_type_my_contacts" translatable="false">Mis contactos</string>
+    <string name="payment_select_sending_type_iban_accounts" translatable="false">Cuentas IBAN</string>
+    <string name="payment_select_sending_type_smart_account_dollars" translatable="false">Mi cuenta Smart Dólares</string>
+    <string name="payment_select_sending_type_smart_account_colones" translatable="false">Mi cuenta Smart Colones</string>
+
     <!-- Payment Account -->
     <string name="payment_account_title" translatable="false">Seleccioná la cuenta con la que querés ahorrar</string>
     <string name="payment_account_colon" translatable="false">Multimoney Smart | Colones</string>
@@ -1162,4 +1207,27 @@
 
     <!-- Smart Transfer Iban -->
     <string name="smart_iban_transfer_title" translatable="false">Cuentas registradas</string>
+    <string name="smart_iban_transfer_send_money" translatable="false">Enviar dinero</string>
+
+    <!-- Smart Payment Sheet-->
+    <string name="smart_payment_sheet_title" translatable="false">Monto a enviar</string>
+    <string name="smart_payment_sheet_from_account" translatable="false">Desde la cuenta</string>
+    <string name="smart_payment_sheet_to_account" translatable="false">Hacia la cuenta</string>
+    <string name="smart_payment_sheet_transfer_button" translatable="false">Realizar envío</string>
+    <string name="smart_payment_sheet_equivalent" translatable="false">Equivalente a %1$s</string>
+
+    <!-- Card Preferences -->
+    <string name="card_preferences_title" translatable="false">Preferencias de tarjeta</string>
+    <string name="card_preferences_linked_card_title" translatable="false">Tarjeta vinculada</string>
+    <string name="card_preferences_unlinked_card_title" translatable="false">Tarjeta desvinculada</string>
+    <string name="card_preferences_linked_card_description" translatable="false">Al desvincular tu tarjeta no podrás\nrealizar ninguna transacción con\nMultimoney Visa</string>
+    <string name="card_preferences_linked_card_dialog_title" translatable="false">Vincular tarjeta</string>
+    <string name="card_preferences_linked_card_dialog_description" translatable="false">¿Estás seguro que deseás vincular tu tarjeta a este dispositivo?</string>
+    <string name="card_preferences_linked_card_dialog_positive_button" translatable="false">Vincular</string>
+    <string name="card_preferences_linked_card_dialog_negative_button" translatable="false">Cancelar</string>
+    <string name="card_preferences_unlinked_card_dialog_title" translatable="false">Desvincular tarjeta</string>
+    <string name="card_preferences_unlinked_card_dialog_description" translatable="false">¿Estás seguro que deseás desvincular tu tarjeta?</string>
+    <string name="card_preferences_unlinked_card_dialog_positive_button" translatable="false">Desvincular</string>
+    <string name="card_preferences_unlinked_card_dialog_negative_button" translatable="false">Cancelar</string>
+
 </resources>

@@ -79,42 +79,38 @@ class SignInViewModel @Inject constructor(
 //            .metadata(attrs)
 //            .build()
 
-        Amplify.Auth.signOut({
-            // TODO: This line must be uncommented when logic to send metadata to cognito is implemented
+        // TODO: This line must be uncommented when logic to send metadata to cognito is implemented
 //        Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword, options, { authSignInResult ->
-            Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword, { authSignInResult ->
-                if (authSignInResult.isSignInComplete) {
-                    Amplify.Auth.fetchAuthSession({ authSessionSuccess ->
-                        val session = authSessionSuccess as AWSCognitoAuthSession
-                        when (session.identityId.type) {
-                            AuthSessionResult.Type.SUCCESS -> {
-                                // Get user attributes in order to save user name for welcome message
-                                Amplify.Auth.fetchUserAttributes({ authUserAttribute ->
-                                    viewModelScope.launch {
-                                        // If isBiometricActive false that means the userName has to be saved
-                                        saveUserData(session, authUserAttribute)
-                                        uiState = uiState.copy(isLoading = false)
-                                        if (uiState.isFingerprintChecked) {
-                                            uiState = uiState.copy(configureBiometric = true)
-                                        } else {
-                                            navigateToHome()
-                                        }
+        Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword, { authSignInResult ->
+            if (authSignInResult.isSignInComplete) {
+                Amplify.Auth.fetchAuthSession({ authSessionSuccess ->
+                    val session = authSessionSuccess as AWSCognitoAuthSession
+                    when (session.identityId.type) {
+                        AuthSessionResult.Type.SUCCESS -> {
+                            // Get user attributes in order to save user name for welcome message
+                            Amplify.Auth.fetchUserAttributes({ authUserAttribute ->
+                                viewModelScope.launch {
+                                    // If isBiometricActive false that means the userName has to be saved
+                                    saveUserData(session, authUserAttribute)
+                                    uiState = uiState.copy(isLoading = false)
+                                    if (uiState.isFingerprintChecked) {
+                                        uiState = uiState.copy(configureBiometric = true)
+                                    } else {
+                                        navigateToHome()
                                     }
-                                }, {
-                                    cognitoError()
-                                })
-                            }
-                            AuthSessionResult.Type.FAILURE -> cognitoError()
+                                }
+                            }, {
+                                cognitoError()
+                            })
                         }
-                    }, {
-                        cognitoError()
-                    })
-                } else {
+                        AuthSessionResult.Type.FAILURE -> cognitoError()
+                    }
+                }, {
                     cognitoError()
-                }
-            }, {
+                })
+            } else {
                 cognitoError()
-            })
+            }
         }, {
             cognitoError()
         })

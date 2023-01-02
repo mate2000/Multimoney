@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.transfer.iban
+package com.multimoney.multimoney.presentation.ui.smart.payment.iban
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -20,10 +20,9 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.SmartTransferIbanViewModel.UIEvent.OnAddAccountClick
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.SmartTransferIbanViewModel.UIEvent.OnCallQueryListSinpeAccountUseCaseImpl
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.SmartTransferIbanViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.payment.iban.SmartTransferIbanViewModel.UIEvent.OnAddAccountClick
+import com.multimoney.multimoney.presentation.ui.smart.payment.iban.SmartTransferIbanViewModel.UIEvent.OnCallQueryListSinpeAccountUseCaseImpl
+import com.multimoney.multimoney.presentation.ui.smart.payment.iban.SmartTransferIbanViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiary
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -90,17 +89,17 @@ fun SmartTransferIbanScreen(
 @Composable
 fun PaymentOptions(viewModel: SmartTransferIbanViewModel = hiltViewModel()) {
     LazyColumn(modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp)) {
-        items(viewModel.uiState.sinpeAccountList ?: listOf()) { account ->
+        items(viewModel.uiState.sinpeAccountList) { account ->
             CustomInfoButton(
                 title = account?.nameAccount ?: "",
                 subtitle = stringResource(
                     id = string.smart_account_beneficiary_content,
                     account?.bank ?: "",
                     "${
-                        getMaskedAccountIban(
-                            account?.sinpeAccount ?: "",
-                            stringResource(id = string.payment_account_masked_text)
-                        )
+                    getMaskedAccountIban(
+                        account?.sinpeAccount ?: "",
+                        stringResource(id = string.payment_account_masked_text)
+                    )
                     }%"
                 ),
                 modifier = Modifier
@@ -109,7 +108,7 @@ fun PaymentOptions(viewModel: SmartTransferIbanViewModel = hiltViewModel()) {
                 endIcon = drawable.ic_options,
                 startIcon = account?.currencyId?.getCurrencyFromId()?.accountIcon,
                 onClick = {
-
+                    // todo: navigate to send money
                 }
             )
         }

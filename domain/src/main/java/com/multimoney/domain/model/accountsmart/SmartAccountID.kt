@@ -7,7 +7,8 @@ import kotlinx.parcelize.Parcelize
 data class SmartAccountID(
     val tokenAccount: String?,
     val currencyID: Int?,
-    val accountNumber: String?
+    val accountNumber: String?,
+    val ibanAccountNumber: String? = ""
 ) : Parcelable
 
 @Parcelize

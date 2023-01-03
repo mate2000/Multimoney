@@ -49,7 +49,11 @@ fun SmartSelectSendingTypeScreen(
     LaunchedEffect(key1 = true) {
         viewModel.baseEvent.collect { event ->
             when (event) {
-                is SmartSelectSendingTypeViewModel.BaseEvent.OnShowTbdToastEvent -> Toast.makeText(context, "TBD", Toast.LENGTH_SHORT).show()
+                is SmartSelectSendingTypeViewModel.BaseEvent.OnShowTbdToastEvent -> Toast.makeText(
+                    context,
+                    "TBD",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -76,9 +80,9 @@ fun SmartSelectSendingTypeScreen(
                         SendingTypeOptionsCR(
                             modifier = sendingTypeOptionModifier,
                             onMyFavoritesClick = { viewModel.onUIEvent(OnMyFavoritesSelected) },
-                            onMyContactsClick = { viewModel.onUIEvent(OnMyContactsSelected)},
-                            onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected)},
-                            onIBANAccountsClick = { viewModel.onUIEvent(OnIBANAccountSelected)},
+                            onMyContactsClick = { viewModel.onUIEvent(OnMyContactsSelected) },
+                            onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected) },
+                            onIBANAccountsClick = { viewModel.onUIEvent(OnIBANAccountSelected) },
                             smartAccountTitle = viewModel.getTitleSmartAccountResource(),
                             smartAccountStartIcon = viewModel.getIconSmartAccountResource()
                         )
@@ -117,7 +121,7 @@ fun SendingTypeOptionsContainer(
 }
 
 @Composable
-fun SendingTypeOptionsCR (
+fun SendingTypeOptionsCR(
     modifier: Modifier,
     onMyFavoritesClick: () -> Unit,
     onMyContactsClick: () -> Unit,

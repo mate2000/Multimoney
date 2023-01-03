@@ -30,7 +30,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
-import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnCallInFidoToken
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnConfigureOnFidoSdk
@@ -173,6 +172,11 @@ class CreditOnfidoViewModel @Inject constructor(
                     override fun userCompleted(captures: Captures) {
                         countDownTimer.resumeTimer()
                         onCallOnfidoCheckProcess(pkUser, identification, idBrand ?: 0, idUserRequest, email)
+                        if (idPrint == ID_PRINT_EMPTY) {
+                            onCallSaveCreditOperation()
+                        } else {
+                            navigateToCorrectScreen()
+                        }
                     }
 
                     override fun userExited(exitCode: ExitCode) {
@@ -223,7 +227,6 @@ class CreditOnfidoViewModel @Inject constructor(
                 }
             }
         }
-        navigateToCorrectScreen()
     }
 
     private fun onCallSaveCreditOperation() {
@@ -236,6 +239,7 @@ class CreditOnfidoViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess {
                     idPrint = it.idPrint
+                    navigateToCorrectScreen()
                 }
                 result.onFailure {
                     uiState = uiState.copy(
@@ -264,7 +268,7 @@ class CreditOnfidoViewModel @Inject constructor(
 
     private fun onNavigateToSignDocumentScreen(signDocumentStep: String) {
         popAndNavigateTo(
-            "${Screen.SignDocumentProcessScreen.baseRoute}/$signDocumentStep/$evicertiaUrl/$idPrint/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/${false}",
+            "${Screen.SignDocumentProcessScreen.baseRoute}/$signDocumentStep/$evicertiaUrl/$idPrint/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName",
             Screen.CreditOnfidoScreen.route
         )
     }

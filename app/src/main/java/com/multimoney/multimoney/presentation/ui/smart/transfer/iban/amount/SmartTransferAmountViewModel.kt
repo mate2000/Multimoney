@@ -13,7 +13,6 @@ import androidx.lifecycle.viewModelScope
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.util.SmartEditAmountHelper
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnAbandonFlow
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnAmountCompleted
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnAmountValueChange
@@ -26,6 +25,7 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.Smar
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnShareVoucherImage
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnTryLater
+import com.multimoney.multimoney.presentation.util.SmartEditAmountHelper
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
@@ -60,34 +60,37 @@ class SmartTransferAmountViewModel @Inject constructor(
             )
             totalBalanceLabel =
                 uiState.currency + editAmountHelper.smartAccount?.totalBalance.toString()
-            getExchangeOnCompleted()
+            getExchangeOnCompleted(true)
         }
     }
 
-    private fun getExchangeOnCompleted() {
-        if (editAmountHelper.shouldDisplayExchange && uiState.isAmountValid) {
-            executeUseCase {
-                editAmountHelper.getSmartExchangeRate(
-                    currentAmount = uiState.currentAmountValueString?.toDoubleOrNull() ?: 0.0,
-                    onFailure = {
-                        onFailureWithDialog(
-                            false,
-                            DialogParameters(isActive = mutableStateOf(true))
-                        )
-                    },
-                    onLoading = {
-                        uiState = uiState.copy(isLoading = true)
-                    },
-                    onSuccess = { rate ->
-                        uiState = uiState.copy(
-                            isLoading = false,
-                            exchangeRate = rate?.exchangeRate ?: 0.0,
-                            exchangeConvertedAmount = rate?.amount ?: 0.0,
-                            exchangeRateLabel = rate?.exchangeRateLabel ?: "0.0",
-                            convertedAmountLabel = rate?.convertedAmountLabel ?: "0.0"
-                        )
-                    }
-                )
+    private fun getExchangeOnCompleted(isStart: Boolean = false) {
+        val amount = uiState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
+        if (editAmountHelper.shouldDisplayExchange) {
+            if ((uiState.isAmountValid && amount > 0.0) || isStart) {
+                executeUseCase {
+                    editAmountHelper.getSmartExchangeRate(
+                        currentAmount = uiState.currentAmountValueString?.toDoubleOrNull() ?: 0.0,
+                        onFailure = {
+                            onFailureWithDialog(
+                                false,
+                                DialogParameters(isActive = mutableStateOf(true))
+                            )
+                        },
+                        onLoading = {
+                            uiState = uiState.copy(isLoading = true)
+                        },
+                        onSuccess = { rate ->
+                            uiState = uiState.copy(
+                                isLoading = false,
+                                exchangeRate = rate?.exchangeRate ?: 0.0,
+                                exchangeConvertedAmount = rate?.amount ?: 0.0,
+                                exchangeRateLabel = rate?.exchangeRateLabel ?: "0.0",
+                                convertedAmountLabel = rate?.convertedAmountLabel ?: "0.0"
+                            )
+                        }
+                    )
+                }
             }
         }
     }
@@ -96,7 +99,7 @@ class SmartTransferAmountViewModel @Inject constructor(
         if (validateDecimalIncome(newAmount)) {
             uiState = uiState.copy(
                 currentAmountValueString = newAmount,
-                enableButton = validateForm(),
+                enableButton = validateForm(newAmount = newAmount),
                 isAmountValid = true
             )
         }
@@ -105,18 +108,20 @@ class SmartTransferAmountViewModel @Inject constructor(
     private fun onMotiveChange(newMotive: String) {
         uiState = uiState.copy(
             motive = newMotive,
-            enableButton = validateForm()
+            enableButton = validateForm(newMotive = newMotive)
         )
     }
 
-    private fun validateForm() =
-        (uiState.currentAmountValueString?.isNotEmpty() == true) && (uiState.currentAmountValueString?.toDoubleOrNull()
-            ?: 0.0) > 0 && uiState.motive.isNotEmpty()
+    private fun validateForm(
+        newAmount: String? = uiState.currentAmountValueString,
+        newMotive: String = uiState.motive
+    ) = (newAmount?.isNotEmpty() == true) && (newAmount.toDoubleOrNull()
+        ?: 0.0) > 0.0 && newMotive.isNotEmpty()
 
 
     private fun onContinueClick() {
-        val isValidAmount = (uiState.currentAmountValueString?.toDoubleOrNull()
-            ?: 0.0) <= (editAmountHelper.smartAccount?.totalBalance ?: 0.0)
+        val isValidAmount = (uiState.currentAmountValueString?.toDoubleOrNull() ?: 0.0) <=
+                (editAmountHelper.smartAccount?.totalBalance ?: 0.0)
         uiState = if (isValidAmount) {
             uiState.copy(
                 isAmountValid = true,

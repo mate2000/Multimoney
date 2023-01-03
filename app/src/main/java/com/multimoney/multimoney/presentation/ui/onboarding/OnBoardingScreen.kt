@@ -86,7 +86,8 @@ fun OnBoardingScreen(
             Modifier
                 .fillMaxSize()
                 .padding(top = 16.dp, start = 16.dp, end = 16.dp)
-                .weight(0.6f)
+                .weight(0.6f),
+            verticalArrangement = Arrangement.Bottom
         ) {
             Text(
                 text = stringResource(id = viewModel.uiState.title),
@@ -109,7 +110,7 @@ fun OnBoardingScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 24.dp, bottom = 80.dp)
-                    .weight(0.14f, false),
+                    .weight(0.14f, true),
                 style = Typography.h6.copy(
                     color = MultimoneyTheme.colors.onBoardingSubText,
                     fontSize = 20.sp

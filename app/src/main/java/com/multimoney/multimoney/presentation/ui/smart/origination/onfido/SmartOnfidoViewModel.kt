@@ -161,7 +161,7 @@ class SmartOnfidoViewModel @Inject constructor(
                 result.data,
                 object : OnfidoResultListener {
                     override fun userCompleted(captures: Captures) {
-                        /*countDownTimer.resumeTimer()*/
+                        countDownTimer.resumeTimer()
                         onCallOnfidoCheckProcess(
                             pkUser,
                             identification,

@@ -75,6 +75,7 @@ const val CRYPTO_ROUTE = "crypto_route"
 const val PROFILE_ROUTE = "profile_route"
 const val TEST_ROUTE = "test_route"
 const val SMART_PAYMENT_ROUTE = "smart_payment_route"
+const val SMART_TRANSFER_ROUTE = "smart_transfer_route"
 const val ID_BRAND = "id_brand"
 const val PHONE_NUMBER = "phone_number"
 const val NEW_PHONE_NUMBER = "new_phone_number"
@@ -290,12 +291,6 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "add_iban_account_screen"
     )
 
-    // Transfer Iban Account
-    object TransferIbanAccountScreen : Screen(
-        "transfer_iban_account_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
-        "transfer_iban_account_screen"
-    )
-
     // Payment Credit
     object PaymentFeeScreen : Screen(
         "payment_fee_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}/{$IDENTIFICATION}/{$NAME_CLIENT}/{$PAYMENT_DATE}",
@@ -421,9 +416,21 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "smart_payment_saving_amount_screen"
     )
 
+    // Smart Transfer Screens
+
     object SmartSelectSendingTypeScreen : Screen(
-        "smart_select_sending_type_screen/{$PK_USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$SMART_IDS}",
+        "smart_select_sending_type_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$SMART_IDS}/{$ID_CLIENT}",
         "smart_select_sending_type_screen"
+    )
+
+    object SmartTransferIbanAccountScreen : Screen(
+        "transfer_iban_account_screen/{$SMART_IDS}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}",
+        "transfer_iban_account_screen"
+    )
+
+    object SmartTransferAmountScreen : Screen(
+        "smart_transfer_amount_screen/{$SMART_IDS}/{$IBAN_ACCOUNT}/{$PREVIOUS_SCREEN}",
+        "smart_transfer_amount_screen"
     )
 
     // TestNavGraph Screens

@@ -62,7 +62,7 @@ fun SmartPaymentConfirmBottomSheet(
                 color = MultimoneyTheme.colors.text,
                 textAlign = TextAlign.Center
             )
-            if (viewModel.shouldDisplayExchange) {
+            if (viewModel.editAmountHelper.shouldDisplayExchange) {
                 Spacer(modifier = Modifier.height(8.dp))
                 ExchangeTotalLabel(
                     totalConverted = viewModel.uiState.convertedAmountLabel
@@ -72,7 +72,7 @@ fun SmartPaymentConfirmBottomSheet(
                 modifier = Modifier
                     .padding(top = 16.dp)
                     .fillMaxWidth(),
-                text = stringResource(viewModel.sheetSubtitle),
+                text = stringResource(viewModel.editAmountHelper.sheetSubtitle),
                 style = Typography.body2.copy(fontWeight = FontWeight.W600),
                 color = MultimoneyTheme.colors.text,
                 textAlign = TextAlign.Start
@@ -81,17 +81,17 @@ fun SmartPaymentConfirmBottomSheet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(78.dp),
-                startIcon = viewModel.originIcon,
-                title = viewModel.bankDetail,
-                subtitle = if (viewModel.idBrand == Brand.CostaRica.id) {
+                startIcon = viewModel.editAmountHelper.originIcon,
+                title = viewModel.editAmountHelper.bankDetail,
+                subtitle = if (viewModel.editAmountHelper.idBrand == Brand.CostaRica.id) {
                     getMaskedAccountIban(
-                        viewModel.maskedCardNumber,
+                        viewModel.editAmountHelper.maskedCardNumber,
                         stringResource(id = R.string.payment_account_masked_text)
                     )
                 } else {
                     stringResource(
                         R.string.visa_card_masked_number,
-                        viewModel.maskedCardNumber.takeLast(CARD_NUMBER_LAST_DIGITS)
+                        viewModel.editAmountHelper.maskedCardNumber.takeLast(CARD_NUMBER_LAST_DIGITS)
                     )
                 },
                 endIcon = null,

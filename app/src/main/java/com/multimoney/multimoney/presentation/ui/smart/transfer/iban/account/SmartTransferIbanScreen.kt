@@ -23,6 +23,7 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnAddAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnCallQueryListSinpeAccountUseCaseImpl
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnNavigateBack
@@ -77,7 +78,7 @@ fun SmartTransferIbanScreen(
                 modifier = Modifier.padding(end = 16.dp),
                 style = Typography.subtitle1.copy(
                     fontWeight = FontWeight.SemiBold,
-                    color = MultimoneyTheme.colors.text
+                    color = MultimoneyTheme.colors.smartCardTrending
                 )
             )
             CustomButton(
@@ -115,12 +116,10 @@ fun PaymentOptions(viewModel: SmartTransferIbanViewModel = hiltViewModel()) {
                 subtitle = stringResource(
                     id = string.smart_account_beneficiary_content,
                     account?.bank ?: "",
-                    "${
-                        getMaskedAccountIban(
-                            account?.sinpeAccount ?: "",
-                            stringResource(id = string.payment_account_masked_text)
-                        )
-                    }%"
+                    getMaskedAccountIban(
+                        account?.sinpeAccount ?: "",
+                        stringResource(id = string.payment_account_masked_text)
+                    )
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -128,7 +127,7 @@ fun PaymentOptions(viewModel: SmartTransferIbanViewModel = hiltViewModel()) {
                 endIcon = drawable.ic_options,
                 startIcon = account?.currencyId?.getCurrencyFromId()?.accountIcon,
                 onClick = {
-                    viewModel.onUIEvent(SmartTransferIbanViewModel.UIEvent.OnAccountClick(account))
+                    viewModel.onUIEvent(OnAccountClick(account))
                 }
             )
         }

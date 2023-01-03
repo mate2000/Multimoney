@@ -27,19 +27,23 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.text.isDigitsOnly
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.GrayScale800
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency80
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
-import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel
+import com.multimoney.multimoney.presentation.util.SmartEditAmountHelper.Companion.CURRENCY_SEPARATOR
 import com.multimoney.multimoney.presentation.util.addTextStyleToTextPortion
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.filterInvalidAmountInput
 import com.multimoney.multimoney.presentation.util.transformation.CurrencyDoubleTransformation
+import com.multimoney.multimoney.presentation.util.transformation.CurrencyIntegerTransformation
 
 @Composable
 fun SmartAmountBody(
     @StringRes titleId: Int,
-    originAccountSubtitle: String?,
+    originAccountSubtitle: String? = null,
     currentAmount: String?,
     amountErrorMessage: String? = null,
     isAmountError: Boolean? = null,
@@ -54,17 +58,20 @@ fun SmartAmountBody(
     onContinueClick: () -> Unit,
     enableButton: Boolean,
     motive: String? = null,
-    onMotiveChange: (String) -> Unit
+    onMotiveChange: (String) -> Unit = {}
 ) {
     val background: Color
     val text: Color
+    val subText: Color
 
     if (isSystemInDarkTheme()) {
         background = GrayScale800
         text = WhiteTransparency90
+        subText = WhiteTransparency80
     } else {
         background = GrayScale800
         text = WhiteTransparency90
+        subText = WhiteTransparency80
     }
 
     val focusManager = LocalFocusManager.current
@@ -98,7 +105,7 @@ fun SmartAmountBody(
                         Typography.body2.copy(fontWeight = FontWeight.SemiBold)
                     ),
                     style = Typography.body2,
-                    color = text
+                    color = subText
                 )
             }
             CurrencyAmountInput(
@@ -106,7 +113,11 @@ fun SmartAmountBody(
                 value = currentAmount,
                 placeHolder = stringResource(id = amountPlaceHolderId),
                 onValueChange = {
-                    onAmountChange(it.filterInvalidAmountInput())
+                    if (currency == CurrencyType.Colon.symbol) {
+                        onAmountChange(it.filter { value -> value.isDigit() })
+                    } else {
+                        onAmountChange(it.filterInvalidAmountInput())
+                    }
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
@@ -125,10 +136,17 @@ fun SmartAmountBody(
                     }
                 ),
                 isRequired = true,
-                customTransformation = CurrencyDoubleTransformation(
-                    currency,
-                    CreditAmountViewModel.CURRENCY_SEPARATOR
-                ),
+                customTransformation = if (currency == CurrencyType.Colon.symbol) {
+                    CurrencyIntegerTransformation(
+                        currency,
+                        CURRENCY_SEPARATOR
+                    )
+                } else {
+                    CurrencyDoubleTransformation(
+                        currency,
+                        CURRENCY_SEPARATOR
+                    )
+                },
                 onDebounceValidation = onDebounceValidation,
                 errorMessage = amountErrorMessage,
                 isError = isAmountError == true

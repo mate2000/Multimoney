@@ -1,8 +1,7 @@
-package com.multimoney.multimoney.presentation.ui.smart
+package com.multimoney.multimoney.presentation.util
 
 import android.content.Context
 import android.view.View
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.ui.geometry.Rect
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.DataStorePreferences
@@ -21,9 +20,7 @@ import com.multimoney.multimoney.presentation.navigation.SMART_IDS
 import com.multimoney.multimoney.presentation.navigation.navgraph.BANK_DETAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.MASKED_CARD
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
-import com.multimoney.multimoney.presentation.util.ShareHelper
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
-import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.workers.startTimedNotification
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
@@ -37,12 +34,12 @@ class SmartEditAmountHelper @Inject constructor(
 ) {
 
     // stateless
-    private var idCard: Long = 0
-    private var identification: String = ""
-    private var pkUser: String = ""
-    private var userName: String = ""
-    private var idCurrency: Int = 0
-    private var tokenNumber: Long = 0
+    var idCard: Long = 0
+    var identification: String = ""
+    var pkUser: String = ""
+    var userName: String = ""
+    var idCurrency: Int = 0
+    var tokenNumber: Long = 0
     var smartAccount: SmartAccountID? = null
     var ibanAccount: IbanAccountID? = null
     var smartCurrency: CurrencyType? = CurrencyType.Dollar
@@ -146,5 +143,12 @@ class SmartEditAmountHelper @Inject constructor(
         capturingBounds: Rect
     ) {
         shareHelper.sharedScreenShot(view, capturingBounds)
+    }
+
+    companion object {
+        const val DEFAULT_DESCRIPTION = "Depósito a cuenta Smart"
+        const val ID_NOT_APPLICABLE = -1
+        const val NOT_APPLICABLE = "NA"
+        const val CURRENCY_SEPARATOR = ','
     }
 }

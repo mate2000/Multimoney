@@ -79,7 +79,7 @@ class SmartSignViewModel @Inject constructor(
     }
 
     private fun onShouldCallSubscription(idRequestSys: Long, idBrand: Int) {
-        if ( uiState.signDocumentProcessStep != VALIDATE_IDENTITY.value) {
+        if (uiState.signDocumentProcessStep != VALIDATE_IDENTITY.value) {
             uiState = uiState.copy(
                 loadingIcon = drawable.ic_multimoney_white_logo,
                 loadingTitle = string.smart_other_generating_document_title,
@@ -243,7 +243,7 @@ class SmartSignViewModel @Inject constructor(
 
     companion object {
         const val MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION = 3
-        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 600000L
+        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 30000L
         const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 30000L
     }
 }

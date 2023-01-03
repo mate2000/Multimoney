@@ -166,7 +166,6 @@ fun MarketScreenContent(
 
 @Composable
 fun MarketHeader() {
-
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Start

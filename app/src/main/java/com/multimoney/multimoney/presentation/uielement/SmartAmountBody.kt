@@ -29,18 +29,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.GrayScale800
-import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel
 import com.multimoney.multimoney.presentation.util.addTextStyleToTextPortion
 import com.multimoney.multimoney.presentation.util.filterInvalidAmountInput
 import com.multimoney.multimoney.presentation.util.transformation.CurrencyDoubleTransformation
 
 @Composable
-fun SmartAmountContent(
+fun SmartAmountBody(
     @StringRes titleId: Int,
     originAccountSubtitle: String?,
-    currentAmount: String,
+    currentAmount: String?,
     amountErrorMessage: String? = null,
     isAmountError: Boolean? = null,
     @StringRes amountPlaceHolderId: Int,
@@ -57,11 +57,14 @@ fun SmartAmountContent(
     onMotiveChange: (String) -> Unit
 ) {
     val background: Color
+    val text: Color
 
     if (isSystemInDarkTheme()) {
         background = GrayScale800
+        text = WhiteTransparency90
     } else {
         background = GrayScale800
+        text = WhiteTransparency90
     }
 
     val focusManager = LocalFocusManager.current
@@ -80,7 +83,7 @@ fun SmartAmountContent(
                 text = stringResource(id = titleId),
                 style = Typography.h6.copy(
                     fontWeight = FontWeight.SemiBold,
-                    color = MultimoneyTheme.colors.labelText
+                    color = text
                 ),
                 textAlign = TextAlign.Left
             )
@@ -93,7 +96,9 @@ fun SmartAmountContent(
                     ).addTextStyleToTextPortion(
                         originAccountSubtitle,
                         Typography.body2.copy(fontWeight = FontWeight.SemiBold)
-                    )
+                    ),
+                    style = Typography.body2,
+                    color = text
                 )
             }
             CurrencyAmountInput(
@@ -144,12 +149,15 @@ fun SmartAmountContent(
             motive?.let {
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    modifier = Modifier.padding(bottom = 8.dp),
+                    modifier = Modifier.padding(bottom = 16.dp),
                     text = stringResource(id = R.string.smart_iban_transfer_motive_label),
-                    style = Typography.body2
+                    style = Typography.body2,
+                    color = text
                 )
                 CustomOutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
                     value = motive,
                     onValueChange = {
                         onMotiveChange(it)

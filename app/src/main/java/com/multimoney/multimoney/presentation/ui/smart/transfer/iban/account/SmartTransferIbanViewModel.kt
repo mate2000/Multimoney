@@ -105,14 +105,14 @@ class SmartTransferIbanViewModel @Inject constructor(
         // Todo Add iban account of transfer recipient
     }
 
-    private fun onAccountClick(selectedSinpeAccount: SinpeAccount) {
+    private fun onAccountClick(selectedSinpeAccount: SinpeAccount?) {
         val ibanAccount = encodeData(
             IbanAccountID(
-                bank = selectedSinpeAccount.bank,
-                clientIdentification = selectedSinpeAccount.clientIdentification,
-                sinpeAccount = selectedSinpeAccount.sinpeAccount,
-                currencyId = selectedSinpeAccount.currencyId,
-                nameAccount = selectedSinpeAccount.nameAccount
+                bank = selectedSinpeAccount?.bank,
+                clientIdentification = selectedSinpeAccount?.clientIdentification,
+                sinpeAccount = selectedSinpeAccount?.sinpeAccount,
+                currencyId = selectedSinpeAccount?.currencyId,
+                nameAccount = selectedSinpeAccount?.nameAccount
             )
         )
         navigateTo(
@@ -139,6 +139,6 @@ class SmartTransferIbanViewModel @Inject constructor(
         object OnNavigateBack : UIEvent()
         object OnAddAccountClick : UIEvent()
         object OnCallQueryListSinpeAccountUseCaseImpl : UIEvent()
-        data class OnAccountClick(val account: SinpeAccount) : UIEvent()
+        data class OnAccountClick(val account: SinpeAccount?) : UIEvent()
     }
 }

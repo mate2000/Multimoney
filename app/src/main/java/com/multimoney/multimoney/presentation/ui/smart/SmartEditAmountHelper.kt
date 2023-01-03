@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterialApi::class)
-
 package com.multimoney.multimoney.presentation.ui.smart
 
 import android.content.Context
@@ -45,8 +43,8 @@ class SmartEditAmountHelper @Inject constructor(
     private var userName: String = ""
     private var idCurrency: Int = 0
     private var tokenNumber: Long = 0
-    private var smartAccount: SmartAccountID? = null
-    private var ibanAccount: IbanAccountID? = null
+    var smartAccount: SmartAccountID? = null
+    var ibanAccount: IbanAccountID? = null
     var smartCurrency: CurrencyType? = CurrencyType.Dollar
     var ibanCurrency: CurrencyType? = null
     var idBrand: Int = 0
@@ -97,10 +95,10 @@ class SmartEditAmountHelper @Inject constructor(
     suspend fun getSmartExchangeRate(
         user: String = this.userName,
         idBrand: Int = this.idBrand,
-        ibanCurrency: CurrencyType? = this.ibanCurrency,
+        abbreviation: String? = this.ibanCurrency?.disbursementValue,
         identification: String = this.identification,
-        idOriginCurrency: String = this.ibanCurrency?.id.toString(),
-        idDestinationCurrency: String = this.smartCurrency?.id.toString(),
+        idOriginCurrency: String = this.smartCurrency?.id.toString(),
+        idDestinationCurrency: String = this.ibanCurrency?.id.toString(),
         currentAmount: Double,
         onSuccess: (ExchangeRateResult?) -> Unit,
         onFailure: () -> Unit,
@@ -109,7 +107,7 @@ class SmartEditAmountHelper @Inject constructor(
         querySmartExchangeRateUseCase.invoke(
             user = user,
             idBrand = idBrand,
-            abbreviation = ibanCurrency?.disbursementValue ?: "",
+            abbreviation = abbreviation ?: "",
             identification = identification,
             idOriginCurrency = idOriginCurrency,
             idDestinationCurrency = idDestinationCurrency,

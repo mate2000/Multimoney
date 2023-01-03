@@ -1200,12 +1200,17 @@
     <string name="currency_item_percent_invested" translatable="false">%1$s\%%</string>
 
     <!-- Smart Transfer Iban -->
+    <string name="smart_iban_transfer_accounts_title" translatable="false">Cuentas IBAN</string>
+    <string name="smart_iban_transfer_accounts_add" translatable="false">Agregar</string>
     <string name="smart_iban_transfer_title" translatable="false">Cuentas registradas</string>
     <string name="smart_iban_transfer_send_money" translatable="false">Enviar dinero</string>
     <string name="smart_iban_transfer_from_account" translatable="false">Desde mi cuenta %s</string>
     <string name="smart_iban_transfer_motive_label" translatable="false">Motivo</string>
     <string name="smart_iban_transfer_smart_account_colon" translatable="false">Smart Colones %s</string>
     <string name="smart_iban_transfer_smart_account_dolar" translatable="false">Smart Dolares %s</string>
+    <string name="smart_iban_transfer_abandon_dialog_title" translatable="false">Cancelar envío</string>
+    <string name="smart_iban_transfer_abandon_dialog_message" translatable="false">¿Estás seguro que querés cancelar el envío?</string>
+    <string name="smart_iban_transfer_error_balance_insufficient" translatable="false">No tienes fondos suficientes. Tu disponible es %s</string>
 
     <!-- Card Preferences -->
     <string name="card_preferences_title" translatable="false">Preferencias de tarjeta</string>

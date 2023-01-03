@@ -68,7 +68,11 @@ class SavingAmountViewModel @Inject constructor(
             editAmountHelper.onStart()
             uiState = uiState.copy(
                 currency = editAmountHelper.smartCurrency?.symbol ?: Dollar.symbol,
-                placeholder = if (editAmountHelper.smartCurrency == Dollar) R.string.smart_dollar_placeholder else R.string.smart_colon_placeholder,
+                placeholder = if (editAmountHelper.smartCurrency == Dollar) {
+                    R.string.smart_dollar_placeholder
+                } else {
+                    R.string.smart_colon_placeholder
+                },
                 minSuggestion = SuggestedAmount.createSuggestion(
                     editAmountHelper.smartCurrency == Dollar,
                     SuggestionOrder.MIN

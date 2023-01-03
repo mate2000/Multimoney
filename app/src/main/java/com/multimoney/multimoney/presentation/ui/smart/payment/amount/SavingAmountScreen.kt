@@ -151,8 +151,7 @@ fun QuantitySuggestions(viewModel: SavingAmountViewModel = hiltViewModel()) {
             .fillMaxWidth()
     ) {
         RoundedPaymentButton(
-            modifier = Modifier
-                .weight(0.32f),
+            modifier = Modifier.weight(0.32f),
             onClick = { viewModel.onUIEvent(OnSuggestedAmountClick(viewModel.uiState.minSuggestion)) },
             strokeWidth = 1.dp,
             roundedShapeDp = 24.dp,

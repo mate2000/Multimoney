@@ -44,6 +44,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.SmartPaymentInfoItem
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.uielement.VoucherCurrencyExchangeInfo
+import com.multimoney.multimoney.presentation.util.CARD_NUMBER_LAST_DIGITS
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 import com.multimoney.multimoney.presentation.util.shape.DottedShape
@@ -192,7 +193,9 @@ fun SmartPaymentSuccessScreen(
                         subtitle = if (viewModel.editAmountHelper.idBrand == Brand.ElSalvador.id) {
                             stringResource(
                                 R.string.visa_card_masked_number,
-                                viewModel.editAmountHelper.maskedCardNumber.takeLast(4)
+                                viewModel.editAmountHelper.maskedCardNumber.takeLast(
+                                    CARD_NUMBER_LAST_DIGITS
+                                )
                             )
                         } else {
                             getMaskedAccountIban(

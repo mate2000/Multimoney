@@ -56,7 +56,11 @@ class SmartTransferAmountViewModel @Inject constructor(
             }
             uiState = uiState.copy(
                 currency = editAmountHelper.smartCurrency?.symbol ?: CurrencyType.Dollar.symbol,
-                placeholder = if (editAmountHelper.smartCurrency == CurrencyType.Dollar) R.string.smart_dollar_placeholder else R.string.smart_colon_placeholder
+                placeholder = if (editAmountHelper.smartCurrency == CurrencyType.Dollar) {
+                    R.string.smart_dollar_placeholder
+                } else {
+                    R.string.smart_colon_placeholder
+                }
             )
             totalBalanceLabel =
                 uiState.currency + editAmountHelper.smartAccount?.totalBalance.toString()

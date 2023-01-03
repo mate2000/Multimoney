@@ -416,7 +416,7 @@
     <string name="sign_out_dialog_description" translatable="false">Para volver a ingresar al app deberás escribir tu usuario y contraseña de nuevo</string>
 
     <!-- Home Product Header -->
-    <string name="home_product_header_title" translatable="false">Mis Productos</string>
+    <string name="home_product_header_title" translatable="false">Productos disponibles</string>
 
     <!-- Home Credit Header Expanded-->
     <string name="home_product_credit_header_expanded_title" translatable="false">Mi Crédito</string>

@@ -675,13 +675,14 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToSendMoneyScreen(account: Account?) {
         smartAccount = SmartAccountID(
-            account?.tokenNumber,
-            account?.idCurrencyAccount,
-            account?.accountNumber
+            tokenAccount = account?.tokenNumber,
+            currencyID = account?.idCurrencyAccount,
+            accountNumber = account?.accountNumber,
+            totalBalance = account?.totalBalance
         )
         if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             navigateTo(
-                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${pkUser}/${uiState.idBrand}/${identification}/${encodeData(smartAccount)}"
+                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${userName}/${uiState.idBrand}/${identification}/${encodeData(smartAccount)}/$idClient"
             )
         }
     }

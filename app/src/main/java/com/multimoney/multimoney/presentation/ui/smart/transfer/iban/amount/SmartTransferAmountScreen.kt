@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnAbandonFlow
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnAmountCompleted
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnAmountValueChange
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnCallProcessSinpeTransfer
@@ -25,12 +26,13 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.Smar
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnTryLater
 import com.multimoney.multimoney.presentation.uielement.AlertResult
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.LoadingMultiMoney
 import com.multimoney.multimoney.presentation.uielement.SmartAmountContent
 import com.multimoney.multimoney.presentation.uielement.SmartPaymentBottomSheet
+import com.multimoney.multimoney.presentation.uielement.SmartAmountBody
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
-import com.multimoney.multimoney.presentation.util.CARD_NUMBER_LAST_DIGITS
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.getFullMaskedAccountIban
@@ -89,6 +91,18 @@ fun SmartTransferAmountScreen(
         }
     }
 
+    if (viewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
+            openDialogCustom = viewModel.uiState.openDialog.isActive,
+            onDismissAction = viewModel.uiState.openDialog.dismissAction,
+            onNegativeAction = viewModel.uiState.openDialog.negativeAction
+        )
+    }
+
     LoadingIndicator(viewModel.uiState.isLoading)
 }
 
@@ -99,24 +113,18 @@ fun SmartTransferAmountContent(viewModel: SmartTransferAmountViewModel = hiltVie
         modifier = Modifier.background(MultimoneyTheme.colors.background)
     ) {
         TopNavBar(
-            isRightButtonVisible = false,
-            onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) }
+            isRightButtonVisible = true,
+            onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
+            onRightButtonClick = { viewModel.onUIEvent(OnAbandonFlow) }
         )
-        SmartAmountContent(
+        SmartAmountBody(
             titleId = R.string.smart_iban_transfer_send_money,
             originAccountSubtitle = stringResource(
                 id = viewModel.fromSmartLabel,
-                if (viewModel.editAmountHelper.smartCurrency == CurrencyType.Colon) {
-                    getMaskedAccountIban(
-                        viewModel.editAmountHelper.maskedCardNumber,
-                        stringResource(id = R.string.payment_account_masked_text)
-                    )
-                } else {
-                    stringResource(
-                        R.string.visa_card_masked_number,
-                        viewModel.editAmountHelper.maskedCardNumber.takeLast(CARD_NUMBER_LAST_DIGITS)
-                    )
-                }
+                getMaskedAccountIban(
+                    viewModel.editAmountHelper.maskedCardNumber,
+                    stringResource(id = R.string.payment_account_masked_text)
+                )
             ),
             currentAmount = viewModel.uiState.currentAmountValueString,
             amountPlaceHolderId = viewModel.uiState.placeholder,
@@ -124,10 +132,18 @@ fun SmartTransferAmountContent(viewModel: SmartTransferAmountViewModel = hiltVie
                 viewModel.onUIEvent(OnAmountValueChange(it))
             },
             onDebounceValidation = { viewModel.onUIEvent(OnAmountCompleted(it)) },
+            isAmountError = viewModel.uiState.isAmountValid.not(),
+            amountErrorMessage = stringResource(
+                id = R.string.smart_iban_transfer_error_balance_insufficient,
+                viewModel.totalBalanceLabel
+            ),
             currency = viewModel.uiState.currency,
+            exchangeRate = viewModel.uiState.exchangeRateLabel,
+            convertedTotal = viewModel.uiState.convertedAmountLabel,
             shouldDisplayExchange = viewModel.editAmountHelper.shouldDisplayExchange,
             onContinueClick = { viewModel.onUIEvent(OnContinueClick) },
             enableButton = viewModel.uiState.enableButton,
+            motive = viewModel.uiState.motive,
             onMotiveChange = { viewModel.onUIEvent(OnMotiveChange(it)) }
         )
     }

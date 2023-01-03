@@ -1,7 +1,9 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -10,6 +12,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -20,6 +23,7 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnAddAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnCallQueryListSinpeAccountUseCaseImpl
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnNavigateBack
@@ -55,21 +59,38 @@ fun SmartTransferIbanScreen(
         )
         Text(
             modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
-            text = stringResource(string.payment_account_title),
+            text = stringResource(string.smart_iban_transfer_accounts_title),
             style = Typography.h5.copy(
                 fontWeight = FontWeight.SemiBold,
                 color = MultimoneyTheme.colors.text
             )
         )
-        Text(
-            text = stringResource(id = string.smart_iban_transfer_title),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = 32.dp, start = 16.dp, end = 16.dp),
-            style = Typography.h6.copy(
-                fontWeight = FontWeight.SemiBold,
-                color = MultimoneyTheme.colors.text
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 32.dp, start = 16.dp, end = 16.dp),
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(id = string.smart_iban_transfer_title),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(end = 16.dp),
+                style = Typography.subtitle1.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    color = MultimoneyTheme.colors.smartCardTrending
+                )
             )
-        )
+            CustomButton(
+                text = stringResource(id = string.smart_iban_transfer_accounts_add),
+                onClick = {
+                    viewModel.onUIEvent(OnAddAccountClick)
+                },
+                buttonType = PrimaryTertiary,
+                trailingIcon = drawable.ic_plus
+            )
+        }
+
         PaymentOptions(viewModel)
     }
 
@@ -95,12 +116,12 @@ fun PaymentOptions(viewModel: SmartTransferIbanViewModel = hiltViewModel()) {
                 subtitle = stringResource(
                     id = string.smart_account_beneficiary_content,
                     account?.bank ?: "",
-                    "${
+
                     getMaskedAccountIban(
                         account?.sinpeAccount ?: "",
                         stringResource(id = string.payment_account_masked_text)
                     )
-                    }%"
+
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -108,21 +129,9 @@ fun PaymentOptions(viewModel: SmartTransferIbanViewModel = hiltViewModel()) {
                 endIcon = drawable.ic_options,
                 startIcon = account?.currencyId?.getCurrencyFromId()?.accountIcon,
                 onClick = {
-                    // todo: navigate to send money
+                    viewModel.onUIEvent(OnAccountClick(account))
                 }
             )
         }
     }
-
-    CustomButton(
-        text = stringResource(id = string.payment_account_create),
-        modifier = Modifier
-            .padding(top = 32.dp, start = 16.dp, end = 16.dp)
-            .fillMaxWidth(),
-        onClick = {
-            viewModel.onUIEvent(OnAddAccountClick)
-        },
-        buttonType = PrimaryTertiary,
-        trailingIcon = drawable.ic_plus
-    )
 }

@@ -10,7 +10,6 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.interaction.credit.MutationSaveCreditFlowStepUseCase
-import com.multimoney.domain.interaction.credit.MutationSaveCreditOperationUseCase
 import com.multimoney.domain.interaction.credit.QueryScreenConfigUseCase
 import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.util.onFailure
@@ -47,7 +46,6 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnPreviousStep
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetCloseDialogTexts
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetNavigation
-import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnShowBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnUpdateScreenConfigData
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
@@ -65,8 +63,7 @@ class CreditViewModel @Inject constructor(
     val dataStorePreferences: DataStorePreferences,
     val saveCreditStepsHelper: SaveCreditStepsHelper,
     private val mutationSaveCreditFlowStepUseCase: MutationSaveCreditFlowStepUseCase,
-    val queryScreenConfigUseCase: QueryScreenConfigUseCase,
-    private val mutationSaveCreditOperationUseCase: MutationSaveCreditOperationUseCase
+    val queryScreenConfigUseCase: QueryScreenConfigUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -76,7 +73,6 @@ class CreditViewModel @Inject constructor(
     // Stateless
     var closeDialogTitle: Int = string.empty
     var closeDialogDescription: String = ""
-    var whatsAppLink: String = ""
     var nextAction: () -> Unit = {}
     private var nextStep: Int = CreditStep.One.id
     private var previousStep: Int = CreditStep.One.id
@@ -231,7 +227,7 @@ class CreditViewModel @Inject constructor(
         this.previousStep = previousStep
     }
 
-    private fun onCallMutationSaveCreditFlowStep(shouldCallSaveCreditOperation: Boolean) {
+    private fun onCallMutationSaveCreditFlowStep() {
         executeUseCase {
             mutationSaveCreditFlowStepUseCase.invoke(
                 user = email,
@@ -242,12 +238,8 @@ class CreditViewModel @Inject constructor(
                 currentStep = CreditStep.Search.getNameById(nextStep)
             ).collectLatest { result ->
                 result.onSuccess {
-                    if (shouldCallSaveCreditOperation) {
-                        onCallSaveCreditOperation()
-                    } else {
-                        uiState = uiState.copy(isLoading = false)
-                        nextStep()
-                    }
+                    uiState = uiState.copy(isLoading = false)
+                    nextStep()
                 }.onFailure {
                     uiState = uiState.copy(
                         isLoading = false,
@@ -276,30 +268,6 @@ class CreditViewModel @Inject constructor(
         }
     }
 
-    private fun onCallSaveCreditOperation() {
-        executeUseCase {
-            mutationSaveCreditOperationUseCase.invoke(
-                idUserRequest.toLong(),
-                pkUser.toLong(),
-                email,
-                idBrand.toInt()
-            ).collectLatest { result ->
-                result.onSuccess {
-                    idPrint = it.idPrint
-                    nextStep()
-                }
-                result.onFailure {
-                    uiState = uiState.copy(
-                        isLoading = false,
-                        isAlertResultVisible = true
-                    )
-                }.onLoading {
-                    uiState = uiState.copy(isLoading = true)
-                }
-            }
-        }
-    }
-
     fun getLoadingString(): Int = if (idBrand.isNotEmpty()) {
         when (idBrand.toInt()) {
             Brand.Guatemala.id -> string.credit_glad_to_see_you_gt
@@ -319,13 +287,11 @@ class CreditViewModel @Inject constructor(
         val isCurrentLocationButtonVisible: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         var lastStep: Int = 1,
-        var loadContent: Boolean = false,
-        var isAlertResultVisible: Boolean = false
+        var loadContent: Boolean = false
     )
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is OnSetWhatsAppLink -> whatsAppLink = event.whatsAppLink
             is OnSetCloseDialogTexts -> onInitializeTexts(
                 event.title,
                 event.description
@@ -352,7 +318,7 @@ class CreditViewModel @Inject constructor(
             is OnUpdateScreenConfigData -> {
                 saveCreditStepsHelper.start(event.screenConfigData)
             }
-            is OnCallMutationSaveCreditFlowStep -> onCallMutationSaveCreditFlowStep(event.shouldCallSaveCreditOperation)
+            is OnCallMutationSaveCreditFlowStep -> onCallMutationSaveCreditFlowStep()
             is OnBackVisibilityValueChanged -> uiState = uiState.copy(isBackVisible = event.isVisible)
             is OnShowBottomSheet -> onShowBottomSheet()
             is OnNavigateToHome -> onNavigateToHome()
@@ -360,7 +326,6 @@ class CreditViewModel @Inject constructor(
     }
 
     sealed class UIEvent {
-        data class OnSetWhatsAppLink(val whatsAppLink: String) : UIEvent()
         data class OnSetCloseDialogTexts(val title: Int, val description: String) : UIEvent()
         data class OnSetNavigation(
             val nextAction: () -> Unit = {},
@@ -383,7 +348,7 @@ class CreditViewModel @Inject constructor(
 
         data class OnCurrencySymbolValueChange(val currencySymbol: String) : UIEvent()
         data class OnUpdateScreenConfigData(val screenConfigData: List<CreditCatalog?>?) : UIEvent()
-        data class OnCallMutationSaveCreditFlowStep(val shouldCallSaveCreditOperation: Boolean = false) : UIEvent()
+        object OnCallMutationSaveCreditFlowStep : UIEvent()
         data class OnBackVisibilityValueChanged(val isVisible: Boolean) : UIEvent()
         object OnShowBottomSheet : UIEvent()
         object OnNavigateToHome : UIEvent()

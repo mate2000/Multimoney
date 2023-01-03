@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.send.sending
+package com.multimoney.multimoney.presentation.ui.smart.transfer.iban.sending
 
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.domain.model.accountsmart.SmartAccountID
@@ -9,10 +9,10 @@ import com.multimoney.multimoney.presentation.navigation.SMART_IDS
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
-import com.multimoney.multimoney.presentation.ui.smart.send.sending.SmartSelectSendingTypeViewModel.UIEvent.OnIBANAccountSelected
-import com.multimoney.multimoney.presentation.ui.smart.send.sending.SmartSelectSendingTypeViewModel.UIEvent.OnMyContactsSelected
-import com.multimoney.multimoney.presentation.ui.smart.send.sending.SmartSelectSendingTypeViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.smart.send.sending.SmartSelectSendingTypeViewModel.UIEvent.OnSmartAccountSelected
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.sending.SmartSelectSendingTypeViewModel.UIEvent.OnIBANAccountSelected
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.sending.SmartSelectSendingTypeViewModel.UIEvent.OnMyContactsSelected
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.sending.SmartSelectSendingTypeViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.sending.SmartSelectSendingTypeViewModel.UIEvent.OnSmartAccountSelected
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -77,7 +77,9 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     }
 
     private fun onNavigateToIBANAccount() {
-        // TODO navigate to HU REV-1423
+        navigateTo(
+            "${Screen.SmartTransferIbanAccountScreen.baseRoute}/$pkUser/$idBrand/$identification/${Screen.SmartSelectSendingTypeScreen.baseRoute}/$idClient"
+        )
     }
 
     private fun onNavigateToSmartAccount() {

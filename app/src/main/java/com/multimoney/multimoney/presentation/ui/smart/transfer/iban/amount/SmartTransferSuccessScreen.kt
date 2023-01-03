@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.send.iban.amount
+package com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -8,16 +8,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.ui.smart.send.iban.amount.SmartTransferAmountViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.smart.send.iban.amount.SmartTransferAmountViewModel.UIEvent.OnNavigateHome
-import com.multimoney.multimoney.presentation.ui.smart.send.iban.amount.SmartTransferAmountViewModel.UIEvent.OnShareVoucherImage
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnNavigateHome
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnShareVoucherImage
 import com.multimoney.multimoney.presentation.uielement.PaymentSuccessResult
 import com.multimoney.multimoney.presentation.uielement.SmartPaymentInfoItem
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
@@ -49,7 +48,7 @@ fun SmartTransferSuccessScreen(
                 viewModel.uiState.currency
             ),
             amount = viewModel.uiState.currency +
-                viewModel.uiState.currentAmountValueString.collectAsState().value,
+                viewModel.uiState.currentAmountValueString,
             fromToText = stringResource(R.string.smart_payment_to_account),
             buttonText = stringResource(R.string.smart_payment_make_another_payment),
             onButtonClick = { viewModel.onUIEvent(OnNavigateBack) }
@@ -64,7 +63,7 @@ fun SmartTransferSuccessScreen(
                 title = stringResource(R.string.smart_payment_origin_account_label),
                 subtitle = stringResource(
                     R.string.visa_card_masked_number,
-                    viewModel.ibanAccount?.bank ?: ""
+                    viewModel.editAmountHelper.ibanAccount?.bank ?: ""
                 )
             )
 
@@ -79,7 +78,7 @@ fun SmartTransferSuccessScreen(
                 subtitle = viewModel.uiState.referenceNumber
             )
 
-            if (viewModel.shouldDisplayExchange) {
+            if (viewModel.editAmountHelper.shouldDisplayExchange) {
                 SmartPaymentInfoItem(
                     modifier = Modifier
                         .fillMaxWidth()

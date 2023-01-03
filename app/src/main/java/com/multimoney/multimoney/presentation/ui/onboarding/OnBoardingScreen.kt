@@ -95,12 +95,12 @@ fun OnBoardingScreen(
                     .fillMaxWidth()
                     .padding(top = 30.dp)
                     .weight(
-                        0.12f, false
+                        0.14f, false
                     ),
-                style = TextStyle(
+                style = Typography.h3.copy(
                     fontSize = 48.sp,
                     color = MultimoneyTheme.colors.onBoardingTitleText,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.SemiBold
                 )
             )
             Text(
@@ -109,8 +109,8 @@ fun OnBoardingScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 24.dp, bottom = 80.dp)
-                    .weight(0.13f, true),
-                style = TextStyle(
+                    .weight(0.14f, false),
+                style = Typography.h6.copy(
                     color = MultimoneyTheme.colors.onBoardingSubText,
                     fontSize = 20.sp
                 )

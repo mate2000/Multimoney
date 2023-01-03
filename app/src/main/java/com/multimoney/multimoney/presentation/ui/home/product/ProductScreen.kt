@@ -39,10 +39,7 @@ import com.google.accompanist.pager.rememberPagerState
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.security.MiniCardsItem
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.theme.GrayScale200
-import com.multimoney.multimoney.presentation.theme.GrayScale600
-import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.theme.*
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnDeleteAutomaticPaymentToastEvent
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent
@@ -404,8 +401,8 @@ fun ProductContent(
             CustomDotsIndicator(
                 totalDots = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
                 selectedIndex = state.currentPage,
-                selectedColor = GrayScale200,
-                unSelectedColor = GrayScale600,
+                selectedColor = WhiteTransparency90,
+                unSelectedColor = WhiteTransparency30,
                 dotSize = 10.dp
             )
         }

@@ -51,11 +51,10 @@ import com.onfido.android.sdk.capture.Onfido.OnfidoResultListener
 import com.onfido.android.sdk.capture.errors.OnfidoException
 import com.onfido.android.sdk.capture.upload.Captures
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import timber.log.Timber
+import javax.inject.Inject
 
 @HiltViewModel
 class SmartOnfidoViewModel @Inject constructor(
@@ -162,7 +161,7 @@ class SmartOnfidoViewModel @Inject constructor(
                 result.data,
                 object : OnfidoResultListener {
                     override fun userCompleted(captures: Captures) {
-                        countDownTimer.resumeTimer()
+                        /*countDownTimer.resumeTimer()*/
                         onCallOnfidoCheckProcess(
                             pkUser,
                             identification,
@@ -213,14 +212,14 @@ class SmartOnfidoViewModel @Inject constructor(
                 user
             ).collectLatest { result ->
                 result.onSuccess {
-                    Timber.d("onFido status: ${it.id}")
+                    // nothing to do here
                 }
                 result.onFailure {
-                    Timber.d("onFido status: ${it.errorCode}")
+                    // nothing to do here
                 }
             }
-            navigateToCorrectScreen()
         }
+        navigateToCorrectScreen()
     }
 
     private fun navigateToCorrectScreen() {

@@ -95,6 +95,17 @@ const val SMART_IDS_LIST = "smart_id_list"
 const val SMART_IDS = "smart_ids"
 const val IBAN_ACCOUNT = "iban_account"
 const val GLOBAL_CRYPTO_BALANCE = "global_crypto_balance"
+const val PASSWORD = "password"
+const val DEVICE_ID = "device_id"
+const val UNIQUE_ID = "unique_id"
+const val IP_ADDRESS = "ip_address"
+const val DEVICE_TYPE = "device_type"
+const val DEVICE_NAME = "device_name"
+const val APP_VERSION = "app_version"
+const val DEVICE_BRAND = "device_brand"
+const val DEVICE_MODEL = "device_model"
+const val IS_EMULATOR = "is_emulator"
+const val FORCE_CHANGE_DEVICE = "force_change_device"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -107,12 +118,17 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     // LoginNavGraph Screens
     object SplashScreen : Screen("splash_screen")
     object OnBoardingScreen : Screen("onboarding_screen")
-    object SignInScreen : Screen("sign_in_screen")
+    object SignInScreen : Screen("sign_in_screen?$FORCE_CHANGE_DEVICE={$FORCE_CHANGE_DEVICE}","sign_in_screen")
     object SignUpScreen : Screen("sign_up_screen/{$SIGN_UP_STEP}", "sign_up_screen")
 
     object SignUpSplashComeBackScreen : Screen(
         "sign_up_splash_come_back_screen/{$SIGN_UP_STEP}",
         "sign_up_splash_come_back_screen"
+    )
+
+    object SignInOTPScreen : Screen(
+        "sign_in_otp_screen/{$EMAIL}/{$PASSWORD}/{$DEVICE_ID}/{$UNIQUE_ID}/{$IP_ADDRESS}/{$DEVICE_TYPE}/{$DEVICE_NAME}/{$APP_VERSION}/{$DEVICE_BRAND}/{$DEVICE_MODEL}/{$IS_EMULATOR}",
+        "sign_in_otp_screen"
     )
 
     object SignUpCompleted : Screen("sign_up_completed")

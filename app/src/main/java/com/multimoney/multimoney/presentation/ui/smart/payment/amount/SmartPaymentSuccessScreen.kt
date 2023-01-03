@@ -13,9 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -25,10 +22,8 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmou
 import com.multimoney.multimoney.presentation.uielement.PaymentSuccessResult
 import com.multimoney.multimoney.presentation.uielement.SmartPaymentInfoItem
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
-import com.multimoney.multimoney.presentation.uielement.VoucherCurrencyExchangeInfo
-import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.CARD_NUMBER_LAST_DIGITS
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
-import com.multimoney.multimoney.presentation.util.shape.DottedShape
 
 @Composable
 fun SmartPaymentSuccessScreen(
@@ -70,17 +65,20 @@ fun SmartPaymentSuccessScreen(
                     .height(24.dp)
                     .width(24.dp),
                 title = stringResource(R.string.smart_payment_card_bank_label),
-                subtitle = if (viewModel.editAmountHelper.idBrand == Brand.ElSalvador.id) {stringResource(
-                    R.string.visa_card_masked_number,
-                    viewModel.editAmountHelper.maskedCardNumber.takeLast(4)
-                )
-            } else {
-                            getMaskedAccountIban(
-                                viewModel.editAmountHelper.maskedCardNumber,
-                                stringResource(id = R.string.payment_account_masked_text)
-                            )
-                        }
+                subtitle = if (viewModel.editAmountHelper.idBrand == Brand.ElSalvador.id) {
+                    stringResource(
+                        R.string.visa_card_masked_number,
+                        viewModel.editAmountHelper.maskedCardNumber.takeLast(
+                            CARD_NUMBER_LAST_DIGITS
+                        )
                     )
+                } else {
+                    getMaskedAccountIban(
+                        viewModel.editAmountHelper.maskedCardNumber,
+                        stringResource(id = R.string.payment_account_masked_text)
+                    )
+                }
+            )
 
             SmartPaymentInfoItem(
                 modifier = Modifier.padding(start = 21.dp, top = 32.dp),

@@ -53,7 +53,6 @@ import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.GrayScale300
 import com.multimoney.multimoney.presentation.theme.GrayScale400
 import com.multimoney.multimoney.presentation.theme.GrayScale500
-import com.multimoney.multimoney.presentation.theme.GrayScale600
 import com.multimoney.multimoney.presentation.theme.GrayScale800
 import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.SemanticNegative400
@@ -64,6 +63,7 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency30
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInOTPViewModel.Companion.FOUR_DIGITS
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -221,8 +221,8 @@ fun OtpTextField(
             (0 until digits).map { index ->
                 OutlinedTextField(
                     modifier = Modifier
-                        .padding(horizontal = 6.dp)
-                        .size(56.dp)
+                        .padding(horizontal = if (digits > FOUR_DIGITS) 4.dp else 6.dp)
+                        .size(if (digits > FOUR_DIGITS) 50.dp else 56.dp)
                         .bringIntoViewRequester(bringIntoViewRequester)
                         .onFocusChanged {
                             if (it.isFocused) {

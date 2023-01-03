@@ -128,6 +128,8 @@ import com.multimoney.domain.interaction.profile.QueryCountryContactUseCase
 import com.multimoney.domain.interaction.profile.QueryCountryContactUseCaseImpl
 import com.multimoney.domain.interaction.profile.QueryTermsAndConditionsSignedUseCase
 import com.multimoney.domain.interaction.profile.QueryTermsAndConditionsSignedUseCaseImpl
+import com.multimoney.domain.interaction.security.MutationChangeDeviceUseCaseImpl
+import com.multimoney.domain.interaction.security.MutationChangeDeviceUseCase
 import com.multimoney.domain.interaction.security.MutationChangeEmailUseCase
 import com.multimoney.domain.interaction.security.MutationChangeEmailUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationChangePhoneUseCase
@@ -136,6 +138,8 @@ import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUs
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationOnfidoCheckProcessUseCase
 import com.multimoney.domain.interaction.security.MutationOnfidoCheckProcessUseCaseImpl
+import com.multimoney.domain.interaction.security.MutationRequestChangeDeviceUseCaseImpl
+import com.multimoney.domain.interaction.security.MutationRequestChangeDeviceUseCase
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCase
@@ -661,4 +665,14 @@ class InteractionModule {
     @Singleton
     fun provideQueryTermsAndConditionsSigned(profileRepository: ProfileRepository): QueryTermsAndConditionsSignedUseCase =
         QueryTermsAndConditionsSignedUseCaseImpl(profileRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationRequestChangeDevice(securityRepository: SecurityRepository): MutationRequestChangeDeviceUseCase =
+        MutationRequestChangeDeviceUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationChangeDevice(securityRepository: SecurityRepository): MutationChangeDeviceUseCase =
+        MutationChangeDeviceUseCaseImpl(securityRepository)
 }

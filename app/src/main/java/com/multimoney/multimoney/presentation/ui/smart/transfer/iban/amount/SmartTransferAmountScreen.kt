@@ -1,49 +1,40 @@
-package com.multimoney.multimoney.presentation.ui.smart.payment.amount
+package com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnAmountCompleted
-import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnAmountValueChange
-import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnContinueClick
-import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnNavigateHome
-import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnRetryTransfer
-import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnStart
-import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnSuggestedAmountClick
-import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnTryLater
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnAbandonFlow
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnAmountCompleted
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnAmountValueChange
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnMotiveChange
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnNavigateHome
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnRetryTransfer
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnTryLater
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.LoadingMultiMoney
-import com.multimoney.multimoney.presentation.uielement.RoundedPaymentButton
 import com.multimoney.multimoney.presentation.uielement.SmartAmountBody
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.catalog.SuggestionOrder
+import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SavingAmountScreen(
+fun SmartTransferAmountScreen(
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
-    viewModel: SavingAmountViewModel = hiltViewModel()
+    viewModel: SmartTransferAmountViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     LaunchedEffect(true) {
@@ -81,19 +72,13 @@ fun SavingAmountScreen(
             viewModel.onUIEvent(OnNavigateHome)
         }
     } else if (viewModel.uiState.paymentSuccess) {
-        SmartPaymentSuccessScreen(
-            viewModel = viewModel
-        )
+        // Todo add success screen
         BackHandler {
             viewModel.onUIEvent(OnNavigateHome)
         }
     } else {
-        SavingAmountContent(viewModel)
-        SmartPaymentConfirmBottomSheet(
-            rememberCoroutineScope(),
-            viewModel.uiState.bottomSheetState,
-            viewModel
-        )
+        SmartTransferAmountContent(viewModel)
+        // Todo add confirmation sheet
         BackHandler {
             viewModel.onUIEvent(OnNavigateBack)
         }
@@ -116,68 +101,43 @@ fun SavingAmountScreen(
 
 @Composable
 @Preview
-fun SavingAmountContent(viewModel: SavingAmountViewModel = hiltViewModel()) {
+fun SmartTransferAmountContent(viewModel: SmartTransferAmountViewModel = hiltViewModel()) {
     Column(
         modifier = Modifier.background(MultimoneyTheme.colors.background)
     ) {
         TopNavBar(
-            isRightButtonVisible = false,
-            onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) }
+            isRightButtonVisible = true,
+            onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
+            onRightButtonClick = { viewModel.onUIEvent(OnAbandonFlow) }
         )
         SmartAmountBody(
-            titleId = R.string.smart_saving_amount_title,
+            titleId = R.string.smart_iban_transfer_send_money,
+            originAccountSubtitle = stringResource(
+                id = viewModel.fromSmartLabel,
+                getMaskedAccountIban(
+                    viewModel.editAmountHelper.maskedCardNumber,
+                    stringResource(id = R.string.payment_account_masked_text)
+                )
+            ),
             currentAmount = viewModel.uiState.currentAmountValueString,
             amountPlaceHolderId = viewModel.uiState.placeholder,
             onAmountChange = {
                 viewModel.onUIEvent(OnAmountValueChange(it))
             },
             onDebounceValidation = { viewModel.onUIEvent(OnAmountCompleted(it)) },
+            isAmountError = viewModel.uiState.isAmountValid.not(),
+            amountErrorMessage = stringResource(
+                id = R.string.smart_iban_transfer_error_balance_insufficient,
+                viewModel.totalBalanceLabel
+            ),
             currency = viewModel.uiState.currency,
             exchangeRate = viewModel.uiState.exchangeRateLabel,
             convertedTotal = viewModel.uiState.convertedAmountLabel,
             shouldDisplayExchange = viewModel.editAmountHelper.shouldDisplayExchange,
             onContinueClick = { viewModel.onUIEvent(OnContinueClick) },
             enableButton = viewModel.uiState.enableButton,
-            suggestions = { QuantitySuggestions(viewModel) }
-        )
-    }
-}
-
-@Composable
-fun QuantitySuggestions(viewModel: SavingAmountViewModel = hiltViewModel()) {
-    Row(
-        modifier = Modifier
-            .padding(top = 24.dp)
-            .fillMaxWidth()
-    ) {
-        RoundedPaymentButton(
-            modifier = Modifier.weight(0.32f),
-            onClick = { viewModel.onUIEvent(OnSuggestedAmountClick(viewModel.uiState.minSuggestion)) },
-            strokeWidth = 1.dp,
-            roundedShapeDp = 24.dp,
-            mainText = viewModel.uiState.minSuggestion.display,
-            isSelected = viewModel.verifySuggestionSelected(SuggestionOrder.MIN),
-            textAlign = Alignment.CenterHorizontally
-        )
-        Spacer(modifier = Modifier.weight(0.02f))
-        RoundedPaymentButton(
-            modifier = Modifier.weight(0.32f),
-            onClick = { viewModel.onUIEvent(OnSuggestedAmountClick(viewModel.uiState.mediumSuggestion)) },
-            strokeWidth = 1.dp,
-            roundedShapeDp = 24.dp,
-            mainText = viewModel.uiState.mediumSuggestion.display,
-            isSelected = viewModel.verifySuggestionSelected(SuggestionOrder.MEDIUM),
-            textAlign = Alignment.CenterHorizontally
-        )
-        Spacer(modifier = Modifier.weight(0.02f))
-        RoundedPaymentButton(
-            modifier = Modifier.weight(0.32f),
-            onClick = { viewModel.onUIEvent(OnSuggestedAmountClick(viewModel.uiState.maxSuggestion)) },
-            strokeWidth = 1.dp,
-            roundedShapeDp = 24.dp,
-            mainText = viewModel.uiState.maxSuggestion.display,
-            isSelected = viewModel.verifySuggestionSelected(SuggestionOrder.MAX),
-            textAlign = Alignment.CenterHorizontally
+            motive = viewModel.uiState.motive,
+            onMotiveChange = { viewModel.onUIEvent(OnMotiveChange(it)) }
         )
     }
 }

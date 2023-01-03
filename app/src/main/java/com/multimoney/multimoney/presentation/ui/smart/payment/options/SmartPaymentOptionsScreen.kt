@@ -16,8 +16,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.smart.payment.options.SmartPaymentOptionsViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.smart.payment.options.SmartPaymentOptionsViewModel.UIEvent.OnSmartAccountSelected
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.smartaccount.BaseSelectSmartAccountViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.smartaccount.BaseSelectSmartAccountViewModel.UIEvent.OnSmartAccountSelected
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.smartaccount.BaseSelectSmartAccountViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
@@ -29,7 +30,7 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 fun SmartPaymentOptionsScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
-    viewModel: SmartPaymentOptionsViewModel = hiltViewModel()
+    viewModel: BaseSelectSmartAccountViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
         viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)

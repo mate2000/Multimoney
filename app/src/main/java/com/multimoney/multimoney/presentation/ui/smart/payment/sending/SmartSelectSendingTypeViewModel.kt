@@ -30,15 +30,11 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     var idClient: Int = 0
     var idBrand: Int = 0
 
-    var uiState by mutableStateOf(UIState())
-        private set
-
     init {
         smartAccount = savedStateHandle[SMART_IDS]
         pkUser = savedStateHandle[PK_USER] ?: ""
         identification = savedStateHandle[IDENTIFICATION] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
-        uiState = uiState.copy(idBrand = idBrand)
     }
 
 
@@ -124,11 +120,6 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
             isRestart = false
         )
     }
-
-    data class UIState(
-        //Fields
-        val idBrand: Int? = null,
-    )
 
     sealed class UIEvent {
         object OnCloseClick : UIEvent()

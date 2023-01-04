@@ -80,7 +80,7 @@ val Typography = Typography(
     button = TextStyle(
         fontFamily = PoppinsFontFamily,
         fontWeight = FontWeight.W600,
-        fontSize = 15.sp,
+        fontSize = 14.sp,
         letterSpacing = 1.25.sp
     ),
     caption = TextStyle(

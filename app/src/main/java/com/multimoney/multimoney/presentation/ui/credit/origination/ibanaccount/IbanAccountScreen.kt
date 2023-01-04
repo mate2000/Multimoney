@@ -111,16 +111,16 @@ fun IbanAccountScreen(
     ) {
         Text(
             text = stringResource(id = R.string.iban_account_tile),
-            modifier = Modifier.padding(top = 32.dp),
-            style = Typography.h5.copy(fontWeight = FontWeight.SemiBold, fontSize = 22.sp),
-            color = MultimoneyTheme.colors.labelText
+            modifier = Modifier.padding(top = 8.dp),
+            style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.titleText
         )
 
         if (viewModel.uiState.ibanSuccess) {
             CustomInfoButton(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 12.dp),
+                    .padding(top = 24.dp),
                 startIcon = if (viewModel.validateAccount?.currency == CurrencyType.Dollar.currency) R.drawable.ic_account_dollar else R.drawable.ic_account_colon,
                 title = viewModel.validateAccount?.bankName ?: "",
                 subtitle = getMaskedAccount(
@@ -134,7 +134,7 @@ fun IbanAccountScreen(
             )
         } else {
             CustomOutlinedTextField(
-                modifier = Modifier.padding(top = 32.dp),
+                modifier = Modifier.padding(top = 28.dp),
                 value = viewModel.uiState.accountNumber,
                 leadingIconComposable = { tint ->
                     Row(

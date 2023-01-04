@@ -132,14 +132,14 @@ fun HomeAddressScreen(
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Text(
             text = stringResource(id = title),
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier.padding(top = 8.dp),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.labelText
+            color = MultimoneyTheme.colors.titleText
         )
         CustomDropdown(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 32.dp),
+                .padding(top = 24.dp),
             items = viewModel.uiState.divisionOneList,
             value = viewModel.uiState.divisionOneSelected,
             onValueChange = {

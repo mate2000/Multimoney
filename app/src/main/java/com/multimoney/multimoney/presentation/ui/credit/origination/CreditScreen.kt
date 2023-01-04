@@ -131,7 +131,7 @@ fun CreditScreen(
                 Column {
                     TopNavBar(
                         isLeftButtonVisible = viewModel.uiState.currentStep != CreditStep.One.id && viewModel.uiState.currentStep < CreditStep.Eight.id,
-                        isRightButtonVisible = viewModel.uiState.isCloseVisible,
+                        isRightButtonVisible = false,
                         onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
                         onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) }
                     )
@@ -158,7 +158,7 @@ fun CreditScreen(
                             onClick = { viewModel.onUIEvent(OnContinueClick(focusManager)) },
                             text = stringResource(id = R.string.button_continue),
                             modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
-                                .fillMaxWidth().height(48.dp),
+                                .fillMaxWidth().height(56.dp),
                             buttonType = PrimaryPrimary,
                             enable = viewModel.uiState.isContinueEnabled
                         )

@@ -3,17 +3,19 @@ package com.multimoney.multimoney.presentation.uielement
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.multimoney.multimoney.presentation.theme.GrayScale800
 import com.multimoney.multimoney.presentation.theme.Primary400
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency12
@@ -64,15 +66,20 @@ fun CustomToggleButton(
                             backgroundColor = WhiteTransparency12,
                             contentColor = WhiteTransparency12
                         )
-                    }
+                    },
+                    contentPadding = PaddingValues(
+                        horizontal = 8.dp,
+                        vertical = 4.dp
+                    )
                 ) {
-                    Text(
+                    AutoSizeText(
                         text = item,
                         color = if (selectedIndex == index) {
                             GrayScale800
                         } else {
                             WhiteTransparency60
                         },
+                        textStyle = TextStyle(fontSize = 25.sp)
                     )
                 }
             }

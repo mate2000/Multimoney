@@ -104,9 +104,9 @@ fun JobInfoScreen(
     ) {
         Text(
             text = stringResource(id = R.string.credit_job_title),
-            modifier = Modifier.padding(top = 32.dp),
-            style = Typography.h5.copy(fontWeight = FontWeight.SemiBold, fontSize = 22.sp),
-            color = MultimoneyTheme.colors.labelText
+            modifier = Modifier.padding(top = 8.dp),
+            style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.titleText
         )
 
         CustomOutlinedTextField(
@@ -135,7 +135,7 @@ fun JobInfoScreen(
             minYear = JOB_DATE_MIN_YEAR,
             minMonth = JOB_DATE_MIN_MONTH,
             minDay = JOB_DATE_MIN_DAY,
-            leadingIcon = R.drawable.ic_calendar_voucher,
+            trailingIcon = R.drawable.ic_calendar_voucher,
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next
             ),
@@ -164,7 +164,6 @@ fun JobInfoScreen(
         }
 
         CustomOutlinedTextField(
-            leadingIcon = R.drawable.ic_phone,
             value = viewModel.uiState.phoneNumber,
             placeHolder = stringResource(id = phonePlaceHolder),
             onValueChange = { phoneNumber ->
@@ -197,7 +196,7 @@ fun JobInfoScreen(
                 minYear = JOB_DATE_MIN_YEAR,
                 minMonth = JOB_DATE_MIN_MONTH,
                 minDay = JOB_DATE_MIN_DAY,
-                leadingIcon = R.drawable.ic_calendar_voucher,
+                trailingIcon = R.drawable.ic_calendar_voucher,
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Next
                 ),

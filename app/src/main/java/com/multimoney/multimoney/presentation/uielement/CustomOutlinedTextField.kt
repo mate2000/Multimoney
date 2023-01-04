@@ -177,6 +177,7 @@ fun CustomOutlinedTextField(
     val labelColor: Color
     var backgroundColor: Color
     val iconTintColor: Color
+    val leadingIconComposableColor: Color
     val textColor: Color
     val placeholderColor: Color
     val focusedIndicatorColor: Color
@@ -195,6 +196,7 @@ fun CustomOutlinedTextField(
             WhiteTransparency90
         }
         textFieldStrokeErrorColor = SemanticNegative300
+        leadingIconComposableColor = WhiteTransparency60
         when {
             isError -> {
                 focusedIndicatorColor = SemanticNegative400
@@ -228,17 +230,20 @@ fun CustomOutlinedTextField(
             isError -> {
                 focusedIndicatorColor = SemanticNegative500
                 iconTintColor = SemanticNegative500
+                leadingIconComposableColor = Primary500
                 textColor = GrayScale800
             }
             enabled -> {
                 focusedIndicatorColor = Primary500
                 iconTintColor = Primary500
+                leadingIconComposableColor = Primary500
                 textColor = GrayScale800
             }
             else -> {
                 focusedIndicatorColor = GrayScale400
                 backgroundColor = GrayScale300
                 iconTintColor = GrayScale500
+                leadingIconComposableColor = GrayScale500
                 textColor = GrayScale500
             }
         }
@@ -290,7 +295,7 @@ fun CustomOutlinedTextField(
                     )
                 }
             } ?: leadingIconComposable?.let {
-                { it(iconTintColor) }
+                { it(leadingIconComposableColor) }
             },
             trailingIcon = if (isPassword) {
                 {

@@ -6680,7 +6680,9 @@ type Wording {
 
   cTA: String!
 
-  display: Boolean
+  link: String!
+
+  display: Boolean!
 }
 
 type VirtualcardConfigurationType {

@@ -683,7 +683,7 @@ class ProductViewModel @Inject constructor(
                 account?.accountNumber
             )
             navigateTo(
-                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${pkUser}/${uiState.idBrand}/${identification}/${encodeData(smartAccount)}"
+                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${userName}/${uiState.idBrand}/${identification}/${encodeData(smartAccount)}/$idClient"
             )
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             // TODO navigate to account selection screen HU [tbd]

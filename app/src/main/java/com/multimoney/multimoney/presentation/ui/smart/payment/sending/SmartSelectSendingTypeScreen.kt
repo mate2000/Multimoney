@@ -74,7 +74,7 @@ fun SmartSelectSendingTypeScreen(
         )
         SendingTypeOptionsContainer(
             sendingTypeOptions = {
-                when (viewModel.uiState.idBrand) {
+                when (viewModel.idBrand) {
                     // These sending options should be available only for CR
                     Brand.CostaRica.id -> {
                         SendingTypeOptionsCR(

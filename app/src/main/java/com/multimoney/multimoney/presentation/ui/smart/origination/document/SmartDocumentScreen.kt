@@ -52,7 +52,7 @@ import com.multimoney.multimoney.presentation.util.ISO_8601_API_FORMAT_PATTERN
 import com.multimoney.multimoney.presentation.util.YEAR_MONTH_DAY_PATTERN
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import com.multimoney.multimoney.presentation.util.getPickedDateAsString
-import java.time.LocalDate
+import com.multimoney.multimoney.presentation.util.toLocalDate
 import java.util.Calendar
 import java.util.Date
 
@@ -209,7 +209,7 @@ fun SmartDocumentScreen(
                         viewModel.onUIEvent(
                             OnBirthDateValueChange(
                                 date,
-                                LocalDate.of(year, month, day)
+                                calendarValidation.toLocalDate()
                             )
                         )
                     },
@@ -236,7 +236,9 @@ fun SmartDocumentScreen(
                 .focusable(false),
             items = Gender.Search.getGenderList(),
             value = viewModel.uiState.gender,
-            onValueChange = { gender -> viewModel.onUIEvent(OnGenderChange(gender)) },
+            onValueChange = { gender, _ ->
+                viewModel.onUIEvent(OnGenderChange(gender))
+            },
             labelText = stringResource(id = R.string.gender),
             placeHolder = stringResource(id = R.string.select)
         )
@@ -248,7 +250,9 @@ fun SmartDocumentScreen(
                 .focusable(false),
             items = viewModel.uiState.civilStatusList.map { it?.maritalStatusDescription.orEmpty() },
             value = viewModel.uiState.civilState,
-            onValueChange = { viewModel.onUIEvent(OnCivilStateChange(it)) },
+            onValueChange = { valueSelected, _ ->
+                viewModel.onUIEvent(OnCivilStateChange(valueSelected))
+            },
             labelText = stringResource(id = R.string.civil_state),
             placeHolder = stringResource(id = R.string.select)
         )
@@ -260,7 +264,9 @@ fun SmartDocumentScreen(
                 .focusable(false),
             items = viewModel.uiState.professionSmartList.map { it?.name.orEmpty() },
             value = viewModel.uiState.profession,
-            onValueChange = { viewModel.onUIEvent(OnProfessionChange(it)) },
+            onValueChange = { valueSelected, _ ->
+                viewModel.onUIEvent(OnProfessionChange(valueSelected))
+            },
             labelText = stringResource(id = R.string.profession),
             placeHolder = stringResource(id = R.string.select)
         )

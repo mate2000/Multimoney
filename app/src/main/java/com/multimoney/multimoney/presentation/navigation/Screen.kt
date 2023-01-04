@@ -75,6 +75,7 @@ const val CRYPTO_ROUTE = "crypto_route"
 const val PROFILE_ROUTE = "profile_route"
 const val TEST_ROUTE = "test_route"
 const val SMART_PAYMENT_ROUTE = "smart_payment_route"
+const val SMART_TRANSFER_ROUTE = "smart_transfer_route"
 const val ID_BRAND = "id_brand"
 const val PHONE_NUMBER = "phone_number"
 const val NEW_PHONE_NUMBER = "new_phone_number"
@@ -94,6 +95,17 @@ const val SMART_IDS_LIST = "smart_id_list"
 const val SMART_IDS = "smart_ids"
 const val IBAN_ACCOUNT = "iban_account"
 const val GLOBAL_CRYPTO_BALANCE = "global_crypto_balance"
+const val PASSWORD = "password"
+const val DEVICE_ID = "device_id"
+const val UNIQUE_ID = "unique_id"
+const val IP_ADDRESS = "ip_address"
+const val DEVICE_TYPE = "device_type"
+const val DEVICE_NAME = "device_name"
+const val APP_VERSION = "app_version"
+const val DEVICE_BRAND = "device_brand"
+const val DEVICE_MODEL = "device_model"
+const val IS_EMULATOR = "is_emulator"
+const val FORCE_CHANGE_DEVICE = "force_change_device"
 const val ID_CLIENT = "id_client"
 const val ID_LOAN_CLIENT = "id_loan_client"
 const val STATUS_CREDIT = "status_credit"
@@ -115,12 +127,17 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     // LoginNavGraph Screens
     object SplashScreen : Screen("splash_screen")
     object OnBoardingScreen : Screen("onboarding_screen")
-    object SignInScreen : Screen("sign_in_screen")
+    object SignInScreen : Screen("sign_in_screen?$FORCE_CHANGE_DEVICE={$FORCE_CHANGE_DEVICE}","sign_in_screen")
     object SignUpScreen : Screen("sign_up_screen/{$SIGN_UP_STEP}", "sign_up_screen")
 
     object SignUpSplashComeBackScreen : Screen(
         "sign_up_splash_come_back_screen/{$SIGN_UP_STEP}",
         "sign_up_splash_come_back_screen"
+    )
+
+    object SignInOTPScreen : Screen(
+        "sign_in_otp_screen/{$EMAIL}/{$PASSWORD}/{$DEVICE_ID}/{$UNIQUE_ID}/{$IP_ADDRESS}/{$DEVICE_TYPE}/{$DEVICE_NAME}/{$APP_VERSION}/{$DEVICE_BRAND}/{$DEVICE_MODEL}/{$IS_EMULATOR}",
+        "sign_in_otp_screen"
     )
 
     object SignUpCompleted : Screen("sign_up_completed")
@@ -234,7 +251,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SignDocumentProcessScreen : Screen(
-        "sign_document_process_screen/{$SIGN_DOCUMENT_STEP_ARG}/{$SIGN_DOCUMENT_URL}/{$SIGN_DOCUMENT_ID_PRINT}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$IS_SMART_EVICERTIA}",
+        "sign_document_process_screen/{$SIGN_DOCUMENT_STEP_ARG}/{$SIGN_DOCUMENT_URL}/{$SIGN_DOCUMENT_ID_PRINT}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}",
         "sign_document_process_screen"
     )
 
@@ -297,12 +314,6 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object AddIbanAccountScreen : Screen(
         "add_iban_account_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
         "add_iban_account_screen"
-    )
-
-    // Transfer Iban Account
-    object TransferIbanAccountScreen : Screen(
-        "transfer_iban_account_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
-        "transfer_iban_account_screen"
     )
 
     // Payment Credit
@@ -430,15 +441,26 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "smart_payment_saving_amount_screen"
     )
 
+    // Smart Transfer Screens
+
     object SmartSelectSendingTypeScreen : Screen(
-        "smart_select_sending_type_screen/{$PK_USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$SMART_IDS}",
+        "smart_select_sending_type_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$SMART_IDS}/{$ID_CLIENT}",
         "smart_select_sending_type_screen"
+    )
+
+    object SmartTransferIbanAccountScreen : Screen(
+        "transfer_iban_account_screen/{$SMART_IDS}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}",
+        "transfer_iban_account_screen"
+    )
+
+    object SmartTransferAmountScreen : Screen(
+        "smart_transfer_amount_screen/{$SMART_IDS}/{$IBAN_ACCOUNT}/{$PREVIOUS_SCREEN}",
+        "smart_transfer_amount_screen"
     )
 
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")
     object ChartScreen : Screen("chart_screen/{$}")
-    object SubscriptionScreen : Screen("subscription_screen")
 
     // Crypto
     object CryptoWalletScreen : Screen(

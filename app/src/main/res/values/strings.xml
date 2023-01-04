@@ -94,12 +94,30 @@
     <string name="sign_in_biometric_title" translatable="false">Ingresar con biometrico</string>
     <string name="sign_in_biometric_enter_with_password" translatable="false">O podés ingresar tu contraseña</string>
     <string name="sign_in_biometric_email_hint" translatable="false">Ingresá tu correo electrónica</string>
+    <string name="sign_in_session_active_on_another_device_title" translatable="false">Sesión activa en otro dispositivo</string>
+    <string name="sign_in_session_open_here_close_another" translatable="false">Al ingresar aquí, cerrarás la sesión que se encuentra abierta en otro dispositivo</string>
+    <string name="sign_in_dialog_exit_button" translatable="false">Salir</string>
+    <string name="sign_in_dialog_sign_in_here_button" translatable="false">Iniciar sesión aquí</string>
+    <string name="sign_in_otp_wrong_code" translatable="false">Código de verificación incorrecto</string>
+    <string name="sign_in_otp_expired_code" translatable="false">Código de verificación ha expirado</string>
+    <string name="sign_in_we_sent_you_a_code_template" translatable="false">Te enviamos un código al %1$s para que verifiques este dispositivo</string>
+    <string name="sign_in_verify_otp_button" translatable="false">Verificar</string>
+    <string name="sign_in_verify_otp_error_title" translatable="false">Lo sentimos, no pudimos cambiar tu dispositivo</string>
+    <string name="sign_in_verify_otp_error_subtitle" translatable="false">No es posible validar tu teléfono por favor, inténtalo nuevamente.</string>
+    <string name="sign_in_verify_otp_blocked_title" translatable="false">Usuario bloqueado</string>
+    <string name="sign_in_verify_otp_blocked_subtitle_gt" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte</string>
+    <string name="sign_in_verify_otp_blocked_subtitle" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no podés realizar el registro ahora. Inténtalo más tarde o contacta a soporte:</string>
+
 
     <!-- Sign Up General-->
     <string name="sign_up_splash_come_back" translatable="false">¡Nos alegra\nque regresés!</string>
     <string name="sign_up_close_dialog_description" translatable="false">Podrás retomar el registro cuando quieras</string>
     <string name="sign_up_close_dialog_positive_button_text" translatable="false">Salir</string>
     <string name="sign_up_close_dialog_negative_button_text" translatable="false">Cancelar</string>
+    <string name="sign_in_error_alert_dialog" translatable="false">Parece que hubo un error</string>
+    <string name="sign_in_error_alert_dialog_button" translatable="false">Ir al inicio</string>
+
+
 
     <!-- Sign Up Email -->
     <string name="sign_up_email_header" translatable="false">Ingresá tu correo electrónico</string>
@@ -139,8 +157,8 @@
     <string name="sign_up_otp_code_placeholder" translatable="false">0</string>
     <string name="sign_up_otp_code_required" translatable="false">Código de verificación requerido</string>
     <string name="sign_up_otp_code_not_valid" translatable="false">Código de verificación incorrecto</string>
-    <string name="sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
-    <string name="sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_gt" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no podés realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
+    <string name="sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_gt" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
+    <string name="sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no podés realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
 
     <!-- Sign Up Personal Data -->
     <string name="sign_up_personal_data_id_not_valid" translatable="false">Número de %s inválido</string>
@@ -973,7 +991,7 @@
 
     <!-- Payment Schedule Cards-->
     <string name="payment_schedule_card_title" translatable="false">Configurá tu pago \nautomático</string>
-    <string name="payment_schedule_card_info_dialog_description" translatable="false">Tu pago se determina de acuerdo a la cuota de cada mes. Si tenés saldo en dólares y colones se aplicará el tipo de cambio del día de pago.</string>
+    <string name="payment_schedule_card_info_dialog_description" translatable="false">Tu pago se determina de acuerdo a la cuota mínima de cada mes.</string>
     <string name="payment_schedule_card_label_date" translatable="false">Día del mes que se hará el pago</string>
     <string name="payment_schedule_card_label_origin" translatable="false">Desde tu tarjeta</string>
     <string name="payment_schedule_card_label_date_description" translatable="false">%s de cada mes</string>
@@ -1224,7 +1242,17 @@
     <string name="currency_item_percent_invested_with_symbol" translatable="false">%1s%2$s\%%</string>
 
     <!-- Smart Transfer Iban -->
+    <string name="smart_iban_transfer_accounts_title" translatable="false">Cuentas IBAN</string>
+    <string name="smart_iban_transfer_accounts_add" translatable="false">Agregar</string>
     <string name="smart_iban_transfer_title" translatable="false">Cuentas registradas</string>
+    <string name="smart_iban_transfer_send_money" translatable="false">Enviar dinero</string>
+    <string name="smart_iban_transfer_from_account" translatable="false">Desde mi cuenta %s</string>
+    <string name="smart_iban_transfer_motive_label" translatable="false">Motivo</string>
+    <string name="smart_iban_transfer_smart_account_colon" translatable="false">Smart Colones %s</string>
+    <string name="smart_iban_transfer_smart_account_dolar" translatable="false">Smart Dolares %s</string>
+    <string name="smart_iban_transfer_abandon_dialog_title" translatable="false">Cancelar envío</string>
+    <string name="smart_iban_transfer_abandon_dialog_message" translatable="false">¿Estás seguro que querés cancelar el envío?</string>
+    <string name="smart_iban_transfer_error_balance_insufficient" translatable="false">No tienes fondos suficientes. Tu disponible es %s</string>
 
     <!-- Card Preferences -->
     <string name="card_preferences_title" translatable="false">Preferencias de tarjeta</string>

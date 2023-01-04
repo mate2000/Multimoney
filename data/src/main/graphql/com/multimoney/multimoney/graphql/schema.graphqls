@@ -716,6 +716,7 @@ type Mutation {
   """
   Security
   """
+
   requestchangeDevice(requestChangeDeviceInputType: ChangeDeviceDtoInput!): UserValidation!
 
   """
@@ -6679,7 +6680,9 @@ type Wording {
 
   cTA: String!
 
-  display: Boolean
+  link: String!
+
+  display: Boolean!
 }
 
 type VirtualcardConfigurationType {

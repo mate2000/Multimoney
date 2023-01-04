@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -43,7 +44,9 @@ import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.SmartPaymentInfoItem
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.uielement.VoucherCurrencyExchangeInfo
+import com.multimoney.multimoney.presentation.util.CARD_NUMBER_LAST_DIGITS
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 import com.multimoney.multimoney.presentation.util.shape.DottedShape
 
 @Composable
@@ -167,7 +170,10 @@ fun SmartPaymentSuccessScreen(
                         Modifier
                             .height(1.dp)
                             .fillMaxWidth()
-                            .background(MultimoneyTheme.colors.dividerWhite16, shape = DottedShape(step = 10.dp))
+                            .background(
+                                MultimoneyTheme.colors.dividerWhite16,
+                                shape = DottedShape(step = 10.dp)
+                            )
                     )
                     Text(
                         text = stringResource(R.string.smart_payment_from_label),
@@ -184,10 +190,19 @@ fun SmartPaymentSuccessScreen(
                             .height(24.dp)
                             .width(24.dp),
                         title = stringResource(R.string.smart_payment_origin_account_label),
-                        subtitle = stringResource(
-                            R.string.visa_card_masked_number,
-                            viewModel.maskedCardNumber.takeLast(4)
-                        )
+                        subtitle = if (viewModel.editAmountHelper.idBrand == Brand.ElSalvador.id) {
+                            stringResource(
+                                R.string.visa_card_masked_number,
+                                viewModel.editAmountHelper.maskedCardNumber.takeLast(
+                                    CARD_NUMBER_LAST_DIGITS
+                                )
+                            )
+                        } else {
+                            getMaskedAccountIban(
+                                viewModel.editAmountHelper.maskedCardNumber,
+                                stringResource(id = R.string.payment_account_masked_text)
+                            )
+                        }
                     )
 
                     SmartPaymentInfoItem(
@@ -201,7 +216,7 @@ fun SmartPaymentSuccessScreen(
                         subtitle = viewModel.uiState.referenceNumber
                     )
 
-                    if (viewModel.shouldDisplayExchange) {
+                    if (viewModel.editAmountHelper.shouldDisplayExchange) {
                         Spacer(modifier = Modifier.height(32.dp))
                         VoucherCurrencyExchangeInfo(
                             leftTitleResource = R.string.payment_amount_bottom_sheet_exchange_type,

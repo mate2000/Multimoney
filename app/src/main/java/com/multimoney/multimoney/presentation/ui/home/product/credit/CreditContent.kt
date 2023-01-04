@@ -182,7 +182,14 @@ fun CreditContent(viewModel: ProductViewModel) {
                                 type = Primary
                             ) {
                                 CardGtSvCreditRejected(
-                                    action = {},
+                                    action = {
+                                        viewModel.onUIEvent(
+                                            OnMaxAttemptsCardClick(
+                                                whatsAppLink = viewModel.uiState.userStatus?.infoCredit?.wording?.link ?: whatsAppLink,
+                                                context = context
+                                            )
+                                        )
+                                    },
                                     wording = viewModel.uiState.userStatus?.infoCredit?.wording
                                 )
                             }

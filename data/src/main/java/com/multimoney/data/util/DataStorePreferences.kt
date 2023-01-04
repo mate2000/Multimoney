@@ -1,5 +1,6 @@
 package com.multimoney.data.util
 
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -7,6 +8,8 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.multimoney.data.base.BaseDataStorePreferences
 import com.multimoney.data.util.cryptography.CryptographyHelper
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import java.util.*
 import javax.crypto.Cipher
 import javax.inject.Inject
 
@@ -78,7 +81,20 @@ class DataStorePreferences @Inject constructor(
 
     fun isOnBoardingEnabled(): Flow<Boolean> = getData(ON_BOARDING_ENABLED_KEY, true)
 
+    private suspend fun setUniqueID(uuid: String) {
+        setSecuredData(UNIQUE_ID, uuid)
+    }
+
+    suspend fun getUniqueId(): Flow<String> {
+        if (getSecuredData(UNIQUE_ID, "").first().isEmpty()) {
+            setUniqueID(UUID.randomUUID().toString())
+        }
+        return  getSecuredData(UNIQUE_ID,"")
+    }
+
+
     companion object {
+        private val UNIQUE_ID = stringPreferencesKey("unique_id")
         private val TOKEN_KEY = stringPreferencesKey("auth_token")
         private val ID_BRAND = stringPreferencesKey("id_brand")
         private val PK_USER = stringPreferencesKey("pk_user")

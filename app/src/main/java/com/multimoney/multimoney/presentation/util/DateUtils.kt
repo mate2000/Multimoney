@@ -1,11 +1,13 @@
 package com.multimoney.multimoney.presentation.util
 
+import android.os.Build
 import com.multimoney.multimoney.R
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Period
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
@@ -159,6 +161,12 @@ fun parseApiDateToTermsAndConditionsDateTime(date: String?): String {
     }
 }
 
+fun Calendar.toLocalDate(): LocalDate = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    LocalDateTime.ofInstant(this.toInstant(), this.timeZone.toZoneId()).toLocalDate()
+} else {
+    LocalDateTime.ofInstant(this.toInstant(), ZoneId.systemDefault()).toLocalDate()
+}
+
 enum class FilterDateByDays(
     val time: Long,
     val timeDescription: String,
@@ -195,7 +203,6 @@ const val BIRTH_DATE_MIN_MONTH = 0
 const val BIRTH_DATE_MIN_DAY = 1
 const val EIGHTEEN_YEARS_VALUE = 18
 const val ONE_HUNDRED_TWENTY_YEARS_VALUE = 120
-const val SPANISH_LOCALE = "es"
 
 val YEAR_FORMAT = SimpleDateFormat(YEAR_PATTER, Locale.getDefault())
 val DAY_FORMAT = SimpleDateFormat(DAY_PATTERN, Locale.getDefault())
@@ -205,5 +212,4 @@ val BAR_DIVIDER_FORMAT = SimpleDateFormat("dd | MM | yyyy", Locale.getDefault())
 val SHORT_TIME_FORMAT = SimpleDateFormat("hh:mm a", Locale.getDefault())
 val BAR_DIVIDER_FORMAT_YEAR_TWO_DIGITS = SimpleDateFormat("dd | MM | yy", Locale.getDefault())
 val DATE_TIME_DOCUMENTS_FORMAT = DateTimeFormatter.ofPattern("ddMMyyHHmmss")
-val API_DATE_AND_TIME_FORMAT =
-    SimpleDateFormat(YEAR_MONTH_DAY_AND_TIME_BAR_FORMAT, Locale.getDefault())
+val API_DATE_AND_TIME_FORMAT = SimpleDateFormat(YEAR_MONTH_DAY_AND_TIME_BAR_FORMAT, Locale.getDefault())

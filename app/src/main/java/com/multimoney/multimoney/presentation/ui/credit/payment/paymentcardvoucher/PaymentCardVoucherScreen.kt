@@ -51,7 +51,6 @@ import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.uielement.VoucherAccountInfo
 import com.multimoney.multimoney.presentation.uielement.VoucherNumberInfo
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import com.multimoney.multimoney.presentation.util.shape.DottedShape
 
 @Composable
@@ -179,11 +178,11 @@ fun PaymentVoucherVDScreen(
 
                     VoucherAccountInfo(
                         modifier = Modifier.padding(start = 27.dp, top = 24.dp),
-                        icon = drawable.ic_bank,
-                        title = stringResource(string.payment_voucher_vd_origin_account_label),
-                        subTitle = getMaskedAccount(
-                            viewModel.card?.cardMaskedNumber ?: "",
-                            stringResource(id = string.payment_account_masked_text)
+                        icon = drawable.ic_visa_card_item,
+                        title = viewModel.card?.detail.orEmpty(),
+                        subTitle = stringResource(
+                            id = string.visa_card_masked_number,
+                            viewModel.card?.cardMaskedNumber?.takeLast(4) ?: 0
                         )
                     )
 

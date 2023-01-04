@@ -387,6 +387,7 @@ class SmartAccountRepositoryImpl @Inject constructor(
         )
     }
 
+    // Todo Remember to include Email in the Apollo model when the backend adds the field
     override suspend fun mutationManageSinpeAccountSave(
         user: String,
         idBrand: Int,
@@ -397,6 +398,7 @@ class SmartAccountRepositoryImpl @Inject constructor(
         country: String,
         idAccount: Long?,
         option: String?,
+        email: String?
     ): Flow<MultimoneyResult<SaveSinpeAccount?>> = fetchData(
         apolloCall = graphqlApi.mutationManageSinpeAccountSave(
             user,

@@ -268,7 +268,8 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
             nameAccount = uiState.favoriteName.ifBlank { user ?: "" },
             country = Brand.CostaRica.countryCode,
             idAccount = null,
-            option = null
+            option = null,
+            email = uiState.email
         ).collectLatest {
             it.onSuccess {
                 uiState = uiState.copy(isLoading = false)

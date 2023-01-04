@@ -87,23 +87,21 @@ fun DocumentGenerationScreen(
                 textAlign = Companion.Center
             )
         }
-        if (!viewModel.isSmart) {
-            Row(
-                modifier = Modifier.padding(bottom = 30.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(32.dp),
-                    color =
-                    MultimoneyTheme.colors.primary
-                )
-                Text(
-                    text = stringResource(id = string.document_generation_info),
-                    modifier = Modifier.padding(start = 12.dp),
-                    style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-                    color = MultimoneyTheme.colors.text
-                )
-            }
+        Row(
+            modifier = Modifier.padding(bottom = 30.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(32.dp),
+                color =
+                MultimoneyTheme.colors.primary
+            )
+            Text(
+                text = stringResource(id = string.document_generation_info),
+                modifier = Modifier.padding(start = 12.dp),
+                style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                color = MultimoneyTheme.colors.text
+            )
         }
     }
 

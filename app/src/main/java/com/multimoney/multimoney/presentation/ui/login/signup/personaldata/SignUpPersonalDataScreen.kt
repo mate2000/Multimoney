@@ -175,10 +175,10 @@ fun SignUpPersonalDataScreen(
                 .focusable(false)
                 .padding(top = 16.dp),
             items = viewModel.uiState.countryList,
-            onValueChange = { value ->
+            onValueChange = { valueSelected, _ ->
                 viewModel.onUIEvent(
                     OnNationalityChange(
-                        viewModel.uiState.countryList.indexOf(value),
+                        viewModel.uiState.countryList.indexOf(valueSelected),
                         updateNationality = { nationality, idBrand ->
                             sharedViewModel.onUIEvent(
                                 OnNationalityValueChange(nationality, idBrand)

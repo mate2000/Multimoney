@@ -25,15 +25,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.Companion.CREDIT_INDICATOR_TOTAL_STEPS
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnContinueClick
-import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetCloseDialogTexts
-import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.credit.origination.additionalinformation.AdditionalInformationBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.origination.additionalinformation.AdditionalInformationScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountScreen
@@ -43,8 +40,6 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.homeaddress.
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeScreen
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiaryUnderLined
@@ -54,7 +49,6 @@ import com.multimoney.multimoney.presentation.uielement.LoadingMultiMoney
 import com.multimoney.multimoney.presentation.uielement.StepProgressBar
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -68,15 +62,6 @@ fun CreditScreen(
     val focusManager = LocalFocusManager.current
     val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
     val coroutineScope = rememberCoroutineScope()
-
-    viewModel.onUIEvent(
-        OnSetWhatsAppLink(
-            stringResource(
-                id = string.whatsapp_deep_link,
-                SignUpViewModel.PHONE_HARDCODED
-            )
-        )
-    )
 
     LaunchedEffect(true) {
         viewModel.baseEvent.collect { event ->
@@ -176,20 +161,6 @@ fun CreditScreen(
                 }
             }
         }
-    }
-
-    if (viewModel.uiState.isAlertResultVisible) {
-        AlertResult(
-            titleString = stringResource(id = string.save_credit_operation_error_title),
-            descriptionString = stringResource(id = string.save_credit_operation_error_subtitle),
-            buttonTextResource = string.save_credit_operation_error_action,
-            isLeftButtonVisible = false,
-            onRightButtonClick = { viewModel.onUIEvent(OnNavigateToHome) },
-            onButtonClick = {
-                context.openWhatsAppDeepLink(viewModel.whatsAppLink)
-                viewModel.onUIEvent(OnNavigateToHome)
-            }
-        )
     }
 
     LoadingIndicator(viewModel.uiState.isLoading)

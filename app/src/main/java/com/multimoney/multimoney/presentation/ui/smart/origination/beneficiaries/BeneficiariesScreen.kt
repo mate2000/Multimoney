@@ -65,7 +65,6 @@ fun BeneficiariesScreen(
     beneficiaryViewModel: BeneficiariesViewModel = hiltViewModel(),
     sharedViewModel: SmartViewModel = hiltViewModel()
 ) {
-
     LaunchedEffect(key1 = true) {
         sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true))
         beneficiaryViewModel.baseEvent.collect { event ->
@@ -128,7 +127,6 @@ fun BeneficiariesScreen(
         } else {
             beneficiaryViewModel.onUIEvent(OnValidateForm)
         }
-
     }
 
     val generalModifier = if (beneficiaryViewModel.uiState.addBeneficiaryState) {
@@ -157,7 +155,7 @@ fun BeneficiariesScreen(
             positiveButtonText = stringResource(id = beneficiaryViewModel.uiState.openDialog.positiveResource),
             openDialogCustom = beneficiaryViewModel.uiState.openDialog.isActive,
             onNegativeAction = beneficiaryViewModel.uiState.openDialog.negativeAction,
-            onPositiveAction = beneficiaryViewModel.uiState.openDialog.positiveAction,
+            onPositiveAction = beneficiaryViewModel.uiState.openDialog.positiveAction
         )
     }
 
@@ -194,7 +192,9 @@ fun BeneficiaryForm(viewModel: BeneficiariesViewModel) {
             relationshipStatus?.description ?: ""
         },
         value = viewModel.uiState.relationship,
-        onValueChange = { viewModel.onUIEvent(OnRelationshipValueChange(it)) },
+        onValueChange = { valueSelected, _ ->
+            viewModel.onUIEvent(OnRelationshipValueChange(valueSelected))
+        },
         labelText = stringResource(id = string.relationship),
         placeHolder = stringResource(id = string.select)
     )

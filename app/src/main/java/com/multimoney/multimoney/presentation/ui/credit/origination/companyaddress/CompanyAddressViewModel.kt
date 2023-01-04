@@ -64,6 +64,8 @@ class CompanyAddressViewModel @Inject constructor(
             divisionThreeList = listOf(),
             divisionThreeSelected = null
         )
+        companyCanton = null
+        companyDistrict = null
         divisionOne?.pkCatalog?.let {
             onCallQueryCompanyCanton(
                 pkUser,
@@ -84,6 +86,7 @@ class CompanyAddressViewModel @Inject constructor(
     ) {
         uiState =
             uiState.copy(divisionTwoSelected = divisionTwo, divisionThreeList = listOf(), divisionThreeSelected = null)
+        companyDistrict = null
         if (idBrand != Brand.ElSalvador.id) {
             divisionTwo?.pkCatalog?.let {
                 onCallQueryCompanyDistrict(

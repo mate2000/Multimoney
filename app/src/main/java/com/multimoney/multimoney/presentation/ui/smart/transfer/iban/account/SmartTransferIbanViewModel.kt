@@ -1,26 +1,30 @@
-package com.multimoney.multimoney.presentation.ui.smart.transfer.iban
+package com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.domain.interaction.accountsmart.QueryListSinpeAccountUseCase
+import com.multimoney.domain.model.accountsmart.IbanAccountID
 import com.multimoney.domain.model.accountsmart.SinpeAccount
+import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.SMART_IDS
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.SmartTransferIbanViewModel.UIEvent.OnAccountClick
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.SmartTransferIbanViewModel.UIEvent.OnAddAccountClick
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.SmartTransferIbanViewModel.UIEvent.OnCallQueryListSinpeAccountUseCaseImpl
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.SmartTransferIbanViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnAccountClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnAddAccountClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnCallQueryListSinpeAccountUseCaseImpl
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -40,15 +44,15 @@ class SmartTransferIbanViewModel @Inject constructor(
     private var user: String = ""
     private var idBrand: String = ""
     private var idClient: String = ""
-    private var idLoanClient: String = ""
     private var identification: String? = ""
+    private var smartAccount: SmartAccountID? = null
 
     init {
         user = savedStateHandle[USER] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: ""
         idClient = savedStateHandle[ID_CLIENT] ?: ""
-        idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: ""
         identification = savedStateHandle[IDENTIFICATION] ?: ""
+        smartAccount = savedStateHandle[SMART_IDS]
     }
 
     private fun callQueryListSinpeAccountUseCaseImpl() = executeUseCase {
@@ -93,22 +97,27 @@ class SmartTransferIbanViewModel @Inject constructor(
     private fun onNavigateBack() {
         popAndNavigateTo(
             route = Screen.HomeScreen.route,
-            popTo = Screen.TransferIbanAccountScreen.route
+            popTo = Screen.SmartTransferIbanAccountScreen.route
         )
     }
 
     private fun navigateToAddIbanAccount() {
-        navigateTo(
-            route = "${Screen.AddIbanAccountScreen.baseRoute}/$user/$idBrand/$identification/${Screen.PaymentAccountScreen.baseRoute}/$idClient/$idLoanClient"
+        // Todo Add iban account of transfer recipient
+    }
+
+    private fun onAccountClick(selectedSinpeAccount: SinpeAccount?) {
+        val ibanAccount = encodeData(
+            IbanAccountID(
+                bank = selectedSinpeAccount?.bank,
+                clientIdentification = selectedSinpeAccount?.clientIdentification,
+                sinpeAccount = selectedSinpeAccount?.sinpeAccount,
+                currencyId = selectedSinpeAccount?.currencyId,
+                nameAccount = selectedSinpeAccount?.nameAccount
+            )
         )
-    }
-
-    private fun onAddAccountClick() {
-        // TODO Implement add sinpeAccount navigation
-    }
-
-    private fun onAccountClick(selectedSinpeAccount: SinpeAccount) {
-        // TODO Implement selected sinpeAccount navigation
+        navigateTo(
+            "${Screen.SmartTransferAmountScreen.baseRoute}/${encodeData(smartAccount)}/$ibanAccount/${Screen.SmartTransferIbanAccountScreen.baseRoute}"
+        )
     }
 
     data class UIState(
@@ -119,7 +128,7 @@ class SmartTransferIbanViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            OnAddAccountClick -> onAddAccountClick()
+            OnAddAccountClick -> navigateToAddIbanAccount()
             is OnNavigateBack -> onNavigateBack()
             is OnAccountClick -> onAccountClick(uiEvent.account)
             OnCallQueryListSinpeAccountUseCaseImpl -> callQueryListSinpeAccountUseCaseImpl()
@@ -130,6 +139,6 @@ class SmartTransferIbanViewModel @Inject constructor(
         object OnNavigateBack : UIEvent()
         object OnAddAccountClick : UIEvent()
         object OnCallQueryListSinpeAccountUseCaseImpl : UIEvent()
-        data class OnAccountClick(val account: SinpeAccount) : UIEvent()
+        data class OnAccountClick(val account: SinpeAccount?) : UIEvent()
     }
 }

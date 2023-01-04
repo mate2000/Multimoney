@@ -285,6 +285,11 @@ type Query {
   emissionPlace(emissionPlaceInput: ScreenConfigDtoInput!): [ScreenConfig!]!
 
   """
+  Credit
+  """
+  payMethod(getPayMethodInput: GetPayMethodDtoInput!): [GetPayMethod!]!
+
+  """
   Crypto
   """
   cryptoCurrencyMovement(cryptoMovementInput: CryptoMovementDtoInput!): CryptoCurrencyMovement!
@@ -711,7 +716,8 @@ type Mutation {
   """
   Security
   """
-  requestchangeDevice(requestChangeDeviceInputType: ChangeDeviceDtoInput!): ResponseApi!
+
+  requestchangeDevice(requestChangeDeviceInputType: ChangeDeviceDtoInput!): UserValidation!
 
   """
   Security
@@ -1704,6 +1710,8 @@ type CreditOffer {
   products: [PRODUCTO!]
 
   rejectedBlaze: Boolean!
+
+  isCrosseling: Boolean
 }
 
 input CreditOfferDtoInput {
@@ -2158,6 +2166,28 @@ input LinkCreditContractDtoInput {
   pkUser: Long!
 
   idPrint: Long!
+
+  idBrand: Int
+
+  user: String
+}
+
+type GetPayMethod {
+  id: Int!
+
+  descripcion: String!
+
+  nombre: String!
+
+  codigo: String!
+}
+
+input GetPayMethodDtoInput {
+  idClient: String!
+
+  currency: String!
+
+  selectedAmount: Decimal!
 
   idBrand: Int
 
@@ -2786,6 +2816,10 @@ type UserValidation {
   idIdentification: Int
 
   strIdIdentification: String
+
+  idClient: Long
+
+  isNewUser: Boolean
 
   status: Int
 
@@ -5773,6 +5807,8 @@ type CreditInfo {
   infoPreApprove: CreditPreApproveInfo
 
   wording: Wording
+
+  createDate: DateTime
 }
 
 type AppUser {
@@ -6643,6 +6679,10 @@ type Wording {
   textTwo: String!
 
   cTA: String!
+
+  link: String!
+
+  display: Boolean!
 }
 
 type VirtualcardConfigurationType {

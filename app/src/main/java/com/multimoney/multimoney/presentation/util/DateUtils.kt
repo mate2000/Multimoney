@@ -1,11 +1,13 @@
 package com.multimoney.multimoney.presentation.util
 
+import android.os.Build
 import com.multimoney.multimoney.R
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Period
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
@@ -157,6 +159,12 @@ fun parseApiDateToTermsAndConditionsDateTime(date: String?): String {
     } else {
         ""
     }
+}
+
+fun Calendar.toLocalDate(): LocalDate = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    LocalDateTime.ofInstant(this.toInstant(), this.timeZone.toZoneId()).toLocalDate()
+} else {
+    LocalDateTime.ofInstant(this.toInstant(), ZoneId.systemDefault()).toLocalDate()
 }
 
 enum class FilterDateByDays(val days: Long, val time: String, val timeAbv: String) {

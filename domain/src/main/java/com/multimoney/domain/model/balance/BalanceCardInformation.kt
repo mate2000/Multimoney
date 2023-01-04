@@ -1,5 +1,9 @@
 package com.multimoney.domain.model.balance
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class BalanceCardInformation(
     val cardInformation: CardInformation?,
     val floatingBalance: String?,
@@ -8,5 +12,6 @@ data class BalanceCardInformation(
     val interestRate: String?,
     val term: String?,
     val fullName: String?,
-    val remission: Boolean?
-)
+    val remission: Boolean?,
+    val status: String?
+) : Parcelable

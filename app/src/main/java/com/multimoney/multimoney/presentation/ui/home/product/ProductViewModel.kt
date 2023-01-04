@@ -223,16 +223,15 @@ class ProductViewModel @Inject constructor(
             navigateTo("${Screen.SmartPaymentMethodScreenSV.baseRoute}/$smartIds")
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             val infoCredit = uiState.userStatus?.infoCredit
-            val smartIds = encodeData(
-                balanceCredit?.balanceAccountSmart?.map {
-                    SmartAccountID(
-                        tokenAccount = it?.tokenNumber,
-                        currencyID = it?.idCurrencyAccount,
-                        accountNumber = it?.accountNumber ?: ""
-                    )
-                }
-            )
-            navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/$smartIds/$email/${uiState.idBrand}/$identification/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
+            val smartIds = encodeData(balanceCredit?.balanceAccountSmart?.map {
+                SmartAccountID(
+                    tokenAccount = it?.tokenNumber,
+                    currencyID = it?.idCurrencyAccount,
+                    accountNumber = it?.accountNumber ?: "",
+                    ibanAccountNumber = it?.ibanAccountNumber
+                )
+            })
+            navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/${smartIds}/$email/${uiState.idBrand}/$identification/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
         }
     }
 
@@ -327,18 +326,18 @@ class ProductViewModel @Inject constructor(
         navigateTo(
             "${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/${uiState.userStatus?.infoUser?.phone}/${
             encodeData(
-                balanceCredit?.balanceCardInformation?.cardInformation
+                balanceCredit?.balanceCardInformation
             )
-            }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}"
+            }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}/$idClient/${uiState.userStatus?.infoCredit?.idLoanClient ?: 0}"
         )
 
     private fun onNavigateToHomeMultimoneyVisa() =
         navigateTo(
             "${Screen.VisaCardScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/${uiState.userStatus?.infoUser?.phone}/${
             encodeData(
-                balanceCredit?.balanceCardInformation?.cardInformation
+                balanceCredit?.balanceCardInformation
             )
-            }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}"
+            }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}/$idClient/${uiState.userStatus?.infoCredit?.idLoanClient ?: 0}"
         )
 
     private fun onNavigateToProfileScreen() {
@@ -504,7 +503,10 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToGtSvNonPreApproved() =
         navigateTo(
-            route = "${Screen.NonPreApprovedScreen.baseRoute}/$pkUser/$email/${uiState.idBrand}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}"
+            "${Screen.NonPreApprovedScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
+                    "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/${uiState.userStatus?.infoUser?.firstName}/" +
+                    "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
+                    "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0}"
         )
 
     fun getCreditBalanceLabel(balanceCredit: List<BalanceCredit?>?): String {
@@ -655,7 +657,8 @@ class ProductViewModel @Inject constructor(
         val smartIds = SmartAccountID(
             tokenAccount = account?.tokenNumber,
             currencyID = account?.idCurrencyAccount,
-            accountNumber = account?.accountNumber
+            accountNumber = account?.accountNumber,
+            ibanAccountNumber = account?.ibanAccountNumber
         )
         navigateTo(
             route = "${Screen.SmartPaymentAccountScreenCR.baseRoute}/$email/${uiState.idBrand}/$identification/${Screen.HomeScreen.route}/$idClient/" +
@@ -672,13 +675,14 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToSendMoneyScreen(account: Account?) {
         smartAccount = SmartAccountID(
-            account?.tokenNumber,
-            account?.idCurrencyAccount,
-            account?.accountNumber
+            tokenAccount = account?.tokenNumber,
+            currencyID = account?.idCurrencyAccount,
+            accountNumber = account?.accountNumber,
+            totalBalance = account?.totalBalance
         )
         if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             navigateTo(
-                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${pkUser}/${uiState.idBrand}/${identification}/${encodeData(smartAccount)}"
+                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${userName}/${uiState.idBrand}/${identification}/${encodeData(smartAccount)}/$idClient"
             )
         }
     }

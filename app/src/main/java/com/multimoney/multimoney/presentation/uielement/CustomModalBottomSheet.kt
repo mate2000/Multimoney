@@ -32,6 +32,7 @@ fun CustomModalBottomSheet(
     title: Int,
     closeIcon: Int,
     closeAction: () -> Unit = {},
+    closeIconVisible: Boolean = true,
     shape: Shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
     modalBottomSheetState: ModalBottomSheetState,
     coroutineScope: CoroutineScope,
@@ -68,7 +69,11 @@ fun CustomModalBottomSheet(
                         modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentHeight(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
+                        horizontalArrangement = if (closeIconVisible) {
+                            Arrangement.SpaceBetween
+                        } else {
+                            Arrangement.Center
+                        },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
@@ -76,21 +81,23 @@ fun CustomModalBottomSheet(
                             style = Typography.subtitle1.copy(fontWeight = FontWeight.SemiBold),
                             color = titleColor
                         )
-                        Image(
-                            painter = painterResource(id = closeIcon),
-                            contentDescription = "",
-                            modifier = Modifier.clickable {
-                                coroutineScope.launch {
-                                    closeAction()
-                                    modalBottomSheetState.hide()
+                        if (closeIconVisible) {
+                            Image(
+                                painter = painterResource(id = closeIcon),
+                                contentDescription = "",
+                                modifier = Modifier.clickable {
+                                    coroutineScope.launch {
+                                        closeAction()
+                                        modalBottomSheetState.hide()
+                                    }
                                 }
-                            }
-                        )
+                            )
+                        }
                     }
                     content()
                 }
             }
-        },
+        }
     ) {
         Box(
             Modifier

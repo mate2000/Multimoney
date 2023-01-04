@@ -23,8 +23,8 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmou
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.options.SmartPaymentOptionsScreen
-import com.multimoney.multimoney.presentation.ui.smart.payment.sending.SmartSelectSendingTypeScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.transfer.SavingMethodTransferScreen
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.sending.SmartSelectSendingTypeScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.register.SmartTransferRegisterIbanScreen
 
 const val MASKED_CARD = "masked_card"

@@ -60,7 +60,7 @@ fun CustomDropdown(
     modifier: Modifier,
     items: List<String>,
     value: String,
-    onValueChange: (newText: String) -> Unit = {},
+    onValueChange: (newText: String, index: Int) -> Unit = { _: String, _: Int -> },
     labelText: String,
     placeHolder: String?,
     isError: Boolean = false,
@@ -189,7 +189,7 @@ fun CustomDropdown(
 @Composable
 fun CustomHighlightDropdown(
     items: List<String>,
-    onValueChange: (newText: String) -> Unit = {},
+    onValueChange: (newText: String, index: Int) -> Unit = { _: String, _: Int -> },
     onDismissRequest: () -> Unit,
     modifier: Modifier,
     expanded: Boolean,
@@ -214,10 +214,10 @@ fun CustomHighlightDropdown(
                 .background(ComplementaryBlack3),
             offset = DpOffset(0.dp, 10.dp)
         ) {
-            items.forEach { label ->
+            items.forEachIndexed { index, label ->
                 DropdownMenuItem(onClick = {
                     onDismissRequest()
-                    onValueChange(label)
+                    onValueChange(label, index)
                 }) {
                     Text(
                         text = label,
@@ -247,8 +247,8 @@ fun CustomDropdown(
         modifier = modifier,
         items = items?.map { it?.description ?: "" } ?: listOf(),
         value = value?.description ?: "",
-        onValueChange = { valueSelected ->
-            onValueChange(items?.findLast { it?.description == valueSelected })
+        onValueChange = { _, index ->
+            onValueChange(items?.get(index))
         },
         labelText = labelText,
         placeHolder = placeHolder,

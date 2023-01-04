@@ -1,0 +1,44 @@
+mutation ProcessSinpeTransfer(
+    $pkUser: Int!,
+    $identification: String!,
+    $originCustomerIdentification: String!,
+    $ibanAccountOrigin: String!,
+    $originCustomerName: String!,
+    $idCurrencyOrigin: String!,
+    $amountToTransfer: Decimal!,
+    $ibanAccountDestination: String!,
+    $destinationCustomerIdentification: String!,
+    $destinationCustomerName: String!,
+    $idCurrencyDestination: String!,
+    $reasonOfTransfer: String!,
+    $type: String!,
+    $exchangeRate: Decimal!,
+    $user: String!,
+    $idBrand: Int!
+){
+    sinpeTransfer(
+        sinpeTransferInput: {
+            pkUsuario: $pkUser
+            identification: $identification
+            originCustomerIdentification: $originCustomerIdentification
+            ibanAccountOrigin: $ibanAccountOrigin
+            originCustomerName: $originCustomerName
+            idCurrencyOrigin: $idCurrencyOrigin
+            ibanAccountDestination: $ibanAccountDestination
+            destinationCustomerIdentification: $destinationCustomerIdentification
+            destionationCustomerName: $destinationCustomerName
+            idCurrencyDestination: $idCurrencyDestination
+            reasonOfTransfer: $reasonOfTransfer
+            tYPE: $type
+            amountToTransfer: $amountToTransfer
+            exchangeRate: $exchangeRate
+            idBrand: $idBrand
+            user: $user
+        }
+    ) {
+        result {
+            nUMERO_REFERENCIA_INTERNO
+        }
+        message
+    }
+}

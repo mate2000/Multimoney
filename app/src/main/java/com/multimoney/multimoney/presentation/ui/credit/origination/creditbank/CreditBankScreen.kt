@@ -144,10 +144,10 @@ fun CreditBankScreen(
                 .focusable(false)
                 .padding(top = 16.dp),
             items = viewModel.uiState.accountTypeListFiltered?.map { it?.description ?: "" } ?: listOf(),
-            onValueChange = { value ->
+            onValueChange = { valueSelected, _ ->
                 viewModel.onUIEvent(
                     OnAccountTypeValueChanged(
-                        viewModel.uiState.accountTypeListFiltered?.findLast { it?.description == value }
+                        viewModel.uiState.accountTypeListFiltered?.findLast { it?.description == valueSelected }
                     )
                 )
             },

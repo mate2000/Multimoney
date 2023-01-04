@@ -188,8 +188,8 @@ fun SmartCrSalaryScreen(
                 professionStatus?.name ?: ""
             },
             value = viewModel.uiState.profession,
-            onValueChange = {
-                viewModel.onUIEvent(OnProfessionChange(it))
+            onValueChange = { valueSelected, _ ->
+                viewModel.onUIEvent(OnProfessionChange(valueSelected))
             },
             labelText = stringResource(id = string.smart_account_formal_select_profession),
             placeHolder = stringResource(id = string.select)

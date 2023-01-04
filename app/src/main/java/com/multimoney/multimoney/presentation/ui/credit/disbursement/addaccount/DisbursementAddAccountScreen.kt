@@ -99,10 +99,10 @@ fun DisbursementAddAccountScreen(
                     items = viewModel.uiState.accountTypeListFiltered?.map { it?.description ?: "" }
                         ?: listOf(),
                     value = viewModel.uiState.accountTypeSelectedString,
-                    onValueChange = { value ->
+                    onValueChange = { valueSelected, _ ->
                         viewModel.onUIEvent(
                             OnAccountTypeValueChanged(
-                                viewModel.uiState.accountTypeListFiltered?.findLast { it?.description == value })
+                                viewModel.uiState.accountTypeListFiltered?.findLast { it?.description == valueSelected })
                         )
                     })
                 AccountNumber(
@@ -189,7 +189,7 @@ private fun AccountNumber(
 private fun AccountType(
     items: List<String>,
     value: String,
-    onValueChange: (String) -> Unit
+    onValueChange: (String, Int) -> Unit
 ) {
     CustomDropdown(
         modifier = Modifier

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ButtonDefaults
@@ -127,7 +126,10 @@ fun PaymentSuccessResult(
                         textAlign = TextAlign.Center
                     )
                     if (exchangedAmount.isNullOrBlank().not()) {
-                        ExchangeTotalLabel(totalConverted = exchangedAmount ?: "")
+                        ExchangeTotalLabel(
+                            showIcon = false,
+                            totalConverted = exchangedAmount ?: ""
+                        )
                     }
                 }
                 Box(
@@ -174,7 +176,8 @@ private fun PaymentSuccessResultPreview() {
     PaymentSuccessResult(
         onShareClick = { _, _ -> },
         savePayText = "Ahorrado",
-        amount = "500$",
+        amount = "$500",
+        exchangedAmount = "Q3200",
         fromToText = "Desde",
         buttonText = "Hacer otro ahorro",
         onButtonClick = {}

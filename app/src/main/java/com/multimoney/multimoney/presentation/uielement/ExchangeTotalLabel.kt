@@ -63,8 +63,8 @@ fun ExchangeTotalLabel(
                 contentDescription = "",
                 tint = iconColor
             )
+            Spacer(modifier = Modifier.width(8.dp))
         }
-        Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = fullText.addTextStyleToTextPortion(
                 style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),

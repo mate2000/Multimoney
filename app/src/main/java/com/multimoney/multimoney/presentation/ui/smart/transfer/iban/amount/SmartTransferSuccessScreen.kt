@@ -44,6 +44,7 @@ fun SmartTransferSuccessScreen(
                 viewModel.uiState.currency
             ),
             amount = viewModel.getFormattedAmount(),
+            exchangedAmount = viewModel.uiState.convertedAmountLabel,
             fromToText = stringResource(R.string.smart_payment_to_account),
             buttonText = stringResource(R.string.smart_payment_make_another_payment),
             onButtonClick = { viewModel.onUIEvent(OnNavigateBack) }
@@ -53,7 +54,7 @@ fun SmartTransferSuccessScreen(
                 icon = R.drawable.ic_bank_account,
                 title = stringResource(R.string.smart_payment_origin_account_label),
                 subtitle = getMaskedAccountIban(
-                    viewModel.editAmountHelper.maskedCardNumber ?: "",
+                    viewModel.editAmountHelper.maskedCardNumber,
                     stringResource(R.string.payment_account_masked_text)
                 )
             )

@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.navigation.navgraph
 
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -23,8 +22,7 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPay
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodScreen
-import com.multimoney.multimoney.presentation.ui.smart.payment.options.SmartPaymentOptionsScreen
-import com.multimoney.multimoney.presentation.ui.smart.payment.options.SmartPaymentOptionsViewModel
+import com.multimoney.multimoney.presentation.ui.smart.payment.options.SmartPaymentOptionsContainer
 import com.multimoney.multimoney.presentation.ui.smart.payment.transfer.SavingMethodTransferScreen
 
 const val MASKED_CARD = "masked_card"
@@ -93,7 +91,7 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
                 navArgument(ID_LOAN_CLIENT) { type = NavType.StringType }
             )
         ) {
-            SmartPaymentOptionsScreen(
+            SmartPaymentOptionsContainer(
                 onNavigate = {
                     navController.navigate(it.route)
                 },
@@ -107,8 +105,7 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
                         inclusive = false,
                         saveState = false
                     )
-                },
-                viewModel = hiltViewModel<SmartPaymentOptionsViewModel>()
+                }
             )
         }
         composable(Screen.SavingMethodTransferScreen.route) {

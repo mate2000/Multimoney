@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.payment.options
+package com.multimoney.multimoney.presentation.ui.smart.common.selectsmartaccount
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
@@ -16,9 +16,8 @@ import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.smartaccount.BaseSelectSmartAccountViewModel
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.smartaccount.BaseSelectSmartAccountViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.smartaccount.BaseSelectSmartAccountViewModel.UIEvent.OnSmartAccountSelected
+import com.multimoney.multimoney.presentation.ui.smart.common.selectsmartaccount.BaseSelectSmartAccountViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.common.selectsmartaccount.BaseSelectSmartAccountViewModel.UIEvent.OnSmartAccountSelected
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
@@ -30,6 +29,7 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 fun SmartPaymentOptionsScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
+    topNavBar: @Composable () -> Unit,
     viewModel: BaseSelectSmartAccountViewModel
 ) {
     LaunchedEffect(true) {
@@ -41,10 +41,7 @@ fun SmartPaymentOptionsScreen(
             .background(MultimoneyTheme.colors.background)
             .fillMaxSize()
     ) {
-        TopNavBar(
-            onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
-            isRightButtonVisible = false
-        )
+        topNavBar()
         PaymentOptions(
             onAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected(it)) },
             screenTitle = viewModel.uiState.screenTitle
@@ -71,7 +68,7 @@ fun PaymentOptions(
 ) {
     Column(Modifier.padding(horizontal = 16.dp)) {
         Text(
-            modifier = Modifier.padding(top = 32.dp),
+            modifier = Modifier.padding(vertical = 24.dp),
             text = stringResource(screenTitle),
             style = Typography.h5.copy(
                 fontWeight = FontWeight.SemiBold,

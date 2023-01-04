@@ -688,7 +688,7 @@ class ProductViewModel @Inject constructor(
                     totalBalance = it?.totalBalance
                 )
             })
-            navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/${smartIds}/$email/${uiState.idBrand}/$identification/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
+            navigateTo("${Screen.SmartSelectAccountScreen.baseRoute}/${smartIds}/$email/${uiState.idBrand}/$identification/${infoCredit?.idClient}")
         }
     }
 
@@ -701,7 +701,8 @@ class ProductViewModel @Inject constructor(
         )
         if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             navigateTo(
-                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${userName}/${uiState.idBrand}/${identification}/${encodeData(smartAccount)}/$idClient"
+                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${userName}/${uiState.idBrand}/${identification}/${encodeData(smartAccount)}/$idClient"+
+                        "/${Screen.HomeScreen.route}"
             )
         }
     }

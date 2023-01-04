@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.smart.common.selectsmartaccount.BaseSelectSmartAccountViewModel
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -26,7 +27,7 @@ class SelectSmartAccountViewModel @Inject constructor(
                 encodeData(
                     selectedSmartAccount
                 )
-            }/$idClient"
+            }/$idClient/${Screen.SmartSelectAccountScreen.baseRoute}"
         )
     }
 }

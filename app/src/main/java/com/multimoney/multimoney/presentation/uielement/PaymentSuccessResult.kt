@@ -7,11 +7,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -44,6 +47,7 @@ fun PaymentSuccessResult(
     onShareClick: (view: View, bounds: Rect) -> Unit,
     savePayText: String,
     amount: String,
+    exchangedAmount: String? = null,
     fromToText: String,
     buttonText: String,
     onButtonClick: () -> Unit,
@@ -54,7 +58,8 @@ fun PaymentSuccessResult(
 
     Column(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Box(
@@ -121,6 +126,9 @@ fun PaymentSuccessResult(
                         color = MultimoneyTheme.colors.text,
                         textAlign = TextAlign.Center
                     )
+                    if (exchangedAmount.isNullOrBlank().not()) {
+                        ExchangeTotalLabel(totalConverted = exchangedAmount ?: "")
+                    }
                 }
                 Box(
                     Modifier
@@ -139,6 +147,7 @@ fun PaymentSuccessResult(
                     color = MultimoneyTheme.colors.labelText
                 )
                 infoContent()
+                Spacer(Modifier.height(16.dp))
             }
         }
 
@@ -171,54 +180,33 @@ private fun PaymentSuccessResultPreview() {
         onButtonClick = {}
     ) {
         SmartPaymentInfoItem(
-            modifier = Modifier.padding(start = 21.dp, top = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             icon = drawable.ic_visa_card_item,
-            iconModifier = Modifier
-                .height(24.dp)
-                .width(24.dp),
             title = "Tarjeta",
             subtitle = "Visa••••1234"
         )
 
         SmartPaymentInfoItem(
-            modifier = Modifier.padding(start = 21.dp, top = 32.dp),
             verticalAlignment = Alignment.Top,
             icon = drawable.ic_receipt,
-            iconModifier = Modifier
-                .height(24.dp)
-                .width(24.dp),
             title = stringResource(string.smart_payment_reference_number_label),
             subtitle = "5365841"
         )
 
         SmartPaymentInfoItem(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 21.dp, top = 32.dp, end = 32.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            icon = drawable.ic_calendar,
-            iconModifier = Modifier
-                .height(24.dp)
-                .width(24.dp),
-            title = "12/12/2022",
-            rightSubtitle = "12:05"
-        )
-
-        SmartPaymentInfoItem(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 21.dp, top = 32.dp, end = 32.dp),
-            verticalAlignment = Alignment.CenterVertically,
             icon = drawable.ic_money_gray,
-            iconModifier = Modifier
-                .height(24.dp)
-                .width(24.dp),
             title = stringResource(string.payment_amount_bottom_sheet_exchange_type),
             subtitle = "1000",
             rightTitle = stringResource(string.payment_amount_bottom_sheet_amount_to_debit),
             rightSubtitle = "500",
             showVerticalDivision = true
+        )
+
+        SmartPaymentInfoItem(
+            verticalAlignment = Alignment.CenterVertically,
+            icon = drawable.ic_calendar,
+            title = "12/12/2022",
+            rightSubtitle = "12:05"
         )
     }
 }

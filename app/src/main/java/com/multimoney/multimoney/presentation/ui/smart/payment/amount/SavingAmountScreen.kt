@@ -39,13 +39,10 @@ import com.multimoney.multimoney.presentation.uielement.RoundedPaymentButton
 import com.multimoney.multimoney.presentation.uielement.SmartAmountBody
 import com.multimoney.multimoney.presentation.uielement.SmartPaymentBottomSheet
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
-import com.multimoney.multimoney.presentation.uielement.VoucherCurrencyExchangeInfo
 import com.multimoney.multimoney.presentation.util.CARD_NUMBER_LAST_DIGITS
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.SuggestionOrder
-import com.multimoney.multimoney.presentation.util.filterInvalidAmountInput
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
-import com.multimoney.multimoney.presentation.util.transformation.CurrencyDoubleTransformation
 
 @Composable
 fun SavingAmountScreen(
@@ -191,32 +188,32 @@ private fun SavingAmountBottomSheet(viewModel: SavingAmountViewModel) {
         modalBottomSheetState = viewModel.uiState.bottomSheetState,
         saveSendTitleResource = R.string.smart_payment_amount_bottom_sheet_title,
         amount = viewModel.getFormattedAmount(),
-        exchangedAmount = if (viewModel.shouldDisplayExchange) {
+        exchangedAmount = if (viewModel.editAmountHelper.shouldDisplayExchange) {
             viewModel.uiState.convertedAmountLabel
         } else {
             null
         },
-        fromLabel = stringResource(viewModel.sheetSubtitle),
-        fromTitle = viewModel.bankDetail,
-        fromSubtitle = if (viewModel.idBrand == Brand.CostaRica.id) {
+        fromLabel = stringResource(viewModel.editAmountHelper.sheetSubtitle),
+        fromTitle = viewModel.editAmountHelper.bankDetail,
+        fromSubtitle = if (viewModel.editAmountHelper.idBrand == Brand.CostaRica.id) {
             getMaskedAccountIban(
-                viewModel.ibanAccount?.sinpeAccount ?: "",
+                viewModel.editAmountHelper.ibanAccount?.sinpeAccount ?: "",
                 stringResource(R.string.payment_account_masked_text)
             )
         } else {
             stringResource(
                 R.string.visa_card_masked_number,
-                viewModel.maskedCardNumber.takeLast(CARD_NUMBER_LAST_DIGITS)
+                viewModel.editAmountHelper.maskedCardNumber.takeLast(CARD_NUMBER_LAST_DIGITS)
             )
         },
-        fromIcon = viewModel.originIcon,
+        fromIcon = viewModel.editAmountHelper.originIcon,
         toLabel = stringResource(R.string.smart_payment_amount_bottom_sheet_to),
         toTitle = stringResource(
             R.string.smart_payment_amount_bottom_sheet_my_smart_account,
-            viewModel.smartCurrency?.symbol ?: ""
+            viewModel.editAmountHelper.smartCurrency?.symbol ?: ""
         ),
-        toSubtitle = if (viewModel.idBrand == Brand.CostaRica.id) {
-            stringResource(viewModel.smartCurrency?.currencyName ?: R.string.empty)
+        toSubtitle = if (viewModel.editAmountHelper.idBrand == Brand.CostaRica.id) {
+            stringResource(viewModel.editAmountHelper.smartCurrency?.currencyName ?: R.string.empty)
         } else {
             null
         },

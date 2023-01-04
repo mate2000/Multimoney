@@ -129,7 +129,7 @@ fun SmartPaymentBottomSheet(
                     .fillMaxWidth()
                     .height(32.dp)
             )
-            if (motive.isNullOrBlank().not()) {
+            motive?.let {
                 Text(
                     text = stringResource(id = R.string.motive),
                     style = Typography.body2.copy(fontWeight = FontWeight.W600),
@@ -138,7 +138,7 @@ fun SmartPaymentBottomSheet(
                     modifier = Modifier.fillMaxWidth()
                 )
                 Text(
-                    text = motive ?: "",
+                    text = motive,
                     style = Typography.subtitle2,
                     color = MultimoneyTheme.colors.subTitleText,
                     textAlign = TextAlign.Start,

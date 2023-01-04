@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -53,7 +54,10 @@ fun SmartPaymentInfoItem(
     showVerticalDivision: Boolean = false
 ) {
     Row(
-        modifier = modifier.height(IntrinsicSize.Min),
+        modifier = modifier
+            .height(IntrinsicSize.Min)
+            .fillMaxWidth()
+            .padding(start = 24.dp, top = 24.dp, end = 24.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Row(
@@ -65,6 +69,8 @@ fun SmartPaymentInfoItem(
                     contentDescription = "",
                     tint = iconTint,
                     modifier = iconModifier
+                        .height(24.dp)
+                        .width(24.dp)
                 )
             }
             Column(modifier = Modifier.padding(start = 14.dp)) {
@@ -83,11 +89,11 @@ fun SmartPaymentInfoItem(
             }
         }
         if (showVerticalDivision) {
-            Column(
+            Box(
                 Modifier.fillMaxHeight()
                     .width(1.dp)
                     .background(color = MultimoneyTheme.colors.dividerWhite40)
-            ) {}
+            )
         }
         Column(modifier = Modifier.padding(end = 14.dp)) {
             if (rightTitle.isNullOrBlank().not()) {

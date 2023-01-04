@@ -47,12 +47,9 @@ import com.multimoney.multimoney.presentation.util.getCurrentTime
 import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.Calendar
-import javax.inject.Inject
 import javax.inject.Inject
 
 @HiltViewModel
@@ -196,7 +193,7 @@ class SavingAmountViewModel @Inject constructor(
                 transferType = SmartSinpeTransferType.REQUEST,
                 amountToTransfer = if (editAmountHelper.shouldDisplayExchange) {
                     // Using this value cause endpoint expects amount in the same currency of the account
-                    uiState.exchangeConvertedAmount
+                    uiState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
                 } else {
                     uiState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
                 },
@@ -306,10 +303,12 @@ class SavingAmountViewModel @Inject constructor(
             CURRENCY_SEPARATOR.toString()
         )
 
-    fun getConvertedAmountFormatted() = "${editAmountHelper.ibanCurrency?.id?.getCurrencyFromId()?.symbol}${
-    uiState.exchangeConvertedAmount.formattedTwoDecimalsNumber().toString()
-        .stringToDoubleFormat(CURRENCY_SEPARATOR.toString())
-    }"
+    fun getConvertedAmountFormatted() =
+        "${editAmountHelper.ibanCurrency?.symbol}${
+        uiState.exchangeConvertedAmount.formattedTwoDecimalsNumber().toString()
+            .stringToDoubleFormat(CURRENCY_SEPARATOR.toString())
+        }"
+
     private fun onNavigateToHome() {
         navigateBack(
             popTo = Screen.HomeScreen.route,

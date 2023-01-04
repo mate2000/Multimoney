@@ -70,6 +70,8 @@
     <string name="you_have_exceeded_the_max_characters_error" translatable="false">Has excedido el máximo de caracteres permitidos</string>
     <string name="error_button_retry" translatable="false">Reintentar</string>
     <string name="error_button_try_later" translatable="false">Intentar más tarde</string>
+    <string name="error_try_again" translatable="false">Intentalo nuevamente</string>
+    <string name="error_button_try_again" translatable="false">Intentar de nuevo</string>
 
     <!-- OnBoarding -->
     <string name="onboarding_step_one_title" translatable="false">Multiplicá tus ahorros</string>

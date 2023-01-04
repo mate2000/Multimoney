@@ -108,7 +108,8 @@ fun SmartLivingAddressScreen(
             message = viewModel.uiState.openDialog.description.ifBlank {
                 stringResource(R.string.error)
             },
-            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction,
+            openDialogCustom = viewModel.uiState.openDialog.isActive
         )
     }
 

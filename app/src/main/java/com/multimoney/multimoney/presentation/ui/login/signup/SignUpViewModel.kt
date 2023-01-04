@@ -74,8 +74,7 @@ class SignUpViewModel @Inject constructor(
     private fun nextStep() {
         if (nextStep <= SIGN_UP_TOTAL_STEPS) {
             uiState = uiState.copy(
-                currentStep = nextStep,
-                isCloseVisible = nextStep > SignUpStep.One.id
+                currentStep = nextStep
             )
         } else {
             completedProcessAction()
@@ -85,8 +84,7 @@ class SignUpViewModel @Inject constructor(
     private fun previousStep() {
         if (previousStep > SignUpStep.One.id || uiState.currentStep == SignUpStep.Two.id) {
             uiState = uiState.copy(
-                currentStep = previousStep,
-                isCloseVisible = previousStep > SignUpStep.One.id
+                currentStep = previousStep
             )
         } else {
             popAndNavigateTo(
@@ -103,8 +101,7 @@ class SignUpViewModel @Inject constructor(
     private fun moveToStep(step: Int) {
         if (step <= SIGN_UP_TOTAL_STEPS) {
             uiState = uiState.copy(
-                currentStep = step,
-                isCloseVisible = step > SignUpStep.One.id
+                currentStep = step
             )
         }
     }

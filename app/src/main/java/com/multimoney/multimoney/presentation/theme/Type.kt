@@ -27,7 +27,7 @@ val Typography = Typography(
         fontFamily = PoppinsFontFamily,
         fontWeight = FontWeight.W400,
         fontSize = 60.sp,
-        letterSpacing = 0.5.sp
+        letterSpacing = (-0.5).sp
     ),
     h3 = TextStyle(
         fontFamily = PoppinsFontFamily,

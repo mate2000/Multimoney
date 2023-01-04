@@ -147,7 +147,7 @@ private fun SmartTransferBottomSheet(viewModel: SmartTransferAmountViewModel) {
             viewModel.editAmountHelper.smartCurrency?.symbol ?: ""
         ),
         fromSubtitle = getMaskedAccountIban(
-            viewModel.editAmountHelper.maskedCardNumber,
+            viewModel.editAmountHelper.smartAccount?.ibanAccountNumber ?: "",
             stringResource(R.string.payment_account_masked_text)
         ),
         toLabel = stringResource(R.string.smart_payment_sheet_to_account),
@@ -155,7 +155,7 @@ private fun SmartTransferBottomSheet(viewModel: SmartTransferAmountViewModel) {
         toTitle = viewModel.editAmountHelper.accountName,
         toSubtitle = getFullMaskedAccountIban(
             viewModel.editAmountHelper.bankDetail,
-            viewModel.editAmountHelper.smartAccount?.ibanAccountNumber ?: "",
+            viewModel.editAmountHelper.maskedCardNumber,
             stringResource(R.string.payment_account_masked_text)
         ),
         motive = viewModel.uiState.motive,

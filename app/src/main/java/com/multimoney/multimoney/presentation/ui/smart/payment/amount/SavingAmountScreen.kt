@@ -197,7 +197,7 @@ private fun SavingAmountBottomSheet(viewModel: SavingAmountViewModel) {
         fromTitle = viewModel.editAmountHelper.bankDetail,
         fromSubtitle = if (viewModel.editAmountHelper.idBrand == Brand.CostaRica.id) {
             getMaskedAccountIban(
-                viewModel.editAmountHelper.maskedCardNumber,
+                viewModel.editAmountHelper.ibanAccount?.sinpeAccount ?: "",
                 stringResource(R.string.payment_account_masked_text)
             )
         } else {

@@ -86,7 +86,8 @@ fun OnBoardingScreen(
             Modifier
                 .fillMaxSize()
                 .padding(top = 16.dp, start = 16.dp, end = 16.dp)
-                .weight(0.6f)
+                .weight(0.6f),
+            verticalArrangement = Arrangement.Bottom
         ) {
             Text(
                 text = stringResource(id = viewModel.uiState.title),
@@ -95,12 +96,12 @@ fun OnBoardingScreen(
                     .fillMaxWidth()
                     .padding(top = 30.dp)
                     .weight(
-                        0.12f, false
+                        0.14f, false
                     ),
-                style = TextStyle(
+                style = Typography.h3.copy(
                     fontSize = 48.sp,
                     color = MultimoneyTheme.colors.onBoardingTitleText,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.SemiBold
                 )
             )
             Text(
@@ -109,8 +110,8 @@ fun OnBoardingScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 24.dp, bottom = 80.dp)
-                    .weight(0.13f, true),
-                style = TextStyle(
+                    .weight(0.14f, true),
+                style = Typography.h6.copy(
                     color = MultimoneyTheme.colors.onBoardingSubText,
                     fontSize = 20.sp
                 )
@@ -154,7 +155,7 @@ fun OnBoardingScreen(
                         .wrapContentSize()
                         .padding(start = 4.dp),
                     onClick = {
-                        viewModel.onUIEvent(OnNavigateToNextScreen(Screen.SignInScreen.route))
+                        viewModel.onUIEvent(OnNavigateToNextScreen(Screen.SignInScreen.baseRoute))
                     }
                 )
             }

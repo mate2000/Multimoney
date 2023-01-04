@@ -150,7 +150,7 @@ fun SmartTransferRegisterIbanScreen(
                 onValueChange = { documentNumber ->
                     viewModel.onUIEvent(OnIdentificationValueChange(documentNumber))
                 },
-                onSelectionChange = { documentType ->
+                onSelectionChange = { documentType, _ ->
                     viewModel.onUIEvent(OnIdentificationTypeChange(documentType))
                 },
                 optionList = viewModel.uiState.documentList,

@@ -48,7 +48,7 @@ fun CustomDropdownTextField(
     errorMessage: String? = null,
     enabled: Boolean = true,
     onValueChange: (newText: String) -> Unit = {},
-    onSelectionChange: (newSelection: String) -> Unit = {},
+    onSelectionChange: (newSelection: String, index: Int) -> Unit = { _: String, _: Int -> },
     optionList: List<String> = listOf(),
     optionSelected: String = "",
     customTransformation: VisualTransformation? = null,

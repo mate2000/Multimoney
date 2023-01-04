@@ -6589,6 +6589,8 @@ type Wording {
 
   cTA: String!
 
+  link: String!
+
   display: Boolean!
 }
 

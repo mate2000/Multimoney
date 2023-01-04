@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.navigation.navgraph
 
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -10,13 +11,17 @@ import com.multimoney.multimoney.presentation.navigation.IBAN_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.SMART_IDS
+import com.multimoney.multimoney.presentation.navigation.SMART_IDS_LIST
 import com.multimoney.multimoney.presentation.navigation.SMART_TRANSFER_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SinpeAccountNavType
+import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAccountIDListNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAccountIDNavType
+import com.multimoney.multimoney.presentation.ui.smart.payment.options.SmartPaymentOptionsScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.sending.SmartSelectSendingTypeScreen
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.smartaccount.SelectSmartAccountViewModel
 
 fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
     navigation(
@@ -104,6 +109,36 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                         saveState = false
                     )
                 }
+            )
+        }
+        composable(
+            route = Screen.SmartPaymentOptionsScreenCR.route,
+            arguments = listOf(
+                navArgument(SMART_IDS_LIST) {
+                    type = SmartAccountIDListNavType()
+                },
+                navArgument(USER) { type = NavType.StringType },
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(ID_CLIENT) { type = NavType.StringType },
+                navArgument(ID_LOAN_CLIENT) { type = NavType.StringType }
+            )
+        ) {
+            SmartPaymentOptionsScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                },
+                viewModel = hiltViewModel<SelectSmartAccountViewModel>()
             )
         }
     }

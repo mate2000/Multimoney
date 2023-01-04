@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.domain.model.accountsmart.SmartAccountID
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.SMART_IDS_LIST
@@ -13,7 +14,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.ui.smart.payment.options.SmartPaymentOptionsViewModel
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.smartaccount.BaseSelectSmartAccountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.smartaccount.BaseSelectSmartAccountViewModel.UIEvent.OnSmartAccountSelected
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
@@ -24,8 +24,8 @@ open class BaseSelectSmartAccountViewModel(
 ) : BaseViewModel(true) {
 
     // UIState
-    var uiState by mutableStateOf(SmartPaymentOptionsViewModel.UIState())
-        private set
+    var uiState by mutableStateOf(UIState())
+        protected set
 
     // Stateless
     protected var user: String = ""
@@ -59,9 +59,10 @@ open class BaseSelectSmartAccountViewModel(
         }
     }
 
-    open class UIState(
+    data class UIState(
         val openDialog: DialogParameters = DialogParameters(),
-        var isLoading: Boolean = false
+        var isLoading: Boolean = false,
+        val screenTitle: Int = R.string.payment_options_title_cr
     )
 
     open fun onUIEvent(uiEvent: UIEvent) {

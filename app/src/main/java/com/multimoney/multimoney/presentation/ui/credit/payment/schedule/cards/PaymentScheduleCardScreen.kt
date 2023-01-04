@@ -123,7 +123,10 @@ fun PaymentScheduleContent(
                         imageModifier = Modifier.size(48.dp),
                         startIcon = drawable.ic_visa_card_item,
                         title = detail ?: "",
-                        subtitle = cardMaskedNumber ?: "",
+                        subtitle = stringResource(
+                            id = string.visa_card_masked_number,
+                            cardMaskedNumber?.takeLast(4) ?: 0
+                        ),
                         endIcon = drawable.ic_edit_green,
                         onEndIconClick = {
                             viewModel.onUIEvent(OnEditCardVisaDirect)

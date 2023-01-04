@@ -1,6 +1,5 @@
 package com.multimoney.data.base
 
-import android.util.Log
 import com.apollographql.apollo3.ApolloCall
 import com.apollographql.apollo3.api.Operation
 import com.apollographql.apollo3.exception.ApolloException
@@ -11,6 +10,7 @@ import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.util.MultimoneyException.APOLLO_ERROR
 import com.multimoney.domain.util.MultimoneyException.APOLLO_PARSE_EXCEPTION
 import com.multimoney.domain.util.MultimoneyException.UNKNOWN_ERROR
+import java.io.IOException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
-import java.io.IOException
+import timber.log.Timber
 
 abstract class BaseRepository {
 
@@ -113,7 +113,7 @@ abstract class BaseRepository {
                             )
                         )
                     } else {
-                        Log.wtf("Subscription", apolloResponse.data.toString())
+                        Timber.wtf("SUBSCRITION_MM", apolloResponse.data.toString())
                         send(MultimoneyResult.Success(apolloResponse.data))
                     }
                 }

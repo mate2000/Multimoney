@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -101,7 +102,8 @@ fun SmartCrSalaryScreen(
                                 idJobLevel2 = sourceIncomeSharedViewModel.uiState.divisionTwoSelected?.id?.toLongOrNull(),
                                 idJobLevel3 = sourceIncomeSharedViewModel.uiState.divisionThreeSelected?.id?.toLongOrNull(),
                                 fullJobAddress = sourceIncomeSharedViewModel.uiState.address,
-                                income = viewModel.uiState.paymentAmount.toFloat()
+                                income = viewModel.uiState.paymentAmount.toFloat(),
+                                currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep)
                             )
                         )
                     )
@@ -186,8 +188,8 @@ fun SmartCrSalaryScreen(
                 professionStatus?.name ?: ""
             },
             value = viewModel.uiState.profession,
-            onValueChange = {
-                viewModel.onUIEvent(OnProfessionChange(it))
+            onValueChange = { valueSelected, _ ->
+                viewModel.onUIEvent(OnProfessionChange(valueSelected))
             },
             labelText = stringResource(id = string.smart_account_formal_select_profession),
             placeHolder = stringResource(id = string.select)

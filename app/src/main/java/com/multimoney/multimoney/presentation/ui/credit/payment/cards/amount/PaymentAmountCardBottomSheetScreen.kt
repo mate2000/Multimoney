@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnAutomaticProgrammedPaymentCheckedChanged
@@ -24,7 +25,6 @@ import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.CustomModalBottomSheet
-import com.multimoney.multimoney.presentation.util.getMaskedVisa
 import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -66,9 +66,9 @@ fun PaymentAmountCardBottomSheetScreen(
                     .height(72.dp),
                 startIcon = R.drawable.ic_visa_card_item,
                 title = viewModel.uiState.card?.detail.orEmpty(),
-                subtitle = getMaskedVisa(
-                    viewModel.uiState.card?.cardMaskedNumber.orEmpty(),
-                    stringResource(id = R.string.visa_card_masked_number)
+                subtitle = stringResource(
+                    id = string.visa_card_masked_number,
+                    viewModel.uiState.card?.cardMaskedNumber?.takeLast(4) ?: 0
                 ),
                 endIcon = null,
                 enable = false

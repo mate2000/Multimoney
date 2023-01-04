@@ -581,6 +581,7 @@ class ProductViewModel @Inject constructor(
             QuickActionFlow.ACTIVATE_MM_VISA.flow -> onCreateMultimoneyVisa(onLoadingValueChange)
             QuickActionFlow.PAY_FEE.flow -> onNavigateToPaymentScreen()
             QuickActionFlow.SAVE_SMART.flow -> onNavigateToSmartSave()
+            QuickActionFlow.SEND_MONEY.flow -> onNavigateToSendMoneyScreenQuickAction()
         }
     }
 
@@ -673,6 +674,23 @@ class ProductViewModel @Inject constructor(
         )
     }
 
+    private fun onNavigateToSendMoneyScreenQuickAction() {
+        if (uiState.idBrand == Brand.ElSalvador.id.toString()) {
+            val account = balanceCredit?.balanceAccountSmart?.first()
+            smartAccount = SmartAccountID(
+                account?.tokenNumber,
+                account?.idCurrencyAccount,
+                account?.accountNumber
+            )
+            navigateTo(
+                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${userName}/${uiState.idBrand}/${identification}/${encodeData(smartAccount)}/$idClient"
+            )
+        } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
+            // TODO navigate to account selection screen HU [tbd]
+            emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
+        }
+    }
+
     private fun onNavigateToSendMoneyScreen(account: Account?) {
         smartAccount = SmartAccountID(
             tokenAccount = account?.tokenNumber,
@@ -680,11 +698,9 @@ class ProductViewModel @Inject constructor(
             accountNumber = account?.accountNumber,
             totalBalance = account?.totalBalance
         )
-        if (uiState.idBrand == Brand.CostaRica.id.toString()) {
-            navigateTo(
-                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${userName}/${uiState.idBrand}/${identification}/${encodeData(smartAccount)}/$idClient"
-            )
-        }
+        navigateTo(
+            "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${userName}/${uiState.idBrand}/${identification}/${encodeData(smartAccount)}/$idClient"
+        )
     }
 
     private fun onCreateMultimoneyVisa(onLoadingValueChange: (isLoading: Boolean) -> Unit) {
@@ -964,6 +980,7 @@ class ProductViewModel @Inject constructor(
 
     sealed class BaseEvent {
         object OnShowCardIssuanceError : BaseEvent()
+        object OnShowTbdToastEvent: BaseEvent()
     }
 
     companion object {

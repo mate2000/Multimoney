@@ -49,6 +49,7 @@ import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 import com.multimoney.multimoney.presentation.util.transformation.PhoneNumberTransformation
 import com.togitech.ccp.data.CountryData
 import kotlinx.coroutines.flow.Flow
@@ -153,18 +154,18 @@ fun PhoneTextField(
             isError -> {
                 focusedIndicatorColor = SemanticNegative400
                 textColor = DefaultWhite
-                dropdownArrowColor = Color.White.copy(0.6f)
+                dropdownArrowColor = WhiteTransparency60
             }
             enabled -> {
                 focusedIndicatorColor = WhiteTransparency60
                 textColor = DefaultWhite
-                dropdownArrowColor = Color.White.copy(0.9f)
+                dropdownArrowColor = WhiteTransparency90
             }
             else -> {
                 focusedIndicatorColor = DefaultBlack
                 backgroundColor = GrayScale500
                 textColor = GrayScale400
-                dropdownArrowColor = Color.White.copy(0.6f)
+                dropdownArrowColor = WhiteTransparency60
             }
         }
     } else {
@@ -177,18 +178,18 @@ fun PhoneTextField(
             isError -> {
                 focusedIndicatorColor = SemanticNegative500
                 textColor = GrayScale800
-                dropdownArrowColor = Color.White.copy(0.6f)
+                dropdownArrowColor = WhiteTransparency60
             }
             enabled -> {
                 focusedIndicatorColor = Primary500
                 textColor = GrayScale800
-                dropdownArrowColor = Color.White.copy(0.9f)
+                dropdownArrowColor = WhiteTransparency90
             }
             else -> {
                 focusedIndicatorColor = GrayScale400
                 backgroundColor = GrayScale300
                 textColor = GrayScale500
-                dropdownArrowColor = Color.White.copy(0.6f)
+                dropdownArrowColor = WhiteTransparency60
             }
         }
     }

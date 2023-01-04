@@ -104,7 +104,7 @@ fun SmartTransferAmountContent(viewModel: SmartTransferAmountViewModel = hiltVie
             originAccountSubtitle = stringResource(
                 id = viewModel.fromSmartLabel,
                 getMaskedAccountIban(
-                    viewModel.editAmountHelper.maskedCardNumber,
+                    viewModel.editAmountHelper.smartAccount?.ibanAccountNumber ?: "",
                     stringResource(id = R.string.payment_account_masked_text)
                 )
             ),

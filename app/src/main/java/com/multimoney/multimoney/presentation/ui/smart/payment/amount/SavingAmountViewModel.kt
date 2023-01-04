@@ -21,7 +21,6 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.CURRENCY_SEPARATOR
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnAmountCompleted
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnAmountValueChange
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnCallProcessTransfer
@@ -40,7 +39,6 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Dollar
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SuggestedAmount
 import com.multimoney.multimoney.presentation.util.catalog.SuggestionOrder
-import com.multimoney.multimoney.presentation.util.formattedTwoDecimalsNumber
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getCurrentTime
 import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
@@ -298,15 +296,7 @@ class SavingAmountViewModel @Inject constructor(
     }
 
     fun getFormattedAmount() =
-        uiState.currency + uiState.currentAmountValueString?.stringToDoubleFormat(
-            CURRENCY_SEPARATOR.toString()
-        )
-
-    fun getConvertedAmountFormatted() =
-        "${editAmountHelper.ibanCurrency?.symbol}${
-        uiState.exchangeConvertedAmount.formattedTwoDecimalsNumber().toString()
-            .stringToDoubleFormat(CURRENCY_SEPARATOR.toString())
-        }"
+        uiState.currency + uiState.currentAmountValueString?.stringToDoubleFormat()
 
     private fun onNavigateToHome() {
         navigateBack(

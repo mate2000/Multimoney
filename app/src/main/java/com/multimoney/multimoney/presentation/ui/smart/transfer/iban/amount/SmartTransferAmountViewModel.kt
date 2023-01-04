@@ -18,7 +18,6 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnAbandonFlow
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnAmountCompleted
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnAmountValueChange
@@ -255,9 +254,7 @@ class SmartTransferAmountViewModel @Inject constructor(
     }
 
     fun getFormattedAmount() =
-        uiState.currency + uiState.currentAmountValueString?.stringToDoubleFormat(
-            CreditAmountViewModel.CURRENCY_SEPARATOR.toString()
-        )
+        uiState.currency + uiState.currentAmountValueString?.stringToDoubleFormat()
 
     data class UIState(
         val currency: String = "",

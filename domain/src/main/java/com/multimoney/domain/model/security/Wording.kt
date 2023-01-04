@@ -4,5 +4,6 @@ data class Wording(
     val textOne : String,
     val textTwo : String,
     val cTA: String,
+    val link: String = "",
     val display: Boolean = false
 )

@@ -60,7 +60,7 @@ fun CustomDropdown(
     modifier: Modifier,
     items: List<String>,
     value: String,
-    onValueChange: (newText: String) -> Unit = {},
+    onValueChange: (newText: String, index: Int) -> Unit = { _: String, _: Int -> },
     labelText: String,
     placeHolder: String?,
     isError: Boolean = false,
@@ -171,9 +171,11 @@ fun CustomDropdown(
         */
         if (expanded) {
             Popup {
-                Box(modifier = Modifier
-                    .background(BlackTransparency70)
-                    .fillMaxSize())
+                Box(
+                    modifier = Modifier
+                        .background(BlackTransparency70)
+                        .fillMaxSize()
+                )
             }
         }
 
@@ -191,10 +193,10 @@ fun CustomDropdown(
                     },
                 offset = DpOffset(0.dp, 10.dp)
             ) {
-                items.forEach { label ->
+                items.forEachIndexed { index, label ->
                     DropdownMenuItem(onClick = {
                         expanded = false
-                        onValueChange(label)
+                        onValueChange(label, index)
                     }) {
                         Text(
                             text = label,
@@ -225,8 +227,8 @@ fun CustomDropdown(
         modifier = modifier,
         items = items?.map { it?.description ?: "" } ?: listOf(),
         value = value?.description ?: "",
-        onValueChange = { valueSelected ->
-            onValueChange(items?.findLast { it?.description == valueSelected })
+        onValueChange = { _, index ->
+            onValueChange(items?.get(index))
         },
         labelText = labelText,
         placeHolder = placeHolder,

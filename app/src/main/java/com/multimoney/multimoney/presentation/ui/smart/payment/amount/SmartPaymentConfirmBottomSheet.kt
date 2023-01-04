@@ -53,51 +53,52 @@ fun SmartPaymentConfirmBottomSheet(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = CenterHorizontally
         ) {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp),
-                text = viewModel.getFormattedAmount(),
-                style = Typography.h4.copy(fontWeight = FontWeight.W600),
-                color = MultimoneyTheme.colors.text,
-                textAlign = TextAlign.Center
-            )
-            if (viewModel.shouldDisplayExchange) {
-                Spacer(modifier = Modifier.height(8.dp))
-                ExchangeTotalLabel(
-                    totalConverted = viewModel.uiState.convertedAmountLabel
+            viewModel.editAmountHelper.apply {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    text = viewModel.getFormattedAmount(),
+                    style = Typography.h4.copy(fontWeight = FontWeight.W600),
+                    color = MultimoneyTheme.colors.text,
+                    textAlign = TextAlign.Center
+                )
+                if (shouldDisplayExchange) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    ExchangeTotalLabel(
+                        totalConverted = viewModel.uiState.convertedAmountLabel
+                    )
+                }
+                Text(
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .fillMaxWidth(),
+                    text = stringResource(sheetSubtitle),
+                    style = Typography.body2.copy(fontWeight = FontWeight.W600),
+                    color = MultimoneyTheme.colors.text,
+                    textAlign = TextAlign.Start
+                )
+                CustomInfoButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(78.dp),
+                    startIcon = originIcon,
+                    title = bankDetail,
+                    subtitle = if (idBrand == Brand.CostaRica.id) {
+                        getMaskedAccountIban(
+                            maskedCardNumber,
+                            stringResource(id = R.string.payment_account_masked_text)
+                        )
+                    } else {
+                        stringResource(
+                            R.string.visa_card_masked_number,
+                            maskedCardNumber.takeLast(CARD_NUMBER_LAST_DIGITS)
+                        )
+                    },
+                    endIcon = null,
+                    enable = false
                 )
             }
-            Text(
-                modifier = Modifier
-                    .padding(top = 16.dp)
-                    .fillMaxWidth(),
-                text = stringResource(viewModel.sheetSubtitle),
-                style = Typography.body2.copy(fontWeight = FontWeight.W600),
-                color = MultimoneyTheme.colors.text,
-                textAlign = TextAlign.Start
-            )
-            CustomInfoButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(78.dp),
-                startIcon = viewModel.originIcon,
-                title = viewModel.bankDetail,
-                subtitle = if (viewModel.idBrand == Brand.CostaRica.id) {
-                    getMaskedAccountIban(
-                        viewModel.maskedCardNumber,
-                        stringResource(id = R.string.payment_account_masked_text)
-                    )
-                } else {
-                    stringResource(
-                        R.string.visa_card_masked_number,
-                        viewModel.maskedCardNumber.takeLast(CARD_NUMBER_LAST_DIGITS)
-                    )
-                },
-                endIcon = null,
-                enable = false
-            )
-
             Icon(
                 painter = painterResource(R.drawable.ic_down_arrow_from_to),
                 tint = Color.Unspecified,

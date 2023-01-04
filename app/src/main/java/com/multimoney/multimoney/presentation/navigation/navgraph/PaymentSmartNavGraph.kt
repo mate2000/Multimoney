@@ -23,7 +23,6 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmou
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.options.SmartPaymentOptionsScreen
-import com.multimoney.multimoney.presentation.ui.smart.payment.sending.SmartSelectSendingTypeScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.transfer.SavingMethodTransferScreen
 
 const val MASKED_CARD = "masked_card"
@@ -169,31 +168,6 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
             )
         ) {
             SavingAmountScreen(
-                onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        PREVIOUS_IS_RESTART,
-                        it.isRestart
-                    )
-                    navController.popBackStack(
-                        route = it.popTo,
-                        inclusive = false,
-                        saveState = false
-                    )
-                }
-            )
-        }
-
-        composable(
-            route = Screen.SmartSelectSendingTypeScreen.route,
-            arguments = listOf(
-                navArgument(ID_BRAND) { type = NavType.IntType },
-                navArgument(SMART_IDS) { type = SmartAccountIDNavType() }
-            )
-        ) {
-            SmartSelectSendingTypeScreen(
-                onNavigate = {
-                    navController.navigate(it.route)
-                },
                 onPopBackStack = {
                     navController.previousBackStackEntry?.savedStateHandle?.set(
                         PREVIOUS_IS_RESTART,

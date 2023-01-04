@@ -20,6 +20,7 @@ import com.multimoney.data.networking.graphql.apollomodel.CardBlockingNVMutation
 import com.multimoney.data.networking.graphql.apollomodel.CardIssuanceNVQuery
 import com.multimoney.data.networking.graphql.apollomodel.CardUnblockingNVMutation
 import com.multimoney.data.networking.graphql.apollomodel.CatalogTypeIndentificationQuery
+import com.multimoney.data.networking.graphql.apollomodel.ChangeDeviceMutation
 import com.multimoney.data.networking.graphql.apollomodel.ChangeEmailMutation
 import com.multimoney.data.networking.graphql.apollomodel.ChangePhoneMutation
 import com.multimoney.data.networking.graphql.apollomodel.CivilStatusQuery
@@ -75,6 +76,7 @@ import com.multimoney.data.networking.graphql.apollomodel.ProfessionSmartQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProfessionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.QuickActionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.RelationshipQuery
+import com.multimoney.data.networking.graphql.apollomodel.RequestChangeDeviceMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveAutomatedSmartAccountMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveClientBankAccountMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditApplicationMutation
@@ -102,6 +104,7 @@ import com.multimoney.data.networking.graphql.apollomodel.type.BeneficiaryReques
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.credit.CreditInfoQuestion
 import com.multimoney.domain.model.credit.DestinyAccount
+import com.multimoney.domain.model.security.RequestChangeDevice
 import com.multimoney.domain.model.crypto.CryptoCurrencyNews
 import com.multimoney.domain.model.crypto.GetHistoricalCurrencyPrices
 import com.multimoney.domain.model.util.MultimoneyResult
@@ -1573,6 +1576,27 @@ class GraphqlApi @Inject constructor(
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
+
+    fun mutationResquestChangeDevice(
+        email: String,
+    ): ApolloCall<RequestChangeDeviceMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            RequestChangeDeviceMutation(
+                email = email
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationChangeDevice(
+        email: String,
+        otp: String
+    ): ApolloCall<ChangeDeviceMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            ChangeDeviceMutation(
+                email = email,
+                otp = otp
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
     fun querySmartExchangeRate(
         user: String,
         identification: String,
@@ -1608,6 +1632,7 @@ class GraphqlApi @Inject constructor(
                 pkUser = pkUser,
                 currentFlow = currentFlow,
                 identification = identification
+
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

@@ -50,8 +50,7 @@ fun SmartSelectSendingTypeScreen(
             onMyContactsClick = { viewModel.onUIEvent(OnMyContactsSelected)},
             onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected)},
             onIBANAccountsClick = { viewModel.onUIEvent(OnIBANAccountSelected)},
-            smartAccountTitle = viewModel.getTitleSmartAccountResource(),
-            smartAccountStartIcon = viewModel.getIconSmartAccountResource()
+            smartAccountTitleAndIconResources =  viewModel.getTitleAndIconSmartAccountResources()
         )
     }
     BackHandler { viewModel.onUIEvent(OnNavigateBack) }
@@ -62,8 +61,7 @@ fun SendingTypeOptions(
     onMyContactsClick: () -> Unit,
     onMySmartAccountClick: () -> Unit,
     onIBANAccountsClick: () -> Unit,
-    smartAccountTitle: Int?,
-    smartAccountStartIcon: Int?
+    smartAccountTitleAndIconResources: Pair<Int, Int?>
 ) {
     Column(Modifier.padding(horizontal = 16.dp)) {
         Text(
@@ -83,14 +81,14 @@ fun SendingTypeOptions(
             onEndIconClick = onMyContactsClick,
             onClick = onMyContactsClick
         )
-        smartAccountTitle?.let {
+        smartAccountTitleAndIconResources.let { (title, icon) ->
             CustomInfoButton(
-                title = stringResource(id = it),
+                title = stringResource(id = title),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp),
                 endIcon = R.drawable.ic_right_chevron,
-                startIcon = smartAccountStartIcon,
+                startIcon = icon,
                 onEndIconClick = onMySmartAccountClick,
                 onClick = onMySmartAccountClick
             )

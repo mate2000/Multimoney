@@ -338,18 +338,18 @@ class ProductViewModel @Inject constructor(
         navigateTo(
             "${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/${uiState.userStatus?.infoUser?.phone}/${
             encodeData(
-                balanceCredit?.balanceCardInformation?.cardInformation
+                balanceCredit?.balanceCardInformation
             )
-            }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}"
+            }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}/$idClient/${uiState.userStatus?.infoCredit?.idLoanClient ?: 0}"
         )
 
     private fun onNavigateToHomeMultimoneyVisa() =
         navigateTo(
             "${Screen.VisaCardScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/${uiState.userStatus?.infoUser?.phone}/${
             encodeData(
-                balanceCredit?.balanceCardInformation?.cardInformation
+                balanceCredit?.balanceCardInformation
             )
-            }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}"
+            }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}/$idClient/${uiState.userStatus?.infoCredit?.idLoanClient ?: 0}"
         )
 
     private fun onNavigateToProfileScreen() {
@@ -701,13 +701,14 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToSendMoneyScreen(account: Account?) {
         smartAccount = SmartAccountID(
-            account?.tokenNumber,
-            account?.idCurrencyAccount,
-            account?.accountNumber
+            tokenAccount = account?.tokenNumber,
+            currencyID = account?.idCurrencyAccount,
+            accountNumber = account?.accountNumber,
+            totalBalance = account?.totalBalance
         )
         if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             navigateTo(
-                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${pkUser}/${uiState.idBrand}/${identification}/${encodeData(smartAccount)}"
+                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${userName}/${uiState.idBrand}/${identification}/${encodeData(smartAccount)}/$idClient"
             )
         }
     }

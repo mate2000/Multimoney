@@ -122,9 +122,7 @@ fun PaymentPointsContent(
                                         point.name ?: "",
                                         point.address ?: "",
                                         point.addressDescription ?: "",
-                                        point.schedule ?: "",
-                                        point.latitude ?: "",
-                                        point.longitude ?: ""
+                                        point.schedule ?: ""
                                     )
                                 )
                             }

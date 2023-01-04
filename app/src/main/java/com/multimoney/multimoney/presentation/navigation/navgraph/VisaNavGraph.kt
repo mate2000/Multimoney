@@ -10,13 +10,12 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.VISA_ROUTE
-import com.multimoney.multimoney.presentation.navigation.navtype.payment.CardInformationNavType
+import com.multimoney.multimoney.presentation.navigation.navtype.payment.BalanceCardInformationNavType
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardScreen
 import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceScreen
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingScreen
 import com.multimoney.multimoney.presentation.ui.visa.preferences.VisaPreferencesScreen
 
-const val CARD_INFORMATION = "card_information"
 const val BALANCE_CARD_INFORMATION = "balance_card_information"
 const val AVAILABLE_BALANCE_LABEL = "available_balance_label"
 
@@ -30,7 +29,9 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(PK_USER) { type = NavType.LongType },
-                navArgument(CARD_INFORMATION) { type = CardInformationNavType() }
+                navArgument(ID_CLIENT) { type = NavType.IntType },
+                navArgument(ID_LOAN_CLIENT) { type = NavType.IntType },
+                navArgument(BALANCE_CARD_INFORMATION) { type = BalanceCardInformationNavType() }
             )
         ) { navBackStackEntry ->
             VisaIssuanceScreen(
@@ -54,7 +55,9 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(PK_USER) { type = NavType.LongType },
-                navArgument(CARD_INFORMATION) { type = CardInformationNavType() }
+                navArgument(ID_CLIENT) { type = NavType.IntType },
+                navArgument(ID_LOAN_CLIENT) { type = NavType.IntType },
+                navArgument(BALANCE_CARD_INFORMATION) { type = BalanceCardInformationNavType() }
             )
         ) { navBackStackEntry ->
             VisaCardScreen(
@@ -76,34 +79,36 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
                 }
             )
         }
-        composable(
-            route = Screen.VisaTokenizationWaitingScreen.route,
-            arguments = listOf(
-                navArgument(ID_BRAND) { type = NavType.IntType },
-                navArgument(PK_USER) { type = NavType.LongType },
-                navArgument(CARD_INFORMATION) { type = CardInformationNavType() }
-            )
-        ) {
-            VisaTokenizationWaitingScreen(onPopAndNavigate = {
+    }
+    composable(
+        route = Screen.VisaTokenizationWaitingScreen.route,
+        arguments = listOf(
+            navArgument(ID_BRAND) { type = NavType.IntType },
+            navArgument(PK_USER) { type = NavType.LongType },
+            navArgument(ID_CLIENT) { type = NavType.IntType },
+            navArgument(ID_LOAN_CLIENT) { type = NavType.IntType },
+            navArgument(BALANCE_CARD_INFORMATION) { type = BalanceCardInformationNavType() }
+        )
+    ) {
+        VisaTokenizationWaitingScreen(onPopAndNavigate = {
+            navController.navigate(it.route) {
+                launchSingleTop = true
+                popUpTo(it.popTo) { inclusive = true }
+            }
+        })
+    }
+    composable(
+        route = Screen.VisaPreferencesScreen.route
+    ) {
+        VisaPreferencesScreen(
+            onNavigate = {
+                navController.navigate(it.route)
+            },
+            onPopAndNavigate = {
                 navController.navigate(it.route) {
-                    launchSingleTop = true
                     popUpTo(it.popTo) { inclusive = true }
                 }
-            })
-        }
-        composable(
-            route = Screen.VisaPreferencesScreen.route
-        ) {
-            VisaPreferencesScreen(
-                onNavigate = {
-                    navController.navigate(it.route)
-                },
-                onPopAndNavigate = {
-                    navController.navigate(it.route) {
-                        popUpTo(it.popTo) { inclusive = true }
-                    }
-                }
-            )
-        }
+            }
+        )
     }
 }

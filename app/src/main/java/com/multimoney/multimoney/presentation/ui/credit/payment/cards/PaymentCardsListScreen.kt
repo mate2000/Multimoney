@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -158,7 +159,10 @@ fun PaymentCardList(
                     imageModifier = Modifier.size(48.dp),
                     startIcon = R.drawable.ic_visa_card_item,
                     title = card?.detail ?: "",
-                    subtitle = card?.cardMaskedNumber ?: "",
+                    subtitle = stringResource(
+                        id = string.visa_card_masked_number,
+                        card?.cardMaskedNumber?.takeLast(4) ?: 0
+                    ),
                     onClick = {
                         viewModel.onUIEvent(PaymentCardListViewModel.UIEvent.OnCardSelected(card))
                     }

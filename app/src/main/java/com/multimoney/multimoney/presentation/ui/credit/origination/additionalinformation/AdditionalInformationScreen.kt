@@ -46,7 +46,7 @@ fun AdditionalInformationScreen(
                         OnNextActionClick(
                             user = sharedViewModel.email,
                             nextStepAction = {
-                                sharedViewModel.onUIEvent(OnCallMutationSaveCreditFlowStep(true))
+                                sharedViewModel.onUIEvent(OnCallMutationSaveCreditFlowStep)
                             },
                             saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
                         )

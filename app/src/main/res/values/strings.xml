@@ -28,6 +28,8 @@
     <string name="understood" translatable="false">Entendido</string>
     <string name="activate" translatable="false">Activar</string>
     <string name="locked" translatable="false">Bloquear</string>
+    <string name="unlocked" translatable="false">Desbloquear</string>
+    <string name="pay" translatable="false">Pagar</string>
     <string name="see_data" translatable="false">Ver datos</string>
     <string name="link" translatable="false">Vincular</string>
     <string name="shared" translatable="false">Compartir</string>
@@ -69,12 +71,12 @@
     <string name="error_button_try_later" translatable="false">Intentar más tarde</string>
 
     <!-- OnBoarding -->
-    <string name="onboarding_step_one_title" translatable="false">Invertí de forma Smart</string>
-    <string name="onboarding_step_one_sub_title" translatable="false">Ganá hasta 7\%; de interés anual con tu cuenta Multimoney Smart.</string>
-    <string name="onboarding_step_two_title" translatable="false">Tu crédito sin papeleos</string>
-    <string name="onboarding_step_two_sub_title" translatable="false">Con sólo tu identificación consigue hasta [moneda] [monto máx] en minutos.</string>
-    <string name="onboarding_step_three_title" translatable="false">Hacé tu inversión en cripto</string>
-    <string name="onboarding_step_three_sub_title" translatable="false">Comprá y vendé cripto de forma simple y rápida.</string>
+    <string name="onboarding_step_one_title" translatable="false">Multiplicá tus ahorros</string>
+    <string name="onboarding_step_one_sub_title" translatable="false">Ganá 3.5% de interés anual.</string>
+    <string name="onboarding_step_two_title" translatable="false">Tu crédito en 5 minutos</string>
+    <string name="onboarding_step_two_sub_title" translatable="false">Recibí hasta [moneda] [monto máx] con solo tu identificación.</string>
+    <string name="onboarding_step_three_title" translatable="false">Invierte en cripto</string>
+    <string name="onboarding_step_three_sub_title" translatable="false">Comprá, vendé y transferí cripto de forma simple y segura.</string>
     <string name="onboarding_account_already_created" translatable="false">Ya tengo cuenta</string>
 
     <!-- Sign In -->
@@ -92,12 +94,30 @@
     <string name="sign_in_biometric_title" translatable="false">Ingresar con biometrico</string>
     <string name="sign_in_biometric_enter_with_password" translatable="false">O podés ingresar tu contraseña</string>
     <string name="sign_in_biometric_email_hint" translatable="false">Ingresá tu correo electrónica</string>
+    <string name="sign_in_session_active_on_another_device_title" translatable="false">Sesión activa en otro dispositivo</string>
+    <string name="sign_in_session_open_here_close_another" translatable="false">Al ingresar aquí, cerrarás la sesión que se encuentra abierta en otro dispositivo</string>
+    <string name="sign_in_dialog_exit_button" translatable="false">Salir</string>
+    <string name="sign_in_dialog_sign_in_here_button" translatable="false">Iniciar sesión aquí</string>
+    <string name="sign_in_otp_wrong_code" translatable="false">Código de verificación incorrecto</string>
+    <string name="sign_in_otp_expired_code" translatable="false">Código de verificación ha expirado</string>
+    <string name="sign_in_we_sent_you_a_code_template" translatable="false">Te enviamos un código al %1$s para que verifiques este dispositivo</string>
+    <string name="sign_in_verify_otp_button" translatable="false">Verificar</string>
+    <string name="sign_in_verify_otp_error_title" translatable="false">Lo sentimos, no pudimos cambiar tu dispositivo</string>
+    <string name="sign_in_verify_otp_error_subtitle" translatable="false">No es posible validar tu teléfono por favor, inténtalo nuevamente.</string>
+    <string name="sign_in_verify_otp_blocked_title" translatable="false">Usuario bloqueado</string>
+    <string name="sign_in_verify_otp_blocked_subtitle_gt" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte</string>
+    <string name="sign_in_verify_otp_blocked_subtitle" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no podés realizar el registro ahora. Inténtalo más tarde o contacta a soporte:</string>
+
 
     <!-- Sign Up General-->
     <string name="sign_up_splash_come_back" translatable="false">¡Nos alegra\nque regresés!</string>
     <string name="sign_up_close_dialog_description" translatable="false">Podrás retomar el registro cuando quieras</string>
     <string name="sign_up_close_dialog_positive_button_text" translatable="false">Salir</string>
     <string name="sign_up_close_dialog_negative_button_text" translatable="false">Cancelar</string>
+    <string name="sign_in_error_alert_dialog" translatable="false">Parece que hubo un error</string>
+    <string name="sign_in_error_alert_dialog_button" translatable="false">Ir al inicio</string>
+
+
 
     <!-- Sign Up Email -->
     <string name="sign_up_email_header" translatable="false">Ingresá tu correo electrónico</string>
@@ -137,8 +157,8 @@
     <string name="sign_up_otp_code_placeholder" translatable="false">0</string>
     <string name="sign_up_otp_code_required" translatable="false">Código de verificación requerido</string>
     <string name="sign_up_otp_code_not_valid" translatable="false">Código de verificación incorrecto</string>
-    <string name="sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
-    <string name="sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_gt" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no podés realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
+    <string name="sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_gt" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
+    <string name="sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no podés realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
 
     <!-- Sign Up Personal Data -->
     <string name="sign_up_personal_data_id_not_valid" translatable="false">Número de %s inválido</string>
@@ -680,6 +700,24 @@
     <string name="visa_card_dialog_title" translatable="false">Vincular tarjeta</string>
     <string name="visa_card_dialog_description" translatable="false">¿Estás seguro que deseas vincular tu tarjeta a este dispositivo?</string>
     <string name="visa_card_success_message_label" translatable="false">La tarjeta fue tokenizada exitosamente</string>
+    <string name="visa_card_password_message_title" translatable="false">Validación de identidad</string>
+    <string name="visa_card_password_message_subtitle" translatable="false">No es posible validar tu identidad con biometricos.</string>
+    <string name="visa_card_password_message_try_with_password" translatable="false">Intentar con contraseña</string>
+    <string name="visa_card_password_title" translatable="false">Ver datos de mi tarjeta</string>
+    <string name="visa_card_password_error" translatable="false">Contraseña inválida</string>
+    <string name="visa_card_password_button" translatable="false">Confirmar</string>
+    <string name="visa_card_biometric_dialog_title" translatable="false">Validación de identidad</string>
+    <string name="visa_card_biometric_dialog_subtitle" translatable="false">Utilice su biometría para visualizar los datos de tu tarjeta.</string>
+    <string name="visa_card_unblock_without_nfc_dialog_title" translatable="false">Desbloquear tarjeta</string>
+    <string name="visa_card_unblock_without_nfc_dialog_subtitle" translatable="false">Al desbloquear tu tarjeta podrás hacer pagos online.</string>
+    <string name="visa_card_unblock_with_nfc_dialog_title" translatable="false">Desbloquear tarjeta</string>
+    <string name="visa_card_unblock_with_nfc_dialog_subtitle" translatable="false">Al desbloquear tu tarjeta podrás hacer pagos online y compras en comercio.</string>
+    <string name="visa_card_unblock_not_allowed_dialog_title" translatable="false">¡Oh no! No puedes desbloquear tu tarjeta</string>
+    <string name="visa_card_unblock_not_allowed_dialog_subtitle" translatable="false">Contáctate con servicio al cliente para desbloquear tu tarjeta.</string>
+    <string name="visa_card_block_dialog_title" translatable="false">Estás bloqueando tu tarjeta digital Multimoney Visa</string>
+    <string name="visa_card_block_dialog_subtitle" translatable="false">Si bloqueás la tarjeta no podrás realizar pagos online. Podrás desbloquearla después si lo deseás, y será al instante.</string>
+    <string name="visa_card_block_disclaimer" translatable="false">Desbloqueá tu tarjeta para usar tu Multimoney Visa.</string>
+
 
     <!-- visa tokenization waiting -->
     <string name="visa_tokenization_waiting_description_one_bold" translatable="false">100% libre de plástico.</string>
@@ -692,6 +730,12 @@
     <string name="visa_tokenization_waiting_description_three_bold_gt" translatable="false">Puedes pagar con tu teléfono</string>
     <string name="visa_tokenization_waiting_description_three_gt" translatable="false">\no con los datos de tu tarjeta</string>
     <string name="visa_tokenization_waiting_loading_label" translatable="false">Activando tu tarjeta…</string>
+
+    <!-- visa tokenization success -->
+    <string name="visa_tokenization_success_title" translatable="false">¡Hemos finalizado!</string>
+    <string name="visa_tokenization_success_description" translatable="false">Ya podés utilizar tu Multimoney Visa para realizar compras online y en comercios</string>
+    <string name="visa_tokenization_success_description_gt" translatable="false">Ya puedes utilizar tu Multimoney Visa para realizar compras online y en comercios</string>
+    <string name="visa_tokenization_success_button_action" translatable="false">Ver Multimoney Visa</string>
 
     <!-- Credit Loading -->
     <string name="credit_glad_to_see_you" translatable="false">¡Nos alegra que regresés!</string>
@@ -947,7 +991,7 @@
 
     <!-- Payment Schedule Cards-->
     <string name="payment_schedule_card_title" translatable="false">Configurá tu pago \nautomático</string>
-    <string name="payment_schedule_card_info_dialog_description" translatable="false">Tu pago se determina de acuerdo a la cuota de cada mes. Si tenés saldo en dólares y colones se aplicará el tipo de cambio del día de pago.</string>
+    <string name="payment_schedule_card_info_dialog_description" translatable="false">Tu pago se determina de acuerdo a la cuota mínima de cada mes.</string>
     <string name="payment_schedule_card_label_date" translatable="false">Día del mes que se hará el pago</string>
     <string name="payment_schedule_card_label_origin" translatable="false">Desde tu tarjeta</string>
     <string name="payment_schedule_card_label_date_description" translatable="false">%s de cada mes</string>
@@ -1189,7 +1233,17 @@
     <string name="currency_item_percent_invested" translatable="false">%1$s\%%</string>
 
     <!-- Smart Transfer Iban -->
+    <string name="smart_iban_transfer_accounts_title" translatable="false">Cuentas IBAN</string>
+    <string name="smart_iban_transfer_accounts_add" translatable="false">Agregar</string>
     <string name="smart_iban_transfer_title" translatable="false">Cuentas registradas</string>
+    <string name="smart_iban_transfer_send_money" translatable="false">Enviar dinero</string>
+    <string name="smart_iban_transfer_from_account" translatable="false">Desde mi cuenta %s</string>
+    <string name="smart_iban_transfer_motive_label" translatable="false">Motivo</string>
+    <string name="smart_iban_transfer_smart_account_colon" translatable="false">Smart Colones %s</string>
+    <string name="smart_iban_transfer_smart_account_dolar" translatable="false">Smart Dolares %s</string>
+    <string name="smart_iban_transfer_abandon_dialog_title" translatable="false">Cancelar envío</string>
+    <string name="smart_iban_transfer_abandon_dialog_message" translatable="false">¿Estás seguro que querés cancelar el envío?</string>
+    <string name="smart_iban_transfer_error_balance_insufficient" translatable="false">No tienes fondos suficientes. Tu disponible es %s</string>
 
     <!-- Card Preferences -->
     <string name="card_preferences_title" translatable="false">Preferencias de tarjeta</string>

@@ -132,6 +132,8 @@ import com.multimoney.domain.interaction.profile.QueryCountryContactUseCase
 import com.multimoney.domain.interaction.profile.QueryCountryContactUseCaseImpl
 import com.multimoney.domain.interaction.profile.QueryTermsAndConditionsSignedUseCase
 import com.multimoney.domain.interaction.profile.QueryTermsAndConditionsSignedUseCaseImpl
+import com.multimoney.domain.interaction.security.MutationChangeDeviceUseCaseImpl
+import com.multimoney.domain.interaction.security.MutationChangeDeviceUseCase
 import com.multimoney.domain.interaction.security.MutationChangeEmailUseCase
 import com.multimoney.domain.interaction.security.MutationChangeEmailUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationChangePhoneUseCase
@@ -140,6 +142,8 @@ import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUs
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationOnfidoCheckProcessUseCase
 import com.multimoney.domain.interaction.security.MutationOnfidoCheckProcessUseCaseImpl
+import com.multimoney.domain.interaction.security.MutationRequestChangeDeviceUseCaseImpl
+import com.multimoney.domain.interaction.security.MutationRequestChangeDeviceUseCase
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCase
@@ -176,6 +180,10 @@ import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.MutationActivatedCardAutomaticDebitUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationActivatedCardAutomaticDebitUseCaseImpl
+import com.multimoney.domain.interaction.virtualcard.MutationCardBlockingUseCase
+import com.multimoney.domain.interaction.virtualcard.MutationCardBlockingUseCaseImpl
+import com.multimoney.domain.interaction.virtualcard.MutationCardUnblockingUseCase
+import com.multimoney.domain.interaction.virtualcard.MutationCardUnblockingUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.MutationPayCreditVDUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationPayCreditVDUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCase
@@ -645,6 +653,16 @@ class InteractionModule {
     fun provideMutationActivatedCardAutomaticDebitUseCase(virtualCardRepository: VirtualCardRepository): MutationActivatedCardAutomaticDebitUseCase =
         MutationActivatedCardAutomaticDebitUseCaseImpl(virtualCardRepository)
 
+    @Provides
+    @Singleton
+    fun provideMutationCardBlockingUseCase(virtualCardRepository: VirtualCardRepository): MutationCardBlockingUseCase =
+        MutationCardBlockingUseCaseImpl(virtualCardRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationCardUnblockingUseCase(virtualCardRepository: VirtualCardRepository): MutationCardUnblockingUseCase =
+        MutationCardUnblockingUseCaseImpl(virtualCardRepository)
+
     // Profile
 
     @Provides
@@ -661,4 +679,14 @@ class InteractionModule {
     @Singleton
     fun provideQueryTermsAndConditionsSigned(profileRepository: ProfileRepository): QueryTermsAndConditionsSignedUseCase =
         QueryTermsAndConditionsSignedUseCaseImpl(profileRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationRequestChangeDevice(securityRepository: SecurityRepository): MutationRequestChangeDeviceUseCase =
+        MutationRequestChangeDeviceUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationChangeDevice(securityRepository: SecurityRepository): MutationChangeDeviceUseCase =
+        MutationChangeDeviceUseCaseImpl(securityRepository)
 }

@@ -15,7 +15,7 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.Smar
 import com.multimoney.multimoney.presentation.uielement.PaymentSuccessResult
 import com.multimoney.multimoney.presentation.uielement.SmartPaymentInfoItem
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
-import com.multimoney.multimoney.presentation.util.CARD_NUMBER_LAST_DIGITS
+import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 
 @Composable
 fun SmartTransferSuccessScreen(
@@ -52,10 +52,9 @@ fun SmartTransferSuccessScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 icon = R.drawable.ic_bank_account,
                 title = stringResource(R.string.smart_payment_origin_account_label),
-                subtitle = stringResource(
-                    R.string.visa_card_masked_number,
-                    viewModel.editAmountHelper.ibanAccount?.bank?.takeLast(CARD_NUMBER_LAST_DIGITS)
-                        ?: ""
+                subtitle = getMaskedAccountIban(
+                    viewModel.editAmountHelper.maskedCardNumber ?: "",
+                    stringResource(R.string.payment_account_masked_text)
                 )
             )
 
@@ -77,14 +76,11 @@ fun SmartTransferSuccessScreen(
                 )
             }
 
-            // Add motive condition
-            if (true) {
-                SmartPaymentInfoItem(
-                    title = stringResource(R.string.smart_payment_motive),
-                    icon = R.drawable.ic_notebook_motive,
-                    subtitle = "Transferencia cena ayer" // viewModel.uiState.motive
-                )
-            }
+            SmartPaymentInfoItem(
+                title = stringResource(R.string.smart_payment_motive),
+                icon = R.drawable.ic_notebook_motive,
+                subtitle = viewModel.uiState.motive
+            )
 
             SmartPaymentInfoItem(
                 verticalAlignment = Alignment.CenterVertically,

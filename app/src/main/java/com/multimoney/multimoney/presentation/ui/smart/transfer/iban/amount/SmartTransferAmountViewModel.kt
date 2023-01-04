@@ -100,7 +100,7 @@ class SmartTransferAmountViewModel @Inject constructor(
                             uiState = uiState.copy(
                                 isLoading = false,
                                 exchangeRate = rate?.exchangeRate ?: 0.0,
-                                exchangeConvertedAmount = rate?.amount ?: 0.0,
+                                exchangeConvertedAmount = rate?.convertedAmount ?: 0.0,
                                 exchangeRateLabel = rate?.exchangeRateLabel ?: "0.0",
                                 convertedAmountLabel = rate?.convertedAmountLabel ?: "0.0"
                             )

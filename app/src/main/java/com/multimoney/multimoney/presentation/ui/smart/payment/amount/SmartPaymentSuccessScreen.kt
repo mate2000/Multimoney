@@ -83,7 +83,7 @@ fun SmartPaymentSuccessScreen(
                     title = stringResource(R.string.payment_amount_bottom_sheet_exchange_type),
                     subtitle = viewModel.uiState.exchangeRateLabel,
                     rightTitle = stringResource(R.string.payment_amount_bottom_sheet_amount_to_debit),
-                    rightSubtitle = viewModel.getConvertedAmountFormatted(),
+                    rightSubtitle = viewModel.uiState.convertedAmountLabel,
                     showVerticalDivision = true
                 )
             }

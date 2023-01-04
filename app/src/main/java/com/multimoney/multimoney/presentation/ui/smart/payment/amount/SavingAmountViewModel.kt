@@ -41,7 +41,6 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SuggestedAmount
 import com.multimoney.multimoney.presentation.util.catalog.SuggestionOrder
 import com.multimoney.multimoney.presentation.util.formattedTwoDecimalsNumber
-import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getCurrentTime
 import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
@@ -108,7 +107,7 @@ class SavingAmountViewModel @Inject constructor(
                         uiState = uiState.copy(
                             isLoading = false,
                             exchangeRate = rate?.exchangeRate ?: 0.0,
-                            exchangeConvertedAmount = rate?.amount ?: 0.0,
+                            exchangeConvertedAmount = rate?.convertedAmount ?: 0.0,
                             exchangeRateLabel = rate?.exchangeRateLabel ?: "0.0",
                             convertedAmountLabel = rate?.convertedAmountLabel ?: "0.0"
                         )
@@ -193,7 +192,7 @@ class SavingAmountViewModel @Inject constructor(
                 transferType = SmartSinpeTransferType.REQUEST,
                 amountToTransfer = if (editAmountHelper.shouldDisplayExchange) {
                     // Using this value cause endpoint expects amount in the same currency of the account
-                    uiState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
+                    uiState.exchangeConvertedAmount
                 } else {
                     uiState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
                 },

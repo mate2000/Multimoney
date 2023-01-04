@@ -717,6 +717,8 @@
     <string name="visa_card_block_dialog_title" translatable="false">Estás bloqueando tu tarjeta digital Multimoney Visa</string>
     <string name="visa_card_block_dialog_subtitle" translatable="false">Si bloqueás la tarjeta no podrás realizar pagos online. Podrás desbloquearla después si lo deseás, y será al instante.</string>
     <string name="visa_card_block_disclaimer" translatable="false">Desbloqueá tu tarjeta para usar tu Multimoney Visa.</string>
+    <string name="visa_card_tap_and_pay_title" translatable="false">Pago con Contactless</string>
+    <string name="visa_card_tap_and_pay_description" translatable="false"></string>
 
 
     <!-- visa tokenization waiting -->

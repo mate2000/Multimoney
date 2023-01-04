@@ -42,18 +42,19 @@ fun CustomToggleButton(
     Column(modifier = modifier) {
         Row(
             modifier = Modifier
-                .height(40.dp)
+                .height(50.dp)
                 .wrapContentWidth()
-                .border(border = BorderStroke(1.dp, WhiteTransparency50), shape = RoundedCornerShape(15.dp))
+                .border(border = BorderStroke(1.dp, WhiteTransparency50),
+                    shape = RoundedCornerShape(percent = 50))
         ) {
             items.forEachIndexed { index, item ->
                 OutlinedButton(
                     modifier = Modifier
-                        .height(40.dp)
+                        .height(50.dp)
                         .wrapContentWidth(),
                     shape = when (index) {
-                        0 -> RoundedCornerShape(topStart = 15.dp, bottomStart = 15.dp)
-                        items.lastIndex -> RoundedCornerShape(topEnd = 15.dp, bottomEnd = 15.dp)
+                        0 -> RoundedCornerShape(topStartPercent = 50, bottomStartPercent = 50)
+                        items.lastIndex -> RoundedCornerShape(topEndPercent = 50, bottomEndPercent = 50)
                         else -> RoundedCornerShape(topStart = 0.dp, bottomStart = 0.dp, topEnd = 0.dp, bottomEnd = 0.dp)
                     },
                     onClick = { onIndexChanged(index) },

@@ -121,7 +121,7 @@ fun IbanAccountScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 24.dp),
-                startIcon = if (viewModel.validateAccount?.currency == CurrencyType.Dollar.currency) R.drawable.ic_account_dollar else R.drawable.ic_account_colon,
+                startIcon = R.drawable.ic_bank_account,
                 title = viewModel.validateAccount?.bankName ?: "",
                 subtitle = getMaskedAccount(
                     viewModel.uiState.accountNumber,

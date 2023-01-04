@@ -16,4 +16,27 @@
     <style name="OnfidoShadowedScrollStyle">
         <item name="android:scrollbars">vertical</item>
     </style>
+
+    <style name="MyDatePickerStyle" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/green_500</item>
+        <!--selected Item color-->
+        <item name="colorControlActivated">@color/green</item>
+        <!-- arrow borderColor(<>)-->
+        <item name="android:selectableItemBackgroundBorderless">@android:color/transparent</item>
+        <!-- Highlight item color-->
+        <item name="colorControlHighlight">@color/green_500</item>
+        <!--Calender Background color -->
+        <item name="android:windowBackground">@drawable/bg_calendar_round_corners</item>
+        <!-- Ok Cancel Color-->
+        <item name="android:textColor">@color/green</item>
+        <!-- Week TextColor-->
+        <item name="android:textColorSecondary">@color/white</item>
+        <!-- Calender Number color arrow color (< >) -->
+        <item name="android:textColorPrimary">@color/white</item>
+        <!--day , month-->
+        <item name="android:textColorPrimaryInverse">@color/white</item>
+        <!-- year-->
+        <item name="android:textColorSecondaryInverse">@color/white</item>
+
+    </style>
 </resources>

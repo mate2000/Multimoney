@@ -125,6 +125,11 @@ type Query {
   bankList365Type(bankList365Input: BankList365DtoInput!): [BankList365!]
 
   """
+  AccountSmart
+  """
+  verifiedExternalAccount(verifiedExternalAccountInput: VerifiedExternalAccountDtoInput!): VerifiedExternalAccount
+
+  """
   Balance
   """
   balanceCredit(balanceCreditInput: balanceCreditInput!): [PromissoryNoteMobile!]
@@ -280,6 +285,11 @@ type Query {
   emissionPlace(emissionPlaceInput: ScreenConfigDtoInput!): [ScreenConfig!]!
 
   """
+  Credit
+  """
+  payMethod(getPayMethodInput: GetPayMethodDtoInput!): [GetPayMethod!]!
+
+  """
   Crypto
   """
   cryptoCurrencyMovement(cryptoMovementInput: CryptoMovementDtoInput!): CryptoCurrencyMovement!
@@ -419,17 +429,17 @@ type Query {
   """
   Security
   """
-  saveRegisterCoreLog(saveRegisterCoreLogDto: SaveRegisterCoreLogDtoInput!): SaveRegisterCoreLog!
-
-  """
-  Security
-  """
   quickActions(quickActionsInput: QuickActionsDtoInput!): [QuickActions!]!
 
   """
   Security
   """
   userPhoneMobileGet(userPhoneMobileGetInput: UserPhoneMobileGetDtoInput!): UserEventMobile!
+
+  """
+  Security
+  """
+  countryPhoneCodes(getCountryPhone: GetCountryPhoneCodeDtoInput!): [GetCountryPhoneCode!]!
 
   """
   VirtualCard
@@ -701,7 +711,13 @@ type Mutation {
   """
   Security
   """
-  changeDevice(changeDeviceInputType: ChangeDeviceDtoInput!): ChangeDevice!
+  changeDevice(changeDeviceInputType: ChangeDeviceDtoInput!): ResponseApi!
+
+  """
+  Security
+  """
+
+  requestchangeDevice(requestChangeDeviceInputType: ChangeDeviceDtoInput!): UserValidation!
 
   """
   Security
@@ -738,6 +754,11 @@ type Mutation {
   Security
   """
   userPhoneMobileSave(userPhoneMobileSaveInput: UserPhoneMobileSaveDtoInput!): UserEventMobile!
+
+  """
+  Security
+  """
+  saveRegisterCoreLog(saveRegisterCoreLogDto: SaveRegisterCoreLogDtoInput!): SaveRegisterCoreLog!
 
   """
   VirtualCard
@@ -1527,6 +1548,26 @@ input BankList365DtoInput {
   user: String
 }
 
+type VerifiedExternalAccount {
+  status: Int
+
+  message: String
+
+  _HaveError: Boolean
+
+  _ErrorMessage: String
+
+  _FullError: String
+}
+
+input VerifiedExternalAccountDtoInput {
+  identification: String!
+
+  idBrand: Int
+
+  user: String
+}
+
 type PromissoryNoteMobile {
   fk_Suv_Cat_Marca: Short!
 
@@ -1669,6 +1710,8 @@ type CreditOffer {
   products: [PRODUCTO!]
 
   rejectedBlaze: Boolean!
+
+  isCrosseling: Boolean
 }
 
 input CreditOfferDtoInput {
@@ -2123,6 +2166,28 @@ input LinkCreditContractDtoInput {
   pkUser: Long!
 
   idPrint: Long!
+
+  idBrand: Int
+
+  user: String
+}
+
+type GetPayMethod {
+  id: Int!
+
+  descripcion: String!
+
+  nombre: String!
+
+  codigo: String!
+}
+
+input GetPayMethodDtoInput {
+  idClient: String!
+
+  currency: String!
+
+  selectedAmount: Decimal!
 
   idBrand: Int
 
@@ -2752,6 +2817,10 @@ type UserValidation {
 
   strIdIdentification: String
 
+  idClient: Long
+
+  isNewUser: Boolean
+
   status: Int
 
   message: String
@@ -2939,26 +3008,6 @@ input GetCompanyNameByIdentificationDtoInput {
   user: String
 }
 
-type SaveRegisterCoreLog {
-  status: Int
-
-  message: String
-
-  detail: String
-}
-
-input SaveRegisterCoreLogDtoInput {
-  process: String!
-
-  parameters: String!
-
-  result: String!
-
-  idBrand: Int
-
-  user: String
-}
-
 type QuickActions {
   idIcono: String!
 
@@ -3030,6 +3079,18 @@ input UserPhoneMobileGetDtoInput {
 
   pkUser: Long!
 
+  idBrand: Int
+
+  user: String
+}
+
+type GetCountryPhoneCode {
+  country: String!
+
+  code: Int!
+}
+
+input GetCountryPhoneCodeDtoInput {
   idBrand: Int
 
   user: String
@@ -4701,9 +4762,7 @@ input LogTrackingDtoInput {
   user: String
 }
 
-type ChangeDevice {
-  tipo_envio: String!
-
+type ResponseApi {
   status: Int
 
   message: String
@@ -4713,6 +4772,8 @@ type ChangeDevice {
 
 input ChangeDeviceDtoInput {
   email: String!
+
+  otp: String
 
   idBrand: Int
 
@@ -4867,6 +4928,26 @@ input UserPhoneMobileSaveDtoInput {
   idWalletCard: String!
 
   pkUser: Long!
+
+  idBrand: Int
+
+  user: String
+}
+
+type SaveRegisterCoreLog {
+  status: Int
+
+  message: String
+
+  detail: String
+}
+
+input SaveRegisterCoreLogDtoInput {
+  process: String!
+
+  parameters: String!
+
+  result: String!
 
   idBrand: Int
 
@@ -5237,6 +5318,12 @@ type CardUnblocking {
   msg: String!
 
   processedAt: String!
+
+  status: Int
+
+  message: String
+
+  detail: String
 }
 
 input CardUnblockingDtoInput {
@@ -5720,6 +5807,8 @@ type CreditInfo {
   infoPreApprove: CreditPreApproveInfo
 
   wording: Wording
+
+  createDate: DateTime
 }
 
 type AppUser {
@@ -6243,6 +6332,8 @@ type GetCoreBankMovementsResult {
   transactionCatalogueDescription: String
 
   amount: Decimal
+
+  formattedAmount: String!
 
   currencyDescription: String
 

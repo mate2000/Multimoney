@@ -10,25 +10,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Rect
-import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.interaction.accountsmart.MutationProcessSinpeTransferUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationProcessTransferVisaToSmartVDUseCase
+import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
-import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.ID_VISA_CARD
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN
-import com.multimoney.multimoney.presentation.navigation.navgraph.BANK_DETAIL
-import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
-import com.multimoney.multimoney.presentation.navigation.navgraph.MASKED_CARD
-import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.CURRENCY_SEPARATOR
+import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnAmountCompleted
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnAmountValueChange
-import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnCallProcessTransferVisaToSmart
+import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnCallProcessTransfer
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnNavigateHome
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnRetryTransfer
@@ -36,80 +34,172 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmou
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnSuggestedAmountClick
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnTryLater
-import com.multimoney.multimoney.presentation.util.ShareHelper
-import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Colon
+import com.multimoney.multimoney.presentation.util.SmartEditAmountHelper
+import com.multimoney.multimoney.presentation.util.SmartEditAmountHelper.Companion.DEFAULT_DESCRIPTION
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Dollar
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SuggestedAmount
 import com.multimoney.multimoney.presentation.util.catalog.SuggestionOrder
+import com.multimoney.multimoney.presentation.util.formattedTwoDecimalsNumber
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getCurrentTime
-import com.multimoney.multimoney.presentation.util.workers.startTimedNotification
+import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
+import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
-import java.util.Calendar
+import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
 class SavingAmountViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+    val editAmountHelper: SmartEditAmountHelper,
     private val processTransferVisaToSmart: MutationProcessTransferVisaToSmartVDUseCase,
-    private val shareHelper: ShareHelper
+    private val processSinpeTransferUseCase: MutationProcessSinpeTransferUseCase
 ) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())
         private set
 
-    // stateless
-    private var idBrand: Int = 0
-    private var idCard: Long = 0
-    private var identification: String = ""
-    private var user: String = ""
-    private var idCurrency: Int = 0
-    private var tokenNumber: Long = 0
-    var maskedCardNumber: String = ""
-    var bankDetail: String = ""
-
     private fun onStart() {
-        idBrand = savedStateHandle[ID_BRAND] ?: 0
-        idCard = savedStateHandle[ID_VISA_CARD] ?: 0
-        identification = savedStateHandle[IDENTIFICATION] ?: ""
-        user = savedStateHandle[USER] ?: ""
-        idCurrency = savedStateHandle[ID_CURRENCY] ?: 0
-        tokenNumber = savedStateHandle[ACCOUNT_TOKEN] ?: 0
-        maskedCardNumber = savedStateHandle[MASKED_CARD] ?: ""
-        bankDetail = savedStateHandle[BANK_DETAIL] ?: ""
-
-        // Todo get if the account is using dollars
-        uiState = uiState.copy(
-            currency = if (idCurrency == Dollar.id) Dollar.symbol else Colon.symbol,
-            minSuggestion = SuggestedAmount.createSuggestion(
-                idCurrency == Dollar.id,
-                SuggestionOrder.MIN
-            ),
-            mediumSuggestion = SuggestedAmount.createSuggestion(
-                idCurrency == Dollar.id,
-                SuggestionOrder.MEDIUM
-            ),
-            maxSuggestion = SuggestedAmount.createSuggestion(
-                idCurrency == Dollar.id,
-                SuggestionOrder.MAX
+        viewModelScope.launch {
+            editAmountHelper.onStart()
+            uiState = uiState.copy(
+                currency = editAmountHelper.smartCurrency?.symbol ?: Dollar.symbol,
+                placeholder = if (editAmountHelper.smartCurrency == Dollar) {
+                    R.string.smart_dollar_placeholder
+                } else {
+                    R.string.smart_colon_placeholder
+                },
+                minSuggestion = SuggestedAmount.createSuggestion(
+                    editAmountHelper.smartCurrency == Dollar,
+                    SuggestionOrder.MIN
+                ),
+                mediumSuggestion = SuggestedAmount.createSuggestion(
+                    editAmountHelper.smartCurrency == Dollar,
+                    SuggestionOrder.MEDIUM
+                ),
+                maxSuggestion = SuggestedAmount.createSuggestion(
+                    editAmountHelper.smartCurrency == Dollar,
+                    SuggestionOrder.MAX
+                )
             )
-        )
+            getExchangeOnCompleted()
+        }
+    }
+
+    private fun getExchangeOnCompleted() {
+        if (editAmountHelper.shouldDisplayExchange) {
+            executeUseCase {
+                editAmountHelper.getSmartExchangeRate(
+                    currentAmount = uiState.currentAmountValueString?.toDoubleOrNull() ?: 0.0,
+                    onFailure = {
+                        onFailureWithDialog(
+                            false,
+                            DialogParameters(isActive = mutableStateOf(true))
+                        )
+                    },
+                    onLoading = {
+                        uiState = uiState.copy(isLoading = true)
+                    },
+                    onSuccess = { rate ->
+                        uiState = uiState.copy(
+                            isLoading = false,
+                            exchangeRate = rate?.exchangeRate ?: 0.0,
+                            exchangeConvertedAmount = rate?.amount ?: 0.0,
+                            exchangeRateLabel = rate?.exchangeRateLabel ?: "0.0",
+                            convertedAmountLabel = rate?.convertedAmountLabel ?: "0.0"
+                        )
+                    }
+                )
+            }
+        }
+    }
+
+    private fun onProcessTransfer() {
+        if (editAmountHelper.idBrand == Brand.CostaRica.id) {
+            onCallProcessSinpeTransfer()
+        } else if (editAmountHelper.idBrand == Brand.ElSalvador.id) {
+            onCallProcessTransferVisaToSmart()
+        }
     }
 
     private fun onCallProcessTransferVisaToSmart() {
         executeUseCase {
             processTransferVisaToSmart.invoke(
-                idCard,
-                tokenNumber,
-                identification,
+                editAmountHelper.idCard,
+                editAmountHelper.tokenNumber,
+                editAmountHelper.identification,
                 uiState.currentAmountValueString ?: "",
-                idCurrency,
+                editAmountHelper.idCurrency,
                 DEFAULT_DESCRIPTION,
-                maskedCardNumber,
-                user,
-                idBrand
+                editAmountHelper.maskedCardNumber,
+                editAmountHelper.pkUser,
+                editAmountHelper.idBrand
+            ).collectLatest { result ->
+                result.onSuccess {
+                    if (it?.referenceNumber.isNullOrBlank()) {
+                        uiState = uiState.copy(
+                            showLoadingScreen = false,
+                            showErrorScreen = true,
+                            paymentSuccess = false
+                        )
+                    } else {
+                        uiState = uiState.copy(
+                            showLoadingScreen = false,
+                            showErrorScreen = false,
+                            paymentSuccess = true,
+                            currentDate = getCurrentDate(Calendar.getInstance().time),
+                            currentTime = getCurrentTime(Calendar.getInstance().time),
+                            referenceNumber = it?.referenceNumber ?: ""
+                        )
+                    }
+                }
+                result.onFailure {
+                    uiState = uiState.copy(
+                        showLoadingScreen = false,
+                        showErrorScreen = true,
+                        paymentSuccess = false
+                    )
+                }
+                result.onLoading {
+                    uiState = uiState.copy(
+                        showLoadingScreen = true,
+                        showErrorScreen = false,
+                        paymentSuccess = false
+                    )
+                }
+            }
+        }
+    }
+
+    private fun onCallProcessSinpeTransfer() {
+        executeUseCase {
+            processSinpeTransferUseCase.invoke(
+                pkUser = editAmountHelper.pkUser.toIntOrNull() ?: 0,
+                identification = editAmountHelper.identification,
+                originCustomerIdentification = editAmountHelper.ibanAccount?.clientIdentification
+                    ?: "",
+                ibanAccountOrigin = editAmountHelper.ibanAccount?.sinpeAccount ?: "",
+                originCustomerName = editAmountHelper.userName,
+                idCurrencyOrigin = editAmountHelper.ibanCurrency?.id.toString(),
+                ibanAccountDestination = editAmountHelper.smartAccount?.ibanAccountNumber ?: "",
+                destinationCustomerIdentification = editAmountHelper.identification,
+                destinationCustomerName = editAmountHelper.userName,
+                idCurrencyDestination = editAmountHelper.smartCurrency?.id.toString(),
+                reasonOfTransfer = DEFAULT_DESCRIPTION,
+                transferType = SmartSinpeTransferType.REQUEST,
+                amountToTransfer = if (editAmountHelper.shouldDisplayExchange) {
+                    // Using this value cause endpoint expects amount in the same currency of the account
+                    uiState.exchangeConvertedAmount
+                } else {
+                    uiState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
+                },
+                exchangeRate = uiState.exchangeRate,
+                idBrand = editAmountHelper.idBrand,
+                user = editAmountHelper.userName
             ).collectLatest { result ->
                 result.onSuccess {
                     if (it?.referenceNumber.isNullOrBlank()) {
@@ -148,21 +238,24 @@ class SavingAmountViewModel @Inject constructor(
     }
 
     private fun onAmountChanged(newAmount: String) {
-        val suggestions =
-            listOf(uiState.minSuggestion, uiState.mediumSuggestion, uiState.maxSuggestion)
-        val possibleSuggestion = suggestions.find { suggestion -> suggestion.value == newAmount }
-        uiState = if (possibleSuggestion != null) {
-            uiState.copy(
-                currentAmountValueString = newAmount,
-                suggestedAmountSelected = possibleSuggestion,
-                enableButton = newAmount.toDouble() > 0
-            )
-        } else {
-            uiState.copy(
-                currentAmountValueString = newAmount,
-                suggestedAmountSelected = null,
-                enableButton = newAmount.isNotEmpty() && newAmount.toDouble() > 0
-            )
+        if (validateDecimalIncome(newAmount)) {
+            val suggestions =
+                listOf(uiState.minSuggestion, uiState.mediumSuggestion, uiState.maxSuggestion)
+            val possibleSuggestion =
+                suggestions.find { suggestion -> suggestion.value == newAmount }
+            uiState = if (possibleSuggestion != null) {
+                uiState.copy(
+                    suggestedAmountSelected = possibleSuggestion,
+                    currentAmountValueString = newAmount,
+                    enableButton = newAmount.toDouble() > 0
+                )
+            } else {
+                uiState.copy(
+                    suggestedAmountSelected = null,
+                    currentAmountValueString = newAmount,
+                    enableButton = newAmount.isNotEmpty() && newAmount.toDouble() > 0
+                )
+            }
         }
     }
 
@@ -172,6 +265,7 @@ class SavingAmountViewModel @Inject constructor(
             currentAmountValueString = amount.value,
             suggestedAmountSelected = amount
         )
+        getExchangeOnCompleted()
     }
 
     fun verifySuggestionSelected(order: SuggestionOrder) =
@@ -189,43 +283,47 @@ class SavingAmountViewModel @Inject constructor(
             showLoadingScreen = true,
             paymentSuccess = false
         )
-        onCallProcessTransferVisaToSmart()
+        if (editAmountHelper.idBrand == Brand.CostaRica.id) {
+            onCallProcessSinpeTransfer()
+        } else {
+            onCallProcessTransferVisaToSmart()
+        }
     }
 
-    private fun onTryLater(
-        notificationTitle: String,
-        notificationBody: String,
-        notificationSmallIcon: Int,
-        context: Context
-    ) {
-        startTimedNotification(
-            context,
-            notificationTitle,
-            notificationBody,
-            notificationSmallIcon
-        )
-        navigateBack(
-            popTo = Screen.HomeScreen.route,
-            isRestart = true
-        )
+    private fun onFailureWithDialog(isLoading: Boolean, dialogParameters: DialogParameters) {
+        uiState =
+            uiState.copy(
+                isLoading = isLoading,
+                openDialog = dialogParameters
+            )
     }
 
-    private fun onShareVoucherImage(
-        view: View,
-        capturingBounds: Rect
-    ) {
-        shareHelper.sharedScreenShot(view, capturingBounds)
-    }
+    fun getFormattedAmount() =
+        uiState.currency + uiState.currentAmountValueString?.stringToDoubleFormat(
+            CURRENCY_SEPARATOR.toString()
+        )
+
+
+    fun getConvertedAmountFormatted() =
+        "${editAmountHelper.ibanCurrency?.id?.getCurrencyFromId()?.symbol}${
+            uiState.exchangeConvertedAmount.formattedTwoDecimalsNumber().toString()
+                .stringToDoubleFormat(CURRENCY_SEPARATOR.toString())
+        }"
 
     private fun onNavigateToHome() {
         navigateBack(
-            popTo = Screen.HomeScreen.route,
-            isRestart = true
+            popTo = Screen.HomeScreen.route, isRestart = true
         )
     }
 
-    private fun onNavigateBack() =
-        navigateBack(popTo = Screen.SmartPaymentCardsScreenSV.route, isRestart = true)
+    private fun onNavigateBack() {
+        val screen = when (editAmountHelper.previousScreen) {
+            Screen.SmartPaymentAccountScreenCR.baseRoute -> Screen.SmartPaymentAccountScreenCR.route
+            Screen.SmartPaymentCardsScreenSV.baseRoute -> Screen.SmartPaymentCardsScreenSV.route
+            else -> Screen.HomeScreen.route
+        }
+        navigateBack(popTo = screen, isRestart = false)
+    }
 
     data class UIState(
         // Interactions
@@ -237,9 +335,13 @@ class SavingAmountViewModel @Inject constructor(
         val currentAmountValueString: String? = null,
         val enableButton: Boolean = false,
         val isLoading: Boolean = false,
-        val idCard: Long = 0,
+        val exchangeRate: Double = 0.0,
+        val exchangeConvertedAmount: Double = 0.0,
+        val exchangeRateLabel: String = "0.0",
+        val convertedAmountLabel: String = "0.0",
+        val placeholder: Int = R.string.smart_dollar_placeholder,
+        val openDialog: DialogParameters = DialogParameters(),
         val bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(Hidden),
-        val cardBankName: String = "",
         var showErrorScreen: Boolean = false,
         val showLoadingScreen: Boolean = false,
         val paymentSuccess: Boolean = false,
@@ -253,18 +355,26 @@ class SavingAmountViewModel @Inject constructor(
             is OnNavigateBack -> onNavigateBack()
             is OnStart -> onStart()
             is OnAmountValueChange -> onAmountChanged(uiEvent.value)
+            is OnAmountCompleted -> getExchangeOnCompleted()
             is OnContinueClick -> onContinueClick()
             is OnSuggestedAmountClick -> selectSuggestion(uiEvent.suggestion)
-            is OnCallProcessTransferVisaToSmart -> onCallProcessTransferVisaToSmart()
+            is OnCallProcessTransfer -> onProcessTransfer()
+            is OnFailureWithDialog -> onFailureWithDialog(
+                uiEvent.isLoading,
+                uiEvent.dialogParameters
+            )
             is OnRetryTransfer -> onRetryTransfer()
-            is OnTryLater -> onTryLater(
+            is OnTryLater -> editAmountHelper.onTryLater(
                 uiEvent.notificationTitle,
                 uiEvent.notificationBody,
                 uiEvent.notificationSmallIcon,
                 uiEvent.context
-            )
+            ) { onNavigateToHome() }
             is OnNavigateHome -> onNavigateToHome()
-            is OnShareVoucherImage -> onShareVoucherImage(uiEvent.view, uiEvent.capturingBounds)
+            is OnShareVoucherImage -> editAmountHelper.onShareVoucherImage(
+                uiEvent.view,
+                uiEvent.capturingBounds
+            )
         }
     }
 
@@ -272,10 +382,16 @@ class SavingAmountViewModel @Inject constructor(
         object OnNavigateBack : UIEvent()
         object OnStart : UIEvent()
         data class OnAmountValueChange(val value: String) : UIEvent()
+        data class OnAmountCompleted(val value: String) : UIEvent()
         data class OnSuggestedAmountClick(val suggestion: SuggestedAmount) : UIEvent()
         object OnContinueClick : UIEvent()
-        object OnCallProcessTransferVisaToSmart : UIEvent()
+        object OnCallProcessTransfer : UIEvent()
         object OnRetryTransfer : UIEvent()
+        data class OnFailureWithDialog(
+            val isLoading: Boolean,
+            val dialogParameters: DialogParameters
+        ) : UIEvent()
+
         data class OnTryLater(
             val notificationTitle: String,
             val notificationBody: String,
@@ -288,10 +404,5 @@ class SavingAmountViewModel @Inject constructor(
             val view: View,
             val capturingBounds: Rect
         ) : UIEvent()
-    }
-
-    companion object {
-        const val SAVING_PLACEHOLDER = "$0"
-        const val DEFAULT_DESCRIPTION = "Smart account deposit"
     }
 }

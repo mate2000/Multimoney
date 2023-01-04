@@ -127,9 +127,7 @@ class ApprovedByOnfidoViewModel @Inject constructor(
                     }
                 }
             }
-            result.onFailure {
-                onFailure(it)
-            }
+            result.onFailure { onFailure(it) }
             result.onLoading {
                 uiState = uiState.copy(isLoading = true)
             }

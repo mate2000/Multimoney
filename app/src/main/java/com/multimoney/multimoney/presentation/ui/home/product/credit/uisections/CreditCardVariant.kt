@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -442,7 +442,7 @@ fun OngoingCredit(
                 color = MultimoneyTheme.colors.text
             )
         } else {
-            Spacer(modifier = Modifier.padding(bottom = 44.dp))
+            Spacer(modifier = Modifier.padding(bottom = 30.dp))
         }
         CustomRoundedLinearProgress(
             progress = viewModel.productProgress,
@@ -454,21 +454,23 @@ fun OngoingCredit(
             Text(
                 text = stringResource(
                     id = R.string.home_product_remaining,
-                    viewModel.balanceCredit?.getFirstSummary()?.currentBalanceLabel.toString()
+                    viewModel.getCreditBalanceLabel(viewModel.balanceCredit?.balanceCredit)
                 ),
                 modifier = Modifier.padding(top = 4.dp),
                 style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                 color = MultimoneyTheme.colors.text
             )
-            Text(
-                text = stringResource(
-                    id = R.string.home_product_amount,
-                    viewModel.balanceCredit?.getFirstCredit()?.creditLimitLabel.toString()
-                ),
-                modifier = Modifier.padding(top = 4.dp, start = 3.dp),
-                style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.textSubhead
-            )
+            if (viewModel.uiState.isCreditAvailable) {
+                Text(
+                    text = stringResource(
+                        id = R.string.home_product_amount,
+                        viewModel.balanceCredit?.getFirstCredit()?.creditLimitLabel.toString()
+                    ),
+                    modifier = Modifier.padding(top = 4.dp, start = 3.dp),
+                    style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                    color = MultimoneyTheme.colors.textSubhead
+                )
+            }
         }
         Row(
             modifier = Modifier
@@ -490,7 +492,7 @@ fun OngoingCredit(
                     color = MultimoneyTheme.colors.text
                 )
                 Text(
-                    text = viewModel.balanceCredit?.getFirstSummary()?.monthlyQuotaLabel.toString(),
+                    text = viewModel.getQuota(viewModel.balanceCredit?.balanceCredit),
                     modifier = Modifier.padding(top = 4.dp),
                     style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                     color = MultimoneyTheme.colors.text
@@ -519,9 +521,9 @@ fun OngoingCredit(
                                 .clip(CircleShape)
                                 .background(
                                     if ((
-                                                viewModel.balanceCredit?.getFirstSummary()?.daysExpired
-                                                    ?: 0
-                                                ) > 0
+                                        viewModel.balanceCredit?.getFirstSummary()?.daysExpired
+                                            ?: 0
+                                        ) > 0
                                     ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor
                                 )
                         )

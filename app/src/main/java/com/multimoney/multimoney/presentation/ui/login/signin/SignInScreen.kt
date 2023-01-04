@@ -29,21 +29,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnFingerprintCheckedChanged
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnInitializeBiometricPrompt
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnNavigateToForgotPassword
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricPromptForDecryption
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricPromptForEncryption
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricSignInChanged
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnStart
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnUserEmailValueChange
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnValidateUserEmail
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.*
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiaryUnderLined
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -51,14 +44,22 @@ import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.capitalized
+import com.multimoney.multimoney.presentation.util.getDeviceId
+import com.multimoney.multimoney.presentation.util.getDeviceName
+import com.multimoney.multimoney.presentation.util.getDeviceType
+import com.multimoney.multimoney.presentation.util.getIpAddress
+import com.multimoney.multimoney.presentation.util.splitByWhiteSpace
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
+
 
 @Composable
 @Preview
 fun SignInScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-    viewModel: SignInViewModel = hiltViewModel()
+    viewModel: SignInViewModel = hiltViewModel(),
+    forceChangeDevice : Boolean = false
 ) {
     // Properties
     val focusManager = LocalFocusManager.current
@@ -68,7 +69,15 @@ fun SignInScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
-            onUIEvent(OnStart)
+            onUIEvent(
+                OnStart(
+                    getDeviceId(fragmentActivity),
+                    getIpAddress(fragmentActivity) ?: "",
+                    getDeviceName(fragmentActivity) ?: "",
+                    getDeviceType(fragmentActivity).value ?: "",
+                    forceChangeDevice
+                )
+            )
         }
     }
 
@@ -95,7 +104,8 @@ fun SignInScreen(
                 .wrapContentSize()
                 .align(Alignment.CenterHorizontally)
                 .padding(top = 40.dp)
-                .size(64.dp, 67.dp)
+                .size(64.dp, 67.dp),
+            alpha = 0.9f
         )
 
         Text(
@@ -104,22 +114,17 @@ fun SignInScreen(
                     withStyle(
                         style = Typography.h5.toSpanStyle()
                             .copy(
-                                color = MultimoneyTheme.colors.text,
-                                fontWeight = FontWeight.SemiBold
+                                color = MultimoneyTheme.colors.loginTitleText,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 28.sp
                             )
                     ) {
                         append(
                             stringResource(
                                 id = R.string.sign_in_title_name,
-                                viewModel.uiState.userName
+                                viewModel.uiState.userName.splitByWhiteSpace().first().capitalized()
                             )
                         )
-                    }
-                    withStyle(
-                        style = Typography.subtitle1.toSpanStyle()
-                            .copy(color = MultimoneyTheme.colors.text)
-                    ) {
-                        append(stringResource(id = R.string.sign_in_title_no_name))
                     }
                 }
             } else {
@@ -127,8 +132,9 @@ fun SignInScreen(
                     withStyle(
                         style = Typography.h5.toSpanStyle()
                             .copy(
-                                color = MultimoneyTheme.colors.text,
-                                fontWeight = FontWeight.SemiBold
+                                color = MultimoneyTheme.colors.loginTitleText,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 28.sp
                             )
                     ) {
                         append(stringResource(id = R.string.sign_in_title))
@@ -138,7 +144,7 @@ fun SignInScreen(
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(top = 24.dp)
+                .padding(top = 24.dp, start = 24.dp, end = 24.dp)
         )
 
         // Fields
@@ -162,8 +168,7 @@ fun SignInScreen(
                     id = R.string.label_email
                 )
             },
-            modifier = Modifier
-                .padding(top = 44.dp),
+            modifier = Modifier.padding(top = 51.dp),
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.sign_in_email_required),
             isError = viewModel.uiState.userEmailError.first,
@@ -236,6 +241,25 @@ fun SignInScreen(
                         showDialog = false
                     )
                 )
+            },
+            openDialogCustom = viewModel.uiState.openDialogCustom
+        )
+    }
+
+    if (viewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = R.string.sign_in_session_active_on_another_device_title),
+            message = stringResource(id = R.string.sign_in_session_open_here_close_another),
+            positiveButtonText = stringResource(id = R.string.sign_in_dialog_sign_in_here_button),
+            negativeButtonText = stringResource(id = R.string.sign_in_dialog_exit_button),
+            onPositiveAction = {
+                viewModel.onUIEvent(SignInViewModel.UIEvent.OnNavigateToOTPScreen)
+            },
+            onNegativeAction = {
+                viewModel.onUIEvent(SignInViewModel.UIEvent.OnCloseDialog)
+            },
+            onDismissAction = {
+                viewModel.onUIEvent(SignInViewModel.UIEvent.OnCloseDialog)
             },
             openDialogCustom = viewModel.uiState.openDialogCustom
         )

@@ -51,6 +51,7 @@ import com.onfido.android.sdk.capture.Onfido.OnfidoResultListener
 import com.onfido.android.sdk.capture.errors.OnfidoException
 import com.onfido.android.sdk.capture.upload.Captures
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -120,7 +121,7 @@ class CreditOnfidoViewModel @Inject constructor(
                 names,
                 lastNames,
                 identification,
-                getApplicationId(),
+                BuildConfig.APPLICATION_ID,
                 Brand.CostaRica.id,
                 user
             ).collectLatest { result ->
@@ -141,25 +142,17 @@ class CreditOnfidoViewModel @Inject constructor(
         identification: String,
         user: String
     ) {
-        viewModelScope.launch {
+        executeUseCase {
             mutationOnFidoInitialProcessUseCase.invoke(
                 names,
                 lastNames,
                 identification,
-                getApplicationId(),
+                BuildConfig.APPLICATION_ID,
                 Brand.CostaRica.id,
                 user
             ).collectLatest { result ->
                 onFidoTokenEvent.emit(result)
             }
-        }
-    }
-
-    private fun getApplicationId(): String {
-        return if (BuildConfig.DEBUG) {
-            BuildConfig.ONFIDO_APPLICATION_ID
-        } else {
-            BuildConfig.APPLICATION_ID
         }
     }
 
@@ -206,7 +199,7 @@ class CreditOnfidoViewModel @Inject constructor(
         idUserRequest: Long,
         user: String
     ) {
-        executeUseCase {
+        GlobalScope.launch {
             mutationOnfidoCheckProcessUseCase.invoke(
                 identification,
                 applicantId ?: "",

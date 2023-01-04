@@ -19,7 +19,11 @@ import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.S
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.SmartMovementsLatest
 
 @Composable
-fun SmartFooterExpanded(viewModel: ProductViewModel, currentPage: Int) {
+fun SmartFooterExpanded(
+    viewModel: ProductViewModel,
+    currentPage: Int,
+    onLoadingValueChange: (isLoading: Boolean) -> Unit
+) {
     ConstraintLayout(
         Modifier.fillMaxSize()
     ) {
@@ -70,12 +74,15 @@ fun SmartFooterExpanded(viewModel: ProductViewModel, currentPage: Int) {
             onClickPay = {
                 viewModel.onUIEvent(
                     ProductViewModel.UIEvent.OnNavigateToPaymentSmartFlow(
-                        viewModel.balanceCredit?.balanceAccountSmart?.get(index)
+                        viewModel.balanceCredit?.balanceAccountSmart?.get(index),
+                        onLoadingValueChange
                     )
                 )
             },
             onClickSendMoney = {
-                viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSendMoneyFlow)
+                viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSendMoneyFlow(
+                    viewModel.balanceCredit?.balanceAccountSmart?.get(index)
+                ))
             },
             canSendMoney = viewModel.canSendMoney(
                 viewModel.uiState.productPageList?.get(currentPage)?.productSmartIndex

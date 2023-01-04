@@ -9,9 +9,7 @@ private fun GetPaymentPointsQuery.GetPaymentPoint.mapToDomainModel() = PaymentPo
     description = description,
     address = address,
     addressDescription = addressDescription,
-    schedule = schedule,
-    latitude = "13.7013318",
-    longitude = "-89.2266226"
+    schedule = schedule
 )
 
 fun GetPaymentPointsQuery.Data.mapToDomainModel() = getPaymentPoints.map { it.mapToDomainModel() }

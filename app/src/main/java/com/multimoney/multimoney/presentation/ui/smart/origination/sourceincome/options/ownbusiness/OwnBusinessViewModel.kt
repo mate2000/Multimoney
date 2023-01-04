@@ -64,10 +64,10 @@ class OwnBusinessViewModel @Inject constructor() : BaseViewModel(false) {
     private fun onValidateForm() = emitBaseEvent(BaseEvent.OnFormValidateCompleted(isFormValid()))
 
     fun isFormValid() = uiState.companyNameValue.isNotBlank() &&
-            uiState.companyDescriptionValue.isNotBlank() &&
-            !uiState.companyDescriptionError.first &&
-            uiState.monthlyIncomeValue.isNotBlank() &&
-            uiState.monthlyIncomeValue.toFloat() > MIN_INCOME
+        uiState.companyDescriptionValue.isNotBlank() &&
+        !uiState.companyDescriptionError.first &&
+        uiState.monthlyIncomeValue.isNotBlank() &&
+        uiState.monthlyIncomeValue.toFloat() > MIN_INCOME
 
     data class UIState(
         // Interactions

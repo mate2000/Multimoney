@@ -31,7 +31,6 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
-import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.Companion.STEP_BY_STEP_EVENT_DELAY
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnBirthDateValueChange
@@ -53,10 +52,9 @@ import com.multimoney.multimoney.presentation.util.ISO_8601_API_FORMAT_PATTERN
 import com.multimoney.multimoney.presentation.util.YEAR_MONTH_DAY_PATTERN
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import com.multimoney.multimoney.presentation.util.getPickedDateAsString
-import java.time.LocalDate
+import com.multimoney.multimoney.presentation.util.toLocalDate
 import java.util.Calendar
 import java.util.Date
-import kotlinx.coroutines.delay
 
 @Composable
 fun SmartDocumentScreen(
@@ -66,8 +64,7 @@ fun SmartDocumentScreen(
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
 
-    LaunchedEffect(true) {
-        delay(STEP_BY_STEP_EVENT_DELAY)
+    LaunchedEffect(sharedViewModel.accountSmartData) {
         viewModel.onUIEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
     }
 
@@ -97,9 +94,10 @@ fun SmartDocumentScreen(
                                 sharedViewModel.onUIEvent(
                                     SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase(
                                         accountSmartData = sharedViewModel.accountSmartData?.copy(
-                                            status = 1,
                                             idProfessionType = viewModel.uiState.professionId,
+                                            stringProfessionType = viewModel.uiState.profession,
                                             idGender = viewModel.uiState.genderId,
+                                            strGenre = viewModel.uiState.gender,
                                             expirationDate = getFormatDateByString(
                                                 viewModel.uiState.expirationDate,
                                                 YEAR_MONTH_DAY_PATTERN,
@@ -111,6 +109,7 @@ fun SmartDocumentScreen(
                                                 ISO_8601_API_FORMAT_PATTERN
                                             ),
                                             idCivilStatusType = viewModel.uiState.civilStateId,
+                                            strMaritalStatus = viewModel.uiState.civilState,
                                             currentStep = SmartSteps.Search.getNameById(
                                                 sharedViewModel.uiState.currentStep
                                             )
@@ -162,9 +161,9 @@ fun SmartDocumentScreen(
         Text(
             text = buildAnnotatedString {
                 withStyle(
-                    style = Typography.h4.toSpanStyle()
+                    style = Typography.h6.toSpanStyle()
                         .copy(
-                            color = MultimoneyTheme.colors.text,
+                            color = MultimoneyTheme.colors.labelText,
                             fontWeight = FontWeight.SemiBold
                         )
                 ) {
@@ -210,7 +209,7 @@ fun SmartDocumentScreen(
                         viewModel.onUIEvent(
                             OnBirthDateValueChange(
                                 date,
-                                LocalDate.of(year, month, day)
+                                calendarValidation.toLocalDate()
                             )
                         )
                     },

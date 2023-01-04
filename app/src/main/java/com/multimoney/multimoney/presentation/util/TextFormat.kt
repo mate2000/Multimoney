@@ -13,6 +13,7 @@ private const val INTEGER_FORMAT =
 private const val DOUBLE_FORMAT_SEPARATOR = ","
 private const val DOUBLE_FORMAT =
     "###$DOUBLE_FORMAT_SEPARATOR###$DOUBLE_FORMAT_SEPARATOR###$DOUBLE_FORMAT_SEPARATOR###.##"
+private val DECIMAL_FORMAT_REGEX = "[0-9]{0,20}[.]*[0-9]{0,2}".toRegex()
 
 // Convert time to milli seconds
 fun Duration.format(): String {
@@ -27,9 +28,9 @@ fun Duration.format(): String {
 
 // Format String to Integer decimal format
 fun String.stringToIntegerFormat(separator: String? = null): String =
-    if (isValidAmount() && separator == null) {
+    if (isNotEmpty() && isValidAmount() && separator == null) {
         DecimalFormat(INTEGER_FORMAT).format(toDouble())
-    } else if (isValidAmount() && separator != null) {
+    } else if (isNotEmpty() && isValidAmount() && separator != null) {
         DecimalFormat(INTEGER_FORMAT.replace(INTEGER_FORMAT_SEPARATOR, separator)).format(toDouble())
     } else {
         this
@@ -37,9 +38,9 @@ fun String.stringToIntegerFormat(separator: String? = null): String =
 
 // Format String to Integer decimal format
 fun String.stringToDoubleFormat(separator: String? = null): String =
-    if (isValidAmount() && separator == null) {
+    if (isNotEmpty() && isValidAmount() && separator == null) {
         DecimalFormat(DOUBLE_FORMAT).format(toDouble())
-    } else if (isValidAmount() && separator != null) {
+    } else if (isNotEmpty() && isValidAmount() && separator != null) {
         DecimalFormat(DOUBLE_FORMAT.replace(DOUBLE_FORMAT_SEPARATOR, separator)).format(toDouble())
     } else {
         this
@@ -48,9 +49,7 @@ fun String.stringToDoubleFormat(separator: String? = null): String =
 fun Double.formattedTwoDecimalsNumber(): Double =
     String.format(TWO_DECIMALS_FORMAT, this).toDouble()
 
-fun String.isValidAmount() = isNotBlank() && isValidAmountLength()
-
-fun String.isValidAmountLength() = length <= 12
+fun String.isValidAmount() = DECIMAL_FORMAT_REGEX.matches(this)
 
 fun String.capitalized(): String {
     return this.lowercase().replaceFirstChar {
@@ -62,9 +61,6 @@ fun String.capitalized(): String {
 
 fun getMaskedAccount(accountNumber: String, maskedText: String) =
     accountNumber.take(ACCOUNT_FIRST_DIGITS).plus(maskedText).plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
-
-fun getMaskedVisa(cardNumber: String, maskedText: String) =
-    cardNumber.take(CARD_NUMBER_LAST_DIGITS).plus(maskedText).plus(cardNumber.takeLast(ACCOUNT_LAST_DIGITS))
 
 fun getMaskedAccountIban(accountNumber: String, maskedText: String) =
     Brand.CostaRica.iban.plus(

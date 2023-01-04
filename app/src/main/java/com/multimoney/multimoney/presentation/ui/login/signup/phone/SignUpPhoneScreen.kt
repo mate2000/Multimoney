@@ -133,7 +133,7 @@ fun SignUpPhoneScreen(
             modifier = Modifier.padding(top = 12.dp),
             leadingIcon = drawable.ic_information,
             text = stringResource(id = string.sign_up_phone_information),
-            textStyle = Typography.subtitle2.copy(color = WhiteTransparency90)
+            textStyle = Typography.subtitle2.copy(color = MultimoneyTheme.colors.labelText)
         )
 
         // Fields

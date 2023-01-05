@@ -310,7 +310,7 @@ class HomeViewModel @Inject constructor(
             idBrand,
             identification,
             baseAsset = baseAsset,
-            startDate = getPreviousDate(FilterDateByDays.YESTERDAY.days),
+            startDate = getPreviousDate(FilterDateByDays.YESTERDAY.time),
             endDate = getCurrentDateYMDPattern()
         ).collectLatest { result ->
             result.onSuccess { historicBalance ->

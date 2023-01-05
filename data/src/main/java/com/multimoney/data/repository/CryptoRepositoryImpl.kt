@@ -8,7 +8,9 @@ import com.multimoney.data.mapper.crypto.mapToDomainModel
 import com.multimoney.data.networking.GraphqlApi
 import com.multimoney.data.paging.CryptoMovementsPagingSource
 import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
+import com.multimoney.domain.model.crypto.CryptoCurrencyNews
 import com.multimoney.domain.model.crypto.GetHistoricalClientBalance
+import com.multimoney.domain.model.crypto.GetHistoricalCurrencyPrices
 import com.multimoney.domain.model.crypto.GetListOfAvailableCryptoCoins
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Success
@@ -72,4 +74,36 @@ class CryptoRepositoryImpl @Inject constructor(
             }
         ).flow
     }
+
+    override suspend fun getCurrencyHistoricalPrices(
+        market: String,
+        max_data_points: Long,
+        range_begin: String,
+        range_end: String,
+        pagination_limit: Int,
+        pagination_offset: Int,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<GetHistoricalCurrencyPrices>> = fetchData(
+        apolloCall = graphqlApi.queryCurrencyHistoricalPrices(
+            market,
+            max_data_points,
+            range_begin,
+            range_end,
+            pagination_limit,
+            pagination_offset,
+            user,
+            idBrand
+        ),
+        apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
+    )
+
+    override suspend fun getCurrencyNews(
+        baseAsset: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<CryptoCurrencyNews>> = fetchData(
+        apolloCall = graphqlApi.queryCurrencyNews(baseAsset, user, idBrand),
+        apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
+    )
 }

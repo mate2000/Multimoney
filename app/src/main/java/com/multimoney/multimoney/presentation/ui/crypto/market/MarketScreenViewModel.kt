@@ -65,6 +65,27 @@ class MarketScreenViewModel @Inject constructor(
         )
     }
 
+    private fun onSetAssetBeforeNavigate(
+        asset: String,
+        description: String,
+        currentPrice: Float,
+        urlImage: String
+    ) {
+        uiState = uiState.copy(
+            asset = asset,
+            description = description,
+            currentPrice = currentPrice,
+            urlImage = urlImage
+        )
+    }
+
+    private fun onNavigateToCurrencyDetails() {
+        navigateTo(
+            "${Screen.CryptoCurrencyDetailsScreen.baseRoute}/${uiState.user}"
+                    + "/${uiState.idBrand}/${uiState.asset}/${uiState.description}/${uiState.currentPrice}/${uiState.urlImage}"
+        )
+    }
+
     private fun onFailure(error: HttpError) {
         uiState = uiState.copy(
             isLoading = false,
@@ -79,6 +100,10 @@ class MarketScreenViewModel @Inject constructor(
         val user: String? = null,
         val idBrand: Int? = null,
         val isLoading: Boolean = false,
+        val asset: String? = null,
+        val description: String? = null,
+        val currentPrice: Float? = null,
+        val urlImage: String? = null,
         val openDialog: DialogParameters = DialogParameters(),
         val availableCryptoCoins: GetListOfAvailableCryptoCoins? = null
     )
@@ -88,6 +113,13 @@ class MarketScreenViewModel @Inject constructor(
             is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
             is UIEvent.OnGetUserInfo -> onGetUserInfo()
             is UIEvent.OnGetAvailableListOfCryptoCoins -> onGetAvailableListOfCryptoCoins()
+            is UIEvent.OnNavigateToCurrencyDetails -> onNavigateToCurrencyDetails()
+            is UIEvent.OnSetAssetBeforeNavigation -> onSetAssetBeforeNavigate(
+                event.asset,
+                event.description,
+                event.currentPrice,
+                event.urlImage
+            )
         }
     }
 
@@ -95,5 +127,12 @@ class MarketScreenViewModel @Inject constructor(
         object OnGetUserInfo : UIEvent
         object OnNavigateBack : UIEvent
         object OnGetAvailableListOfCryptoCoins : UIEvent
+        object OnNavigateToCurrencyDetails : UIEvent
+        data class OnSetAssetBeforeNavigation(
+            val asset: String,
+            val description: String,
+            val currentPrice: Float,
+            val urlImage: String
+        ) : UIEvent
     }
 }

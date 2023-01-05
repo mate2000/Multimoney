@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -12,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
@@ -21,7 +22,6 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-
 
 @Composable
 fun SelectSmartAccountScreen(
@@ -37,13 +37,12 @@ fun SelectSmartAccountScreen(
             onPopAndNavigate = onPopAndNavigate
         )
     }
-
-  //  BackHandler { viewModel.onUIEvent(ProfileViewModel.UIEvent.OnNavigateBack) }
-//    SelectSmartAccountContent(viewModel)
+    //  BackHandler { viewModel.onUIEvent(ProfileViewModel.UIEvent.OnNavigateBack) }
+    SelectSmartAccountContent(viewModel)
 }
-@Preview
+
 @Composable
-fun SelectSmartAccountContent() {
+fun SelectSmartAccountContent(viewModel: SelectSmartAccountViewModel) {
     Column(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)
@@ -55,18 +54,25 @@ fun SelectSmartAccountContent() {
             isRightButtonVisible = false
         )
         Text(
-            modifier = Modifier.padding(top = 8.dp,bottom = 24.dp),
-            text = stringResource(id = R.string.crypto_select_smart_account_title_template),
+            modifier = Modifier.padding(top = 8.dp, bottom = 24.dp),
+            text = stringResource(
+                id = R.string.crypto_select_smart_account_title_template,
+                "Bitcoin"
+            ),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText,
             textAlign = TextAlign.Left
         )
-        CustomInfoButton(
-            modifier = Modifier.fillMaxWidth(),
-            startIcon = R.drawable.ic_multimoney_green_logo,
-            title = "Multimoney Smart | $",
-            subtitle = "CR****5506 | $1,500,000.00"
-        )
-
+        LazyColumn() {
+            items(viewModel.uiState.accounts) { account ->
+                //TODO replace with real info from accounts
+                CustomInfoButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    startIcon = R.drawable.ic_multimoney_green_logo,
+                    title = "Multimoney Smart | ${account.currencyCode}",
+                    subtitle = "CR****5506 | ${account.totalBalance}"
+                )
+            }
+        }
     }
 }

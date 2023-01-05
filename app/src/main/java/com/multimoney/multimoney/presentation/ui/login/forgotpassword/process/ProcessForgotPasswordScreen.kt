@@ -35,6 +35,7 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.ProcessForgotPasswordViewModel.BaseEvent.OnResendOtpToastEvent
+import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.ProcessForgotPasswordViewModel.UIEvent.OnAlertButtonClick
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.ProcessForgotPasswordViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.ProcessForgotPasswordViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.ProcessForgotPasswordViewModel.UIEvent.OnNewPasswordConfirmationValueChange
@@ -89,7 +90,8 @@ fun ProcessForgotPasswordScreen(
         onOtpValueChange = { value -> viewModel.onUIEvent(OnOtpValueChange(value)) },
         onResendClick = { viewModel.onUIEvent(OnResendOtpClick(focusManager)) },
         onNewPasswordValueChange = { value -> viewModel.onUIEvent(OnNewPasswordValueChange(value)) },
-        onNewPasswordConfirmationValueChange = { value -> viewModel.onUIEvent(OnNewPasswordConfirmationValueChange(value)) }
+        onNewPasswordConfirmationValueChange = { value -> viewModel.onUIEvent(OnNewPasswordConfirmationValueChange(value)) },
+        onAlertButtonClick = { viewModel.onUIEvent(OnAlertButtonClick(focusManager)) }
     )
 }
 
@@ -103,17 +105,18 @@ fun ProcessForgotPasswordContent(
     onOtpValueChange: (String) -> Unit = {},
     onResendClick: () -> Unit = {},
     onNewPasswordValueChange: (String) -> Unit = {},
-    onNewPasswordConfirmationValueChange: (String) -> Unit = {}
+    onNewPasswordConfirmationValueChange: (String) -> Unit = {},
+    onAlertButtonClick: () -> Unit = {}
 ) {
     if (uiState.isAlertResultVisible) {
         AlertResult(
             iconResource = uiState.alertResultIconResource,
             titleResource = uiState.alertResultTitleResource,
             descriptionResource = uiState.alertResultDescriptionResource,
-            buttonTextResource = R.string.common_go_home,
+            buttonTextResource = uiState.alertResultButtonTextResource,
             isRightButtonVisible = false,
             isLeftButtonVisible = false,
-            onButtonClick = { onCloseClick() }
+            onButtonClick = { onAlertButtonClick() }
         )
     } else {
         Column(

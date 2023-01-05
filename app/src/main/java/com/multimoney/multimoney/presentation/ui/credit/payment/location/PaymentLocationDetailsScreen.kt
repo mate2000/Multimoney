@@ -122,8 +122,7 @@ fun PaymentLocationDetailsScreen(
                 viewModel.onUIEvent(
                     UIEvent.OnNavigateMapsClick(
                         context = context,
-                        latitude = viewModel.pointLatitude,
-                        longitude = viewModel.pointLongitude
+                        viewModel.pointAddress
                     )
                 )
             },

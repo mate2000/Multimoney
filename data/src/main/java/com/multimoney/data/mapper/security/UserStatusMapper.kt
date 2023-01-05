@@ -84,6 +84,7 @@ private fun ValidateUserStatusQuery.Wording1.mapToDomainModel() = Wording(
     textOne = textOne,
     textTwo = textTwo,
     cTA = cTA,
+    link = link.orEmpty(),
     display = display ?: false
 )
 

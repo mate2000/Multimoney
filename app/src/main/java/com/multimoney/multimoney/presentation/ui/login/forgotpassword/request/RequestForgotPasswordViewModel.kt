@@ -95,12 +95,12 @@ class RequestForgotPasswordViewModel @Inject constructor(
                 email = uiState.email
             ).collectLatest { result ->
                 result.onSuccess {
+                    idBrand = Brand.Default.id
+                    uiState = uiState.copy(isAlertResultVisible = true, isLoading = false)
+                }.onMessage {
                     idBrand = it?.idBrand ?: Brand.Default.id
                     pkUser = it?.pkUser.orEmpty()
                     onResetPassword()
-                }.onMessage {
-                    idBrand = Brand.Default.id
-                    uiState = uiState.copy(isAlertResultVisible = true, isLoading = false)
                 }.onFailure {
                     idBrand = Brand.Default.id
                     uiState = uiState.copy(isAlertResultVisible = true, isLoading = false)

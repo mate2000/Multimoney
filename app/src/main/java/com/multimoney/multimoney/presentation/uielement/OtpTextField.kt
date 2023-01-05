@@ -53,7 +53,6 @@ import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.GrayScale300
 import com.multimoney.multimoney.presentation.theme.GrayScale400
 import com.multimoney.multimoney.presentation.theme.GrayScale500
-import com.multimoney.multimoney.presentation.theme.GrayScale600
 import com.multimoney.multimoney.presentation.theme.GrayScale800
 import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.SemanticNegative400
@@ -64,6 +63,7 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency30
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInOTPViewModel.Companion.FOUR_DIGITS
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -104,7 +104,7 @@ fun OtpTextField(
     value: String = "",
     placeHolder: String = "",
     isValueFromSms: Boolean = false,
-    digits: Int = 1,
+    digits: Int = 6,
     isRequired: Boolean = true,
     isRequiredMessage: String? = null,
     isError: Boolean = false,
@@ -216,13 +216,13 @@ fun OtpTextField(
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             (0 until digits).map { index ->
                 OutlinedTextField(
                     modifier = Modifier
-                        .padding(horizontal = 6.dp)
-                        .size(56.dp)
+                        .padding(horizontal = if (digits > FOUR_DIGITS) 4.dp else 6.dp)
+                        .size(if (digits > FOUR_DIGITS) 50.dp else 56.dp)
                         .bringIntoViewRequester(bringIntoViewRequester)
                         .onFocusChanged {
                             if (it.isFocused) {
@@ -267,7 +267,7 @@ fun OtpTextField(
                         }
                     ),
                     keyboardActions = KeyboardActions(onNext = {
-                        focusManager.moveFocus(FocusDirection.Next)
+                        focusManager.moveFocus(FocusDirection.Right)
                     }, onDone = {
                         focusManager.clearFocus()
                     }),
@@ -286,7 +286,7 @@ fun OtpTextField(
                             onValueChange(newValue)
                             textDebounce.value = newValue
                             if (index < digits - 1 && it.length == 1 && valueCharArray[index + 1] == emptyChar) {
-                                focusManager.moveFocus(FocusDirection.Next)
+                                focusManager.moveFocus(FocusDirection.Right)
                             } else {
                                 focusManager.clearFocus()
                             }

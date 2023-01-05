@@ -20,6 +20,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.BaseEvent
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.ProcessForgotPasswordViewModel.BaseEvent.OnResendOtpToastEvent
+import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.ProcessForgotPasswordViewModel.UIEvent.OnAlertButtonClick
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.ProcessForgotPasswordViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.ProcessForgotPasswordViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.ProcessForgotPasswordViewModel.UIEvent.OnNewPasswordConfirmationValueChange
@@ -53,6 +54,7 @@ class ProcessForgotPasswordViewModel @Inject constructor(
     private var idBrand: Int = 0
     private var pkUser: String = ""
     private var previousScreen: String? = null
+    private var otp: String = ""
 
     init {
         email = savedStateHandle[EMAIL] ?: ""
@@ -138,11 +140,12 @@ class ProcessForgotPasswordViewModel @Inject constructor(
     private fun isFormValid(): Boolean {
         return uiState.oneLowercaseState ?: false && uiState.oneUppercaseState ?: false && uiState.oneNumberState ?: false &&
             uiState.oneCharacterState ?: false && passwordHasMinimumCharacters(uiState.newPassword) &&
-            (uiState.newPasswordConfirmation == uiState.newPassword) && !uiState.newPasswordConfirmationError.first && uiState.otp.trim()
-            .isNotEmpty() && uiState.otp.trim().length == OTP_TOTAL_DIGITS
+            (uiState.newPasswordConfirmation == uiState.newPassword) && !uiState.newPasswordConfirmationError.first && otp.trim()
+            .isNotEmpty() && otp.trim().length == OTP_TOTAL_DIGITS
     }
 
     private fun onOtpValueChange(value: String) {
+        otp = value
         uiState = uiState.copy(
             otp = value,
             isFormValid = isFormValid()
@@ -191,8 +194,7 @@ class ProcessForgotPasswordViewModel @Inject constructor(
     private fun onConfirmResetPassword() = Amplify.Auth.confirmResetPassword(uiState.newPassword, uiState.otp, {
         onAlertSuccess()
     }, {
-        val test = it
-        onAlertFailure()
+        onAlertFailure(it.message == OTP_ERROR_MESSAGE)
     })
 
     private fun onAlertSuccess() {
@@ -221,6 +223,7 @@ class ProcessForgotPasswordViewModel @Inject constructor(
             } else {
                 R.string.common_go_home
             },
+            isAlertResultOtpFailure = isOtpFailure,
             isLoading = false
         )
     }
@@ -261,36 +264,47 @@ class ProcessForgotPasswordViewModel @Inject constructor(
         }
     }
 
+    private fun onAlertButtonClick(focusManager: FocusManager) {
+        if (uiState.isAlertResultOtpFailure) {
+            otp = ""
+            uiState = uiState.copy(
+                isAlertResultVisible = false,
+                isAlertResultOtpFailure = false,
+                otp = "",
+                isFormValid = isFormValid()
+            )
+        } else {
+            onCloseClick(focusManager)
+        }
+    }
+
     data class UIState(
         // Interactions
-
         val titleResource: Int = R.string.empty,
-
         val otp: String = "",
         val newPassword: String = "",
         val newPasswordConfirmation: String = "",
         val newPasswordError: Pair<Boolean, Int> = Pair(false, R.string.sign_up_otp_code_not_valid),
         val newPasswordConfirmationError: Pair<Boolean, Int> = Pair(false, R.string.sign_up_otp_code_not_valid),
-
         var eightCharactersMinimumState: Boolean? = null,
         var oneUppercaseState: Boolean? = null,
         var oneLowercaseState: Boolean? = null,
         var oneNumberState: Boolean? = null,
         var oneCharacterState: Boolean? = null,
-
         val alertResultIconResource: Int = R.drawable.ic_success_symbol,
         val alertResultTitleResource: Int = R.string.empty,
         val alertResultDescriptionResource: Int = R.string.empty,
         val alertResultButtonTextResource: Int = R.string.empty,
-
         val isFormValid: Boolean = false,
         val isLoading: Boolean = false,
-        val isAlertResultVisible: Boolean = false
+        val isAlertResultVisible: Boolean = false,
+        val isAlertResultOtpFailure: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnCloseClick -> onCloseClick(uiEvent.focusManager)
+            is OnAlertButtonClick -> onAlertButtonClick(uiEvent.focusManager)
             is OnContinueClick -> onContinueClick(uiEvent.focusManager)
             is OnOtpValueChange -> onOtpValueChange(uiEvent.value)
             is OnResendOtpClick -> onResendOtpClick(uiEvent.focusManager)
@@ -302,6 +316,7 @@ class ProcessForgotPasswordViewModel @Inject constructor(
 
     sealed class UIEvent {
         data class OnCloseClick(val focusManager: FocusManager) : UIEvent()
+        data class OnAlertButtonClick(val focusManager: FocusManager) : UIEvent()
         data class OnContinueClick(val focusManager: FocusManager) : UIEvent()
         data class OnOtpValueChange(val value: String) : UIEvent()
         data class OnResendOtpClick(val focusManager: FocusManager) : UIEvent()
@@ -316,5 +331,6 @@ class ProcessForgotPasswordViewModel @Inject constructor(
 
     companion object {
         const val OTP_TOTAL_DIGITS = 6
+        const val OTP_ERROR_MESSAGE = "Confirmation code entered is not correct."
     }
 }

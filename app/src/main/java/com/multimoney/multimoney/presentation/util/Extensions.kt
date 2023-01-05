@@ -44,15 +44,8 @@ fun Context.openWhatsAppDeepLink(link: String, onFailure: () -> Unit = {}) {
     }
 }
 
-fun Context.openMapsLink(latitude: String, longitude: String) {
-    val mapsIntentUri =
-        Uri.parse(
-            String.format(
-                resources.getString(R.string.payment_location_intent_uri_format),
-                latitude,
-                longitude
-            )
-        )
+fun Context.openMapsLink(locationAddress: String) {
+    val mapsIntentUri = Uri.parse(locationAddress)
     val mapIntent = Intent(Intent.ACTION_VIEW, mapsIntentUri)
     mapIntent.setPackage(resources.getString(R.string.payment_location_intent_package))
     this.startActivity(mapIntent)

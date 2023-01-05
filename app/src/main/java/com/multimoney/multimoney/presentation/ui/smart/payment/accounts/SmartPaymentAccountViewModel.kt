@@ -22,8 +22,8 @@ import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountViewModel.UIEvent.OnAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountViewModel.UIEvent.OnAddAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.Companion.ID_NOT_APPLICABLE
-import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.Companion.NOT_APPLICABLE
+import com.multimoney.multimoney.presentation.util.SmartEditAmountHelper.Companion.ID_NOT_APPLICABLE
+import com.multimoney.multimoney.presentation.util.SmartEditAmountHelper.Companion.NOT_APPLICABLE
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

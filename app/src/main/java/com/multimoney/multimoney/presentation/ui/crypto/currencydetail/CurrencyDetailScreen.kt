@@ -60,6 +60,11 @@ fun CurrencyDetailScreen(
 
     BackHandler { viewModel.onUIEvent(CryptoCurrencyDetailViewModel.UIEvent.OnNavigateBack) }
 
+    CurrencyDetailContent(viewModel)
+}
+
+@Composable
+fun CurrencyDetailContent(viewModel: CryptoCurrencyDetailViewModel){
     var selectedDateRange by remember { mutableStateOf(FilterDateByDays.YESTERDAY.days) }
     val graphicColor =
         if (viewModel.uiState.balanceItem?.investedBalanceCurrency?.contains("+") == true)

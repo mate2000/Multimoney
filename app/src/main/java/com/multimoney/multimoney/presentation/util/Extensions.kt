@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.net.Uri
 import android.nfc.cardemulation.CardEmulation
 import android.os.Build
@@ -12,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.core.content.ContextCompat
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
@@ -59,6 +61,11 @@ fun Context.openIntent(intent: Intent, onFailure: () -> Unit) {
     } catch (noActivity: ActivityNotFoundException) {
         onFailure()
     }
+}
+
+fun Context.checkPermission(permission: String): Boolean {
+    val isGranted = ContextCompat.checkSelfPermission(this, permission)
+    return isGranted == PERMISSION_GRANTED
 }
 
 fun tickerFlow(

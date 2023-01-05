@@ -57,6 +57,7 @@
     <string name="quetzales" translatable="false">Quetzales</string>
     <string name="detail" translatable="false">Detalle</string>
     <string name="success" translatable="false">Exito</string>
+    <string name="allow" translatable="false">Permitir</string>
 
     <string name="content_description_more_info" translatable="false">Más información</string>
 
@@ -1234,6 +1235,10 @@
     <string name="smart_iban_transfer_abandon_dialog_title" translatable="false">Cancelar envío</string>
     <string name="smart_iban_transfer_abandon_dialog_message" translatable="false">¿Estás seguro que querés cancelar el envío?</string>
     <string name="smart_iban_transfer_error_balance_insufficient" translatable="false">No tienes fondos suficientes. Tu disponible es %s</string>
+
+    <!-- Smart SAC Transfer -->
+    <string name="smart_sac_transfer_contact_dialog_title" translatable="false">Acceso a contactos</string>
+    <string name="smart_sac_transfer_contact_dialog_message" translatable="false">Para saber cuáles de tus amigos tienen cuentas Smart  necesitamos que nos des acceso a tus contactos.</string>
 
     <!-- Card Preferences -->
     <string name="card_preferences_title" translatable="false">Preferencias de tarjeta</string>

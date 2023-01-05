@@ -1,7 +1,12 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.sending
 
+import android.Manifest.permission.READ_PHONE_NUMBERS
+import android.Manifest.permission.READ_PHONE_STATE
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,6 +44,16 @@ fun SmartSelectSendingTypeScreen(
     viewModel: SmartSelectSendingTypeViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // Permission Accepted: Do something
+
+        } else {
+            // Permission Denied: Do something
+        }
+    }
 
     LaunchedEffect(true) {
         viewModel.apply {
@@ -80,7 +95,10 @@ fun SmartSelectSendingTypeScreen(
                         SendingTypeOptionsCR(
                             modifier = sendingTypeOptionModifier,
                             onMyFavoritesClick = { viewModel.onUIEvent(OnMyFavoritesSelected) },
-                            onMyContactsClick = { viewModel.onUIEvent(OnMyContactsSelected) },
+                            onMyContactsClick = {
+                                                launcher.launch(READ_PHONE_NUMBERS)
+                                                /*viewModel.onUIEvent(OnMyContactsSelected)*/
+                                                },
                             onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected) },
                             onIBANAccountsClick = { viewModel.onUIEvent(OnIBANAccountSelected) },
                             smartAccountTitle = viewModel.getTitleSmartAccountResource(),
@@ -91,7 +109,9 @@ fun SmartSelectSendingTypeScreen(
                     Brand.ElSalvador.id -> {
                         SendingTypeOptionsSV(
                             modifier = sendingTypeOptionModifier,
-                            onMyFavoritesClick = { viewModel.onUIEvent(OnMyFavoritesSelected) },
+                            onMyFavoritesClick = {
+                                                 /*viewModel.onUIEvent(OnMyFavoritesSelected)*/
+                                launcher.launch(READ_PHONE_NUMBERS)},
                             onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected) },
                             onOtherBankAccountsClick = { viewModel.onUIEvent(OnOtherBankAccountsSelected) },
                             onTransfer365MobileClick = { viewModel.onUIEvent(OnTransfer365MobileSelected) }
@@ -206,4 +226,12 @@ fun SendingTypeOptionsSV(
         onEndIconClick = onTransfer365MobileClick,
         onClick = onTransfer365MobileClick
     )
+}
+
+@Composable
+fun permissionLauncher(): ManagedActivityResultLauncher<String, Boolean> {
+
+    return rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) {  }
 }

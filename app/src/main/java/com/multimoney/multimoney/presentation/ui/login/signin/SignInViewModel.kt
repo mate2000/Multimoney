@@ -17,6 +17,7 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnCallCognitoSignIn
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnFingerprintCheckedChanged
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnInitializeBiometricPrompt
@@ -29,6 +30,7 @@ import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnUserPasswordValueChange
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnValidateUserEmail
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
+import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -298,9 +300,12 @@ class SignInViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateToForgotPassword() {
-        // TODO navigate to forgot screen
-    }
+    private fun onNavigateToForgotPassword() = navigateTo(
+        route = Screen.RequestForgotPassword.baseRoute
+            .plus(
+                getNavParam(PREVIOUS_SCREEN, Screen.SignInScreen.route)
+            )
+    )
 
     private fun onShowBiometricSignInChanged(value: Boolean) {
         uiState = uiState.copy(

@@ -29,6 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.multimoney.multimoney.R
@@ -38,6 +39,24 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
 import com.multimoney.multimoney.presentation.util.gesture.detectTapAndPressUnconsumed
 
+/**
+ * It's a dropdown text field that can be used in place of the standard text field
+ *
+ * @param modifier: Apply style
+ * @param labelText: Label Text Resource
+ * @param value: The value of the text field
+ * @param placeHolder: The value of the placeHolder
+ * @param isError: Display error
+ * @param errorMessage: Error message to be displayed
+ * @param enabled: Enable or Disable field.
+ * @param onValueChange: Function to handle input changes.
+ * @param onSelectionChange: Function to handle Dropdown selection changes.
+ * @param optionList: List Value to use in Dropdown
+ * @param optionSelected: The selected item from the dropdown list
+ * @param customTransformation: VisualTransformation mask to apply in input
+ * @param onDebounceValidation: Function to handle validations with a debounce of 0.5 seg.
+ */
+@Preview
 @Composable
 fun CustomDropdownTextField(
     modifier: Modifier = Modifier,

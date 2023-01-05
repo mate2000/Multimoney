@@ -27,8 +27,24 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 
+/**
+ * CryptoActionsSection: This section is used to show the actions that the user can do on crypto home
+ *
+ * paremeters:
+ * @param modifier
+ * @param hasSmartBalance verify if the user has a smart balance
+ * @param enableCryptoActions enable the crypto actions or not
+ * @param enableSendAndGive enable the send and give actions or not
+ * @param noBalanceAction action to be executed when the user has no balance in buy crypto action
+ * @param hasBalanceAction default action to be executed in buy crypto action
+ * @param sellAction action to be executed in sell crypto action
+ * @param giveAction action to be executed in receive crypto action
+ * @param sendAction action to be executed in send crypto action
+ **/
+
 @Composable
 fun CryptoActionsSection(
+    modifier: Modifier = Modifier,
     hasSmartBalance: Boolean,
     enableCryptoActions: Boolean = false,
     enableSendAndGive: Boolean = true,
@@ -39,7 +55,7 @@ fun CryptoActionsSection(
     sendAction: () -> Unit = {},
 ) {
 
-    Column {
+    Column(modifier = modifier) {
         Divider(
             modifier = Modifier.fillMaxWidth(),
             color = MultimoneyTheme.colors.dividerDefaultColor,
@@ -69,7 +85,7 @@ fun CryptoActionsSection(
             if (enableSendAndGive) {
                 item {
                     CryptoAction(
-                        enable = enableCryptoActions,
+                        enable = true,
                         title = stringResource(id = R.string.crypto_footer_expanded_get_crypto_label),
                         icon = R.drawable.ic_arrow_get,
                         action = giveAction

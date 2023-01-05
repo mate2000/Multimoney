@@ -1,0 +1,43 @@
+query GetCryptoMovements(
+    $user: String!,
+    $idBrand: Int!,
+    $identification: String!,
+    $market: String!,
+    $order_time_begin: DateTime!,
+    $order_time_end: DateTime!,
+    $pagination_limit: Int!
+    $pagination_offset: Int!
+){
+    cryptoCurrencyMovement(cryptoMovementInput: {
+        user: $user,
+        idBrand: $idBrand,
+        identification: $identification,
+        market: $market,
+        order_time_begin: $order_time_begin,
+        order_time_end: $order_time_end,
+        pagination_limit: $pagination_limit
+        pagination_offset: $pagination_offset
+    }
+    ) {
+        total_count,
+        items {
+            id,
+            profile_id,
+            side,
+            market,
+            type,
+            base_amount,
+            price,
+            quote_amount,
+            created_at,
+            modified_at,
+            amount_filled,
+            volume_weighted_average_price,
+            dateCreated,
+            decriptionMovement,
+            abbreviationCurrency,
+            held,
+            month_limit_exceeded
+        }
+    }
+}

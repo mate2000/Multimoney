@@ -2,9 +2,11 @@ package com.multimoney.multimoney.presentation.ui.crypto.graphics
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
@@ -23,14 +25,16 @@ fun DateFilterDWMYSection(
     ) {
 
         FilterDateByDays.values().filter {
-            it != FilterDateByDays.LAST_180_DAYS && it != FilterDateByDays.LAST_90_DAYS
+            it != FilterDateByDays.LAST_180_DAYS
+                    && it != FilterDateByDays.LAST_90_DAYS
+                    && it != FilterDateByDays.HOUR
         }.forEach { filterDateByDays ->
             item {
                 DateFilterItem(
-                    day = filterDateByDays.time,
+                    day = filterDateByDays.timeDescription,
                     avbDay = filterDateByDays.timeAbv,
-                    days = filterDateByDays.days,
-                    isSelected = selectedDateFilter == filterDateByDays.days,
+                    days = filterDateByDays.time,
+                    isSelected = selectedDateFilter == filterDateByDays.time,
                     onDateFilterSelected = onDateFilterSelected
                 )
             }
@@ -54,10 +58,10 @@ fun FullDateFilterSection(
         FilterDateByDays.values().forEach { filterDateByDays ->
             item {
                 DateFilterItem(
-                    day = filterDateByDays.time,
-                    avbDay = filterDateByDays.timeAbv,
-                    days = filterDateByDays.days,
-                    isSelected = selectedDateFilter == filterDateByDays.days,
+                    day = filterDateByDays.timeDescriptionExtended,
+                    avbDay = filterDateByDays.timeAbvExtended,
+                    days = filterDateByDays.time,
+                    isSelected = selectedDateFilter == filterDateByDays.time,
                     onDateFilterSelected = onDateFilterSelected
                 )
             }
@@ -75,7 +79,7 @@ fun DateFilterItem(
 ) {
 
     CustomButton(
-        modifier = Modifier,
+        modifier = Modifier.padding(horizontal = 8.dp),
         text = if (isSelected) day else avbDay,
         onClick = {
             onDateFilterSelected(days)

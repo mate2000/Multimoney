@@ -1,0 +1,29 @@
+package com.multimoney.multimoney.presentation.ui.crypto.market
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.multimoney.multimoney.presentation.uielement.ShimmerBoxView
+import com.multimoney.multimoney.presentation.uielement.ShimmerItemView
+
+@Composable
+fun MarketSkeleton() {
+
+    ShimmerBoxView {
+        Column {
+            repeat(7) {
+                ShimmerItemView(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(88.dp)
+                        .padding(horizontal = 8.dp, vertical = 16.dp),
+                    radius = 24.dp
+                )
+            }
+        }
+    }
+}

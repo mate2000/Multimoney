@@ -1,0 +1,29 @@
+mutation ManageSinpeAccountSave(
+    $user: String,
+    $idBrand: Int,
+    $identification: String,
+    $account_number: String,
+    $id_Currency: Long,
+    $nameAccount: String,
+    $country: String,
+    $id_account: Long,
+    $option: String
+){
+    manageSinpeAccountSave(
+        manageSinpeAccountSaveInput: {
+            user: $user
+            idBrand: $idBrand
+            identification: $identification
+            account_number: $account_number
+            id_Currency: $id_Currency
+            nameAccount: $nameAccount
+            country: $country
+            id_account: $id_account
+            option: $option
+        }
+    ) {
+        result {
+            id_Account_Sinpe
+        }
+    }
+}

@@ -106,6 +106,16 @@ const val DEVICE_BRAND = "device_brand"
 const val DEVICE_MODEL = "device_model"
 const val IS_EMULATOR = "is_emulator"
 const val FORCE_CHANGE_DEVICE = "force_change_device"
+const val ID_CLIENT = "id_client"
+const val ID_LOAN_CLIENT = "id_loan_client"
+const val STATUS_CREDIT = "status_credit"
+const val STATUS_SMART = "status_smart"
+const val STATUS_CRYPTO = "status_crypto"
+const val CARD_STATUS = "card_status"
+const val CRYPTO_ASSET = "asset"
+const val DESCRIPTION_CURRENCY = "description_currency"
+const val CURRENT_CRYPTO_PRICE = "current_crypto_price"
+const val URL_IMAGE = "url_image"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -439,6 +449,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "smart_select_sending_type_screen"
     )
 
+    object SmartTransferRegisterIbanScreen : Screen(
+        "smart_transfer_register_iban_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}",
+        "smart_transfer_register_iban_screen"
+    )
+
     object SmartTransferIbanAccountScreen : Screen(
         "transfer_iban_account_screen/{$SMART_IDS}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}",
         "transfer_iban_account_screen"
@@ -455,7 +470,22 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // Crypto
     object CryptoWalletScreen : Screen(
-        "crypto_wallet_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$GLOBAL_CRYPTO_BALANCE}",
+        "crypto_wallet_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$GLOBAL_CRYPTO_BALANCE}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$STATUS_CREDIT}/{$STATUS_SMART}/{$STATUS_CRYPTO}/{$CARD_STATUS}",
         "crypto_wallet_screen"
+    )
+
+    object CryptoMarketScreen : Screen(
+        "crypto_market_screen/{$USER}/{$ID_BRAND}",
+        "crypto_market_screen"
+    )
+
+    object CryptoMovementsScreen: Screen(
+        "crypto_movements_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
+        "crypto_movements_screen"
+    )
+
+    object CryptoCurrencyDetailsScreen: Screen(
+        "crypto_currency_details_screen/{$USER}/{$ID_BRAND}/{$CRYPTO_ASSET}/{$DESCRIPTION_CURRENCY}/{$CURRENT_CRYPTO_PRICE}/{$URL_IMAGE}",
+        "crypto_currency_details_screen"
     )
 }

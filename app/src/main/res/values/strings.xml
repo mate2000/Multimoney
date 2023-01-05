@@ -512,10 +512,11 @@
     <string name="credit_amount_disbursement_progress_factor_error_message" translatable="false">El monto debe ser múltiplo de %s%s</string>
     <string name="credit_amount_disbursement_minimum_error_message" translatable="false">El monto ingresado es menor al permitido</string>
     <string name="credit_amount_disbursement_maximum_error_message" translatable="false">El monto ingresado es mayor al permitido</string>
-    <string name="credit_amount_condition_of_credit_info" translatable="false">Condiciones del crédito</string>
+    <string name="credit_amount_condition_of_credit_info" translatable="false">Condiciones</string>
     <string name="credit_amount_condition_of_credit_modal_description" translatable="false">La cuota e interés pueden variar según su evaluación crediticia.</string>
     <string name="credit_amount_monthly_fee" translatable="false">Cuota mensual:\u00A0</string>
     <string name="credit_amount_interest" translatable="false">Interés:\u00A0</string>
+    <string name="credit_amount_interest_origination" translatable="false">Interés corriente:\u00A0</string>
     <string name="credit_amount_term" translatable="false">Plazo:\u00A0</string>
     <string name="credit_amount_term_value" translatable="false">%1$s meses</string>
     <string name="credit_amount_commission_for_disbursement" translatable="false">Comisión por desembolso:\u00A0</string>
@@ -1070,8 +1071,25 @@
     <!--Crypto Wallet-->
     <string name="crypto_wallet_header_title" translatable="false">Mi portafolio</string>
     <string name="crypto_wallet_balance_section_label" translatable="false">Balance</string>
+    <string name="crypto_wallet_search_crypto_currency" translatable="false">Buscar Criptomoneda</string>
+    <string name="crypto_wallet_show_all_coins" translatable="false">Ver Todas</string>
     <string name="crypto_gains_symbol" translatable="false">+</string>
     <string name="crypto_losses_symbol" translatable="false">-</string>
+
+    <!--Crypto Market-->
+    <string name="market_header_title" translatable="false">Mercado</string>
+    <string name="market_search_crypto_currency" translatable="false">Buscar Criptomonedas</string>
+    <string name="market_select_filter" translatable="false">Seleccionar</string>
+    <string name="market_cancel_filter" translatable="false">Cancelar</string>
+    <string name="market_filter_crypto_az_label" translatable="false">A-Z</string>
+    <string name="market_filter_crypto_price_label" translatable="false">Precio</string>
+
+    <!--Crypto Market Details-->
+    <string name="market_details_button_history" translatable="false">Historia</string>
+    <string name="market_details_button_news" translatable="false">Noticias</string>
+    <string name="market_details_button_show_more" translatable="false">Ver Más</string>
+    <string name="market_details_button_show_less" translatable="false">Ver Menos</string>
+    <string name="market_details_button_read_more" translatable="false">Leer más</string>
 
     <!-- Evicertia screen -->
     <string name="smart_evicertia_missing_signature_title_card" translatable="false">¡Solo falta tu firma!</string>
@@ -1176,6 +1194,10 @@
     <string name="crypto_currencies" translatable="false">Mis monedas</string>
     <string name="crypto_currencies_see_all" translatable="false">Ver todas</string>
 
+    <!--Crypto Movements-->
+    <string name="crypto_movements" translatable="false">Mis movimientos</string>
+    <string name="crypto_movements_see_all" translatable="false">Ver todos</string>
+
     <!-- Disbursement Voucher -->
     <string name="disbursement_voucher_title_chooser" translatable="false">Voucher</string>
     <string name="disbursement_voucher_schedule_payment" translatable="false">Programar pago automático</string>
@@ -1229,13 +1251,28 @@
 
     <!-- Currency Item -->
     <string name="currency_item_dollar_symbol" translatable="false">$%2s</string>
+    <string name="currency_item_inside_parenthesis" translatable="false">(%1s)</string>
     <string name="currency_item_description" translatable="false">%1$s (%2$s)</string>
+    <string name="currency_item_gain_or_losses_description" translatable="false">%1s$%2s (%3s\%%)</string>
     <string name="currency_item_percent_invested" translatable="false">%1$s\%%</string>
+    <string name="currency_item_percent_invested_with_symbol" translatable="false">%1s%2$s\%%</string>
 
     <!-- Smart Transfer Iban -->
     <string name="smart_iban_transfer_accounts_title" translatable="false">Cuentas IBAN</string>
     <string name="smart_iban_transfer_accounts_add" translatable="false">Agregar</string>
     <string name="smart_iban_transfer_title" translatable="false">Cuentas registradas</string>
+
+    <!-- Smart IBAN Register -->
+    <string name="smart_iban_register_title" translatable="false">Registro de cuenta</string>
+    <string name="smart_iban_register_account_label" translatable="false">Número de cuenta IBAN</string>
+    <string name="smart_iban_register_document_label" translatable="false">Documento</string>
+    <string name="smart_iban_register_mail_label" translatable="false">Correo electrónico para notificar</string>
+    <string name="smart_iban_register_favorite_checkbox" translatable="false">Agregar a favoritos</string>
+    <string name="smart_iban_register_account_placeholder" translatable="false">CR 00000 00000 00000 00000</string>
+    <string name="smart_iban_register_account_error" translatable="false">Número inválido</string>
+    <string name="smart_iban_register_email_error" translatable="false">Formato incorrecto. Debe contener “@” y “.”</string>
+    <string name="smart_iban_register_favorite_label" translatable="false">Apodo</string>
+
     <string name="smart_iban_transfer_send_money" translatable="false">Enviar dinero</string>
     <string name="smart_iban_transfer_from_account" translatable="false">Desde mi cuenta %s</string>
     <string name="smart_iban_transfer_motive_label" translatable="false">Motivo</string>
@@ -1265,5 +1302,4 @@
     <string name="card_preferences_unlinked_card_dialog_description" translatable="false">¿Estás seguro que deseás desvincular tu tarjeta?</string>
     <string name="card_preferences_unlinked_card_dialog_positive_button" translatable="false">Desvincular</string>
     <string name="card_preferences_unlinked_card_dialog_negative_button" translatable="false">Cancelar</string>
-
 </resources>

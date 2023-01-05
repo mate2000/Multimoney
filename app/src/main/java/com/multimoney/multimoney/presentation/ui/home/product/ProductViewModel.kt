@@ -355,9 +355,20 @@ class ProductViewModel @Inject constructor(
         navigateTo("${Screen.SmartMovementsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification/$accountToken")
 
     private fun onNavigateToCryptoWallet() {
+        val userStatus = uiState.userStatus
+        val globalBalance = balanceCredit?.balanceCryptoAccount?.globalBalance ?: 0.0
+        val statusCrypto = userStatus?.infoCrypto?.status
+        val statusSmart = userStatus?.infoBankAccount?.status
+        val statusCredit = userStatus?.infoCredit?.status
+        val idLoanClient = userStatus?.infoCredit?.idLoanClient
+        val cardStatus = userStatus?.infoVirtualCard?.status
         navigateTo(
-            "${Screen.CryptoWalletScreen.baseRoute}/$email/${uiState.idBrand}/$identification/${balanceCredit?.balanceCryptoAccount?.globalBalance ?: 0.0}"
+            "${Screen.CryptoWalletScreen.baseRoute}/$email/${uiState.idBrand}/${identification}/${globalBalance}/${idClient}/${idLoanClient}/${statusCredit}/${statusSmart}/${statusCrypto}/${cardStatus}"
         )
+    }
+
+    private fun onNavigateToCryptoMarket() {
+        navigateTo("${Screen.CryptoMarketScreen.baseRoute}/$userName/${uiState.idBrand}")
     }
 
     private fun openWhatsAppLink(context: Context, whatsAppLink: String) {
@@ -853,6 +864,7 @@ class ProductViewModel @Inject constructor(
             is OnNavigateToProfileScreen -> onNavigateToProfileScreen()
             is OnNavigateToDisbursement -> onNavigateToDisbursement()
             is UIEvent.OnNavigateToCryptoWallet -> onNavigateToCryptoWallet()
+            is UIEvent.OnNavigateToCryptoMarket -> onNavigateToCryptoMarket()
             is OnNavigateToGtSvNonPreApproved -> onNavigateToGtSvNonPreApproved()
             is OnSetUserData -> onSetUserData(
                 idBrand = uiEvent.idBrand,
@@ -941,6 +953,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToSmartPaymentAccountScreen : UIEvent()
         object OnNavigateToSmartPaymentMethodScreen : UIEvent()
         object OnNavigateToCryptoWallet : UIEvent()
+        object OnNavigateToCryptoMarket : UIEvent()
         object OnGetSmartContent : UIEvent()
 
         data class OnSetUserData(

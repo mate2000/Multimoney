@@ -29,6 +29,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
 
 @Composable
 fun CryptoActionsSection(
+    modifier: Modifier = Modifier,
     hasSmartBalance: Boolean,
     enableCryptoActions: Boolean = false,
     enableSendAndGive: Boolean = true,
@@ -39,7 +40,7 @@ fun CryptoActionsSection(
     sendAction: () -> Unit = {},
 ) {
 
-    Column {
+    Column(modifier = modifier) {
         Divider(
             modifier = Modifier.fillMaxWidth(),
             color = MultimoneyTheme.colors.dividerDefaultColor,

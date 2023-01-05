@@ -4,6 +4,7 @@ import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.crypto.mapToDomainModel
 import com.multimoney.data.networking.GraphqlApi
 import com.multimoney.domain.model.crypto.GetHistoricalClientBalance
+import com.multimoney.domain.model.crypto.GetListOfAvailableCryptoCoins
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.CryptoRepository
@@ -30,6 +31,14 @@ class CryptoRepositoryImpl @Inject constructor(
             startDate,
             endDate
         ),
+        apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
+    )
+
+    override suspend fun getAvailableListOfCryptoCoins(
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<GetListOfAvailableCryptoCoins?>> = fetchData(
+        apolloCall = graphqlApi.queryGetAvailableListOfCryptoCoins(user, idBrand),
         apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
     )
 

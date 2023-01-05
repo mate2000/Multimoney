@@ -41,6 +41,19 @@ import com.multimoney.multimoney.presentation.uielement.CustomButtonType.Primary
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiary
 import com.multimoney.multimoney.presentation.util.shape.DottedShape
 
+/**
+ * Parameters:
+ * @param onShareClick: Action to perform when share button is pressed.
+ *         Passes view and bounds to handle screen-capture.
+ * @param savePayText: String of title indicating save or pay action
+ * @param amount: String of amount to be shown (Should be sent formatted)
+ * @param exchangedAmount: String of amount exchanged (Should be sent formatted)
+ * @param fromToText: String of label indicating if transaction is to or from account Smart
+ * @param buttonText: String of button text
+ * @param onButtonClick: Action to perform on button click
+ * @param infoContent: Composable items to be shown indicating the info of the transaction
+ */
+
 @Composable
 fun PaymentSuccessResult(
     onShareClick: (view: View, bounds: Rect) -> Unit,

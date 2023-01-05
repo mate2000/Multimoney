@@ -30,6 +30,26 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import kotlinx.coroutines.CoroutineScope
 
+/**
+ * Parameters:
+ * @param coroutineScope: Coroutine scope
+ * @param modalBottomSheetState: Bottom sheet state
+ * @param saveSendTitleResource: Resource of title to be shown indicating save to Smart or send from Smart
+ * @param amount: String of amount (Should be formatted)
+ * @param exchangedAmount: String of amount exchanged for currency conversion (Should be formatted)
+ * @param fromLabel: String indicating label of origin account
+ * @param fromTitle: String indicating title of origin account
+ * @param fromSubtitle: String indicating subtitle of origin account
+ * @param fromIcon: Resource indicating icon of origin account
+ * @param toLabel: String indicating label of destination account
+ * @param toTitle: String indicating title of destination account
+ * @param toSubtitle: String indicating subtitle of destination account
+ * @param toIcon: Resource indicating icon of destination account
+ * @param motive: String of motive (null to not include field, empty string will show field empty)
+ * @param buttonText: String indicating label text of button
+ * @param buttonAction: Action to call on button click
+ */
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SmartPaymentBottomSheet(
@@ -168,6 +188,7 @@ fun SmartPaymentBottomSheet(
 @Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
 @Composable
 private fun BottomSheetPreview() {
+    // To see this preview you may need to start interactive mode
     SmartPaymentBottomSheet(
         coroutineScope = rememberCoroutineScope(),
         modalBottomSheetState = ModalBottomSheetState(Expanded),
@@ -182,8 +203,8 @@ private fun BottomSheetPreview() {
         toTitle = "Mi Cuenta Smart | $",
         toSubtitle = "Dólares",
         toIcon = R.drawable.ic_bank_account_dollar,
+        motive = "Cena de ayer",
         buttonText = "continuar",
-        motive = "Cena de ayer"
-    ) {
-    }
+        buttonAction = {}
+    )
 }

@@ -1,9 +1,17 @@
 package com.multimoney.multimoney.presentation.uielement
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +37,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
  * @param subtitle: Left side subtitle string value
  * @param rightTitle: Right side title string value
  * @param rightSubtitle: Right side subtitle string value
+ * @param showVerticalDivision: Show vertical line to separate left from right content
  */
 
 @Composable
@@ -41,10 +50,14 @@ fun SmartPaymentInfoItem(
     title: String,
     subtitle: String? = null,
     rightTitle: String? = null,
-    rightSubtitle: String? = null
+    rightSubtitle: String? = null,
+    showVerticalDivision: Boolean = false
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier
+            .height(IntrinsicSize.Min)
+            .fillMaxWidth()
+            .padding(start = 24.dp, top = 24.dp, end = 24.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Row(
@@ -56,6 +69,8 @@ fun SmartPaymentInfoItem(
                     contentDescription = "",
                     tint = iconTint,
                     modifier = iconModifier
+                        .height(24.dp)
+                        .width(24.dp)
                 )
             }
             Column(modifier = Modifier.padding(start = 14.dp)) {
@@ -72,6 +87,13 @@ fun SmartPaymentInfoItem(
                     )
                 }
             }
+        }
+        if (showVerticalDivision) {
+            Box(
+                Modifier.fillMaxHeight()
+                    .width(1.dp)
+                    .background(color = MultimoneyTheme.colors.dividerWhite40)
+            )
         }
         Column(modifier = Modifier.padding(end = 14.dp)) {
             if (rightTitle.isNullOrBlank().not()) {

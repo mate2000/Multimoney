@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.payment.options
+package com.multimoney.multimoney.presentation.ui.smart.payment.optionscr
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
@@ -70,11 +70,11 @@ class SmartPaymentOptionsViewModel @Inject constructor(
     private fun navigateToSmartAccount(clientBankAccounts: List<SinpeAccount?>) {
         navigateTo(
             route = "${Screen.SmartPaymentAccountScreenCR.baseRoute}/$user/$idBrand/$identification/${Screen.SmartPaymentOptionsScreenCR.baseRoute}/" +
-                    "$idClient/$idLoanClient/${encodeData(clientBankAccounts)}/${
-                        encodeData(
-                            selectedSmartAccount
-                        )
-                    }"
+                "$idClient/$idLoanClient/${encodeData(clientBankAccounts)}/${
+                encodeData(
+                    selectedSmartAccount
+                )
+                }"
         )
     }
 

@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.payment.method
+package com.multimoney.multimoney.presentation.ui.smart.payment.methodsv
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -17,9 +17,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnTransferSelected
-import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnVisaSelected
+import com.multimoney.multimoney.presentation.ui.smart.payment.methodsv.SmartPaymentMethodViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.payment.methodsv.SmartPaymentMethodViewModel.UIEvent.OnTransferSelected
+import com.multimoney.multimoney.presentation.ui.smart.payment.methodsv.SmartPaymentMethodViewModel.UIEvent.OnVisaSelected
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent

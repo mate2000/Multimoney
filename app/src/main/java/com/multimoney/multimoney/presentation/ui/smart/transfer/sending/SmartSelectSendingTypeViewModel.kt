@@ -40,7 +40,6 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
     }
 
-
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is UIEvent.OnCloseClick -> onNavigateToHome()
@@ -141,5 +140,4 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     sealed class BaseEvent {
         object OnShowTbdToastEvent : BaseEvent()
     }
-
 }

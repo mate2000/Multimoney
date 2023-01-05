@@ -10,6 +10,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Rect
 import androidx.lifecycle.viewModelScope
+import com.multimoney.domain.interaction.accountsmart.MutationProcessSinpeTransferUseCase
+import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -28,15 +33,21 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.Smar
 import com.multimoney.multimoney.presentation.util.SmartEditAmountHelper
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.getCurrentDate
+import com.multimoney.multimoney.presentation.util.getCurrentTime
+import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
 class SmartTransferAmountViewModel @Inject constructor(
-    val editAmountHelper: SmartEditAmountHelper
+    val editAmountHelper: SmartEditAmountHelper,
+    private val processSinpeTransferUseCase: MutationProcessSinpeTransferUseCase
 ) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())
@@ -88,7 +99,7 @@ class SmartTransferAmountViewModel @Inject constructor(
                             uiState = uiState.copy(
                                 isLoading = false,
                                 exchangeRate = rate?.exchangeRate ?: 0.0,
-                                exchangeConvertedAmount = rate?.amount ?: 0.0,
+                                exchangeConvertedAmount = rate?.convertedAmount ?: 0.0,
                                 exchangeRateLabel = rate?.exchangeRateLabel ?: "0.0",
                                 convertedAmountLabel = rate?.convertedAmountLabel ?: "0.0"
                             )
@@ -119,13 +130,16 @@ class SmartTransferAmountViewModel @Inject constructor(
     private fun validateForm(
         newAmount: String? = uiState.currentAmountValueString,
         newMotive: String = uiState.motive
-    ) = (newAmount?.isNotEmpty() == true) && (newAmount.toDoubleOrNull()
-        ?: 0.0) > 0.0 && newMotive.isNotEmpty()
-
+    ) = (newAmount?.isNotEmpty() == true) && (
+        newAmount.toDoubleOrNull()
+            ?: 0.0
+        ) > 0.0 && newMotive.isNotEmpty()
 
     private fun onContinueClick() {
-        val isValidAmount = (uiState.currentAmountValueString?.toDoubleOrNull() ?: 0.0) <=
-                (editAmountHelper.smartAccount?.totalBalance ?: 0.0)
+        val isValidAmount = (
+            uiState.currentAmountValueString?.toDoubleOrNull()
+                ?: 0.0
+            ) <= (editAmountHelper.smartAccount?.totalBalance ?: 0.0)
         uiState = if (isValidAmount) {
             uiState.copy(
                 isAmountValid = true,
@@ -137,16 +151,74 @@ class SmartTransferAmountViewModel @Inject constructor(
     }
 
     private fun onCallProcessSinpeTransfer() {
-        TODO("Not yet implemented")
+        executeUseCase {
+            processSinpeTransferUseCase.invoke(
+                pkUser = editAmountHelper.pkUser.toIntOrNull() ?: 0,
+                identification = editAmountHelper.identification,
+                ibanAccountOrigin = editAmountHelper.smartAccount?.ibanAccountNumber ?: "",
+                originCustomerIdentification = editAmountHelper.identification,
+                originCustomerName = editAmountHelper.userName,
+                idCurrencyOrigin = editAmountHelper.smartCurrency?.id.toString(),
+                destinationCustomerIdentification = editAmountHelper.ibanAccount?.clientIdentification
+                    ?: "",
+                ibanAccountDestination = editAmountHelper.ibanAccount?.sinpeAccount ?: "",
+                destinationCustomerName = editAmountHelper.userName,
+                idCurrencyDestination = editAmountHelper.ibanCurrency?.id.toString(),
+                reasonOfTransfer = uiState.motive,
+                transferType = SmartSinpeTransferType.SEND,
+                amountToTransfer = if (editAmountHelper.shouldDisplayExchange) {
+                    // Using this value cause endpoint expects amount in the same currency of the account
+                    uiState.exchangeConvertedAmount
+                } else {
+                    uiState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
+                },
+                exchangeRate = uiState.exchangeRate,
+                idBrand = editAmountHelper.idBrand,
+                user = editAmountHelper.userName
+            ).collectLatest { result ->
+                result.onSuccess {
+                    if (it?.referenceNumber.isNullOrBlank()) {
+                        uiState = uiState.copy(
+                            showLoadingScreen = false,
+                            showErrorScreen = true,
+                            paymentSuccess = false
+                        )
+                    } else {
+                        uiState = uiState.copy(
+                            showLoadingScreen = false,
+                            showErrorScreen = false,
+                            paymentSuccess = true,
+                            currentDate = getCurrentDate(Calendar.getInstance().time),
+                            currentTime = getCurrentTime(Calendar.getInstance().time),
+                            referenceNumber = it?.referenceNumber ?: ""
+                        )
+                    }
+                }
+                result.onFailure {
+                    uiState = uiState.copy(
+                        showLoadingScreen = false,
+                        showErrorScreen = true,
+                        paymentSuccess = false
+                    )
+                }
+                result.onLoading {
+                    uiState = uiState.copy(
+                        showLoadingScreen = true,
+                        showErrorScreen = false,
+                        paymentSuccess = false
+                    )
+                }
+            }
+        }
     }
 
     private fun onRetryTransfer() {
         uiState = uiState.copy(
             showErrorScreen = false,
-            showLoadingScreen = true,
+            showLoadingScreen = false,
             paymentSuccess = false
         )
-        onCallProcessSinpeTransfer()
+        onContinueClick()
     }
 
     private fun onFailureWithDialog(isLoading: Boolean, dialogParameters: DialogParameters) {
@@ -159,8 +231,7 @@ class SmartTransferAmountViewModel @Inject constructor(
 
     private fun onAbandonFlow() {
         uiState = uiState.copy(
-            openDialog =
-            DialogParameters(
+            openDialog = DialogParameters(
                 titleResource = R.string.smart_iban_transfer_abandon_dialog_title,
                 descriptionResource = R.string.smart_iban_transfer_abandon_dialog_message,
                 isActive = mutableStateOf(true),
@@ -181,6 +252,9 @@ class SmartTransferAmountViewModel @Inject constructor(
     private fun onNavigateBack() {
         navigateBack(popTo = Screen.SmartTransferIbanAccountScreen.route, isRestart = false)
     }
+
+    fun getFormattedAmount() =
+        uiState.currency + uiState.currentAmountValueString?.stringToDoubleFormat()
 
     data class UIState(
         val currency: String = "",

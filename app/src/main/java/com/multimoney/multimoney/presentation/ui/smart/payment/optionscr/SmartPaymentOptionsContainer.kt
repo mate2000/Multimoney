@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.payment.options
+package com.multimoney.multimoney.presentation.ui.smart.payment.optionscr
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel

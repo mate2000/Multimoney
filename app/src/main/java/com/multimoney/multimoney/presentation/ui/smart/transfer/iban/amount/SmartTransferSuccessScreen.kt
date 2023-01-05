@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.payment.amount
+package com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -7,21 +7,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnNavigateHome
-import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnShareVoucherImage
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnNavigateHome
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountViewModel.UIEvent.OnShareVoucherImage
 import com.multimoney.multimoney.presentation.uielement.PaymentSuccessResult
 import com.multimoney.multimoney.presentation.uielement.SmartPaymentInfoItem
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
-import com.multimoney.multimoney.presentation.util.CARD_NUMBER_LAST_DIGITS
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 
 @Composable
-fun SmartPaymentSuccessScreen(
-    viewModel: SavingAmountViewModel
+fun SmartTransferSuccessScreen(
+    viewModel: SmartTransferAmountViewModel
 ) {
     Column(
         modifier = Modifier
@@ -42,32 +40,23 @@ fun SmartPaymentSuccessScreen(
                 )
             },
             savePayText = stringResource(
-                R.string.smart_payment_you_saved_on_your_smart_account,
+                R.string.smart_payment_you_sent,
                 viewModel.uiState.currency
             ),
             amount = viewModel.getFormattedAmount(),
             exchangedAmount = viewModel.uiState.convertedAmountLabel,
-            fromToText = stringResource(R.string.smart_payment_from_label),
+            fromToText = stringResource(R.string.smart_payment_to_account),
             buttonText = stringResource(R.string.smart_payment_make_another_payment),
             onButtonClick = { viewModel.onUIEvent(OnNavigateBack) }
         ) {
             SmartPaymentInfoItem(
                 verticalAlignment = Alignment.CenterVertically,
-                icon = viewModel.editAmountHelper.originIcon,
-                title = stringResource(viewModel.editAmountHelper.originTitle),
-                subtitle = if (viewModel.editAmountHelper.idBrand == Brand.ElSalvador.id) {
-                    stringResource(
-                        R.string.visa_card_masked_number,
-                        viewModel.editAmountHelper.maskedCardNumber.takeLast(
-                            CARD_NUMBER_LAST_DIGITS
-                        )
-                    )
-                } else {
-                    getMaskedAccountIban(
-                        viewModel.editAmountHelper.maskedCardNumber,
-                        stringResource(id = R.string.payment_account_masked_text)
-                    )
-                }
+                icon = R.drawable.ic_bank_account,
+                title = stringResource(R.string.smart_payment_origin_account_label),
+                subtitle = getMaskedAccountIban(
+                    viewModel.editAmountHelper.maskedCardNumber,
+                    stringResource(R.string.payment_account_masked_text)
+                )
             )
 
             SmartPaymentInfoItem(
@@ -79,7 +68,6 @@ fun SmartPaymentSuccessScreen(
 
             if (viewModel.editAmountHelper.shouldDisplayExchange) {
                 SmartPaymentInfoItem(
-                    verticalAlignment = Alignment.CenterVertically,
                     icon = R.drawable.ic_money_gray,
                     title = stringResource(R.string.payment_amount_bottom_sheet_exchange_type),
                     subtitle = viewModel.uiState.exchangeRateLabel,
@@ -88,6 +76,12 @@ fun SmartPaymentSuccessScreen(
                     showVerticalDivision = true
                 )
             }
+
+            SmartPaymentInfoItem(
+                title = stringResource(R.string.smart_payment_motive),
+                icon = R.drawable.ic_notebook_motive,
+                subtitle = viewModel.uiState.motive
+            )
 
             SmartPaymentInfoItem(
                 verticalAlignment = Alignment.CenterVertically,

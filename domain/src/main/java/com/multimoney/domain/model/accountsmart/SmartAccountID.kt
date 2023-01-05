@@ -18,5 +18,5 @@ data class IbanAccountID(
     val clientIdentification: String? = "",
     val sinpeAccount: String? = "",
     val currencyId: Int? = 0,
-    val nameAccount: String? = "",
+    val nameAccount: String? = ""
 ) : Parcelable

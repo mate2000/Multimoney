@@ -227,16 +227,14 @@ fun HomeWalletContent(
                 )
             }
         }
-        walletViewModel.uiState.areCoinsLoading.let { isLoading ->
-            if (isLoading) {
-                WalletSkeleton()
-            } else {
-                MyCoinsSection(
-                    walletViewModel.uiState.balanceCryptoAccount,
-                    isFocused = isFocused,
-                    searchQuery = searchQuery,
-                )
-            }
+        if (walletViewModel.uiState.areCoinsLoading) {
+            WalletSkeleton()
+        } else {
+            MyCoinsSection(
+                walletViewModel.uiState.balanceCryptoAccount,
+                isFocused = isFocused,
+                searchQuery = searchQuery,
+            )
         }
     }
 }

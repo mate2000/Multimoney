@@ -373,8 +373,9 @@ class ProductViewModel @Inject constructor(
         val statusSmart = userStatus?.infoBankAccount?.status
         val statusCredit = userStatus?.infoCredit?.status
         val idLoanClient = userStatus?.infoCredit?.idLoanClient
+        val cardStatus = userStatus?.infoVirtualCard?.status
         navigateTo(
-            "${Screen.CryptoWalletScreen.baseRoute}/$email/${uiState.idBrand}/${identification}/${globalBalance}/${idClient}/${idLoanClient}/${statusCredit}/${statusSmart}/${statusCrypto}"
+            "${Screen.CryptoWalletScreen.baseRoute}/$email/${uiState.idBrand}/${identification}/${globalBalance}/${idClient}/${idLoanClient}/${statusCredit}/${statusSmart}/${statusCrypto}/${cardStatus}"
         )
     }
 

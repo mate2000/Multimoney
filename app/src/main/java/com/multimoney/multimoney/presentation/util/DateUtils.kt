@@ -203,7 +203,6 @@ const val BIRTH_DATE_MIN_MONTH = 0
 const val BIRTH_DATE_MIN_DAY = 1
 const val EIGHTEEN_YEARS_VALUE = 18
 const val ONE_HUNDRED_TWENTY_YEARS_VALUE = 120
-const val SPANISH_LOCALE = "es"
 
 val YEAR_FORMAT = SimpleDateFormat(YEAR_PATTER, Locale.getDefault())
 val DAY_FORMAT = SimpleDateFormat(DAY_PATTERN, Locale.getDefault())

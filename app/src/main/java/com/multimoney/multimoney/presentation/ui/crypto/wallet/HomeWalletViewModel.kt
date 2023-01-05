@@ -13,13 +13,7 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.GLOBAL_CRYPTO_BALANCE
-import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.ID_CLIENT
-import com.multimoney.multimoney.presentation.navigation.STATUS_CREDIT
-import com.multimoney.multimoney.presentation.navigation.STATUS_CRYPTO
-import com.multimoney.multimoney.presentation.navigation.STATUS_SMART
-import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.*
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
@@ -50,7 +44,8 @@ class HomeWalletViewModel @Inject constructor(
             idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: 0,
             statusCredit = savedStateHandle[STATUS_CREDIT] ?: 0,
             statusSmart = savedStateHandle[STATUS_SMART] ?: 0,
-            statusCrypto = savedStateHandle[STATUS_CRYPTO] ?: 0
+            statusCrypto = savedStateHandle[STATUS_CRYPTO] ?: 0,
+            cardStatus = savedStateHandle[CARD_STATUS] ?: 0
         )
     }
 
@@ -63,7 +58,7 @@ class HomeWalletViewModel @Inject constructor(
         creditStatus: Int,
         accountStatus: Int,
         cryptoStatus: Int,
-        cardStatus: Int = 1
+        cardStatus: Int
     ) = executeUseCase {
         queryBalanceUseCase.invoke(
             user = user,
@@ -133,7 +128,8 @@ class HomeWalletViewModel @Inject constructor(
             idLoanClient = uiState.idLoanClient ?: 0,
             creditStatus = uiState.statusCredit ?: 0,
             accountStatus = uiState.statusSmart ?: 0,
-            cryptoStatus = uiState.statusCrypto ?: 0
+            cryptoStatus = uiState.statusCrypto ?: 0,
+            cardStatus = uiState.cardStatus ?: 0
         )
     }
 
@@ -165,6 +161,7 @@ class HomeWalletViewModel @Inject constructor(
         val statusCredit: Int? = null,
         val statusSmart: Int? = null,
         val statusCrypto: Int? = null,
+        val cardStatus: Int? = null,
         val globalCryptoBalance: Float? = null,
         val balanceCryptoAccount: BalanceCryptoAccount? = null,
         val isLoading: Boolean = false,

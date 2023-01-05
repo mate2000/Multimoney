@@ -19,6 +19,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSig
 
 const val ACCOUNT_TOKEN = "account_token"
 const val SMART_PAYMENT_ACCOUNTS = "smart_payment_accounts"
+const val REQUEST_STATUS = "request_status"
 
 fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
     navigation(
@@ -31,10 +32,10 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
             SmartScreen(onNavigate = {
                 navController.navigate(it.route)
             }, onPopAndNavigate = {
-                navController.navigate(it.route) {
-                    popUpTo(it.popTo) { inclusive = true }
-                }
-            })
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                })
         }
 
         composable(
@@ -105,7 +106,7 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
         composable(
             route = Screen.ApprovedByOnfidoScreen.route,
             arguments = listOf(
-                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(ID_BRAND) { type = NavType.IntType }
             )
         ) {
             ApprovedByOnfidoScreen(

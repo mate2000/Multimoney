@@ -100,6 +100,7 @@ class SmartViewModel @Inject constructor(
             status = 0,
             user = user
         )
+        globalRequestId =
     }
 
     private fun callQueryStepByStepUseCase() = executeUseCase {
@@ -218,6 +219,7 @@ class SmartViewModel @Inject constructor(
                 status = accountSmartData?.status ?: 0,
                 user = accountSmartData?.user ?: "",
                 idBrand = accountSmartData?.idBrand ?: 0,
+                idGlobalRequest = accountSmartData?.idGlobalRequest ?: 0,
                 currentStep = accountSmartData?.currentStep,
                 birthday = accountSmartData?.birthday,
                 idGender = accountSmartData?.idGender,

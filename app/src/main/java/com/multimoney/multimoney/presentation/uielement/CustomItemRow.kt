@@ -72,7 +72,7 @@ fun CustomItemRow(
                 contentDescription = "",
                 colorFilter = if (startIconColor != null) ColorFilter.tint(startIconColor) else null
             )
-            Spacer(modifier = Modifier.width(10.dp))
+            Spacer(modifier = Modifier.width(16.dp))
             Column {
                 Text(
                     text = title,

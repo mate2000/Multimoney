@@ -180,7 +180,7 @@ class OwnTransferAmountViewModel @Inject constructor(
     }
 
     private fun onNavigateBack() {
-        navigateBack(popTo = Screen.SmartTransferIbanAccountScreen.route, isRestart = false)
+        navigateBack(popTo = Screen.SmartSelectSendingTypeScreen.route, isRestart = false)
     }
 
     data class UIState(

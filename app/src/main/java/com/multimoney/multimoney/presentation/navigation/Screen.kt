@@ -449,6 +449,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "smart_transfer_amount_screen"
     )
 
+    object OwnTransferAmountScreen : Screen(
+        "own_transfer_amount_screen/{$SMART_IDS}/{$PREVIOUS_SCREEN}",
+        "own_transfer_amount_screen"
+    )
+
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")
     object ChartScreen : Screen("chart_screen/{$}")

@@ -22,9 +22,9 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.MASKED_CARD
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.workers.startTimedNotification
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
-import javax.inject.Inject
 
 class SmartEditAmountHelper @Inject constructor(
     private val querySmartExchangeRateUseCase: QuerySmartExchangeRateUseCase,

@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.payment.options
+package com.multimoney.multimoney.presentation.ui.smart.payment.optionscr
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,8 +20,8 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
-import com.multimoney.multimoney.presentation.ui.smart.payment.options.SmartPaymentOptionsViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.smart.payment.options.SmartPaymentOptionsViewModel.UIEvent.OnSmartAccountSelected
+import com.multimoney.multimoney.presentation.ui.smart.payment.optionscr.SmartPaymentOptionsViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.payment.optionscr.SmartPaymentOptionsViewModel.UIEvent.OnSmartAccountSelected
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -110,11 +110,11 @@ class SmartPaymentOptionsViewModel @Inject constructor(
     private fun navigateToSmartAccount(clientBankAccounts: List<SinpeAccount?>) {
         navigateTo(
             route = "${Screen.SmartPaymentAccountScreenCR.baseRoute}/$user/$idBrand/$identification/${Screen.SmartPaymentOptionsScreenCR.baseRoute}/" +
-                    "$idClient/$idLoanClient/${encodeData(clientBankAccounts)}/${
-                        encodeData(
-                            selectedSmartAccount
-                        )
-                    }"
+                "$idClient/$idLoanClient/${encodeData(clientBankAccounts)}/${
+                encodeData(
+                    selectedSmartAccount
+                )
+                }"
         )
     }
 

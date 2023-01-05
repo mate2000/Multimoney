@@ -116,10 +116,12 @@ fun PaymentOptions(viewModel: SmartTransferIbanViewModel = hiltViewModel()) {
                 subtitle = stringResource(
                     id = string.smart_account_beneficiary_content,
                     account?.bank ?: "",
+
                     getMaskedAccountIban(
                         account?.sinpeAccount ?: "",
                         stringResource(id = string.payment_account_masked_text)
                     )
+
                 ),
                 modifier = Modifier
                     .fillMaxWidth()

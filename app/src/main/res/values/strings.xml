@@ -52,11 +52,12 @@
         <item>Si</item>
         <item>No</item>
     </string-array>
-    <string name="colons" translatable="false">Colenes</string>
+    <string name="colons" translatable="false">Colones</string>
     <string name="dollars" translatable="false">Doláres</string>
     <string name="quetzales" translatable="false">Quetzales</string>
     <string name="detail" translatable="false">Detalle</string>
     <string name="success" translatable="false">Exito</string>
+    <string name="motive" translatable="false">Motivo</string>
 
     <string name="content_description_more_info" translatable="false">Más información</string>
 
@@ -69,6 +70,8 @@
     <string name="you_have_exceeded_the_max_characters_error" translatable="false">Has excedido el máximo de caracteres permitidos</string>
     <string name="error_button_retry" translatable="false">Reintentar</string>
     <string name="error_button_try_later" translatable="false">Intentar más tarde</string>
+    <string name="error_try_again" translatable="false">Intentalo nuevamente</string>
+    <string name="error_button_try_again" translatable="false">Intentar de nuevo</string>
 
     <!-- OnBoarding -->
     <string name="onboarding_step_one_title" translatable="false">Multiplicá tus ahorros</string>
@@ -786,6 +789,7 @@
     <string name="iban_account_loading" translatable="false">Verificando cuenta...</string>
     <string name="iban_account_error" translatable="false">Revisa formato. Debe tener 20 dígitos</string>
     <string name="iban_dialog_message" translatable="false">¿Estás seguro que querés editar tu cuenta IBAN?</string>
+    <string name="iban_masked_account_number" translatable="false">CR••••%s</string>
 
     <!-- Payment Voucher -->
     <string name="payment_voucher_title_chooser" translatable="false">Voucher</string>
@@ -804,10 +808,15 @@
     <string name="smart_payment_you_saved_on_your_smart_account" translatable="false">Has ahorrado en tu cuenta Smart | %s</string>
     <string name="smart_payment_from_label" translatable="false">Desde</string>
     <string name="smart_payment_origin_account_label" translatable="false">Cuenta de origen</string>
+    <string name="smart_payment_motive" translatable="false">Motivo</string>
+    <string name="smart_payment_amount_debited" translatable="false">Monto debitado</string>
+    <string name="smart_payment_exchange_rate_label" translatable="false">Tipo de cambio</string>
     <string name="smart_payment_reference_number_label" translatable="false">N° de referencia</string>
     <string name="smart_payment_share_button" translatable="false">Compartir</string>
     <string name="smart_payment_make_another_payment" translatable="false">Hacer otro ahorro</string>
     <string name="smart_payment_card_bank_label" translatable="false">Tarjeta Banco</string>
+    <string name="smart_payment_you_sent" translatable="false">Has enviado</string>
+    <string name="smart_payment_to_account" translatable="false">Hacia la cuenta</string>
 
     <!-- Smart Card -->
     <string name="smart_card_balance" translatable="false">Saldo</string>
@@ -948,7 +957,8 @@
     <string name="payment_amount_bottom_sheet_account" translatable="false">Desde tu cuenta</string>
     <string name="payment_amount_bottom_sheet_exchange_type" translatable="false">Tipo de cambio</string>
     <string name="payment_amount_bottom_sheet_amount_to_debit" translatable="false">Monto a debitar</string>
-    <string name="payment_amount_bottom_sheet_button" translatable="false">Realizar pago</string>
+    <string name="payment_amount_bottom_sheet_pay_button" translatable="false">Realizar pago</string>
+    <string name="payment_amount_bottom_sheet_send_button" translatable="false">Realizar envío</string>
     <string name="payment_amount_bottom_sheet_process_payment_description_label" translatable="false">Pago unica moneda desde App</string>
     <string name="payment_amount_bottom_sheet_enable_automatic_payment" translatable="false">Programar pago automático</string>
 
@@ -1271,6 +1281,13 @@
     <string name="smart_iban_transfer_abandon_dialog_title" translatable="false">Cancelar envío</string>
     <string name="smart_iban_transfer_abandon_dialog_message" translatable="false">¿Estás seguro que querés cancelar el envío?</string>
     <string name="smart_iban_transfer_error_balance_insufficient" translatable="false">No tienes fondos suficientes. Tu disponible es %s</string>
+
+    <!-- Smart Payment Sheet-->
+    <string name="smart_payment_sheet_title" translatable="false">Monto a enviar</string>
+    <string name="smart_payment_sheet_from_account" translatable="false">Desde la cuenta</string>
+    <string name="smart_payment_sheet_to_account" translatable="false">Hacia la cuenta</string>
+    <string name="smart_payment_sheet_transfer_button" translatable="false">Realizar envío</string>
+    <string name="smart_payment_sheet_equivalent" translatable="false">Equivalente a %1$s</string>
 
     <!-- Card Preferences -->
     <string name="card_preferences_title" translatable="false">Preferencias de tarjeta</string>

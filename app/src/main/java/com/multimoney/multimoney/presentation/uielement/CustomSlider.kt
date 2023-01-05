@@ -86,7 +86,7 @@ fun CustomSlider(
                 inactiveTrackColor = SliderBrushColor(color = inactiveTrackColor),
                 activeTrackColor = SliderBrushColor(
                     brush = Brush.linearGradient(
-                        colors = listOf(Secondary500, Primary400),
+                        colors = listOf(Primary400, Secondary500),
                         start = Offset(0f, Float.POSITIVE_INFINITY),
                         end = Offset(Float.POSITIVE_INFINITY, 0f)
                     ),

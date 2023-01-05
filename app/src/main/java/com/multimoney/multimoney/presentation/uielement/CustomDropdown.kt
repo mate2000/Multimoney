@@ -53,6 +53,7 @@ import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 import com.multimoney.multimoney.presentation.util.gesture.detectTapAndPressUnconsumed
 
 @Composable
@@ -143,7 +144,7 @@ fun CustomDropdown(
             colors = TextFieldDefaults.textFieldColors(
                 backgroundColor = backgroundColor,
                 focusedIndicatorColor = focusedColor,
-                unfocusedIndicatorColor = GrayScale400,
+                unfocusedIndicatorColor = focusedColor,
                 errorIndicatorColor = SemanticNegative500,
                 textColor = textColor
             ),
@@ -162,7 +163,10 @@ fun CustomDropdown(
                     style = Typography.body2
                 )
             },
-            enabled = false
+            enabled = false,
+            textStyle = Typography.body2.copy(
+                color = WhiteTransparency90
+            )
         )
 
         CustomHighlightDropdown(

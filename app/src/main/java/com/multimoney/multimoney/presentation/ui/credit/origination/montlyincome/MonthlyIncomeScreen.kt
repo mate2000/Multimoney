@@ -109,13 +109,13 @@ fun MonthlyIncomeScreen(
     ) {
         Text(
             text = stringResource(id = R.string.credit_monthly_income_title),
-            modifier = Modifier.padding(top = 32.dp),
-            style = Typography.h5.copy(fontWeight = FontWeight.SemiBold, fontSize = 22.sp),
-            color = MultimoneyTheme.colors.labelText
+            modifier = Modifier.padding(top = 8.dp),
+            style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.titleText
         )
 
         CustomOutlinedTextField(
-            modifier = Modifier.padding(top = 32.dp),
+            modifier = Modifier.padding(top = 24.dp),
             value = viewModel.uiState.income,
             leadingIcon = R.drawable.ic_money,
             placeHolder = stringResource(

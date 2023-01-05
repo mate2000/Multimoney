@@ -64,8 +64,10 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNoVoConfig
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCryptoWallet
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCryptoMarket
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCryptoMovements
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetCryptoMovements
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditContent
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditFooter
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditFooterExpanded
@@ -117,6 +119,7 @@ fun ProductScreen(
     LaunchedEffect(key1 = true) {
         viewModel.executeNavigation(onNavigate = onNavigate)
         viewModel.onUIEvent(OnNoVoConfig)
+        viewModel.onUIEvent(OnGetCryptoMovements)
     }
 
     // BaseEvent from ProductViewModel
@@ -479,6 +482,8 @@ fun ProductFooterExpanded(
                     userStatus = viewModel.uiState.userStatus,
                     balance = viewModel.balanceCredit,
                     idBrand = viewModel.uiState.idBrand,
+                    cryptoMovements = viewModel.uiState.cryptoCurrencyMovements,
+                    onShowAllClick = { viewModel.onUIEvent(OnNavigateToCryptoMovements) },
                     actionMarket = { viewModel.onUIEvent(OnNavigateToCryptoMarket) },
                     actionWallet = { viewModel.onUIEvent(OnNavigateToCryptoWallet) },
                     noBalanceAction = {

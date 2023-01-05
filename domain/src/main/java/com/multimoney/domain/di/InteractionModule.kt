@@ -84,8 +84,6 @@ import com.multimoney.domain.interaction.credit.QueryCreditExtensionMessageUseCa
 import com.multimoney.domain.interaction.credit.QueryCreditExtensionMessageUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryCreditOfferUseCase
 import com.multimoney.domain.interaction.credit.QueryCreditOfferUseCaseImpl
-import com.multimoney.domain.interaction.credit.QueryEmploymentSituationUseCase
-import com.multimoney.domain.interaction.credit.QueryEmploymentSituationUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryGetCardAutomaticDebitUseCase
 import com.multimoney.domain.interaction.credit.QueryGetCardAutomaticDebitUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryGetClientAutomaticDebitUseCase
@@ -120,6 +118,16 @@ import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventU
 import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventUseCaseImpl
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCase
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryEmploymentSituationUseCase
+import com.multimoney.domain.interaction.credit.QueryEmploymentSituationUseCaseImpl
+import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUseCase
+import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUseCaseImpl
+import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCase
+import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCaseImpl
+import com.multimoney.domain.interaction.crypto.GetCurrencyHistoricalPricesUseCase
+import com.multimoney.domain.interaction.crypto.GetCurrencyHistoricalPricesUseCaseImpl
+import com.multimoney.domain.interaction.crypto.GetCurrencyNewsUseCase
+import com.multimoney.domain.interaction.crypto.GetCurrencyNewsUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCase
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCaseImpl
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
@@ -621,6 +629,26 @@ class InteractionModule {
     @Singleton
     fun provideQueryGetHistoricalClientBalance(cryptoRepository: CryptoRepository): GetHistoricalClientBalanceUseCase =
         GetHistoricalClientBalanceUseCaseImpl(cryptoRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryGetAvailableListOfCryptoCoins(cryptoRepository: CryptoRepository): GetAvailableListOfCryptoCoinsUseCase =
+        GetAvailableListOfCryptoCoinsUseCaseImpl(cryptoRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryGetCryptoMovements(cryptoRepository: CryptoRepository): GetCryptoCurrencyMovementsUseCase =
+        GetCryptoCurrencyMovementsUseCaseImpl(cryptoRepository)
+
+    @Singleton
+    @Provides
+    fun provideQueryGetCurrencyNews(cryptoRepository: CryptoRepository): GetCurrencyNewsUseCase =
+        GetCurrencyNewsUseCaseImpl(cryptoRepository)
+
+    @Singleton
+    @Provides
+    fun provideQueryGetCurrencyHistoricalPrices(cryptoRepository: CryptoRepository): GetCurrencyHistoricalPricesUseCase =
+        GetCurrencyHistoricalPricesUseCaseImpl(cryptoRepository)
 
     // Virtual Card
 

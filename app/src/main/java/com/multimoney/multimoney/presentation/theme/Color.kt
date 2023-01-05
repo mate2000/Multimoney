@@ -185,6 +185,7 @@ data class MultimoneyColors(
     val cryptoWalletGainsColor: Color,
     val cryptoActionButtonEnable: Color,
     val cryptoActionButtonDisable: Color,
+    val bodyTextColor: Color,
     val fullTransparency: Color = Color.Transparent,
 )
 
@@ -238,6 +239,7 @@ val DarkColorPalette = MultimoneyColors(
     cryptoActionButtonEnable = Primary400,
     cryptoActionButtonDisable = GrayScale400,
     cryptoWalletGainsColor = Tertiary400,
+    bodyTextColor = WhiteTransparency60,
 )
 
 val LightColorPalette = MultimoneyColors(
@@ -290,6 +292,7 @@ val LightColorPalette = MultimoneyColors(
     cryptoActionButtonEnable = Primary500,
     cryptoActionButtonDisable = GrayScale500,
     cryptoWalletGainsColor = Tertiary600,
+    bodyTextColor = BlackTransparency60,
 )
 
 val LocalMultimoneyColors = staticCompositionLocalOf {

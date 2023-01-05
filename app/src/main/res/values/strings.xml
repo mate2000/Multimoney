@@ -85,7 +85,7 @@
     <string name="sign_in_label_password" translatable="false">Contraseña</string>
     <string name="sign_in_forgot_password" translatable="false">Olvidé mi contraseña</string>
     <string name="sign_in_access_with_biometrics" translatable="false">Ingresar con biométricos</string>
-    <string name="sign_in_activate_fingerprint" translatable="false">Activar huella digital</string>
+    <string name="sign_in_activate_fingerprint" translatable="false">Activar Face ID</string>
     <string name="sign_in_create_account" translatable="false">No tengo cuenta</string>
     <string name="sign_in_email_required" translatable="false">El correo electrónico es requerido</string>
     <string name="sign_in_email_not_valid" translatable="false">El correo ingresado es incorrecto</string>
@@ -121,7 +121,7 @@
 
     <!-- Sign Up Email -->
     <string name="sign_up_email_header" translatable="false">Ingresá tu correo electrónico</string>
-    <string name="sign_up_email_title" translatable="false">¡Nos emociona\nque estés acá!</string>
+    <string name="sign_up_email_title" translatable="false">¡Nos emociona \nque estés acá!</string>
     <string name="sign_up_email_required" translatable="false">Correo electrónico requerido</string>
     <string name="sign_up_email_placeholder" translatable="false">nombre@email.com</string>
     <string name="sign_up_email_not_valid" translatable="false">Correo electrónico inválido</string>
@@ -132,9 +132,9 @@
     <string name="sign_up_email_blocked_dialog_description" translatable="false">Tu usuario ha sido bloqueado porque no hemos podido verificar tu número de teléfono. \nContactá a servicio al cliente</string>
 
     <!-- Sign Up Phone -->
-    <string name="sign_up_phone_title" translatable="false">¿Cuál es tu número de teléfono celular?</string>
+    <string name="sign_up_phone_title" translatable="false">¿Cuál es tu número de teléfono \ncelular?</string>
     <string name="sign_up_phone_information" translatable="false">Lo registramos por motivos de seguridad</string>
-    <string name="sign_up_phone_label_phone" translatable="false">Celular</string>
+    <string name="sign_up_phone_label_phone" translatable="false">Teléfono</string>
     <string name="sign_up_phone_required" translatable="false">Número de celular requerido</string>
     <string name="sign_up_phone_not_valid" translatable="false">Número de celular incorrecto</string>
     <string name="sign_up_phone_contact_by" translatable="false">Contactar por:</string>
@@ -144,8 +144,8 @@
 
     <!-- Sign Up Otp -->
     <string name="sign_up_otp_title" translatable="false">Te enviamos un SMS \nal %s</string>
-    <string name="sign_up_otp_subtitle" translatable="false">Ingresa el código para vincular tu teléfono a tu cuenta de usuario.</string>
-    <string name="sign_up_otp_change_phone" translatable="false">Corregir número</string>
+    <string name="sign_up_otp_subtitle" translatable="false">Ingresá el código para conectar tu teléfono a tu cuenta</string>
+    <string name="sign_up_otp_change_phone" translatable="false">Corregir celular</string>
     <string name="sign_up_otp_resend" translatable="false">Reenviar código</string>
     <string name="sign_up_otp_call" translatable="false">Recibir código por llamada</string>
     <string name="sign_up_otp_sms" translatable="false">Recibir código por sms</string>
@@ -1136,6 +1136,11 @@
 
     <!-- Payment sending type -->
     <string name="payment_select_sending_type_title" translatable="false">Enviar dinero a</string>
+    <string name="payment_select_sending_type_favorites_cr" translatable="false">Mis favoritos</string>
+    <string name="payment_select_sending_type_favorites_sv" translatable="false">A mis favoritos</string>
+    <string name="payment_select_sending_type_to_smart_accounts" translatable="false">A cuentas Smart</string>
+    <string name="payment_select_sending_type_other_bank_accounts" translatable="false">Cuentas de otros bancos</string>
+    <string name="payment_select_sending_type_transfer_365_mobile" translatable="false">Transfer 365 móvil</string>
     <string name="payment_select_sending_type_my_contacts" translatable="false">Mis contactos</string>
     <string name="payment_select_sending_type_iban_accounts" translatable="false">Cuentas IBAN</string>
     <string name="payment_select_sending_type_smart_account_dollars" translatable="false">Mi cuenta Smart Dólares</string>

@@ -88,12 +88,12 @@ fun CustomDropdown(
                 textColor = DefaultWhite
             }
             enabled -> {
-                iconTintColor = GrayScale400
+                iconTintColor = WhiteTransparency70
                 textColor = DefaultWhite
             }
             else -> {
                 backgroundColor = GrayScale500
-                iconTintColor = GrayScale400
+                iconTintColor = WhiteTransparency70
                 textColor = GrayScale400
             }
         }
@@ -107,7 +107,7 @@ fun CustomDropdown(
                 textColor = GrayScale800
             }
             enabled -> {
-                iconTintColor = Primary500
+                iconTintColor = WhiteTransparency70
                 textColor = GrayScale600
             }
             else -> {

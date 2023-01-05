@@ -212,7 +212,7 @@ class ProductViewModel @Inject constructor(
     // This function opens the saving flow from the quick actions
     private fun onNavigateToSmartSave() {
         if (uiState.idBrand == Brand.ElSalvador.id.toString()) {
-            val account = balanceCredit?.balanceAccountSmart?.first()
+            val account = balanceCredit?.balanceAccountSmart?.firstOrNull()
             val smartIds = encodeData(
                 SmartAccountID(
                     tokenAccount = account?.tokenNumber,
@@ -676,7 +676,19 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToSendMoneyScreenQuickAction() {
         if (uiState.idBrand == Brand.ElSalvador.id.toString()) {
-            // Todo
+            val account = balanceCredit?.balanceAccountSmart?.firstOrNull()
+            smartAccount = SmartAccountID(
+                account?.tokenNumber,
+                account?.idCurrencyAccount,
+                account?.accountNumber
+            )
+            navigateTo(
+                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${userName}/${uiState.idBrand}/${identification}/${
+                    encodeData(
+                        smartAccount
+                    )
+                }/$idClient/${Screen.HomeScreen.route}"
+            )
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             val infoCredit = uiState.userStatus?.infoCredit
             val smartIds = encodeData(balanceCredit?.balanceAccountSmart?.map {
@@ -699,12 +711,10 @@ class ProductViewModel @Inject constructor(
             accountNumber = account?.accountNumber,
             totalBalance = account?.totalBalance
         )
-        if (uiState.idBrand == Brand.CostaRica.id.toString()) {
-            navigateTo(
-                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${userName}/${uiState.idBrand}/${identification}/${encodeData(smartAccount)}/$idClient"+
-                        "/${Screen.HomeScreen.route}"
-            )
-        }
+        navigateTo(
+            "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${userName}/${uiState.idBrand}/${identification}/${encodeData(smartAccount)}/$idClient"+
+                    "/${Screen.HomeScreen.route}"
+        )
     }
 
     private fun onCreateMultimoneyVisa(onLoadingValueChange: (isLoading: Boolean) -> Unit) {
@@ -984,6 +994,7 @@ class ProductViewModel @Inject constructor(
 
     sealed class BaseEvent {
         object OnShowCardIssuanceError : BaseEvent()
+        object OnShowTbdToastEvent: BaseEvent()
     }
 
     companion object {

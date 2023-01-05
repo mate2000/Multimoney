@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.transfer.iban.sending
+package com.multimoney.multimoney.presentation.ui.smart.transfer.sending
 
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.domain.model.accountsmart.SmartAccountID
@@ -14,7 +14,7 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.sending.Sma
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.sending.SmartSelectSendingTypeViewModel.UIEvent.OnMyContactsSelected
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.sending.SmartSelectSendingTypeViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.sending.SmartSelectSendingTypeViewModel.UIEvent.OnSmartAccountSelected
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
@@ -43,10 +43,14 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
+            is UIEvent.OnCloseClick -> onNavigateToHome()
             is OnNavigateBack -> onNavigateBack()
             is OnMyContactsSelected -> onNavigateToMyContacts()
             is OnSmartAccountSelected -> onNavigateToSmartAccount()
             is OnIBANAccountSelected -> onNavigateToIBANAccount()
+            is UIEvent.OnMyFavoritesSelected -> onNavigateToMyFavorites()
+            is UIEvent.OnOtherBankAccountsSelected -> onNavigateToOtherBankAccounts()
+            is UIEvent.OnTransfer365MobileSelected -> onNavigateToTransfer365Mobile()
         }
     }
 
@@ -80,6 +84,9 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         return result
     }
 
+    private fun onNavigateToHome() =
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true)
+
     private fun onNavigateToIBANAccount() {
         navigateTo(
             "${Screen.SmartTransferIbanAccountScreen.baseRoute}/${encodeData(smartAccount)}/$user/$idBrand/$identification/${Screen.SmartSelectSendingTypeScreen.baseRoute}/$idClient"
@@ -88,10 +95,27 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
 
     private fun onNavigateToSmartAccount() {
         // TODO navigate to HU REV-1431
+        emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
     }
 
     private fun onNavigateToMyContacts() {
         // TODO navigate to HU REV-1445
+        emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
+    }
+
+    private fun onNavigateToMyFavorites() {
+        // TODO navigate to [tbd]
+        emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
+    }
+
+    private fun onNavigateToOtherBankAccounts() {
+        // TODO navigate to HU REV-1458
+        emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
+    }
+
+    private fun onNavigateToTransfer365Mobile() {
+        // TODO navigate to HU REV-1458
+        emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
     }
 
     private fun onNavigateBack() {
@@ -102,9 +126,18 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     }
 
     sealed class UIEvent {
+        object OnCloseClick : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnMyContactsSelected : UIEvent()
         object OnSmartAccountSelected : UIEvent()
         object OnIBANAccountSelected : UIEvent()
+        object OnMyFavoritesSelected : UIEvent()
+        object OnOtherBankAccountsSelected : UIEvent()
+        object OnTransfer365MobileSelected : UIEvent()
     }
+
+    sealed class BaseEvent {
+        object OnShowTbdToastEvent : BaseEvent()
+    }
+
 }

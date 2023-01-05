@@ -72,13 +72,11 @@ fun SmartTransferAmountScreen(
             viewModel.onUIEvent(OnNavigateHome)
         }
     } else if (viewModel.uiState.paymentSuccess) {
-        // Todo add success screen
         BackHandler {
             viewModel.onUIEvent(OnNavigateHome)
         }
     } else {
         SmartTransferAmountContent(viewModel)
-        // Todo add confirmation sheet
         BackHandler {
             viewModel.onUIEvent(OnNavigateBack)
         }

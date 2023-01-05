@@ -310,7 +310,7 @@ class HomeViewModel @Inject constructor(
             idBrand,
             identification,
             baseAsset = baseAsset,
-            startDate = getPreviousDate(FilterDateByDays.YESTERDAY.days),
+            startDate = getPreviousDate(FilterDateByDays.YESTERDAY.time),
             endDate = getCurrentDateYMDPattern()
         ).collectLatest { result ->
             result.onSuccess { historicBalance ->
@@ -346,6 +346,15 @@ class HomeViewModel @Inject constructor(
                 resourceText = R.string.home_my_products_label_credit
             )
         )
+
+        val creditStatus = uiState.validateUserStatus?.infoCredit?.status
+
+        if (uiState.idBrand == Brand.CostaRica.id.toString()) {
+            if (creditStatus == CreditStatus.CREDIT_NOT_PRE_APPROVED.status || creditStatus == CreditStatus.CREDIT_REJECTED.status) {
+                productPageList.clear()
+            }
+        }
+
         // If idBrand is different from Guatemala enable Smart
         if (uiState.idBrand != Brand.Guatemala.id.toString()) {
             if (balance.balanceAccountSmart.isNullOrEmpty().not()) {

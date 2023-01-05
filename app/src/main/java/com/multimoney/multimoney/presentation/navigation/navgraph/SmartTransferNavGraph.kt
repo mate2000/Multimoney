@@ -16,8 +16,8 @@ import com.multimoney.multimoney.presentation.navigation.navtype.payment.SinpeAc
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAccountIDNavType
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountScreen
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.sending.SmartSelectSendingTypeScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.register.SmartTransferRegisterIbanScreen
+import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeScreen
 
 fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
     navigation(

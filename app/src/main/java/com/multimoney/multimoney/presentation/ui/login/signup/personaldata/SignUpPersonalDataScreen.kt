@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Nationalities
 import com.multimoney.data.util.catalog.SignUpStep
@@ -166,7 +167,8 @@ fun SignUpPersonalDataScreen(
             text = stringResource(id = R.string.sign_up_personal_data_nationality_header),
             style = Typography.h6.copy(
                 color = MultimoneyTheme.colors.titleText,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                lineHeight = 24.sp
             )
         )
         CustomDropdown(

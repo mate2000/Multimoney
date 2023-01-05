@@ -94,7 +94,7 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
         queryValidateBankAccountUseCase(
             account = "${Brand.CostaRica.iban}${uiState.ibanAccountNumber}",
             identification = identification.orEmpty(),
-            queryType = "",
+            queryType = null,
             user = user.orEmpty(),
             idBrand = idBrand ?: 0
         ).collectLatest {
@@ -137,7 +137,7 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
         viewModelScope.launch {
             queryCatalogDocumentTypeUseCase(
                 idBrand,
-                ""
+                user ?: ""
             ).collectLatest { result ->
                 result.onSuccess {
                     onSuccessCatalogDocumentType = it

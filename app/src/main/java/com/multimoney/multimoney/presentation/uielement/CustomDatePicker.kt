@@ -169,7 +169,7 @@ fun CustomDatePicker(
                     val calendar = Calendar.getInstance()
                     val datePicker = DatePickerDialog(
                         context,
-                        R.style.MyDatePickerStyle,
+                        R.style.CustomDarkDatePickerStyle,
                         { view, year, month, day ->
                             activity?.onUserInteraction()
                             onValueChange(view, year, month, day)

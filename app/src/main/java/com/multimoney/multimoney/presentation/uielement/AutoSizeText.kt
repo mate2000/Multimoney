@@ -13,6 +13,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 
+/**
+ * "Draw a Text with a TextStyle that is scaled down until it fits in the available space."
+ *
+ * The function takes a `Modifier` as a parameter, which is used to determine the available space. The
+ * `drawWithContent` modifier is used to draw the text only when it fits in the available space
+ *
+ * @param modifier Modifier = Modifier
+ * @param text The text to be displayed.
+ * @param textStyle The style of the text.
+ * @param color Color = Color.Unspecified
+ */
 @Composable
 fun AutoSizeText(
     modifier: Modifier = Modifier,

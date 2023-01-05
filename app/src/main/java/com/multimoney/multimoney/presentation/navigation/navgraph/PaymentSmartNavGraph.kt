@@ -181,5 +181,6 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
                 }
             )
         }
+
     }
 }

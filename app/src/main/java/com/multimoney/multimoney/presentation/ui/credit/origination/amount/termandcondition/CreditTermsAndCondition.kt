@@ -58,7 +58,9 @@ fun CreditTermsAndCondition(
                 isActive.value = false
             })
             if (viewModel.uiState.html.isNotEmpty()) {
-                Column(modifier = Modifier.weight(1f).padding(horizontal = 16.dp)) {
+                Column(modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 16.dp)) {
                     MmWebViewHtml(
                         viewModel.uiState.html,
                         LocalContext.current
@@ -69,7 +71,7 @@ fun CreditTermsAndCondition(
                 modifier = Modifier
                     .padding(bottom = 40.dp, top = 16.dp, start = 16.dp, end = 16.dp)
                     .fillMaxWidth()
-                    .height(48.dp),
+                    .height(56.dp),
                 text = stringResource(id = R.string.accept),
                 buttonType = PrimaryPrimary,
                 onClick = {

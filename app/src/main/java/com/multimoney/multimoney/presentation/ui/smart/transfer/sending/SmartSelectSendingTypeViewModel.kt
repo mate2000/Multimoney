@@ -9,13 +9,9 @@ import com.multimoney.multimoney.presentation.navigation.SMART_IDS
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.sending.SmartSelectSendingTypeViewModel.UIEvent.OnIBANAccountSelected
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.sending.SmartSelectSendingTypeViewModel.UIEvent.OnMyContactsSelected
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.sending.SmartSelectSendingTypeViewModel.UIEvent.OnSmartAccountSelected
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -45,9 +41,9 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         when (uiEvent) {
             is UIEvent.OnCloseClick -> onNavigateToHome()
             is OnNavigateBack -> onNavigateBack()
-            is OnMyContactsSelected -> onNavigateToMyContacts()
-            is OnSmartAccountSelected -> onNavigateToSmartAccount()
-            is OnIBANAccountSelected -> onNavigateToIBANAccount()
+            is UIEvent.OnMyContactsSelected -> onNavigateToMyContacts()
+            is UIEvent.OnSmartAccountSelected -> onNavigateToSmartAccount()
+            is UIEvent.OnIBANAccountSelected -> onNavigateToIBANAccount()
             is UIEvent.OnMyFavoritesSelected -> onNavigateToMyFavorites()
             is UIEvent.OnOtherBankAccountsSelected -> onNavigateToOtherBankAccounts()
             is UIEvent.OnTransfer365MobileSelected -> onNavigateToTransfer365Mobile()
@@ -139,5 +135,4 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     sealed class BaseEvent {
         object OnShowTbdToastEvent : BaseEvent()
     }
-
 }

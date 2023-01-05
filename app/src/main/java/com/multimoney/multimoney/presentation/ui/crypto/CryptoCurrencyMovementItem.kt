@@ -47,7 +47,7 @@ fun CryptoCurrencyMovementItem(
                     textAlign = TextAlign.Start
                 )
                 Text(
-                    text = parseApiDateToCardDate(movement.created_at),
+                    text = parseApiDateToCardDate(movement.createdAt),
                     style = Typography.body2.copy(color = MultimoneyTheme.colors.textSubhead),
                     textAlign = TextAlign.Start
                 )
@@ -66,7 +66,7 @@ fun CryptoCurrencyMovementItem(
                     Text(
                         text = stringResource(
                             id = R.string.currency_item_dollar_symbol,
-                            movement.quote_amount
+                            movement.quoteAmount
                         ),
                         style = Typography.subtitle1
                             .copy(color = MultimoneyTheme.colors.text, fontWeight = FontWeight.Bold),
@@ -74,7 +74,7 @@ fun CryptoCurrencyMovementItem(
                     )
                 }
                 Text(
-                    text = "${movement.amount_filled} ${movement.abbreviationCurrency}",
+                    text = "${movement.amountFilled} ${movement.abbreviationCurrency}",
                     style = Typography.body2.copy(color = MultimoneyTheme.colors.textSubhead),
                     textAlign = TextAlign.End
                 )

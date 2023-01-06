@@ -31,10 +31,10 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
             SmartScreen(onNavigate = {
                 navController.navigate(it.route)
             }, onPopAndNavigate = {
-                navController.navigate(it.route) {
-                    popUpTo(it.popTo) { inclusive = true }
-                }
-            })
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                })
         }
 
         composable(
@@ -105,7 +105,7 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
         composable(
             route = Screen.ApprovedByOnfidoScreen.route,
             arguments = listOf(
-                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(ID_BRAND) { type = NavType.IntType }
             )
         ) {
             ApprovedByOnfidoScreen(

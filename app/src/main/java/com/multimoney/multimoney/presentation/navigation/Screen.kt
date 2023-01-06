@@ -106,9 +106,20 @@ const val DEVICE_BRAND = "device_brand"
 const val DEVICE_MODEL = "device_model"
 const val IS_EMULATOR = "is_emulator"
 const val FORCE_CHANGE_DEVICE = "force_change_device"
+const val ID_CLIENT = "id_client"
+const val ID_LOAN_CLIENT = "id_loan_client"
+const val STATUS_CREDIT = "status_credit"
+const val STATUS_SMART = "status_smart"
+const val STATUS_CRYPTO = "status_crypto"
+const val CARD_STATUS = "card_status"
+const val CRYPTO_ASSET = "asset"
+const val DESCRIPTION_CURRENCY = "description_currency"
+const val CURRENT_CRYPTO_PRICE = "current_crypto_price"
+const val URL_IMAGE = "url_image"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
+const val PREVIOUS_IS_RETURN_TO_HOME = "previous_is_return_to_home"
 
 /**
  * Use this class to declare all your new screens and their routes
@@ -120,6 +131,14 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object OnBoardingScreen : Screen("onboarding_screen")
     object SignInScreen : Screen("sign_in_screen?$FORCE_CHANGE_DEVICE={$FORCE_CHANGE_DEVICE}","sign_in_screen")
     object SignUpScreen : Screen("sign_up_screen/{$SIGN_UP_STEP}", "sign_up_screen")
+    object RequestForgotPassword :
+        Screen("request_forgot_password_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}", "request_forgot_password_screen")
+
+    object ProcessForgotPassword :
+        Screen(
+            "process_forgot_password_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}?$EMAIL={$EMAIL}?$ID_BRAND={$ID_BRAND}?$PK_USER={$PK_USER}",
+            "process_forgot_password_screen"
+        )
 
     object SignUpSplashComeBackScreen : Screen(
         "sign_up_splash_come_back_screen/{$SIGN_UP_STEP}",
@@ -435,8 +454,18 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     // Smart Transfer Screens
 
     object SmartSelectSendingTypeScreen : Screen(
-        "smart_select_sending_type_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$SMART_IDS}/{$ID_CLIENT}",
+        "smart_select_sending_type_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$SMART_IDS}/{$ID_CLIENT}/{$PREVIOUS_SCREEN}",
         "smart_select_sending_type_screen"
+    )
+
+    object SmartSelectAccountScreen : Screen(
+        "smart_select_account_screen/{$SMART_IDS_LIST}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ID_CLIENT}",
+        "smart_select_account_screen"
+    )
+
+    object SmartTransferRegisterIbanScreen : Screen(
+        "smart_transfer_register_iban_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}",
+        "smart_transfer_register_iban_screen"
     )
 
     object SmartTransferIbanAccountScreen : Screen(
@@ -455,7 +484,22 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // Crypto
     object CryptoWalletScreen : Screen(
-        "crypto_wallet_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$GLOBAL_CRYPTO_BALANCE}",
+        "crypto_wallet_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$GLOBAL_CRYPTO_BALANCE}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$STATUS_CREDIT}/{$STATUS_SMART}/{$STATUS_CRYPTO}/{$CARD_STATUS}",
         "crypto_wallet_screen"
+    )
+
+    object CryptoMarketScreen : Screen(
+        "crypto_market_screen/{$USER}/{$ID_BRAND}",
+        "crypto_market_screen"
+    )
+
+    object CryptoMovementsScreen: Screen(
+        "crypto_movements_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
+        "crypto_movements_screen"
+    )
+
+    object CryptoCurrencyDetailsScreen: Screen(
+        "crypto_currency_details_screen/{$USER}/{$ID_BRAND}/{$CRYPTO_ASSET}/{$DESCRIPTION_CURRENCY}/{$CURRENT_CRYPTO_PRICE}/{$URL_IMAGE}",
+        "crypto_currency_details_screen"
     )
 }

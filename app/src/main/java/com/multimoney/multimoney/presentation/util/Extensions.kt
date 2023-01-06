@@ -29,6 +29,9 @@ import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeType
 import com.novopayment.sdk.vts.module.payment.apdu.PaymentService
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
+import java.net.URLDecoder
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import java.util.Locale
 import kotlin.time.Duration
 
@@ -221,6 +224,14 @@ fun String.formatExpirationDate() = if (this.length == 3) {
     this.take(2).plus("/").plus(this.takeLast(2))
 } else {
     this
+}
+
+fun String.encodeURLToUTF(): String {
+    return URLEncoder.encode(this, StandardCharsets.UTF_8.toString())
+}
+
+fun String.decodeURLFromUTF(): String {
+    return URLDecoder.decode(this, StandardCharsets.UTF_8.toString())
 }
 
 /**

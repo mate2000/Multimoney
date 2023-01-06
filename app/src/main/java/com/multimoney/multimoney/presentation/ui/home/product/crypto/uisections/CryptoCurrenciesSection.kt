@@ -27,10 +27,7 @@ import com.multimoney.multimoney.presentation.util.MAX_CRYPTO_ITEMS
 fun CryptoCurrencies(
     items: List<BalanceCryptoAccountItems>?
 ) {
-    Column(modifier = Modifier
-        .verticalScroll(rememberScrollState())
-        .padding(horizontal = 16.dp)
-    ) {
+    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Row(
             modifier = Modifier
                 .padding(horizontal = 4.dp)

@@ -107,6 +107,21 @@ fun getPreviousDate(daysToSubtract: Long): String {
     return date.toString()
 }
 
+fun getPreviousDate(dateFilter: FilterDate = FilterDate.YESTERDAY): String {
+    val date = LocalDate.now()
+    when (dateFilter) {
+        FilterDate.YESTERDAY -> date.minusDays(1)
+        FilterDate.LAST_7_DAYS -> date.minusDays(7)
+        FilterDate.LAST_30_DAYS -> date.minusDays(30)
+        FilterDate.LAST_90_DAYS -> date.minusDays(90)
+        FilterDate.LAST_180_DAYS -> date.minusDays(180)
+        FilterDate.LAST_365_DAYS -> date.minusDays(365)
+    }
+
+    val formatters: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    return date.format(formatters)
+}
+
 fun getCurrentDate(time: Date): String {
     return BAR_DIVIDER_FORMAT.format(time)
 }
@@ -152,16 +167,33 @@ fun Calendar.toLocalDate(): LocalDate = if (Build.VERSION.SDK_INT >= Build.VERSI
     LocalDateTime.ofInstant(this.toInstant(), ZoneId.systemDefault()).toLocalDate()
 }
 
-enum class FilterDateByDays(val days: Long, val time: String, val timeAbv: String) {
-    YESTERDAY(1, "Dia", "D"),
-    LAST_7_DAYS(7, "Semana", "S"),
-    LAST_30_DAYS(30, "Mes", "M"),
-    LAST_90_DAYS(90, "3 Meses", "3M"),
-    LAST_180_DAYS(180, "6 Meses", "6M"),
-    LAST_365_DAYS(365, "Año", "A"),
+enum class FilterDateByDays(
+    val time: Long,
+    val timeDescription: String,
+    val timeDescriptionExtended: String,
+    val timeAbv: String,
+    val timeAbvExtended: String,
+    val dataPoints: Long
+) {
+    HOUR(24, "Hora", "1 Hora", "H", "1H",60),
+    YESTERDAY(1, "Dia", "1 Dia", "D", "1D",24),
+    LAST_7_DAYS(7, "Semana", "1 Semana", "S", "1S",7),
+    LAST_30_DAYS(30, "Mes", "1 Mes", "M", "1M",30),
+    LAST_90_DAYS(90, "Meses", "3 Meses", "3M", "3M",90),
+    LAST_180_DAYS(180, "Meses", "6 Meses", "6M", "6M",180),
+    LAST_365_DAYS(365, "Año", "1 Año", "A", "1A",365),
 }
 
-const val YEAR_MONTH_DAY_PATTERN = "yyyy-MM-dd"
+enum class FilterDate {
+    YESTERDAY,
+    LAST_7_DAYS,
+    LAST_30_DAYS,
+    LAST_90_DAYS,
+    LAST_180_DAYS,
+    LAST_365_DAYS
+}
+
+const val YEAR_MONTH_DAY_PATTERN = "yyyy-mm-dd"
 const val DAY_PATTERN = "dd"
 const val ISO_8601_API_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
 const val YEAR_MONTH_DAY_AND_TIME_BAR_FORMAT = "dd | MM | yyyy hh:mm a"

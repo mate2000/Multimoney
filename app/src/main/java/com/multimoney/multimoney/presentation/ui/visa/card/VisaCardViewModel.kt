@@ -37,6 +37,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnAvailableAmountClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnBlockUnblockCardClick
@@ -57,6 +58,7 @@ import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.NfcHelper
 import com.multimoney.multimoney.presentation.util.catalog.CardType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.util.BiometricHelper
 import com.multimoney.multimoney.util.CognitoHelper
 import com.novopayment.sdk.vts.NovoVTS
@@ -229,9 +231,12 @@ class VisaCardViewModel @Inject constructor(
         callCognitoSignIn()
     }
 
-    private fun onPasswordForgotPassword() {
-        // TODO: Move to password flow
-    }
+    private fun onPasswordForgotPassword() = navigateTo(
+        route = Screen.RequestForgotPassword.baseRoute
+            .plus(
+                getNavParam(PREVIOUS_SCREEN, Screen.VisaCardScreen.route)
+            )
+    )
 
     private fun onShowPasswordBottomSheet(isPasswordMessage: Boolean) {
         uiState = uiState.copy(

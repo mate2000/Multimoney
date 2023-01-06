@@ -10,11 +10,11 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 fun ContinueValidatingOnfidoScreen(
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-   viewModel: ContinueValidatingOnfidoViewModel = hiltViewModel()
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
+    viewModel: ContinueValidatingOnfidoViewModel = hiltViewModel()
 ) {
     LaunchedEffect(key1 = true) {
-        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
+        viewModel.executeNavigation(onPopBackStack = onPopBackStack)
     }
 
     AlertResult(

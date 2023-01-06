@@ -97,6 +97,7 @@ const val GLOBAL_CRYPTO_BALANCE = "global_crypto_balance"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
+const val HOME_STATE = "home_state"
 
 /**
  * Use this class to declare all your new screens and their routes

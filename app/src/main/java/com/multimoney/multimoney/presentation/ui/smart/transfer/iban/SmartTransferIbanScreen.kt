@@ -20,7 +20,6 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.SmartTransferIbanViewModel.UIEvent.OnAddAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.SmartTransferIbanViewModel.UIEvent.OnCallQueryListSinpeAccountUseCaseImpl
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.SmartTransferIbanViewModel.UIEvent.OnNavigateBack
@@ -38,11 +37,12 @@ import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 fun SmartTransferIbanScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: SmartTransferIbanViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnCallQueryListSinpeAccountUseCaseImpl)
-        viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
+        viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)
     }
 
     Column(
@@ -97,10 +97,10 @@ fun PaymentOptions(viewModel: SmartTransferIbanViewModel = hiltViewModel()) {
                     id = string.smart_account_beneficiary_content,
                     account?.bank ?: "",
                     "${
-                        getMaskedAccountIban(
-                            account?.sinpeAccount ?: "",
-                            stringResource(id = string.payment_account_masked_text)
-                        )
+                    getMaskedAccountIban(
+                        account?.sinpeAccount ?: "",
+                        stringResource(id = string.payment_account_masked_text)
+                    )
                     }%"
                 ),
                 modifier = Modifier
@@ -109,7 +109,6 @@ fun PaymentOptions(viewModel: SmartTransferIbanViewModel = hiltViewModel()) {
                 endIcon = drawable.ic_options,
                 startIcon = account?.currencyId?.getCurrencyFromId()?.accountIcon,
                 onClick = {
-
                 }
             )
         }

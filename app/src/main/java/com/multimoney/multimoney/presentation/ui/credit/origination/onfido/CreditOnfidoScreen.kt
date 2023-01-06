@@ -56,12 +56,13 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 @Preview
 fun CreditOnfidoScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: CreditOnfidoViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
 
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
+        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)
     }
 
     if (viewModel.idBrand != null) {

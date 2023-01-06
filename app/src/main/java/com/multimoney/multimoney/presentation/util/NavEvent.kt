@@ -2,9 +2,10 @@ package com.multimoney.multimoney.presentation.util
 
 import androidx.annotation.StringRes
 import androidx.navigation.NavHostController
+import com.multimoney.multimoney.presentation.ui.home.HomeState
 
 sealed class NavEvent {
-    data class PopBackStack(val popTo: String, val isRestart: Boolean) : NavEvent()
+    data class PopBackStack(val popTo: String, val isRestart: Boolean, val homeState: HomeState) : NavEvent()
     data class Navigate(val route: String) : NavEvent()
     data class InnerNavigate(val innerNavigate: NavHostController, val route: String) : NavEvent()
     data class PopAndNavigate(val route: String, val popTo: String) : NavEvent()

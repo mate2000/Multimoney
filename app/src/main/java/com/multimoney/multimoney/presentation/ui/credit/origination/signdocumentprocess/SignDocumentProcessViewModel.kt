@@ -37,6 +37,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.signdocument
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToContinueValidatingIdentity
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnShowDialogInformation
+import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.EVICERTIA_REJECTED_FIRST_TIME
 import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.EVICERTIA_REJECTED_SECOND_TIME
@@ -46,8 +47,8 @@ import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENE
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class SignDocumentProcessViewModel @Inject constructor(
@@ -166,7 +167,7 @@ class SignDocumentProcessViewModel @Inject constructor(
             alertResultTitleResource = R.string.credit_request_sent_successfully,
             alertResultDescription = "",
             alertResultDescriptionResource = R.string.credit_request_info_verification_wait,
-            alertResultButtonResource = R.string.understood,
+            alertResultButtonResource = R.string.understood
         )
     }
 
@@ -216,10 +217,7 @@ class SignDocumentProcessViewModel @Inject constructor(
 
     private fun onNavigateToHome() {
         emitBaseEvent(SimulateUserInteraction)
-        popAndNavigateTo(
-            route = Screen.HomeScreen.route,
-            popTo = Screen.SignDocumentProcessScreen.route
-        )
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
     }
 
     data class UIState(
@@ -236,14 +234,15 @@ class SignDocumentProcessViewModel @Inject constructor(
         val alertResultTitleResource: Int = R.string.empty,
         val alertResultDescription: String = "",
         val alertResultDescriptionResource: Int = R.string.empty,
-        val alertResultButtonResource: Int = R.string.empty,
+        val alertResultButtonResource: Int = R.string.empty
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnCallSubscriptionCreditContractEvent -> onShouldCallSubscription(idPrint, idBrand)
-            is OnChangeScreen -> uiState =
-                uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
+            is OnChangeScreen ->
+                uiState =
+                    uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
             is OnInitializeText -> dialogDescription = uiEvent.dialogDescription
             is OnCloseClick -> onNavigateToHome()
             is OnShowDialogInformation -> createDialog()

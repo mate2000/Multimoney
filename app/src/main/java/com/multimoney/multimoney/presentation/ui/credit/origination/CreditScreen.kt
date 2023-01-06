@@ -62,6 +62,7 @@ import kotlinx.coroutines.launch
 fun CreditScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: CreditViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -96,7 +97,11 @@ fun CreditScreen(
     }
     // Navigation
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
+        viewModel.executeNavigation(
+            onNavigate = onNavigate,
+            onPopAndNavigate = onPopAndNavigate,
+            onPopBackStack = onPopBackStack
+        )
     }
 
     if (viewModel.idBrand.isNotEmpty()) {

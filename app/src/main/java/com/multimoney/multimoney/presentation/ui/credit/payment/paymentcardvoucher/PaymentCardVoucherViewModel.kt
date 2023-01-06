@@ -20,6 +20,7 @@ import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentcardvoucher.PaymentCardVoucherViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentcardvoucher.PaymentCardVoucherViewModel.UIEvent.OnScheduleAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentcardvoucher.PaymentCardVoucherViewModel.UIEvent.OnSharedVoucherImage
+import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.ShareHelper
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getCurrentTime
@@ -69,12 +70,8 @@ class PaymentCardVoucherViewModel @Inject constructor(
         shareHelper.sharedScreenShot(view, capturingBounds)
     }
 
-    private fun onNavigateToHome() {
-        popAndNavigateTo(
-            route = Screen.HomeScreen.route,
-            popTo = Screen.PaymentCardVoucherScreen.route
-        )
-    }
+    private fun onNavigateToHome() =
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
 
     private fun onScheduleAutomaticPayment() = navigateTo(
         route = "${Screen.PaymentScheduleCardScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/${

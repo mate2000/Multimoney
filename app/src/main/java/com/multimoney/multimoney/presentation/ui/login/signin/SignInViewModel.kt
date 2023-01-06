@@ -19,7 +19,19 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.*
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnCallCognitoSignIn
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnCloseDialog
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnFingerprintCheckedChanged
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnInitializeBiometricPrompt
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnNavigateToForgotPassword
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnNavigateToOTPScreen
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricPromptForDecryption
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricPromptForEncryption
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricSignInChanged
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnUserEmailValueChange
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnUserPasswordValueChange
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnValidateUserEmail
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.checkIfEmulator
@@ -38,7 +50,6 @@ class SignInViewModel @Inject constructor(
     private val biometricHelper: BiometricHelper,
     private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(false) {
-
 
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -60,7 +71,6 @@ class SignInViewModel @Inject constructor(
     private var deviceModel = getDeviceModel()
     private var isEmulator = checkIfEmulator()
     private var forceDeviceChange = false
-
 
     private fun onStart(
         deviceId: String,
@@ -107,7 +117,6 @@ class SignInViewModel @Inject constructor(
         val options = AWSCognitoAuthSignInOptions.builder()
             .metadata(attrs)
             .build()
-
 
         Amplify.Auth.signOut({
             // TODO: This line must be uncommented when logic to send metadata to cognito is implemented
@@ -157,7 +166,8 @@ class SignInViewModel @Inject constructor(
                     } else {
                         cognitoError()
                     }
-                })
+                }
+            )
         }, {
             cognitoError()
         })
@@ -381,8 +391,7 @@ class SignInViewModel @Inject constructor(
     fun isWelcomeWithName() =
         uiState.userName.isNotEmpty() && uiState.userEmail == biometricUserEmail
 
-    private fun onNavigateToOTPScreen(
-    ) {
+    private fun onNavigateToOTPScreen() {
         popAndNavigateTo(
             "${Screen.SignInOTPScreen.baseRoute}/${uiState.userEmail}/${uiState.userPassword}/$deviceId/$uniqueId/$ipAddress/$deviceType/$deviceName/$appVersion/$deviceBrand/$deviceModel/$isEmulator",
             Screen.SignInOTPScreen.baseRoute
@@ -393,7 +402,7 @@ class SignInViewModel @Inject constructor(
         // Fields
         val userEmail: String = "",
         val userEmailError: Pair<Boolean, Int> = Pair(false, R.string.error_empty),
-        val userPassword: String = "",
+        val userPassword: String = "Qwerty.1234",
         val userPasswordError: Pair<Boolean, Int> = Pair(false, R.string.error_empty),
         val userName: String = "",
         val isFingerprintChecked: Boolean = false,
@@ -410,9 +419,9 @@ class SignInViewModel @Inject constructor(
         val isBiometricActive: Boolean = false,
         val showBiometricSignIn: Boolean = false,
         val isLoading: Boolean = false,
-        val openDialog: DialogParameters = DialogParameters(),
+        val openDialog: DialogParameters = DialogParameters()
 
-        )
+    )
 
     fun onUIEvent(event: UIEvent) {
         when (event) {

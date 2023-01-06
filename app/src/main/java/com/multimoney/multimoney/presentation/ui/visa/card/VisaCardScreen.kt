@@ -26,6 +26,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.BaseEvent.OnOpenNfcConfig
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.BaseEvent.OnOpenTapAndPayConfig
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnBlockUnblockCardClick
@@ -33,7 +34,6 @@ import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIE
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnInitializeBiometricPrompt
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigatePreferences
-import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnOpenDialogConfirmToStartTokenizationProcess
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnSeeDataClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnStartPaymentProcess
@@ -94,6 +94,9 @@ fun VisaCardScreen(
             when (event) {
                 OnOpenTapAndPayConfig -> {
                     launch.launch(context.getTapAndPayIntent())
+                }
+                OnOpenNfcConfig -> {
+                    launch.launch(viewModel.nfcHelper.getIntentToRequestActivateNfc())
                 }
             }
         }
@@ -171,7 +174,7 @@ fun VisaCardScreen(
                     text = stringResource(id = R.string.link),
                     enabled = viewModel.uiState.isCardBlocked.not(),
                     onClick = {
-                        viewModel.onUIEvent(OnOpenDialogConfirmToStartTokenizationProcess)
+                        viewModel.onUIEvent(OnStartPaymentProcess)
                     }
                 )
             } else if (viewModel.uiState.isNfcAvailable && viewModel.uiState.isCardTokenize) {
@@ -183,18 +186,6 @@ fun VisaCardScreen(
                     icon = R.drawable.ic_pay,
                     text = stringResource(id = R.string.pay),
                     enabled = viewModel.uiState.isCardBlocked.not(),
-                    onClick = {
-                        viewModel.onUIEvent(OnOpenDialogConfirmToStartTokenizationProcess)
-                    }
-                )
-            } else {
-                CustomButtonBig(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                        .padding(end = 8.dp),
-                    icon = R.drawable.ic_money,
-                    text = stringResource(id = R.string.pay),
                     onClick = {
                         viewModel.onUIEvent(OnStartPaymentProcess)
                     }

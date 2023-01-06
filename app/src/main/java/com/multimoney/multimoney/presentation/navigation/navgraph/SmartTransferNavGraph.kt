@@ -10,12 +10,15 @@ import com.multimoney.multimoney.presentation.navigation.IBAN_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.SMART_IDS
+import com.multimoney.multimoney.presentation.navigation.SMART_IDS_LIST
 import com.multimoney.multimoney.presentation.navigation.SMART_TRANSFER_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SinpeAccountNavType
+import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAccountIDListNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAccountIDNavType
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountScreen
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.smartaccount.SelectSmartAccountContainer
 import com.multimoney.multimoney.presentation.ui.smart.transfer.register.SmartTransferRegisterIbanScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeScreen
 
@@ -32,6 +35,7 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                 navArgument(IDENTIFICATION) { type = NavType.StringType },
                 navArgument(SMART_IDS) { type = SmartAccountIDNavType() },
                 navArgument(ID_CLIENT) { type = NavType.IntType },
+                navArgument(PREVIOUS_SCREEN) { type = NavType.StringType },
             )
         ) {
             SmartSelectSendingTypeScreen(
@@ -78,10 +82,16 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                 onNavigate = {
                     navController.navigate(it.route)
                 },
-                onPopAndNavigate = {
-                    navController.navigate(it.route) {
-                        popUpTo(it.popTo) { inclusive = true }
-                    }
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
                 }
             )
         }
@@ -107,7 +117,34 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                 }
             )
         }
-
+        composable(
+            route = Screen.SmartSelectAccountScreen.route,
+            arguments = listOf(
+                navArgument(SMART_IDS_LIST) {
+                    type = SmartAccountIDListNavType()
+                },
+                navArgument(USER) { type = NavType.StringType },
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(ID_CLIENT) { type = NavType.StringType }
+            )
+        ) {
+            SelectSmartAccountContainer(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
+        }
         composable(
             route = Screen.SmartTransferRegisterIbanScreen.route,
             arguments = listOf(
@@ -123,8 +160,10 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                     navController.navigate(it.route)
                 },
                 onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART,
-                        it.isRestart)
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,

@@ -40,12 +40,12 @@ import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 @Composable
 fun SmartTransferIbanScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: SmartTransferIbanViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnCallQueryListSinpeAccountUseCaseImpl)
-        viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
+        viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
     }
 
     Column(

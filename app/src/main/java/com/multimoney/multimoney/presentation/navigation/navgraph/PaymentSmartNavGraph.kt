@@ -22,7 +22,7 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPay
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.methodsv.SmartPaymentMethodScreen
-import com.multimoney.multimoney.presentation.ui.smart.payment.optionscr.SmartPaymentOptionsScreen
+import com.multimoney.multimoney.presentation.ui.smart.payment.optionscr.SmartPaymentOptionsContainer
 import com.multimoney.multimoney.presentation.ui.smart.payment.transfer.SavingMethodTransferScreen
 
 const val MASKED_CARD = "masked_card"
@@ -91,7 +91,7 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
                 navArgument(ID_LOAN_CLIENT) { type = NavType.StringType }
             )
         ) {
-            SmartPaymentOptionsScreen(
+            SmartPaymentOptionsContainer(
                 onNavigate = {
                     navController.navigate(it.route)
                 },
@@ -181,6 +181,5 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
                 }
             )
         }
-
     }
 }

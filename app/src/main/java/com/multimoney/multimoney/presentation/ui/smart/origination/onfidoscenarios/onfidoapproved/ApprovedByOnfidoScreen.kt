@@ -18,23 +18,28 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 @Composable
 fun ApprovedByOnfidoScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: ApprovedByOnfidoViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
+        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)
         viewModel.onUIEvent(OnCallQueryGetUserStatusInfo)
     }
 
-    AlertResult(iconResource = R.drawable.ic_success_symbol,
+    AlertResult(
+        iconResource = R.drawable.ic_success_symbol,
         titleResource = R.string.approved_by_onfido_title,
         buttonTextResource = R.string.approved_by_onfido_buttton_text,
         isLeftButtonVisible = false,
         onRightButtonClick = { viewModel.onUIEvent(OnNavigateToHome) },
-        onButtonClick = { viewModel.onUIEvent(OnMakeFirstSavingTransfer) })
+        onButtonClick = { viewModel.onUIEvent(OnMakeFirstSavingTransfer) }
+    )
 
     Column {
-        CustomTextButton(textResource = R.string.finalize,
-            onClick = { viewModel.onUIEvent(OnNavigateToHome) })
+        CustomTextButton(
+            textResource = R.string.finalize,
+            onClick = { viewModel.onUIEvent(OnNavigateToHome) }
+        )
     }
 
     LoadingIndicator(viewModel.uiState.isLoading)

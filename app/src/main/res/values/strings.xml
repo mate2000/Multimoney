@@ -720,7 +720,9 @@
     <string name="visa_card_unblock_not_allowed_dialog_subtitle" translatable="false">Contáctate con servicio al cliente para desbloquear tu tarjeta.</string>
     <string name="visa_card_block_dialog_title" translatable="false">Estás bloqueando tu tarjeta digital Multimoney Visa</string>
     <string name="visa_card_block_dialog_subtitle" translatable="false">Si bloqueás la tarjeta no podrás realizar pagos online. Podrás desbloquearla después si lo deseás, y será al instante.</string>
+    <string name="visa_card_block_dialog_subtitle_gt" translatable="false">Si bloqueas la tarjeta no podrás realizar pagos online. Podrás desbloquearla después si lo deseas, y será al instante.</string>
     <string name="visa_card_block_disclaimer" translatable="false">Desbloqueá tu tarjeta para usar tu Multimoney Visa.</string>
+    <string name="visa_card_block_disclaimer_gt" translatable="false">Desbloquea tu tarjeta para usar tu Multimoney Visa.</string>
 
 
     <!-- visa tokenization waiting -->

@@ -15,6 +15,7 @@ import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
 import com.amplifyframework.auth.result.AuthSessionResult
 import com.amplifyframework.core.Amplify
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.Brand.CostaRica
 import com.multimoney.data.util.catalog.Brand.ElSalvador
 import com.multimoney.data.util.catalog.Brand.Guatemala
@@ -382,12 +383,21 @@ class VisaCardViewModel @Inject constructor(
             uiState.isCardBlocked.not() -> uiState = uiState.copy(
                 dialogParameters = DialogParameters(
                     titleResource = R.string.visa_card_block_dialog_title,
-                    descriptionResource = R.string.visa_card_block_dialog_subtitle,
+                    descriptionResource = if (idBrand == Brand.Guatemala.id) {
+                        R.string.visa_card_block_dialog_subtitle_gt
+                    } else {
+                        R.string.visa_card_block_dialog_subtitle
+                    },
                     positiveResource = R.string.locked,
                     negativeResource = R.string.cancel,
                     positiveAction = { onCallMutationCardBlockingUseCase() },
                     isActive = mutableStateOf(true)
-                )
+                ),
+                visaCardBlockDisclaimer = if (idBrand == Brand.Guatemala.id) {
+                    R.string.visa_card_block_disclaimer_gt
+                } else {
+                    R.string.visa_card_block_disclaimer
+                }
             )
             uiState.isCardBlocked && uiState.isNfcAvailable.not() && balanceCardInformation?.allowUnLock == true ->
                 uiState =
@@ -441,6 +451,7 @@ class VisaCardViewModel @Inject constructor(
         val isPasswordConfirmButtonEnabled: Boolean = false,
         val bottomSheetVisibleState: ModalBottomSheetState = ModalBottomSheetState(Hidden),
         val dialogParameters: DialogParameters = DialogParameters(),
+        val visaCardBlockDisclaimer: Int = R.string.empty,
         val isLoading: Boolean = false
     )
 

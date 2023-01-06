@@ -423,17 +423,17 @@ class ProductViewModel @Inject constructor(
         validateUserStatus.apply {
             return when (action) {
                 CREDIT_INITIAL_CARD -> {
-                        (infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty() || validateUserStatus.infoCredit?.infoPreApprove?.currentStep == CREDIT_STEP_PRE_APPROVED)
+                    (infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty() || validateUserStatus.infoCredit?.infoPreApprove?.currentStep == CREDIT_STEP_PRE_APPROVED)
                 }
 
                 SMART_INITIAL_CARD -> {
                     infoUser?.statusOnfido == SmartOnFidoOrFirmStatus.PENDING.status &&
-                        infoBankAccount?.statusFirm == PENDING.status &&
-                        (infoBankAccount?.infoRequest?.currentStep.isNullOrEmpty() || validateUserStatus.infoBankAccount?.infoRequest?.statusRequest == SMART_STEP_PENDING)
+                            infoBankAccount?.statusFirm == PENDING.status &&
+                            (infoBankAccount?.infoRequest?.currentStep.isNullOrEmpty() || validateUserStatus.infoBankAccount?.infoRequest?.statusRequest == SMART_STEP_PENDING)
                 }
 
                 CREDIT_INFO_INCOMPLETE -> {
-                        (CreditStep.Search.getIdByName(infoCredit?.infoPreApprove?.currentStep) < CreditStep.Eight.id)
+                    (CreditStep.Search.getIdByName(infoCredit?.infoPreApprove?.currentStep) < CreditStep.Eight.id)
                 }
 
                 CREDIT_IDENTITY_INCOMPLETE -> {
@@ -450,8 +450,8 @@ class ProductViewModel @Inject constructor(
 
                 SMART_IDENTITY_INCOMPLETE -> {
                     infoUser?.statusOnfido != SmartOnFidoOrFirmStatus.APPROVED.status && (
-                        SmartSteps.Search.getIdByName(infoBankAccount?.infoRequest?.currentStep) == SmartSteps.Six.id
-                        )
+                            SmartSteps.Search.getIdByName(infoBankAccount?.infoRequest?.currentStep) == SmartSteps.Six.id
+                            )
                 }
 
                 CREDIT_FIRM_INCOMPLETE -> {
@@ -460,12 +460,12 @@ class ProductViewModel @Inject constructor(
 
                 CREDIT_FIRMED_ONFIDO_PENDING -> {
                     infoCredit?.infoPreApprove?.statusFirm == FIRMED.status &&
-                        infoUser?.statusOnfido == PENDING.status
+                            infoUser?.statusOnfido == PENDING.status
                 }
 
                 SMART_FIRMED_ONFIDO_PENDING -> {
                     infoBankAccount?.statusFirm == SmartOnFidoOrFirmStatus.FIRMED.status &&
-                        infoUser?.statusOnfido == SmartOnFidoOrFirmStatus.PENDING?.status
+                            infoUser?.statusOnfido == SmartOnFidoOrFirmStatus.PENDING?.status
                 }
 
                 CREDIT_FIRM_REJECTED -> {
@@ -498,7 +498,7 @@ class ProductViewModel @Inject constructor(
 
                 CREDIT_ERROR_CREATE_ACCOUNT -> {
                     infoCredit?.infoPreApprove?.statusFirm == FAILED.status ||
-                        infoCredit?.infoPreApprove?.status == ERROR_CREDIT
+                            infoCredit?.infoPreApprove?.status == ERROR_CREDIT
                 }
 
                 else -> false

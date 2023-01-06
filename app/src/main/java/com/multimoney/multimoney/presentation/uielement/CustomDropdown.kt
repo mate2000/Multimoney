@@ -53,6 +53,7 @@ import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 import com.multimoney.multimoney.presentation.util.gesture.detectTapAndPressUnconsumed
 
 @Composable
@@ -60,7 +61,7 @@ fun CustomDropdown(
     modifier: Modifier,
     items: List<String>,
     value: String,
-    onValueChange: (newText: String) -> Unit = {},
+    onValueChange: (newText: String, index: Int) -> Unit = { _: String, _: Int -> },
     labelText: String,
     placeHolder: String?,
     isError: Boolean = false,
@@ -88,12 +89,12 @@ fun CustomDropdown(
                 textColor = DefaultWhite
             }
             enabled -> {
-                iconTintColor = GrayScale400
+                iconTintColor = WhiteTransparency70
                 textColor = DefaultWhite
             }
             else -> {
                 backgroundColor = GrayScale500
-                iconTintColor = GrayScale400
+                iconTintColor = WhiteTransparency70
                 textColor = GrayScale400
             }
         }
@@ -107,7 +108,7 @@ fun CustomDropdown(
                 textColor = GrayScale800
             }
             enabled -> {
-                iconTintColor = Primary500
+                iconTintColor = WhiteTransparency70
                 textColor = GrayScale600
             }
             else -> {
@@ -143,7 +144,7 @@ fun CustomDropdown(
             colors = TextFieldDefaults.textFieldColors(
                 backgroundColor = backgroundColor,
                 focusedIndicatorColor = focusedColor,
-                unfocusedIndicatorColor = GrayScale400,
+                unfocusedIndicatorColor = focusedColor,
                 errorIndicatorColor = SemanticNegative500,
                 textColor = textColor
             ),
@@ -162,48 +163,73 @@ fun CustomDropdown(
                     style = Typography.body2
                 )
             },
-            enabled = false
+            enabled = false,
+            textStyle = Typography.body2.copy(
+                color = WhiteTransparency90
+            )
         )
 
-        /*
-        * Show Popup when dropdown is expanded to fill background with black transparent color
-        * Popup is used to not break the view hierarchy
-        */
-        if (expanded) {
-            Popup {
-                Box(modifier = Modifier
-                    .background(BlackTransparency70)
-                    .fillMaxSize())
-            }
-        }
+        CustomHighlightDropdown(
+            expanded = expanded,
+            items = items,
+            onValueChange = onValueChange,
+            modifier = Modifier
+                .width(with(LocalDensity.current) { textFieldSize.width.toDp() })
+                .pointerInput(Unit) {
+                    detectTapAndPressUnconsumed(onTap = {
+                        activity?.onUserInteraction()
+                    })
+                },
+            onDismissRequest = { expanded = false }
+        )
+    }
+}
 
-        MaterialTheme(shapes = MaterialTheme.shapes.copy(medium = RoundedCornerShape(16.dp))) {
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                modifier = Modifier
-                    .width(with(LocalDensity.current) { textFieldSize.width.toDp() })
-                    .background(ComplementaryBlack3)
-                    .pointerInput(Unit) {
-                        detectTapAndPressUnconsumed(onTap = {
-                            activity?.onUserInteraction()
-                        })
-                    },
-                offset = DpOffset(0.dp, 10.dp)
-            ) {
-                items.forEach { label ->
-                    DropdownMenuItem(onClick = {
-                        expanded = false
-                        onValueChange(label)
-                    }) {
-                        Text(
-                            text = label,
-                            style = Typography.body2.copy(
-                                color = MultimoneyTheme.colors.text,
-                                fontWeight = FontWeight.Normal
-                            )
+/**
+ * Dropdown Menu with an opaque background in the entire screen to highlight
+ * item list, this element uses a default 10.dp top offset to have a
+ * separation with the superior element
+ */
+@Composable
+fun CustomHighlightDropdown(
+    items: List<String>,
+    onValueChange: (newText: String, index: Int) -> Unit = { _: String, _: Int -> },
+    onDismissRequest: () -> Unit,
+    modifier: Modifier,
+    expanded: Boolean,
+) {
+    /*
+    * Show Popup when dropdown is expanded to fill background with black transparent color
+    * Popup is used to not break the view hierarchy
+    */
+    if (expanded) {
+        Popup {
+            Box(modifier = Modifier
+                .background(BlackTransparency70)
+                .fillMaxSize())
+        }
+    }
+
+    MaterialTheme(shapes = MaterialTheme.shapes.copy(medium = RoundedCornerShape(16.dp))) {
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = onDismissRequest,
+            modifier = modifier
+                .background(ComplementaryBlack3),
+            offset = DpOffset(0.dp, 10.dp)
+        ) {
+            items.forEachIndexed { index, label ->
+                DropdownMenuItem(onClick = {
+                    onDismissRequest()
+                    onValueChange(label, index)
+                }) {
+                    Text(
+                        text = label,
+                        style = Typography.body2.copy(
+                            color = MultimoneyTheme.colors.text,
+                            fontWeight = FontWeight.Normal
                         )
-                    }
+                    )
                 }
             }
         }
@@ -225,8 +251,8 @@ fun CustomDropdown(
         modifier = modifier,
         items = items?.map { it?.description ?: "" } ?: listOf(),
         value = value?.description ?: "",
-        onValueChange = { valueSelected ->
-            onValueChange(items?.findLast { it?.description == valueSelected })
+        onValueChange = { _, index ->
+            onValueChange(items?.get(index))
         },
         labelText = labelText,
         placeHolder = placeHolder,

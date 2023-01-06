@@ -21,7 +21,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
-import com.multimoney.multimoney.presentation.navigation.navgraph.IS_SMART_EVICERTIA
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
@@ -68,7 +67,6 @@ class SignDocumentProcessViewModel @Inject constructor(
     var idUserRequest: Long = 0
     var firstName: String = ""
     var lastName: String = ""
-    var isSmart: Boolean = false
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -79,7 +77,6 @@ class SignDocumentProcessViewModel @Inject constructor(
         idUserRequest = savedStateHandle[ID_USER_REQUEST] ?: 0
         firstName = savedStateHandle[FIRST_NAME] ?: ""
         lastName = savedStateHandle[LAST_NAME] ?: ""
-        isSmart = savedStateHandle[IS_SMART_EVICERTIA] ?: false
         uiState = uiState.copy(
             signDocumentProcessStep = savedStateHandle[SIGN_DOCUMENT_STEP_ARG] ?: "",
             signDocumentUrl = savedStateHandle[SIGN_DOCUMENT_URL] ?: ""
@@ -240,9 +237,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnCallSubscriptionCreditContractEvent -> onShouldCallSubscription(idPrint, idBrand)
-            is OnChangeScreen ->
-                uiState =
-                    uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
+            is OnChangeScreen -> uiState = uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
             is OnInitializeText -> dialogDescription = uiEvent.dialogDescription
             is OnCloseClick -> onNavigateToHome()
             is OnShowDialogInformation -> createDialog()

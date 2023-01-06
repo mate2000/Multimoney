@@ -12,14 +12,15 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.util.MultimoneyResult
-import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
-import com.multimoney.multimoney.presentation.util.MMCountDownTimer
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
+import com.multimoney.multimoney.presentation.ui.home.profile.settings.changepassword.ChangePasswordViewModel.UIEvent.OnNavigateToForgotPassword
+import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeConsecutiveLetterOrNumber
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeEqualConsecutiveLetterOrNumber
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeLettersOrNumbers
@@ -28,7 +29,6 @@ import com.multimoney.multimoney.presentation.util.passwordHasANumberValidation
 import com.multimoney.multimoney.presentation.util.passwordHasAUppercaseLetterValidation
 import com.multimoney.multimoney.presentation.util.passwordHasMinimumCharacters
 import com.multimoney.multimoney.presentation.util.passwordHasSpecialCharacterValidation
-import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -111,8 +111,8 @@ class ChangePasswordViewModel @Inject constructor(
 
     private fun isFormValid(): Boolean {
         return uiState.oneLowercaseState ?: false && uiState.oneUppercaseState ?: false && uiState.oneNumberState ?: false &&
-                uiState.oneCharacterState ?: false && passwordHasMinimumCharacters(uiState.newPassword)
-                && (uiState.newPasswordConfirmation == uiState.newPassword) && !uiState.newPasswordConfirmationError.first
+            uiState.oneCharacterState ?: false && passwordHasMinimumCharacters(uiState.newPassword) &&
+            (uiState.newPasswordConfirmation == uiState.newPassword) && !uiState.newPasswordConfirmationError.first
     }
 
     private fun onNewPasswordValueChange(password: String?) {
@@ -159,13 +159,16 @@ class ChangePasswordViewModel @Inject constructor(
     }
 
     private fun onCallCognitoUpdatePassword() = executeUseCase {
-        Amplify.Auth.updatePassword(uiState.currentPassword, uiState.newPassword,
+        Amplify.Auth.updatePassword(
+            uiState.currentPassword,
+            uiState.newPassword,
             {
                 updateCognitoStatus(
                     R.string.profile_settings_password_modified
                 )
                 uiState = uiState.copy(isLoading = false)
-            }, {
+            },
+            {
                 uiState = uiState.copy(isLoading = false)
                 uiState = when (it) {
                     is NotAuthorizedException -> {
@@ -220,6 +223,13 @@ class ChangePasswordViewModel @Inject constructor(
         uiState = uiState.copy(isAlertResultVisible = true, isLoading = false)
     }
 
+    private fun onNavigateToForgotPassword() = navigateTo(
+        route = Screen.RequestForgotPassword.baseRoute
+            .plus(
+                getNavParam(PREVIOUS_SCREEN, Screen.ProfileChangePasswordScreen.route)
+            )
+    )
+
     data class UIState(
         // Fields
         val currentPassword: String = "",
@@ -247,7 +257,7 @@ class ChangePasswordViewModel @Inject constructor(
         var oneCharacterState: Boolean? = null,
         var isAlertResultVisible: Boolean = false,
         var alertResultTitle: Int = R.string.empty,
-        var alertResultDescription: Int = R.string.empty,
+        var alertResultDescription: Int = R.string.empty
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -265,6 +275,7 @@ class ChangePasswordViewModel @Inject constructor(
             is UIEvent.OnUpdateLoadingState -> onUpdateLoadingState(event.state)
             is UIEvent.OnShowAlertDialog -> onShowAlertDialog()
             is UIEvent.OnNavigateToHome -> navigateBack(Screen.HomeScreen.route, isRestart = true)
+            is OnNavigateToForgotPassword -> onNavigateToForgotPassword()
         }
     }
 
@@ -292,6 +303,7 @@ class ChangePasswordViewModel @Inject constructor(
         object OnCallCognitoUpdatePassword : UIEvent()
         object OnUpdateLocallyStoredPassword : UIEvent()
         object OnUpdatePassword : UIEvent()
+        object OnNavigateToForgotPassword : UIEvent()
     }
 
     companion object {

@@ -214,14 +214,14 @@ class SmartOnfidoViewModel @Inject constructor(
                 user
             ).collectLatest { result ->
                 result.onSuccess {
-                    Timber.d("onFido status: ${it.id}")
+                    // nothing to do here
                 }
                 result.onFailure {
-                    Timber.d("onFido status: ${it.errorCode}")
+                    // nothing to do here
                 }
             }
-            navigateToCorrectScreen()
         }
+        navigateToCorrectScreen()
     }
 
     private fun navigateToCorrectScreen() {

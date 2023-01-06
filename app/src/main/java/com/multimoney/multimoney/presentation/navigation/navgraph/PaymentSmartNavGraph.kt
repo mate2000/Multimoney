@@ -22,9 +22,8 @@ import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAc
 import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountsScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsScreen
-import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodScreen
-import com.multimoney.multimoney.presentation.ui.smart.payment.options.SmartPaymentOptionsScreen
-import com.multimoney.multimoney.presentation.ui.smart.payment.sending.SmartSelectSendingTypeScreen
+import com.multimoney.multimoney.presentation.ui.smart.payment.methodsv.SmartPaymentMethodScreen
+import com.multimoney.multimoney.presentation.ui.smart.payment.optionscr.SmartPaymentOptionsContainer
 import com.multimoney.multimoney.presentation.ui.smart.payment.transfer.SavingMethodTransferScreen
 
 const val MASKED_CARD = "masked_card"
@@ -89,7 +88,7 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
                 navArgument(ID_LOAN_CLIENT) { type = NavType.StringType }
             )
         ) {
-            SmartPaymentOptionsScreen(
+            SmartPaymentOptionsContainer(
                 onNavigate = {
                     navController.navigate(it.route)
                 },
@@ -160,29 +159,6 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
             )
         ) {
             SavingAmountScreen(
-                onPopBackStack = {
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
-                    navController.popBackStack(
-                        route = it.popTo,
-                        inclusive = false,
-                        saveState = false
-                    )
-                }
-            )
-        }
-
-        composable(
-            route = Screen.SmartSelectSendingTypeScreen.route,
-            arguments = listOf(
-                navArgument(ID_BRAND) { type = NavType.IntType },
-                navArgument(SMART_IDS) { type = SmartAccountIDNavType() }
-            )
-        ) {
-            SmartSelectSendingTypeScreen(
-                onNavigate = {
-                    navController.navigate(it.route)
-                },
                 onPopBackStack = {
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)

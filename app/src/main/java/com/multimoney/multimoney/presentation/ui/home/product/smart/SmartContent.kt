@@ -16,6 +16,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.C
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType
+import com.multimoney.multimoney.presentation.util.catalog.ProductType
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 
 @Composable
@@ -29,7 +30,10 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
         id = R.string.whatsapp_deep_link, SignUpViewModel.PHONE_HARDCODED
     )
 
-    val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 1)
+    val decrement =
+        if (viewModel.uiState.productPageList?.any { it.product == ProductType.Credit.value } == true) 1 else 0
+    val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: decrement)
+
     CustomProductBackground(
         modifier = Modifier.padding(horizontal = 16.dp),
         type = ProductBackGroundType.Secondary
@@ -58,7 +62,8 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
                             CardSmartProduct(
                                 currency = it[index]?.currencyCode ?: "",
                                 profitMonthly = it[index]?.gainedInterest.toString(),
-                                profitTotal = it[index]?.totalBalance.toString()
+                                profitTotal = it[index]?.totalBalance.toString(),
+                                currentMonth = it[index]?.month ?: ""
                             )
                         }
                     }

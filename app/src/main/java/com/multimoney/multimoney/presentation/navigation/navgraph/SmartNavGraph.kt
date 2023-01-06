@@ -11,14 +11,13 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.SMART_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.ui.smart.origination.onfidoscenarios.continuevalidatingonfido.ContinueValidatingOnfidoScreen
-import com.multimoney.multimoney.presentation.ui.smart.origination.evicertiaandonfidoerrors.OnfidoAndEvicertiaErrorsScreen
 import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.SmartMovementsScreen
 import com.multimoney.multimoney.presentation.ui.smart.SmartScreen
+import com.multimoney.multimoney.presentation.ui.smart.origination.evicertiaandonfidoerrors.OnfidoAndEvicertiaErrorsScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoScreen
+import com.multimoney.multimoney.presentation.ui.smart.origination.onfidoscenarios.continuevalidatingonfido.ContinueValidatingOnfidoScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfidoscenarios.onfidoapproved.ApprovedByOnfidoScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignScreen
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.SmartTransferIbanScreen
 
 const val ACCOUNT_TOKEN = "account_token"
 const val SMART_PAYMENT_ACCOUNTS = "smart_payment_accounts"
@@ -189,42 +188,7 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
                         saveState = false
                     )
                 }
-            )
-        }
-
-        composable(
-            route = Screen.TransferIbanAccountScreen.route,
-            arguments = listOf(
-                navArgument(ID_BRAND) {
-                    type = NavType.StringType
-                },
-                navArgument(ID_CLIENT) {
-                    type = NavType.StringType
-                },
-                navArgument(ID_LOAN_CLIENT) {
-                    type = NavType.StringType
-                }
-            )
-        ) {
-            SmartTransferIbanScreen(
-                onNavigate = {
-                    navController.navigate(it.route)
-                },
-                onPopAndNavigate = {
-                    navController.navigate(it.route) {
-                        popUpTo(it.popTo) { inclusive = true }
-                    }
-                },
-                onPopBackStack = {
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
-                    navController.popBackStack(
-                        route = it.popTo,
-                        inclusive = false,
-                        saveState = false
-                    )
-                }
-            )
+            })
         }
     }
 }

@@ -33,6 +33,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.ireward.htmlcompose.HtmlText
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.DefaultBlack
@@ -168,6 +169,7 @@ fun CustomDatePicker(
                     val calendar = Calendar.getInstance()
                     val datePicker = DatePickerDialog(
                         context,
+                        R.style.CustomDarkDatePickerStyle,
                         { view, year, month, day ->
                             activity?.onUserInteraction()
                             onValueChange(view, year, month, day)

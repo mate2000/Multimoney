@@ -156,12 +156,12 @@ fun SmartAddressFields(
             items = sourceIncomeSharedViewModel.uiState.divisionOneList?.map { it?.name.orEmpty() }
                 ?: listOf(),
             value = sourceIncomeSharedViewModel.uiState.divisionOneSelected?.name ?: "",
-            onValueChange = {
+            onValueChange = { valueSelected, _ ->
                 sourceIncomeSharedViewModel.onUIEvent(
                     OnDivisionOneValueChange(
                         user = user,
                         idBrand = idBrand,
-                        divisionOne = it
+                        divisionOne = valueSelected
                     )
                 )
             },
@@ -177,12 +177,12 @@ fun SmartAddressFields(
         items = sourceIncomeSharedViewModel.uiState.divisionTwoList?.map { it?.name.orEmpty() }
             ?: listOf(),
         value = sourceIncomeSharedViewModel.uiState.divisionTwoSelected?.name ?: "",
-        onValueChange = {
+        onValueChange = { valueSelected, _ ->
             sourceIncomeSharedViewModel.onUIEvent(
                 OnDivisionTwoValueChange(
                     user = user,
                     idBrand = idBrand,
-                    divisionTwo = it
+                    divisionTwo = valueSelected
                 )
             )
         },
@@ -197,12 +197,12 @@ fun SmartAddressFields(
         items = sourceIncomeSharedViewModel.uiState.divisionThreeList?.map { it?.name.orEmpty() }
             ?: listOf(),
         value = sourceIncomeSharedViewModel.uiState.divisionThreeSelected?.name ?: "",
-        onValueChange = {
+        onValueChange = { valueSelected, _ ->
             sourceIncomeSharedViewModel.onUIEvent(
                 OnDivisionThreeValueChange(
                     user = user,
                     idBrand = idBrand,
-                    divisionThree = it
+                    divisionThree = valueSelected
                 )
             )
         },

@@ -56,7 +56,7 @@ class OnfidoAndEvicertiaErrorsViewModel @Inject constructor(
 
     private fun onNavigateToOnfidoProcess() {
         popAndNavigateTo(
-            route = "${Screen.CreditOnfidoScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$PRINT_EMPTY/$URL_EMPTY/${CreditOnFidoOrFirmStatus.FIRMED.status}",
+            route = "${Screen.CreditOnfidoScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$PRINT_EMPTY/${CreditOnFidoOrFirmStatus.FIRMED.status}",
             popTo = Screen.OnfidoAndEvicertiaErrorsScreen.route
         )
     }

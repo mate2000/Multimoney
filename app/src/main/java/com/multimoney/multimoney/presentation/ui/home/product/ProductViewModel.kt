@@ -4,22 +4,22 @@ import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
+import com.multimoney.data.util.catalog.SmartSteps
+import com.multimoney.data.util.catalog.SmartAccountStatusRequest
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.APPROVED
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.FAILED
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.FIRMED
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.OVER_COUNTER
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.PENDING
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.REJECTED
-import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.data.util.catalog.SmartAccountStatus.EXIST_IN_CORE
 import com.multimoney.data.util.catalog.SmartAccountStatus.NO_EXIST
-import com.multimoney.data.util.catalog.SmartAccountStatusRequest
 import com.multimoney.data.util.catalog.SmartAccountStatusRequest.CANCELED
 import com.multimoney.data.util.catalog.SmartAccountStatusRequest.CREATED
 import com.multimoney.data.util.catalog.SmartAccountStatusRequest.SENT
-import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
-import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.domain.interaction.accountsmart.QueryListSinpeAccountUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceCardInformationUseCase
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
@@ -80,6 +80,8 @@ import com.multimoney.multimoney.presentation.util.ShareHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
+import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
+import com.multimoney.multimoney.presentation.util.catalog.SignDocumentOrigin
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.novopayment.sdk.vts.NovoVTS
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -172,17 +174,35 @@ class ProductViewModel @Inject constructor(
         uiState = uiState.copy(userStatus = userStatus)
     }
 
-    private fun onNavigateToCreditScreen(creditStep: String) {
+    private fun onNavigateToCreditScreen(
+        creditStep: String
+    ) {
         when (creditStep) {
-            CREDIT_FIRM_INCOMPLETE, CREDIT_ONFIDO_REJECTED, CREDIT_FIRM_REJECTED -> {
-                // todo call the new endpoint to get the evicertia url
+            CREDIT_ONFIDO_REJECTED -> {
+                if (uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm?.lowercase() == FIRMED.status.lowercase()) {
+                    navigateTo(
+                        "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
+                                "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}/${uiState.userStatus?.infoUser?.firstName}/" +
+                                "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
+                                "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint}"
+                    )
+                } else {
+                    navigateTo(
+                        "${Screen.SignDocumentProcessScreen.baseRoute}/${SignDocumentStep.GENERATE_DOCUMENT_STEP.value}/${SignDocumentOrigin.Product.value}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0}/${uiState.idBrand.toInt()}/$pkUser/$identification/$email/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}"
+                    )
+                }
+            }
+            CREDIT_FIRM_INCOMPLETE, CREDIT_FIRM_REJECTED -> {
+                navigateTo(
+                    "${Screen.SignDocumentProcessScreen.baseRoute}/${SignDocumentStep.GENERATE_DOCUMENT_STEP.value}/${SignDocumentOrigin.Product.value}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0}/${uiState.idBrand.toInt()}/$pkUser/$identification/$email/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}"
+                )
             }
             else -> {
                 navigateTo(
                     "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
-                        "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}/${uiState.userStatus?.infoUser?.firstName}/" +
-                        "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
-                        "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint}"
+                            "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}/${uiState.userStatus?.infoUser?.firstName}/" +
+                            "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
+                            "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint}"
                 )
             }
         }
@@ -344,6 +364,11 @@ class ProductViewModel @Inject constructor(
         navigateTo("${Screen.ProfileScreen.baseRoute}/$idClient/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/$email/${uiState.userStatus?.infoUser?.phone}/$identification/$pkUser/${uiState.userStatus?.infoUser?.userName}")
     }
 
+    private fun onNavigateToSignDocumentScreen() {
+        navigateTo("${Screen.ProfileScreen.baseRoute}/$idClient/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/$email/${uiState.userStatus?.infoUser?.phone}/$identification/$pkUser/${uiState.userStatus?.infoUser?.userName}")
+    }
+
+
     // Todo check if the navigation to this screen is suitable for the purchase crypto flow
     private fun onNavigateToSmartPaymentAccountScreen() =
         navigateTo(Screen.SmartPaymentOptionsScreenCR.route)
@@ -398,8 +423,6 @@ class ProductViewModel @Inject constructor(
         validateUserStatus.apply {
             return when (action) {
                 CREDIT_INITIAL_CARD -> {
-                    infoUser?.statusOnfido == PENDING.status &&
-                        infoCredit?.infoPreApprove?.statusFirm == PENDING.status &&
                         (infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty() || validateUserStatus.infoCredit?.infoPreApprove?.currentStep == CREDIT_STEP_PRE_APPROVED)
                 }
 
@@ -410,15 +433,11 @@ class ProductViewModel @Inject constructor(
                 }
 
                 CREDIT_INFO_INCOMPLETE -> {
-                    infoUser?.statusOnfido == PENDING.status &&
-                        infoCredit?.infoPreApprove?.statusFirm == PENDING.status &&
                         (CreditStep.Search.getIdByName(infoCredit?.infoPreApprove?.currentStep) < CreditStep.Eight.id)
                 }
 
                 CREDIT_IDENTITY_INCOMPLETE -> {
-                    infoUser?.statusOnfido != APPROVED.status && (
-                        CreditStep.Search.getIdByName(infoCredit?.infoPreApprove?.currentStep) == CreditStep.Eight.id
-                        )
+                    (CreditStep.Search.getIdByName(infoCredit?.infoPreApprove?.currentStep) == CreditStep.Eight.id)
                 }
 
                 CREDIT_EL_SALVADOR_MANUAL_PROCESS -> {
@@ -436,8 +455,7 @@ class ProductViewModel @Inject constructor(
                 }
 
                 CREDIT_FIRM_INCOMPLETE -> {
-                    infoCredit?.infoPreApprove?.statusFirm == PENDING.status &&
-                        infoUser?.statusOnfido != PENDING.status
+                    infoCredit?.infoPreApprove?.idPrint != null && infoCredit?.infoPreApprove?.idPrint != 0L && infoCredit?.infoPreApprove?.statusFirm == PENDING.status
                 }
 
                 CREDIT_FIRMED_ONFIDO_PENDING -> {

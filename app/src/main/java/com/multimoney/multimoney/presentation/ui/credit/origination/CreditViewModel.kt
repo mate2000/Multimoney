@@ -29,6 +29,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnBackVisibilityValueChanged
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnCallMutationSaveCreditFlowStep
@@ -87,7 +88,6 @@ class CreditViewModel @Inject constructor(
     var idPrint: Long = 0
     var statusOnfido: String = ""
     var statusEvicertia: String = ""
-    var linkEvicertia: String = URL_EMPTY
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: ""
@@ -170,15 +170,6 @@ class CreditViewModel @Inject constructor(
                 statusOnfido.lowercase() != CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase() -> {
                 navigateToOnfido()
             }
-            statusEvicertia.lowercase() != CreditOnFidoOrFirmStatus.FIRMED.status.lowercase() -> {
-                navigateToSignDocumentProcess(
-                    if (linkEvicertia == URL_EMPTY) {
-                        GENERATE_DOCUMENT_STEP.value
-                    } else {
-                        SIGN_DOCUMENTS_STEP.value
-                    }
-                )
-            }
         }
     }
 
@@ -209,14 +200,7 @@ class CreditViewModel @Inject constructor(
 
     private fun navigateToOnfido() {
         popAndNavigateTo(
-            "${Screen.CreditOnfidoScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$idPrint/$URL_EMPTY/$statusEvicertia",
-            Screen.CreditScreen.route
-        )
-    }
-
-    private fun navigateToSignDocumentProcess(signDocumentStep: String) {
-        popAndNavigateTo(
-            "${Screen.SignDocumentProcessScreen.baseRoute}/$signDocumentStep/$URL_EMPTY/$idPrint/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName",
+            "${Screen.CreditOnfidoScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$idPrint/$statusEvicertia",
             Screen.CreditScreen.route
         )
     }
@@ -363,6 +347,5 @@ class CreditViewModel @Inject constructor(
         const val CREDIT_TOTAL_STEPS = 7
         const val CREDIT_INDICATOR_TOTAL_STEPS = 6
         const val BANNER_TIME = 2000L
-        const val URL_EMPTY = "url"
     }
 }

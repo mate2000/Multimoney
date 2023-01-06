@@ -46,7 +46,7 @@ fun AdditionalInformationScreen(
                         OnNextActionClick(
                             user = sharedViewModel.email,
                             nextStepAction = {
-                                sharedViewModel.onUIEvent(OnCallMutationSaveCreditFlowStep(true))
+                                sharedViewModel.onUIEvent(OnCallMutationSaveCreditFlowStep)
                             },
                             saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
                         )
@@ -67,11 +67,11 @@ fun AdditionalInformationScreen(
     }
 
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(8.dp))
         Text(
             text = stringResource(id = R.string.credit_additional_information_title),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.labelText
+            color = MultimoneyTheme.colors.titleText
         )
         Spacer(Modifier.height(24.dp))
         when (sharedViewModel.idBrand.toInt()) {

@@ -27,6 +27,9 @@ import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeType
 import com.novopayment.sdk.vts.module.payment.apdu.PaymentService
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
+import java.net.URLDecoder
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import java.util.Locale
 import kotlin.time.Duration
 
@@ -44,15 +47,8 @@ fun Context.openWhatsAppDeepLink(link: String, onFailure: () -> Unit = {}) {
     }
 }
 
-fun Context.openMapsLink(latitude: String, longitude: String) {
-    val mapsIntentUri =
-        Uri.parse(
-            String.format(
-                resources.getString(R.string.payment_location_intent_uri_format),
-                latitude,
-                longitude
-            )
-        )
+fun Context.openMapsLink(locationAddress: String) {
+    val mapsIntentUri = Uri.parse(locationAddress)
     val mapIntent = Intent(Intent.ACTION_VIEW, mapsIntentUri)
     mapIntent.setPackage(resources.getString(R.string.payment_location_intent_package))
     this.startActivity(mapIntent)
@@ -221,6 +217,14 @@ fun String.formatExpirationDate() = if (this.length == 3) {
     this.take(2).plus("/").plus(this.takeLast(2))
 } else {
     this
+}
+
+fun String.encodeURLToUTF(): String {
+    return URLEncoder.encode(this, StandardCharsets.UTF_8.toString())
+}
+
+fun String.decodeURLFromUTF(): String {
+    return URLDecoder.decode(this, StandardCharsets.UTF_8.toString())
 }
 
 /**

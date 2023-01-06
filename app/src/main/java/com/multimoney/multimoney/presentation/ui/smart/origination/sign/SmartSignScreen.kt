@@ -39,7 +39,7 @@ fun SmartSignScreen(
 
     when (viewModel.uiState.signDocumentProcessStep) {
         GENERATE_DOCUMENT_STEP.value -> {
-            SmartDocumenGenerationScreen(
+            SmartDocumentGenerationScreen(
                 viewModel = viewModel,
                 icon = viewModel.uiState.loadingIcon,
                 title = viewModel.uiState.loadingTitle,

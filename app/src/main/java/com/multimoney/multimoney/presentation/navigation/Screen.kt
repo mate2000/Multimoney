@@ -46,8 +46,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_METHOD
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS_DESCRIPTION
-import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LATITUDE
-import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LONGITUDE
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_SCHEDULE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
@@ -77,6 +75,7 @@ const val CRYPTO_ROUTE = "crypto_route"
 const val PROFILE_ROUTE = "profile_route"
 const val TEST_ROUTE = "test_route"
 const val SMART_PAYMENT_ROUTE = "smart_payment_route"
+const val SMART_TRANSFER_ROUTE = "smart_transfer_route"
 const val ID_BRAND = "id_brand"
 const val PHONE_NUMBER = "phone_number"
 const val NEW_PHONE_NUMBER = "new_phone_number"
@@ -96,9 +95,31 @@ const val SMART_IDS_LIST = "smart_id_list"
 const val SMART_IDS = "smart_ids"
 const val IBAN_ACCOUNT = "iban_account"
 const val GLOBAL_CRYPTO_BALANCE = "global_crypto_balance"
+const val PASSWORD = "password"
+const val DEVICE_ID = "device_id"
+const val UNIQUE_ID = "unique_id"
+const val IP_ADDRESS = "ip_address"
+const val DEVICE_TYPE = "device_type"
+const val DEVICE_NAME = "device_name"
+const val APP_VERSION = "app_version"
+const val DEVICE_BRAND = "device_brand"
+const val DEVICE_MODEL = "device_model"
+const val IS_EMULATOR = "is_emulator"
+const val FORCE_CHANGE_DEVICE = "force_change_device"
+const val ID_CLIENT = "id_client"
+const val ID_LOAN_CLIENT = "id_loan_client"
+const val STATUS_CREDIT = "status_credit"
+const val STATUS_SMART = "status_smart"
+const val STATUS_CRYPTO = "status_crypto"
+const val CARD_STATUS = "card_status"
+const val CRYPTO_ASSET = "asset"
+const val DESCRIPTION_CURRENCY = "description_currency"
+const val CURRENT_CRYPTO_PRICE = "current_crypto_price"
+const val URL_IMAGE = "url_image"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
+const val PREVIOUS_IS_RETURN_TO_HOME = "previous_is_return_to_home"
 
 /**
  * Use this class to declare all your new screens and their routes
@@ -108,12 +129,25 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     // LoginNavGraph Screens
     object SplashScreen : Screen("splash_screen")
     object OnBoardingScreen : Screen("onboarding_screen")
-    object SignInScreen : Screen("sign_in_screen")
+    object SignInScreen : Screen("sign_in_screen?$FORCE_CHANGE_DEVICE={$FORCE_CHANGE_DEVICE}","sign_in_screen")
     object SignUpScreen : Screen("sign_up_screen/{$SIGN_UP_STEP}", "sign_up_screen")
+    object RequestForgotPassword :
+        Screen("request_forgot_password_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}", "request_forgot_password_screen")
+
+    object ProcessForgotPassword :
+        Screen(
+            "process_forgot_password_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}?$EMAIL={$EMAIL}?$ID_BRAND={$ID_BRAND}?$PK_USER={$PK_USER}",
+            "process_forgot_password_screen"
+        )
 
     object SignUpSplashComeBackScreen : Screen(
         "sign_up_splash_come_back_screen/{$SIGN_UP_STEP}",
         "sign_up_splash_come_back_screen"
+    )
+
+    object SignInOTPScreen : Screen(
+        "sign_in_otp_screen/{$EMAIL}/{$PASSWORD}/{$DEVICE_ID}/{$UNIQUE_ID}/{$IP_ADDRESS}/{$DEVICE_TYPE}/{$DEVICE_NAME}/{$APP_VERSION}/{$DEVICE_BRAND}/{$DEVICE_MODEL}/{$IS_EMULATOR}",
+        "sign_in_otp_screen"
     )
 
     object SignUpCompleted : Screen("sign_up_completed")
@@ -227,7 +261,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SignDocumentProcessScreen : Screen(
-        "sign_document_process_screen/{$SIGN_DOCUMENT_STEP_ARG}/{$SIGN_DOCUMENT_URL}/{$SIGN_DOCUMENT_ID_PRINT}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$IS_SMART_EVICERTIA}",
+        "sign_document_process_screen/{$SIGN_DOCUMENT_STEP_ARG}/{$SIGN_DOCUMENT_URL}/{$SIGN_DOCUMENT_ID_PRINT}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}",
         "sign_document_process_screen"
     )
 
@@ -290,12 +324,6 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object AddIbanAccountScreen : Screen(
         "add_iban_account_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
         "add_iban_account_screen"
-    )
-
-    // Transfer Iban Account
-    object TransferIbanAccountScreen : Screen(
-        "transfer_iban_account_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
-        "transfer_iban_account_screen"
     )
 
     // Payment Credit
@@ -366,7 +394,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object PaymentLocationDetailsScreen : Screen(
-        "payment_location_details_screen?$POINT_NAME={$POINT_NAME}?$POINT_ADDRESS={$POINT_ADDRESS}?$POINT_ADDRESS_DESCRIPTION={$POINT_ADDRESS_DESCRIPTION}?$POINT_SCHEDULE={$POINT_SCHEDULE}?$POINT_LATITUDE={$POINT_LATITUDE}?$POINT_LONGITUDE={$POINT_LONGITUDE}?$PAYMENT_AMOUNT={$PAYMENT_AMOUNT}?$CREDIT_NUMBER={$CREDIT_NUMBER}?$ID_BRAND={$ID_BRAND}",
+        "payment_location_details_screen?$POINT_NAME={$POINT_NAME}?$POINT_ADDRESS={$POINT_ADDRESS}?$POINT_ADDRESS_DESCRIPTION={$POINT_ADDRESS_DESCRIPTION}?$POINT_SCHEDULE={$POINT_SCHEDULE}?$PAYMENT_AMOUNT={$PAYMENT_AMOUNT}?$CREDIT_NUMBER={$CREDIT_NUMBER}?$ID_BRAND={$ID_BRAND}",
         "payment_location_details_screen"
     )
 
@@ -423,19 +451,55 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "smart_payment_saving_amount_screen"
     )
 
+    // Smart Transfer Screens
+
     object SmartSelectSendingTypeScreen : Screen(
-        "smart_select_sending_type_screen/{$PK_USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$SMART_IDS}",
+        "smart_select_sending_type_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$SMART_IDS}/{$ID_CLIENT}/{$PREVIOUS_SCREEN}",
         "smart_select_sending_type_screen"
+    )
+
+    object SmartSelectAccountScreen : Screen(
+        "smart_select_account_screen/{$SMART_IDS_LIST}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ID_CLIENT}",
+        "smart_select_account_screen"
+    )
+
+    object SmartTransferRegisterIbanScreen : Screen(
+        "smart_transfer_register_iban_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}",
+        "smart_transfer_register_iban_screen"
+    )
+
+    object SmartTransferIbanAccountScreen : Screen(
+        "transfer_iban_account_screen/{$SMART_IDS}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}",
+        "transfer_iban_account_screen"
+    )
+
+    object SmartTransferAmountScreen : Screen(
+        "smart_transfer_amount_screen/{$SMART_IDS}/{$IBAN_ACCOUNT}/{$PREVIOUS_SCREEN}",
+        "smart_transfer_amount_screen"
     )
 
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")
     object ChartScreen : Screen("chart_screen/{$}")
-    object SubscriptionScreen : Screen("subscription_screen")
 
     // Crypto
     object CryptoWalletScreen : Screen(
-        "crypto_wallet_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$GLOBAL_CRYPTO_BALANCE}",
+        "crypto_wallet_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$GLOBAL_CRYPTO_BALANCE}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$STATUS_CREDIT}/{$STATUS_SMART}/{$STATUS_CRYPTO}/{$CARD_STATUS}",
         "crypto_wallet_screen"
+    )
+
+    object CryptoMarketScreen : Screen(
+        "crypto_market_screen/{$USER}/{$ID_BRAND}",
+        "crypto_market_screen"
+    )
+
+    object CryptoMovementsScreen: Screen(
+        "crypto_movements_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
+        "crypto_movements_screen"
+    )
+
+    object CryptoCurrencyDetailsScreen: Screen(
+        "crypto_currency_details_screen/{$USER}/{$ID_BRAND}/{$CRYPTO_ASSET}/{$DESCRIPTION_CURRENCY}/{$CURRENT_CRYPTO_PRICE}/{$URL_IMAGE}",
+        "crypto_currency_details_screen"
     )
 }

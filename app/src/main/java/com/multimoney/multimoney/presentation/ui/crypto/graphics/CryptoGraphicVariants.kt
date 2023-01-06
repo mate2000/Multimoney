@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
+import com.multimoney.domain.model.crypto.CurrencyHistoricPrice
 import com.multimoney.domain.model.crypto.HistoricalBalanceClient
 
 @Composable
@@ -31,7 +32,7 @@ fun HomeCryptoGraphic(
             .fillMaxWidth()
             .height(80.dp)
             .padding(top = 8.dp, bottom = 8.dp, start = 16.dp),
-        convertedBalances = convertedBalances,
+        graphicsPoints = convertedBalances,
         graphicColor = graphicColor
     )
 }
@@ -51,7 +52,26 @@ fun WalletCryptoGraphic(
             .height(100.dp)
             .padding(top = 24.dp, bottom = 32.dp, start = 16.dp, end = 16.dp),
         fromHome = false,
-        convertedBalances = convertedBalances,
+        graphicsPoints = convertedBalances,
+        graphicColor = graphicColor
+    )
+}
+
+@Composable
+fun MarketCurrencyDetailsGraphic(
+    currencyHistory: List<CurrencyHistoricPrice>,
+    graphicColor: Color
+) {
+
+    val convertedBalances = currencyHistory.map { it.average_price.toDouble() }
+
+    CryptoGraphic(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(144.dp)
+            .padding(top = 32.dp, bottom = 32.dp, start = 16.dp, end = 16.dp),
+        fromHome = false,
+        graphicsPoints = convertedBalances,
         graphicColor = graphicColor
     )
 }
@@ -59,14 +79,14 @@ fun WalletCryptoGraphic(
 @Composable
 fun CryptoGraphic(
     modifier: Modifier = Modifier,
-    convertedBalances: List<Double>,
+    graphicsPoints: List<Double>,
     fromHome: Boolean = true,
     graphicColor: Color
 ) {
 
-    if (convertedBalances.isEmpty()
-        || convertedBalances.size == MINIMUM_GRAPHIC_POINTS
-        || convertedBalances.all { convertedBalances.firstOrNull() == it }
+    if (graphicsPoints.isEmpty()
+        || graphicsPoints.size == MINIMUM_GRAPHIC_POINTS
+        || graphicsPoints.all { graphicsPoints.firstOrNull() == it }
     ) {
 
         if (fromHome) {
@@ -78,7 +98,7 @@ fun CryptoGraphic(
 
         LineGraphic(
             modifier = modifier,
-            lineGraphicEntries = convertedBalances,
+            lineGraphicEntries = graphicsPoints,
             graphicColor = graphicColor
         )
     }

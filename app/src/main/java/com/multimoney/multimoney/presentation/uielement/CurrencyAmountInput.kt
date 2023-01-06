@@ -214,7 +214,10 @@ fun CurrencyAmountInput(
             ),
             enabled = enabled,
             visualTransformation = customTransformation ?: VisualTransformation.None,
-            textStyle = Typography.h4.copy(textAlign = TextAlign.Center)
+            textStyle = Typography.h4.copy(
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.W600
+            )
         )
 
         // This is required to execute the debounce
@@ -229,7 +232,7 @@ fun CurrencyAmountInput(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_exclamation_mark),
                     modifier = Modifier
-                        .size(width = 11.dp, height = 11.dp),
+                        .size(width = 13.5.dp, height = 13.5.dp),
                     contentDescription = "",
                     tint = errorIndicatorColor
                 )

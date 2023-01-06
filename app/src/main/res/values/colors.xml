@@ -12,6 +12,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="white_100">#E6FFFFFF</color>
     <color name="green">#49D249</color>
+    <color name="green_500">#21B621</color>
     <color name="onfidoColorPrimary">@color/gray_800</color>
     <color name="onfidoTextColorPrimary">@color/white_100</color>
     <color name="onfidoTextColorSecondary">@color/white_100</color>

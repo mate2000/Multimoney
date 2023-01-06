@@ -6,6 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
+import com.multimoney.multimoney.presentation.navigation.HOME_STATE
 import com.multimoney.multimoney.presentation.navigation.IBAN_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
@@ -35,7 +36,7 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                 navArgument(IDENTIFICATION) { type = NavType.StringType },
                 navArgument(SMART_IDS) { type = SmartAccountIDNavType() },
                 navArgument(ID_CLIENT) { type = NavType.IntType },
-                navArgument(PREVIOUS_SCREEN) { type = NavType.StringType },
+                navArgument(PREVIOUS_SCREEN) { type = NavType.StringType }
             )
         ) {
             SmartSelectSendingTypeScreen(
@@ -43,10 +44,8 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                     navController.navigate(it.route)
                 },
                 onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        PREVIOUS_IS_RESTART,
-                        it.isRestart
-                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,
@@ -83,10 +82,8 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                     navController.navigate(it.route)
                 },
                 onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        PREVIOUS_IS_RESTART,
-                        it.isRestart
-                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,
@@ -105,10 +102,8 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
         ) {
             SmartTransferAmountScreen(
                 onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        PREVIOUS_IS_RESTART,
-                        it.isRestart
-                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,
@@ -133,10 +128,8 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                     navController.navigate(it.route)
                 },
                 onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        PREVIOUS_IS_RESTART,
-                        it.isRestart
-                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,
@@ -160,10 +153,8 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                     navController.navigate(it.route)
                 },
                 onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        PREVIOUS_IS_RESTART,
-                        it.isRestart
-                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,

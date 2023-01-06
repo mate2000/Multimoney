@@ -15,6 +15,7 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.SmartMovementsViewModel.UIEvent.OnErrorLoading
 import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.SmartMovementsViewModel.UIEvent.OnGetMovement
 import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.SmartMovementsViewModel.UIEvent.OnIsLoadingChange
@@ -58,10 +59,7 @@ class SmartMovementsViewModel @Inject constructor(
     }
 
     private fun navigateBackToHome() {
-        popAndNavigateTo(
-            route = Screen.HomeScreen.route,
-            popTo = Screen.SmartMovementsScreen.route
-        )
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = false, HomeState.UNEXPANDED)
     }
 
     private fun onErrorLoading(failureDialog: DialogParameters) {

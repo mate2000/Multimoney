@@ -6,6 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
+import com.multimoney.multimoney.presentation.navigation.HOME_STATE
 import com.multimoney.multimoney.presentation.navigation.IBAN_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.ID_VISA_CARD
@@ -44,10 +45,8 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
                     navController.navigate(it.route)
                 },
                 onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        PREVIOUS_IS_RESTART,
-                        it.isRestart
-                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,
@@ -67,10 +66,8 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
                     navController.navigate(it.route)
                 },
                 onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        PREVIOUS_IS_RESTART,
-                        it.isRestart
-                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,
@@ -96,10 +93,8 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
                     navController.navigate(it.route)
                 },
                 onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        PREVIOUS_IS_RESTART,
-                        it.isRestart
-                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,
@@ -114,10 +109,8 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
                     navController.navigate(it.route)
                 },
                 onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        PREVIOUS_IS_RESTART,
-                        it.isRestart
-                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,
@@ -144,10 +137,8 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
                     navController.navigate(it.route)
                 },
                 onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        PREVIOUS_IS_RESTART,
-                        it.isRestart
-                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,
@@ -169,10 +160,8 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
         ) {
             SavingAmountScreen(
                 onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        PREVIOUS_IS_RESTART,
-                        it.isRestart
-                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,

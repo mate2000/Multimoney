@@ -124,6 +124,13 @@ class HomeViewModel @Inject constructor(
             callQueryGetConfigurationVersion(uiState.idBrand.toInt())
         }
     }
+
+    private fun onSetHomeState(homeState: HomeState) {
+        uiState = uiState.copy(
+            homeState = homeState
+        )
+    }
+
     private fun onGetSmartMovements(
         user: String,
         idBrand: Int,
@@ -708,6 +715,7 @@ class HomeViewModel @Inject constructor(
         var email: String = "",
         var userName: String = "",
         var forceIsExpanded: Boolean = false,
+        var homeState: HomeState = HomeState.OLD_STATE,
         var productScreenPagerState: PagerState? = null,
         var productPageList: List<ProductPage> = emptyList(),
         val smartMovementsList: List<SmartMovementsResult> = emptyList(),
@@ -723,6 +731,7 @@ class HomeViewModel @Inject constructor(
             )
             is OnSignOut -> signOut()
             is OnSetUserData -> onsetUserData()
+            is UIEvent.OnSetHomeState -> onSetHomeState(uiEvent.homeState)
             is UIEvent.OnOpenQuickActionFlow -> openQuickActionFlow(flow = uiEvent.flow)
             is OnGetSmartMovements -> onGetSmartMovements(
                 uiEvent.user,
@@ -770,6 +779,7 @@ class HomeViewModel @Inject constructor(
         data class OnMyProductClick(val expand: Boolean) : UIEvent()
         data class OnMyProductPageChange(val page: PagerState) : UIEvent()
         object OnSetUserData : UIEvent()
+        data class OnSetHomeState(val homeState: HomeState) : UIEvent()
         object OnSignOut : UIEvent()
         object OnShowAutomaticPaymentEdit : UIEvent()
         object OnHideAutomaticPaymentEdit : UIEvent()

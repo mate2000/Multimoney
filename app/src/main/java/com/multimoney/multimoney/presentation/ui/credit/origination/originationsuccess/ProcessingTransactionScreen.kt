@@ -58,14 +58,14 @@ import com.multimoney.multimoney.presentation.util.shape.DottedShape
 
 @Composable
 fun ProcessingTransactionScreen(
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: ProcessingTransactionViewModel = hiltViewModel()
 ) {
     val view = LocalView.current
     var capturingViewBounds by remember { mutableStateOf<Rect?>(null) }
 
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
+        viewModel.executeNavigation(onPopBackStack = onPopBackStack)
         viewModel.onUIEvent(OnCallQueryGetInfoDebit)
     }
 

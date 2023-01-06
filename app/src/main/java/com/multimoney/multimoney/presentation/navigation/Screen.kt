@@ -120,6 +120,7 @@ const val URL_IMAGE = "url_image"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
+const val HOME_STATE = "home_state"
 const val PREVIOUS_IS_RETURN_TO_HOME = "previous_is_return_to_home"
 
 /**

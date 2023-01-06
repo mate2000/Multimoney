@@ -378,11 +378,6 @@ class ProductViewModel @Inject constructor(
         navigateTo("${Screen.ProfileScreen.baseRoute}/$idClient/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/$email/${uiState.userStatus?.infoUser?.phone}/$identification/$pkUser/${uiState.userStatus?.infoUser?.userName}")
     }
 
-    private fun onNavigateToSignDocumentScreen() {
-        navigateTo("${Screen.ProfileScreen.baseRoute}/$idClient/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/$email/${uiState.userStatus?.infoUser?.phone}/$identification/$pkUser/${uiState.userStatus?.infoUser?.userName}")
-    }
-
-
     // Todo check if the navigation to this screen is suitable for the purchase crypto flow
     private fun onNavigateToSmartPaymentAccountScreen() =
         navigateTo(Screen.SmartPaymentOptionsScreenCR.route)

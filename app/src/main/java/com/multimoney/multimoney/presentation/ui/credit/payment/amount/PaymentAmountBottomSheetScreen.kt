@@ -117,7 +117,7 @@ fun PaymentAmountBottomSheetScreen(
                 onClick = {
                     viewModel.onUIEvent(UIEvent.OnProcessPayment(paymentDescription = paymentDescription))
                 },
-                text = stringResource(id = R.string.payment_amount_bottom_sheet_button),
+                text = stringResource(id = R.string.payment_amount_bottom_sheet_pay_button),
                 buttonType = CustomButtonType.PrimaryPrimary,
                 enable = viewModel.uiState.isLoading.not()
             )

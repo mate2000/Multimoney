@@ -214,7 +214,10 @@ fun CurrencyAmountInput(
             ),
             enabled = enabled,
             visualTransformation = customTransformation ?: VisualTransformation.None,
-            textStyle = Typography.h4.copy(textAlign = TextAlign.Center)
+            textStyle = Typography.h4.copy(
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.W600
+            )
         )
 
         // This is required to execute the debounce

@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun SignDocumentProcessScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: SignDocumentProcessViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -34,7 +35,7 @@ fun SignDocumentProcessScreen(
 
     LaunchedEffect(true) {
         viewModel.apply {
-            executeNavigation(onPopAndNavigate = onPopAndNavigate)
+            executeNavigation(onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)
             onUIEvent(OnCallSubscriptionCreditContractEvent)
             onUIEvent(OnCallGetLinkCreditContractEvent)
             baseEvent.collectLatest { event ->

@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.multimoney.multimoney.presentation.navigation.CREDIT_ROUTE
+import com.multimoney.multimoney.presentation.navigation.HOME_STATE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -51,13 +52,25 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
                 navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType }
             )
         ) {
-            CreditScreen(onNavigate = {
-                navController.navigate(it.route)
-            }, onPopAndNavigate = {
+            CreditScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopAndNavigate = {
                     navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }
                     }
-                })
+                },
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
         }
 
         composable(
@@ -69,11 +82,22 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
                 navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType }
             )
         ) {
-            CreditOnfidoScreen(onPopAndNavigate = {
-                navController.navigate(it.route) {
-                    popUpTo(it.popTo) { inclusive = true }
+            CreditOnfidoScreen(
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                },
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
                 }
-            })
+            )
         }
         composable(
             route = Screen.SignDocumentProcessScreen.route,
@@ -84,21 +108,38 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
                 navArgument(PK_USER) { type = NavType.LongType }
             )
         ) {
-            SignDocumentProcessScreen(onPopAndNavigate = {
-                navController.navigate(it.route) {
-                    popUpTo(it.popTo) { inclusive = true }
+            SignDocumentProcessScreen(
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                },
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
                 }
-            })
+            )
         }
 
         composable(
             route = Screen.ContinueValidatingOnfidoScreen.route
         ) {
-            ContinueValidatingOnfidoScreen(onPopAndNavigate = {
-                navController.navigate(it.route) {
-                    popUpTo(it.popTo) { inclusive = true }
+            ContinueValidatingOnfidoScreen(
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
                 }
-            })
+            )
         }
         composable(
             route = Screen.ProcessingTransactionScreen.route,
@@ -107,11 +148,17 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
                 navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType }
             )
         ) {
-            ProcessingTransactionScreen(onPopAndNavigate = {
-                navController.navigate(it.route) {
-                    popUpTo(it.popTo) { inclusive = true }
+            ProcessingTransactionScreen(
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
                 }
-            })
+            )
         }
         composable(
             route = Screen.OnfidoAndEvicertiaErrorsScreen.route,
@@ -126,6 +173,15 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
                     navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }
                     }
+                },
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
                 }
             )
         }
@@ -148,7 +204,8 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
                     navController.navigate(it.route)
                 },
                 onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,
@@ -169,10 +226,14 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
             )
         ) {
             CreditMovementsScreen(
-                onPopAndNavigate = {
-                    navController.navigate(it.route) {
-                        popUpTo(it.popTo) { inclusive = true }
-                    }
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
                 }
             )
         }
@@ -193,7 +254,8 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
                     }
                 },
                 onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,

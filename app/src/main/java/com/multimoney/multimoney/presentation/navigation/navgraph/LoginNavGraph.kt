@@ -9,7 +9,10 @@ import androidx.navigation.navArgument
 import com.multimoney.multimoney.presentation.navigation.FORCE_CHANGE_DEVICE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.LOGIN_ROUTE
+import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.ProcessForgotPasswordScreen
+import com.multimoney.multimoney.presentation.ui.login.forgotpassword.request.RequestForgotPasswordScreen
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInOTPScreen
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpScreen
@@ -44,7 +47,8 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                 }
             )
         }
-        composable(route = Screen.SignInScreen.route,
+        composable(
+            route = Screen.SignInScreen.route,
             arguments = listOf(
                 navArgument(FORCE_CHANGE_DEVICE) {
                     type = NavType.BoolType
@@ -116,6 +120,41 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                     navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }
                     }
+                }
+            )
+        }
+        composable(route = Screen.RequestForgotPassword.route) {
+            RequestForgotPasswordScreen(
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        launchSingleTop = true
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                },
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
+        }
+        composable(
+            route = Screen.ProcessForgotPassword.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) { type = NavType.IntType }
+            )
+        ) {
+            ProcessForgotPasswordScreen(
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
                 }
             )
         }

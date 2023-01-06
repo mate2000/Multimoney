@@ -14,11 +14,19 @@ fun CustomRoundedLinearProgress(
     progress: Float,
     modifier: Modifier,
     progressBackground: Color = MultimoneyTheme.colors.progressBackground,
-    gradientColorStops: Array<Pair<Float, Color>> = arrayOf(
-        0.0f to MultimoneyTheme.colors.linearProgressIndicatorStart,
-        0.65f to MultimoneyTheme.colors.linearProgressIndicatorFinal
-    )
+    type: LinearProgressBarType = LinearProgressBarType.Credit,
 ) {
+
+    // Setting gradient colors according to progress bar type
+    val gradientColorStops: Array<Pair<Float, Color>> = when (type) {
+        LinearProgressBarType.Credit -> {
+             arrayOf(
+                0.0f to MultimoneyTheme.colors.linearProgressIndicatorStart,
+                0.75f to MultimoneyTheme.colors.linearProgressIndicatorFinal
+            )
+        }
+    }
+
     Canvas(
         modifier = modifier,
         onDraw = {
@@ -46,4 +54,8 @@ fun CustomRoundedLinearProgress(
             )
         }
     )
+}
+
+sealed class LinearProgressBarType {
+    object Credit: LinearProgressBarType()
 }

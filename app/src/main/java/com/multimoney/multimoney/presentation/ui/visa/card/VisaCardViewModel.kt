@@ -40,6 +40,8 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.BaseEvent.OnOpenNfcConfig
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.BaseEvent.OnOpenTapAndPayConfig
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnAvailableAmountClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnBlockUnblockCardClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnHandleTapAndPayIntentResult
@@ -57,7 +59,6 @@ import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIE
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnStartPaymentProcess
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnTryWithPassword
-import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.BaseEvent.OnOpenTapAndPayConfig
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.NfcHelper
 import com.multimoney.multimoney.presentation.util.catalog.CardType
@@ -77,7 +78,7 @@ import javax.inject.Inject
 class VisaCardViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val countDownTimer: MMCountDownTimer,
-    private val nfcHelper: NfcHelper,
+    val nfcHelper: NfcHelper,
     private val biometricHelper: BiometricHelper,
     private val dataStorePreferences: DataStorePreferences,
     private val cognitoHelper: CognitoHelper,
@@ -214,6 +215,23 @@ class VisaCardViewModel @Inject constructor(
     }
 
     private fun startPaymentProcess() {
+        if (nfcHelper.isNfcEnabled()) {
+            checkIdMultimoneyIsTheDefaultPaymentMethod()
+        } else {
+            uiState = uiState.copy(
+                dialogParameters = DialogParameters(
+                    titleResource = if (idBrand == Guatemala.id) string.visa_nfc_required_dialog_title_gt else R.string.visa_nfc_required_dialog_title,
+                    descriptionResource = string.visa_nfc_required_dialog_description,
+                    positiveResource = string.activate,
+                    negativeResource = string.cancel,
+                    positiveAction = { emitBaseEvent(OnOpenNfcConfig) },
+                    isActive = mutableStateOf(true)
+                )
+            )
+        }
+    }
+
+    private fun checkIdMultimoneyIsTheDefaultPaymentMethod() {
         if (NovoVTS.isDefaultPaymentService()) {
             // todo start Payment Process
         } else {
@@ -527,7 +545,8 @@ class VisaCardViewModel @Inject constructor(
     }
 
     sealed class BaseEvent {
-        object OpenTapAndPayConfig : BaseEvent()
+        object OnOpenTapAndPayConfig : BaseEvent()
+        object OnOpenNfcConfig : BaseEvent()
     }
 
     companion object {

@@ -120,6 +120,7 @@ const val URL_IMAGE = "url_image"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
+const val PREVIOUS_IS_RETURN_TO_HOME = "previous_is_return_to_home"
 
 /**
  * Use this class to declare all your new screens and their routes
@@ -131,6 +132,14 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object OnBoardingScreen : Screen("onboarding_screen")
     object SignInScreen : Screen("sign_in_screen?$FORCE_CHANGE_DEVICE={$FORCE_CHANGE_DEVICE}","sign_in_screen")
     object SignUpScreen : Screen("sign_up_screen/{$SIGN_UP_STEP}", "sign_up_screen")
+    object RequestForgotPassword :
+        Screen("request_forgot_password_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}", "request_forgot_password_screen")
+
+    object ProcessForgotPassword :
+        Screen(
+            "process_forgot_password_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}?$EMAIL={$EMAIL}?$ID_BRAND={$ID_BRAND}?$PK_USER={$PK_USER}",
+            "process_forgot_password_screen"
+        )
 
     object SignUpSplashComeBackScreen : Screen(
         "sign_up_splash_come_back_screen/{$SIGN_UP_STEP}",
@@ -446,8 +455,18 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     // Smart Transfer Screens
 
     object SmartSelectSendingTypeScreen : Screen(
-        "smart_select_sending_type_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$SMART_IDS}/{$ID_CLIENT}",
+        "smart_select_sending_type_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$SMART_IDS}/{$ID_CLIENT}/{$PREVIOUS_SCREEN}",
         "smart_select_sending_type_screen"
+    )
+
+    object SmartSelectAccountScreen : Screen(
+        "smart_select_account_screen/{$SMART_IDS_LIST}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ID_CLIENT}",
+        "smart_select_account_screen"
+    )
+
+    object SmartTransferRegisterIbanScreen : Screen(
+        "smart_transfer_register_iban_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}",
+        "smart_transfer_register_iban_screen"
     )
 
     object SmartTransferIbanAccountScreen : Screen(

@@ -22,7 +22,8 @@ private fun ValidateUserExistsQuery.ValidateUserExists.mapToDomainModel() = User
     userStatus = userStatus,
     message = message,
     status = status,
-    detail = detail
+    detail = detail,
+    idBrand = idBrand
 )
 
 fun ValidateUserExistsQuery.Data.mapToDomainModel() = validateUserExists.mapToDomainModel()

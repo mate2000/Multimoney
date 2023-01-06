@@ -10,6 +10,8 @@ import com.multimoney.domain.interaction.accountsmart.MutationProcessTransferVis
 import com.multimoney.domain.interaction.accountsmart.MutationProcessTransferVisaToSmartVDUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.MutationSaveSinpeAccountUseCase
+import com.multimoney.domain.interaction.accountsmart.MutationSaveSinpeAccountUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelOneUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelOneUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelThreeUseCase
@@ -611,6 +613,11 @@ class InteractionModule {
     @Singleton
     fun provideMiniCardsUseCase(securityRepository: SecurityRepository): QueryMiniCardsUseCase =
         QueryMiniCardsUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationSaveSinpeAccountUseCase(smartAccountRepository: SmartAccountRepository): MutationSaveSinpeAccountUseCase =
+        MutationSaveSinpeAccountUseCaseImpl(smartAccountRepository)
 
     // Multimoney Visa
     @Provides

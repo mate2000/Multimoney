@@ -224,7 +224,7 @@ class ProductViewModel @Inject constructor(
     // This function opens the saving flow from the quick actions
     private fun onNavigateToSmartSave() {
         if (uiState.idBrand == Brand.ElSalvador.id.toString()) {
-            val account = balanceCredit?.balanceAccountSmart?.first()
+            val account = balanceCredit?.balanceAccountSmart?.firstOrNull()
             val smartIds = encodeData(
                 SmartAccountID(
                     tokenAccount = account?.tokenNumber,
@@ -634,7 +634,7 @@ class ProductViewModel @Inject constructor(
         executeUseCase {
             queryListSinpeAccountUseCaseImpl.invoke(
                 user = email,
-                identification = identification ?: "",
+                identification = identification,
                 idBrand = uiState.idBrand.toInt(),
                 country = "",
                 idAccount = 0,
@@ -712,7 +712,7 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToSendMoneyScreenQuickAction() {
         if (uiState.idBrand == Brand.ElSalvador.id.toString()) {
-            val account = balanceCredit?.balanceAccountSmart?.first()
+            val account = balanceCredit?.balanceAccountSmart?.firstOrNull()
             smartAccount = SmartAccountID(
                 account?.tokenNumber,
                 account?.idCurrencyAccount,
@@ -723,11 +723,20 @@ class ProductViewModel @Inject constructor(
                 encodeData(
                     smartAccount
                 )
-                }/$idClient"
+                }/$idClient/${Screen.HomeScreen.route}"
             )
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
-            // TODO navigate to account selection screen HU [tbd]
-            emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
+            val infoCredit = uiState.userStatus?.infoCredit
+            val smartIds = encodeData(balanceCredit?.balanceAccountSmart?.map {
+                SmartAccountID(
+                    tokenAccount = it?.tokenNumber,
+                    currencyID = it?.idCurrencyAccount,
+                    accountNumber = it?.accountNumber ?: "",
+                    ibanAccountNumber = it?.ibanAccountNumber,
+                    totalBalance = it?.totalBalance
+                )
+            })
+            navigateTo("${Screen.SmartSelectAccountScreen.baseRoute}/${smartIds}/$email/${uiState.idBrand}/$identification/${infoCredit?.idClient}")
         }
     }
 
@@ -736,14 +745,12 @@ class ProductViewModel @Inject constructor(
             tokenAccount = account?.tokenNumber,
             currencyID = account?.idCurrencyAccount,
             accountNumber = account?.accountNumber,
-            totalBalance = account?.totalBalance
+            totalBalance = account?.totalBalance,
+            ibanAccountNumber = account?.ibanAccountNumber
         )
         navigateTo(
-            "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$userName/${uiState.idBrand}/$identification/${
-            encodeData(
-                smartAccount
-            )
-            }/$idClient"
+            "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${userName}/${uiState.idBrand}/${identification}" +
+                    "/${encodeData(smartAccount)}/$idClient/${Screen.HomeScreen.route}"
         )
     }
 

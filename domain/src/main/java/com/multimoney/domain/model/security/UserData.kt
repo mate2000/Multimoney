@@ -23,5 +23,6 @@ data class UserData(
     var userStatus: String? = null,
     var message: String? = null,
     var status: Int? = null,
-    var detail: String? = null
-): Parcelable
+    var detail: String? = null,
+    var idBrand: Int? = 0
+) : Parcelable

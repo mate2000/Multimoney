@@ -49,6 +49,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnShowBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnUpdateScreenConfigData
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
+import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
@@ -133,10 +134,7 @@ class CreditViewModel @Inject constructor(
     }
 
     private fun onNavigateToHome() {
-        popAndNavigateTo(
-            route = Screen.HomeScreen.route,
-            popTo = Screen.CreditScreen.route
-        )
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
     }
 
     private fun onContinueClick(focusManager: FocusManager) {
@@ -200,10 +198,7 @@ class CreditViewModel @Inject constructor(
                 isCloseVisible = previousStep >= CreditStep.One.id
             )
         } else {
-            popAndNavigateTo(
-                route = Screen.HomeScreen.route,
-                popTo = Screen.CreditScreen.route
-            )
+            navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
         }
     }
 

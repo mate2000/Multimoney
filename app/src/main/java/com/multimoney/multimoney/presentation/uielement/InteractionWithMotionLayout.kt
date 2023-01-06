@@ -24,6 +24,7 @@ import androidx.constraintlayout.compose.MotionLayout
 import androidx.constraintlayout.compose.MotionScene
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.ui.home.HomeState
 
 @OptIn(ExperimentalMotionApi::class, ExperimentalMaterialApi::class)
 @Composable
@@ -36,7 +37,9 @@ fun MotionLayoutMM(
     forceExpanded: Boolean = false,
     updateIsExpanded: (Boolean) -> Unit,
     updateForceExpanded: (Boolean) -> Unit,
-    footerExpanded: @Composable () -> Unit
+    footerExpanded: @Composable () -> Unit,
+    homeState: HomeState,
+    updateHomeState: (HomeState) -> Unit
 ) {
     val context = LocalContext.current
     val motionSceneContent = remember {
@@ -65,9 +68,16 @@ fun MotionLayoutMM(
         }
     }
 
+    LaunchedEffect(key1 = true) {
+        if (homeState == HomeState.UNEXPANDED) {
+            updateHomeState(HomeState.OLD_STATE)
+            isBackPressed = true
+        }
+    }
+
     MotionLayout(
         motionScene = MotionScene(motionSceneContent),
-        progress = if (forceExpanded) 1f else (swipeAbleState.offset.value / TOTAL_PERCENTAGE),
+        progress = if (forceExpanded || homeState == HomeState.EXPANDED) 1f else (swipeAbleState.offset.value / TOTAL_PERCENTAGE),
         modifier = Modifier.fillMaxHeight()
     ) {
         Box(

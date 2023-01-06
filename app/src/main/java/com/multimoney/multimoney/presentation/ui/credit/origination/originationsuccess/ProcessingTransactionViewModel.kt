@@ -21,14 +21,15 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.originations
 import com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess.ProcessingTransactionViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess.ProcessingTransactionViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess.ProcessingTransactionViewModel.UIEvent.OnSharedVoucherImage
+import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.API_DATE_FORMAT
 import com.multimoney.multimoney.presentation.util.ShareHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getCurrentTime
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class ProcessingTransactionViewModel @Inject constructor(
@@ -91,10 +92,7 @@ class ProcessingTransactionViewModel @Inject constructor(
     }
 
     private fun onNavigateToHome() {
-        popAndNavigateTo(
-            route = Screen.HomeScreen.route,
-            popTo = Screen.ProcessingTransactionScreen.route
-        )
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
     }
 
     fun getDateFormatted(): String {

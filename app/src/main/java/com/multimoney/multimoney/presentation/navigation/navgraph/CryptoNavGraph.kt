@@ -6,15 +6,19 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import com.multimoney.multimoney.presentation.navigation.CRYPTO_ROUTE
+import com.multimoney.multimoney.presentation.navigation.CARD_STATUS
 import com.multimoney.multimoney.presentation.navigation.CURRENT_CRYPTO_PRICE
+import com.multimoney.multimoney.presentation.navigation.CRYPTO_ROUTE
 import com.multimoney.multimoney.presentation.navigation.GLOBAL_CRYPTO_BALANCE
+import com.multimoney.multimoney.presentation.navigation.HOME_STATE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
-import com.multimoney.multimoney.presentation.navigation.ID_LOAN_CLIENT
-import com.multimoney.multimoney.presentation.navigation.*
 import com.multimoney.multimoney.presentation.navigation.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
+import com.multimoney.multimoney.presentation.navigation.STATUS_CREDIT
+import com.multimoney.multimoney.presentation.navigation.STATUS_CRYPTO
+import com.multimoney.multimoney.presentation.navigation.STATUS_SMART
+import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreen
 import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsScreen
 import com.multimoney.multimoney.presentation.ui.crypto.movements.CryptoMovementsScreen
@@ -23,12 +27,10 @@ import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWallet
 fun NavGraphBuilder.cryptoNavGraph(
     navController: NavHostController
 ) {
-
     navigation(
         startDestination = Screen.CryptoWalletScreen.route,
         route = CRYPTO_ROUTE
     ) {
-
         composable(
             route = Screen.CryptoWalletScreen.route,
             arguments = listOf(
@@ -40,14 +42,12 @@ fun NavGraphBuilder.cryptoNavGraph(
                 navArgument(STATUS_SMART) { type = NavType.IntType },
                 navArgument(STATUS_CRYPTO) { type = NavType.IntType },
                 navArgument(CARD_STATUS) { type = NavType.IntType }
-            ),
+            )
         ) {
             HomeWallet(
                 onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        PREVIOUS_IS_RESTART,
-                        it.isRestart
-                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,
@@ -59,12 +59,12 @@ fun NavGraphBuilder.cryptoNavGraph(
                     navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }
                     }
-                },
+                }
             )
         }
         composable(
             route = Screen.CryptoMarketScreen.route,
-            arguments = listOf(navArgument(ID_BRAND) { type = NavType.IntType }),
+            arguments = listOf(navArgument(ID_BRAND) { type = NavType.IntType })
         ) {
             MarketScreen(
                 onPopBackStack = {

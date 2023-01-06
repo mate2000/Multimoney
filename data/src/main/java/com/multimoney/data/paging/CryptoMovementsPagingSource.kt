@@ -50,7 +50,7 @@ class CryptoMovementsPagingSource(
                     }
                     searchResult = cryptoMovementsResult
                     endOfPageReached =
-                        pageSize * currentPage > cryptoCurrencyMovements.cryptoCurrencyMovements.total_count
+                        pageSize * currentPage > cryptoCurrencyMovements.cryptoCurrencyMovements.totalCount
                 }
                 result.onFailure { error ->
                     error.throwable?.let { LoadResult.Error<Int, CryptoCurrencyMovement>(it) }

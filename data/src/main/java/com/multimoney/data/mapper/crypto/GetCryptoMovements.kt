@@ -10,26 +10,26 @@ fun GetCryptoMovementsQuery.Data.mapToDomainModel() = GetCryptoCurrencyMovements
 )
 
 private fun GetCryptoMovementsQuery.CryptoCurrencyMovement.mapToDomainModel() = CryptoCurrencyMovements(
-    total_count = total_count,
-    items = items.map { it.mapToDomainModel() }
+    totalCount = total_count ?: 0,
+    items = items?.map { it?.mapToDomainModel() ?: CryptoCurrencyMovement() } ?: listOf()
 )
 
 private fun GetCryptoMovementsQuery.Item.mapToDomainModel() = CryptoCurrencyMovement(
-    abbreviationCurrency = abbreviationCurrency,
-    amount_filled = amount_filled,
-    base_amount = base_amount,
-    dateCreated = dateCreated,
-    created_at = created_at.toString(),
-    held = held,
-    market = market,
-    modified_at = modified_at.toString(),
-    id = id,
-    descriptionMovement = decriptionMovement,
-    price = price,
-    profile_id = profile_id,
-    quote_amount = quote_amount,
-    side = side,
-    type = type,
-    month_limit_exceeded = month_limit_exceeded,
-    volume_weighted_average_price = volume_weighted_average_price
+    abbreviationCurrency = abbreviationCurrency.orEmpty(),
+    amountFilled = amount_filled.orEmpty(),
+    baseAmount = base_amount.orEmpty(),
+    dateCreated = dateCreated.orEmpty(),
+    createdAt = created_at.toString(),
+    held = held ?: false,
+    market = market.orEmpty(),
+    modifiedAt = modified_at.toString(),
+    id = id.orEmpty(),
+    descriptionMovement = decriptionMovement.orEmpty(),
+    price = price.orEmpty(),
+    profileId = profile_id.orEmpty(),
+    quoteAmount = quote_amount.orEmpty(),
+    side = side.orEmpty(),
+    type = type.orEmpty(),
+    monthLimitExceeded = month_limit_exceeded ?: false,
+    volumeWeightedAveragePrice = volume_weighted_average_price.orEmpty()
 )

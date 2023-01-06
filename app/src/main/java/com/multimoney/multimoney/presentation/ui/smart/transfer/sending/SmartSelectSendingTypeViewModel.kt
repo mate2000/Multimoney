@@ -17,7 +17,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
-import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -92,21 +91,22 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
     }
 
-    private fun onShowPermissionDialog() {
-        uiState = uiState.copy(
-            openDialog = DialogParameters(
-                titleResource = R.string.smart_sac_transfer_contact_dialog_title,
-                descriptionResource = R.string.smart_sac_transfer_contact_dialog_message,
-                positiveResource = R.string.allow,
-                negativeResource = R.string.cancel,
-                negativeAction = { uiState = uiState.copy(showErrorScreen = true) },
-                positiveAction = { onNavigateToMyContacts() }
-            )
-        )
+    private fun onCheckPermission(isPermissionGranted: Boolean) {
+        if (isPermissionGranted) {
+            showRationale(false)
+            onNavigateToMyContacts()
+        } else {
+            showRationale(true)
+        }
+    }
+
+    private fun showRationale(show: Boolean) {
+        uiState = uiState.copy(showErrorScreen = show)
     }
 
     private fun onNavigateToMyContacts() {
         // TODO navigate to HU REV-1445
+        showRationale(false)
         emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
     }
 
@@ -135,33 +135,35 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     }
 
     data class UIState(
-        val openDialog: DialogParameters = DialogParameters(),
-        var isLoading: Boolean = false,
-        val showErrorScreen: Boolean = false
+        var showErrorScreen: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is UIEvent.OnCloseClick -> onNavigateToHome()
             is OnNavigateBack -> onNavigateBack()
-            is UIEvent.OnMyContactsSelected -> onNavigateToMyContacts()
+            is UIEvent.OnNavigateToMyContacts -> onNavigateToMyContacts()
             is UIEvent.OnSmartAccountSelected -> onNavigateToSmartAccount()
             is UIEvent.OnIBANAccountSelected -> onNavigateToIBANAccount()
             is UIEvent.OnMyFavoritesSelected -> onNavigateToMyFavorites()
             is UIEvent.OnOtherBankAccountsSelected -> onNavigateToOtherBankAccounts()
             is UIEvent.OnTransfer365MobileSelected -> onNavigateToTransfer365Mobile()
+            is UIEvent.OnCheckContactPermission -> onCheckPermission(uiEvent.isPermissionGranted)
+            is UIEvent.OnShowRationale -> showRationale(uiEvent.show)
         }
     }
 
     sealed class UIEvent {
         object OnCloseClick : UIEvent()
         object OnNavigateBack : UIEvent()
-        object OnMyContactsSelected : UIEvent()
+        object OnNavigateToMyContacts : UIEvent()
         object OnSmartAccountSelected : UIEvent()
         object OnIBANAccountSelected : UIEvent()
         object OnMyFavoritesSelected : UIEvent()
         object OnOtherBankAccountsSelected : UIEvent()
         object OnTransfer365MobileSelected : UIEvent()
+        data class OnCheckContactPermission(val isPermissionGranted: Boolean) : UIEvent()
+        data class OnShowRationale(val show: Boolean) : UIEvent()
     }
 
     sealed class BaseEvent {

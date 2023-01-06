@@ -222,7 +222,7 @@ class VisaCardViewModel @Inject constructor(
     }
 
     private fun onHandleTapAndPayIntentResult(result: ActivityResult) {
-        if (result.resultCode == Activity.RESULT_OK) {
+        if (result.resultCode == Activity.RESULT_OK && NovoVTS.isDefaultPaymentService()) {
             // todo start Payment Process
         } else {
             // show dialog to explain why we need that the user define as a default the multimoney wallet

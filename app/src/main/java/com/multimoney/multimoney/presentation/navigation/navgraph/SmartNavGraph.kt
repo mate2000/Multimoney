@@ -188,7 +188,7 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
                         saveState = false
                     )
                 }
-            })
+            )
         }
     }
 }

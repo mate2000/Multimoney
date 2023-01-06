@@ -6,14 +6,19 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import com.multimoney.multimoney.presentation.navigation.CRYPTO_ROUTE
+import com.multimoney.multimoney.presentation.navigation.CARD_STATUS
 import com.multimoney.multimoney.presentation.navigation.CURRENT_CRYPTO_PRICE
+import com.multimoney.multimoney.presentation.navigation.CRYPTO_ROUTE
 import com.multimoney.multimoney.presentation.navigation.GLOBAL_CRYPTO_BALANCE
 import com.multimoney.multimoney.presentation.navigation.HOME_STATE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
+import com.multimoney.multimoney.presentation.navigation.STATUS_CREDIT
+import com.multimoney.multimoney.presentation.navigation.STATUS_CRYPTO
+import com.multimoney.multimoney.presentation.navigation.STATUS_SMART
+import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreen
 import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsScreen
 import com.multimoney.multimoney.presentation.ui.crypto.movements.CryptoMovementsScreen
@@ -37,7 +42,7 @@ fun NavGraphBuilder.cryptoNavGraph(
                 navArgument(STATUS_SMART) { type = NavType.IntType },
                 navArgument(STATUS_CRYPTO) { type = NavType.IntType },
                 navArgument(CARD_STATUS) { type = NavType.IntType }
-            ),
+            )
         ) {
             HomeWallet(
                 onPopBackStack = {
@@ -54,12 +59,12 @@ fun NavGraphBuilder.cryptoNavGraph(
                     navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }
                     }
-                },
+                }
             )
         }
         composable(
             route = Screen.CryptoMarketScreen.route,
-            arguments = listOf(navArgument(ID_BRAND) { type = NavType.IntType }),
+            arguments = listOf(navArgument(ID_BRAND) { type = NavType.IntType })
         ) {
             MarketScreen(
                 onPopBackStack = {

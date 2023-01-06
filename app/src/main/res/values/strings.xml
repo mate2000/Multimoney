@@ -741,6 +741,7 @@
     
     <!-- visa nfc required dialog -->
     <string name="visa_nfc_required_dialog_title" translatable="false">Activá el NFC para realizar pagos en comercios</string>
+    <string name="visa_multimoney_default_payment_method_required_dialog_title" translatable="false">Elige tu Multimoney Visa para realizar pagos en comercios</string>
     <string name="visa_nfc_required_dialog_title_gt" translatable="false">Activa el NFC para realizar pagos en comercios</string>
     <string name="visa_nfc_required_dialog_description" translatable="false">Sin esta funcionalidad, solo podrás ver los datos de tu tarjeta</string>
 

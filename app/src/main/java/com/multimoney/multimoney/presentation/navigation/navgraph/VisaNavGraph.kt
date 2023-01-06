@@ -61,6 +61,7 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
             )
         ) { navBackStackEntry ->
             VisaCardScreen(
+                isRestart = navController.currentBackStackEntry?.savedStateHandle?.get(PREVIOUS_IS_RESTART) ?: true,
                 onNavigate = {
                     navController.navigate(it.route)
                 },

@@ -402,7 +402,7 @@ class SignInViewModel @Inject constructor(
         // Fields
         val userEmail: String = "",
         val userEmailError: Pair<Boolean, Int> = Pair(false, R.string.error_empty),
-        val userPassword: String = "Qwerty.1234",
+        val userPassword: String = "",
         val userPasswordError: Pair<Boolean, Int> = Pair(false, R.string.error_empty),
         val userName: String = "",
         val isFingerprintChecked: Boolean = false,

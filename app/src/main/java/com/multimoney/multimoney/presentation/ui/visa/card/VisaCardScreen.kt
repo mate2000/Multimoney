@@ -30,10 +30,12 @@ import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.Bas
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.BaseEvent.OnOpenTapAndPayConfig
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnBlockUnblockCardClick
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnCallNovoGetFavoriteCard
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnHandleTapAndPayIntentResult
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnInitializeBiometricPrompt
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigatePreferences
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnOpenDialogConfirmToStartTokenizationProcess
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnSeeDataClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnStartPaymentProcess
@@ -56,6 +58,7 @@ import com.multimoney.multimoney.presentation.util.getTapAndPayIntent
 @Preview
 @OptIn(ExperimentalMaterialApi::class)
 fun VisaCardScreen(
+    isRestart: Boolean = true,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
@@ -68,6 +71,16 @@ fun VisaCardScreen(
     val launch = rememberLauncherForActivityResult(contract = StartActivityForResult(), onResult = { result ->
         viewModel.onUIEvent(OnHandleTapAndPayIntentResult(result))
     })
+
+    viewModel.apply {
+        isOnRestart = isRestart
+        LaunchedEffect(isOnRestart) {
+            if (isOnRestart) {
+                viewModel.onUIEvent(OnCallNovoGetFavoriteCard)
+                isOnRestart = false
+            }
+        }
+    }
 
     // Navigation
     LaunchedEffect(true) {
@@ -171,10 +184,10 @@ fun VisaCardScreen(
                         .fillMaxWidth()
                         .padding(end = 8.dp),
                     icon = R.drawable.ic_link,
-                    text = stringResource(id = R.string.link),
+                    text = stringResource(id = string.link),
                     enabled = viewModel.uiState.isCardBlocked.not(),
                     onClick = {
-                        viewModel.onUIEvent(OnStartPaymentProcess)
+                        viewModel.onUIEvent(OnOpenDialogConfirmToStartTokenizationProcess)
                     }
                 )
             } else if (viewModel.uiState.isNfcAvailable && viewModel.uiState.isCardTokenize) {

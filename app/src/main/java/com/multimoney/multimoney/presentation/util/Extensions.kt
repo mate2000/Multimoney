@@ -9,13 +9,16 @@ import android.net.Uri
 import android.nfc.cardemulation.CardEmulation
 import android.os.Build
 import android.provider.Settings.Secure
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.All
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Colon
@@ -66,9 +69,34 @@ fun Context.openIntent(intent: Intent, onFailure: () -> Unit) {
     }
 }
 
-fun Context.checkPermission(permission: String): Boolean {
-    val isGranted = ContextCompat.checkSelfPermission(this, permission)
-    return isGranted == PERMISSION_GRANTED
+/**
+ * checkPermission
+ *
+ * This function helps to decide what action to take when requesting a system permission
+ *
+ * Params:
+ * @param permission: the permission to be requested
+ * @param permissionGrantedAction: the action to perform if the permission is already granted
+ * @param showRationaleAction: the action for showing an UI to the user explaining why the permission
+ * is needed in case the user denies (or has already denied) the permission
+ * @param launcher: the activity for result launcher to launch the request permission dialog if the
+ * permission is not granted
+ */
+
+fun Context.checkPermission(
+    permission: String,
+    permissionGrantedAction: () -> Unit,
+    showRationaleAction: () -> Unit,
+    launcher: ManagedActivityResultLauncher<String, Boolean>
+) {
+    val isGranted = ContextCompat.checkSelfPermission(this, permission) == PERMISSION_GRANTED
+    val showRationale = this.findActivity()
+        ?.let { ActivityCompat.shouldShowRequestPermissionRationale(it, permission) }
+    when {
+        isGranted -> permissionGrantedAction()
+        showRationale == true -> showRationaleAction()
+        else -> launcher.launch(permission)
+    }
 }
 
 fun tickerFlow(

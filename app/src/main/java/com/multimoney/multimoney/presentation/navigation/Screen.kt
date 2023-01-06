@@ -458,6 +458,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "smart_select_sending_type_screen"
     )
 
+    object SmartTransferRegisterIbanScreen : Screen(
+        "smart_transfer_register_iban_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}",
+        "smart_transfer_register_iban_screen"
+    )
+
     object SmartTransferIbanAccountScreen : Screen(
         "transfer_iban_account_screen/{$SMART_IDS}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}",
         "transfer_iban_account_screen"

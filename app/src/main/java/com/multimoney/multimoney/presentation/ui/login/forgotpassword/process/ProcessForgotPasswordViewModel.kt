@@ -219,7 +219,7 @@ class ProcessForgotPasswordViewModel @Inject constructor(
                 R.string.process_forgot_password_alert_failure_description
             },
             alertResultButtonTextResource = if (isOtpFailure) {
-                R.string.error_button_try_again
+                R.string.process_forgot_password_alert_failure_button_try_again
             } else {
                 R.string.common_go_home
             },

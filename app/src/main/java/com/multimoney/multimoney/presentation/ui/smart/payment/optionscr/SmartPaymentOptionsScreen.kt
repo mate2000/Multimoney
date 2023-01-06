@@ -1,6 +1,5 @@
-package com.multimoney.multimoney.presentation.ui.smart.payment.method
+package com.multimoney.multimoney.presentation.ui.smart.payment.optionscr
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,23 +16,23 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnTransferSelected
-import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnVisaSelected
+import com.multimoney.multimoney.presentation.ui.smart.payment.optionscr.SmartPaymentOptionsViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.payment.optionscr.SmartPaymentOptionsViewModel.UIEvent.OnSmartAccountSelected
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 
 @Composable
-fun SmartPaymentMethodScreen(
+fun SmartPaymentOptionsScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
-    viewModel: SmartPaymentMethodViewModel = hiltViewModel()
+    viewModel: SmartPaymentOptionsViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
-        viewModel.apply {
-            executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
-        }
+        viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
     }
 
     Column(
@@ -46,47 +45,54 @@ fun SmartPaymentMethodScreen(
             isRightButtonVisible = false
         )
         PaymentOptions(
-            onTransferClick = { viewModel.onUIEvent(OnTransferSelected) },
-            onVisaClick = { viewModel.onUIEvent(OnVisaSelected) }
+            onAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected(it)) }
         )
     }
-    BackHandler { viewModel.onUIEvent(OnNavigateBack) }
+
+    LoadingIndicator(viewModel.uiState.isLoading)
+
+    if (viewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            openDialogCustom = viewModel.uiState.openDialog.isActive,
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+        )
+    }
 }
 
 @Composable
 fun PaymentOptions(
-    onTransferClick: () -> Unit,
-    onVisaClick: () -> Unit
+    onAccountClick: (CurrencyType) -> Unit
 ) {
     Column(Modifier.padding(horizontal = 16.dp)) {
         Text(
             modifier = Modifier.padding(top = 32.dp),
-            text = stringResource(R.string.payment_method_title),
+            text = stringResource(R.string.payment_options_title_cr),
             style = Typography.h5.copy(
                 fontWeight = FontWeight.SemiBold,
                 color = MultimoneyTheme.colors.text
             )
         )
         CustomInfoButton(
-            title = stringResource(id = R.string.payment_method_transfer),
+            title = stringResource(id = R.string.payment_account_colon),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 12.dp),
             endIcon = R.drawable.ic_right_chevron,
-            startIcon = R.drawable.ic_payment_transfer,
-            onEndIconClick = onTransferClick,
-            onClick = onTransferClick
+            startIcon = R.drawable.ic_payment_colon,
+            onClick = { onAccountClick(CurrencyType.Colon) }
         )
 
         CustomInfoButton(
-            title = stringResource(id = R.string.payment_method_visa),
+            title = stringResource(id = R.string.payment_account_dollar),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 12.dp),
             endIcon = R.drawable.ic_right_chevron,
-            startIcon = R.drawable.ic_payment_visa,
-            onEndIconClick = onVisaClick,
-            onClick = onVisaClick
+            startIcon = R.drawable.ic_payment_dollar,
+            onClick = { onAccountClick(CurrencyType.Dollar) }
         )
     }
 }

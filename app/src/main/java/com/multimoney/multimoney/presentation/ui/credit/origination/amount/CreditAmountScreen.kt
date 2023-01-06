@@ -173,7 +173,7 @@ fun CreditAmountScreen(
                     .padding(start = 16.dp, end = 16.dp, top = 36.dp, bottom = 40.dp),
                 text = stringResource(id = title),
                 style = Typography.h5.copy(
-                    color = MultimoneyTheme.colors.text,
+                    color = MultimoneyTheme.colors.titleText,
                     fontWeight = FontWeight.SemiBold
                 )
             )

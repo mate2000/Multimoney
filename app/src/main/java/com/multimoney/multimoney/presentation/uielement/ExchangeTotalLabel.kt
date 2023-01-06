@@ -33,7 +33,8 @@ import com.multimoney.multimoney.presentation.util.addTextStyleToTextPortion
 fun ExchangeTotalLabel(
     modifier: Modifier = Modifier,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
-    totalConverted: String
+    totalConverted: String,
+    showIcon: Boolean = true
 ) {
     val labelColor: Color
     val iconColor: Color
@@ -56,12 +57,14 @@ fun ExchangeTotalLabel(
         horizontalArrangement = horizontalArrangement,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_renew),
-            contentDescription = "",
-            tint = iconColor
-        )
-        Spacer(modifier = Modifier.width(8.dp))
+        if (showIcon) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_renew),
+                contentDescription = "",
+                tint = iconColor
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+        }
         Text(
             text = fullText.addTextStyleToTextPortion(
                 style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),

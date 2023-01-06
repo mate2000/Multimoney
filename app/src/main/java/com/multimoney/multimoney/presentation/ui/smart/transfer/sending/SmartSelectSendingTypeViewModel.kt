@@ -37,7 +37,6 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         idClient = savedStateHandle[ID_CLIENT] ?: 0
     }
 
-
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is UIEvent.OnCloseClick -> onNavigateToHome()
@@ -136,5 +135,4 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     sealed class BaseEvent {
         object OnShowTbdToastEvent : BaseEvent()
     }
-
 }

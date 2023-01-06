@@ -46,6 +46,7 @@ fun OwnTransferAmountScreen(
 
     if (viewModel.uiState.showLoadingScreen) {
         LoadingMultiMoney(R.string.smart_processing_transaction)
+        // This else if will be managed in other ticket
     } else if (viewModel.uiState.showErrorScreen) {
         val notificationTitle = stringResource(R.string.smart_saving_try_later_notification_title)
         val notificationBody = stringResource(R.string.smart_saving_try_later_notification_body)

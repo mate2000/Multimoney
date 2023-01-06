@@ -58,7 +58,7 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
                     R.drawable.ic_sending_dollar)
             }
             else -> {
-                Pair(0,0)
+                Pair(R.string.empty,0)
             }
         }
         return result

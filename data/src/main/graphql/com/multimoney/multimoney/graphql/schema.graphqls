@@ -125,6 +125,11 @@ type Query {
   bankList365Type(bankList365Input: BankList365DtoInput!): [BankList365!]
 
   """
+  AccountSmart
+  """
+  verifiedExternalAccount(verifiedExternalAccountInput: VerifiedExternalAccountDtoInput!): VerifiedExternalAccount
+
+  """
   Balance
   """
   balanceCredit(balanceCreditInput: balanceCreditInput!): [PromissoryNoteMobile!]
@@ -278,6 +283,11 @@ type Query {
   Credit
   """
   emissionPlace(emissionPlaceInput: ScreenConfigDtoInput!): [ScreenConfig!]!
+
+  """
+  Credit
+  """
+  payMethod(getPayMethodInput: GetPayMethodDtoInput!): [GetPayMethod!]!
 
   """
   Crypto
@@ -701,7 +711,13 @@ type Mutation {
   """
   Security
   """
-  changeDevice(changeDeviceInputType: ChangeDeviceDtoInput!): ChangeDevice!
+  changeDevice(changeDeviceInputType: ChangeDeviceDtoInput!): ResponseApi!
+
+  """
+  Security
+  """
+
+  requestchangeDevice(requestChangeDeviceInputType: ChangeDeviceDtoInput!): UserValidation!
 
   """
   Security
@@ -1532,6 +1548,26 @@ input BankList365DtoInput {
   user: String
 }
 
+type VerifiedExternalAccount {
+  status: Int
+
+  message: String
+
+  _HaveError: Boolean
+
+  _ErrorMessage: String
+
+  _FullError: String
+}
+
+input VerifiedExternalAccountDtoInput {
+  identification: String!
+
+  idBrand: Int
+
+  user: String
+}
+
 type PromissoryNoteMobile {
   fk_Suv_Cat_Marca: Short!
 
@@ -1674,6 +1710,8 @@ type CreditOffer {
   products: [PRODUCTO!]
 
   rejectedBlaze: Boolean!
+
+  isCrosseling: Boolean
 }
 
 input CreditOfferDtoInput {
@@ -2128,6 +2166,28 @@ input LinkCreditContractDtoInput {
   pkUser: Long!
 
   idPrint: Long!
+
+  idBrand: Int
+
+  user: String
+}
+
+type GetPayMethod {
+  id: Int!
+
+  descripcion: String!
+
+  nombre: String!
+
+  codigo: String!
+}
+
+input GetPayMethodDtoInput {
+  idClient: String!
+
+  currency: String!
+
+  selectedAmount: Decimal!
 
   idBrand: Int
 
@@ -2756,6 +2816,10 @@ type UserValidation {
   idIdentification: Int
 
   strIdIdentification: String
+
+  idClient: Long
+
+  isNewUser: Boolean
 
   status: Int
 
@@ -4698,9 +4762,7 @@ input LogTrackingDtoInput {
   user: String
 }
 
-type ChangeDevice {
-  tipo_envio: String!
-
+type ResponseApi {
   status: Int
 
   message: String
@@ -4710,6 +4772,8 @@ type ChangeDevice {
 
 input ChangeDeviceDtoInput {
   email: String!
+
+  otp: String
 
   idBrand: Int
 
@@ -5743,6 +5807,8 @@ type CreditInfo {
   infoPreApprove: CreditPreApproveInfo
 
   wording: Wording
+
+  createDate: DateTime
 }
 
 type AppUser {
@@ -6267,6 +6333,8 @@ type GetCoreBankMovementsResult {
 
   amount: Decimal
 
+  formattedAmount: String!
+
   currencyDescription: String
 
   bankAuthorization: String
@@ -6611,6 +6679,10 @@ type Wording {
   textTwo: String!
 
   cTA: String!
+
+  link: String!
+
+  display: Boolean!
 }
 
 type VirtualcardConfigurationType {

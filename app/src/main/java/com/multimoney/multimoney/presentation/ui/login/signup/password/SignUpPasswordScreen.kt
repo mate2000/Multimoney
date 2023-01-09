@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.flowlayout.FlowRow
@@ -176,7 +177,7 @@ fun SignUpPasswordScreen(
         Text(
             text = buildAnnotatedString {
                 withStyle(
-                    style = Typography.h5.toSpanStyle()
+                    style = Typography.h6.toSpanStyle()
                         .copy(
                             color = MultimoneyTheme.colors.labelText,
                             fontWeight = FontWeight.SemiBold
@@ -186,7 +187,8 @@ fun SignUpPasswordScreen(
                 }
             },
             textAlign = TextAlign.Start,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            lineHeight = 24.sp
         )
         CustomOutlinedTextField(
             value = viewModel.uiState.password,
@@ -296,7 +298,7 @@ fun SignUpPasswordScreen(
                 )
             },
             text = stringResource(id = R.string.sign_in_activate_fingerprint),
-            modifier = Modifier.padding(top = 24.dp)
+            modifier = Modifier.padding(top = 16.dp)
         )
     }
 

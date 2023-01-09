@@ -17,6 +17,7 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
+import com.multimoney.domain.model.virtualcard.PayCreditVisaDirect
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
@@ -25,15 +26,17 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.MINIMUM_PAYMENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.MINIMUM_PAYMENT_LABEL
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel
-import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnAlertResultButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnAlertResultRightButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnAmountValueChange
@@ -44,7 +47,6 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.Pay
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnPayClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.getCurrencyFromValue
 import com.multimoney.multimoney.presentation.util.isValidAmount
 import com.multimoney.multimoney.presentation.util.transformation.CurrencyDoubleTransformation
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -75,6 +77,9 @@ class PaymentAmountCardViewModel @Inject constructor(
     private var maximumPayment: Float = 0.00F
     private var maximumPaymentLabel: String = ""
     private var alertResultTitle: String = ""
+    private var payCreditVisa: PayCreditVisaDirect? = null
+    private var idCurrency: Int? = null
+    private var paymentDate: String? = ""
 
     init {
         user = savedStateHandle[USER] ?: ""
@@ -83,10 +88,12 @@ class PaymentAmountCardViewModel @Inject constructor(
         creditNumber = savedStateHandle[CREDIT_NUMBER] ?: ""
         idClient = savedStateHandle[ID_CLIENT]
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT]
+        idCurrency = savedStateHandle[ID_CURRENCY]
         minimumPayment = savedStateHandle[MINIMUM_PAYMENT] ?: 0.00F
         minimumPaymentLabel = savedStateHandle[MINIMUM_PAYMENT_LABEL] ?: ""
         maximumPayment = savedStateHandle[MAXIMUM_PAYMENT] ?: 0.00F
         maximumPaymentLabel = savedStateHandle[MAXIMUM_PAYMENT_LABEL] ?: ""
+        paymentDate = savedStateHandle[PAYMENT_DATE] ?: ""
         onInitializeInteractionValues()
     }
 
@@ -152,6 +159,18 @@ class PaymentAmountCardViewModel @Inject constructor(
 
     private fun onFinishVisaAnimation() {
         uiState = uiState.copy(isVisaAnimationVisible = false)
+        onNavigateToPaymentCardVoucher()
+    }
+
+    private fun onNavigateToPaymentCardVoucher() {
+        popAndNavigateTo(
+            "${Screen.PaymentCardVoucherScreen.baseRoute}/$user/$idBrand/$identification/$idClient/$idLoanClient/${
+            encodeData(
+                uiState.card
+            )
+            }/${getCurrentAmountFormatted()}/${uiState.isAutomaticProgrammedPaymentChecked}/${payCreditVisa?.referenceAuthorization}/$paymentDate",
+            Screen.PaymentAmountCardsScreen.route
+        )
     }
 
     private fun onNavigateBack() =
@@ -193,7 +212,7 @@ class PaymentAmountCardViewModel @Inject constructor(
     private fun onCallMutationPayCreditVDUseCase() = executeUseCase {
         mutationPayCreditVDUseCase.invoke(
             identification = identification.orEmpty(),
-            currency = uiState.card?.currencyDescription?.getCurrencyFromValue()?.id.toString(),
+            currency = idCurrency.toString(),
             paymentAmount = uiState.currentAmountValueString.toDouble(),
             operationNumber = creditNumber.orEmpty(),
             reference = REFERENCE_PREFIX.plus(creditNumber),
@@ -203,6 +222,7 @@ class PaymentAmountCardViewModel @Inject constructor(
             idBrand = idBrand
         ).collectLatest { result ->
             result.onSuccess {
+                payCreditVisa = it
                 if (uiState.isAutomaticProgrammedPaymentChecked) {
                     onCallMutationActivatedCardAutomaticDebitUseCase()
                 } else {

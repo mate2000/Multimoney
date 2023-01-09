@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,10 +33,10 @@ import com.multimoney.multimoney.presentation.theme.GrayScale400
 import com.multimoney.multimoney.presentation.theme.GrayScale500
 import com.multimoney.multimoney.presentation.theme.GrayScale700
 import com.multimoney.multimoney.presentation.theme.GrayScale800
-import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Primary200
 import com.multimoney.multimoney.presentation.theme.Primary400
 import com.multimoney.multimoney.presentation.theme.Primary500
+import com.multimoney.multimoney.presentation.theme.SemanticInformative400
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency12
@@ -91,7 +92,11 @@ fun CustomButton(
                     disabledBackgroundColor = WhiteTransparency20,
                     disabledContentColor = GrayScale500
                 )
-                textColor = GrayScale800
+                textColor = if (enable) {
+                    GrayScale800
+                } else {
+                    GrayScale500
+                }
                 arrowIconTint = if (enable) {
                     GrayScale800
                 } else {
@@ -107,7 +112,11 @@ fun CustomButton(
                     disabledBackgroundColor = WhiteTransparency20,
                     disabledContentColor = GrayScale500
                 )
-                textColor = GrayScale800
+                textColor = if (enable) {
+                    GrayScale800
+                } else {
+                    GrayScale500
+                }
                 arrowIconTint = if (enable) {
                     GrayScale800
                 } else {
@@ -238,7 +247,7 @@ fun CustomButton(
                         GrayScale700
                     },
                     disabledBackgroundColor = GrayScale700,
-                    disabledContentColor = GrayScale700,
+                    disabledContentColor = GrayScale700
                 )
                 textColor = DefaultWhite
                 arrowIconTint = if (enable) {
@@ -254,7 +263,7 @@ fun CustomButton(
                         DefaultWhite
                     },
                     disabledBackgroundColor = DefaultWhite,
-                    disabledContentColor = GrayScale400,
+                    disabledContentColor = GrayScale400
                 )
                 textColor = DefaultBlack
                 arrowIconTint = if (enable) {
@@ -276,6 +285,41 @@ fun CustomButton(
                     disabledContentColor = GrayScale700
                 )
                 textColor = Primary400
+                arrowIconTint = if (enable) {
+                    DefaultWhite
+                } else {
+                    GrayScale400
+                }
+            } else {
+                buttonColor = ButtonDefaults.buttonColors(
+                    backgroundColor = if (isPressed) {
+                        Primary200
+                    } else {
+                        DefaultWhite
+                    },
+                    disabledBackgroundColor = DefaultWhite,
+                    disabledContentColor = GrayScale400
+                )
+                textColor = Primary500
+                arrowIconTint = if (enable) {
+                    Primary500
+                } else {
+                    GrayScale400
+                }
+            }
+        }
+        CustomButtonType.PrimaryQuaternaryUnderLined -> {
+            if (isSystemInDarkTheme()) {
+                buttonColor = ButtonDefaults.buttonColors(
+                    backgroundColor = if (isPressed) {
+                        WhiteTransparency12
+                    } else {
+                        Transparent
+                    },
+                    disabledBackgroundColor = Transparent,
+                    disabledContentColor = GrayScale400
+                )
+                textColor = SemanticInformative400
                 arrowIconTint = if (enable) {
                     DefaultWhite
                 } else {
@@ -349,6 +393,7 @@ fun CustomButton(
         ) {
             Text(
                 text = text,
+                fontWeight = FontWeight.SemiBold,
                 style = if (underLined) {
                     Typography.button.copy(textDecoration = TextDecoration.Underline)
                 } else {
@@ -383,5 +428,6 @@ sealed class CustomButtonType() {
     object PrimaryTertiary : CustomButtonType()
     object PrimaryTertiaryUnderLined : CustomButtonType()
     object PrimaryQuaternary : CustomButtonType()
+    object PrimaryQuaternaryUnderLined: CustomButtonType()
     object PrimaryQuinary : CustomButtonType()
 }

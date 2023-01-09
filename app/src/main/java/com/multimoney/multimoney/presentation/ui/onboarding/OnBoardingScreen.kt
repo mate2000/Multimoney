@@ -86,16 +86,20 @@ fun OnBoardingScreen(
             Modifier
                 .fillMaxSize()
                 .padding(top = 16.dp, start = 16.dp, end = 16.dp)
-                .weight(0.6f)
+                .weight(0.6f),
+            verticalArrangement = Arrangement.Bottom
         ) {
             Text(
                 text = stringResource(id = viewModel.uiState.title),
                 textAlign = TextAlign.Left,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 40.dp)
-                    .weight(0.13f),
-                style = Typography.h4.copy(
+                    .padding(top = 30.dp)
+                    .weight(
+                        0.14f, false
+                    ),
+                style = Typography.h3.copy(
+                    fontSize = 48.sp,
                     color = MultimoneyTheme.colors.onBoardingTitleText,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -105,8 +109,12 @@ fun OnBoardingScreen(
                 textAlign = TextAlign.Left,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(0.11f),
-                style = Typography.h6.copy(color = MultimoneyTheme.colors.onBoardingSubText)
+                    .padding(top = 24.dp, bottom = 80.dp)
+                    .weight(0.14f, true),
+                style = Typography.h6.copy(
+                    color = MultimoneyTheme.colors.onBoardingSubText,
+                    fontSize = 20.sp
+                )
             )
             CustomButton(
                 modifier = Modifier
@@ -130,7 +138,7 @@ fun OnBoardingScreen(
                     textAlign = TextAlign.Left,
                     modifier = Modifier.wrapContentSize(),
                     fontFamily = PoppinsFontFamily,
-                    fontWeight = FontWeight.SemiBold,
+                    fontWeight = FontWeight.Bold,
                     color = Color.White,
                     fontSize = 14.sp
                 )
@@ -147,7 +155,7 @@ fun OnBoardingScreen(
                         .wrapContentSize()
                         .padding(start = 4.dp),
                     onClick = {
-                        viewModel.onUIEvent(OnNavigateToNextScreen(Screen.SignInScreen.route))
+                        viewModel.onUIEvent(OnNavigateToNextScreen(Screen.SignInScreen.baseRoute))
                     }
                 )
             }

@@ -11,7 +11,6 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAccountScreen
-import com.multimoney.multimoney.presentation.ui.crypto.currencydetail.CurrencyDetailScreen
 import com.multimoney.multimoney.presentation.ui.home.HomeScreen
 
 fun NavGraphBuilder.homeNavGraph(

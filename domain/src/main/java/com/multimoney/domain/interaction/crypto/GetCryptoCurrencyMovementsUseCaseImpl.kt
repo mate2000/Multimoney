@@ -1,11 +1,11 @@
 package com.multimoney.domain.interaction.crypto
 
+import androidx.paging.PagingData
 import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
-import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.repository.CryptoRepository
 import kotlinx.coroutines.flow.Flow
 
-class GetCryptoCurrencyMovementsUseCaseImpl(val repository: CryptoRepository) :
+class GetCryptoCurrencyMovementsUseCaseImpl(val cryptoRepository: CryptoRepository):
     GetCryptoCurrencyMovementsUseCase {
 
     override suspend fun invoke(
@@ -13,17 +13,18 @@ class GetCryptoCurrencyMovementsUseCaseImpl(val repository: CryptoRepository) :
         idBrand: Int,
         identification: String,
         market: String,
-        startDate: String,
-        endDate: String
-    ): Flow<MultimoneyResult<CryptoCurrencyMovement?>> {
-        return repository.getCryptoCurrencyMovements(
+        order_time_begin: Any,
+        order_time_end: Any,
+        pagination_limit: Int
+    ): Flow<PagingData<CryptoCurrencyMovement>> {
+        return cryptoRepository.getCryptoCurrencyMovements(
             user,
             idBrand,
             identification,
             market,
-            startDate,
-            endDate
+            order_time_begin,
+            order_time_end,
+            pagination_limit
         )
     }
-
 }

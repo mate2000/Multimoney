@@ -50,6 +50,7 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCa
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnMyProductClick
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnMyProductPageChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.BaseEvent.OnShowCardIssuanceError
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.BaseEvent.OnShowTbdToastEvent
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.DEFAULT_PRODUCT_PAGES
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCreateMultimoneyVisa
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnDeleteAutomaticPayment
@@ -62,8 +63,11 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartPaymentMethodScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNoVoConfig
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCryptoWallet
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCryptoMarket
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCryptoMovements
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetCryptoMovements
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditContent
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditFooter
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditFooterExpanded
@@ -115,6 +119,7 @@ fun ProductScreen(
     LaunchedEffect(key1 = true) {
         viewModel.executeNavigation(onNavigate = onNavigate)
         viewModel.onUIEvent(OnNoVoConfig)
+        viewModel.onUIEvent(OnGetCryptoMovements)
     }
 
     // BaseEvent from ProductViewModel
@@ -122,6 +127,7 @@ fun ProductScreen(
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnShowCardIssuanceError -> sharedViewModel.onUIEvent(UIEvent.OnShowCardIssuanceError)
+                is OnShowTbdToastEvent -> Toast.makeText(context, "TBD", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -289,7 +295,7 @@ fun TipsAndOffer(
             }
             Row {
                 Icon(
-                    painter = painterResource(R.drawable.ic_notification_large),
+                    painter = painterResource(R.drawable.ic_notification),
                     modifier = Modifier.clickable {
                         // todo action
                     },
@@ -378,7 +384,9 @@ fun ProductContent(
     Column(modifier = modifier) {
         HorizontalPager(
             count = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
-            modifier = Modifier.padding(top = 8.dp),
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .weight(1f),
             state = state
         ) { page ->
             when (viewModel.uiState.productPageList?.get(page)?.product) {
@@ -404,7 +412,7 @@ fun ProductContent(
                 selectedIndex = state.currentPage,
                 selectedColor = GrayScale200,
                 unSelectedColor = GrayScale600,
-                modifier = Modifier.size(10.dp)
+                dotSize = 10.dp
             )
         }
     }
@@ -474,7 +482,9 @@ fun ProductFooterExpanded(
                     userStatus = viewModel.uiState.userStatus,
                     balance = viewModel.balanceCredit,
                     idBrand = viewModel.uiState.idBrand,
-                    actionMarket = { /* todo send to all coins screen*/ },
+                    cryptoMovements = viewModel.uiState.cryptoCurrencyMovements,
+                    onShowAllClick = { viewModel.onUIEvent(OnNavigateToCryptoMovements) },
+                    actionMarket = { viewModel.onUIEvent(OnNavigateToCryptoMarket) },
                     actionWallet = { viewModel.onUIEvent(OnNavigateToCryptoWallet) },
                     noBalanceAction = {
                         when (viewModel.uiState.idBrand) {
@@ -496,7 +506,7 @@ fun ProductFooterExpanded(
                     },
                     hasBalanceAction = { /*todo go to buy crypto flow*/ },
                     currencyItemClick = { item ->
-                        viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToCryptoMovementScreen(item))
+                        viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToCryptoDetailScreen(item))
                     }
                 )
             }

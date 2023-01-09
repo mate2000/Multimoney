@@ -54,8 +54,8 @@ import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewM
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnNavigateToSignIn
 import com.multimoney.multimoney.presentation.uielement.OtpTextField
 import com.multimoney.multimoney.presentation.uielement.SystemBroadcastReceiver
-import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.transformation.PhoneNumberTransformation
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
@@ -252,7 +252,7 @@ fun SignUpOtpScreen(
         )
 
         Text(
-            style = Typography.body2.copy(color = MultimoneyTheme.colors.textSubhead),
+            style = Typography.body2.copy(color = MultimoneyTheme.colors.subTitleText),
             text = stringResource(id = R.string.sign_up_otp_subtitle),
             textAlign = TextAlign.Start,
             modifier = Modifier

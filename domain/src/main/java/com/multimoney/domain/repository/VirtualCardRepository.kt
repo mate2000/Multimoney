@@ -2,6 +2,8 @@ package com.multimoney.domain.repository
 
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.virtualcard.AutomaticCardDebit
+import com.multimoney.domain.model.virtualcard.CardBlocking
+import com.multimoney.domain.model.virtualcard.CardUnblocking
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.domain.model.virtualcard.PayCreditVisaDirect
 import kotlinx.coroutines.flow.Flow
@@ -33,4 +35,27 @@ interface VirtualCardRepository {
         idCard: Long,
         cardMasked: String
     ): Flow<MultimoneyResult<AutomaticCardDebit?>>
+
+    suspend fun mutationCardBlocking(
+        blockType: String,
+        observations: String,
+        clientId: Int,
+        userApp: String,
+        cardToken: String,
+        source: String,
+        idLoan: Int,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<CardBlocking?>>
+
+    suspend fun mutationCardUnblocking(
+        observations: String,
+        clientId: Int,
+        userApp: String,
+        cardToken: String,
+        source: String,
+        idLoan: Int,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<CardUnblocking?>>
 }

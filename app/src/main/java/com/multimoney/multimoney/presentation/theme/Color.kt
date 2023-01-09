@@ -93,6 +93,7 @@ val ComplementaryGray2 = Color(0x99FFFFFF)
 val ComplementaryGray5 = Color(0x0DFFFFFF)
 val ComplementaryBlack = Color(0xFF212121)
 val ComplementaryBlack2 = Color(0xFF161616)
+val ComplementaryBlack3 = Color(0xFF1B1B1B)
 
 // WhiteTransparency
 val WhiteTransparency5 = Color(0xFFFFFFFF).copy(alpha = 0.05f)
@@ -144,6 +145,8 @@ data class MultimoneyColors(
     val onBoardingTitleText: Color,
     val onBoardingSubText: Color,
     val loginTitleText: Color,
+    val subTitleText: Color,
+    val titleText: Color,
     val textLink: Color,
     val textInformation: Color,
     val textSubhead: Color,
@@ -182,6 +185,7 @@ data class MultimoneyColors(
     val cryptoWalletGainsColor: Color,
     val cryptoActionButtonEnable: Color,
     val cryptoActionButtonDisable: Color,
+    val bodyTextColor: Color,
     val fullTransparency: Color = Color.Transparent,
 )
 
@@ -193,8 +197,10 @@ val DarkColorPalette = MultimoneyColors(
     backgroundInformativeChip = WhiteTransparency10,
     text = DefaultWhite,
     onBoardingTitleText = WhiteTransparency90,
-    onBoardingSubText = WhiteTransparency90,
+    onBoardingSubText = WhiteTransparency80,
     loginTitleText = WhiteTransparency90,
+    titleText = WhiteTransparency90,
+    subTitleText = WhiteTransparency70,
     textLink = Primary400,
     textInformation = SemanticInformative400,
     textSubhead = GrayScale600,
@@ -233,6 +239,7 @@ val DarkColorPalette = MultimoneyColors(
     cryptoActionButtonEnable = Primary400,
     cryptoActionButtonDisable = GrayScale400,
     cryptoWalletGainsColor = Tertiary400,
+    bodyTextColor = WhiteTransparency60,
 )
 
 val LightColorPalette = MultimoneyColors(
@@ -243,8 +250,10 @@ val LightColorPalette = MultimoneyColors(
     backgroundInformativeChip = WhiteTransparency10,
     text = DefaultWhite,
     onBoardingTitleText = WhiteTransparency90,
-    onBoardingSubText = WhiteTransparency90,
+    onBoardingSubText = WhiteTransparency80,
     loginTitleText = WhiteTransparency90,
+    titleText = WhiteTransparency90,
+    subTitleText = WhiteTransparency70,
     textLink = Primary400,
     textInformation = SemanticInformative400,
     textSubhead = GrayScale600,
@@ -283,6 +292,7 @@ val LightColorPalette = MultimoneyColors(
     cryptoActionButtonEnable = Primary500,
     cryptoActionButtonDisable = GrayScale500,
     cryptoWalletGainsColor = Tertiary600,
+    bodyTextColor = BlackTransparency60,
 )
 
 val LocalMultimoneyColors = staticCompositionLocalOf {

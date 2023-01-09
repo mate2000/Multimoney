@@ -1,8 +1,7 @@
 package com.multimoney.domain.interaction.crypto
 
+import androidx.paging.PagingData
 import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
-import com.multimoney.domain.model.crypto.GetHistoricalClientBalance
-import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
 interface GetCryptoCurrencyMovementsUseCase {
@@ -11,7 +10,8 @@ interface GetCryptoCurrencyMovementsUseCase {
         idBrand: Int,
         identification: String,
         market: String,
-        startDate: String,
-        endDate: String
-    ): Flow<MultimoneyResult<CryptoCurrencyMovement?>>
+        order_time_begin: Any,
+        order_time_end: Any,
+        pagination_limit: Int
+    ): Flow<PagingData<CryptoCurrencyMovement>>
 }

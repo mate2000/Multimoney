@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Nationalities
 import com.multimoney.data.util.catalog.SignUpStep
@@ -165,8 +166,9 @@ fun SignUpPersonalDataScreen(
                 .padding(end = 40.dp),
             text = stringResource(id = R.string.sign_up_personal_data_nationality_header),
             style = Typography.h6.copy(
-                color = MultimoneyTheme.colors.text,
-                fontWeight = FontWeight.SemiBold
+                color = MultimoneyTheme.colors.titleText,
+                fontWeight = FontWeight.SemiBold,
+                lineHeight = 24.sp
             )
         )
         CustomDropdown(
@@ -175,10 +177,10 @@ fun SignUpPersonalDataScreen(
                 .focusable(false)
                 .padding(top = 16.dp),
             items = viewModel.uiState.countryList,
-            onValueChange = { value ->
+            onValueChange = { valueSelected, _ ->
                 viewModel.onUIEvent(
                     OnNationalityChange(
-                        viewModel.uiState.countryList.indexOf(value),
+                        viewModel.uiState.countryList.indexOf(valueSelected),
                         updateNationality = { nationality, idBrand ->
                             sharedViewModel.onUIEvent(
                                 OnNationalityValueChange(nationality, idBrand)
@@ -196,7 +198,7 @@ fun SignUpPersonalDataScreen(
         )
         when (viewModel.uiState.nationalityValue) {
             Nationalities.CostaRicaId.country -> SignUpPersonalDataCrScreen()
-            Nationalities.ElSalvador.country -> SignUpPersonalDataSvScreen()
+            Nationalities.ElSalvadorDui.country -> SignUpPersonalDataSvScreen()
             Nationalities.Guatemala.country -> SignUpPersonalDataGtScreen()
         }
     }

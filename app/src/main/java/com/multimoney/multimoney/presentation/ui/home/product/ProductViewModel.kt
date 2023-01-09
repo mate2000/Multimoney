@@ -4,6 +4,9 @@ import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.APPROVED
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.FAILED
@@ -22,6 +25,7 @@ import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.domain.interaction.accountsmart.QueryListSinpeAccountUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceCardInformationUseCase
+import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCase
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
 import com.multimoney.domain.model.accountsmart.SinpeAccount
 import com.multimoney.domain.model.accountsmart.SmartAccountID
@@ -33,6 +37,7 @@ import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.balance.Summary
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditMovementsResult
+import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.domain.model.util.onFailure
@@ -57,7 +62,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMiniCardsClicked
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditMovementsScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCryptoMovementScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToGtSvNonPreApproved
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToHomeMultimoneyVisa
@@ -77,16 +81,22 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnShareIbanAccount
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
+import com.multimoney.multimoney.presentation.util.FilterDate
 import com.multimoney.multimoney.presentation.util.NfcHelper
+import com.multimoney.multimoney.presentation.util.PAGE_SIZE
 import com.multimoney.multimoney.presentation.util.ShareHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
+import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
+import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.novopayment.sdk.vts.NovoVTS
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flowOf
+import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -94,7 +104,8 @@ class ProductViewModel @Inject constructor(
     private val nfcHelper: NfcHelper,
     private val cardIssuanceNVUseCase: QueryCardIssuanceNVUseCase,
     private val balanceCardInformationUseCase: QueryBalanceCardInformationUseCase,
-    private val queryListSinpeAccountUseCaseImpl: QueryListSinpeAccountUseCase
+    private val queryListSinpeAccountUseCaseImpl: QueryListSinpeAccountUseCase,
+    private val queryGetCryptoCurrencyMovementsUseCase: GetCryptoCurrencyMovementsUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -115,6 +126,7 @@ class ProductViewModel @Inject constructor(
     var isExpiredTitle = R.string.home_product_expiration
     var smartMovementsList: List<SmartMovementsResult> = emptyList()
     var creditMovements: List<CreditMovementsResult> = emptyList()
+    var smartAccount : SmartAccountID? = null
 
     private fun onSetUserData(
         idBrand: String,
@@ -228,7 +240,8 @@ class ProductViewModel @Inject constructor(
                 SmartAccountID(
                     tokenAccount = it?.tokenNumber,
                     currencyID = it?.idCurrencyAccount,
-                    accountNumber = it?.accountNumber ?: ""
+                    accountNumber = it?.accountNumber ?: "",
+                    ibanAccountNumber = it?.ibanAccountNumber
                 )
             })
             navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/${smartIds}/$email/${uiState.idBrand}/$identification/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
@@ -256,9 +269,12 @@ class ProductViewModel @Inject constructor(
             }/$identification/$userName/${balanceCredit?.getFirstSummary()?.paymentDate}/${Screen.HomeScreen.route}"
         } else {
             "${Screen.PaymentOptionsScreen.baseRoute}/${uiState.idBrand}/${balanceCredit?.getFirstCredit()?.creditNumber}/${
-                encodeData(configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true })
-            }/${encodeData(configurationVersion?.configuration?.credit?.transferAccount)}" +
-                    "/${balanceCredit?.getFirstSummary()?.minPayment}/${balanceCredit?.getFirstSummary()?.minPaymentLabel}/${balanceCredit?.getFirstSummary()?.currentBalance}/${balanceCredit?.getFirstSummary()?.currentBalanceLabel}/$identification/$email/$idClient/${infoCredit?.idLoanClient}"
+            encodeData(configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true })
+            }/${encodeData(configurationVersion?.configuration?.credit?.transferAccount)}/" +
+                "${balanceCredit?.getFirstSummary()?.minPayment}/${balanceCredit?.getFirstSummary()?.minPaymentLabel}/" +
+                "${balanceCredit?.getFirstSummary()?.currentBalance}/${balanceCredit?.getFirstSummary()?.currentBalanceLabel}/" +
+                "$identification/$email/$idClient/${infoCredit?.idLoanClient}/${balanceCredit?.getFirstSummary()?.idCurrency}/" +
+                "${balanceCredit?.getFirstSummary()?.paymentDate}"
         }
         navigateTo(route)
     }
@@ -322,19 +338,19 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToVisaActivateScreen() =
         navigateTo(
             "${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/${uiState.userStatus?.infoUser?.phone}/${
-                encodeData(
-                    balanceCredit?.balanceCardInformation?.cardInformation
-                )
-            }"
+            encodeData(
+                balanceCredit?.balanceCardInformation
+            )
+            }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}/$idClient/${uiState.userStatus?.infoCredit?.idLoanClient ?: 0}"
         )
 
     private fun onNavigateToHomeMultimoneyVisa() =
         navigateTo(
             "${Screen.VisaCardScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/${uiState.userStatus?.infoUser?.phone}/${
-                encodeData(
-                    balanceCredit?.balanceCardInformation?.cardInformation
-                )
-            }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}"
+            encodeData(
+                balanceCredit?.balanceCardInformation
+            )
+            }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}/$idClient/${uiState.userStatus?.infoCredit?.idLoanClient ?: 0}"
         )
 
     private fun onNavigateToProfileScreen() {
@@ -352,17 +368,24 @@ class ProductViewModel @Inject constructor(
         navigateTo("${Screen.SmartMovementsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification/$accountToken")
 
     private fun onNavigateToCryptoWallet() {
+        val userStatus = uiState.userStatus
+        val globalBalance = balanceCredit?.balanceCryptoAccount?.globalBalance ?: 0.0
+        val statusCrypto = userStatus?.infoCrypto?.status
+        val statusSmart = userStatus?.infoBankAccount?.status
+        val statusCredit = userStatus?.infoCredit?.status
+        val idLoanClient = userStatus?.infoCredit?.idLoanClient
+        val cardStatus = userStatus?.infoVirtualCard?.status
         navigateTo(
-            "${Screen.CryptoWalletScreen.baseRoute}/$email/${uiState.idBrand}/$identification/${balanceCredit?.balanceCryptoAccount?.globalBalance ?: 0.0}"
+            "${Screen.CryptoWalletScreen.baseRoute}/$email/${uiState.idBrand}/${identification}/${globalBalance}/${idClient}/${idLoanClient}/${statusCredit}/${statusSmart}/${statusCrypto}/${cardStatus}"
         )
     }
 
-    private fun onNavigateToCryptoMovements(cryptoItem: BalanceCryptoAccountItems) {
-        navigateTo(
-            "${Screen.CryptoCurrencyMovementsScreen.baseRoute}/${uiState.idBrand}/$identification/$email/${
-                encodeData(cryptoItem)
-            }"
-        )
+    private fun onNavigateToCryptoMarket() {
+        navigateTo("${Screen.CryptoMarketScreen.baseRoute}/$userName/${uiState.idBrand}")
+    }
+
+    private fun onNavigateToCryptoMovements() {
+        navigateTo("${Screen.CryptoMovementsAllScreen.baseRoute}/$userName/${uiState.idBrand}/$identification")
     }
 
     private fun openWhatsAppLink(context: Context, whatsAppLink: String) {
@@ -508,7 +531,10 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToGtSvNonPreApproved() =
         navigateTo(
-            route = "${Screen.NonPreApprovedScreen.baseRoute}/$pkUser/$email/${uiState.idBrand}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}"
+            "${Screen.NonPreApprovedScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
+                    "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/${uiState.userStatus?.infoUser?.firstName}/" +
+                    "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
+                    "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0}"
         )
 
     fun getCreditBalanceLabel(balanceCredit: List<BalanceCredit?>?): String {
@@ -583,6 +609,7 @@ class ProductViewModel @Inject constructor(
             QuickActionFlow.ACTIVATE_MM_VISA.flow -> onCreateMultimoneyVisa(onLoadingValueChange)
             QuickActionFlow.PAY_FEE.flow -> onNavigateToPaymentScreen()
             QuickActionFlow.SAVE_SMART.flow -> onNavigateToSmartSave()
+            QuickActionFlow.SEND_MONEY.flow -> onNavigateToSendMoneyScreenQuickAction()
         }
     }
 
@@ -599,42 +626,40 @@ class ProductViewModel @Inject constructor(
         )
     }
 
-    private fun callQueryBalanceUseCase(
-        account: Account?,
-        onLoadingValueChange: (isLoading: Boolean) -> Unit
-    ) = executeUseCase {
-        queryListSinpeAccountUseCaseImpl.invoke(
-            user = email,
-            identification = identification ?: "",
-            idBrand = uiState.idBrand.toInt(),
-            country = "",
-            idAccount = 0,
-            accountNumber = ""
-        ).collectLatest { result ->
-            result.onSuccess { accountList ->
-                onLoadingValueChange(false)
-                if (accountList?.data?.isEmpty() == true) {
-                    navigateToAddIbanAccount()
-                } else {
-                    accountList?.data?.let {
-                        navigateToSmartAccount(account = account, clientBankAccounts = it)
+    private fun callQueryBalanceUseCase(account: Account?, onLoadingValueChange: (isLoading: Boolean) -> Unit) =
+        executeUseCase {
+            queryListSinpeAccountUseCaseImpl.invoke(
+                user = email,
+                identification = identification ?: "",
+                idBrand = uiState.idBrand.toInt(),
+                country = "",
+                idAccount = 0,
+                accountNumber = ""
+            ).collectLatest { result ->
+                result.onSuccess { accountList ->
+                    onLoadingValueChange(false)
+                    if (accountList?.data?.isEmpty() == true) {
+                        navigateToAddIbanAccount()
+                    } else {
+                        accountList?.data?.let {
+                            navigateToSmartAccount(account = account, clientBankAccounts = it)
+                        }
                     }
                 }
-            }
-            result.onFailure {
-                onLoadingValueChange(false)
-                uiState = uiState.copy(
-                    openDialog = DialogParameters(
-                        description = it.getError().toString(),
-                        isActive = mutableStateOf(true)
+                result.onFailure {
+                    onLoadingValueChange(false)
+                    uiState = uiState.copy(
+                        openDialog = DialogParameters(
+                            description = it.getError().toString(),
+                            isActive = mutableStateOf(true)
+                        )
                     )
-                )
-            }
-            result.onLoading {
-                onLoadingValueChange(true)
+                }
+                result.onLoading {
+                    onLoadingValueChange(true)
+                }
             }
         }
-    }
 
     // This function opens the flow from the smart card
     private fun onSmartAccountCardClick(
@@ -661,15 +686,12 @@ class ProductViewModel @Inject constructor(
         val smartIds = SmartAccountID(
             tokenAccount = account?.tokenNumber,
             currencyID = account?.idCurrencyAccount,
-            accountNumber = account?.accountNumber
+            accountNumber = account?.accountNumber,
+            ibanAccountNumber = account?.ibanAccountNumber
         )
         navigateTo(
             route = "${Screen.SmartPaymentAccountScreenCR.baseRoute}/$email/${uiState.idBrand}/$identification/${Screen.HomeScreen.route}/$idClient/" +
-                    "${infoCredit?.idLoanClient}/${encodeData(clientBankAccounts)}/${
-                        encodeData(
-                            smartIds
-                        )
-                    }"
+                "${infoCredit?.idLoanClient}/${encodeData(clientBankAccounts)}/${encodeData(smartIds)}"
         )
     }
 
@@ -680,8 +702,39 @@ class ProductViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateToSendMoneyScreen() {
-        // todo add navigation to send money screen
+    private fun onNavigateToSendMoneyScreenQuickAction() {
+        if (uiState.idBrand == Brand.ElSalvador.id.toString()) {
+            val account = balanceCredit?.balanceAccountSmart?.first()
+            smartAccount = SmartAccountID(
+                account?.tokenNumber,
+                account?.idCurrencyAccount,
+                account?.accountNumber
+            )
+            navigateTo(
+                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${userName}/${uiState.idBrand}/${identification}/${encodeData(smartAccount)}/$idClient"
+            )
+        } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
+            // TODO navigate to account selection screen HU [tbd]
+            emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
+        }
+    }
+
+    private fun onNavigateToSendMoneyScreen(account: Account?) {
+        smartAccount = SmartAccountID(
+            tokenAccount = account?.tokenNumber,
+            currencyID = account?.idCurrencyAccount,
+            accountNumber = account?.accountNumber,
+            totalBalance = account?.totalBalance
+        )
+        navigateTo(
+            "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${userName}/${uiState.idBrand}/${identification}/${encodeData(smartAccount)}/$idClient"
+        )
+    }
+
+    private fun onNavigateToCryptoDetail(cryptoItem: BalanceCryptoAccountItems) {
+        navigateTo(
+            "${Screen.CryptoCurrencyMovementsScreen.baseRoute}/${uiState.idBrand}/$identification/$email/${encodeData(cryptoItem)}"
+        )
     }
 
     private fun onCreateMultimoneyVisa(onLoadingValueChange: (isLoading: Boolean) -> Unit) {
@@ -704,6 +757,20 @@ class ProductViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun onCallQueryGetCryptoMovements() = executeUseCase {
+        uiState = uiState.copy(
+            cryptoCurrencyMovements = queryGetCryptoCurrencyMovementsUseCase.invoke(
+                user = userName,
+                idBrand = uiState.idBrand.toInt(),
+                identification = identification,
+                market = EMPTY_STRING, // get all markets movements with empty string
+                order_time_begin = getPreviousDate(FilterDate.LAST_365_DAYS),
+                order_time_end = getCurrentDateYMDPattern(),
+                pagination_limit = PAGE_SIZE
+            ).cachedIn(viewModelScope)
+        )
     }
 
     private fun onCallQueryBalanceCardInformation(onLoadingValueChange: (isLoading: Boolean) -> Unit) {
@@ -813,7 +880,8 @@ class ProductViewModel @Inject constructor(
         val canExpandCredit: Boolean = false,
         val scheduleChipIconResource: Int? = null,
         val phoneNumber: String? = null,
-        val smartContent: Pair<Boolean?, String> = Pair(null, "")
+        val smartContent: Pair<Boolean?, String> = Pair(null, ""),
+        val cryptoCurrencyMovements: Flow<PagingData<CryptoCurrencyMovement>> = flowOf()
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -828,7 +896,7 @@ class ProductViewModel @Inject constructor(
                 onIntent = uiEvent.onIntent
             )
             is OnNavigateToPaymentProcess -> onNavigateToPaymentScreen()
-            is OnNavigateToSendMoneyFlow -> onNavigateToSendMoneyScreen()
+            is OnNavigateToSendMoneyFlow -> onNavigateToSendMoneyScreen(uiEvent.account)
             is OnNavigateToHomeMultimoneyVisa -> onNavigateToHomeMultimoneyVisa()
             is OnNavigateToPaymentSmartFlow -> onSmartAccountCardClick(
                 uiEvent.account,
@@ -837,6 +905,9 @@ class ProductViewModel @Inject constructor(
             is OnNavigateToProfileScreen -> onNavigateToProfileScreen()
             is OnNavigateToDisbursement -> onNavigateToDisbursement()
             is UIEvent.OnNavigateToCryptoWallet -> onNavigateToCryptoWallet()
+            is UIEvent.OnNavigateToCryptoMarket -> onNavigateToCryptoMarket()
+            is UIEvent.OnNavigateToCryptoMovements -> onNavigateToCryptoMovements()
+            is UIEvent.OnGetCryptoMovements -> onCallQueryGetCryptoMovements()
             is OnNavigateToGtSvNonPreApproved -> onNavigateToGtSvNonPreApproved()
             is OnSetUserData -> onSetUserData(
                 idBrand = uiEvent.idBrand,
@@ -887,9 +958,7 @@ class ProductViewModel @Inject constructor(
             is OnCreateMultimoneyVisa -> onCreateMultimoneyVisa(uiEvent.onLoadingValueChange)
             is OnNoVoConfig -> onConfigNovoSdk()
             is OnGetSmartContent -> getSmartContent()
-            is OnNavigateToCryptoMovementScreen -> {
-                onNavigateToCryptoMovements(uiEvent.cryptoItem)
-            }
+            is UIEvent.OnNavigateToCryptoDetailScreen -> onNavigateToCryptoDetail(uiEvent.cryptoItem)
         }
     }
 
@@ -909,16 +978,16 @@ class ProductViewModel @Inject constructor(
             val onIntent: () -> Unit? = { }
         ) : UIEvent()
 
+        object OnGetCryptoMovements : UIEvent()
         object OnNavigateToPaymentProcess : UIEvent()
         object OnNavigateToProfileScreen : UIEvent()
         object OnNavigateToHomeMultimoneyVisa : UIEvent()
         object OnNavigateToDisbursement : UIEvent()
-        object OnNavigateToSendMoneyFlow : UIEvent()
         data class OnNavigateToPaymentSmartFlow(
             val account: Account?,
             val onLoadingValueChange: (isLoading: Boolean) -> Unit
         ) : UIEvent()
-
+        data class OnNavigateToSendMoneyFlow(val account: Account?) : UIEvent()
         data class OnNavigateToSmartMovements(val accountToken: String) : UIEvent()
         object OnNavigateToCreditMovementsScreen : UIEvent()
         object OnNavigateToGtSvNonPreApproved : UIEvent()
@@ -926,15 +995,14 @@ class ProductViewModel @Inject constructor(
         object IsPaymentExpired : UIEvent()
         data class OnNavigateToCreditScreen(val creditStep: String) : UIEvent()
         object OnChipQuotaClick : UIEvent()
-        data class OnNavigateToScheduleAutomaticPaymentScreen(val isEditSchedule: Boolean) :
-            UIEvent()
-
+        data class OnNavigateToScheduleAutomaticPaymentScreen(val isEditSchedule: Boolean) : UIEvent()
         object OnNavigateToSmartPaymentAccountScreen : UIEvent()
         object OnNavigateToSmartPaymentMethodScreen : UIEvent()
         object OnNavigateToCryptoWallet : UIEvent()
+        object OnNavigateToCryptoMarket : UIEvent()
+        object OnNavigateToCryptoMovements : UIEvent()
         object OnGetSmartContent : UIEvent()
-        data class OnNavigateToCryptoMovementScreen(val cryptoItem: BalanceCryptoAccountItems) :
-            UIEvent()
+        data class OnNavigateToCryptoDetailScreen(val cryptoItem: BalanceCryptoAccountItems) : UIEvent()
 
         data class OnSetUserData(
             val idBrand: String,
@@ -973,9 +1041,11 @@ class ProductViewModel @Inject constructor(
 
     sealed class BaseEvent {
         object OnShowCardIssuanceError : BaseEvent()
+        object OnShowTbdToastEvent: BaseEvent()
     }
 
     companion object {
+        const val EMPTY_STRING = ""
         const val ERROR_CREDIT = "Error"
         const val DEFAULT_PRODUCT_PAGES = 1
         const val DEFAULT_PROGRESS = 1F

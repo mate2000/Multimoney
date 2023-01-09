@@ -13,12 +13,17 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.theme.BlackTransparency10
+import com.multimoney.multimoney.presentation.theme.BlackTransparency70
+import com.multimoney.multimoney.presentation.theme.BlackTransparency80
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.SIGN_UP_INDICATOR_TOTAL_STEPS
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnBackClick
@@ -69,7 +74,6 @@ fun SignUpScreen(
     ) {
         Column {
             TopNavBar(
-                isLeftButtonVisible = viewModel.uiState.currentStep != SignUpStep.Six.id,
                 isRightButtonVisible = viewModel.uiState.isCloseVisible,
                 onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
                 onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) }
@@ -99,7 +103,7 @@ fun SignUpScreen(
                 modifier = Modifier
                     .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
                     .fillMaxWidth()
-                    .height(48.dp),
+                    .height(56.dp),
                 buttonType = CustomButtonType.PrimaryPrimary,
                 enable = viewModel.uiState.isContinueEnabled
             )

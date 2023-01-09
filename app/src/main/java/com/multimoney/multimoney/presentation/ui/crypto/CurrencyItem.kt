@@ -76,12 +76,19 @@ fun CurrencyItem(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = stringResource(id = R.string.currency_item_description, descriptionCurrency, asset),
+                            text = stringResource(
+                                id = R.string.currency_item_description,
+                                descriptionCurrency,
+                                asset
+                            ),
                             style = Typography.body2,
                             color = MultimoneyTheme.colors.labelText
                         )
                         Text(
-                            text = stringResource(id = R.string.currency_item_dollar_symbol, balanceDollars),
+                            text = stringResource(
+                                id = R.string.currency_item_dollar_symbol,
+                                balanceDollars
+                            ),
                             style = Typography.body2,
                             color = MultimoneyTheme.colors.labelText
                         )
@@ -99,7 +106,10 @@ fun CurrencyItem(
                             )
                             Text(
                                 modifier = Modifier.padding(start = 8.dp),
-                                text = stringResource(id = R.string.currency_item_percent_invested, percentageInvestedCurrency),
+                                text = stringResource(
+                                    id = R.string.currency_item_percent_invested,
+                                    percentageInvestedCurrency
+                                ),
                                 style = Typography.caption,
                                 color = SemanticPositive400
                             )

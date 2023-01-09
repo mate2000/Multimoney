@@ -47,8 +47,8 @@ fun SignUpPersonalDataSvScreen(
                 .focusable(false)
                 .padding(top = 16.dp),
             items = viewModel.uiState.documentList,
-            onValueChange = {
-                viewModel.onUIEvent(OnIdentificationTypeValueChange(it))
+            onValueChange = { valueSelected, _ ->
+                viewModel.onUIEvent(OnIdentificationTypeValueChange(valueSelected))
             },
             labelText = stringResource(id = R.string.sign_up_personal_data_document_label),
             value = viewModel.uiState.identificationValueType,
@@ -85,7 +85,7 @@ fun SignUpPersonalDataSvScreen(
             }),
             labelText = stringResource(id = R.string.sign_up_personal_data_document_number_label),
             modifier = Modifier
-                .padding(top = 44.dp),
+                .padding(top = 16.dp),
             isRequired = true,
             isRequiredMessage = stringResource(
                 id = R.string.sign_up_personal_data_id_required,
@@ -106,7 +106,7 @@ fun SignUpPersonalDataSvScreen(
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .padding(top = 44.dp)
+                    .padding(top = 16.dp)
             ) {
                 CustomOutlinedTextField(
                     placeHolder = stringResource(id = R.string.sign_up_personal_data_first_name_hint),
@@ -176,7 +176,7 @@ fun SignUpPersonalDataSvScreen(
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .padding(top = 44.dp)
+                    .padding(top = 16.dp)
             ) {
                 CustomOutlinedTextField(
                     placeHolder = stringResource(id = R.string.sign_up_personal_data_first_lastname_hint),

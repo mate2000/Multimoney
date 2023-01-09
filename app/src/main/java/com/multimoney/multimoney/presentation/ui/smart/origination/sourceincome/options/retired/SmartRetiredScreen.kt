@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -67,7 +68,8 @@ fun SmartRetiredScreen(
                             accountSmartData = sharedViewModel.accountSmartData?.copy(
                                 idEconomicActivity = SourceIncomeOptionType.Retired.id.toLong(),
                                 institutionPension = viewModel.uiState.institution,
-                                income = viewModel.uiState.paymentAmount.toFloat()
+                                income = viewModel.uiState.paymentAmount.toFloat(),
+                                currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep)
                             )
                         )
                     )

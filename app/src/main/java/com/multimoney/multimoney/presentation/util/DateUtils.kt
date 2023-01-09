@@ -1,11 +1,13 @@
 package com.multimoney.multimoney.presentation.util
 
+import android.os.Build
 import com.multimoney.multimoney.R
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Period
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
@@ -18,11 +20,13 @@ fun getPickedDateAsString(year: Int, month: Int, day: Int, dateFormat: String): 
 }
 
 fun getFormatDateByString(date: String, formatOne: String, formatTwo: String): String {
+    if (date.isBlank()) return ""
+
     val simpleDateFormat = SimpleDateFormat(formatOne, Locale.getDefault())
     val formattedDate = simpleDateFormat.parse(date)
-    val simpleDateFormatTow = SimpleDateFormat(formatTwo, Locale.getDefault())
+    val simpleDateFormatTwo = SimpleDateFormat(formatTwo, Locale.getDefault())
     return formattedDate?.let {
-        simpleDateFormatTow.format(formattedDate)
+        simpleDateFormatTwo.format(formattedDate)
     } ?: run {
         ""
     }
@@ -60,7 +64,7 @@ fun getCardDateFormat(
 }
 
 fun getDayFromString(date: String?, format: SimpleDateFormat): String {
-    return if (date.isNullOrEmpty().not()) {
+    return if (date.isNullOrBlank().not()) {
         val dateFormatted = format.parse(date)
         dateFormatted?.let {
             DAY_FORMAT.format(dateFormatted)
@@ -103,6 +107,21 @@ fun getPreviousDate(daysToSubtract: Long): String {
     return date.toString()
 }
 
+fun getPreviousDate(dateFilter: FilterDate = FilterDate.YESTERDAY): String {
+    val date = LocalDate.now()
+    when (dateFilter) {
+        FilterDate.YESTERDAY -> date.minusDays(1)
+        FilterDate.LAST_7_DAYS -> date.minusDays(7)
+        FilterDate.LAST_30_DAYS -> date.minusDays(30)
+        FilterDate.LAST_90_DAYS -> date.minusDays(90)
+        FilterDate.LAST_180_DAYS -> date.minusDays(180)
+        FilterDate.LAST_365_DAYS -> date.minusDays(365)
+    }
+
+    val formatters: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    return date.format(formatters)
+}
+
 fun getCurrentDate(time: Date): String {
     return BAR_DIVIDER_FORMAT.format(time)
 }
@@ -142,13 +161,36 @@ fun parseApiDateToTermsAndConditionsDateTime(date: String?): String {
     }
 }
 
-enum class FilterDateByDays(val days: Long, val time: String, val timeAbv: String) {
-    YESTERDAY(1, "Dia", "D"),
-    LAST_7_DAYS(7, "Semana", "S"),
-    LAST_30_DAYS(30, "Mes", "M"),
-    LAST_90_DAYS(90, "3 Meses", "3M"),
-    LAST_180_DAYS(180, "6 Meses", "6M"),
-    LAST_365_DAYS(365, "Año", "A"),
+fun Calendar.toLocalDate(): LocalDate = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    LocalDateTime.ofInstant(this.toInstant(), this.timeZone.toZoneId()).toLocalDate()
+} else {
+    LocalDateTime.ofInstant(this.toInstant(), ZoneId.systemDefault()).toLocalDate()
+}
+
+enum class FilterDateByDays(
+    val time: Long,
+    val timeDescription: String,
+    val timeDescriptionExtended: String,
+    val timeAbv: String,
+    val timeAbvExtended: String,
+    val dataPoints: Long
+) {
+    HOUR(24, "Hora", "1 Hora", "H", "1H",60),
+    YESTERDAY(1, "Dia", "1 Dia", "D", "1D",24),
+    LAST_7_DAYS(7, "Semana", "1 Semana", "S", "1S",7),
+    LAST_30_DAYS(30, "Mes", "1 Mes", "M", "1M",30),
+    LAST_90_DAYS(90, "Meses", "3 Meses", "3M", "3M",90),
+    LAST_180_DAYS(180, "Meses", "6 Meses", "6M", "6M",180),
+    LAST_365_DAYS(365, "Año", "1 Año", "A", "1A",365),
+}
+
+enum class FilterDate {
+    YESTERDAY,
+    LAST_7_DAYS,
+    LAST_30_DAYS,
+    LAST_90_DAYS,
+    LAST_180_DAYS,
+    LAST_365_DAYS
 }
 
 const val YEAR_MONTH_DAY_PATTERN = "yyyy-mm-dd"

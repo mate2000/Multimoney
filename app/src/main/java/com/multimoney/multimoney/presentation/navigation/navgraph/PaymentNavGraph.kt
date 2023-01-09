@@ -22,6 +22,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.Pay
 import com.multimoney.multimoney.presentation.ui.credit.payment.fee.PaymentFeeSelectionScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.location.PaymentLocationDetailsScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.options.PaymentOptionsScreen
+import com.multimoney.multimoney.presentation.ui.credit.payment.paymentcardvoucher.PaymentVoucherVDScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.PaymentVoucherScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.PaymentScheduleScreen
@@ -62,14 +63,13 @@ const val IS_EDIT_BANK_ACCOUNT = "is_edit_bank_account"
 const val IS_EDIT_PAYMENT_SCHEDULE = "is_edit_payment_schedule"
 const val PREVIOUS_SCREEN = "previous_screen"
 const val USER_SMART_ACCOUNT = "user_smart_account"
+const val CURRENCY_SYMBOL = "currency_symbol"
 
 // Payment maps location parameters
 const val POINT_NAME = "point_name"
 const val POINT_ADDRESS = "point_address"
 const val POINT_ADDRESS_DESCRIPTION = "point_address_description"
 const val POINT_SCHEDULE = "point_schedule"
-const val POINT_LATITUDE = "point_latitude"
-const val POINT_LONGITUDE = "point_longitude"
 
 fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
     navigation(
@@ -253,7 +253,7 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                     type = NavType.IntType
                 },
                 navArgument(CLIENT_CARD_VISA_DIRECT) {
-                    type = ClientBankAccountNavType()
+                    type = CardVDNavType()
                 },
                 navArgument(IS_EDIT_BANK_ACCOUNT) {
                     type = NavType.BoolType
@@ -365,6 +365,9 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 navArgument(ID_LOAN_CLIENT) {
                     type = NavType.IntType
                 },
+                navArgument(ID_CURRENCY) {
+                    type = NavType.IntType
+                },
                 navArgument(MINIMUM_PAYMENT) {
                     type = NavType.FloatType
                 },
@@ -461,6 +464,9 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 navArgument(ID_LOAN_CLIENT) {
                     type = NavType.IntType
                 },
+                navArgument(ID_CURRENCY) {
+                    type = NavType.IntType
+                },
                 navArgument(MINIMUM_PAYMENT) {
                     type = NavType.FloatType
                 },
@@ -499,6 +505,9 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 navArgument(ID_LOAN_CLIENT) {
                     type = NavType.IntType
                 },
+                navArgument(ID_CURRENCY) {
+                    type = NavType.IntType
+                },
                 navArgument(MINIMUM_PAYMENT) {
                     type = NavType.FloatType
                 },
@@ -508,6 +517,11 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
             )
         ) {
             PaymentAmountCardScreen(
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                },
                 onNavigate = {
                     navController.navigate(it.route)
                 },
@@ -518,6 +532,38 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                         inclusive = false,
                         saveState = false
                     )
+                }
+            )
+        }
+
+        composable(
+            Screen.PaymentCardVoucherScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_CLIENT) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_LOAN_CLIENT) {
+                    type = NavType.IntType
+                },
+                navArgument(CARD_SELECTED) {
+                    type = CardVDNavType()
+                },
+                navArgument(IS_AUTOMATIC_PAYMENT_CHECKED) {
+                    type = NavType.BoolType
+                }
+            )
+        ) {
+            PaymentVoucherVDScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
                 }
             )
         }

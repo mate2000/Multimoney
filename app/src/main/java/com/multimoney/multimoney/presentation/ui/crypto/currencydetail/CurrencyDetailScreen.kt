@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -28,20 +26,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberAsyncImagePainter
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
+import com.multimoney.multimoney.presentation.ui.crypto.CryptoCurrencyMovementItem
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.DateFilterDWMYSection
-import com.multimoney.multimoney.presentation.ui.crypto.graphics.WalletCryptoGraphic
+import com.multimoney.multimoney.presentation.ui.crypto.graphics.MarketCurrencyDetailsGraphic
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
-fun CurrencyDetailScreen(
-    viewModel: CryptoCurrencyDetailViewModel = hiltViewModel(),
+fun CurrencyMovementsScreen(
+    viewModel: CryptoCurrencyMovementsViewModel = hiltViewModel(),
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {}
@@ -52,31 +52,48 @@ fun CurrencyDetailScreen(
             onNavigate = onNavigate,
             onPopAndNavigate = onPopAndNavigate
         )
-        viewModel.onUIEvent(CryptoCurrencyDetailViewModel.UIEvent.OnSetDateRange(FilterDateByDays.YESTERDAY.days))
-        viewModel.onUIEvent(CryptoCurrencyDetailViewModel.UIEvent.OnGetUserInfo)
-        viewModel.onUIEvent(CryptoCurrencyDetailViewModel.UIEvent.OnGetAssetHistory)
-        viewModel.onUIEvent(CryptoCurrencyDetailViewModel.UIEvent.OnGetMovements)
+        viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnSetDateRange(FilterDateByDays.YESTERDAY.time))
+        viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnGetUserInfo)
+        viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnGetAssetHistory)
+        viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnGetMovements)
     }
 
-    BackHandler { viewModel.onUIEvent(CryptoCurrencyDetailViewModel.UIEvent.OnNavigateBack) }
+    BackHandler { viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateBack) }
 
-    CurrencyDetailContent(viewModel)
+    CurrencyDetailContent(
+        uiState = viewModel.uiState,
+        backPressed = { viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateBack) },
+        onDateChanged = { dateSelected ->
+            viewModel.onUIEvent(
+                CryptoCurrencyMovementsViewModel.UIEvent.OnSetDateRange(
+                    dateSelected
+                )
+            )
+        },
+        viewAllClick = { viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnViewAllMovements) }
+    )
 }
 
 @Composable
-fun CurrencyDetailContent(viewModel: CryptoCurrencyDetailViewModel){
-    var selectedDateRange by remember { mutableStateOf(FilterDateByDays.YESTERDAY.days) }
+fun CurrencyDetailContent(
+    uiState: CryptoCurrencyMovementsViewModel.UiState,
+    backPressed: () -> Unit,
+    onDateChanged: (Long) -> Unit,
+    viewAllClick : () -> Unit
+) {
+
+    val movements = uiState.cryptoMovements.collectAsLazyPagingItems()
+
+    var selectedDateRange by remember { mutableStateOf(FilterDateByDays.YESTERDAY.time) }
     val graphicColor =
-        if (viewModel.uiState.balanceItem?.investedBalanceCurrency?.contains("+") == true)
+        if (uiState.cryptoItem?.investedBalanceCurrency?.contains("+") == true)
             MultimoneyTheme.colors.cryptoWalletGainsColor else MultimoneyTheme.colors.cryptoLossesColor
 
     Scaffold(
         topBar = {
             TopNavBar(
                 isRightButtonVisible = false,
-                onLeftButtonClick = {
-                    viewModel.onUIEvent(CryptoCurrencyDetailViewModel.UIEvent.OnNavigateBack)
-                },
+                onLeftButtonClick = backPressed
             )
         },
         modifier = Modifier.fillMaxSize(),
@@ -86,14 +103,14 @@ fun CurrencyDetailContent(viewModel: CryptoCurrencyDetailViewModel){
             Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Image(
-                        painter = rememberAsyncImagePainter(viewModel.uiState.balanceItem?.url_image),
+                        painter = rememberAsyncImagePainter(uiState.cryptoItem?.url_image),
                         contentDescription = ""
                     )
                     Text(
                         modifier = Modifier.padding(start = 12.dp),
                         text = stringResource(
                             id = R.string.currency_detail_title,
-                            viewModel.uiState.balanceItem?.asset ?: "",
+                            uiState.cryptoItem?.asset ?: "",
                         ),
                         style = MaterialTheme.typography.h6.copy(
                             fontWeight = FontWeight.SemiBold,
@@ -105,37 +122,33 @@ fun CurrencyDetailContent(viewModel: CryptoCurrencyDetailViewModel){
                     modifier = Modifier.padding(top = 16.dp),
                     text = stringResource(
                         id = R.string.dollar_symbol_value,
-                        viewModel.uiState.balanceItem?.balanceDollars.toString()
+                        uiState.cryptoItem?.balanceDollars.toString()
                     ),
                     style = Typography.h4.copy(color = MultimoneyTheme.colors.text)
                 )
                 Text(
-                    text = "${viewModel.uiState.balanceItem?.available} ${viewModel.uiState.balanceItem?.asset}",
+                    text = "${uiState.cryptoItem?.available} ${uiState.cryptoItem?.asset}",
                     style = Typography.body2,
                     color = WhiteTransparency60
                 )
                 Text(
                     text = stringResource(
                         id = R.string.currency_item_description,
-                        viewModel.uiState.balanceItem?.investedBalanceCurrency ?: "",
-                        viewModel.uiState.balanceItem?.percentageInvestedCurrency ?: ""
+                        uiState.cryptoItem?.investedBalanceCurrency ?: "",
+                        uiState.cryptoItem?.percentageInvestedCurrency ?: ""
                     ),
                     style = Typography.body2,
                     color = MultimoneyTheme.colors.labelText
                 )
-                WalletCryptoGraphic(
-                    clientCryptoBalanceHistory = viewModel.uiState.historicalBalance,
-                    graphicColor = graphicColor,
+                MarketCurrencyDetailsGraphic(
+                    currencyHistory = uiState.historicalBalance,
+                    graphicColor = graphicColor
                 )
                 DateFilterDWMYSection(
                     selectedDateFilter = selectedDateRange,
                     onDateFilterSelected = { dateSelected ->
                         selectedDateRange = dateSelected
-                        viewModel.onUIEvent(
-                            CryptoCurrencyDetailViewModel.UIEvent.OnSetDateRange(
-                                dateSelected
-                            )
-                        )
+                        onDateChanged(selectedDateRange)
                     }
                 )
                 Row(
@@ -151,7 +164,9 @@ fun CurrencyDetailContent(viewModel: CryptoCurrencyDetailViewModel){
                         style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                         color = MultimoneyTheme.colors.labelText
                     )
-                    TextButton(onClick = { }) {
+                    TextButton(onClick = {
+                        viewAllClick()
+                    }) {
                         Text(
                             textAlign = TextAlign.End,
                             text = stringResource(id = R.string.currency_detail_see_all),
@@ -160,13 +175,11 @@ fun CurrencyDetailContent(viewModel: CryptoCurrencyDetailViewModel){
                         )
                     }
                 }
-                LazyColumn(content = {
-                    viewModel.uiState.cryptoMovement?.items?.let {
-                        items(it) { cryptoMovement ->
-                            CryptoMovementItem(cryptoMovement)
-                        }
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    movements.itemSnapshotList.items.forEach {
+                        CryptoCurrencyMovementItem(cryptoCurrencyMovement = it)
                     }
-                })
+                }
             }
         }
     }

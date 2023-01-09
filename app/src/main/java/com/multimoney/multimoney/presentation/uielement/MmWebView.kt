@@ -11,6 +11,7 @@ fun MmWebView(url: String, context: Context) {
     AndroidView(factory = {
         WebView(context).apply {
             webViewClient = WebViewClient()
+            settings.javaScriptEnabled = true
             loadUrl(url)
         }
     })

@@ -30,7 +30,7 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiary.SmartBeneficiaryScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaScreen
-import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressScreen
+import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivingAddressScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeScreen
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -155,7 +155,7 @@ fun GetSvStepContent(
 ) {
     when (step) {
         SmartSteps.One.id -> SmartDocumentScreen(sharedViewModel = viewModel)
-        SmartSteps.Two.id -> SmartLivAddressScreen(sharedViewModel = viewModel)
+        SmartSteps.Two.id -> SmartLivingAddressScreen(sharedViewModel = viewModel)
         SmartSteps.Three.id -> SourceIncomeScreen(sharedViewModel = viewModel)
         SmartSteps.Four.id -> SmartBeneficiaryScreen(sharedViewModel = viewModel)
         SmartSteps.Five.id -> SmartFactaScreen(sharedViewModel = viewModel)
@@ -168,7 +168,7 @@ fun GetCrStepContent(
     viewModel: SmartViewModel
 ) {
     when (step) {
-        SmartSteps.One.id -> SmartLivAddressScreen(sharedViewModel = viewModel)
+        SmartSteps.One.id -> SmartLivingAddressScreen(sharedViewModel = viewModel)
         SmartSteps.Two.id -> SourceIncomeScreen(sharedViewModel = viewModel)
         SmartSteps.Three.id -> SmartFactaScreen(sharedViewModel = viewModel)
     }

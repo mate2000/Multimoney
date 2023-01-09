@@ -51,11 +51,10 @@ import com.onfido.android.sdk.capture.Onfido.OnfidoResultListener
 import com.onfido.android.sdk.capture.errors.OnfidoException
 import com.onfido.android.sdk.capture.upload.Captures
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import timber.log.Timber
+import javax.inject.Inject
 
 @HiltViewModel
 class SmartOnfidoViewModel @Inject constructor(
@@ -121,7 +120,7 @@ class SmartOnfidoViewModel @Inject constructor(
                 names,
                 lastNames,
                 identification,
-                getApplicationId(),
+                BuildConfig.APPLICATION_ID,
                 Brand.CostaRica.id,
                 user
             ).collectLatest { result ->
@@ -144,20 +143,12 @@ class SmartOnfidoViewModel @Inject constructor(
                 names,
                 lastNames,
                 identification,
-                getApplicationId(),
+                BuildConfig.APPLICATION_ID,
                 Brand.CostaRica.id,
                 user
             ).collectLatest { result ->
                 onFidoTokenEvent.emit(result)
             }
-        }
-    }
-
-    private fun getApplicationId(): String {
-        return if (BuildConfig.DEBUG) {
-            BuildConfig.ONFIDO_APPLICATION_ID
-        } else {
-            BuildConfig.APPLICATION_ID
         }
     }
 
@@ -221,14 +212,14 @@ class SmartOnfidoViewModel @Inject constructor(
                 user
             ).collectLatest { result ->
                 result.onSuccess {
-                    Timber.d("onFido status: ${it.id}")
+                    // nothing to do here
                 }
                 result.onFailure {
-                    Timber.d("onFido status: ${it.errorCode}")
+                    // nothing to do here
                 }
             }
-            navigateToCorrectScreen()
         }
+        navigateToCorrectScreen()
     }
 
     private fun navigateToCorrectScreen() {

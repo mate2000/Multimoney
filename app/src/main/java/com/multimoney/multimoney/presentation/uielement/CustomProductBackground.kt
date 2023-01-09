@@ -13,7 +13,6 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R.drawable
@@ -29,7 +28,6 @@ import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Se
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Tertiary
 import com.multimoney.multimoney.presentation.util.coloredShadow
 
-const val SIXTY_PERCENT = 0.90
 @Preview
 @Composable
 fun CustomProductBackground(
@@ -37,12 +35,6 @@ fun CustomProductBackground(
     type: ProductBackGroundType = Primary,
     content: @Composable () -> Unit = {}
 ) {
-
-    val configuration = LocalConfiguration.current
-
-    val screenWidth = configuration.screenWidthDp.dp
-    val startOffset = screenWidth.value * SIXTY_PERCENT
-
     val shadowCardColor: Color
     val cardResourceId: Int
     when (type) {

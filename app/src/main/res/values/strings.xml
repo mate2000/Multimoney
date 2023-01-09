@@ -1013,6 +1013,10 @@
     <!-- Payment Schedule Card List-->
     <string name="payment_schedule_card_list_title" translatable="false">Selecciona una tarjeta para programar tu pago</string>
     <string name="payment_schedule_card_list_add_card" translatable="false">Agregar tarjeta</string>
+    <string name="payment_schedule_card_list_dialog_title_sv" translatable="false">¿Estás seguro que querés salir?</string>
+    <string name="payment_schedule_card_list_dialog_title_gt" translatable="false">¿Estás seguro que quieres salir?</string>
+    <string name="payment_schedule_card_list_dialog_description_sv" translatable="false">Puedes programar tu pago automático cuando quieras.</string>
+    <string name="payment_schedule_card_list_dialog_description_gt" translatable="false">Puedes programar tu pago automático cuando quieras.</string>
 
     <!-- Disbursement Amount-->
     <string name="disbursement_amount_title" translatable="false">¿Cuánto \ndinero necesitás?</string>

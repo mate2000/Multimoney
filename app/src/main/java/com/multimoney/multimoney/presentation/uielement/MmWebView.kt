@@ -22,7 +22,7 @@ fun MmWebViewHtml(html: String, context: Context) {
     AndroidView(factory = {
         WebView(context).apply {
             webViewClient = WebViewClient()
-            loadData(formatHtmlToDarkMode(html), "text/html", "UTF-8")
+            loadData(formatHtmlToDarkMode(html), MIME_TYPE, HTML_ENCODING)
         }
     })
 }
@@ -31,6 +31,8 @@ private fun formatHtmlToDarkMode(htmlString: String): String =
     HTML_PLACEHOLDER.replace(BODY_PLACEHOLDER, htmlString)
 
 private const val BODY_PLACEHOLDER = "BODY_PLACEHOLDER"
+private const val MIME_TYPE = "text/html"
+private const val HTML_ENCODING = "UTF-8"
 
 /* A string that is used to format the html string to dark mode. */
 private const val HTML_PLACEHOLDER = "<!DOCTYPE html>\n" +

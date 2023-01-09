@@ -47,6 +47,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetCloseDialogTexts
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnShowBottomSheet
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnHideBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnUpdateScreenConfigData
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.ui.home.HomeState
@@ -143,10 +144,16 @@ class CreditViewModel @Inject constructor(
     }
 
     fun onHideBottomSheet() {
+        uiState = uiState.copy(
+            isBottomSheetVisible = false
+        )
         emitBaseEvent(BaseEvent.OnHideBottomSheet)
     }
 
     fun onShowBottomSheet() {
+        uiState = uiState.copy(
+            isBottomSheetVisible = true
+        )
         emitBaseEvent(BaseEvent.OnShowBottomSheet)
     }
 
@@ -195,7 +202,8 @@ class CreditViewModel @Inject constructor(
         if (previousStep > CreditStep.One.id || uiState.currentStep == CreditStep.Two.id) {
             uiState = uiState.copy(
                 currentStep = previousStep,
-                isCloseVisible = previousStep >= CreditStep.One.id
+                isCloseVisible = previousStep >= CreditStep.One.id,
+                isBottomSheetVisible = false
             )
         } else {
             navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
@@ -282,7 +290,8 @@ class CreditViewModel @Inject constructor(
         val isCurrentLocationButtonVisible: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         var lastStep: Int = 1,
-        var loadContent: Boolean = false
+        var loadContent: Boolean = false,
+        val isBottomSheetVisible: Boolean = false
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -316,6 +325,7 @@ class CreditViewModel @Inject constructor(
             is OnCallMutationSaveCreditFlowStep -> onCallMutationSaveCreditFlowStep()
             is OnBackVisibilityValueChanged -> uiState = uiState.copy(isBackVisible = event.isVisible)
             is OnShowBottomSheet -> onShowBottomSheet()
+            is OnHideBottomSheet -> onHideBottomSheet()
             is OnNavigateToHome -> onNavigateToHome()
         }
     }
@@ -346,6 +356,7 @@ class CreditViewModel @Inject constructor(
         object OnCallMutationSaveCreditFlowStep : UIEvent()
         data class OnBackVisibilityValueChanged(val isVisible: Boolean) : UIEvent()
         object OnShowBottomSheet : UIEvent()
+        object OnHideBottomSheet : UIEvent()
         object OnNavigateToHome : UIEvent()
     }
 

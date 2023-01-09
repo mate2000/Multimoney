@@ -21,6 +21,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnCallMutationSaveCreditFlowStep
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnShowBottomSheet
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnHideBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.origination.additionalinformation.AdditionalInformationViewModel.UIEvent.OnInitData
 import com.multimoney.multimoney.presentation.ui.credit.origination.additionalinformation.AdditionalInformationViewModel.UIEvent.OnLoadCreditSteps
 import com.multimoney.multimoney.presentation.ui.credit.origination.additionalinformation.AdditionalInformationViewModel.UIEvent.OnNextActionClick
@@ -46,6 +47,7 @@ fun AdditionalInformationScreen(
                         OnNextActionClick(
                             user = sharedViewModel.email,
                             nextStepAction = {
+                                sharedViewModel.onUIEvent(OnHideBottomSheet)
                                 sharedViewModel.onUIEvent(OnCallMutationSaveCreditFlowStep)
                             },
                             saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper

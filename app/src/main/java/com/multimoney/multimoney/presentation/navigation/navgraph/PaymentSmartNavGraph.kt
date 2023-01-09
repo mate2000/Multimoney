@@ -6,6 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
+import com.multimoney.multimoney.presentation.navigation.HOME_STATE
 import com.multimoney.multimoney.presentation.navigation.IBAN_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.ID_VISA_CARD
@@ -21,8 +22,8 @@ import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAc
 import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountsScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsScreen
-import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodScreen
-import com.multimoney.multimoney.presentation.ui.smart.payment.options.SmartPaymentOptionsScreen
+import com.multimoney.multimoney.presentation.ui.smart.payment.methodsv.SmartPaymentMethodScreen
+import com.multimoney.multimoney.presentation.ui.smart.payment.optionscr.SmartPaymentOptionsContainer
 import com.multimoney.multimoney.presentation.ui.smart.payment.transfer.SavingMethodTransferScreen
 
 const val MASKED_CARD = "masked_card"
@@ -44,10 +45,8 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
                     navController.navigate(it.route)
                 },
                 onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        PREVIOUS_IS_RESTART,
-                        it.isRestart
-                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,
@@ -67,10 +66,8 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
                     navController.navigate(it.route)
                 },
                 onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        PREVIOUS_IS_RESTART,
-                        it.isRestart
-                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,
@@ -91,15 +88,13 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
                 navArgument(ID_LOAN_CLIENT) { type = NavType.StringType }
             )
         ) {
-            SmartPaymentOptionsScreen(
+            SmartPaymentOptionsContainer(
                 onNavigate = {
                     navController.navigate(it.route)
                 },
                 onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        PREVIOUS_IS_RESTART,
-                        it.isRestart
-                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,
@@ -114,10 +109,8 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
                     navController.navigate(it.route)
                 },
                 onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        PREVIOUS_IS_RESTART,
-                        it.isRestart
-                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,
@@ -144,10 +137,8 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
                     navController.navigate(it.route)
                 },
                 onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        PREVIOUS_IS_RESTART,
-                        it.isRestart
-                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,
@@ -164,15 +155,13 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
                 navArgument(ID_VISA_CARD) { type = NavType.LongType },
                 navArgument(PREVIOUS_SCREEN) { type = NavType.StringType },
                 navArgument(MASKED_CARD) { type = NavType.StringType },
-                navArgument(BANK_DETAIL) { type = NavType.StringType },
+                navArgument(BANK_DETAIL) { type = NavType.StringType }
             )
         ) {
             SavingAmountScreen(
                 onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        PREVIOUS_IS_RESTART,
-                        it.isRestart
-                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,

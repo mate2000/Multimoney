@@ -53,12 +53,13 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 @Preview
 fun SmartOnfidoScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: SmartOnfidoViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
 
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
+        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)
     }
 
     val launchOnFidoActivityResult = rememberLauncherForActivityResult(StartActivityForResult()) { result ->

@@ -229,7 +229,7 @@ fun VisaCardScreen(
         }
         if (viewModel.uiState.isCardBlocked) {
             CustomInformativeChip(
-                text = stringResource(id = string.visa_card_block_disclaimer),
+                text = stringResource(id = viewModel.uiState.visaCardBlockDisclaimer),
                 textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.textInformation),
                 modifier = Modifier.padding(vertical = 24.dp, horizontal = 16.dp),
                 startIcon = R.drawable.ic_information,

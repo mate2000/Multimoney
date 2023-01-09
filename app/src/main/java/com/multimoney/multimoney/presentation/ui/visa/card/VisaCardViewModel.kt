@@ -38,6 +38,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.BaseEvent.OnOpenNfcConfig
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.BaseEvent.OnOpenTapAndPayConfig
@@ -63,6 +64,7 @@ import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.NfcHelper
 import com.multimoney.multimoney.presentation.util.catalog.CardType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.util.BiometricHelper
 import com.multimoney.multimoney.util.CognitoHelper
 import com.novopayment.sdk.vts.NovoVTS
@@ -274,9 +276,12 @@ class VisaCardViewModel @Inject constructor(
         callCognitoSignIn()
     }
 
-    private fun onPasswordForgotPassword() {
-        // TODO: Move to password flow
-    }
+    private fun onPasswordForgotPassword() = navigateTo(
+        route = Screen.RequestForgotPassword.baseRoute
+            .plus(
+                getNavParam(PREVIOUS_SCREEN, Screen.VisaCardScreen.route)
+            )
+    )
 
     private fun onShowPasswordBottomSheet(isPasswordMessage: Boolean) {
         uiState = uiState.copy(
@@ -284,9 +289,9 @@ class VisaCardViewModel @Inject constructor(
             isPasswordConfirmButtonEnabled = false,
             isPasswordMessage = isPasswordMessage,
             passwordTitle = if (isPasswordMessage) {
-                R.string.visa_card_password_message_title
+                string.visa_card_password_message_title
             } else {
-                R.string.visa_card_password_title
+                string.visa_card_password_title
             },
             bottomSheetVisibleState = ModalBottomSheetState(Expanded)
         )
@@ -297,7 +302,7 @@ class VisaCardViewModel @Inject constructor(
     }
 
     private fun onTryWithPassword() {
-        uiState = uiState.copy(isPasswordMessage = false, passwordTitle = R.string.visa_card_password_title)
+        uiState = uiState.copy(isPasswordMessage = false, passwordTitle = string.visa_card_password_title)
     }
 
     private fun callCognitoSignIn() {
@@ -420,12 +425,21 @@ class VisaCardViewModel @Inject constructor(
             uiState.isCardBlocked.not() -> uiState = uiState.copy(
                 dialogParameters = DialogParameters(
                     titleResource = string.visa_card_block_dialog_title,
-                    descriptionResource = string.visa_card_block_dialog_subtitle,
+                    descriptionResource = if (idBrand == Guatemala.id) {
+                        string.visa_card_block_dialog_subtitle_gt
+                    } else {
+                        string.visa_card_block_dialog_subtitle
+                    },
                     positiveResource = string.locked,
                     negativeResource = string.cancel,
                     positiveAction = { onCallMutationCardBlockingUseCase() },
                     isActive = mutableStateOf(true)
-                )
+                ),
+                visaCardBlockDisclaimer = if (idBrand == Guatemala.id) {
+                    string.visa_card_block_disclaimer_gt
+                } else {
+                    string.visa_card_block_disclaimer
+                }
             )
             uiState.isCardBlocked && uiState.isNfcAvailable.not() && balanceCardInformation?.allowUnLock == true ->
                 uiState =
@@ -479,6 +493,7 @@ class VisaCardViewModel @Inject constructor(
         val isPasswordConfirmButtonEnabled: Boolean = false,
         val bottomSheetVisibleState: ModalBottomSheetState = ModalBottomSheetState(Hidden),
         val dialogParameters: DialogParameters = DialogParameters(),
+        val visaCardBlockDisclaimer: Int = R.string.empty,
         val isLoading: Boolean = false
     )
 
@@ -493,7 +508,7 @@ class VisaCardViewModel @Inject constructor(
                 encodeData(
                     balanceCardInformation
                 )
-                }/$availableBalanceLabel/$idClient/$idLoanClient"
+                }"
             )
             is OnOpenDialogConfirmToStartTokenizationProcess -> uiState = uiState.copy(
                 dialogParameters = DialogParameters(

@@ -116,7 +116,7 @@ class VisaIssuanceViewModel @Inject constructor(
                 encodeData(
                     balanceCardInformation
                 )
-                }/$availableBalanceLabel/$idClient/$idLoanClient",
+                }",
                 Screen.VisaIssuanceScreen.route
             )
         }

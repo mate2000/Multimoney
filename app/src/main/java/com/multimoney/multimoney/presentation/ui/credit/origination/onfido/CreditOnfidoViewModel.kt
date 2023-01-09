@@ -43,6 +43,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.Credi
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnSetCloseDialogTexts
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnSetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.RefreshOnFidoToken
+import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.AppFlow
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -289,10 +290,7 @@ class CreditOnfidoViewModel @Inject constructor(
     }
 
     private fun onNavigateToHome() {
-        popAndNavigateTo(
-            route = Screen.HomeScreen.route,
-            popTo = Screen.CreditScreen.route
-        )
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
     }
 
     fun onUIEvent(event: UIEvent) {

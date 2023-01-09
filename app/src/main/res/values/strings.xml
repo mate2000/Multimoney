@@ -752,6 +752,8 @@
     <!-- visa payment success -->
     <string name="visa_payment_success_title" translatable="false">Tu pago se realizó con éxito</string>
     <string name="visa_payment_success_description" translatable="false">Recibirás un comprobante y documentación en tu correo electrónico</string>
+    <string name="visa_payment_error_title" translatable="false">Hubo un error de conexión</string>
+    <string name="visa_payment_error_description" translatable="false">Perdimos la conexión al hacer el\npago, intentemos una vez más</string>
 
     <!-- Credit Loading -->
     <string name="credit_glad_to_see_you" translatable="false">¡Nos alegra que regresés!</string>

@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -33,7 +32,7 @@ import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIE
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnBlockUnblockCardClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnCallNovoGetFavoriteCard
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnHandleTapAndPayIntentResult
-import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnHidePaymentSuccessScreen
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnHideAlertResultScreen
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnInitializeBiometricPrompt
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigatePreferences
@@ -58,8 +57,6 @@ import com.multimoney.multimoney.presentation.util.getCardNumberTwo
 import com.multimoney.multimoney.presentation.util.getTapAndPayIntent
 
 @Composable
-@Preview
-@OptIn(ExperimentalMaterialApi::class)
 fun VisaCardScreen(
     isRestart: Boolean = true,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
@@ -67,9 +64,7 @@ fun VisaCardScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: VisaCardViewModel = hiltViewModel()
 ) {
-    val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
-    val fragmentActivity = LocalContext.current as FragmentActivity
 
     val launch = rememberLauncherForActivityResult(contract = StartActivityForResult(), onResult = { result ->
         viewModel.onUIEvent(OnHandleTapAndPayIntentResult(result))
@@ -117,6 +112,18 @@ fun VisaCardScreen(
             }
         }
     }
+
+    VisaCardContent(viewModel)
+}
+
+@Composable
+@Preview
+@OptIn(ExperimentalMaterialApi::class)
+fun VisaCardContent(
+    viewModel: VisaCardViewModel = hiltViewModel()
+) {
+    val fragmentActivity = LocalContext.current as FragmentActivity
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -242,14 +249,16 @@ fun VisaCardScreen(
         }
     }
 
-    if (viewModel.uiState.showPaymentSuccessScreen) {
+    if (viewModel.uiState.showAlertResultScreen) {
         AlertResult(
-            iconResource = drawable.ic_success_symbol,
-            titleResource = string.visa_payment_success_title,
-            descriptionResource = string.visa_payment_success_description,
-            buttonTextResource = string.finalize,
-            isTopNavBarVisible = false,
-            onButtonClick = { viewModel.onUIEvent(OnHidePaymentSuccessScreen) }
+            iconResource = viewModel.uiState.alertResultScreenIconResource,
+            titleResource = viewModel.uiState.alertResultScreenTitleResource,
+            descriptionResource = viewModel.uiState.alertResultScreenDescriptionResource,
+            buttonTextResource = viewModel.uiState.alertResultScreenButtonResource,
+            onButtonClick = viewModel.uiState.alertResultScreenOnButtonClick,
+            isTopNavBarVisible = viewModel.uiState.alertResultScreenRightButtonVisible,
+            isRightButtonVisible = viewModel.uiState.alertResultScreenRightButtonVisible,
+            onRightButtonClick = { viewModel.onUIEvent(OnHideAlertResultScreen) }
         )
     }
 

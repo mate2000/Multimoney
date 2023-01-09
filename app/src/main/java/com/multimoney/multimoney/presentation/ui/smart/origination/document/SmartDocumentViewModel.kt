@@ -36,6 +36,7 @@ import com.multimoney.multimoney.presentation.util.YEAR_MONTH_DAY_PATTERN
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import com.multimoney.multimoney.presentation.util.onBirthDateAgeValidation
+import com.multimoney.multimoney.presentation.util.onExpirationDateValidation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
@@ -52,6 +53,33 @@ class SmartDocumentViewModel @Inject constructor(
     // UIState
     var uiState by mutableStateOf(UIState())
         private set
+
+    /**
+     * this function is intended to load the form data on the UI, after getting the
+     * data coming from the current step (provided from the backend)
+     */
+    private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
+        val birthdate = accountSmartData?.birthday?.let {
+            getFormatDateByString(
+                it,
+                ISO_8601_API_FORMAT_PATTERN,
+                YEAR_MONTH_DAY_PATTERN
+            )
+        } ?: ""
+        val expirationDate = accountSmartData?.expirationDate?.let {
+            getFormatDateByString(
+                it,
+                ISO_8601_API_FORMAT_PATTERN,
+                YEAR_MONTH_DAY_PATTERN
+            )
+        } ?: ""
+
+        if (birthdate.isNotBlank()) onBirthDateValueChange(birthdate, LocalDate.parse(birthdate))
+        if (expirationDate.isNotBlank()) onExpirationDateValueChange(expirationDate)
+        onGenderChange(accountSmartData?.strGenre.orEmpty())
+        onCivilStateChange(accountSmartData?.strMaritalStatus.orEmpty())
+        onProfessionChange(accountSmartData?.stringProfessionType.orEmpty())
+    }
 
     private fun callQueryNationalitiesUseCase(user: String, idBrand: Int) =
         executeUseCase {
@@ -169,8 +197,10 @@ class SmartDocumentViewModel @Inject constructor(
         }
 
     private fun onExpirationDateValueChange(expirationDate: String) {
-        uiState = uiState.copy(expirationDate = expirationDate)
-        validateForm()
+        if (onExpirationDateValidation(expirationDate)) {
+            uiState = uiState.copy(expirationDate = expirationDate)
+            validateForm()
+        }
     }
 
     private fun onBirthDateValueChange(birthdate: String, pickedDate: LocalDate) {
@@ -218,32 +248,6 @@ class SmartDocumentViewModel @Inject constructor(
 
     private fun onNextActionClick(nextStepAction: () -> Unit) {
         nextStepAction()
-    }
-
-    /**
-     * this function is intended to load the form data on the UI, after getting the
-     * data coming from the current step (provided from the backend)
-     */
-    private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
-        uiState = uiState.copy(
-            birthdate = accountSmartData?.birthday?.let {
-                getFormatDateByString(
-                    it,
-                    ISO_8601_API_FORMAT_PATTERN,
-                    YEAR_MONTH_DAY_PATTERN
-                )
-            } ?: "",
-            expirationDate = accountSmartData?.expirationDate?.let {
-                getFormatDateByString(
-                    it,
-                    ISO_8601_API_FORMAT_PATTERN,
-                    YEAR_MONTH_DAY_PATTERN
-                )
-            } ?: ""
-        )
-        onGenderChange(accountSmartData?.strGenre.orEmpty())
-        onCivilStateChange(accountSmartData?.strMaritalStatus.orEmpty())
-        onProfessionChange(accountSmartData?.stringProfessionType.orEmpty())
     }
 
     data class UIState(

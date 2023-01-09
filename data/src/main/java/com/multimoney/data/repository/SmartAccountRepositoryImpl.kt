@@ -30,8 +30,8 @@ import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
 import com.multimoney.domain.repository.SmartAccountRepository
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 class SmartAccountRepositoryImpl @Inject constructor(
     private val graphqlApi: GraphqlApi
@@ -162,7 +162,7 @@ class SmartAccountRepositoryImpl @Inject constructor(
     override suspend fun queryStepByStep(
         user: String,
         idBrand: Int,
-        idRequest: Int
+        idRequest: Long
     ): Flow<MultimoneyResult<StepByStep?>> =
         fetchData(
             apolloCall = graphqlApi.queryStepByStep(user, idBrand, idRequest),

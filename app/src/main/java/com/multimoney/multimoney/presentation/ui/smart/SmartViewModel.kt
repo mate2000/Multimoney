@@ -10,7 +10,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.SmartAccountStatusRequest
 import com.multimoney.data.util.catalog.SmartStatus
 import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCase
@@ -31,9 +30,9 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.COMING_FROM_CR
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_GLOBAL_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
-import com.multimoney.multimoney.presentation.navigation.navgraph.REQUEST_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
@@ -81,7 +80,7 @@ class SmartViewModel @Inject constructor(
     val email: String = savedStateHandle[EMAIL] ?: ""
     val firstName: String = savedStateHandle[FIRST_NAME] ?: ""
     val lastName: String = savedStateHandle[LAST_NAME] ?: ""
-    val requestStatus: String = savedStateHandle[REQUEST_STATUS] ?: ""
+    var globalRequestId: Long = savedStateHandle[ID_GLOBAL_REQUEST] ?: 0
 
     // Stateless
     private var overridePreviousAction: (() -> Unit)? = null
@@ -91,7 +90,6 @@ class SmartViewModel @Inject constructor(
     private var idSysRequest: Long = 0
     var accountSmartData: AccountSmartData? = null
     var isOnFidoVerified = true
-    var globalRequestId = 0
     var nextAction: () -> Unit = {}
 
     // UIState
@@ -107,30 +105,32 @@ class SmartViewModel @Inject constructor(
     }
 
     private fun callQueryStepByStepUseCase() = executeUseCase {
-        queryStepByStepUseCase.invoke(
-            user = accountSmartData?.user ?: "",
-            idBrand = accountSmartData?.idBrand ?: 0,
-            idRequest = globalRequestId
-        ).collectLatest { result ->
-            result.onSuccess { stepByStep ->
-                stepByStep?.let {
-                    navigateToScreenOnStepFetched(it)
+        if (globalRequestId != 0L) {
+            queryStepByStepUseCase.invoke(
+                user = accountSmartData?.user ?: "",
+                idBrand = accountSmartData?.idBrand ?: 0,
+                idRequest = globalRequestId
+            ).collectLatest { result ->
+                result.onSuccess { stepByStep ->
+                    stepByStep?.let {
+                        navigateToScreenOnStepFetched(it)
+                    }
+                    onUIEvent(OnLoadingValueChange(false))
                 }
-                onUIEvent(OnLoadingValueChange(false))
-            }
-            result.onFailure {
-                onUIEvent(
-                    OnFailureWithDialog(
-                        isLoading = false,
-                        openDialog = DialogParameters(
-                            description = it.getError() ?: "",
-                            isActive = mutableStateOf(true)
+                result.onFailure {
+                    onUIEvent(
+                        OnFailureWithDialog(
+                            isLoading = false,
+                            openDialog = DialogParameters(
+                                description = it.getError() ?: "",
+                                isActive = mutableStateOf(true)
+                            )
                         )
                     )
-                )
-            }
-            result.onLoading {
-                onUIEvent(OnLoadingValueChange(true))
+                }
+                result.onLoading {
+                    onUIEvent(OnLoadingValueChange(true))
+                }
             }
         }
     }
@@ -148,7 +148,7 @@ class SmartViewModel @Inject constructor(
             status = SmartStatus.Search.getIdByName(stepByStep.statusRequest),
             idProfessionType = stepByStep.idProfessionType,
             idCivilStatusType = stepByStep.idMaritalStatus?.toLong(),
-            birthday = stepByStep.birthdate.orEmpty(),
+            birthday = stepByStep.birthdate,
             expirationDate = stepByStep.expirationDate,
             idGender = stepByStep.idGenre?.toLong(),
             strGenre = stepByStep.strGenre,
@@ -162,7 +162,7 @@ class SmartViewModel @Inject constructor(
             strAddressLevel3 = stepByStep.strAddressLevel3,
             positionJob = stepByStep.positionJob,
             idEconomicActivity = stepByStep.idEconomicActivity?.toLong(),
-            institutionPension = stepByStep.institutionalPesion.orEmpty(),
+            institutionPension = stepByStep.institutionalPesion,
             income = stepByStep.income,
             addressDetail = stepByStep.addressDetail,
             user = user,
@@ -171,8 +171,8 @@ class SmartViewModel @Inject constructor(
             aboutCompany = stepByStep.aboutCompany,
             companyName = stepByStep.nameCompany,
             specifiesIncomeSource = stepByStep.specifiesIncomeSource,
-            listBeneficiaries = stepByStep.beneficiary.orEmpty(),
-            entrepreneurship = stepByStep.entrepreneurship.orEmpty(),
+            listBeneficiaries = stepByStep.beneficiary,
+            entrepreneurship = stepByStep.entrepreneurship,
             legalID = stepByStep.legalID,
             isPEP = stepByStep.isPEP,
             isUSCitizen = stepByStep.isUSCitizen,
@@ -190,32 +190,34 @@ class SmartViewModel @Inject constructor(
     }
 
     private fun callMutationInitialRequestUseCase() {
-        if (requestStatus == SmartAccountStatusRequest.PENDING.status)
-        executeUseCase(
-            action = {
-                mutationInitialRequestUseCase.invoke(
-                    pkUser = accountSmartData?.pkUser?.toInt()?.toLong() ?: 0,
-                    idBrand = accountSmartData?.idBrand ?: 0,
-                    user = accountSmartData?.user ?: ""
-                ).collectLatest { result ->
-                    result.onSuccess {
-                        globalRequestId = it?.idGlobalRequest ?: 0
-                        onUIEvent(OnLoadingValueChange(false))
-                        callQueryStepByStepUseCase()
-                    }
-                    result.onFailure {
-                        onUIEvent(OnLoadingValueChange(false))
-                        uiState = uiState.copy(
-                            isAlertResultVisible = true,
-                            alertResultDescription = it.getError()
-                        )
-                    }
-                    result.onLoading {
-                        onUIEvent(OnLoadingValueChange(true))
+        if (globalRequestId == 0L) {
+            executeUseCase(
+                action = {
+                    mutationInitialRequestUseCase.invoke(
+                        pkUser = accountSmartData?.pkUser?.toLongOrNull() ?: 0,
+                        idBrand = accountSmartData?.idBrand ?: 0,
+                        user = accountSmartData?.user ?: ""
+                    ).collectLatest { result ->
+                        result.onSuccess {
+                            globalRequestId = it?.idGlobalRequest ?: 0
+                            onUIEvent(OnLoadingValueChange(false))
+                        }
+                        result.onFailure {
+                            onUIEvent(OnLoadingValueChange(false))
+                            uiState = uiState.copy(
+                                isAlertResultVisible = true,
+                                alertResultDescription = it.getError()
+                            )
+                        }
+                        result.onLoading {
+                            onUIEvent(OnLoadingValueChange(true))
+                        }
                     }
                 }
-            }
-        )
+            )
+        } else {
+            callQueryStepByStepUseCase()
+        }
     }
 
     private fun callMutationGlobalRequestUseCase(isLastStep: Boolean = false) = executeUseCase(
@@ -292,7 +294,7 @@ class SmartViewModel @Inject constructor(
             user = user,
             idBrand = idBrandAsInt,
             identificationNumber = identification,
-            idRequest = globalRequestId.toLong()
+            idRequest = globalRequestId
         ).collectLatest { result ->
             result.onSuccess {
                 onUIEvent(OnLoadingValueChange(false))
@@ -566,7 +568,5 @@ class SmartViewModel @Inject constructor(
         const val SMART_INDICATOR_CR_TOTAL_STEPS = 3
         const val DEFAULT_ID_BRAND_ERROR = -1
         const val URL_EMPTY = "url"
-        const val STEP_BY_STEP_EVENT_DELAY = 1500L
     }
-}
 }

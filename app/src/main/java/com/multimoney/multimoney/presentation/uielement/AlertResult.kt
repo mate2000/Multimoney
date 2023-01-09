@@ -14,8 +14,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
@@ -30,9 +33,11 @@ import com.multimoney.multimoney.presentation.uielement.CustomButtonType.Primary
  * Parameters:
  * @param iconResource: Result icon resource.
  * @param titleResource: Result title resource
- * @param descriptionResource: Result description resource
  * @param titleString: Result title string value
+ * @param titleAnnotatedString: Result title annotated string value
+ * @param descriptionResource: Result description resource
  * @param descriptionString: Result description string value
+ * @param descriptionAnnotatedString: Result description annotated string value
  * @param buttonTextResource: Result button text resource
  * @param buttonTextString: Result button text resource
  * @param isTopNavBarVisible: Make TopNavBar visible
@@ -48,9 +53,11 @@ import com.multimoney.multimoney.presentation.uielement.CustomButtonType.Primary
 fun AlertResult(
     iconResource: Int = R.drawable.ic_error_symbol,
     titleResource: Int = R.string.empty,
-    descriptionResource: Int = R.string.empty,
     titleString: String = "",
+    titleAnnotatedString: AnnotatedString = AnnotatedString(""),
+    descriptionResource: Int = R.string.empty,
     descriptionString: String = "",
+    descriptionAnnotatedString: AnnotatedString = AnnotatedString(""),
     buttonTextResource: Int = R.string.empty,
     isTopNavBarVisible: Boolean = true,
     isLeftButtonVisible: Boolean = true,
@@ -63,9 +70,7 @@ fun AlertResult(
     secondaryButtonTextResource: Int = R.string.empty
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MultimoneyTheme.colors.background),
+        modifier = Modifier.fillMaxSize().background(MultimoneyTheme.colors.background),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         if (isTopNavBarVisible) {
@@ -78,8 +83,7 @@ fun AlertResult(
         }
 
         Column(
-            modifier = Modifier
-                .wrapContentHeight().fillMaxWidth(),
+            modifier = Modifier.wrapContentHeight().fillMaxWidth(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -89,44 +93,62 @@ fun AlertResult(
             Text(
                 modifier = Modifier.padding(top = 40.dp, start = 24.dp, end = 24.dp),
                 text = if (titleResource != R.string.empty) {
-                    stringResource(id = titleResource)
+                    buildAnnotatedString {
+                        withStyle(
+                            style = Typography.h5.toSpanStyle()
+                                .copy(color = MultimoneyTheme.colors.labelText, fontWeight = FontWeight.SemiBold)
+                        ) { append(stringResource(id = titleResource)) }
+                    }
+                } else if (titleString.isNotEmpty()) {
+                    buildAnnotatedString {
+                        withStyle(
+                            style = Typography.h5.toSpanStyle()
+                                .copy(color = MultimoneyTheme.colors.labelText, fontWeight = FontWeight.SemiBold)
+                        ) { append(titleString) }
+                    }
                 } else {
-                    titleString
+                    titleAnnotatedString
                 },
-                style = Typography.h5.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.labelText,
                 textAlign = TextAlign.Center
             )
             Text(
                 modifier = Modifier.padding(all = 24.dp),
                 text = if (descriptionResource != R.string.empty) {
-                    stringResource(id = descriptionResource)
+                    buildAnnotatedString {
+                        withStyle(
+                            style = Typography.body1.toSpanStyle().copy(color = MultimoneyTheme.colors.labelText)
+                        ) { append(stringResource(id = descriptionResource)) }
+                    }
+                } else if (descriptionString.isNotEmpty()) {
+                    buildAnnotatedString {
+                        withStyle(
+                            style = Typography.body1.toSpanStyle().copy(color = MultimoneyTheme.colors.labelText)
+                        ) { append(descriptionString) }
+                    }
                 } else {
-                    descriptionString
+                    descriptionAnnotatedString
                 },
-                style = Typography.body1,
-                color = MultimoneyTheme.colors.labelText,
                 textAlign = TextAlign.Center
             )
         }
         Column(Modifier.padding(horizontal = 16.dp)) {
             CustomButton(
-                modifier = Modifier
-                    .fillMaxWidth().height(48.dp),
+                modifier = Modifier.fillMaxWidth().height(48.dp),
                 onClick = { onButtonClick() },
                 text = stringResource(id = buttonTextResource),
                 buttonType = PrimaryPrimary
             )
             if (isSecondaryButtonVisible) {
                 CustomButton(
-                    modifier = Modifier
-                        .fillMaxWidth().height(48.dp).padding(top = 8.dp),
+                    modifier = Modifier.fillMaxWidth().height(48.dp).padding(top = 8.dp),
                     onClick = { onSecondaryButtonClick() },
                     text = stringResource(id = secondaryButtonTextResource),
                     buttonType = PrimaryTertiary
                 )
             }
-            Spacer(Modifier.fillMaxWidth().height(40.dp))
+            Spacer(
+                Modifier.fillMaxWidth().height(40.dp)
+            )
         }
     }
 }

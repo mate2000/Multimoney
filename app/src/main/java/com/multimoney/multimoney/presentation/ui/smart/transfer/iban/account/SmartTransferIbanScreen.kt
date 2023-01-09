@@ -40,12 +40,12 @@ import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 @Composable
 fun SmartTransferIbanScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: SmartTransferIbanViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnCallQueryListSinpeAccountUseCaseImpl)
-        viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
+        viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
     }
 
     Column(
@@ -116,10 +116,12 @@ fun PaymentOptions(viewModel: SmartTransferIbanViewModel = hiltViewModel()) {
                 subtitle = stringResource(
                     id = string.smart_account_beneficiary_content,
                     account?.bank ?: "",
+
                     getMaskedAccountIban(
                         account?.sinpeAccount ?: "",
                         stringResource(id = string.payment_account_masked_text)
                     )
+
                 ),
                 modifier = Modifier
                     .fillMaxWidth()

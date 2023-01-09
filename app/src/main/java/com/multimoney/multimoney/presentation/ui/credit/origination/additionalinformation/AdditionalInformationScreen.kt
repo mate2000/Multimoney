@@ -21,6 +21,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnCallMutationSaveCreditFlowStep
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnShowBottomSheet
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnHideBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.origination.additionalinformation.AdditionalInformationViewModel.UIEvent.OnInitData
 import com.multimoney.multimoney.presentation.ui.credit.origination.additionalinformation.AdditionalInformationViewModel.UIEvent.OnLoadCreditSteps
 import com.multimoney.multimoney.presentation.ui.credit.origination.additionalinformation.AdditionalInformationViewModel.UIEvent.OnNextActionClick
@@ -46,6 +47,7 @@ fun AdditionalInformationScreen(
                         OnNextActionClick(
                             user = sharedViewModel.email,
                             nextStepAction = {
+                                sharedViewModel.onUIEvent(OnHideBottomSheet)
                                 sharedViewModel.onUIEvent(OnCallMutationSaveCreditFlowStep)
                             },
                             saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
@@ -67,11 +69,11 @@ fun AdditionalInformationScreen(
     }
 
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(8.dp))
         Text(
             text = stringResource(id = R.string.credit_additional_information_title),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.labelText
+            color = MultimoneyTheme.colors.titleText
         )
         Spacer(Modifier.height(24.dp))
         when (sharedViewModel.idBrand.toInt()) {

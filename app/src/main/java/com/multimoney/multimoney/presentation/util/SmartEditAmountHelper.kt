@@ -22,15 +22,15 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.MASKED_CARD
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.workers.startTimedNotification
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
+import javax.inject.Inject
 
 class SmartEditAmountHelper @Inject constructor(
     private val querySmartExchangeRateUseCase: QuerySmartExchangeRateUseCase,
     private val shareHelper: ShareHelper,
     private val savedStateHandle: SavedStateHandle,
-    private val dataStorePreferences: DataStorePreferences,
+    private val dataStorePreferences: DataStorePreferences
 ) {
 
     // stateless
@@ -43,7 +43,6 @@ class SmartEditAmountHelper @Inject constructor(
     var smartAccount: SmartAccountID? = null
     var ibanAccount: IbanAccountID? = null
     var smartCurrency: CurrencyType? = CurrencyType.Dollar
-    var smartDestinationCurrency : CurrencyType? = CurrencyType.Dollar
     var ibanCurrency: CurrencyType? = null
     var idBrand: Int = 0
     var shouldDisplayExchange: Boolean = false
@@ -51,7 +50,9 @@ class SmartEditAmountHelper @Inject constructor(
     var bankDetail: String = ""
     var previousScreen: String = ""
     var sheetSubtitle: Int = R.string.smart_payment_amount_bottom_sheet_from_card
+    var originTitle: Int = R.string.empty
     var originIcon: Int = R.drawable.ic_visa_card_item
+    var accountName: String = ""
 
     suspend fun onStart() {
         idBrand = dataStorePreferences.getIdBrand().first().toInt()
@@ -78,19 +79,10 @@ class SmartEditAmountHelper @Inject constructor(
         bankDetail = ibanAccount?.bank ?: ""
         maskedCardNumber = ibanAccount?.sinpeAccount ?: ""
         sheetSubtitle = R.string.smart_payment_amount_bottom_sheet_from_card_CR
+        originTitle = R.string.smart_payment_origin_account_label
         originIcon =
             ibanCurrency?.id?.getCurrencyFromId()?.accountIcon ?: CurrencyType.Colon.accountIcon
-        smartDestinationCurrency = when(smartCurrency?.value) {
-            CurrencyType.Dollar.value -> {
-                CurrencyType.Colon
-            }
-            CurrencyType.Colon.value -> {
-                CurrencyType.Dollar
-            }
-            else -> {
-                null
-            }
-        }
+        accountName = ibanAccount?.nameAccount ?: ""
     }
 
     private fun initializeSVValues() {
@@ -98,16 +90,17 @@ class SmartEditAmountHelper @Inject constructor(
         maskedCardNumber = savedStateHandle[MASKED_CARD] ?: ""
         bankDetail = savedStateHandle[BANK_DETAIL] ?: ""
         sheetSubtitle = R.string.smart_payment_amount_bottom_sheet_from_card
+        originTitle = R.string.smart_payment_card_bank_label
         originIcon = R.drawable.ic_visa_card_item
     }
 
     suspend fun getSmartExchangeRate(
         user: String = this.userName,
         idBrand: Int = this.idBrand,
-        abbreviation: String? = this.ibanCurrency?.disbursementValue ?: smartDestinationCurrency?.disbursementValue,
+        abbreviation: String? = this.ibanCurrency?.disbursementValue,
         identification: String = this.identification,
         idOriginCurrency: String = this.smartCurrency?.id.toString(),
-        idDestinationCurrency: String = this.ibanCurrency?.id?.toString() ?: smartDestinationCurrency?.id.toString(),
+        idDestinationCurrency: String = this.ibanCurrency?.id.toString(),
         currentAmount: Double,
         onSuccess: (ExchangeRateResult?) -> Unit,
         onFailure: () -> Unit,

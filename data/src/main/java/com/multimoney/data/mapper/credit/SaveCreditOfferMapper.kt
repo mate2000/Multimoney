@@ -7,7 +7,7 @@ import com.multimoney.domain.model.credit.SaveCreditOffer
 private fun SaveCreditOfferMutation.Product.mapToDomainModel() = Product(
     id = iD_PRODUCTO ?: "",
     creditLimit = lIMITE_CREDITO ?: "",
-    progressFactor = tRACTO?.toDouble() ?: 0.0,
+    progressFactor = tRACTO?.toDoubleOrNull() ?: 0.0,
     minimumDisbursement = mINIMO_DESEMBOLSO ?: "",
     minimumDisbursementLabel = sTR_MINIMO_DESEMBOLSO ?: "",
     maximumDisbursement = mAXIMO_DESEMBOLSO ?: "",
@@ -17,7 +17,7 @@ private fun SaveCreditOfferMutation.Product.mapToDomainModel() = Product(
     currency = mONEDA ?: "",
     regularInterestRate = tASA_INTERES_NORMAL ?: "",
     regularInterestRateLabel = sTR_TASA_INTERES_NORMAL ?: "",
-    fee = cuota_Real.toString().toDouble() ?: 0.0,
+    fee = cuota_Real.toString().toDoubleOrNull() ?: 0.0,
     feeLabel = cUOTA ?: "",
     commissionDisbursement = cOMISION_DESEMBOLSO ?: "",
     commissionDisbursementLabel = sTR_COMISION_DESEMBOLSO ?: "",

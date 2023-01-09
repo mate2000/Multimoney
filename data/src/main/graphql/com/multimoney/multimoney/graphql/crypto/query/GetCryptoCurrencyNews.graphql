@@ -1,0 +1,19 @@
+query GetCryptoCurrencyNews(
+    $baseAsset: String!,
+    $user: String!,
+    $idBrand: Int!
+){
+    cryptoNewsFeed(cryptoNewsFeedInput: {
+        baseAsset: $baseAsset
+        user: $user
+        idBrand: $idBrand
+    }
+    ) {
+        title,
+        information,
+        result{
+            title,
+            link
+        }
+    }
+}

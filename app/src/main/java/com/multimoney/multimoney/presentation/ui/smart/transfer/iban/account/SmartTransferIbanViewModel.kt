@@ -18,8 +18,8 @@ import com.multimoney.multimoney.presentation.navigation.SMART_IDS
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnAddAccountClick
@@ -94,12 +94,8 @@ class SmartTransferIbanViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateBack() {
-        popAndNavigateTo(
-            route = Screen.HomeScreen.route,
-            popTo = Screen.SmartTransferIbanAccountScreen.route
-        )
-    }
+    private fun onNavigateBack() =
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
 
     private fun navigateToAddIbanAccount() {
         // Todo Add iban account of transfer recipient

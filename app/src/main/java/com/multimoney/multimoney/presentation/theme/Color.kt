@@ -134,6 +134,13 @@ val GradientGrey2 = Color(0xFF474747).copy(alpha = 0.50f)
 val GradientGrayLiner1 = Color(0xFF343434).copy(alpha = 0f)
 val GradientGrayLiner2 = Color(0xFF8C8C8C)
 
+// Shadow Colors
+val ShadowColorPrimary = Color(0xFFB7ECC5)
+val ShadowColorSecondary = Color(0xFFA6F2D3)
+val ShadowColorTertiary = Color(0xFFA4E7E4)
+val ShadowColorComplementaryOne = Color(0xFFA9D8F0)
+val ShadowColorComplementaryTwo = Color(0xFFA3C2FD)
+
 @Immutable
 data class MultimoneyColors(
     val primary: Color,

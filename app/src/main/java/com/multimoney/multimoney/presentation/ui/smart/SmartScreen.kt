@@ -20,6 +20,8 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.NavigateToEvicertia
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.NavigateToOnfido
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationInitialRequest
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseAlertClick
@@ -149,27 +151,24 @@ fun SmartScreen(
 }
 
 @Composable
-fun GetSvStepContent(
-    step: Int,
-    viewModel: SmartViewModel
-) {
+fun GetSvStepContent(step: Int, viewModel: SmartViewModel) {
     when (step) {
         SmartSteps.One.id -> SmartDocumentScreen(sharedViewModel = viewModel)
         SmartSteps.Two.id -> SmartLivingAddressScreen(sharedViewModel = viewModel)
         SmartSteps.Three.id -> SourceIncomeScreen(sharedViewModel = viewModel)
         SmartSteps.Four.id -> SmartBeneficiaryScreen(sharedViewModel = viewModel)
         SmartSteps.Five.id -> SmartFactaScreen(sharedViewModel = viewModel)
+        SmartSteps.Six.id -> viewModel.onUIEvent(NavigateToOnfido)
     }
 }
 
 @Composable
-fun GetCrStepContent(
-    step: Int,
-    viewModel: SmartViewModel
-) {
+fun GetCrStepContent(step: Int, viewModel: SmartViewModel) {
     when (step) {
         SmartSteps.One.id -> SmartLivingAddressScreen(sharedViewModel = viewModel)
         SmartSteps.Two.id -> SourceIncomeScreen(sharedViewModel = viewModel)
         SmartSteps.Three.id -> SmartFactaScreen(sharedViewModel = viewModel)
+        SmartSteps.Four.id -> viewModel.onUIEvent(NavigateToOnfido)
+        SmartSteps.Five.id -> viewModel.onUIEvent(NavigateToEvicertia)
     }
 }

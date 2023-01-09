@@ -42,7 +42,8 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(PK_USER) { type = NavType.LongType },
-                navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType }
+                navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType },
+                navArgument(SIGN_DOCUMENT_GLOBAL_ID) { type = NavType.LongType }
             )
         ) {
             SmartOnfidoScreen(onPopAndNavigate = {
@@ -75,7 +76,8 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(ID_USER_REQUEST) { type = NavType.LongType },
                 navArgument(PK_USER) { type = NavType.LongType },
-                navArgument(IS_SMART_EVICERTIA) { type = NavType.BoolType }
+                navArgument(IS_SMART_EVICERTIA) { type = NavType.BoolType },
+                navArgument(SIGN_DOCUMENT_GLOBAL_ID) { type = NavType.LongType }
             )
         ) {
             SmartSignScreen(onPopAndNavigate = {

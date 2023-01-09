@@ -101,7 +101,7 @@ fun onExpirationDateValidation(pickedDate: String): Boolean {
     val pickedAsDate = LocalDate.parse(pickedDate)
     val actualDate = LocalDate.now()
     val periodBetweenDates = Period.between(actualDate, pickedAsDate).days
-    return periodBetweenDates > 0
+    return periodBetweenDates >= 0
 }
 
 fun getCurrentDateYMDPattern(): String {
@@ -200,7 +200,7 @@ enum class FilterDate {
     LAST_365_DAYS
 }
 
-const val YEAR_MONTH_DAY_PATTERN = "yyyy-mm-dd"
+const val YEAR_MONTH_DAY_PATTERN = "yyyy-MM-dd"
 const val DAY_PATTERN = "dd"
 const val ISO_8601_API_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
 const val YEAR_MONTH_DAY_AND_TIME_BAR_FORMAT = "dd | MM | yyyy hh:mm a"

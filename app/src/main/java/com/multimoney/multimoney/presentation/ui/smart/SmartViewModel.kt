@@ -199,6 +199,7 @@ class SmartViewModel @Inject constructor(
                         user = accountSmartData?.user ?: ""
                     ).collectLatest { result ->
                         result.onSuccess {
+                            accountSmartData?.idGlobalRequest = it?.idGlobalRequest ?: 0
                             globalRequestId = it?.idGlobalRequest ?: 0
                             onUIEvent(OnLoadingValueChange(false))
                         }

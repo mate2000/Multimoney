@@ -396,8 +396,7 @@ fun ProductContent(
                 )
             }
         }
-        Spacer(modifier = Modifier.padding(4.dp))
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+        Row(Modifier.fillMaxWidth().padding(top = 16.dp), horizontalArrangement = Arrangement.Center) {
             CustomDotsIndicator(
                 totalDots = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
                 selectedIndex = state.currentPage,

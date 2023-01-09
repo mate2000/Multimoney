@@ -17,9 +17,16 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R.drawable
+import com.multimoney.multimoney.presentation.theme.ShadowColorComplementaryOne
+import com.multimoney.multimoney.presentation.theme.ShadowColorComplementaryTwo
+import com.multimoney.multimoney.presentation.theme.ShadowColorPrimary
+import com.multimoney.multimoney.presentation.theme.ShadowColorSecondary
+import com.multimoney.multimoney.presentation.theme.ShadowColorTertiary
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.ComplementaryTwo
+import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.ComplementaryOne
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Primary
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Secondary
+import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Tertiary
 import com.multimoney.multimoney.presentation.util.coloredShadow
 
 const val SIXTY_PERCENT = 0.90
@@ -36,19 +43,28 @@ fun CustomProductBackground(
     val screenWidth = configuration.screenWidthDp.dp
     val startOffset = screenWidth.value * SIXTY_PERCENT
 
-    val shadowCardColor = Color(0xFF4E86EF)
-    val cardResourceId: Int = when (type) {
+    val shadowCardColor: Color
+    val cardResourceId: Int
+    when (type) {
         Primary -> {
-            drawable.bg_card_credit
+            shadowCardColor = ShadowColorPrimary
+            cardResourceId = drawable.bg_card_credit
         }
         Secondary -> {
-            drawable.bg_card_smart
+            shadowCardColor = ShadowColorSecondary
+            cardResourceId = drawable.bg_card_smart
+        }
+        Tertiary -> {
+            shadowCardColor = ShadowColorTertiary
+            cardResourceId = drawable.bg_card_tertiary
+        }
+        ComplementaryOne -> {
+            shadowCardColor = ShadowColorComplementaryOne
+            cardResourceId = drawable.bg_card_complementary_one
         }
         ComplementaryTwo -> {
-            drawable.bg_card_crypto
-        }
-        else -> {
-            drawable.bg_card_credit
+            shadowCardColor = ShadowColorComplementaryTwo
+            cardResourceId = drawable.bg_card_crypto
         }
     }
 

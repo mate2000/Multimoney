@@ -11,6 +11,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.signdocument
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnAlertButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnAlertCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallSubscriptionCreditContractEvent
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallGetLinkCreditContractEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnShowDialogInformation
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.documentgeneration.DocumentGenerationScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.signdocument.SignDocumentScreen
@@ -36,6 +37,7 @@ fun SignDocumentProcessScreen(
         viewModel.apply {
             executeNavigation(onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)
             onUIEvent(OnCallSubscriptionCreditContractEvent)
+            onUIEvent(OnCallGetLinkCreditContractEvent)
             baseEvent.collectLatest { event ->
                 when (event) {
                     is SimulateUserInteraction -> activity?.onUserInteraction()

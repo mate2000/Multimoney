@@ -63,6 +63,7 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
             )
         ) { navBackStackEntry ->
             VisaCardScreen(
+                isRestart = navController.currentBackStackEntry?.savedStateHandle?.get(PREVIOUS_IS_RESTART) ?: true,
                 onNavigate = {
                     navController.navigate(it.route)
                 },
@@ -88,17 +89,20 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
         arguments = listOf(
             navArgument(ID_BRAND) { type = NavType.IntType },
             navArgument(PK_USER) { type = NavType.LongType },
-            navArgument(ID_CLIENT) { type = NavType.IntType },
-            navArgument(ID_LOAN_CLIENT) { type = NavType.IntType },
             navArgument(BALANCE_CARD_INFORMATION) { type = BalanceCardInformationNavType() }
         )
     ) {
-        VisaTokenizationWaitingScreen(onPopAndNavigate = {
-            navController.navigate(it.route) {
-                launchSingleTop = true
-                popUpTo(it.popTo) { inclusive = true }
+        VisaTokenizationWaitingScreen(
+            onPopBackStack = {
+                navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                navController.popBackStack(
+                    route = it.popTo,
+                    inclusive = false,
+                    saveState = false
+                )
             }
-        })
+        )
     }
     composable(
         route = Screen.VisaPreferencesScreen.route

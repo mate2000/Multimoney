@@ -307,7 +307,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object VisaTokenizationWaitingScreen : Screen(
-        "visa_tokenization_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$PHONE_NUMBER}/{$BALANCE_CARD_INFORMATION}/{$AVAILABLE_BALANCE_LABEL}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
+        "visa_tokenization_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$PHONE_NUMBER}/{$BALANCE_CARD_INFORMATION}",
         "visa_tokenization_screen"
     )
 

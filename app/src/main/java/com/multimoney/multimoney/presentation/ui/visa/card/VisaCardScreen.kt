@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -32,6 +33,7 @@ import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIE
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnBlockUnblockCardClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnCallNovoGetFavoriteCard
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnHandleTapAndPayIntentResult
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnHidePaymentSuccessScreen
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnInitializeBiometricPrompt
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigatePreferences
@@ -39,6 +41,7 @@ import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIE
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnSeeDataClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnStartPaymentProcess
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButtonBig
 import com.multimoney.multimoney.presentation.uielement.CustomCardVisaVertical
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -237,6 +240,17 @@ fun VisaCardScreen(
                 size = Large
             )
         }
+    }
+
+    if (viewModel.uiState.showPaymentSuccessScreen) {
+        AlertResult(
+            iconResource = drawable.ic_success_symbol,
+            titleResource = string.visa_payment_success_title,
+            descriptionResource = string.visa_payment_success_description,
+            buttonTextResource = string.finalize,
+            isTopNavBarVisible = false,
+            onButtonClick = { viewModel.onUIEvent(OnHidePaymentSuccessScreen) }
+        )
     }
 
     VisaCardPasswordBottomSheetScreen(

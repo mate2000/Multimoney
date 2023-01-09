@@ -4,25 +4,25 @@ import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.multimoney.data.util.catalog.CreditStep
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
-import com.multimoney.data.util.catalog.SmartSteps
-import com.multimoney.data.util.catalog.SmartAccountStatusRequest
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.APPROVED
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.FAILED
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.FIRMED
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.OVER_COUNTER
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.PENDING
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.REJECTED
+import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.data.util.catalog.SmartAccountStatus.EXIST_IN_CORE
 import com.multimoney.data.util.catalog.SmartAccountStatus.NO_EXIST
+import com.multimoney.data.util.catalog.SmartAccountStatusRequest
 import com.multimoney.data.util.catalog.SmartAccountStatusRequest.CANCELED
 import com.multimoney.data.util.catalog.SmartAccountStatusRequest.CREATED
 import com.multimoney.data.util.catalog.SmartAccountStatusRequest.SENT
+import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
+import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.domain.interaction.accountsmart.QueryListSinpeAccountUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceCardInformationUseCase
 import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCase
@@ -43,7 +43,6 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
-import com.multimoney.multimoney.BuildConfig
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -87,12 +86,12 @@ import com.multimoney.multimoney.presentation.util.ShareHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
-import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentOrigin
+import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
 import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
-import com.novopayment.sdk.vts.NovoVTS
+import com.multimoney.multimoney.util.NovoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
@@ -103,6 +102,7 @@ import javax.inject.Inject
 class ProductViewModel @Inject constructor(
     private val helper: ShareHelper,
     private val nfcHelper: NfcHelper,
+    private val novoHelper: NovoHelper,
     private val cardIssuanceNVUseCase: QueryCardIssuanceNVUseCase,
     private val balanceCardInformationUseCase: QueryBalanceCardInformationUseCase,
     private val queryListSinpeAccountUseCaseImpl: QueryListSinpeAccountUseCase,
@@ -194,9 +194,9 @@ class ProductViewModel @Inject constructor(
                 if (uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm?.lowercase() == FIRMED.status.lowercase()) {
                     navigateTo(
                         "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
-                                "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}/${uiState.userStatus?.infoUser?.firstName}/" +
-                                "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
-                                "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint}"
+                            "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}/${uiState.userStatus?.infoUser?.firstName}/" +
+                            "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
+                            "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint}"
                     )
                 } else {
                     navigateTo(
@@ -212,9 +212,9 @@ class ProductViewModel @Inject constructor(
             else -> {
                 navigateTo(
                     "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
-                            "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}/${uiState.userStatus?.infoUser?.firstName}/" +
-                            "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
-                            "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint}"
+                        "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}/${uiState.userStatus?.infoUser?.firstName}/" +
+                        "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
+                        "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint}"
                 )
             }
         }
@@ -397,7 +397,7 @@ class ProductViewModel @Inject constructor(
         val idLoanClient = userStatus?.infoCredit?.idLoanClient
         val cardStatus = userStatus?.infoVirtualCard?.status
         navigateTo(
-            "${Screen.CryptoWalletScreen.baseRoute}/$email/${uiState.idBrand}/${identification}/${globalBalance}/${idClient}/${idLoanClient}/${statusCredit}/${statusSmart}/${statusCrypto}/${cardStatus}"
+            "${Screen.CryptoWalletScreen.baseRoute}/$email/${uiState.idBrand}/$identification/$globalBalance/$idClient/$idLoanClient/$statusCredit/$statusSmart/$statusCrypto/$cardStatus"
         )
     }
 
@@ -452,8 +452,8 @@ class ProductViewModel @Inject constructor(
 
                 SMART_INITIAL_CARD -> {
                     infoUser?.statusOnfido == SmartOnFidoOrFirmStatus.PENDING.status &&
-                            infoBankAccount?.statusFirm == PENDING.status &&
-                            (infoBankAccount?.infoRequest?.currentStep.isNullOrEmpty() || validateUserStatus.infoBankAccount?.infoRequest?.statusRequest == SMART_STEP_PENDING)
+                        infoBankAccount?.statusFirm == PENDING.status &&
+                        (infoBankAccount?.infoRequest?.currentStep.isNullOrEmpty() || validateUserStatus.infoBankAccount?.infoRequest?.statusRequest == SMART_STEP_PENDING)
                 }
 
                 CREDIT_INFO_INCOMPLETE -> {
@@ -474,8 +474,8 @@ class ProductViewModel @Inject constructor(
 
                 SMART_IDENTITY_INCOMPLETE -> {
                     infoUser?.statusOnfido != SmartOnFidoOrFirmStatus.APPROVED.status && (
-                            SmartSteps.Search.getIdByName(infoBankAccount?.infoRequest?.currentStep) == SmartSteps.Six.id
-                            )
+                        SmartSteps.Search.getIdByName(infoBankAccount?.infoRequest?.currentStep) == SmartSteps.Six.id
+                        )
                 }
 
                 CREDIT_FIRM_INCOMPLETE -> {
@@ -484,12 +484,12 @@ class ProductViewModel @Inject constructor(
 
                 CREDIT_FIRMED_ONFIDO_PENDING -> {
                     infoCredit?.infoPreApprove?.statusFirm == FIRMED.status &&
-                            infoUser?.statusOnfido == PENDING.status
+                        infoUser?.statusOnfido == PENDING.status
                 }
 
                 SMART_FIRMED_ONFIDO_PENDING -> {
                     infoBankAccount?.statusFirm == SmartOnFidoOrFirmStatus.FIRMED.status &&
-                            infoUser?.statusOnfido == SmartOnFidoOrFirmStatus.PENDING?.status
+                        infoUser?.statusOnfido == SmartOnFidoOrFirmStatus.PENDING?.status
                 }
 
                 CREDIT_FIRM_REJECTED -> {
@@ -522,7 +522,7 @@ class ProductViewModel @Inject constructor(
 
                 CREDIT_ERROR_CREATE_ACCOUNT -> {
                     infoCredit?.infoPreApprove?.statusFirm == FAILED.status ||
-                            infoCredit?.infoPreApprove?.status == ERROR_CREDIT
+                        infoCredit?.infoPreApprove?.status == ERROR_CREDIT
                 }
 
                 else -> false
@@ -732,24 +732,26 @@ class ProductViewModel @Inject constructor(
                 account?.accountNumber
             )
             navigateTo(
-                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${userName}/${uiState.idBrand}/${identification}/${
-                    encodeData(
-                        smartAccount
-                    )
+                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$userName/${uiState.idBrand}/$identification/${
+                encodeData(
+                    smartAccount
+                )
                 }/$idClient/${Screen.HomeScreen.route}"
             )
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             val infoCredit = uiState.userStatus?.infoCredit
-            val smartIds = encodeData(balanceCredit?.balanceAccountSmart?.map {
-                SmartAccountID(
-                    tokenAccount = it?.tokenNumber,
-                    currencyID = it?.idCurrencyAccount,
-                    accountNumber = it?.accountNumber ?: "",
-                    ibanAccountNumber = it?.ibanAccountNumber,
-                    totalBalance = it?.totalBalance
-                )
-            })
-            navigateTo("${Screen.SmartSelectAccountScreen.baseRoute}/${smartIds}/$email/${uiState.idBrand}/$identification/${infoCredit?.idClient}")
+            val smartIds = encodeData(
+                balanceCredit?.balanceAccountSmart?.map {
+                    SmartAccountID(
+                        tokenAccount = it?.tokenNumber,
+                        currencyID = it?.idCurrencyAccount,
+                        accountNumber = it?.accountNumber ?: "",
+                        ibanAccountNumber = it?.ibanAccountNumber,
+                        totalBalance = it?.totalBalance
+                    )
+                }
+            )
+            navigateTo("${Screen.SmartSelectAccountScreen.baseRoute}/$smartIds/$email/${uiState.idBrand}/$identification/${infoCredit?.idClient}")
         }
     }
 
@@ -762,8 +764,8 @@ class ProductViewModel @Inject constructor(
             ibanAccountNumber = account?.ibanAccountNumber
         )
         navigateTo(
-            "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${userName}/${uiState.idBrand}/${identification}" +
-                    "/${encodeData(smartAccount)}/$idClient/${Screen.HomeScreen.route}"
+            "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$userName/${uiState.idBrand}/$identification" +
+                "/${encodeData(smartAccount)}/$idClient/${Screen.HomeScreen.route}"
         )
     }
 
@@ -838,15 +840,7 @@ class ProductViewModel @Inject constructor(
 
     private fun onConfigNovoSdk() {
         if (nfcHelper.isNfcSupported()) {
-            if (NovoVTS.isConfiguredForVts().not()) {
-                NovoVTS.setConfigurations(
-                    BuildConfig.NOVO_CLIENT_ID,
-                    BuildConfig.NOVO_API_KEY,
-                    BuildConfig.NOVO_API_URL,
-                    BuildConfig.NOVO_VCEH_URL,
-                    BuildConfig.NOVO_SOCKET_URL
-                )
-            }
+            novoHelper.configureNovoSdk()
         }
     }
 
@@ -1072,7 +1066,7 @@ class ProductViewModel @Inject constructor(
 
     sealed class BaseEvent {
         object OnShowCardIssuanceError : BaseEvent()
-        object OnShowTbdToastEvent: BaseEvent()
+        object OnShowTbdToastEvent : BaseEvent()
     }
 
     companion object {

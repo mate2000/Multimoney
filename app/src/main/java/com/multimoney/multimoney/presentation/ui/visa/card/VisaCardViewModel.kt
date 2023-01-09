@@ -47,6 +47,7 @@ import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIE
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnCallNovoGetFavoriteCard
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnHandleTapAndPayIntentResult
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnHidePasswordBottomSheet
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnHidePaymentSuccessScreen
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnInitializeBiometricPrompt
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigatePreferences
@@ -67,6 +68,7 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.util.BiometricHelper
 import com.multimoney.multimoney.util.CognitoHelper
+import com.multimoney.multimoney.util.NovoHelper
 import com.novopayment.sdk.vts.NovoVTS
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -81,6 +83,7 @@ class VisaCardViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val countDownTimer: MMCountDownTimer,
     val nfcHelper: NfcHelper,
+    private var novoHelper: NovoHelper,
     private val biometricHelper: BiometricHelper,
     private val dataStorePreferences: DataStorePreferences,
     private val cognitoHelper: CognitoHelper,
@@ -234,7 +237,7 @@ class VisaCardViewModel @Inject constructor(
 
     private fun checkIfMultimoneyIsTheDefaultPaymentMethod() {
         if (NovoVTS.isDefaultPaymentService()) {
-            // todo start Payment Process
+            startNovoPayment()
         } else {
             uiState = uiState.copy(
                 dialogParameters = DialogParameters(
@@ -251,8 +254,19 @@ class VisaCardViewModel @Inject constructor(
 
     private fun onHandleTapAndPayIntentResult(result: ActivityResult) {
         if (nfcHelper.isNfcEnabled() && NovoVTS.isDefaultPaymentService()) {
-            // todo start Payment Process
+            startNovoPayment()
         }
+    }
+
+    private fun startNovoPayment() {
+        novoHelper.novoNewPayment(
+            onSuccessPayment = {
+                uiState = uiState.copy(showPaymentSuccessScreen = true)
+            },
+            onErrorPayment = {
+                // todo error in payment
+            }
+        )
     }
 
     private fun onSeeDataClick(fragmentActivity: FragmentActivity) {
@@ -267,7 +281,7 @@ class VisaCardViewModel @Inject constructor(
         uiState = uiState.copy(
             password = value,
             isPasswordConfirmButtonEnabled = value.isNotBlank(),
-            passwordError = Pair(false, R.string.error_empty)
+            passwordError = Pair(false, string.error_empty)
         )
     }
 
@@ -341,7 +355,7 @@ class VisaCardViewModel @Inject constructor(
         passwordAttempts++
         if (passwordAttempts < MAX_PASSWORD_ATTEMPTS) {
             uiState = uiState.copy(
-                passwordError = Pair(true, R.string.visa_card_password_error),
+                passwordError = Pair(true, string.visa_card_password_error),
                 isLoading = false
             )
         } else {
@@ -489,12 +503,13 @@ class VisaCardViewModel @Inject constructor(
         val blockUnblockButtonText: Int = string.locked,
         val blockUnblockButtonIcon: Int = R.drawable.ic_locked,
         val password: String = "",
-        val passwordError: Pair<Boolean, Int> = Pair(false, R.string.error_empty),
+        val passwordError: Pair<Boolean, Int> = Pair(false, string.error_empty),
         val isPasswordConfirmButtonEnabled: Boolean = false,
         val bottomSheetVisibleState: ModalBottomSheetState = ModalBottomSheetState(Hidden),
         val dialogParameters: DialogParameters = DialogParameters(),
-        val visaCardBlockDisclaimer: Int = R.string.empty,
-        val isLoading: Boolean = false
+        val visaCardBlockDisclaimer: Int = string.empty,
+        val isLoading: Boolean = false,
+        val showPaymentSuccessScreen: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -538,6 +553,7 @@ class VisaCardViewModel @Inject constructor(
             is OnTryWithPassword -> onTryWithPassword()
             is OnBlockUnblockCardClick -> onBlockUnblockCardClick()
             is OnHandleTapAndPayIntentResult -> onHandleTapAndPayIntentResult(uiEvent.result)
+            is OnHidePaymentSuccessScreen -> uiState = uiState.copy(showPaymentSuccessScreen = false)
         }
     }
 
@@ -565,6 +581,7 @@ class VisaCardViewModel @Inject constructor(
         object OnPasswordConfirmClick : UIEvent()
         object OnPasswordForgotPassword : UIEvent()
         data class OnHandleTapAndPayIntentResult(val result: ActivityResult) : UIEvent()
+        object OnHidePaymentSuccessScreen : UIEvent()
     }
 
     sealed class BaseEvent {

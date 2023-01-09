@@ -121,7 +121,6 @@
     <string name="sign_in_error_alert_dialog_button" translatable="false">Ir al inicio</string>
 
 
-
     <!-- Sign Up Email -->
     <string name="sign_up_email_header" translatable="false">Ingresá tu correo electrónico</string>
     <string name="sign_up_email_title" translatable="false">¡Nos emociona \nque estés acá!</string>
@@ -743,12 +742,16 @@
     <string name="visa_tokenization_success_description" translatable="false">Ya podés utilizar tu Multimoney Visa para realizar compras online y en comercios</string>
     <string name="visa_tokenization_success_description_gt" translatable="false">Ya puedes utilizar tu Multimoney Visa para realizar compras online y en comercios</string>
     <string name="visa_tokenization_success_button_action" translatable="false">Ver Multimoney Visa</string>
-    
+
     <!-- visa nfc required dialog -->
     <string name="visa_nfc_required_dialog_title" translatable="false">Activá el NFC para realizar pagos en comercios</string>
     <string name="visa_multimoney_default_payment_method_required_dialog_title" translatable="false">Elige tu Multimoney Visa para realizar pagos en comercios</string>
     <string name="visa_nfc_required_dialog_title_gt" translatable="false">Activa el NFC para realizar pagos en comercios</string>
     <string name="visa_nfc_required_dialog_description" translatable="false">Sin esta funcionalidad, solo podrás ver los datos de tu tarjeta</string>
+
+    <!-- visa payment success -->
+    <string name="visa_payment_success_title" translatable="false">Tu pago se realizó con éxito</string>
+    <string name="visa_payment_success_description" translatable="false">Recibirás un comprobante y documentación en tu correo electrónico</string>
 
     <!-- Credit Loading -->
     <string name="credit_glad_to_see_you" translatable="false">¡Nos alegra que regresés!</string>

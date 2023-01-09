@@ -796,7 +796,7 @@
     <string name="iban_account_hint" translatable="false">0000 0000 0000 0000 0000</string>
     <string name="iban_account_cr" translatable="false">CR</string>
     <string name="iban_account_loading" translatable="false">Verificando cuenta...</string>
-    <string name="iban_account_error" translatable="false">Revisa formato. Debe tener 20 dígitos</string>
+    <string name="iban_account_error" translatable="false"><![CDATA[<b>Revisa formato.</b> Debe tener 20 dígitos]]></string>
     <string name="iban_dialog_message" translatable="false">¿Estás seguro que querés editar tu cuenta IBAN?</string>
     <string name="iban_masked_account_number" translatable="false">CR••••%s</string>
 

@@ -182,7 +182,8 @@ class SmartViewModel @Inject constructor(
             idJobLevel1 = stepByStep.idJobLevel1,
             idJobLevel2 = stepByStep.idJobLevel2,
             idJobLevel3 = stepByStep.idJobLevel3,
-            fullJobAddress = stepByStep.fullJobAddress
+            fullJobAddress = stepByStep.fullJobAddress,
+            idGlobalRequest = stepByStep.idRequest?.toLong() ?: 0
         )
 
         // update the current step coming from the backend in order to navigate to the proper screen
@@ -217,6 +218,7 @@ class SmartViewModel @Inject constructor(
                 }
             )
         } else {
+            accountSmartData?.idGlobalRequest = globalRequestId
             callQueryStepByStepUseCase()
         }
     }

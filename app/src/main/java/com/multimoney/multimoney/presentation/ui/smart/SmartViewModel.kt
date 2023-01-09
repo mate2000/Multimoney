@@ -80,7 +80,7 @@ class SmartViewModel @Inject constructor(
     val email: String = savedStateHandle[EMAIL] ?: ""
     val firstName: String = savedStateHandle[FIRST_NAME] ?: ""
     val lastName: String = savedStateHandle[LAST_NAME] ?: ""
-    var globalRequestId: Long = savedStateHandle[ID_GLOBAL_REQUEST] ?: 0
+    var idGlobalRequest: Long = savedStateHandle[ID_GLOBAL_REQUEST] ?: 0
 
     // Stateless
     private var overridePreviousAction: (() -> Unit)? = null
@@ -105,11 +105,11 @@ class SmartViewModel @Inject constructor(
     }
 
     private fun callQueryStepByStepUseCase() = executeUseCase {
-        if (globalRequestId != 0L) {
+        if (idGlobalRequest != 0L) {
             queryStepByStepUseCase.invoke(
                 user = accountSmartData?.user ?: "",
                 idBrand = accountSmartData?.idBrand ?: 0,
-                idRequest = globalRequestId
+                idRequest = idGlobalRequest
             ).collectLatest { result ->
                 result.onSuccess { stepByStep ->
                     stepByStep?.let {
@@ -191,7 +191,7 @@ class SmartViewModel @Inject constructor(
     }
 
     private fun callMutationInitialRequestUseCase() {
-        if (globalRequestId == 0L) {
+        if (idGlobalRequest == 0L) {
             executeUseCase(
                 action = {
                     mutationInitialRequestUseCase.invoke(
@@ -201,7 +201,7 @@ class SmartViewModel @Inject constructor(
                     ).collectLatest { result ->
                         result.onSuccess {
                             accountSmartData?.idGlobalRequest = it?.idGlobalRequest ?: 0
-                            globalRequestId = it?.idGlobalRequest ?: 0
+                            idGlobalRequest = it?.idGlobalRequest ?: 0
                             onUIEvent(OnLoadingValueChange(false))
                         }
                         result.onFailure {
@@ -218,7 +218,7 @@ class SmartViewModel @Inject constructor(
                 }
             )
         } else {
-            accountSmartData?.idGlobalRequest = globalRequestId
+            accountSmartData?.idGlobalRequest = idGlobalRequest
             callQueryStepByStepUseCase()
         }
     }
@@ -264,7 +264,7 @@ class SmartViewModel @Inject constructor(
                 result.onSuccess {
                     if (isLastStep) {
                         idSysRequest = it?.idSysRequest?.toLong() ?: 0L
-                        globalRequestId = it?.idGlobalRequest ?: 0
+                        idGlobalRequest = it?.idGlobalRequest ?: 0
                         callMutationSaveSmartAccount()
                     } else {
                         onUIEvent(OnLoadingValueChange(false))
@@ -297,7 +297,7 @@ class SmartViewModel @Inject constructor(
             user = user,
             idBrand = idBrandAsInt,
             identificationNumber = identification,
-            idRequest = globalRequestId
+            idRequest = idGlobalRequest
         ).collectLatest { result ->
             result.onSuccess {
                 onUIEvent(OnLoadingValueChange(false))
@@ -421,7 +421,7 @@ class SmartViewModel @Inject constructor(
 
     private fun navigateToOnfido() {
         popAndNavigateTo(
-            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idSysRequest/$globalRequestId/$URL_EMPTY",
+            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idSysRequest/$idGlobalRequest/$URL_EMPTY",
             Screen.SmartScreen.route
         )
     }

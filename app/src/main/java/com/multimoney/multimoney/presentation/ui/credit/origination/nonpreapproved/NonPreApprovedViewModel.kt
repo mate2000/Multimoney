@@ -333,7 +333,8 @@ class NonPreApprovedViewModel @Inject constructor(
         route = "${Screen.CreditScreen.baseRoute}/${idBrand ?: 0}/${pkUser ?: 0}/${identification ?: ""}/${email ?: ""}/${lastStep ?: CreditStep.One.id}/" +
                 "${idUserRequest ?: 0}/${firstName ?: ""}/" +
                 "${lastName ?: ""}/${statusOnfido ?: ""}/" +
-                "${statusEvicertia ?: ""}/${idPrint ?: 0}",
+                "${statusEvicertia ?: ""}/${idPrint ?: 0}/" +
+                "",
         popTo = Screen.NonPreApprovedScreen.route
     )
 

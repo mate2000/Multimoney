@@ -60,8 +60,7 @@ import kotlinx.coroutines.flow.onEach
 @OptIn(FlowPreview::class)
 @Composable
 fun VisaTokenizationWaitingScreen(
-    onNavigate: (NavEvent.Navigate) -> Unit = {},
-    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
+    onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     viewModel: VisaTokenizationWaitingViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -72,7 +71,7 @@ fun VisaTokenizationWaitingScreen(
     })
 
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
+        viewModel.executeNavigation(onPopBackStack = onPopBackStack)
         viewModel.onUIEvent(OnGetAndroidId(context.getAndroidId()))
         viewModel.onUIEvent(OnGoToNextScreen(context, color))
         viewModel.onUIEvent(OnStartNovoTokenization)

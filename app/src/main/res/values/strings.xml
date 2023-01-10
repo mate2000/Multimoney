@@ -724,6 +724,7 @@
     <string name="visa_card_block_disclaimer" translatable="false">Desbloqueá tu tarjeta para usar tu Multimoney Visa.</string>
     <string name="visa_card_block_disclaimer_gt" translatable="false">Desbloquea tu tarjeta para usar tu Multimoney Visa.</string>
 
+    <string name="visa_card_tap_and_pay_title" translatable="false">Pago con Contactless</string>
 
     <!-- visa tokenization waiting -->
     <string name="visa_tokenization_waiting_description_one_bold" translatable="false">100% libre de plástico.</string>
@@ -742,6 +743,12 @@
     <string name="visa_tokenization_success_description" translatable="false">Ya podés utilizar tu Multimoney Visa para realizar compras online y en comercios</string>
     <string name="visa_tokenization_success_description_gt" translatable="false">Ya puedes utilizar tu Multimoney Visa para realizar compras online y en comercios</string>
     <string name="visa_tokenization_success_button_action" translatable="false">Ver Multimoney Visa</string>
+    
+    <!-- visa nfc required dialog -->
+    <string name="visa_nfc_required_dialog_title" translatable="false">Activá el NFC para realizar pagos en comercios</string>
+    <string name="visa_multimoney_default_payment_method_required_dialog_title" translatable="false">Elige tu Multimoney Visa para realizar pagos en comercios</string>
+    <string name="visa_nfc_required_dialog_title_gt" translatable="false">Activa el NFC para realizar pagos en comercios</string>
+    <string name="visa_nfc_required_dialog_description" translatable="false">Sin esta funcionalidad, solo podrás ver los datos de tu tarjeta</string>
 
     <!-- Credit Loading -->
     <string name="credit_glad_to_see_you" translatable="false">¡Nos alegra que regresés!</string>
@@ -789,7 +796,7 @@
     <string name="iban_account_hint" translatable="false">0000 0000 0000 0000 0000</string>
     <string name="iban_account_cr" translatable="false">CR</string>
     <string name="iban_account_loading" translatable="false">Verificando cuenta...</string>
-    <string name="iban_account_error" translatable="false">Revisa formato. Debe tener 20 dígitos</string>
+    <string name="iban_account_error" translatable="false"><![CDATA[<b>Revisa formato.</b> Debe tener 20 dígitos]]></string>
     <string name="iban_dialog_message" translatable="false">¿Estás seguro que querés editar tu cuenta IBAN?</string>
     <string name="iban_masked_account_number" translatable="false">CR••••%s</string>
 
@@ -1013,6 +1020,10 @@
     <!-- Payment Schedule Card List-->
     <string name="payment_schedule_card_list_title" translatable="false">Selecciona una tarjeta para programar tu pago</string>
     <string name="payment_schedule_card_list_add_card" translatable="false">Agregar tarjeta</string>
+    <string name="payment_schedule_card_list_dialog_title_sv" translatable="false">¿Estás seguro que querés salir?</string>
+    <string name="payment_schedule_card_list_dialog_title_gt" translatable="false">¿Estás seguro que quieres salir?</string>
+    <string name="payment_schedule_card_list_dialog_description_sv" translatable="false">Puedes programar tu pago automático cuando quieras.</string>
+    <string name="payment_schedule_card_list_dialog_description_gt" translatable="false">Puedes programar tu pago automático cuando quieras.</string>
 
     <!-- Disbursement Amount-->
     <string name="disbursement_amount_title" translatable="false">¿Cuánto \ndinero necesitás?</string>

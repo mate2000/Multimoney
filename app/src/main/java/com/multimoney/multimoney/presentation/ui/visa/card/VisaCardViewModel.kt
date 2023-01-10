@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.visa.card
 
+import androidx.activity.result.ActivityResult
 import androidx.biometric.BiometricPrompt
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
@@ -15,7 +16,6 @@ import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
 import com.amplifyframework.auth.result.AuthSessionResult
 import com.amplifyframework.core.Amplify
 import com.multimoney.data.util.DataStorePreferences
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.Brand.CostaRica
 import com.multimoney.data.util.catalog.Brand.ElSalvador
 import com.multimoney.data.util.catalog.Brand.Guatemala
@@ -40,9 +40,12 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.BaseEvent.OnOpenNfcConfig
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.BaseEvent.OnOpenTapAndPayConfig
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnAvailableAmountClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnBlockUnblockCardClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnCallNovoGetFavoriteCard
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnHandleTapAndPayIntentResult
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnHidePasswordBottomSheet
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnInitializeBiometricPrompt
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
@@ -55,6 +58,7 @@ import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIE
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnSeeDataClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnShowPasswordBottomSheet
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnStartPaymentProcess
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnTryWithPassword
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.NfcHelper
@@ -76,7 +80,7 @@ import javax.inject.Inject
 class VisaCardViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val countDownTimer: MMCountDownTimer,
-    private val nfcHelper: NfcHelper,
+    val nfcHelper: NfcHelper,
     private val biometricHelper: BiometricHelper,
     private val dataStorePreferences: DataStorePreferences,
     private val cognitoHelper: CognitoHelper,
@@ -116,7 +120,6 @@ class VisaCardViewModel @Inject constructor(
         availableBalanceLabel = savedStateHandle[AVAILABLE_BALANCE_LABEL]
         idClient = savedStateHandle[ID_CLIENT] ?: 0
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: 0
-        callNovoGetFavoriteCard()
     }
 
     private fun onStart() {
@@ -131,9 +134,9 @@ class VisaCardViewModel @Inject constructor(
             isLoading = false,
             isCardBlocked = isCardBlocked,
             blockUnblockButtonText = if (isCardBlocked) {
-                R.string.unlocked
+                string.unlocked
             } else {
-                R.string.locked
+                string.locked
             },
             blockUnblockButtonIcon = if (isCardBlocked) {
                 R.drawable.ic_unlocked
@@ -212,6 +215,46 @@ class VisaCardViewModel @Inject constructor(
         )
     }
 
+    private fun startPaymentProcess() {
+        if (nfcHelper.isNfcEnabled()) {
+            checkIfMultimoneyIsTheDefaultPaymentMethod()
+        } else {
+            uiState = uiState.copy(
+                dialogParameters = DialogParameters(
+                    titleResource = if (idBrand == Guatemala.id) string.visa_nfc_required_dialog_title_gt else string.visa_nfc_required_dialog_title,
+                    descriptionResource = string.visa_nfc_required_dialog_description,
+                    positiveResource = string.activate,
+                    negativeResource = string.cancel,
+                    positiveAction = { emitBaseEvent(OnOpenNfcConfig) },
+                    isActive = mutableStateOf(true)
+                )
+            )
+        }
+    }
+
+    private fun checkIfMultimoneyIsTheDefaultPaymentMethod() {
+        if (NovoVTS.isDefaultPaymentService()) {
+            // todo start Payment Process
+        } else {
+            uiState = uiState.copy(
+                dialogParameters = DialogParameters(
+                    titleResource = string.visa_multimoney_default_payment_method_required_dialog_title,
+                    descriptionResource = string.visa_nfc_required_dialog_description,
+                    positiveResource = string.select,
+                    negativeResource = string.cancel,
+                    positiveAction = { emitBaseEvent(OnOpenTapAndPayConfig) },
+                    isActive = mutableStateOf(true)
+                )
+            )
+        }
+    }
+
+    private fun onHandleTapAndPayIntentResult(result: ActivityResult) {
+        if (nfcHelper.isNfcEnabled() && NovoVTS.isDefaultPaymentService()) {
+            // todo start Payment Process
+        }
+    }
+
     private fun onSeeDataClick(fragmentActivity: FragmentActivity) {
         if (isBiometricActive) {
             onShowBiometricPromptForDecryption(fragmentActivity)
@@ -246,9 +289,9 @@ class VisaCardViewModel @Inject constructor(
             isPasswordConfirmButtonEnabled = false,
             isPasswordMessage = isPasswordMessage,
             passwordTitle = if (isPasswordMessage) {
-                R.string.visa_card_password_message_title
+                string.visa_card_password_message_title
             } else {
-                R.string.visa_card_password_title
+                string.visa_card_password_title
             },
             bottomSheetVisibleState = ModalBottomSheetState(Expanded)
         )
@@ -259,7 +302,7 @@ class VisaCardViewModel @Inject constructor(
     }
 
     private fun onTryWithPassword() {
-        uiState = uiState.copy(isPasswordMessage = false, passwordTitle = R.string.visa_card_password_title)
+        uiState = uiState.copy(isPasswordMessage = false, passwordTitle = string.visa_card_password_title)
     }
 
     private fun callCognitoSignIn() {
@@ -331,7 +374,6 @@ class VisaCardViewModel @Inject constructor(
             idLoan = idLoanClient,
             user = email,
             idBrand = idBrand
-
         ).collectLatest { result ->
             result.onSuccess {
                 isNavigateBackRefresh = true
@@ -382,31 +424,31 @@ class VisaCardViewModel @Inject constructor(
         when {
             uiState.isCardBlocked.not() -> uiState = uiState.copy(
                 dialogParameters = DialogParameters(
-                    titleResource = R.string.visa_card_block_dialog_title,
-                    descriptionResource = if (idBrand == Brand.Guatemala.id) {
-                        R.string.visa_card_block_dialog_subtitle_gt
+                    titleResource = string.visa_card_block_dialog_title,
+                    descriptionResource = if (idBrand == Guatemala.id) {
+                        string.visa_card_block_dialog_subtitle_gt
                     } else {
-                        R.string.visa_card_block_dialog_subtitle
+                        string.visa_card_block_dialog_subtitle
                     },
-                    positiveResource = R.string.locked,
-                    negativeResource = R.string.cancel,
+                    positiveResource = string.locked,
+                    negativeResource = string.cancel,
                     positiveAction = { onCallMutationCardBlockingUseCase() },
                     isActive = mutableStateOf(true)
                 ),
-                visaCardBlockDisclaimer = if (idBrand == Brand.Guatemala.id) {
-                    R.string.visa_card_block_disclaimer_gt
+                visaCardBlockDisclaimer = if (idBrand == Guatemala.id) {
+                    string.visa_card_block_disclaimer_gt
                 } else {
-                    R.string.visa_card_block_disclaimer
+                    string.visa_card_block_disclaimer
                 }
             )
             uiState.isCardBlocked && uiState.isNfcAvailable.not() && balanceCardInformation?.allowUnLock == true ->
                 uiState =
                     uiState.copy(
                         dialogParameters = DialogParameters(
-                            titleResource = R.string.visa_card_unblock_without_nfc_dialog_title,
-                            descriptionResource = R.string.visa_card_unblock_without_nfc_dialog_subtitle,
-                            positiveResource = R.string.unlocked,
-                            negativeResource = R.string.cancel,
+                            titleResource = string.visa_card_unblock_without_nfc_dialog_title,
+                            descriptionResource = string.visa_card_unblock_without_nfc_dialog_subtitle,
+                            positiveResource = string.unlocked,
+                            negativeResource = string.cancel,
                             positiveAction = { onCallMutationCardUnblockingUseCase() },
                             isActive = mutableStateOf(true)
                         )
@@ -415,20 +457,20 @@ class VisaCardViewModel @Inject constructor(
                 uiState =
                     uiState.copy(
                         dialogParameters = DialogParameters(
-                            titleResource = R.string.visa_card_unblock_with_nfc_dialog_title,
-                            descriptionResource = R.string.visa_card_unblock_with_nfc_dialog_subtitle,
-                            positiveResource = R.string.unlocked,
-                            negativeResource = R.string.cancel,
+                            titleResource = string.visa_card_unblock_with_nfc_dialog_title,
+                            descriptionResource = string.visa_card_unblock_with_nfc_dialog_subtitle,
+                            positiveResource = string.unlocked,
+                            negativeResource = string.cancel,
                             positiveAction = { onCallMutationCardUnblockingUseCase() },
                             isActive = mutableStateOf(true)
                         )
                     )
             else -> uiState = uiState.copy(
                 dialogParameters = DialogParameters(
-                    titleResource = R.string.visa_card_unblock_not_allowed_dialog_title,
-                    descriptionResource = R.string.visa_card_unblock_not_allowed_dialog_subtitle,
-                    positiveResource = R.string.accept,
-                    negativeResource = R.string.empty,
+                    titleResource = string.visa_card_unblock_not_allowed_dialog_title,
+                    descriptionResource = string.visa_card_unblock_not_allowed_dialog_subtitle,
+                    positiveResource = string.accept,
+                    negativeResource = string.empty,
                     positiveAction = { },
                     isActive = mutableStateOf(true)
                 )
@@ -442,9 +484,9 @@ class VisaCardViewModel @Inject constructor(
         val isNfcAvailable: Boolean = false,
         val isCardBlocked: Boolean = false,
         val isCardTokenize: Boolean = false,
-        val passwordTitle: Int = R.string.empty,
+        val passwordTitle: Int = string.empty,
         val isPasswordMessage: Boolean = false,
-        val blockUnblockButtonText: Int = R.string.locked,
+        val blockUnblockButtonText: Int = string.locked,
         val blockUnblockButtonIcon: Int = R.drawable.ic_locked,
         val password: String = "",
         val passwordError: Pair<Boolean, Int> = Pair(false, R.string.error_empty),
@@ -457,8 +499,8 @@ class VisaCardViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnNavigateBack -> navigateBack(Screen.HomeScreen.route, isNavigateBackRefresh)
             is OnCallNovoGetFavoriteCard -> callNovoGetFavoriteCard()
+            is OnNavigateBack -> navigateBack(Screen.HomeScreen.route, isNavigateBackRefresh)
             is OnNavigatePreferences -> navigateTo(
                 "${Screen.VisaPreferencesScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
                 encodeData(
@@ -473,7 +515,7 @@ class VisaCardViewModel @Inject constructor(
                 encodeData(
                     balanceCardInformation
                 )
-                }/$availableBalanceLabel/$idClient/$idLoanClient"
+                }"
             )
             is OnOpenDialogConfirmToStartTokenizationProcess -> uiState = uiState.copy(
                 dialogParameters = DialogParameters(
@@ -487,6 +529,7 @@ class VisaCardViewModel @Inject constructor(
                     isActive = mutableStateOf(true)
                 )
             )
+            is OnStartPaymentProcess -> startPaymentProcess()
             is OnStart -> onStart()
             is OnInitializeBiometricPrompt -> initializeBiometricPrompt(
                 uiEvent.biometricPromptTitle,
@@ -501,6 +544,7 @@ class VisaCardViewModel @Inject constructor(
             is OnPasswordForgotPassword -> onPasswordForgotPassword()
             is OnTryWithPassword -> onTryWithPassword()
             is OnBlockUnblockCardClick -> onBlockUnblockCardClick()
+            is OnHandleTapAndPayIntentResult -> onHandleTapAndPayIntentResult(uiEvent.result)
         }
     }
 
@@ -512,13 +556,14 @@ class VisaCardViewModel @Inject constructor(
             val biometricPromptNegative: String
         ) : UIEvent()
 
+        object OnCallNovoGetFavoriteCard : UIEvent()
         data class OnSeeDataClick(val fragmentActivity: FragmentActivity) : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnNavigatePreferences : UIEvent()
         object OnAvailableAmountClick : UIEvent()
         object OnNavigateToVisaTokenizationScreen : UIEvent()
-        object OnCallNovoGetFavoriteCard : UIEvent()
         object OnOpenDialogConfirmToStartTokenizationProcess : UIEvent()
+        object OnStartPaymentProcess : UIEvent()
         object OnHidePasswordBottomSheet : UIEvent()
         object OnTryWithPassword : UIEvent()
         object OnBlockUnblockCardClick : UIEvent()
@@ -526,6 +571,12 @@ class VisaCardViewModel @Inject constructor(
         data class OnPasswordChange(val value: String) : UIEvent()
         object OnPasswordConfirmClick : UIEvent()
         object OnPasswordForgotPassword : UIEvent()
+        data class OnHandleTapAndPayIntentResult(val result: ActivityResult) : UIEvent()
+    }
+
+    sealed class BaseEvent {
+        object OnOpenTapAndPayConfig : BaseEvent()
+        object OnOpenNfcConfig : BaseEvent()
     }
 
     companion object {

@@ -47,6 +47,7 @@ import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.AppFlow
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.SignDocumentOrigin
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import com.multimoney.multimoney.presentation.util.onfido.OnFidoHelper
@@ -89,7 +90,6 @@ class CreditOnfidoViewModel @Inject constructor(
     var lastName: String = ""
     var idUserRequest: Long = 0
     var idPrint: Long = 0
-    var evicertiaUrl: String = ""
     var evicertiaStatus: String = ""
     var applicantId: String? = ""
     var whatsAppLink: String = ""
@@ -103,7 +103,6 @@ class CreditOnfidoViewModel @Inject constructor(
         lastName = savedStateHandle[LAST_NAME] ?: ""
         idUserRequest = savedStateHandle[ID_USER_REQUEST] ?: 0
         idPrint = savedStateHandle[SIGN_DOCUMENT_ID_PRINT] ?: 0
-        evicertiaUrl = savedStateHandle[SIGN_DOCUMENT_URL] ?: ""
         evicertiaStatus = savedStateHandle[EVICERTIA_STATUS] ?: ""
     }
 
@@ -269,7 +268,7 @@ class CreditOnfidoViewModel @Inject constructor(
 
     private fun onNavigateToSignDocumentScreen(signDocumentStep: String) {
         popAndNavigateTo(
-            "${Screen.SignDocumentProcessScreen.baseRoute}/$signDocumentStep/$evicertiaUrl/$idPrint/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName",
+            "${Screen.SignDocumentProcessScreen.baseRoute}/$signDocumentStep/${SignDocumentOrigin.OnFido.value}/$idPrint/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName",
             Screen.CreditOnfidoScreen.route
         )
     }

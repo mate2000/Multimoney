@@ -92,6 +92,8 @@ import com.multimoney.domain.interaction.credit.QueryGetClientAutomaticDebitUseC
 import com.multimoney.domain.interaction.credit.QueryGetClientAutomaticDebitUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryGetClientBankAccountUseCase
 import com.multimoney.domain.interaction.credit.QueryGetClientBankAccountUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryGetLinkCreditContractUseCase
+import com.multimoney.domain.interaction.credit.QueryGetLinkCreditContractUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryGetExchangeRateCreditUseCase
 import com.multimoney.domain.interaction.credit.QueryGetExchangeRateCreditUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryGetInfoDepositUseCase
@@ -393,6 +395,11 @@ class InteractionModule {
     @Singleton
     fun provideQueryEmploymentSituationUseCase(creditRepository: CreditRepository): QueryEmploymentSituationUseCase =
         QueryEmploymentSituationUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryGetLinkCreditContractUseCase(creditRepository: CreditRepository): QueryGetLinkCreditContractUseCase =
+        QueryGetLinkCreditContractUseCaseImpl(creditRepository)
 
     @Provides
     @Singleton

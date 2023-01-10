@@ -1,0 +1,19 @@
+query GetLinkCreditContract(
+    $idPrint: Long!,
+    $idBrand: Int!,
+    $pkUser: Long!,
+    $user: String!
+){
+    getLinkCreditContract(
+        linkCreditContractInput: {
+            idPrint: $idPrint,
+            idBrand: $idBrand,
+            pkUser: $pkUser,
+            user: $user
+        }
+    ) {
+        linkAvailable
+        link
+        statusEvicertia
+    }
+}

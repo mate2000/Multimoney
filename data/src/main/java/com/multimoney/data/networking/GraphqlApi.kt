@@ -55,6 +55,7 @@ import com.multimoney.data.networking.graphql.apollomodel.GetHistoricalCurrencyP
 import com.multimoney.data.networking.graphql.apollomodel.GetInfoDepositQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPaymentPointsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPromissoryNoteDetailQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetLinkCreditContractQuery
 import com.multimoney.data.networking.graphql.apollomodel.GlobalRequestMutation
 import com.multimoney.data.networking.graphql.apollomodel.HomeCantonQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeDistrictQuery
@@ -460,6 +461,19 @@ class GraphqlApi @Inject constructor(
             idBrand
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryGetLinkCreditContract(
+        idPrint: Long,
+        idBrand: Int,
+        pkUser: Long,
+        user: String
+    ): ApolloCall<GetLinkCreditContractQuery.Data> =
+        apolloAuthorizedClient.query(GetLinkCreditContractQuery(
+            idPrint,
+            idBrand,
+            pkUser,
+            user
+        )).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationSaveCreditOperation(
         idUserRequest: Long,

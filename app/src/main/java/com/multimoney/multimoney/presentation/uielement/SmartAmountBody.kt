@@ -27,7 +27,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.core.text.isDigitsOnly
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.GrayScale800
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -167,7 +166,7 @@ fun SmartAmountBody(
             motive?.let {
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    modifier = Modifier.padding(bottom = 16.dp),
+                    modifier = Modifier.padding(bottom = 4.dp),
                     text = stringResource(id = R.string.smart_iban_transfer_motive_label),
                     style = Typography.body2,
                     color = text

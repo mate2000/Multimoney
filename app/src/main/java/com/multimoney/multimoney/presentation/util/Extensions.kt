@@ -5,9 +5,11 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.database.Cursor
 import android.net.Uri
 import android.nfc.cardemulation.CardEmulation
 import android.os.Build
+import android.provider.ContactsContract
 import android.provider.Settings.Secure
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.ui.graphics.Color
@@ -109,6 +111,26 @@ fun Context.checkPermission(
         isFirstRequest && showRationale == false -> launcher.launch(permission)
         else -> launcher.launch(permission)
     }
+}
+
+fun Context.getPhoneNumbers() : List<String> {
+    val context = this
+    val numbers = mutableListOf<String>()
+    val contentResolver = context.contentResolver
+    val phones: Cursor? = contentResolver.query(
+        ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+        null, null, null
+    )
+    if (phones != null) {
+        while (phones.moveToNext()) {
+            val index = phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+            if (index >= 0) {
+                numbers.add(phones.getString(index))
+            }
+        }
+        phones.close()
+    }
+    return numbers
 }
 
 fun tickerFlow(

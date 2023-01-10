@@ -39,6 +39,8 @@ import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.checkPermission
+import com.multimoney.multimoney.presentation.util.getPhoneNumbers
+
 
 @Composable
 fun SmartSelectSendingTypeScreen(
@@ -50,14 +52,15 @@ fun SmartSelectSendingTypeScreen(
     val launcherContactPermissionDialog = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
-        viewModel.onUIEvent(OnPermissionResult(isGranted))
+        val numbers = if (isGranted) context.getPhoneNumbers() else null
+        viewModel.onUIEvent(OnPermissionResult(isGranted, numbers))
     }
     val permissionFlow: (fromRationale: Boolean) -> Unit = {
         context.checkPermission(
             permission = READ_CONTACTS,
             permissionGrantedAction = {
                 viewModel.onUIEvent(
-                    OnNavigateToMyContacts
+                    OnNavigateToMyContacts(context.getPhoneNumbers())
                 )
             },
             showRationaleAction = { isPermanentlyDenied ->

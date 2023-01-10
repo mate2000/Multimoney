@@ -54,9 +54,9 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.REFERENCE_NUMB
 import com.multimoney.multimoney.presentation.navigation.navgraph.SELECTED_AMOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_DISPLAY_EXCHANGE_RATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ORIGIN
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
-import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ORIGIN
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.SMART_PAYMENT_ACCOUNTS
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
@@ -131,10 +131,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     // LoginNavGraph Screens
     object SplashScreen : Screen("splash_screen")
     object OnBoardingScreen : Screen("onboarding_screen")
-    object SignInScreen : Screen("sign_in_screen?$FORCE_CHANGE_DEVICE={$FORCE_CHANGE_DEVICE}","sign_in_screen")
+    object SignInScreen : Screen("sign_in_screen?$FORCE_CHANGE_DEVICE={$FORCE_CHANGE_DEVICE}", "sign_in_screen")
     object SignUpScreen : Screen("sign_up_screen/{$SIGN_UP_STEP}", "sign_up_screen")
     object RequestForgotPassword :
         Screen("request_forgot_password_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}", "request_forgot_password_screen")
+
+    object RegisteredUserPassword : Screen("registered_user_password", "registered_user_password")
 
     object ProcessForgotPassword :
         Screen(
@@ -495,12 +497,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "crypto_market_screen"
     )
 
-    object CryptoMovementsScreen: Screen(
+    object CryptoMovementsScreen : Screen(
         "crypto_movements_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
         "crypto_movements_screen"
     )
 
-    object CryptoCurrencyDetailsScreen: Screen(
+    object CryptoCurrencyDetailsScreen : Screen(
         "crypto_currency_details_screen/{$USER}/{$ID_BRAND}/{$CRYPTO_ASSET}/{$DESCRIPTION_CURRENCY}/{$CURRENT_CRYPTO_PRICE}/{$URL_IMAGE}",
         "crypto_currency_details_screen"
     )

@@ -83,8 +83,7 @@ fun SmartSelectSendingTypeScreen(
                             onMyContactsClick = { viewModel.onUIEvent(OnMyContactsSelected) },
                             onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected) },
                             onIBANAccountsClick = { viewModel.onUIEvent(OnIBANAccountSelected) },
-                            smartAccountTitle = viewModel.getTitleSmartAccountResource(),
-                            smartAccountStartIcon = viewModel.getIconSmartAccountResource()
+                            smartAccountTitleAndIconResource = viewModel.getTitleAndIconSmartAccountResources()
                         )
                     }
                     // These options should be available only for SV
@@ -128,8 +127,7 @@ fun SendingTypeOptionsCR(
     onMyContactsClick: () -> Unit,
     onMySmartAccountClick: () -> Unit,
     onIBANAccountsClick: () -> Unit,
-    smartAccountTitle: Int?,
-    smartAccountStartIcon: Int?
+    smartAccountTitleAndIconResource: Pair<Int, Int?>,
 ) {
     CustomInfoButton(
         title = stringResource(R.string.payment_select_sending_type_favorites_cr),
@@ -147,12 +145,12 @@ fun SendingTypeOptionsCR(
         onEndIconClick = onMyContactsClick,
         onClick = onMyContactsClick
     )
-    smartAccountTitle?.let {
+    smartAccountTitleAndIconResource.let { (title, icon) ->
         CustomInfoButton(
-            title = stringResource(id = it),
+            title = stringResource(id = title),
             modifier = modifier,
             endIcon = R.drawable.ic_right_chevron,
-            startIcon = smartAccountStartIcon,
+            startIcon = icon,
             onEndIconClick = onMySmartAccountClick,
             onClick = onMySmartAccountClick
         )

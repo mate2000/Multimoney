@@ -80,8 +80,9 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     }
 
     private fun onNavigateToSmartAccount() {
-        // TODO navigate to HU REV-1431
-        emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
+        navigateTo(
+            "${Screen.OwnTransferAmountScreen.baseRoute}/${encodeData(smartAccount)}/${Screen.SmartSelectSendingTypeScreen.baseRoute}"
+        )
     }
 
     private fun onNavigateToMyContacts() {

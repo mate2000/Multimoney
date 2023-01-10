@@ -83,6 +83,7 @@ fun Context.openIntent(intent: Intent, onFailure: () -> Unit) {
  * permission is not granted,
  * @param comesFromRationale: a flag to know if the launcher is launched from a rationale
  * @param launchFromRationale: an action to perform before launching the laucher
+ * @param isFirstRequest: flag to know if it is the first time the permission is requested
  */
 
 fun Context.checkPermission(
@@ -91,6 +92,7 @@ fun Context.checkPermission(
     showRationaleAction: (isPermanentlyDenied: Boolean) -> Unit,
     launchFromRationale: (isLastRetry: Boolean) -> Unit,
     comesFromRationale: Boolean = false,
+    isFirstRequest: Boolean = false,
     launcher: ManagedActivityResultLauncher<String, Boolean>
 ) {
     val isGranted = ContextCompat.checkSelfPermission(this, permission) == PERMISSION_GRANTED
@@ -103,7 +105,8 @@ fun Context.checkPermission(
             launcher.launch(permission)
         }
         comesFromRationale.not() && showRationale == true -> showRationaleAction(false)
-        comesFromRationale.not() && showRationale == false -> showRationaleAction(true)
+        comesFromRationale.not() && showRationale == false && isFirstRequest.not() -> showRationaleAction(true)
+        isFirstRequest && showRationale == false -> launcher.launch(permission)
         else -> launcher.launch(permission)
     }
 }

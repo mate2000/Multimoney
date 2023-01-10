@@ -69,6 +69,7 @@ fun SmartSelectSendingTypeScreen(
             },
             launchFromRationale = { isLastRetry -> viewModel.setIfIsLastPermissionRetry(isLastRetry) },
             comesFromRationale = it,
+            isFirstRequest = viewModel.uiState.isContactPermissionAlreadyRequested.not(),
             launcher = launcherContactPermissionDialog
         )
     }
@@ -76,6 +77,7 @@ fun SmartSelectSendingTypeScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
+            getPermissionState()
         }
     }
 

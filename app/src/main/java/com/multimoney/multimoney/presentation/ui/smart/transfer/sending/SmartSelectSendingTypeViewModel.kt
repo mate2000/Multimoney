@@ -4,6 +4,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -19,11 +21,14 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSel
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SmartSelectSendingTypeViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
 
     // UIState
@@ -104,14 +109,30 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         uiState = uiState.copy(isLastPermissionRetry = isLastRetry)
     }
 
+    fun getPermissionState() {
+        viewModelScope.launch {
+            uiState = uiState.copy(
+                isContactPermissionAlreadyRequested = dataStorePreferences.isContactPermissionRequested()
+                    .first()
+            )
+        }
+    }
+
     private fun onPermissionResult(isPermissionGranted: Boolean) {
-        if (isPermissionGranted) {
-            showRationale(false)
-            onNavigateToMyContacts()
-        } else if (uiState.isLastPermissionRetry) {
-            onPermissionPermanentlyDenied()
-        } else {
-            showRationale(true)
+        viewModelScope.launch {
+            dataStorePreferences.isContactPermissionRequested(true)
+            uiState = uiState.copy(
+                isContactPermissionAlreadyRequested = dataStorePreferences.isContactPermissionRequested()
+                    .first()
+            )
+            if (isPermissionGranted) {
+                showRationale(false)
+                onNavigateToMyContacts()
+            } else if (uiState.isLastPermissionRetry) {
+                onPermissionPermanentlyDenied()
+            } else {
+                showRationale(true)
+            }
         }
     }
 
@@ -154,7 +175,8 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         val errorMessageRes: Int = R.string.smart_sac_transfer_contact_rationale_message,
         val errorButtonTextRes: Int = R.string.smart_sac_transfer_contact_rationale_button,
         val isButtonLaunchAction: Boolean = true,
-        val isLastPermissionRetry: Boolean = false
+        val isLastPermissionRetry: Boolean = false,
+        val isContactPermissionAlreadyRequested: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

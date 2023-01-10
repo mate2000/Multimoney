@@ -8,13 +8,11 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
-import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCase
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCase
 import com.multimoney.domain.interaction.security.MutationOnfidoCheckProcessUseCase
 import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.onFailure
-import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.BuildConfig
 import com.multimoney.multimoney.R.string
@@ -32,6 +30,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnCallInFidoToken
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnConfigureOnFidoSdk
@@ -248,12 +247,12 @@ class SmartOnfidoViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateToHome() {
-        popAndNavigateTo(
-            route = Screen.HomeScreen.route,
-            popTo = Screen.SmartScreen.route
+    private fun onNavigateToHome() =
+        navigateBack(
+            popTo = Screen.HomeScreen.route,
+            isRestart = true,
+            homeState = HomeState.UNEXPANDED
         )
-    }
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
@@ -279,8 +278,9 @@ class SmartOnfidoViewModel @Inject constructor(
             is OnContinueEnable -> uiState = uiState.copy(isContinueEnabled = event.isEnable)
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
             is OnNavigateToHome -> onNavigateToHome()
-            is OnFailureWithDialog -> uiState =
-                uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
+            is OnFailureWithDialog ->
+                uiState =
+                    uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnOpenOnfidoSdk -> onOpenOnfidoSdk(event.onOpenOnfidoSdk)
         }
     }

@@ -47,13 +47,13 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 
 @Composable
 fun CreditMovementsScreen(
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: CreditMovementsViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
 
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
+        viewModel.executeNavigation(onPopBackStack = onPopBackStack)
         viewModel.isOnRestart = false
         viewModel.onUIEvent(OnGetMovement)
     }

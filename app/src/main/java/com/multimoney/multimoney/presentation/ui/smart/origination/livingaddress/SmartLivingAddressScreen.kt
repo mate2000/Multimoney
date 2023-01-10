@@ -108,7 +108,8 @@ fun SmartLivingAddressScreen(
             message = viewModel.uiState.openDialog.description.ifBlank {
                 stringResource(R.string.error)
             },
-            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction,
+            openDialogCustom = viewModel.uiState.openDialog.isActive
         )
     }
 
@@ -130,10 +131,10 @@ fun SmartLivingAddressScreen(
                     .padding(top = 32.dp),
                 items = viewModel.uiState.divisionOneList?.map { it?.name.orEmpty() } ?: listOf(),
                 value = viewModel.uiState.divisionOneSelected?.name ?: "",
-                onValueChange = {
+                onValueChange = { valueSelected, _ ->
                     viewModel.onUIEvent(
                         SmartLivAddressViewModel.UIEvent.OnDivisionOneValueChange(
-                            divisionOne = it,
+                            divisionOne = valueSelected,
                             onFailureWithDialog = { isLoading, dialogParameters ->
                                 sharedViewModel.onUIEvent(
                                     SmartViewModel.UIEvent.OnFailureWithDialog(
@@ -161,10 +162,10 @@ fun SmartLivingAddressScreen(
                 .padding(top = 32.dp),
             items = viewModel.uiState.divisionTwoList?.map { it?.name.orEmpty() } ?: listOf(),
             value = viewModel.uiState.divisionTwoSelected?.name ?: "",
-            onValueChange = {
+            onValueChange = { valueSelected, _ ->
                 viewModel.onUIEvent(
                     SmartLivAddressViewModel.UIEvent.OnDivisionTwoValueChange(
-                        divisionTwo = it,
+                        divisionTwo = valueSelected,
                         onFailureWithDialog = { isLoading, dialogParameters ->
                             sharedViewModel.onUIEvent(
                                 SmartViewModel.UIEvent.OnFailureWithDialog(
@@ -185,10 +186,10 @@ fun SmartLivingAddressScreen(
                 .padding(top = 32.dp),
             items = viewModel.uiState.divisionThreeList?.map { it?.name.orEmpty() } ?: listOf(),
             value = viewModel.uiState.divisionThreeSelected?.name ?: "",
-            onValueChange = {
+            onValueChange = { valueSelected, _ ->
                 viewModel.onUIEvent(
                     SmartLivAddressViewModel.UIEvent.OnDivisionThreeValueChange(
-                        divisionThree = it
+                        divisionThree = valueSelected
                     )
                 )
             },

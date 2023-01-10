@@ -64,7 +64,7 @@ private fun GetConfigurationVersionQuery.VirtualCard.mapToDomainModel() = Virtua
 )
 
 private fun GetConfigurationVersionQuery.ConfiguracionVersion.mapToDomainModel() = Configuration(
-    timeSession = timeSesion,
+    timeSession = timeSesion.times(1000),
     currency = moneda.map { it.mapToDomainModel() },
     accountSmart = accountSmart.mapToDomainModel(),
     credit = credit.mapToDomainModel(),

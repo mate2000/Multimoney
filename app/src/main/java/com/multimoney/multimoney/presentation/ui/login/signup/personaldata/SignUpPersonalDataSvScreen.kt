@@ -47,8 +47,8 @@ fun SignUpPersonalDataSvScreen(
                 .focusable(false)
                 .padding(top = 16.dp),
             items = viewModel.uiState.documentList,
-            onValueChange = {
-                viewModel.onUIEvent(OnIdentificationTypeValueChange(it))
+            onValueChange = { valueSelected, _ ->
+                viewModel.onUIEvent(OnIdentificationTypeValueChange(valueSelected))
             },
             labelText = stringResource(id = R.string.sign_up_personal_data_document_label),
             value = viewModel.uiState.identificationValueType,

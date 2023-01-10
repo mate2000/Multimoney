@@ -716,7 +716,6 @@ type Mutation {
   """
   Security
   """
-
   requestchangeDevice(requestChangeDeviceInputType: ChangeDeviceDtoInput!): UserValidation!
 
   """
@@ -2201,9 +2200,9 @@ type CryptoCurrencyMovement {
 
   percentageInvested: String
 
-  total_count: Int!
+  total_count: Int
 
-  items: [CryptoCurrencyMovementItem!]!
+  items: [CryptoCurrencyMovementItem]
 }
 
 input CryptoMovementDtoInput {
@@ -2617,6 +2616,8 @@ type ValidateBankAccount {
 
   name: String!
 
+  identification: String!
+
   currency: String!
 
   sellPriceDollar: String!
@@ -2820,6 +2821,8 @@ type UserValidation {
   idClient: Long
 
   isNewUser: Boolean
+
+  idBrand: Int
 
   status: Int
 
@@ -4993,15 +4996,21 @@ input CreateCardDtoInput {
 }
 
 type UpdateCard {
-  applicationName: String!
+  applicationName: String
 
-  userName: String!
+  userName: String
 
-  isApproved: Boolean!
+  isApproved: Boolean
 
-  apiStatus: String!
+  apiStatus: String
 
-  default: Boolean!
+  default: Boolean
+
+  status: Int
+
+  message: String
+
+  detail: String
 }
 
 input UpdateCardDtoInput {
@@ -5151,9 +5160,15 @@ input CreateUserDtoInput {
 }
 
 type DeleteCard {
-  isApproved: String!
+  isApproved: String
 
-  apiStatus: String!
+  apiStatus: String
+
+  status: Int
+
+  message: String
+
+  detail: String
 }
 
 input DeleteCardDtoInput {
@@ -5886,41 +5901,41 @@ type CryptoNewsFeed_Result {
 }
 
 type CryptoCurrencyMovementItem {
-  id: String!
+  id: String
 
-  profile_id: String!
+  profile_id: String
 
-  status: String!
+  status: String
 
-  side: String!
+  side: String
 
-  market: String!
+  market: String
 
-  type: String!
+  type: String
 
-  base_amount: String!
+  base_amount: String
 
-  price: String!
+  price: String
 
-  quote_amount: String!
+  quote_amount: String
 
-  created_at: DateTime!
+  created_at: DateTime
 
-  modified_at: DateTime!
+  modified_at: DateTime
 
-  amount_filled: String!
+  amount_filled: String
 
-  volume_weighted_average_price: String!
+  volume_weighted_average_price: String
 
-  dateCreated: String!
+  dateCreated: String
 
-  decriptionMovement: String!
+  decriptionMovement: String
 
-  abbreviationCurrency: String!
+  abbreviationCurrency: String
 
-  held: Boolean!
+  held: Boolean
 
-  month_limit_exceeded: Boolean!
+  month_limit_exceeded: Boolean
 }
 
 """
@@ -6679,6 +6694,8 @@ type Wording {
   textTwo: String!
 
   cTA: String!
+
+  link: String
 
   display: Boolean
 }

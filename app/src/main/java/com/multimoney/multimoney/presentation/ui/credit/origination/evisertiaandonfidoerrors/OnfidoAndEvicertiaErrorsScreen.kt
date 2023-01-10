@@ -18,10 +18,11 @@ import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaErr
 @Composable
 fun OnfidoAndEvicertiaErrorsScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: OnfidoAndEvicertiaErrorsViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
+        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)
     }
 
     when (viewModel.uiState.error) {

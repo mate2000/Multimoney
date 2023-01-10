@@ -75,7 +75,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private fun isFormValid() = emitBaseEvent(
         OnFormValidateCompleted(
             when (uiState.nationalityValue) {
-                ElSalvadorDui.country -> uiState.personalDocumentValue.isNotBlank() && (uiState.personalDocumentValue.length == ElSalvadorDui.documentSize) && !uiState.personalIdError.first && uiState.firstNameValue.isNotBlank() && uiState.firstLastNameValue.isNotBlank()
+                ElSalvadorDui.country -> uiState.personalDocumentValue.isNotBlank() && (uiState.personalDocumentValue.length == ElSalvadorDui.documentSize || uiState.personalDocumentValue.length == ElSalvadorCarne.documentSize) && !uiState.personalIdError.first && uiState.firstNameValue.isNotBlank() && uiState.firstLastNameValue.isNotBlank()
                 Guatemala.country -> uiState.personalDocumentValue.isNotBlank() && (uiState.personalDocumentValue.length == Guatemala.documentSize) && !uiState.personalIdError.first && uiState.firstNameValue.isNotBlank() && uiState.firstLastNameValue.isNotBlank()
                 CostaRicaId.country -> uiState.personalDocumentValue.isNotBlank() &&
                     (uiState.personalDocumentValue.length == CostaRicaId.documentSize || uiState.personalDocumentValue.length == CostaRicaDimex.documentSize) &&
@@ -91,7 +91,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
         onLoadingValueChange: (isLoading: Boolean) -> Unit
     ): String? {
         onSuccessCountry?.countryList?.forEach {
-            if (it.countryPrefix?.lowercase() == nationality.lowercase()) {
+            if (it.countryDescription?.lowercase() == nationality.lowercase()) {
                 setDefaultCountry(nationality, updateNationality, onLoadingValueChange)
                 return it.countryDescription
             }
@@ -105,13 +105,13 @@ class SignUpPersonalDataViewModel @Inject constructor(
         onLoadingValueChange: (isLoading: Boolean) -> Unit
     ) {
         callQueryCatalogDocumentType(
-            onSuccessCountry?.countryList?.find { it.countryPrefix == nationality }?.idBrand ?: 0,
+            onSuccessCountry?.countryList?.find { it.countryDescription == nationality }?.idBrand ?: 0,
             onLoadingValueChange
         )
         updateNationality.invoke(
-            onSuccessCountry?.countryList?.find { it.countryPrefix == nationality }?.countryPrefix
+            onSuccessCountry?.countryList?.find { it.countryDescription == nationality }?.countryDescription
                 ?: "",
-            onSuccessCountry?.countryList?.find { it.countryPrefix == nationality }?.idBrand ?: 0
+            onSuccessCountry?.countryList?.find { it.countryDescription == nationality }?.idBrand ?: 0
         )
     }
 
@@ -289,7 +289,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
         )
         cleanUIForNationality()
         updateNationality.invoke(
-            onSuccessCountry?.countryList?.get(nationality)?.countryPrefix ?: "",
+            onSuccessCountry?.countryList?.get(nationality)?.countryDescription ?: "",
             onSuccessCountry?.countryList?.get(nationality)?.idBrand ?: 0
         )
     }

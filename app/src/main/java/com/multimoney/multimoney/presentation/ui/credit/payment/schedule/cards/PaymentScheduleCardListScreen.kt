@@ -21,10 +21,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCallQueryGetCards
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCardSelected
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
@@ -62,7 +64,7 @@ fun PaymentScheduleAccountContent(
     ) {
         TopNavBar(
             onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
-            isRightButtonVisible = false
+            onRightButtonClick = { viewModel.onUIEvent(OnCloseClick) }
         )
         Text(
             modifier = Modifier.padding(top = 42.dp, start = 16.dp, end = 16.dp),
@@ -76,14 +78,16 @@ fun PaymentScheduleAccountContent(
         viewModel.uiState.clientCardList?.let { cardList ->
             LazyColumn(modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp)) {
                 items(cardList) { card ->
-
                     CustomInfoButton(
                         modifier = Modifier
                             .fillMaxWidth(),
                         imageModifier = Modifier.size(48.dp),
                         startIcon = R.drawable.ic_visa_card_item,
                         title = card?.detail ?: "",
-                        subtitle = card?.cardMaskedNumber ?: "",
+                        subtitle = stringResource(
+                            id = string.visa_card_masked_number,
+                            card?.cardMaskedNumber?.takeLast(4) ?: 0
+                        ),
                         endIcon = R.drawable.ic_right_chevron,
                         onEndIconClick = {
                             viewModel.onUIEvent(OnCardSelected(card))
@@ -112,8 +116,10 @@ fun PaymentScheduleAccountContent(
                 title = stringResource(id = viewModel.uiState.openDialog.titleResource),
                 message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
                 positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+                negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
                 openDialogCustom = viewModel.uiState.openDialog.isActive,
-                onPositiveAction = viewModel.uiState.openDialog.positiveAction
+                onPositiveAction = viewModel.uiState.openDialog.positiveAction,
+                onNegativeAction = viewModel.uiState.openDialog.negativeAction
             )
         }
     }

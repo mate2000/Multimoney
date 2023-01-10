@@ -17,6 +17,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.SmartAccountDetail
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.SmartCtaButtons
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.SmartMovementsLatest
+import com.multimoney.multimoney.presentation.util.catalog.ProductType
 
 @Composable
 fun SmartFooterExpanded(
@@ -28,7 +29,9 @@ fun SmartFooterExpanded(
         Modifier.fillMaxSize()
     ) {
         val (content, buttons) = createRefs()
-        val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 1)
+        val decrement =
+            if (viewModel.uiState.productPageList?.any { it.product == ProductType.Credit.value } == true) 1 else 0
+        val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: decrement)
 
         Column(
             Modifier

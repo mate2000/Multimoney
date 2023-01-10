@@ -9,15 +9,16 @@ import androidx.navigation.NavHostController
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.connectivity.Connectivity
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.util.firebase.FireBaseEventHelper
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 open class BaseViewModel @Inject constructor(
     val shouldObserveToken: Boolean
@@ -105,8 +106,8 @@ open class BaseViewModel @Inject constructor(
     fun popAndNavigateTo(route: String, popTo: String) =
         sendNavigationEvent(NavEvent.PopAndNavigate(route = route, popTo = popTo))
 
-    fun navigateBack(popTo: String, isRestart: Boolean) =
-        sendNavigationEvent(NavEvent.PopBackStack(popTo = popTo, isRestart = isRestart))
+    fun navigateBack(popTo: String, isRestart: Boolean, homeState: HomeState = HomeState.OLD_STATE) =
+        sendNavigationEvent(NavEvent.PopBackStack(popTo = popTo, isRestart = isRestart, homeState = homeState))
 
     fun executeNavigation(
         onNavigate: (NavEvent.Navigate) -> Unit = {},

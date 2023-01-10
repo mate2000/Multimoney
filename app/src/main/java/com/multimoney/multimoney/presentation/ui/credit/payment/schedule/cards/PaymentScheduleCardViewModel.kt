@@ -32,6 +32,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.P
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnOpenDisclaimerDialog
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnProgramClick
+import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.API_DATE_FORMAT
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getDayFromString
@@ -209,7 +210,7 @@ class PaymentScheduleCardViewModel @Inject constructor(
     }
 
     private fun onNavigateBack() = when (previousScreen) {
-        Screen.HomeBNScreen.baseRoute -> onNavigateBackHome(false)
+        Screen.HomeScreen.route -> onNavigateBackHome(false)
         Screen.PaymentCardVoucherScreen.baseRoute -> navigateBack(
             popTo = Screen.PaymentCardVoucherScreen.route,
             isRestart = false
@@ -229,7 +230,7 @@ class PaymentScheduleCardViewModel @Inject constructor(
     }
 
     private fun onAlertCloseClick() = if (uiState.isAlertResultSuccess) {
-        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true)
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
     } else {
         navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
     }

@@ -8,11 +8,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
+import com.multimoney.domain.interaction.credit.MutationSaveCreditOperationUseCase
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCase
 import com.multimoney.domain.interaction.security.MutationOnfidoCheckProcessUseCase
 import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.BuildConfig
 import com.multimoney.multimoney.R.string
@@ -39,10 +41,13 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.Credi
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnOpenDialogValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnOpenOnfidoSdk
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnSetCloseDialogTexts
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnSetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.RefreshOnFidoToken
+import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.AppFlow
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.SignDocumentOrigin
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import com.multimoney.multimoney.presentation.util.onfido.OnFidoHelper
@@ -51,10 +56,11 @@ import com.onfido.android.sdk.capture.Onfido.OnfidoResultListener
 import com.onfido.android.sdk.capture.errors.OnfidoException
 import com.onfido.android.sdk.capture.upload.Captures
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class CreditOnfidoViewModel @Inject constructor(
@@ -62,6 +68,7 @@ class CreditOnfidoViewModel @Inject constructor(
     val onFidoHelper: OnFidoHelper,
     private val mutationOnFidoInitialProcessUseCase: MutationOnFidoInitialProcessUseCase,
     private val mutationOnfidoCheckProcessUseCase: MutationOnfidoCheckProcessUseCase,
+    private val mutationSaveCreditOperationUseCase: MutationSaveCreditOperationUseCase,
     val countDownTimer: MMCountDownTimer
 ) : BaseViewModel(true) {
 
@@ -83,9 +90,9 @@ class CreditOnfidoViewModel @Inject constructor(
     var lastName: String = ""
     var idUserRequest: Long = 0
     var idPrint: Long = 0
-    var evicertiaUrl: String = ""
     var evicertiaStatus: String = ""
     var applicantId: String? = ""
+    var whatsAppLink: String = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -96,7 +103,6 @@ class CreditOnfidoViewModel @Inject constructor(
         lastName = savedStateHandle[LAST_NAME] ?: ""
         idUserRequest = savedStateHandle[ID_USER_REQUEST] ?: 0
         idPrint = savedStateHandle[SIGN_DOCUMENT_ID_PRINT] ?: 0
-        evicertiaUrl = savedStateHandle[SIGN_DOCUMENT_URL] ?: ""
         evicertiaStatus = savedStateHandle[EVICERTIA_STATUS] ?: ""
     }
 
@@ -141,7 +147,7 @@ class CreditOnfidoViewModel @Inject constructor(
         identification: String,
         user: String
     ) {
-        viewModelScope.launch {
+        executeUseCase {
             mutationOnFidoInitialProcessUseCase.invoke(
                 names,
                 lastNames,
@@ -166,6 +172,11 @@ class CreditOnfidoViewModel @Inject constructor(
                     override fun userCompleted(captures: Captures) {
                         countDownTimer.resumeTimer()
                         onCallOnfidoCheckProcess(pkUser, identification, idBrand ?: 0, idUserRequest, email)
+                        if (idPrint == ID_PRINT_EMPTY) {
+                            onCallSaveCreditOperation()
+                        } else {
+                            navigateToCorrectScreen()
+                        }
                     }
 
                     override fun userExited(exitCode: ExitCode) {
@@ -198,7 +209,7 @@ class CreditOnfidoViewModel @Inject constructor(
         idUserRequest: Long,
         user: String
     ) {
-        executeUseCase {
+        GlobalScope.launch {
             mutationOnfidoCheckProcessUseCase.invoke(
                 identification,
                 applicantId ?: "",
@@ -216,7 +227,30 @@ class CreditOnfidoViewModel @Inject constructor(
                 }
             }
         }
-        navigateToCorrectScreen()
+    }
+
+    private fun onCallSaveCreditOperation() {
+        executeUseCase {
+            mutationSaveCreditOperationUseCase.invoke(
+                idUserRequest,
+                pkUser,
+                email,
+                idBrand ?: 0
+            ).collectLatest { result ->
+                result.onSuccess {
+                    idPrint = it.idPrint
+                    navigateToCorrectScreen()
+                }
+                result.onFailure {
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        isAlertResultVisible = true
+                    )
+                }.onLoading {
+                    uiState = uiState.copy(isLoading = true)
+                }
+            }
+        }
     }
 
     private fun navigateToCorrectScreen() {
@@ -234,7 +268,7 @@ class CreditOnfidoViewModel @Inject constructor(
 
     private fun onNavigateToSignDocumentScreen(signDocumentStep: String) {
         popAndNavigateTo(
-            "${Screen.SignDocumentProcessScreen.baseRoute}/$signDocumentStep/$evicertiaUrl/$idPrint/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/${false}",
+            "${Screen.SignDocumentProcessScreen.baseRoute}/$signDocumentStep/${SignDocumentOrigin.OnFido.value}/$idPrint/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName",
             Screen.CreditOnfidoScreen.route
         )
     }
@@ -255,15 +289,13 @@ class CreditOnfidoViewModel @Inject constructor(
     }
 
     private fun onNavigateToHome() {
-        popAndNavigateTo(
-            route = Screen.HomeScreen.route,
-            popTo = Screen.CreditScreen.route
-        )
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
     }
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is OnSetCloseDialogTexts -> onInitializeTexts(event.title, event.description)
+            is OnSetWhatsAppLink -> whatsAppLink = event.whatsAppLink
             is OnConfigureOnFidoSdk -> onConfigureOnFidoSDK(event.result)
             is OnCallInFidoToken -> callMutationOnFidoInitialProcess(
                 event.firstName,
@@ -295,10 +327,12 @@ class CreditOnfidoViewModel @Inject constructor(
         val isLoading: Boolean = false,
         val isAlertVisible: Boolean = false,
         val isContinueEnabled: Boolean = false,
-        val openDialog: DialogParameters = DialogParameters()
+        val openDialog: DialogParameters = DialogParameters(),
+        var isAlertResultVisible: Boolean = false
     )
 
     sealed class UIEvent {
+        data class OnSetWhatsAppLink(val whatsAppLink: String) : UIEvent()
         data class OnSetCloseDialogTexts(val title: Int, val description: String) : UIEvent()
         data class OnCallInFidoToken(
             val firstName: String,

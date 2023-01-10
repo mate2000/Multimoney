@@ -6,17 +6,18 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
+import com.multimoney.multimoney.presentation.navigation.HOME_STATE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.SMART_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.ui.smart.origination.onfidoscenarios.continuevalidatingonfido.ContinueValidatingOnfidoScreen
-import com.multimoney.multimoney.presentation.ui.smart.origination.evicertiaandonfidoerrors.OnfidoAndEvicertiaErrorsScreen
 import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.SmartMovementsScreen
 import com.multimoney.multimoney.presentation.ui.smart.SmartScreen
+import com.multimoney.multimoney.presentation.ui.smart.origination.evicertiaandonfidoerrors.OnfidoAndEvicertiaErrorsScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoScreen
+import com.multimoney.multimoney.presentation.ui.smart.origination.onfidoscenarios.continuevalidatingonfido.ContinueValidatingOnfidoScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfidoscenarios.onfidoapproved.ApprovedByOnfidoScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignScreen
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.SmartTransferIbanScreen
 
 const val ACCOUNT_TOKEN = "account_token"
 const val SMART_PAYMENT_ACCOUNTS = "smart_payment_accounts"
@@ -29,13 +30,25 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
         composable(
             Screen.SmartScreen.route
         ) {
-            SmartScreen(onNavigate = {
-                navController.navigate(it.route)
-            }, onPopAndNavigate = {
-                navController.navigate(it.route) {
-                    popUpTo(it.popTo) { inclusive = true }
+            SmartScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                },
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
                 }
-            })
+            )
         }
 
         composable(
@@ -46,11 +59,22 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
                 navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType }
             )
         ) {
-            SmartOnfidoScreen(onPopAndNavigate = {
-                navController.navigate(it.route) {
-                    popUpTo(it.popTo) { inclusive = true }
+            SmartOnfidoScreen(
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                },
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
                 }
-            })
+            )
         }
         composable(
             Screen.SmartMovementsScreen.route,
@@ -61,10 +85,14 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
             )
         ) {
             SmartMovementsScreen(
-                onPopAndNavigate = {
-                    navController.navigate(it.route) {
-                        popUpTo(it.popTo) { inclusive = true }
-                    }
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
                 }
             )
         }
@@ -79,11 +107,22 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
                 navArgument(IS_SMART_EVICERTIA) { type = NavType.BoolType }
             )
         ) {
-            SmartSignScreen(onPopAndNavigate = {
-                navController.navigate(it.route) {
-                    popUpTo(it.popTo) { inclusive = true }
+            SmartSignScreen(
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                },
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
                 }
-            })
+            )
         }
 
         composable(
@@ -99,6 +138,15 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
                     navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }
                     }
+                },
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
                 }
             )
         }
@@ -106,7 +154,7 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
         composable(
             route = Screen.ApprovedByOnfidoScreen.route,
             arguments = listOf(
-                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(ID_BRAND) { type = NavType.IntType }
             )
         ) {
             ApprovedByOnfidoScreen(
@@ -114,6 +162,15 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
                     navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }
                     }
+                },
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
                 }
             )
         }
@@ -121,35 +178,15 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
         composable(
             route = Screen.SmartContinueValidatingOnfidoScreen.route
         ) {
-            ContinueValidatingOnfidoScreen(onPopAndNavigate = {
-                navController.navigate(it.route) {
-                    popUpTo(it.popTo) { inclusive = true }
-                }
-            })
-        }
-
-        composable(
-            route = Screen.TransferIbanAccountScreen.route,
-            arguments = listOf(
-                navArgument(ID_BRAND) {
-                    type = NavType.StringType
-                },
-                navArgument(ID_CLIENT) {
-                    type = NavType.StringType
-                },
-                navArgument(ID_LOAN_CLIENT) {
-                    type = NavType.StringType
-                }
-            )
-        ) {
-            SmartTransferIbanScreen(
-                onNavigate = {
-                    navController.navigate(it.route)
-                },
-                onPopAndNavigate = {
-                    navController.navigate(it.route) {
-                        popUpTo(it.popTo) { inclusive = true }
-                    }
+            ContinueValidatingOnfidoScreen(
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
                 }
             )
         }

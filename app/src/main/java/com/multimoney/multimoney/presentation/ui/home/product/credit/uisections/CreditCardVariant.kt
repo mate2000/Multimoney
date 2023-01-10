@@ -119,6 +119,7 @@ fun CardGtSvCreditRejected(
         textOne = "",
         textTwo = "",
         cTA = "",
+        link = "",
         display = false
     ),
     action: () -> Unit = {}
@@ -170,7 +171,7 @@ fun CardGtSvCreditRejected(
                 drawableResource = drawable.ic_chevron_up
             )
             Text(
-                text = stringResource(id = string.home_product_gt_with_out_credit_action),
+                text = wording?.cTA?.filter { wording.cTA != notDefinedValue } ?: "",
                 modifier = Modifier
                     .padding(bottom = 12.dp),
                 style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),

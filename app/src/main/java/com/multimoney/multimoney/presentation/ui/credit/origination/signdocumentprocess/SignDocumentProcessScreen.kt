@@ -8,10 +8,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.SimulateUserInteraction
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallSubscriptionCreditContractEvent
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnShowDialogInformation
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnAlertButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnAlertCloseClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallSubscriptionCreditContractEvent
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallGetLinkCreditContractEvent
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnShowDialogInformation
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.documentgeneration.DocumentGenerationScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.signdocument.SignDocumentScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.validateidentity.ValidateIdentityScreen
@@ -26,6 +27,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun SignDocumentProcessScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: SignDocumentProcessViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -33,8 +35,9 @@ fun SignDocumentProcessScreen(
 
     LaunchedEffect(true) {
         viewModel.apply {
-            executeNavigation(onPopAndNavigate = onPopAndNavigate)
+            executeNavigation(onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)
             onUIEvent(OnCallSubscriptionCreditContractEvent)
+            onUIEvent(OnCallGetLinkCreditContractEvent)
             baseEvent.collectLatest { event ->
                 when (event) {
                     is SimulateUserInteraction -> activity?.onUserInteraction()
@@ -43,7 +46,11 @@ fun SignDocumentProcessScreen(
         }
     }
 
-    if (viewModel.uiState.isAlertResultVisible){
+    LaunchedEffect(true) {
+        viewModel.emitBaseEvent(SimulateUserInteraction)
+    }
+
+    if (viewModel.uiState.isAlertResultVisible) {
         viewModel.uiState.apply {
             AlertResult(
                 iconResource = alertResultIconResource,

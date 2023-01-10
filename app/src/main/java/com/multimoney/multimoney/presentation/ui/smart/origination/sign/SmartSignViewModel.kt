@@ -22,6 +22,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
+import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.BaseEvent.SimulateUserInteraction
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.EVICERTIA_REJECTED_FIRST_TIME
@@ -31,8 +32,8 @@ import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaErr
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 class SmartSignViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
@@ -79,7 +80,7 @@ class SmartSignViewModel @Inject constructor(
     }
 
     private fun onShouldCallSubscription(idRequestSys: Long, idBrand: Int) {
-        if ( uiState.signDocumentProcessStep != VALIDATE_IDENTITY.value) {
+        if (uiState.signDocumentProcessStep != VALIDATE_IDENTITY.value) {
             uiState = uiState.copy(
                 loadingIcon = drawable.ic_multimoney_white_logo,
                 loadingTitle = string.smart_other_generating_document_title,
@@ -184,10 +185,7 @@ class SmartSignViewModel @Inject constructor(
 
     private fun onNavigateToHome() {
         emitBaseEvent(SimulateUserInteraction)
-        popAndNavigateTo(
-            route = Screen.HomeScreen.route,
-            popTo = Screen.SmartSignScreen.route
-        )
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
     }
 
     private fun onNavigateToOnfidoAndEvicertiaError(error: String) {
@@ -217,8 +215,9 @@ class SmartSignViewModel @Inject constructor(
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is UIEvent.OnCallSubscriptionSmartContractEvent -> onShouldCallSubscription(idPrint, idBrand)
-            is UIEvent.OnChangeScreen -> uiState =
-                uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
+            is UIEvent.OnChangeScreen ->
+                uiState =
+                    uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
             is UIEvent.OnInitializeText -> dialogDescription = uiEvent.dialogDescription
             is UIEvent.OnCloseClick -> onNavigateToHome()
             is UIEvent.OnShowDialogInformation -> createDialog()
@@ -243,7 +242,7 @@ class SmartSignViewModel @Inject constructor(
 
     companion object {
         const val MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION = 3
-        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 600000L
+        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 30000L
         const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 30000L
     }
 }

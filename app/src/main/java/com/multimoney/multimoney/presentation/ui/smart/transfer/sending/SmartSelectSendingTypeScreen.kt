@@ -1,10 +1,8 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.sending
 
 import android.Manifest.permission.READ_CONTACTS
-import android.content.Context
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -25,13 +23,14 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnCheckContactPermission
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnCloseClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnContactPermissionPermanentlyDenied
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnIBANAccountSelected
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnMyFavoritesSelected
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnNavigateToMyContacts
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnOtherBankAccountsSelected
+import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnPermissionResult
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnShowRationale
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnSmartAccountSelected
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnTransfer365MobileSelected
@@ -51,7 +50,27 @@ fun SmartSelectSendingTypeScreen(
     val launcherContactPermissionDialog = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
-        viewModel.onUIEvent(OnCheckContactPermission(isGranted))
+        viewModel.onUIEvent(OnPermissionResult(isGranted))
+    }
+    val permissionFlow: (fromRationale: Boolean) -> Unit = {
+        context.checkPermission(
+            permission = READ_CONTACTS,
+            permissionGrantedAction = {
+                viewModel.onUIEvent(
+                    OnNavigateToMyContacts
+                )
+            },
+            showRationaleAction = { isPermanentlyDenied ->
+                if (isPermanentlyDenied) {
+                    viewModel.onUIEvent(OnContactPermissionPermanentlyDenied)
+                } else {
+                    viewModel.onUIEvent(OnShowRationale(true))
+                }
+            },
+            launchFromRationale = { isLastRetry -> viewModel.setIfIsLastPermissionRetry(isLastRetry) },
+            comesFromRationale = it,
+            launcher = launcherContactPermissionDialog
+        )
     }
 
     LaunchedEffect(true) {
@@ -78,15 +97,21 @@ fun SmartSelectSendingTypeScreen(
             isLeftButtonVisible = false,
             onRightButtonClick = { viewModel.onUIEvent(OnShowRationale(false)) },
             titleResource = R.string.smart_sac_transfer_contact_rationale_title,
-            descriptionResource = R.string.smart_sac_transfer_contact_rationale_message,
-            buttonTextResource = R.string.smart_sac_transfer_contact_rationale_button,
-            onButtonClick = { launcherContactPermissionDialog.launch(READ_CONTACTS) }
+            descriptionResource = viewModel.uiState.errorMessageRes,
+            buttonTextResource = viewModel.uiState.errorButtonTextRes,
+            onButtonClick = {
+                if (viewModel.uiState.isButtonLaunchAction) {
+                    permissionFlow(true)
+                } else {
+                    viewModel.onUIEvent(OnShowRationale(false))
+                }
+            }
         )
         BackHandler {
             viewModel.onUIEvent(OnShowRationale(false))
         }
     } else {
-        SendingTypeOptionsContent(viewModel, context, launcherContactPermissionDialog)
+        SendingTypeOptionsContent(viewModel) { permissionFlow(false) }
         BackHandler {
             viewModel.onUIEvent(OnNavigateBack)
         }
@@ -96,8 +121,7 @@ fun SmartSelectSendingTypeScreen(
 @Composable
 fun SendingTypeOptionsContent(
     viewModel: SmartSelectSendingTypeViewModel,
-    context: Context,
-    launcherContactPermissionDialog: ManagedActivityResultLauncher<String, Boolean>
+    permissionFlow: () -> Unit
 ) {
     // Creating a common modifier for sending options
     val sendingTypeOptionModifier = Modifier
@@ -113,64 +137,44 @@ fun SendingTypeOptionsContent(
             isLeftButtonVisible = false,
             onRightButtonClick = { viewModel.onUIEvent(OnCloseClick) }
         )
-        SendingTypeOptionsContainer(
-            sendingTypeOptions = {
-                when (viewModel.idBrand) {
-                    // These sending options should be available only for CR
-                    Brand.CostaRica.id -> {
-                        SendingTypeOptionsCR(
-                            modifier = sendingTypeOptionModifier,
-                            onMyFavoritesClick = { viewModel.onUIEvent(OnMyFavoritesSelected) },
-                            onMyContactsClick = {
-                                context.checkPermission(
-                                    permission = READ_CONTACTS,
-                                    permissionGrantedAction = {
-                                        viewModel.onUIEvent(
-                                            OnNavigateToMyContacts
-                                        )
-                                    },
-                                    showRationaleAction = { viewModel.onUIEvent(OnShowRationale(true)) },
-                                    launcher = launcherContactPermissionDialog
-                                )
-                            },
-                            onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected) },
-                            onIBANAccountsClick = { viewModel.onUIEvent(OnIBANAccountSelected) },
-                            smartAccountTitle = viewModel.getTitleSmartAccountResource(),
-                            smartAccountStartIcon = viewModel.getIconSmartAccountResource()
-                        )
-                    }
-                    // These options should be available only for SV
-                    Brand.ElSalvador.id -> {
-                        SendingTypeOptionsSV(
-                            modifier = sendingTypeOptionModifier,
-                            onMyFavoritesClick = {
-                                context.checkPermission(
-                                    permission = READ_CONTACTS,
-                                    permissionGrantedAction = {
-                                        viewModel.onUIEvent(
-                                            OnNavigateToMyContacts
-                                        )
-                                    },
-                                    showRationaleAction = { viewModel.onUIEvent(OnShowRationale(true)) },
-                                    launcher = launcherContactPermissionDialog
-                                )
-                            },
-                            onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected) },
-                            onOtherBankAccountsClick = {
-                                viewModel.onUIEvent(
-                                    OnOtherBankAccountsSelected
-                                )
-                            },
-                            onTransfer365MobileClick = {
-                                viewModel.onUIEvent(
-                                    OnTransfer365MobileSelected
-                                )
-                            }
-                        )
-                    }
+        SendingTypeOptionsContainer {
+            when (viewModel.idBrand) {
+                // These sending options should be available only for CR
+                Brand.CostaRica.id -> {
+                    SendingTypeOptionsCR(
+                        modifier = sendingTypeOptionModifier,
+                        onMyFavoritesClick = { viewModel.onUIEvent(OnMyFavoritesSelected) },
+                        onMyContactsClick = {
+                            permissionFlow()
+                        },
+                        onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected) },
+                        onIBANAccountsClick = { viewModel.onUIEvent(OnIBANAccountSelected) },
+                        smartAccountTitle = viewModel.getTitleSmartAccountResource(),
+                        smartAccountStartIcon = viewModel.getIconSmartAccountResource()
+                    )
+                }
+                // These options should be available only for SV
+                Brand.ElSalvador.id -> {
+                    SendingTypeOptionsSV(
+                        modifier = sendingTypeOptionModifier,
+                        onMyFavoritesClick = {
+                            viewModel.onUIEvent(OnMyFavoritesSelected)
+                        },
+                        onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected) },
+                        onOtherBankAccountsClick = {
+                            viewModel.onUIEvent(
+                                OnOtherBankAccountsSelected
+                            )
+                        },
+                        onTransfer365MobileClick = {
+                            viewModel.onUIEvent(
+                                OnTransfer365MobileSelected
+                            )
+                        }
+                    )
                 }
             }
-        )
+        }
     }
 }
 

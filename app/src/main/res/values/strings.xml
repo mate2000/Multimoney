@@ -57,7 +57,7 @@
     <string name="quetzales" translatable="false">Quetzales</string>
     <string name="detail" translatable="false">Detalle</string>
     <string name="success" translatable="false">Exito</string>
-    <string name="allow" translatable="false">Permitir</string>
+    <string name="got_it" translatable="false">Entendido</string>
     <string name="motive" translatable="false">Motivo</string>
 
     <string name="content_description_more_info" translatable="false">Más información</string>
@@ -1295,6 +1295,7 @@
     <string name="smart_sac_transfer_contact_rationale_title" translatable="false">Lo sentimos</string>
     <string name="smart_sac_transfer_contact_rationale_message" translatable="false">Necesitamos acceso a tus contactos para que podás realizar envíos</string>
     <string name="smart_sac_transfer_contact_rationale_button" translatable="false">Permitir acceso a contactos</string>
+    <string name="smart_sac_transfer_contact_permission_denied_message" translatable="false">Necesitamos acceso a tus contactos para que podás realizar envíos. Podrás activar el acceso a tus contactos cuando querás.</string>
 
     <!-- Card Preferences -->
     <string name="card_preferences_title" translatable="false">Preferencias de tarjeta</string>

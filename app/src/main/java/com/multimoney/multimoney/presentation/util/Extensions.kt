@@ -80,13 +80,17 @@ fun Context.openIntent(intent: Intent, onFailure: () -> Unit) {
  * @param showRationaleAction: the action for showing an UI to the user explaining why the permission
  * is needed in case the user denies (or has already denied) the permission
  * @param launcher: the activity for result launcher to launch the request permission dialog if the
- * permission is not granted
+ * permission is not granted,
+ * @param comesFromRationale: a flag to know if the launcher is launched from a rationale
+ * @param launchFromRationale: an action to perform before launching the laucher
  */
 
 fun Context.checkPermission(
     permission: String,
     permissionGrantedAction: () -> Unit,
-    showRationaleAction: () -> Unit,
+    showRationaleAction: (isPermanentlyDenied: Boolean) -> Unit,
+    launchFromRationale: (isLastRetry: Boolean) -> Unit,
+    comesFromRationale: Boolean = false,
     launcher: ManagedActivityResultLauncher<String, Boolean>
 ) {
     val isGranted = ContextCompat.checkSelfPermission(this, permission) == PERMISSION_GRANTED
@@ -94,7 +98,12 @@ fun Context.checkPermission(
         ?.let { ActivityCompat.shouldShowRequestPermissionRationale(it, permission) }
     when {
         isGranted -> permissionGrantedAction()
-        showRationale == true -> showRationaleAction()
+        comesFromRationale && showRationale == true -> {
+            launchFromRationale(true)
+            launcher.launch(permission)
+        }
+        comesFromRationale.not() && showRationale == true -> showRationaleAction(false)
+        comesFromRationale.not() && showRationale == false -> showRationaleAction(true)
         else -> launcher.launch(permission)
     }
 }

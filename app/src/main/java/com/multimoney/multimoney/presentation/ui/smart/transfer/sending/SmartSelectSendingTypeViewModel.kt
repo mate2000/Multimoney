@@ -91,10 +91,25 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
     }
 
-    private fun onCheckPermission(isPermissionGranted: Boolean) {
+    private fun onPermissionPermanentlyDenied() {
+        uiState = uiState.copy(
+            errorMessageRes = R.string.smart_sac_transfer_contact_permission_denied_message,
+            errorButtonTextRes = R.string.got_it,
+            isButtonLaunchAction = false
+        )
+        showRationale(true)
+    }
+
+    fun setIfIsLastPermissionRetry(isLastRetry: Boolean) {
+        uiState = uiState.copy(isLastPermissionRetry = isLastRetry)
+    }
+
+    private fun onPermissionResult(isPermissionGranted: Boolean) {
         if (isPermissionGranted) {
             showRationale(false)
             onNavigateToMyContacts()
+        } else if (uiState.isLastPermissionRetry) {
+            onPermissionPermanentlyDenied()
         } else {
             showRationale(true)
         }
@@ -135,7 +150,11 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     }
 
     data class UIState(
-        var showErrorScreen: Boolean = false
+        var showErrorScreen: Boolean = false,
+        val errorMessageRes: Int = R.string.smart_sac_transfer_contact_rationale_message,
+        val errorButtonTextRes: Int = R.string.smart_sac_transfer_contact_rationale_button,
+        val isButtonLaunchAction: Boolean = true,
+        val isLastPermissionRetry: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -146,9 +165,10 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
             is UIEvent.OnSmartAccountSelected -> onNavigateToSmartAccount()
             is UIEvent.OnIBANAccountSelected -> onNavigateToIBANAccount()
             is UIEvent.OnMyFavoritesSelected -> onNavigateToMyFavorites()
+            is UIEvent.OnContactPermissionPermanentlyDenied -> onPermissionPermanentlyDenied()
             is UIEvent.OnOtherBankAccountsSelected -> onNavigateToOtherBankAccounts()
             is UIEvent.OnTransfer365MobileSelected -> onNavigateToTransfer365Mobile()
-            is UIEvent.OnCheckContactPermission -> onCheckPermission(uiEvent.isPermissionGranted)
+            is UIEvent.OnPermissionResult -> onPermissionResult(uiEvent.isPermissionGranted)
             is UIEvent.OnShowRationale -> showRationale(uiEvent.show)
         }
     }
@@ -160,9 +180,10 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         object OnSmartAccountSelected : UIEvent()
         object OnIBANAccountSelected : UIEvent()
         object OnMyFavoritesSelected : UIEvent()
+        object OnContactPermissionPermanentlyDenied : UIEvent()
         object OnOtherBankAccountsSelected : UIEvent()
         object OnTransfer365MobileSelected : UIEvent()
-        data class OnCheckContactPermission(val isPermissionGranted: Boolean) : UIEvent()
+        data class OnPermissionResult(val isPermissionGranted: Boolean) : UIEvent()
         data class OnShowRationale(val show: Boolean) : UIEvent()
     }
 

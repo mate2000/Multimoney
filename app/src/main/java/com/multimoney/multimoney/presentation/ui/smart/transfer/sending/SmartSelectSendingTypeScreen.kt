@@ -189,7 +189,8 @@ fun SendingTypeOptionsContainer(
             modifier = Modifier.padding(top = 32.dp),
             text = stringResource(R.string.payment_select_sending_type_title),
             style = Typography.h5.copy(
-                fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.text
+                fontWeight = FontWeight.SemiBold,
+                color = MultimoneyTheme.colors.text
             )
         )
         sendingTypeOptions()
@@ -204,7 +205,7 @@ fun SendingTypeOptionsCR(
     onMySmartAccountClick: () -> Unit,
     onIBANAccountsClick: () -> Unit,
     smartAccountTitle: Int?,
-    smartAccountStartIcon: Int?,
+    smartAccountStartIcon: Int?
 ) {
     CustomInfoButton(
         title = stringResource(R.string.payment_select_sending_type_favorites_cr),

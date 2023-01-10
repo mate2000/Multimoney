@@ -46,13 +46,14 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 fun SmartScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: SmartViewModel = hiltViewModel()
 ) {
     val focusManager = LocalFocusManager.current
 
     // Navigation
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
+        viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)
         viewModel.onUIEvent(OnCallMutationInitialRequest)
     }
 

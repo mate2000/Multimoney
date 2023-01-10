@@ -23,13 +23,9 @@ import com.multimoney.multimoney.presentation.navigation.EMAIL
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALANCE_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_INFORMATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
-import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.BaseEvent.OnOpenTapAndPayConfig
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnAlertButtonClick
@@ -76,9 +72,6 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
     var email: String = ""
     var balanceCardInformation: BalanceCardInformation? = null
     var androidId: String = ""
-    var availableBalanceLabel: String? = null
-    private var idClient: Int = 0
-    private var idLoanClient: Int = 0
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -87,9 +80,6 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         email = savedStateHandle.get<String>(EMAIL) ?: ""
         phone = savedStateHandle.get<String>(PHONE_NUMBER) ?: ""
         balanceCardInformation = savedStateHandle.get<BalanceCardInformation>(BALANCE_CARD_INFORMATION)
-        availableBalanceLabel = savedStateHandle[AVAILABLE_BALANCE_LABEL]
-        idClient = savedStateHandle[ID_CLIENT] ?: 0
-        idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: 0
     }
 
     private fun startTokenizationProcess() {
@@ -303,14 +293,10 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         }
     }
 
-    private fun onNavigateToHomeMultimoneyVisa() =
-        popAndNavigateTo(
-            "${Screen.VisaCardScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
-            encodeData(
-                balanceCardInformation
-            )
-            }/$availableBalanceLabel/$idClient/$idLoanClient",
-            Screen.VisaTokenizationWaitingScreen.route
+    private fun onNavigateToHomeMultimoneyVisa(isRestart: Boolean = false) =
+        navigateBack(
+            Screen.VisaCardScreen.route,
+            isRestart
         )
 
     private fun onAlertButtonClick() {
@@ -323,7 +309,6 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
     private fun setErrorAlertResult() {
         uiState = uiState.copy(
             isAlertResultVisible = true,
-            isAlertResultSuccess = false,
             alertResultIconResource = R.drawable.ic_error_symbol,
             alertResultTitleResource = R.string.card_tokenization_error_title,
             alertResultDescriptionResource = when (idBrand) {
@@ -346,7 +331,6 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         val icon: Int = R.drawable.ic_novo_waiting_smartphone,
         val description: AnnotatedString = buildAnnotatedString {},
         val openDialog: DialogParameters = DialogParameters(),
-        val isAlertResultSuccess: Boolean = true,
         val isAlertResultVisible: Boolean = false,
         val alertResultIconResource: Int = 0,
         val alertResultTitleResource: Int = R.string.empty,
@@ -363,7 +347,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
             is OnAlertButtonClick -> onAlertButtonClick()
             is OnAlertCloseClick -> onNavigateToHomeMultimoneyVisa()
             is OnShowSuccessTokenizationScreen -> uiState = uiState.copy(showSuccessTokenizationScreen = true)
-            is OnNavigateToHomeVisa -> onNavigateToHomeMultimoneyVisa()
+            is OnNavigateToHomeVisa -> onNavigateToHomeMultimoneyVisa(true)
         }
     }
 

@@ -56,14 +56,14 @@ import com.multimoney.multimoney.presentation.util.shape.DottedShape
 @Composable
 fun PaymentVoucherVDScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: PaymentCardVoucherViewModel = hiltViewModel()
 ) {
     val view = LocalView.current
     var capturingViewBounds by remember { mutableStateOf<Rect?>(null) }
 
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate, onNavigate = onNavigate)
+        viewModel.executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
     }
 
     Column(

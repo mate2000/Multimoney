@@ -1,6 +1,11 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.sending
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -17,11 +22,18 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SmartSelectSendingTypeViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
+
+    // UIState
+    var uiState by mutableStateOf(UIState())
+        private set
 
     // Stateless
     var smartAccount: SmartAccountID? = null
@@ -38,19 +50,6 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         idBrand = savedStateHandle[ID_BRAND] ?: 0
         idClient = savedStateHandle[ID_CLIENT] ?: 0
         previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
-    }
-
-    fun onUIEvent(uiEvent: UIEvent) {
-        when (uiEvent) {
-            is UIEvent.OnCloseClick -> onNavigateToHome()
-            is OnNavigateBack -> onNavigateBack()
-            is UIEvent.OnMyContactsSelected -> onNavigateToMyContacts()
-            is UIEvent.OnSmartAccountSelected -> onNavigateToSmartAccount()
-            is UIEvent.OnIBANAccountSelected -> onNavigateToIBANAccount()
-            is UIEvent.OnMyFavoritesSelected -> onNavigateToMyFavorites()
-            is UIEvent.OnOtherBankAccountsSelected -> onNavigateToOtherBankAccounts()
-            is UIEvent.OnTransfer365MobileSelected -> onNavigateToTransfer365Mobile()
-        }
     }
 
     fun getTitleAndIconSmartAccountResources(): Pair<Int, Int?> {
@@ -85,8 +84,53 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         )
     }
 
+    private fun onPermissionPermanentlyDenied() {
+        uiState = uiState.copy(
+            errorMessageRes = R.string.smart_sac_transfer_contact_permission_denied_message,
+            errorButtonTextRes = R.string.got_it,
+            isButtonLaunchAction = false
+        )
+        showRationale(true)
+    }
+
+    fun setIfIsLastPermissionRetry(isLastRetry: Boolean) {
+        uiState = uiState.copy(isLastPermissionRetry = isLastRetry)
+    }
+
+    fun getPermissionState() {
+        viewModelScope.launch {
+            uiState = uiState.copy(
+                isContactPermissionAlreadyRequested = dataStorePreferences.isContactPermissionRequested()
+                    .first()
+            )
+        }
+    }
+
+    private fun onPermissionResult(isPermissionGranted: Boolean) {
+        viewModelScope.launch {
+            dataStorePreferences.isContactPermissionRequested(true)
+            uiState = uiState.copy(
+                isContactPermissionAlreadyRequested = dataStorePreferences.isContactPermissionRequested()
+                    .first()
+            )
+            if (isPermissionGranted) {
+                showRationale(false)
+                onNavigateToMyContacts()
+            } else if (uiState.isLastPermissionRetry) {
+                onPermissionPermanentlyDenied()
+            } else {
+                showRationale(true)
+            }
+        }
+    }
+
+    private fun showRationale(show: Boolean) {
+        uiState = uiState.copy(showErrorScreen = show)
+    }
+
     private fun onNavigateToMyContacts() {
         // TODO navigate to HU REV-1445
+        showRationale(false)
         emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
     }
 
@@ -114,15 +158,43 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         }
     }
 
+    data class UIState(
+        var showErrorScreen: Boolean = false,
+        val errorMessageRes: Int = R.string.smart_sac_transfer_contact_rationale_message,
+        val errorButtonTextRes: Int = R.string.smart_sac_transfer_contact_rationale_button,
+        val isButtonLaunchAction: Boolean = true,
+        val isLastPermissionRetry: Boolean = false,
+        val isContactPermissionAlreadyRequested: Boolean = false
+    )
+
+    fun onUIEvent(uiEvent: UIEvent) {
+        when (uiEvent) {
+            is UIEvent.OnCloseClick -> onNavigateToHome()
+            is OnNavigateBack -> onNavigateBack()
+            is UIEvent.OnNavigateToMyContacts -> onNavigateToMyContacts()
+            is UIEvent.OnSmartAccountSelected -> onNavigateToSmartAccount()
+            is UIEvent.OnIBANAccountSelected -> onNavigateToIBANAccount()
+            is UIEvent.OnMyFavoritesSelected -> onNavigateToMyFavorites()
+            is UIEvent.OnContactPermissionPermanentlyDenied -> onPermissionPermanentlyDenied()
+            is UIEvent.OnOtherBankAccountsSelected -> onNavigateToOtherBankAccounts()
+            is UIEvent.OnTransfer365MobileSelected -> onNavigateToTransfer365Mobile()
+            is UIEvent.OnPermissionResult -> onPermissionResult(uiEvent.isPermissionGranted)
+            is UIEvent.OnShowRationale -> showRationale(uiEvent.show)
+        }
+    }
+
     sealed class UIEvent {
         object OnCloseClick : UIEvent()
         object OnNavigateBack : UIEvent()
-        object OnMyContactsSelected : UIEvent()
+        object OnNavigateToMyContacts : UIEvent()
         object OnSmartAccountSelected : UIEvent()
         object OnIBANAccountSelected : UIEvent()
         object OnMyFavoritesSelected : UIEvent()
+        object OnContactPermissionPermanentlyDenied : UIEvent()
         object OnOtherBankAccountsSelected : UIEvent()
         object OnTransfer365MobileSelected : UIEvent()
+        data class OnPermissionResult(val isPermissionGranted: Boolean) : UIEvent()
+        data class OnShowRationale(val show: Boolean) : UIEvent()
     }
 
     sealed class BaseEvent {

@@ -50,6 +50,7 @@ import com.multimoney.data.networking.graphql.apollomodel.GetHistoricClientBalan
 import com.multimoney.data.networking.graphql.apollomodel.GetInfoDepositQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPaymentPointsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPromissoryNoteDetailQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetLinkCreditContractQuery
 import com.multimoney.data.networking.graphql.apollomodel.GlobalRequestMutation
 import com.multimoney.data.networking.graphql.apollomodel.HomeCantonQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeDistrictQuery
@@ -58,6 +59,7 @@ import com.multimoney.data.networking.graphql.apollomodel.InitialRequestSmartAcc
 import com.multimoney.data.networking.graphql.apollomodel.ListCardVDQuery
 import com.multimoney.data.networking.graphql.apollomodel.ListMiniCardsQuery
 import com.multimoney.data.networking.graphql.apollomodel.ListSinpeAccountQuery
+import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountSaveMutation
 import com.multimoney.data.networking.graphql.apollomodel.NationalityQuery
 import com.multimoney.data.networking.graphql.apollomodel.OcupationsQuery
 import com.multimoney.data.networking.graphql.apollomodel.EmploymentSituationQuery
@@ -466,6 +468,19 @@ class GraphqlApi @Inject constructor(
             idBrand
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryGetLinkCreditContract(
+        idPrint: Long,
+        idBrand: Int,
+        pkUser: Long,
+        user: String
+    ): ApolloCall<GetLinkCreditContractQuery.Data> =
+        apolloAuthorizedClient.query(GetLinkCreditContractQuery(
+            idPrint,
+            idBrand,
+            pkUser,
+            user
+        )).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationSaveCreditOperation(
         idUserRequest: Long,
@@ -1303,6 +1318,31 @@ class GraphqlApi @Inject constructor(
                 idLoanClient = idLoanClient,
                 user = user,
                 idBrand = idBrand
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationManageSinpeAccountSave(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        accountNumber: String,
+        idCurrency: Long,
+        nameAccount: String,
+        country: String,
+        idAccount: Long?,
+        option: String?,
+    ): ApolloCall<ManageSinpeAccountSaveMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            ManageSinpeAccountSaveMutation(
+                user = Optional.presentIfNotNull(user),
+                idBrand = Optional.presentIfNotNull(idBrand),
+                identification = Optional.presentIfNotNull(identification),
+                account_number = Optional.presentIfNotNull(accountNumber),
+                id_Currency = Optional.presentIfNotNull(idCurrency),
+                nameAccount = Optional.presentIfNotNull(nameAccount),
+                country = Optional.presentIfNotNull(country),
+                id_account = Optional.presentIfNotNull(idAccount),
+                option = Optional.presentIfNotNull(option)
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

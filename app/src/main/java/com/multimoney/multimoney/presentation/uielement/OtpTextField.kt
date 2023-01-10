@@ -104,7 +104,7 @@ fun OtpTextField(
     value: String = "",
     placeHolder: String = "",
     isValueFromSms: Boolean = false,
-    digits: Int = 1,
+    digits: Int = 6,
     isRequired: Boolean = true,
     isRequiredMessage: String? = null,
     isError: Boolean = false,
@@ -216,7 +216,7 @@ fun OtpTextField(
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             (0 until digits).map { index ->
                 OutlinedTextField(
@@ -267,7 +267,7 @@ fun OtpTextField(
                         }
                     ),
                     keyboardActions = KeyboardActions(onNext = {
-                        focusManager.moveFocus(FocusDirection.Next)
+                        focusManager.moveFocus(FocusDirection.Right)
                     }, onDone = {
                         focusManager.clearFocus()
                     }),
@@ -286,7 +286,7 @@ fun OtpTextField(
                             onValueChange(newValue)
                             textDebounce.value = newValue
                             if (index < digits - 1 && it.length == 1 && valueCharArray[index + 1] == emptyChar) {
-                                focusManager.moveFocus(FocusDirection.Next)
+                                focusManager.moveFocus(FocusDirection.Right)
                             } else {
                                 focusManager.clearFocus()
                             }

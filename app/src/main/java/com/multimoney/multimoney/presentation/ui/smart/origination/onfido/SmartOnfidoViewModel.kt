@@ -28,6 +28,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
+import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnCallInFidoToken
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnConfigureOnFidoSdk
@@ -54,6 +55,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -239,12 +241,8 @@ class SmartOnfidoViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateToHome() {
-        popAndNavigateTo(
-            route = Screen.HomeScreen.route,
-            popTo = Screen.SmartScreen.route
-        )
-    }
+    private fun onNavigateToHome() =
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
@@ -270,8 +268,9 @@ class SmartOnfidoViewModel @Inject constructor(
             is OnContinueEnable -> uiState = uiState.copy(isContinueEnabled = event.isEnable)
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
             is OnNavigateToHome -> onNavigateToHome()
-            is OnFailureWithDialog -> uiState =
-                uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
+            is OnFailureWithDialog ->
+                uiState =
+                    uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnOpenOnfidoSdk -> onOpenOnfidoSdk(event.onOpenOnfidoSdk)
         }
     }

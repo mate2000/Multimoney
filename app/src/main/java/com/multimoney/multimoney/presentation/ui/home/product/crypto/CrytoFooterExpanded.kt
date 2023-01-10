@@ -70,7 +70,6 @@ fun CryptoFooterExpandedContent(
     currencyItemClick: (BalanceCryptoAccountItems) -> Unit,
     onShowAllClick: () -> Unit
 ) {
-
     val smartBalanceAvailable = verifyIfHasSmartBalance(balance?.balanceAccountSmart)
     val hasSmartBalance by remember { mutableStateOf(smartBalanceAvailable) }
 
@@ -78,7 +77,7 @@ fun CryptoFooterExpandedContent(
         modifier = Modifier.fillMaxSize(),
         backgroundColor = MultimoneyTheme.colors.background,
         bottomBar = {
-            val enableSendAndGive = idBrand.toInt() == Brand.CostaRica.id
+            val enableSendAndGive = idBrand.toIntOrNull() == Brand.CostaRica.id
 
             CryptoActionsSection(
                 hasSmartBalance = hasSmartBalance,

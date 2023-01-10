@@ -10,6 +10,8 @@ import com.multimoney.domain.interaction.accountsmart.MutationProcessTransferVis
 import com.multimoney.domain.interaction.accountsmart.MutationProcessTransferVisaToSmartVDUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.MutationSaveSinpeAccountUseCase
+import com.multimoney.domain.interaction.accountsmart.MutationSaveSinpeAccountUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelOneUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelOneUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelThreeUseCase
@@ -90,6 +92,8 @@ import com.multimoney.domain.interaction.credit.QueryGetClientAutomaticDebitUseC
 import com.multimoney.domain.interaction.credit.QueryGetClientAutomaticDebitUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryGetClientBankAccountUseCase
 import com.multimoney.domain.interaction.credit.QueryGetClientBankAccountUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryGetLinkCreditContractUseCase
+import com.multimoney.domain.interaction.credit.QueryGetLinkCreditContractUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryGetExchangeRateCreditUseCase
 import com.multimoney.domain.interaction.credit.QueryGetExchangeRateCreditUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryGetInfoDepositUseCase
@@ -392,6 +396,11 @@ class InteractionModule {
 
     @Provides
     @Singleton
+    fun provideQueryGetLinkCreditContractUseCase(creditRepository: CreditRepository): QueryGetLinkCreditContractUseCase =
+        QueryGetLinkCreditContractUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
     fun provideTermsAndConditionUseCase(creditRepository: CreditRepository): TermsAndConditionsUseCase =
         TermsAndConditionsUseCaseImpl(creditRepository)
 
@@ -611,6 +620,11 @@ class InteractionModule {
     @Singleton
     fun provideMiniCardsUseCase(securityRepository: SecurityRepository): QueryMiniCardsUseCase =
         QueryMiniCardsUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationSaveSinpeAccountUseCase(smartAccountRepository: SmartAccountRepository): MutationSaveSinpeAccountUseCase =
+        MutationSaveSinpeAccountUseCaseImpl(smartAccountRepository)
 
     // Multimoney Visa
     @Provides

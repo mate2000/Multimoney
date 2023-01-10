@@ -26,6 +26,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCallQueryGetCards
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCardSelected
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
@@ -63,7 +64,7 @@ fun PaymentScheduleAccountContent(
     ) {
         TopNavBar(
             onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
-            isRightButtonVisible = false
+            onRightButtonClick = { viewModel.onUIEvent(OnCloseClick) }
         )
         Text(
             modifier = Modifier.padding(top = 42.dp, start = 16.dp, end = 16.dp),
@@ -115,8 +116,10 @@ fun PaymentScheduleAccountContent(
                 title = stringResource(id = viewModel.uiState.openDialog.titleResource),
                 message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
                 positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+                negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
                 openDialogCustom = viewModel.uiState.openDialog.isActive,
-                onPositiveAction = viewModel.uiState.openDialog.positiveAction
+                onPositiveAction = viewModel.uiState.openDialog.positiveAction,
+                onNegativeAction = viewModel.uiState.openDialog.negativeAction
             )
         }
     }

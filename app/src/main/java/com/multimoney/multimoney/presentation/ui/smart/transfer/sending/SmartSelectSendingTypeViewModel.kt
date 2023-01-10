@@ -9,6 +9,7 @@ import com.multimoney.multimoney.presentation.navigation.SMART_IDS
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnNavigateBack
@@ -28,6 +29,7 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     var identification: String = ""
     var idClient: Int = 0
     var idBrand: Int = 0
+    var previousScreen: String = ""
 
     init {
         smartAccount = savedStateHandle[SMART_IDS]
@@ -35,8 +37,8 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         identification = savedStateHandle[IDENTIFICATION] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
         idClient = savedStateHandle[ID_CLIENT] ?: 0
+        previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
     }
-
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
@@ -116,10 +118,12 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     }
 
     private fun onNavigateBack() {
-        navigateBack(
-            popTo = Screen.HomeScreen.route,
-            isRestart = false
-        )
+        when (previousScreen) {
+            Screen.SmartSelectAccountScreen.baseRoute -> {
+                navigateBack(popTo = Screen.SmartSelectAccountScreen.route, isRestart = false)
+            }
+            else -> navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
+        }
     }
 
     sealed class UIEvent {
@@ -136,5 +140,4 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     sealed class BaseEvent {
         object OnShowTbdToastEvent : BaseEvent()
     }
-
 }

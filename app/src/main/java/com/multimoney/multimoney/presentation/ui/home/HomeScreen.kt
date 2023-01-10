@@ -37,6 +37,7 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.On
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCloseCardIssuanceError
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnDeleteAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnEditAutomaticPayment
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetHomeState
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.myproducts.MyProductsBottomSheetScreen
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.AutomaticPaymentEditBottomSheet
@@ -51,6 +52,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen(
     isRestart: Boolean = true,
+    homeState: HomeState,
     navController: NavHostController,
     onInnerNavigate: (innerNavController: NavHostController, NavEvent.InnerNavigate) -> Unit = { _, _ -> },
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit,
@@ -63,6 +65,9 @@ fun HomeScreen(
                 onUIEvent(OnSetUserData)
                 isOnRestart = false
             }
+        }
+        LaunchedEffect(key1 = homeState) {
+            onUIEvent(OnSetHomeState(homeState))
         }
     }
 

@@ -14,6 +14,7 @@ import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditApplication
 import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.credit.CreditContractEvent
+import com.multimoney.domain.model.credit.LinkCreditContract
 import com.multimoney.domain.model.credit.CreditExtensionAmount
 import com.multimoney.domain.model.credit.CreditExtensionDetail
 import com.multimoney.domain.model.credit.CreditExtensionMessage
@@ -459,6 +460,23 @@ class CreditRepositoryImpl @Inject constructor(
         apolloCall = graphqlApi.subscriptionCreditContractEvent(idPrint, idBrand),
         apolloCallMapper = { data ->
             Success(data?.mapToDomainModel())
+        }
+    )
+
+    override suspend fun queryGetLinkCreditContract(
+        idPrint: Long,
+        idBrand: Int,
+        pkUser: Long,
+        user: String
+    ): Flow<MultimoneyResult<LinkCreditContract?>> = fetchData(
+        apolloCall = graphqlApi.queryGetLinkCreditContract(
+            idPrint = idPrint,
+            idBrand = idBrand,
+            pkUser = pkUser,
+            user = user
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
         }
     )
 

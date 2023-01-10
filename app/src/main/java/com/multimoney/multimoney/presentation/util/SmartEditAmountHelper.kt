@@ -30,7 +30,7 @@ class SmartEditAmountHelper @Inject constructor(
     private val querySmartExchangeRateUseCase: QuerySmartExchangeRateUseCase,
     private val shareHelper: ShareHelper,
     private val savedStateHandle: SavedStateHandle,
-    private val dataStorePreferences: DataStorePreferences,
+    private val dataStorePreferences: DataStorePreferences
 ) {
 
     // stateless
@@ -50,7 +50,9 @@ class SmartEditAmountHelper @Inject constructor(
     var bankDetail: String = ""
     var previousScreen: String = ""
     var sheetSubtitle: Int = R.string.smart_payment_amount_bottom_sheet_from_card
+    var originTitle: Int = R.string.empty
     var originIcon: Int = R.drawable.ic_visa_card_item
+    var accountName: String = ""
 
     suspend fun onStart() {
         idBrand = dataStorePreferences.getIdBrand().first().toInt()
@@ -77,8 +79,10 @@ class SmartEditAmountHelper @Inject constructor(
         bankDetail = ibanAccount?.bank ?: ""
         maskedCardNumber = ibanAccount?.sinpeAccount ?: ""
         sheetSubtitle = R.string.smart_payment_amount_bottom_sheet_from_card_CR
+        originTitle = R.string.smart_payment_origin_account_label
         originIcon =
             ibanCurrency?.id?.getCurrencyFromId()?.accountIcon ?: CurrencyType.Colon.accountIcon
+        accountName = ibanAccount?.nameAccount ?: ""
     }
 
     private fun initializeSVValues() {
@@ -86,6 +90,7 @@ class SmartEditAmountHelper @Inject constructor(
         maskedCardNumber = savedStateHandle[MASKED_CARD] ?: ""
         bankDetail = savedStateHandle[BANK_DETAIL] ?: ""
         sheetSubtitle = R.string.smart_payment_amount_bottom_sheet_from_card
+        originTitle = R.string.smart_payment_card_bank_label
         originIcon = R.drawable.ic_visa_card_item
     }
 

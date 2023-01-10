@@ -119,7 +119,6 @@ class SmartSignViewModel @Inject constructor(
                         }
                     }
                 }
-            callMutationSaveSmartAccount()
         }
     }
 
@@ -222,11 +221,11 @@ class SmartSignViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess {
                     onShouldCallSubscription(
-                        idPrint,
+                        it?.idAccount ?: 0L,
                         idBrand
                     )
                 }
-                result.onFailure { error ->
+                result.onFailure {
 
                 }
                 result.onLoading {
@@ -248,10 +247,7 @@ class SmartSignViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is UIEvent.OnCallSubscriptionSmartContractEvent -> onShouldCallSubscription(
-                idPrint,
-                idBrand
-            )
+            is UIEvent.OnCallSubscriptionSmartContractEvent -> callMutationSaveSmartAccount()
             is UIEvent.OnChangeScreen -> uiState =
                 uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
             is UIEvent.OnInitializeText -> dialogDescription = uiEvent.dialogDescription

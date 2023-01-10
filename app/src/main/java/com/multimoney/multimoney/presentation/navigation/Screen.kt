@@ -107,6 +107,8 @@ const val DEVICE_BRAND = "device_brand"
 const val DEVICE_MODEL = "device_model"
 const val IS_EMULATOR = "is_emulator"
 const val FORCE_CHANGE_DEVICE = "force_change_device"
+const val SMART_ACCOUNTS_FOR_BUY_CRYPTO = "smart_accounts_for_buy_crypto"
+const val CURRENCY_NAME = "currency_name"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"

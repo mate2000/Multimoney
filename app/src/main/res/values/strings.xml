@@ -325,6 +325,8 @@
     <string name="home_crypto_card_with_balance_label" translatable="false">Balance</string>
     <string name="home_crypto_card_smart_in_process_label" translatable="false">Cripto</string>
     <string name="home_crypto_card_with_balance_zero_label" translatable="false">0.00</string>
+    <string name="buy_crypto_multimoney_smart_account_template" translatable="false">MultiMoney Smart | %1$s</string>
+
     <string name="home_product_process_smart_label" translatable="false">Smart</string>
 
     <!-- Credit in progress firm incomplete -->

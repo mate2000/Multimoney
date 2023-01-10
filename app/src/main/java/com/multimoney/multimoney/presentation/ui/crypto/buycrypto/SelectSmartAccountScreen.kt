@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.crypto.buycrypto
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +23,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.getMaskedAccount
 
 @Composable
 fun SelectSmartAccountScreen(
@@ -37,7 +39,7 @@ fun SelectSmartAccountScreen(
             onPopAndNavigate = onPopAndNavigate
         )
     }
-    //  BackHandler { viewModel.onUIEvent(ProfileViewModel.UIEvent.OnNavigateBack) }
+    BackHandler { viewModel.onUIEvent(SelectSmartAccountViewModel.UIEvent.OnNavigateBack) }
     SelectSmartAccountContent(viewModel)
 }
 
@@ -50,14 +52,16 @@ fun SelectSmartAccountContent(viewModel: SelectSmartAccountViewModel) {
             .fillMaxSize()
     ) {
         TopNavBar(
-            //onLeftButtonClick = { viewModel.onUIEvent(ProfileViewModel.UIEvent.OnNavigateBack) },
+            onLeftButtonClick = { viewModel.onUIEvent(SelectSmartAccountViewModel.UIEvent.OnNavigateBack) },
             isRightButtonVisible = false
         )
+
+        //ToDo replace with incoming currency
         Text(
             modifier = Modifier.padding(top = 8.dp, bottom = 24.dp),
             text = stringResource(
                 id = R.string.crypto_select_smart_account_title_template,
-                "Bitcoin"
+                viewModel.uiState.currency
             ),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText,
@@ -65,12 +69,19 @@ fun SelectSmartAccountContent(viewModel: SelectSmartAccountViewModel) {
         )
         LazyColumn() {
             items(viewModel.uiState.accounts) { account ->
+
                 //TODO replace with real info from accounts
                 CustomInfoButton(
                     modifier = Modifier.fillMaxWidth(),
                     startIcon = R.drawable.ic_multimoney_green_logo,
-                    title = "Multimoney Smart | ${account.currencyCode}",
-                    subtitle = "CR****5506 | ${account.totalBalance}"
+                    title = stringResource(
+                        id = R.string.buy_crypto_multimoney_smart_account_template,
+                        account.currencyCode ?: ""
+                    ),
+                    subtitle = getMaskedAccount(
+                        account.accountNumber ?: "",
+                        stringResource(id = R.string.payment_account_masked_text)
+                    ).plus(" | ").plus(account.totalBalance )
                 )
             }
         }

@@ -32,11 +32,7 @@ import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIE
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnBlockUnblockCardClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnCallNovoGetFavoriteCard
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnHandleTapAndPayIntentResult
-<<<<<<< HEAD
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnHideAlertResultScreen
-=======
-import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateHome
->>>>>>> c3240509 (:zap: REV-1321 Fix some issues to call new payment)
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnInitializeBiometricPrompt
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigatePreferences
@@ -171,7 +167,7 @@ fun VisaCardContent(
         ) {
             CustomInformativeChip(
                 text = stringResource(
-                    id = R.string.visa_card_available_amount,
+                    id = string.visa_card_available_amount,
                     viewModel.availableBalanceLabel.orEmpty()
                 ),
                 textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.labelText),
@@ -211,7 +207,7 @@ fun VisaCardContent(
                         .fillMaxWidth()
                         .padding(end = 8.dp),
                     icon = R.drawable.ic_pay,
-                    text = stringResource(id = R.string.pay),
+                    text = stringResource(id = string.pay),
                     enabled = viewModel.uiState.isCardBlocked.not(),
                     onClick = {
                         viewModel.onUIEvent(OnStartPaymentProcess)
@@ -224,7 +220,7 @@ fun VisaCardContent(
                     .fillMaxWidth()
                     .padding(end = 8.dp),
                 icon = R.drawable.ic_eye,
-                text = stringResource(id = R.string.see_data),
+                text = stringResource(id = string.see_data),
                 onClick = {
                     viewModel.onUIEvent(OnSeeDataClick(fragmentActivity))
                 }

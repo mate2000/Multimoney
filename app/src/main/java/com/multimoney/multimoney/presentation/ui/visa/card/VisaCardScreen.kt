@@ -32,7 +32,11 @@ import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIE
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnBlockUnblockCardClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnCallNovoGetFavoriteCard
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnHandleTapAndPayIntentResult
+<<<<<<< HEAD
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnHideAlertResultScreen
+=======
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateHome
+>>>>>>> c3240509 (:zap: REV-1321 Fix some issues to call new payment)
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnInitializeBiometricPrompt
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigatePreferences

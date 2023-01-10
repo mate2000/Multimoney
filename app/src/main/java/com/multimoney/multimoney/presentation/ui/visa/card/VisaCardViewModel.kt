@@ -50,6 +50,7 @@ import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIE
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnHidePasswordBottomSheet
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnInitializeBiometricPrompt
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateHome
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigatePreferences
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateToVisaTokenizationScreen
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnOpenDialogConfirmToStartTokenizationProcess
@@ -291,7 +292,7 @@ class VisaCardViewModel @Inject constructor(
                 alertResultScreenTitleResource = string.visa_payment_success_title,
                 alertResultScreenDescriptionResource = string.visa_payment_success_description,
                 alertResultScreenButtonResource = string.finalize,
-                alertResultScreenOnButtonClick = { onUIEvent(OnHideAlertResultScreen) },
+                alertResultScreenOnButtonClick = { onUIEvent(OnNavigateHome) },
                 alertResultScreenRightButtonVisible = false,
                 showAlertResultScreen = true
             )
@@ -602,6 +603,7 @@ class VisaCardViewModel @Inject constructor(
             is OnBlockUnblockCardClick -> onBlockUnblockCardClick()
             is OnHandleTapAndPayIntentResult -> onHandleTapAndPayIntentResult(uiEvent.result)
             is OnHideAlertResultScreen -> hideAlertResultDialog()
+            is OnNavigateHome -> navigateBack(Screen.HomeScreen.route, true)
         }
     }
 
@@ -630,6 +632,7 @@ class VisaCardViewModel @Inject constructor(
         object OnPasswordForgotPassword : UIEvent()
         data class OnHandleTapAndPayIntentResult(val result: ActivityResult) : UIEvent()
         object OnHideAlertResultScreen : UIEvent()
+        object OnNavigateHome : UIEvent()
     }
 
     sealed class BaseEvent {

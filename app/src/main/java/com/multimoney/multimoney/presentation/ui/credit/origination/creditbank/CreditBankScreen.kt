@@ -76,9 +76,7 @@ fun CreditBankScreen(
                     OnNextActionClick(
                         user = sharedViewModel.email,
                         nextStepAction = {
-                            sharedViewModel.onUIEvent(
-                                OnCallMutationSaveCreditFlowStep()
-                            )
+                            sharedViewModel.onUIEvent(OnCallMutationSaveCreditFlowStep)
                         },
                         saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
                     )
@@ -111,8 +109,8 @@ fun CreditBankScreen(
                 .fillMaxWidth()
                 .padding(top = 8.dp),
             text = stringResource(id = title),
-            style = Typography.h5.copy(
-                color = MultimoneyTheme.colors.text,
+            style = Typography.h6.copy(
+                color = MultimoneyTheme.colors.titleText,
                 fontWeight = FontWeight.SemiBold
             )
         )
@@ -128,7 +126,7 @@ fun CreditBankScreen(
             modifier = Modifier
                 .wrapContentSize(Alignment.TopStart)
                 .focusable(false)
-                .padding(top = 16.dp),
+                .padding(top = 32.dp),
             items = viewModel.uiState.bankList,
             onValueChange = {
                 viewModel.onUIEvent(OnBankValueChanged(it))
@@ -144,10 +142,10 @@ fun CreditBankScreen(
                 .focusable(false)
                 .padding(top = 16.dp),
             items = viewModel.uiState.accountTypeListFiltered?.map { it?.description ?: "" } ?: listOf(),
-            onValueChange = { value ->
+            onValueChange = { valueSelected, _ ->
                 viewModel.onUIEvent(
                     OnAccountTypeValueChanged(
-                        viewModel.uiState.accountTypeListFiltered?.findLast { it?.description == value }
+                        viewModel.uiState.accountTypeListFiltered?.findLast { it?.description == valueSelected }
                     )
                 )
             },

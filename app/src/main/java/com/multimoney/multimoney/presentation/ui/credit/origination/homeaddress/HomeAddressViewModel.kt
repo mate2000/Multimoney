@@ -28,8 +28,8 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.homeaddress.
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class HomeAddressViewModel @Inject constructor(
@@ -65,6 +65,8 @@ class HomeAddressViewModel @Inject constructor(
             divisionThreeSelected = null,
             divisionThreeList = listOf()
         )
+        homeCanton = null
+        homeDistrict = null
         divisionOne?.pkCatalog?.let {
             onCallQueryHomeCanton(
                 pkUser,
@@ -85,6 +87,7 @@ class HomeAddressViewModel @Inject constructor(
     ) {
         uiState =
             uiState.copy(divisionTwoSelected = divisionTwo, divisionThreeSelected = null, divisionThreeList = listOf())
+        homeDistrict = null
         if (idBrand != Brand.ElSalvador.id) {
             divisionTwo?.pkCatalog?.let {
                 onCallQueryHomeDistrict(

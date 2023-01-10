@@ -1,7 +1,8 @@
 package com.multimoney.multimoney.presentation.ui.visa.card
 
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,14 +26,19 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.BaseEvent.OnOpenNfcConfig
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.BaseEvent.OnOpenTapAndPayConfig
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnBlockUnblockCardClick
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnCallNovoGetFavoriteCard
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnHandleTapAndPayIntentResult
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnInitializeBiometricPrompt
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigatePreferences
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnOpenDialogConfirmToStartTokenizationProcess
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnSeeDataClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnStartPaymentProcess
 import com.multimoney.multimoney.presentation.uielement.CustomButtonBig
 import com.multimoney.multimoney.presentation.uielement.CustomCardVisaVertical
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -46,11 +52,13 @@ import com.multimoney.multimoney.presentation.util.getCardNumberFour
 import com.multimoney.multimoney.presentation.util.getCardNumberOne
 import com.multimoney.multimoney.presentation.util.getCardNumberThree
 import com.multimoney.multimoney.presentation.util.getCardNumberTwo
+import com.multimoney.multimoney.presentation.util.getTapAndPayIntent
 
 @Composable
 @Preview
 @OptIn(ExperimentalMaterialApi::class)
 fun VisaCardScreen(
+    isRestart: Boolean = true,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
@@ -59,6 +67,20 @@ fun VisaCardScreen(
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val fragmentActivity = LocalContext.current as FragmentActivity
+
+    val launch = rememberLauncherForActivityResult(contract = StartActivityForResult(), onResult = { result ->
+        viewModel.onUIEvent(OnHandleTapAndPayIntentResult(result))
+    })
+
+    viewModel.apply {
+        isOnRestart = isRestart
+        LaunchedEffect(isOnRestart) {
+            if (isOnRestart) {
+                viewModel.onUIEvent(OnCallNovoGetFavoriteCard)
+                isOnRestart = false
+            }
+        }
+    }
 
     // Navigation
     LaunchedEffect(true) {
@@ -79,6 +101,19 @@ fun VisaCardScreen(
             biometricPromptNegative = stringResource(id = string.cancel)
         )
     )
+
+    LaunchedEffect(true) {
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                OnOpenTapAndPayConfig -> {
+                    launch.launch(context.getTapAndPayIntent())
+                }
+                OnOpenNfcConfig -> {
+                    launch.launch(viewModel.nfcHelper.getIntentToRequestActivateNfc())
+                }
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -149,7 +184,7 @@ fun VisaCardScreen(
                         .fillMaxWidth()
                         .padding(end = 8.dp),
                     icon = R.drawable.ic_link,
-                    text = stringResource(id = R.string.link),
+                    text = stringResource(id = string.link),
                     enabled = viewModel.uiState.isCardBlocked.not(),
                     onClick = {
                         viewModel.onUIEvent(OnOpenDialogConfirmToStartTokenizationProcess)
@@ -165,7 +200,7 @@ fun VisaCardScreen(
                     text = stringResource(id = R.string.pay),
                     enabled = viewModel.uiState.isCardBlocked.not(),
                     onClick = {
-                        viewModel.onUIEvent(OnOpenDialogConfirmToStartTokenizationProcess)
+                        viewModel.onUIEvent(OnStartPaymentProcess)
                     }
                 )
             }
@@ -194,7 +229,7 @@ fun VisaCardScreen(
         }
         if (viewModel.uiState.isCardBlocked) {
             CustomInformativeChip(
-                text = stringResource(id = string.visa_card_block_disclaimer),
+                text = stringResource(id = viewModel.uiState.visaCardBlockDisclaimer),
                 textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.textInformation),
                 modifier = Modifier.padding(vertical = 24.dp, horizontal = 16.dp),
                 startIcon = R.drawable.ic_information,

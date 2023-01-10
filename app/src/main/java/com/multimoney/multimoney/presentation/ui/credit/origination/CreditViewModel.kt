@@ -10,7 +10,6 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.interaction.credit.MutationSaveCreditFlowStepUseCase
-import com.multimoney.domain.interaction.credit.MutationSaveCreditOperationUseCase
 import com.multimoney.domain.interaction.credit.QueryScreenConfigUseCase
 import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.util.onFailure
@@ -30,6 +29,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnBackVisibilityValueChanged
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnCallMutationSaveCreditFlowStep
@@ -47,17 +47,18 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnPreviousStep
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetCloseDialogTexts
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetNavigation
-import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnShowBottomSheet
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnHideBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnUpdateScreenConfigData
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
+import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class CreditViewModel @Inject constructor(
@@ -65,8 +66,7 @@ class CreditViewModel @Inject constructor(
     val dataStorePreferences: DataStorePreferences,
     val saveCreditStepsHelper: SaveCreditStepsHelper,
     private val mutationSaveCreditFlowStepUseCase: MutationSaveCreditFlowStepUseCase,
-    val queryScreenConfigUseCase: QueryScreenConfigUseCase,
-    private val mutationSaveCreditOperationUseCase: MutationSaveCreditOperationUseCase
+    val queryScreenConfigUseCase: QueryScreenConfigUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -76,7 +76,6 @@ class CreditViewModel @Inject constructor(
     // Stateless
     var closeDialogTitle: Int = string.empty
     var closeDialogDescription: String = ""
-    var whatsAppLink: String = ""
     var nextAction: () -> Unit = {}
     private var nextStep: Int = CreditStep.One.id
     private var previousStep: Int = CreditStep.One.id
@@ -91,7 +90,6 @@ class CreditViewModel @Inject constructor(
     var idPrint: Long = 0
     var statusOnfido: String = ""
     var statusEvicertia: String = ""
-    var linkEvicertia: String = URL_EMPTY
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: ""
@@ -137,10 +135,7 @@ class CreditViewModel @Inject constructor(
     }
 
     private fun onNavigateToHome() {
-        popAndNavigateTo(
-            route = Screen.HomeScreen.route,
-            popTo = Screen.CreditScreen.route
-        )
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
     }
 
     private fun onContinueClick(focusManager: FocusManager) {
@@ -149,10 +144,16 @@ class CreditViewModel @Inject constructor(
     }
 
     fun onHideBottomSheet() {
+        uiState = uiState.copy(
+            isBottomSheetVisible = false
+        )
         emitBaseEvent(BaseEvent.OnHideBottomSheet)
     }
 
     fun onShowBottomSheet() {
+        uiState = uiState.copy(
+            isBottomSheetVisible = true
+        )
         emitBaseEvent(BaseEvent.OnShowBottomSheet)
     }
 
@@ -174,15 +175,6 @@ class CreditViewModel @Inject constructor(
                 statusOnfido.lowercase() != CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase() -> {
                 navigateToOnfido()
             }
-            statusEvicertia.lowercase() != CreditOnFidoOrFirmStatus.FIRMED.status.lowercase() -> {
-                navigateToSignDocumentProcess(
-                    if (linkEvicertia == URL_EMPTY) {
-                        GENERATE_DOCUMENT_STEP.value
-                    } else {
-                        SIGN_DOCUMENTS_STEP.value
-                    }
-                )
-            }
         }
     }
 
@@ -201,26 +193,17 @@ class CreditViewModel @Inject constructor(
         if (previousStep > CreditStep.One.id || uiState.currentStep == CreditStep.Two.id) {
             uiState = uiState.copy(
                 currentStep = previousStep,
-                isCloseVisible = previousStep >= CreditStep.One.id
+                isCloseVisible = previousStep >= CreditStep.One.id,
+                isBottomSheetVisible = false
             )
         } else {
-            popAndNavigateTo(
-                route = Screen.HomeScreen.route,
-                popTo = Screen.CreditScreen.route
-            )
+            navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
         }
     }
 
     private fun navigateToOnfido() {
         popAndNavigateTo(
-            "${Screen.CreditOnfidoScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$idPrint/$URL_EMPTY/$statusEvicertia",
-            Screen.CreditScreen.route
-        )
-    }
-
-    private fun navigateToSignDocumentProcess(signDocumentStep: String) {
-        popAndNavigateTo(
-            "${Screen.SignDocumentProcessScreen.baseRoute}/$signDocumentStep/$URL_EMPTY/$idPrint/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/${false}",
+            "${Screen.CreditOnfidoScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$idPrint/$statusEvicertia",
             Screen.CreditScreen.route
         )
     }
@@ -231,7 +214,7 @@ class CreditViewModel @Inject constructor(
         this.previousStep = previousStep
     }
 
-    private fun onCallMutationSaveCreditFlowStep(shouldCallSaveCreditOperation: Boolean) {
+    private fun onCallMutationSaveCreditFlowStep() {
         executeUseCase {
             mutationSaveCreditFlowStepUseCase.invoke(
                 user = email,
@@ -242,12 +225,8 @@ class CreditViewModel @Inject constructor(
                 currentStep = CreditStep.Search.getNameById(nextStep)
             ).collectLatest { result ->
                 result.onSuccess {
-                    if (shouldCallSaveCreditOperation) {
-                        onCallSaveCreditOperation()
-                    } else {
-                        uiState = uiState.copy(isLoading = false)
-                        nextStep()
-                    }
+                    uiState = uiState.copy(isLoading = false)
+                    nextStep()
                 }.onFailure {
                     uiState = uiState.copy(
                         isLoading = false,
@@ -276,30 +255,6 @@ class CreditViewModel @Inject constructor(
         }
     }
 
-    private fun onCallSaveCreditOperation() {
-        executeUseCase {
-            mutationSaveCreditOperationUseCase.invoke(
-                idUserRequest.toLong(),
-                pkUser.toLong(),
-                email,
-                idBrand.toInt()
-            ).collectLatest { result ->
-                result.onSuccess {
-                    idPrint = it.idPrint
-                    nextStep()
-                }
-                result.onFailure {
-                    uiState = uiState.copy(
-                        isLoading = false,
-                        isAlertResultVisible = true
-                    )
-                }.onLoading {
-                    uiState = uiState.copy(isLoading = true)
-                }
-            }
-        }
-    }
-
     fun getLoadingString(): Int = if (idBrand.isNotEmpty()) {
         when (idBrand.toInt()) {
             Brand.Guatemala.id -> string.credit_glad_to_see_you_gt
@@ -320,12 +275,11 @@ class CreditViewModel @Inject constructor(
         val openDialog: DialogParameters = DialogParameters(),
         var lastStep: Int = 1,
         var loadContent: Boolean = false,
-        var isAlertResultVisible: Boolean = false
+        val isBottomSheetVisible: Boolean = false
     )
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is OnSetWhatsAppLink -> whatsAppLink = event.whatsAppLink
             is OnSetCloseDialogTexts -> onInitializeTexts(
                 event.title,
                 event.description
@@ -352,15 +306,15 @@ class CreditViewModel @Inject constructor(
             is OnUpdateScreenConfigData -> {
                 saveCreditStepsHelper.start(event.screenConfigData)
             }
-            is OnCallMutationSaveCreditFlowStep -> onCallMutationSaveCreditFlowStep(event.shouldCallSaveCreditOperation)
+            is OnCallMutationSaveCreditFlowStep -> onCallMutationSaveCreditFlowStep()
             is OnBackVisibilityValueChanged -> uiState = uiState.copy(isBackVisible = event.isVisible)
             is OnShowBottomSheet -> onShowBottomSheet()
+            is OnHideBottomSheet -> onHideBottomSheet()
             is OnNavigateToHome -> onNavigateToHome()
         }
     }
 
     sealed class UIEvent {
-        data class OnSetWhatsAppLink(val whatsAppLink: String) : UIEvent()
         data class OnSetCloseDialogTexts(val title: Int, val description: String) : UIEvent()
         data class OnSetNavigation(
             val nextAction: () -> Unit = {},
@@ -383,9 +337,10 @@ class CreditViewModel @Inject constructor(
 
         data class OnCurrencySymbolValueChange(val currencySymbol: String) : UIEvent()
         data class OnUpdateScreenConfigData(val screenConfigData: List<CreditCatalog?>?) : UIEvent()
-        data class OnCallMutationSaveCreditFlowStep(val shouldCallSaveCreditOperation: Boolean = false) : UIEvent()
+        object OnCallMutationSaveCreditFlowStep : UIEvent()
         data class OnBackVisibilityValueChanged(val isVisible: Boolean) : UIEvent()
         object OnShowBottomSheet : UIEvent()
+        object OnHideBottomSheet : UIEvent()
         object OnNavigateToHome : UIEvent()
     }
 
@@ -398,6 +353,5 @@ class CreditViewModel @Inject constructor(
         const val CREDIT_TOTAL_STEPS = 7
         const val CREDIT_INDICATOR_TOTAL_STEPS = 6
         const val BANNER_TIME = 2000L
-        const val URL_EMPTY = "url"
     }
 }

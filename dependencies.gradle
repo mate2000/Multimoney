@@ -1,6 +1,6 @@
 ext {
     // Global versions:
-    compile_sdk_version = 32
+    compile_sdk_version = 33
     min_sdk_version = 24
     target_sdk_version = 32
 
@@ -34,7 +34,7 @@ ext {
     ]
 
     // Navigation
-    navigation_version = "2.5.2"
+    navigation_version = "2.6.0-alpha04"
 
     navigation = [
             compose: "androidx.navigation:navigation-compose:${navigation_version}",

@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -25,15 +24,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.Companion.CREDIT_INDICATOR_TOTAL_STEPS
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnContinueClick
-import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetCloseDialogTexts
-import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.credit.origination.additionalinformation.AdditionalInformationBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.origination.additionalinformation.AdditionalInformationScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountScreen
@@ -43,8 +39,6 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.homeaddress.
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeScreen
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiaryUnderLined
@@ -54,7 +48,6 @@ import com.multimoney.multimoney.presentation.uielement.LoadingMultiMoney
 import com.multimoney.multimoney.presentation.uielement.StepProgressBar
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -62,21 +55,12 @@ import kotlinx.coroutines.launch
 fun CreditScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: CreditViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
     val coroutineScope = rememberCoroutineScope()
-
-    viewModel.onUIEvent(
-        OnSetWhatsAppLink(
-            stringResource(
-                id = string.whatsapp_deep_link,
-                SignUpViewModel.PHONE_HARDCODED
-            )
-        )
-    )
 
     LaunchedEffect(true) {
         viewModel.baseEvent.collect { event ->
@@ -96,7 +80,11 @@ fun CreditScreen(
     }
     // Navigation
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
+        viewModel.executeNavigation(
+            onNavigate = onNavigate,
+            onPopAndNavigate = onPopAndNavigate,
+            onPopBackStack = onPopBackStack
+        )
     }
 
     if (viewModel.idBrand.isNotEmpty()) {
@@ -126,12 +114,14 @@ fun CreditScreen(
             }
         } else {
             Column(
-                modifier = Modifier.fillMaxSize().background(MultimoneyTheme.colors.background)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MultimoneyTheme.colors.background)
             ) {
                 Column {
                     TopNavBar(
                         isLeftButtonVisible = viewModel.uiState.currentStep != CreditStep.One.id && viewModel.uiState.currentStep < CreditStep.Eight.id,
-                        isRightButtonVisible = viewModel.uiState.isCloseVisible,
+                        isRightButtonVisible = viewModel.uiState.currentStep <= CreditStep.One.id,
                         onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
                         onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) }
                     )
@@ -144,7 +134,9 @@ fun CreditScreen(
                     }
                 }
                 Column(
-                    modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
                     GetStepContent(
@@ -157,15 +149,20 @@ fun CreditScreen(
                         CustomButton(
                             onClick = { viewModel.onUIEvent(OnContinueClick(focusManager)) },
                             text = stringResource(id = R.string.button_continue),
-                            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
-                                .fillMaxWidth().height(48.dp),
+                            modifier = Modifier
+                                .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
+                                .fillMaxWidth()
+                                .height(56.dp),
                             buttonType = PrimaryPrimary,
                             enable = viewModel.uiState.isContinueEnabled
                         )
                         if (viewModel.uiState.isCurrentLocationButtonVisible) {
                             CustomButton(
                                 text = stringResource(id = R.string.credit_home_address_select_current_location),
-                                modifier = Modifier.padding(top = 12.dp).fillMaxWidth().height(48.dp),
+                                modifier = Modifier
+                                    .padding(top = 12.dp)
+                                    .fillMaxWidth()
+                                    .height(48.dp),
                                 onClick = {
                                     // active the location to select de current location
                                 },
@@ -176,20 +173,6 @@ fun CreditScreen(
                 }
             }
         }
-    }
-
-    if (viewModel.uiState.isAlertResultVisible) {
-        AlertResult(
-            titleString = stringResource(id = string.save_credit_operation_error_title),
-            descriptionString = stringResource(id = string.save_credit_operation_error_subtitle),
-            buttonTextResource = string.save_credit_operation_error_action,
-            isLeftButtonVisible = false,
-            onRightButtonClick = { viewModel.onUIEvent(OnNavigateToHome) },
-            onButtonClick = {
-                context.openWhatsAppDeepLink(viewModel.whatsAppLink)
-                viewModel.onUIEvent(OnNavigateToHome)
-            }
-        )
     }
 
     LoadingIndicator(viewModel.uiState.isLoading)
@@ -208,8 +191,11 @@ fun CreditScreen(
             onPositiveAction = viewModel.uiState.openDialog.positiveAction
         )
     }
-    AdditionalInformationBottomSheet(coroutineScope = coroutineScope, modalBottomSheetState = bottomSheetState) {
-        viewModel.onHideBottomSheet()
+
+    if (viewModel.uiState.isBottomSheetVisible) {
+        AdditionalInformationBottomSheet(coroutineScope = coroutineScope, modalBottomSheetState = bottomSheetState) {
+            viewModel.onHideBottomSheet()
+        }
     }
 }
 

@@ -1,0 +1,10 @@
+mutation RequestChangeDevice($email : String!) {
+    requestchangeDevice(
+        requestChangeDeviceInputType: {
+        email: $email,
+        }
+    ){
+        status,
+        phoneNumber
+    }
+}

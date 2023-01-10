@@ -39,9 +39,13 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.Credi
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnLoadingValueChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnOpenOnfidoSdk
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnSetCloseDialogTexts
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnSetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.RefreshOnFidoToken
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -51,18 +55,29 @@ import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.AppFlow
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 
 @Composable
 @Preview
 fun CreditOnfidoScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: CreditOnfidoViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
 
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
+        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)
     }
+
+    viewModel.onUIEvent(
+        OnSetWhatsAppLink(
+            stringResource(
+                id = string.whatsapp_deep_link,
+                SignUpViewModel.PHONE_HARDCODED
+            )
+        )
+    )
 
     if (viewModel.idBrand != null) {
         if (viewModel.idBrand == Brand.Guatemala.id) {
@@ -249,6 +264,20 @@ fun CreditOnfidoScreen(
     }
 
     LoadingIndicator(viewModel.uiState.isLoading)
+
+    if (viewModel.uiState.isAlertResultVisible) {
+        AlertResult(
+            titleString = stringResource(id = string.save_credit_operation_error_title),
+            descriptionString = stringResource(id = string.save_credit_operation_error_subtitle),
+            buttonTextResource = string.save_credit_operation_error_action,
+            isLeftButtonVisible = false,
+            onRightButtonClick = { viewModel.onUIEvent(OnNavigateToHome) },
+            onButtonClick = {
+                context.openWhatsAppDeepLink(viewModel.whatsAppLink)
+                viewModel.onUIEvent(OnNavigateToHome)
+            }
+        )
+    }
 
     if (viewModel.uiState.openDialog.isActive.value) {
         CustomDialog(

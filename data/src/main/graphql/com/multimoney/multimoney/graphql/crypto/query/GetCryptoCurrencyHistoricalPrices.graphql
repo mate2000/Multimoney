@@ -1,0 +1,28 @@
+query GetHistoricalCurrencyPrices(
+    $market: String!,
+    $max_data_points: Long!,
+    $range_begin: String!,
+    $range_end: String!,
+    $pagination_limit: Int!,
+    $pagination_offset: Int!,
+    $user: String!,
+    $idBrand: Int!
+){
+    cryptoHistoricalPrice(cryptoHistoricalPriceInput: {
+        market: $market,
+        max_data_points: $max_data_points
+        range_begin: $range_begin
+        range_end: $range_end
+        pagination_limit: $pagination_limit
+        pagination_offset: $pagination_offset
+        user: $user
+        idBrand: $idBrand
+    }) {
+        market
+        items {
+            average_price
+            timestamp
+        }
+        total_count
+    }
+}

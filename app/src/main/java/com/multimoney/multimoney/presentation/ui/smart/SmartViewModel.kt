@@ -35,7 +35,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.NavigateToEvicertia
-import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.NavigateToOnfido
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationInitialRequest
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
@@ -60,8 +59,8 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
@@ -186,8 +185,17 @@ class SmartViewModel @Inject constructor(
             fullJobAddress = stepByStep.fullJobAddress
         )
 
-        // update the current step coming from the backend in order to navigate to the proper screen
-        uiState = uiState.copy(currentStep = SmartSteps.Search.getIdByName(stepByStep.currentStep))
+        val currentStep = SmartSteps.Search.getIdByName(stepByStep.currentStep)
+
+        when {
+            // navigate to onfido screen after the last step obtained and idBrand matches the country id
+            currentStep == SmartSteps.Four.id && idBrandAsInt == Brand.CostaRica.id -> navigateToOnfido()
+            currentStep == SmartSteps.Six.id && idBrandAsInt == Brand.ElSalvador.id -> navigateToOnfido()
+            else -> {
+                // update the current step coming from the backend in order to navigate to the proper screen
+                uiState = uiState.copy(currentStep = SmartSteps.Search.getIdByName(stepByStep.currentStep))
+            }
+        }
     }
 
     private fun callMutationInitialRequestUseCase() = executeUseCase(
@@ -459,7 +467,7 @@ class SmartViewModel @Inject constructor(
 
     data class UIState(
         // Interactions
-        val currentStep: Int = SmartSteps.One.id,
+        val currentStep: Int = -1,
         val isCloseVisible: Boolean = true,
         val isContinueEnabled: Boolean = false,
         val buttonTextRes: Int = string.button_continue,
@@ -504,7 +512,6 @@ class SmartViewModel @Inject constructor(
             is OnOnFidoVerifiedChanged -> isOnFidoVerified = event.isOnFidoVerified
             is OnCallSaveAutomatedSmartAccount -> onCallMutationSaveSmartAccount(event.accountSmartData)
             is OverridePreviousAction -> overridePreviousAction(event.action)
-            is NavigateToOnfido -> navigateToOnfido()
             is NavigateToEvicertia -> navigateToCorrectScreen()
         }
     }
@@ -550,8 +557,6 @@ class SmartViewModel @Inject constructor(
 
         data class OverridePreviousAction(val action: (() -> Unit)?) : UIEvent()
 
-        object NavigateToOnfido : UIEvent()
-
         object NavigateToEvicertia : UIEvent()
     }
 
@@ -560,6 +565,5 @@ class SmartViewModel @Inject constructor(
         const val SMART_INDICATOR_CR_TOTAL_STEPS = 3
         const val DEFAULT_ID_BRAND_ERROR = -1
         const val URL_EMPTY = "url"
-        const val STEP_BY_STEP_EVENT_DELAY = 1500L
     }
 }

@@ -13,6 +13,7 @@ import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.ProcessForgotPasswordScreen
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.request.RequestForgotPasswordScreen
+import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordScreen
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInOTPScreen
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpScreen
@@ -23,6 +24,7 @@ import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingScreen
 import com.multimoney.multimoney.presentation.ui.splash.SplashScreen
 
 const val SIGN_UP_STEP = "sign_up_step"
+const val STATUS = "status"
 
 fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
     navigation(
@@ -157,6 +159,21 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                     )
                 }
             )
+        }
+
+        composable(
+            route = Screen.RegisteredUserPassword.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(PK_USER) { type = NavType.LongType }
+            )
+        ) {
+            RegisteredUserPasswordScreen(onPopAndNavigate = {
+                navController.navigate(it.route) {
+                    launchSingleTop = true
+                    popUpTo(it.popTo) { inclusive = true }
+                }
+            })
         }
     }
 }

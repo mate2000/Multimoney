@@ -4,7 +4,9 @@ import androidx.biometric.BiometricPrompt
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.focus.FocusManager
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.amplifyframework.auth.AuthUserAttribute
 import com.amplifyframework.auth.AuthUserAttributeKey
@@ -18,9 +20,19 @@ import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.Screen.SignInScreen
+import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
+import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.STATUS
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnCallCognitoSignUp
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnCallPasswordSave
+import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnConfirmPasswordValueChange
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnFingerprintCheckedChanged
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnInitializeDialogTexts
@@ -46,6 +58,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RegisteredUserPasswordViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     val biometricHelper: BiometricHelper,
     private val dataStorePreferences: DataStorePreferences,
     private val queryValidationSecurityUseCase: QueryValidationSecurityUseCase
@@ -63,6 +76,25 @@ class RegisteredUserPasswordViewModel @Inject constructor(
     private var biometricDialogSuccessDescription = ""
     private var biometricDialogFailureDescription = ""
     private var isBiometricAvailable = false
+    var email: String = ""
+    private var pkUser: Long = 0
+    private var identification: String = ""
+    private var status: String = ""
+    private var idBrand: Int = 0
+    var firstName: String = ""
+    var lastName: String = ""
+    private var phone: String = ""
+
+    init {
+        email = savedStateHandle[EMAIL] ?: ""
+        pkUser = savedStateHandle[PK_USER] ?: 0
+        identification = savedStateHandle[IDENTIFICATION] ?: ""
+        status = savedStateHandle[STATUS] ?: ""
+        idBrand = savedStateHandle[ID_BRAND] ?: 0
+        firstName = savedStateHandle[FIRST_NAME] ?: ""
+        lastName = savedStateHandle[LAST_NAME] ?: ""
+        phone = savedStateHandle[PHONE_NUMBER] ?: ""
+    }
 
     private fun onInitializeDialogTexts(
         biometricPromptTitle: String,
@@ -171,17 +203,15 @@ class RegisteredUserPasswordViewModel @Inject constructor(
             result.onSuccess {
                 onUIEvent(
                     OnCallCognitoSignUp(
-                        email = "",
-                        firstName = "",
+                        email = email,
+                        firstName = firstName,
                         secondName = "",
-                        lastName = "",
-                        phone = "${""}${""}",
-                        identification = "",
-                        pkUser = "",
-                        status = "",
-                        idBrand = 0,
-                        onSuccess = {
-                        },
+                        lastName = lastName,
+                        phone = phone,
+                        identification = identification,
+                        pkUser = pkUser,
+                        status = status,
+                        idBrand = idBrand,
                         onFailureWithDialog = { dialog ->
                             uiState = uiState.copy(isLoading = false, openDialogCustom = dialog)
                         }
@@ -219,7 +249,6 @@ class RegisteredUserPasswordViewModel @Inject constructor(
         pkUser: String,
         status: String,
         idBrand: Int,
-        onSuccess: () -> Unit,
         onFailureWithDialog: (DialogParameters) -> Unit
     ) {
         val attrs = mapOf(
@@ -237,7 +266,7 @@ class RegisteredUserPasswordViewModel @Inject constructor(
             .userAttributes(attrs.map { AuthUserAttribute(it.key, it.value) })
             .build()
         Amplify.Auth.signUp(email, uiState.password, options, {
-            onSuccess()
+            uiState = uiState.copy(isLoading = false)
             emitBaseEvent(BaseEvent.OnOpenBiometricDialog)
         }, {
             onFailureWithDialog(
@@ -345,6 +374,25 @@ class RegisteredUserPasswordViewModel @Inject constructor(
         popTo = Screen.RegisteredUserPassword.route
     )
 
+    private fun onCloseClick(focusManager: FocusManager) {
+        focusManager.clearFocus()
+        uiState = uiState.copy(
+            openDialogCustom = DialogParameters(
+                titleResource = string.general_close_dialog_title,
+                descriptionResource = string.sign_up_close_dialog_description,
+                positiveResource = string.sign_up_close_dialog_positive_button_text,
+                negativeResource = string.sign_up_close_dialog_negative_button_text,
+                positiveAction = {
+                    popAndNavigateTo(
+                        route = SignInScreen.route,
+                        popTo = Screen.RegisteredUserPassword.route
+                    )
+                },
+                isActive = mutableStateOf(true)
+            )
+        )
+    }
+
     data class UIState(
         // Fields
         var password: String = "",
@@ -385,7 +433,6 @@ class RegisteredUserPasswordViewModel @Inject constructor(
                 uiEvent.pkUser,
                 uiEvent.status,
                 uiEvent.idBrand,
-                uiEvent.onSuccess,
                 uiEvent.onFailureWithDialog
             )
             is OnValidForm -> uiEvent.onContinueEnable(isFormValid())
@@ -397,6 +444,7 @@ class RegisteredUserPasswordViewModel @Inject constructor(
                 uiEvent.userName
             )
             is OnIsBiometricAvailable -> isBiometricAvailable = uiEvent.value
+            is OnCloseClick -> onCloseClick(focusManager = uiEvent.focusManager)
         }
     }
 
@@ -418,7 +466,6 @@ class RegisteredUserPasswordViewModel @Inject constructor(
             val pkUser: String,
             val status: String,
             val idBrand: Int,
-            val onSuccess: () -> Unit,
             val onFailureWithDialog: (DialogParameters) -> Unit
         ) : UIEvent()
 
@@ -451,6 +498,7 @@ class RegisteredUserPasswordViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnIsBiometricAvailable(val value: Boolean) : UIEvent()
+        data class OnCloseClick(val focusManager: FocusManager) : UIEvent()
     }
 
     sealed class BaseEvent {

@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.login.registereduser.password
 
 import android.content.res.Configuration
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -34,6 +35,7 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.BaseEvent.OnOpenBiometricDialog
+import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnConfirmPasswordValueChange
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnFingerprintCheckedChanged
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnIsBiometricAvailable
@@ -47,10 +49,15 @@ import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.CustomPasswordRequirementLabel
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
+import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
-fun RegisteredUserPasswordScreen(viewModel: RegisteredUserPasswordViewModel = hiltViewModel()) {
+fun RegisteredUserPasswordScreen(
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    viewModel: RegisteredUserPasswordViewModel = hiltViewModel()
+) {
     // Properties
+    val focusManager = LocalFocusManager.current
     val context = LocalContext.current
     val fragmentActivity = LocalContext.current as FragmentActivity
 
@@ -66,6 +73,7 @@ fun RegisteredUserPasswordScreen(viewModel: RegisteredUserPasswordViewModel = hi
     )
 
     LaunchedEffect(true) {
+        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
         viewModel.apply {
             onUIEvent(
                 OnIsBiometricAvailable(biometricHelper.isBiometricAvailable(context))
@@ -76,8 +84,8 @@ fun RegisteredUserPasswordScreen(viewModel: RegisteredUserPasswordViewModel = hi
                 is OnOpenBiometricDialog -> viewModel.onUIEvent(
                     OnShowBiometricPromptForEncryption(
                         fragmentActivity = fragmentActivity,
-                        userEmail = "",
-                        userName = "${""} ${""}"
+                        userEmail = viewModel.email,
+                        userName = "${viewModel.firstName} ${viewModel.lastName}"
                     )
                 )
             }
@@ -86,6 +94,7 @@ fun RegisteredUserPasswordScreen(viewModel: RegisteredUserPasswordViewModel = hi
 
     // Content
     RegisteredUserPasswordContent(
+        onCloseClick = { viewModel.onUIEvent(OnCloseClick(focusManager = focusManager)) },
         viewModel.uiState.password,
         viewModel.uiState.passwordError,
         onPasswordChange = { viewModel.onUIEvent(OnPasswordValueChange(it)) },
@@ -106,6 +115,10 @@ fun RegisteredUserPasswordScreen(viewModel: RegisteredUserPasswordViewModel = hi
 
     LoadingIndicator(viewModel.uiState.isLoading)
 
+    BackHandler {
+        // empty to block system back
+    }
+
     // Dialog
     if (viewModel.uiState.openDialogCustom.isActive.value) {
         CustomDialog(
@@ -124,6 +137,7 @@ fun RegisteredUserPasswordScreen(viewModel: RegisteredUserPasswordViewModel = hi
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun RegisteredUserPasswordContent(
+    onCloseClick: () -> Unit = {},
     passwordValue: String = "",
     passwordError: Pair<Boolean, Int> = Pair(false, string.empty),
     onPasswordChange: (String) -> Unit = {},
@@ -148,17 +162,16 @@ fun RegisteredUserPasswordContent(
         Column {
             TopNavBar(
                 isLeftButtonVisible = false,
-                onRightButtonClick = { }
+                onRightButtonClick = onCloseClick
             )
             Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 24.dp)) {
                 Text(
                     text = buildAnnotatedString {
                         withStyle(
-                            style = Typography.h6.toSpanStyle()
-                                .copy(
-                                    color = MultimoneyTheme.colors.labelText,
-                                    fontWeight = FontWeight.SemiBold
-                                )
+                            style = Typography.h6.toSpanStyle().copy(
+                                color = MultimoneyTheme.colors.labelText,
+                                fontWeight = FontWeight.SemiBold
+                            )
                         ) {
                             append(stringResource(id = string.sign_up_password_title))
                         }
@@ -181,8 +194,7 @@ fun RegisteredUserPasswordContent(
                     }),
                     labelText = stringResource(id = string.sign_up_label_password),
                     isPassword = true,
-                    modifier = Modifier
-                        .padding(top = 24.dp),
+                    modifier = Modifier.padding(top = 24.dp),
                     isRequired = true,
                     isRequiredMessage = stringResource(id = string.sign_up_password_required),
                     isError = passwordError.first,
@@ -208,8 +220,7 @@ fun RegisteredUserPasswordContent(
                     }),
                     labelText = stringResource(id = string.sign_up_label_confirm_password),
                     isPassword = true,
-                    modifier = Modifier
-                        .padding(top = 16.dp),
+                    modifier = Modifier.padding(top = 16.dp),
                     isRequired = true,
                     isRequiredMessage = stringResource(id = string.sign_up_password_required),
                     isError = confirmPasswordError.first,
@@ -220,8 +231,7 @@ fun RegisteredUserPasswordContent(
                     }
                 )
                 FlowRow(
-                    Modifier
-                        .padding(top = 8.dp)
+                    Modifier.padding(top = 8.dp)
                 ) {
                     PasswordRequirementLabels(
                         text = stringResource(id = string.sign_up_password_requirement_eight_characters_minimum),
@@ -258,9 +268,7 @@ fun RegisteredUserPasswordContent(
         CustomButton(
             onClick = { },
             text = stringResource(id = string.button_continue),
-            modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
-                .fillMaxWidth()
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp).fillMaxWidth()
                 .height(48.dp),
             buttonType = PrimaryPrimary,
             enable = isContinueEnabled

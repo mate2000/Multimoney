@@ -59,6 +59,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.SMART_PAYMENT_ACCOUNTS
+import com.multimoney.multimoney.presentation.navigation.navgraph.STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.TRANSFER_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
@@ -136,13 +137,15 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object RequestForgotPassword :
         Screen("request_forgot_password_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}", "request_forgot_password_screen")
 
-    object RegisteredUserPassword : Screen("registered_user_password", "registered_user_password")
+    object RegisteredUserPassword : Screen(
+        "registered_user_password?$EMAIL={$EMAIL}?$FIRST_NAME={$FIRST_NAME}?$LAST_NAME={$LAST_NAME}?$PHONE_NUMBER={$PHONE_NUMBER}?$IDENTIFICATION={$IDENTIFICATION}?$PK_USER={$PK_USER}?$STATUS={$STATUS}?$ID_BRAND={$ID_BRAND}",
+        "registered_user_password"
+    )
 
-    object ProcessForgotPassword :
-        Screen(
-            "process_forgot_password_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}?$EMAIL={$EMAIL}?$ID_BRAND={$ID_BRAND}?$PK_USER={$PK_USER}",
-            "process_forgot_password_screen"
-        )
+    object ProcessForgotPassword : Screen(
+        "process_forgot_password_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}?$EMAIL={$EMAIL}?$ID_BRAND={$ID_BRAND}?$PK_USER={$PK_USER}",
+        "process_forgot_password_screen"
+    )
 
     object SignUpSplashComeBackScreen : Screen(
         "sign_up_splash_come_back_screen/{$SIGN_UP_STEP}",
@@ -236,11 +239,10 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "disbursement_add_account_screen"
     )
 
-    object DisbursementVoucherScreen :
-        Screen(
-            route = "disbursement_voucher_screen/{$CLIENT_BANK_ACCOUNT}/{$DISBURSEMENT_LABEL}/{$EXCHANGE_RATE_LABEL}/{$SHOULD_DISPLAY_EXCHANGE_RATE}/{$REFERENCE_NUMBER}/{$AMOUNT_ORIGINAL_LABEL}",
-            "disbursement_voucher_screen"
-        )
+    object DisbursementVoucherScreen : Screen(
+        route = "disbursement_voucher_screen/{$CLIENT_BANK_ACCOUNT}/{$DISBURSEMENT_LABEL}/{$EXCHANGE_RATE_LABEL}/{$SHOULD_DISPLAY_EXCHANGE_RATE}/{$REFERENCE_NUMBER}/{$AMOUNT_ORIGINAL_LABEL}",
+        "disbursement_voucher_screen"
+    )
 
     // CreditNavGraph Screens
     object CreditScreen : Screen(
@@ -346,11 +348,10 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "payment_amount_screen"
     )
 
-    object PaymentVoucherScreen :
-        Screen(
-            route = "payment_voucher_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CLIENT_BANK_ACCOUNT}/{$PAYMENT_DATE}/{$CURRENT_AMOUNT_VALUE}/{$PAYMENT_LABEL}/{$EXCHANGE_RATE_LABEL}/{$SHOULD_DISPLAY_EXCHANGE_RATE}/{$IS_MULTI_CURRENCY}/{$IS_AUTOMATIC_PAYMENT_CHECKED}/{$REFERENCE_NUMBER}",
-            "payment_voucher_screen"
-        )
+    object PaymentVoucherScreen : Screen(
+        route = "payment_voucher_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CLIENT_BANK_ACCOUNT}/{$PAYMENT_DATE}/{$CURRENT_AMOUNT_VALUE}/{$PAYMENT_LABEL}/{$EXCHANGE_RATE_LABEL}/{$SHOULD_DISPLAY_EXCHANGE_RATE}/{$IS_MULTI_CURRENCY}/{$IS_AUTOMATIC_PAYMENT_CHECKED}/{$REFERENCE_NUMBER}",
+        "payment_voucher_screen"
+    )
 
     object PaymentScheduleScreen : Screen(
         "payment_schedule_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CLIENT_BANK_ACCOUNT}/{$PAYMENT_DATE}/{$IS_EDIT_BANK_ACCOUNT}/{$PREVIOUS_SCREEN}/{$IS_EDIT_PAYMENT_SCHEDULE}",

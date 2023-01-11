@@ -193,7 +193,7 @@ fun CustomOutlinedTextField(
     if (isSystemInDarkTheme()) {
         labelColor = WhiteTransparency70
         backgroundColor = WhiteTransparency10
-        placeholderColor = WhiteTransparency30
+        placeholderColor = WhiteTransparency60
         unfocusedIndicatorColor = DefaultBlack
         errorIndicatorColor = if (isError || emptyError) {
             SemanticNegative400
@@ -217,7 +217,7 @@ fun CustomOutlinedTextField(
                 focusedIndicatorColor = DefaultBlack
                 backgroundColor = GrayScale500
                 iconTintColor = WhiteTransparency60
-                textColor = WhiteTransparency30
+                textColor = WhiteTransparency90
             }
         }
     } else {
@@ -289,7 +289,7 @@ fun CustomOutlinedTextField(
                     }
                 },
             value = value ?: "",
-            shape = RoundedCornerShape(if (isTextArea) 25 else 50),
+            shape = RoundedCornerShape(if (isTextArea) 32 else 50),
             leadingIcon = leadingIcon?.let {
                 {
                     Icon(
@@ -364,7 +364,9 @@ fun CustomOutlinedTextField(
                 ?: if (passwordVisible || !isPassword) {
                     VisualTransformation.None
                 } else PasswordVisualTransformation(),
-            textStyle = Typography.body2,
+            textStyle = Typography.body2.copy(
+                color = WhiteTransparency90
+            ),
             maxLines = if (isTextArea) 2 else 1,
             focusedBorderThickness = FOCUSED_BORDER_WIDTH
         )

@@ -38,22 +38,7 @@ import androidx.compose.ui.window.Popup
 import com.multimoney.domain.model.credit.CreditCatalogOption
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
-import com.multimoney.multimoney.presentation.theme.BlackTransparency70
-import com.multimoney.multimoney.presentation.theme.ComplementaryBlack3
-import com.multimoney.multimoney.presentation.theme.DefaultWhite
-import com.multimoney.multimoney.presentation.theme.GrayScale400
-import com.multimoney.multimoney.presentation.theme.GrayScale500
-import com.multimoney.multimoney.presentation.theme.GrayScale600
-import com.multimoney.multimoney.presentation.theme.GrayScale700
-import com.multimoney.multimoney.presentation.theme.GrayScale800
-import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.theme.Primary300
-import com.multimoney.multimoney.presentation.theme.Primary400
-import com.multimoney.multimoney.presentation.theme.Primary500
-import com.multimoney.multimoney.presentation.theme.SemanticNegative500
-import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
-import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
+import com.multimoney.multimoney.presentation.theme.*
 import com.multimoney.multimoney.presentation.util.gesture.detectTapAndPressUnconsumed
 
 @Composable
@@ -82,7 +67,7 @@ fun CustomDropdown(
     if (isSystemInDarkTheme()) {
         focusedColor = GrayScale700
         labelColor = WhiteTransparency70
-        backgroundColor = GrayScale700
+        backgroundColor = WhiteTransparency10
         when {
             isError -> {
                 iconTintColor = GrayScale400
@@ -90,7 +75,7 @@ fun CustomDropdown(
             }
             enabled -> {
                 iconTintColor = WhiteTransparency70
-                textColor = DefaultWhite
+                textColor = WhiteTransparency90
             }
             else -> {
                 backgroundColor = GrayScale500

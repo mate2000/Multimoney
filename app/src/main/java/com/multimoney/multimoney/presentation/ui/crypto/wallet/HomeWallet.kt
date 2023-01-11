@@ -360,7 +360,7 @@ fun MyCoinsSection(
                 priceOfTheDay = item.priceOfTheDay,
                 percentageInvestedCurrency = item.percentageInvestedCurrency,
                 available = item.available
-            )
+            ){}
         }
     }
 }

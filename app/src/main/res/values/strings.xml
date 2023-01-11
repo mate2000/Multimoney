@@ -1275,6 +1275,12 @@
     <string name="smart_iban_transfer_accounts_add" translatable="false">Agregar</string>
     <string name="smart_iban_transfer_title" translatable="false">Cuentas registradas</string>
 
+    <!-- Currency Detail Screen -->
+    <string name="currency_detail_title" translatable="false">Inversión en %s</string>
+    <string name="currency_detail_daily_invest" translatable="false">Hoy %1$s (%2$s)</string>
+    <string name="currency_detail_my_movements" translatable="false">Mis movimientos</string>
+    <string name="currency_detail_see_all" translatable="false">Ver todas</string>
+
     <!-- Smart IBAN Register -->
     <string name="smart_iban_register_title" translatable="false">Registro de cuenta</string>
     <string name="smart_iban_register_account_label" translatable="false">Número de cuenta IBAN</string>

@@ -43,6 +43,8 @@ import com.multimoney.data.networking.graphql.apollomodel.GetConfigurationVersio
 import com.multimoney.data.networking.graphql.apollomodel.GetCoreBankMovementsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCountryContactQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCountryQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetCryptoCurrencyMovementQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetCryptoPriceHistoryQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetExchangeRateCreditQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetHistoricClientBalanceQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetInfoDepositQuery
@@ -1715,4 +1717,46 @@ class GraphqlApi @Inject constructor(
                 user = user
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryCryptoCurrencyMovements(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        market: String,
+        startDate: String,
+        endDate: String
+    ): ApolloCall<GetCryptoCurrencyMovementQuery.Data> =
+        apolloAuthorizedClient.query(
+            GetCryptoCurrencyMovementQuery(
+                user,
+                idBrand,
+                identification,
+                market,
+                startDate,
+                endDate
+            )
+        )
+
+    fun queryCryptoPriceHistory(
+        market: String,
+        user: String,
+        idBrand: Int,
+        startDate: String,
+        endDate: String,
+        maxPoints: Long,
+        paginationLimit: Int,
+        paginationOffset: Int,
+    ): ApolloCall<GetCryptoPriceHistoryQuery.Data> =
+        apolloAuthorizedClient.query(
+            GetCryptoPriceHistoryQuery(
+                market,
+                user,
+                idBrand,
+                startDate,
+                endDate,
+                maxPoints,
+                paginationLimit,
+                paginationOffset
+            )
+        )
 }

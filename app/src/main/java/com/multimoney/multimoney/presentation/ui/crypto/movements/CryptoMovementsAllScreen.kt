@@ -28,16 +28,16 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoCurrencyMovementItem
-import com.multimoney.multimoney.presentation.ui.crypto.movements.CryptoMovementsScreenViewModel.UIEvent.GetCryptoMovements
-import com.multimoney.multimoney.presentation.ui.crypto.movements.CryptoMovementsScreenViewModel.UIEvent.OnGetUserInfo
-import com.multimoney.multimoney.presentation.ui.crypto.movements.CryptoMovementsScreenViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.crypto.movements.CryptoMovementsAllViewModel.UIEvent.GetCryptoMovements
+import com.multimoney.multimoney.presentation.ui.crypto.movements.CryptoMovementsAllViewModel.UIEvent.OnGetUserInfo
+import com.multimoney.multimoney.presentation.ui.crypto.movements.CryptoMovementsAllViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import kotlinx.coroutines.flow.Flow
 
 @Composable
-fun CryptoMovementsScreen(
-    cryptoMovementsViewModel: CryptoMovementsScreenViewModel = hiltViewModel(),
+fun CryptoMovementsAllScreen(
+    cryptoMovementsViewModel: CryptoMovementsAllViewModel = hiltViewModel(),
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {}
@@ -97,7 +97,6 @@ private fun CryptoMovementsScreenContent(
 
 @Composable
 private fun HeaderSection() {
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -117,7 +116,6 @@ private fun HeaderSection() {
 private fun MovementsListSection(
     cryptoMovements: LazyPagingItems<CryptoCurrencyMovement>
 ) {
-
     LazyColumn(
         modifier = Modifier
             .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp)

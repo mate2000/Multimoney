@@ -52,31 +52,18 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
     }
 
-    fun getTitleSmartAccountResource(): Int? {
+    fun getTitleAndIconSmartAccountResources(): Pair<Int, Int?> {
         val result = when (smartAccount?.currencyID?.getCurrencyFromId()?.value) {
             CurrencyType.Dollar.value -> {
-                R.string.payment_select_sending_type_smart_account_dollars
+              Pair(R.string.payment_select_sending_type_smart_account_colones,
+                  R.drawable.ic_payment_colon)
             }
             CurrencyType.Colon.value -> {
-                R.string.payment_select_sending_type_smart_account_colones
+               Pair(R.string.payment_select_sending_type_smart_account_dollars,
+                   R.drawable.ic_sending_dollar)
             }
             else -> {
-                0
-            }
-        }
-        return result
-    }
-
-    fun getIconSmartAccountResource(): Int? {
-        val result = when (smartAccount?.currencyID?.getCurrencyFromId()?.value) {
-            CurrencyType.Dollar.value -> {
-                R.drawable.ic_sending_dollar
-            }
-            CurrencyType.Colon.value -> {
-                R.drawable.ic_payment_colon
-            }
-            else -> {
-                0
+                Pair(R.string.empty, 0)
             }
         }
         return result
@@ -92,8 +79,9 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     }
 
     private fun onNavigateToSmartAccount() {
-        // TODO navigate to HU REV-1431
-        emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
+        navigateTo(
+            "${Screen.OwnTransferAmountScreen.baseRoute}/${encodeData(smartAccount)}/${Screen.SmartSelectSendingTypeScreen.baseRoute}"
+        )
     }
 
     private fun onPermissionPermanentlyDenied() {

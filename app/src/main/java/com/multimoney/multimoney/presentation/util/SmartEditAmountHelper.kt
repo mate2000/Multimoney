@@ -22,9 +22,9 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.MASKED_CARD
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.workers.startTimedNotification
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
-import javax.inject.Inject
 
 class SmartEditAmountHelper @Inject constructor(
     private val querySmartExchangeRateUseCase: QuerySmartExchangeRateUseCase,
@@ -43,6 +43,7 @@ class SmartEditAmountHelper @Inject constructor(
     var smartAccount: SmartAccountID? = null
     var ibanAccount: IbanAccountID? = null
     var smartCurrency: CurrencyType? = CurrencyType.Dollar
+    var smartDestinationCurrency : CurrencyType? = CurrencyType.Dollar
     var ibanCurrency: CurrencyType? = null
     var idBrand: Int = 0
     var shouldDisplayExchange: Boolean = false
@@ -83,6 +84,17 @@ class SmartEditAmountHelper @Inject constructor(
         originIcon =
             ibanCurrency?.id?.getCurrencyFromId()?.accountIcon ?: CurrencyType.Colon.accountIcon
         accountName = ibanAccount?.nameAccount ?: ""
+        smartDestinationCurrency = when(smartCurrency?.value) {
+            CurrencyType.Dollar.value -> {
+                CurrencyType.Colon
+            }
+            CurrencyType.Colon.value -> {
+                CurrencyType.Dollar
+            }
+            else -> {
+                null
+            }
+        }
     }
 
     private fun initializeSVValues() {
@@ -97,10 +109,10 @@ class SmartEditAmountHelper @Inject constructor(
     suspend fun getSmartExchangeRate(
         user: String = this.userName,
         idBrand: Int = this.idBrand,
-        abbreviation: String? = this.ibanCurrency?.disbursementValue,
+        abbreviation: String? = this.ibanCurrency?.disbursementValue ?: smartDestinationCurrency?.disbursementValue,
         identification: String = this.identification,
         idOriginCurrency: String = this.smartCurrency?.id.toString(),
-        idDestinationCurrency: String = this.ibanCurrency?.id.toString(),
+        idDestinationCurrency: String = this.ibanCurrency?.id?.toString() ?: smartDestinationCurrency?.id.toString(),
         currentAmount: Double,
         onSuccess: (ExchangeRateResult?) -> Unit,
         onFailure: () -> Unit,

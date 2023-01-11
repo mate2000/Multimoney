@@ -142,44 +142,41 @@ fun SendingTypeOptionsContent(
             isLeftButtonVisible = false,
             onRightButtonClick = { viewModel.onUIEvent(OnCloseClick) }
         )
-        SendingTypeOptionsContainer {
-            when (viewModel.idBrand) {
-                // These sending options should be available only for CR
-                Brand.CostaRica.id -> {
-                    SendingTypeOptionsCR(
-                        modifier = sendingTypeOptionModifier,
-                        onMyFavoritesClick = { viewModel.onUIEvent(OnMyFavoritesSelected) },
-                        onMyContactsClick = {
-                            permissionFlow()
-                        },
-                        onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected) },
-                        onIBANAccountsClick = { viewModel.onUIEvent(OnIBANAccountSelected) },
-                        smartAccountTitle = viewModel.getTitleSmartAccountResource(),
-                        smartAccountStartIcon = viewModel.getIconSmartAccountResource()
-                    )
-                }
-                // These options should be available only for SV
-                Brand.ElSalvador.id -> {
-                    SendingTypeOptionsSV(
-                        modifier = sendingTypeOptionModifier,
-                        onMyFavoritesClick = {
-                            viewModel.onUIEvent(OnMyFavoritesSelected)
-                        },
-                        onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected) },
-                        onOtherBankAccountsClick = {
-                            viewModel.onUIEvent(
-                                OnOtherBankAccountsSelected
-                            )
-                        },
-                        onTransfer365MobileClick = {
-                            viewModel.onUIEvent(
-                                OnTransfer365MobileSelected
-                            )
-                        }
-                    )
+        SendingTypeOptionsContainer(
+            sendingTypeOptions = {
+                when (viewModel.idBrand) {
+                    // These sending options should be available only for CR
+                    Brand.CostaRica.id -> {
+                        SendingTypeOptionsCR(
+                            modifier = sendingTypeOptionModifier,
+                            onMyFavoritesClick = { viewModel.onUIEvent(OnMyFavoritesSelected) },
+                            onMyContactsClick = { permissionFlow() },
+                            onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected) },
+                            onIBANAccountsClick = { viewModel.onUIEvent(OnIBANAccountSelected) },
+                            smartAccountTitleAndIconResource = viewModel.getTitleAndIconSmartAccountResources()
+                        )
+                    }
+                    // These options should be available only for SV
+                    Brand.ElSalvador.id -> {
+                        SendingTypeOptionsSV(
+                            modifier = sendingTypeOptionModifier,
+                            onMyFavoritesClick = { viewModel.onUIEvent(OnMyFavoritesSelected) },
+                            onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected) },
+                            onOtherBankAccountsClick = {
+                                viewModel.onUIEvent(
+                                    OnOtherBankAccountsSelected
+                                )
+                            },
+                            onTransfer365MobileClick = {
+                                viewModel.onUIEvent(
+                                    OnTransfer365MobileSelected
+                                )
+                            }
+                        )
+                    }
                 }
             }
-        }
+        )
     }
 }
 
@@ -207,8 +204,7 @@ fun SendingTypeOptionsCR(
     onMyContactsClick: () -> Unit,
     onMySmartAccountClick: () -> Unit,
     onIBANAccountsClick: () -> Unit,
-    smartAccountTitle: Int?,
-    smartAccountStartIcon: Int?
+    smartAccountTitleAndIconResource: Pair<Int, Int?>,
 ) {
     CustomInfoButton(
         title = stringResource(R.string.payment_select_sending_type_favorites_cr),
@@ -226,12 +222,12 @@ fun SendingTypeOptionsCR(
         onEndIconClick = onMyContactsClick,
         onClick = onMyContactsClick
     )
-    smartAccountTitle?.let {
+    smartAccountTitleAndIconResource.let { (title, icon) ->
         CustomInfoButton(
-            title = stringResource(id = it),
+            title = stringResource(id = title),
             modifier = modifier,
             endIcon = R.drawable.ic_right_chevron,
-            startIcon = smartAccountStartIcon,
+            startIcon = icon,
             onEndIconClick = onMySmartAccountClick,
             onClick = onMySmartAccountClick
         )

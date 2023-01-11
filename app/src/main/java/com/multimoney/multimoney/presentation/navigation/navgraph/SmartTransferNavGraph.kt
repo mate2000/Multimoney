@@ -22,6 +22,7 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.Smar
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.smartaccount.SelectSmartAccountContainer
 import com.multimoney.multimoney.presentation.ui.smart.transfer.register.SmartTransferRegisterIbanScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeScreen
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.amount.OwnTransferAmountScreen
 
 fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
     navigation(
@@ -155,6 +156,27 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                 onPopBackStack = {
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
+        }
+        composable(
+            Screen.OwnTransferAmountScreen.route,
+            arguments = listOf(
+                navArgument(SMART_IDS) { type = SmartAccountIDNavType() },
+                navArgument(PREVIOUS_SCREEN) { type = NavType.StringType }
+            )
+        ) {
+            OwnTransferAmountScreen(
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,

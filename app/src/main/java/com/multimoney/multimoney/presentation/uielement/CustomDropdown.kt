@@ -52,6 +52,8 @@ import com.multimoney.multimoney.presentation.theme.Primary400
 import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 import com.multimoney.multimoney.presentation.util.gesture.detectTapAndPressUnconsumed
@@ -82,15 +84,15 @@ fun CustomDropdown(
     if (isSystemInDarkTheme()) {
         focusedColor = GrayScale700
         labelColor = WhiteTransparency70
-        backgroundColor = GrayScale700
+        backgroundColor = WhiteTransparency10
         when {
             isError -> {
                 iconTintColor = GrayScale400
-                textColor = DefaultWhite
+                textColor = WhiteTransparency90
             }
             enabled -> {
                 iconTintColor = WhiteTransparency70
-                textColor = DefaultWhite
+                textColor = WhiteTransparency90
             }
             else -> {
                 backgroundColor = GrayScale500
@@ -159,7 +161,7 @@ fun CustomDropdown(
             placeholder = {
                 Text(
                     text = placeHolder ?: "",
-                    color = GrayScale400,
+                    color = WhiteTransparency60,
                     style = Typography.body2
                 )
             },

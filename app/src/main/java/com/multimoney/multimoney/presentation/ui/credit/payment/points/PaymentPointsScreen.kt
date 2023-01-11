@@ -90,7 +90,7 @@ fun PaymentPointsContent(
                 color = MultimoneyTheme.colors.labelText,
                 textAlign = TextAlign.Left
             )
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             CustomSearchBar(
                 modifier = Modifier.padding(top = 24.dp),
                 value = viewModel.uiState.queryValue,

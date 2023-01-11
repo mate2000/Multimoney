@@ -1,5 +1,7 @@
 package com.multimoney.multimoney.presentation.navigation.navgraph
 
+import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -12,6 +14,7 @@ import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.VISA_ROUTE
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.BalanceCardInformationNavType
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardScreen
 import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceScreen
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingScreen
@@ -114,7 +117,11 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
                 navArgument(ID_CLIENT) { type = NavType.IntType },
                 navArgument(ID_LOAN_CLIENT) { type = NavType.IntType }
             )
-        ) {
+        ) { backStackEntry ->
+            val parentEntry = remember(backStackEntry) {
+                navController.getBackStackEntry(Screen.HomeScreen.route)
+            }
+            val viewModel = hiltViewModel<HomeViewModel>(parentEntry)
             VisaPreferencesScreen(
                 onNavigate = {
                     navController.navigate(it.route)
@@ -127,7 +134,8 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
                         inclusive = false,
                         saveState = false
                     )
-                }
+                },
+                sharedViewModel = viewModel
             )
         }
     }

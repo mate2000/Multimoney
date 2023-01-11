@@ -22,9 +22,9 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
-import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.Companion.NOVO_CARD_TOKEN_EMPTY
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.Companion.NOVO_CARD_TOKEN_EMPTY_TWO
 import com.multimoney.multimoney.presentation.ui.visa.preferences.VisaPreferencesViewModel.UIEvent.OnCheckedChange
-import com.multimoney.multimoney.presentation.ui.visa.preferences.VisaPreferencesViewModel.UIEvent.OnDeleteTokenDevice
 import com.multimoney.multimoney.presentation.ui.visa.preferences.VisaPreferencesViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.visa.preferences.VisaPreferencesViewModel.UIEvent.OnNavigateToVisaTokenizationScreen
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -69,7 +69,7 @@ class VisaPreferencesViewModel @Inject constructor(
 
     private fun callNovoGetFavoriteCard() {
         uiState = uiState.copy(
-            switchButtonValue = NovoVTS.getFavoriteCard() != VisaCardViewModel.NOVO_CARD_TOKEN_EMPTY && NovoVTS.getFavoriteCard() != VisaCardViewModel.NOVO_CARD_TOKEN_EMPTY_TWO
+            switchButtonValue = NovoVTS.getFavoriteCard() != NOVO_CARD_TOKEN_EMPTY && NovoVTS.getFavoriteCard() != NOVO_CARD_TOKEN_EMPTY_TWO
         )
     }
 
@@ -87,14 +87,14 @@ class VisaPreferencesViewModel @Inject constructor(
         )
     }
 
-    private fun onOpenUnlinkCardDialog() {
+    private fun onOpenUnlinkCardDialog(onDeleteTokenBaseEvent: () -> Unit) {
         uiState = uiState.copy(
             openDialog = DialogParameters(
                 titleResource = R.string.card_preferences_unlinked_card_dialog_title,
                 descriptionResource = R.string.card_preferences_unlinked_card_dialog_description,
                 positiveResource = R.string.card_preferences_unlinked_card_dialog_positive_button,
                 negativeResource = R.string.card_preferences_unlinked_card_dialog_negative_button,
-                positiveAction = { onDeleteTokenDevice() },
+                positiveAction = { onDeleteTokenDevice(onDeleteTokenBaseEvent) },
                 negativeAction = { uiState = uiState.copy(switchButtonValue = uiState.switchButtonValue.not()) },
                 isActive = mutableStateOf(true)
             )
@@ -111,7 +111,7 @@ class VisaPreferencesViewModel @Inject constructor(
         }/$availableBalanceLabel/$idClient/$idLoanClient"
     )
 
-    private fun onDeleteTokenDevice() = executeUseCase {
+    private fun onDeleteTokenDevice(onDeleteTokenBaseEvent: () -> Unit) = executeUseCase {
         mutationDeleteTokenDeviceNVUseCase.invoke(
             identification = identification,
             user = user,
@@ -122,6 +122,8 @@ class VisaPreferencesViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess {
                 uiState = uiState.copy(isLoading = false)
+                NovoVTS.setFavoriteCard(NOVO_CARD_TOKEN_EMPTY)
+                navigateHome(onDeleteTokenBaseEvent)
             }.onFailure {
                 uiState = uiState.copy(isLoading = false)
                 openDialog = DialogParameters(
@@ -134,12 +136,17 @@ class VisaPreferencesViewModel @Inject constructor(
         }
     }
 
-    private fun onCheckedChange(value: Boolean) {
+    private fun navigateHome(onDeleteTokenBaseEvent: () -> Unit) {
+        navigateBack(Screen.HomeScreen.route, false)
+        onDeleteTokenBaseEvent()
+    }
+
+    private fun onCheckedChange(value: Boolean, onDeleteTokenBaseEvent: () -> Unit) {
         uiState = uiState.copy(switchButtonValue = value)
         if (value) {
             onOpenLinkCardDialog()
         } else {
-            onOpenUnlinkCardDialog()
+            onOpenUnlinkCardDialog(onDeleteTokenBaseEvent)
         }
     }
 
@@ -152,17 +159,15 @@ class VisaPreferencesViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnCheckedChange -> onCheckedChange(uiEvent.value)
+            is OnCheckedChange -> onCheckedChange(uiEvent.value, uiEvent.onDeleteTokenBaseEvent)
             is OnNavigateBack -> onNavigateBack()
             is OnNavigateToVisaTokenizationScreen -> onNavigateToVisaTokenizationScreen()
-            is OnDeleteTokenDevice -> onDeleteTokenDevice()
         }
     }
 
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()
         object OnNavigateToVisaTokenizationScreen : UIEvent()
-        object OnDeleteTokenDevice : UIEvent()
-        data class OnCheckedChange(val value: Boolean) : UIEvent()
+        data class OnCheckedChange(val value: Boolean, val onDeleteTokenBaseEvent: () -> Unit) : UIEvent()
     }
 }

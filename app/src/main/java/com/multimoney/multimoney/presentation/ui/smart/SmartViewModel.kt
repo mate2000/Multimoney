@@ -440,7 +440,7 @@ class SmartViewModel @Inject constructor(
 
     private fun onNavigateToSignDocumentScreen(signDocumentStep: String) {
         navigateTo(
-            route = "${Screen.SmartSignScreen.baseRoute}/$signDocumentStep/$URL_EMPTY/$idSysRequest/$idBrand/$pkUser/$identification/$email/$idSysRequest/$firstName/$lastName/${true}/${globalRequestId}/{$user}"
+            route = "${Screen.SmartSignScreen.baseRoute}/$signDocumentStep/$URL_EMPTY/$idSysRequest/$idBrand/$pkUser/$identification/$email/$idSysRequest/$firstName/$lastName/${true}/${idGlobalRequest}/{$user}"
         )
     }
 

@@ -466,7 +466,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SmartTransferRegisterIbanScreen : Screen(
-        "smart_transfer_register_iban_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}",
+        "smart_transfer_register_iban_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$SMART_IDS}",
         "smart_transfer_register_iban_screen"
     )
 

@@ -1,7 +1,10 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.sending
 
+import android.Manifest.permission.READ_CONTACTS
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,16 +24,23 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnCloseClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnContactPermissionPermanentlyDenied
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnIBANAccountSelected
-import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnMyContactsSelected
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnMyFavoritesSelected
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnNavigateToMyContacts
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnOtherBankAccountsSelected
+import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnPermissionResult
+import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnShowRationale
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnSmartAccountSelected
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnTransfer365MobileSelected
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.checkPermission
+import com.multimoney.multimoney.presentation.util.getPhoneNumbers
+
 
 @Composable
 fun SmartSelectSendingTypeScreen(
@@ -39,10 +49,38 @@ fun SmartSelectSendingTypeScreen(
     viewModel: SmartSelectSendingTypeViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+    val launcherContactPermissionDialog = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        val numbers = if (isGranted) context.getPhoneNumbers() else null
+        viewModel.onUIEvent(OnPermissionResult(isGranted, numbers))
+    }
+    val permissionFlow: (fromRationale: Boolean) -> Unit = {
+        context.checkPermission(
+            permission = READ_CONTACTS,
+            permissionGrantedAction = {
+                viewModel.onUIEvent(
+                    OnNavigateToMyContacts(context.getPhoneNumbers())
+                )
+            },
+            showRationaleAction = { isPermanentlyDenied ->
+                if (isPermanentlyDenied) {
+                    viewModel.onUIEvent(OnContactPermissionPermanentlyDenied)
+                } else {
+                    viewModel.onUIEvent(OnShowRationale(true))
+                }
+            },
+            launchFromRationale = { isLastRetry -> viewModel.setIfIsLastPermissionRetry(isLastRetry) },
+            comesFromRationale = it,
+            isFirstRequest = viewModel.uiState.isContactPermissionAlreadyRequested.not(),
+            launcher = launcherContactPermissionDialog
+        )
+    }
 
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
+            getPermissionState()
         }
     }
 
@@ -58,6 +96,38 @@ fun SmartSelectSendingTypeScreen(
         }
     }
 
+    if (viewModel.uiState.showErrorScreen) {
+        AlertResult(
+            isTopNavBarVisible = true,
+            isLeftButtonVisible = false,
+            onRightButtonClick = { viewModel.onUIEvent(OnShowRationale(false)) },
+            titleResource = R.string.smart_sac_transfer_contact_rationale_title,
+            descriptionResource = viewModel.uiState.errorMessageRes,
+            buttonTextResource = viewModel.uiState.errorButtonTextRes,
+            onButtonClick = {
+                if (viewModel.uiState.isButtonLaunchAction) {
+                    permissionFlow(true)
+                } else {
+                    viewModel.onUIEvent(OnShowRationale(false))
+                }
+            }
+        )
+        BackHandler {
+            viewModel.onUIEvent(OnShowRationale(false))
+        }
+    } else {
+        SendingTypeOptionsContent(viewModel) { permissionFlow(false) }
+        BackHandler {
+            viewModel.onUIEvent(OnNavigateBack)
+        }
+    }
+}
+
+@Composable
+fun SendingTypeOptionsContent(
+    viewModel: SmartSelectSendingTypeViewModel,
+    permissionFlow: () -> Unit
+) {
     // Creating a common modifier for sending options
     val sendingTypeOptionModifier = Modifier
         .fillMaxWidth()
@@ -80,7 +150,7 @@ fun SmartSelectSendingTypeScreen(
                         SendingTypeOptionsCR(
                             modifier = sendingTypeOptionModifier,
                             onMyFavoritesClick = { viewModel.onUIEvent(OnMyFavoritesSelected) },
-                            onMyContactsClick = { viewModel.onUIEvent(OnMyContactsSelected) },
+                            onMyContactsClick = { permissionFlow() },
                             onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected) },
                             onIBANAccountsClick = { viewModel.onUIEvent(OnIBANAccountSelected) },
                             smartAccountTitleAndIconResource = viewModel.getTitleAndIconSmartAccountResources()
@@ -92,15 +162,22 @@ fun SmartSelectSendingTypeScreen(
                             modifier = sendingTypeOptionModifier,
                             onMyFavoritesClick = { viewModel.onUIEvent(OnMyFavoritesSelected) },
                             onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected) },
-                            onOtherBankAccountsClick = { viewModel.onUIEvent(OnOtherBankAccountsSelected) },
-                            onTransfer365MobileClick = { viewModel.onUIEvent(OnTransfer365MobileSelected) }
+                            onOtherBankAccountsClick = {
+                                viewModel.onUIEvent(
+                                    OnOtherBankAccountsSelected
+                                )
+                            },
+                            onTransfer365MobileClick = {
+                                viewModel.onUIEvent(
+                                    OnTransfer365MobileSelected
+                                )
+                            }
                         )
                     }
                 }
             }
         )
     }
-    BackHandler { viewModel.onUIEvent(OnNavigateBack) }
 }
 
 @Composable

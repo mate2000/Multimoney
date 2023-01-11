@@ -9,6 +9,6 @@ class QueryStepByStepUseCaseImpl(val repository: SmartAccountRepository) : Query
     override suspend fun invoke(
         user: String,
         idBrand: Int,
-        idRequest: Int,
+        idRequest: Long
     ): Flow<MultimoneyResult<StepByStep?>> = repository.queryStepByStep(user, idBrand, idRequest)
 }

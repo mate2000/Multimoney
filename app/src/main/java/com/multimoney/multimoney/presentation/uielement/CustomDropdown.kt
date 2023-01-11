@@ -38,7 +38,24 @@ import androidx.compose.ui.window.Popup
 import com.multimoney.domain.model.credit.CreditCatalogOption
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
-import com.multimoney.multimoney.presentation.theme.*
+import com.multimoney.multimoney.presentation.theme.BlackTransparency70
+import com.multimoney.multimoney.presentation.theme.ComplementaryBlack3
+import com.multimoney.multimoney.presentation.theme.DefaultWhite
+import com.multimoney.multimoney.presentation.theme.GrayScale400
+import com.multimoney.multimoney.presentation.theme.GrayScale500
+import com.multimoney.multimoney.presentation.theme.GrayScale600
+import com.multimoney.multimoney.presentation.theme.GrayScale700
+import com.multimoney.multimoney.presentation.theme.GrayScale800
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Primary300
+import com.multimoney.multimoney.presentation.theme.Primary400
+import com.multimoney.multimoney.presentation.theme.Primary500
+import com.multimoney.multimoney.presentation.theme.SemanticNegative500
+import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 import com.multimoney.multimoney.presentation.util.gesture.detectTapAndPressUnconsumed
 
 @Composable
@@ -71,7 +88,7 @@ fun CustomDropdown(
         when {
             isError -> {
                 iconTintColor = GrayScale400
-                textColor = DefaultWhite
+                textColor = WhiteTransparency90
             }
             enabled -> {
                 iconTintColor = WhiteTransparency70
@@ -144,7 +161,7 @@ fun CustomDropdown(
             placeholder = {
                 Text(
                     text = placeHolder ?: "",
-                    color = GrayScale400,
+                    color = WhiteTransparency60,
                     style = Typography.body2
                 )
             },

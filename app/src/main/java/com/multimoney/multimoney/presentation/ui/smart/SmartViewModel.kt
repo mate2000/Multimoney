@@ -30,6 +30,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.COMING_FROM_CR
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_GLOBAL_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
@@ -79,17 +80,17 @@ class SmartViewModel @Inject constructor(
     val email: String = savedStateHandle[EMAIL] ?: ""
     val firstName: String = savedStateHandle[FIRST_NAME] ?: ""
     val lastName: String = savedStateHandle[LAST_NAME] ?: ""
+    var idGlobalRequest: Long = savedStateHandle[ID_GLOBAL_REQUEST] ?: 0
 
     // Stateless
-    var nextAction: () -> Unit = {}
     private var overridePreviousAction: (() -> Unit)? = null
     private var closeDialogDescription: String = ""
-    var accountSmartData: AccountSmartData? = null
     private var nextStep: Int = SmartSteps.One.id
     private var previousStep: Int = SmartSteps.One.id
-    var globalRequestId = 0
     private var idSysRequest: Long = 0
+    var accountSmartData: AccountSmartData? = null
     var isOnFidoVerified = true
+    var nextAction: () -> Unit = {}
 
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -104,30 +105,32 @@ class SmartViewModel @Inject constructor(
     }
 
     private fun callQueryStepByStepUseCase() = executeUseCase {
-        queryStepByStepUseCase.invoke(
-            user = accountSmartData?.user ?: "",
-            idBrand = accountSmartData?.idBrand ?: 0,
-            idRequest = globalRequestId
-        ).collectLatest { result ->
-            result.onSuccess { stepByStep ->
-                stepByStep?.let {
-                    navigateToScreenOnStepFetched(it)
+        if (idGlobalRequest != 0L) {
+            queryStepByStepUseCase.invoke(
+                user = accountSmartData?.user ?: "",
+                idBrand = accountSmartData?.idBrand ?: 0,
+                idRequest = idGlobalRequest
+            ).collectLatest { result ->
+                result.onSuccess { stepByStep ->
+                    stepByStep?.let {
+                        navigateToScreenOnStepFetched(it)
+                    }
+                    onUIEvent(OnLoadingValueChange(false))
                 }
-                onUIEvent(OnLoadingValueChange(false))
-            }
-            result.onFailure {
-                onUIEvent(
-                    OnFailureWithDialog(
-                        isLoading = false,
-                        openDialog = DialogParameters(
-                            description = it.getError() ?: "",
-                            isActive = mutableStateOf(true)
+                result.onFailure {
+                    onUIEvent(
+                        OnFailureWithDialog(
+                            isLoading = false,
+                            openDialog = DialogParameters(
+                                description = it.getError() ?: "",
+                                isActive = mutableStateOf(true)
+                            )
                         )
                     )
-                )
-            }
-            result.onLoading {
-                onUIEvent(OnLoadingValueChange(true))
+                }
+                result.onLoading {
+                    onUIEvent(OnLoadingValueChange(true))
+                }
             }
         }
     }
@@ -145,7 +148,7 @@ class SmartViewModel @Inject constructor(
             status = SmartStatus.Search.getIdByName(stepByStep.statusRequest),
             idProfessionType = stepByStep.idProfessionType,
             idCivilStatusType = stepByStep.idMaritalStatus?.toLong(),
-            birthday = stepByStep.birthdate.orEmpty(),
+            birthday = stepByStep.birthdate,
             expirationDate = stepByStep.expirationDate,
             idGender = stepByStep.idGenre?.toLong(),
             strGenre = stepByStep.strGenre,
@@ -159,7 +162,7 @@ class SmartViewModel @Inject constructor(
             strAddressLevel3 = stepByStep.strAddressLevel3,
             positionJob = stepByStep.positionJob,
             idEconomicActivity = stepByStep.idEconomicActivity?.toLong(),
-            institutionPension = stepByStep.institutionalPesion.orEmpty(),
+            institutionPension = stepByStep.institutionalPesion,
             income = stepByStep.income,
             addressDetail = stepByStep.addressDetail,
             user = user,
@@ -168,8 +171,8 @@ class SmartViewModel @Inject constructor(
             aboutCompany = stepByStep.aboutCompany,
             companyName = stepByStep.nameCompany,
             specifiesIncomeSource = stepByStep.specifiesIncomeSource,
-            listBeneficiaries = stepByStep.beneficiary.orEmpty(),
-            entrepreneurship = stepByStep.entrepreneurship.orEmpty(),
+            listBeneficiaries = stepByStep.beneficiary,
+            entrepreneurship = stepByStep.entrepreneurship,
             legalID = stepByStep.legalID,
             isPEP = stepByStep.isPEP,
             isUSCitizen = stepByStep.isUSCitizen,
@@ -179,38 +182,46 @@ class SmartViewModel @Inject constructor(
             idJobLevel1 = stepByStep.idJobLevel1,
             idJobLevel2 = stepByStep.idJobLevel2,
             idJobLevel3 = stepByStep.idJobLevel3,
-            fullJobAddress = stepByStep.fullJobAddress
+            fullJobAddress = stepByStep.fullJobAddress,
+            idGlobalRequest = stepByStep.idRequest?.toLong() ?: 0
         )
 
         // update the current step coming from the backend in order to navigate to the proper screen
         uiState = uiState.copy(currentStep = SmartSteps.Search.getIdByName(stepByStep.currentStep))
     }
 
-    private fun callMutationInitialRequestUseCase() = executeUseCase(
-        action = {
-            mutationInitialRequestUseCase.invoke(
-                pkUser = accountSmartData?.pkUser?.toInt()?.toLong() ?: 0,
-                idBrand = accountSmartData?.idBrand ?: 0,
-                user = accountSmartData?.user ?: ""
-            ).collectLatest { result ->
-                result.onSuccess {
-                    globalRequestId = it?.idGlobalRequest ?: 0
-                    onUIEvent(OnLoadingValueChange(false))
-                    callQueryStepByStepUseCase()
+    private fun callMutationInitialRequestUseCase() {
+        if (idGlobalRequest == 0L) {
+            executeUseCase(
+                action = {
+                    mutationInitialRequestUseCase.invoke(
+                        pkUser = accountSmartData?.pkUser?.toLongOrNull() ?: 0,
+                        idBrand = accountSmartData?.idBrand ?: 0,
+                        user = accountSmartData?.user ?: ""
+                    ).collectLatest { result ->
+                        result.onSuccess {
+                            accountSmartData?.idGlobalRequest = it?.idGlobalRequest ?: 0
+                            idGlobalRequest = it?.idGlobalRequest ?: 0
+                            onUIEvent(OnLoadingValueChange(false))
+                        }
+                        result.onFailure {
+                            onUIEvent(OnLoadingValueChange(false))
+                            uiState = uiState.copy(
+                                isAlertResultVisible = true,
+                                alertResultDescription = it.getError()
+                            )
+                        }
+                        result.onLoading {
+                            onUIEvent(OnLoadingValueChange(true))
+                        }
+                    }
                 }
-                result.onFailure {
-                    onUIEvent(OnLoadingValueChange(false))
-                    uiState = uiState.copy(
-                        isAlertResultVisible = true,
-                        alertResultDescription = it.getError()
-                    )
-                }
-                result.onLoading {
-                    onUIEvent(OnLoadingValueChange(true))
-                }
-            }
+            )
+        } else {
+            accountSmartData?.idGlobalRequest = idGlobalRequest
+            callQueryStepByStepUseCase()
         }
-    )
+    }
 
     private fun callMutationGlobalRequestUseCase(isLastStep: Boolean = false) = executeUseCase(
         action = {
@@ -219,6 +230,7 @@ class SmartViewModel @Inject constructor(
                 status = accountSmartData?.status ?: 0,
                 user = accountSmartData?.user ?: "",
                 idBrand = accountSmartData?.idBrand ?: 0,
+                idGlobalRequest = accountSmartData?.idGlobalRequest ?: 0,
                 currentStep = accountSmartData?.currentStep,
                 birthday = accountSmartData?.birthday,
                 idGender = accountSmartData?.idGender,
@@ -252,7 +264,7 @@ class SmartViewModel @Inject constructor(
                 result.onSuccess {
                     if (isLastStep) {
                         idSysRequest = it?.idSysRequest?.toLong() ?: 0L
-                        globalRequestId = it?.idGlobalRequest ?: 0
+                        idGlobalRequest = it?.idGlobalRequest ?: 0
                         callMutationSaveSmartAccount()
                     } else {
                         onUIEvent(OnLoadingValueChange(false))
@@ -285,7 +297,7 @@ class SmartViewModel @Inject constructor(
             user = user,
             idBrand = idBrandAsInt,
             identificationNumber = identification,
-            idRequest = globalRequestId.toLong()
+            idRequest = idGlobalRequest
         ).collectLatest { result ->
             result.onSuccess {
                 onUIEvent(OnLoadingValueChange(false))
@@ -409,7 +421,7 @@ class SmartViewModel @Inject constructor(
 
     private fun navigateToOnfido() {
         popAndNavigateTo(
-            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idSysRequest/$globalRequestId/$URL_EMPTY",
+            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idSysRequest/$idGlobalRequest/$URL_EMPTY",
             Screen.SmartScreen.route
         )
     }
@@ -559,6 +571,5 @@ class SmartViewModel @Inject constructor(
         const val SMART_INDICATOR_CR_TOTAL_STEPS = 3
         const val DEFAULT_ID_BRAND_ERROR = -1
         const val URL_EMPTY = "url"
-        const val STEP_BY_STEP_EVENT_DELAY = 1500L
     }
 }

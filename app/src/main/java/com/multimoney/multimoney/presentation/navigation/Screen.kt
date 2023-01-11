@@ -21,6 +21,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.FK_FLOW_CONTRO
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_GLOBAL_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOMATIC_PAYMENT_CHECKED
@@ -131,10 +132,15 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     // LoginNavGraph Screens
     object SplashScreen : Screen("splash_screen")
     object OnBoardingScreen : Screen("onboarding_screen")
-    object SignInScreen : Screen("sign_in_screen?$FORCE_CHANGE_DEVICE={$FORCE_CHANGE_DEVICE}","sign_in_screen")
+    object SignInScreen :
+        Screen("sign_in_screen?$FORCE_CHANGE_DEVICE={$FORCE_CHANGE_DEVICE}", "sign_in_screen")
+
     object SignUpScreen : Screen("sign_up_screen/{$SIGN_UP_STEP}", "sign_up_screen")
     object RequestForgotPassword :
-        Screen("request_forgot_password_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}", "request_forgot_password_screen")
+        Screen(
+            "request_forgot_password_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}",
+            "request_forgot_password_screen"
+        )
 
     object ProcessForgotPassword :
         Screen(
@@ -407,7 +413,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // Smart
     object SmartScreen : Screen(
-        "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$FIRST_NAME}/{$LAST_NAME}/{$ONFIDO_STATUS}/{$COMING_FROM_CRYPTO}",
+        "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$FIRST_NAME}/{$LAST_NAME}/{$ONFIDO_STATUS}/{$COMING_FROM_CRYPTO}/{$ID_GLOBAL_REQUEST}",
         "smart_screen"
     )
 
@@ -480,6 +486,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "smart_transfer_amount_screen"
     )
 
+    object OwnTransferAmountScreen : Screen(
+        "own_transfer_amount_screen/{$SMART_IDS}/{$PREVIOUS_SCREEN}",
+        "own_transfer_amount_screen"
+    )
+
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")
     object ChartScreen : Screen("chart_screen/{$}")
@@ -495,12 +506,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "crypto_market_screen"
     )
 
-    object CryptoMovementsScreen: Screen(
+    object CryptoMovementsScreen : Screen(
         "crypto_movements_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
         "crypto_movements_screen"
     )
 
-    object CryptoCurrencyDetailsScreen: Screen(
+    object CryptoCurrencyDetailsScreen : Screen(
         "crypto_currency_details_screen/{$USER}/{$ID_BRAND}/{$CRYPTO_ASSET}/{$DESCRIPTION_CURRENCY}/{$CURRENT_CRYPTO_PRICE}/{$URL_IMAGE}",
         "crypto_currency_details_screen"
     )

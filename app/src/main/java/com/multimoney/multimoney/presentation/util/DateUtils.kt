@@ -97,6 +97,13 @@ fun onBirthDateAgeValidation(pickedDate: LocalDate): Pair<Boolean, Int> {
     }
 }
 
+fun onExpirationDateValidation(pickedDate: String): Boolean {
+    val pickedAsDate = LocalDate.parse(pickedDate)
+    val actualDate = LocalDate.now()
+    val periodBetweenDates = Period.between(actualDate, pickedAsDate).days
+    return periodBetweenDates >= 0
+}
+
 fun getCurrentDateYMDPattern(): String {
     val date = LocalDate.now()
     return date.toString()
@@ -175,13 +182,13 @@ enum class FilterDateByDays(
     val timeAbvExtended: String,
     val dataPoints: Long
 ) {
-    HOUR(24, "Hora", "1 Hora", "H", "1H",60),
-    YESTERDAY(1, "Dia", "1 Dia", "D", "1D",24),
-    LAST_7_DAYS(7, "Semana", "1 Semana", "S", "1S",7),
-    LAST_30_DAYS(30, "Mes", "1 Mes", "M", "1M",30),
-    LAST_90_DAYS(90, "Meses", "3 Meses", "3M", "3M",90),
-    LAST_180_DAYS(180, "Meses", "6 Meses", "6M", "6M",180),
-    LAST_365_DAYS(365, "Año", "1 Año", "A", "1A",365),
+    HOUR(24, "Hora", "1 Hora", "H", "1H", 60),
+    YESTERDAY(1, "Dia", "1 Dia", "D", "1D", 24),
+    LAST_7_DAYS(7, "Semana", "1 Semana", "S", "1S", 7),
+    LAST_30_DAYS(30, "Mes", "1 Mes", "M", "1M", 30),
+    LAST_90_DAYS(90, "Meses", "3 Meses", "3M", "3M", 90),
+    LAST_180_DAYS(180, "Meses", "6 Meses", "6M", "6M", 180),
+    LAST_365_DAYS(365, "Año", "1 Año", "A", "1A", 365),
 }
 
 enum class FilterDate {
@@ -212,4 +219,5 @@ val BAR_DIVIDER_FORMAT = SimpleDateFormat("dd | MM | yyyy", Locale.getDefault())
 val SHORT_TIME_FORMAT = SimpleDateFormat("hh:mm a", Locale.getDefault())
 val BAR_DIVIDER_FORMAT_YEAR_TWO_DIGITS = SimpleDateFormat("dd | MM | yy", Locale.getDefault())
 val DATE_TIME_DOCUMENTS_FORMAT = DateTimeFormatter.ofPattern("ddMMyyHHmmss")
-val API_DATE_AND_TIME_FORMAT = SimpleDateFormat(YEAR_MONTH_DAY_AND_TIME_BAR_FORMAT, Locale.getDefault())
+val API_DATE_AND_TIME_FORMAT =
+    SimpleDateFormat(YEAR_MONTH_DAY_AND_TIME_BAR_FORMAT, Locale.getDefault())

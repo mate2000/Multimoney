@@ -35,9 +35,9 @@ import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 fun OwnTransferAmountScreen(
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: OwnTransferAmountViewModel = hiltViewModel()
-){
+) {
     val context = LocalContext.current
-    LaunchedEffect( true ) {
+    LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onPopBackStack = onPopBackStack)
             onUIEvent(OnStart)

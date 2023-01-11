@@ -193,7 +193,7 @@ fun CustomOutlinedTextField(
     if (isSystemInDarkTheme()) {
         labelColor = WhiteTransparency70
         backgroundColor = WhiteTransparency10
-        placeholderColor = WhiteTransparency30
+        placeholderColor = WhiteTransparency60
         unfocusedIndicatorColor = DefaultBlack
         errorIndicatorColor = if (isError || emptyError) {
             SemanticNegative400
@@ -202,21 +202,19 @@ fun CustomOutlinedTextField(
         }
         textFieldStrokeErrorColor = SemanticNegative300
         leadingIconComposableColor = WhiteTransparency60
+        iconTintColor = WhiteTransparency60
         when {
             isError -> {
                 focusedIndicatorColor = SemanticNegative400
-                iconTintColor = SemanticNegative400
                 textColor = WhiteTransparency90
             }
             enabled -> {
                 focusedIndicatorColor = WhiteTransparency60
-                iconTintColor = WhiteTransparency60
                 textColor = WhiteTransparency90
             }
             else -> {
                 focusedIndicatorColor = DefaultBlack
                 backgroundColor = GrayScale500
-                iconTintColor = WhiteTransparency60
                 textColor = WhiteTransparency30
             }
         }
@@ -366,7 +364,8 @@ fun CustomOutlinedTextField(
                 } else PasswordVisualTransformation(),
             textStyle = Typography.body2,
             maxLines = if (isTextArea) 2 else 1,
-            focusedBorderThickness = FOCUSED_BORDER_WIDTH
+            focusedBorderThickness = FOCUSED_BORDER_WIDTH,
+            unfocusedBorderThickness = UNFOCUSED_BORDER_WIDTH
         )
 
         // This is required to execute the debounce
@@ -561,4 +560,5 @@ fun OutlinedTextField(
 }
 
 private val OutlinedTextFieldTopPadding = 8.dp
-private val FOCUSED_BORDER_WIDTH = 1.dp
+private val FOCUSED_BORDER_WIDTH = (0.5).dp
+private val UNFOCUSED_BORDER_WIDTH = (0.5).dp

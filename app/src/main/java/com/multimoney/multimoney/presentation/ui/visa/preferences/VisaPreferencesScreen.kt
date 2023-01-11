@@ -110,7 +110,8 @@ fun VisaPreferencesContent(
             negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
             openDialogCustom = viewModel.uiState.openDialog.isActive,
             onPositiveAction = viewModel.uiState.openDialog.positiveAction,
-            onNegativeAction = viewModel.uiState.openDialog.negativeAction
+            onNegativeAction = viewModel.uiState.openDialog.negativeAction,
+            isCancelable = false
         )
     }
     LoadingIndicator(viewModel.uiState.isLoading)

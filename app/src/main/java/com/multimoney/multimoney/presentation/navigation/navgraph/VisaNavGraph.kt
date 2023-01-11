@@ -91,8 +91,6 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(PK_USER) { type = NavType.LongType },
-                navArgument(ID_CLIENT) { type = NavType.IntType },
-                navArgument(ID_LOAN_CLIENT) { type = NavType.IntType },
                 navArgument(BALANCE_CARD_INFORMATION) { type = BalanceCardInformationNavType() }
             )
         ) {

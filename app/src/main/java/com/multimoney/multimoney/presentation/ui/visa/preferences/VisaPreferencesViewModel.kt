@@ -108,7 +108,7 @@ class VisaPreferencesViewModel @Inject constructor(
         encodeData(
             cardInformation
         )
-        }/$availableBalanceLabel/$idClient/$idLoanClient"
+        }"
     )
 
     private fun onDeleteTokenDevice(onDeleteTokenBaseEvent: () -> Unit) = executeUseCase {
@@ -125,10 +125,13 @@ class VisaPreferencesViewModel @Inject constructor(
                 NovoVTS.setFavoriteCard(NOVO_CARD_TOKEN_EMPTY)
                 navigateHome(onDeleteTokenBaseEvent)
             }.onFailure {
-                uiState = uiState.copy(isLoading = false)
-                openDialog = DialogParameters(
-                    description = it.getError() ?: "",
-                    isActive = mutableStateOf(true)
+                uiState = uiState.copy(
+                    isLoading = false,
+                    switchButtonValue = uiState.switchButtonValue.not(),
+                    openDialog = DialogParameters(
+                        description = it.getError() ?: "",
+                        isActive = mutableStateOf(true)
+                    )
                 )
             }.onLoading {
                 uiState = uiState.copy(isLoading = true)

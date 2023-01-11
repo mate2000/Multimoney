@@ -209,7 +209,7 @@ class SmartOnfidoViewModel @Inject constructor(
         idUserRequest: Long,
         user: String
     ) {
-        GlobalScope.launch {
+        executeUseCase {
             mutationOnfidoCheckProcessUseCase.invoke(
                 identification,
                 applicantId ?: "",

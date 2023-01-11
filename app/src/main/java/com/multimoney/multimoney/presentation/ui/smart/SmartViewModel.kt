@@ -34,8 +34,8 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.NavigateToEvicertia
 import com.multimoney.multimoney.presentation.ui.home.HomeState
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.NavigateToEvicertia
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationInitialRequest
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
@@ -60,8 +60,8 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
@@ -194,7 +194,8 @@ class SmartViewModel @Inject constructor(
             currentStep == SmartSteps.Six.id && idBrandAsInt == Brand.ElSalvador.id -> navigateToOnfido()
             else -> {
                 // update the current step coming from the backend in order to navigate to the proper screen
-                uiState = uiState.copy(currentStep = SmartSteps.Search.getIdByName(stepByStep.currentStep))
+                uiState =
+                    uiState.copy(currentStep = SmartSteps.Search.getIdByName(stepByStep.currentStep))
             }
         }
     }
@@ -379,7 +380,11 @@ class SmartViewModel @Inject constructor(
     }
 
     private fun navigateBackToHome() =
-        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
+        navigateBack(
+            popTo = Screen.HomeScreen.route,
+            isRestart = true,
+            homeState = HomeState.UNEXPANDED
+        )
 
     private fun nextStep() {
         if (nextStep <= getTotalStepperCounter()) {
@@ -420,16 +425,6 @@ class SmartViewModel @Inject constructor(
         )
     }
 
-    private fun navigateToCorrectScreen() {
-        val signDocumentStep =
-            if (SmartOnFidoOrFirmStatus.FIRMED.status.lowercase() == SmartOnFidoOrFirmStatus.FIRMED.status.lowercase()) {
-                VALIDATE_IDENTITY.value
-            } else {
-                GENERATE_DOCUMENT_STEP.value
-            }
-        onNavigateToSignDocumentScreen(signDocumentStep)
-    }
-
     private fun onNavigateToSignDocumentScreen(signDocumentStep: String) {
         navigateTo(
             route = "${Screen.SmartSignScreen.baseRoute}/$signDocumentStep/$URL_EMPTY/$idSysRequest/$idBrand/$pkUser/$identification/$email/$idSysRequest/$firstName/$lastName/${true}/${globalRequestId}/{$user}"
@@ -464,7 +459,7 @@ class SmartViewModel @Inject constructor(
 
     data class UIState(
         // Interactions
-        val currentStep: Int = -1,
+        val currentStep: Int = SmartSteps.One.id,
         val isCloseVisible: Boolean = true,
         val isContinueEnabled: Boolean = false,
         val buttonTextRes: Int = string.button_continue,
@@ -509,7 +504,15 @@ class SmartViewModel @Inject constructor(
             is OnOnFidoVerifiedChanged -> isOnFidoVerified = event.isOnFidoVerified
             is OnCallSaveAutomatedSmartAccount -> onCallMutationSaveSmartAccount(event.accountSmartData)
             is OverridePreviousAction -> overridePreviousAction(event.action)
-            is NavigateToEvicertia -> navigateToCorrectScreen()
+            is NavigateToEvicertia -> {
+                val signDocumentStep =
+                    if (SmartOnFidoOrFirmStatus.FIRMED.status.lowercase() == SmartOnFidoOrFirmStatus.FIRMED.status.lowercase()) {
+                        VALIDATE_IDENTITY.value
+                    } else {
+                        GENERATE_DOCUMENT_STEP.value
+                    }
+                onNavigateToSignDocumentScreen(signDocumentStep)
+            }
         }
     }
 

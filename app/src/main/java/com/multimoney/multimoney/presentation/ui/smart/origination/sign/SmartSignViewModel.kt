@@ -223,12 +223,6 @@ class SmartSignViewModel @Inject constructor(
                         idBrand
                     )
                 }
-                result.onFailure {
-
-                }
-                result.onLoading {
-
-                }
             }
         }
     }

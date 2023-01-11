@@ -69,6 +69,7 @@ import com.multimoney.data.networking.graphql.apollomodel.GetHistoricalCurrencyP
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoCheckProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoIntialProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.PayCreditVDMutation
+import com.multimoney.data.networking.graphql.apollomodel.UpdateCardVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.PaymentAmountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProccessPaymentListMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProcessCreditExtensionDetailMutation
@@ -1486,6 +1487,32 @@ class GraphqlApi @Inject constructor(
             identification,
             user,
             idBrand
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationUpdateCardVD(
+        idCard: Long,
+        identification: String,
+        cardDescription: String,
+        cardMasked: String,
+        expirationMonth: String,
+        expirationYear: String,
+        verificationValue: String,
+        default: Boolean,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<UpdateCardVDMutation.Data> = apolloAuthorizedClient.mutation(
+        UpdateCardVDMutation(
+            idCard = idCard,
+            identification = identification,
+            cardDescription = cardDescription,
+            cardMasked = cardMasked,
+            expirationMonth = expirationMonth,
+            expirationYear = expirationYear,
+            verificationValue = verificationValue,
+            default = default,
+            user = user,
+            idBrand = idBrand
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 

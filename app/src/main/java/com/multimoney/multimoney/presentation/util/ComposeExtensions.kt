@@ -10,6 +10,15 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+/**
+ * Allows a shadow to be placed around a composable component
+ * @param color: Shadow color to be painted
+ * @param alpha: Alpha level of the color to be painted
+ * @param borderRadius: Border radius of the shadow. Larger value means less width
+ * @param shadowRadius: Radius of the shadow. Larger values means more height
+ * @param offsetX: Modify the initial position of the shadow in 'X' from the origin.
+ * @param offsetY: Modify the initial position of the shadow in 'Y' from the origin.
+ * */
 fun Modifier.coloredShadow(
     color: Color,
     alpha: Float = 0.2f,
@@ -22,19 +31,24 @@ fun Modifier.coloredShadow(
     val shadowColor = color.copy(alpha = alpha).toArgb()
     val transparent = color.copy(alpha = 0f).toArgb()
 
+    // Drawing behind the modified content
     this.drawBehind {
 
+        // Using a canvas to draw the shadow
         this.drawIntoCanvas {
             val paint = Paint()
             val frameworkPaint = paint.asFrameworkPaint()
             frameworkPaint.color = transparent
 
+            // Creating the shadow with the given parameters
             frameworkPaint.setShadowLayer(
                 shadowRadius.toPx(),
                 offsetX.toPx(),
                 offsetY.toPx(),
                 shadowColor
             )
+
+            // Drawing a rounded rectangle and paint the shadow on it
             it.drawRoundRect(
                 0f + borderRadius.toPx(),
                 0f + borderRadius.toPx(),

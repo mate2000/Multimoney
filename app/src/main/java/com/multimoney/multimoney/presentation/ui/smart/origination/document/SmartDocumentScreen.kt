@@ -221,7 +221,7 @@ fun SmartDocumentScreen(
                 )
                 calendar.set(
                     calendar.get(Calendar.YEAR) - DATE_MIN_YEARS.toInt(),
-                    calendar.get(Calendar.DAY_OF_MONTH),
+                    calendar.get(Calendar.MONTH),
                     calendar.get(Calendar.DAY_OF_MONTH)
                 )
                 datePicker.datePicker.minDate = calendar.timeInMillis
@@ -293,6 +293,7 @@ fun SmartDocumentScreen(
                 val calendar = Calendar.getInstance()
                 val datePicker = DatePickerDialog(
                     context,
+                    R.style.CustomDarkDatePickerStyle,
                     { _, year, month, day ->
                         val date = getPickedDateAsString(
                             year,

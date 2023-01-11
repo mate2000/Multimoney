@@ -142,44 +142,41 @@ fun SendingTypeOptionsContent(
             isLeftButtonVisible = false,
             onRightButtonClick = { viewModel.onUIEvent(OnCloseClick) }
         )
-
-        SendingTypeOptionsContainer {
-            when (viewModel.idBrand) {
-                // These sending options should be available only for CR
-                Brand.CostaRica.id -> {
-                    SendingTypeOptionsCR(
-                        modifier = sendingTypeOptionModifier,
-                        onMyFavoritesClick = { viewModel.onUIEvent(OnMyFavoritesSelected) },
-                        onMyContactsClick = {
-                            permissionFlow()
-                        },
-                        onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected) },
-                        onIBANAccountsClick = { viewModel.onUIEvent(OnIBANAccountSelected) },
-                        smartAccountTitleAndIconResource = viewModel.getTitleAndIconSmartAccountResources()
-                    )
-                }
-                // These options should be available only for SV
-                Brand.ElSalvador.id -> {
-                    SendingTypeOptionsSV(
-                        modifier = sendingTypeOptionModifier,
-                        onMyFavoritesClick = {
-                            viewModel.onUIEvent(OnMyFavoritesSelected)
-                        },
-                        onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected) },
-                        onOtherBankAccountsClick = {
-                            viewModel.onUIEvent(
-                                OnOtherBankAccountsSelected
-                            )
-                        },
-                        onTransfer365MobileClick = {
-                            viewModel.onUIEvent(
-                                OnTransfer365MobileSelected
-                            )
-                        }
-                    )
+        SendingTypeOptionsContainer(
+            sendingTypeOptions = {
+                when (viewModel.idBrand) {
+                    // These sending options should be available only for CR
+                    Brand.CostaRica.id -> {
+                        SendingTypeOptionsCR(
+                            modifier = sendingTypeOptionModifier,
+                            onMyFavoritesClick = { viewModel.onUIEvent(OnMyFavoritesSelected) },
+                            onMyContactsClick = { permissionFlow() },
+                            onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected) },
+                            onIBANAccountsClick = { viewModel.onUIEvent(OnIBANAccountSelected) },
+                            smartAccountTitleAndIconResource = viewModel.getTitleAndIconSmartAccountResources()
+                        )
+                    }
+                    // These options should be available only for SV
+                    Brand.ElSalvador.id -> {
+                        SendingTypeOptionsSV(
+                            modifier = sendingTypeOptionModifier,
+                            onMyFavoritesClick = { viewModel.onUIEvent(OnMyFavoritesSelected) },
+                            onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected) },
+                            onOtherBankAccountsClick = {
+                                viewModel.onUIEvent(
+                                    OnOtherBankAccountsSelected
+                                )
+                            },
+                            onTransfer365MobileClick = {
+                                viewModel.onUIEvent(
+                                    OnTransfer365MobileSelected
+                                )
+                            }
+                        )
+                    }
                 }
             }
-        }
+        )
     }
 }
 

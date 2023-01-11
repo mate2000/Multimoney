@@ -176,7 +176,7 @@ fun CurrencyDetailContent(
                     }
                 }
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    movements.itemSnapshotList.items.forEach {
+                    movements.itemSnapshotList.items.take(3).forEach {
                         CryptoCurrencyMovementItem(cryptoCurrencyMovement = it)
                     }
                 }

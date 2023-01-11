@@ -4,17 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material.RadioButton
-import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,13 +22,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.theme.DefaultWhite
-import com.multimoney.multimoney.presentation.theme.GrayScale500
 import com.multimoney.multimoney.presentation.theme.GrayScale800
-import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.SemanticInformative400
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 
 /**
@@ -139,49 +130,11 @@ fun RadioButtonQuestion(
                 )
             }
             Spacer(modifier = Modifier.height(26.dp))
-            RadioButton(modifier = Modifier.fillMaxWidth(), radioModifier = Modifier.size(20.dp), text = stringResource(id = firstButtonTextResource), selected = firstButtonIsSelected, onOptionSelected = onFirstButtonOnClick)
+            CustomRadioButton(modifier = Modifier.fillMaxWidth(), radioModifier = Modifier.size(20.dp), text = stringResource(id = firstButtonTextResource), selected = firstButtonIsSelected, onOptionSelected = onFirstButtonOnClick)
             Spacer(modifier = Modifier.height(25.dp))
-            RadioButton(modifier = Modifier.fillMaxWidth(), radioModifier = Modifier.size(20.dp), text = stringResource(id = secondButtonTextResource), selected = secondButtonIsSelected, onOptionSelected = onSecondButtonOnClick)
+            CustomRadioButton(modifier = Modifier.fillMaxWidth(), radioModifier = Modifier.size(20.dp), text = stringResource(id = secondButtonTextResource), selected = secondButtonIsSelected, onOptionSelected = onSecondButtonOnClick)
             Spacer(modifier = Modifier.height(26.dp))
         }
-    }
-}
-
-@Composable
-fun RadioButton(
-    modifier: Modifier,
-    radioModifier: Modifier,
-    text: String,
-    onOptionSelected: () -> Unit = {},
-    selected: Boolean
-) {
-    Row(
-        modifier,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        var radioSelectedColor = Primary500
-        var radioUnSelectedColor = GrayScale500
-        var textColor = GrayScale800
-        if (isSystemInDarkTheme()) {
-            radioSelectedColor = Primary500
-            radioUnSelectedColor = GrayScale500
-            textColor = WhiteTransparency70
-        }
-        RadioButton(
-            colors = RadioButtonDefaults.colors(radioSelectedColor, radioUnSelectedColor),
-            selected = selected,
-            modifier = radioModifier,
-            onClick = {
-                onOptionSelected()
-            }
-        )
-        Spacer(modifier = Modifier.width(18.dp))
-        Text(
-            modifier = Modifier.padding(top = 2.dp),
-            text = text,
-            style = Typography.subtitle2,
-            color = textColor
-        )
     }
 }
 

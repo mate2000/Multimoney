@@ -104,7 +104,7 @@ fun SmartTransferAmountContent(viewModel: SmartTransferAmountViewModel = hiltVie
             originAccountSubtitle = stringResource(
                 id = viewModel.fromSmartLabel,
                 getMaskedAccountIban(
-                    viewModel.originSmartAccount?.ibanAccountNumber ?: "",
+                    viewModel.smartAccount?.ibanAccountNumber ?: "",
                     stringResource(id = R.string.payment_account_masked_text)
                 )
             ),
@@ -144,10 +144,10 @@ private fun SmartTransferBottomSheet(viewModel: SmartTransferAmountViewModel) {
         fromIcon = R.drawable.ic_multimoney_smart,
         fromTitle = stringResource(
             R.string.smart_payment_amount_bottom_sheet_my_smart_account,
-            viewModel.originCurrency?.symbol ?: ""
+            viewModel.smartCurrency?.symbol ?: ""
         ),
         fromSubtitle = getMaskedAccountIban(
-            viewModel.originSmartAccount?.ibanAccountNumber ?: "",
+            viewModel.smartAccount?.ibanAccountNumber ?: "",
             stringResource(R.string.payment_account_masked_text)
         ),
         toLabel = stringResource(R.string.smart_payment_sheet_to_account),

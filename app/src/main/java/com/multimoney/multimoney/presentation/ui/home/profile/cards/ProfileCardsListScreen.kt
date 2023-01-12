@@ -12,9 +12,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -55,11 +57,13 @@ fun ProfileCardsListScreen(
     ProfileCardsListContent(viewModel)
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 @Preview
 fun ProfileCardsListContent(
     viewModel: ProfileCardListViewModel = hiltViewModel()
 ) {
+    val coroutineScope = rememberCoroutineScope()
     Column(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)
@@ -92,6 +96,13 @@ fun ProfileCardsListContent(
             )
         }
     }
+    ProfileCardEditBottomSheet(
+        coroutineScope = coroutineScope,
+        modalBottomSheetState = viewModel.uiState.bottomSheetVisibleState,
+        onEditClick = { viewModel.onUIEvent(ProfileCardListViewModel.UIEvent.OnEditCard(it)) },
+        onDeleteClick = { viewModel.onUIEvent(ProfileCardListViewModel.UIEvent.OnDeleteCard(it)) },
+        card = viewModel.uiState.cardVDSelected
+    )
     LoadingIndicator(viewModel.uiState.isLoading)
 }
 

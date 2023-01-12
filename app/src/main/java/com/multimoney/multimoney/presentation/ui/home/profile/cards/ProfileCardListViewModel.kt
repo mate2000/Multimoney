@@ -1,5 +1,8 @@
 package com.multimoney.multimoney.presentation.ui.home.profile.cards
 
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -16,6 +19,8 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnCallQueryGetClientCards
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnCardThreePointsSelected
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnDeleteCard
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnEditCard
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnNavigateBackHome
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -24,6 +29,7 @@ import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @HiltViewModel
+@OptIn(ExperimentalMaterialApi::class)
 class ProfileCardListViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val queryListCardVDUseCase: QueryListCardVDUseCase
@@ -75,6 +81,17 @@ class ProfileCardListViewModel @Inject constructor(
     }
 
     private fun onCardThreePointsSelected(cardSelected: CardVisaDirect?) {
+        uiState = uiState.copy(
+            cardVDSelected = cardSelected,
+            bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded)
+        )
+    }
+
+    private fun onDeleteCard(card: CardVisaDirect?) {
+        // TODO
+    }
+
+    private fun onEditCard(card: CardVisaDirect?) {
         // TODO
     }
 
@@ -89,7 +106,9 @@ class ProfileCardListViewModel @Inject constructor(
         val isCardListEmpty: Boolean = true,
         val isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
-        val isVisaAnimationVisible: Boolean = false
+        val isVisaAnimationVisible: Boolean = false,
+        val bottomSheetVisibleState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
+        val cardVDSelected: CardVisaDirect? = null
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -98,6 +117,8 @@ class ProfileCardListViewModel @Inject constructor(
             is OnNavigateBackHome -> onNavigateBackHome()
             is OnCallQueryGetClientCards -> onCallQueryGetClientCardsUseCase()
             is OnCardThreePointsSelected -> onCardThreePointsSelected(uiEvent.cardSelected)
+            is OnEditCard -> onEditCard(uiEvent.card)
+            is OnDeleteCard -> onDeleteCard(uiEvent.card)
         }
     }
 
@@ -107,5 +128,7 @@ class ProfileCardListViewModel @Inject constructor(
         class OnCardThreePointsSelected(val cardSelected: CardVisaDirect?) : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnNavigateBackHome : UIEvent()
+        data class OnEditCard(val card: CardVisaDirect?) : UIEvent()
+        data class OnDeleteCard(val card: CardVisaDirect?) : UIEvent()
     }
 }

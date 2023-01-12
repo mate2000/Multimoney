@@ -146,7 +146,10 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(IDENTIFICATION) { type = NavType.StringType },
                 navArgument(PREVIOUS_SCREEN) { type = NavType.StringType },
-                navArgument(ID_CLIENT) { type = NavType.IntType }
+                navArgument(ID_CLIENT) { type = NavType.IntType },
+                navArgument(SMART_IDS) {
+                    type = SmartAccountIDNavType()
+                }
             )
         ) {
             SmartTransferRegisterIbanScreen(

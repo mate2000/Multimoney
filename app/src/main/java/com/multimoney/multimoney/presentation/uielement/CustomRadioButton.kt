@@ -65,7 +65,7 @@ fun CustomRadioButton(
         Text(
             modifier = Modifier.padding(top = 2.dp),
             text = text,
-            style = Typography.subtitle2.copy(fontSize = 15.sp),
+            style = Typography.body2,
             color = textColor
         )
     }

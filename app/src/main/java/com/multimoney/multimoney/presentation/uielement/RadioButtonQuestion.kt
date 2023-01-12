@@ -130,9 +130,17 @@ fun RadioButtonQuestion(
                 )
             }
             Spacer(modifier = Modifier.height(26.dp))
-            CustomRadioButton(modifier = Modifier.fillMaxWidth(), radioModifier = Modifier.size(20.dp), text = stringResource(id = firstButtonTextResource), selected = firstButtonIsSelected, onOptionSelected = onFirstButtonOnClick)
+            CustomRadioButton(modifier = Modifier.fillMaxWidth(),
+                radioModifier = Modifier.size(20.dp),
+                text = stringResource(id = firstButtonTextResource),
+                selected = firstButtonIsSelected,
+                onOptionSelected = onFirstButtonOnClick)
             Spacer(modifier = Modifier.height(25.dp))
-            CustomRadioButton(modifier = Modifier.fillMaxWidth(), radioModifier = Modifier.size(20.dp), text = stringResource(id = secondButtonTextResource), selected = secondButtonIsSelected, onOptionSelected = onSecondButtonOnClick)
+            CustomRadioButton(modifier = Modifier.fillMaxWidth(),
+                radioModifier = Modifier.size(20.dp),
+                text = stringResource(id = secondButtonTextResource),
+                selected = secondButtonIsSelected,
+                onOptionSelected = onSecondButtonOnClick)
             Spacer(modifier = Modifier.height(26.dp))
         }
     }

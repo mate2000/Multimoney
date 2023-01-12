@@ -14,7 +14,6 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.util.MultimoneyResult
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnCallCognitoSignUp
@@ -38,10 +37,10 @@ import com.multimoney.multimoney.presentation.util.passwordHasMinimumCharacters
 import com.multimoney.multimoney.presentation.util.passwordHasSpecialCharacterValidation
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class SignUpPasswordViewModel @Inject constructor(
@@ -117,26 +116,26 @@ class SignUpPasswordViewModel @Inject constructor(
             noMoreThanThreeEqualConsecutiveLetterOrNumber(uiState.password) -> {
                 Pair(
                     true,
-                    R.string.sign_up_password_requirement_max_three_characters_or_number_consecutive
+                    string.sign_up_password_requirement_max_three_characters_or_number_consecutive
                 )
             }
             noMoreThanThreeConsecutiveLetterOrNumber(uiState.password) -> {
                 Pair(
                     true,
-                    R.string.sign_up_password_requirement_max_three_characters_or_number_consecutive
+                    string.sign_up_password_requirement_max_three_characters_or_number_consecutive
                 )
             }
             noMoreThanThreeLettersOrNumbers(uiState.password) -> {
                 Pair(
                     true,
-                    R.string.sign_up_password_requirement_max_three_characters_or_number_consecutive
+                    string.sign_up_password_requirement_max_three_characters_or_number_consecutive
                 )
             }
             (uiState.password.isNotEmpty() && uiState.confirmPassword.isNotEmpty() && uiState.confirmPassword != uiState.password) -> {
-                Pair(true, R.string.sign_up_password_confirm_password_error)
+                Pair(true, string.sign_up_password_confirm_password_error)
             }
             else -> {
-                Pair(false, R.string.error_empty)
+                Pair(false, string.error_empty)
             }
         }
     }
@@ -323,9 +322,9 @@ class SignUpPasswordViewModel @Inject constructor(
     data class UIState(
         // Fields
         var password: String = "",
-        var passwordError: Pair<Boolean, Int> = Pair(false, R.string.error_empty),
+        var passwordError: Pair<Boolean, Int> = Pair(false, string.error_empty),
         var confirmPassword: String = "",
-        var confirmPasswordError: Pair<Boolean, Int> = Pair(false, R.string.error_empty),
+        var confirmPasswordError: Pair<Boolean, Int> = Pair(false, string.error_empty),
         var eightCharactersMinimumState: Boolean? = null,
         var oneUppercaseState: Boolean? = null,
         var oneLowercaseState: Boolean? = null,

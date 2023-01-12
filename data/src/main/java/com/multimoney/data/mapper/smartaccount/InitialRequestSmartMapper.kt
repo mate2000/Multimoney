@@ -5,9 +5,9 @@ import com.multimoney.domain.model.accountsmart.GlobalRequest
 
 private fun InitialRequestSmartAccountMutation.Result.mapToDomain() =
     GlobalRequest(
-        idGlobalRequest.toString().toInt(),
+        idGlobalRequest.toString().toLongOrNull() ?: 0,
         accountExists,
-        idSysdeRequest.toString().toInt()
+        idSysdeRequest.toString().toIntOrNull() ?: 0
     )
 
 private fun InitialRequestSmartAccountMutation.InitialRequestSmartAccount.mapToDomainModel() =

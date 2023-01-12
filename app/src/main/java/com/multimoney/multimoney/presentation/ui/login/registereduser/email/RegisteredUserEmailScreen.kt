@@ -81,7 +81,7 @@ fun RegisteredUserEmailContent(
             Column {
                 Text(
                     text = stringResource(R.string.registered_user_email_title, maskedMail),
-                    modifier = Modifier.padding(top = 42.dp),
+                    modifier = Modifier.padding(top = 24.dp),
                     style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
                     color = MultimoneyTheme.colors.text
                 )

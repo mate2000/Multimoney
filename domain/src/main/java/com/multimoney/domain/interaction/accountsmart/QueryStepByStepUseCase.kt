@@ -8,6 +8,6 @@ interface QueryStepByStepUseCase {
     suspend operator fun invoke(
         user: String,
         idBrand: Int,
-        idRequest: Int,
+        idRequest: Long
     ): Flow<MultimoneyResult<StepByStep?>>
 }

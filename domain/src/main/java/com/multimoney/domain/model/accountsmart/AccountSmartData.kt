@@ -5,10 +5,11 @@ package com.multimoney.domain.model.accountsmart
  * on every step from the smart flow.
  */
 data class AccountSmartData(
-    var pkUser: String? = "",
-    var status: Int? = 0,
-    var user: String? = "",
-    var idBrand: Int? = 0,
+    var pkUser: String = "",
+    var status: Int = 0,
+    var user: String = "",
+    var idBrand: Int = 0,
+    var idGlobalRequest: Long = 0,
     var idProfessionType: Int? = null,
     var idCivilStatusType: Long? = null,
     var birthday: String? = null,

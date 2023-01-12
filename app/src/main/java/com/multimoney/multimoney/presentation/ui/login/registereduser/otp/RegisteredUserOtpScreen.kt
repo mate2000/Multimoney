@@ -180,7 +180,7 @@ fun RegisteredUserOtpContent(
                         maskedPhoneNumber
                     ),
                     textAlign = TextAlign.Start,
-                    modifier = Modifier.padding(top = 42.dp).fillMaxWidth()
+                    modifier = Modifier.padding(top = 24.dp).fillMaxWidth()
                 )
 
                 Text(

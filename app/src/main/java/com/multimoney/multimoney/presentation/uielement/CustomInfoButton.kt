@@ -183,7 +183,7 @@ fun CustomInfoButton(
                             // align the icon to the top
                             top.linkTo(parent.top, 17.dp)
                         }
-                        end.linkTo(parent.end, margin = 12.dp)
+                        end.linkTo(parent.end, margin = 18.dp)
                     }.clickable {
                         onEndIconClick()
                     },

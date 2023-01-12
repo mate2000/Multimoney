@@ -56,9 +56,9 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SELECTED_AMOUN
 import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_DISPLAY_EXCHANGE_RATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_GLOBAL_ID
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ORIGIN
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
-import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ORIGIN
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.SMART_PAYMENT_ACCOUNTS
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
@@ -223,6 +223,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object ProfileChangePasswordScreen : Screen(
         "profile_change_password_screen/{$ID_BRAND}/{$PK_USER}/{$USER_NAME}",
         "profile_change_password_screen"
+    )
+
+    object ProfileCardListScreen : Screen(
+        "profile_card_list_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
+        "profile_card_list_screen"
     )
 
     // DisbursementNavGraph Screens

@@ -1052,7 +1052,7 @@ class GraphqlApi @Inject constructor(
     fun queryStepByStep(
         user: String,
         idBrand: Int,
-        idRequest: Int
+        idRequest: Long
     ): ApolloCall<StepByStepQuery.Data> =
         apolloAuthorizedClient.query(StepByStepQuery(user, idBrand, idRequest))
             .fetchPolicy(FetchPolicy.NetworkOnly)
@@ -1062,6 +1062,7 @@ class GraphqlApi @Inject constructor(
         status: Int,
         user: String,
         idBrand: Int,
+        idGlobalRequest: Long,
         idProfessionType: Int?,
         idCivilStatusType: Long?,
         birthday: String?,
@@ -1098,6 +1099,7 @@ class GraphqlApi @Inject constructor(
                 status,
                 user,
                 idBrand,
+                idGlobalRequest,
                 Optional.presentIfNotNull(idProfessionType),
                 Optional.presentIfNotNull(idAddressLevel1),
                 Optional.presentIfNotNull(idAddressLevel2),

@@ -13,7 +13,11 @@ mutation SaveAutomatedSmartAccount(
         }
     ) {
         result {
+            requestID
             message
+            idAccount : iDAccount
+            documentRoute
+            identification
         }
     }
 }

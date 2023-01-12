@@ -234,8 +234,9 @@ class ProductViewModel @Inject constructor(
             else -> {
                 navigateTo(
                     "${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
-                        "${uiState.userStatus?.infoUser?.firstName}/" +
-                        "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/$comingFromCrypto"
+                        "${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}/" +
+                        "${uiState.userStatus?.infoUser?.statusOnfido}/$comingFromCrypto/" +
+                        "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}"
                 )
             }
         }
@@ -399,7 +400,7 @@ class ProductViewModel @Inject constructor(
         val idLoanClient = userStatus?.infoCredit?.idLoanClient
         val cardStatus = userStatus?.infoVirtualCard?.status
         navigateTo(
-            "${Screen.CryptoWalletScreen.baseRoute}/$email/${uiState.idBrand}/${identification}/${globalBalance}/${idClient}/${idLoanClient}/${statusCredit}/${statusSmart}/${statusCrypto}/${cardStatus}"
+            "${Screen.CryptoWalletScreen.baseRoute}/$email/${uiState.idBrand}/$identification/$globalBalance/$idClient/$idLoanClient/$statusCredit/$statusSmart/$statusCrypto/$cardStatus"
         )
     }
 
@@ -650,7 +651,7 @@ class ProductViewModel @Inject constructor(
             queryListSinpeAccountUseCaseImpl.invoke(
                 user = email,
                 identification = identification,
-                idBrand = uiState.idBrand.toInt(),
+                idBrand = uiState.idBrand.toIntOrNull() ?: 0,
                 country = "",
                 idAccount = 0,
                 accountNumber = ""
@@ -734,24 +735,26 @@ class ProductViewModel @Inject constructor(
                 account?.accountNumber
             )
             navigateTo(
-                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${userName}/${uiState.idBrand}/${identification}/${
-                    encodeData(
-                        smartAccount
-                    )
+                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$userName/${uiState.idBrand}/$identification/${
+                encodeData(
+                    smartAccount
+                )
                 }/$idClient/${Screen.HomeScreen.route}"
             )
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             val infoCredit = uiState.userStatus?.infoCredit
-            val smartIds = encodeData(balanceCredit?.balanceAccountSmart?.map {
-                SmartAccountID(
-                    tokenAccount = it?.tokenNumber,
-                    currencyID = it?.idCurrencyAccount,
-                    accountNumber = it?.accountNumber ?: "",
-                    ibanAccountNumber = it?.ibanAccountNumber,
-                    totalBalance = it?.totalBalance
-                )
-            })
-            navigateTo("${Screen.SmartSelectAccountScreen.baseRoute}/${smartIds}/$email/${uiState.idBrand}/$identification/${infoCredit?.idClient}")
+            val smartIds = encodeData(
+                balanceCredit?.balanceAccountSmart?.map {
+                    SmartAccountID(
+                        tokenAccount = it?.tokenNumber,
+                        currencyID = it?.idCurrencyAccount,
+                        accountNumber = it?.accountNumber ?: "",
+                        ibanAccountNumber = it?.ibanAccountNumber,
+                        totalBalance = it?.totalBalance
+                    )
+                }
+            )
+            navigateTo("${Screen.SmartSelectAccountScreen.baseRoute}/$smartIds/$email/${uiState.idBrand}/$identification/${infoCredit?.idClient}")
         }
     }
 
@@ -764,8 +767,8 @@ class ProductViewModel @Inject constructor(
             ibanAccountNumber = account?.ibanAccountNumber
         )
         navigateTo(
-            "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${userName}/${uiState.idBrand}/${identification}" +
-                    "/${encodeData(smartAccount)}/$idClient/${Screen.HomeScreen.route}"
+            "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$userName/${uiState.idBrand}/$identification" +
+                "/${encodeData(smartAccount)}/$idClient/${Screen.HomeScreen.route}"
         )
     }
 
@@ -810,7 +813,7 @@ class ProductViewModel @Inject constructor(
             balanceCardInformationUseCase.invoke(
                 email,
                 identification,
-                uiState.idBrand.toInt(),
+                uiState.idBrand.toIntOrNull() ?: 0,
                 uiState.userStatus?.infoUser?.idClient ?: 0,
                 uiState.userStatus?.infoCredit?.idLoanClient ?: 0,
                 CARD_INFORMATION_STATUS
@@ -1074,7 +1077,7 @@ class ProductViewModel @Inject constructor(
 
     sealed class BaseEvent {
         object OnShowCardIssuanceError : BaseEvent()
-        object OnShowTbdToastEvent: BaseEvent()
+        object OnShowTbdToastEvent : BaseEvent()
     }
 
     companion object {

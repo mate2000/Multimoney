@@ -21,6 +21,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSig
 
 const val ACCOUNT_TOKEN = "account_token"
 const val SMART_PAYMENT_ACCOUNTS = "smart_payment_accounts"
+const val ID_GLOBAL_REQUEST = "id_global_request"
 
 fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
     navigation(
@@ -28,7 +29,10 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
         route = SMART_ROUTE
     ) {
         composable(
-            Screen.SmartScreen.route
+            Screen.SmartScreen.route,
+            arguments = listOf(
+                navArgument(ID_GLOBAL_REQUEST) { type = NavType.LongType }
+            )
         ) {
             SmartScreen(
                 onNavigate = {
@@ -56,7 +60,8 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(PK_USER) { type = NavType.LongType },
-                navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType }
+                navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType },
+                navArgument(SIGN_DOCUMENT_GLOBAL_ID) { type = NavType.LongType }
             )
         ) {
             SmartOnfidoScreen(
@@ -104,7 +109,8 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(ID_USER_REQUEST) { type = NavType.LongType },
                 navArgument(PK_USER) { type = NavType.LongType },
-                navArgument(IS_SMART_EVICERTIA) { type = NavType.BoolType }
+                navArgument(IS_SMART_EVICERTIA) { type = NavType.BoolType },
+                navArgument(SIGN_DOCUMENT_GLOBAL_ID) { type = NavType.LongType }
             )
         ) {
             SmartSignScreen(

@@ -77,7 +77,7 @@ fun PaymentAccountContent(
             onRightButtonClick = { viewModel.onUIEvent(OnNavigateBackHome) }
         )
         Text(
-            modifier = Modifier.padding(top = 42.dp, start = 16.dp, end = 16.dp, bottom = 20.dp),
+            modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp, bottom = 20.dp),
             text = stringResource(id = viewModel.uiState.titleResource),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText,

@@ -67,7 +67,7 @@ fun PaymentScheduleAccountContent(
             onRightButtonClick = { viewModel.onUIEvent(OnCloseClick) }
         )
         Text(
-            modifier = Modifier.padding(top = 42.dp, start = 16.dp, end = 16.dp),
+            modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp),
             text = stringResource(id = R.string.payment_schedule_card_list_title),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.text,

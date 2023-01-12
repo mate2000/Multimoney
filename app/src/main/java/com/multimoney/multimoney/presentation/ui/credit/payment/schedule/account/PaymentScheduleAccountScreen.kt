@@ -66,7 +66,7 @@ fun PaymentScheduleAccountContent(
             isRightButtonVisible = true
         )
         Text(
-            modifier = Modifier.padding(top = 50.dp, start = 16.dp, end = 16.dp),
+            modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp),
             text = stringResource(id = R.string.payment_schedule_account_title),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.text,

@@ -287,10 +287,10 @@ class VisaCardViewModel @Inject constructor(
     private fun handleErrorResult() {
         if (numAttemptsToStartPayment < MAX_NUMBER_ATTEMPTS_TO_PAY) {
             showAlertResultDialog(false)
-            startNovoPayment()
             numAttemptsToStartPayment++
         } else {
             hideAlertResultDialog()
+            numAttemptsToStartPayment = 0
         }
     }
 
@@ -658,7 +658,7 @@ class VisaCardViewModel @Inject constructor(
         const val NOVO_CARD_TOKEN_EMPTY_TWO = "-1"
         const val MAX_PASSWORD_ATTEMPTS = 3
         const val INIT_PASSWORD_ATTEMPTS = 0
-        const val MAX_NUMBER_ATTEMPTS_TO_PAY = 1
+        const val MAX_NUMBER_ATTEMPTS_TO_PAY = 2
         const val DELAY_TO_START_PAYMENT = 300L
     }
 }

@@ -870,6 +870,10 @@ class ProductViewModel @Inject constructor(
         )
     }
 
+    private fun onNavigateToBuyCrypto(){
+        navigateTo("${Screen.CryptoPurchaseListScreen.baseRoute}/$email/${uiState.idBrand.toInt()}")
+    }
+
     private fun getSmartContent() {
         val statusRequest = uiState.userStatus?.infoBankAccount?.infoRequest?.statusRequest
         val statusFirm = uiState.userStatus?.infoBankAccount?.statusFirm
@@ -996,6 +1000,7 @@ class ProductViewModel @Inject constructor(
             is OnNoVoConfig -> onConfigNovoSdk()
             is OnGetSmartContent -> getSmartContent()
             is UIEvent.OnNavigateToCryptoDetailScreen -> onNavigateToCryptoDetail(uiEvent.cryptoItem)
+            is UIEvent.OnNavigateToBuyCrypto -> onNavigateToBuyCrypto()
         }
     }
 
@@ -1076,6 +1081,7 @@ class ProductViewModel @Inject constructor(
 
         object OnNoVoConfig : UIEvent()
         data class OnCartButtonClickWithoutSmartBalance(val onSavingCLick: () -> Unit) : UIEvent()
+        object OnNavigateToBuyCrypto : UIEvent()
     }
 
     sealed class BaseEvent {

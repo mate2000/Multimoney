@@ -79,7 +79,7 @@ fun CurrencyDetailContent(
     uiState: CryptoCurrencyMovementsViewModel.UiState,
     backPressed: () -> Unit,
     onDateChanged: (Long) -> Unit,
-    viewAllClick : () -> Unit
+    viewAllClick: () -> Unit
 ) {
 
     val movements = uiState.cryptoMovements.collectAsLazyPagingItems()

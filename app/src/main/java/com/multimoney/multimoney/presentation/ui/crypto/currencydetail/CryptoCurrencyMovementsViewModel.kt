@@ -61,7 +61,7 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess {
                     uiState = uiState.copy(
-                        historicalBalance = it?.cryptoHistoricalPrice?.items ?: listOf(),
+                        historicalBalance = it.cryptoHistoricalPrice.items,
                         isLoading = false
                     )
                 }
@@ -104,10 +104,14 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateToAllMovements(){
+    private fun onNavigateToAllMovements() {
         popAndNavigateTo(
-            "${Screen.CryptoMovementsAllScreen.baseRoute}/${idBrand}/$identification/$user/${encodeData(uiState.cryptoItem)}",
-                    Screen.CryptoCurrencyMovementsScreen.route
+            "${Screen.CryptoMovementsAllScreen.baseRoute}/${idBrand}/$identification/$user/${
+                encodeData(
+                    uiState.cryptoItem
+                )
+            }",
+            Screen.CryptoCurrencyMovementsScreen.route
         )
     }
 

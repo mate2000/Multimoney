@@ -42,6 +42,7 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 fun SignUpScreen(
+    isRestart: Boolean = true,
     step: String,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
@@ -85,9 +86,11 @@ fun SignUpScreen(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             GetStepContent(
+                isRestart = isRestart,
+                onNavigate = onNavigate,
                 step = viewModel.uiState.currentStep,
                 viewModel = viewModel,
-                onPopAndNavigate
+                onPopAndNavigate = onPopAndNavigate
             )
             CustomButton(
                 onClick = { viewModel.onUIEvent(OnContinueClick(focusManager)) },
@@ -122,13 +125,19 @@ fun SignUpScreen(
 
 @Composable
 fun GetStepContent(
+    isRestart: Boolean = true,
     step: Int,
+    onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: SignUpViewModel,
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {}
 ) {
     when (step) {
         SignUpStep.One.id -> SignUpEmailScreen(sharedViewModel = viewModel)
-        SignUpStep.Two.id -> SignUpPersonalDataScreen(sharedViewModel = viewModel)
+        SignUpStep.Two.id -> SignUpPersonalDataScreen(
+            isRestart = isRestart,
+            onNavigate = onNavigate,
+            sharedViewModel = viewModel
+        )
         SignUpStep.Three.id -> SignUpPhoneScreen(sharedViewModel = viewModel)
         SignUpStep.Four.id -> SignUpOtpScreen(
             onPopAndNavigate,

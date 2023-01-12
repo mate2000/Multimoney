@@ -61,7 +61,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.SMART_PAYMENT_ACCOUNTS
-import com.multimoney.multimoney.presentation.navigation.navgraph.STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.TRANSFER_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
@@ -120,6 +119,7 @@ const val CRYPTO_ASSET = "asset"
 const val DESCRIPTION_CURRENCY = "description_currency"
 const val CURRENT_CRYPTO_PRICE = "current_crypto_price"
 const val URL_IMAGE = "url_image"
+const val USER_DATA = "user_data"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -144,15 +144,28 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
             "request_forgot_password_screen"
         )
 
+    object RegisteredUserEmailScreen :
+        Screen(
+            "registered_user_email_screen?$ID_BRAND={$ID_BRAND}?$USER_DATA={$USER_DATA}",
+            "registered_user_email_screen"
+        )
+
+    object RegisteredUserOtpScreen :
+        Screen(
+            "registered_user_otp_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}?$ID_BRAND={$ID_BRAND}?$USER_DATA={$USER_DATA}",
+            "registered_user_otp_screen"
+        )
+
     object RegisteredUserPassword : Screen(
-        "registered_user_password?$EMAIL={$EMAIL}?$FIRST_NAME={$FIRST_NAME}?$LAST_NAME={$LAST_NAME}?$PHONE_NUMBER={$PHONE_NUMBER}?$IDENTIFICATION={$IDENTIFICATION}?$PK_USER={$PK_USER}?$STATUS={$STATUS}?$ID_BRAND={$ID_BRAND}",
+        "registered_user_password?$USER_DATA={$USER_DATA}?$ID_BRAND={$ID_BRAND}",
         "registered_user_password"
     )
 
-    object ProcessForgotPassword : Screen(
-        "process_forgot_password_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}?$EMAIL={$EMAIL}?$ID_BRAND={$ID_BRAND}?$PK_USER={$PK_USER}",
-        "process_forgot_password_screen"
-    )
+    object ProcessForgotPassword :
+        Screen(
+            "process_forgot_password_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}?$EMAIL={$EMAIL}?$ID_BRAND={$ID_BRAND}?$PK_USER={$PK_USER}",
+            "process_forgot_password_screen"
+        )
 
     object SignUpSplashComeBackScreen : Screen(
         "sign_up_splash_come_back_screen/{$SIGN_UP_STEP}",

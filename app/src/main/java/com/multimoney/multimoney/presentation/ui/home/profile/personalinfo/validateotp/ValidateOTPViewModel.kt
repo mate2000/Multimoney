@@ -495,6 +495,5 @@ class ValidateOTPViewModel @Inject constructor(
         const val TIMER_DURATION = 0L
         const val TIMER_DELAY = 1L
         const val APP_SOURCE = 2
-
     }
 }

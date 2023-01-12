@@ -54,6 +54,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.QUOTA_TOTAL
 import com.multimoney.multimoney.presentation.navigation.navgraph.REFERENCE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SELECTED_AMOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_DISPLAY_EXCHANGE_RATE
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_GLOBAL_ID
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
@@ -274,8 +275,8 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SmartSignScreen : Screen(
-        "sign_document_process_screen/{$SIGN_DOCUMENT_STEP_ARG}/{$SIGN_DOCUMENT_URL}/{$SIGN_DOCUMENT_ID_PRINT}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$IS_SMART_EVICERTIA}",
-        "sign_document_process_screen"
+        "smart_sign_document_process_screen/{$SIGN_DOCUMENT_STEP_ARG}/{$SIGN_DOCUMENT_URL}/{$SIGN_DOCUMENT_ID_PRINT}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$IS_SMART_EVICERTIA}/{$SIGN_DOCUMENT_GLOBAL_ID}/{$USER}",
+        "smart_sign_document_process_screen"
     )
 
     object SmartOnfidoAndEvicertiaErrorsScreen : Screen(
@@ -418,7 +419,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SmartOnfidoScreen : Screen(
-        "smart_onfido_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$FIRST_NAME}/{$LAST_NAME}/{$SIGN_DOCUMENT_ID_PRINT}/{$SIGN_DOCUMENT_URL}/{$COMING_FROM_CRYPTO}",
+        "smart_onfido_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$FIRST_NAME}/{$LAST_NAME}/{$SIGN_DOCUMENT_ID_PRINT}/{$SIGN_DOCUMENT_GLOBAL_ID}/{$SIGN_DOCUMENT_URL}",
         "smart_onfido_screen"
     )
 

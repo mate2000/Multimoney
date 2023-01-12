@@ -145,7 +145,7 @@ fun PaymentOptionsTransferContent(viewModel: PaymentOptionsTransferViewModel = h
                 onClick = { viewModel.onUIEvent(OnNavigateBackHome(false)) },
                 text = stringResource(id = R.string.payment_options_transfer_go_home),
                 modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp, bottom = 56.dp, top = 16.dp)
+                    .padding(start = 16.dp, end = 16.dp, bottom = 40.dp, top = 16.dp)
                     .fillMaxWidth()
                     .height(48.dp),
                 buttonType = PrimaryPrimary

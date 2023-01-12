@@ -1,6 +1,5 @@
 package com.multimoney.data.util
 
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -9,7 +8,7 @@ import com.multimoney.data.base.BaseDataStorePreferences
 import com.multimoney.data.util.cryptography.CryptographyHelper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import java.util.*
+import java.util.UUID
 import javax.crypto.Cipher
 import javax.inject.Inject
 
@@ -92,6 +91,11 @@ class DataStorePreferences @Inject constructor(
         return  getSecuredData(UNIQUE_ID,"")
     }
 
+    suspend fun isContactPermissionRequested(isOnBoardingEnabled: Boolean) =
+        setData(CONTACT_PERMISSION_STATE_KEY, isOnBoardingEnabled)
+
+    fun isContactPermissionRequested(): Flow<Boolean> = getData(CONTACT_PERMISSION_STATE_KEY, false)
+
 
     companion object {
         private val UNIQUE_ID = stringPreferencesKey("unique_id")
@@ -105,5 +109,6 @@ class DataStorePreferences @Inject constructor(
         private val USER_PASSWORD_KEY = stringPreferencesKey("user_password_key")
         private val BIOMETRICS_ENABLED_KEY = booleanPreferencesKey("biometrics_enabled_key")
         private val ON_BOARDING_ENABLED_KEY = booleanPreferencesKey("on_boarding_enabled_key")
+        private val CONTACT_PERMISSION_STATE_KEY = booleanPreferencesKey("contact_permission_state_key")
     }
 }

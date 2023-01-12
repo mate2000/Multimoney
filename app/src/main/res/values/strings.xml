@@ -431,6 +431,10 @@
     <string name="profile_terms_and_conditions_sales_title" translatable="false">Ventas</string>
     <string name="profile_terms_and_conditions_crypto_title" translatable="false">Cripto</string>
 
+    <!-- Credit Schedule Automatic Payment -->
+    <string name="profile_cards_bottom_sheet_title" translatable="false">Mis tarjetas</string>
+    <string name="profile_cards_bottom_sheet_edit" translatable="false">Editar tarjeta</string>
+    <string name="profile_cards_bottom_sheet_delete" translatable="false">Eliminar tarjeta</string>
 
     <!-- Sign Out -->
     <string name="sign_out_dialog_title" translatable="false">¿Estás seguro que querés cerrar sesión?</string>

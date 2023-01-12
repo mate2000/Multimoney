@@ -468,7 +468,7 @@ fun OngoingCredit(
                     ),
                     modifier = Modifier.padding(top = 4.dp, start = 3.dp),
                     style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-                    color = MultimoneyTheme.colors.textSubhead
+                    color = MultimoneyTheme.colors.text
                 )
             }
         }

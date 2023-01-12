@@ -11,6 +11,7 @@ interface MutationGlobalRequestUseCase {
         status: Int,
         user: String,
         idBrand: Int,
+        idGlobalRequest: Long,
         idProfessionType: Int?,
         idCivilStatusType: Long?,
         birthday: String?,

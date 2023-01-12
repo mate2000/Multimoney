@@ -234,8 +234,9 @@ class ProductViewModel @Inject constructor(
             else -> {
                 navigateTo(
                     "${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
-                        "${uiState.userStatus?.infoUser?.firstName}/" +
-                        "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/$comingFromCrypto"
+                        "${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}/" +
+                        "${uiState.userStatus?.infoUser?.statusOnfido}/$comingFromCrypto/" +
+                        "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}"
                 )
             }
         }
@@ -648,7 +649,7 @@ class ProductViewModel @Inject constructor(
             queryListSinpeAccountUseCaseImpl.invoke(
                 user = email,
                 identification = identification,
-                idBrand = uiState.idBrand.toInt(),
+                idBrand = uiState.idBrand.toIntOrNull() ?: 0,
                 country = "",
                 idAccount = 0,
                 accountNumber = ""
@@ -810,7 +811,7 @@ class ProductViewModel @Inject constructor(
             balanceCardInformationUseCase.invoke(
                 email,
                 identification,
-                uiState.idBrand.toInt(),
+                uiState.idBrand.toIntOrNull() ?: 0,
                 uiState.userStatus?.infoUser?.idClient ?: 0,
                 uiState.userStatus?.infoCredit?.idLoanClient ?: 0,
                 CARD_INFORMATION_STATUS

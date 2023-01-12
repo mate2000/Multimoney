@@ -70,7 +70,7 @@ fun ProfileCardsListContent(
             isRightButtonVisible = false
         )
         Text(
-            modifier = Modifier.padding(top = 20.dp, start = 16.dp, end = 16.dp),
+            modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp),
             text = stringResource(id = R.string.payment_cards_list_title),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText,
@@ -132,7 +132,7 @@ fun ProfileCardList(
     viewModel: ProfileCardListViewModel = hiltViewModel()
 ) {
     viewModel.uiState.cardVDList?.let { clientBankAccountList ->
-        LazyColumn(modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp)) {
+        LazyColumn(modifier = Modifier.padding(top = 32.dp, start = 16.dp, end = 16.dp)) {
             items(clientBankAccountList) { card ->
                 CustomInfoButton(
                     modifier = Modifier

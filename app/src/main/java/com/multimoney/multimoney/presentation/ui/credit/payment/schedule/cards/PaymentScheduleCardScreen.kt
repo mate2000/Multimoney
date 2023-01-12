@@ -96,7 +96,7 @@ fun PaymentScheduleContent(
                     isRightButtonVisible = false
                 )
                 CustomInformativeText(
-                    modifier = Modifier.fillMaxWidth().padding(top = 42.dp, start = 7.dp, end = 16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(top = 24.dp, start = 7.dp, end = 16.dp),
                     trailingIcon = drawable.ic_information_chip,
                     trailingIconClick = { viewModel.onUIEvent(OnOpenDisclaimerDialog) },
                     text = stringResource(id = string.payment_schedule_card_title),

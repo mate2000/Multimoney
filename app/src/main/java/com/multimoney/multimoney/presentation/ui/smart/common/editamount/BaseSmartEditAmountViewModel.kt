@@ -73,15 +73,15 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
     Origin refers to the account where the money's going to be taken from
     Destination is the account to receive the money
     */
-    var originSmartAccount: SmartAccountID? = null
-    var destinationIbanAccount: IbanAccountID? = null
+    var smartAccount: SmartAccountID? = null
+    var ibanAccount: IbanAccountID? = null
 
     // For Smart to Smart
     var destinationSmartAccount: SmartAccountID? = null
 
-    var originCurrency: CurrencyType? = CurrencyType.Dollar
+    var smartCurrency: CurrencyType? = CurrencyType.Dollar
     var smartDestinationCurrency: CurrencyType? = CurrencyType.Dollar
-    var destinationCurrency: CurrencyType? = null
+    var ibanCurrency: CurrencyType? = null
     var idBrand: Int = 0
     var shouldDisplayExchange: Boolean = false
     var maskedCardNumber: String = ""
@@ -99,10 +99,10 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
         identification = preferences.getIdentification().first()
         pkUser = preferences.getPkUser().first()
         userName = preferences.getUserName().first()
-        originSmartAccount = savedStateHandle[SMART_IDS]
-        originCurrency = originSmartAccount?.currencyID?.getCurrencyFromId()
-        tokenNumber = originSmartAccount?.tokenAccount?.toLongOrNull() ?: 0
-        idCurrency = originSmartAccount?.currencyID ?: 0
+        smartAccount = savedStateHandle[SMART_IDS]
+        smartCurrency = smartAccount?.currencyID?.getCurrencyFromId()
+        tokenNumber = smartAccount?.tokenAccount?.toLongOrNull() ?: 0
+        idCurrency = smartAccount?.currencyID ?: 0
         previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
 
         if (idBrand == Brand.CostaRica.id) {
@@ -113,25 +113,25 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
     }
 
     open fun initializeCRValues() {
-        destinationIbanAccount = savedStateHandle[IBAN_ACCOUNT]
-        destinationCurrency = if (destinationIbanAccount != null) {
-            destinationIbanAccount?.currencyId?.getCurrencyFromId()
+        ibanAccount = savedStateHandle[IBAN_ACCOUNT]
+        ibanCurrency = if (ibanAccount != null) {
+            ibanAccount?.currencyId?.getCurrencyFromId()
         } else if (destinationSmartAccount != null) {
             destinationSmartAccount?.currencyID?.getCurrencyFromId()
         } else {
             CurrencyType.Colon
         }
-        shouldDisplayExchange = originCurrency != destinationCurrency
-        bankDetail = destinationIbanAccount?.bank ?: ""
-        maskedCardNumber = destinationIbanAccount?.sinpeAccount ?: ""
+        shouldDisplayExchange = smartCurrency != ibanCurrency
+        bankDetail = ibanAccount?.bank ?: ""
+        maskedCardNumber = ibanAccount?.sinpeAccount ?: ""
         sheetSubtitle = R.string.smart_payment_amount_bottom_sheet_from_card_CR
         originTitle = R.string.smart_payment_origin_account_label
         originIcon =
-            destinationCurrency?.id?.getCurrencyFromId()?.accountIcon
+            ibanCurrency?.id?.getCurrencyFromId()?.accountIcon
                 ?: CurrencyType.Colon.accountIcon
 
-        accountName = destinationIbanAccount?.nameAccount ?: ""
-        smartDestinationCurrency = when (originCurrency?.value) {
+        accountName = ibanAccount?.nameAccount ?: ""
+        smartDestinationCurrency = when (smartCurrency?.value) {
             CurrencyType.Dollar.value -> {
                 CurrencyType.Colon
             }
@@ -155,10 +155,10 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
 
     open fun getExchangeOnCompleted(
         isStart: Boolean = false,
-        abbreviation: String? = destinationCurrency?.disbursementValue
+        abbreviation: String? = ibanCurrency?.disbursementValue
             ?: smartDestinationCurrency?.disbursementValue,
-        idOriginCurrency: String = originCurrency?.id.toString(),
-        idDestinationCurrency: String = destinationCurrency?.id?.toString()
+        idOriginCurrency: String = smartCurrency?.id.toString(),
+        idDestinationCurrency: String = ibanCurrency?.id?.toString()
             ?: smartDestinationCurrency?.id.toString(),
         currentAmount: Double = baseUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0,
     ) {

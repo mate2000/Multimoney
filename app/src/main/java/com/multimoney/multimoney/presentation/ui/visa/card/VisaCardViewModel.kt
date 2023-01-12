@@ -71,12 +71,16 @@ import com.multimoney.multimoney.util.BiometricHelper
 import com.multimoney.multimoney.util.CognitoHelper
 import com.multimoney.multimoney.util.NovoHelper
 import com.novopayment.sdk.vts.NovoVTS
+import com.novopayment.sdk.vts.model.NovoError
+import com.novopayment.sdk.vts.util.error.StatusCode.ERROR_PAYMENT_CANCEL_DIALOG
+import com.novopayment.sdk.vts.util.error.StatusCode.ERROR_PAYMENT_TIMEOUT_SUBMIT_DIALOG
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
@@ -256,7 +260,10 @@ class VisaCardViewModel @Inject constructor(
 
     private fun onHandleTapAndPayIntentResult(result: ActivityResult) {
         if (nfcHelper.isNfcEnabled() && NovoVTS.isDefaultPaymentService()) {
-            startNovoPayment()
+            viewModelScope.launch {
+                delay(DELAY_TO_START_PAYMENT)
+                startNovoPayment()
+            }
         }
     }
 
@@ -266,9 +273,15 @@ class VisaCardViewModel @Inject constructor(
                 showAlertResultDialog(true)
             },
             onErrorPayment = {
-                handleErrorResult()
+                if (shouldHandleNovoError(it)) {
+                    handleErrorResult()
+                }
             }
         )
+    }
+
+    private fun shouldHandleNovoError(novoError: NovoError): Boolean {
+        return novoError.code != ERROR_PAYMENT_CANCEL_DIALOG.value && novoError.code != ERROR_PAYMENT_TIMEOUT_SUBMIT_DIALOG.value
     }
 
     private fun handleErrorResult() {
@@ -646,5 +659,6 @@ class VisaCardViewModel @Inject constructor(
         const val MAX_PASSWORD_ATTEMPTS = 3
         const val INIT_PASSWORD_ATTEMPTS = 0
         const val MAX_NUMBER_ATTEMPTS_TO_PAY = 1
+        const val DELAY_TO_START_PAYMENT = 300L
     }
 }

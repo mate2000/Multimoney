@@ -13,17 +13,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.theme.BlackTransparency10
-import com.multimoney.multimoney.presentation.theme.BlackTransparency70
-import com.multimoney.multimoney.presentation.theme.BlackTransparency80
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.SIGN_UP_INDICATOR_TOTAL_STEPS
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnBackClick
@@ -48,6 +43,7 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 fun SignUpScreen(
+    isRestart: Boolean = true,
     step: String,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
@@ -93,9 +89,11 @@ fun SignUpScreen(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             GetStepContent(
+                isRestart = isRestart,
+                onNavigate = onNavigate,
                 step = viewModel.uiState.currentStep,
                 viewModel = viewModel,
-                onPopAndNavigate
+                onPopAndNavigate = onPopAndNavigate
             )
             CustomButton(
                 onClick = { viewModel.onUIEvent(OnContinueClick(focusManager)) },
@@ -130,14 +128,19 @@ fun SignUpScreen(
 
 @Composable
 fun GetStepContent(
+    isRestart: Boolean = true,
     step: Int,
+    onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: SignUpViewModel,
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {}
 ) {
-
     when (step) {
         SignUpStep.One.id -> SignUpEmailScreen(sharedViewModel = viewModel)
-        SignUpStep.Two.id -> SignUpPersonalDataScreen(sharedViewModel = viewModel)
+        SignUpStep.Two.id -> SignUpPersonalDataScreen(
+            isRestart = isRestart,
+            onNavigate = onNavigate,
+            sharedViewModel = viewModel
+        )
         SignUpStep.Three.id -> SignUpPhoneScreen(sharedViewModel = viewModel)
         SignUpStep.Four.id -> SignUpOtpScreen(
             onPopAndNavigate,

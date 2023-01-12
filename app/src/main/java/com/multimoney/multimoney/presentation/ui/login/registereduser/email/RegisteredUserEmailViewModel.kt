@@ -11,6 +11,7 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.USER_DATA
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailViewModel.UIEvent.OnEmailValueChange
@@ -28,12 +29,10 @@ class RegisteredUserEmailViewModel @Inject constructor(savedStateHandle: SavedSt
         private set
 
     // Stateless
-    private var previousScreen: String = ""
     private var idBrand: Int = 0
-    private var userData: UserData? = null
+    var userData: UserData? = null
 
     init {
-        previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
         userData = savedStateHandle.get<UserData>(USER_DATA)
     }
@@ -55,11 +54,15 @@ class RegisteredUserEmailViewModel @Inject constructor(savedStateHandle: SavedSt
     }
 
     private fun onEmailValueChange(value: String) {
-        uiState = uiState.copy(email = value, isFormValid = isFormValid())
+        uiState = uiState.copy(email = value)
+        uiState = uiState.copy(isFormValid = isFormValid())
         clearEmailError()
     }
 
-    private fun onBackClick() = navigateBack(popTo = previousScreen, isRestart = false)
+    private fun onBackClick() = navigateBack(
+        popTo = Screen.SignUpScreen.route,
+        isRestart = false
+    )
 
     private fun onContinueClick() = if (uiState.email != (userData?.email ?: "")) {
         uiState = uiState.copy(emailError = Pair(true, R.string.registered_user_email_different))
@@ -67,13 +70,13 @@ class RegisteredUserEmailViewModel @Inject constructor(savedStateHandle: SavedSt
         navigateTo(
             route = Screen.RegisteredUserOtpScreen.baseRoute
                 .plus(
-                    getNavParam(PREVIOUS_SCREEN, previousScreen)
+                    getNavParam(PREVIOUS_SCREEN, Screen.RegisteredUserEmailScreen.baseRoute)
                 )
                 .plus(
                     getNavParam(ID_BRAND, idBrand)
                 )
                 .plus(
-                    getNavParam(USER_DATA, userData)
+                    getNavParam(USER_DATA, encodeData(userData))
                 )
         )
     }

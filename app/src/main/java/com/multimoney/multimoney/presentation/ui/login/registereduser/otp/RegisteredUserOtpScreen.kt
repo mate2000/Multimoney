@@ -2,6 +2,7 @@ package com.multimoney.multimoney.presentation.ui.login.registereduser.otp
 
 import android.app.Activity
 import android.content.Intent
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -19,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
@@ -33,13 +33,19 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
-import com.multimoney.domain.model.security.UserData
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.BaseEvent.OnOpenWhatsApp
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.Companion.PHASE_FIVE
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.Companion.PHASE_FOUR
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.Companion.PHASE_ONE
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.Companion.PHASE_THREE
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.Companion.PHASE_TWO
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.Companion.TIMER_DURATION
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.Companion.TOTAL_DIGITS
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnCallMutationSendPinProcess
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnContinueClick
@@ -50,14 +56,9 @@ import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.Regist
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIState
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.PHONE_HARDCODED
-import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_FIVE
-import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_FOUR
-import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_ONE
-import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_THREE
-import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_TWO
-import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TIMER_DURATION
-import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TOTAL_DIGITS
 import com.multimoney.multimoney.presentation.uielement.CustomButton
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.OtpTextField
 import com.multimoney.multimoney.presentation.uielement.SystemBroadcastReceiver
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
@@ -130,7 +131,7 @@ fun RegisteredUserOtpScreen(
     viewModel.apply {
         RegisteredUserOtpContent(
             uiState = uiState,
-            userData = userData,
+            maskedPhoneNumber = userData?.maskedPhoneNumber.orEmpty(),
             onOtpValueChange = { value -> onUIEvent(OnOtpValueChange(value)) },
             onOtherPhoneNumberClick = { onUIEvent(OnOtherPhoneNumberClick) },
             getPhaseResourceString = { getPhaseResourceString() },
@@ -145,7 +146,7 @@ fun RegisteredUserOtpScreen(
 @Preview
 fun RegisteredUserOtpContent(
     uiState: UIState = UIState(),
-    userData: UserData? = UserData(),
+    maskedPhoneNumber: String = "",
     onOtpValueChange: (String) -> Unit = {},
     onOtherPhoneNumberClick: () -> Unit = {},
     getPhaseResourceString: () -> Int = { R.string.empty },
@@ -153,7 +154,6 @@ fun RegisteredUserOtpContent(
     onBackClick: () -> Unit = {},
     onContinueClick: () -> Unit = {}
 ) {
-    val focusManager = LocalFocusManager.current
     Column(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)
@@ -177,7 +177,7 @@ fun RegisteredUserOtpContent(
                     ),
                     text = stringResource(
                         id = R.string.registered_user_otp_title,
-                        userData?.phoneNumber.orEmpty()
+                        maskedPhoneNumber
                     ),
                     textAlign = TextAlign.Start,
                     modifier = Modifier.padding(top = 42.dp).fillMaxWidth()
@@ -271,6 +271,7 @@ fun RegisteredUserOtpContent(
             }
             CustomButton(
                 onClick = { onContinueClick() },
+                enable = uiState.isFormValid,
                 text = stringResource(id = string.button_continue),
                 modifier = Modifier
                     .padding(bottom = 20.dp)
@@ -278,5 +279,20 @@ fun RegisteredUserOtpContent(
                     .height(48.dp)
             )
         }
+    }
+    LoadingIndicator(uiState.isLoading)
+    if (uiState.dialogParameters.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = uiState.dialogParameters.titleResource),
+            message = stringResource(id = uiState.dialogParameters.descriptionResource).ifEmpty { uiState.dialogParameters.description },
+            positiveButtonText = stringResource(id = uiState.dialogParameters.positiveResource),
+            negativeButtonText = stringResource(id = uiState.dialogParameters.negativeResource),
+            openDialogCustom = uiState.dialogParameters.isActive,
+            onPositiveAction = uiState.dialogParameters.positiveAction,
+            onNegativeAction = uiState.dialogParameters.negativeAction
+        )
+    }
+    BackHandler {
+        onBackClick()
     }
 }

@@ -139,7 +139,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     object RegisteredUserEmailScreen :
         Screen(
-            "registered_user_email_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}?$ID_BRAND={$ID_BRAND}?$USER_DATA={$USER_DATA}",
+            "registered_user_email_screen?$ID_BRAND={$ID_BRAND}?$USER_DATA={$USER_DATA}",
             "registered_user_email_screen"
         )
 

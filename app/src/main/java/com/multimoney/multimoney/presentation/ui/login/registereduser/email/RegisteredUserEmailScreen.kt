@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.login.registereduser.email
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -49,6 +50,7 @@ fun RegisteredUserEmailScreen(
     }
     RegisteredUserEmailContent(
         uiState = viewModel.uiState,
+        maskedMail = viewModel.userData?.maskedMail.orEmpty(),
         onEmailValueChange = { value -> viewModel.onUIEvent(OnEmailValueChange(value)) },
         onValidateEmail = { viewModel.onUIEvent(OnValidateEmail) },
         onBackClick = { viewModel.onUIEvent(OnBackClick) },
@@ -60,6 +62,7 @@ fun RegisteredUserEmailScreen(
 @Preview
 fun RegisteredUserEmailContent(
     uiState: UIState = UIState(),
+    maskedMail: String = "",
     onEmailValueChange: (String) -> Unit = {},
     onValidateEmail: () -> Unit = {},
     onBackClick: () -> Unit = {},
@@ -77,7 +80,7 @@ fun RegisteredUserEmailContent(
         ) {
             Column {
                 Text(
-                    text = stringResource(R.string.registered_user_email_title),
+                    text = stringResource(R.string.registered_user_email_title, maskedMail),
                     modifier = Modifier.padding(top = 42.dp),
                     style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
                     color = MultimoneyTheme.colors.text
@@ -109,6 +112,7 @@ fun RegisteredUserEmailContent(
             }
             CustomButton(
                 onClick = { onContinueClick() },
+                enable = uiState.isFormValid,
                 text = stringResource(id = string.button_continue),
                 modifier = Modifier
                     .padding(bottom = 20.dp)
@@ -116,5 +120,9 @@ fun RegisteredUserEmailContent(
                     .height(48.dp)
             )
         }
+    }
+
+    BackHandler {
+        onBackClick()
     }
 }

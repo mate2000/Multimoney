@@ -204,9 +204,9 @@ class RegisteredUserOtpViewModel @Inject constructor(
         uiState = uiState.copy(
             otp = value,
             isOtpFromSms = false,
-            otpError = Pair(false, R.string.error_empty),
-            isFormValid = isFormValid()
+            otpError = Pair(false, R.string.error_empty)
         )
+        uiState = uiState.copy(isFormValid = isFormValid())
     }
 
     private fun onExecuteTimer() {
@@ -232,12 +232,18 @@ class RegisteredUserOtpViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    private fun onBackClick() = navigateBack(popTo = previousScreen, isRestart = false)
+    private fun onBackClick() = navigateBack(
+        popTo = when (previousScreen) {
+            Screen.RegisteredUserEmailScreen.baseRoute -> Screen.RegisteredUserEmailScreen.route
+            else -> Screen.SignUpScreen.route
+        },
+        isRestart = false
+    )
 
     private fun onContinueClick() {
         executeUseCase {
             queryValidatePinUseCase.invoke(
-                idBrand = idBrand ?: 0,
+                idBrand = idBrand,
                 appSource = APP_SOURCE,
                 pkUser = userData?.pkUser ?: "",
                 pinSecurity = uiState.otp,

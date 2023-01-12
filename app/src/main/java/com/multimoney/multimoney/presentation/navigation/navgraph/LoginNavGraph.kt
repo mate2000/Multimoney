@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.navigation.navgraph
 
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -79,6 +80,9 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
             SignUpScreen(
                 // Workaround to solve compose issue when launchSingleTop is combine with arguments
                 // (Use: navController.currentBackStackEntry ?: navBackStackEntry)
+                isRestart = navController.currentBackStackEntry?.savedStateHandle?.getLiveData<Boolean>(
+                    PREVIOUS_IS_RESTART
+                )?.observeAsState()?.value ?: true,
                 step = navController.currentBackStackEntry?.arguments?.getString(
                     SIGN_UP_STEP,
                     DEFAULT_STEP

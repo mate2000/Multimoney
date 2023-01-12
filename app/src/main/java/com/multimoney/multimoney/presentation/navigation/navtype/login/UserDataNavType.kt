@@ -5,7 +5,7 @@ import androidx.navigation.NavType
 import com.google.gson.Gson
 import com.multimoney.domain.model.security.UserData
 
-class UserDataNavType : NavType<UserData>(isNullableAllowed = false) {
+class UserDataNavType : NavType<UserData>(isNullableAllowed = true) {
 
     override fun get(bundle: Bundle, key: String): UserData? {
         return bundle.getParcelable(key)

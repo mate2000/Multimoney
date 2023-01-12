@@ -10,6 +10,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.SmartStatus
 import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCase
@@ -35,6 +36,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.home.HomeState
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.NavigateToEvicertia
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationInitialRequest
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
@@ -56,6 +58,8 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OverridePreviousAction
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
+import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -186,8 +190,18 @@ class SmartViewModel @Inject constructor(
             idGlobalRequest = stepByStep.idRequest?.toLong() ?: 0
         )
 
-        // update the current step coming from the backend in order to navigate to the proper screen
-        uiState = uiState.copy(currentStep = SmartSteps.Search.getIdByName(stepByStep.currentStep))
+        val currentStep = SmartSteps.Search.getIdByName(stepByStep.currentStep)
+
+        when {
+            // navigate to onfido screen after the last step obtained and idBrand matches the country id
+            currentStep == SmartSteps.Four.id && idBrandAsInt == Brand.CostaRica.id -> navigateToOnfido()
+            currentStep == SmartSteps.Six.id && idBrandAsInt == Brand.ElSalvador.id -> navigateToOnfido()
+            else -> {
+                // update the current step coming from the backend in order to navigate to the proper screen
+                uiState =
+                    uiState.copy(currentStep = SmartSteps.Search.getIdByName(stepByStep.currentStep))
+            }
+        }
     }
 
     private fun callMutationInitialRequestUseCase() {
@@ -262,14 +276,10 @@ class SmartViewModel @Inject constructor(
                 legalID = accountSmartData?.legalID
             ).collectLatest { result ->
                 result.onSuccess {
-                    if (isLastStep) {
-                        idSysRequest = it?.idSysRequest?.toLong() ?: 0L
-                        idGlobalRequest = it?.idGlobalRequest ?: 0
-                        callMutationSaveSmartAccount()
-                    } else {
-                        onUIEvent(OnLoadingValueChange(false))
-                        onUIEvent(OnNextStep)
-                    }
+                    idSysRequest = it?.idSysRequest?.toLong() ?: 0L
+                    idGlobalRequest = it?.idGlobalRequest ?: 0
+                    onUIEvent(OnLoadingValueChange(false))
+                    onUIEvent(OnNextStep)
                 }
                 result.onFailure {
                     onUIEvent(OnLoadingValueChange(false))
@@ -291,30 +301,6 @@ class SmartViewModel @Inject constructor(
             )
         }
     )
-
-    private suspend fun callMutationSaveSmartAccount() {
-        mutationSaveSmartAccount.invoke(
-            user = user,
-            idBrand = idBrandAsInt,
-            identificationNumber = identification,
-            idRequest = idGlobalRequest
-        ).collectLatest { result ->
-            result.onSuccess {
-                onUIEvent(OnLoadingValueChange(false))
-                onUIEvent(OnNextStep)
-            }
-            result.onFailure { error ->
-                onUIEvent(OnLoadingValueChange(false))
-                uiState = uiState.copy(
-                    isAlertResultVisible = true,
-                    alertResultDescription = error.getError()
-                )
-            }
-            result.onLoading {
-                onUIEvent(OnLoadingValueChange(true))
-            }
-        }
-    }
 
     /**
      * After last step of origination (Before OnFido/Evicertia)
@@ -406,7 +392,11 @@ class SmartViewModel @Inject constructor(
     }
 
     private fun navigateBackToHome() =
-        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
+        navigateBack(
+            popTo = Screen.HomeScreen.route,
+            isRestart = true,
+            homeState = HomeState.UNEXPANDED
+        )
 
     private fun nextStep() {
         if (nextStep <= getTotalStepperCounter()) {
@@ -445,6 +435,12 @@ class SmartViewModel @Inject constructor(
                 description = error.getError() ?: "",
                 isActive = mutableStateOf(true)
             )
+        )
+    }
+
+    private fun onNavigateToSignDocumentScreen(signDocumentStep: String) {
+        navigateTo(
+            route = "${Screen.SmartSignScreen.baseRoute}/$signDocumentStep/$URL_EMPTY/$idSysRequest/$idBrand/$pkUser/$identification/$email/$idSysRequest/$firstName/$lastName/${true}/${idGlobalRequest}/{$user}"
         )
     }
 
@@ -521,6 +517,15 @@ class SmartViewModel @Inject constructor(
             is OnOnFidoVerifiedChanged -> isOnFidoVerified = event.isOnFidoVerified
             is OnCallSaveAutomatedSmartAccount -> onCallMutationSaveSmartAccount(event.accountSmartData)
             is OverridePreviousAction -> overridePreviousAction(event.action)
+            is NavigateToEvicertia -> {
+                val signDocumentStep =
+                    if (SmartOnFidoOrFirmStatus.FIRMED.status.lowercase() == SmartOnFidoOrFirmStatus.FIRMED.status.lowercase()) {
+                        VALIDATE_IDENTITY.value
+                    } else {
+                        GENERATE_DOCUMENT_STEP.value
+                    }
+                onNavigateToSignDocumentScreen(signDocumentStep)
+            }
         }
     }
 
@@ -564,6 +569,8 @@ class SmartViewModel @Inject constructor(
         object OnCallMutationInitialRequest : UIEvent()
 
         data class OverridePreviousAction(val action: (() -> Unit)?) : UIEvent()
+
+        object NavigateToEvicertia : UIEvent()
     }
 
     companion object {

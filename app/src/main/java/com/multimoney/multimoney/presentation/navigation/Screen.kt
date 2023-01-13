@@ -119,6 +119,8 @@ const val CRYPTO_ASSET = "asset"
 const val DESCRIPTION_CURRENCY = "description_currency"
 const val CURRENT_CRYPTO_PRICE = "current_crypto_price"
 const val URL_IMAGE = "url_image"
+const val SMART_ACCOUNTS_FOR_BUY_CRYPTO = "smart_accounts_for_buy_crypto"
+const val CURRENCY_NAME = "currency_name"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"

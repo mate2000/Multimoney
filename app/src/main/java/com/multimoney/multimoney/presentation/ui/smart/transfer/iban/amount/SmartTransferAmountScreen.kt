@@ -27,7 +27,7 @@ import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.LoadingMultiMoney
-import com.multimoney.multimoney.presentation.uielement.SmartAmountBody
+import com.multimoney.multimoney.presentation.ui.smart.common.editamount.SmartAmountBody
 import com.multimoney.multimoney.presentation.uielement.SmartPaymentBottomSheet
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -104,7 +104,7 @@ fun SmartTransferAmountContent(viewModel: SmartTransferAmountViewModel = hiltVie
             originAccountSubtitle = stringResource(
                 id = viewModel.fromSmartLabel,
                 getMaskedAccountIban(
-                    viewModel.originSmartAccount?.ibanAccountNumber ?: "",
+                    viewModel.smartAccount?.ibanAccountNumber ?: "",
                     stringResource(id = R.string.payment_account_masked_text)
                 )
             ),
@@ -144,10 +144,10 @@ private fun SmartTransferBottomSheet(viewModel: SmartTransferAmountViewModel) {
         fromIcon = R.drawable.ic_multimoney_smart,
         fromTitle = stringResource(
             R.string.smart_payment_amount_bottom_sheet_my_smart_account,
-            viewModel.originCurrency?.symbol ?: ""
+            viewModel.smartCurrency?.symbol ?: ""
         ),
         fromSubtitle = getMaskedAccountIban(
-            viewModel.originSmartAccount?.ibanAccountNumber ?: "",
+            viewModel.smartAccount?.ibanAccountNumber ?: "",
             stringResource(R.string.payment_account_masked_text)
         ),
         toLabel = stringResource(R.string.smart_payment_sheet_to_account),

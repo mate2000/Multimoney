@@ -44,7 +44,11 @@ fun SmartTransferSuccessScreen(
                 viewModel.baseUIState.currency
             ),
             amount = viewModel.getFormattedAmount(),
-            exchangedAmount = viewModel.baseUIState.convertedAmountLabel,
+            exchangedAmount = if (viewModel.shouldDisplayExchange) {
+                viewModel.baseUIState.convertedAmountLabel
+            } else {
+                null
+            },
             fromToText = stringResource(R.string.smart_payment_to_account),
             buttonText = stringResource(R.string.smart_payment_make_another_payment),
             onButtonClick = { viewModel.onBaseUIEvent(OnNavigateBack) }

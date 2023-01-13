@@ -15,6 +15,7 @@ import com.multimoney.multimoney.presentation.ui.home.profile.ProfileScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.help.HelpScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.help.termsandconditions.TermsAndConditionsScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.help.termsandconditions.detail.TermsAndConditionsDetailsScreen
+import com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard.EditCardScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.PersonalInfoScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.email.ChangeEmailScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.phone.ChangePhoneScreen
@@ -22,6 +23,12 @@ import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.valid
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.verifyidentity.VerifyIdentityScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.settings.SettingsScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.settings.changepassword.ChangePasswordScreen
+
+const val ID_CARD = "id_card"
+const val CARD_DESCRIPTION = "card_description"
+const val CARD_MASKED = "card_masked"
+const val CARD_VALID_DATE = "card_valid_date"
+const val CARD_DEFAULT = "card_default"
 
 fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
     navigation(
@@ -330,6 +337,27 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
                 },
                 onNavigate = {
                     navController.navigate(it.route)
+                }
+            )
+        }
+
+        composable(
+            route =  Screen.ProfileMyCardsEditCardScreen.route,
+            arguments = listOf(
+                /*navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                }*/
+            )
+        ) {
+            EditCardScreen(
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
                 }
             )
         }

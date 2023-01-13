@@ -1346,4 +1346,16 @@
     <string name="process_forgot_password_alert_failure_description" translatable="false">Lo sentimos, volvé a intentar más \ntarde</string>
     <string name="process_forgot_password_alert_failure_description_gt" translatable="false">Lo sentimos, vuelve a intentar más tarde</string>
     <string name="process_forgot_password_alert_failure_button_try_again" translatable="false">Intentar nuevamente</string>
+
+    <!-- Profile -> My Cards -> Edit Card -->
+    <string name="profile_my_cards_edit_card_title" translatable="false">Editar tarjeta</string>
+    <string name="profile_my_cards_edit_card_nickname_label" translatable="false">Apodo de la tarjeta</string>
+    <string name="profile_my_cards_edit_card_field_required" translatable="false">El campo no puede estar vacío</string>
+    <string name="profile_my_cards_edit_card_valid_until_label" translatable="false">Válida hasta</string>
+    <string name="profile_my_cards_edit_card_valid_until_placeholder" translatable="false">00 | 00</string>
+    <string name="profile_my_cards_edit_card_cvv_label" translatable="false">CVV</string>
+    <string name="profile_my_cards_edit_card_cvv_length_error" translatable="false">Debe ser un número de 3 dígitos</string>
+    <string name="profile_my_cards_edit_card_cvv_dialog_title" translatable="false">Código CVV</string>
+    <string name="profile_my_cards_edit_card_cvv_dialog_description" translatable="false">Es el número de 3 dígitos ubicado en el dorso de tu tarjeta</string>
+    <string name="profile_my_cards_edit_card_save_changes_label" translatable="false">Guardar cambios</string>
 </resources>

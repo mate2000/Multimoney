@@ -55,6 +55,10 @@ class ProfileViewModel @Inject constructor(
         navigateTo("${Screen.ProfilePersonalInfoScreen.baseRoute}/${uiState.idClient}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
     }
 
+    private fun navigateToEditCardScreen() {
+        navigateTo(Screen.ProfileMyCardsEditCardScreen.baseRoute)
+    }
+
     private fun navigateToSettingsScreen() {
         navigateTo("${Screen.ProfileSettingsScreen.baseRoute}/${uiState.idBrand}/${uiState.pkUser}/${uiState.userName}")
     }
@@ -110,7 +114,8 @@ class ProfileViewModel @Inject constructor(
             is UIEvent.OnGetProfileInfo -> getProfileInfo()
             is UIEvent.OnUpdateProfileClick -> navigateToPersonalInfoScreen()
             is UIEvent.OnMyAccountsClick -> Timber.d("navigate to my account screen")
-            is UIEvent.OnMyCardsClick -> Timber.d("navigate to my cards screen")
+            //is UIEvent.OnMyCardsClick -> Timber.d("navigate to my cards screen")
+            is UIEvent.OnMyCardsClick -> navigateToEditCardScreen()
             is UIEvent.OnSettingsClick -> navigateToSettingsScreen()
             is UIEvent.OnHelpClick -> navigateToHelpAndInformation()
             is UIEvent.OnInviteFriendsClick -> Timber.d("navigate to invite friends screen")

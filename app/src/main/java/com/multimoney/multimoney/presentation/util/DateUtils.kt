@@ -135,6 +135,14 @@ fun getCurrentDateMinusYears(years: Long): LocalDate {
     return today.minusYears(years)
 }
 
+fun getDateTimeFormatterPattern(pattern: String): DateTimeFormatter {
+    return DateTimeFormatter.ofPattern(pattern)
+}
+
+fun getLocalDateFromParse(date: String, formatter: DateTimeFormatter): LocalDate {
+    return LocalDate.parse(date, formatter)
+}
+
 fun parseApiDateToCardDate(date: String?): String {
     return if (date.isNullOrEmpty().not()) {
         val dateFormatted = date?.let { API_DATE_FORMAT.parse(it) }

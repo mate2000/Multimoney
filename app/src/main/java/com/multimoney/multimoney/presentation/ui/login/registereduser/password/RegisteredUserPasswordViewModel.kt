@@ -14,6 +14,7 @@ import com.amplifyframework.auth.options.AuthSignUpOptions
 import com.amplifyframework.core.Amplify
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
+import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
@@ -21,15 +22,9 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.Screen.SignInScreen
-import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
-import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
-import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
-import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
-import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
-import com.multimoney.multimoney.presentation.navigation.navgraph.STATUS
+import com.multimoney.multimoney.presentation.navigation.USER_DATA
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnCallCognitoSignUp
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnCallPasswordSave
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnCloseClick
@@ -52,9 +47,9 @@ import com.multimoney.multimoney.presentation.util.passwordHasMinimumCharacters
 import com.multimoney.multimoney.presentation.util.passwordHasSpecialCharacterValidation
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class RegisteredUserPasswordViewModel @Inject constructor(
@@ -76,24 +71,12 @@ class RegisteredUserPasswordViewModel @Inject constructor(
     private var biometricDialogSuccessDescription = ""
     private var biometricDialogFailureDescription = ""
     private var isBiometricAvailable = false
-    var email: String = ""
-    private var pkUser: Long = 0
-    private var identification: String = ""
-    private var status: String = ""
     private var idBrand: Int = 0
-    var firstName: String = ""
-    var lastName: String = ""
-    private var phone: String = ""
+    var userData: UserData? = null
 
     init {
-        email = savedStateHandle[EMAIL] ?: ""
-        pkUser = savedStateHandle[PK_USER] ?: 0
-        identification = savedStateHandle[IDENTIFICATION] ?: ""
-        status = savedStateHandle[STATUS] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
-        firstName = savedStateHandle[FIRST_NAME] ?: ""
-        lastName = savedStateHandle[LAST_NAME] ?: ""
-        phone = savedStateHandle[PHONE_NUMBER] ?: ""
+        userData = savedStateHandle[USER_DATA]
     }
 
     private fun onInitializeDialogTexts(
@@ -193,24 +176,24 @@ class RegisteredUserPasswordViewModel @Inject constructor(
         )
     }
 
-    private fun callQuerySavePassword(pkUser: String, user: String, idBrant: Int) = executeUseCase {
+    private fun callQuerySavePassword() = executeUseCase {
         queryValidationSecurityUseCase.invoke(
-            pkUser = pkUser,
+            pkUser = userData?.pkUser ?: "",
             password = uiState.password,
-            user = user,
-            idBrand = idBrant
+            user = userData?.email ?: "",
+            idBrand = idBrand
         ).collectLatest { result ->
             result.onSuccess {
                 onUIEvent(
                     OnCallCognitoSignUp(
-                        email = email,
-                        firstName = firstName,
-                        secondName = "",
-                        lastName = lastName,
-                        phone = phone,
-                        identification = identification,
-                        pkUser = pkUser,
-                        status = status,
+                        email = userData?.email ?: "",
+                        firstName = userData?.firstName ?: "",
+                        secondName = userData?.secondName ?: "",
+                        lastName = userData?.firstLastName ?: "",
+                        phone = "${userData?.countryCode} ${userData?.phoneNumber}",
+                        identification = userData?.identification ?: "",
+                        pkUser = userData?.pkUser ?: "0",
+                        status = userData?.userStatus ?: "",
                         idBrand = idBrand,
                         onFailureWithDialog = { dialog ->
                             uiState = uiState.copy(isLoading = false, openDialogCustom = dialog)
@@ -436,7 +419,7 @@ class RegisteredUserPasswordViewModel @Inject constructor(
                 uiEvent.onFailureWithDialog
             )
             is OnValidForm -> uiEvent.onContinueEnable(isFormValid())
-            is OnCallPasswordSave -> callQuerySavePassword(uiEvent.pkUser, uiEvent.user, uiEvent.idBrant)
+            is OnCallPasswordSave -> callQuerySavePassword()
             is OnFingerprintCheckedChanged -> onFingerprintCheckedChanged(uiEvent.value, uiEvent.showDialog)
             is OnShowBiometricPromptForEncryption -> onShowBiometricPromptForEncryption(
                 uiEvent.fragmentActivity,
@@ -469,11 +452,7 @@ class RegisteredUserPasswordViewModel @Inject constructor(
             val onFailureWithDialog: (DialogParameters) -> Unit
         ) : UIEvent()
 
-        data class OnCallPasswordSave(
-            val pkUser: String,
-            val user: String,
-            val idBrant: Int
-        ) : UIEvent()
+        object OnCallPasswordSave : UIEvent()
 
         data class OnValidForm(val onContinueEnable: (isEnable: Boolean) -> Unit) : UIEvent()
 

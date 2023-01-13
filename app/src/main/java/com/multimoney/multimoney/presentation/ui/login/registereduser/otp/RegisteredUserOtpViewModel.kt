@@ -254,12 +254,12 @@ class RegisteredUserOtpViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess {
                     popAndNavigateTo(
-                        route = Screen.RegisteredUserPassword.route.plus(
+                        route = Screen.RegisteredUserPassword.baseRoute.plus(
                             getNavParam(USER_DATA, encodeData(userData)).plus(
                                 getNavParam(ID_BRAND, idBrand)
                             )
                         ),
-                        popTo = Screen.SignUpScreen.baseRoute
+                        popTo = Screen.RegisteredUserOtpScreen.route
                     )
                 }.onMessage {
                     uiState =

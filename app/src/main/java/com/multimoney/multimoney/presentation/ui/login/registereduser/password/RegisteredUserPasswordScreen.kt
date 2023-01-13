@@ -35,6 +35,7 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.BaseEvent.OnOpenBiometricDialog
+import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnCallPasswordSave
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnConfirmPasswordValueChange
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnFingerprintCheckedChanged
@@ -84,8 +85,8 @@ fun RegisteredUserPasswordScreen(
                 is OnOpenBiometricDialog -> viewModel.onUIEvent(
                     OnShowBiometricPromptForEncryption(
                         fragmentActivity = fragmentActivity,
-                        userEmail = viewModel.email,
-                        userName = "${viewModel.firstName} ${viewModel.lastName}"
+                        userEmail = viewModel.userData?.email ?: "",
+                        userName = "${viewModel.userData?.firstName} ${viewModel.userData?.firstLastName}"
                     )
                 )
             }
@@ -106,11 +107,15 @@ fun RegisteredUserPasswordScreen(
         viewModel.uiState.oneLowercaseState,
         viewModel.uiState.oneNumberState,
         viewModel.uiState.oneCharacterState,
+        viewModel.biometricHelper.isBiometricAvailable(context),
         viewModel.uiState.isFingerprintChecked,
         onFingerprintCheckedChanged = { value, showDialog ->
             viewModel.onUIEvent(OnFingerprintCheckedChanged(value, showDialog))
         },
-        viewModel.uiState.isContinueEnabled
+        viewModel.uiState.isContinueEnabled,
+        onContinueClick = {
+            viewModel.onUIEvent(OnCallPasswordSave)
+        }
     )
 
     LoadingIndicator(viewModel.uiState.isLoading)
@@ -149,9 +154,11 @@ fun RegisteredUserPasswordContent(
     oneLowercaseState: Boolean? = null,
     oneNumberState: Boolean? = null,
     oneCharacterState: Boolean? = null,
+    isBiometricAvailable: Boolean = false,
     isFingerprintChecked: Boolean = false,
     onFingerprintCheckedChanged: (Boolean, Boolean) -> Unit = { _, _ -> },
-    isContinueEnabled: Boolean = false
+    isContinueEnabled: Boolean = false,
+    onContinueClick: () -> Unit = {}
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -254,19 +261,21 @@ fun RegisteredUserPasswordContent(
                         state = oneCharacterState
                     )
                 }
-                CustomCheckBox(
-                    checked = isFingerprintChecked,
-                    onCheckedChange = {
-                        onFingerprintCheckedChanged(it, it)
-                    },
-                    text = stringResource(id = string.sign_in_activate_fingerprint),
-                    modifier = Modifier.padding(top = 16.dp)
-                )
+                if (isBiometricAvailable) {
+                    CustomCheckBox(
+                        checked = isFingerprintChecked,
+                        onCheckedChange = {
+                            onFingerprintCheckedChanged(it, it)
+                        },
+                        text = stringResource(id = string.sign_in_activate_fingerprint),
+                        modifier = Modifier.padding(top = 16.dp)
+                    )
+                }
             }
         }
 
         CustomButton(
-            onClick = { },
+            onClick = onContinueClick,
             text = stringResource(id = string.button_continue),
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp).fillMaxWidth()
                 .height(48.dp),

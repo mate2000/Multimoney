@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -14,7 +13,14 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.*
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CARD
+import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_MASKED
+import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_EXPIRATION_MONTH
+import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_EXPIRATION_YEAR
+import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_DEFAULT
+import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_DESCRIPTION
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard.EditCardViewModel.UIEvent.OnNicknameValueChange
 import com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard.EditCardViewModel.UIEvent.OnCvvValueChange
@@ -23,12 +29,8 @@ import com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard.E
 import com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard.EditCardViewModel.UIEvent.OnSaveChangesClick
 import com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard.EditCardViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard.EditCardViewModel.UIEvent.OnDisclaimerClick
-import com.multimoney.multimoney.presentation.util.getDateTimeFormatterPattern
-import com.multimoney.multimoney.presentation.util.getLocalDateFromParse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -44,29 +46,22 @@ class EditCardViewModel @Inject constructor(
     // Stateless
     private var idCard: Long? = 0
     private var identification: String? = ""
-    private var cardDescription: String? = ""
     var cardMasked: String? = ""
-    var cardValidDate: String? = ""
+    var cardExpirationMonth: String? = ""
+    var cardExpirationYear: String? = ""
     private var cardDefault: Boolean? = false
     private var user: String? = ""
     private var idBrand: Int? = null
-    private var cardValidDateFormatter: DateTimeFormatter? = null
-    private var cardValidLocalDate: LocalDate? = null
 
     init {
         idCard = savedStateHandle[ID_CARD]
         identification = savedStateHandle[IDENTIFICATION]
         cardMasked = savedStateHandle[CARD_MASKED]
+        cardExpirationMonth = savedStateHandle[CARD_EXPIRATION_MONTH]
+        cardExpirationYear = savedStateHandle[CARD_EXPIRATION_YEAR]
         cardDefault = savedStateHandle[CARD_DEFAULT]
-        user = savedStateHandle[EMAIL]
+        user = savedStateHandle[USER]
         idBrand = savedStateHandle[ID_BRAND]
-        cardValidDateFormatter = getDateTimeFormatterPattern(BACKEND_DATE_FORMAT)
-        cardValidLocalDate =
-            //(cardValidDateFormatter)?.let { getLocalDateFromParse(savedStateHandle[CARD_VALID_DATE] ?: "", it) }
-            (cardValidDateFormatter)?.let { getLocalDateFromParse("2018-05-10" ?: "", it) }
-        cardValidDate = cardValidLocalDate?.format(getDateTimeFormatterPattern(DATE_MONTH_FORMAT)).orEmpty()
-            .plus(VISUAL_DATE_SYMBOL)
-            .plus(cardValidLocalDate?.format(getDateTimeFormatterPattern(DATE_YEAR_FORMAT)).orEmpty())
         uiState = uiState.copy(
             nickname = savedStateHandle[CARD_DESCRIPTION] ?: ""
         )
@@ -110,27 +105,29 @@ class EditCardViewModel @Inject constructor(
         )
     }
 
-    private fun onSaveChangesClick(focusManager: FocusManager) {
+    private fun onSaveChangesClick(
+        focusManager: FocusManager,
+        onEditCardShowToastBaseEvent: () -> Unit
+    ) {
         focusManager.clearFocus()
-        onCallMutationUpdateCardVD()
-
+        onCallMutationUpdateCardVD(onEditCardShowToastBaseEvent)
     }
 
     private fun navigateBack(isRestart: Boolean) =
         navigateBack(
             isRestart = isRestart,
-            popTo = Screen.ProfileScreen.route
+            popTo = Screen.ProfileCardListScreen.route
         )
 
-    private fun onCallMutationUpdateCardVD() =
+    private fun onCallMutationUpdateCardVD(onEditCardShowToastBaseEvent: () -> Unit) =
         executeUseCase {
             mutationUpdateCardVDUseCase.invoke(
                 idCard = idCard ?: 0,
                 identification = identification ?: "",
                 cardDescription = uiState.nickname,
                 cardMasked = cardMasked ?: "",
-                expirationMonth = "",
-                expirationYear = "",
+                expirationMonth = cardExpirationMonth.orEmpty(),
+                expirationYear = cardExpirationYear.orEmpty(),
                 verificationValue = uiState.cvv,
                 default = cardDefault ?: false,
                 user = user ?: "",
@@ -138,7 +135,10 @@ class EditCardViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess {
                     uiState = uiState.copy(isLoading = false)
-                    navigateBack(true)
+                    if (it?.isApproved == true) {
+                        navigateBack(true)
+                        onEditCardShowToastBaseEvent()
+                    }
                 }.onFailure {
                     uiState = uiState.copy(
                         isLoading = false,
@@ -172,7 +172,10 @@ class EditCardViewModel @Inject constructor(
             is OnNicknameValueChange -> onNicknameValueChange(event.nickname)
             is OnCvvValueChange -> onCvvValueChange(event.cvv)
             is OnBackClick -> navigateBack(false)
-            is OnSaveChangesClick -> onSaveChangesClick(event.focusManager)
+            is OnSaveChangesClick -> onSaveChangesClick(
+                event.focusManager,
+                event.onEditCardShowToastBaseEvent
+            )
             is OnDisclaimerClick -> onCvvCodeDialog()
         }
     }
@@ -188,16 +191,16 @@ class EditCardViewModel @Inject constructor(
             UIEvent()
 
         data class OnBackClick(val focusManager: FocusManager) : UIEvent()
-        data class OnSaveChangesClick(val focusManager: FocusManager) : UIEvent()
+        data class OnSaveChangesClick(
+            val focusManager: FocusManager,
+            val onEditCardShowToastBaseEvent: () -> Unit
+        ) : UIEvent()
+
         data class OnCloseClick(val focusManager: FocusManager) : UIEvent()
         data class OnDisclaimerClick(val focusManager: FocusManager) : UIEvent()
     }
 
     companion object {
-        const val DATE_FORMAT = "dd-MM-yyyy"
-        const val BACKEND_DATE_FORMAT = "yyyy-MM-dd"
-        const val DATE_MONTH_FORMAT = "MM"
-        const val DATE_YEAR_FORMAT = "yy"
         const val VISUAL_DATE_SYMBOL = " | "
         const val CVV_MAX_LENGTH = 3
     }

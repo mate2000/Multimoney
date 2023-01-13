@@ -28,19 +28,31 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.SemanticInformative400
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel
+import com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard.EditCardViewModel.Companion.VISUAL_DATE_SYMBOL
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard.EditCardViewModel.UIEvent.OnNicknameValueChange
 import com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard.EditCardViewModel.UIEvent.OnCvvValueChange
+import com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard.EditCardViewModel.UIEvent.OnSaveChangesClick
 import com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard.EditCardViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard.EditCardViewModel.UIEvent.OnDisclaimerClick
-import com.multimoney.multimoney.presentation.uielement.*
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnEditCardShowToast
+import com.multimoney.multimoney.presentation.uielement.TopNavBar
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
+import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.uielement.CustomButton
+import com.multimoney.multimoney.presentation.uielement.CustomButtonType
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 
 @Composable
 fun EditCardScreen(
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
-    viewModel: EditCardViewModel = hiltViewModel()
+    viewModel: EditCardViewModel = hiltViewModel(),
+    sharedViewModel: ProfileCardListViewModel = hiltViewModel()
 ) {
     // Properties
 
@@ -64,7 +76,12 @@ fun EditCardScreen(
             TopBar { viewModel.onUIEvent(OnBackClick(focusManager)) }
             Column(
                 modifier = Modifier
-                    .padding(16.dp),
+                    .padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        top = 24.dp,
+                        bottom = 16.dp
+                    ),
             ) {
                 Title(title = R.string.profile_my_cards_edit_card_title)
                 CardBox(
@@ -79,7 +96,8 @@ fun EditCardScreen(
                 )
                 Row {
                     CardValidDate(
-                        value = viewModel.cardValidDate.orEmpty(),
+                        value = viewModel.cardExpirationMonth.orEmpty().plus(VISUAL_DATE_SYMBOL)
+                            .plus(viewModel.cardExpirationYear.orEmpty()),
                         modifier = Modifier.weight(1f)
                     )
                     CardCVV(
@@ -94,6 +112,10 @@ fun EditCardScreen(
             }
         }
         SaveChanges(enable = viewModel.uiState.isSaveChangesEnabled) {
+            viewModel.onUIEvent(OnSaveChangesClick(
+                focusManager = focusManager,
+                onEditCardShowToastBaseEvent = { sharedViewModel.onUIEvent(OnEditCardShowToast) }
+            ))
         }
     }
 
@@ -138,7 +160,7 @@ private fun CardBox(
 ) {
     CustomInfoButton(
         modifier = Modifier
-            .padding(top = 24.dp)
+            .padding(top = 32.dp)
             .fillMaxWidth(),
         imageModifier = Modifier.size(48.dp),
         startIcon = R.drawable.ic_visa_card_item,
@@ -214,7 +236,8 @@ private fun CardCVV(
         labelText = stringResource(id = R.string.profile_my_cards_edit_card_cvv_label),
         placeHolder = value,
         trailingIconActionEnabled = true,
-        trailingIcon = R.drawable.ic_information,
+        trailingIcon = R.drawable.ic_informative_400,
+        trailingIconColor = SemanticInformative400,
         trailingIconAction = onDisclaimerClick,
         isRequiredMessage = stringResource(id = R.string.profile_my_cards_edit_card_field_required),
         keyboardOptions = KeyboardOptions(

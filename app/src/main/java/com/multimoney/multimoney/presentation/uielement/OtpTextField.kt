@@ -216,7 +216,7 @@ fun OtpTextField(
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.Center
         ) {
             (0 until digits).map { index ->
                 OutlinedTextField(

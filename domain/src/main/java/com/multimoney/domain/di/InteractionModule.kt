@@ -134,6 +134,8 @@ import com.multimoney.domain.interaction.crypto.GetCurrencyNewsUseCase
 import com.multimoney.domain.interaction.crypto.GetCurrencyNewsUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCase
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCaseImpl
+import com.multimoney.domain.interaction.mmvisa.MutationDeleteTokenDeviceNVUseCase
+import com.multimoney.domain.interaction.mmvisa.MutationDeleteTokenDeviceNVUseCaseImpl
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCaseImpl
 import com.multimoney.domain.interaction.profile.QueryCountryContactUseCase
@@ -631,6 +633,11 @@ class InteractionModule {
     @Singleton
     fun provideQueryCardIssuanceUseCase(multimoneyVisaRepository: MultimoneyVisaRepository): QueryCardIssuanceNVUseCase =
         QueryCardIssuanceNVUseCaseImpl(multimoneyVisaRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationDeleteTokenDeviceUseCase(multimoneyVisaRepository: MultimoneyVisaRepository): MutationDeleteTokenDeviceNVUseCase =
+        MutationDeleteTokenDeviceNVUseCaseImpl(multimoneyVisaRepository)
 
     @Provides
     @Singleton

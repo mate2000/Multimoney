@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.home
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.pager.ExperimentalPagerApi
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.extension.findActivity
@@ -37,6 +39,7 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.On
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCloseCardIssuanceError
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnDeleteAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnEditAutomaticPayment
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnHideUnlinkToast
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetHomeState
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.myproducts.MyProductsBottomSheetScreen
@@ -48,7 +51,7 @@ import com.multimoney.multimoney.presentation.util.MMCountDownTimer.OnCountDownT
 import com.multimoney.multimoney.presentation.util.NavEvent
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalPagerApi::class)
 @Composable
 fun HomeScreen(
     isRestart: Boolean = true,
@@ -78,6 +81,7 @@ fun HomeScreen(
         rememberModalBottomSheetState(initialValue = Hidden, skipHalfExpanded = true)
     val myProductsModalBottomSheetState = rememberModalBottomSheetState(Hidden, skipHalfExpanded = true)
     val activity = LocalContext.current.findActivity()
+    val unlinkedToastText = stringResource(id = string.card_preferences_unlinked_card_toast)
 
     LaunchedEffect(true) {
         viewModel.executeNavigation(
@@ -116,6 +120,11 @@ fun HomeScreen(
                 }
             }
         }
+    }
+
+    if (viewModel.uiState.toastIsVisible) {
+        Toast.makeText(activity, unlinkedToastText, Toast.LENGTH_LONG).show()
+        viewModel.onUIEvent(OnHideUnlinkToast)
     }
 
     Scaffold(bottomBar = {

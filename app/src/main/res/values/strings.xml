@@ -43,6 +43,7 @@
     <string name="not_applicable" translatable="false">NA</string>
     <string name="common_leave" translatable="false">Abandonar</string>
     <string name="common_try_again" translatable="false">Volver a intentar</string>
+    <string name="common_return" translatable="false">Volver</string>
     <string name="info" translatable="false">Información</string>
     <string name="common_options" translatable="false">Opciones</string>
     <string name="common_remove" translatable="false">Eliminar</string>
@@ -111,6 +112,8 @@
     <string name="sign_in_verify_otp_blocked_title" translatable="false">Usuario bloqueado</string>
     <string name="sign_in_verify_otp_blocked_subtitle_gt" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte</string>
     <string name="sign_in_verify_otp_blocked_subtitle" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no podés realizar el registro ahora. Inténtalo más tarde o contacta a soporte:</string>
+    <string name="sign_in_dialog_user_exists_title" translatable="false">¿Eres usuario MultiMoney?</string>
+    <string name="sign_in_dialog_user_exists_description" translatable="false">Si eres cliente MultiMoney o no tienes una cuenta registrada, presioná continuar y seguí unos cuantos pasos para poder ingresar a tu nueva App MultiMoney</string>
 
 
     <!-- Sign Up General-->
@@ -123,7 +126,7 @@
 
 
     <!-- Sign Up Email -->
-    <string name="sign_up_email_header" translatable="false">Ingresá tu correo electrónico</string>
+    <string name="sign_up_email_header" translatable="false">Ingresá tu correo</string>
     <string name="sign_up_email_title" translatable="false">¡Nos emociona \nque estés acá!</string>
     <string name="sign_up_email_required" translatable="false">Correo electrónico requerido</string>
     <string name="sign_up_email_placeholder" translatable="false">nombre@email.com</string>
@@ -170,6 +173,7 @@
     <string name="sign_up_personal_data_nationality" translatable="false">¿De dónde es tu identificación?</string>
     <string name="sign_up_personal_data_nationality_placeholder" translatable="false">Selecciona tu país</string>
     <string name="sign_up_personal_data_document_label" translatable="false">¿Qué tipo de documento de identidad tienes?</string>
+    <string name="sign_up_personal_data_document_label_cr" translatable="false">¿Qué tipo de documento de identidad tenés?</string>
     <string name="sign_up_personal_data_document_hint" translatable="false">Selecciona tu documento </string>
     <string name="sign_up_personal_data_document_number_label" translatable="false">Número de identificación</string>
     <string name="sign_up_personal_data_names" translatable="false">Nombre(s)</string>
@@ -1332,6 +1336,7 @@
     <string name="card_preferences_unlinked_card_dialog_description" translatable="false">¿Estás seguro que deseás desvincular tu tarjeta?</string>
     <string name="card_preferences_unlinked_card_dialog_positive_button" translatable="false">Desvincular</string>
     <string name="card_preferences_unlinked_card_dialog_negative_button" translatable="false">Cancelar</string>
+    <string name="card_preferences_unlinked_card_toast" translatable="false">Tu tarjeta ha sido desvinculada</string>
 
     <!-- Request Forgot Password -->
     <string name="request_forgot_password_title" translatable="false">¡Vamos a recuperarla!</string>

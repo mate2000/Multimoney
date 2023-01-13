@@ -1,0 +1,16 @@
+mutation DeleteTokenDeviceNV($identification: String!,$user: String!, $idBrand: Int! $idClient: Int!, $idLoanClient: Int!,$idDevice: String!){
+  deleteTokenDeviceNV(
+    deleteTokenDeviceNVInput: {
+      identification: $identification
+      clientId: $idClient
+      idPrestamo: $idLoanClient
+      idDispositivo: $idDevice
+      user: $user
+      idBrand: $idBrand
+    }
+  ) {
+    rc
+    msg
+    processedAt
+  }
+}

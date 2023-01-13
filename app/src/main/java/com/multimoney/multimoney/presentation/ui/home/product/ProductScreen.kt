@@ -388,8 +388,7 @@ fun ProductContent(
         HorizontalPager(
             count = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
             modifier = Modifier
-                .padding(top = 8.dp)
-                .weight(1f),
+                .padding(top = 8.dp),
             state = state
         ) { page ->
             when (viewModel.uiState.productPageList?.get(page)?.product) {

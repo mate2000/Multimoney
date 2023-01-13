@@ -325,6 +325,9 @@ fun String.addTextStyleToTextPortion(textToStyle: String, style: TextStyle): Ann
     }
 }
 
+fun String.capitalizedAllWords(): String =
+    splitByWhiteSpace().joinToString(WHITE_SPACE_SEPARATOR.toString()) { it.capitalized() }
+
 private const val HEX_FORMAT = "#%02x%02x%02x"
 private const val SPECIAL_CHARACTER_REGEX = "[!\"#\$%&'()*+,-./:;\\\\<=>?@^_`{|}~]"
 private const val NUMBER_REGEX = "[0-9]"

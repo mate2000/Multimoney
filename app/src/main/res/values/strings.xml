@@ -126,7 +126,7 @@
 
 
     <!-- Sign Up Email -->
-    <string name="sign_up_email_header" translatable="false">Ingresá tu correo electrónico</string>
+    <string name="sign_up_email_header" translatable="false">Ingresá tu correo</string>
     <string name="sign_up_email_title" translatable="false">¡Nos emociona \nque estés acá!</string>
     <string name="sign_up_email_required" translatable="false">Correo electrónico requerido</string>
     <string name="sign_up_email_placeholder" translatable="false">nombre@email.com</string>
@@ -173,6 +173,7 @@
     <string name="sign_up_personal_data_nationality" translatable="false">¿De dónde es tu identificación?</string>
     <string name="sign_up_personal_data_nationality_placeholder" translatable="false">Selecciona tu país</string>
     <string name="sign_up_personal_data_document_label" translatable="false">¿Qué tipo de documento de identidad tienes?</string>
+    <string name="sign_up_personal_data_document_label_cr" translatable="false">¿Qué tipo de documento de identidad tenés?</string>
     <string name="sign_up_personal_data_document_hint" translatable="false">Selecciona tu documento </string>
     <string name="sign_up_personal_data_document_number_label" translatable="false">Número de identificación</string>
     <string name="sign_up_personal_data_names" translatable="false">Nombre(s)</string>

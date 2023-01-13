@@ -30,7 +30,6 @@ import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingScreen
 import com.multimoney.multimoney.presentation.ui.splash.SplashScreen
 
 const val SIGN_UP_STEP = "sign_up_step"
-const val STATUS = "status"
 
 fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
     navigation(

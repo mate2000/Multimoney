@@ -329,6 +329,8 @@ fun String.addTextStyleToTextPortion(textToStyle: String, style: TextStyle): Ann
     }
 }
 
+fun CharSequence.replaceNumbersToZero() = replace(Regex(DIGITS_REGEX), ZERO_STRING)
+
 fun getCountryCodeByIdBrand(idBrand: Int): String {
     return when (idBrand) {
         Brand.ElSalvador.id -> PhoneCountryCode.EL_SALVADOR.code
@@ -346,3 +348,5 @@ private const val SPECIAL_CHARACTER_REGEX = "[!\"#\$%&'()*+,-./:;\\\\<=>?@^_`{|}
 private const val NUMBER_REGEX = "[0-9]"
 private const val DECIMAL_SEPARATOR = '.'
 private const val WHITE_SPACE_SEPARATOR = ' '
+private const val DIGITS_REGEX = "\\d"
+private const val ZERO_STRING = "0"

@@ -109,6 +109,7 @@ class VisaCardViewModel @Inject constructor(
     private var biometricPromptNegative = ""
     private var passwordAttempts = INIT_PASSWORD_ATTEMPTS
     private var isNavigateBackRefresh = false
+    private var isSignOut = false
 
     init {
         idBrand = savedStateHandle.get<Int>(ID_BRAND)?.toInt() ?: 0
@@ -298,6 +299,9 @@ class VisaCardViewModel @Inject constructor(
     }
 
     private fun onHidePasswordBottomSheet() {
+        if (isSignOut) {
+            signOut()
+        }
         uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(Hidden))
     }
 
@@ -308,6 +312,7 @@ class VisaCardViewModel @Inject constructor(
     private fun callCognitoSignIn() {
         uiState = uiState.copy(isLoading = true)
         Amplify.Auth.signOut({
+            isSignOut = true
             Amplify.Auth.signIn(email, password, { authSignInResult ->
                 if (authSignInResult.isSignInComplete) {
                     Amplify.Auth.fetchAuthSession({ authSessionSuccess ->
@@ -318,6 +323,7 @@ class VisaCardViewModel @Inject constructor(
                                     passwordAttempts = INIT_PASSWORD_ATTEMPTS
                                     dataStorePreferences.setAuthToken(session.userPoolTokens.value?.idToken ?: "")
                                     uiState = uiState.copy(isLoading = false, isCardTextVisible = true)
+                                    isSignOut = false
                                     onHidePasswordBottomSheet()
                                 }
                             }

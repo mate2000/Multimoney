@@ -43,6 +43,7 @@
     <string name="not_applicable" translatable="false">NA</string>
     <string name="common_leave" translatable="false">Abandonar</string>
     <string name="common_try_again" translatable="false">Volver a intentar</string>
+    <string name="common_return" translatable="false">Volver</string>
     <string name="info" translatable="false">Información</string>
     <string name="common_options" translatable="false">Opciones</string>
     <string name="common_remove" translatable="false">Eliminar</string>
@@ -111,6 +112,8 @@
     <string name="sign_in_verify_otp_blocked_title" translatable="false">Usuario bloqueado</string>
     <string name="sign_in_verify_otp_blocked_subtitle_gt" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte</string>
     <string name="sign_in_verify_otp_blocked_subtitle" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no podés realizar el registro ahora. Inténtalo más tarde o contacta a soporte:</string>
+    <string name="sign_in_dialog_user_exists_title" translatable="false">¿Eres usuario MultiMoney?</string>
+    <string name="sign_in_dialog_user_exists_description" translatable="false">Si eres cliente MultiMoney o no tienes una cuenta registrada, presioná continuar y seguí unos cuantos pasos para poder ingresar a tu nueva App MultiMoney</string>
 
 
     <!-- Sign Up General-->

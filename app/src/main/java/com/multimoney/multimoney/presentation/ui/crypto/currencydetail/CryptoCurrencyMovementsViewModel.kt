@@ -14,6 +14,7 @@ import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.CRYPTO_ASSET
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
@@ -36,9 +37,13 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
-    var user = ""
-    var idBrand = 0
-    var identification = ""
+    private var user = ""
+    private var idBrand = 0
+    private var identification = ""
+
+    // UIState
+    var uiState by mutableStateOf(UiState())
+        private set
 
     private fun onGetUserInfo() {
         user = savedStateHandle[USER] ?: ""
@@ -52,7 +57,7 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
             queryGetCurrencyHistoricalPricesUseCase(
                 idBrand = idBrand,
                 user = user,
-                market = uiState.cryptoItem?.asset.plus(USD_CURRENCY) ?: "",
+                market = uiState.cryptoItem?.asset.plus(USD_CURRENCY),
                 max_data_points = MAX_POINTS.toLong(),
                 pagination_limit = PAGING_LIMIT,
                 pagination_offset = PAGING_OFFSET,
@@ -61,7 +66,7 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess {
                     uiState = uiState.copy(
-                        historicalBalance = it?.cryptoHistoricalPrice?.items ?: listOf(),
+                        historicalBalance = it.cryptoHistoricalPrice.items,
                         isLoading = false
                     )
                 }
@@ -82,7 +87,7 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
                     market = uiState.cryptoItem?.asset.plus(USD_CURRENCY),
                     order_time_begin = getPreviousDate(uiState.startDate ?: 1),
                     order_time_end = getCurrentDateYMDPattern(),
-                    pagination_limit = 3
+                    pagination_limit = SINGLE_PAGE
                 )
             )
         }
@@ -106,14 +111,11 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
 
     private fun onNavigateToAllMovements(){
         popAndNavigateTo(
-            "${Screen.CryptoMovementsAllScreen.baseRoute}/${idBrand}/$identification/$user/${encodeData(uiState.cryptoItem)}",
+            "${Screen.CryptoMovementsAllScreen.baseRoute}/${idBrand}/$identification/$user?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}",
                     Screen.CryptoCurrencyMovementsScreen.route
         )
     }
 
-    // UIState
-    var uiState by mutableStateOf(UiState())
-        private set
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
@@ -146,8 +148,10 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
 
     companion object {
         const val USD_CURRENCY = "USD"
+        const val TODAY_TEXT = "Hoy"
         const val PAGING_LIMIT = 100
         const val PAGING_OFFSET = 0
         const val MAX_POINTS = 24
+        const val SINGLE_PAGE = 1
     }
 }

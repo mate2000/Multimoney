@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.multimoney.multimoney.presentation.navigation.CARD_STATUS
+import com.multimoney.multimoney.presentation.navigation.CRYPTO_ASSET
 import com.multimoney.multimoney.presentation.navigation.CRYPTO_ROUTE
 import com.multimoney.multimoney.presentation.navigation.CURRENT_CRYPTO_PRICE
 import com.multimoney.multimoney.presentation.navigation.GLOBAL_CRYPTO_BALANCE
@@ -50,8 +51,14 @@ fun NavGraphBuilder.cryptoNavGraph(
         ) {
             HomeWallet(
                 onPopBackStack = {
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        HOME_STATE,
+                        it.homeState
+                    )
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,
@@ -78,9 +85,13 @@ fun NavGraphBuilder.cryptoNavGraph(
         ) {
             CurrencyMovementsScreen(
                 onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
                         PREVIOUS_IS_RESTART,
                         it.isRestart
+                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        HOME_STATE,
+                        it.homeState
                     )
                     navController.popBackStack(
                         route = it.popTo,
@@ -124,9 +135,10 @@ fun NavGraphBuilder.cryptoNavGraph(
             route = Screen.CryptoMovementsAllScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
-                navArgument(ITEM_CRYPTO_CURRENCY) {
-                    type = CryptoCurrencyNavType()
-                }
+                navArgument(CRYPTO_ASSET) {
+                    defaultValue = ""
+                    type = NavType.StringType
+                },
             )
         ) {
             CryptoMovementsAllScreen(

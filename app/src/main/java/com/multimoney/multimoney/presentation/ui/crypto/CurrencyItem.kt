@@ -38,7 +38,7 @@ fun CurrencyItem(
     priceOfTheDay: Double,
     percentageInvestedCurrency: String,
     available: Double,
-    onClick: () -> Unit
+    onClick: () -> Unit = {}
 ) {
     Column(modifier = Modifier.clickable {
         onClick()

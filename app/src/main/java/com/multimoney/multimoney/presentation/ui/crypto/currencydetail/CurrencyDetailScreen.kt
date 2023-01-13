@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -29,29 +30,29 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberAsyncImagePainter
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.theme.LocalMultimoneyColors
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoCurrencyMovementItem
+import com.multimoney.multimoney.presentation.ui.crypto.currencydetail.CryptoCurrencyMovementsViewModel.Companion.TODAY_TEXT
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.DateFilterDWMYSection
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.MarketCurrencyDetailsGraphic
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.addTextStyleToTextPortion
 
 @Composable
 fun CurrencyMovementsScreen(
     viewModel: CryptoCurrencyMovementsViewModel = hiltViewModel(),
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {}
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
 ) {
     LaunchedEffect(true) {
-        viewModel.executeNavigation(
-            onPopBackStack = onPopBackStack,
-            onNavigate = onNavigate,
-            onPopAndNavigate = onPopAndNavigate
-        )
+        viewModel.executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
+
         viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnSetDateRange(FilterDateByDays.YESTERDAY.time))
         viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnGetUserInfo)
         viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnGetAssetHistory)
@@ -79,7 +80,7 @@ fun CurrencyDetailContent(
     uiState: CryptoCurrencyMovementsViewModel.UiState,
     backPressed: () -> Unit,
     onDateChanged: (Long) -> Unit,
-    viewAllClick : () -> Unit
+    viewAllClick: () -> Unit
 ) {
 
     val movements = uiState.cryptoMovements.collectAsLazyPagingItems()
@@ -88,7 +89,8 @@ fun CurrencyDetailContent(
     val graphicColor =
         if (uiState.cryptoItem?.investedBalanceCurrency?.contains("+") == true)
             MultimoneyTheme.colors.cryptoWalletGainsColor else MultimoneyTheme.colors.cryptoLossesColor
-
+    val gainOrLossColor = if (uiState.cryptoItem?.investedBalanceCurrency?.contains('-') == true) MultimoneyTheme.colors.cryptoLossesColor
+        else MultimoneyTheme.colors.cryptoGainsColor
     Scaffold(
         topBar = {
             TopNavBar(
@@ -129,16 +131,19 @@ fun CurrencyDetailContent(
                 Text(
                     text = "${uiState.cryptoItem?.available} ${uiState.cryptoItem?.asset}",
                     style = Typography.body2,
-                    color = WhiteTransparency60
+                    color = LocalMultimoneyColors.current.labelText
                 )
                 Text(
                     text = stringResource(
-                        id = R.string.currency_item_description,
+                        id = R.string.currency_detail_daily_invest,
                         uiState.cryptoItem?.investedBalanceCurrency ?: "",
                         uiState.cryptoItem?.percentageInvestedCurrency ?: ""
+                    ).addTextStyleToTextPortion(
+                        textToStyle = TODAY_TEXT,
+                        style = Typography.body2.copy(color = LocalMultimoneyColors.current.subTitleText)
                     ),
                     style = Typography.body2,
-                    color = MultimoneyTheme.colors.labelText
+                    color = gainOrLossColor
                 )
                 MarketCurrencyDetailsGraphic(
                     currencyHistory = uiState.historicalBalance,

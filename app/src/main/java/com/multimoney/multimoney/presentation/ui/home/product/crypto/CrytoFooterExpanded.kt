@@ -38,7 +38,7 @@ fun CryptoFooterExpanded(
     actionWallet: () -> Unit,
     noBalanceAction: () -> Unit,
     hasBalanceAction: () -> Unit,
-    currencyItemClick: (BalanceCryptoAccountItems) -> Unit,
+    currencyItemClick: (BalanceCryptoAccountItems) -> Unit = {},
     onShowAllClick: () -> Unit
 ) {
     if (userStatus?.infoCrypto?.status == CryptoAccountStatus.ACTIVE.status) {

@@ -11,6 +11,7 @@ import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCas
 import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.CRYPTO_ASSET
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
@@ -37,7 +38,7 @@ class CryptoMovementsAllViewModel  @Inject constructor(
 
     private fun setUserData() {
         uiState = uiState.copy(
-            cryptoItem = savedStateHandle[ITEM_CRYPTO_CURRENCY],
+            cryptoItem = savedStateHandle[CRYPTO_ASSET],
             user = savedStateHandle[USER],
             idBrand = savedStateHandle[ID_BRAND],
             identification = savedStateHandle[IDENTIFICATION]
@@ -50,7 +51,7 @@ class CryptoMovementsAllViewModel  @Inject constructor(
                 user = uiState.user ?: "",
                 idBrand = uiState.idBrand ?: 0,
                 identification = uiState.identification ?: "",
-                market = uiState.cryptoItem?.asset?.plus(USD_CURRENCY) ?: "",
+                market = uiState.cryptoItem?.plus(USD_CURRENCY) ?: "",
                 order_time_begin = getPreviousDate(FilterDate.LAST_365_DAYS),
                 order_time_end = getCurrentDateYMDPattern(),
                 pagination_limit = PAGE_SIZE
@@ -59,7 +60,7 @@ class CryptoMovementsAllViewModel  @Inject constructor(
     }
 
     data class UIState(
-        val cryptoItem: BalanceCryptoAccountItems? = null,
+        val cryptoItem: String? = null,
         val user: String? = null,
         val idBrand: Int? = null,
         val identification: String? = null,

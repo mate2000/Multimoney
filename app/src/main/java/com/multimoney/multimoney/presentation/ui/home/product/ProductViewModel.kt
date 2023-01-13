@@ -235,8 +235,8 @@ class ProductViewModel @Inject constructor(
             else -> {
                 navigateTo(
                     "${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
-                            "${uiState.userStatus?.infoUser?.firstName}/" +
-                            "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/$comingFromCrypto"
+                        "${uiState.userStatus?.infoUser?.firstName}/" +
+                        "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/$comingFromCrypto"
                 )
             }
         }
@@ -291,12 +291,12 @@ class ProductViewModel @Inject constructor(
             }/$identification/$userName/${balanceCredit?.getFirstSummary()?.paymentDate}/${Screen.HomeScreen.route}"
         } else {
             "${Screen.PaymentOptionsScreen.baseRoute}/${uiState.idBrand}/${balanceCredit?.getFirstCredit()?.creditNumber}/${
-            encodeData(configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true })
+                encodeData(configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true })
             }/${encodeData(configurationVersion?.configuration?.credit?.transferAccount)}/" +
-                "${balanceCredit?.getFirstSummary()?.minPayment}/${balanceCredit?.getFirstSummary()?.minPaymentLabel}/" +
-                "${balanceCredit?.getFirstSummary()?.currentBalance}/${balanceCredit?.getFirstSummary()?.currentBalanceLabel}/" +
-                "$identification/$email/$idClient/${infoCredit?.idLoanClient}/${balanceCredit?.getFirstSummary()?.idCurrency}/" +
-                "${balanceCredit?.getFirstSummary()?.paymentDate}"
+                    "${balanceCredit?.getFirstSummary()?.minPayment}/${balanceCredit?.getFirstSummary()?.minPaymentLabel}/" +
+                    "${balanceCredit?.getFirstSummary()?.currentBalance}/${balanceCredit?.getFirstSummary()?.currentBalanceLabel}/" +
+                    "$identification/$email/$idClient/${infoCredit?.idLoanClient}/${balanceCredit?.getFirstSummary()?.idCurrency}/" +
+                    "${balanceCredit?.getFirstSummary()?.paymentDate}"
         }
         navigateTo(route)
     }
@@ -360,18 +360,18 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToVisaActivateScreen() =
         navigateTo(
             "${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/${uiState.userStatus?.infoUser?.phone}/${
-            encodeData(
-                balanceCredit?.balanceCardInformation
-            )
+                encodeData(
+                    balanceCredit?.balanceCardInformation
+                )
             }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}/$idClient/${uiState.userStatus?.infoCredit?.idLoanClient ?: 0}"
         )
 
     private fun onNavigateToHomeMultimoneyVisa() =
         navigateTo(
             "${Screen.VisaCardScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/${uiState.userStatus?.infoUser?.phone}/${
-            encodeData(
-                balanceCredit?.balanceCardInformation
-            )
+                encodeData(
+                    balanceCredit?.balanceCardInformation
+                )
             }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}/$idClient/${uiState.userStatus?.infoCredit?.idLoanClient ?: 0}"
         )
 
@@ -547,9 +547,9 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToGtSvNonPreApproved() =
         navigateTo(
             "${Screen.NonPreApprovedScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
-                "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/${uiState.userStatus?.infoUser?.firstName}/" +
-                "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
-                "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0}"
+                    "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/${uiState.userStatus?.infoUser?.firstName}/" +
+                    "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
+                    "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0}"
         )
 
     fun getCreditBalanceLabel(balanceCredit: List<BalanceCredit?>?): String {
@@ -709,11 +709,11 @@ class ProductViewModel @Inject constructor(
         )
         navigateTo(
             route = "${Screen.SmartPaymentAccountScreenCR.baseRoute}/$email/${uiState.idBrand}/$identification/${Screen.HomeScreen.route}/$idClient/" +
-                "${infoCredit?.idLoanClient}/${encodeData(clientBankAccounts)}/${
-                encodeData(
-                    smartIds
-                )
-                }"
+                    "${infoCredit?.idLoanClient}/${encodeData(clientBankAccounts)}/${
+                        encodeData(
+                            smartIds
+                        )
+                    }"
         )
     }
 
@@ -765,12 +765,6 @@ class ProductViewModel @Inject constructor(
         navigateTo(
             "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${userName}/${uiState.idBrand}/${identification}" +
                     "/${encodeData(smartAccount)}/$idClient/${Screen.HomeScreen.route}"
-        )
-    }
-
-    private fun onNavigateToCryptoDetail(cryptoItem: BalanceCryptoAccountItems) {
-        navigateTo(
-            "${Screen.CryptoCurrencyMovementsScreen.baseRoute}/${uiState.idBrand}/$identification/$email/${encodeData(cryptoItem)}"
         )
     }
 
@@ -995,7 +989,6 @@ class ProductViewModel @Inject constructor(
             is OnCreateMultimoneyVisa -> onCreateMultimoneyVisa(uiEvent.onLoadingValueChange)
             is OnNoVoConfig -> onConfigNovoSdk()
             is OnGetSmartContent -> getSmartContent()
-            is UIEvent.OnNavigateToCryptoDetailScreen -> onNavigateToCryptoDetail(uiEvent.cryptoItem)
         }
     }
 
@@ -1024,6 +1017,7 @@ class ProductViewModel @Inject constructor(
             val account: Account?,
             val onLoadingValueChange: (isLoading: Boolean) -> Unit
         ) : UIEvent()
+
         data class OnNavigateToSendMoneyFlow(val account: Account?) : UIEvent()
         data class OnNavigateToSmartMovements(val accountToken: String) : UIEvent()
         object OnNavigateToCreditMovementsScreen : UIEvent()
@@ -1041,7 +1035,6 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToCryptoMarket : UIEvent()
         object OnNavigateToCryptoMovements : UIEvent()
         object OnGetSmartContent : UIEvent()
-        data class OnNavigateToCryptoDetailScreen(val cryptoItem: BalanceCryptoAccountItems) : UIEvent()
 
         data class OnSetUserData(
             val idBrand: String,
@@ -1080,7 +1073,7 @@ class ProductViewModel @Inject constructor(
 
     sealed class BaseEvent {
         object OnShowCardIssuanceError : BaseEvent()
-        object OnShowTbdToastEvent: BaseEvent()
+        object OnShowTbdToastEvent : BaseEvent()
     }
 
     companion object {

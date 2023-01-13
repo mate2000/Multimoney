@@ -504,7 +504,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object CryptoMovementsAllScreen : Screen(
-        "crypto_movements_all_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}/{$ITEM_CRYPTO_CURRENCY}",
+        "crypto_movements_all_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}?$CRYPTO_ASSET={$CRYPTO_ASSET}",
         "crypto_movements_all_screen"
     )
 

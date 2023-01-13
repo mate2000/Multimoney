@@ -77,8 +77,9 @@ private fun CryptoMovementsScreenContent(
             .background(MultimoneyTheme.colors.background)
     ) {
         TopNavBar(
-            isRightButtonVisible = false,
-            onLeftButtonClick = onBackPressed
+            isLeftButtonVisible = false,
+            isRightButtonVisible = true,
+            onRightButtonClick = onBackPressed
         )
         HeaderSection()
         when (movements.loadState.refresh) {

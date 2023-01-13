@@ -509,9 +509,6 @@ fun ProductFooterExpanded(
                         }
                     },
                     hasBalanceAction = { /*todo go to buy crypto flow*/ },
-                    currencyItemClick = { item ->
-                        viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToCryptoDetailScreen(item))
-                    }
                 )
             }
         }

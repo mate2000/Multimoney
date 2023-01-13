@@ -119,7 +119,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
         } else if (destinationSmartAccount != null) {
             destinationSmartAccount?.currencyID?.getCurrencyFromId()
         } else {
-            CurrencyType.Colon
+            null
         }
         shouldDisplayExchange = smartCurrency != ibanCurrency
         bankDetail = ibanAccount?.bank ?: ""

@@ -24,6 +24,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
@@ -130,8 +131,8 @@ fun RequestForgotPasswordContent(
                 )
                 Text(
                     text = stringResource(id = R.string.request_forgot_password_title),
-                    modifier = Modifier.padding(top = 53.dp, start = 16.dp, end = 16.dp),
-                    style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+                    modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp),
+                    style = Typography.h6.copy(fontWeight = FontWeight.SemiBold, fontSize = 22.sp),
                     color = MultimoneyTheme.colors.text
                 )
                 Text(
@@ -150,7 +151,7 @@ fun RequestForgotPasswordContent(
                     ),
                     keyboardActions = KeyboardActions(onNext = { focusManager.clearFocus() }),
                     labelText = stringResource(id = string.label_email),
-                    modifier = Modifier.padding(top = 51.dp, start = 16.dp, end = 16.dp),
+                    modifier = Modifier.padding(top = 36.dp, start = 16.dp, end = 16.dp),
                     isRequired = true,
                     isRequiredMessage = stringResource(id = string.request_forgot_password_email_required),
                     isError = emailError.first,

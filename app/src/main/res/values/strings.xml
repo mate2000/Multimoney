@@ -122,7 +122,6 @@
     <string name="sign_in_error_alert_dialog_button" translatable="false">Ir al inicio</string>
 
 
-
     <!-- Sign Up Email -->
     <string name="sign_up_email_header" translatable="false">Ingresá tu correo electrónico</string>
     <string name="sign_up_email_title" translatable="false">¡Nos emociona \nque estés acá!</string>
@@ -431,6 +430,10 @@
     <string name="profile_terms_and_conditions_sales_title" translatable="false">Ventas</string>
     <string name="profile_terms_and_conditions_crypto_title" translatable="false">Cripto</string>
 
+    <!-- Credit Schedule Automatic Payment -->
+    <string name="profile_cards_bottom_sheet_title" translatable="false">Mis tarjetas</string>
+    <string name="profile_cards_bottom_sheet_edit" translatable="false">Editar tarjeta</string>
+    <string name="profile_cards_bottom_sheet_delete" translatable="false">Eliminar tarjeta</string>
 
     <!-- Sign Out -->
     <string name="sign_out_dialog_title" translatable="false">¿Estás seguro que querés cerrar sesión?</string>
@@ -697,8 +700,8 @@
     <string name="visa_issuance_button_label" translatable="false">Vincular tarjeta</string>
 
     <!-- Visa Card-->
-    <string name="visa_card_sv_dialog_description_available" translatable="false">Recordá que podés utilizar tu tarjeta digital solo con el monto de tu crédito disponible. Tus compras se sumarán a tu saldo del crédito.</string>
-    <string name="visa_card_cr_dialog_description_available" translatable="false">Recordá que podés utilizar tu tarjeta digital solo con el monto de tu crédito disponible. Tus compras se sumarán a tu saldo del crédito.</string>
+    <string name="visa_card_sv_dialog_description_available" translatable="false">Recordá que podes utilizar tu tarjeta digital solo con el monto de tu crédito disponible. Tus compras se sumarán a tu saldo del crédito.</string>
+    <string name="visa_card_cr_dialog_description_available" translatable="false">Recordá que podes utilizar tu tarjeta digital solo con el monto de tu crédito disponible. Tus compras se sumarán a tu saldo del crédito.</string>
     <string name="visa_card_gt_dialog_description_available" translatable="false">Recuerda que puedes utilizar tu tarjeta digital solo con el monto de tu crédito disponible. Tus compras se sumarán a tu saldo del crédito.</string>
     <string name="visa_card_available_amount" translatable="false">Disponible %s</string>
     <string name="visa_card_masked_number" translatable="false">Visa ••••%s</string>
@@ -744,12 +747,18 @@
     <string name="visa_tokenization_success_description" translatable="false">Ya podés utilizar tu Multimoney Visa para realizar compras online y en comercios</string>
     <string name="visa_tokenization_success_description_gt" translatable="false">Ya puedes utilizar tu Multimoney Visa para realizar compras online y en comercios</string>
     <string name="visa_tokenization_success_button_action" translatable="false">Ver Multimoney Visa</string>
-    
+
     <!-- visa nfc required dialog -->
     <string name="visa_nfc_required_dialog_title" translatable="false">Activá el NFC para realizar pagos en comercios</string>
     <string name="visa_multimoney_default_payment_method_required_dialog_title" translatable="false">Elige tu Multimoney Visa para realizar pagos en comercios</string>
     <string name="visa_nfc_required_dialog_title_gt" translatable="false">Activa el NFC para realizar pagos en comercios</string>
     <string name="visa_nfc_required_dialog_description" translatable="false">Sin esta funcionalidad, solo podrás ver los datos de tu tarjeta</string>
+
+    <!-- visa payment success -->
+    <string name="visa_payment_success_title" translatable="false">Tu pago se realizó con éxito</string>
+    <string name="visa_payment_success_description" translatable="false">Recibirás un comprobante y documentación en tu correo electrónico</string>
+    <string name="visa_payment_error_title" translatable="false">Hubo un error de conexión</string>
+    <string name="visa_payment_error_description" translatable="false">Perdimos la conexión al hacer el\npago, intentemos una vez más</string>
 
     <!-- Credit Loading -->
     <string name="credit_glad_to_see_you" translatable="false">¡Nos alegra que regresés!</string>

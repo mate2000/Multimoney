@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.register
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -38,6 +40,7 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.register.SmartTr
 import com.multimoney.multimoney.presentation.ui.smart.transfer.register.SmartTransferRegisterIbanViewModel.UIEvent.OnFavoriteNameValueChange
 import com.multimoney.multimoney.presentation.ui.smart.transfer.register.SmartTransferRegisterIbanViewModel.UIEvent.OnIdentificationTypeChange
 import com.multimoney.multimoney.presentation.ui.smart.transfer.register.SmartTransferRegisterIbanViewModel.UIEvent.OnIdentificationValueChange
+import com.multimoney.multimoney.presentation.ui.smart.transfer.register.SmartTransferRegisterIbanViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.transfer.register.SmartTransferRegisterIbanViewModel.UIEvent.OnQueryDocumentList
 import com.multimoney.multimoney.presentation.ui.smart.transfer.register.SmartTransferRegisterIbanViewModel.UIEvent.OnValidateDocument
 import com.multimoney.multimoney.presentation.ui.smart.transfer.register.SmartTransferRegisterIbanViewModel.UIEvent.OnValidateUserEmail
@@ -68,6 +71,10 @@ fun SmartTransferRegisterIbanScreen(
         }
     }
 
+    BackHandler {
+        viewModel.onUIEvent(OnNavigateBack)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -78,7 +85,8 @@ fun SmartTransferRegisterIbanScreen(
     ) {
         Column {
             TopNavBar(
-                onLeftButtonClick = { viewModel.onUIEvent(SmartTransferRegisterIbanViewModel.UIEvent.OnNavigateBack) },
+                modifier = Modifier.offset(x = (-16).dp),
+                onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
                 isRightButtonVisible = false
             )
             Text(

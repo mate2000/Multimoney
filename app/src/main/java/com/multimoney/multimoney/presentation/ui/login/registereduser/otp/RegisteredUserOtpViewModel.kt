@@ -19,6 +19,7 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.USER_DATA
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnCallMutationSendPinProcess
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnContinueClick
@@ -31,20 +32,21 @@ import com.multimoney.multimoney.presentation.util.OTP_MESSAGE_REGEX
 import com.multimoney.multimoney.presentation.util.ResendOtp
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.format
+import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.takeWhile
 import java.time.LocalDateTime
 import java.util.regex.Pattern
 import javax.inject.Inject
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit.SECONDS
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.takeWhile
 
 @HiltViewModel
 class RegisteredUserOtpViewModel @Inject constructor(
@@ -251,28 +253,28 @@ class RegisteredUserOtpViewModel @Inject constructor(
                 userCreate = userData?.firstName ?: ""
             ).collectLatest { result ->
                 result.onSuccess {
-                    // TODO: Navigate to password only change the Route to
                     popAndNavigateTo(
-                        route = Screen.RegisteredUserEmailScreen.route,
-                        popTo = Screen.SignUpScreen.route
-                    )
-                }
-                    .onMessage {
-                        uiState =
-                            uiState.copy(otpError = Pair(true, R.string.sign_up_otp_code_not_valid), isLoading = false)
-                    }
-                    .onFailure {
-                        uiState = uiState.copy(
-                            isLoading = false,
-                            dialogParameters = DialogParameters(
-                                description = it.getError() ?: "",
-                                isActive = mutableStateOf(true)
+                        route = Screen.RegisteredUserPassword.route.plus(
+                            getNavParam(USER_DATA, encodeData(userData)).plus(
+                                getNavParam(ID_BRAND, idBrand)
                             )
+                        ),
+                        popTo = Screen.SignUpScreen.baseRoute
+                    )
+                }.onMessage {
+                    uiState =
+                        uiState.copy(otpError = Pair(true, R.string.sign_up_otp_code_not_valid), isLoading = false)
+                }.onFailure {
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        dialogParameters = DialogParameters(
+                            description = it.getError() ?: "",
+                            isActive = mutableStateOf(true)
                         )
-                    }
-                    .onLoading {
-                        uiState = uiState.copy(isLoading = true)
-                    }
+                    )
+                }.onLoading {
+                    uiState = uiState.copy(isLoading = true)
+                }
             }
         }
     }

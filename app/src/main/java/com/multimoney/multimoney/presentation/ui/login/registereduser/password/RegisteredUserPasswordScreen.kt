@@ -121,7 +121,7 @@ fun RegisteredUserPasswordScreen(
     LoadingIndicator(viewModel.uiState.isLoading)
 
     BackHandler {
-        // empty to block system back
+        viewModel.onUIEvent(OnCloseClick(focusManager = focusManager))
     }
 
     // Dialog

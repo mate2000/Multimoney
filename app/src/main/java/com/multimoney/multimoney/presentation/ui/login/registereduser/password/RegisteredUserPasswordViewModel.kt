@@ -37,6 +37,7 @@ import com.multimoney.multimoney.presentation.ui.login.registereduser.password.R
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnShowBiometricPromptForEncryption
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnValidForm
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.getCountryCodeByIdBrand
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeConsecutiveLetterOrNumber
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeEqualConsecutiveLetterOrNumber
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeLettersOrNumbers
@@ -47,9 +48,9 @@ import com.multimoney.multimoney.presentation.util.passwordHasMinimumCharacters
 import com.multimoney.multimoney.presentation.util.passwordHasSpecialCharacterValidation
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class RegisteredUserPasswordViewModel @Inject constructor(
@@ -190,7 +191,7 @@ class RegisteredUserPasswordViewModel @Inject constructor(
                         firstName = userData?.firstName ?: "",
                         secondName = userData?.secondName ?: "",
                         lastName = userData?.firstLastName ?: "",
-                        phone = "${userData?.countryCode} ${userData?.phoneNumber}",
+                        phone = "${if (userData?.countryCode.isNullOrEmpty()) getCountryCodeByIdBrand(idBrand) else userData?.countryCode}${userData?.phoneNumber}",
                         identification = userData?.identification ?: "",
                         pkUser = userData?.pkUser ?: "0",
                         status = userData?.userStatus ?: "",

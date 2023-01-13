@@ -259,7 +259,7 @@ class RegisteredUserOtpViewModel @Inject constructor(
                                 getNavParam(ID_BRAND, idBrand)
                             )
                         ),
-                        popTo = Screen.RegisteredUserOtpScreen.route
+                        popTo = Screen.SignUpScreen.route
                     )
                 }.onMessage {
                     uiState =

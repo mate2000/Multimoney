@@ -12,9 +12,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -55,11 +57,13 @@ fun ProfileCardsListScreen(
     ProfileCardsListContent(viewModel)
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 @Preview
 fun ProfileCardsListContent(
     viewModel: ProfileCardListViewModel = hiltViewModel()
 ) {
+    val coroutineScope = rememberCoroutineScope()
     Column(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)
@@ -70,7 +74,7 @@ fun ProfileCardsListContent(
             isRightButtonVisible = false
         )
         Text(
-            modifier = Modifier.padding(top = 20.dp, start = 16.dp, end = 16.dp),
+            modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp),
             text = stringResource(id = R.string.payment_cards_list_title),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText,
@@ -92,6 +96,13 @@ fun ProfileCardsListContent(
             )
         }
     }
+    ProfileCardEditBottomSheet(
+        coroutineScope = coroutineScope,
+        modalBottomSheetState = viewModel.uiState.bottomSheetVisibleState,
+        onEditClick = { viewModel.onUIEvent(ProfileCardListViewModel.UIEvent.OnEditCard(it)) },
+        onDeleteClick = { viewModel.onUIEvent(ProfileCardListViewModel.UIEvent.OnDeleteCard(it)) },
+        card = viewModel.uiState.cardVDSelected
+    )
     LoadingIndicator(viewModel.uiState.isLoading)
 }
 
@@ -132,7 +143,7 @@ fun ProfileCardList(
     viewModel: ProfileCardListViewModel = hiltViewModel()
 ) {
     viewModel.uiState.cardVDList?.let { clientBankAccountList ->
-        LazyColumn(modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp)) {
+        LazyColumn(modifier = Modifier.padding(top = 32.dp, start = 16.dp, end = 16.dp)) {
             items(clientBankAccountList) { card ->
                 CustomInfoButton(
                     modifier = Modifier

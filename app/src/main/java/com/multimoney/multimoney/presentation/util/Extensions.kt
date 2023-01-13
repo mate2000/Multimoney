@@ -30,6 +30,7 @@ import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType
 import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.CashPaymentPoint
 import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.TransferBank
 import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.VisaDirect
+import com.multimoney.multimoney.presentation.util.catalog.PhoneCountryCode
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeType
 import com.novopayment.sdk.vts.module.payment.apdu.PaymentService
 import kotlinx.coroutines.delay
@@ -113,13 +114,16 @@ fun Context.checkPermission(
     }
 }
 
-fun Context.getPhoneNumbers() : List<String> {
+fun Context.getPhoneNumbers(): List<String> {
     val context = this
     val numbers = mutableListOf<String>()
     val contentResolver = context.contentResolver
     val phones: Cursor? = contentResolver.query(
-        ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-        null, null, null
+        ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+        null,
+        null,
+        null,
+        null
     )
     if (phones != null) {
         while (phones.moveToNext()) {
@@ -326,6 +330,15 @@ fun String.addTextStyleToTextPortion(textToStyle: String, style: TextStyle): Ann
 }
 
 fun CharSequence.replaceNumbersToZero() = replace(Regex(DIGITS_REGEX), ZERO_STRING)
+
+fun getCountryCodeByIdBrand(idBrand: Int): String {
+    return when (idBrand) {
+        Brand.ElSalvador.id -> PhoneCountryCode.EL_SALVADOR.code
+        Brand.CostaRica.id -> PhoneCountryCode.COSTA_RICA.code
+        Brand.ElSalvador.id -> PhoneCountryCode.GUATEMALA.code
+        else -> ""
+    }
+}
 
 fun String.capitalizedAllWords(): String =
     splitByWhiteSpace().joinToString(WHITE_SPACE_SEPARATOR.toString()) { it.capitalized() }

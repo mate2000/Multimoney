@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
@@ -41,7 +40,7 @@ fun LoadingMultiMoney(
         Text(
             text = stringResource(id = textRes),
             modifier = Modifier.padding(top = 32.dp),
-            style = Typography.h5.copy(fontWeight = FontWeight.SemiBold),
+            style = Typography.body1,
             color = MultimoneyTheme.colors.text,
             textAlign = TextAlign.Center
         )

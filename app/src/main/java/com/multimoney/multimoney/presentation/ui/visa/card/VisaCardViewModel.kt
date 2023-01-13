@@ -75,12 +75,12 @@ import com.novopayment.sdk.vts.model.NovoError
 import com.novopayment.sdk.vts.util.error.StatusCode.ERROR_PAYMENT_CANCEL_DIALOG
 import com.novopayment.sdk.vts.util.error.StatusCode.ERROR_PAYMENT_TIMEOUT_SUBMIT_DIALOG
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
@@ -117,6 +117,7 @@ class VisaCardViewModel @Inject constructor(
     private var biometricPromptNegative = ""
     private var passwordAttempts = INIT_PASSWORD_ATTEMPTS
     private var isNavigateBackRefresh = false
+    private var isSignOut = false
     private var numAttemptsToStartPayment: Int = 0
 
     init {
@@ -368,6 +369,9 @@ class VisaCardViewModel @Inject constructor(
     }
 
     private fun onHidePasswordBottomSheet() {
+        if (isSignOut) {
+            signOut()
+        }
         uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(Hidden))
     }
 
@@ -378,6 +382,7 @@ class VisaCardViewModel @Inject constructor(
     private fun callCognitoSignIn() {
         uiState = uiState.copy(isLoading = true)
         Amplify.Auth.signOut({
+            isSignOut = true
             Amplify.Auth.signIn(email, password, { authSignInResult ->
                 if (authSignInResult.isSignInComplete) {
                     Amplify.Auth.fetchAuthSession({ authSessionSuccess ->
@@ -388,6 +393,7 @@ class VisaCardViewModel @Inject constructor(
                                     passwordAttempts = INIT_PASSWORD_ATTEMPTS
                                     dataStorePreferences.setAuthToken(session.userPoolTokens.value?.idToken ?: "")
                                     uiState = uiState.copy(isLoading = false, isCardTextVisible = true)
+                                    isSignOut = false
                                     onHidePasswordBottomSheet()
                                 }
                             }

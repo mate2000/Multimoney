@@ -210,7 +210,7 @@ private fun SavingAmountBottomSheet(viewModel: SavingAmountViewModel) {
         toLabel = stringResource(R.string.smart_payment_amount_bottom_sheet_to),
         toTitle = stringResource(
             R.string.smart_payment_amount_bottom_sheet_my_smart_account,
-            viewModel.ibanCurrency?.symbol ?: ""
+            viewModel.smartCurrency?.symbol ?: ""
         ),
         toSubtitle = if (viewModel.idBrand == Brand.CostaRica.id) {
             stringResource(viewModel.smartCurrency?.currencyName ?: R.string.empty)

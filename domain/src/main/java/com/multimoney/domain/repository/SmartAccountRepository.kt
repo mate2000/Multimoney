@@ -9,7 +9,9 @@ import com.multimoney.domain.model.accountsmart.ExchangeRateResult
 import com.multimoney.domain.model.accountsmart.GeneralEconomicActivityResult
 import com.multimoney.domain.model.accountsmart.GlobalRequest
 import com.multimoney.domain.model.accountsmart.Nationalities
+import com.multimoney.domain.model.accountsmart.PhonesResult
 import com.multimoney.domain.model.accountsmart.Professions
+import com.multimoney.domain.model.accountsmart.RelatedContact
 import com.multimoney.domain.model.accountsmart.RelationshipData
 import com.multimoney.domain.model.accountsmart.SaveSinpeAccount
 import com.multimoney.domain.model.accountsmart.SaveSmartAccount
@@ -210,4 +212,10 @@ interface SmartAccountRepository {
         idBrand: Int,
         user: String
     ): Flow<MultimoneyResult<SinpeTransferResult?>>
+
+    suspend fun queryRelatedContactsByPhone(
+        user: String,
+        idBrand: Int,
+        contacts: List<RelatedContact>
+    ): Flow<MultimoneyResult<PhonesResult?>>
 }

@@ -55,10 +55,6 @@ class ProfileViewModel @Inject constructor(
         navigateTo("${Screen.ProfilePersonalInfoScreen.baseRoute}/${uiState.idClient}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
     }
 
-    private fun navigateToEditCardScreen() {
-        navigateTo(Screen.ProfileMyCardsEditCardScreen.baseRoute)
-    }
-
     private fun navigateToSettingsScreen() {
         navigateTo("${Screen.ProfileSettingsScreen.baseRoute}/${uiState.idBrand}/${uiState.pkUser}/${uiState.userName}")
     }

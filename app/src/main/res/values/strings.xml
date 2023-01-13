@@ -1394,4 +1394,6 @@
     <string name="profile_my_cards_edit_card_cvv_dialog_title" translatable="false">Código CVV</string>
     <string name="profile_my_cards_edit_card_cvv_dialog_description" translatable="false">Es el número de 3 dígitos ubicado en el dorso de tu tarjeta</string>
     <string name="profile_my_cards_edit_card_save_changes_label" translatable="false">Guardar cambios</string>
+    <string name="profile_my_cards_edit_card_toast_result_success" translatable="false">Tarjeta actualizada</string>
+    <string name="profile_my_cards_delete_card_toast_result_success" translatable="false">Tarjeta eliminada</string>
 </resources>

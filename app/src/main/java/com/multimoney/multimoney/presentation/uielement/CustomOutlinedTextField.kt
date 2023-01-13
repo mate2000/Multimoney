@@ -90,6 +90,7 @@ import kotlinx.coroutines.launch
  * @param value: Variable to store the input value.
  * @param leadingIcon: Landing icon to display, by default there is no icon.
  * @param trailingIcon: Trailing icon to display, by default there is no icon.
+ * @param trailingIconColor: Trailing icon color, by default it is white.
  * @param trailingIconAction: Action to perform when the trailing icon is clicked.
  * @param trailingIconActionEnabled: Enable or disable the trailing icon action.
  * @param placeHolder: Hint for the textField.
@@ -125,6 +126,7 @@ fun CustomOutlinedTextField(
     leadingIcon: Int? = null,
     leadingIconComposable: @Composable ((Color) -> Unit)? = null,
     trailingIcon: Int? = null,
+    trailingIconColor: Color = WhiteTransparency60,
     trailingIconAction: () -> Unit = {},
     trailingIconActionEnabled: Boolean = false,
     placeHolder: String = "",
@@ -327,7 +329,7 @@ fun CustomOutlinedTextField(
                             Icon(
                                 painter = painterResource(id = it),
                                 contentDescription = "",
-                                tint = iconTintColor
+                                tint = trailingIconColor
                             )
                         }
                     }

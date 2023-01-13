@@ -1,5 +1,7 @@
 package com.multimoney.multimoney.presentation.navigation.navgraph
 
+import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -12,11 +14,12 @@ import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.PROFILE_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileScreen
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardsListScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.help.HelpScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.help.termsandconditions.TermsAndConditionsScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.help.termsandconditions.detail.TermsAndConditionsDetailsScreen
-import com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard.EditCardScreen
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.editcard.EditCardScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.PersonalInfoScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.email.ChangeEmailScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.phone.ChangePhoneScreen
@@ -28,7 +31,8 @@ import com.multimoney.multimoney.presentation.ui.home.profile.settings.changepas
 const val ID_CARD = "id_card"
 const val CARD_DESCRIPTION = "card_description"
 const val CARD_MASKED = "card_masked"
-const val CARD_VALID_DATE = "card_valid_date"
+const val CARD_EXPIRATION_MONTH = "card_expiration_month"
+const val CARD_EXPIRATION_YEAR = "card_expiration_year"
 const val CARD_DEFAULT = "card_default"
 
 fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
@@ -350,6 +354,7 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
                 }
             )
         ) {
+            val viewModel = hiltViewModel<ProfileCardListViewModel>()
             ProfileCardsListScreen(
                 isRestart = navController.currentBackStackEntry?.savedStateHandle?.get(PREVIOUS_IS_RESTART) ?: true,
                 onNavigate = {
@@ -363,18 +368,29 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
                         inclusive = false,
                         saveState = false
                     )
-                }
+                },
+                viewModel = viewModel
             )
         }
 
         composable(
             route =  Screen.ProfileMyCardsEditCardScreen.route,
             arguments = listOf(
-                /*navArgument(ID_BRAND) {
+                navArgument(ID_CARD) {
+                    type = NavType.LongType
+                },
+                navArgument(ID_BRAND) {
                     type = NavType.IntType
-                }*/
+                },
+                navArgument(CARD_DEFAULT) {
+                    type = NavType.BoolType
+                }
             )
-        ) {
+        ) { backStackEntry ->
+            val parentEntry = remember(backStackEntry) {
+                navController.getBackStackEntry(Screen.ProfileCardListScreen.route)
+            }
+            val viewModel = hiltViewModel<ProfileCardListViewModel>(parentEntry)
             EditCardScreen(
                 onPopBackStack = {
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
@@ -384,7 +400,8 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
                         inclusive = false,
                         saveState = false
                     )
-                }
+                },
+                sharedViewModel = viewModel
             )
         }
     }

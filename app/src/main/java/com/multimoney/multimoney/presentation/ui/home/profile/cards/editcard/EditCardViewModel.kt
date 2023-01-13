@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard
+package com.multimoney.multimoney.presentation.ui.home.profile.cards.editcard
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,13 +22,13 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_DESCRIPTI
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard.EditCardViewModel.UIEvent.OnNicknameValueChange
-import com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard.EditCardViewModel.UIEvent.OnCvvValueChange
-import com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard.EditCardViewModel.UIEvent.OnLoadingValueChange
-import com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard.EditCardViewModel.UIEvent.OnFailureWithDialog
-import com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard.EditCardViewModel.UIEvent.OnSaveChangesClick
-import com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard.EditCardViewModel.UIEvent.OnBackClick
-import com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard.EditCardViewModel.UIEvent.OnDisclaimerClick
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.editcard.EditCardViewModel.UIEvent.OnNicknameValueChange
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.editcard.EditCardViewModel.UIEvent.OnCvvValueChange
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.editcard.EditCardViewModel.UIEvent.OnLoadingValueChange
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.editcard.EditCardViewModel.UIEvent.OnFailureWithDialog
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.editcard.EditCardViewModel.UIEvent.OnSaveChangesClick
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.editcard.EditCardViewModel.UIEvent.OnBackClick
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.editcard.EditCardViewModel.UIEvent.OnDisclaimerClick
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -123,14 +123,14 @@ class EditCardViewModel @Inject constructor(
         executeUseCase {
             mutationUpdateCardVDUseCase.invoke(
                 idCard = idCard ?: 0,
-                identification = identification ?: "",
+                identification = identification.orEmpty(),
                 cardDescription = uiState.nickname,
-                cardMasked = cardMasked ?: "",
+                cardMasked = cardMasked.orEmpty(),
                 expirationMonth = cardExpirationMonth.orEmpty(),
                 expirationYear = cardExpirationYear.orEmpty(),
                 verificationValue = uiState.cvv,
                 default = cardDefault ?: false,
-                user = user ?: "",
+                user = user.orEmpty(),
                 idBrand = idBrand ?: 0
             ).collectLatest { result ->
                 result.onSuccess {
@@ -204,5 +204,4 @@ class EditCardViewModel @Inject constructor(
         const val VISUAL_DATE_SYMBOL = " | "
         const val CVV_MAX_LENGTH = 3
     }
-
 }

@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard
+package com.multimoney.multimoney.presentation.ui.home.profile.cards.editcard
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -31,14 +31,14 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.SemanticInformative400
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel
-import com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard.EditCardViewModel.Companion.VISUAL_DATE_SYMBOL
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.editcard.EditCardViewModel.Companion.VISUAL_DATE_SYMBOL
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard.EditCardViewModel.UIEvent.OnNicknameValueChange
-import com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard.EditCardViewModel.UIEvent.OnCvvValueChange
-import com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard.EditCardViewModel.UIEvent.OnSaveChangesClick
-import com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard.EditCardViewModel.UIEvent.OnBackClick
-import com.multimoney.multimoney.presentation.ui.home.profile.mycards.editcard.EditCardViewModel.UIEvent.OnDisclaimerClick
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.editcard.EditCardViewModel.UIEvent.OnNicknameValueChange
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.editcard.EditCardViewModel.UIEvent.OnCvvValueChange
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.editcard.EditCardViewModel.UIEvent.OnSaveChangesClick
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.editcard.EditCardViewModel.UIEvent.OnBackClick
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.editcard.EditCardViewModel.UIEvent.OnDisclaimerClick
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnEditCardShowToast
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator

@@ -12,6 +12,7 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -23,6 +24,9 @@ import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardL
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnEditCard
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnNavigateBackHome
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnEditCardShowToast
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnDeleteCardShowToast
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnHideToast
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -92,7 +96,23 @@ class ProfileCardListViewModel @Inject constructor(
     }
 
     private fun onEditCard(card: CardVisaDirect?) {
-        // TODO
+        navigateTo(
+            route = "${Screen.ProfileMyCardsEditCardScreen.baseRoute}/${card?.idCard?.toLong() ?: 0}/$identification/${card?.detail}/${card?.cardMaskedNumber?.takeLast(4)}/${card?.expirationMonth}/${card?.expirationYear}/${card?.verified}/$user/$idBrand"
+        )
+    }
+
+    private fun onEditCardShowToast() {
+        uiState  = uiState.copy(
+            toastIsVisible = true,
+            toastMessage = R.string.profile_my_cards_edit_card_toast_result_success
+        )
+    }
+
+    private fun onDeleteCardShowToast() {
+        uiState  = uiState.copy(
+            toastIsVisible = true,
+            toastMessage = R.string.profile_my_cards_delete_card_toast_result_success
+        )
     }
 
     private fun onNavigateBack() =
@@ -108,7 +128,9 @@ class ProfileCardListViewModel @Inject constructor(
         val openDialog: DialogParameters = DialogParameters(),
         val isVisaAnimationVisible: Boolean = false,
         val bottomSheetVisibleState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
-        val cardVDSelected: CardVisaDirect? = null
+        val cardVDSelected: CardVisaDirect? = null,
+        val toastIsVisible: Boolean = false,
+        val toastMessage: Int = R.string.empty
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -119,6 +141,11 @@ class ProfileCardListViewModel @Inject constructor(
             is OnCardThreePointsSelected -> onCardThreePointsSelected(uiEvent.cardSelected)
             is OnEditCard -> onEditCard(uiEvent.card)
             is OnDeleteCard -> onDeleteCard(uiEvent.card)
+            is OnEditCardShowToast -> onEditCardShowToast()
+            is OnDeleteCardShowToast -> onDeleteCardShowToast()
+            is OnHideToast -> uiState = uiState.copy(
+                toastIsVisible = false
+            )
         }
     }
 
@@ -128,6 +155,9 @@ class ProfileCardListViewModel @Inject constructor(
         class OnCardThreePointsSelected(val cardSelected: CardVisaDirect?) : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnNavigateBackHome : UIEvent()
+        object OnEditCardShowToast : UIEvent()
+        object OnDeleteCardShowToast : UIEvent()
+        object OnHideToast: UIEvent()
         data class OnEditCard(val card: CardVisaDirect?) : UIEvent()
         data class OnDeleteCard(val card: CardVisaDirect?) : UIEvent()
     }

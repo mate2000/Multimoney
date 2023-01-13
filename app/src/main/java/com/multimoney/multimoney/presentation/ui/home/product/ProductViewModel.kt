@@ -366,14 +366,16 @@ class ProductViewModel @Inject constructor(
             }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}/$idClient/${uiState.userStatus?.infoCredit?.idLoanClient ?: 0}"
         )
 
-    private fun onNavigateToHomeMultimoneyVisa() =
+    private fun onNavigateToHomeMultimoneyVisa() {
+        val infoCredit = uiState.userStatus?.infoCredit
         navigateTo(
             "${Screen.VisaCardScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/${uiState.userStatus?.infoUser?.phone}/${
             encodeData(
                 balanceCredit?.balanceCardInformation
             )
-            }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}/$idClient/${uiState.userStatus?.infoCredit?.idLoanClient ?: 0}"
+            }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}/$idClient/${infoCredit?.idLoanClient ?: 0}"
         )
+    }
 
     private fun onNavigateToProfileScreen() {
         navigateTo("${Screen.ProfileScreen.baseRoute}/$idClient/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/$email/${uiState.userStatus?.infoUser?.phone}/$identification/$pkUser/${uiState.userStatus?.infoUser?.userName}")

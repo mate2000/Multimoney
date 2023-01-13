@@ -35,7 +35,6 @@ import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.GrayScale500
 import com.multimoney.multimoney.presentation.theme.GrayScale700
 import com.multimoney.multimoney.presentation.theme.GrayScale800
-import com.multimoney.multimoney.presentation.theme.Primary400
 import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.SemanticInformative400
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -70,7 +69,8 @@ fun CustomDialog(
     onNegativeAction: () -> Unit = {},
     onPositiveAction: () -> Unit = {},
     onDismissAction: () -> Unit = {},
-    openDialogCustom: MutableState<Boolean> = mutableStateOf(false)
+    openDialogCustom: MutableState<Boolean> = mutableStateOf(false),
+    isCancelable: Boolean = true
 ) {
     val context = LocalContext.current
     val activity = context.findActivity()
@@ -110,8 +110,10 @@ fun CustomDialog(
     }
 
     Dialog(onDismissRequest = {
-        onDismissAction()
-        openDialogCustom.value = false
+        if (isCancelable) {
+            onDismissAction()
+            openDialogCustom.value = false
+        }
     }) {
         Card(
             shape = shape,

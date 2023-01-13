@@ -25,33 +25,37 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.visa.preferences.VisaPreferencesViewModel.UIEvent.OnCheckedChange
 import com.multimoney.multimoney.presentation.ui.visa.preferences.VisaPreferencesViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomSwitchButton
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 fun VisaPreferencesScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-    viewModel: VisaPreferencesViewModel = hiltViewModel()
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
+    viewModel: VisaPreferencesViewModel = hiltViewModel(),
+    sharedViewModel: HomeViewModel = hiltViewModel()
 ) {
     // Navigation
     LaunchedEffect(true) {
         viewModel.apply {
-            executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
+            executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
         }
     }
 
-    VisaPreferencesContent(viewModel)
+    VisaPreferencesContent(viewModel, sharedViewModel)
 }
 
 @Composable
 @Preview
 fun VisaPreferencesContent(
-    viewModel: VisaPreferencesViewModel = hiltViewModel()
+    viewModel: VisaPreferencesViewModel = hiltViewModel(),
+    sharedViewModel: HomeViewModel = hiltViewModel()
 ) {
     Column(
         modifier = Modifier
@@ -91,7 +95,10 @@ fun VisaPreferencesContent(
                 ),
                 titleColor = MultimoneyTheme.colors.titleText,
                 descriptionText = stringResource(R.string.card_preferences_linked_card_description),
-                hasEndButton = true
+                hasEndButton = true,
+                onDeleteTokenBaseEvent = {
+                    sharedViewModel.onUIEvent(HomeViewModel.UIEvent.OnShowUnlinkToast)
+                }
             )
         }
     }
@@ -103,9 +110,11 @@ fun VisaPreferencesContent(
             negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
             openDialogCustom = viewModel.uiState.openDialog.isActive,
             onPositiveAction = viewModel.uiState.openDialog.positiveAction,
-            onNegativeAction = viewModel.uiState.openDialog.negativeAction
+            onNegativeAction = viewModel.uiState.openDialog.negativeAction,
+            isCancelable = false
         )
     }
+    LoadingIndicator(viewModel.uiState.isLoading)
 }
 
 @Composable
@@ -116,7 +125,8 @@ fun VisaPreferencesComponent(
     titleText: String,
     titleColor: Color,
     descriptionText: String,
-    hasEndButton: Boolean = false
+    hasEndButton: Boolean = false,
+    onDeleteTokenBaseEvent: () -> Unit = { }
 ) {
     ConstraintLayout(
         modifier = modifier
@@ -149,7 +159,7 @@ fun VisaPreferencesComponent(
                 },
                 checked = viewModel.uiState.switchButtonValue
             ) { value ->
-                viewModel.onUIEvent(OnCheckedChange(value))
+                viewModel.onUIEvent(OnCheckedChange(value, onDeleteTokenBaseEvent))
             }
         }
         Text(

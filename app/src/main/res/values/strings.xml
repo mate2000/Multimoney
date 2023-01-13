@@ -1335,6 +1335,7 @@
     <string name="card_preferences_unlinked_card_dialog_description" translatable="false">¿Estás seguro que deseás desvincular tu tarjeta?</string>
     <string name="card_preferences_unlinked_card_dialog_positive_button" translatable="false">Desvincular</string>
     <string name="card_preferences_unlinked_card_dialog_negative_button" translatable="false">Cancelar</string>
+    <string name="card_preferences_unlinked_card_toast" translatable="false">Tu tarjeta ha sido desvinculada</string>
 
     <!-- Request Forgot Password -->
     <string name="request_forgot_password_title" translatable="false">¡Vamos a recuperarla!</string>

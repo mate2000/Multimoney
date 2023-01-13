@@ -584,7 +584,14 @@ class VisaCardViewModel @Inject constructor(
         when (uiEvent) {
             is OnCallNovoGetFavoriteCard -> callNovoGetFavoriteCard()
             is OnNavigateBack -> navigateBack(Screen.HomeScreen.route, isNavigateBackRefresh)
-            is OnNavigatePreferences -> navigateTo(Screen.VisaPreferencesScreen.baseRoute)
+            is OnNavigatePreferences -> navigateTo(
+                "${Screen.VisaPreferencesScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
+                encodeData(
+                    balanceCardInformation
+                )
+                }/$availableBalanceLabel/$idClient/$idLoanClient"
+
+            )
             is OnAvailableAmountClick -> onAvailableAmountClick()
             is OnNavigateToVisaTokenizationScreen -> navigateTo(
                 "${Screen.VisaTokenizationWaitingScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${

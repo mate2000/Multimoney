@@ -2824,6 +2824,10 @@ type UserValidation {
 
   idBrand: Int
 
+  maskedMail: String
+
+  maskedPhoneNumber: String
+
   status: Int
 
   message: String
@@ -5390,15 +5394,21 @@ input EnrollCardDtoInput {
 }
 
 type deleteTokenDeviceNV {
-  rc: String!
+  rc: String
 
-  msg: String!
+  msg: String
 
-  processedAt: String!
+  processedAt: String
 
-  tokenReferenceId: String!
+  tokenReferenceId: String
 
-  tokenRequestorId: String!
+  tokenRequestorId: String
+
+  status: Int
+
+  message: String
+
+  detail: String
 }
 
 input DeleteTokenDeviceDtoInput {

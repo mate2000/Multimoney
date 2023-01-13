@@ -99,7 +99,7 @@ fun PaymentOptionsTransferContent(viewModel: PaymentOptionsTransferViewModel = h
                     .verticalScroll(rememberScrollState())
             ) {
                 Text(
-                    modifier = Modifier.padding(top = 42.dp),
+                    modifier = Modifier.padding(top = 24.dp),
                     text = stringResource(id = viewModel.uiState.titleResource),
                     style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
                     color = MultimoneyTheme.colors.text,
@@ -145,7 +145,7 @@ fun PaymentOptionsTransferContent(viewModel: PaymentOptionsTransferViewModel = h
                 onClick = { viewModel.onUIEvent(OnNavigateBackHome(false)) },
                 text = stringResource(id = R.string.payment_options_transfer_go_home),
                 modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp, bottom = 56.dp, top = 16.dp)
+                    .padding(start = 16.dp, end = 16.dp, bottom = 40.dp, top = 16.dp)
                     .fillMaxWidth()
                     .height(48.dp),
                 buttonType = PrimaryPrimary

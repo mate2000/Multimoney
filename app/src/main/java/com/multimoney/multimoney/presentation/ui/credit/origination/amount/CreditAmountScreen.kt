@@ -295,7 +295,7 @@ fun CreditAmountScreen(
             )
             CreditInfo(
                 iconId = drawable.ic_percentage,
-                textId = string.credit_amount_interest,
+                textId = string.credit_amount_interest_origination,
                 value = viewModel.uiState.regularInterestRateLabel
             )
             CreditInfo(
@@ -368,7 +368,7 @@ fun CreditInfo(iconId: Int, textId: Int, value: String?) {
         Icon(
             painter = painterResource(id = iconId),
             contentDescription = "",
-            modifier = Modifier.size(16.dp, 16.dp),
+            modifier = Modifier.size(18.dp, 18.dp),
             tint = MultimoneyTheme.colors.iconColor
         )
         Text(

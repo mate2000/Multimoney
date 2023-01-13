@@ -46,9 +46,11 @@ import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIE
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnBlockUnblockCardClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnCallNovoGetFavoriteCard
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnHandleTapAndPayIntentResult
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnHideAlertResultScreen
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnHidePasswordBottomSheet
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnInitializeBiometricPrompt
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateHome
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigatePreferences
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateToVisaTokenizationScreen
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnOpenDialogConfirmToStartTokenizationProcess
@@ -67,13 +69,18 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.util.BiometricHelper
 import com.multimoney.multimoney.util.CognitoHelper
+import com.multimoney.multimoney.util.NovoHelper
 import com.novopayment.sdk.vts.NovoVTS
+import com.novopayment.sdk.vts.model.NovoError
+import com.novopayment.sdk.vts.util.error.StatusCode.ERROR_PAYMENT_CANCEL_DIALOG
+import com.novopayment.sdk.vts.util.error.StatusCode.ERROR_PAYMENT_TIMEOUT_SUBMIT_DIALOG
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
@@ -81,6 +88,7 @@ class VisaCardViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val countDownTimer: MMCountDownTimer,
     val nfcHelper: NfcHelper,
+    private var novoHelper: NovoHelper,
     private val biometricHelper: BiometricHelper,
     private val dataStorePreferences: DataStorePreferences,
     private val cognitoHelper: CognitoHelper,
@@ -109,6 +117,7 @@ class VisaCardViewModel @Inject constructor(
     private var biometricPromptNegative = ""
     private var passwordAttempts = INIT_PASSWORD_ATTEMPTS
     private var isNavigateBackRefresh = false
+    private var numAttemptsToStartPayment: Int = 0
 
     init {
         idBrand = savedStateHandle.get<Int>(ID_BRAND)?.toInt() ?: 0
@@ -234,7 +243,7 @@ class VisaCardViewModel @Inject constructor(
 
     private fun checkIfMultimoneyIsTheDefaultPaymentMethod() {
         if (NovoVTS.isDefaultPaymentService()) {
-            // todo start Payment Process
+            startNovoPayment()
         } else {
             uiState = uiState.copy(
                 dialogParameters = DialogParameters(
@@ -251,7 +260,68 @@ class VisaCardViewModel @Inject constructor(
 
     private fun onHandleTapAndPayIntentResult(result: ActivityResult) {
         if (nfcHelper.isNfcEnabled() && NovoVTS.isDefaultPaymentService()) {
-            // todo start Payment Process
+            viewModelScope.launch {
+                delay(DELAY_TO_START_PAYMENT)
+                startNovoPayment()
+            }
+        }
+    }
+
+    private fun startNovoPayment() {
+        novoHelper.novoNewPayment(
+            onSuccessPayment = {
+                showAlertResultDialog(true)
+            },
+            onErrorPayment = {
+                if (shouldHandleNovoError(it)) {
+                    handleErrorResult()
+                }
+            }
+        )
+    }
+
+    private fun shouldHandleNovoError(novoError: NovoError): Boolean {
+        return novoError.code != ERROR_PAYMENT_CANCEL_DIALOG.value && novoError.code != ERROR_PAYMENT_TIMEOUT_SUBMIT_DIALOG.value
+    }
+
+    private fun handleErrorResult() {
+        if (numAttemptsToStartPayment < MAX_NUMBER_ATTEMPTS_TO_PAY) {
+            showAlertResultDialog(false)
+            numAttemptsToStartPayment++
+        } else {
+            hideAlertResultDialog()
+            numAttemptsToStartPayment = 0
+        }
+    }
+
+    private fun hideAlertResultDialog() {
+        uiState = uiState.copy(showAlertResultScreen = false)
+    }
+
+    private fun showAlertResultDialog(isSuccess: Boolean) {
+        if (isSuccess) {
+            uiState = uiState.copy(
+                alertResultScreenIconResource = R.drawable.ic_success_symbol,
+                alertResultScreenTitleResource = string.visa_payment_success_title,
+                alertResultScreenDescriptionResource = string.visa_payment_success_description,
+                alertResultScreenButtonResource = string.finalize,
+                alertResultScreenOnButtonClick = { onUIEvent(OnNavigateHome) },
+                alertResultScreenRightButtonVisible = false,
+                showAlertResultScreen = true
+            )
+        } else {
+            uiState = uiState.copy(
+                alertResultScreenIconResource = R.drawable.ic_error_symbol,
+                alertResultScreenTitleResource = string.visa_payment_error_title,
+                alertResultScreenDescriptionResource = string.visa_payment_error_description,
+                alertResultScreenButtonResource = string.understood,
+                alertResultScreenOnButtonClick = {
+                    hideAlertResultDialog()
+                    startNovoPayment()
+                },
+                alertResultScreenRightButtonVisible = true,
+                showAlertResultScreen = true
+            )
         }
     }
 
@@ -267,7 +337,7 @@ class VisaCardViewModel @Inject constructor(
         uiState = uiState.copy(
             password = value,
             isPasswordConfirmButtonEnabled = value.isNotBlank(),
-            passwordError = Pair(false, R.string.error_empty)
+            passwordError = Pair(false, string.error_empty)
         )
     }
 
@@ -341,7 +411,7 @@ class VisaCardViewModel @Inject constructor(
         passwordAttempts++
         if (passwordAttempts < MAX_PASSWORD_ATTEMPTS) {
             uiState = uiState.copy(
-                passwordError = Pair(true, R.string.visa_card_password_error),
+                passwordError = Pair(true, string.visa_card_password_error),
                 isLoading = false
             )
         } else {
@@ -489,12 +559,19 @@ class VisaCardViewModel @Inject constructor(
         val blockUnblockButtonText: Int = string.locked,
         val blockUnblockButtonIcon: Int = R.drawable.ic_locked,
         val password: String = "",
-        val passwordError: Pair<Boolean, Int> = Pair(false, R.string.error_empty),
+        val passwordError: Pair<Boolean, Int> = Pair(false, string.error_empty),
         val isPasswordConfirmButtonEnabled: Boolean = false,
         val bottomSheetVisibleState: ModalBottomSheetState = ModalBottomSheetState(Hidden),
         val dialogParameters: DialogParameters = DialogParameters(),
-        val visaCardBlockDisclaimer: Int = R.string.empty,
-        val isLoading: Boolean = false
+        val visaCardBlockDisclaimer: Int = string.empty,
+        val isLoading: Boolean = false,
+        val showAlertResultScreen: Boolean = false,
+        val alertResultScreenIconResource: Int = R.drawable.ic_success_symbol,
+        val alertResultScreenTitleResource: Int = string.empty,
+        val alertResultScreenDescriptionResource: Int = string.empty,
+        val alertResultScreenButtonResource: Int = string.empty,
+        val alertResultScreenOnButtonClick: () -> Unit = {},
+        val alertResultScreenRightButtonVisible: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -538,6 +615,8 @@ class VisaCardViewModel @Inject constructor(
             is OnTryWithPassword -> onTryWithPassword()
             is OnBlockUnblockCardClick -> onBlockUnblockCardClick()
             is OnHandleTapAndPayIntentResult -> onHandleTapAndPayIntentResult(uiEvent.result)
+            is OnHideAlertResultScreen -> hideAlertResultDialog()
+            is OnNavigateHome -> navigateBack(Screen.HomeScreen.route, true)
         }
     }
 
@@ -565,6 +644,8 @@ class VisaCardViewModel @Inject constructor(
         object OnPasswordConfirmClick : UIEvent()
         object OnPasswordForgotPassword : UIEvent()
         data class OnHandleTapAndPayIntentResult(val result: ActivityResult) : UIEvent()
+        object OnHideAlertResultScreen : UIEvent()
+        object OnNavigateHome : UIEvent()
     }
 
     sealed class BaseEvent {
@@ -577,5 +658,7 @@ class VisaCardViewModel @Inject constructor(
         const val NOVO_CARD_TOKEN_EMPTY_TWO = "-1"
         const val MAX_PASSWORD_ATTEMPTS = 3
         const val INIT_PASSWORD_ATTEMPTS = 0
+        const val MAX_NUMBER_ATTEMPTS_TO_PAY = 2
+        const val DELAY_TO_START_PAYMENT = 300L
     }
 }

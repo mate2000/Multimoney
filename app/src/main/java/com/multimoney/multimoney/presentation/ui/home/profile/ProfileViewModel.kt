@@ -13,7 +13,6 @@ import com.multimoney.multimoney.presentation.navigation.EMAIL
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
-import timber.log.Timber
 import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
@@ -24,6 +23,7 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -47,7 +47,7 @@ class ProfileViewModel @Inject constructor(
             pkUser = savedStateHandle[PK_USER],
             idClient = savedStateHandle[ID_CLIENT],
             idBrand = savedStateHandle[ID_BRAND] ?: 0,
-            firstName = savedStateHandle[FIRST_NAME],
+            firstName = savedStateHandle[FIRST_NAME]
         )
     }
 
@@ -63,8 +63,12 @@ class ProfileViewModel @Inject constructor(
         navigateTo("${Screen.ProfileSettingsScreen.baseRoute}/${uiState.idBrand}/${uiState.pkUser}/${uiState.userName}")
     }
 
-    private fun navigateToHelpAndInformation () {
+    private fun navigateToHelpAndInformation() {
         navigateTo("${Screen.ProfileHelpScreen.baseRoute}/${uiState.idBrand}/${uiState.identification}/${uiState.pkUser}/${uiState.userName}")
+    }
+
+    private fun navigateToMyCards() {
+        navigateTo("${Screen.ProfileCardListScreen.baseRoute}/${uiState.email}/${uiState.idBrand}/${uiState.identification}")
     }
 
     private fun signOutDialogConfirmation() {
@@ -114,13 +118,11 @@ class ProfileViewModel @Inject constructor(
             is UIEvent.OnGetProfileInfo -> getProfileInfo()
             is UIEvent.OnUpdateProfileClick -> navigateToPersonalInfoScreen()
             is UIEvent.OnMyAccountsClick -> Timber.d("navigate to my account screen")
-            //is UIEvent.OnMyCardsClick -> Timber.d("navigate to my cards screen")
-            is UIEvent.OnMyCardsClick -> navigateToEditCardScreen()
+            is UIEvent.OnMyCardsClick -> navigateToMyCards()
             is UIEvent.OnSettingsClick -> navigateToSettingsScreen()
             is UIEvent.OnHelpClick -> navigateToHelpAndInformation()
             is UIEvent.OnInviteFriendsClick -> Timber.d("navigate to invite friends screen")
             is UIEvent.OnLogoutClick -> signOutDialogConfirmation()
-
         }
     }
 

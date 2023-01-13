@@ -34,7 +34,10 @@ import com.multimoney.data.networking.graphql.apollomodel.CreditOfferQuery
 import com.multimoney.data.networking.graphql.apollomodel.DataInformationClientQuery
 import com.multimoney.data.networking.graphql.apollomodel.DeactivatedCardAutomaticDebitMutation
 import com.multimoney.data.networking.graphql.apollomodel.DeactivatedClientAutomaticDebitMutation
+import com.multimoney.data.networking.graphql.apollomodel.EmploymentSituationQuery
+import com.multimoney.data.networking.graphql.apollomodel.ExchangeRateQuery
 import com.multimoney.data.networking.graphql.apollomodel.GeneralEconomicActivityQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetAvailableListOfCryptoCoinsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCardAutomaticDebitQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetClientAutomaticDebitQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetClientBankAccountQuery
@@ -43,8 +46,11 @@ import com.multimoney.data.networking.graphql.apollomodel.GetConfigurationVersio
 import com.multimoney.data.networking.graphql.apollomodel.GetCoreBankMovementsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCountryContactQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCountryQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetCryptoCurrencyNewsQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetCryptoMovementsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetExchangeRateCreditQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetHistoricClientBalanceQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetHistoricalCurrencyPricesQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetInfoDepositQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPaymentPointsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPromissoryNoteDetailQuery
@@ -60,12 +66,6 @@ import com.multimoney.data.networking.graphql.apollomodel.ListSinpeAccountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountSaveMutation
 import com.multimoney.data.networking.graphql.apollomodel.NationalityQuery
 import com.multimoney.data.networking.graphql.apollomodel.OcupationsQuery
-import com.multimoney.data.networking.graphql.apollomodel.EmploymentSituationQuery
-import com.multimoney.data.networking.graphql.apollomodel.ExchangeRateQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetAvailableListOfCryptoCoinsQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetCryptoCurrencyNewsQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetCryptoMovementsQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetHistoricalCurrencyPricesQuery
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoCheckProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoIntialProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.PayCreditVDMutation
@@ -107,12 +107,6 @@ import com.multimoney.data.networking.graphql.apollomodel.type.BeneficiaryReques
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.credit.CreditInfoQuestion
 import com.multimoney.domain.model.credit.DestinyAccount
-import com.multimoney.domain.model.crypto.CryptoCurrencyNews
-import com.multimoney.domain.model.crypto.GetHistoricalCurrencyPrices
-import com.multimoney.domain.model.util.MultimoneyResult
-import kotlinx.coroutines.flow.Flow
-import com.multimoney.domain.model.crypto.GetListOfAvailableCryptoCoins
-import com.multimoney.domain.model.security.RequestChangeDevice
 import javax.inject.Inject
 
 class GraphqlApi @Inject constructor(
@@ -1058,7 +1052,7 @@ class GraphqlApi @Inject constructor(
     fun queryStepByStep(
         user: String,
         idBrand: Int,
-        idRequest: Int
+        idRequest: Long
     ): ApolloCall<StepByStepQuery.Data> =
         apolloAuthorizedClient.query(StepByStepQuery(user, idBrand, idRequest))
             .fetchPolicy(FetchPolicy.NetworkOnly)
@@ -1068,6 +1062,7 @@ class GraphqlApi @Inject constructor(
         status: Int,
         user: String,
         idBrand: Int,
+        idGlobalRequest: Long,
         idProfessionType: Int?,
         idCivilStatusType: Long?,
         birthday: String?,
@@ -1104,6 +1099,7 @@ class GraphqlApi @Inject constructor(
                 status,
                 user,
                 idBrand,
+                idGlobalRequest,
                 Optional.presentIfNotNull(idProfessionType),
                 Optional.presentIfNotNull(idAddressLevel1),
                 Optional.presentIfNotNull(idAddressLevel2),
@@ -1329,7 +1325,7 @@ class GraphqlApi @Inject constructor(
         nameAccount: String,
         country: String,
         idAccount: Long?,
-        option: String?,
+        option: String?
     ): ApolloCall<ManageSinpeAccountSaveMutation.Data> =
         apolloAuthorizedClient.mutation(
             ManageSinpeAccountSaveMutation(
@@ -1408,7 +1404,7 @@ class GraphqlApi @Inject constructor(
 
     fun queryGetAvailableListOfCryptoCoins(
         user: String,
-        idBrand: Int,
+        idBrand: Int
     ): ApolloCall<GetAvailableListOfCryptoCoinsQuery.Data> =
         apolloAuthorizedClient.query(
             GetAvailableListOfCryptoCoinsQuery(
@@ -1644,9 +1640,8 @@ class GraphqlApi @Inject constructor(
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
-
     fun mutationResquestChangeDevice(
-        email: String,
+        email: String
     ): ApolloCall<RequestChangeDeviceMutation.Data> =
         apolloAuthorizedClient.mutation(
             RequestChangeDeviceMutation(

@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.navigation.navtype.payment
+package com.multimoney.multimoney.presentation.navigation.navtype.home
 
 import android.os.Bundle
 import androidx.navigation.NavType

@@ -94,7 +94,7 @@ fun CustomDatePicker(
     if (isSystemInDarkTheme()) {
         labelColor = WhiteTransparency70
         backgroundColor = WhiteTransparency10
-        placeholderColor = WhiteTransparency30
+        placeholderColor = WhiteTransparency60
         unfocusedIndicatorColor = DefaultBlack
         errorIndicatorColor = if (isError) {
             SemanticNegative400

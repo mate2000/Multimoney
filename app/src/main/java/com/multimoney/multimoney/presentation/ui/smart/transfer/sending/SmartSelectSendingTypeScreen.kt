@@ -262,7 +262,7 @@ fun SendingTypeOptionsSV(
         title = stringResource(id = R.string.payment_select_sending_type_to_smart_accounts),
         modifier = modifier,
         endIcon = R.drawable.ic_right_chevron,
-        startIcon = R.drawable.ic_sending_dollar,
+        startIcon = R.drawable.ic_sending_contact,
         onEndIconClick = onMySmartAccountClick,
         onClick = onMySmartAccountClick
     )

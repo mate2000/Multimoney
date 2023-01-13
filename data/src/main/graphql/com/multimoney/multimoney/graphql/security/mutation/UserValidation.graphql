@@ -27,6 +27,9 @@ mutation UserValidation($email:String!, $currentStep:String!, $idBrand:Int!, $id
     countryCode
     currentStep
     userStatus
+    isNewUser
+    maskedMail
+    maskedPhoneNumber
     message
     status
   }

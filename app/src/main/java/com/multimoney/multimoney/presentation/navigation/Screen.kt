@@ -119,6 +119,7 @@ const val CRYPTO_ASSET = "asset"
 const val DESCRIPTION_CURRENCY = "description_currency"
 const val CURRENT_CRYPTO_PRICE = "current_crypto_price"
 const val URL_IMAGE = "url_image"
+const val USER_DATA = "user_data"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -135,12 +136,23 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object OnBoardingScreen : Screen("onboarding_screen")
     object SignInScreen :
         Screen("sign_in_screen?$FORCE_CHANGE_DEVICE={$FORCE_CHANGE_DEVICE}", "sign_in_screen")
-
     object SignUpScreen : Screen("sign_up_screen/{$SIGN_UP_STEP}", "sign_up_screen")
     object RequestForgotPassword :
         Screen(
             "request_forgot_password_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}",
             "request_forgot_password_screen"
+        )
+
+    object RegisteredUserEmailScreen :
+        Screen(
+            "registered_user_email_screen?$ID_BRAND={$ID_BRAND}?$USER_DATA={$USER_DATA}",
+            "registered_user_email_screen"
+        )
+
+    object RegisteredUserOtpScreen :
+        Screen(
+            "registered_user_otp_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}?$ID_BRAND={$ID_BRAND}?$USER_DATA={$USER_DATA}",
+            "registered_user_otp_screen"
         )
 
     object ProcessForgotPassword :

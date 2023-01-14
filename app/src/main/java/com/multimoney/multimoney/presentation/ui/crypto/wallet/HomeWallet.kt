@@ -55,6 +55,7 @@ import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewMod
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewModel.UIEvent.OnSetDateRange
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoActionsSection
+import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
@@ -278,14 +279,21 @@ fun BalanceSection(
             text = stringResource(R.string.crypto_wallet_balance_section_label),
             style = Typography.subtitle1.copy(color = MultimoneyTheme.colors.quickActionLabelColor)
         )
-        Text(
+        Row(
             modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
-            text = stringResource(
-                id = R.string.currency_item_dollar_symbol,
-                globalCryptoBalance.roundToTwoDecimalPlacesWithoutNegatives()
-            ),
-            style = Typography.h4.copy(color = MultimoneyTheme.colors.text)
-        )
+        ) {
+            BalanceTextView(
+                balanceText = globalCryptoBalance.roundToTwoDecimalPlacesWithoutNegatives(),
+                currencyStyle = Typography.h4.copy(
+                    color = MultimoneyTheme.colors.text,
+                    fontWeight = FontWeight.Bold
+                ),
+                currencyDecimalStyle = Typography.body2.copy(
+                    color = MultimoneyTheme.colors.text,
+                    fontWeight = FontWeight.Bold
+                )
+            )
+        }
         Text(
             modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
             text = stringResource(

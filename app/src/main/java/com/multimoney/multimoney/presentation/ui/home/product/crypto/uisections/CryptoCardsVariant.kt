@@ -22,9 +22,11 @@ import com.multimoney.multimoney.presentation.theme.BlackTransparency16
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.HomeCryptoGraphic
+import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.util.calculateGainLoses
+import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlaces
 import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlacesWithoutNegatives
 
 @Composable
@@ -133,11 +135,16 @@ fun CryptoCardWithBalance(
                 fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.text
             )
         )
-        Text(
+        BalanceTextView(
             modifier = Modifier.height(40.dp),
-            text = stringResource(id = R.string.currency_item_dollar_symbol, cryptoBalance),
-            style = Typography.h4.copy(
-                fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.text
+            balanceText = cryptoBalance.roundToTwoDecimalPlaces(),
+            currencyStyle = Typography.h4.copy(
+                color = MultimoneyTheme.colors.text,
+                fontWeight = FontWeight.Bold
+            ),
+            currencyDecimalStyle = Typography.body2.copy(
+                color = MultimoneyTheme.colors.text,
+                fontWeight = FontWeight.Bold
             )
         )
 

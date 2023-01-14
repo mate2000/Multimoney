@@ -1,0 +1,19 @@
+mutation DeleteCardVD(
+    $identification: String!,
+    $user: String!,
+    $idBrand: Int!,
+    $idCard: Long!
+)
+{
+    deleteCardVD(
+        deleteCardVDInput: {
+            identification: $identification,
+            user: $user,
+            idBrand: $idBrand,
+            idCard: $idCard
+        }
+    ) {
+        isApproved
+        apiStatus
+    }
+}

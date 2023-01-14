@@ -306,7 +306,7 @@ fun MarketDetailsButtonsSection(
             modifier = Modifier
                 .width(164.dp)
                 .wrapContentHeight()
-                .padding(horizontal = 4.dp),
+                .padding(horizontal = 8.dp),
             buttonType = if (selected.value) CustomButtonType.PrimaryQuinary else CustomButtonType.PrimaryQuaternary,
             text = stringResource(R.string.market_details_button_history),
             onClick = onHistoryClick
@@ -315,7 +315,7 @@ fun MarketDetailsButtonsSection(
             modifier = Modifier
                 .width(164.dp)
                 .wrapContentHeight()
-                .padding(horizontal = 4.dp),
+                .padding(horizontal = 8.dp),
             buttonType = if (selected.value.not()) CustomButtonType.PrimaryQuinary else CustomButtonType.PrimaryQuaternary,
             text = stringResource(R.string.market_details_button_news),
             onClick = onNewsClick

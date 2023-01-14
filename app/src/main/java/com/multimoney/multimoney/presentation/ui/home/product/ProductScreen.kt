@@ -296,19 +296,22 @@ fun TipsAndOffer(
                     color = MultimoneyTheme.colors.labelText
                 )
             }
-            Row {
+            Row(modifier = Modifier.padding(end = 8.dp)) {
                 Icon(
                     painter = painterResource(R.drawable.ic_notification),
-                    modifier = Modifier.clickable {
-                        // todo action
-                    },
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clickable {
+                            // todo action
+                        },
                     contentDescription = "",
                     tint = MultimoneyTheme.colors.iconColor
                 )
                 Icon(
                     painter = painterResource(R.drawable.ic_profile),
                     modifier = Modifier
-                        .padding(start = 16.dp, end = 2.dp)
+                        .padding(start = 16.dp)
+                        .size(32.dp)
                         .clickable {
                             viewModel.onUIEvent(OnNavigateToProfileScreen)
                         },

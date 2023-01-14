@@ -282,7 +282,10 @@ fun TipsAndOffer(
             Column {
                 Text(
                     text = viewModel.uiState.userStatus?.wording?.textOne ?: "",
-                    style = Typography.h6.copy(letterSpacing = 0.38.sp),
+                    style = Typography.h6.copy(
+                        letterSpacing = 0.38.sp,
+                        lineHeight = 24.sp
+                    ),
                     color = MultimoneyTheme.colors.labelText
                 )
                 Text(

@@ -3,6 +3,7 @@ package com.multimoney.multimoney.presentation.uielement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -70,6 +71,7 @@ fun CustomProductBackground(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .heightIn(min = 200.dp)
                     .paint(painterResource(id = cardResourceId), contentScale = ContentScale.FillBounds)
                     .clip(RoundedCornerShape(24.dp))
                     .blur(0.24.dp)

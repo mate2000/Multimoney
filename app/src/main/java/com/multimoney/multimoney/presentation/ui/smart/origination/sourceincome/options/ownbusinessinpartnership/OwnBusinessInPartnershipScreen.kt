@@ -185,7 +185,7 @@ fun OwnBusinessOnPersonalBasisContent(
                 R.string.smart_decimal_income_placeholder,
                 currencySymbol
             ),
-            leadingIcon = R.drawable.ic_money_gray,
+            leadingIcon = R.drawable.ic_quick_action_money,
             customTransformation = formatDecimalMoney(currencySymbol),
             isRequired = true,
             isRequiredMessage = stringResource(R.string.smart_business_personal_basis_income_required_message)

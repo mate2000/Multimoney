@@ -10,7 +10,7 @@ import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.SMART_IDS
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
@@ -44,7 +44,7 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     var previousScreen: String = ""
 
     init {
-        smartAccount = savedStateHandle[SMART_IDS]
+        smartAccount = savedStateHandle[SMART_ACCOUNT]
         user = savedStateHandle[USER] ?: ""
         identification = savedStateHandle[IDENTIFICATION] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -55,12 +55,16 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     fun getTitleAndIconSmartAccountResources(): Pair<Int, Int?> {
         val result = when (smartAccount?.currencyID?.getCurrencyFromId()?.value) {
             CurrencyType.Dollar.value -> {
-              Pair(R.string.payment_select_sending_type_smart_account_colones,
-                  R.drawable.ic_payment_colon)
+                Pair(
+                    R.string.payment_select_sending_type_smart_account_colones,
+                    R.drawable.ic_payment_colon
+                )
             }
             CurrencyType.Colon.value -> {
-               Pair(R.string.payment_select_sending_type_smart_account_dollars,
-                   R.drawable.ic_sending_dollar)
+                Pair(
+                    R.string.payment_select_sending_type_smart_account_dollars,
+                    R.drawable.ic_sending_dollar
+                )
             }
             else -> {
                 Pair(R.string.empty, 0)

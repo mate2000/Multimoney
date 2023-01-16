@@ -23,15 +23,14 @@ import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSma
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.BaseUIEvent.OnNavigateHome
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.BaseUIEvent.OnRetryTransfer
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.BaseUIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.smart.common.editamount.SmartAmountBody
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.LoadingMultiMoney
-import com.multimoney.multimoney.presentation.ui.smart.common.editamount.SmartAmountBody
 import com.multimoney.multimoney.presentation.uielement.SmartPaymentBottomSheet
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.getFullMaskedAccountIban
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 
 @Composable
@@ -120,8 +119,8 @@ fun SmartTransferAmountContent(viewModel: SmartTransferAmountViewModel = hiltVie
                 viewModel.totalBalanceLabel
             ),
             currency = viewModel.baseUIState.currency,
-            exchangeRate = viewModel.baseUIState.exchangeRateLabel,
-            convertedTotal = viewModel.baseUIState.convertedAmountLabel,
+            exchangeRate = viewModel.baseUIState.exchangeRateLabel ?: "",
+            convertedTotal = viewModel.baseUIState.convertedAmountLabel ?: "",
             shouldDisplayExchange = viewModel.shouldDisplayExchange,
             onContinueClick = { viewModel.onBaseUIEvent(OnContinueClick) },
             enableButton = viewModel.baseUIState.enableButton,
@@ -137,27 +136,17 @@ private fun SmartTransferBottomSheet(viewModel: SmartTransferAmountViewModel) {
     SmartPaymentBottomSheet(
         coroutineScope = rememberCoroutineScope(),
         modalBottomSheetState = viewModel.baseUIState.bottomSheetState,
-        saveSendTitleResource = R.string.smart_payment_sheet_title,
+        saveSendTitleResource = R.string.smart_payment_sheet_send_title,
         amount = viewModel.getFormattedAmount(),
         exchangedAmount = if (viewModel.shouldDisplayExchange) viewModel.baseUIState.convertedAmountLabel else null,
-        fromLabel = stringResource(R.string.smart_payment_sheet_from_account),
-        fromIcon = R.drawable.ic_multimoney_smart,
-        fromTitle = stringResource(
-            R.string.smart_payment_amount_bottom_sheet_my_smart_account,
-            viewModel.smartCurrency?.symbol ?: ""
-        ),
-        fromSubtitle = getMaskedAccountIban(
-            viewModel.smartAccount?.ibanAccountNumber ?: "",
-            stringResource(R.string.payment_account_masked_text)
-        ),
-        toLabel = stringResource(R.string.smart_payment_sheet_to_account),
-        toIcon = viewModel.originIcon,
-        toTitle = viewModel.accountName,
-        toSubtitle = getFullMaskedAccountIban(
-            viewModel.bankDetail,
-            viewModel.maskedCardNumber,
-            stringResource(R.string.payment_account_masked_text)
-        ),
+        fromLabel = stringResource(viewModel.baseUIState.originAccountDisplay?.sheetLabel ?: R.string.empty),
+        fromIcon = viewModel.baseUIState.originAccountDisplay?.icon ?: R.drawable.ic_dropdown_open,
+        fromTitle = viewModel.baseUIState.originAccountDisplay?.sheetTitle ?: "",
+        fromSubtitle = viewModel.baseUIState.originAccountDisplay?.sheetSubtitle ?: "",
+        toLabel = stringResource(viewModel.baseUIState.destinyAccountDisplay?.sheetLabel ?: R.string.empty),
+        toIcon = viewModel.baseUIState.destinyAccountDisplay?.icon ?: R.drawable.ic_dropdown_open,
+        toTitle = viewModel.baseUIState.destinyAccountDisplay?.sheetTitle ?: "",
+        toSubtitle = viewModel.baseUIState.destinyAccountDisplay?.sheetSubtitle ?: "",
         motive = viewModel.baseUIState.motive,
         buttonText = stringResource(R.string.payment_amount_bottom_sheet_send_button),
         buttonAction = { viewModel.onBaseUIEvent(OnCallProcessTransfer) }

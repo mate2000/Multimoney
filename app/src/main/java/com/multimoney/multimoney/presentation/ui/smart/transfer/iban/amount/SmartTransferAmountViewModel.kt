@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
-class SmartTransferAmountViewModel @Inject constructor(): BaseSmartEditAmountViewModel() {
+class SmartTransferAmountViewModel @Inject constructor() : BaseSmartEditAmountViewModel() {
 
     // stateless
     var fromSmartLabel: Int = R.string.smart_iban_transfer_smart_account_colon
@@ -24,36 +24,19 @@ class SmartTransferAmountViewModel @Inject constructor(): BaseSmartEditAmountVie
     override fun onStart() {
         viewModelScope.launch {
             initializeValues()
-            baseUIState = baseUIState.copy(
-                currency = ibanCurrency?.symbol ?: CurrencyType.Dollar.symbol,
-                placeholder = if (ibanCurrency == CurrencyType.Dollar) {
-                    R.string.smart_dollar_placeholder
-                } else {
-                    R.string.smart_colon_placeholder
-                }
-            )
-            fromSmartLabel = if (smartCurrency == CurrencyType.Colon) {
+            fromSmartLabel = if (originCurrency == CurrencyType.Colon) {
                 R.string.smart_iban_transfer_smart_account_colon
             } else {
                 R.string.smart_iban_transfer_smart_account_dolar
             }
             totalBalanceLabel =
                 baseUIState.currency + smartAccount?.totalBalance.toString()
-            getExchangeOnCompleted(
-                isStart = true,
-                abbreviation = smartCurrency?.disbursementValue ?: "",
-                idOriginCurrency = ibanCurrency?.id.toString(),
-                idDestinationCurrency = smartCurrency?.id.toString()
-            )
+            getExchangeOnCompleted(isStart = true)
         }
     }
 
     override fun onAmountCompleted() {
-        getExchangeOnCompleted(
-            abbreviation = smartCurrency?.disbursementValue ?: "",
-            idOriginCurrency = ibanCurrency?.id.toString(),
-            idDestinationCurrency = smartCurrency?.id.toString()
-        )
+        getExchangeOnCompleted()
     }
 
     override fun onContinueClick() {
@@ -74,10 +57,10 @@ class SmartTransferAmountViewModel @Inject constructor(): BaseSmartEditAmountVie
             originIdentification = identification,
             originAccountNumber = smartAccount?.ibanAccountNumber ?: "",
             originCustomerName = userName,
-            originCurrency = smartCurrency?.id.toString(),
+            originCurrency = originCurrency?.id.toString(),
             destinationCustomerName = ibanAccount?.nameAccount ?: "",
             destinationAccountNumber = ibanAccount?.sinpeAccount ?: "",
-            destinationCurrency = ibanCurrency?.id.toString(),
+            destinationCurrency = destinyCurrency?.id.toString(),
             transferType = SmartSinpeTransferType.SEND,
             destinationIdentification = ibanAccount?.clientIdentification ?: ""
         )

@@ -60,6 +60,7 @@
     <string name="success" translatable="false">Exito</string>
     <string name="got_it" translatable="false">Entendido</string>
     <string name="motive" translatable="false">Motivo</string>
+    <string name="return_string" translatable="false">%s</string>
 
     <string name="content_description_more_info" translatable="false">Más información</string>
 
@@ -980,6 +981,7 @@
     <string name="payment_amount_bottom_sheet_account" translatable="false">Desde tu cuenta</string>
     <string name="payment_amount_bottom_sheet_exchange_type" translatable="false">Tipo de cambio</string>
     <string name="payment_amount_bottom_sheet_amount_to_debit" translatable="false">Monto a debitar</string>
+    <string name="payment_amount_bottom_sheet_debited_amount" translatable="false">Monto debitado</string>
     <string name="payment_amount_bottom_sheet_pay_button" translatable="false">Realizar pago</string>
     <string name="payment_amount_bottom_sheet_send_button" translatable="false">Realizar envío</string>
     <string name="payment_amount_bottom_sheet_process_payment_description_label" translatable="false">Pago unica moneda desde App</string>
@@ -987,7 +989,7 @@
 
     <!-- Smart Payment Amount Bottom Sheet -->
     <string name="smart_payment_amount_bottom_sheet_my_smart_account" translatable="false">Mi cuenta Smart | %s</string>
-    <string name="smart_payment_amount_bottom_sheet_title" translatable="false">Monto a ahorrar</string>
+    <string name="smart_payment_amount_bottom_sheet_save_title" translatable="false">Monto a ahorrar</string>
     <string name="smart_payment_amount_bottom_sheet_from_card" translatable="false">Desde la tarjeta</string>
     <string name="smart_payment_amount_bottom_sheet_from_card_CR" translatable="false">Desde la cuenta</string>
     <string name="smart_payment_amount_bottom_sheet_to" translatable="false">Hacia</string>
@@ -1309,11 +1311,12 @@
     <string name="smart_iban_transfer_select_smart_account_title" translatable="false">Enviar dinero desde</string>
 
     <!-- Smart Payment Sheet-->
-    <string name="smart_payment_sheet_title" translatable="false">Monto a enviar</string>
+    <string name="smart_payment_sheet_send_title" translatable="false">Monto a enviar</string>
     <string name="smart_payment_sheet_from_account" translatable="false">Desde la cuenta</string>
     <string name="smart_payment_sheet_to_account" translatable="false">Hacia la cuenta</string>
     <string name="smart_payment_sheet_transfer_button" translatable="false">Realizar envío</string>
     <string name="smart_payment_sheet_equivalent" translatable="false">Equivalente a %1$s</string>
+    <string name="smart_payment_sheet_multimoney_smart" translatable="false">Multimoney Smart</string>
 
     <!-- Smart SAC Transfer -->
     <string name="smart_sac_transfer_contact_rationale_title" translatable="false">Lo sentimos</string>

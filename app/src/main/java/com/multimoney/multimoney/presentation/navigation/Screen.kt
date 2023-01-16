@@ -4,7 +4,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.AMOUNT_ORIGINAL_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALANCE_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_INFORMATION
-import com.multimoney.multimoney.presentation.navigation.navgraph.BANK_DETAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_CARD_VISA_DIRECT
@@ -30,7 +29,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_PAYMEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_MULTI_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_SMART_EVICERTIA
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
-import com.multimoney.multimoney.presentation.navigation.navgraph.MASKED_CARD
 import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.MINIMUM_PAYMENT
@@ -60,11 +58,11 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
+import com.multimoney.multimoney.presentation.navigation.navgraph.SMART_ACCOUNT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SMART_PAYMENT_ACCOUNTS
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.TRANSFER_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.navigation.navgraph.USER_SMART_ACCOUNT
 
 // Route
 const val LOGIN_ROUTE = "log_in_route"
@@ -93,9 +91,11 @@ const val CHANGING_FIELD = "changing_field"
 const val NEW_VALUE = "new_value"
 const val DATE_SIGNED = "date_signed"
 const val VERSION = "version"
-const val ID_VISA_CARD = "id_visa_card"
-const val SMART_IDS_LIST = "smart_id_list"
-const val SMART_IDS = "smart_ids"
+const val TRANSFER_TYPE = "transfer_type"
+const val ORIGIN_ACCOUNT = "origin_account"
+const val DESTINY_ACCOUNT = "destiny_account"
+const val SMART_ACCOUNT_LIST = "smart_id_list"
+const val SMART_ACCOUNT = "smart_account"
 const val IBAN_ACCOUNT = "iban_account"
 const val GLOBAL_CRYPTO_BALANCE = "global_crypto_balance"
 const val PASSWORD = "password"
@@ -452,64 +452,95 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     // Smart Payment
 
     object SmartPaymentOptionsScreenCR : Screen(
-        "smart_payment_options_screen/{$SMART_IDS_LIST}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
+        "smart_payment_options_screen/{$SMART_ACCOUNT_LIST}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
         "smart_payment_options_screen"
     )
 
     object SmartPaymentAccountScreenCR : Screen(
-        "smart_payment_accounts_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SMART_PAYMENT_ACCOUNTS}/{$SMART_IDS}",
+        "smart_payment_accounts_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SMART_PAYMENT_ACCOUNTS}/{$SMART_ACCOUNT}",
         "smart_payment_accounts_screen"
     )
 
     object SmartPaymentMethodScreenSV : Screen(
-        "smart_payment_method_screen/{$SMART_IDS}",
+        "smart_payment_method_screen/{$SMART_ACCOUNT}",
         "smart_payment_method_screen"
     )
 
     object SmartPaymentCardsScreenSV : Screen(
-        "smart_payment_cards_screen/{$SMART_IDS}",
+        "smart_payment_cards_screen/{$SMART_ACCOUNT}",
         "smart_payment_cards_screen"
     )
 
     object SavingMethodTransferScreen : Screen(
-        route = "saving_method_transfer_screen/{$USER_SMART_ACCOUNT}",
-        baseRoute = "saving_method_transfer_screen"
+        "saving_method_transfer_screen/{$SMART_ACCOUNT_NUMBER}",
+        "saving_method_transfer_screen"
     )
 
-    object SmartPaymentSavingAmount : Screen(
-        "smart_payment_saving_amount_screen/{$SMART_IDS}?$IBAN_ACCOUNT={$IBAN_ACCOUNT}/{$ID_VISA_CARD}/{$PREVIOUS_SCREEN}/{$MASKED_CARD}/{$BANK_DETAIL}",
-        "smart_payment_saving_amount_screen"
+    /**
+     * Params in order
+     * @param PREVIOUS_SCREEN: Route to the previous screen
+     * @param ORIGIN_ACCOUNT: Card visa direct
+     * @param DESTINY_ACCOUNT: Smart account
+     * @param TRANSFER_TYPE: Int id indicating transfer type (VisaToSmart)
+     */
+    object SmartPaymentSavingAmountSV : Screen(
+        "smart_payment_saving_amount_screen_sv/{$PREVIOUS_SCREEN}/{$ORIGIN_ACCOUNT}/{$DESTINY_ACCOUNT}/{$TRANSFER_TYPE}",
+        "smart_payment_saving_amount_screen_sv"
+    )
+
+    /**
+     * Params in order
+     * @param PREVIOUS_SCREEN: Route to the previous screen
+     * @param ORIGIN_ACCOUNT: Iban account
+     * @param DESTINY_ACCOUNT: Smart account
+     * @param TRANSFER_TYPE: Int id indicating transfer type (IbanToSmart)
+     */
+    object SmartPaymentSavingAmountCR : Screen(
+        "smart_payment_saving_amount_screen_cr/{$PREVIOUS_SCREEN}/{$ORIGIN_ACCOUNT}/{$DESTINY_ACCOUNT}/{$TRANSFER_TYPE}",
+        "smart_payment_saving_amount_screen_cr"
     )
 
     // Smart Transfer Screens
 
     object SmartSelectSendingTypeScreen : Screen(
-        "smart_select_sending_type_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$SMART_IDS}/{$ID_CLIENT}/{$PREVIOUS_SCREEN}",
+        "smart_select_sending_type_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$SMART_ACCOUNT}/{$ID_CLIENT}/{$PREVIOUS_SCREEN}",
         "smart_select_sending_type_screen"
     )
 
     object SmartSelectAccountScreen : Screen(
-        "smart_select_account_screen/{$SMART_IDS_LIST}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ID_CLIENT}",
+        "smart_select_account_screen/{$SMART_ACCOUNT_LIST}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ID_CLIENT}",
         "smart_select_account_screen"
     )
 
     object SmartTransferRegisterIbanScreen : Screen(
-        "smart_transfer_register_iban_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$SMART_IDS}",
+        "smart_transfer_register_iban_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$SMART_ACCOUNT}",
         "smart_transfer_register_iban_screen"
     )
 
     object SmartTransferIbanAccountScreen : Screen(
-        "transfer_iban_account_screen/{$SMART_IDS}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}",
+        "transfer_iban_account_screen/{$SMART_ACCOUNT}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}",
         "transfer_iban_account_screen"
     )
 
+    /**
+     * Params in order
+     * @param ORIGIN_ACCOUNT: Smart account
+     * @param DESTINY_ACCOUNT: Iban account
+     * @param TRANSFER_TYPE: Int id indicating transfer type (SmartToIban)
+     */
     object SmartTransferAmountScreen : Screen(
-        "smart_transfer_amount_screen/{$SMART_IDS}/{$IBAN_ACCOUNT}/{$PREVIOUS_SCREEN}",
+        "smart_transfer_amount_screen/{$ORIGIN_ACCOUNT}/{$DESTINY_ACCOUNT}/{$TRANSFER_TYPE}",
         "smart_transfer_amount_screen"
     )
 
+    /**
+     * Params in order
+     * @param ORIGIN_ACCOUNT: Origin smart account
+     * @param DESTINY_ACCOUNT: Destiny smart account
+     * @param TRANSFER_TYPE: Int id indicating transfer type (SmartToSmart)
+     */
     object OwnTransferAmountScreen : Screen(
-        "own_transfer_amount_screen/{$SMART_IDS}/{$PREVIOUS_SCREEN}",
+        "own_transfer_amount_screen/{$ORIGIN_ACCOUNT}/{$DESTINY_ACCOUNT}/{$TRANSFER_TYPE}",
         "own_transfer_amount_screen"
     )
 

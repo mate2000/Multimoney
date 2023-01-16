@@ -38,8 +38,8 @@ fun CustomInfoButton(
     modifier: Modifier = Modifier,
     imageModifier: Modifier = Modifier,
     startIcon: Int? = R.drawable.ic_payment_fee_icon,
-    title: String = "",
-    subtitle: String = "",
+    title: String = "Title",
+    subtitle: String = "Test",
     subtitle2: String = "",
     endIcon: Int? = R.drawable.ic_right_chevron,
     shouldCenterEndIcon: Boolean = true,
@@ -130,6 +130,7 @@ fun CustomInfoButton(
                     modifier = Modifier.constrainAs(subTitleId) {
                         top.linkTo(titleId.bottom, margin = 4.dp)
                         start.linkTo(titleId.start)
+                        if (startIcon != null) bottom.linkTo(startIconId.bottom)
                         height = Dimension.fillToConstraints
                     },
                     style = Typography.caption,

@@ -64,17 +64,17 @@ fun String.capitalized(): String {
     }
 }
 
-fun getMaskedAccount(accountNumber: String, maskedText: String) =
+fun getMaskedAccount(accountNumber: String, maskedText: String = ACCOUNT_MASK) =
     accountNumber.take(ACCOUNT_FIRST_DIGITS).plus(maskedText)
         .plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
 
-fun getMaskedAccountIban(accountNumber: String, maskedText: String) =
+fun getMaskedAccountIban(accountNumber: String, maskedText: String = ACCOUNT_MASK) =
     Brand.CostaRica.iban.plus(
         accountNumber.take(ACCOUNT_IBAN_FIRST_DIGITS).plus(maskedText)
             .plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
     )
 
-fun getFullMaskedAccountIban(accountBank: String, accountNumber: String, maskedText: String) =
+fun getFullMaskedAccountIban(accountBank: String, accountNumber: String, maskedText: String = ACCOUNT_MASK) =
     accountBank.plus(" | " + getMaskedAccountIban(accountNumber, maskedText))
 
 const val ACCOUNT_IBAN_FIRST_DIGITS = 0
@@ -82,3 +82,4 @@ const val ACCOUNT_FIRST_DIGITS = 2
 const val ACCOUNT_LAST_DIGITS = 4
 const val CARD_NUMBER_LAST_DIGITS = 4
 const val TWO_DECIMALS_FORMAT = "%.2f"
+const val ACCOUNT_MASK = "••••"

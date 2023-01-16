@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.BaseUIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.BaseUIEvent.OnNavigateHome
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.BaseUIEvent.OnShareVoucherImage
 import com.multimoney.multimoney.presentation.uielement.PaymentSuccessResult
@@ -50,15 +49,14 @@ fun SmartTransferSuccessScreen(
                 null
             },
             fromToText = stringResource(R.string.smart_payment_to_account),
-            buttonText = stringResource(R.string.smart_payment_make_another_payment),
-            onButtonClick = { viewModel.onBaseUIEvent(OnNavigateBack) }
+            showButton = false
         ) {
             SmartPaymentInfoItem(
                 verticalAlignment = Alignment.CenterVertically,
                 icon = R.drawable.ic_bank_account,
                 title = stringResource(R.string.smart_payment_origin_account_label),
                 subtitle = getMaskedAccountIban(
-                    viewModel.maskedCardNumber,
+                    viewModel.smartAccount?.ibanAccountNumber ?: "",
                     stringResource(R.string.payment_account_masked_text)
                 )
             )

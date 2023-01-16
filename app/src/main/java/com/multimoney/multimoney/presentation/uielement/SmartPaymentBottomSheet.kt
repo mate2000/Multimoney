@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
@@ -105,18 +106,18 @@ fun SmartPaymentBottomSheet(
                 color = MultimoneyTheme.colors.text,
                 textAlign = TextAlign.Start
             )
-            fromSubtitle?.let {
-                CustomInfoButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(78.dp),
-                    startIcon = fromIcon,
-                    title = fromTitle,
-                    subtitle = it,
-                    endIcon = null,
-                    enable = false
-                )
-            }
+
+            CustomInfoButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(78.dp),
+                imageModifier = Modifier.size(48.dp),
+                startIcon = fromIcon,
+                title = fromTitle,
+                subtitle = fromSubtitle ?: "",
+                endIcon = null,
+                enable = false
+            )
 
             Icon(
                 painter = painterResource(R.drawable.ic_down_arrow_from_to),
@@ -134,6 +135,7 @@ fun SmartPaymentBottomSheet(
                     .padding(top = 8.dp)
                     .fillMaxWidth()
             )
+
             CustomInfoButton(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -144,6 +146,7 @@ fun SmartPaymentBottomSheet(
                 endIcon = null,
                 enable = false
             )
+
             Spacer(
                 Modifier
                     .fillMaxWidth()
@@ -192,7 +195,7 @@ private fun BottomSheetPreview() {
     SmartPaymentBottomSheet(
         coroutineScope = rememberCoroutineScope(),
         modalBottomSheetState = ModalBottomSheetState(Expanded),
-        saveSendTitleResource = R.string.smart_payment_amount_bottom_sheet_title,
+        saveSendTitleResource = R.string.smart_payment_amount_bottom_sheet_save_title,
         amount = "$500",
         exchangedAmount = "₡320,980",
         fromLabel = "Desde tu cuenta",

@@ -9,6 +9,6 @@ interface QueryRelatedContactsByPhoneUseCase {
     suspend operator fun invoke(
         user: String,
         idBrand: Int,
-        contacts: List<RelatedContact>?
+        contacts: List<RelatedContact>
     ): Flow<MultimoneyResult<PhonesResult?>>
 }

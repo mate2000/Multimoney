@@ -135,12 +135,12 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
 
     private fun onNavigateToMyContacts(numbers: List<String>) {
         // TODO navigate to HU REV-1445
-        val contacts = mutableListOf<RelatedContact>()
-        numbers.forEach { number ->
-            contacts.add(RelatedContact(number))
+        val contacts = encodeData(numbers.map {
+            RelatedContact(it)
         }
+        )
         navigateTo(
-            "${Screen.MyContactsTransferScreen.baseRoute}/$user/$idBrand/${encodeData(contacts)}/${Screen.SmartSelectSendingTypeScreen.baseRoute}"
+            "${Screen.MyContactsTransferScreen.baseRoute}/$user/$idBrand/${contacts}/${Screen.SmartSelectSendingTypeScreen.baseRoute}"
         )
     }
 

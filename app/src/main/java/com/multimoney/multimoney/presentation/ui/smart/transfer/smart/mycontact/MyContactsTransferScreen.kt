@@ -48,37 +48,46 @@ fun MyContactsTransferScreen(
         TopNavBar(
             isRightButtonVisible = true,
             onLeftButtonClick = { viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnNavigateBack) },
-            onRightButtonClick = { viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnNavigateToHome)}
+            onRightButtonClick = { viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnNavigateToHome) }
         )
-        if (viewModel.idBrand == Brand.CostaRica.id.toString()) {
+        if (viewModel.idBrand == Brand.ElSalvador.id) {
             Text(
                 modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
-                text = stringResource(R.string.smart_transfer_my_contacts_title),
+                text = stringResource(R.string.smart_transfer_my_contacts_title_SV),
                 style = Typography.h5.copy(
                     fontWeight = FontWeight.SemiBold,
                     color = MultimoneyTheme.colors.text
                 )
             )
-        } else {
-
-        }
-        Text(
-            modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
-            text = stringResource(R.string.smart_iban_transfer_accounts_title),
-            style = Typography.h5.copy(
-                fontWeight = FontWeight.SemiBold,
-                color = MultimoneyTheme.colors.text
-            )
-        )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 32.dp, start = 16.dp, end = 16.dp),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 32.dp, start = 16.dp, end = 16.dp),
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(id = R.string.smart_mycontacts_transfer_title),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(end = 16.dp),
+                    style = Typography.subtitle1.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        color = MultimoneyTheme.colors.smartCardTrending
+                    )
+                )
+                CustomButton(
+                    text = stringResource(id = R.string.smart_my_contacts_transfer_accounts_add),
+                    onClick = {
+                        viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnAddSACAccountClick)
+                    },
+                    buttonType = CustomButtonType.PrimaryTertiary
+                )
+            }
             Text(
-                text = stringResource(id = R.string.smart_iban_transfer_title),
+                text = stringResource(
+                    id = R.string.smart_mycontacts_transfer_title,
+                    viewModel.uiState.relatedContactList.count()
+                ),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(end = 16.dp),
                 style = Typography.subtitle1.copy(
@@ -86,15 +95,38 @@ fun MyContactsTransferScreen(
                     color = MultimoneyTheme.colors.smartCardTrending
                 )
             )
-            CustomButton(
-                text = stringResource(id = R.string.smart_iban_transfer_accounts_add),
-                onClick = {
-                    viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnAddSACAccountClick)
-                },
-                buttonType = CustomButtonType.PrimaryTertiary
+
+        } else {
+            Text(
+                modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
+                text = stringResource(R.string.smart_transfer_my_contacts_title_CR),
+                style = Typography.h5.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    color = MultimoneyTheme.colors.text
+                )
+            )
+            Text(
+                text = stringResource(id = R.string.smart_mycontacts_transfer_title),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(end = 16.dp, start = 16.dp, top = 16.dp),
+                style = Typography.subtitle1.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    color = MultimoneyTheme.colors.smartCardTrending
+                )
+            )
+            Text(
+                text = stringResource(
+                    id = R.string.smart_mycontacts_total_transfer_title,
+                    viewModel.uiState.relatedContactList.count()
+                ),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(end = 16.dp, start = 16.dp, top = 8.dp),
+                style = Typography.subtitle1.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    color = MultimoneyTheme.colors.smartCardTrending
+                )
             )
         }
-
         ContactListCR()
     }
 

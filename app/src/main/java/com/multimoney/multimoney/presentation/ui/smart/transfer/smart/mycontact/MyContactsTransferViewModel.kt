@@ -5,11 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.domain.interaction.accountsmart.QueryRelatedContactsByPhoneUseCase
+import com.multimoney.domain.model.accountsmart.PhoneSmart
 import com.multimoney.domain.model.accountsmart.RelatedContact
 import com.multimoney.domain.model.util.error.HttpError
-import com.multimoney.domain.model.util.onFailure
-import com.multimoney.domain.model.util.onLoading
-import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.CONTACTS
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
@@ -18,7 +16,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class MyContactsTransferViewModel @Inject constructor(
@@ -32,19 +29,38 @@ class MyContactsTransferViewModel @Inject constructor(
 
     // Stateless
     private var user: String = ""
-    var idBrand: String = ""
-    private var relatedContacts: List<RelatedContact>? = null
+    var idBrand: Int = 0
+    var relatedContacts: List<RelatedContact> = listOf()
 
     init {
         user = savedStateHandle[USER] ?: ""
-        idBrand = savedStateHandle[ID_BRAND] ?: ""
-        relatedContacts = savedStateHandle[CONTACTS]
+        idBrand = savedStateHandle[ID_BRAND] ?: 0
+        relatedContacts = savedStateHandle.get<Array<RelatedContact>>(CONTACTS)?.toList() ?: listOf()
     }
 
+    private fun callQueryRelatedContactsByPhoneUseCaseImp() {
+        val listFake =
+            relatedContacts.map {
+                PhoneSmart(
+                    identification = it.phoneNumber + "TEST",
+                    number = it.phoneNumber + "TEST",
+                    bankName = it.phoneNumber + "TEST",
+                    idCurrency = it.phoneNumber + "TEST",
+                    currency = it.phoneNumber + "TEST",
+                    ibanNumber = it.phoneNumber + "TEST",
+                    email = it.phoneNumber + "TEST",
+                    titular = it.phoneNumber + "TEST",
+                    accountNumber = it.phoneNumber + "TEST",
+                )
+            }
+        uiState = uiState.copy(relatedContactList = listFake)
+    }
+
+    /*
     private fun callQueryRelatedContactsByPhoneUseCaseImp() = executeUseCase {
         queryRelatedContactsByPhoneUseCaseImp.invoke(
             user = user,
-            idBrand = idBrand.toInt(),
+            idBrand = idBrand,
            contacts = relatedContacts
         ).collectLatest { result ->
             result.onSuccess { accountList ->
@@ -53,7 +69,7 @@ class MyContactsTransferViewModel @Inject constructor(
                     navigateToAddSACAccount()
                 } else {
                     accountList?.phones?.let {
-                       // uiState = uiState.copy(sinpeAccountList = it)
+                       uiState = uiState.copy(relatedContactList = it)
                     }
                 }
             }
@@ -65,7 +81,7 @@ class MyContactsTransferViewModel @Inject constructor(
                 uiState = uiState.copy(isLoading = true)
             }
         }
-    }
+    }*/
 
     private fun onFailure(error: HttpError) {
         uiState = uiState.copy(
@@ -91,7 +107,7 @@ class MyContactsTransferViewModel @Inject constructor(
     data class UIState(
         val openDialog: DialogParameters = DialogParameters(),
         var isLoading: Boolean = false,
-        var relatedContactList: List<RelatedContact?> = listOf()
+        var relatedContactList: List<PhoneSmart?> = listOf()
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

@@ -159,7 +159,6 @@ fun OwnBusinessOnPersonalBasisContent(
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.moveFocus(FocusDirection.Down)
             }),
-            isTextArea = true,
             isError = viewModel.uiState.businessActivityError.first,
             errorMessage = stringResource(viewModel.uiState.businessActivityError.second),
             isRequiredMessage = stringResource(R.string.smart_business_personal_basis_activity_required_message)

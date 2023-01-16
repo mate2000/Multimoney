@@ -200,7 +200,7 @@ enum class FilterDate {
     LAST_365_DAYS
 }
 
-const val YEAR_MONTH_DAY_PATTERN = "yyyy | mm | dd"
+const val YEAR_MONTH_DAY_PATTERN = "yyyy-MM-dd"
 const val YEAR_MONTH_DAY_PATTERN_BAR_FORMAT = "yyyy | mm | dd"
 const val DAY_PATTERN = "dd"
 const val ISO_8601_API_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"

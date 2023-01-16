@@ -7,9 +7,12 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.Card
@@ -71,23 +74,26 @@ fun CustomCatalogItem(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 22.dp, bottom = 8.dp)
+                .fillMaxSize()
+                .padding(top = 20.dp)
         ) {
             Image(
                 modifier = Modifier
-                    .wrapContentHeight()
-                    .weight(0.41f),
+                    .size(32.dp),
                 painter = painterResource(iconId.getSourceIncomeIconDrawable()),
                 contentDescription = label,
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.Inside,
                 alignment = Alignment.BottomCenter,
             )
 
             Text(
                 modifier = Modifier
-                    .wrapContentHeight()
-                    .weight(0.59f),
+                    .padding(
+                        top = 12.dp,
+                        end = 16.dp,
+                        start = 16.dp
+                    )
+                    .fillMaxHeight(),
                 text = label,
                 textAlign = TextAlign.Center,
                 style = Typography.subtitle1.copy(

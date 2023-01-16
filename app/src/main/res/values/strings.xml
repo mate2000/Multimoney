@@ -1310,6 +1310,9 @@
     <string name="smart_sac_transfer_contact_rationale_button" translatable="false">Permitir acceso a contactos</string>
     <string name="smart_sac_transfer_contact_permission_denied_message" translatable="false">Necesitamos acceso a tus contactos para que podás realizar envíos. Podrás activar el acceso a tus contactos cuando querás.</string>
 
+    <!-- Smart My Contacts Transfer -->
+    <string name="smart_transfer_my_contacts_title" translatable="false">Mis contactos</string>
+
     <!-- Card Preferences -->
     <string name="card_preferences_title" translatable="false">Preferencias de tarjeta</string>
     <string name="card_preferences_linked_card_title" translatable="false">Tarjeta vinculada</string>

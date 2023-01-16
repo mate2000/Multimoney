@@ -156,7 +156,6 @@ fun OtherIncomeContent(
             keyboardActions = KeyboardActions(onNext = {
                 focusManager.moveFocus(FocusDirection.Down)
             }),
-            isTextArea = true,
             isError = viewModel.uiState.sourceError.first,
             errorMessage = stringResource(viewModel.uiState.sourceError.second),
             isRequiredMessage = stringResource(R.string.smart_other_source_of_income_required)

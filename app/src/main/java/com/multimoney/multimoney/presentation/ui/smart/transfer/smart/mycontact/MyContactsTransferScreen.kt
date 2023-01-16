@@ -91,8 +91,7 @@ fun MyContactsTransferScreen(
                 onClick = {
                     viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnAddSACAccountClick)
                 },
-                buttonType = CustomButtonType.PrimaryTertiary,
-                trailingIcon = R.drawable.ic_plus
+                buttonType = CustomButtonType.PrimaryTertiary
             )
         }
 

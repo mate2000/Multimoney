@@ -299,7 +299,7 @@ fun TipsAndOffer(
                     color = MultimoneyTheme.colors.labelText
                 )
             }
-            Row(modifier = Modifier.padding(end = 8.dp)) {
+            Row(modifier = Modifier.padding(end = 16.dp)) {
                 Icon(
                     painter = painterResource(R.drawable.ic_notification),
                     modifier = Modifier

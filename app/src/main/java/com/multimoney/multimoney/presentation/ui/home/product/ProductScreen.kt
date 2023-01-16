@@ -429,7 +429,7 @@ fun ProductContent(
                 selectedIndex = state.currentPage,
                 selectedColor = WhiteTransparency90,
                 unSelectedColor = WhiteTransparency30,
-                dotSize = 10.dp
+                dotSize = 8.dp
             )
         }
     }

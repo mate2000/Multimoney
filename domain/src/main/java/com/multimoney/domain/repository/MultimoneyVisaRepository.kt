@@ -14,4 +14,13 @@ interface MultimoneyVisaRepository {
         user: String,
         idBrand: Int
     ): Flow<MultimoneyResult<CardIssuanceNV?>>
+
+    suspend fun mutationDeleteTokenDeviceNVMutation(
+        identification: String,
+        user: String,
+        idBrand: Int,
+        idClient: Int,
+        idLoanClient: Int,
+        idDevice: String
+    ): Flow<MultimoneyResult<CardIssuanceNV?>>
 }

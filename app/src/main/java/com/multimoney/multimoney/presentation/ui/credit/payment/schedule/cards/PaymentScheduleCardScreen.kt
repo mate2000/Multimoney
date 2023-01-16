@@ -25,6 +25,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnAlertButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnAlertCloseClick
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnEditCardVisaDirect
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnGetClientCardVisaDirect
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnNavigateBack
@@ -93,10 +94,10 @@ fun PaymentScheduleContent(
             Column {
                 TopNavBar(
                     onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
-                    isRightButtonVisible = false
+                    onRightButtonClick = { viewModel.onUIEvent(OnCloseClick) }
                 )
                 CustomInformativeText(
-                    modifier = Modifier.fillMaxWidth().padding(top = 42.dp, start = 7.dp, end = 16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(top = 24.dp, start = 7.dp, end = 16.dp),
                     trailingIcon = drawable.ic_information_chip,
                     trailingIconClick = { viewModel.onUIEvent(OnOpenDisclaimerDialog) },
                     text = stringResource(id = string.payment_schedule_card_title),
@@ -173,10 +174,13 @@ fun PaymentScheduleContent(
 
     if (viewModel.uiState.openDialog.isActive.value) {
         CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
             message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
             positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
             openDialogCustom = viewModel.uiState.openDialog.isActive,
-            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction,
+            onNegativeAction = viewModel.uiState.openDialog.negativeAction
         )
     }
     LoadingIndicator(viewModel.uiState.isLoading)

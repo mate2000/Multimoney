@@ -31,6 +31,7 @@ import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.Companion.DATE_MIN_YEARS
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent
@@ -192,6 +193,7 @@ fun SmartDocumentScreen(
                 val calendar = Calendar.getInstance()
                 val datePicker = DatePickerDialog(
                     context,
+                    R.style.CustomDarkDatePickerStyle,
                     { _, year, month, day ->
                         val date = getPickedDateAsString(
                             year,
@@ -214,9 +216,9 @@ fun SmartDocumentScreen(
                     calendar.get(Calendar.DAY_OF_MONTH)
                 )
                 calendar.set(
-                    BIRTH_DATE_MIN_YEAR,
-                    BIRTH_DATE_MIN_MONTH,
-                    BIRTH_DATE_MIN_DAY
+                    calendar.get(Calendar.YEAR) - DATE_MIN_YEARS.toInt(),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH)
                 )
                 datePicker.datePicker.minDate = calendar.timeInMillis
                 datePicker.datePicker.maxDate = Date().time
@@ -287,6 +289,7 @@ fun SmartDocumentScreen(
                 val calendar = Calendar.getInstance()
                 val datePicker = DatePickerDialog(
                     context,
+                    R.style.CustomDarkDatePickerStyle,
                     { _, year, month, day ->
                         val date = getPickedDateAsString(
                             year,

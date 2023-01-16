@@ -58,9 +58,11 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnEd
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnGetCreditMovements
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnGetSmartMovements
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnHideAutomaticPaymentEdit
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnHideUnlinkToast
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowAutomaticPaymentEdit
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowCardIssuanceError
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowUnlinkToast
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSignOut
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.INDEX_ONE
@@ -720,7 +722,8 @@ class HomeViewModel @Inject constructor(
         var productPageList: List<ProductPage> = emptyList(),
         val smartMovementsList: List<SmartMovementsResult> = emptyList(),
         val creditMovementsList: List<CreditMovementsResult> = emptyList(),
-        val showCardIssuanceError: Boolean = false
+        val showCardIssuanceError: Boolean = false,
+        val toastIsVisible: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -743,6 +746,12 @@ class HomeViewModel @Inject constructor(
                 uiEvent.idBrand,
                 uiEvent.idLoanClient
             )
+            is OnShowUnlinkToast -> {
+                uiState = uiState.copy(toastIsVisible = true)
+            }
+            is OnHideUnlinkToast -> {
+                uiState = uiState.copy(toastIsVisible = false)
+            }
             is OnShowAutomaticPaymentEdit -> emitBaseEvent(OnShowAutomaticPaymentEditBottomSheet)
             is OnHideAutomaticPaymentEdit -> emitBaseEvent(OnHideAutomaticPaymentEditBottomSheet)
             is OnEditAutomaticPayment -> emitBaseEvent(OnEditAutomaticPaymentEvent)
@@ -781,6 +790,8 @@ class HomeViewModel @Inject constructor(
         object OnSetUserData : UIEvent()
         data class OnSetHomeState(val homeState: HomeState) : UIEvent()
         object OnSignOut : UIEvent()
+        object OnShowUnlinkToast : UIEvent()
+        object OnHideUnlinkToast : UIEvent()
         object OnShowAutomaticPaymentEdit : UIEvent()
         object OnHideAutomaticPaymentEdit : UIEvent()
         object OnEditAutomaticPayment : UIEvent()

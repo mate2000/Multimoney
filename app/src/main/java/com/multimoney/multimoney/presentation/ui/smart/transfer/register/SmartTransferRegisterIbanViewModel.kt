@@ -10,6 +10,8 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.accountsmart.MutationSaveSinpeAccountUseCase
 import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCase
 import com.multimoney.domain.interaction.security.QueryValidateBankAccountUseCase
+import com.multimoney.domain.model.accountsmart.IbanAccountID
+import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.security.CatalogType
 import com.multimoney.domain.model.security.ValidateAccount
 import com.multimoney.domain.model.util.error.HttpError
@@ -19,10 +21,13 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.SMART_IDS
+import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAccountViewModel
 import com.multimoney.multimoney.presentation.util.capitalized
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -57,6 +62,7 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
     private var identification: String?
     private var previousScreen: String?
     private var idClient: Int?
+    private var smartAccount: SmartAccountID? = null
 
     init {
         user = savedStateHandle[USER]
@@ -64,6 +70,7 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
         identification = savedStateHandle[IDENTIFICATION]
         previousScreen = savedStateHandle[PREVIOUS_SCREEN]
         idClient = savedStateHandle[ID_CLIENT]
+        smartAccount = savedStateHandle[SMART_IDS]
     }
 
     private fun onQueryDocumentList() {
@@ -265,7 +272,7 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
             identification = uiState.documentNumber,
             accountNumber = Brand.CostaRica.iban.plus(uiState.ibanAccountNumber),
             idCurrency = validateAccount?.currency?.getCurrencyFromId()?.id?.toLong() ?: 0,
-            nameAccount = uiState.favoriteName.ifBlank { user ?: "" },
+            nameAccount = uiState.favoriteName.ifBlank { validateAccount?.name ?: "" },
             country = Brand.CostaRica.countryCode,
             idAccount = null,
             option = null,
@@ -294,11 +301,22 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
     }
 
     private fun onNavigateBack() {
-        // TODO Implement Back Navigation
+        navigateBack(popTo = Screen.SmartTransferIbanAccountScreen.route, isRestart = false)
     }
 
     private fun onNavigateToSendMoney() {
-        // TODO Implement send money navigation
+        val ibanAccount = encodeData(
+            IbanAccountID(
+                bank = validateAccount?.bankName,
+                clientIdentification = identification,
+                sinpeAccount = Brand.CostaRica.iban.plus(uiState.ibanAccountNumber),
+                currencyId = validateAccount?.currency?.getCurrencyFromId()?.id ?: 0,
+                nameAccount = uiState.favoriteName.ifBlank { validateAccount?.name ?: "" }
+            )
+        )
+        navigateTo(
+            "${Screen.SmartTransferAmountScreen.baseRoute}/${encodeData(smartAccount)}/$ibanAccount/${Screen.SmartTransferIbanAccountScreen.baseRoute}"
+        )
     }
 
     data class UIState(

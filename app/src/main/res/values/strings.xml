@@ -43,6 +43,7 @@
     <string name="not_applicable" translatable="false">NA</string>
     <string name="common_leave" translatable="false">Abandonar</string>
     <string name="common_try_again" translatable="false">Volver a intentar</string>
+    <string name="common_return" translatable="false">Volver</string>
     <string name="info" translatable="false">Información</string>
     <string name="common_options" translatable="false">Opciones</string>
     <string name="common_remove" translatable="false">Eliminar</string>
@@ -111,6 +112,8 @@
     <string name="sign_in_verify_otp_blocked_title" translatable="false">Usuario bloqueado</string>
     <string name="sign_in_verify_otp_blocked_subtitle_gt" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte</string>
     <string name="sign_in_verify_otp_blocked_subtitle" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no podés realizar el registro ahora. Inténtalo más tarde o contacta a soporte:</string>
+    <string name="sign_in_dialog_user_exists_title" translatable="false">¿Eres usuario MultiMoney?</string>
+    <string name="sign_in_dialog_user_exists_description" translatable="false">Si eres cliente MultiMoney o no tienes una cuenta registrada, presioná continuar y seguí unos cuantos pasos para poder ingresar a tu nueva App MultiMoney</string>
 
 
     <!-- Sign Up General-->
@@ -123,7 +126,7 @@
 
 
     <!-- Sign Up Email -->
-    <string name="sign_up_email_header" translatable="false">Ingresá tu correo electrónico</string>
+    <string name="sign_up_email_header" translatable="false">Ingresá tu correo</string>
     <string name="sign_up_email_title" translatable="false">¡Nos emociona \nque estés acá!</string>
     <string name="sign_up_email_required" translatable="false">Correo electrónico requerido</string>
     <string name="sign_up_email_placeholder" translatable="false">nombre@email.com</string>
@@ -170,6 +173,7 @@
     <string name="sign_up_personal_data_nationality" translatable="false">¿De dónde es tu identificación?</string>
     <string name="sign_up_personal_data_nationality_placeholder" translatable="false">Selecciona tu país</string>
     <string name="sign_up_personal_data_document_label" translatable="false">¿Qué tipo de documento de identidad tienes?</string>
+    <string name="sign_up_personal_data_document_label_cr" translatable="false">¿Qué tipo de documento de identidad tenés?</string>
     <string name="sign_up_personal_data_document_hint" translatable="false">Selecciona tu documento </string>
     <string name="sign_up_personal_data_document_number_label" translatable="false">Número de identificación</string>
     <string name="sign_up_personal_data_names" translatable="false">Nombre(s)</string>
@@ -1030,10 +1034,8 @@
     <!-- Payment Schedule Card List-->
     <string name="payment_schedule_card_list_title" translatable="false">Selecciona una tarjeta para programar tu pago</string>
     <string name="payment_schedule_card_list_add_card" translatable="false">Agregar tarjeta</string>
-    <string name="payment_schedule_card_list_dialog_title_sv" translatable="false">¿Estás seguro que querés salir?</string>
-    <string name="payment_schedule_card_list_dialog_title_gt" translatable="false">¿Estás seguro que quieres salir?</string>
-    <string name="payment_schedule_card_list_dialog_description_sv" translatable="false">Puedes programar tu pago automático cuando quieras.</string>
-    <string name="payment_schedule_card_list_dialog_description_gt" translatable="false">Puedes programar tu pago automático cuando quieras.</string>
+    <string name="payment_schedule_card_list_dialog_title" translatable="false">¿Estás seguro que quieres salir?</string>
+    <string name="payment_schedule_card_list_dialog_description" translatable="false">Puedes programar tu pago automático cuando quieras.</string>
 
     <!-- Disbursement Amount-->
     <string name="disbursement_amount_title" translatable="false">¿Cuánto \ndinero necesitás?</string>
@@ -1332,6 +1334,7 @@
     <string name="card_preferences_unlinked_card_dialog_description" translatable="false">¿Estás seguro que deseás desvincular tu tarjeta?</string>
     <string name="card_preferences_unlinked_card_dialog_positive_button" translatable="false">Desvincular</string>
     <string name="card_preferences_unlinked_card_dialog_negative_button" translatable="false">Cancelar</string>
+    <string name="card_preferences_unlinked_card_toast" translatable="false">Tu tarjeta ha sido desvinculada</string>
 
     <!-- Request Forgot Password -->
     <string name="request_forgot_password_title" translatable="false">¡Vamos a recuperarla!</string>
@@ -1362,4 +1365,24 @@
     <string name="process_forgot_password_alert_failure_description" translatable="false">Lo sentimos, volvé a intentar más \ntarde</string>
     <string name="process_forgot_password_alert_failure_description_gt" translatable="false">Lo sentimos, vuelve a intentar más tarde</string>
     <string name="process_forgot_password_alert_failure_button_try_again" translatable="false">Intentar nuevamente</string>
+
+    <!-- Registeres User Email -->
+    <string name="registered_user_email_title" translatable="false">Tenemos tu correo  %s registrado en Multimoney</string>
+    <string name="registered_user_email_subtitle" translatable="false">Ingresá el correo electrónico completo para verificar que sos vos.</string>
+    <string name="registered_user_email_not_valid" translatable="false">Revisa formato. Debe contener “@” y “.”</string>
+    <string name="registered_user_email_different" translatable="false">El correo es invalido</string>
+    <string name="registered_user_email_placeholder" translatable="false">nombre@email.com</string>
+    <string name="registered_user_email_required" translatable="false">El correo electrónico es requerido</string>
+
+    <!-- Registered User Otp -->
+    <string name="registered_user_otp_title" translatable="false">Te enviamos un SMS \na tu celular %s</string>
+    <string name="registered_user_otp_subtitle" translatable="false">Ingresá el código que te enviamos para verificar tu identidad.</string>
+    <string name="registered_user_otp_blocked_dialog_title" translatable="false">Usuario bloqueado.</string>
+    <string name="registered_user_otp_blocked_dialog_description" translatable="false">Tu usuario ha sido bloqueado porque no hemos podido verificar tu número de teléfono. \nContactá a servicio al cliente</string>
+    <string name="registered_user_otp_other_phone_number" translatable="false">Tengo otro número</string>
+    <string name="registered_user_otp_other_phone_number_title" translatable="false">¿Cambiaste de número de teléfono?</string>
+    <string name="registered_user_otp_other_phone_number_subtitle" translatable="false">Por favor comunicate con nosotros para actualizar tus datos</string>
+    <string name="registered_user_otp_code_placeholder" translatable="false">0</string>
+    <string name="registered_user_otp_code_required" translatable="false">Código de verificación requerido</string>
+
 </resources>

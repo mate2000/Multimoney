@@ -50,6 +50,7 @@ fun VisaCardPasswordBottomSheetScreen(
         title = viewModel.uiState.passwordTitle,
         closeIcon = R.drawable.ic_close_bottom_sheet,
         closeIconVisible = viewModel.uiState.isPasswordMessage.not(),
+        closeAction = { viewModel.onUIEvent(OnHidePasswordBottomSheet) },
         modalBottomSheetState = modalBottomSheetState,
         coroutineScope = coroutineScope
     ) {

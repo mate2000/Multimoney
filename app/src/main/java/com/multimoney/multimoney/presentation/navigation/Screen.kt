@@ -54,9 +54,9 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.REFERENCE_NUMB
 import com.multimoney.multimoney.presentation.navigation.navgraph.SELECTED_AMOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_DISPLAY_EXCHANGE_RATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ORIGIN
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
-import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ORIGIN
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.SMART_PAYMENT_ACCOUNTS
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
@@ -117,6 +117,7 @@ const val CRYPTO_ASSET = "asset"
 const val DESCRIPTION_CURRENCY = "description_currency"
 const val CURRENT_CRYPTO_PRICE = "current_crypto_price"
 const val URL_IMAGE = "url_image"
+const val CONTACTS = "contacts"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -483,6 +484,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object OwnTransferAmountScreen : Screen(
         "own_transfer_amount_screen/{$SMART_IDS}/{$PREVIOUS_SCREEN}",
         "own_transfer_amount_screen"
+    )
+
+    object MyContactsTransferScreen : Screen(
+        "my_contacts_transfer_screen/{$USER}/{$ID_BRAND}/{$CONTACTS}/{$PREVIOUS_SCREEN}",
+        "my_contacts_transfer_screen"
     )
 
     // TestNavGraph Screens

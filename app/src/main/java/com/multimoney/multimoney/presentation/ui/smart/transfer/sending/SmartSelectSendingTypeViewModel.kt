@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.domain.model.accountsmart.RelatedContact
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -55,12 +56,16 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     fun getTitleAndIconSmartAccountResources(): Pair<Int, Int?> {
         val result = when (smartAccount?.currencyID?.getCurrencyFromId()?.value) {
             CurrencyType.Dollar.value -> {
-              Pair(R.string.payment_select_sending_type_smart_account_colones,
-                  R.drawable.ic_payment_colon)
+                Pair(
+                    R.string.payment_select_sending_type_smart_account_colones,
+                    R.drawable.ic_payment_colon
+                )
             }
             CurrencyType.Colon.value -> {
-               Pair(R.string.payment_select_sending_type_smart_account_dollars,
-                   R.drawable.ic_sending_dollar)
+                Pair(
+                    R.string.payment_select_sending_type_smart_account_dollars,
+                    R.drawable.ic_sending_dollar
+                )
             }
             else -> {
                 Pair(R.string.empty, 0)
@@ -130,8 +135,13 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
 
     private fun onNavigateToMyContacts(numbers: List<String>) {
         // TODO navigate to HU REV-1445
-        showRationale(false)
-        emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
+        val contacts = mutableListOf<RelatedContact>()
+        numbers.forEach { number ->
+            contacts.add(RelatedContact(number))
+        }
+        navigateTo(
+            "${Screen.MyContactsTransferScreen.baseRoute}/$user/$idBrand/${encodeData(contacts)}/${Screen.SmartSelectSendingTypeScreen.baseRoute}"
+        )
     }
 
     private fun onNavigateToMyFavorites() {

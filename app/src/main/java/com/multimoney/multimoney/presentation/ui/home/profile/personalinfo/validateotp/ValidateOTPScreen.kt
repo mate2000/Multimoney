@@ -249,8 +249,9 @@ fun ValidateOTPContent(viewModel: ValidateOTPViewModel) {
                 id = viewModel.uiState.enterTheCodeTextResource,
                 viewModel.uiState.destination ?: ""
             ),
-            style = Typography.body2
-        )
+            style = Typography.body2,
+            color = MultimoneyTheme.colors.labelText,
+            )
 
         when (viewModel.uiState.messageStatus) {
             OTPMessageStatus.RESEND_OTP, OTPMessageStatus.RESEND_OTP_AGAIN -> {

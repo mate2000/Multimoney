@@ -2,7 +2,7 @@ package com.multimoney.multimoney.presentation.ui
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.fragment.app.FragmentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.multimoney.presentation.navigation.navgraph.Navigation
@@ -15,7 +15,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : FragmentActivity() {
+class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var mmCountDownTimer: MMCountDownTimer

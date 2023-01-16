@@ -38,7 +38,6 @@ fun CryptoFooterExpanded(
     actionWallet: () -> Unit,
     noBalanceAction: () -> Unit,
     hasBalanceAction: () -> Unit,
-    currencyItemClick: (BalanceCryptoAccountItems) -> Unit = {},
     onShowAllClick: () -> Unit
 ) {
     if (userStatus?.infoCrypto?.status == CryptoAccountStatus.ACTIVE.status) {
@@ -51,7 +50,6 @@ fun CryptoFooterExpanded(
             actionWallet,
             noBalanceAction,
             hasBalanceAction,
-            currencyItemClick,
             onShowAllClick
         )
     }
@@ -67,7 +65,6 @@ fun CryptoFooterExpandedContent(
     actionWallet: () -> Unit,
     noBalanceAction: () -> Unit,
     hasBalanceAction: () -> Unit,
-    currencyItemClick: (BalanceCryptoAccountItems) -> Unit,
     onShowAllClick: () -> Unit
 ) {
     val smartBalanceAvailable = verifyIfHasSmartBalance(balance?.balanceAccountSmart)
@@ -105,8 +102,7 @@ fun CryptoFooterExpandedContent(
                     Column(
                         modifier = Modifier.verticalScroll(rememberScrollState())
                     ) {
-                        CryptoCurrencies(items = balance?.balanceCryptoAccount?.items){ cryptoCurrencyItem ->
-                            currencyItemClick(cryptoCurrencyItem)
+                        CryptoCurrencies(items = balance?.balanceCryptoAccount?.items){
                         }
                         CryptoMovementsSection(
                             cryptoMovements = cryptoMovements,

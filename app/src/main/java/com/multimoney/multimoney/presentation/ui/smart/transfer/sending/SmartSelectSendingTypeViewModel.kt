@@ -1,6 +1,11 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.sending
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -16,12 +21,19 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSel
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SmartSelectSendingTypeViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
+
+    // UIState
+    var uiState by mutableStateOf(UIState())
+        private set
 
     // Stateless
     var smartAccount: SmartAccountID? = null
@@ -40,44 +52,18 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
     }
 
-    fun onUIEvent(uiEvent: UIEvent) {
-        when (uiEvent) {
-            is UIEvent.OnCloseClick -> onNavigateToHome()
-            is OnNavigateBack -> onNavigateBack()
-            is UIEvent.OnMyContactsSelected -> onNavigateToMyContacts()
-            is UIEvent.OnSmartAccountSelected -> onNavigateToSmartAccount()
-            is UIEvent.OnIBANAccountSelected -> onNavigateToIBANAccount()
-            is UIEvent.OnMyFavoritesSelected -> onNavigateToMyFavorites()
-            is UIEvent.OnOtherBankAccountsSelected -> onNavigateToOtherBankAccounts()
-            is UIEvent.OnTransfer365MobileSelected -> onNavigateToTransfer365Mobile()
-        }
-    }
-
-    fun getTitleSmartAccountResource(): Int? {
+    fun getTitleAndIconSmartAccountResources(): Pair<Int, Int?> {
         val result = when (smartAccount?.currencyID?.getCurrencyFromId()?.value) {
             CurrencyType.Dollar.value -> {
-                R.string.payment_select_sending_type_smart_account_dollars
+              Pair(R.string.payment_select_sending_type_smart_account_colones,
+                  R.drawable.ic_payment_colon)
             }
             CurrencyType.Colon.value -> {
-                R.string.payment_select_sending_type_smart_account_colones
+               Pair(R.string.payment_select_sending_type_smart_account_dollars,
+                   R.drawable.ic_sending_dollar)
             }
             else -> {
-                0
-            }
-        }
-        return result
-    }
-
-    fun getIconSmartAccountResource(): Int? {
-        val result = when (smartAccount?.currencyID?.getCurrencyFromId()?.value) {
-            CurrencyType.Dollar.value -> {
-                R.drawable.ic_sending_dollar
-            }
-            CurrencyType.Colon.value -> {
-                R.drawable.ic_payment_colon
-            }
-            else -> {
-                0
+                Pair(R.string.empty, 0)
             }
         }
         return result
@@ -93,12 +79,58 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     }
 
     private fun onNavigateToSmartAccount() {
-        // TODO navigate to HU REV-1431
-        emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
+        navigateTo(
+            "${Screen.OwnTransferAmountScreen.baseRoute}/${encodeData(smartAccount)}/${Screen.SmartSelectSendingTypeScreen.baseRoute}"
+        )
     }
 
-    private fun onNavigateToMyContacts() {
+    private fun onPermissionPermanentlyDenied() {
+        uiState = uiState.copy(
+            errorMessageRes = R.string.smart_sac_transfer_contact_permission_denied_message,
+            errorButtonTextRes = R.string.got_it,
+            isButtonLaunchAction = false
+        )
+        showRationale(true)
+    }
+
+    fun setIfIsLastPermissionRetry(isLastRetry: Boolean) {
+        uiState = uiState.copy(isLastPermissionRetry = isLastRetry)
+    }
+
+    fun getPermissionState() {
+        viewModelScope.launch {
+            uiState = uiState.copy(
+                isContactPermissionAlreadyRequested = dataStorePreferences.isContactPermissionRequested()
+                    .first()
+            )
+        }
+    }
+
+    private fun onPermissionResult(isPermissionGranted: Boolean, numbersList: List<String>?) {
+        viewModelScope.launch {
+            dataStorePreferences.isContactPermissionRequested(true)
+            uiState = uiState.copy(
+                isContactPermissionAlreadyRequested = dataStorePreferences.isContactPermissionRequested()
+                    .first()
+            )
+            if (isPermissionGranted) {
+                showRationale(false)
+                onNavigateToMyContacts(numbersList ?: listOf())
+            } else if (uiState.isLastPermissionRetry) {
+                onPermissionPermanentlyDenied()
+            } else {
+                showRationale(true)
+            }
+        }
+    }
+
+    private fun showRationale(show: Boolean) {
+        uiState = uiState.copy(showErrorScreen = show)
+    }
+
+    private fun onNavigateToMyContacts(numbers: List<String>) {
         // TODO navigate to HU REV-1445
+        showRationale(false)
         emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
     }
 
@@ -126,15 +158,50 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         }
     }
 
+    data class UIState(
+        var showErrorScreen: Boolean = false,
+        val errorMessageRes: Int = R.string.smart_sac_transfer_contact_rationale_message,
+        val errorButtonTextRes: Int = R.string.smart_sac_transfer_contact_rationale_button,
+        val isButtonLaunchAction: Boolean = true,
+        val isLastPermissionRetry: Boolean = false,
+        val isContactPermissionAlreadyRequested: Boolean = false
+    )
+
+    fun onUIEvent(uiEvent: UIEvent) {
+        when (uiEvent) {
+            is UIEvent.OnCloseClick -> onNavigateToHome()
+            is OnNavigateBack -> onNavigateBack()
+            is UIEvent.OnNavigateToMyContacts -> onNavigateToMyContacts(uiEvent.numbersList)
+            is UIEvent.OnSmartAccountSelected -> onNavigateToSmartAccount()
+            is UIEvent.OnIBANAccountSelected -> onNavigateToIBANAccount()
+            is UIEvent.OnMyFavoritesSelected -> onNavigateToMyFavorites()
+            is UIEvent.OnContactPermissionPermanentlyDenied -> onPermissionPermanentlyDenied()
+            is UIEvent.OnOtherBankAccountsSelected -> onNavigateToOtherBankAccounts()
+            is UIEvent.OnTransfer365MobileSelected -> onNavigateToTransfer365Mobile()
+            is UIEvent.OnPermissionResult -> onPermissionResult(
+                uiEvent.isPermissionGranted,
+                uiEvent.numbersList
+            )
+            is UIEvent.OnShowRationale -> showRationale(uiEvent.show)
+        }
+    }
+
     sealed class UIEvent {
         object OnCloseClick : UIEvent()
         object OnNavigateBack : UIEvent()
-        object OnMyContactsSelected : UIEvent()
+        data class OnNavigateToMyContacts(val numbersList: List<String>) : UIEvent()
         object OnSmartAccountSelected : UIEvent()
         object OnIBANAccountSelected : UIEvent()
         object OnMyFavoritesSelected : UIEvent()
+        object OnContactPermissionPermanentlyDenied : UIEvent()
         object OnOtherBankAccountsSelected : UIEvent()
         object OnTransfer365MobileSelected : UIEvent()
+        data class OnPermissionResult(
+            val isPermissionGranted: Boolean,
+            val numbersList: List<String>?
+        ) : UIEvent()
+
+        data class OnShowRationale(val show: Boolean) : UIEvent()
     }
 
     sealed class BaseEvent {

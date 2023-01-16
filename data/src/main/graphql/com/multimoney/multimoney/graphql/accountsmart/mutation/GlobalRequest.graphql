@@ -3,6 +3,7 @@ mutation GlobalRequest(
     $status: Int!
     $user: String!
     $idBrand: Int!
+    $idGlobalRequest: Long!
     $idProfessionType: Int
     $idAddressLevel1: Long
     $idAddressLevel2: Long
@@ -38,6 +39,7 @@ mutation GlobalRequest(
         status: $status
         user: $user
         idBrand: $idBrand
+        idGlobalRequest: $idGlobalRequest
         idProfessionType: $idProfessionType,
         birthdate: $birthdate,
         expirationDate: $expirationDate,

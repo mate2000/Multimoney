@@ -21,6 +21,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
 import com.multimoney.multimoney.presentation.util.getPreviousDate
@@ -61,7 +62,7 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
                 max_data_points = MAX_POINTS.toLong(),
                 pagination_limit = PAGING_LIMIT,
                 pagination_offset = PAGING_OFFSET,
-                range_begin = getPreviousDate(uiState.startDate ?: 1),
+                range_begin = getPreviousDate(uiState.startDate ?: FilterDateByDays.YESTERDAY.time),
                 range_end = getCurrentDateYMDPattern()
             ).collectLatest { result ->
                 result.onSuccess {
@@ -85,7 +86,7 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
                     idBrand = idBrand,
                     identification = identification,
                     market = uiState.cryptoItem?.asset.plus(USD_CURRENCY),
-                    order_time_begin = getPreviousDate(uiState.startDate ?: 1),
+                    order_time_begin = getPreviousDate(uiState.startDate ?: FilterDateByDays.YESTERDAY.time),
                     order_time_end = getCurrentDateYMDPattern(),
                     pagination_limit = SINGLE_PAGE
                 )

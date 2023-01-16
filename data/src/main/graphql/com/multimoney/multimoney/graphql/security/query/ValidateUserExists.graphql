@@ -23,6 +23,9 @@ query ValidateUserExists($email:String!){
     idIdentification
     countryCode
     currentStep
+    isNewUser
+    maskedMail
+    maskedPhoneNumber
     userStatus
     idBrand
   }

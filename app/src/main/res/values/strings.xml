@@ -445,7 +445,7 @@
     <string name="sign_out_dialog_description" translatable="false">Para volver a ingresar al app deberás escribir tu usuario y contraseña de nuevo</string>
 
     <!-- Home Product Header -->
-    <string name="home_product_header_title" translatable="false">Mis Productos</string>
+    <string name="home_product_header_title" translatable="false">Productos disponibles</string>
 
     <!-- Home Credit Header Expanded-->
     <string name="home_product_credit_header_expanded_title" translatable="false">Mi Crédito</string>
@@ -849,12 +849,13 @@
 
     <!-- Smart Account -->
     <string name="smart_account_document_title" translatable="false">Contános sobre vos</string>
+    <string name="smart_account_date_placeholder" translatable="false">00 | 00 | 0000</string>
     <string name="smart_account_document_birthdate_title" translatable="false">Fecha de nacimiento</string>
     <string name="smart_account_document_birthdate_age_error" translatable="false">Debes ser mayor de 18 años</string>
     <string name="smart_account_document_birthdate_age_limit_error" translatable="false">Validá tu fecha de nacimiento.</string>
     <string name="smart_account_document_issue_date_required" translatable="false">Fecha de nacimiento requerida</string>
     <string name="smart_account_smart_account_document_date_required_date_valid" translatable="false">Validá la fecha de emisión</string>
-    <string name="smart_account_document_expiration_title" translatable="false">Fecha de vencimiento</string>
+    <string name="smart_account_document_expiration_title" translatable="false">Fecha de vencimiento de tu DUI</string>
     <string name="smart_account_document_expiration_date_required" translatable="false">Fecha de vencimiento requerida</string>
     <string name="smart_account_retired_title" translatable="false">Jubilado</string>
     <string name="smart_account_retired_institution_label" translatable="false">Institución con la que recibe la pensión</string>
@@ -864,15 +865,15 @@
     <string name="smart_origin_main_income_title" translatable="false">¿Cuál es tu principal fuente de ingresos?</string>
     <string name="smart_account_formal_title" translatable="false">Asalariado Formal</string>
     <string name="smart_account_formal_monthly" translatable="false">Ingreso mensual en colones</string>
-    <string name="smart_account_formal_placeholder" translatable="false">₡0000.000,0</string>
+    <string name="smart_account_formal_placeholder" translatable="false">₡00.0</string>
     <string name="smart_account_formal_select_profession" translatable="false">Selecciona tu profesión</string>
     <string name="smart_account_no_internet_error_description" translatable="false">No pudimos guardar tu información por un problema de conexión</string>
-    <string name="smart_decimal_income_placeholder" translatable="false">%s 00,000.00</string>
+    <string name="smart_decimal_income_placeholder" translatable="false">%s00.0</string>
 
     <!-- Smart Account - Beneficiary -->
     <string name="smart_account_beneficiaries_title" translatable="false">Mis beneficiarios</string>
     <string name="smart_account_beneficiaries_percentage" translatable="false">Porcentaje a otorgar (%)</string>
-    <string name="smart_account_add_beneficiaries" translatable="false">Agregar beneficiario +</string>
+    <string name="smart_account_add_beneficiaries" translatable="false">Agregar beneficiario</string>
     <string name="smart_account_beneficiary_content" translatable="false">%1$s | %2$s</string>
     <string name="smart_account_beneficiary_max_percentage_dialog_title" translatable="false">Superaste el máximo permitido</string>
     <string name="smart_account_beneficiary_max_percentage_dialog_subtitle" translatable="false">El porcentaje máximo a otorgar es 100%</string>

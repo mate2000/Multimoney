@@ -287,7 +287,7 @@ fun CustomOutlinedTextField(
                     }
                 },
             value = value ?: "",
-            shape = RoundedCornerShape(if (isTextArea) 25 else 50),
+            shape = RoundedCornerShape(if (isTextArea) 32 else 50),
             leadingIcon = leadingIcon?.let {
                 {
                     Icon(
@@ -362,7 +362,9 @@ fun CustomOutlinedTextField(
                 ?: if (passwordVisible || !isPassword) {
                     VisualTransformation.None
                 } else PasswordVisualTransformation(),
-            textStyle = Typography.body2,
+            textStyle = Typography.body2.copy(
+                color = WhiteTransparency90
+            ),
             maxLines = if (isTextArea) 2 else 1,
             focusedBorderThickness = FOCUSED_BORDER_WIDTH,
             unfocusedBorderThickness = UNFOCUSED_BORDER_WIDTH

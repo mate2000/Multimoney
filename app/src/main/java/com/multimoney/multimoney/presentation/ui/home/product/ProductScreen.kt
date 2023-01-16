@@ -548,7 +548,7 @@ fun TipBox(content: @Composable () -> Unit) {
         modifier = Modifier
             .size(152.dp, 140.dp)
             .padding(
-                end = 13.dp
+                end = 12.dp
             )
     ) {
         CustomImage(

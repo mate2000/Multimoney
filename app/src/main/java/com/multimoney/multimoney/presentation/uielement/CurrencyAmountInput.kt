@@ -200,7 +200,7 @@ fun CurrencyAmountInput(
                     modifier = Modifier.fillMaxWidth(),
                     text = placeHolder,
                     color = placeholderColor,
-                    style = Typography.h4.copy(textAlign = TextAlign.Center, fontWeight = FontWeight.W600)
+                    style = Typography.h5.copy(textAlign = TextAlign.Center, fontWeight = FontWeight.W700)
                 )
             },
             isError = isError || emptyError,
@@ -214,10 +214,7 @@ fun CurrencyAmountInput(
             ),
             enabled = enabled,
             visualTransformation = customTransformation ?: VisualTransformation.None,
-            textStyle = Typography.h4.copy(
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.W600
-            )
+            textStyle = Typography.h5.copy(textAlign = TextAlign.Center, fontWeight = FontWeight.W700)
         )
 
         // This is required to execute the debounce

@@ -118,7 +118,7 @@ fun PaymentVoucherVDScreen(
                     ) {
                         Text(
                             text = stringResource(string.payment_voucher_vd_success_label),
-                            modifier = Modifier.padding(top = 16.dp),
+                            modifier = Modifier.padding(top = 32.dp),
                             style = Typography.subtitle1.copy(fontWeight = FontWeight.SemiBold),
                             color = MultimoneyTheme.colors.text
                         )
@@ -138,7 +138,7 @@ fun PaymentVoucherVDScreen(
                                 .padding(
                                     start = 24.dp,
                                     end = 24.dp,
-                                    top = 12.dp
+                                    top = 24.dp
                                 )
                                 .fillMaxWidth(),
                             elevation = ButtonDefaults.elevation(
@@ -151,7 +151,7 @@ fun PaymentVoucherVDScreen(
                         )
                         Text(
                             text = stringResource(string.payment_voucher_vd_amount),
-                            modifier = Modifier.padding(top = 12.dp),
+                            modifier = Modifier.padding(top = 24.dp),
                             style = Typography.body1,
                             color = MultimoneyTheme.colors.text
                         )
@@ -177,7 +177,7 @@ fun PaymentVoucherVDScreen(
                     )
 
                     VoucherAccountInfo(
-                        modifier = Modifier.padding(start = 27.dp, top = 24.dp),
+                        modifier = Modifier.padding(start = 27.dp, top = 16.dp),
                         icon = drawable.ic_visa_card_item,
                         title = viewModel.card?.detail.orEmpty(),
                         subTitle = stringResource(
@@ -196,7 +196,7 @@ fun PaymentVoucherVDScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 27.dp, top = 34.dp, end = 24.dp),
+                            .padding(start = 27.dp, top = 32.dp, end = 24.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Row {

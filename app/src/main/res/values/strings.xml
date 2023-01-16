@@ -787,8 +787,8 @@
 
     <!-- Payment Fee -->
     <string name="payment_fee_title" translatable="false">Pagar al instante</string>
-    <string name="payment_fee_one_option" translatable="false">Cuota en</string>
-    <string name="payment_fee_both_options" translatable="false">Ambas cuotas</string>
+    <string name="payment_fee_one_option" translatable="false">Pagar</string>
+    <string name="payment_fee_both_options" translatable="false">Pagar ambas</string>
     <string name="payment_fee_both_plus_symbol" translatable="false">\u0020+\u0020</string>
 
     <!-- Payment Account -->

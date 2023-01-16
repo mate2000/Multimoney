@@ -46,14 +46,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.document.Smar
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.util.BIRTH_DATE_MIN_DAY
-import com.multimoney.multimoney.presentation.util.BIRTH_DATE_MIN_MONTH
-import com.multimoney.multimoney.presentation.util.BIRTH_DATE_MIN_YEAR
-import com.multimoney.multimoney.presentation.util.ISO_8601_API_FORMAT_PATTERN
-import com.multimoney.multimoney.presentation.util.YEAR_MONTH_DAY_PATTERN
-import com.multimoney.multimoney.presentation.util.getFormatDateByString
-import com.multimoney.multimoney.presentation.util.getPickedDateAsString
-import com.multimoney.multimoney.presentation.util.toLocalDate
+import com.multimoney.multimoney.presentation.util.*
 import java.util.Calendar
 import java.util.Date
 
@@ -204,7 +197,7 @@ fun SmartDocumentScreen(
                             year,
                             month,
                             day,
-                            YEAR_MONTH_DAY_PATTERN
+                            YEAR_MONTH_DAY_PATTERN_BAR_FORMAT
                         )
 
                         val calendarValidation = Calendar.getInstance()
@@ -299,7 +292,7 @@ fun SmartDocumentScreen(
                             year,
                             month,
                             day,
-                            YEAR_MONTH_DAY_PATTERN
+                            YEAR_MONTH_DAY_AND_TIME_BAR_FORMAT
                         )
                         viewModel.onUIEvent(UIEvent.OnExpirationDateValueChange(date))
                     },

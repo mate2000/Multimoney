@@ -6,7 +6,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
@@ -116,21 +120,18 @@ fun PaymentOptions(viewModel: SmartTransferIbanViewModel = hiltViewModel()) {
                 subtitle = stringResource(
                     id = string.smart_account_beneficiary_content,
                     account?.bank ?: "",
-
                     getMaskedAccountIban(
                         account?.sinpeAccount ?: "",
                         stringResource(id = string.payment_account_masked_text)
                     )
-
                 ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 12.dp),
+                modifier = Modifier.fillMaxWidth().wrapContentHeight().padding(top = 12.dp),
                 endIcon = drawable.ic_options,
                 startIcon = account?.currencyId?.getCurrencyFromId()?.accountIcon,
                 onClick = {
                     viewModel.onUIEvent(OnAccountClick(account))
-                }
+                }/*,
+                cardModifier = Modifier.fillMaxSize()*/
             )
         }
     }

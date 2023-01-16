@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.theme.SemanticInformative400
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.editcard.EditCardViewModel.Companion.VISUAL_DATE_SYMBOL
@@ -47,6 +46,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.util.CARD_NUMBER_LAST_DIGITS
 
 @Composable
 fun EditCardScreen(
@@ -86,7 +86,7 @@ fun EditCardScreen(
                 Title(title = R.string.profile_my_cards_edit_card_title)
                 CardBox(
                     title = viewModel.uiState.nickname,
-                    subtitle = viewModel.cardMasked.orEmpty()
+                    subtitle = viewModel.card?.cardMaskedNumber?.takeLast(CARD_NUMBER_LAST_DIGITS).orEmpty()
                 )
                 CardNickName(
                     value = viewModel.uiState.nickname,
@@ -96,8 +96,8 @@ fun EditCardScreen(
                 )
                 Row {
                     CardValidDate(
-                        value = viewModel.cardExpirationMonth.orEmpty().plus(VISUAL_DATE_SYMBOL)
-                            .plus(viewModel.cardExpirationYear.orEmpty()),
+                        value = viewModel.card?.expirationMonth.orEmpty().plus(VISUAL_DATE_SYMBOL)
+                            .plus(viewModel.card?.expirationYear.orEmpty()),
                         modifier = Modifier.weight(1f)
                     )
                     CardCVV(
@@ -237,7 +237,7 @@ private fun CardCVV(
         placeHolder = value,
         trailingIconActionEnabled = true,
         trailingIcon = R.drawable.ic_informative_400,
-        trailingIconColor = SemanticInformative400,
+        trailingIconColor = MultimoneyTheme.colors.trailingIconTintOutLinedTextField,
         trailingIconAction = onDisclaimerClick,
         isRequiredMessage = stringResource(id = R.string.profile_my_cards_edit_card_field_required),
         keyboardOptions = KeyboardOptions(

@@ -18,6 +18,7 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnCallQueryGetClientCards
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnCardThreePointsSelected
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnDeleteCard
@@ -97,7 +98,11 @@ class ProfileCardListViewModel @Inject constructor(
 
     private fun onEditCard(card: CardVisaDirect?) {
         navigateTo(
-            route = "${Screen.ProfileMyCardsEditCardScreen.baseRoute}/${card?.idCard?.toLong() ?: 0}/$identification/${card?.detail}/${card?.cardMaskedNumber?.takeLast(4)}/${card?.expirationMonth}/${card?.expirationYear}/${card?.verified}/$user/$idBrand"
+            route = "${Screen.ProfileMyCardsEditCardScreen.baseRoute}/$identification/$user/$idBrand/${
+                encodeData(
+                    card
+                )
+            }"
         )
     }
 

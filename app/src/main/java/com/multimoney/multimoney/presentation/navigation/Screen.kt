@@ -6,11 +6,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALA
 import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_INFORMATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.BANK_DETAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
-import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_MASKED
-import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_DEFAULT
-import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_DESCRIPTION
-import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_EXPIRATION_MONTH
-import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_EXPIRATION_YEAR
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_CARD_VISA_DIRECT
 import com.multimoney.multimoney.presentation.navigation.navgraph.COMING_FROM_CRYPTO
@@ -29,7 +24,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_GLOBAL_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CARD
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOMATIC_PAYMENT_CHECKED
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_PAYMENT_SCHEDULE
@@ -249,7 +243,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object ProfileMyCardsEditCardScreen : Screen(
-        route = "profile_my_cards_edit_card_screen/{$ID_CARD}/{$IDENTIFICATION}/{$CARD_DESCRIPTION}/{$CARD_MASKED}/{$CARD_EXPIRATION_MONTH}/{$CARD_EXPIRATION_YEAR}/{$CARD_DEFAULT}/{$USER}/{$ID_BRAND}",
+        route = "profile_my_cards_edit_card_screen/{$IDENTIFICATION}/{$USER}/{$ID_BRAND}/{$CARD_SELECTED}",
         baseRoute = "profile_my_cards_edit_card_screen"
     )
 

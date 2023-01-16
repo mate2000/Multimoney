@@ -9,16 +9,12 @@ import com.multimoney.domain.interaction.virtualcard.MutationUpdateCardVDUseCase
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CARD
-import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_MASKED
-import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_EXPIRATION_MONTH
-import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_EXPIRATION_YEAR
-import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_DEFAULT
-import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_DESCRIPTION
+import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -44,26 +40,19 @@ class EditCardViewModel @Inject constructor(
         private set
 
     // Stateless
-    private var idCard: Long? = 0
+    var card: CardVisaDirect? = null
     private var identification: String? = ""
-    var cardMasked: String? = ""
-    var cardExpirationMonth: String? = ""
-    var cardExpirationYear: String? = ""
-    private var cardDefault: Boolean? = false
+
     private var user: String? = ""
     private var idBrand: Int? = null
 
     init {
-        idCard = savedStateHandle[ID_CARD]
         identification = savedStateHandle[IDENTIFICATION]
-        cardMasked = savedStateHandle[CARD_MASKED]
-        cardExpirationMonth = savedStateHandle[CARD_EXPIRATION_MONTH]
-        cardExpirationYear = savedStateHandle[CARD_EXPIRATION_YEAR]
-        cardDefault = savedStateHandle[CARD_DEFAULT]
         user = savedStateHandle[USER]
         idBrand = savedStateHandle[ID_BRAND]
+        card = savedStateHandle[CARD_SELECTED]
         uiState = uiState.copy(
-            nickname = savedStateHandle[CARD_DESCRIPTION] ?: ""
+            nickname = card?.detail.orEmpty()
         )
     }
 
@@ -81,10 +70,10 @@ class EditCardViewModel @Inject constructor(
     }
 
     private fun onCvvValueChange(cvv: String) {
-        if (cvv.length <= CVV_MAX_LENGTH) {
+        if (cvv.length <= CARD_CVV_MAX_LENGTH) {
             uiState = uiState.copy(
                 cvv = cvv,
-                cvvError = if (cvv.length < CVV_MAX_LENGTH) {
+                cvvError = if (cvv.length < CARD_CVV_MAX_LENGTH) {
                     Pair(true, R.string.profile_my_cards_edit_card_cvv_length_error)
                 } else {
                     Pair(false, R.string.empty)
@@ -122,14 +111,14 @@ class EditCardViewModel @Inject constructor(
     private fun onCallMutationUpdateCardVD(onEditCardShowToastBaseEvent: () -> Unit) =
         executeUseCase {
             mutationUpdateCardVDUseCase.invoke(
-                idCard = idCard ?: 0,
+                idCard =  card?.idCard?.toLong() ?: 0,
                 identification = identification.orEmpty(),
                 cardDescription = uiState.nickname,
-                cardMasked = cardMasked.orEmpty(),
-                expirationMonth = cardExpirationMonth.orEmpty(),
-                expirationYear = cardExpirationYear.orEmpty(),
+                cardMasked = card?.cardMaskedNumber.orEmpty(),
+                expirationMonth = card?.expirationMonth.orEmpty(),
+                expirationYear = card?.expirationYear.orEmpty(),
                 verificationValue = uiState.cvv,
-                default = cardDefault ?: false,
+                default = card?.verified ?: false,
                 user = user.orEmpty(),
                 idBrand = idBrand ?: 0
             ).collectLatest { result ->
@@ -202,6 +191,6 @@ class EditCardViewModel @Inject constructor(
 
     companion object {
         const val VISUAL_DATE_SYMBOL = " | "
-        const val CVV_MAX_LENGTH = 3
+        const val CARD_CVV_MAX_LENGTH = 3
     }
 }

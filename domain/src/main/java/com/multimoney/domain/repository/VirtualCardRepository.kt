@@ -1,7 +1,12 @@
 package com.multimoney.domain.repository
 
 import com.multimoney.domain.model.util.MultimoneyResult
-import com.multimoney.domain.model.virtualcard.*
+import com.multimoney.domain.model.virtualcard.AutomaticCardDebit
+import com.multimoney.domain.model.virtualcard.CardBlocking
+import com.multimoney.domain.model.virtualcard.CardUnblocking
+import com.multimoney.domain.model.virtualcard.CardVisaDirect
+import com.multimoney.domain.model.virtualcard.PayCreditVisaDirect
+import com.multimoney.domain.model.virtualcard.UpdateCard
 import kotlinx.coroutines.flow.Flow
 
 interface VirtualCardRepository {

@@ -13,6 +13,7 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.PROFILE_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navtype.payment.CardVDNavType
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardsListScreen
@@ -27,13 +28,6 @@ import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.valid
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.verifyidentity.VerifyIdentityScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.settings.SettingsScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.settings.changepassword.ChangePasswordScreen
-
-const val ID_CARD = "id_card"
-const val CARD_DESCRIPTION = "card_description"
-const val CARD_MASKED = "card_masked"
-const val CARD_EXPIRATION_MONTH = "card_expiration_month"
-const val CARD_EXPIRATION_YEAR = "card_expiration_year"
-const val CARD_DEFAULT = "card_default"
 
 fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
     navigation(
@@ -376,14 +370,11 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
         composable(
             route =  Screen.ProfileMyCardsEditCardScreen.route,
             arguments = listOf(
-                navArgument(ID_CARD) {
-                    type = NavType.LongType
-                },
                 navArgument(ID_BRAND) {
                     type = NavType.IntType
                 },
-                navArgument(CARD_DEFAULT) {
-                    type = NavType.BoolType
+                navArgument(CARD_SELECTED) {
+                    type = CardVDNavType()
                 }
             )
         ) { backStackEntry ->

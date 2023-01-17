@@ -35,6 +35,7 @@ import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.balance.Account
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.balance.BalanceCredit
+import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.balance.Summary
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditMovementsResult
@@ -376,7 +377,8 @@ class ProductViewModel @Inject constructor(
             }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}/$idClient/${uiState.userStatus?.infoCredit?.idLoanClient ?: 0}"
         )
 
-    private fun onNavigateToHomeMultimoneyVisa() =
+    private fun onNavigateToHomeMultimoneyVisa() {
+        val infoCredit = uiState.userStatus?.infoCredit
         navigateTo(
             "${Screen.VisaCardScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/${uiState.userStatus?.infoUser?.phone}/${
                 encodeData(
@@ -384,6 +386,7 @@ class ProductViewModel @Inject constructor(
                 )
             }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}/$idClient/${uiState.userStatus?.infoCredit?.idLoanClient ?: 0}"
         )
+    }
 
     private fun onNavigateToProfileScreen() {
         navigateTo("${Screen.ProfileScreen.baseRoute}/$idClient/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/$email/${uiState.userStatus?.infoUser?.phone}/$identification/$pkUser/${uiState.userStatus?.infoUser?.userName}")
@@ -417,7 +420,7 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToCryptoMovements() {
-        navigateTo("${Screen.CryptoMovementsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification")
+        navigateTo("${Screen.CryptoMovementsAllScreen.baseRoute}/$userName/${uiState.idBrand}/$identification")
     }
 
     private fun openWhatsAppLink(context: Context, whatsAppLink: String) {

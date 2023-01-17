@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCase
 import com.multimoney.domain.model.balance.BalanceCryptoAccount
+import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.crypto.HistoricalBalanceClient
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
@@ -17,6 +18,8 @@ import com.multimoney.multimoney.presentation.navigation.*
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
 import com.multimoney.multimoney.presentation.util.getPreviousDate
@@ -152,6 +155,13 @@ class HomeWalletViewModel @Inject constructor(
         )
     }
 
+    private fun onNavigateToCryptoDetail(cryptoItem: BalanceCryptoAccountItems) {
+        navigateTo(
+            "${Screen.CryptoCurrencyMovementsScreen.baseRoute}/${uiState.idBrand}/${uiState.identification}/${uiState.user}/${encodeData(cryptoItem)
+            }"
+        )
+    }
+
     data class UiState(
         val user: String? = null,
         val idBrand: Int? = null,
@@ -177,6 +187,7 @@ class HomeWalletViewModel @Inject constructor(
             is UIEvent.OnSetDateRange -> onSetDateRange(event.startDate)
             is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
             is UIEvent.OnGetUserInfo -> onGetUserInfo()
+            is UIEvent.OnNavigateToCryptoDetailScreen -> onNavigateToCryptoDetail(event.cryptoItem)
             UIEvent.OnGetBalanceClient -> onGetBalanceClient()
         }
     }
@@ -186,5 +197,7 @@ class HomeWalletViewModel @Inject constructor(
         object OnNavigateBack : UIEvent
         object OnGetBalanceClient : UIEvent
         data class OnSetDateRange(val startDate: Long): UIEvent
+        data class OnNavigateToCryptoDetailScreen(val cryptoItem: BalanceCryptoAccountItems) :
+            UIEvent
     }
 }

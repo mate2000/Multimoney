@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -161,7 +162,7 @@ fun CardSmartProduct(
                 )
                 Row {
                     Icon(
-                        imageVector = Icons.Filled.Add,
+                        painter = painterResource(id = R.drawable.ic_mm_add),
                         contentDescription = null,
                         tint = MultimoneyTheme.colors.smartCardPlus
                     )
@@ -183,7 +184,7 @@ fun CardSmartProduct(
             Icon(
                 modifier = Modifier.padding(end = 12.dp),
                 tint = MultimoneyTheme.colors.smartCardTrending,
-                imageVector = Icons.Filled.TrendingUp,
+                painter = painterResource(id = R.drawable.ic_mm_trending),
                 contentDescription = null
             )
         }

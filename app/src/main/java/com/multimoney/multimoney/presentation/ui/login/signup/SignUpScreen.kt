@@ -24,7 +24,6 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Co
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnInitializeText
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnMoveToStep
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationScreen
@@ -60,8 +59,6 @@ fun SignUpScreen(
             }
         }
     }
-
-    viewModel.onUIEvent(OnInitializeText(stringResource(id = R.string.sign_up_close_dialog_description)))
 
     Column(
         modifier = Modifier
@@ -117,7 +114,7 @@ fun SignUpScreen(
     if (viewModel.uiState.openDialog.isActive.value) {
         CustomDialog(
             title = stringResource(id = viewModel.uiState.openDialog.titleResource),
-            message = viewModel.uiState.openDialog.description,
+            message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
             positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
             negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
             openDialogCustom = viewModel.uiState.openDialog.isActive,

@@ -1323,6 +1323,14 @@
     <string name="smart_sac_transfer_contact_rationale_button" translatable="false">Permitir acceso a contactos</string>
     <string name="smart_sac_transfer_contact_permission_denied_message" translatable="false">Necesitamos acceso a tus contactos para que podás realizar envíos. Podrás activar el acceso a tus contactos cuando querás.</string>
 
+    <!-- Smart SAC Transfer - Add SAC Account -->
+    <string name="smart_add_sac_account_title" translatable="false">Datos de la cuenta</string>
+    <string name="smart_add_sac_account_type_label" translatable="false">Tipo de cuenta</string>
+    <string name="smart_add_sac_account_number_label" translatable="false">Número de cuenta</string>
+    <string name="smart_add_sac_account_email_label" translatable="false">Correo electrónico</string>
+    <string name="smart_add_sac_account_number_placeholder" translatable="false">000000000</string>
+    <string name="smart_add_sac_account_number_validation" translatable="false">El número de cuenta debe tener de 9 a 16 dígitos</string>
+
     <!-- Card Preferences -->
     <string name="card_preferences_title" translatable="false">Preferencias de tarjeta</string>
     <string name="card_preferences_linked_card_title" translatable="false">Tarjeta vinculada</string>

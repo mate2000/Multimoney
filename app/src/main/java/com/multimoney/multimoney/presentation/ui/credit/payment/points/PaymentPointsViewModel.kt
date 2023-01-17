@@ -31,8 +31,6 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getNavParam
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
 @HiltViewModel
@@ -65,28 +63,19 @@ class PaymentPointsViewModel @Inject constructor(
             .plus(
                 getNavParam(
                     POINT_NAME,
-                    URLEncoder.encode(
-                        pointName,
-                        StandardCharsets.UTF_8.name()
-                    )
+                    pointName
                 )
             )
             .plus(
                 getNavParam(
                     POINT_ADDRESS,
-                    URLEncoder.encode(
-                        pointAddress,
-                        StandardCharsets.UTF_8.name()
-                    )
+                    pointAddress
                 )
             )
             .plus(
                 getNavParam(
                     POINT_ADDRESS_DESCRIPTION,
-                    URLEncoder.encode(
-                        pointAddressDescription,
-                        StandardCharsets.UTF_8.name()
-                    )
+                    pointAddressDescription
                 )
             )
             .plus(getNavParam(POINT_SCHEDULE, pointSchedule))

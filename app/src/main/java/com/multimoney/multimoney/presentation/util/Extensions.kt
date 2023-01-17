@@ -113,13 +113,16 @@ fun Context.checkPermission(
     }
 }
 
-fun Context.getPhoneNumbers() : List<String> {
+fun Context.getPhoneNumbers(): List<String> {
     val context = this
     val numbers = mutableListOf<String>()
     val contentResolver = context.contentResolver
     val phones: Cursor? = contentResolver.query(
-        ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-        null, null, null
+        ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+        null,
+        null,
+        null,
+        null
     )
     if (phones != null) {
         while (phones.moveToNext()) {
@@ -325,8 +328,11 @@ fun String.addTextStyleToTextPortion(textToStyle: String, style: TextStyle): Ann
     }
 }
 
+fun String.isCognitoErrorCode(code: String) = contains(""""$CODE_KEYWORD":"$code"""")
+
 private const val HEX_FORMAT = "#%02x%02x%02x"
 private const val SPECIAL_CHARACTER_REGEX = "[!\"#\$%&'()*+,-./:;\\\\<=>?@^_`{|}~]"
 private const val NUMBER_REGEX = "[0-9]"
 private const val DECIMAL_SEPARATOR = '.'
 private const val WHITE_SPACE_SEPARATOR = ' '
+private const val CODE_KEYWORD = "code"

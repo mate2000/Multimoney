@@ -862,7 +862,7 @@
     <string name="smart_account_formal_title" translatable="false">Asalariado formal</string>
     <string name="smart_account_formal_monthly" translatable="false">Ingreso mensual</string>
     <string name="smart_account_formal_placeholder" translatable="false">₡0000.000,0</string>
-    <string name="smart_account_formal_select_occupation" translatable="false">Selecciona tu ocupación</string>
+    <string name="smart_account_formal_select_occupation" translatable="false">Seleccioná tu ocupación</string>
     <string name="smart_account_no_internet_error_description" translatable="false">No pudimos guardar tu información por un problema de conexión</string>
     <string name="smart_decimal_income_placeholder" translatable="false">%s 00,000.00</string>
 

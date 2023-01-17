@@ -100,7 +100,7 @@ fun SmartDocumentScreen(
                                             ),
                                             birthday = getFormatDateByString(
                                                 viewModel.uiState.birthdate,
-                                                YEAR_MONTH_DAY_PATTERN,
+                                                YEAR_MONTH_DAY_PATTERN_BAR_FORMAT,
                                                 ISO_8601_API_FORMAT_PATTERN
                                             ),
                                             idCivilStatusType = viewModel.uiState.civilStateId,

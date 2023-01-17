@@ -35,6 +35,7 @@ import com.multimoney.multimoney.presentation.util.BAR
 import com.multimoney.multimoney.presentation.util.HYPHEN
 import com.multimoney.multimoney.presentation.util.ISO_8601_API_FORMAT_PATTERN
 import com.multimoney.multimoney.presentation.util.YEAR_MONTH_DAY_PATTERN
+import com.multimoney.multimoney.presentation.util.YEAR_MONTH_DAY_PATTERN_BAR_FORMAT
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import com.multimoney.multimoney.presentation.util.onBirthDateAgeValidation
@@ -65,18 +66,18 @@ class SmartDocumentViewModel @Inject constructor(
             getFormatDateByString(
                 it,
                 ISO_8601_API_FORMAT_PATTERN,
-                YEAR_MONTH_DAY_PATTERN
+                YEAR_MONTH_DAY_PATTERN_BAR_FORMAT
             )
         } ?: ""
         val expirationDate = accountSmartData?.expirationDate?.let {
             getFormatDateByString(
                 it,
                 ISO_8601_API_FORMAT_PATTERN,
-                YEAR_MONTH_DAY_PATTERN
+                YEAR_MONTH_DAY_PATTERN_BAR_FORMAT
             )
         } ?: ""
 
-        if (birthdate.isNotBlank()) onBirthDateValueChange(birthdate, LocalDate.parse(birthdate))
+        if (birthdate.isNotBlank()) onBirthDateValueChange(birthdate, LocalDate.parse(birthdate.replace(BAR, HYPHEN)))
         if (expirationDate.isNotBlank()) onExpirationDateValueChange(expirationDate)
         onGenderChange(accountSmartData?.strGenre.orEmpty())
         onCivilStateChange(accountSmartData?.strMaritalStatus.orEmpty())

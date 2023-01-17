@@ -10,6 +10,7 @@ import com.multimoney.domain.model.virtualcard.AutomaticCardDebit
 import com.multimoney.domain.model.virtualcard.CardBlocking
 import com.multimoney.domain.model.virtualcard.CardUnblocking
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
+import com.multimoney.domain.model.virtualcard.DeleteCard
 import com.multimoney.domain.model.virtualcard.PayCreditVisaDirect
 import com.multimoney.domain.model.virtualcard.UpdateCard
 import com.multimoney.domain.repository.VirtualCardRepository
@@ -90,6 +91,23 @@ class VirtualCardRepositoryImpl @Inject constructor(
             default = default,
             user = user,
             idBrand = idBrand
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun mutationDeleteCardVD(
+        identification: String,
+        user: String,
+        idBrand: Int,
+        idCard: Long,
+    ): Flow<MultimoneyResult<DeleteCard?>> = fetchData(
+        apolloCall = graphqlApi.mutationDeleteCardVD(
+            identification = identification,
+            user = user,
+            idBrand = idBrand,
+            idCard = idCard
         ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())

@@ -1394,7 +1394,6 @@
     <string name="registered_user_otp_code_placeholder" translatable="false">0</string>
     <string name="registered_user_otp_code_required" translatable="false">Código de verificación requerido</string>
 
-
     <!-- Profile -> My Cards -> Edit Card -->
     <string name="profile_my_cards_edit_card_title" translatable="false">Editar tarjeta</string>
     <string name="profile_my_cards_edit_card_nickname_label" translatable="false">Apodo de la tarjeta</string>
@@ -1407,5 +1406,10 @@
     <string name="profile_my_cards_edit_card_cvv_dialog_description" translatable="false">Es el número de 3 dígitos ubicado en el dorso de tu tarjeta</string>
     <string name="profile_my_cards_edit_card_save_changes_label" translatable="false">Guardar cambios</string>
     <string name="profile_my_cards_edit_card_toast_result_success" translatable="false">Tarjeta actualizada</string>
+
+    <!-- Profile -> My Cards -> Delete Card -->
+    <string name="profile_my_cards_delete_card_dialog_title" translatable="false">¿Estás seguro que quieres eliminar tu tarjeta?</string>
+    <string name="profile_my_cards_delete_card_dialog_description" translatable="false">Los datos se borrarán del app de forma permanente</string>
     <string name="profile_my_cards_delete_card_toast_result_success" translatable="false">Tarjeta eliminada</string>
+
 </resources>

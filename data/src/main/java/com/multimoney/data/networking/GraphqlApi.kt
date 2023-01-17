@@ -64,6 +64,7 @@ import com.multimoney.data.networking.graphql.apollomodel.HomeDistrictQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeProvinceQuery
 import com.multimoney.data.networking.graphql.apollomodel.InitialRequestSmartAccountMutation
 import com.multimoney.data.networking.graphql.apollomodel.ListCardVDQuery
+import com.multimoney.data.networking.graphql.apollomodel.DeleteCardVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.ListMiniCardsQuery
 import com.multimoney.data.networking.graphql.apollomodel.ListSinpeAccountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountSaveMutation
@@ -1555,6 +1556,20 @@ class GraphqlApi @Inject constructor(
             cardMasked = cardMasked,
             idCard = idCard,
             idBrand = idBrand
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationDeleteCardVD(
+        identification: String,
+        user: String,
+        idBrand: Int,
+        idCard: Long,
+    ): ApolloCall<DeleteCardVDMutation.Data> = apolloAuthorizedClient.mutation(
+        DeleteCardVDMutation(
+            identification = identification,
+            user = user,
+            idBrand = idBrand,
+            idCard = idCard
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 

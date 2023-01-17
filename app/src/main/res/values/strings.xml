@@ -387,8 +387,8 @@
     <string name="profile_otp_to_sms" translatable="false">SMS</string>
     <string name="profile_to_email" translatable="false">Correo electrónico</string>
     <string name="profile_send_code" translatable="false">Enviar código</string>
-    <string name="profile_enter_the_code_sent_to_template" translatable="false">Ingresa el código de verificación enviado a %1$s</string>
-    <string name="profile_enter_the_code_sent_to_template_gt" translatable="false">Ingresá el código de verificación enviado a %1$s</string>
+    <string name="profile_enter_the_code_sent_to_template_gt" translatable="false">Ingresa el código de verificación enviado a %1$s</string>
+    <string name="profile_enter_the_code_sent_to_template" translatable="false">Ingresá el código de verificación enviado a %1$s</string>
     <string name="profile_otp_user_blocked_max_attempt_phone" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no podés realizar el registro ahora. Inténtalo más tarde o contactá a soporte.</string>
     <string name="profile_otp_user_blocked_max_attempt_email" translatable="false">No hemos podido verificar tu correo electrónico. Por tu seguridad no podés realizar el registro ahora. Inténtalo más tarde o contactá a soporte.</string>
     <string name="profile_otp_user_blocked_max_attempt_phone_gt" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
@@ -447,6 +447,7 @@
 
     <!-- Home Product Header -->
     <string name="home_product_header_title" translatable="false">Mis Productos</string>
+    <string name="home_product_available_products_title" translatable="false">Productos disponibles</string>
 
     <!-- Home Credit Header Expanded-->
     <string name="home_product_credit_header_expanded_title" translatable="false">Mi Crédito</string>
@@ -788,8 +789,8 @@
 
     <!-- Payment Fee -->
     <string name="payment_fee_title" translatable="false">Pagar al instante</string>
-    <string name="payment_fee_one_option" translatable="false">Cuota en</string>
-    <string name="payment_fee_both_options" translatable="false">Ambas cuotas</string>
+    <string name="payment_fee_one_option" translatable="false">Pagar</string>
+    <string name="payment_fee_both_options" translatable="false">Pagar ambas</string>
     <string name="payment_fee_both_plus_symbol" translatable="false">\u0020+\u0020</string>
 
     <!-- Payment Account -->
@@ -850,12 +851,13 @@
 
     <!-- Smart Account -->
     <string name="smart_account_document_title" translatable="false">Contános sobre vos</string>
+    <string name="smart_account_date_placeholder" translatable="false">00 | 00 | 0000</string>
     <string name="smart_account_document_birthdate_title" translatable="false">Fecha de nacimiento</string>
     <string name="smart_account_document_birthdate_age_error" translatable="false">Debes ser mayor de 18 años</string>
     <string name="smart_account_document_birthdate_age_limit_error" translatable="false">Validá tu fecha de nacimiento.</string>
     <string name="smart_account_document_issue_date_required" translatable="false">Fecha de nacimiento requerida</string>
     <string name="smart_account_smart_account_document_date_required_date_valid" translatable="false">Validá la fecha de emisión</string>
-    <string name="smart_account_document_expiration_title" translatable="false">Fecha de vencimiento</string>
+    <string name="smart_account_document_expiration_title" translatable="false">Fecha de vencimiento de tu DUI</string>
     <string name="smart_account_document_expiration_date_required" translatable="false">Fecha de vencimiento requerida</string>
     <string name="smart_account_retired_title" translatable="false">Jubilado</string>
     <string name="smart_account_retired_institution_label" translatable="false">Institución con la que recibe la pensión</string>
@@ -863,17 +865,18 @@
     <string name="smart_account_retired_amount_label" translatable="false">Ingreso mensual</string>
     <string name="smart_account_retired_amount_placeholder" translatable="false">$000</string>
     <string name="smart_origin_main_income_title" translatable="false">¿Cuál es tu principal fuente de ingresos?</string>
-    <string name="smart_account_formal_title" translatable="false">Asalariado Formal</string>
-    <string name="smart_account_formal_monthly" translatable="false">Ingreso mensual en colones</string>
-    <string name="smart_account_formal_placeholder" translatable="false">₡0000.000,0</string>
+    <string name="smart_account_formal_title" translatable="false">Asalariado formal</string>
+    <string name="smart_account_formal_monthly" translatable="false">Ingreso mensual</string>
+    <string name="smart_account_formal_placeholder" translatable="false">₡00.0</string>
+    <string name="smart_account_formal_select_occupation" translatable="false">Seleccioná tu ocupación</string>
     <string name="smart_account_formal_select_profession" translatable="false">Selecciona tu profesión</string>
     <string name="smart_account_no_internet_error_description" translatable="false">No pudimos guardar tu información por un problema de conexión</string>
-    <string name="smart_decimal_income_placeholder" translatable="false">%s 00,000.00</string>
+    <string name="smart_decimal_income_placeholder" translatable="false">%s00.0</string>
 
     <!-- Smart Account - Beneficiary -->
     <string name="smart_account_beneficiaries_title" translatable="false">Mis beneficiarios</string>
     <string name="smart_account_beneficiaries_percentage" translatable="false">Porcentaje a otorgar (%)</string>
-    <string name="smart_account_add_beneficiaries" translatable="false">Agregar beneficiario +</string>
+    <string name="smart_account_add_beneficiaries" translatable="false">Agregar beneficiario</string>
     <string name="smart_account_beneficiary_content" translatable="false">%1$s | %2$s</string>
     <string name="smart_account_beneficiary_max_percentage_dialog_title" translatable="false">Superaste el máximo permitido</string>
     <string name="smart_account_beneficiary_max_percentage_dialog_subtitle" translatable="false">El porcentaje máximo a otorgar es 100%</string>
@@ -1289,6 +1292,12 @@
     <string name="smart_iban_transfer_accounts_add" translatable="false">Agregar</string>
     <string name="smart_iban_transfer_title" translatable="false">Cuentas registradas</string>
 
+    <!-- Currency Detail Screen -->
+    <string name="currency_detail_title" translatable="false">Inversión en %s</string>
+    <string name="currency_detail_daily_invest" translatable="false">Hoy %1$s (%2$s)</string>
+    <string name="currency_detail_my_movements" translatable="false">Mis movimientos</string>
+    <string name="currency_detail_see_all" translatable="false">Ver todas</string>
+
     <!-- Smart IBAN Register -->
     <string name="smart_iban_register_title" translatable="false">Registro de cuenta</string>
     <string name="smart_iban_register_account_label" translatable="false">Número de cuenta IBAN</string>
@@ -1388,4 +1397,18 @@
     <string name="registered_user_otp_code_placeholder" translatable="false">0</string>
     <string name="registered_user_otp_code_required" translatable="false">Código de verificación requerido</string>
 
+
+    <!-- Profile -> My Cards -> Edit Card -->
+    <string name="profile_my_cards_edit_card_title" translatable="false">Editar tarjeta</string>
+    <string name="profile_my_cards_edit_card_nickname_label" translatable="false">Apodo de la tarjeta</string>
+    <string name="profile_my_cards_edit_card_field_required" translatable="false">El campo no puede estar vacío</string>
+    <string name="profile_my_cards_edit_card_valid_until_label" translatable="false">Válida hasta</string>
+    <string name="profile_my_cards_edit_card_valid_until_placeholder" translatable="false">00 | 00</string>
+    <string name="profile_my_cards_edit_card_cvv_label" translatable="false">CVV</string>
+    <string name="profile_my_cards_edit_card_cvv_length_error" translatable="false">Debe ser un número de 3 dígitos</string>
+    <string name="profile_my_cards_edit_card_cvv_dialog_title" translatable="false">Código CVV</string>
+    <string name="profile_my_cards_edit_card_cvv_dialog_description" translatable="false">Es el número de 3 dígitos ubicado en el dorso de tu tarjeta</string>
+    <string name="profile_my_cards_edit_card_save_changes_label" translatable="false">Guardar cambios</string>
+    <string name="profile_my_cards_edit_card_toast_result_success" translatable="false">Tarjeta actualizada</string>
+    <string name="profile_my_cards_delete_card_toast_result_success" translatable="false">Tarjeta eliminada</string>
 </resources>

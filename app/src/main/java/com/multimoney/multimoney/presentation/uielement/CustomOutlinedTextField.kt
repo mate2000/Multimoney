@@ -90,6 +90,7 @@ import kotlinx.coroutines.launch
  * @param value: Variable to store the input value.
  * @param leadingIcon: Landing icon to display, by default there is no icon.
  * @param trailingIcon: Trailing icon to display, by default there is no icon.
+ * @param trailingIconColor: Trailing icon color, by default it is white.
  * @param trailingIconAction: Action to perform when the trailing icon is clicked.
  * @param trailingIconActionEnabled: Enable or disable the trailing icon action.
  * @param placeHolder: Hint for the textField.
@@ -125,6 +126,7 @@ fun CustomOutlinedTextField(
     leadingIcon: Int? = null,
     leadingIconComposable: @Composable ((Color) -> Unit)? = null,
     trailingIcon: Int? = null,
+    trailingIconColor: Color = WhiteTransparency60,
     trailingIconAction: () -> Unit = {},
     trailingIconActionEnabled: Boolean = false,
     placeHolder: String = "",
@@ -287,7 +289,7 @@ fun CustomOutlinedTextField(
                     }
                 },
             value = value ?: "",
-            shape = RoundedCornerShape(if (isTextArea) 25 else 50),
+            shape = RoundedCornerShape(if (isTextArea) 32 else 50),
             leadingIcon = leadingIcon?.let {
                 {
                     Icon(
@@ -327,7 +329,7 @@ fun CustomOutlinedTextField(
                             Icon(
                                 painter = painterResource(id = it),
                                 contentDescription = "",
-                                tint = iconTintColor
+                                tint = trailingIconColor
                             )
                         }
                     }
@@ -362,7 +364,9 @@ fun CustomOutlinedTextField(
                 ?: if (passwordVisible || !isPassword) {
                     VisualTransformation.None
                 } else PasswordVisualTransformation(),
-            textStyle = Typography.body2,
+            textStyle = Typography.body2.copy(
+                color = WhiteTransparency90
+            ),
             maxLines = if (isTextArea) 2 else 1,
             focusedBorderThickness = FOCUSED_BORDER_WIDTH,
             unfocusedBorderThickness = UNFOCUSED_BORDER_WIDTH

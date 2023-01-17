@@ -95,7 +95,7 @@ fun CustomButton(
                 textColor = if (enable) {
                     GrayScale800
                 } else {
-                    GrayScale500
+                    GrayScale400
                 }
                 arrowIconTint = if (enable) {
                     GrayScale800
@@ -115,7 +115,7 @@ fun CustomButton(
                 textColor = if (enable) {
                     GrayScale800
                 } else {
-                    GrayScale500
+                    GrayScale400
                 }
                 arrowIconTint = if (enable) {
                     GrayScale800

@@ -24,6 +24,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Gender
 import com.multimoney.data.util.catalog.SmartSteps
@@ -46,14 +47,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.document.Smar
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.util.BIRTH_DATE_MIN_DAY
-import com.multimoney.multimoney.presentation.util.BIRTH_DATE_MIN_MONTH
-import com.multimoney.multimoney.presentation.util.BIRTH_DATE_MIN_YEAR
-import com.multimoney.multimoney.presentation.util.ISO_8601_API_FORMAT_PATTERN
-import com.multimoney.multimoney.presentation.util.YEAR_MONTH_DAY_PATTERN
-import com.multimoney.multimoney.presentation.util.getFormatDateByString
-import com.multimoney.multimoney.presentation.util.getPickedDateAsString
-import com.multimoney.multimoney.presentation.util.toLocalDate
+import com.multimoney.multimoney.presentation.util.*
 import java.util.Calendar
 import java.util.Date
 
@@ -165,7 +159,9 @@ fun SmartDocumentScreen(
                     style = Typography.h6.toSpanStyle()
                         .copy(
                             color = MultimoneyTheme.colors.labelText,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 20.sp,
+                            letterSpacing = 0.15.sp
                         )
                 ) {
                     append(stringResource(id = R.string.smart_account_document_title))
@@ -176,11 +172,11 @@ fun SmartDocumentScreen(
         )
 
         CustomOutlinedTextField(
-            leadingIcon = R.drawable.ic_calendar,
+            trailingIcon = R.drawable.ic_calendar_credit_questions,
             modifier = Modifier
                 .padding(top = 32.dp),
             labelText = stringResource(id = R.string.smart_account_document_birthdate_title),
-            placeHolder = stringResource(id = R.string.select),
+            placeHolder = stringResource(id = R.string.smart_account_date_placeholder),
             value = viewModel.uiState.birthdate,
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next
@@ -203,7 +199,7 @@ fun SmartDocumentScreen(
                             year,
                             month,
                             day,
-                            YEAR_MONTH_DAY_PATTERN
+                            YEAR_MONTH_DAY_PATTERN_BAR_FORMAT
                         )
 
                         val calendarValidation = Calendar.getInstance()
@@ -274,11 +270,11 @@ fun SmartDocumentScreen(
         )
 
         CustomOutlinedTextField(
-            leadingIcon = R.drawable.ic_calendar,
+            trailingIcon = R.drawable.ic_calendar_credit_questions,
             modifier = Modifier
                 .padding(top = 32.dp),
             labelText = stringResource(id = R.string.smart_account_document_expiration_title),
-            placeHolder = stringResource(id = R.string.select),
+            placeHolder = stringResource(id = R.string.smart_account_date_placeholder),
             value = viewModel.uiState.expirationDate,
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next
@@ -299,7 +295,7 @@ fun SmartDocumentScreen(
                             year,
                             month,
                             day,
-                            YEAR_MONTH_DAY_PATTERN
+                            YEAR_MONTH_DAY_AND_TIME_BAR_FORMAT
                         )
                         viewModel.onUIEvent(UIEvent.OnExpirationDateValueChange(date))
                     },

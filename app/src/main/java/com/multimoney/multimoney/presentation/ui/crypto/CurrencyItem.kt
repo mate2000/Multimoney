@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.crypto
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.SemanticPositive400
@@ -35,12 +37,13 @@ fun CurrencyItem(
     priceOfTheDay: Double,
     percentageInvestedCurrency: String,
     available: Double,
+    onClick: () -> Unit = {}
 ) {
     Column {
         Column(modifier.paint(
             painterResource(id = R.drawable.bg_cryptocurrency_enabled),
             contentScale = ContentScale.FillBounds
-        )) {
+        ).clickable { onClick() }) {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
@@ -87,10 +90,7 @@ fun CurrencyItem(
                     ) {
                         Row {
                             Text(
-                                text = stringResource(
-                                    id = R.string.currency_item_dollar_symbol,
-                                    priceOfTheDay
-                                ),
+                                text = stringResource(id = R.string.dollar_symbol_value, priceOfTheDay),
                                 style = Typography.caption,
                                 color = WhiteTransparency60
                             )

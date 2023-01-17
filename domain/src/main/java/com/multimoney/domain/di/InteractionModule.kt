@@ -122,12 +122,12 @@ import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventU
 import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventUseCaseImpl
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCase
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCaseImpl
+import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCase
+import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryEmploymentSituationUseCase
 import com.multimoney.domain.interaction.credit.QueryEmploymentSituationUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUseCase
 import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUseCaseImpl
-import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCase
-import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetCurrencyHistoricalPricesUseCase
 import com.multimoney.domain.interaction.crypto.GetCurrencyHistoricalPricesUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetCurrencyNewsUseCase

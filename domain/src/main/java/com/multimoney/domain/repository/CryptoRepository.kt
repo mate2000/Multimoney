@@ -1,7 +1,7 @@
 package com.multimoney.domain.repository
 
-import androidx.paging.PagingData
 import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
+import androidx.paging.PagingData
 import com.multimoney.domain.model.crypto.CryptoCurrencyNews
 import com.multimoney.domain.model.crypto.GetHistoricalClientBalance
 import com.multimoney.domain.model.crypto.GetHistoricalCurrencyPrices

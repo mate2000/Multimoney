@@ -15,6 +15,8 @@ import com.multimoney.domain.model.accountsmart.SaveSinpeAccount
 import com.multimoney.domain.model.accountsmart.SaveSmartAccount
 import com.multimoney.domain.model.accountsmart.SinpeAccountResult
 import com.multimoney.domain.model.accountsmart.SinpeTransferResult
+import com.multimoney.domain.model.accountsmart.SmartAccountType
+import com.multimoney.domain.model.accountsmart.SmartAccountTypeResult
 import com.multimoney.domain.model.accountsmart.SmartMovement
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.accountsmart.StepByStep
@@ -211,4 +213,9 @@ interface SmartAccountRepository {
         idBrand: Int,
         user: String
     ): Flow<MultimoneyResult<SinpeTransferResult?>>
+
+    suspend fun querySmartAccountType(
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<SmartAccountTypeResult?>>
 }

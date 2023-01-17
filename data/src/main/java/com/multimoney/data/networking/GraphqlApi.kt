@@ -91,6 +91,7 @@ import com.multimoney.data.networking.graphql.apollomodel.SaveTermsAndConditions
 import com.multimoney.data.networking.graphql.apollomodel.ScreenConfigQuery
 import com.multimoney.data.networking.graphql.apollomodel.SendCreditContractEventMutation
 import com.multimoney.data.networking.graphql.apollomodel.SendPinProcessMutation
+import com.multimoney.data.networking.graphql.apollomodel.SmartAccountTypeQuery
 import com.multimoney.data.networking.graphql.apollomodel.StepByStepQuery
 import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsSignedQuery
@@ -1730,4 +1731,11 @@ class GraphqlApi @Inject constructor(
                 user = user
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun querySmartAccountType(
+        idBrand: Int,
+        user: String
+    ): ApolloCall<SmartAccountTypeQuery.Data> = apolloAuthorizedClient.query(
+        SmartAccountTypeQuery(idBrand = idBrand, user = user)
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

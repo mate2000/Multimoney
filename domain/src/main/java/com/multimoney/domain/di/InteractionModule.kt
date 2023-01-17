@@ -34,6 +34,8 @@ import com.multimoney.domain.interaction.accountsmart.QueryProfessionUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryProfessionUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryRelationshipUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryRelationshipUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QuerySmartAccountTypeUseCase
+import com.multimoney.domain.interaction.accountsmart.QuerySmartAccountTypeUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QuerySmartExchangeRateUseCase
 import com.multimoney.domain.interaction.accountsmart.QuerySmartExchangeRateUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryStepByStepUseCase
@@ -724,4 +726,9 @@ class InteractionModule {
     @Singleton
     fun provideMutationChangeDevice(securityRepository: SecurityRepository): MutationChangeDeviceUseCase =
         MutationChangeDeviceUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideQuerySmartAccountType(smartAccountRepository: SmartAccountRepository): QuerySmartAccountTypeUseCase =
+        QuerySmartAccountTypeUseCaseImpl(smartAccountRepository)
 }

@@ -22,6 +22,7 @@ import com.multimoney.domain.model.accountsmart.SaveSinpeAccount
 import com.multimoney.domain.model.accountsmart.SaveSmartAccount
 import com.multimoney.domain.model.accountsmart.SinpeAccountResult
 import com.multimoney.domain.model.accountsmart.SinpeTransferResult
+import com.multimoney.domain.model.accountsmart.SmartAccountTypeResult
 import com.multimoney.domain.model.accountsmart.SmartMovement
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.accountsmart.StepByStep
@@ -457,6 +458,20 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 idBrand = idBrand,
                 user = user
             ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+    }
+
+    override suspend fun querySmartAccountType(
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<SmartAccountTypeResult?>> {
+        return fetchData(graphqlApi.querySmartAccountType(
+            idBrand = idBrand,
+            user = user
+        ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
             }

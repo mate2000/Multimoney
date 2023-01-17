@@ -12,9 +12,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,10 +31,11 @@ import com.multimoney.multimoney.presentation.theme.BlackTransparency20
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
+import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
-import com.multimoney.multimoney.presentation.util.getCurrencySymbolValue
+import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 
 
 /**
@@ -113,7 +111,7 @@ fun CardInactiveSmartProduct(
 @Preview
 fun CardSmartProduct(
     currency: String = "",
-    profitTotal: String = "",
+    profitTotal: Double? = 0.0,
     profitMonthly: String = "",
     currentMonth: String = ""
 ) {
@@ -131,15 +129,20 @@ fun CardSmartProduct(
                 color = MultimoneyTheme.colors.text
             )
         )
-        Text(
-            text = stringResource(id = currency.getCurrencySymbolValue(), profitTotal),
+        BalanceTextView(
             modifier = Modifier.padding(bottom = 10.dp),
-            style = Typography.h4.copy(
-                fontWeight = FontWeight.SemiBold,
-                color = MultimoneyTheme.colors.text
+            balanceText = profitTotal?.toCurrencyFormat(
+                stringResource(id = currency.getCurrencySymbol())
+            ) ?: "",
+            currencyStyle = Typography.h4.copy(
+                color = MultimoneyTheme.colors.text,
+                fontWeight = FontWeight.Bold
+            ),
+            currencyDecimalStyle = Typography.body2.copy(
+                color = MultimoneyTheme.colors.text,
+                fontWeight = FontWeight.Bold
             )
         )
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()

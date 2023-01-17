@@ -32,6 +32,7 @@ import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIE
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnBlockUnblockCardClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnCallNovoGetFavoriteCard
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnHandleTapAndPayIntentResult
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnHideAlertResultScreen
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnInitializeBiometricPrompt
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigatePreferences
@@ -39,6 +40,7 @@ import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIE
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnSeeDataClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnStartPaymentProcess
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButtonBig
 import com.multimoney.multimoney.presentation.uielement.CustomCardVisaVertical
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -55,8 +57,6 @@ import com.multimoney.multimoney.presentation.util.getCardNumberTwo
 import com.multimoney.multimoney.presentation.util.getTapAndPayIntent
 
 @Composable
-@Preview
-@OptIn(ExperimentalMaterialApi::class)
 fun VisaCardScreen(
     isRestart: Boolean = true,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
@@ -64,9 +64,7 @@ fun VisaCardScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: VisaCardViewModel = hiltViewModel()
 ) {
-    val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
-    val fragmentActivity = LocalContext.current as FragmentActivity
 
     val launch = rememberLauncherForActivityResult(contract = StartActivityForResult(), onResult = { result ->
         viewModel.onUIEvent(OnHandleTapAndPayIntentResult(result))
@@ -83,6 +81,16 @@ fun VisaCardScreen(
     }
 
     // Navigation
+
+    viewModel.apply {
+        isOnRestart = isRestart
+        LaunchedEffect(isOnRestart) {
+            if (isOnRestart) {
+                onUIEvent(UIEvent.OnCallNovoGetFavoriteCard)
+                isOnRestart = false
+            }
+        }
+    }
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(
@@ -114,6 +122,18 @@ fun VisaCardScreen(
             }
         }
     }
+
+    VisaCardContent(viewModel)
+}
+
+@Composable
+@Preview
+@OptIn(ExperimentalMaterialApi::class)
+fun VisaCardContent(
+    viewModel: VisaCardViewModel = hiltViewModel()
+) {
+    val fragmentActivity = LocalContext.current as FragmentActivity
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -157,7 +177,7 @@ fun VisaCardScreen(
         ) {
             CustomInformativeChip(
                 text = stringResource(
-                    id = R.string.visa_card_available_amount,
+                    id = string.visa_card_available_amount,
                     viewModel.availableBalanceLabel.orEmpty()
                 ),
                 textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.labelText),
@@ -197,7 +217,7 @@ fun VisaCardScreen(
                         .fillMaxWidth()
                         .padding(end = 8.dp),
                     icon = R.drawable.ic_pay,
-                    text = stringResource(id = R.string.pay),
+                    text = stringResource(id = string.pay),
                     enabled = viewModel.uiState.isCardBlocked.not(),
                     onClick = {
                         viewModel.onUIEvent(OnStartPaymentProcess)
@@ -210,7 +230,7 @@ fun VisaCardScreen(
                     .fillMaxWidth()
                     .padding(end = 8.dp),
                 icon = R.drawable.ic_eye,
-                text = stringResource(id = R.string.see_data),
+                text = stringResource(id = string.see_data),
                 onClick = {
                     viewModel.onUIEvent(OnSeeDataClick(fragmentActivity))
                 }
@@ -237,6 +257,19 @@ fun VisaCardScreen(
                 size = Large
             )
         }
+    }
+
+    if (viewModel.uiState.showAlertResultScreen) {
+        AlertResult(
+            iconResource = viewModel.uiState.alertResultScreenIconResource,
+            titleResource = viewModel.uiState.alertResultScreenTitleResource,
+            descriptionResource = viewModel.uiState.alertResultScreenDescriptionResource,
+            buttonTextResource = viewModel.uiState.alertResultScreenButtonResource,
+            onButtonClick = viewModel.uiState.alertResultScreenOnButtonClick,
+            isTopNavBarVisible = viewModel.uiState.alertResultScreenRightButtonVisible,
+            isRightButtonVisible = viewModel.uiState.alertResultScreenRightButtonVisible,
+            onRightButtonClick = { viewModel.onUIEvent(OnHideAlertResultScreen) }
+        )
     }
 
     VisaCardPasswordBottomSheetScreen(

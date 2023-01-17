@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/panelParent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/margin_large_novo_sdk"
+    android:paddingBottom="@dimen/margin_large_novo_sdk">
+
+    <LinearLayout
+        android:id="@+id/containder_dialog_options"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_dialog_novo_sdk"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.9">
+
+        <TextView
+            android:id="@+id/textTitle"
+            style="@style/Theme.NovoVts.TextView.DialogTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:text="@string/dialog_payment_title_payment_novo_sdk" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/panelContent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/scrollView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:overScrollMode="ifContentScrolls"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingBottom="@dimen/padding_medium_novo_sdk">
+
+                    <ImageView
+                        android:id="@+id/imageContactless"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_xlarge_novo_sdk"
+                        android:contentDescription="@string/image_contactless_payment_description_novo_sdk"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_contactless_pay_novo_sdk" />
+
+                    <TextView
+                        android:id="@+id/textDescription"
+                        style="@style/Theme.NovoVts.TextView.DialogBody"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_medium_novo_sdk"
+                        android:layout_marginTop="@dimen/margin_xlarge_novo_sdk"
+                        android:layout_marginEnd="@dimen/margin_medium_novo_sdk"
+                        android:textColor="@color/white_transparency_70"
+                        android:text="@string/dialog_payment_text_description_novo_sdk"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/imageContactless" />
+
+                    <TextView
+                        android:id="@+id/textLabelTimer"
+                        style="@style/Theme.NovoVts.TextView.DialogBody"
+                        android:layout_width="0dp"
+                        android:textColor="@color/white_transparency_70"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_xlarge_novo_sdk"
+                        android:text="@string/dialog_payment_label_timer_novo_sdk"
+                        app:layout_constraintEnd_toEndOf="@+id/textDescription"
+                        app:layout_constraintStart_toStartOf="@+id/textDescription"
+                        app:layout_constraintTop_toBottomOf="@+id/textDescription" />
+
+                    <TextView
+                        android:id="@+id/textTimer"
+                        style="@style/Theme.NovoVts.TextView.DialogBody"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_large_novo_sdk"
+                        android:background="@drawable/bg_item_step_up_otp_novo_sdk"
+                        android:paddingBottom="@dimen/padding_large_novo_sdk"
+                        android:text="@string/text_loading_novo_sdk"
+                        android:textColor="@color/white_transparency_90"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/text_title_novo_sdk"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="@+id/textLabelTimer"
+                        app:layout_constraintStart_toStartOf="@+id/textLabelTimer"
+                        app:layout_constraintTop_toBottomOf="@+id/textLabelTimer" />
+
+                    <TextView
+                        android:id="@+id/textTitleCard"
+                        style="@style/Theme.NovoVts.TextView.DialogBody"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:textColor="@color/white_transparency_90"
+                        android:layout_marginTop="@dimen/margin_xlarge_novo_sdk"
+                        android:text="@string/dialog_payment_title_card_novo_sdk"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toEndOf="@+id/imageCardPayment"
+                        app:layout_constraintTop_toBottomOf="@+id/textTimer" />
+
+                    <ImageView
+                        android:id="@+id/imageCardPayment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:contentDescription="@string/image_card_payment_description_novo_sdk"
+                        app:layout_constraintBottom_toBottomOf="@+id/textCardLast4"
+                        app:layout_constraintStart_toStartOf="@+id/textTimer"
+                        app:layout_constraintTop_toTopOf="@+id/textTitleCard"
+                        app:srcCompat="@drawable/ic_card_payment_novo_sdk" />
+
+                    <TextView
+                        android:id="@+id/textCardLast4"
+                        style="@style/Theme.NovoVts.TextView.DialogBody"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:text="@string/text_loading_novo_sdk"
+                        android:textColor="@color/white_transparency_60"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="@+id/textTitleCard"
+                        app:layout_constraintTop_toBottomOf="@+id/textTitleCard" />
+
+                    <TextView
+                        android:id="@+id/textTitleTokenLast4"
+                        style="@style/Theme.NovoVts.TextView.DialogBody"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:text="@string/dialog_payment_title_token_last_4_novo_sdk"
+                        android:textColor="@color/white_transparency_90"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/textTitleCard" />
+
+                    <TextView
+                        android:id="@+id/textTokenLast4"
+                        style="@style/Theme.NovoVts.TextView.DialogBody"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_loading_novo_sdk"
+                        android:textColor="@color/white_transparency_60"
+                        app:layout_constraintEnd_toEndOf="@+id/textTitleTokenLast4"
+                        app:layout_constraintTop_toBottomOf="@+id/textTitleTokenLast4" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.core.widget.NestedScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/buttonClose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_small_novo_sdk"
+        android:layout_marginEnd="@dimen/margin_small_novo_sdk"
+        android:contentDescription="@null"
+        android:padding="@dimen/padding_small_novo_sdk"
+        android:src="@drawable/ic_close_dialog_novo_sdk"
+        app:layout_constraintEnd_toEndOf="@+id/containder_dialog_options"
+        app:layout_constraintTop_toTopOf="@+id/containder_dialog_options" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

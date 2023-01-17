@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.balance.BalanceCryptoAccount
+import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -54,6 +55,7 @@ import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewMod
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewModel.UIEvent.OnGetUserInfo
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewModel.UIEvent.OnSetDateRange
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoActionsSection
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
@@ -234,6 +236,9 @@ fun HomeWalletContent(
                 walletViewModel.uiState.balanceCryptoAccount,
                 isFocused = isFocused,
                 searchQuery = searchQuery,
+                onItemClick = {
+                    walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnNavigateToCryptoDetailScreen(it))
+                }
             )
         }
     }
@@ -303,7 +308,8 @@ fun BalanceSection(
 fun MyCoinsSection(
     balanceCryptoAccount: BalanceCryptoAccount?,
     isFocused: MutableState<Boolean>,
-    searchQuery: MutableState<String>
+    searchQuery: MutableState<String>,
+    onItemClick: (BalanceCryptoAccountItems) -> Unit = {}
 ) {
 
     val filteredList = if (searchQuery.value.isNotEmpty()) balanceCryptoAccount?.items?.filter {
@@ -350,7 +356,6 @@ fun MyCoinsSection(
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp, vertical = 16.dp)
     ) {
-
         filteredList.forEach { item ->
             CurrencyItem(
                 imageUrl = item.url_image,
@@ -359,7 +364,10 @@ fun MyCoinsSection(
                 balanceDollars = item.balanceDollars,
                 priceOfTheDay = item.priceOfTheDay,
                 percentageInvestedCurrency = item.percentageInvestedCurrency,
-                available = item.available
+                available = item.available,
+                onClick = {
+                    onItemClick(item)
+                }
             )
         }
     }

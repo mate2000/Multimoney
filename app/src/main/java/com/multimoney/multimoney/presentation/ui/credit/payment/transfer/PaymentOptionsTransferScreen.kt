@@ -99,7 +99,7 @@ fun PaymentOptionsTransferContent(viewModel: PaymentOptionsTransferViewModel = h
                     .verticalScroll(rememberScrollState())
             ) {
                 Text(
-                    modifier = Modifier.padding(top = 42.dp),
+                    modifier = Modifier.padding(top = 24.dp),
                     text = stringResource(id = viewModel.uiState.titleResource),
                     style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
                     color = MultimoneyTheme.colors.text,

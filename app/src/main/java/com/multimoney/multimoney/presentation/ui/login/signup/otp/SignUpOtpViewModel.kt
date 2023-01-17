@@ -16,6 +16,7 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnCallMutationSendPinProcess
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnCallMutationSendPinProcessSuccess
@@ -26,9 +27,9 @@ import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewM
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnOtpValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnValidateForm
-import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.OTP_MESSAGE_REGEX
 import com.multimoney.multimoney.presentation.util.ResendOtp
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.format
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -57,7 +58,7 @@ class SignUpOtpViewModel @Inject constructor(
         private set
 
     // Stateless
-    private var linkWhatsapp = ""
+    var linkWhatsapp = ""
     var userBlockedForMaxAttend = ""
 
     // Events
@@ -91,7 +92,7 @@ class SignUpOtpViewModel @Inject constructor(
 
     private fun initializeTimer(
         phaseCount: Int = uiState.phaseCount,
-        totalTime: Long = TIMER_DURATION,
+        totalTime: Long = TIMER_DURATION
     ) {
         val newRemainingTime = totalTime.seconds
         uiState = uiState.copy(
@@ -155,7 +156,7 @@ class SignUpOtpViewModel @Inject constructor(
         sendMethod: String,
         pkUser: String,
         idBrand: Int,
-        user: String,
+        user: String
     ) = executeUseCase {
         uiState = uiState.copy(isTimerRunning = false)
         mutationSendPinProcessUseCase.invoke(
@@ -188,7 +189,7 @@ class SignUpOtpViewModel @Inject constructor(
         onCallMutationUpdateUserRegisterUseCase: () -> Unit,
         onPhoneVerifiedChanged: () -> Unit,
         onLoadingValueChange: (status: Boolean) -> Unit,
-        onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit,
+        onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
     ) {
         executeUseCase {
             queryValidatePinUseCase.invoke(
@@ -227,7 +228,7 @@ class SignUpOtpViewModel @Inject constructor(
 
     private fun onCallMutationSendPinProcessSuccess(
         onLoadingValueChange: () -> Unit,
-        pinProcess: SendPinProcess?,
+        pinProcess: SendPinProcess?
     ) {
         uiState = uiState.copy(otpResend = pinProcess?.nextType)
         initializeTimer(totalTime = pinProcess?.pinExpirationTime?.toLong() ?: TIMER_DURATION)
@@ -279,7 +280,7 @@ class SignUpOtpViewModel @Inject constructor(
         val remainingTime: Duration = TIMER_DURATION.seconds,
         val isTimerRunning: Boolean = false,
         val remainingTimeText: String = remainingTime.format(),
-        val isOtpFromSms: Boolean = false,
+        val isOtpFromSms: Boolean = false
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -321,7 +322,7 @@ class SignUpOtpViewModel @Inject constructor(
     sealed class UIEvent {
         data class OnStart(
             val linkWhatsapp: String,
-            val userBlockedForMaxAttends: String,
+            val userBlockedForMaxAttends: String
         ) : UIEvent()
 
         data class OnNextActionClick(
@@ -333,7 +334,7 @@ class SignUpOtpViewModel @Inject constructor(
             val onCallMutationUpdateUserRegisterUseCase: () -> Unit,
             val onPhoneVerifiedChanged: () -> Unit,
             val onLoadingValueChange: (status: Boolean) -> Unit,
-            val onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit,
+            val onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
         ) : UIEvent()
 
         data class OnGetOtpFromMessage(val message: String) : UIEvent()
@@ -346,12 +347,12 @@ class SignUpOtpViewModel @Inject constructor(
             val sendMethod: String,
             val pkUser: String,
             val idBrand: Int,
-            val user: String,
+            val user: String
         ) : UIEvent()
 
         data class OnCallMutationSendPinProcessSuccess(
             val onLoadingValueChange: () -> Unit,
-            val pinProcess: SendPinProcess?,
+            val pinProcess: SendPinProcess?
         ) : UIEvent()
 
         data class OnInitializeTimer(val phaseCount: Int, val time: Long) : UIEvent()

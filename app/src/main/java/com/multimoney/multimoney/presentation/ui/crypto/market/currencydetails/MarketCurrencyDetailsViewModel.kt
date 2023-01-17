@@ -151,7 +151,7 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
+            is UIEvent.OnNavigateBack -> navigateBack(Screen.CryptoMarketScreen.route, false)
             is UIEvent.OnSetPreviousInfo -> setPreviousInfo()
             is UIEvent.OnGetCurrencyNews -> getCurrencyNews()
             is UIEvent.OnGetCurrencyHistoricalPrices -> getCurrencyHistoricalPrices(

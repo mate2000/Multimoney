@@ -79,4 +79,22 @@ class NovoHelper @Inject constructor() {
             withTermsAndConditions = false
         )
     }
+
+    fun novoNewPayment(
+        onSuccessPayment: (response: NovoResponse<Boolean>) -> Unit,
+        onErrorPayment: (error: NovoError) -> Unit
+    ) {
+        NovoVTS.newPayment(
+            listener = object : ResponseListener<Boolean> {
+                override fun onError(error: NovoError) {
+                    onErrorPayment(error)
+                }
+
+                override fun onFinish(response: NovoResponse<Boolean>) {
+                    onSuccessPayment(response)
+                }
+            },
+            NovoVTS.getFavoriteCard()
+        )
+    }
 }

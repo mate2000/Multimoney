@@ -860,7 +860,7 @@
     <string name="smart_account_retired_amount_placeholder" translatable="false">$000</string>
     <string name="smart_origin_main_income_title" translatable="false">¿Cuál es tu principal fuente de ingresos?</string>
     <string name="smart_account_formal_title" translatable="false">Asalariado formal</string>
-    <string name="smart_account_formal_monthly" translatable="false">Ingreso mensual en colones</string>
+    <string name="smart_account_formal_monthly" translatable="false">Ingreso mensual</string>
     <string name="smart_account_formal_placeholder" translatable="false">₡0000.000,0</string>
     <string name="smart_account_formal_select_occupation" translatable="false">Selecciona tu ocupación</string>
     <string name="smart_account_no_internet_error_description" translatable="false">No pudimos guardar tu información por un problema de conexión</string>

@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.balance.BalanceCryptoAccount
+import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -54,7 +55,9 @@ import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewMod
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewModel.UIEvent.OnGetUserInfo
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewModel.UIEvent.OnSetDateRange
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoActionsSection
+import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
@@ -63,6 +66,8 @@ import com.multimoney.multimoney.presentation.util.calculateGainLoses
 import com.multimoney.multimoney.presentation.util.calculatePercentage
 import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlaces
 import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlacesWithoutNegatives
+import com.multimoney.multimoney.presentation.util.toCurrencyFormat
+import com.multimoney.multimoney.presentation.util.toCurrencyFormatWithoutNegatives
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -234,6 +239,9 @@ fun HomeWalletContent(
                 walletViewModel.uiState.balanceCryptoAccount,
                 isFocused = isFocused,
                 searchQuery = searchQuery,
+                onItemClick = {
+                    walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnNavigateToCryptoDetailScreen(it))
+                }
             )
         }
     }
@@ -278,20 +286,27 @@ fun BalanceSection(
             text = stringResource(R.string.crypto_wallet_balance_section_label),
             style = Typography.subtitle1.copy(color = MultimoneyTheme.colors.quickActionLabelColor)
         )
-        Text(
+        Row(
             modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
-            text = stringResource(
-                id = R.string.currency_item_dollar_symbol,
-                globalCryptoBalance.roundToTwoDecimalPlacesWithoutNegatives()
-            ),
-            style = Typography.h4.copy(color = MultimoneyTheme.colors.text)
-        )
+        ) {
+            BalanceTextView(
+                balanceText = globalCryptoBalance.toCurrencyFormat(),
+                currencyStyle = Typography.h4.copy(
+                    color = MultimoneyTheme.colors.text,
+                    fontWeight = FontWeight.Bold
+                ),
+                currencyDecimalStyle = Typography.body2.copy(
+                    color = MultimoneyTheme.colors.text,
+                    fontWeight = FontWeight.Bold
+                )
+            )
+        }
         Text(
             modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
             text = stringResource(
                 id = R.string.currency_item_gain_or_losses_description,
                 gainsOrLossesSymbol,
-                gainsOrLosses.roundToTwoDecimalPlacesWithoutNegatives(),
+                gainsOrLosses.toCurrencyFormatWithoutNegatives(),
                 percentage.roundToTwoDecimalPlaces()
             ),
             style = Typography.body2.copy(color = graphicColor)
@@ -303,7 +318,8 @@ fun BalanceSection(
 fun MyCoinsSection(
     balanceCryptoAccount: BalanceCryptoAccount?,
     isFocused: MutableState<Boolean>,
-    searchQuery: MutableState<String>
+    searchQuery: MutableState<String>,
+    onItemClick: (BalanceCryptoAccountItems) -> Unit = {}
 ) {
 
     val filteredList = if (searchQuery.value.isNotEmpty()) balanceCryptoAccount?.items?.filter {
@@ -350,7 +366,6 @@ fun MyCoinsSection(
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp, vertical = 16.dp)
     ) {
-
         filteredList.forEach { item ->
             CurrencyItem(
                 imageUrl = item.url_image,
@@ -359,7 +374,10 @@ fun MyCoinsSection(
                 balanceDollars = item.balanceDollars,
                 priceOfTheDay = item.priceOfTheDay,
                 percentageInvestedCurrency = item.percentageInvestedCurrency,
-                available = item.available
+                available = item.available,
+                onClick = {
+                    onItemClick(item)
+                }
             )
         }
     }

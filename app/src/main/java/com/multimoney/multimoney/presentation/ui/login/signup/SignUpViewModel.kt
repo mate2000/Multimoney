@@ -24,7 +24,6 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFirstLastNameValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFirstNameValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnInitializeText
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnMoveToStep
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNationalityValueChange
@@ -43,8 +42,8 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
@@ -63,13 +62,8 @@ class SignUpViewModel @Inject constructor(
     var strIdIdentification = ""
     var countryCode = ""
     var nextAction: () -> Unit = {}
-    var closeDialogDescription: String = ""
     private var nextStep: Int = SignUpStep.One.id
     private var previousStep: Int = SignUpStep.One.id
-
-    private fun onInitializeTexts(description: String) {
-        closeDialogDescription = description
-    }
 
     private fun nextStep() {
         if (nextStep <= SIGN_UP_TOTAL_STEPS) {
@@ -194,7 +188,7 @@ class SignUpViewModel @Inject constructor(
         uiState = uiState.copy(
             openDialog = DialogParameters(
                 titleResource = string.general_close_dialog_title,
-                description = closeDialogDescription,
+                descriptionResource = string.sign_up_close_dialog_description,
                 positiveResource = string.sign_up_close_dialog_positive_button_text,
                 negativeResource = string.sign_up_close_dialog_negative_button_text,
                 positiveAction = {
@@ -230,9 +224,6 @@ class SignUpViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is OnInitializeText -> onInitializeTexts(
-                event.description
-            )
             is OnSetNavigation -> onSetNavigation(
                 event.nextAction,
                 event.nextStep,
@@ -285,10 +276,6 @@ class SignUpViewModel @Inject constructor(
     }
 
     sealed class UIEvent {
-        data class OnInitializeText(
-            val description: String
-        ) : UIEvent()
-
         data class OnBackClick(val focusManager: FocusManager) : UIEvent()
         data class OnCloseClick(val focusManager: FocusManager) : UIEvent()
         data class OnContinueClick(val focusManager: FocusManager) : UIEvent()

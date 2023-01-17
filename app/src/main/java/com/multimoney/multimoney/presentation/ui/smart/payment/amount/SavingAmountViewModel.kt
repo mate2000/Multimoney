@@ -56,7 +56,7 @@ class SavingAmountViewModel @Inject constructor(
             )
             getExchangeOnCompleted(
                 isStart = true,
-                abbreviation = originCurrency?.disbursementValue ?: "",
+                abbreviation = destinyCurrency?.disbursementValue ?: "",
                 idOriginCurrency = originCurrency?.id.toString(),
                 idDestinationCurrency = destinyCurrency?.id.toString()
             )
@@ -132,7 +132,7 @@ class SavingAmountViewModel @Inject constructor(
 
     override fun onAmountCompleted() {
         getExchangeOnCompleted(
-            abbreviation = originCurrency?.disbursementValue ?: "",
+            abbreviation = destinyCurrency?.disbursementValue ?: "",
             idOriginCurrency = originCurrency?.id.toString(),
             idDestinationCurrency = destinyCurrency?.id.toString()
         )

@@ -31,12 +31,21 @@ class SmartTransferAmountViewModel @Inject constructor() : BaseSmartEditAmountVi
             }
             totalBalanceLabel =
                 baseUIState.currency + smartAccount?.totalBalance.toString()
-            getExchangeOnCompleted(isStart = true)
+            getExchangeOnCompleted(
+                isStart = true,
+                abbreviation = originCurrency?.disbursementValue ?: "",
+                idOriginCurrency = destinyCurrency?.id.toString(),
+                idDestinationCurrency = originCurrency?.id.toString()
+            )
         }
     }
 
     override fun onAmountCompleted() {
-        getExchangeOnCompleted()
+        getExchangeOnCompleted(
+            abbreviation = originCurrency?.disbursementValue ?: "",
+            idOriginCurrency = destinyCurrency?.id.toString(),
+            idDestinationCurrency = originCurrency?.id.toString()
+        )
     }
 
     override fun onContinueClick() {

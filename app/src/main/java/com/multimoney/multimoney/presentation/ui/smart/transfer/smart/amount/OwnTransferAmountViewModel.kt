@@ -31,7 +31,12 @@ class OwnTransferAmountViewModel @Inject constructor() : BaseSmartEditAmountView
             }
             totalBalanceLabel =
                 baseUIState.currency + smartAccount?.totalBalance.toString()
-            getExchangeOnCompleted(true)
+            getExchangeOnCompleted(
+                true,
+                abbreviation = originCurrency?.disbursementValue ?: "",
+                idOriginCurrency = destinyCurrency?.id.toString(),
+                idDestinationCurrency = originCurrency?.id.toString()
+            )
         }
     }
 
@@ -46,6 +51,14 @@ class OwnTransferAmountViewModel @Inject constructor() : BaseSmartEditAmountView
             destinationCurrency = destinyCurrency?.id.toString(),
             transferType = SmartSinpeTransferType.SEND,
             destinationIdentification = identification
+        )
+    }
+
+    override fun onAmountCompleted() {
+        getExchangeOnCompleted(
+            abbreviation = originCurrency?.disbursementValue ?: "",
+            idOriginCurrency = destinyCurrency?.id.toString(),
+            idDestinationCurrency = originCurrency?.id.toString()
         )
     }
 

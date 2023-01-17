@@ -140,13 +140,13 @@ private fun SmartTransferBottomSheet(viewModel: SmartTransferAmountViewModel) {
         amount = viewModel.getFormattedAmount(),
         exchangedAmount = if (viewModel.shouldDisplayExchange) viewModel.baseUIState.convertedAmountLabel else null,
         fromLabel = stringResource(viewModel.baseUIState.originAccountDisplay?.sheetLabel ?: R.string.empty),
-        fromIcon = viewModel.baseUIState.originAccountDisplay?.icon ?: R.drawable.ic_dropdown_open,
+        fromIcon = viewModel.baseUIState.originAccountDisplay?.icon,
         fromTitle = viewModel.baseUIState.originAccountDisplay?.sheetTitle
             ?: stringResource(viewModel.baseUIState.originAccountDisplay?.sheetTitleResource ?: R.string.empty),
         fromSubtitle = viewModel.baseUIState.originAccountDisplay?.sheetSubtitle
             ?: stringResource(viewModel.baseUIState.originAccountDisplay?.sheetSubtitleResource ?: R.string.empty),
         toLabel = stringResource(viewModel.baseUIState.destinyAccountDisplay?.sheetLabel ?: R.string.empty),
-        toIcon = viewModel.baseUIState.destinyAccountDisplay?.icon ?: R.drawable.ic_dropdown_open,
+        toIcon = viewModel.baseUIState.destinyAccountDisplay?.icon,
         toTitle = viewModel.baseUIState.destinyAccountDisplay?.sheetTitle ?: "",
         toSubtitle = viewModel.baseUIState.destinyAccountDisplay?.sheetSubtitle ?: "",
         motive = viewModel.baseUIState.motive,

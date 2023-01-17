@@ -62,11 +62,11 @@ fun SmartPaymentBottomSheet(
     fromLabel: String,
     fromTitle: String,
     fromSubtitle: String?,
-    fromIcon: Int,
+    fromIcon: Int?,
     toLabel: String,
     toTitle: String,
     toSubtitle: String?,
-    toIcon: Int,
+    toIcon: Int?,
     motive: String? = null,
     buttonText: String,
     buttonAction: () -> Unit

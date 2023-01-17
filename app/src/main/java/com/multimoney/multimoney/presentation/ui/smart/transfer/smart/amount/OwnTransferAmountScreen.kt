@@ -150,7 +150,7 @@ private fun OwnTransferAmountBottomSheet(viewModel: OwnTransferAmountViewModel) 
             ?: stringResource(
                 viewModel.baseUIState.originAccountDisplay?.sheetSubtitleResource ?: R.string.empty
             ),
-        fromIcon = viewModel.baseUIState.originAccountDisplay?.icon ?: R.drawable.ic_dropdown_open,
+        fromIcon = viewModel.baseUIState.originAccountDisplay?.icon,
         toLabel = stringResource(R.string.smart_payment_amount_bottom_sheet_to),
         toTitle = viewModel.baseUIState.destinyAccountDisplay?.sheetTitle ?: stringResource(
             viewModel.baseUIState.destinyAccountDisplay?.sheetTitleResource ?: R.string.empty
@@ -159,7 +159,7 @@ private fun OwnTransferAmountBottomSheet(viewModel: OwnTransferAmountViewModel) 
             ?: stringResource(
                 viewModel.baseUIState.destinyAccountDisplay?.sheetSubtitleResource ?: R.string.empty
             ),
-        toIcon = viewModel.baseUIState.destinyAccountDisplay?.icon ?: R.drawable.ic_dropdown_open,
+        toIcon = viewModel.baseUIState.destinyAccountDisplay?.icon,
         motive = viewModel.baseUIState.motive,
         buttonText = stringResource(string.button_continue),
         buttonAction = { viewModel.onBaseUIEvent(OnCallProcessTransfer) }

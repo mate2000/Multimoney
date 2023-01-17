@@ -118,7 +118,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                             ibanAccount?.bank ?: "",
                             ibanAccount?.sinpeAccount ?: ""
                         ),
-                        icon = destinyCurrency?.accountIcon ?: Dollar.accountIcon
+                        icon = destinyCurrency?.accountIcon
                     ),
                     currency = destinyCurrency?.symbol ?: Dollar.symbol
                 )

@@ -132,13 +132,13 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
 
                 baseUIState = baseUIState.copy(
                     originAccountDisplay = DisplayAccount(
-                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_card,
+                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_card_CR,
                         sheetTitleResource = originCurrency?.myAccountSmart,
                         sheetSubtitleResource = originCurrency?.currencyName,
                         icon = R.drawable.ic_multimoney_smart
                     ),
                     destinyAccountDisplay = DisplayAccount(
-                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_to,
+                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_card_CR,
                         sheetTitleResource = destinyCurrency?.myAccountSmart,
                         sheetSubtitleResource = destinyCurrency?.currencyName,
                         icon = R.drawable.ic_multimoney_smart
@@ -197,8 +197,8 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
     open fun getExchangeOnCompleted(
         isStart: Boolean = false,
         abbreviation: String? = destinyCurrency?.disbursementValue,
-        idOriginCurrency: String = originCurrency?.id.toString(),
-        idDestinationCurrency: String = destinyCurrency?.id.toString(),
+        idOriginCurrency: String = destinyCurrency?.id.toString(),
+        idDestinationCurrency: String = originCurrency?.id.toString(),
         currentAmount: Double = baseUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
     ) {
         val amount = baseUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0

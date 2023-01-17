@@ -96,6 +96,7 @@ const val ORIGIN_ACCOUNT = "origin_account"
 const val DESTINY_ACCOUNT = "destiny_account"
 const val SMART_ACCOUNT_LIST = "smart_id_list"
 const val SMART_ACCOUNT = "smart_account"
+const val SECOND_SMART_ACCOUNT = "second_smart_account"
 const val IBAN_ACCOUNT = "iban_account"
 const val GLOBAL_CRYPTO_BALANCE = "global_crypto_balance"
 const val PASSWORD = "password"
@@ -503,7 +504,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     // Smart Transfer Screens
 
     object SmartSelectSendingTypeScreen : Screen(
-        "smart_select_sending_type_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$SMART_ACCOUNT}/{$ID_CLIENT}/{$PREVIOUS_SCREEN}",
+        "smart_select_sending_type_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$SMART_ACCOUNT}/{$SECOND_SMART_ACCOUNT}/{$ID_CLIENT}/{$PREVIOUS_SCREEN}",
         "smart_select_sending_type_screen"
     )
 

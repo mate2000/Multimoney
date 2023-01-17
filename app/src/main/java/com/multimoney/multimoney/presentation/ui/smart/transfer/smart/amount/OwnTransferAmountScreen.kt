@@ -139,22 +139,28 @@ private fun OwnTransferAmountBottomSheet(viewModel: OwnTransferAmountViewModel) 
         saveSendTitleResource = R.string.smart_payment_sheet_send_title,
         amount = viewModel.getFormattedAmount(),
         exchangedAmount = viewModel.baseUIState.convertedAmountLabel,
-        fromLabel = stringResource(viewModel.baseUIState.originAccountDisplay?.sheetLabel ?: R.string.empty),
+        fromLabel = stringResource(
+            viewModel.baseUIState.originAccountDisplay?.sheetLabel ?: R.string.empty
+        ),
         fromTitle = viewModel.baseUIState.originAccountDisplay?.sheetTitle
-            ?: stringResource(viewModel.baseUIState.originAccountDisplay?.sheetTitleResource ?: R.string.empty),
+            ?: stringResource(
+                viewModel.baseUIState.originAccountDisplay?.sheetTitleResource ?: R.string.empty
+            ),
         fromSubtitle = viewModel.baseUIState.originAccountDisplay?.sheetSubtitle
-            ?: stringResource(viewModel.baseUIState.originAccountDisplay?.sheetTitleResource ?: R.string.empty),
+            ?: stringResource(
+                viewModel.baseUIState.originAccountDisplay?.sheetSubtitleResource ?: R.string.empty
+            ),
         fromIcon = viewModel.baseUIState.originAccountDisplay?.icon ?: R.drawable.ic_dropdown_open,
         toLabel = stringResource(R.string.smart_payment_amount_bottom_sheet_to),
-        toTitle = viewModel.baseUIState.destinyAccountDisplay?.sheetTitle
-            ?: stringResource(
-                viewModel.baseUIState.destinyAccountDisplay?.sheetTitleResource ?: R.string.empty
-            ),
+        toTitle = viewModel.baseUIState.destinyAccountDisplay?.sheetTitle ?: stringResource(
+            viewModel.baseUIState.destinyAccountDisplay?.sheetTitleResource ?: R.string.empty
+        ),
         toSubtitle = viewModel.baseUIState.destinyAccountDisplay?.sheetSubtitle
             ?: stringResource(
-                viewModel.baseUIState.destinyAccountDisplay?.sheetTitleResource ?: R.string.empty
+                viewModel.baseUIState.destinyAccountDisplay?.sheetSubtitleResource ?: R.string.empty
             ),
         toIcon = viewModel.baseUIState.destinyAccountDisplay?.icon ?: R.drawable.ic_dropdown_open,
+        motive = viewModel.baseUIState.motive,
         buttonText = stringResource(string.button_continue),
         buttonAction = { viewModel.onBaseUIEvent(OnCallProcessTransfer) }
     )

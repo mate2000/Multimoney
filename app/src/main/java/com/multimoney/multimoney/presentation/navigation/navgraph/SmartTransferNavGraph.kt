@@ -11,6 +11,7 @@ import com.multimoney.multimoney.presentation.navigation.HOME_STATE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.ORIGIN_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
+import com.multimoney.multimoney.presentation.navigation.SECOND_SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT_LIST
 import com.multimoney.multimoney.presentation.navigation.SMART_TRANSFER_ROUTE
@@ -38,6 +39,7 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(IDENTIFICATION) { type = NavType.StringType },
                 navArgument(SMART_ACCOUNT) { type = SmartAccountIDNavType() },
+                navArgument(SECOND_SMART_ACCOUNT) { type = SmartAccountIDNavType() },
                 navArgument(ID_CLIENT) { type = NavType.IntType },
                 navArgument(PREVIOUS_SCREEN) { type = NavType.StringType }
             )
@@ -200,9 +202,9 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
         composable(
             Screen.OwnTransferAmountScreen.route,
             arguments = listOf(
-                navArgument(SMART_ACCOUNT) { type = SmartAccountIDNavType() },
-                navArgument(PREVIOUS_SCREEN) { type = NavType.StringType },
-                navArgument(SMART_ACCOUNT) { type = SmartAccountIDNavType() }
+                navArgument(ORIGIN_ACCOUNT) { type = SmartAccountIDNavType() },
+                navArgument(DESTINY_ACCOUNT) { type = SmartAccountIDNavType() },
+                navArgument(TRANSFER_TYPE) { type = NavType.IntType }
             )
         ) {
             OwnTransferAmountScreen(

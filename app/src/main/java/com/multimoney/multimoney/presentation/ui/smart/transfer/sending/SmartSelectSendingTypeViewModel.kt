@@ -10,6 +10,7 @@ import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.SECOND_SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
@@ -19,6 +20,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
+import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
@@ -36,7 +38,8 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         private set
 
     // Stateless
-    var smartAccount: SmartAccountID? = null
+    var selectedSmartAccount: SmartAccountID? = null
+    var secondSmartAccount: SmartAccountID? = null
     var user: String = ""
     var identification: String = ""
     var idClient: Int = 0
@@ -44,7 +47,8 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     var previousScreen: String = ""
 
     init {
-        smartAccount = savedStateHandle[SMART_ACCOUNT]
+        selectedSmartAccount = savedStateHandle[SMART_ACCOUNT]
+        secondSmartAccount = savedStateHandle[SECOND_SMART_ACCOUNT]
         user = savedStateHandle[USER] ?: ""
         identification = savedStateHandle[IDENTIFICATION] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -53,7 +57,7 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     }
 
     fun getTitleAndIconSmartAccountResources(): Pair<Int, Int?> {
-        val result = when (smartAccount?.currencyID?.getCurrencyFromId()?.value) {
+        val result = when (selectedSmartAccount?.currencyID?.getCurrencyFromId()?.value) {
             CurrencyType.Dollar.value -> {
                 Pair(
                     R.string.payment_select_sending_type_smart_account_colones,
@@ -78,13 +82,15 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
 
     private fun onNavigateToIBANAccount() {
         navigateTo(
-            "${Screen.SmartTransferIbanAccountScreen.baseRoute}/${encodeData(smartAccount)}/$user/$idBrand/$identification/${Screen.SmartSelectSendingTypeScreen.baseRoute}/$idClient"
+            "${Screen.SmartTransferIbanAccountScreen.baseRoute}/${encodeData(selectedSmartAccount)}/$user/$idBrand/$identification/${Screen.SmartSelectSendingTypeScreen.baseRoute}/$idClient"
         )
     }
 
     private fun onNavigateToSmartAccount() {
         navigateTo(
-            "${Screen.OwnTransferAmountScreen.baseRoute}/${encodeData(smartAccount)}/${Screen.SmartSelectSendingTypeScreen.baseRoute}"
+            "${Screen.OwnTransferAmountScreen.baseRoute}/" +
+                "${encodeData(selectedSmartAccount)}/${encodeData(secondSmartAccount)}/" +
+                "${SmartTransferTypes.SmartToSmart.id}"
         )
     }
 

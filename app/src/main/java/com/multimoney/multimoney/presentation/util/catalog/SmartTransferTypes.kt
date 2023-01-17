@@ -7,28 +7,6 @@ sealed class SmartTransferTypes(val id: Int) {
     object SmartToOtherBank : SmartTransferTypes(4)
     object IbanToSmart : SmartTransferTypes(5)
     object VisaToSmart : SmartTransferTypes(6)
-
-    object Labels {
-        fun getBottomSheetLabel(id: Int) = when (id) {
-            SmartToIban.id -> {}
-            SmartToSmart.id -> {}
-            SmartToMobile.id -> {}
-            SmartToOtherBank.id -> {}
-            IbanToSmart.id -> {}
-            VisaToSmart.id -> {}
-            else -> {}
-        }
-
-        fun getSuccessSheetLabel(id: Int) = when (id) {
-            SmartToIban.id -> {}
-            SmartToSmart.id -> {}
-            SmartToMobile.id -> {}
-            SmartToOtherBank.id -> {}
-            IbanToSmart.id -> {}
-            VisaToSmart.id -> {}
-            else -> {}
-        }
-    }
 }
 
 data class DisplayAccount(

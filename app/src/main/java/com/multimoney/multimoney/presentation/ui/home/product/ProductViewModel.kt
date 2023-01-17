@@ -766,9 +766,19 @@ class ProductViewModel @Inject constructor(
             totalBalance = account?.totalBalance,
             ibanAccountNumber = account?.ibanAccountNumber
         )
+        val secondAccount = balanceCredit?.balanceAccountSmart?.find { accounts -> accounts?.tokenNumber != account?.tokenNumber }
+        val secondAccountSend = encodeData(
+            SmartAccountID(
+                tokenAccount = secondAccount?.tokenNumber,
+                currencyID = secondAccount?.idCurrencyAccount,
+                accountNumber = secondAccount?.accountNumber,
+                totalBalance = secondAccount?.totalBalance,
+                ibanAccountNumber = secondAccount?.ibanAccountNumber
+            )
+        )
         navigateTo(
             "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$userName/${uiState.idBrand}/$identification" +
-                "/${encodeData(smartAccount)}/$idClient/${Screen.HomeScreen.route}"
+                "/${encodeData(smartAccount)}/$secondAccountSend/$idClient/${Screen.HomeScreen.route}"
         )
     }
 

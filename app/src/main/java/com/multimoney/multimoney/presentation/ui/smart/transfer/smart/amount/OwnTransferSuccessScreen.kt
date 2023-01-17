@@ -14,6 +14,7 @@ import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSma
 import com.multimoney.multimoney.presentation.uielement.PaymentSuccessResult
 import com.multimoney.multimoney.presentation.uielement.SmartPaymentInfoItem
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
+import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 
 @Composable
 fun OwnTransferSuccessScreen(
@@ -50,8 +51,8 @@ fun OwnTransferSuccessScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 icon = viewModel.baseUIState.originAccountDisplay?.icon ?: 0,
                 title = stringResource(R.string.smart_payment_origin_account_label),
-                subtitle = viewModel.baseUIState.originAccountDisplay?.sheetSubtitle ?: stringResource(
-                    viewModel.baseUIState.originAccountDisplay?.sheetSubtitleResource ?: R.string.empty
+                subtitle = getMaskedAccountIban(
+                    viewModel.smartAccount?.ibanAccountNumber ?: ""
                 )
             )
 

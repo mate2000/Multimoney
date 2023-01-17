@@ -54,7 +54,12 @@ class SavingAmountViewModel @Inject constructor(
                     SuggestionOrder.MAX
                 )
             )
-            getExchangeOnCompleted(isStart = true)
+            getExchangeOnCompleted(
+                isStart = true,
+                abbreviation = originCurrency?.disbursementValue ?: "",
+                idOriginCurrency = originCurrency?.id.toString(),
+                idDestinationCurrency = destinyCurrency?.id.toString()
+            )
         }
     }
 
@@ -126,7 +131,11 @@ class SavingAmountViewModel @Inject constructor(
     }
 
     override fun onAmountCompleted() {
-        getExchangeOnCompleted()
+        getExchangeOnCompleted(
+            abbreviation = originCurrency?.disbursementValue ?: "",
+            idOriginCurrency = originCurrency?.id.toString(),
+            idDestinationCurrency = destinyCurrency?.id.toString()
+        )
     }
 
     override fun onAmountChanged(newAmount: String) {

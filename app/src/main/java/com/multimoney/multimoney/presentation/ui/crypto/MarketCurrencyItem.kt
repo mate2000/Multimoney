@@ -41,11 +41,6 @@ fun MarketCurrencyItem(
     amountChange: String
 ) {
     val amountChangeValue = amountChange.toDouble()
-    val gainOrLoss = if (amountChangeValue < 0) {
-        stringResource(id = R.string.crypto_losses_symbol)
-    } else {
-        stringResource(id = R.string.crypto_gains_symbol)
-    }
     val gainOrLossColor =
         if (amountChangeValue < 0) MultimoneyTheme.colors.cryptoLossesColor else MultimoneyTheme.colors.cryptoGainsColor
 

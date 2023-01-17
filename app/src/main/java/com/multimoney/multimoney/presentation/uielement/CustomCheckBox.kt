@@ -57,7 +57,7 @@ fun CustomCheckBox(
 
     if (isSystemInDarkTheme()) {
         textColor = DefaultWhite
-        checkedColor = DefaultWhite
+        checkedColor = Primary500
         uncheckedColor = GrayScale400
         checkmarkColor = DefaultBlack
         disabledColor = WhiteTransparency30

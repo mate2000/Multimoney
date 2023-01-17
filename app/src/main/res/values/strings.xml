@@ -1,7 +1,7 @@
 <resources>
 
     <!-- App -->
-    <string name="app_name" translatable="false">Multimoney</string>
+    <string name="app_name" translatable="false">MultiMoney</string>
 
     <!-- Common -->
     <string name="button_continue" translatable="false">Continuar</string>
@@ -209,7 +209,7 @@
 
     <!-- Sign Up Biometrics -->
     <string name="sign_up_biometrics_facial_title" translatable="false">Activá el reconocimiento facial</string>
-    <string name="sign_up_biometrics_facial_subtitle" translatable="false">Ingresa a Multimoney de manera segura y rápida</string>
+    <string name="sign_up_biometrics_facial_subtitle" translatable="false">Ingresa a MultiMoney de manera segura y rápida</string>
     <string name="sign_up_biometrics_activate_later" translatable="false">Activar más tarde</string>
     <string name="sign_up_biometrics_activate_now" translatable="false">Activar ahora</string>
     <string name="sign_up_biometric_success_title" translatable="false">El reconocimiento facial ya está configurado</string>
@@ -227,7 +227,7 @@
     <string name="sign_up_id_validation_three" translatable="false">Tomarás una fotografía de tu rostro, no utilices lentes u otros accesorios</string>
 
     <!-- Sign Up Complete -->
-    <string name="sign_up_complete_title" translatable="false">¡Felices finanzas!\nBienvenid@ a Multimoney</string>
+    <string name="sign_up_complete_title" translatable="false">¡Felices finanzas!\nBienvenid@ a MultiMoney</string>
 
     <!-- Biometric Dialog -->
     <string name="biometric_dialog_title" translatable="false">¿Inicia sesión con tu biométrica?</string>
@@ -276,7 +276,7 @@
     <string name="home_crypto_card_with_balance_zero_text" translatable="false">0.00</string>
     <string name="home_send_money_button_text" translatable="false">Enviar dinero</string>
     <string name="home_pay_button_text" translatable="false">Abonar</string>
-    <string name="home_my_products_title" translatable="false">Mi billetera Multimoney</string>
+    <string name="home_my_products_title" translatable="false">Mi billetera MultiMoney</string>
     <string name="home_my_products_subtitle" translatable="false">Tus productos</string>
     <string name="home_my_products_title_credit" translatable="false">Crédito</string>
     <string name="home_my_products_label_credit" translatable="false">Mi Crédito</string>
@@ -498,7 +498,7 @@
     <string name="quick_action_bottom_sheet_credit_pay_fee" translatable="false">Pagar cuota</string>
     <string name="quick_action_bottom_sheet_credit_disburse_available" translatable="false">Desembolsar disponible</string>
     <string name="quick_action_bottom_sheet_credit_pay_at_business" translatable="false">Pagar en comercio</string>
-    <string name="quick_action_bottom_sheet_credit_see_multimoney_visa_info" translatable="false">Ver datos Multimoney Visa</string>
+    <string name="quick_action_bottom_sheet_credit_see_multimoney_visa_info" translatable="false">Ver datos MultiMoney Visa</string>
     <string name="quick_action_bottom_sheet_smart_saving" translatable="false">Ahorrar Smart</string>
     <string name="quick_action_bottom_sheet_smart_send_money" translatable="false">Enviar dinero</string>
     <string name="quick_action_bottom_sheet_crypto_buy" translatable="false">Comprar cripto</string>
@@ -691,17 +691,17 @@
 
     <!-- Visa Issuance-->
     <string name="visa_issuance_sv_nfc_title" translatable="false">¡Comprá en línea y en comercios!</string>
-    <string name="visa_issuance_sv_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para vos.</string>
-    <string name="visa_issuance_sv_no_nfc_title" translatable="false">¡Comprá en línea con Multimoney Visa!</string>
-    <string name="visa_issuance_sv_no_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para vos.</string>
+    <string name="visa_issuance_sv_nfc_subtitle" translatable="false">La nueva MultiMoney Visa y todos sus beneficios son para vos.</string>
+    <string name="visa_issuance_sv_no_nfc_title" translatable="false">¡Comprá en línea con MultiMoney Visa!</string>
+    <string name="visa_issuance_sv_no_nfc_subtitle" translatable="false">La nueva MultiMoney Visa y todos sus beneficios son para vos.</string>
     <string name="visa_issuance_cr_nfc_title" translatable="false">¡Comprá en línea y en comercios!</string>
-    <string name="visa_issuance_cr_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para vos.</string>
-    <string name="visa_issuance_cr_no_nfc_title" translatable="false">¡Comprá en línea con Multimoney Visa!</string>
-    <string name="visa_issuance_cr_no_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para vos.</string>
+    <string name="visa_issuance_cr_nfc_subtitle" translatable="false">La nueva MultiMoney Visa y todos sus beneficios son para vos.</string>
+    <string name="visa_issuance_cr_no_nfc_title" translatable="false">¡Comprá en línea con MultiMoney Visa!</string>
+    <string name="visa_issuance_cr_no_nfc_subtitle" translatable="false">La nueva MultiMoney Visa y todos sus beneficios son para vos.</string>
     <string name="visa_issuance_gt_nfc_title" translatable="false">¡Compra en línea y en comercios!</string>
-    <string name="visa_issuance_gt_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para ti.</string>
-    <string name="visa_issuance_gt_no_nfc_title" translatable="false">¡Compra en línea con Multimoney Visa!</string>
-    <string name="visa_issuance_gt_no_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para ti.</string>
+    <string name="visa_issuance_gt_nfc_subtitle" translatable="false">La nueva MultiMoney Visa y todos sus beneficios son para ti.</string>
+    <string name="visa_issuance_gt_no_nfc_title" translatable="false">¡Compra en línea con MultiMoney Visa!</string>
+    <string name="visa_issuance_gt_no_nfc_subtitle" translatable="false">La nueva MultiMoney Visa y todos sus beneficios son para ti.</string>
     <string name="visa_issuance_button_label" translatable="false">Vincular tarjeta</string>
 
     <!-- Visa Card-->
@@ -727,11 +727,11 @@
     <string name="visa_card_unblock_with_nfc_dialog_subtitle" translatable="false">Al desbloquear tu tarjeta podrás hacer pagos online y compras en comercio.</string>
     <string name="visa_card_unblock_not_allowed_dialog_title" translatable="false">¡Oh no! No puedes desbloquear tu tarjeta</string>
     <string name="visa_card_unblock_not_allowed_dialog_subtitle" translatable="false">Contáctate con servicio al cliente para desbloquear tu tarjeta.</string>
-    <string name="visa_card_block_dialog_title" translatable="false">Estás bloqueando tu tarjeta digital Multimoney Visa</string>
+    <string name="visa_card_block_dialog_title" translatable="false">Estás bloqueando tu tarjeta digital MultiMoney Visa</string>
     <string name="visa_card_block_dialog_subtitle" translatable="false">Si bloqueás la tarjeta no podrás realizar pagos online. Podrás desbloquearla después si lo deseás, y será al instante.</string>
     <string name="visa_card_block_dialog_subtitle_gt" translatable="false">Si bloqueas la tarjeta no podrás realizar pagos online. Podrás desbloquearla después si lo deseas, y será al instante.</string>
-    <string name="visa_card_block_disclaimer" translatable="false">Desbloqueá tu tarjeta para usar tu Multimoney Visa.</string>
-    <string name="visa_card_block_disclaimer_gt" translatable="false">Desbloquea tu tarjeta para usar tu Multimoney Visa.</string>
+    <string name="visa_card_block_disclaimer" translatable="false">Desbloqueá tu tarjeta para usar tu MultiMoney Visa.</string>
+    <string name="visa_card_block_disclaimer_gt" translatable="false">Desbloquea tu tarjeta para usar tu MultiMoney Visa.</string>
 
     <string name="visa_card_tap_and_pay_title" translatable="false">Pago con Contactless</string>
 
@@ -749,13 +749,13 @@
 
     <!-- visa tokenization success -->
     <string name="visa_tokenization_success_title" translatable="false">¡Hemos finalizado!</string>
-    <string name="visa_tokenization_success_description" translatable="false">Ya podés utilizar tu Multimoney Visa para realizar compras online y en comercios</string>
-    <string name="visa_tokenization_success_description_gt" translatable="false">Ya puedes utilizar tu Multimoney Visa para realizar compras online y en comercios</string>
-    <string name="visa_tokenization_success_button_action" translatable="false">Ver Multimoney Visa</string>
+    <string name="visa_tokenization_success_description" translatable="false">Ya podés utilizar tu MultiMoney Visa para realizar compras online y en comercios</string>
+    <string name="visa_tokenization_success_description_gt" translatable="false">Ya puedes utilizar tu MultiMoney Visa para realizar compras online y en comercios</string>
+    <string name="visa_tokenization_success_button_action" translatable="false">Ver MultiMoney Visa</string>
 
     <!-- visa nfc required dialog -->
     <string name="visa_nfc_required_dialog_title" translatable="false">Activá el NFC para realizar pagos en comercios</string>
-    <string name="visa_multimoney_default_payment_method_required_dialog_title" translatable="false">Elige tu Multimoney Visa para realizar pagos en comercios</string>
+    <string name="visa_multimoney_default_payment_method_required_dialog_title" translatable="false">Elige tu MultiMoney Visa para realizar pagos en comercios</string>
     <string name="visa_nfc_required_dialog_title_gt" translatable="false">Activa el NFC para realizar pagos en comercios</string>
     <string name="visa_nfc_required_dialog_description" translatable="false">Sin esta funcionalidad, solo podrás ver los datos de tu tarjeta</string>
 
@@ -907,7 +907,7 @@
     <string name="smart_other_source_of_income_label" translatable="false">Especificá tu fuente de ingresos</string>
     <string name="smart_other_source_of_income_required" translatable="false">Fuente de ingresos requerido</string>
     <string name="smart_other_generating_document_title" translatable="false">Estamos generando tus documentos</string>
-    <string name="smart_other_generating_document_subtitle" translatable="false">Al firmar tu contrato podrás utilizar tu Multimoney Smart</string>
+    <string name="smart_other_generating_document_subtitle" translatable="false">Al firmar tu contrato podrás utilizar tu MultiMoney Smart</string>
     <string name="smart_other_income_cr_placeholder" translatable="false">₡000,000</string>
     <string name="smart_other_income_sv_placeholder" translatable="false">$000</string>
 
@@ -1123,7 +1123,7 @@
     <string name="smart_evicertia_missing_signature_title_card" translatable="false">¡Solo falta tu firma!</string>
     <string name="smart_evicertia_missing_signature_subtitle_card" translatable="false">Firmá el contrato para que podás empezar a invertir de forma Smart</string>
     <string name="smart_evicertia_miss_title" translatable="false">¡Te vamos a extrañar!</string>
-    <string name="smart_evicertia_miss_subtitle" translatable="false">Si querés finalizar la solicitud de tu Multimoney Smart debés firmar el contrato.</string>
+    <string name="smart_evicertia_miss_subtitle" translatable="false">Si querés finalizar la solicitud de tu MultiMoney Smart debés firmar el contrato.</string>
     <string name="smart_evicertia_missing_signature_title" translatable="false">Te vamos a extrañar</string>
 
     <!-- Validate identity -->
@@ -1131,11 +1131,11 @@
     <string name="validate_identity_subtitle" translatable="false">Esto solo toma unos minutos</string>
     <string name="validate_document_generation_title" translatable="false">Estamos generando tus documentos</string>
     <string name="validate_document_generation_subtitle" translatable="false">Al firmar tu contrato podrás utilizar tu Multinoney Smart</string>
-    <string name="approved_by_onfido_title" translatable="false">¡Tu Multimoney Smart ya está activa!</string>
+    <string name="approved_by_onfido_title" translatable="false">¡Tu MultiMoney Smart ya está activa!</string>
     <string name="approved_by_onfido_buttton_text" translatable="false">Hacer mi primer abono</string>
     <string name="rejected_by_onfido_title" translatable="false">No pudimos validar tu identidad</string>
     <string name="rejected_by_onfido_buttton_text" translatable="false">Validar mi identidad</string>
-    <string name="smart_continue_validating_identity_title" translatable="false">Ya casi tenés tu Multimoney Smart</string>
+    <string name="smart_continue_validating_identity_title" translatable="false">Ya casi tenés tu MultiMoney Smart</string>
     <string name="smart_rejected_by_onfido_subtitle" translatable="false">Inténtalo nuevamente</string>
 
     <!-- Credit Schedule Automatic Payment -->
@@ -1204,8 +1204,8 @@
 
     <!-- Payment Account -->
     <string name="payment_account_title" translatable="false">Seleccioná la cuenta con la que querés ahorrar</string>
-    <string name="payment_account_colon" translatable="false">Multimoney Smart | Colones</string>
-    <string name="payment_account_dollar" translatable="false">Multimoney Smart | Dólares</string>
+    <string name="payment_account_colon" translatable="false">MultiMoney Smart | Colones</string>
+    <string name="payment_account_dollar" translatable="false">MultiMoney Smart | Dólares</string>
 
     <!-- IBAN Account -->
     <string name="payment_account_iban_title" translatable="false">¿En qué cuenta IBAN querés recibir tu dinero?</string>
@@ -1334,7 +1334,7 @@
     <string name="card_preferences_title" translatable="false">Preferencias de tarjeta</string>
     <string name="card_preferences_linked_card_title" translatable="false">Tarjeta vinculada</string>
     <string name="card_preferences_unlinked_card_title" translatable="false">Tarjeta desvinculada</string>
-    <string name="card_preferences_linked_card_description" translatable="false">Al desvincular tu tarjeta no podrás\nrealizar ninguna transacción con\nMultimoney Visa</string>
+    <string name="card_preferences_linked_card_description" translatable="false">Al desvincular tu tarjeta no podrás\nrealizar ninguna transacción con\nMultiMoney Visa</string>
     <string name="card_preferences_linked_card_dialog_title" translatable="false">Vincular tarjeta</string>
     <string name="card_preferences_linked_card_dialog_description" translatable="false">¿Estás seguro que deseás vincular tu tarjeta a este dispositivo?</string>
     <string name="card_preferences_linked_card_dialog_positive_button" translatable="false">Vincular</string>
@@ -1376,7 +1376,7 @@
     <string name="process_forgot_password_alert_failure_button_try_again" translatable="false">Intentar nuevamente</string>
 
     <!-- Registeres User Email -->
-    <string name="registered_user_email_title" translatable="false">Tenemos tu correo  %s registrado en Multimoney</string>
+    <string name="registered_user_email_title" translatable="false">Tenemos tu correo  %s registrado en MultiMoney</string>
     <string name="registered_user_email_subtitle" translatable="false">Ingresá el correo electrónico completo para verificar que sos vos.</string>
     <string name="registered_user_email_not_valid" translatable="false">Revisa formato. Debe contener “@” y “.”</string>
     <string name="registered_user_email_different" translatable="false">El correo es invalido</string>

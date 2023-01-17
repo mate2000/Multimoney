@@ -69,7 +69,7 @@ fun MyContactsTransferScreen(
                 Text(
                     text = stringResource(id = R.string.smart_mycontacts_transfer_title),
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(end = 16.dp),
+                    modifier = Modifier.padding(end = 16.dp, start = 16.dp, top = 16.dp),
                     style = Typography.subtitle1.copy(
                         fontWeight = FontWeight.SemiBold,
                         color = MultimoneyTheme.colors.smartCardTrending
@@ -89,7 +89,7 @@ fun MyContactsTransferScreen(
                     viewModel.uiState.relatedContactList.count()
                 ),
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(end = 16.dp),
+                modifier = Modifier.padding(end = 16.dp, start = 16.dp, top = 16.dp),
                 style = Typography.subtitle1.copy(
                     fontWeight = FontWeight.SemiBold,
                     color = MultimoneyTheme.colors.smartCardTrending

@@ -25,6 +25,8 @@ import coil.compose.rememberAsyncImagePainter
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlaces
+import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlacesWithoutNegatives
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 
 @Composable
@@ -107,11 +109,7 @@ fun MarketCurrencyItem(
                         )
                         Text(
                             modifier = Modifier.padding(start = 8.dp),
-                            text = stringResource(
-                                id = R.string.currency_item_percent_invested_with_symbol,
-                                gainOrLoss,
-                                percentChange
-                            ),
+                            text = percentChange.roundToTwoDecimalPlaces(),
                             style = Typography.caption,
                             color = gainOrLossColor
                         )

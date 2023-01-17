@@ -14,7 +14,6 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Transparent
@@ -23,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.multimoney.multimoney.R
@@ -121,7 +121,10 @@ fun CustomInfoButton(
                         height = Dimension.fillToConstraints
                         width = Dimension.fillToConstraints
                     },
-                    style = Typography.body2.copy(fontWeight = FontWeight.SemiBold, fontSize = 15.sp),
+                    style = Typography.body2.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 15.sp
+                    ),
                     color = titleColor,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -168,7 +171,10 @@ fun CustomInfoButton(
                         bottom.linkTo(startIconId.bottom)
                         width = Dimension.fillToConstraints
                     },
-                    style = Typography.body2.copy(fontWeight = FontWeight.SemiBold, fontSize = 15.sp),
+                    style = Typography.body2.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 15.sp
+                    ),
                     color = titleColor,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis

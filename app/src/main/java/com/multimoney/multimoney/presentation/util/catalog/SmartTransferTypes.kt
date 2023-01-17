@@ -15,5 +15,5 @@ data class DisplayAccount(
     val sheetSubtitle: String? = null,
     val sheetTitleResource: Int? = null,
     val sheetSubtitleResource: Int? = null,
-    val icon: Int
+    val icon: Int?
 )

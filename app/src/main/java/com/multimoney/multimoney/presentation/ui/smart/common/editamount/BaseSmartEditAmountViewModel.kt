@@ -158,7 +158,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                         sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_card_CR,
                         sheetTitle = ibanAccount?.bank ?: "",
                         sheetSubtitle = getMaskedAccountIban(ibanAccount?.sinpeAccount ?: ""),
-                        icon = originCurrency?.accountIcon ?: R.drawable.info_blue_icon
+                        icon = originCurrency?.accountIcon
                     ),
                     destinyAccountDisplay = DisplayAccount(
                         sheetLabel = R.string.smart_payment_sheet_to_account,

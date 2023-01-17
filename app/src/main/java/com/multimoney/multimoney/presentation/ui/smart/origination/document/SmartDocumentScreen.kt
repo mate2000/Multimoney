@@ -295,7 +295,7 @@ fun SmartDocumentScreen(
                             year,
                             month,
                             day,
-                            YEAR_MONTH_DAY_AND_TIME_BAR_FORMAT
+                            YEAR_MONTH_DAY_PATTERN_BAR_FORMAT
                         )
                         viewModel.onUIEvent(UIEvent.OnExpirationDateValueChange(date))
                     },

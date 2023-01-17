@@ -31,6 +31,8 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.document.Smar
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnProfessionChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnValidateForm
+import com.multimoney.multimoney.presentation.util.BAR
+import com.multimoney.multimoney.presentation.util.HYPHEN
 import com.multimoney.multimoney.presentation.util.ISO_8601_API_FORMAT_PATTERN
 import com.multimoney.multimoney.presentation.util.YEAR_MONTH_DAY_PATTERN
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -197,7 +199,7 @@ class SmartDocumentViewModel @Inject constructor(
         }
 
     private fun onExpirationDateValueChange(expirationDate: String) {
-        if (onExpirationDateValidation(expirationDate)) {
+        if (onExpirationDateValidation(expirationDate.replace(BAR, HYPHEN))) {
             uiState = uiState.copy(expirationDate = expirationDate)
             validateForm()
         }
@@ -238,10 +240,10 @@ class SmartDocumentViewModel @Inject constructor(
         emitBaseEvent(
             BaseEvent.OnFormValidateCompleted(
                 isFormValid = uiState.gender.isNotBlank() &&
-                    uiState.birthdate.isNotBlank() &&
-                    uiState.civilState.isNotBlank() &&
-                    uiState.profession.isNotBlank() &&
-                    uiState.expirationDate.isNotBlank() && !uiState.birthdateErrorStatus
+                        uiState.birthdate.isNotBlank() &&
+                        uiState.civilState.isNotBlank() &&
+                        uiState.profession.isNotBlank() &&
+                        uiState.expirationDate.isNotBlank() && !uiState.birthdateErrorStatus
             )
         )
     }

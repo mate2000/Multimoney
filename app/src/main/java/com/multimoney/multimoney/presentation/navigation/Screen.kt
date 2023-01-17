@@ -11,6 +11,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_CARD_VI
 import com.multimoney.multimoney.presentation.navigation.navgraph.COMING_FROM_CRYPTO
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
+import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.CURRENT_AMOUNT_VALUE
 import com.multimoney.multimoney.presentation.navigation.navgraph.DISBURSEMENT_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
@@ -246,6 +247,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object ProfileCardListScreen : Screen(
         "profile_card_list_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
         "profile_card_list_screen"
+    )
+
+    object ProfileMyCardsEditCardScreen : Screen(
+        route = "profile_my_cards_edit_card_screen/{$IDENTIFICATION}/{$USER}/{$ID_BRAND}/{$CARD_SELECTED}",
+        baseRoute = "profile_my_cards_edit_card_screen"
     )
 
     // DisbursementNavGraph Screens
@@ -523,14 +529,19 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "crypto_wallet_screen"
     )
 
+    object CryptoCurrencyMovementsScreen : Screen(
+        "crypto_currency_movements_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}/{$ITEM_CRYPTO_CURRENCY}",
+        "crypto_currency_movements_screen"
+    )
+
     object CryptoMarketScreen : Screen(
         "crypto_market_screen/{$USER}/{$ID_BRAND}",
         "crypto_market_screen"
     )
 
-    object CryptoMovementsScreen : Screen(
-        "crypto_movements_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
-        "crypto_movements_screen"
+    object CryptoMovementsAllScreen : Screen(
+        "crypto_movements_all_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}?$CRYPTO_ASSET={$CRYPTO_ASSET}",
+        "crypto_movements_all_screen"
     )
 
     object CryptoCurrencyDetailsScreen : Screen(

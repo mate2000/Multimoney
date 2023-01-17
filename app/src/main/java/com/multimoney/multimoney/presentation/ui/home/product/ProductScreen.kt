@@ -26,6 +26,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -141,7 +143,11 @@ fun ProductScreen(
                             ProductViewModel.UIEvent.OnQuickActionClicked(
                                 event.flow,
                                 onLoadingValueChange = {
-                                    sharedViewModel.onUIEvent(HomeViewModel.UIEvent.OnLoadingValueChanged(it))
+                                    sharedViewModel.onUIEvent(
+                                        HomeViewModel.UIEvent.OnLoadingValueChanged(
+                                            it
+                                        )
+                                    )
                                 }
                             )
                         )
@@ -274,6 +280,9 @@ fun TipsAndOffer(
     viewModel: ProductViewModel,
     sharedViewModel: HomeViewModel
 ) {
+    val poppinsRegularFontFamily = FontFamily(
+        Font(R.font.poppins_regular)
+    )
     Column(modifier = modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -282,15 +291,20 @@ fun TipsAndOffer(
             Column {
                 Text(
                     text = viewModel.uiState.userStatus?.wording?.textOne ?: "",
-                    style = Typography.h6.copy(letterSpacing = 0.38.sp),
+                    style = Typography.h6.copy(
+                        fontFamily = poppinsRegularFontFamily,
+                        fontSize = 20.sp,
+                        lineHeight = 24.sp,
+                        letterSpacing = 0.15.sp
+                    ),
                     color = MultimoneyTheme.colors.labelText
                 )
                 Text(
                     modifier = Modifier.padding(top = 4.dp),
                     text = viewModel.uiState.userStatus?.wording?.textTwo ?: "",
                     style = Typography.h5.copy(
-                        fontSize = 28.sp,
-                        letterSpacing = 0.4.sp,
+                        fontSize = 24.sp,
+                        lineHeight = 32.sp,
                         fontWeight = FontWeight.SemiBold
                     ),
                     color = MultimoneyTheme.colors.labelText
@@ -388,8 +402,7 @@ fun ProductContent(
         HorizontalPager(
             count = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
             modifier = Modifier
-                .padding(top = 8.dp)
-                .weight(1f),
+                .padding(top = 8.dp),
             state = state
         ) { page ->
             when (viewModel.uiState.productPageList?.get(page)?.product) {
@@ -398,7 +411,8 @@ fun ProductContent(
                 ProductType.Crypto.value -> CryptoContent(
                     userStatus = viewModel.uiState.userStatus,
                     cryptoBalance = viewModel.balanceCredit?.balanceCryptoAccount,
-                    cryptoEmptyState = viewModel.uiState.userStatus?.infoCrypto?.profileEnable ?: false,
+                    cryptoEmptyState = viewModel.uiState.userStatus?.infoCrypto?.profileEnable
+                        ?: false,
                     openActionEnable = !sharedViewModel.uiState.forceIsExpanded,
                     clientBalanceHistory = sharedViewModel.uiState.cryptoHistoricalBalance,
                     openCryptoHomeAction = { sharedViewModel.onUIEvent(OnMyProductClick(true)) },
@@ -439,11 +453,19 @@ fun ProductFooter(
                     uiState = viewModel.uiState,
                     balance = viewModel.balanceCredit,
                     onNavigateToDisbursement = { viewModel.onUIEvent(OnNavigateToDisbursement) },
-                    onNavigateToVisaActivateScreen = { viewModel.onUIEvent(OnNavigateToHomeMultimoneyVisa) },
+                    onNavigateToVisaActivateScreen = {
+                        viewModel.onUIEvent(
+                            OnNavigateToHomeMultimoneyVisa
+                        )
+                    },
                     onCreateMultimoneyVisa = {
                         viewModel.onUIEvent(
                             OnCreateMultimoneyVisa(onLoadingValueChange = {
-                                sharedViewModel.onUIEvent(HomeViewModel.UIEvent.OnLoadingValueChanged(it))
+                                sharedViewModel.onUIEvent(
+                                    HomeViewModel.UIEvent.OnLoadingValueChanged(
+                                        it
+                                    )
+                                )
                             })
                         )
                     }

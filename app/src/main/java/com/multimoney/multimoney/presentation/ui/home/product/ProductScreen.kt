@@ -349,7 +349,7 @@ fun ProductHeader(
             sharedViewModel = sharedViewModel
         )
         Text(
-            text = stringResource(id = R.string.home_product_header_title),
+            text = stringResource(id = viewModel.getProductScreenTitle()),
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 24.dp),
             style = Typography.body1.copy(
                 fontWeight = FontWeight.SemiBold

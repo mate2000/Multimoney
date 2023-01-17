@@ -19,6 +19,7 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnCallQueryGetClientCards
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnCardThreePointsSelected
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnDeleteCard
@@ -154,14 +155,20 @@ class ProfileCardListViewModel @Inject constructor(
     }
 
     private fun onEditCard(card: CardVisaDirect?) {
-        // TODO
+        navigateTo(
+            route = "${Screen.ProfileMyCardsEditCardScreen.baseRoute}/$identification/$user/$idBrand/${
+                encodeData(
+                    card
+                )
+            }"
+        )
     }
 
     private fun onEditCardShowToast() {
-        /*uiState  = uiState.copy(
+        uiState  = uiState.copy(
             toastIsVisible = true,
             toastMessage = R.string.profile_my_cards_edit_card_toast_result_success
-        )*/
+        )
     }
 
     private fun onDeleteCardShowToast() {

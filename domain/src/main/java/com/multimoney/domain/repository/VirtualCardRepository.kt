@@ -7,6 +7,7 @@ import com.multimoney.domain.model.virtualcard.CardUnblocking
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.domain.model.virtualcard.DeleteCard
 import com.multimoney.domain.model.virtualcard.PayCreditVisaDirect
+import com.multimoney.domain.model.virtualcard.UpdateCard
 import kotlinx.coroutines.flow.Flow
 
 interface VirtualCardRepository {
@@ -27,6 +28,19 @@ interface VirtualCardRepository {
         idCard: Long,
         idBrand: Int
     ): Flow<MultimoneyResult<PayCreditVisaDirect?>>
+
+    suspend fun mutationUpdateCardVD(
+        idCard: Long,
+        identification: String,
+        cardDescription: String,
+        cardMasked: String,
+        expirationMonth: String,
+        expirationYear: String,
+        verificationValue: String,
+        default: Boolean,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<UpdateCard?>>
 
     suspend fun mutationDeleteCardVD(
         identification: String,

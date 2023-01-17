@@ -171,7 +171,7 @@ fun PaymentAccountList(
     CustomButton(
         text = stringResource(id = R.string.payment_account_create),
         modifier = Modifier
-            .padding(top = 28.dp)
+            .padding(top = 40.dp)
             .fillMaxWidth(),
         onClick = { viewModel.onUIEvent(OnAddAccountClick) },
         buttonType = CustomButtonType.PrimaryTertiary,

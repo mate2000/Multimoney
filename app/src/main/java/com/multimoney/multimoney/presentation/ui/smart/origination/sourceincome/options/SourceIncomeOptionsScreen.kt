@@ -91,8 +91,8 @@ fun SourceIncomeContent(
             items(generalEconomicActivityList) { sourceOfIncome ->
                 CustomCatalogItem(
                     modifier = Modifier
-                        .defaultMinSize(minHeight = 140.dp)
-                        .height(140.dp)
+                        .defaultMinSize(minHeight = 152.dp)
+                        .height(152.dp)
                         .fillMaxWidth()
                         .padding(10.dp),
                     iconId = sourceOfIncome?.iconCode ?: 0,

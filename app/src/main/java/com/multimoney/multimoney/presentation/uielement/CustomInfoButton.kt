@@ -14,6 +14,7 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Transparent
@@ -120,7 +121,7 @@ fun CustomInfoButton(
                         height = Dimension.fillToConstraints
                         width = Dimension.fillToConstraints
                     },
-                    style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
+                    style = Typography.body2.copy(fontWeight = FontWeight.SemiBold, fontSize = 15.sp),
                     color = titleColor,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -132,7 +133,7 @@ fun CustomInfoButton(
                         start.linkTo(titleId.start)
                         height = Dimension.fillToConstraints
                     },
-                    style = Typography.caption,
+                    style = Typography.caption.copy(fontSize = 13.sp),
                     color = subtitleColor
                 )
                 if (subtitle2.isNotEmpty()) {
@@ -143,7 +144,7 @@ fun CustomInfoButton(
                             start.linkTo(subTitleId.start)
                             bottom.linkTo(parent.bottom, margin = 16.dp)
                         },
-                        style = Typography.caption,
+                        style = Typography.caption.copy(fontSize = 13.sp),
                         color = subtitleColor
                     )
                 }
@@ -166,7 +167,7 @@ fun CustomInfoButton(
                         bottom.linkTo(startIconId.bottom)
                         width = Dimension.fillToConstraints
                     },
-                    style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
+                    style = Typography.body2.copy(fontWeight = FontWeight.SemiBold, fontSize = 15.sp),
                     color = titleColor,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis

@@ -154,6 +154,22 @@ fun SmartCrSalaryScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
+        CustomDropdown(
+            modifier = Modifier
+                .padding(top = 44.dp)
+                .wrapContentSize(Alignment.TopStart)
+                .focusable(false),
+            items = viewModel.uiState.professionSmartList.map { professionStatus ->
+                professionStatus?.name ?: ""
+            },
+            value = viewModel.uiState.profession,
+            onValueChange = { valueSelected, _ ->
+                viewModel.onUIEvent(OnProfessionChange(valueSelected))
+            },
+            labelText = stringResource(id = string.smart_account_formal_select_occupation),
+            placeHolder = stringResource(id = string.select)
+        )
+
         CustomOutlinedTextField(
             value = viewModel.uiState.paymentAmount,
             onValueChange = {
@@ -168,7 +184,7 @@ fun SmartCrSalaryScreen(
             }),
             labelText = stringResource(id = string.smart_account_formal_monthly),
             modifier = Modifier
-                .padding(top = 44.dp),
+                .padding(top = 24.dp),
             placeHolder = stringResource(id = string.smart_account_formal_placeholder),
             customTransformation = formatDecimalMoney(
                 stringResource(
@@ -177,22 +193,6 @@ fun SmartCrSalaryScreen(
                 )
             ),
             leadingIcon = R.drawable.ic_quick_action_money
-        )
-
-        CustomDropdown(
-            modifier = Modifier
-                .padding(top = 16.dp)
-                .wrapContentSize(Alignment.TopStart)
-                .focusable(false),
-            items = viewModel.uiState.professionSmartList.map { professionStatus ->
-                professionStatus?.name ?: ""
-            },
-            value = viewModel.uiState.profession,
-            onValueChange = { valueSelected, _ ->
-                viewModel.onUIEvent(OnProfessionChange(valueSelected))
-            },
-            labelText = stringResource(id = string.smart_account_formal_select_profession),
-            placeHolder = stringResource(id = string.select)
         )
 
         SmartAddressFields(

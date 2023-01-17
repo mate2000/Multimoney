@@ -73,7 +73,8 @@ fun CustomDialog(
     onNegativeAction: () -> Unit = {},
     onPositiveAction: () -> Unit = {},
     onDismissAction: () -> Unit = {},
-    openDialogCustom: MutableState<Boolean> = mutableStateOf(false)
+    openDialogCustom: MutableState<Boolean> = mutableStateOf(false),
+    isCancelable: Boolean = true
 ) {
     val context = LocalContext.current
     val activity = context.findActivity()
@@ -116,8 +117,10 @@ fun CustomDialog(
     }
 
     Dialog(onDismissRequest = {
-        onDismissAction()
-        openDialogCustom.value = false
+        if (isCancelable) {
+            onDismissAction()
+            openDialogCustom.value = false
+        }
     }) {
         Card(
             shape = shape,

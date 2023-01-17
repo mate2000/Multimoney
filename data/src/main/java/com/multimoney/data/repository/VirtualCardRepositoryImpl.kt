@@ -12,6 +12,7 @@ import com.multimoney.domain.model.virtualcard.CardUnblocking
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.domain.model.virtualcard.DeleteCard
 import com.multimoney.domain.model.virtualcard.PayCreditVisaDirect
+import com.multimoney.domain.model.virtualcard.UpdateCard
 import com.multimoney.domain.repository.VirtualCardRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -64,6 +65,35 @@ class VirtualCardRepositoryImpl @Inject constructor(
             } else {
                 Message(data.mapToDomainModel())
             }
+        }
+    )
+
+    override suspend fun mutationUpdateCardVD(
+        idCard: Long,
+        identification: String,
+        cardDescription: String,
+        cardMasked: String,
+        expirationMonth: String,
+        expirationYear: String,
+        verificationValue: String,
+        default: Boolean,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<UpdateCard?>> = fetchData(
+        apolloCall = graphqlApi.mutationUpdateCardVD(
+            idCard = idCard,
+            identification = identification,
+            cardDescription = cardDescription,
+            cardMasked = cardMasked,
+            expirationMonth = expirationMonth,
+            expirationYear = expirationYear,
+            verificationValue = verificationValue,
+            default = default,
+            user = user,
+            idBrand = idBrand
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
         }
     )
 

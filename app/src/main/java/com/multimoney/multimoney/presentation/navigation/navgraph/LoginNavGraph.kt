@@ -19,6 +19,7 @@ import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.Pr
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.request.RequestForgotPasswordScreen
 import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailScreen
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpScreen
+import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordScreen
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInOTPScreen
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpScreen
@@ -166,6 +167,7 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                 }
             )
         }
+
         composable(
             Screen.RegisteredUserEmailScreen.route,
             arguments = listOf(
@@ -212,6 +214,20 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                     )
                 }
             )
+        }
+        composable(
+            route = Screen.RegisteredUserPassword.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(USER_DATA) { type = UserDataNavType() }
+            )
+        ) {
+            RegisteredUserPasswordScreen(onPopAndNavigate = {
+                navController.navigate(it.route) {
+                    launchSingleTop = true
+                    popUpTo(it.popTo) { inclusive = true }
+                }
+            })
         }
     }
 }

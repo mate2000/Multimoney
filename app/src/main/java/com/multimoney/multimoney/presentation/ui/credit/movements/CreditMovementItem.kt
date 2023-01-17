@@ -17,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.multimoney.domain.model.credit.CreditMovement
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -36,15 +37,15 @@ fun CreditMovementItem(
         Column(Modifier.weight(2f)) {
             Text(
                 text = move.description ?: "",
-                style = Typography.subtitle2.copy(
-                    color = MultimoneyTheme.colors.labelText
+                style = Typography.body1.copy(
+                    color = MultimoneyTheme.colors.labelText, lineHeight = 24.sp
                 ),
                 maxLines = 1
             )
             Text(
                 text = getCardDateFormat(move.date, BAR_DIVIDER_FORMAT_YEAR_TWO_DIGITS),
                 style = Typography.body2.copy(
-                    color = MultimoneyTheme.colors.textSubhead
+                    color = MultimoneyTheme.colors.labelText.copy(alpha = 0.5f), lineHeight = 24.sp
                 ),
                 maxLines = 1
             )

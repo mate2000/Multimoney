@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -15,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
@@ -24,7 +25,6 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
-import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -45,18 +45,15 @@ fun MyContactsTransferScreen(
             .background(MultimoneyTheme.colors.background)
             .fillMaxSize()
     ) {
-        TopNavBar(
-            isRightButtonVisible = true,
+        TopNavBar(isRightButtonVisible = true,
             onLeftButtonClick = { viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnNavigateBack) },
-            onRightButtonClick = { viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnNavigateToHome) }
-        )
+            onRightButtonClick = { viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnNavigateToHome) })
         if (viewModel.idBrand == Brand.ElSalvador.id) {
             Text(
                 modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
                 text = stringResource(R.string.smart_transfer_my_contacts_title_SV),
                 style = Typography.h5.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    color = MultimoneyTheme.colors.text
+                    fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.text
                 )
             )
             Row(
@@ -101,8 +98,7 @@ fun MyContactsTransferScreen(
                 modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
                 text = stringResource(R.string.smart_transfer_my_contacts_title_CR),
                 style = Typography.h5.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    color = MultimoneyTheme.colors.text
+                    fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.text
                 )
             )
             Text(
@@ -127,34 +123,43 @@ fun MyContactsTransferScreen(
                 )
             )
         }
-        ContactListCR()
-    }
-
-    if (viewModel.uiState.openDialog.isActive.value) {
-        CustomDialog(
-            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
-            message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
-            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
-            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
-            openDialogCustom = viewModel.uiState.openDialog.isActive,
-            onDismissAction = viewModel.uiState.openDialog.dismissAction,
-            onNegativeAction = viewModel.uiState.openDialog.negativeAction
-        )
+        ContactList(viewModel)
     }
 
     LoadingIndicator(viewModel.uiState.isLoading)
 }
 
 @Composable
-@Preview
-fun ContactItem() {
+fun ContactItem(
+    modifier: Modifier = Modifier,
+    title: String? = "",
+    subtitle: String = "",
+    endIcon: Int? = R.drawable.ic_options,
+    shouldCenterEndIcon: Boolean = true,
+    onEndIconClick: () -> Unit = {}
+) {
 
 }
 
 @Composable
-fun ContactListCR() {
-}
+fun ContactList(viewModel: MyContactsTransferViewModel = hiltViewModel()) {
+    LazyColumn(modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp)) {
+        items(viewModel.uiState.relatedContactList) { contact ->
+            ContactItem(
+                title = contact?.titular,
+                subtitle = stringResource(
+                    id = R.string.smart_my_concts_number_and_currency_content,
+                    contact?.number ?: "", contact?.currency ?: "",
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp),
+                endIcon = R.drawable.ic_options,
+                onEndIconClick = {
+                    viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnAddSACAccountClick)
+                }
 
-@Composable
-fun ContactListSV() {
+            )
+        }
+    }
 }

@@ -32,13 +32,13 @@ import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.Tra
 import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.VisaDirect
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeType
 import com.novopayment.sdk.vts.module.payment.apdu.PaymentService
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flow
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.Locale
 import kotlin.time.Duration
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
 
 fun Context.openWhatsAppDeepLink(link: String, onFailure: () -> Unit = {}) {
     try {
@@ -323,6 +323,25 @@ fun String.addTextStyleToTextPortion(textToStyle: String, style: TextStyle): Ann
             end = endIndex
         )
     }
+}
+
+fun String?.toTwoChar(): String {
+
+    return when {
+        isNullOrEmpty() -> {
+            "?"
+        }
+        contains(" ") -> {
+            replace("^\\s*([a-zA-Z]).*\\s+([a-zA-Z])\\S+$".toRegex(), "$1$2").uppercase()
+        }
+        length > 1 -> {
+            substring(0, 2)
+        }
+        else -> {
+            substring(0, 1)
+        }
+    }
+
 }
 
 private const val HEX_FORMAT = "#%02x%02x%02x"

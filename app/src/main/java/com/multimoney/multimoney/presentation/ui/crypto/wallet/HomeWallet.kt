@@ -64,6 +64,8 @@ import com.multimoney.multimoney.presentation.util.calculateGainLoses
 import com.multimoney.multimoney.presentation.util.calculatePercentage
 import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlaces
 import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlacesWithoutNegatives
+import com.multimoney.multimoney.presentation.util.toCurrencyFormat
+import com.multimoney.multimoney.presentation.util.toCurrencyFormatWithoutNegatives
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -283,7 +285,7 @@ fun BalanceSection(
             modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
         ) {
             BalanceTextView(
-                balanceText = globalCryptoBalance.roundToTwoDecimalPlacesWithoutNegatives(),
+                balanceText = globalCryptoBalance.toCurrencyFormat(),
                 currencyStyle = Typography.h4.copy(
                     color = MultimoneyTheme.colors.text,
                     fontWeight = FontWeight.Bold
@@ -299,7 +301,7 @@ fun BalanceSection(
             text = stringResource(
                 id = R.string.currency_item_gain_or_losses_description,
                 gainsOrLossesSymbol,
-                gainsOrLosses.roundToTwoDecimalPlacesWithoutNegatives(),
+                gainsOrLosses.toCurrencyFormatWithoutNegatives(),
                 percentage.roundToTwoDecimalPlaces()
             ),
             style = Typography.body2.copy(color = graphicColor)

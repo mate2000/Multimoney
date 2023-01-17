@@ -46,7 +46,12 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.FullDateFilterSection
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.MarketCurrencyDetailsGraphic
-import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.*
+import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnFailureWithDialog
+import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnGetCurrencyHistoricalPrices
+import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnGetCurrencyNews
+import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnOpenCryptoNew
+import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnSetPreviousInfo
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoActionsSection
 import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -58,8 +63,9 @@ import com.multimoney.multimoney.presentation.util.calculateGainLosesMarketDetai
 import com.multimoney.multimoney.presentation.util.calculatePercentageMarketDetails
 import com.multimoney.multimoney.presentation.util.decodeURLFromUTF
 import com.multimoney.multimoney.presentation.util.openIntent
-import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlaces
 import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlacesWithoutNegatives
+import com.multimoney.multimoney.presentation.util.toCurrencyFormat
+import com.multimoney.multimoney.presentation.util.toCurrencyFormatWithoutNegatives
 
 @Composable
 fun MarketCurrencyDetailsScreen(
@@ -265,7 +271,7 @@ fun BalanceSection(
     ) {
 
         BalanceTextView(
-            balanceText = currentPrice.roundToTwoDecimalPlaces(),
+            balanceText = currentPrice.toCurrencyFormat(),
             currencyStyle = Typography.h4.copy(
                 color = MultimoneyTheme.colors.text,
                 fontWeight = FontWeight.Bold
@@ -279,7 +285,7 @@ fun BalanceSection(
             text = stringResource(
                 id = R.string.currency_item_gain_or_losses_description,
                 gainOrLoss,
-                amountChangeValue.roundToTwoDecimalPlacesWithoutNegatives(),
+                amountChangeValue.toCurrencyFormatWithoutNegatives(),
                 percentage.roundToTwoDecimalPlacesWithoutNegatives()
             ),
             style = Typography.body2.copy(color = gainOrLossColor)

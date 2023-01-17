@@ -26,8 +26,8 @@ import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.util.calculateGainLoses
-import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlaces
 import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlacesWithoutNegatives
+import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 
 @Composable
 fun CryptoCardDiscoverCrypto(wording: Wording?) {
@@ -137,7 +137,7 @@ fun CryptoCardWithBalance(
         )
         BalanceTextView(
             modifier = Modifier.height(40.dp),
-            balanceText = cryptoBalance.roundToTwoDecimalPlaces(),
+            balanceText = cryptoBalance.toCurrencyFormat(),
             currencyStyle = Typography.h4.copy(
                 color = MultimoneyTheme.colors.text,
                 fontWeight = FontWeight.Bold

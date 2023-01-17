@@ -95,7 +95,7 @@ fun SmartDocumentScreen(
                                             strGenre = viewModel.uiState.gender,
                                             expirationDate = getFormatDateByString(
                                                 viewModel.uiState.expirationDate,
-                                                YEAR_MONTH_DAY_PATTERN,
+                                                YEAR_MONTH_DAY_PATTERN_BAR_FORMAT,
                                                 ISO_8601_API_FORMAT_PATTERN
                                             ),
                                             birthday = getFormatDateByString(

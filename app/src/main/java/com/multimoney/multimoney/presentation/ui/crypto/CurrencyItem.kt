@@ -24,6 +24,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.SemanticPositive400
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
+import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 
 @Composable
 fun CurrencyItem(
@@ -72,10 +73,7 @@ fun CurrencyItem(
                             color = MultimoneyTheme.colors.labelText
                         )
                         Text(
-                            text = stringResource(
-                                id = R.string.currency_item_dollar_symbol,
-                                balanceDollars
-                            ),
+                            text = balanceDollars.toCurrencyFormat(),
                             style = Typography.body2,
                             color = MultimoneyTheme.colors.labelText
                         )

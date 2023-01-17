@@ -15,5 +15,8 @@ mutation DeleteCardVD(
     ) {
         isApproved
         apiStatus
+        status
+        message
+        detail
     }
 }

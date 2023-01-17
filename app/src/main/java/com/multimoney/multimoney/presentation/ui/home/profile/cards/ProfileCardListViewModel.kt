@@ -56,7 +56,7 @@ class ProfileCardListViewModel @Inject constructor(
         identification = savedStateHandle[IDENTIFICATION] ?: ""
     }
 
-    private fun onCallQueryGetClientCardsUseCase() {
+    private fun onCallQueryGetClientCardsUseCase(fromDelete: Boolean) {
         executeUseCase {
             queryListCardVDUseCase.invoke(
                 user = user,
@@ -69,9 +69,13 @@ class ProfileCardListViewModel @Inject constructor(
                         cardVDList = cardsList,
                         isCardListEmpty = cardsList.isNullOrEmpty()
                     )
+                    if (fromDelete) {
+                        onDeleteCardShowToast()
+                    }
                 }.onFailure {
                     uiState = uiState.copy(
                         isLoading = false,
+                        deleteDialogIsVisible = false,
                         openDialog = DialogParameters(
                             description = it.getError() ?: "",
                             isActive = mutableStateOf(true)
@@ -97,12 +101,21 @@ class ProfileCardListViewModel @Inject constructor(
                 result.onSuccess {
                     uiState = uiState.copy(isLoading = false)
                     if (it?.isApproved.toBoolean()) {
-                        onCallQueryGetClientCardsUseCase()
-                        onDeleteCardShowToast()
+                        onCallQueryGetClientCardsUseCase(fromDelete = true)
+                    } else {
+                        uiState = uiState.copy(
+                            isLoading = false,
+                            deleteDialogIsVisible = false,
+                            openDialog = DialogParameters(
+                                description = it?.messageError?.message ?: "",
+                                isActive = mutableStateOf(true)
+                            )
+                        )
                     }
                 }.onFailure {
                     uiState = uiState.copy(
                         isLoading = false,
+                        deleteDialogIsVisible = false,
                         openDialog = DialogParameters(
                             description = it.getError() ?: "",
                             isActive = mutableStateOf(true)
@@ -123,6 +136,7 @@ class ProfileCardListViewModel @Inject constructor(
 
     private fun onDeleteCard(card: CardVisaDirect?) {
         uiState = uiState.copy(
+            deleteDialogIsVisible = true,
             openDialog = DialogParameters(
                 titleResource = R.string.profile_my_cards_delete_card_dialog_title,
                 descriptionResource = R.string.profile_my_cards_delete_card_dialog_description,
@@ -172,14 +186,15 @@ class ProfileCardListViewModel @Inject constructor(
         val bottomSheetVisibleState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
         val cardVDSelected: CardVisaDirect? = null,
         val toastIsVisible: Boolean = false,
-        val toastMessage: Int = R.string.empty
+        val toastMessage: Int = R.string.empty,
+        val deleteDialogIsVisible: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnNavigateBack -> onNavigateBack()
             is OnNavigateBackHome -> onNavigateBackHome()
-            is OnCallQueryGetClientCards -> onCallQueryGetClientCardsUseCase()
+            is OnCallQueryGetClientCards -> onCallQueryGetClientCardsUseCase(fromDelete = false)
             is OnCardThreePointsSelected -> onCardThreePointsSelected(uiEvent.cardSelected)
             is OnEditCard -> onEditCard(uiEvent.card)
             is OnDeleteCard -> onDeleteCard(uiEvent.card)

@@ -445,7 +445,8 @@
     <string name="sign_out_dialog_description" translatable="false">Para volver a ingresar al app deberás escribir tu usuario y contraseña de nuevo</string>
 
     <!-- Home Product Header -->
-    <string name="home_product_header_title" translatable="false">Productos disponibles</string>
+    <string name="home_product_header_title" translatable="false">Mis Productos</string>
+    <string name="home_product_available_products_title" translatable="false">Productos disponibles</string>
 
     <!-- Home Credit Header Expanded-->
     <string name="home_product_credit_header_expanded_title" translatable="false">Mi Crédito</string>
@@ -863,9 +864,10 @@
     <string name="smart_account_retired_amount_label" translatable="false">Ingreso mensual</string>
     <string name="smart_account_retired_amount_placeholder" translatable="false">$000</string>
     <string name="smart_origin_main_income_title" translatable="false">¿Cuál es tu principal fuente de ingresos?</string>
-    <string name="smart_account_formal_title" translatable="false">Asalariado Formal</string>
-    <string name="smart_account_formal_monthly" translatable="false">Ingreso mensual en colones</string>
+    <string name="smart_account_formal_title" translatable="false">Asalariado formal</string>
+    <string name="smart_account_formal_monthly" translatable="false">Ingreso mensual</string>
     <string name="smart_account_formal_placeholder" translatable="false">₡00.0</string>
+    <string name="smart_account_formal_select_occupation" translatable="false">Seleccioná tu ocupación</string>
     <string name="smart_account_formal_select_profession" translatable="false">Selecciona tu profesión</string>
     <string name="smart_account_no_internet_error_description" translatable="false">No pudimos guardar tu información por un problema de conexión</string>
     <string name="smart_decimal_income_placeholder" translatable="false">%s00.0</string>

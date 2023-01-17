@@ -15,6 +15,7 @@ import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.OVER_COUNTER
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.PENDING
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.REJECTED
 import com.multimoney.data.util.catalog.CreditStep
+import com.multimoney.data.util.catalog.MyProductStatus
 import com.multimoney.data.util.catalog.SmartAccountStatus.EXIST_IN_CORE
 import com.multimoney.data.util.catalog.SmartAccountStatus.NO_EXIST
 import com.multimoney.data.util.catalog.SmartAccountStatusRequest
@@ -187,6 +188,14 @@ class ProductViewModel @Inject constructor(
         uiState = uiState.copy(userStatus = userStatus)
     }
 
+    fun getProductScreenTitle(): Int =
+        when {
+            uiState.userStatus?.infoCredit?.status == MyProductStatus.ACTIVE.status ||
+                    uiState.userStatus?.infoCrypto?.status == MyProductStatus.ACTIVE.status ||
+                    uiState.userStatus?.infoBankAccount?.status == MyProductStatus.ACTIVE.status -> R.string.home_product_header_title
+            else -> R.string.home_product_available_products_title
+        }
+
     private fun onNavigateToCreditScreen(
         creditStep: String
     ) {
@@ -195,9 +204,9 @@ class ProductViewModel @Inject constructor(
                 if (uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm?.lowercase() == FIRMED.status.lowercase()) {
                     navigateTo(
                         "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
-                            "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}/${uiState.userStatus?.infoUser?.firstName}/" +
-                            "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
-                            "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint}"
+                                "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}/${uiState.userStatus?.infoUser?.firstName}/" +
+                                "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
+                                "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint}"
                     )
                 } else {
                     navigateTo(
@@ -213,9 +222,9 @@ class ProductViewModel @Inject constructor(
             else -> {
                 navigateTo(
                     "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
-                        "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}/${uiState.userStatus?.infoUser?.firstName}/" +
-                        "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
-                        "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint}"
+                            "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}/${uiState.userStatus?.infoUser?.firstName}/" +
+                            "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
+                            "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint}"
                 )
             }
         }
@@ -235,9 +244,9 @@ class ProductViewModel @Inject constructor(
             else -> {
                 navigateTo(
                     "${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
-                        "${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}/" +
-                        "${uiState.userStatus?.infoUser?.statusOnfido}/$comingFromCrypto/" +
-                        "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}"
+                            "${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}/" +
+                            "${uiState.userStatus?.infoUser?.statusOnfido}/$comingFromCrypto/" +
+                            "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}"
                 )
             }
         }
@@ -456,8 +465,8 @@ class ProductViewModel @Inject constructor(
 
                 SMART_INITIAL_CARD -> {
                     infoUser?.statusOnfido == SmartOnFidoOrFirmStatus.PENDING.status &&
-                        infoBankAccount?.statusFirm == PENDING.status &&
-                        (infoBankAccount?.infoRequest?.currentStep.isNullOrEmpty() || validateUserStatus.infoBankAccount?.infoRequest?.statusRequest == SMART_STEP_PENDING)
+                            infoBankAccount?.statusFirm == PENDING.status &&
+                            (infoBankAccount?.infoRequest?.currentStep.isNullOrEmpty() || validateUserStatus.infoBankAccount?.infoRequest?.statusRequest == SMART_STEP_PENDING)
                 }
 
                 CREDIT_INFO_INCOMPLETE -> {
@@ -478,8 +487,8 @@ class ProductViewModel @Inject constructor(
 
                 SMART_IDENTITY_INCOMPLETE -> {
                     infoUser?.statusOnfido != SmartOnFidoOrFirmStatus.APPROVED.status && (
-                        SmartSteps.Search.getIdByName(infoBankAccount?.infoRequest?.currentStep) == SmartSteps.Six.id
-                        )
+                            SmartSteps.Search.getIdByName(infoBankAccount?.infoRequest?.currentStep) == SmartSteps.Six.id
+                            )
                 }
 
                 CREDIT_FIRM_INCOMPLETE -> {
@@ -488,12 +497,12 @@ class ProductViewModel @Inject constructor(
 
                 CREDIT_FIRMED_ONFIDO_PENDING -> {
                     infoCredit?.infoPreApprove?.statusFirm == FIRMED.status &&
-                        infoUser?.statusOnfido == PENDING.status
+                            infoUser?.statusOnfido == PENDING.status
                 }
 
                 SMART_FIRMED_ONFIDO_PENDING -> {
                     infoBankAccount?.statusFirm == SmartOnFidoOrFirmStatus.FIRMED.status &&
-                        infoUser?.statusOnfido == SmartOnFidoOrFirmStatus.PENDING?.status
+                            infoUser?.statusOnfido == SmartOnFidoOrFirmStatus.PENDING?.status
                 }
 
                 CREDIT_FIRM_REJECTED -> {
@@ -526,7 +535,7 @@ class ProductViewModel @Inject constructor(
 
                 CREDIT_ERROR_CREATE_ACCOUNT -> {
                     infoCredit?.infoPreApprove?.statusFirm == FAILED.status ||
-                        infoCredit?.infoPreApprove?.status == ERROR_CREDIT
+                            infoCredit?.infoPreApprove?.status == ERROR_CREDIT
                 }
 
                 else -> false
@@ -737,9 +746,9 @@ class ProductViewModel @Inject constructor(
             )
             navigateTo(
                 "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$userName/${uiState.idBrand}/$identification/${
-                encodeData(
-                    smartAccount
-                )
+                    encodeData(
+                        smartAccount
+                    )
                 }/$idClient/${Screen.HomeScreen.route}"
             )
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
@@ -769,7 +778,7 @@ class ProductViewModel @Inject constructor(
         )
         navigateTo(
             "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$userName/${uiState.idBrand}/$identification" +
-                "/${encodeData(smartAccount)}/$idClient/${Screen.HomeScreen.route}"
+                    "/${encodeData(smartAccount)}/$idClient/${Screen.HomeScreen.route}"
         )
     }
 

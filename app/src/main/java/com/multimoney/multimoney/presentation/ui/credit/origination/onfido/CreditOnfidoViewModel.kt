@@ -126,7 +126,7 @@ class CreditOnfidoViewModel @Inject constructor(
                 lastNames,
                 identification,
                 BuildConfig.APPLICATION_ID,
-                Brand.CostaRica.id,
+                idBrand ?: 0,
                 user
             ).collectLatest { result ->
                 result.onSuccess {
@@ -152,7 +152,7 @@ class CreditOnfidoViewModel @Inject constructor(
                 lastNames,
                 identification,
                 BuildConfig.APPLICATION_ID,
-                Brand.CostaRica.id,
+                idBrand ?: 0,
                 user
             ).collectLatest { result ->
                 onFidoTokenEvent.emit(result)

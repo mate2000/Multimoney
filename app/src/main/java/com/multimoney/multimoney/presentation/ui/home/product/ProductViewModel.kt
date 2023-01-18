@@ -33,6 +33,7 @@ import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.balance.Account
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.balance.BalanceCredit
+import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.balance.Summary
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditMovementsResult
@@ -409,7 +410,7 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToCryptoMovements() {
-        navigateTo("${Screen.CryptoMovementsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification")
+        navigateTo("${Screen.CryptoMovementsAllScreen.baseRoute}/$userName/${uiState.idBrand}/$identification")
     }
 
     private fun openWhatsAppLink(context: Context, whatsAppLink: String) {
@@ -772,6 +773,12 @@ class ProductViewModel @Inject constructor(
         )
     }
 
+    private fun onNavigateToCryptoDetail(cryptoItem: BalanceCryptoAccountItems) {
+        navigateTo(
+            "${Screen.CryptoCurrencyMovementsScreen.baseRoute}/${uiState.idBrand}/$identification/$email/${encodeData(cryptoItem)}"
+        )
+    }
+
     private fun onCreateMultimoneyVisa(onLoadingValueChange: (isLoading: Boolean) -> Unit) {
         // todo request token to know if the user already has a device enrolled
         executeUseCase {
@@ -858,6 +865,10 @@ class ProductViewModel @Inject constructor(
                 isActive = mutableStateOf(true)
             )
         )
+    }
+
+    private fun onNavigateToBuyCrypto(){
+        navigateTo("${Screen.CryptoPurchaseListScreen.baseRoute}/$email/${uiState.idBrand.toInt()}")
     }
 
     private fun getSmartContent() {
@@ -985,6 +996,8 @@ class ProductViewModel @Inject constructor(
             is OnCreateMultimoneyVisa -> onCreateMultimoneyVisa(uiEvent.onLoadingValueChange)
             is OnNoVoConfig -> onConfigNovoSdk()
             is OnGetSmartContent -> getSmartContent()
+            is UIEvent.OnNavigateToCryptoDetailScreen -> onNavigateToCryptoDetail(uiEvent.cryptoItem)
+            is UIEvent.OnNavigateToBuyCrypto -> onNavigateToBuyCrypto()
         }
     }
 
@@ -1013,7 +1026,6 @@ class ProductViewModel @Inject constructor(
             val account: Account?,
             val onLoadingValueChange: (isLoading: Boolean) -> Unit
         ) : UIEvent()
-
         data class OnNavigateToSendMoneyFlow(val account: Account?) : UIEvent()
         data class OnNavigateToSmartMovements(val accountToken: String) : UIEvent()
         object OnNavigateToCreditMovementsScreen : UIEvent()
@@ -1031,6 +1043,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToCryptoMarket : UIEvent()
         object OnNavigateToCryptoMovements : UIEvent()
         object OnGetSmartContent : UIEvent()
+        data class OnNavigateToCryptoDetailScreen(val cryptoItem: BalanceCryptoAccountItems) : UIEvent()
 
         data class OnSetUserData(
             val idBrand: String,
@@ -1065,6 +1078,7 @@ class ProductViewModel @Inject constructor(
 
         object OnNoVoConfig : UIEvent()
         data class OnCartButtonClickWithoutSmartBalance(val onSavingCLick: () -> Unit) : UIEvent()
+        object OnNavigateToBuyCrypto : UIEvent()
     }
 
     sealed class BaseEvent {

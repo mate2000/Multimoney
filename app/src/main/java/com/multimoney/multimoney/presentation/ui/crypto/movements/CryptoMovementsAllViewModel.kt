@@ -8,12 +8,15 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCase
+import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.ui.crypto.currencydetail.CryptoCurrencyMovementsViewModel.Companion.USD_CURRENCY
 import com.multimoney.multimoney.presentation.util.FilterDate
 import com.multimoney.multimoney.presentation.util.PAGE_SIZE
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
@@ -24,7 +27,7 @@ import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
 @HiltViewModel
-class CryptoMovementsScreenViewModel  @Inject constructor(
+class CryptoMovementsAllViewModel  @Inject constructor(
     private val queryGetCryptoCurrencyMovementsUseCase: GetCryptoCurrencyMovementsUseCase,
     private val savedStateHandle: SavedStateHandle
 ): BaseViewModel(true) {
@@ -34,6 +37,7 @@ class CryptoMovementsScreenViewModel  @Inject constructor(
 
     private fun setUserData() {
         uiState = uiState.copy(
+            cryptoItem = savedStateHandle[ITEM_CRYPTO_CURRENCY],
             user = savedStateHandle[USER],
             idBrand = savedStateHandle[ID_BRAND],
             identification = savedStateHandle[IDENTIFICATION]
@@ -46,7 +50,7 @@ class CryptoMovementsScreenViewModel  @Inject constructor(
                 user = uiState.user ?: "",
                 idBrand = uiState.idBrand ?: 0,
                 identification = uiState.identification ?: "",
-                market = "",
+                market = uiState.cryptoItem?.asset?.plus(USD_CURRENCY) ?: "",
                 order_time_begin = getPreviousDate(FilterDate.LAST_365_DAYS),
                 order_time_end = getCurrentDateYMDPattern(),
                 pagination_limit = PAGE_SIZE
@@ -55,6 +59,7 @@ class CryptoMovementsScreenViewModel  @Inject constructor(
     }
 
     data class UIState(
+        val cryptoItem: BalanceCryptoAccountItems? = null,
         val user: String? = null,
         val idBrand: Int? = null,
         val identification: String? = null,

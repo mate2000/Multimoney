@@ -1,52 +1,65 @@
 package com.multimoney.multimoney.presentation.ui.crypto
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.Divider
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.paint
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
+import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.SemanticPositive400
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
-import com.multimoney.multimoney.presentation.util.toCurrencyFormat
+import com.multimoney.multimoney.presentation.util.parseApiDateToCardDate
 
 @Composable
-fun CurrencyItem(
+fun CryptoCurrencyPurchaseItem(
     modifier: Modifier = Modifier,
     imageUrl: String,
     descriptionCurrency: String,
     asset: String,
-    balanceDollars: Double,
     priceOfTheDay: Double,
     percentageInvestedCurrency: String,
-    available: Double,
     onClick: () -> Unit
 ) {
     Column(modifier = Modifier.clickable {
         onClick()
     }) {
-        Column(modifier.paint(
-            painterResource(id = R.drawable.bg_cryptocurrency_enabled),
-            contentScale = ContentScale.FillBounds
-        )) {
+        Box(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(72.dp)
+        ) {
+            Image(
+                modifier = Modifier.fillMaxSize(),
+                painter = painterResource(id = R.drawable.bg_cryptocurrency_enabled),
+                contentDescription = null,
+                contentScale = ContentScale.FillBounds
+            )
             Row(
                 modifier = Modifier
                     .fillMaxSize()
@@ -64,25 +77,16 @@ fun CurrencyItem(
                         .padding(start = 16.dp)
                         .fillMaxWidth()
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = stringResource(
-                                id = R.string.currency_item_description,
-                                descriptionCurrency,
-                                asset
-                            ),
-                            style = Typography.body2,
-                            color = MultimoneyTheme.colors.labelText
-                        )
-                        Text(
-                            text = balanceDollars.toCurrencyFormat(),
-                            style = Typography.body2,
-                            color = MultimoneyTheme.colors.labelText
-                        )
-                    }
+                    Text(
+                        text = stringResource(
+                            id = R.string.currency_item_description,
+                            descriptionCurrency,
+                            asset
+                        ),
+                        style = Typography.body2,
+                        color = MultimoneyTheme.colors.labelText
+                    )
+
                     Row(
                         modifier = Modifier
                             .padding(top = 2.dp)
@@ -90,7 +94,10 @@ fun CurrencyItem(
                     ) {
                         Row {
                             Text(
-                                text = stringResource(id = R.string.dollar_symbol_value, priceOfTheDay),
+                                text = stringResource(
+                                    id = R.string.dollar_symbol_value,
+                                    priceOfTheDay
+                                ),
                                 style = Typography.caption,
                                 color = WhiteTransparency60
                             )
@@ -104,13 +111,9 @@ fun CurrencyItem(
                                 color = SemanticPositive400
                             )
                         }
-                        Text(
-                            text = "$available $asset",
-                            style = Typography.caption,
-                            color = WhiteTransparency60
-                        )
                     }
                 }
+                Image(imageVector = ImageVector.vectorResource(id = R.drawable.ic_right_chevron), contentDescription = null)
             }
         }
         Spacer(modifier = Modifier.size(16.dp))

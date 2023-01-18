@@ -17,6 +17,7 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CryptoAccountStatus
 import com.multimoney.domain.model.balance.Account
 import com.multimoney.domain.model.balance.Balance
+import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -37,6 +38,7 @@ fun CryptoFooterExpanded(
     actionWallet: () -> Unit,
     noBalanceAction: () -> Unit,
     hasBalanceAction: () -> Unit,
+    currencyItemClick: (BalanceCryptoAccountItems) -> Unit,
     onShowAllClick: () -> Unit
 ) {
     if (userStatus?.infoCrypto?.status == CryptoAccountStatus.ACTIVE.status) {
@@ -49,6 +51,7 @@ fun CryptoFooterExpanded(
             actionWallet,
             noBalanceAction,
             hasBalanceAction,
+            currencyItemClick,
             onShowAllClick
         )
     }
@@ -64,6 +67,7 @@ fun CryptoFooterExpandedContent(
     actionWallet: () -> Unit,
     noBalanceAction: () -> Unit,
     hasBalanceAction: () -> Unit,
+    currencyItemClick: (BalanceCryptoAccountItems) -> Unit,
     onShowAllClick: () -> Unit
 ) {
     val smartBalanceAvailable = verifyIfHasSmartBalance(balance?.balanceAccountSmart)
@@ -101,7 +105,9 @@ fun CryptoFooterExpandedContent(
                     Column(
                         modifier = Modifier.verticalScroll(rememberScrollState())
                     ) {
-                        CryptoCurrencies(items = balance?.balanceCryptoAccount?.items)
+                        CryptoCurrencies(items = balance?.balanceCryptoAccount?.items){ cryptoCurrencyItem ->
+                            currencyItemClick(cryptoCurrencyItem)
+                        }
                         CryptoMovementsSection(
                             cryptoMovements = cryptoMovements,
                             onShowAllClick = onShowAllClick

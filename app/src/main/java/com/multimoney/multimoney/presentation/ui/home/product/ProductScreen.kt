@@ -529,7 +529,12 @@ fun ProductFooterExpanded(
                             }
                         }
                     },
-                    hasBalanceAction = { /*todo go to buy crypto flow*/ }
+                    hasBalanceAction = {
+                        viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToBuyCrypto)
+                    },
+                    currencyItemClick = { item ->
+                        viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToCryptoDetailScreen(item))
+                    }
                 )
             }
         }

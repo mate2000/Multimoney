@@ -13,16 +13,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.BaseUIEvent.OnAbandonFlow
-import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.BaseUIEvent.OnAmountCompleted
-import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.BaseUIEvent.OnAmountValueChange
-import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.BaseUIEvent.OnCallProcessTransfer
-import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.BaseUIEvent.OnContinueClick
-import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.BaseUIEvent.OnMotiveChange
-import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.BaseUIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.BaseUIEvent.OnNavigateHome
-import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.BaseUIEvent.OnRetryTransfer
-import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.BaseUIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnAbandonFlow
+import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnAmountCompleted
+import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnAmountValueChange
+import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnCallProcessTransfer
+import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnMotiveChange
+import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnNavigateHome
+import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnRetryTransfer
+import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnStart
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
@@ -42,50 +42,50 @@ fun SmartTransferAmountScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onPopBackStack = onPopBackStack)
-            onBaseUIEvent(OnStart)
+            onAmountUIEvent(OnStart)
         }
     }
 
-    if (viewModel.baseUIState.showLoadingScreen) {
+    if (viewModel.amountUIState.showLoadingScreen) {
         LoadingMultiMoney(R.string.smart_processing_transaction)
-    } else if (viewModel.baseUIState.showErrorScreen) {
+    } else if (viewModel.amountUIState.showErrorScreen) {
         AlertResult(
             titleResource = R.string.error_occurred_title,
             isLeftButtonVisible = false,
-            onRightButtonClick = { viewModel.onBaseUIEvent(OnNavigateHome) },
+            onRightButtonClick = { viewModel.onAmountUIEvent(OnNavigateHome) },
             descriptionResource = R.string.error_try_again,
             buttonTextResource = R.string.error_button_try_again,
-            onButtonClick = { viewModel.onBaseUIEvent(OnRetryTransfer) }
+            onButtonClick = { viewModel.onAmountUIEvent(OnRetryTransfer) }
         )
         BackHandler {
-            viewModel.onBaseUIEvent(OnNavigateHome)
+            viewModel.onAmountUIEvent(OnNavigateHome)
         }
-    } else if (viewModel.baseUIState.paymentSuccess) {
+    } else if (viewModel.amountUIState.paymentSuccess) {
         SmartTransferSuccessScreen(viewModel)
         BackHandler {
-            viewModel.onBaseUIEvent(OnNavigateHome)
+            viewModel.onAmountUIEvent(OnNavigateHome)
         }
     } else {
         SmartTransferAmountContent(viewModel)
         SmartTransferBottomSheet(viewModel)
         BackHandler {
-            viewModel.onBaseUIEvent(OnNavigateBack)
+            viewModel.onAmountUIEvent(OnNavigateBack)
         }
     }
 
-    if (viewModel.baseUIState.openDialog.isActive.value) {
+    if (viewModel.amountUIState.openDialog.isActive.value) {
         CustomDialog(
-            title = stringResource(id = viewModel.baseUIState.openDialog.titleResource),
-            message = stringResource(id = viewModel.baseUIState.openDialog.descriptionResource).ifEmpty { viewModel.baseUIState.openDialog.description },
-            positiveButtonText = stringResource(id = viewModel.baseUIState.openDialog.positiveResource),
-            negativeButtonText = stringResource(id = viewModel.baseUIState.openDialog.negativeResource),
-            openDialogCustom = viewModel.baseUIState.openDialog.isActive,
-            onDismissAction = viewModel.baseUIState.openDialog.dismissAction,
-            onNegativeAction = viewModel.baseUIState.openDialog.negativeAction
+            title = stringResource(id = viewModel.amountUIState.openDialog.titleResource),
+            message = stringResource(id = viewModel.amountUIState.openDialog.descriptionResource).ifEmpty { viewModel.amountUIState.openDialog.description },
+            positiveButtonText = stringResource(id = viewModel.amountUIState.openDialog.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.amountUIState.openDialog.negativeResource),
+            openDialogCustom = viewModel.amountUIState.openDialog.isActive,
+            onDismissAction = viewModel.amountUIState.openDialog.dismissAction,
+            onNegativeAction = viewModel.amountUIState.openDialog.negativeAction
         )
     }
 
-    LoadingIndicator(viewModel.baseUIState.isLoading)
+    LoadingIndicator(viewModel.amountUIState.isLoading)
 }
 
 @Composable
@@ -96,8 +96,8 @@ fun SmartTransferAmountContent(viewModel: SmartTransferAmountViewModel = hiltVie
     ) {
         TopNavBar(
             isRightButtonVisible = true,
-            onLeftButtonClick = { viewModel.onBaseUIEvent(OnNavigateBack) },
-            onRightButtonClick = { viewModel.onBaseUIEvent(OnAbandonFlow) }
+            onLeftButtonClick = { viewModel.onAmountUIEvent(OnNavigateBack) },
+            onRightButtonClick = { viewModel.onAmountUIEvent(OnAbandonFlow) }
         )
         SmartAmountBody(
             titleId = R.string.smart_iban_transfer_send_money,
@@ -108,25 +108,25 @@ fun SmartTransferAmountContent(viewModel: SmartTransferAmountViewModel = hiltVie
                     stringResource(id = R.string.payment_account_masked_text)
                 )
             ),
-            currentAmount = viewModel.baseUIState.currentAmountValueString,
-            amountPlaceHolderId = viewModel.baseUIState.placeholder,
+            currentAmount = viewModel.amountUIState.currentAmountValueString,
+            amountPlaceHolderId = viewModel.amountUIState.placeholder,
             onAmountChange = {
-                viewModel.onBaseUIEvent(OnAmountValueChange(it))
+                viewModel.onAmountUIEvent(OnAmountValueChange(it))
             },
-            onDebounceValidation = { viewModel.onBaseUIEvent(OnAmountCompleted(it)) },
-            isAmountError = viewModel.baseUIState.isAmountValid.not(),
+            onDebounceValidation = { viewModel.onAmountUIEvent(OnAmountCompleted(it)) },
+            isAmountError = viewModel.amountUIState.isAmountValid.not(),
             amountErrorMessage = stringResource(
                 id = R.string.smart_iban_transfer_error_balance_insufficient,
                 viewModel.totalBalanceLabel
             ),
-            currency = viewModel.baseUIState.currency,
-            exchangeRate = viewModel.baseUIState.exchangeRateLabel,
-            convertedTotal = viewModel.baseUIState.convertedAmountLabel,
+            currency = viewModel.amountUIState.currency,
+            exchangeRate = viewModel.amountUIState.exchangeRateLabel,
+            convertedTotal = viewModel.amountUIState.convertedAmountLabel,
             shouldDisplayExchange = viewModel.shouldDisplayExchange,
-            onContinueClick = { viewModel.onBaseUIEvent(OnContinueClick) },
-            enableButton = viewModel.baseUIState.enableButton,
-            motive = viewModel.baseUIState.motive,
-            onMotiveChange = { viewModel.onBaseUIEvent(OnMotiveChange(it)) }
+            onContinueClick = { viewModel.onAmountUIEvent(OnContinueClick) },
+            enableButton = viewModel.amountUIState.enableButton,
+            motive = viewModel.amountUIState.motive,
+            onMotiveChange = { viewModel.onAmountUIEvent(OnMotiveChange(it)) }
         )
     }
 }
@@ -136,10 +136,10 @@ fun SmartTransferAmountContent(viewModel: SmartTransferAmountViewModel = hiltVie
 private fun SmartTransferBottomSheet(viewModel: SmartTransferAmountViewModel) {
     SmartPaymentBottomSheet(
         coroutineScope = rememberCoroutineScope(),
-        modalBottomSheetState = viewModel.baseUIState.bottomSheetState,
+        modalBottomSheetState = viewModel.amountUIState.bottomSheetState,
         saveSendTitleResource = R.string.smart_payment_sheet_title,
         amount = viewModel.getFormattedAmount(),
-        exchangedAmount = if (viewModel.shouldDisplayExchange) viewModel.baseUIState.convertedAmountLabel else null,
+        exchangedAmount = if (viewModel.shouldDisplayExchange) viewModel.amountUIState.convertedAmountLabel else null,
         fromLabel = stringResource(R.string.smart_payment_sheet_from_account),
         fromIcon = R.drawable.ic_multimoney_smart,
         fromTitle = stringResource(
@@ -158,8 +158,8 @@ private fun SmartTransferBottomSheet(viewModel: SmartTransferAmountViewModel) {
             viewModel.maskedCardNumber,
             stringResource(R.string.payment_account_masked_text)
         ),
-        motive = viewModel.baseUIState.motive,
+        motive = viewModel.amountUIState.motive,
         buttonText = stringResource(R.string.payment_amount_bottom_sheet_send_button),
-        buttonAction = { viewModel.onBaseUIEvent(OnCallProcessTransfer) }
+        buttonAction = { viewModel.onAmountUIEvent(OnCallProcessTransfer) }
     )
 }

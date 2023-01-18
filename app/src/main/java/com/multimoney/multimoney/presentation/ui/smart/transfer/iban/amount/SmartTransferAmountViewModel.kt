@@ -24,7 +24,7 @@ class SmartTransferAmountViewModel @Inject constructor(): BaseSmartEditAmountVie
     override fun onStart() {
         viewModelScope.launch {
             initializeValues()
-            baseUIState = baseUIState.copy(
+            amountUIState = amountUIState.copy(
                 currency = ibanCurrency?.symbol ?: CurrencyType.Dollar.symbol,
                 placeholder = if (ibanCurrency == CurrencyType.Dollar) {
                     R.string.smart_dollar_placeholder
@@ -38,7 +38,7 @@ class SmartTransferAmountViewModel @Inject constructor(): BaseSmartEditAmountVie
                 R.string.smart_iban_transfer_smart_account_dolar
             }
             totalBalanceLabel =
-                baseUIState.currency + smartAccount?.totalBalance.toString()
+                amountUIState.currency + smartAccount?.totalBalance.toString()
             getExchangeOnCompleted(
                 isStart = true,
                 abbreviation = smartCurrency?.disbursementValue ?: "",
@@ -57,15 +57,15 @@ class SmartTransferAmountViewModel @Inject constructor(): BaseSmartEditAmountVie
     }
 
     override fun onContinueClick() {
-        val currentAmount = baseUIState.exchangeConvertedAmount
+        val currentAmount = amountUIState.exchangeConvertedAmount
         val isValidAmount = (currentAmount) <= (smartAccount?.totalBalance ?: 0.0)
-        baseUIState = if (isValidAmount) {
-            baseUIState.copy(
+        amountUIState = if (isValidAmount) {
+            amountUIState.copy(
                 isAmountValid = true,
                 bottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Expanded)
             )
         } else {
-            baseUIState.copy(isAmountValid = false)
+            amountUIState.copy(isAmountValid = false)
         }
     }
 

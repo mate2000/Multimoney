@@ -9,9 +9,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.BaseUIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.BaseUIEvent.OnNavigateHome
-import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.BaseUIEvent.OnShareVoucherImage
+import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnNavigateHome
+import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnShareVoucherImage
 import com.multimoney.multimoney.presentation.uielement.PaymentSuccessResult
 import com.multimoney.multimoney.presentation.uielement.SmartPaymentInfoItem
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
@@ -30,28 +30,28 @@ fun SmartTransferSuccessScreen(
             isLeftButtonVisible = false,
             isCenterContentVisible = true,
             onRightButtonClick = {
-                viewModel.onBaseUIEvent(OnNavigateHome)
+                viewModel.onAmountUIEvent(OnNavigateHome)
             }
         )
         PaymentSuccessResult(
             onShareClick = { view, bounds ->
-                viewModel.onBaseUIEvent(
+                viewModel.onAmountUIEvent(
                     OnShareVoucherImage(view, bounds)
                 )
             },
             savePayText = stringResource(
                 R.string.smart_payment_you_sent,
-                viewModel.baseUIState.currency
+                viewModel.amountUIState.currency
             ),
             amount = viewModel.getFormattedAmount(),
             exchangedAmount = if (viewModel.shouldDisplayExchange) {
-                viewModel.baseUIState.convertedAmountLabel
+                viewModel.amountUIState.convertedAmountLabel
             } else {
                 null
             },
             fromToText = stringResource(R.string.smart_payment_to_account),
             buttonText = stringResource(R.string.smart_payment_make_another_payment),
-            onButtonClick = { viewModel.onBaseUIEvent(OnNavigateBack) }
+            onButtonClick = { viewModel.onAmountUIEvent(OnNavigateBack) }
         ) {
             SmartPaymentInfoItem(
                 verticalAlignment = Alignment.CenterVertically,
@@ -67,16 +67,16 @@ fun SmartTransferSuccessScreen(
                 verticalAlignment = Alignment.Top,
                 icon = R.drawable.ic_receipt,
                 title = stringResource(R.string.smart_payment_reference_number_label),
-                subtitle = viewModel.baseUIState.referenceNumber
+                subtitle = viewModel.amountUIState.referenceNumber
             )
 
             if (viewModel.shouldDisplayExchange) {
                 SmartPaymentInfoItem(
                     icon = R.drawable.ic_money_gray,
                     title = stringResource(R.string.payment_amount_bottom_sheet_exchange_type),
-                    subtitle = viewModel.baseUIState.exchangeRateLabel,
+                    subtitle = viewModel.amountUIState.exchangeRateLabel,
                     rightTitle = stringResource(R.string.payment_amount_bottom_sheet_amount_to_debit),
-                    rightSubtitle = viewModel.baseUIState.convertedAmountLabel,
+                    rightSubtitle = viewModel.amountUIState.convertedAmountLabel,
                     showVerticalDivision = true
                 )
             }
@@ -84,14 +84,14 @@ fun SmartTransferSuccessScreen(
             SmartPaymentInfoItem(
                 title = stringResource(R.string.smart_payment_motive),
                 icon = R.drawable.ic_notebook_motive,
-                subtitle = viewModel.baseUIState.motive
+                subtitle = viewModel.amountUIState.motive
             )
 
             SmartPaymentInfoItem(
                 verticalAlignment = Alignment.CenterVertically,
                 icon = R.drawable.ic_calendar,
-                title = viewModel.baseUIState.currentDate,
-                rightSubtitle = viewModel.baseUIState.currentTime
+                title = viewModel.amountUIState.currentDate,
+                rightSubtitle = viewModel.amountUIState.currentTime
             )
         }
     }

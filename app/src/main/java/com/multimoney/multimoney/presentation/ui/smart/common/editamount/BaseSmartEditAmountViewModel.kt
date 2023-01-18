@@ -58,7 +58,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
     @Inject
     protected lateinit var processSinpeTransferUseCase: MutationProcessSinpeTransferUseCase
 
-    var baseUIState by mutableStateOf(BaseUIState())
+    var amountUIState by mutableStateOf(AmountUIState())
         protected set
 
     // stateless
@@ -160,11 +160,11 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
         idOriginCurrency: String = smartCurrency?.id.toString(),
         idDestinationCurrency: String = ibanCurrency?.id?.toString()
             ?: smartDestinationCurrency?.id.toString(),
-        currentAmount: Double = baseUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0,
+        currentAmount: Double = amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0,
     ) {
-        val amount = baseUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
+        val amount = amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
         if (shouldDisplayExchange) {
-            if ((baseUIState.isAmountValid && amount > 0.0) || isStart) {
+            if ((amountUIState.isAmountValid && amount > 0.0) || isStart) {
                 executeUseCase {
                     querySmartExchangeRateUseCase.invoke(
                         user = userName,
@@ -182,10 +182,10 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                             )
                         }
                         result.onLoading {
-                            baseUIState = baseUIState.copy(isLoading = true)
+                            amountUIState = amountUIState.copy(isLoading = true)
                         }
                         result.onSuccess { rate ->
-                            baseUIState = baseUIState.copy(
+                            amountUIState = amountUIState.copy(
                                 isLoading = false,
                                 exchangeRate = rate?.exchangeRate ?: 0.0,
                                 exchangeConvertedAmount = rate?.convertedAmount ?: 0.0,
@@ -209,7 +209,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
 
     open fun onAmountChanged(newAmount: String) {
         if (validateDecimalIncome(newAmount)) {
-            baseUIState = baseUIState.copy(
+            amountUIState = amountUIState.copy(
                 currentAmountValueString = newAmount,
                 enableButton = validateForm(newAmount = newAmount),
                 isAmountValid = true
@@ -218,8 +218,8 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
     }
 
     open fun validateForm(
-        newAmount: String? = baseUIState.currentAmountValueString,
-        newMotive: String = baseUIState.motive
+        newAmount: String? = amountUIState.currentAmountValueString,
+        newMotive: String = amountUIState.motive
     ) = (newAmount?.isNotEmpty() == true) && (
             newAmount.toDoubleOrNull()
                 ?: 0.0
@@ -228,7 +228,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
     abstract fun onContinueClick()
 
     open fun onMotiveChange(newMotive: String) {
-        baseUIState = baseUIState.copy(
+        amountUIState = amountUIState.copy(
             motive = newMotive,
             enableButton = validateForm(newMotive = newMotive)
         )
@@ -257,22 +257,22 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                 ibanAccountDestination = destinationAccountNumber,
                 destinationCustomerName = destinationCustomerName,
                 idCurrencyDestination = destinationCurrency,
-                reasonOfTransfer = baseUIState.motive.ifEmpty { DEFAULT_DESCRIPTION },
+                reasonOfTransfer = amountUIState.motive.ifEmpty { DEFAULT_DESCRIPTION },
                 transferType = transferType,
-                amountToTransfer = baseUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0,
-                exchangeRate = if (baseUIState.exchangeRate == 0.0) 1.0 else baseUIState.exchangeRate,
+                amountToTransfer = amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0,
+                exchangeRate = if (amountUIState.exchangeRate == 0.0) 1.0 else amountUIState.exchangeRate,
                 idBrand = idBrand,
                 user = userName
             ).collectLatest { result ->
                 result.onSuccess {
                     if (it?.referenceNumber.isNullOrBlank()) {
-                        baseUIState = baseUIState.copy(
+                        amountUIState = amountUIState.copy(
                             showLoadingScreen = false,
                             showErrorScreen = true,
                             paymentSuccess = false
                         )
                     } else {
-                        baseUIState = baseUIState.copy(
+                        amountUIState = amountUIState.copy(
                             showLoadingScreen = false,
                             showErrorScreen = false,
                             paymentSuccess = true,
@@ -283,14 +283,14 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                     }
                 }
                 result.onFailure {
-                    baseUIState = baseUIState.copy(
+                    amountUIState = amountUIState.copy(
                         showLoadingScreen = false,
                         showErrorScreen = true,
                         paymentSuccess = false
                     )
                 }
                 result.onLoading {
-                    baseUIState = baseUIState.copy(
+                    amountUIState = amountUIState.copy(
                         showLoadingScreen = true,
                         showErrorScreen = false,
                         paymentSuccess = false
@@ -326,15 +326,15 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
     }
 
     protected open fun onFailureWithDialog(isLoading: Boolean, dialogParameters: DialogParameters) {
-        baseUIState =
-            baseUIState.copy(
+        amountUIState =
+            amountUIState.copy(
                 isLoading = isLoading,
                 openDialog = dialogParameters
             )
     }
 
     protected open fun onAbandonFlow() {
-        baseUIState = baseUIState.copy(
+        amountUIState = amountUIState.copy(
             openDialog = DialogParameters(
                 titleResource = R.string.smart_iban_transfer_abandon_dialog_title,
                 descriptionResource = R.string.smart_iban_transfer_abandon_dialog_message,
@@ -347,7 +347,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
     }
 
     protected open fun onRetryTransfer() {
-        baseUIState = baseUIState.copy(
+        amountUIState = amountUIState.copy(
             showErrorScreen = false,
             showLoadingScreen = false,
             paymentSuccess = false
@@ -365,9 +365,9 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
     abstract fun onNavigateBack()
 
     fun getFormattedAmount() =
-        baseUIState.currency + baseUIState.currentAmountValueString?.stringToDoubleFormat()
+        amountUIState.currency + amountUIState.currentAmountValueString?.stringToDoubleFormat()
 
-    data class BaseUIState(
+    data class AmountUIState(
         // Interactions
         val currency: String = "",
         val currentAmountValueString: String? = null,
@@ -392,62 +392,62 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
         var currentTime: String = ""
     )
 
-    open fun onBaseUIEvent(uiEvent: BaseUIEvent) {
+    open fun onAmountUIEvent(uiEvent: AmountUIEvent) {
         when (uiEvent) {
-            is BaseUIEvent.OnNavigateBack -> onNavigateBack()
-            is BaseUIEvent.OnStart -> onStart()
-            is BaseUIEvent.OnAmountValueChange -> onAmountChanged(uiEvent.value)
-            is BaseUIEvent.OnAmountCompleted -> onAmountCompleted()
-            is BaseUIEvent.OnMotiveChange -> onMotiveChange(uiEvent.value)
-            is BaseUIEvent.OnContinueClick -> onContinueClick()
-            is BaseUIEvent.OnAbandonFlow -> onAbandonFlow()
-            is BaseUIEvent.OnCallProcessTransfer -> onProcessTransfer()
-            is BaseUIEvent.OnFailureWithDialog -> onFailureWithDialog(
+            is AmountUIEvent.OnNavigateBack -> onNavigateBack()
+            is AmountUIEvent.OnStart -> onStart()
+            is AmountUIEvent.OnAmountValueChange -> onAmountChanged(uiEvent.value)
+            is AmountUIEvent.OnAmountCompleted -> onAmountCompleted()
+            is AmountUIEvent.OnMotiveChange -> onMotiveChange(uiEvent.value)
+            is AmountUIEvent.OnContinueClick -> onContinueClick()
+            is AmountUIEvent.OnAbandonFlow -> onAbandonFlow()
+            is AmountUIEvent.OnCallProcessTransfer -> onProcessTransfer()
+            is AmountUIEvent.OnFailureWithDialog -> onFailureWithDialog(
                 uiEvent.isLoading,
                 uiEvent.dialogParameters
             )
-            is BaseUIEvent.OnRetryTransfer -> onRetryTransfer()
-            is BaseUIEvent.OnTryLater -> onTryLater(
+            is AmountUIEvent.OnRetryTransfer -> onRetryTransfer()
+            is AmountUIEvent.OnTryLater -> onTryLater(
                 uiEvent.notificationTitle,
                 uiEvent.notificationBody,
                 uiEvent.notificationSmallIcon,
                 uiEvent.context
             ) { onNavigateToHome() }
-            is BaseUIEvent.OnNavigateHome -> onNavigateToHome()
-            is BaseUIEvent.OnShareVoucherImage -> onShareVoucherImage(
+            is AmountUIEvent.OnNavigateHome -> onNavigateToHome()
+            is AmountUIEvent.OnShareVoucherImage -> onShareVoucherImage(
                 uiEvent.view,
                 uiEvent.capturingBounds
             )
         }
     }
 
-    sealed class BaseUIEvent {
-        object OnNavigateBack : BaseUIEvent()
-        object OnStart : BaseUIEvent()
-        data class OnAmountValueChange(val value: String) : BaseUIEvent()
-        data class OnMotiveChange(val value: String) : BaseUIEvent()
-        data class OnAmountCompleted(val value: String) : BaseUIEvent()
-        object OnContinueClick : BaseUIEvent()
-        object OnAbandonFlow : BaseUIEvent()
-        object OnCallProcessTransfer : BaseUIEvent()
-        object OnRetryTransfer : BaseUIEvent()
+    sealed class AmountUIEvent {
+        object OnNavigateBack : AmountUIEvent()
+        object OnStart : AmountUIEvent()
+        data class OnAmountValueChange(val value: String) : AmountUIEvent()
+        data class OnMotiveChange(val value: String) : AmountUIEvent()
+        data class OnAmountCompleted(val value: String) : AmountUIEvent()
+        object OnContinueClick : AmountUIEvent()
+        object OnAbandonFlow : AmountUIEvent()
+        object OnCallProcessTransfer : AmountUIEvent()
+        object OnRetryTransfer : AmountUIEvent()
         data class OnFailureWithDialog(
             val isLoading: Boolean,
             val dialogParameters: DialogParameters
-        ) : BaseUIEvent()
+        ) : AmountUIEvent()
 
         data class OnTryLater(
             val notificationTitle: String,
             val notificationBody: String,
             val notificationSmallIcon: Int,
             val context: Context
-        ) : BaseUIEvent()
+        ) : AmountUIEvent()
 
-        object OnNavigateHome : BaseUIEvent()
+        object OnNavigateHome : AmountUIEvent()
         data class OnShareVoucherImage(
             val view: View,
             val capturingBounds: Rect
-        ) : BaseUIEvent()
+        ) : AmountUIEvent()
     }
 
     companion object {

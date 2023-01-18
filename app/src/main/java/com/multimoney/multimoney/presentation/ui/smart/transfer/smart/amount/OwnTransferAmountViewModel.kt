@@ -30,7 +30,7 @@ class OwnTransferAmountViewModel @Inject constructor() : BaseSmartEditAmountView
             } else {
                 R.string.smart_iban_transfer_smart_account_dolar
             }
-            baseUIState = baseUIState.copy(
+            amountUIState = amountUIState.copy(
                 currency = smartCurrency?.symbol ?: CurrencyType.Dollar.symbol,
                 placeholder = if (smartCurrency == CurrencyType.Dollar) {
                     R.string.smart_dollar_placeholder
@@ -39,7 +39,7 @@ class OwnTransferAmountViewModel @Inject constructor() : BaseSmartEditAmountView
                 }
             )
             totalBalanceLabel =
-                baseUIState.currency + smartAccount?.totalBalance.toString()
+                amountUIState.currency + smartAccount?.totalBalance.toString()
             getExchangeOnCompleted(true)
         }
     }
@@ -50,15 +50,15 @@ class OwnTransferAmountViewModel @Inject constructor() : BaseSmartEditAmountView
 
 
     override fun onContinueClick() {
-        val isValidAmount = (baseUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0) <=
+        val isValidAmount = (amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0) <=
                 (smartAccount?.totalBalance ?: 0.0)
-        baseUIState = if (isValidAmount) {
-            baseUIState.copy(
+        amountUIState = if (isValidAmount) {
+            amountUIState.copy(
                 isAmountValid = true,
                 bottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Expanded)
             )
         } else {
-            baseUIState.copy(isAmountValid = false)
+            amountUIState.copy(isAmountValid = false)
         }
     }
 
@@ -67,7 +67,7 @@ class OwnTransferAmountViewModel @Inject constructor() : BaseSmartEditAmountView
     }
 
     override fun onRetryTransfer() {
-        baseUIState = baseUIState.copy(
+        amountUIState = amountUIState.copy(
             showErrorScreen = false,
             showLoadingScreen = true,
             paymentSuccess = false

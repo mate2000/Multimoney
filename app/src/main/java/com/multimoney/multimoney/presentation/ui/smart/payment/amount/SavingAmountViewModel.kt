@@ -41,7 +41,7 @@ class SavingAmountViewModel @Inject constructor(
     override fun onStart() {
         viewModelScope.launch {
             initializeValues()
-            baseUIState = baseUIState.copy(
+            amountUIState = amountUIState.copy(
                 currency = ibanCurrency?.symbol ?: Dollar.symbol,
                 placeholder = if (ibanCurrency == Dollar) {
                     R.string.smart_dollar_placeholder
@@ -96,7 +96,7 @@ class SavingAmountViewModel @Inject constructor(
                 idCard,
                 tokenNumber,
                 identification,
-                baseUIState.currentAmountValueString ?: "",
+                amountUIState.currentAmountValueString ?: "",
                 idCurrency,
                 DEFAULT_DESCRIPTION,
                 maskedCardNumber,
@@ -105,13 +105,13 @@ class SavingAmountViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess {
                     if (it?.referenceNumber.isNullOrBlank()) {
-                        baseUIState = baseUIState.copy(
+                        amountUIState = amountUIState.copy(
                             showLoadingScreen = false,
                             showErrorScreen = true,
                             paymentSuccess = false
                         )
                     } else {
-                        baseUIState = baseUIState.copy(
+                        amountUIState = amountUIState.copy(
                             showLoadingScreen = false,
                             showErrorScreen = false,
                             paymentSuccess = true,
@@ -122,14 +122,14 @@ class SavingAmountViewModel @Inject constructor(
                     }
                 }
                 result.onFailure {
-                    baseUIState = baseUIState.copy(
+                    amountUIState = amountUIState.copy(
                         showLoadingScreen = false,
                         showErrorScreen = true,
                         paymentSuccess = false
                     )
                 }
                 result.onLoading {
-                    baseUIState = baseUIState.copy(
+                    amountUIState = amountUIState.copy(
                         showLoadingScreen = true,
                         showErrorScreen = false,
                         paymentSuccess = false
@@ -157,7 +157,7 @@ class SavingAmountViewModel @Inject constructor(
                 uiState = uiState.copy(
                     suggestedAmountSelected = possibleSuggestion
                 )
-                baseUIState = baseUIState.copy(
+                amountUIState = amountUIState.copy(
                     currentAmountValueString = newAmount,
                     enableButton = newAmount.toDouble() > 0
                 )
@@ -165,7 +165,7 @@ class SavingAmountViewModel @Inject constructor(
                 uiState = uiState.copy(
                     suggestedAmountSelected = null
                 )
-                baseUIState = baseUIState.copy(
+                amountUIState = amountUIState.copy(
                     currentAmountValueString = newAmount,
                     enableButton = newAmount.isNotEmpty() && newAmount.toDouble() > 0
                 )
@@ -174,7 +174,7 @@ class SavingAmountViewModel @Inject constructor(
     }
 
     private fun selectSuggestion(amount: SuggestedAmount) {
-        baseUIState = baseUIState.copy(
+        amountUIState = amountUIState.copy(
             enableButton = amount.value.isNotEmpty() && amount.value.toDouble() > 0,
             currentAmountValueString = amount.value,
         )
@@ -188,13 +188,13 @@ class SavingAmountViewModel @Inject constructor(
         uiState.suggestedAmountSelected?.isSelected(order) == true
 
     override fun onContinueClick() {
-        baseUIState = baseUIState.copy(
+        amountUIState = amountUIState.copy(
             bottomSheetState = ModalBottomSheetState(Expanded)
         )
     }
 
     override fun onRetryTransfer() {
-        baseUIState = baseUIState.copy(
+        amountUIState = amountUIState.copy(
             showErrorScreen = false,
             showLoadingScreen = true,
             paymentSuccess = false

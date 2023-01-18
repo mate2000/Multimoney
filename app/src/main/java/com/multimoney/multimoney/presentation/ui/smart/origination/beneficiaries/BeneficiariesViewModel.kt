@@ -196,13 +196,10 @@ class BeneficiariesViewModel @Inject constructor(
     }
 
     private fun getTotalPercentage(beneficiaryList: List<Beneficiary>?) : Int {
-        var percentage = 0
-        if (beneficiaryList?.isEmpty() == true) {
-            percentage = 0
+        val percentage = if (beneficiaryList?.isEmpty() == true) {
+            0
         } else {
-            beneficiaryList?.forEach {
-                percentage += it.allocationPercentage?.toInt() ?: 0
-            }
+            MAX_PERCENTAGE
         }
         return percentage
     }

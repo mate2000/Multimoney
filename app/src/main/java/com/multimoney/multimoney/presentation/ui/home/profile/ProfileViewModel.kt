@@ -100,9 +100,6 @@ class ProfileViewModel @Inject constructor(
         )
     }
 
-    fun formatPhoneNumber(phoneWithCode: String?, phoneWithoutCode: String?) =
-        phoneWithCode?.replace(phoneWithoutCode ?: "", " ").plus(phoneWithoutCode)
-
     data class UIState(
         // Fields
         val userName: String? = null,

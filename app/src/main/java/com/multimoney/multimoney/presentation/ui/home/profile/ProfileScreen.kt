@@ -36,6 +36,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomItemRow
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.capitalizedAllWords
+import com.multimoney.multimoney.presentation.util.formatPhoneNumber
 
 @Composable
 fun ProfileScreen(
@@ -74,7 +75,7 @@ fun ProfileContent(viewModel: ProfileViewModel = hiltViewModel()) {
                 ProfileHeader(
                     userName = uiState.userName.orEmpty().capitalizedAllWords(),
                     email = uiState.email.orEmpty(),
-                    phoneNumber = viewModel.formatPhoneNumber(uiState.phoneNumberWithCode, uiState.phoneNumber),
+                    phoneNumber = formatPhoneNumber(uiState.phoneNumberWithCode, uiState.phoneNumber),
                     onUpdateClick = { onUIEvent(OnUpdateProfileClick) }
                 )
                 ProfileOptions(

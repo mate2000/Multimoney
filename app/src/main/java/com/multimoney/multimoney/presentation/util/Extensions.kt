@@ -343,6 +343,17 @@ fun getCountryCodeByIdBrand(idBrand: Int): String {
 fun String.capitalizedAllWords(): String =
     splitByWhiteSpace().joinToString(WHITE_SPACE_SEPARATOR.toString()) { it.capitalized() }
 
+/**
+ * Format a phone number with a  "+Code Number" structure when you have
+ * a Phone Number with a country code and a phone number without a
+ * country code to leave the space in the correct position because
+ * some country codes have different lengths.
+ * @param phoneWithCode The phone number with the country code.
+ * @param phoneWithoutCode The phone number without the country code.
+ */
+fun formatPhoneNumber(phoneWithCode: String?, phoneWithoutCode: String?) =
+    phoneWithCode?.replace(phoneWithoutCode ?: "", " ").plus(phoneWithoutCode)
+
 private const val HEX_FORMAT = "#%02x%02x%02x"
 private const val SPECIAL_CHARACTER_REGEX = "[!\"#\$%&'()*+,-./:;\\\\<=>?@^_`{|}~]"
 private const val NUMBER_REGEX = "[0-9]"

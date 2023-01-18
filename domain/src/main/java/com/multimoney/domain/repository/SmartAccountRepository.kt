@@ -227,10 +227,10 @@ interface SmartAccountRepository {
         idAccountType: Int,
         idCustomer: Long,
         accountNumber: String,
-        accountName: String,
+        accountName: String?,
         email: String,
         active: Boolean,
-        phoneNumber: String,
+        phoneNumber: String?,
         idCurrencyAccount: Int,
     ): Flow<MultimoneyResult<SmartFavoriteResult?>>
 }

@@ -9,7 +9,8 @@ data class SmartAccountID(
     val currencyID: Int?,
     val accountNumber: String?,
     val ibanAccountNumber: String? = "",
-    val totalBalance: Double? = null
+    val totalBalance: Double? = null,
+    val customerId: Long? = null
 ) : Parcelable
 
 @Parcelize

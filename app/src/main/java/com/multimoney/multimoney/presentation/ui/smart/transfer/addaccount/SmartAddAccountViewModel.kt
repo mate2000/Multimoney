@@ -16,11 +16,9 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.SMART_IDS
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -39,7 +37,7 @@ class SmartAddAccountViewModel @Inject constructor(
     //Stateless
     private var idBrand = savedStateHandle[ID_BRAND] ?: 0
     private var user = savedStateHandle[USER] ?: ""
-    private var idClient: String? = ""
+    private var smartAccount: SmartAccountID? = null
 
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -48,7 +46,7 @@ class SmartAddAccountViewModel @Inject constructor(
     init {
         user = savedStateHandle[USER] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
-        idClient = savedStateHandle[ID_CLIENT] ?: ""
+        smartAccount = savedStateHandle[SMART_IDS]
     }
 
     private fun getAccountTypes() = executeUseCase {
@@ -78,13 +76,11 @@ class SmartAddAccountViewModel @Inject constructor(
     private fun onAccountNumberChanged(number: String) {
         if (number.isDigitsOnly()) {
             uiState = uiState.copy(accountNumber = number)
-            validateForm()
         }
     }
 
     private fun onEmailChanged(newEmail: String) {
         uiState = uiState.copy(email = newEmail)
-        validateForm()
     }
 
     private fun isUserEmailValid() {
@@ -100,6 +96,7 @@ class SmartAddAccountViewModel @Inject constructor(
         uiState = uiState.copy(
             isAccountNumberError = uiState.accountNumber.length !in MIN_ACCOUNT_DIGITS..MAX_ACCOUNT_DIGITS
         )
+        validateForm()
     }
 
     private fun onFailure(error: HttpError) {
@@ -119,7 +116,6 @@ class SmartAddAccountViewModel @Inject constructor(
         )
     }
 
-
     private fun onContinueClick() {
         executeUseCase {
             mutationUpdateFavoriteSmartUseCase.invoke(
@@ -127,30 +123,25 @@ class SmartAddAccountViewModel @Inject constructor(
                 user = user,
                 idFavorite = null,
                 idAccountType = uiState.type?.typeId?.toIntOrNull() ?: 0,
-                idCustomer = idClient?.toLongOrNull() ?: 0L,
+                idCustomer = smartAccount?.customerId ?: 0L,
                 accountNumber = uiState.accountNumber,
-                accountName = "",
+                accountName = null,
                 email = uiState.email,
                 active = true,
-                phoneNumber = "",
+                phoneNumber = null,
                 idCurrencyAccount = CurrencyType.Dollar.id
             ).collectLatest { result ->
                 result.onLoading { uiState = uiState.copy(isLoading = true) }
                 result.onSuccess { account ->
+                    // Todo navigate to edit amount screen (Rev-1453) and send destination account number
                     val registeredAccount = account?.results?.first()
-                    val smartAccount = SmartAccountID(
-                        accountNumber = registeredAccount?.accountNumber,
-                        currencyID = registeredAccount?.idCurrencyAccount,
-                        tokenAccount = null
-                    )
-                    uiState = uiState.copy(isLoading = false)
-                    // Todo: change last parameter to contacts screen
-                    navigateTo(
-                        "${Screen.OwnTransferAmountScreen.baseRoute}/${
-                            encodeData(
-                                smartAccount
-                            )
-                        }/${Screen.SmartAddSACAccountScreen.baseRoute}"
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        openDialog = DialogParameters(
+                            titleResource = R.string.info,
+                            description = "Account Added. TBD: Navigation to edit amount in rev-1453",
+                            isActive = mutableStateOf(true)
+                        )
                     )
                 }
                 result.onFailure { onFailure(it) }
@@ -158,11 +149,11 @@ class SmartAddAccountViewModel @Inject constructor(
         }
     }
 
+    // Todo change this navigation to go back to Contacts screen rev-1445
     private fun onNavigateBack() =
         navigateBack(
             popTo = Screen.HomeScreen.route,
-            isRestart = true,
-            homeState = HomeState.UNEXPANDED
+            isRestart = false
         )
 
     data class UIState(
@@ -203,6 +194,6 @@ class SmartAddAccountViewModel @Inject constructor(
 
     companion object {
         const val MIN_ACCOUNT_DIGITS = 9
-        const val MAX_ACCOUNT_DIGITS = 9
+        const val MAX_ACCOUNT_DIGITS = 16
     }
 }

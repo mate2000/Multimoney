@@ -87,7 +87,7 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
                 "${Screen.OwnTransferAmountScreen.baseRoute}/${encodeData(smartAccount)}/${Screen.SmartSelectSendingTypeScreen.baseRoute}"
             )
         } else if (idBrand == Brand.ElSalvador.id) {
-            navigateTo("${Screen.SmartAddSACAccountScreen.baseRoute}/$idBrand/$user/$idClient")
+            navigateTo("${Screen.SmartAddSACAccountScreen.baseRoute}/$idBrand/$user/${encodeData(smartAccount)}")
         }
     }
 

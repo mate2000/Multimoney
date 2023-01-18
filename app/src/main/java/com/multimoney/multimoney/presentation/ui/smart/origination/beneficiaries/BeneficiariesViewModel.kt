@@ -186,13 +186,25 @@ class BeneficiariesViewModel @Inject constructor(
     private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
         accountSmartData?.let {
             uiState = uiState.copy(
-                addBeneficiaryState = false,
+                addBeneficiaryState = accountSmartData.listBeneficiaries?.isEmpty() == true,
                 addBeneficiaryOption = accountSmartData.listBeneficiaries?.isNotEmpty() == true,
                 beneficiaryList = accountSmartData.listBeneficiaries ?: emptyList(),
-                totalPercentage = MAX_PERCENTAGE,
+                totalPercentage = getTotalPercentage(accountSmartData.listBeneficiaries)
             )
             validatePercentage()
         }
+    }
+
+    private fun getTotalPercentage(beneficiaryList: List<Beneficiary>?) : Int {
+        var percentage = 0
+        if (beneficiaryList?.isEmpty() == true) {
+            percentage = 0
+        } else {
+            beneficiaryList?.forEach {
+                percentage += it.allocationPercentage?.toInt() ?: 0
+            }
+        }
+        return percentage
     }
 
     private fun validatePercentage() {
@@ -218,8 +230,7 @@ class BeneficiariesViewModel @Inject constructor(
             )
             is OnEditBeneficiaryClick -> onEditBeneficiary(event.beneficiary)
             is OnRemoveBeneficiaryClick -> onShowAlertBeforeRemoveBeneficiary(event.beneficiary)
-            is OnAddBeneficiaryOptionChange -> uiState =
-                uiState.copy(addBeneficiaryOption = event.option)
+            is OnAddBeneficiaryOptionChange -> uiState = uiState.copy(addBeneficiaryOption = event.option)
             is UIEvent.OnLoadCurrentStepData -> onLoadCurrentStepData(event.accountSmartData)
         }
     }
@@ -230,7 +241,7 @@ class BeneficiariesViewModel @Inject constructor(
         val beneficiaryFullName: String = "",
         val relationship: String = "",
         val percentage: String = "",
-        val addBeneficiaryState: Boolean = true,
+        val addBeneficiaryState: Boolean = false,
         val totalPercentage: Int = 0,
         var showOptionsModal: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),

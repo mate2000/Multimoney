@@ -15,6 +15,7 @@ import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.OVER_COUNTER
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.PENDING
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.REJECTED
 import com.multimoney.data.util.catalog.CreditStep
+import com.multimoney.data.util.catalog.MyProductStatus
 import com.multimoney.data.util.catalog.SmartAccountStatus.EXIST_IN_CORE
 import com.multimoney.data.util.catalog.SmartAccountStatus.NO_EXIST
 import com.multimoney.data.util.catalog.SmartAccountStatusRequest
@@ -187,6 +188,14 @@ class ProductViewModel @Inject constructor(
         uiState = uiState.copy(userStatus = userStatus)
     }
 
+    fun getProductScreenTitle(): Int =
+        when {
+            uiState.userStatus?.infoCredit?.status == MyProductStatus.ACTIVE.status ||
+                    uiState.userStatus?.infoCrypto?.status == MyProductStatus.ACTIVE.status ||
+                    uiState.userStatus?.infoBankAccount?.status == MyProductStatus.ACTIVE.status -> R.string.home_product_header_title
+            else -> R.string.home_product_available_products_title
+        }
+
     private fun onNavigateToCreditScreen(
         creditStep: String
     ) {
@@ -280,19 +289,19 @@ class ProductViewModel @Inject constructor(
             ) > 1 && validateQuotas(creditSummary) && uiState.idBrand.toInt() == Brand.CostaRica.id
         ) {
             "${Screen.PaymentFeeScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
-            encodeData(
-                creditSummary
-            )
+                encodeData(
+                    creditSummary
+                )
             }/$identification/$userName/${balanceCredit?.getFirstSummary()?.paymentDate}"
         } else if (uiState.idBrand.toInt() == Brand.CostaRica.id) {
             "${Screen.PaymentAccountScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
-            encodeData(
-                listOf(creditSummary?.firstOrNull { (it.currentBalance ?: ZERO) > ZERO })
-            )
+                encodeData(
+                    listOf(creditSummary?.firstOrNull { (it.currentBalance ?: ZERO) > ZERO })
+                )
             }/$identification/$userName/${balanceCredit?.getFirstSummary()?.paymentDate}/${Screen.HomeScreen.route}"
         } else {
             "${Screen.PaymentOptionsScreen.baseRoute}/${uiState.idBrand}/${balanceCredit?.getFirstCredit()?.creditNumber}/${
-            encodeData(configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true })
+                encodeData(configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true })
             }/${encodeData(configurationVersion?.configuration?.credit?.transferAccount)}/" +
                 "${balanceCredit?.getFirstSummary()?.minPayment}/${balanceCredit?.getFirstSummary()?.minPaymentLabel}/" +
                 "${balanceCredit?.getFirstSummary()?.currentBalance}/${balanceCredit?.getFirstSummary()?.currentBalanceLabel}/" +
@@ -307,17 +316,17 @@ class ProductViewModel @Inject constructor(
         if (uiState.idBrand.toInt() == Brand.CostaRica.id) {
             navigateTo(
                 route = "${Screen.PaymentScheduleScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
-                encodeData(
-                    ClientBankAccount()
-                )
+                    encodeData(
+                        ClientBankAccount()
+                    )
                 }/${balanceCredit?.getFirstSummary()?.paymentDate}/${false}/${Screen.HomeScreen.route}/$isEditSchedule"
             )
         } else {
             navigateTo(
                 route = "${Screen.PaymentScheduleCardScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
-                encodeData(
-                    CardVisaDirect()
-                )
+                    encodeData(
+                        CardVisaDirect()
+                    )
                 }/${balanceCredit?.getFirstSummary()?.paymentDate}/${false}/${Screen.HomeScreen.route}/$isEditSchedule/$identification"
             )
         }
@@ -361,9 +370,9 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToVisaActivateScreen() =
         navigateTo(
             "${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/${uiState.userStatus?.infoUser?.phone}/${
-            encodeData(
-                balanceCredit?.balanceCardInformation
-            )
+                encodeData(
+                    balanceCredit?.balanceCardInformation
+                )
             }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}/$idClient/${uiState.userStatus?.infoCredit?.idLoanClient ?: 0}"
         )
 
@@ -371,10 +380,10 @@ class ProductViewModel @Inject constructor(
         val infoCredit = uiState.userStatus?.infoCredit
         navigateTo(
             "${Screen.VisaCardScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/${uiState.userStatus?.infoUser?.phone}/${
-            encodeData(
-                balanceCredit?.balanceCardInformation
-            )
-            }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}/$idClient/${infoCredit?.idLoanClient ?: 0}"
+                encodeData(
+                    balanceCredit?.balanceCardInformation
+                )
+            }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}/$idClient/${uiState.userStatus?.infoCredit?.idLoanClient ?: 0}"
         )
     }
 
@@ -737,9 +746,9 @@ class ProductViewModel @Inject constructor(
             )
             navigateTo(
                 "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$userName/${uiState.idBrand}/$identification/${
-                encodeData(
-                    smartAccount
-                )
+                    encodeData(
+                        smartAccount
+                    )
                 }/$idClient/${Screen.HomeScreen.route}"
             )
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
@@ -770,12 +779,6 @@ class ProductViewModel @Inject constructor(
         navigateTo(
             "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$userName/${uiState.idBrand}/$identification" +
                 "/${encodeData(smartAccount)}/$idClient/${Screen.HomeScreen.route}"
-        )
-    }
-
-    private fun onNavigateToCryptoDetail(cryptoItem: BalanceCryptoAccountItems) {
-        navigateTo(
-            "${Screen.CryptoCurrencyMovementsScreen.baseRoute}/${uiState.idBrand}/$identification/$email/${encodeData(cryptoItem)}"
         )
     }
 
@@ -996,7 +999,6 @@ class ProductViewModel @Inject constructor(
             is OnCreateMultimoneyVisa -> onCreateMultimoneyVisa(uiEvent.onLoadingValueChange)
             is OnNoVoConfig -> onConfigNovoSdk()
             is OnGetSmartContent -> getSmartContent()
-            is UIEvent.OnNavigateToCryptoDetailScreen -> onNavigateToCryptoDetail(uiEvent.cryptoItem)
             is UIEvent.OnNavigateToBuyCrypto -> onNavigateToBuyCrypto()
         }
     }
@@ -1026,6 +1028,7 @@ class ProductViewModel @Inject constructor(
             val account: Account?,
             val onLoadingValueChange: (isLoading: Boolean) -> Unit
         ) : UIEvent()
+
         data class OnNavigateToSendMoneyFlow(val account: Account?) : UIEvent()
         data class OnNavigateToSmartMovements(val accountToken: String) : UIEvent()
         object OnNavigateToCreditMovementsScreen : UIEvent()
@@ -1043,7 +1046,6 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToCryptoMarket : UIEvent()
         object OnNavigateToCryptoMovements : UIEvent()
         object OnGetSmartContent : UIEvent()
-        data class OnNavigateToCryptoDetailScreen(val cryptoItem: BalanceCryptoAccountItems) : UIEvent()
 
         data class OnSetUserData(
             val idBrand: String,

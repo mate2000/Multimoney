@@ -48,6 +48,8 @@ import com.multimoney.data.networking.graphql.apollomodel.GetConfigurationVersio
 import com.multimoney.data.networking.graphql.apollomodel.GetCoreBankMovementsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCountryContactQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCountryQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetCryptoCurrencyMovementQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetCryptoPriceHistoryQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCryptoCurrencyNewsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCryptoMovementsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCryptoCurrencyMovementQuery
@@ -66,6 +68,7 @@ import com.multimoney.data.networking.graphql.apollomodel.HomeDistrictQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeProvinceQuery
 import com.multimoney.data.networking.graphql.apollomodel.InitialRequestSmartAccountMutation
 import com.multimoney.data.networking.graphql.apollomodel.ListCardVDQuery
+import com.multimoney.data.networking.graphql.apollomodel.DeleteCardVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.ListMiniCardsQuery
 import com.multimoney.data.networking.graphql.apollomodel.ListSinpeAccountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountSaveMutation
@@ -74,6 +77,7 @@ import com.multimoney.data.networking.graphql.apollomodel.OcupationsQuery
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoCheckProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoIntialProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.PayCreditVDMutation
+import com.multimoney.data.networking.graphql.apollomodel.UpdateCardVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.PaymentAmountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProccessPaymentListMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProcessCreditExtensionDetailMutation
@@ -1546,6 +1550,32 @@ class GraphqlApi @Inject constructor(
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 
+    fun mutationUpdateCardVD(
+        idCard: Long,
+        identification: String,
+        cardDescription: String,
+        cardMasked: String,
+        expirationMonth: String,
+        expirationYear: String,
+        verificationValue: String,
+        default: Boolean,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<UpdateCardVDMutation.Data> = apolloAuthorizedClient.mutation(
+        UpdateCardVDMutation(
+            idCard = idCard,
+            identification = identification,
+            cardDescription = cardDescription,
+            cardMasked = cardMasked,
+            expirationMonth = expirationMonth,
+            expirationYear = expirationYear,
+            verificationValue = verificationValue,
+            default = default,
+            user = user,
+            idBrand = idBrand
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
     fun mutationPayCreditVD(
         identification: String,
         currency: String,
@@ -1567,6 +1597,20 @@ class GraphqlApi @Inject constructor(
             cardMasked = cardMasked,
             idCard = idCard,
             idBrand = idBrand
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationDeleteCardVD(
+        identification: String,
+        user: String,
+        idBrand: Int,
+        idCard: Long,
+    ): ApolloCall<DeleteCardVDMutation.Data> = apolloAuthorizedClient.mutation(
+        DeleteCardVDMutation(
+            identification = identification,
+            user = user,
+            idBrand = idBrand,
+            idCard = idCard
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 

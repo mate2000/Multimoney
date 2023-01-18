@@ -38,15 +38,13 @@ fun CurrencyItem(
     priceOfTheDay: Double,
     percentageInvestedCurrency: String,
     available: Double,
-    onClick: () -> Unit
+    onClick: () -> Unit = {}
 ) {
-    Column(modifier = Modifier.clickable {
-        onClick()
-    }) {
+    Column {
         Column(modifier.paint(
             painterResource(id = R.drawable.bg_cryptocurrency_enabled),
             contentScale = ContentScale.FillBounds
-        )) {
+        ).clickable { onClick() }) {
             Row(
                 modifier = Modifier
                     .fillMaxSize()

@@ -46,7 +46,9 @@ fun CryptoMovementsSection(
                     style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                     color = MultimoneyTheme.colors.labelText
                 )
-                TextButton(onClick = onShowAllClick) {
+                TextButton(
+                    onClick = onShowAllClick
+                ) {
                     Text(
                         textAlign = TextAlign.End,
                         text = stringResource(id = R.string.crypto_movements_see_all),

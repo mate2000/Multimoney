@@ -249,6 +249,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "profile_card_list_screen"
     )
 
+    object ProfileMyCardsEditCardScreen : Screen(
+        route = "profile_my_cards_edit_card_screen/{$IDENTIFICATION}/{$USER}/{$ID_BRAND}/{$CARD_SELECTED}",
+        baseRoute = "profile_my_cards_edit_card_screen"
+    )
+
     // DisbursementNavGraph Screens
     object DisbursementAmountScreen : Screen(
         "disbursement_amount_screen/{$ID_BRAND}/{$USER}/{$ID_CLIENT}/{$SUMMARY_LIST}/{$PK_USER}/{$CREDIT_NUMBER}/{$ID_USER_REQUEST}/{$IDENTIFICATION}",
@@ -535,7 +540,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object CryptoMovementsAllScreen : Screen(
-        "crypto_movements_all_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}/{$ITEM_CRYPTO_CURRENCY}",
+        "crypto_movements_all_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}?$CRYPTO_ASSET={$CRYPTO_ASSET}",
         "crypto_movements_all_screen"
     )
 

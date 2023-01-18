@@ -209,7 +209,7 @@ fun String.getCurrencySymbolValue(): Int {
     }
 }
 
-fun String.getCurrencySymbol(): Int {
+fun String?.getCurrencySymbol(): Int {
     return when (this) {
         Colon.value -> R.string.colon_symbol
         Dollar.value -> R.string.dollar_symbol

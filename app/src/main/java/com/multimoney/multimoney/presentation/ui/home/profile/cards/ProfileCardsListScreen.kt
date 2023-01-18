@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.home.profile.cards
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -27,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
+import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -35,6 +38,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnHideToast
 
 @Composable
 fun ProfileCardsListScreen(
@@ -43,6 +47,9 @@ fun ProfileCardsListScreen(
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: ProfileCardListViewModel = hiltViewModel()
 ) {
+    // Properties
+    val activity = LocalContext.current.findActivity()
+
     // Navigation
     viewModel.apply {
         isOnRestart = isRestart
@@ -53,6 +60,12 @@ fun ProfileCardsListScreen(
                 isOnRestart = false
             }
         }
+    }
+
+    // View
+    if (viewModel.uiState.toastIsVisible) {
+        Toast.makeText(activity, viewModel.uiState.toastMessage, Toast.LENGTH_LONG).show()
+        viewModel.onUIEvent(OnHideToast)
     }
     ProfileCardsListContent(viewModel)
 }
@@ -91,7 +104,14 @@ fun ProfileCardsListContent(
                 title = stringResource(id = viewModel.uiState.openDialog.titleResource),
                 message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
                 positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+                negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
+                positiveButtonColor = if (viewModel.uiState.deleteDialogIsVisible) {
+                    MultimoneyTheme.colors.dialogNegativeButtonColor
+                } else {
+                    MultimoneyTheme.colors.dialogPositiveButtonColor
+                },
                 openDialogCustom = viewModel.uiState.openDialog.isActive,
+                onNegativeAction = viewModel.uiState.openDialog.negativeAction,
                 onPositiveAction = viewModel.uiState.openDialog.positiveAction
             )
         }

@@ -6,8 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Nationalities.CostaRicaDimex
 import com.multimoney.data.util.catalog.Nationalities.CostaRicaId
-import com.multimoney.data.util.catalog.Nationalities.ElSalvadorDui
 import com.multimoney.data.util.catalog.Nationalities.ElSalvadorCarne
+import com.multimoney.data.util.catalog.Nationalities.ElSalvadorDui
 import com.multimoney.data.util.catalog.Nationalities.Guatemala
 import com.multimoney.domain.interaction.security.MutationUserValidationUseCase
 import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCase
@@ -23,6 +23,11 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.USER_DATA
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnGetCountriesSuccess
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnCallQueryGetCountry
@@ -40,6 +45,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnValidateDocument
 import com.multimoney.multimoney.presentation.util.catalog.CrDocuments
 import com.multimoney.multimoney.presentation.util.catalog.SvDocuments
+import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.validCarne
 import com.multimoney.multimoney.presentation.util.validDui
 import com.multimoney.multimoney.presentation.util.validId
@@ -68,6 +74,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
 
     // Stateless
     var documentLength = 0
+    var previousEmail = ""
+    var idBrand = 0
 
     // Event
     val onUserDataValidationEvent = MutableSharedFlow<MultimoneyResult<UserData?>>()
@@ -451,6 +459,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
         nextStep: String,
         idBrand: Int
     ) {
+        previousEmail = email
+        this.idBrand = idBrand
         onCallMutationUserValidationUseCase(email, nextStep, idBrand)
     }
 
@@ -474,11 +484,45 @@ class SignUpPersonalDataViewModel @Inject constructor(
     }
 
     private fun onUserDataValidationSuccess(
+        userData: UserData?,
         onUseDataValueChange: () -> Unit,
-        onCallMutationUpdateUserRegisterUseCase: () -> Unit
+        onCallMutationUpdateUserRegisterUseCase: () -> Unit,
+        onLoadingValueChange: (isLoading: Boolean) -> Unit
     ) {
-        onUseDataValueChange()
-        onCallMutationUpdateUserRegisterUseCase()
+        if (userData?.isNewUser == false) {
+            onLoadingValueChange(false)
+            navigateToRegisteredUser(userData)
+        } else {
+            onUseDataValueChange()
+            onCallMutationUpdateUserRegisterUseCase()
+        }
+    }
+
+    private fun navigateToRegisteredUser(userData: UserData) {
+        if (previousEmail == userData.email) {
+            navigateTo(
+                route = Screen.RegisteredUserOtpScreen.baseRoute
+                    .plus(
+                        getNavParam(PREVIOUS_SCREEN, Screen.SignUpScreen.baseRoute)
+                    )
+                    .plus(
+                        getNavParam(ID_BRAND, idBrand)
+                    )
+                    .plus(
+                        getNavParam(USER_DATA, encodeData(userData))
+                    )
+            )
+        } else {
+            navigateTo(
+                route = Screen.RegisteredUserEmailScreen.baseRoute
+                    .plus(
+                        getNavParam(ID_BRAND, idBrand)
+                    )
+                    .plus(
+                        getNavParam(USER_DATA, encodeData(userData))
+                    )
+            )
+        }
     }
 
     data class UIState(
@@ -555,8 +599,10 @@ class SignUpPersonalDataViewModel @Inject constructor(
             )
             is OnNextActionClick -> onNextActionClick(event.email, event.nextStep, event.idBrand)
             is OnUserDataValidationSuccess -> onUserDataValidationSuccess(
+                event.userData,
                 event.onUseDataValueChange,
-                event.onCallMutationUpdateUserRegisterUseCase
+                event.onCallMutationUpdateUserRegisterUseCase,
+                event.onLoadingValueChange
             )
             is OnValidateDocument -> validateDocument(event.document)
             is OnCallQueryGetCountry -> callQueryGetCountryUseCase(
@@ -639,8 +685,10 @@ class SignUpPersonalDataViewModel @Inject constructor(
             UIEvent()
 
         data class OnUserDataValidationSuccess(
+            val userData: UserData?,
             val onUseDataValueChange: () -> Unit,
-            val onCallMutationUpdateUserRegisterUseCase: () -> Unit
+            val onCallMutationUpdateUserRegisterUseCase: () -> Unit,
+            val onLoadingValueChange: (isLoading: Boolean) -> Unit
         ) : UIEvent()
 
         object OnValidateForm : UIEvent()

@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.navigation.navgraph
 
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -15,6 +16,7 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAccountScreen
 import com.multimoney.multimoney.presentation.ui.home.HomeScreen
 import com.multimoney.multimoney.presentation.ui.home.HomeState
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 
 fun NavGraphBuilder.homeNavGraph(
     navController: NavHostController
@@ -23,7 +25,8 @@ fun NavGraphBuilder.homeNavGraph(
         startDestination = Screen.HomeScreen.route,
         route = HOME_ROUTE
     ) {
-        composable(route = Screen.HomeScreen.route) {
+        composable(route = Screen.HomeScreen.route) { backStackEntry ->
+            val viewModel = hiltViewModel<HomeViewModel>()
             HomeScreen(
                 isRestart = navController.currentBackStackEntry?.savedStateHandle?.getLiveData<Boolean>(PREVIOUS_IS_RESTART)?.observeAsState()?.value ?: true,
                 homeState = navController.currentBackStackEntry?.savedStateHandle?.getLiveData<HomeState>(HOME_STATE)?.observeAsState()?.value ?: HomeState.OLD_STATE,
@@ -43,7 +46,8 @@ fun NavGraphBuilder.homeNavGraph(
                     navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }
                     }
-                }
+                },
+                viewModel = viewModel
             )
         }
 

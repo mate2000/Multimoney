@@ -11,6 +11,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_CARD_VI
 import com.multimoney.multimoney.presentation.navigation.navgraph.COMING_FROM_CRYPTO
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
+import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.CURRENT_AMOUNT_VALUE
 import com.multimoney.multimoney.presentation.navigation.navgraph.DISBURSEMENT_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
@@ -119,6 +120,7 @@ const val CRYPTO_ASSET = "asset"
 const val DESCRIPTION_CURRENCY = "description_currency"
 const val CURRENT_CRYPTO_PRICE = "current_crypto_price"
 const val URL_IMAGE = "url_image"
+const val USER_DATA = "user_data"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -142,6 +144,23 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
             "request_forgot_password_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}",
             "request_forgot_password_screen"
         )
+
+    object RegisteredUserEmailScreen :
+        Screen(
+            "registered_user_email_screen?$ID_BRAND={$ID_BRAND}?$USER_DATA={$USER_DATA}",
+            "registered_user_email_screen"
+        )
+
+    object RegisteredUserOtpScreen :
+        Screen(
+            "registered_user_otp_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}?$ID_BRAND={$ID_BRAND}?$USER_DATA={$USER_DATA}",
+            "registered_user_otp_screen"
+        )
+
+    object RegisteredUserPassword : Screen(
+        "registered_user_password?$USER_DATA={$USER_DATA}?$ID_BRAND={$ID_BRAND}",
+        "registered_user_password"
+    )
 
     object ProcessForgotPassword :
         Screen(
@@ -230,6 +249,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "profile_card_list_screen"
     )
 
+    object ProfileMyCardsEditCardScreen : Screen(
+        route = "profile_my_cards_edit_card_screen/{$IDENTIFICATION}/{$USER}/{$ID_BRAND}/{$CARD_SELECTED}",
+        baseRoute = "profile_my_cards_edit_card_screen"
+    )
+
     // DisbursementNavGraph Screens
     object DisbursementAmountScreen : Screen(
         "disbursement_amount_screen/{$ID_BRAND}/{$USER}/{$ID_CLIENT}/{$SUMMARY_LIST}/{$PK_USER}/{$CREDIT_NUMBER}/{$ID_USER_REQUEST}/{$IDENTIFICATION}",
@@ -246,11 +270,10 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "disbursement_add_account_screen"
     )
 
-    object DisbursementVoucherScreen :
-        Screen(
-            route = "disbursement_voucher_screen/{$CLIENT_BANK_ACCOUNT}/{$DISBURSEMENT_LABEL}/{$EXCHANGE_RATE_LABEL}/{$SHOULD_DISPLAY_EXCHANGE_RATE}/{$REFERENCE_NUMBER}/{$AMOUNT_ORIGINAL_LABEL}",
-            "disbursement_voucher_screen"
-        )
+    object DisbursementVoucherScreen : Screen(
+        route = "disbursement_voucher_screen/{$CLIENT_BANK_ACCOUNT}/{$DISBURSEMENT_LABEL}/{$EXCHANGE_RATE_LABEL}/{$SHOULD_DISPLAY_EXCHANGE_RATE}/{$REFERENCE_NUMBER}/{$AMOUNT_ORIGINAL_LABEL}",
+        "disbursement_voucher_screen"
+    )
 
     // CreditNavGraph Screens
     object CreditScreen : Screen(
@@ -325,7 +348,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object VisaPreferencesScreen : Screen(
-        "visa_preferences_screen",
+        "visa_preferences_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$USER}/{$PHONE_NUMBER}/{$BALANCE_CARD_INFORMATION}/{$AVAILABLE_BALANCE_LABEL}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
         "visa_preferences_screen"
     )
 
@@ -356,11 +379,10 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "payment_amount_screen"
     )
 
-    object PaymentVoucherScreen :
-        Screen(
-            route = "payment_voucher_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CLIENT_BANK_ACCOUNT}/{$PAYMENT_DATE}/{$CURRENT_AMOUNT_VALUE}/{$PAYMENT_LABEL}/{$EXCHANGE_RATE_LABEL}/{$SHOULD_DISPLAY_EXCHANGE_RATE}/{$IS_MULTI_CURRENCY}/{$IS_AUTOMATIC_PAYMENT_CHECKED}/{$REFERENCE_NUMBER}",
-            "payment_voucher_screen"
-        )
+    object PaymentVoucherScreen : Screen(
+        route = "payment_voucher_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CLIENT_BANK_ACCOUNT}/{$PAYMENT_DATE}/{$CURRENT_AMOUNT_VALUE}/{$PAYMENT_LABEL}/{$EXCHANGE_RATE_LABEL}/{$SHOULD_DISPLAY_EXCHANGE_RATE}/{$IS_MULTI_CURRENCY}/{$IS_AUTOMATIC_PAYMENT_CHECKED}/{$REFERENCE_NUMBER}",
+        "payment_voucher_screen"
+    )
 
     object PaymentScheduleScreen : Screen(
         "payment_schedule_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CLIENT_BANK_ACCOUNT}/{$PAYMENT_DATE}/{$IS_EDIT_BANK_ACCOUNT}/{$PREVIOUS_SCREEN}/{$IS_EDIT_PAYMENT_SCHEDULE}",
@@ -507,14 +529,19 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "crypto_wallet_screen"
     )
 
+    object CryptoCurrencyMovementsScreen : Screen(
+        "crypto_currency_movements_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}/{$ITEM_CRYPTO_CURRENCY}",
+        "crypto_currency_movements_screen"
+    )
+
     object CryptoMarketScreen : Screen(
         "crypto_market_screen/{$USER}/{$ID_BRAND}",
         "crypto_market_screen"
     )
 
-    object CryptoMovementsScreen : Screen(
-        "crypto_movements_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
-        "crypto_movements_screen"
+    object CryptoMovementsAllScreen : Screen(
+        "crypto_movements_all_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}?$CRYPTO_ASSET={$CRYPTO_ASSET}",
+        "crypto_movements_all_screen"
     )
 
     object CryptoCurrencyDetailsScreen : Screen(

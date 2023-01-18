@@ -33,10 +33,18 @@ import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.*
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnFingerprintCheckedChanged
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnInitializeBiometricPrompt
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnNavigateToForgotPassword
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnNavigateToSignUp
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricPromptForDecryption
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricPromptForEncryption
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricSignInChanged
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnUserEmailValueChange
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnValidateUserEmail
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiaryUnderLined
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -52,14 +60,13 @@ import com.multimoney.multimoney.presentation.util.getIpAddress
 import com.multimoney.multimoney.presentation.util.splitByWhiteSpace
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
-
 @Composable
 @Preview
 fun SignInScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: SignInViewModel = hiltViewModel(),
-    forceChangeDevice : Boolean = false
+    forceChangeDevice: Boolean = false
 ) {
     // Properties
     val focusManager = LocalFocusManager.current
@@ -204,7 +211,7 @@ fun SignInScreen(
                 .fillMaxWidth()
                 .height(48.dp),
             onClick = {
-                viewModel.navigateTo(route = "${Screen.SignUpScreen.baseRoute}/".plus(0))
+                viewModel.onUIEvent(OnNavigateToSignUp)
             },
             buttonType = PrimaryTertiaryUnderLined
         )
@@ -248,20 +255,14 @@ fun SignInScreen(
 
     if (viewModel.uiState.openDialog.isActive.value) {
         CustomDialog(
-            title = stringResource(id = R.string.sign_in_session_active_on_another_device_title),
-            message = stringResource(id = R.string.sign_in_session_open_here_close_another),
-            positiveButtonText = stringResource(id = R.string.sign_in_dialog_sign_in_here_button),
-            negativeButtonText = stringResource(id = R.string.sign_in_dialog_exit_button),
-            onPositiveAction = {
-                viewModel.onUIEvent(SignInViewModel.UIEvent.OnNavigateToOTPScreen)
-            },
-            onNegativeAction = {
-                viewModel.onUIEvent(SignInViewModel.UIEvent.OnCloseDialog)
-            },
-            onDismissAction = {
-                viewModel.onUIEvent(SignInViewModel.UIEvent.OnCloseDialog)
-            },
-            openDialogCustom = viewModel.uiState.openDialogCustom
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction,
+            onNegativeAction = viewModel.uiState.openDialog.negativeAction,
+            onDismissAction = viewModel.uiState.openDialog.dismissAction,
+            openDialogCustom = viewModel.uiState.openDialog.isActive
         )
     }
 

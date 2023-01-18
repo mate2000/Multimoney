@@ -60,6 +60,7 @@ fun PaymentSuccessResult(
     savePayText: String,
     amount: String,
     exchangedAmount: String? = null,
+    isTransferOperation: Boolean = true,
     fromToText: String,
     buttonText: String,
     onButtonClick: () -> Unit,
@@ -138,7 +139,7 @@ fun PaymentSuccessResult(
                         color = MultimoneyTheme.colors.text,
                         textAlign = TextAlign.Center
                     )
-                    if (exchangedAmount.isNullOrBlank().not()) {
+                    if (exchangedAmount.isNullOrBlank().not() && isTransferOperation) {
                         ExchangeTotalLabel(
                             showIcon = false,
                             totalConverted = exchangedAmount ?: ""

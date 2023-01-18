@@ -95,12 +95,12 @@ fun SmartDocumentScreen(
                                             strGenre = viewModel.uiState.gender,
                                             expirationDate = getFormatDateByString(
                                                 viewModel.uiState.expirationDate,
-                                                YEAR_MONTH_DAY_PATTERN,
+                                                YEAR_MONTH_DAY_PATTERN_BAR_FORMAT,
                                                 ISO_8601_API_FORMAT_PATTERN
                                             ),
                                             birthday = getFormatDateByString(
                                                 viewModel.uiState.birthdate,
-                                                YEAR_MONTH_DAY_PATTERN,
+                                                YEAR_MONTH_DAY_PATTERN_BAR_FORMAT,
                                                 ISO_8601_API_FORMAT_PATTERN
                                             ),
                                             idCivilStatusType = viewModel.uiState.civilStateId,
@@ -295,7 +295,7 @@ fun SmartDocumentScreen(
                             year,
                             month,
                             day,
-                            YEAR_MONTH_DAY_AND_TIME_BAR_FORMAT
+                            YEAR_MONTH_DAY_PATTERN_BAR_FORMAT
                         )
                         viewModel.onUIEvent(UIEvent.OnExpirationDateValueChange(date))
                     },

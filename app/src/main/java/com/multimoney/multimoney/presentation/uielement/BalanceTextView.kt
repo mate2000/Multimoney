@@ -54,7 +54,15 @@ fun BalanceTextView(
                 val fontHeight = with(localDensity) {
                     currencyStyle.fontSize.toDp()
                 }
-                fontPadding = totalTextHeight - fontHeight
+                val fontPaddingDifference = (totalTextHeight - fontHeight) / 2
+                with(localDensity) {
+                    fontPadding =
+                        if (fontPaddingDifference <= currencyDecimalStyle.fontSize.toDp()) {
+                            fontPaddingDifference
+                        } else {
+                            currencyDecimalStyle.fontSize.toDp()
+                        }
+                }
             }
         )
         Box(contentAlignment = Alignment.Center) {

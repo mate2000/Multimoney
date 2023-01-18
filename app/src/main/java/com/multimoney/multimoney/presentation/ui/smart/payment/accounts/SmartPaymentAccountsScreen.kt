@@ -82,20 +82,22 @@ fun PaymentOptions(
                     viewModel.onUIEvent(UIEvent.OnAccountClick(account))
                 }
             )
+            if ((viewModel.uiState.sinpeAccountList?.size?.minus(1)) == viewModel.uiState.sinpeAccountList?.indexOf(
+                    account
+                )
+            ) {
+                CustomButton(
+                    text = stringResource(id = string.payment_account_create),
+                    modifier = Modifier
+                        .padding(top = 12.dp, start = 16.dp, end = 16.dp, bottom = 12.dp)
+                        .fillMaxWidth(),
+                    onClick = {
+                        viewModel.onUIEvent(UIEvent.OnAddAccountClick)
+                    },
+                    buttonType = PrimaryTertiary,
+                    trailingIcon = drawable.ic_plus,
+                )
+            }
         }
     }
-
-    CustomButton(
-        text = stringResource(id = string.payment_account_create),
-        modifier = Modifier
-            .padding(top = 32.dp, start = 16.dp, end = 16.dp)
-            .fillMaxWidth(),
-        onClick = {
-            viewModel.onUIEvent(UIEvent.OnAddAccountClick)
-        },
-        buttonType = PrimaryTertiary,
-        trailingIcon = drawable.ic_plus,
-        enable = (viewModel.uiState.sinpeAccountList?.size
-            ?: 0) < DisbursementAccountViewModel.MAX_ACCOUNT_NUMBER
-    )
 }

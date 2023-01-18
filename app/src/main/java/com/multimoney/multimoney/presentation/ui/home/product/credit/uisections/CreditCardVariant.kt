@@ -48,10 +48,13 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnFidoIncomplete
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnfidoReject
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditStartProcessIncomplete
+import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.uielement.CustomRoundedLinearProgress
 import com.multimoney.multimoney.presentation.util.getCardDateFormat
+import com.multimoney.multimoney.presentation.util.getCurrencySymbol
+import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 
 /**
  * Composable to handle the status non-preapproved for GT and SV
@@ -435,12 +438,22 @@ fun OngoingCredit(
             color = MultimoneyTheme.colors.text
         )
         if (viewModel.uiState.isCreditAvailable) {
-            Text(
-                text = viewModel.balanceCredit?.getFirstSummary()?.availableBalanceLabel.toString(),
-                modifier = Modifier.padding(bottom = 10.dp),
-                style = Typography.h4.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.text
-            )
+            viewModel.balanceCredit?.getFirstSummary()?.let {
+                BalanceTextView(
+                    modifier = Modifier.padding(bottom = 10.dp),
+                    balanceText = it.availableBalance?.toCurrencyFormat(
+                        stringResource(id = it.currency.getCurrencySymbol())
+                    ) ?: "",
+                    currencyStyle = Typography.h4.copy(
+                        color = MultimoneyTheme.colors.text,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    currencyDecimalStyle = Typography.body2.copy(
+                        color = MultimoneyTheme.colors.text,
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+            }
         } else {
             Spacer(modifier = Modifier.padding(bottom = 30.dp))
         }

@@ -3,7 +3,6 @@ package com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -136,7 +135,7 @@ fun CryptoCardWithBalance(
             )
         )
         BalanceTextView(
-            modifier = Modifier.height(40.dp),
+            modifier = Modifier,
             balanceText = cryptoBalance.toCurrencyFormat(),
             currencyStyle = Typography.h4.copy(
                 color = MultimoneyTheme.colors.text,

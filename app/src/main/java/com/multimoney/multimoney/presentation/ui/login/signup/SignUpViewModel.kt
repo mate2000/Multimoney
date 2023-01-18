@@ -216,7 +216,7 @@ class SignUpViewModel @Inject constructor(
     data class UIState(
         // Interactions
         val currentStep: Int = SignUpStep.One.id,
-        val isCloseVisible: Boolean = false,
+        val isCloseVisible: Boolean = true,
         val isContinueEnabled: Boolean = false,
         val isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters()
@@ -272,6 +272,7 @@ class SignUpViewModel @Inject constructor(
             is OnOpenSplashComeBack -> navigateToSplashComeBack(event.step)
             is OnPhoneVerifiedChanged -> isPhoneVerified = event.isPhoneVerified
             is OnOnFidoVerifiedChanged -> isOnFidoVerified = event.isOnFidoVerified
+            is UIEvent.OnShowCloseIcon -> uiState = uiState.copy(isCloseVisible = event.showIcon)
         }
     }
 
@@ -323,6 +324,7 @@ class SignUpViewModel @Inject constructor(
         object OnPreviousStep : UIEvent()
 
         object OnCallMutationUpdateUserRegisterUseCase : UIEvent()
+        data class OnShowCloseIcon(val showIcon: Boolean) : UIEvent()
     }
 
     companion object {

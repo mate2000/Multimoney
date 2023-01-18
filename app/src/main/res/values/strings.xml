@@ -1101,7 +1101,7 @@
     <!--Crypto Wallet-->
     <string name="crypto_wallet_header_title" translatable="false">Mi portafolio</string>
     <string name="crypto_wallet_balance_section_label" translatable="false">Balance</string>
-    <string name="crypto_wallet_search_crypto_currency" translatable="false">Buscar Criptomoneda</string>
+    <string name="crypto_wallet_search_crypto_currency" translatable="false">Buscar criptomoneda</string>
     <string name="crypto_wallet_show_all_coins" translatable="false">Ver Todas</string>
     <string name="crypto_gains_symbol" translatable="false">+</string>
     <string name="crypto_losses_symbol" translatable="false">-</string>

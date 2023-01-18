@@ -130,8 +130,7 @@ fun PaymentOptions(viewModel: SmartTransferIbanViewModel = hiltViewModel()) {
                 startIcon = account?.currencyId?.getCurrencyFromId()?.accountIcon,
                 onClick = {
                     viewModel.onUIEvent(OnAccountClick(account))
-                }/*,
-                cardModifier = Modifier.fillMaxSize()*/
+                }
             )
         }
     }

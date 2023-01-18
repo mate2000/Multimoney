@@ -51,8 +51,7 @@ fun CustomInfoButton(
     shouldCenterEndIcon: Boolean = true,
     onClick: () -> Unit = {},
     onEndIconClick: () -> Unit = {},
-    enable: Boolean = true,
-    cardModifier: Modifier? = null
+    enable: Boolean = true
 ) {
     val buttonColor: ButtonColors = ButtonDefaults.buttonColors(
         backgroundColor = Transparent,

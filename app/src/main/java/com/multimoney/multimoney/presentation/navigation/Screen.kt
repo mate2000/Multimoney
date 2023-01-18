@@ -83,6 +83,7 @@ const val SMART_TRANSFER_ROUTE = "smart_transfer_route"
 const val ID_BRAND = "id_brand"
 const val PHONE_NUMBER = "phone_number"
 const val NEW_PHONE_NUMBER = "new_phone_number"
+const val PHONE_NUMBER_CODE = "phone_number_code"
 const val EMAIL = "email"
 const val USER_NAME = "user_name"
 const val HTML = "html"
@@ -204,7 +205,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object ProfileVerifyIdentityPhoneScreen : Screen(
-        "profile_verify_identity_phone_screen/{$ID_CLIENT}/{$CHANGING_FIELD}/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$NEW_PHONE_NUMBER}/{$EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}",
+        "profile_verify_identity_phone_screen/{$ID_CLIENT}/{$CHANGING_FIELD}/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$NEW_PHONE_NUMBER}/{$EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}/{$PHONE_NUMBER_CODE}",
         "profile_verify_identity_phone_screen"
     )
 
@@ -224,7 +225,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object ProfileValidateOTPScreen : Screen(
-        "profile_validate_otp_screen/{$ID_CLIENT}/{$CHANGING_FIELD}/{$NEW_VALUE}/{$SEND_METHOD}/{$IDENTIFICATION}/{$FIRST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$PK_USER}/{$ID_BRAND}/{$USER}",
+        "profile_validate_otp_screen/{$ID_CLIENT}/{$CHANGING_FIELD}/{$NEW_VALUE}/{$SEND_METHOD}/{$IDENTIFICATION}/{$FIRST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$PK_USER}/{$ID_BRAND}/{$USER}/{$PHONE_NUMBER_CODE}",
         "profile_validate_otp_screen"
     )
 

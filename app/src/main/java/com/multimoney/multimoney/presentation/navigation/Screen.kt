@@ -514,7 +514,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SmartAddSACAccountScreen : Screen(
-        "smart_add_sac_account_screen/{$ID_BRAND}/{$USER}",
+        "smart_add_sac_account_screen/{$ID_BRAND}/{$USER}/{$ID_CLIENT}",
         "smart_add_sac_account_screen"
     )
 

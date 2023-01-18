@@ -53,9 +53,9 @@ import com.multimoney.data.networking.graphql.apollomodel.GetExchangeRateCreditQ
 import com.multimoney.data.networking.graphql.apollomodel.GetHistoricClientBalanceQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetHistoricalCurrencyPricesQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetInfoDepositQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetLinkCreditContractQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPaymentPointsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPromissoryNoteDetailQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetLinkCreditContractQuery
 import com.multimoney.data.networking.graphql.apollomodel.GlobalRequestMutation
 import com.multimoney.data.networking.graphql.apollomodel.HomeCantonQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeDistrictQuery
@@ -95,6 +95,7 @@ import com.multimoney.data.networking.graphql.apollomodel.SmartAccountTypeQuery
 import com.multimoney.data.networking.graphql.apollomodel.StepByStepQuery
 import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsSignedQuery
+import com.multimoney.data.networking.graphql.apollomodel.UpdateFavoriteContactSmartMutation
 import com.multimoney.data.networking.graphql.apollomodel.UpdateUserRegisterMutation
 import com.multimoney.data.networking.graphql.apollomodel.UserPhoneMobileSaveMutation
 import com.multimoney.data.networking.graphql.apollomodel.UserValidationMutation
@@ -1737,5 +1738,37 @@ class GraphqlApi @Inject constructor(
         user: String
     ): ApolloCall<SmartAccountTypeQuery.Data> = apolloAuthorizedClient.query(
         SmartAccountTypeQuery(idBrand = idBrand, user = user)
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    /*
+    To select as favorite send active as true, to unselect send active as false,
+    To add a new favorite account send idFavorite as null
+     */
+    fun mutationUpdateSmartFavoriteContact(
+        idFavorite: Long?,
+        idAccountType: Int,
+        idCustomer: Long,
+        accountNumber: String,
+        accountName: String,
+        email: String,
+        active: Boolean,
+        phoneNumber: String,
+        idCurrencyAccount: Int,
+        idBrand: Int,
+        user: String
+    ): ApolloCall<UpdateFavoriteContactSmartMutation.Data> = apolloAuthorizedClient.mutation(
+        UpdateFavoriteContactSmartMutation(
+            idBrand = idBrand,
+            user = user,
+            idFavorite = Optional.presentIfNotNull(idFavorite),
+            idAccountType = idAccountType,
+            idCustomer = idCustomer,
+            accountNumber = accountNumber,
+            accountName = Optional.presentIfNotNull(accountName),
+            phoneNumber = Optional.presentIfNotNull(phoneNumber),
+            email = email,
+            active = active,
+            idCurrencyAccount = Optional.presentIfNotNull(idCurrencyAccount)
+        )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

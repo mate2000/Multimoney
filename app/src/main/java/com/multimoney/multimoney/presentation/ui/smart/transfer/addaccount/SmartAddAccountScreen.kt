@@ -4,8 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,32 +23,28 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.domain.model.accountsmart.SmartAccountType
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel
-import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel
 import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnAccountNumberChanged
 import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnAccountTypeSelected
-import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnEmailChanged
-import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnValidateUserEmail
 import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnEmailChanged
 import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnGetAccountTypes
-import com.multimoney.multimoney.presentation.uielement.CurrencyAmountInput
+import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnValidateAccountNumber
+import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnValidateUserEmail
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
-import com.multimoney.multimoney.presentation.uielement.RoundedPaymentButton
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.transformation.CurrencyDoubleTransformation
 
 @Composable
 fun SmartAddAccountScreen(
@@ -113,7 +107,7 @@ fun SmartAddAccountContent(viewModel: SmartAddAccountViewModel = hiltViewModel()
                         .wrapContentSize(Alignment.TopStart)
                         .focusable(false),
                     items = viewModel.uiState.accountTypeList.map { it?.typeName.orEmpty() },
-                    value = viewModel.uiState.typeId,
+                    value = viewModel.uiState.type?.typeName ?: "",
                     onValueChange = { valueSelected, _ ->
                         viewModel.onUIEvent(OnAccountTypeSelected(valueSelected))
                     },
@@ -137,10 +131,11 @@ fun SmartAddAccountContent(viewModel: SmartAddAccountViewModel = hiltViewModel()
                         }
                     ),
                     isError = viewModel.uiState.isAccountNumberError,
-                    errorMessage = stringResource(id = R.string.smart_add_sac_account_number_validation)
+                    errorMessage = stringResource(id = R.string.smart_add_sac_account_number_validation),
+                    onDebounceValidation = { viewModel.onUIEvent(OnValidateAccountNumber) }
                 )
                 CustomOutlinedTextField(
-                    modifier = Modifier.padding(top = 16.dp),
+                    modifier = Modifier.padding(vertical = 16.dp),
                     value = viewModel.uiState.email,
                     labelText = stringResource(id = R.string.smart_add_sac_account_email_label),
                     keyboardOptions = KeyboardOptions(

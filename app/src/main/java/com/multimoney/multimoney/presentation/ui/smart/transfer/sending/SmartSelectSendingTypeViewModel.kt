@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -79,9 +80,15 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     }
 
     private fun onNavigateToSmartAccount() {
-        navigateTo(
-            "${Screen.OwnTransferAmountScreen.baseRoute}/${encodeData(smartAccount)}/${Screen.SmartSelectSendingTypeScreen.baseRoute}"
-        )
+        // Temporary check until rev-1445 is merged, when this is merged, if the user is from SV
+        // it should navigate to my contacts screen
+        if (idBrand == Brand.CostaRica.id) {
+            navigateTo(
+                "${Screen.OwnTransferAmountScreen.baseRoute}/${encodeData(smartAccount)}/${Screen.SmartSelectSendingTypeScreen.baseRoute}"
+            )
+        } else if (idBrand == Brand.ElSalvador.id) {
+            navigateTo("${Screen.SmartAddSACAccountScreen.baseRoute}/$idBrand/$user/$idClient")
+        }
     }
 
     private fun onPermissionPermanentlyDenied() {

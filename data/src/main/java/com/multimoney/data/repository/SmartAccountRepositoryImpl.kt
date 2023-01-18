@@ -3,6 +3,7 @@ package com.multimoney.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.apollographql.apollo3.api.Optional
 import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.smartaccount.mapToDomain
 import com.multimoney.data.mapper.smartaccount.mapToDomainModel
@@ -23,6 +24,7 @@ import com.multimoney.domain.model.accountsmart.SaveSmartAccount
 import com.multimoney.domain.model.accountsmart.SinpeAccountResult
 import com.multimoney.domain.model.accountsmart.SinpeTransferResult
 import com.multimoney.domain.model.accountsmart.SmartAccountTypeResult
+import com.multimoney.domain.model.accountsmart.SmartFavoriteResult
 import com.multimoney.domain.model.accountsmart.SmartMovement
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.accountsmart.StepByStep
@@ -471,6 +473,38 @@ class SmartAccountRepositoryImpl @Inject constructor(
         return fetchData(graphqlApi.querySmartAccountType(
             idBrand = idBrand,
             user = user
+        ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+    }
+
+    override suspend fun mutationUpdateFavoriteContactSmart(
+        idBrand: Int,
+        user: String,
+        idFavorite: Long?,
+        idAccountType: Int,
+        idCustomer: Long,
+        accountNumber: String,
+        accountName: String,
+        email: String,
+        active: Boolean,
+        phoneNumber: String,
+        idCurrencyAccount: Int
+    ): Flow<MultimoneyResult<SmartFavoriteResult?>> {
+        return fetchData(graphqlApi.mutationUpdateSmartFavoriteContact(
+            idBrand = idBrand,
+            user = user,
+            idFavorite = idFavorite,
+            idAccountType = idAccountType,
+            idCustomer = idCustomer,
+            accountNumber = accountNumber,
+            accountName = accountName,
+            phoneNumber = phoneNumber,
+            email = email,
+            active = active,
+            idCurrencyAccount = idCurrencyAccount
         ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())

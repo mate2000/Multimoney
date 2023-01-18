@@ -12,6 +12,8 @@ import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmart
 import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationSaveSinpeAccountUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationSaveSinpeAccountUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.MutationUpdateFavoriteSmartUseCase
+import com.multimoney.domain.interaction.accountsmart.MutationUpdateFavoriteSmartUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelOneUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelOneUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelThreeUseCase
@@ -731,4 +733,9 @@ class InteractionModule {
     @Singleton
     fun provideQuerySmartAccountType(smartAccountRepository: SmartAccountRepository): QuerySmartAccountTypeUseCase =
         QuerySmartAccountTypeUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationUpdateFavoriteSmart(smartAccountRepository: SmartAccountRepository): MutationUpdateFavoriteSmartUseCase =
+        MutationUpdateFavoriteSmartUseCaseImpl(smartAccountRepository)
 }

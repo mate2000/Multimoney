@@ -17,6 +17,7 @@ import com.multimoney.domain.model.accountsmart.SinpeAccountResult
 import com.multimoney.domain.model.accountsmart.SinpeTransferResult
 import com.multimoney.domain.model.accountsmart.SmartAccountType
 import com.multimoney.domain.model.accountsmart.SmartAccountTypeResult
+import com.multimoney.domain.model.accountsmart.SmartFavoriteResult
 import com.multimoney.domain.model.accountsmart.SmartMovement
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.accountsmart.StepByStep
@@ -218,4 +219,18 @@ interface SmartAccountRepository {
         idBrand: Int,
         user: String
     ): Flow<MultimoneyResult<SmartAccountTypeResult?>>
+
+    suspend fun mutationUpdateFavoriteContactSmart(
+        idBrand: Int,
+        user: String,
+        idFavorite: Long?,
+        idAccountType: Int,
+        idCustomer: Long,
+        accountNumber: String,
+        accountName: String,
+        email: String,
+        active: Boolean,
+        phoneNumber: String,
+        idCurrencyAccount: Int,
+    ): Flow<MultimoneyResult<SmartFavoriteResult?>>
 }

@@ -24,7 +24,7 @@ fun CustomDotsIndicator(
     selectedColor: Color,
     unSelectedColor: Color,
     modifier: Modifier = Modifier,
-    dotSize: Dp = 10.dp
+    dotSize: Dp = 8.dp
 ) {
     LazyRow(modifier = Modifier
         .wrapContentWidth()
@@ -34,7 +34,7 @@ fun CustomDotsIndicator(
             if (index == selectedIndex) {
                 Box(
                     modifier = modifier
-                        .size(height = dotSize, width = 30.dp)
+                        .size(height = dotSize, width = 24.dp)
                         .clip(RoundedCornerShape(5.dp))
                         .background(selectedColor)
                 )

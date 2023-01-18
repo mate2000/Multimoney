@@ -90,6 +90,7 @@ import kotlinx.coroutines.launch
  * @param value: Variable to store the input value.
  * @param leadingIcon: Landing icon to display, by default there is no icon.
  * @param trailingIcon: Trailing icon to display, by default there is no icon.
+ * @param trailingIconColor: Trailing icon color, by default it is white.
  * @param trailingIconAction: Action to perform when the trailing icon is clicked.
  * @param trailingIconActionEnabled: Enable or disable the trailing icon action.
  * @param placeHolder: Hint for the textField.
@@ -125,6 +126,7 @@ fun CustomOutlinedTextField(
     leadingIcon: Int? = null,
     leadingIconComposable: @Composable ((Color) -> Unit)? = null,
     trailingIcon: Int? = null,
+    trailingIconColor: Color = WhiteTransparency60,
     trailingIconAction: () -> Unit = {},
     trailingIconActionEnabled: Boolean = false,
     placeHolder: String = "",
@@ -193,7 +195,7 @@ fun CustomOutlinedTextField(
     if (isSystemInDarkTheme()) {
         labelColor = WhiteTransparency70
         backgroundColor = WhiteTransparency10
-        placeholderColor = WhiteTransparency30
+        placeholderColor = WhiteTransparency60
         unfocusedIndicatorColor = DefaultBlack
         errorIndicatorColor = if (isError || emptyError) {
             SemanticNegative400
@@ -202,21 +204,19 @@ fun CustomOutlinedTextField(
         }
         textFieldStrokeErrorColor = SemanticNegative300
         leadingIconComposableColor = WhiteTransparency60
+        iconTintColor = WhiteTransparency60
         when {
             isError -> {
                 focusedIndicatorColor = SemanticNegative400
-                iconTintColor = SemanticNegative400
                 textColor = WhiteTransparency90
             }
             enabled -> {
                 focusedIndicatorColor = WhiteTransparency60
-                iconTintColor = WhiteTransparency60
                 textColor = WhiteTransparency90
             }
             else -> {
                 focusedIndicatorColor = DefaultBlack
                 backgroundColor = GrayScale500
-                iconTintColor = WhiteTransparency60
                 textColor = WhiteTransparency30
             }
         }
@@ -289,7 +289,7 @@ fun CustomOutlinedTextField(
                     }
                 },
             value = value ?: "",
-            shape = RoundedCornerShape(if (isTextArea) 25 else 50),
+            shape = RoundedCornerShape(if (isTextArea) 32 else 50),
             leadingIcon = leadingIcon?.let {
                 {
                     Icon(
@@ -329,7 +329,7 @@ fun CustomOutlinedTextField(
                             Icon(
                                 painter = painterResource(id = it),
                                 contentDescription = "",
-                                tint = iconTintColor
+                                tint = trailingIconColor
                             )
                         }
                     }
@@ -364,9 +364,12 @@ fun CustomOutlinedTextField(
                 ?: if (passwordVisible || !isPassword) {
                     VisualTransformation.None
                 } else PasswordVisualTransformation(),
-            textStyle = Typography.body2,
+            textStyle = Typography.body2.copy(
+                color = WhiteTransparency90
+            ),
             maxLines = if (isTextArea) 2 else 1,
-            focusedBorderThickness = FOCUSED_BORDER_WIDTH
+            focusedBorderThickness = FOCUSED_BORDER_WIDTH,
+            unfocusedBorderThickness = UNFOCUSED_BORDER_WIDTH
         )
 
         // This is required to execute the debounce
@@ -561,4 +564,5 @@ fun OutlinedTextField(
 }
 
 private val OutlinedTextFieldTopPadding = 8.dp
-private val FOCUSED_BORDER_WIDTH = 1.dp
+private val FOCUSED_BORDER_WIDTH = (0.5).dp
+private val UNFOCUSED_BORDER_WIDTH = (0.5).dp

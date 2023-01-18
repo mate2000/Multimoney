@@ -110,9 +110,9 @@ fun PaymentAmountCardContent(
             ) {
                 Column {
                     Text(
-                        modifier = Modifier.padding(top = 34.dp),
+                        modifier = Modifier.padding(top = 24.dp),
                         text = stringResource(id = viewModel.uiState.titleResource),
-                        style = Typography.h5.copy(
+                        style = Typography.h6.copy(
                             fontWeight = FontWeight.SemiBold,
                             color = MultimoneyTheme.colors.labelText
                         ),

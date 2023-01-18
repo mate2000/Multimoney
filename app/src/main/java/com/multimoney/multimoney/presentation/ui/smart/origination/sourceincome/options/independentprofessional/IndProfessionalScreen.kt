@@ -131,7 +131,6 @@ fun IndProfessionalScreen(
                 focusManager.clearFocus()
             }),
             placeHolder = stringResource(R.string.smart_decimal_income_placeholder, currencySymbol),
-            leadingIcon = R.drawable.ic_money_gray,
             customTransformation = formatDecimalMoney(currencySymbol),
             isRequiredMessage = stringResource(R.string.smart_own_business_monthly_income_required)
         )

@@ -33,4 +33,25 @@ class MultimoneyVisaRepositoryImpl @Inject constructor(
             Success(data.mapToDomainModel())
         }
     )
+
+    override suspend fun mutationDeleteTokenDeviceNVMutation(
+        identification: String,
+        user: String,
+        idBrand: Int,
+        idClient: Int,
+        idLoanClient: Int,
+        idDevice: String
+    ): Flow<MultimoneyResult<CardIssuanceNV?>> = fetchData(
+        apolloCall = graphqlApi.mutationDeleteTokenDeviceNV(
+            identification,
+            user,
+            idBrand,
+            idClient,
+            idLoanClient,
+            idDevice
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
 }

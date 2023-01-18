@@ -2,6 +2,7 @@ package com.multimoney.multimoney.presentation.uielement
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
@@ -200,7 +200,7 @@ fun CurrencyAmountInput(
                     modifier = Modifier.fillMaxWidth(),
                     text = placeHolder,
                     color = placeholderColor,
-                    style = Typography.h4.copy(textAlign = TextAlign.Center, fontWeight = FontWeight.W600)
+                    style = Typography.h5.copy(textAlign = TextAlign.Center, fontWeight = FontWeight.W700)
                 )
             },
             isError = isError || emptyError,
@@ -214,10 +214,7 @@ fun CurrencyAmountInput(
             ),
             enabled = enabled,
             visualTransformation = customTransformation ?: VisualTransformation.None,
-            textStyle = Typography.h4.copy(
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.W600
-            )
+            textStyle = Typography.h5.copy(textAlign = TextAlign.Center, fontWeight = FontWeight.W700)
         )
 
         // This is required to execute the debounce
@@ -227,12 +224,12 @@ fun CurrencyAmountInput(
         if (isError && errorMessage.isNullOrBlank().not() || emptyError) {
             Row(
                 modifier = Modifier.padding(top = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
+                horizontalArrangement = Arrangement.Start
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_exclamation_mark),
                     modifier = Modifier
-                        .size(width = 13.5.dp, height = 13.5.dp),
+                        .size(width = 16.dp, height = 16.dp),
                     contentDescription = "",
                     tint = errorIndicatorColor
                 )
@@ -249,7 +246,7 @@ fun CurrencyAmountInput(
                     },
                     color = errorIndicatorColor,
                     modifier = Modifier
-                        .padding(start = 5.dp)
+                        .padding(start = 8.dp)
                         .wrapContentSize(),
                     style = Typography.body2
                 )

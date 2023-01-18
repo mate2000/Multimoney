@@ -134,6 +134,13 @@ val GradientGrey2 = Color(0xFF474747).copy(alpha = 0.50f)
 val GradientGrayLiner1 = Color(0xFF343434).copy(alpha = 0f)
 val GradientGrayLiner2 = Color(0xFF8C8C8C)
 
+// Shadow Colors
+val ShadowColorPrimary = Color(0xFFB7ECC5)
+val ShadowColorSecondary = Color(0xFFA6F2D3)
+val ShadowColorTertiary = Color(0xFFA4E7E4)
+val ShadowColorComplementaryOne = Color(0xFFA9D8F0)
+val ShadowColorComplementaryTwo = Color(0xFFA3C2FD)
+
 @Immutable
 data class MultimoneyColors(
     val primary: Color,
@@ -179,6 +186,7 @@ data class MultimoneyColors(
     val gradientOneVoucher: Color,
     val gradientTwoVoucher: Color,
     val iconTintVoucher: Color,
+    val trailingIconTintOutLinedTextField: Color,
     val textAlertColor: Color,
     val homeCryptoNoticeSectionBackGround: Color,
     val cryptoGainsColor: Color,
@@ -186,8 +194,10 @@ data class MultimoneyColors(
     val cryptoWalletGainsColor: Color,
     val cryptoActionButtonEnable: Color,
     val cryptoActionButtonDisable: Color,
+    val fullTransparency: Color = Color.Transparent,
+    val linearProgressIndicatorStart: Color,
+    val linearProgressIndicatorFinal: Color,
     val bodyTextColor: Color,
-    val fullTransparency: Color = Color.Transparent
 )
 
 val DarkColorPalette = MultimoneyColors(
@@ -225,7 +235,7 @@ val DarkColorPalette = MultimoneyColors(
     dotIndicatorColor = Primary400,
     dotIndicatorExpired = SemanticNegative400,
     arrowColor = Primary400,
-    progressBackground = SemanticPositive800,
+    progressBackground = BlackTransparency50,
     progressPercentage = DefaultWhite,
     productChipBackground = BlackTransparency16,
     creditDetailBackground = GrayScale700,
@@ -234,6 +244,7 @@ val DarkColorPalette = MultimoneyColors(
     gradientOneVoucher = GradientGrey1,
     gradientTwoVoucher = GradientGrey2,
     iconTintVoucher = WhiteTransparency40,
+    trailingIconTintOutLinedTextField = SemanticInformative400,
     textAlertColor = SemanticNegative400,
     homeCryptoNoticeSectionBackGround = ComplementaryBlack2,
     cryptoGainsColor = SemanticPositive300,
@@ -241,6 +252,8 @@ val DarkColorPalette = MultimoneyColors(
     cryptoActionButtonEnable = Primary400,
     cryptoActionButtonDisable = GrayScale400,
     cryptoWalletGainsColor = Tertiary400,
+    linearProgressIndicatorStart = Primary300,
+    linearProgressIndicatorFinal = DefaultWhite,
     bodyTextColor = WhiteTransparency60,
 )
 
@@ -288,6 +301,7 @@ val LightColorPalette = MultimoneyColors(
     gradientOneVoucher = GradientGrey1,
     gradientTwoVoucher = GradientGrey2,
     iconTintVoucher = WhiteTransparency40,
+    trailingIconTintOutLinedTextField = SemanticInformative400,
     textAlertColor = SemanticNegative400,
     homeCryptoNoticeSectionBackGround = GrayScale300,
     cryptoGainsColor = SemanticPositive600,
@@ -295,6 +309,8 @@ val LightColorPalette = MultimoneyColors(
     cryptoActionButtonEnable = Primary500,
     cryptoActionButtonDisable = GrayScale500,
     cryptoWalletGainsColor = Tertiary600,
+    linearProgressIndicatorStart = Primary300,
+    linearProgressIndicatorFinal = DefaultWhite,
     bodyTextColor = BlackTransparency60,
 )
 

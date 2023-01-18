@@ -126,12 +126,12 @@ import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventU
 import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventUseCaseImpl
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCase
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCaseImpl
+import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCase
+import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryEmploymentSituationUseCase
 import com.multimoney.domain.interaction.credit.QueryEmploymentSituationUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUseCase
 import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUseCaseImpl
-import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCase
-import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetCurrencyHistoricalPricesUseCase
 import com.multimoney.domain.interaction.crypto.GetCurrencyHistoricalPricesUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetCurrencyNewsUseCase
@@ -200,6 +200,10 @@ import com.multimoney.domain.interaction.virtualcard.MutationCardUnblockingUseCa
 import com.multimoney.domain.interaction.virtualcard.MutationCardUnblockingUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.MutationPayCreditVDUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationPayCreditVDUseCaseImpl
+import com.multimoney.domain.interaction.virtualcard.MutationUpdateCardVDUseCase
+import com.multimoney.domain.interaction.virtualcard.MutationUpdateCardVDUseCaseImpl
+import com.multimoney.domain.interaction.virtualcard.MutationDeleteCardVDUseCase
+import com.multimoney.domain.interaction.virtualcard.MutationDeleteCardVDUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCase
 import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCaseImpl
 import com.multimoney.domain.repository.BalanceRepository
@@ -686,6 +690,16 @@ class InteractionModule {
     @Singleton
     fun provideMutationPayCreditVDUseCase(virtualCardRepository: VirtualCardRepository): MutationPayCreditVDUseCase =
         MutationPayCreditVDUseCaseImpl(virtualCardRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationUpdateCardVDUseCase(virtualCardRepository: VirtualCardRepository): MutationUpdateCardVDUseCase =
+        MutationUpdateCardVDUseCaseImpl(virtualCardRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationDeleteCardVDUseCase(virtualCardRepository: VirtualCardRepository): MutationDeleteCardVDUseCase =
+        MutationDeleteCardVDUseCaseImpl(virtualCardRepository)
 
     @Provides
     @Singleton

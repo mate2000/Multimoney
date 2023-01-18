@@ -21,7 +21,7 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.Smart
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.smartaccount.SelectSmartAccountContainer
-import com.multimoney.multimoney.presentation.ui.smart.transfer.register.SmartTransferRegisterIbanScreen
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.amount.OwnTransferAmountScreen
 
@@ -191,7 +191,8 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
             route = Screen.SmartAddSACAccountScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
-                navArgument(USER) { type = NavType.StringType }
+                navArgument(USER) { type = NavType.StringType },
+                navArgument(IDENTIFICATION) { type = NavType.StringType }
             )
         ) {
             SmartAddAccountScreen(

@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.transfer.register
+package com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

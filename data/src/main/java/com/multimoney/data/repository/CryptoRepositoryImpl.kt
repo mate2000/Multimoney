@@ -7,11 +7,13 @@ import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.crypto.mapToDomainModel
 import com.multimoney.data.networking.GraphqlApi
 import com.multimoney.data.paging.CryptoMovementsPagingSource
+import com.multimoney.domain.model.crypto.BuyCryptoCurrencyOrder
 import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
 import com.multimoney.domain.model.crypto.CryptoCurrencyNews
 import com.multimoney.domain.model.crypto.GetHistoricalClientBalance
 import com.multimoney.domain.model.crypto.GetHistoricalCurrencyPrices
 import com.multimoney.domain.model.crypto.GetListOfAvailableCryptoCoins
+import com.multimoney.domain.model.crypto.GetPaxosChargeData
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.CryptoRepository
@@ -104,6 +106,43 @@ class CryptoRepositoryImpl @Inject constructor(
         idBrand: Int
     ): Flow<MultimoneyResult<CryptoCurrencyNews>> = fetchData(
         apolloCall = graphqlApi.queryCurrencyNews(baseAsset, user, idBrand),
+        apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
+    )
+
+    override suspend fun queryGetPaxosCharges(
+        user: String,
+        idBrand: Int,
+        key: String,
+        transaction: String
+    ): Flow<MultimoneyResult<GetPaxosChargeData>> = fetchData(
+        apolloCall = graphqlApi.queryGetPaxosCharges(user, idBrand, key, transaction),
+        apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
+    )
+
+    override suspend fun mutationBuyCryptoCurrency(
+        pkUser: Int,
+        identification: String,
+        market: String,
+        orderAmount: Double,
+        commissionAmount: Double,
+        taxAmount: Double,
+        accountToken: Long,
+        exchangeRate: Double,
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<BuyCryptoCurrencyOrder>> = fetchData(
+        apolloCall = graphqlApi.mutationBuyCryptoCurrency(
+            pkUser,
+            identification,
+            market,
+            orderAmount,
+            commissionAmount,
+            taxAmount,
+            accountToken,
+            exchangeRate,
+            idBrand,
+            user
+        ),
         apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
     )
 }

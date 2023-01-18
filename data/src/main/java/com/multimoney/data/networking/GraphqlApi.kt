@@ -16,6 +16,7 @@ import com.multimoney.data.networking.graphql.apollomodel.AddressLevel3Query
 import com.multimoney.data.networking.graphql.apollomodel.BalanceCardInformationQuery
 import com.multimoney.data.networking.graphql.apollomodel.BalanceQuery
 import com.multimoney.data.networking.graphql.apollomodel.BanksAndRegularExpressionQuery
+import com.multimoney.data.networking.graphql.apollomodel.BuyCryptoCurrencyMutation
 import com.multimoney.data.networking.graphql.apollomodel.CardBlockingNVMutation
 import com.multimoney.data.networking.graphql.apollomodel.CardIssuanceNVQuery
 import com.multimoney.data.networking.graphql.apollomodel.CardUnblockingNVMutation
@@ -56,6 +57,7 @@ import com.multimoney.data.networking.graphql.apollomodel.GetInfoDepositQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPaymentPointsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPromissoryNoteDetailQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetLinkCreditContractQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetPaxosChargesQuery
 import com.multimoney.data.networking.graphql.apollomodel.GlobalRequestMutation
 import com.multimoney.data.networking.graphql.apollomodel.HomeCantonQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeDistrictQuery
@@ -1488,6 +1490,43 @@ class GraphqlApi @Inject constructor(
                 baseAsset,
                 user,
                 idBrand
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryGetPaxosCharges(
+        user: String,
+        idBrand: Int,
+        key: String,
+        transaction: String,
+    ): ApolloCall<GetPaxosChargesQuery.Data> =
+        apolloAuthorizedClient.query(
+            GetPaxosChargesQuery(user, idBrand, key, transaction)
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationBuyCryptoCurrency(
+        pkUser: Int,
+        identification: String,
+        market: String,
+        orderAmount: Double,
+        commissionAmount: Double,
+        taxAmount: Double,
+        accountToken: Long,
+        exchangeRate: Double,
+        idBrand: Int,
+        user: String
+    ): ApolloCall<BuyCryptoCurrencyMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            BuyCryptoCurrencyMutation(
+                pkUser,
+                identification,
+                market,
+                orderAmount,
+                commissionAmount,
+                taxAmount,
+                accountToken,
+                exchangeRate,
+                idBrand,
+                user
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

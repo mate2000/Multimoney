@@ -1,11 +1,13 @@
 package com.multimoney.domain.repository
 
 import androidx.paging.PagingData
+import com.multimoney.domain.model.crypto.BuyCryptoCurrencyOrder
 import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
 import com.multimoney.domain.model.crypto.CryptoCurrencyNews
 import com.multimoney.domain.model.crypto.GetHistoricalClientBalance
 import com.multimoney.domain.model.crypto.GetHistoricalCurrencyPrices
 import com.multimoney.domain.model.crypto.GetListOfAvailableCryptoCoins
+import com.multimoney.domain.model.crypto.GetPaxosChargeData
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
@@ -51,4 +53,24 @@ interface CryptoRepository {
         user: String,
         idBrand: Int
     ): Flow<MultimoneyResult<CryptoCurrencyNews>>
+
+    suspend fun queryGetPaxosCharges(
+        user: String,
+        idBrand: Int,
+        key: String,
+        transaction: String,
+    ): Flow<MultimoneyResult<GetPaxosChargeData>>
+
+    suspend fun mutationBuyCryptoCurrency(
+        pkUser: Int,
+        identification: String,
+        market: String,
+        orderAmount: Double,
+        commissionAmount: Double,
+        taxAmount: Double,
+        accountToken: Long,
+        exchangeRate: Double,
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<BuyCryptoCurrencyOrder>>
 }

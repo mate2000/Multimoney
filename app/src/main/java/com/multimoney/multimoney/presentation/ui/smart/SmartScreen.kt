@@ -53,7 +53,11 @@ fun SmartScreen(
 
     // Navigation
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)
+        viewModel.executeNavigation(
+            onNavigate = onNavigate,
+            onPopAndNavigate = onPopAndNavigate,
+            onPopBackStack = onPopBackStack
+        )
         viewModel.onUIEvent(OnCallMutationInitialRequest)
     }
 
@@ -150,10 +154,7 @@ fun SmartScreen(
 }
 
 @Composable
-fun GetSvStepContent(
-    step: Int,
-    viewModel: SmartViewModel
-) {
+fun GetSvStepContent(step: Int, viewModel: SmartViewModel) {
     when (step) {
         SmartSteps.One.id -> SmartDocumentScreen(sharedViewModel = viewModel)
         SmartSteps.Two.id -> SmartLivingAddressScreen(sharedViewModel = viewModel)
@@ -164,10 +165,7 @@ fun GetSvStepContent(
 }
 
 @Composable
-fun GetCrStepContent(
-    step: Int,
-    viewModel: SmartViewModel
-) {
+fun GetCrStepContent(step: Int, viewModel: SmartViewModel) {
     when (step) {
         SmartSteps.One.id -> SmartLivingAddressScreen(sharedViewModel = viewModel)
         SmartSteps.Two.id -> SourceIncomeScreen(sharedViewModel = viewModel)

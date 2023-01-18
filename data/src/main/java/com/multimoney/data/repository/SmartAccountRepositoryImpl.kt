@@ -164,7 +164,7 @@ class SmartAccountRepositoryImpl @Inject constructor(
     override suspend fun queryStepByStep(
         user: String,
         idBrand: Int,
-        idRequest: Int
+        idRequest: Long
     ): Flow<MultimoneyResult<StepByStep?>> =
         fetchData(
             apolloCall = graphqlApi.queryStepByStep(user, idBrand, idRequest),
@@ -178,6 +178,7 @@ class SmartAccountRepositoryImpl @Inject constructor(
         status: Int,
         user: String,
         idBrand: Int,
+        idGlobalRequest: Long,
         idProfessionType: Int?,
         idCivilStatusType: Long?,
         birthday: String?,
@@ -211,6 +212,9 @@ class SmartAccountRepositoryImpl @Inject constructor(
         apolloCall = graphqlApi.mutationGlobalRequest(
             pkUser = pkUser,
             status = status,
+            user = user,
+            idBrand = idBrand,
+            idGlobalRequest = idGlobalRequest,
             idProfessionType = idProfessionType,
             idCivilStatusType = idCivilStatusType,
             birthday = birthday,
@@ -226,8 +230,6 @@ class SmartAccountRepositoryImpl @Inject constructor(
             income = income,
             addressDetail = addressDetail,
             fullJobAddress = fullJobAddress,
-            user = user,
-            idBrand = idBrand,
             currentStep = currentStep,
             institutionPension = institutionPension,
             specifiesIncomeSource = specifiesIncomeSource,

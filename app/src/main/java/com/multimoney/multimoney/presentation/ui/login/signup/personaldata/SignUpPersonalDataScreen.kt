@@ -37,21 +37,34 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNationalityChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
+import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
 @Composable
 @Preview
 fun SignUpPersonalDataScreen(
+    isRestart: Boolean = true,
+    onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: SignUpPersonalDataViewModel = hiltViewModel(),
     sharedViewModel: SignUpViewModel = hiltViewModel()
 ) {
+    viewModel.apply {
+        isOnRestart = isRestart
+        LaunchedEffect(isOnRestart) {
+            if (isOnRestart) {
+                viewModel.executeNavigation(onNavigate = onNavigate)
+                viewModel.onUIEvent(
+                    OnCallQueryGetCountry("", onLoadingValueChange = { isLoading ->
+                        sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(isLoading))
+                    })
+                )
+                isOnRestart = false
+            }
+        }
+    }
+
     LaunchedEffect(true) {
-        viewModel.onUIEvent(
-            OnCallQueryGetCountry("", onLoadingValueChange = { isLoading ->
-                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(isLoading))
-            })
-        )
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormValidateCompleted -> sharedViewModel.onUIEvent(OnContinueEnable(event.isFormValid))
@@ -106,6 +119,7 @@ fun SignUpPersonalDataScreen(
             result.onSuccess { userData ->
                 viewModel.onUIEvent(
                     SignUpPersonalDataViewModel.UIEvent.OnUserDataValidationSuccess(
+                        userData = userData,
                         onUseDataValueChange = {
                             sharedViewModel.strIdIdentification = viewModel.uiState.identificationValueType
                             sharedViewModel.onUIEvent(
@@ -125,6 +139,9 @@ fun SignUpPersonalDataScreen(
                         },
                         onCallMutationUpdateUserRegisterUseCase = {
                             sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase)
+                        },
+                        onLoadingValueChange = { isLoading ->
+                            sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(isLoading))
                         }
                     )
                 )

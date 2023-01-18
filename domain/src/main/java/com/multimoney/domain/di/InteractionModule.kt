@@ -136,6 +136,8 @@ import com.multimoney.domain.interaction.crypto.GetCurrencyNewsUseCase
 import com.multimoney.domain.interaction.crypto.GetCurrencyNewsUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCase
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCaseImpl
+import com.multimoney.domain.interaction.mmvisa.MutationDeleteTokenDeviceNVUseCase
+import com.multimoney.domain.interaction.mmvisa.MutationDeleteTokenDeviceNVUseCaseImpl
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCaseImpl
 import com.multimoney.domain.interaction.profile.QueryCountryContactUseCase
@@ -194,8 +196,12 @@ import com.multimoney.domain.interaction.virtualcard.MutationCardBlockingUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationCardBlockingUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.MutationCardUnblockingUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationCardUnblockingUseCaseImpl
+import com.multimoney.domain.interaction.virtualcard.MutationDeleteCardVDUseCase
+import com.multimoney.domain.interaction.virtualcard.MutationDeleteCardVDUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.MutationPayCreditVDUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationPayCreditVDUseCaseImpl
+import com.multimoney.domain.interaction.virtualcard.MutationUpdateCardVDUseCase
+import com.multimoney.domain.interaction.virtualcard.MutationUpdateCardVDUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCase
 import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCaseImpl
 import com.multimoney.domain.repository.BalanceRepository
@@ -636,6 +642,11 @@ class InteractionModule {
 
     @Provides
     @Singleton
+    fun provideMutationDeleteTokenDeviceUseCase(multimoneyVisaRepository: MultimoneyVisaRepository): MutationDeleteTokenDeviceNVUseCase =
+        MutationDeleteTokenDeviceNVUseCaseImpl(multimoneyVisaRepository)
+
+    @Provides
+    @Singleton
     fun provideQueryListSinpeAccountUseCase(smartAccountRepository: SmartAccountRepository): QueryListSinpeAccountUseCase =
         QueryListSinpeAccountUseCaseImpl(smartAccountRepository)
 
@@ -677,6 +688,16 @@ class InteractionModule {
     @Singleton
     fun provideMutationPayCreditVDUseCase(virtualCardRepository: VirtualCardRepository): MutationPayCreditVDUseCase =
         MutationPayCreditVDUseCaseImpl(virtualCardRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationUpdateCardVDUseCase(virtualCardRepository: VirtualCardRepository): MutationUpdateCardVDUseCase =
+        MutationUpdateCardVDUseCaseImpl(virtualCardRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationDeleteCardVDUseCase(virtualCardRepository: VirtualCardRepository): MutationDeleteCardVDUseCase =
+        MutationDeleteCardVDUseCaseImpl(virtualCardRepository)
 
     @Provides
     @Singleton

@@ -27,6 +27,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREE
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnAlertButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnAlertCloseClick
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnEditCardVisaDirect
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnGetClientCardVisaDirect
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnNavigateBack
@@ -235,6 +236,24 @@ class PaymentScheduleCardViewModel @Inject constructor(
         navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
     }
 
+    private fun onCloseClick() {
+        uiState = uiState.copy(
+            openDialog = DialogParameters(
+                titleResource = R.string.payment_schedule_card_list_dialog_title,
+                descriptionResource = R.string.payment_schedule_card_list_dialog_description,
+                positiveResource = R.string.accept,
+                negativeResource = R.string.cancel,
+                positiveAction = {
+                    navigateBack(
+                        popTo = Screen.HomeScreen.route,
+                        isRestart = false
+                    )
+                },
+                isActive = mutableStateOf(true)
+            )
+        )
+    }
+
     data class UIState(
         // Interactions
         val cardVisaDirect: CardVisaDirect? = null,
@@ -255,6 +274,7 @@ class PaymentScheduleCardViewModel @Inject constructor(
             is OnGetClientCardVisaDirect -> getClientCardVisaDirect()
             is OnAlertButtonClick -> onAlertButtonClick()
             is OnAlertCloseClick -> onAlertCloseClick()
+            is OnCloseClick -> onCloseClick()
             is OnProgramClick -> onCallMutationActivatedCardAutomaticDebitUseCase()
             is OnEditCardVisaDirect -> onEditCardVisaDirect()
             is OnOpenDisclaimerDialog -> onOpenDisclaimerDialog()
@@ -266,6 +286,7 @@ class PaymentScheduleCardViewModel @Inject constructor(
         object OnGetClientCardVisaDirect : UIEvent()
         object OnAlertButtonClick : UIEvent()
         object OnAlertCloseClick : UIEvent()
+        object OnCloseClick : UIEvent()
         object OnProgramClick : UIEvent()
         object OnEditCardVisaDirect : UIEvent()
         object OnOpenDisclaimerDialog : UIEvent()

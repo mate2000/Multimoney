@@ -9,12 +9,18 @@ import com.multimoney.domain.model.credit.CreditContractEvent
 
 @Composable
 fun SubscriptionScreen(subscriptionViewModel: SubscriptionViewModel = hiltViewModel()) {
-    Column() {
+    Column {
+        Button(onClick = {
+            subscriptionViewModel.subscribe()
+        }) {
+            Text(text = "Start subscription")
+        }
+
         Button(onClick = {
             subscriptionViewModel.sendCreditContractEvent(
                 CreditContractEvent(
-                    1120654,
-                    5,
+                    466503,
+                    10,
                     "https://ecertia.com/Delivery/ad45b95a-f558-48fe-bf68-1c5cc2315477",
                     "Pendiente",
                     "Pendiente",

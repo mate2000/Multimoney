@@ -82,7 +82,7 @@ interface SmartAccountRepository {
     suspend fun queryStepByStep(
         user: String,
         idBrand: Int,
-        idRequest: Int
+        idRequest: Long
     ): Flow<MultimoneyResult<StepByStep?>>
 
     suspend fun mutationGlobalRequest(
@@ -90,6 +90,7 @@ interface SmartAccountRepository {
         status: Int,
         user: String,
         idBrand: Int,
+        idGlobalRequest: Long,
         idProfessionType: Int?,
         idCivilStatusType: Long?,
         birthday: String?,

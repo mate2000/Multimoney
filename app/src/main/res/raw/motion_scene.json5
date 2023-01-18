@@ -16,7 +16,7 @@
         ],
       },
       main_card: {
-        height: '35%',
+        height: 'wrap',
         top: [
           'header_cards',
           'bottom'
@@ -56,7 +56,7 @@
         ]
       },
       main_card: {
-        height: '35%',
+        height: 'wrap',
         top: [
           'header_title',
           'bottom'

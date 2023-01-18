@@ -77,7 +77,7 @@ fun PaymentAmountBottomSheetScreen(
                     textAlign = TextAlign.Center
                 )
             }
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(40.dp))
             Text(
                 text = stringResource(id = R.string.payment_amount_bottom_sheet_account),
                 style = Typography.body2.copy(fontWeight = FontWeight.W600),

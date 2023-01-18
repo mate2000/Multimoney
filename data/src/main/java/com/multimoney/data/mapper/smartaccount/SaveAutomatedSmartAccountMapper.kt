@@ -5,7 +5,11 @@ import com.multimoney.domain.model.accountsmart.SaveSmartAccount
 
 private fun SaveAutomatedSmartAccountMutation.Result.mapToDomainModel() =
     SaveSmartAccount(
-        message = message
+        requestID = requestID.toString().toLong(),
+        message = message,
+        documentRoute = documentRoute,
+        idAccount = idAccount.toString().toLong(),
+        identification = identification
     )
 
 private fun SaveAutomatedSmartAccountMutation.SaveAutomatedSmartAccount.mapToDomainModel() =

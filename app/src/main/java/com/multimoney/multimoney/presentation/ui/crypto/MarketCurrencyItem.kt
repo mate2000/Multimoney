@@ -25,6 +25,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 
 @Composable
 fun MarketCurrencyItem(
@@ -100,10 +101,7 @@ fun MarketCurrencyItem(
                         horizontalAlignment = Alignment.End
                     ) {
                         Text(
-                            text = stringResource(
-                                id = R.string.currency_item_dollar_symbol,
-                                currentPrice
-                            ),
+                            text = currentPrice.toCurrencyFormat(),
                             style = Typography.caption,
                             color = MultimoneyTheme.colors.text
                         )

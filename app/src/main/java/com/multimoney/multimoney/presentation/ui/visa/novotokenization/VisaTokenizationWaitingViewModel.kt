@@ -309,6 +309,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
     private fun setErrorAlertResult() {
         uiState = uiState.copy(
             isAlertResultVisible = true,
+            isAlertResultSuccess = false,
             alertResultIconResource = R.drawable.ic_error_symbol,
             alertResultTitleResource = R.string.card_tokenization_error_title,
             alertResultDescriptionResource = when (idBrand) {
@@ -331,6 +332,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         val icon: Int = R.drawable.ic_novo_waiting_smartphone,
         val description: AnnotatedString = buildAnnotatedString {},
         val openDialog: DialogParameters = DialogParameters(),
+        val isAlertResultSuccess: Boolean = true,
         val isAlertResultVisible: Boolean = false,
         val alertResultIconResource: Int = 0,
         val alertResultTitleResource: Int = R.string.empty,

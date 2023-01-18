@@ -35,7 +35,6 @@ import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.GrayScale500
 import com.multimoney.multimoney.presentation.theme.GrayScale700
 import com.multimoney.multimoney.presentation.theme.GrayScale800
-import com.multimoney.multimoney.presentation.theme.Primary400
 import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.SemanticInformative400
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -51,6 +50,8 @@ import com.multimoney.multimoney.presentation.util.gesture.detectTapAndPressUnco
  * @param message: Text message of the Dialog
  * @param positiveButtonText: Text for the positive button
  * @param negativeButtonText: Text for the negative button
+ * @param positiveButtonColor: Color for the positive button
+ * @param negativeButtonColor: Color for the negative button
  * @param topIcon: Resource for the top icon
  * @param shape: shape for the dialog
  * @param onNegativeAction: Function to handle the negative button click
@@ -65,12 +66,15 @@ fun CustomDialog(
     message: String = "",
     positiveButtonText: String = stringResource(id = R.string.custom_dialog_default_positive_label),
     negativeButtonText: String = "",
+    positiveButtonColor: Color = SemanticInformative400,
+    negativeButtonColor: Color = SemanticInformative400,
     topIcon: Int? = null,
     shape: Shape = MaterialTheme.shapes.medium,
     onNegativeAction: () -> Unit = {},
     onPositiveAction: () -> Unit = {},
     onDismissAction: () -> Unit = {},
-    openDialogCustom: MutableState<Boolean> = mutableStateOf(false)
+    openDialogCustom: MutableState<Boolean> = mutableStateOf(false),
+    isCancelable: Boolean = true
 ) {
     val context = LocalContext.current
     val activity = context.findActivity()
@@ -78,19 +82,22 @@ fun CustomDialog(
     // Colors
     val titleColor: Color
     val messageColor: Color
-    val buttonColor: Color
+    val positiveButtonTextColor: Color
+    val negativeButtonTextColor: Color
     val iconTintColor: Color
     val backgroundColor: Color
     if (isSystemInDarkTheme()) {
         titleColor = DefaultWhite
         messageColor = WhiteTransparency80
-        buttonColor = SemanticInformative400
+        positiveButtonTextColor = positiveButtonColor
+        negativeButtonTextColor = negativeButtonColor
         iconTintColor = DefaultWhite
         backgroundColor = GrayScale700
     } else {
         titleColor = GrayScale800
         messageColor = GrayScale500
-        buttonColor = SemanticInformative400
+        positiveButtonTextColor = positiveButtonColor
+        negativeButtonTextColor = negativeButtonColor
         iconTintColor = Primary500
         backgroundColor = DefaultWhite
     }
@@ -110,8 +117,10 @@ fun CustomDialog(
     }
 
     Dialog(onDismissRequest = {
-        onDismissAction()
-        openDialogCustom.value = false
+        if (isCancelable) {
+            onDismissAction()
+            openDialogCustom.value = false
+        }
     }) {
         Card(
             shape = shape,
@@ -174,7 +183,7 @@ fun CustomDialog(
                             },
                             style = Typography.button.copy(
                                 fontWeight = SemiBold,
-                                color = buttonColor
+                                color = negativeButtonTextColor
                             )
                         )
                     }
@@ -185,7 +194,10 @@ fun CustomDialog(
                             onPositiveAction()
                             openDialogCustom.value = false
                         },
-                        style = Typography.button.copy(fontWeight = SemiBold, color = buttonColor)
+                        style = Typography.button.copy(
+                            fontWeight = SemiBold,
+                            color = positiveButtonTextColor
+                        )
                     )
                 }
             }

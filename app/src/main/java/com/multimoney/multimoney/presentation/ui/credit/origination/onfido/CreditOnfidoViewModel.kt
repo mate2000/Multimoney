@@ -29,7 +29,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUES
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
-import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnCallInFidoToken
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnConfigureOnFidoSdk
@@ -56,11 +55,11 @@ import com.onfido.android.sdk.capture.Onfido.OnfidoResultListener
 import com.onfido.android.sdk.capture.errors.OnfidoException
 import com.onfido.android.sdk.capture.upload.Captures
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class CreditOnfidoViewModel @Inject constructor(
@@ -127,7 +126,7 @@ class CreditOnfidoViewModel @Inject constructor(
                 lastNames,
                 identification,
                 BuildConfig.APPLICATION_ID,
-                Brand.CostaRica.id,
+                idBrand ?: 0,
                 user
             ).collectLatest { result ->
                 result.onSuccess {
@@ -153,7 +152,7 @@ class CreditOnfidoViewModel @Inject constructor(
                 lastNames,
                 identification,
                 BuildConfig.APPLICATION_ID,
-                Brand.CostaRica.id,
+                idBrand ?: 0,
                 user
             ).collectLatest { result ->
                 onFidoTokenEvent.emit(result)
@@ -170,12 +169,11 @@ class CreditOnfidoViewModel @Inject constructor(
                 result.data,
                 object : OnfidoResultListener {
                     override fun userCompleted(captures: Captures) {
-                        countDownTimer.resumeTimer()
                         onCallOnfidoCheckProcess(pkUser, identification, idBrand ?: 0, idUserRequest, email)
                         if (idPrint == ID_PRINT_EMPTY) {
                             onCallSaveCreditOperation()
                         } else {
-                            navigateToCorrectScreen()
+                            navigateToCorrectScreen(SignDocumentOrigin.OnFidoSecondTime)
                         }
                     }
 
@@ -239,7 +237,7 @@ class CreditOnfidoViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess {
                     idPrint = it.idPrint
-                    navigateToCorrectScreen()
+                    navigateToCorrectScreen(SignDocumentOrigin.OnFidoFirstTime)
                 }
                 result.onFailure {
                     uiState = uiState.copy(
@@ -253,7 +251,7 @@ class CreditOnfidoViewModel @Inject constructor(
         }
     }
 
-    private fun navigateToCorrectScreen() {
+    private fun navigateToCorrectScreen(signDocumentOrigin: SignDocumentOrigin) {
         val signDocumentStep = if (idBrand == Brand.ElSalvador.id || idPrint == ID_PRINT_EMPTY) {
             VALIDATE_IDENTITY.value
         } else {
@@ -263,12 +261,12 @@ class CreditOnfidoViewModel @Inject constructor(
                 GENERATE_DOCUMENT_STEP.value
             }
         }
-        onNavigateToSignDocumentScreen(signDocumentStep)
+        onNavigateToSignDocumentScreen(signDocumentStep, signDocumentOrigin)
     }
 
-    private fun onNavigateToSignDocumentScreen(signDocumentStep: String) {
+    private fun onNavigateToSignDocumentScreen(signDocumentStep: String, signDocumentOrigin: SignDocumentOrigin) {
         popAndNavigateTo(
-            "${Screen.SignDocumentProcessScreen.baseRoute}/$signDocumentStep/${SignDocumentOrigin.OnFido.value}/$idPrint/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName",
+            "${Screen.SignDocumentProcessScreen.baseRoute}/$signDocumentStep/${signDocumentOrigin.value}/$idPrint/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName",
             Screen.CreditOnfidoScreen.route
         )
     }

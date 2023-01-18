@@ -78,6 +78,7 @@ fun SignUpPasswordScreen(
                     )
                 )
             )
+            sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnShowCloseIcon(false))
         }
         viewModel.baseEvent.collect { event ->
             when (event) {
@@ -287,19 +288,21 @@ fun SignUpPasswordScreen(
                 state = viewModel.uiState.oneCharacterState
             )
         }
-        CustomCheckBox(
-            checked = viewModel.uiState.isFingerprintChecked,
-            onCheckedChange = {
-                viewModel.onUIEvent(
-                    SignUpPasswordViewModel.UIEvent.OnFingerprintCheckedChanged(
-                        it,
-                        it
+        if (viewModel.biometricHelper.isBiometricAvailable(context)) {
+            CustomCheckBox(
+                checked = viewModel.uiState.isFingerprintChecked,
+                onCheckedChange = {
+                    viewModel.onUIEvent(
+                        SignUpPasswordViewModel.UIEvent.OnFingerprintCheckedChanged(
+                            it,
+                            it
+                        )
                     )
-                )
-            },
-            text = stringResource(id = R.string.sign_in_activate_fingerprint),
-            modifier = Modifier.padding(top = 16.dp)
-        )
+                },
+                text = stringResource(id = R.string.sign_in_activate_fingerprint),
+                modifier = Modifier.padding(top = 16.dp)
+            )
+        }
     }
 
     // Dialog

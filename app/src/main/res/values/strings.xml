@@ -1206,8 +1206,8 @@
 
     <!-- Payment Account -->
     <string name="payment_account_title" translatable="false">Seleccioná la cuenta con la que querés ahorrar</string>
-    <string name="payment_account_colon" translatable="false">MultiMoney Smart | Colones</string>
-    <string name="payment_account_dollar" translatable="false">MultiMoney Smart | Dólares</string>
+    <string name="payment_account_colon" translatable="false">Mi Cuenta Smart | Colones</string>
+    <string name="payment_account_dollar" translatable="false">Mi Cuenta Smart | Dólares</string>
 
     <!-- IBAN Account -->
     <string name="payment_account_iban_title" translatable="false">¿En qué cuenta IBAN querés recibir tu dinero?</string>

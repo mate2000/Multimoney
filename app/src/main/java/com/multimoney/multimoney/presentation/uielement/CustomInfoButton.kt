@@ -6,7 +6,12 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonColors
@@ -25,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.constraintlayout.compose.Dimension.Companion
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.GradientGrey1
 import com.multimoney.multimoney.presentation.theme.GradientGrey2
@@ -82,7 +88,7 @@ fun CustomInfoButton(
                     colors = listOf(gradientBorderOneColor, gradientBorderTwoColor)
                 ),
                 shape = RoundedCornerShape(20.dp)
-            ),
+            ).wrapContentHeight(),
         shape = RoundedCornerShape(20.dp),
         colors = buttonColor,
         contentPadding = PaddingValues(0.dp),
@@ -134,8 +140,10 @@ fun CustomInfoButton(
                     modifier = Modifier.constrainAs(subTitleId) {
                         top.linkTo(titleId.bottom, margin = 4.dp)
                         start.linkTo(titleId.start)
-                        if (startIcon != null) bottom.linkTo(startIconId.bottom)
-                        height = Dimension.fillToConstraints
+                        bottom.linkTo(parent.bottom, margin = 10.dp)
+                        end.linkTo(endIconId.start)
+                        width = Dimension.fillToConstraints
+                        height = Dimension.wrapContent
                     },
                     style = Typography.caption.copy(fontSize = 13.sp),
                     color = subtitleColor

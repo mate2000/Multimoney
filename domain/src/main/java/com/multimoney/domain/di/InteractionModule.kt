@@ -198,6 +198,8 @@ import com.multimoney.domain.interaction.virtualcard.MutationPayCreditVDUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationPayCreditVDUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.MutationUpdateCardVDUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationUpdateCardVDUseCaseImpl
+import com.multimoney.domain.interaction.virtualcard.MutationDeleteCardVDUseCase
+import com.multimoney.domain.interaction.virtualcard.MutationDeleteCardVDUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCase
 import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCaseImpl
 import com.multimoney.domain.repository.BalanceRepository
@@ -689,6 +691,11 @@ class InteractionModule {
     @Singleton
     fun provideMutationUpdateCardVDUseCase(virtualCardRepository: VirtualCardRepository): MutationUpdateCardVDUseCase =
         MutationUpdateCardVDUseCaseImpl(virtualCardRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationDeleteCardVDUseCase(virtualCardRepository: VirtualCardRepository): MutationDeleteCardVDUseCase =
+        MutationDeleteCardVDUseCaseImpl(virtualCardRepository)
 
     @Provides
     @Singleton

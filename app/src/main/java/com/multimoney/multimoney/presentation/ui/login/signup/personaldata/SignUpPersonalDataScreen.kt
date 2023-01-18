@@ -65,6 +65,10 @@ fun SignUpPersonalDataScreen(
     }
 
     LaunchedEffect(true) {
+        sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnShowCloseIcon(false))
+    }
+
+    LaunchedEffect(true) {
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormValidateCompleted -> sharedViewModel.onUIEvent(OnContinueEnable(event.isFormValid))

@@ -67,6 +67,7 @@ fun SignUpScreen(
     ) {
         Column {
             TopNavBar(
+                isRightButtonVisible = viewModel.uiState.isCloseVisible,
                 onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
                 onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) }
             )

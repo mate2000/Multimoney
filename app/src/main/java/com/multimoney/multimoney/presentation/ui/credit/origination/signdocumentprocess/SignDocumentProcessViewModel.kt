@@ -53,6 +53,7 @@ import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import timber.log.Timber
 
 @HiltViewModel
 class SignDocumentProcessViewModel @Inject constructor(
@@ -121,6 +122,7 @@ class SignDocumentProcessViewModel @Inject constructor(
                     result.onSuccess {
                         handleEvents(creditContractEvent = it)
                     }.onFailure {
+                        Timber.wtf("Subscription Error", "Subscription Error ${it.getError()}")
                         while (numAttemptsToStartSubscription < MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION) {
                             onListenCreditContractEventSubscription(idPrint, idBrand)
                             numAttemptsToStartSubscription++

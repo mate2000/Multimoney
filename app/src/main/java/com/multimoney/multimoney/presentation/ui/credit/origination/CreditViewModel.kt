@@ -251,7 +251,7 @@ class CreditViewModel @Inject constructor(
                 result.onFailure {
                     uiState = uiState.copy(
                         openDialog = DialogParameters(
-                            description = it.getError().toString(),
+                            description = it.getError().orEmpty(),
                             isActive = mutableStateOf(true),
                             positiveAction = {
                                 onUIEvent(OnNavigateToHome)

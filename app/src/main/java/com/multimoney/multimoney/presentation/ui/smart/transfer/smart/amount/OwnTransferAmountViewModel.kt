@@ -63,8 +63,12 @@ class OwnTransferAmountViewModel @Inject constructor() : BaseSmartEditAmountView
     }
 
     override fun onContinueClick() {
-        val isValidAmount =
-            (amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0) <= (smartAccount?.totalBalance ?: 0.0)
+        val currentAmount = if (shouldDisplayExchange) {
+            amountUIState.exchangeConvertedAmount
+        } else {
+            amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
+        }
+        val isValidAmount = currentAmount <= (smartAccount?.totalBalance ?: 0.0)
         amountUIState = if (isValidAmount) {
             amountUIState.copy(
                 isAmountValid = true,

@@ -128,8 +128,8 @@ fun SavingAmountContent(viewModel: SavingAmountViewModel = hiltViewModel()) {
             },
             onDebounceValidation = { viewModel.onAmountUIEvent(OnAmountCompleted(it)) },
             currency = viewModel.amountUIState.currency,
-            exchangeRate = viewModel.amountUIState.exchangeRateLabel ?: "",
-            convertedTotal = viewModel.amountUIState.convertedAmountLabel ?: "",
+            exchangeRate = viewModel.amountUIState.exchangeRateLabel.orEmpty(),
+            convertedTotal = viewModel.amountUIState.convertedAmountLabel.orEmpty(),
             shouldDisplayExchange = viewModel.shouldDisplayExchange,
             onContinueClick = { viewModel.onAmountUIEvent(OnContinueClick) },
             enableButton = viewModel.amountUIState.enableButton,
@@ -190,20 +190,20 @@ private fun SavingAmountBottomSheet(viewModel: SavingAmountViewModel) {
         } else {
             null
         },
-        fromLabel = stringResource(viewModel.baseUIState.originAccountDisplay?.sheetLabel ?: R.string.empty),
-        fromTitle = viewModel.baseUIState.originAccountDisplay?.sheetTitle
-            ?: stringResource(viewModel.baseUIState.originAccountDisplay?.sheetTitleResource ?: R.string.empty),
-        fromSubtitle = viewModel.baseUIState.originAccountDisplay?.sheetSubtitle
-            ?: stringResource(viewModel.baseUIState.originAccountDisplay?.sheetSubtitleResource ?: R.string.empty),
-        fromIcon = viewModel.baseUIState.originAccountDisplay?.icon,
+        fromLabel = stringResource(viewModel.amountUIState.originAccountDisplay?.sheetLabel ?: R.string.empty),
+        fromTitle = viewModel.amountUIState.originAccountDisplay?.sheetTitle
+            ?: stringResource(viewModel.amountUIState.originAccountDisplay?.sheetTitleResource ?: R.string.empty),
+        fromSubtitle = viewModel.amountUIState.originAccountDisplay?.sheetSubtitle
+            ?: stringResource(viewModel.amountUIState.originAccountDisplay?.sheetSubtitleResource ?: R.string.empty),
+        fromIcon = viewModel.amountUIState.originAccountDisplay?.icon,
         toLabel = stringResource(R.string.smart_payment_amount_bottom_sheet_to),
-        toTitle = viewModel.baseUIState.destinyAccountDisplay?.sheetTitle
-            ?: stringResource(viewModel.baseUIState.destinyAccountDisplay?.sheetTitleResource ?: R.string.empty),
-        toSubtitle = viewModel.baseUIState.destinyAccountDisplay?.sheetSubtitle
+        toTitle = viewModel.amountUIState.destinyAccountDisplay?.sheetTitle
+            ?: stringResource(viewModel.amountUIState.destinyAccountDisplay?.sheetTitleResource ?: R.string.empty),
+        toSubtitle = viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitle
             ?: stringResource(
-                viewModel.baseUIState.destinyAccountDisplay?.sheetSubtitleResource ?: R.string.empty
+                viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitleResource ?: R.string.empty
             ),
-        toIcon = viewModel.baseUIState.destinyAccountDisplay?.icon,
+        toIcon = viewModel.amountUIState.destinyAccountDisplay?.icon,
         buttonText = stringResource(R.string.button_continue),
         buttonAction = { viewModel.onAmountUIEvent(OnCallProcessTransfer) }
     )

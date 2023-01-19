@@ -56,13 +56,13 @@ fun SmartPaymentSuccessScreen(
         ) {
             SmartPaymentInfoItem(
                 verticalAlignment = Alignment.CenterVertically,
-                icon = viewModel.baseUIState.originAccountDisplay?.icon ?: 0,
+                icon = viewModel.amountUIState.originAccountDisplay?.icon ?: 0,
                 title = if (viewModel.idBrand == Brand.ElSalvador.id) {
                     stringResource(R.string.smart_payment_card_bank_label)
                 } else {
                     stringResource(R.string.smart_payment_origin_account_label)
                 },
-                subtitle = viewModel.baseUIState.originAccountDisplay?.sheetSubtitle ?: ""
+                subtitle = viewModel.amountUIState.originAccountDisplay?.sheetSubtitle ?: ""
             )
 
             SmartPaymentInfoItem(

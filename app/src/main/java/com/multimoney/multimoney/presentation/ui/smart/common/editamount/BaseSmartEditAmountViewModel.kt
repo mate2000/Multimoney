@@ -37,8 +37,8 @@ import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getCurrentTime
 import com.multimoney.multimoney.presentation.util.getFullMaskedAccountIban
-import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
+import com.multimoney.multimoney.presentation.util.getMaskedVisaAccount
 import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import com.multimoney.multimoney.presentation.util.workers.startTimedNotification
@@ -62,7 +62,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
     @Inject
     protected lateinit var processSinpeTransferUseCase: MutationProcessSinpeTransferUseCase
 
-    var baseUIState by mutableStateOf(BaseUIState())
+    var amountUIState by mutableStateOf(AmountUIState())
         protected set
 
     // stateless
@@ -104,7 +104,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                 destinyCurrency = ibanAccount?.currencyId?.getCurrencyFromId()
                 shouldDisplayExchange = originCurrency != destinyCurrency
 
-                baseUIState = baseUIState.copy(
+                amountUIState = amountUIState.copy(
                     originAccountDisplay = DisplayAccount(
                         sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_card_CR,
                         sheetTitleResource = originCurrency?.myAccountSmart,
@@ -113,10 +113,10 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                     ),
                     destinyAccountDisplay = DisplayAccount(
                         sheetLabel = R.string.smart_payment_sheet_to_account,
-                        sheetTitle = ibanAccount?.nameAccount ?: "",
+                        sheetTitle = ibanAccount?.nameAccount.orEmpty(),
                         sheetSubtitle = getFullMaskedAccountIban(
-                            ibanAccount?.bank ?: "",
-                            ibanAccount?.sinpeAccount ?: ""
+                            ibanAccount?.bank.orEmpty(),
+                            ibanAccount?.sinpeAccount.orEmpty()
                         ),
                         icon = destinyCurrency?.accountIcon
                     ),
@@ -130,7 +130,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                 destinyCurrency = smartDestiny?.currencyID?.getCurrencyFromId()
                 shouldDisplayExchange = true
 
-                baseUIState = baseUIState.copy(
+                amountUIState = amountUIState.copy(
                     originAccountDisplay = DisplayAccount(
                         sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_card_CR,
                         sheetTitleResource = originCurrency?.myAccountSmart,
@@ -153,11 +153,11 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                 destinyCurrency = smartAccount?.currencyID?.getCurrencyFromId()
                 shouldDisplayExchange = originCurrency != destinyCurrency
 
-                baseUIState = baseUIState.copy(
+                amountUIState = amountUIState.copy(
                     originAccountDisplay = DisplayAccount(
                         sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_card_CR,
-                        sheetTitle = ibanAccount?.bank ?: "",
-                        sheetSubtitle = getMaskedAccountIban(ibanAccount?.sinpeAccount ?: ""),
+                        sheetTitle = ibanAccount?.bank.orEmpty(),
+                        sheetSubtitle = getMaskedAccountIban(ibanAccount?.sinpeAccount.orEmpty()),
                         icon = originCurrency?.accountIcon
                     ),
                     destinyAccountDisplay = DisplayAccount(
@@ -176,11 +176,11 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                 destinyCurrency = smartAccount?.currencyID?.getCurrencyFromId()
                 shouldDisplayExchange = originCurrency != destinyCurrency
 
-                baseUIState = baseUIState.copy(
+                amountUIState = amountUIState.copy(
                     originAccountDisplay = DisplayAccount(
                         sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_card,
-                        sheetTitle = visaAccount?.detail ?: "",
-                        sheetSubtitle = getMaskedAccount(visaAccount?.cardMaskedNumber ?: ""),
+                        sheetTitle = visaAccount?.detail.orEmpty(),
+                        sheetSubtitle = getMaskedVisaAccount(visaAccount?.cardMaskedNumber.orEmpty()),
                         icon = R.drawable.ic_visa_card_item
                     ),
                     destinyAccountDisplay = DisplayAccount(

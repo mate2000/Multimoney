@@ -143,7 +143,7 @@ fun PaymentSuccessResult(
                     if (exchangedAmount.isNullOrBlank().not() && isTransferOperation) {
                         ExchangeTotalLabel(
                             showIcon = false,
-                            totalConverted = exchangedAmount ?: ""
+                            totalConverted = exchangedAmount.orEmpty()
                         )
                     }
                 }

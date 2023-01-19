@@ -6,11 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
@@ -30,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.constraintlayout.compose.Dimension.Companion
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.GradientGrey1
 import com.multimoney.multimoney.presentation.theme.GradientGrey2
@@ -140,8 +135,10 @@ fun CustomInfoButton(
                     modifier = Modifier.constrainAs(subTitleId) {
                         top.linkTo(titleId.bottom, margin = 4.dp)
                         start.linkTo(titleId.start)
-                        bottom.linkTo(parent.bottom, margin = 10.dp)
-                        end.linkTo(endIconId.start)
+                        if (startIcon == null) bottom.linkTo(parent.bottom, margin = 10.dp)
+                        else bottom.linkTo(startIconId.bottom)
+                        if (endIcon == null) end.linkTo(parent.end, margin = 10.dp)
+                        else end.linkTo(endIconId.start, margin = 10.dp)
                         width = Dimension.fillToConstraints
                         height = Dimension.wrapContent
                     },

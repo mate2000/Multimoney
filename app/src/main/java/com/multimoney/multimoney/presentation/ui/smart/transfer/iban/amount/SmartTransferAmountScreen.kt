@@ -103,7 +103,7 @@ fun SmartTransferAmountContent(viewModel: SmartTransferAmountViewModel = hiltVie
             originAccountSubtitle = stringResource(
                 id = viewModel.fromSmartLabel,
                 getMaskedAccountIban(
-                    viewModel.smartAccount?.ibanAccountNumber ?: "",
+                    viewModel.smartAccount?.ibanAccountNumber.orEmpty(),
                     stringResource(id = R.string.payment_account_masked_text)
                 )
             ),
@@ -119,8 +119,8 @@ fun SmartTransferAmountContent(viewModel: SmartTransferAmountViewModel = hiltVie
                 viewModel.totalBalanceLabel
             ),
             currency = viewModel.amountUIState.currency,
-            exchangeRate = viewModel.amountUIState.exchangeRateLabel ?: "",
-            convertedTotal = viewModel.amountUIState.convertedAmountLabel ?: "",
+            exchangeRate = viewModel.amountUIState.exchangeRateLabel.orEmpty(),
+            convertedTotal = viewModel.amountUIState.convertedAmountLabel.orEmpty(),
             shouldDisplayExchange = viewModel.shouldDisplayExchange,
             onContinueClick = { viewModel.onAmountUIEvent(OnContinueClick) },
             enableButton = viewModel.amountUIState.enableButton,
@@ -139,16 +139,25 @@ private fun SmartTransferBottomSheet(viewModel: SmartTransferAmountViewModel) {
         saveSendTitleResource = R.string.smart_payment_sheet_send_title,
         amount = viewModel.getFormattedAmount(),
         exchangedAmount = if (viewModel.shouldDisplayExchange) viewModel.amountUIState.convertedAmountLabel else null,
-        fromLabel = stringResource(viewModel.baseUIState.originAccountDisplay?.sheetLabel ?: R.string.empty),
-        fromIcon = viewModel.baseUIState.originAccountDisplay?.icon,
-        fromTitle = viewModel.baseUIState.originAccountDisplay?.sheetTitle
-            ?: stringResource(viewModel.baseUIState.originAccountDisplay?.sheetTitleResource ?: R.string.empty),
-        fromSubtitle = viewModel.baseUIState.originAccountDisplay?.sheetSubtitle
-            ?: stringResource(viewModel.baseUIState.originAccountDisplay?.sheetSubtitleResource ?: R.string.empty),
-        toLabel = stringResource(viewModel.baseUIState.destinyAccountDisplay?.sheetLabel ?: R.string.empty),
-        toIcon = viewModel.baseUIState.destinyAccountDisplay?.icon,
-        toTitle = viewModel.baseUIState.destinyAccountDisplay?.sheetTitle ?: "",
-        toSubtitle = viewModel.baseUIState.destinyAccountDisplay?.sheetSubtitle ?: "",
+        fromLabel = stringResource(
+            viewModel.amountUIState.originAccountDisplay?.sheetLabel ?: R.string.empty
+        ),
+        fromIcon = viewModel.amountUIState.originAccountDisplay?.icon,
+        fromTitle = viewModel.amountUIState.originAccountDisplay?.sheetTitle
+            ?: stringResource(
+                viewModel.amountUIState.originAccountDisplay?.sheetTitleResource ?: R.string.empty
+            ),
+        fromSubtitle = viewModel.amountUIState.originAccountDisplay?.sheetSubtitle
+            ?: stringResource(
+                viewModel.amountUIState.originAccountDisplay?.sheetSubtitleResource
+                    ?: R.string.empty
+            ),
+        toLabel = stringResource(
+            viewModel.amountUIState.destinyAccountDisplay?.sheetLabel ?: R.string.empty
+        ),
+        toIcon = viewModel.amountUIState.destinyAccountDisplay?.icon,
+        toTitle = viewModel.amountUIState.destinyAccountDisplay?.sheetTitle.orEmpty(),
+        toSubtitle = viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitle.orEmpty(),
         motive = viewModel.amountUIState.motive,
         buttonText = stringResource(R.string.payment_amount_bottom_sheet_send_button),
         buttonAction = { viewModel.onAmountUIEvent(OnCallProcessTransfer) }

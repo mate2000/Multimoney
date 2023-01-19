@@ -94,7 +94,7 @@ fun SmartPaymentBottomSheet(
             )
             if (exchangedAmount.isNullOrBlank().not()) {
                 ExchangeTotalLabel(
-                    totalConverted = exchangedAmount ?: ""
+                    totalConverted = exchangedAmount.orEmpty()
                 )
             }
             Text(
@@ -114,7 +114,7 @@ fun SmartPaymentBottomSheet(
                 imageModifier = Modifier.size(48.dp),
                 startIcon = fromIcon,
                 title = fromTitle,
-                subtitle = fromSubtitle ?: "",
+                subtitle = fromSubtitle.orEmpty(),
                 endIcon = null,
                 enable = false
             )
@@ -142,7 +142,7 @@ fun SmartPaymentBottomSheet(
                     .height(78.dp),
                 startIcon = toIcon,
                 title = toTitle,
-                subtitle = toSubtitle ?: "",
+                subtitle = toSubtitle.orEmpty(),
                 endIcon = null,
                 enable = false
             )

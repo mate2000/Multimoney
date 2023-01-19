@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.APPROVED
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.FAILED
@@ -34,7 +35,6 @@ import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.balance.Account
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.balance.BalanceCredit
-import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.balance.Summary
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditMovementsResult
@@ -81,6 +81,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnShareIbanAccount
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnVisaCardExpiredDialog
 import com.multimoney.multimoney.presentation.util.FilterDate
 import com.multimoney.multimoney.presentation.util.NfcHelper
 import com.multimoney.multimoney.presentation.util.PAGE_SIZE
@@ -89,6 +90,7 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentOrigin
+import com.multimoney.multimoney.presentation.util.catalog.ProfileCardListOrigin
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
 import com.multimoney.multimoney.presentation.util.getPreviousDate
@@ -97,11 +99,14 @@ import com.multimoney.multimoney.util.NovoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
+    private val dataStorePreferences: DataStorePreferences,
     private val helper: ShareHelper,
     private val nfcHelper: NfcHelper,
     private val novoHelper: NovoHelper,
@@ -179,6 +184,41 @@ class ProductViewModel @Inject constructor(
                     R.string.detail
                 }
             )
+        }
+    }
+
+    private fun navigateToMyCards() {
+        navigateTo(
+            route = "${Screen.ProfileCardListScreen.baseRoute}/${email}/${uiState.idBrand}/${identification}/${ProfileCardListOrigin.Product.value}"
+        )
+    }
+
+    private fun onVisaCardExpiredDialog(
+        idBrand: String,
+        balance: Balance?
+    ) {
+        if (idBrand != Brand.CostaRica.id.toString()) {
+            if (balance?.balanceCardInformation?.cardInformation?.status == "A") {
+                viewModelScope.launch {
+                    if (dataStorePreferences.isVisaCardExpiredEnabled().first()) {
+                        uiState = uiState.copy(
+                            openDialog = DialogParameters(
+                                titleResource = R.string.product_visa_card_expired_dialog_title,
+                                descriptionResource = R.string.product_visa_card_expired_dialog_description,
+                                positiveResource = R.string.product_visa_card_expired_dialog_update_label,
+                                negativeResource = R.string.product_visa_card_expired_dialog_hide_label,
+                                positiveAction = { navigateToMyCards() },
+                                negativeAction = {
+                                    viewModelScope.launch {
+                                        dataStorePreferences.isVisaCardExpiredDialogEnabled(false)
+                                    }
+                                },
+                                isActive = mutableStateOf(true)
+                            )
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -995,6 +1035,10 @@ class ProductViewModel @Inject constructor(
             is OnCreateMultimoneyVisa -> onCreateMultimoneyVisa(uiEvent.onLoadingValueChange)
             is OnNoVoConfig -> onConfigNovoSdk()
             is OnGetSmartContent -> getSmartContent()
+            is OnVisaCardExpiredDialog -> onVisaCardExpiredDialog(
+                idBrand = uiEvent.idBrand,
+                balance = uiEvent.balance
+            )
         }
     }
 
@@ -1075,6 +1119,11 @@ class ProductViewModel @Inject constructor(
 
         object OnNoVoConfig : UIEvent()
         data class OnCartButtonClickWithoutSmartBalance(val onSavingCLick: () -> Unit) : UIEvent()
+
+        data class OnVisaCardExpiredDialog(
+            val idBrand: String,
+            val balance: Balance?
+        ) : UIEvent()
     }
 
     sealed class BaseEvent {

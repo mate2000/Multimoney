@@ -96,6 +96,12 @@ class DataStorePreferences @Inject constructor(
 
     fun isContactPermissionRequested(): Flow<Boolean> = getData(CONTACT_PERMISSION_STATE_KEY, false)
 
+    suspend fun isVisaCardExpiredDialogEnabled(dialogEnabled: Boolean) {
+        setData(VISA_CARD_EXPIRED_DIALOG_KEY, dialogEnabled)
+    }
+
+    fun isVisaCardExpiredEnabled(): Flow<Boolean> = getData(VISA_CARD_EXPIRED_DIALOG_KEY, true)
+
 
     companion object {
         private val UNIQUE_ID = stringPreferencesKey("unique_id")
@@ -110,5 +116,6 @@ class DataStorePreferences @Inject constructor(
         private val BIOMETRICS_ENABLED_KEY = booleanPreferencesKey("biometrics_enabled_key")
         private val ON_BOARDING_ENABLED_KEY = booleanPreferencesKey("on_boarding_enabled_key")
         private val CONTACT_PERMISSION_STATE_KEY = booleanPreferencesKey("contact_permission_state_key")
+        private val VISA_CARD_EXPIRED_DIALOG_KEY = booleanPreferencesKey("visa_card_expired_dialog_key")
     }
 }

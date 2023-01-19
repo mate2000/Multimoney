@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.home.profile.cards.editcard
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -121,6 +122,9 @@ fun EditCardScreen(
 
     LoadingIndicator(isLoading = viewModel.uiState.isLoading)
     Dialog(openDialog = viewModel.uiState.openDialog)
+    BackHandler {
+        viewModel.onUIEvent(OnBackClick(focusManager))
+    }
 }
 
 @Composable

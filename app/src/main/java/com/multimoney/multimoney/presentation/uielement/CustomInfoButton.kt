@@ -137,12 +137,14 @@ fun CustomInfoButton(
                         top.linkTo(titleId.bottom, margin = 4.dp)
                         start.linkTo(titleId.start)
                         bottom.linkTo(parent.bottom, margin = 10.dp)
-                        end.linkTo(endIconId.start)
+                        end.linkTo(endIconId.start, margin = 10.dp)
                         width = Dimension.fillToConstraints
                         height = Dimension.wrapContent
                     },
                     style = Typography.caption,
-                    color = subtitleColor
+                    color = subtitleColor,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
                 if (subtitle2.isNotEmpty()) {
                     Text(

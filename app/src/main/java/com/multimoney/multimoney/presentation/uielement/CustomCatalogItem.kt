@@ -86,7 +86,7 @@ fun CustomCatalogItem(
                 alignment = Alignment.BottomCenter,
             )
 
-            Text(
+            AutoSizeText(
                 modifier = Modifier
                     .padding(
                         top = 12.dp,
@@ -95,12 +95,12 @@ fun CustomCatalogItem(
                     )
                     .fillMaxHeight(),
                 text = label,
-                textAlign = TextAlign.Center,
-                style = Typography.subtitle1.copy(
+                textStyle = Typography.subtitle1.copy(
                     fontWeight = FontWeight.SemiBold,
                     color = labelColor,
                     textAlign = TextAlign.Center
-                )
+                ),
+                softWrap = true
             )
         }
     }

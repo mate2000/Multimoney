@@ -30,6 +30,7 @@ fun AutoSizeText(
     text: String,
     textStyle: TextStyle = LocalTextStyle.current,
     color: Color = Color.Unspecified,
+    softWrap: Boolean = false
 ) {
     var scaledTextStyle by remember { mutableStateOf(textStyle) }
     var readyToDraw by remember { mutableStateOf(false) }
@@ -42,7 +43,7 @@ fun AutoSizeText(
             }
         },
         style = scaledTextStyle,
-        softWrap = false,
+        softWrap = softWrap,
         onTextLayout = { textLayoutResult ->
             if (textLayoutResult.didOverflowWidth || textLayoutResult.didOverflowHeight) {
                 scaledTextStyle =

@@ -101,7 +101,11 @@ fun CryptoFooterExpandedContent(
                     Column(
                         modifier = Modifier.verticalScroll(rememberScrollState())
                     ) {
-                        CryptoCurrencies(items = balance?.balanceCryptoAccount?.items)
+                        CryptoCurrencies(
+                            items = balance?.balanceCryptoAccount?.items,
+                            itemClick = {},
+                            viewAllClick = { actionWallet() }
+                        )
                         CryptoMovementsSection(
                             cryptoMovements = cryptoMovements,
                             onShowAllClick = onShowAllClick

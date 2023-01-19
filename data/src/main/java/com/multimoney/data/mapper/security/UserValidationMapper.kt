@@ -18,6 +18,9 @@ private fun UserValidationMutation.UserValidation.mapToDomainModel() = UserData(
     countryCode = countryCode,
     currentStep = currentStep ?: "",
     userStatus = userStatus,
+    isNewUser = isNewUser,
+    maskedMail = maskedMail,
+    maskedPhoneNumber = maskedPhoneNumber,
     message = message,
     status = status
 )

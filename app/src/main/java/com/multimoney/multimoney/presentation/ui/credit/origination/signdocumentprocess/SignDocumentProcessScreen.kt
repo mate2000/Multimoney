@@ -10,8 +10,8 @@ import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.SimulateUserInteraction
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnAlertButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnAlertCloseClick
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallSubscriptionCreditContractEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallGetLinkCreditContractEvent
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallSubscriptionCreditContractEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnShowDialogInformation
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.documentgeneration.DocumentGenerationScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.signdocument.SignDocumentScreen
@@ -47,7 +47,9 @@ fun SignDocumentProcessScreen(
     }
 
     LaunchedEffect(true) {
-        viewModel.emitBaseEvent(SimulateUserInteraction)
+        viewModel.apply {
+            mmCountDownTimer.resumeTimer()
+        }
     }
 
     if (viewModel.uiState.isAlertResultVisible) {

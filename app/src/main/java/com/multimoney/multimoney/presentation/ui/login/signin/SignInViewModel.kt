@@ -16,7 +16,12 @@ import com.amplifyframework.auth.cognito.options.AWSCognitoAuthSignInOptions
 import com.amplifyframework.auth.result.AuthSessionResult
 import com.amplifyframework.core.Amplify
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.domain.interaction.security.QueryValidateUserExistsUseCase
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onMessage
+import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
@@ -26,6 +31,7 @@ import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnInitializeBiometricPrompt
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnNavigateToForgotPassword
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnNavigateToOTPScreen
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnNavigateToSignUp
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricPromptForDecryption
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricPromptForEncryption
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricSignInChanged
@@ -34,15 +40,18 @@ import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnUserPasswordValueChange
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnValidateUserEmail
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
+import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.checkIfEmulator
 import com.multimoney.multimoney.presentation.util.getAppVersion
 import com.multimoney.multimoney.presentation.util.getDeviceBrand
 import com.multimoney.multimoney.presentation.util.getDeviceModel
 import com.multimoney.multimoney.presentation.util.getNavParam
+import com.multimoney.multimoney.presentation.util.isCognitoErrorCode
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -50,7 +59,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SignInViewModel @Inject constructor(
     private val biometricHelper: BiometricHelper,
-    private val dataStorePreferences: DataStorePreferences
+    private val dataStorePreferences: DataStorePreferences,
+    private val queryValidateUserExistsUseCase: QueryValidateUserExistsUseCase
 ) : BaseViewModel(false) {
 
     // UIState
@@ -146,38 +156,84 @@ class SignInViewModel @Inject constructor(
                                             }
                                         }
                                     }, {
-                                        cognitoError()
+                                        callQueryValidationUserExistsUseCase()
                                     })
                                 }
-                                AuthSessionResult.Type.FAILURE -> cognitoError()
+                                AuthSessionResult.Type.FAILURE -> callQueryValidationUserExistsUseCase()
                             }
                         }, {
-                            cognitoError()
+                            callQueryValidationUserExistsUseCase()
                         })
                     } else {
-                        cognitoError()
+                        callQueryValidationUserExistsUseCase()
                     }
                 },
                 {
-                    if (isSessionActiveOnAnotherDevice(it)) {
+                    checkSessionState(it)
+                }
+            )
+        }, {
+            callQueryValidationUserExistsUseCase()
+        })
+    }
+
+    private fun checkSessionState(authException: AuthException) = when {
+        authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.SessionActive.code) == true ->
+            uiState =
+                uiState.copy(
+                    openDialog = DialogParameters(
+                        titleResource = string.sign_in_session_active_on_another_device_title,
+                        descriptionResource = string.sign_in_session_open_here_close_another,
+                        positiveResource = string.sign_in_dialog_sign_in_here_button,
+                        negativeResource = string.sign_in_dialog_exit_button,
+                        positiveAction = { onUIEvent(OnNavigateToOTPScreen) },
+                        negativeAction = { onUIEvent(OnCloseDialog) },
+                        dismissAction = { onUIEvent(OnCloseDialog) },
+                        isActive = mutableStateOf(true)
+                    )
+                )
+        authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.SessionBlocked.code) == true ->
+            uiState =
+                uiState.copy(
+                    openDialog = DialogParameters(
+                        titleResource = string.sign_in_session_blocked_title,
+                        descriptionResource = string.sign_in_session_blocked_description,
+                        isActive = mutableStateOf(true)
+                    )
+                )
+        else -> callQueryValidationUserExistsUseCase()
+    }
+
+    private fun callQueryValidationUserExistsUseCase() =
+        executeUseCase {
+            queryValidateUserExistsUseCase(
+                email = uiState.userEmail
+            ).collectLatest { result ->
+                result.onSuccess { userData ->
+                    if (userData?.isNewUser == false) {
                         uiState = uiState.copy(
                             openDialog = DialogParameters(
+                                titleResource = string.sign_in_dialog_user_exists_title,
+                                descriptionResource = string.sign_in_dialog_user_exists_description,
+                                positiveResource = string.button_continue,
+                                negativeResource = string.common_return,
+                                positiveAction = { onNavigateToSignUp() },
+                                negativeAction = { onUIEvent(OnCloseDialog) },
+                                dismissAction = { onUIEvent(OnCloseDialog) },
                                 isActive = mutableStateOf(true)
-                            )
+                            ),
+                            isLoading = false
                         )
                     } else {
                         cognitoError()
                     }
+                }.onMessage {
+                    cognitoError()
+                }.onFailure {
+                    cognitoError()
                 }
-            )
-        }, {
-            cognitoError()
-        })
-    }
-
-    private fun isSessionActiveOnAnotherDevice(exception: AuthException): Boolean {
-        return exception.cause?.message?.contains(""""$CODE_KEYWORD":"$SESSION_ACTIVE_ERROR_CODE"""") == true
-    }
+            }
+        }
 
     private fun onCloseDialog() {
         uiState = uiState.copy(
@@ -200,6 +256,7 @@ class SignInViewModel @Inject constructor(
         dataStorePreferences.setPkUser(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_PK_USER))
         dataStorePreferences.setIdentification(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_IDENTIFICATION))
         dataStorePreferences.setUserEmail(uiState.userEmail)
+        dataStorePreferences.setUserPhoneNumberWithCode(authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.phoneNumber() }?.value.orEmpty())
     }
 
     private fun isFormValid() {
@@ -354,6 +411,8 @@ class SignInViewModel @Inject constructor(
         popTo = Screen.SignInScreen.route
     )
 
+    private fun onNavigateToSignUp() = navigateTo(route = "${Screen.SignUpScreen.baseRoute}/".plus(0))
+
     private fun initializeBiometricPrompt(
         biometricPromptTitle: String,
         biometricPromptDescription: String,
@@ -425,7 +484,6 @@ class SignInViewModel @Inject constructor(
         val showBiometricSignIn: Boolean = false,
         val isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters()
-
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -457,6 +515,7 @@ class SignInViewModel @Inject constructor(
             is OnNavigateToForgotPassword -> onNavigateToForgotPassword()
             is OnCloseDialog -> onCloseDialog()
             is OnNavigateToOTPScreen -> onNavigateToOTPScreen()
+            is OnNavigateToSignUp -> onNavigateToSignUp()
         }
     }
 
@@ -496,6 +555,7 @@ class SignInViewModel @Inject constructor(
         object OnValidateUserEmail : UIEvent()
         object OnCallCognitoSignIn : UIEvent()
         object OnNavigateToForgotPassword : UIEvent()
+        object OnNavigateToSignUp : UIEvent()
     }
 
     companion object {
@@ -508,7 +568,5 @@ class SignInViewModel @Inject constructor(
         const val DEVICE_NAME = "DeviceName"
         const val IP_ADDRESS = "IpAddress"
         const val FORCE = "Force"
-        const val SESSION_ACTIVE_ERROR_CODE = "2885"
-        const val CODE_KEYWORD = "code"
     }
 }

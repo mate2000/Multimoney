@@ -4,16 +4,24 @@ import android.content.ActivityNotFoundException
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.database.Cursor
+import android.icu.text.NumberFormat
 import android.net.Uri
 import android.nfc.cardemulation.CardEmulation
 import android.os.Build
+import android.provider.ContactsContract
 import android.provider.Settings.Secure
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.All
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Colon
@@ -23,6 +31,7 @@ import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType
 import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.CashPaymentPoint
 import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.TransferBank
 import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.VisaDirect
+import com.multimoney.multimoney.presentation.util.catalog.PhoneCountryCode
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeType
 import com.novopayment.sdk.vts.module.payment.apdu.PaymentService
 import kotlinx.coroutines.delay
@@ -62,6 +71,71 @@ fun Context.openIntent(intent: Intent, onFailure: () -> Unit) {
     } catch (noActivity: ActivityNotFoundException) {
         onFailure()
     }
+}
+
+/**
+ * checkPermission
+ *
+ * This function helps to decide what action to take when requesting a system permission
+ *
+ * Params:
+ * @param permission: the permission to be requested
+ * @param permissionGrantedAction: the action to perform if the permission is already granted
+ * @param showRationaleAction: the action for showing an UI to the user explaining why the permission
+ * is needed in case the user denies (or has already denied) the permission
+ * @param launcher: the activity for result launcher to launch the request permission dialog if the
+ * permission is not granted,
+ * @param comesFromRationale: a flag to know if the launcher is launched from a rationale
+ * @param launchFromRationale: an action to perform before launching the laucher
+ * @param isFirstRequest: flag to know if it is the first time the permission is requested
+ */
+
+fun Context.checkPermission(
+    permission: String,
+    permissionGrantedAction: () -> Unit,
+    showRationaleAction: (isPermanentlyDenied: Boolean) -> Unit,
+    launchFromRationale: (isLastRetry: Boolean) -> Unit,
+    comesFromRationale: Boolean = false,
+    isFirstRequest: Boolean = false,
+    launcher: ManagedActivityResultLauncher<String, Boolean>
+) {
+    val isGranted = ContextCompat.checkSelfPermission(this, permission) == PERMISSION_GRANTED
+    val showRationale = this.findActivity()
+        ?.let { ActivityCompat.shouldShowRequestPermissionRationale(it, permission) }
+    when {
+        isGranted -> permissionGrantedAction()
+        comesFromRationale && showRationale == true -> {
+            launchFromRationale(true)
+            launcher.launch(permission)
+        }
+        comesFromRationale.not() && showRationale == true -> showRationaleAction(false)
+        comesFromRationale.not() && showRationale == false && isFirstRequest.not() -> showRationaleAction(true)
+        isFirstRequest && showRationale == false -> launcher.launch(permission)
+        else -> launcher.launch(permission)
+    }
+}
+
+fun Context.getPhoneNumbers(): List<String> {
+    val context = this
+    val numbers = mutableListOf<String>()
+    val contentResolver = context.contentResolver
+    val phones: Cursor? = contentResolver.query(
+        ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+        null,
+        null,
+        null,
+        null
+    )
+    if (phones != null) {
+        while (phones.moveToNext()) {
+            val index = phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+            if (index >= 0) {
+                numbers.add(phones.getString(index))
+            }
+        }
+        phones.close()
+    }
+    return numbers
 }
 
 fun tickerFlow(
@@ -134,7 +208,7 @@ fun String.getCurrencySymbolValue(): Int {
     }
 }
 
-fun String.getCurrencySymbol(): Int {
+fun String?.getCurrencySymbol(): Int {
     return when (this) {
         Colon.value -> R.string.colon_symbol
         Dollar.value -> R.string.dollar_symbol
@@ -203,9 +277,33 @@ fun Char.isValidAmountCharacter() =
 
 fun String.filterInvalidAmountInput() = this.filter { it.isValidAmountCharacter() }
 
-fun Double.roundToTwoDecimalPlaces() = String.format("%.2f", this)
+fun Double.roundToTwoDecimalPlaces() = String.format(TWO_DECIMALS_FORMAT, this)
+fun Double.roundToTwoDecimalPlacesWithoutNegatives() =
+    String.format(TWO_DECIMALS_FORMAT, this).replace("-", "")
 
-fun Double.roundToTwoDecimalPlacesWithoutNegatives() = String.format("%.2f", this).replace("-", "")
+fun Double.toCurrencyFormat(
+    symbol: String = Dollar.symbol,
+    amountOfDecimals: Int = DEFAULT_AMOUNT_OF_DECIMALS
+): String {
+    val formatter = NumberFormat.getCurrencyInstance()
+    formatter.maximumFractionDigits = amountOfDecimals
+    // remove the default dollar symbol from the custom symbol property
+    return "$symbol${formatter.format(this).replace(Dollar.symbol, "")}"
+}
+
+fun Double.toCurrencyFormatWithoutNegatives(
+    symbol: String = Dollar.symbol,
+    amountOfDecimals: Int = DEFAULT_AMOUNT_OF_DECIMALS
+): String {
+    val formatter = NumberFormat.getCurrencyInstance()
+    formatter.maximumFractionDigits = amountOfDecimals
+    // remove the default dollar symbol from the custom symbol property
+    return "$symbol${
+    formatter.format(this)
+        .replace(Dollar.symbol, "")
+        .replace("-", "")
+    }"
+}
 
 fun String.getCardNumberOne() = this.substring(0, 4)
 fun String.getCardNumberTwo() = this.substring(4, 8)
@@ -256,8 +354,39 @@ fun String.addTextStyleToTextPortion(textToStyle: String, style: TextStyle): Ann
     }
 }
 
+fun String.isCognitoErrorCode(code: String) = contains(""""$CODE_KEYWORD":"$code"""")
+
+fun CharSequence.replaceNumbersToZero() = replace(Regex(DIGITS_REGEX), ZERO_STRING)
+
+fun getCountryCodeByIdBrand(idBrand: Int): String {
+    return when (idBrand) {
+        Brand.ElSalvador.id -> PhoneCountryCode.EL_SALVADOR.code
+        Brand.CostaRica.id -> PhoneCountryCode.COSTA_RICA.code
+        Brand.ElSalvador.id -> PhoneCountryCode.GUATEMALA.code
+        else -> ""
+    }
+}
+
+fun String.capitalizedAllWords(): String =
+    splitByWhiteSpace().joinToString(WHITE_SPACE_SEPARATOR.toString()) { it.capitalized() }
+
+/**
+ * Format a phone number with a  "+Code Number" structure when you have
+ * a Phone Number with a country code and a phone number without a
+ * country code to leave the space in the correct position because
+ * some country codes have different lengths.
+ * @param phoneWithCode The phone number with the country code.
+ * @param phoneWithoutCode The phone number without the country code.
+ */
+fun formatPhoneNumber(phoneWithCode: String?, phoneWithoutCode: String?) =
+    phoneWithCode?.replace(phoneWithoutCode ?: "", " ").plus(phoneWithoutCode)
+
 private const val HEX_FORMAT = "#%02x%02x%02x"
 private const val SPECIAL_CHARACTER_REGEX = "[!\"#\$%&'()*+,-./:;\\\\<=>?@^_`{|}~]"
 private const val NUMBER_REGEX = "[0-9]"
 private const val DECIMAL_SEPARATOR = '.'
 private const val WHITE_SPACE_SEPARATOR = ' '
+private const val CODE_KEYWORD = "code"
+private const val DIGITS_REGEX = "\\d"
+private const val ZERO_STRING = "0"
+private const val DEFAULT_AMOUNT_OF_DECIMALS = 2

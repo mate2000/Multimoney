@@ -142,7 +142,7 @@ class ChangePhoneViewModel @Inject constructor(
     }
 
     private fun onContinueButtonClicked() {
-        navigateTo("${Screen.ProfileVerifyIdentityPhoneScreen.baseRoute}/${uiState.idClient}/${FieldToChange.PHONE.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.newPhoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
+        navigateTo("${Screen.ProfileVerifyIdentityPhoneScreen.baseRoute}/${uiState.idClient}/${FieldToChange.PHONE.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.newPhoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}/${uiState.phoneCode}")
     }
 
     data class UIState(

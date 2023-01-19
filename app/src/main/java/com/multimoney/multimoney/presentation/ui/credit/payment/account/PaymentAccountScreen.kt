@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -77,7 +78,7 @@ fun PaymentAccountContent(
             onRightButtonClick = { viewModel.onUIEvent(OnNavigateBackHome) }
         )
         Text(
-            modifier = Modifier.padding(top = 42.dp, start = 16.dp, end = 16.dp, bottom = 20.dp),
+            modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp),
             text = stringResource(id = viewModel.uiState.titleResource),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText,
@@ -148,12 +149,11 @@ fun PaymentAccountList(
     viewModel: PaymentAccountViewModel = hiltViewModel()
 ) {
     viewModel.uiState.clientBankAccountList?.let { clientBankAccountList ->
-        LazyColumn(modifier = Modifier.padding(top = 20.dp, start = 16.dp, end = 16.dp)) {
+        LazyColumn(modifier = Modifier.padding(top = 32.dp, start = 16.dp, end = 16.dp)) {
             items(clientBankAccountList) { clientBankAccount ->
                 CustomInfoButton(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 12.dp),
+                        .fillMaxWidth(),
                     startIcon = clientBankAccount?.idCurrency?.getCurrencyFromId()?.accountIcon ?: 0,
                     title = clientBankAccount?.bankDescription ?: "",
                     subtitle = getMaskedAccount(
@@ -164,13 +164,14 @@ fun PaymentAccountList(
                         viewModel.onUIEvent(OnClientBankAccountSelected(clientBankAccount))
                     }
                 )
+                Spacer(modifier = Modifier.height(12.dp))
             }
         }
     }
     CustomButton(
         text = stringResource(id = R.string.payment_account_create),
         modifier = Modifier
-            .padding(top = 32.dp)
+            .padding(top = 40.dp)
             .fillMaxWidth(),
         onClick = { viewModel.onUIEvent(OnAddAccountClick) },
         buttonType = CustomButtonType.PrimaryTertiary,

@@ -28,6 +28,7 @@ import com.multimoney.multimoney.presentation.navigation.CHANGING_FIELD
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.NEW_VALUE
 import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
+import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER_CODE
 import com.multimoney.multimoney.presentation.navigation.SEND_METHOD
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
@@ -95,7 +96,8 @@ class ValidateOTPViewModel @Inject constructor(
             userName = savedStateHandle[USER],
             sendMethod = savedStateHandle[SEND_METHOD],
             changingField = savedStateHandle[CHANGING_FIELD],
-            newValue = savedStateHandle[NEW_VALUE]
+            newValue = savedStateHandle[NEW_VALUE],
+            newPhoneNumberCode = savedStateHandle[PHONE_NUMBER_CODE]
         )
         getTextResources()
     }
@@ -322,6 +324,7 @@ class ValidateOTPViewModel @Inject constructor(
             uiState = uiState.copy(isLoading = false)
             viewModelScope.launch {
                 dataStorePreferences.setUserPhoneNumber(uiState.newValue ?: "")
+                dataStorePreferences.setUserPhoneNumberWithCode(uiState.newPhoneNumberCode?.plus(uiState.newValue) ?: "")
                 navigateBack(Screen.HomeScreen.route, isRestart = true)
                 emitBaseEvent(HomeViewModel.BaseEvent.OnPhoneNumberChangedToastEvent)
             }
@@ -389,6 +392,7 @@ class ValidateOTPViewModel @Inject constructor(
         val idClient: Int? = null,
         val userName: String? = null,
         val phoneNumber: String? = null,
+        val newPhoneNumberCode: String? = null,
         val firstName: String? = null,
         val newValue: String? = null,
         val sendMethod: String? = null,
@@ -495,6 +499,5 @@ class ValidateOTPViewModel @Inject constructor(
         const val TIMER_DURATION = 0L
         const val TIMER_DELAY = 1L
         const val APP_SOURCE = 2
-
     }
 }

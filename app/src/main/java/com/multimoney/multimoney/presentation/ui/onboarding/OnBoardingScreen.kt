@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.onboarding
 
-import android.content.pm.ActivityInfo
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,7 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -40,18 +38,14 @@ import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnPress
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
-import com.multimoney.multimoney.presentation.uielement.LockScreenOrientation
 import com.multimoney.multimoney.presentation.uielement.StoryProgressBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
 @Composable
 fun OnBoardingScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit,
-    viewModel: OnBoardingViewModel = hiltViewModel(),
+    viewModel: OnBoardingViewModel = hiltViewModel()
 ) {
-
-    LockScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
     }
@@ -96,7 +90,8 @@ fun OnBoardingScreen(
                     .fillMaxWidth()
                     .padding(top = 30.dp)
                     .weight(
-                        0.14f, false
+                        0.14f,
+                        false
                     ),
                 style = Typography.h3.copy(
                     fontSize = 48.sp,

@@ -137,7 +137,8 @@ fun NavGraphBuilder.cryptoNavGraph(
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(CRYPTO_ASSET) {
-                    defaultValue = ""
+                    nullable = true
+                    defaultValue = null
                     type = NavType.StringType
                 },
             )
@@ -195,10 +196,18 @@ fun NavGraphBuilder.cryptoNavGraph(
                 navArgument(USER) { type = NavType.StringType },
                 navArgument(ID_BRAND) { type = NavType.IntType },
             )
-        ){
+        ) {
             ListCryptoCurrenciesScreen(
-                popBackStack = {
-                    navController.popBackStack()
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
                 }
             )
         }

@@ -533,9 +533,6 @@ fun ProductFooterExpanded(
                     },
                     hasBalanceAction = {
                         viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToBuyCrypto)
-                    },
-                    currencyItemClick = { item ->
-                        viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToCryptoDetailScreen(item))
                     }
                 )
             }

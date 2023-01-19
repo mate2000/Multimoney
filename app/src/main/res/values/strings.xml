@@ -100,6 +100,8 @@
     <string name="sign_in_biometric_enter_with_password" translatable="false">O podés ingresar tu contraseña</string>
     <string name="sign_in_biometric_email_hint" translatable="false">Ingresá tu correo electrónica</string>
     <string name="sign_in_session_active_on_another_device_title" translatable="false">Sesión activa en otro dispositivo</string>
+    <string name="sign_in_session_blocked_title" translatable="false">Sesión activa en otro dispositivo</string>
+    <string name="sign_in_session_blocked_description" translatable="false">Sesión activa en otro dispositivo</string>
     <string name="sign_in_session_open_here_close_another" translatable="false">Al ingresar aquí, cerrarás la sesión que se encuentra abierta en otro dispositivo</string>
     <string name="sign_in_dialog_exit_button" translatable="false">Salir</string>
     <string name="sign_in_dialog_sign_in_here_button" translatable="false">Iniciar sesión aquí</string>
@@ -1099,7 +1101,7 @@
     <!--Crypto Wallet-->
     <string name="crypto_wallet_header_title" translatable="false">Mi portafolio</string>
     <string name="crypto_wallet_balance_section_label" translatable="false">Balance</string>
-    <string name="crypto_wallet_search_crypto_currency" translatable="false">Buscar Criptomoneda</string>
+    <string name="crypto_wallet_search_crypto_currency" translatable="false">Buscar criptomoneda</string>
     <string name="crypto_wallet_show_all_coins" translatable="false">Ver Todas</string>
     <string name="crypto_gains_symbol" translatable="false">+</string>
     <string name="crypto_losses_symbol" translatable="false">-</string>

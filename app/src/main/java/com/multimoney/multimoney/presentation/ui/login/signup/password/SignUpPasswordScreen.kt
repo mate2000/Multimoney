@@ -78,6 +78,7 @@ fun SignUpPasswordScreen(
                     )
                 )
             )
+            sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnShowCloseIcon(false))
         }
         viewModel.baseEvent.collect { event ->
             when (event) {

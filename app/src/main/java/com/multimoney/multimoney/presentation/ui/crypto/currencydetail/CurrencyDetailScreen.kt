@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.crypto.currencydetail
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberAsyncImagePainter
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.LocalMultimoneyColors
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -38,10 +40,14 @@ import com.multimoney.multimoney.presentation.ui.crypto.CryptoCurrencyMovementIt
 import com.multimoney.multimoney.presentation.ui.crypto.currencydetail.CryptoCurrencyMovementsViewModel.Companion.TODAY_TEXT
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.DateFilterDWMYSection
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.MarketCurrencyDetailsGraphic
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoActionsSection
+import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.addTextStyleToTextPortion
+import com.multimoney.multimoney.presentation.util.formattedTwoDecimalsNumber
+import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 
 @Composable
 fun CurrencyMovementsScreen(
@@ -51,10 +57,13 @@ fun CurrencyMovementsScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
 ) {
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
-
-        viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnSetDateRange(FilterDateByDays.YESTERDAY.time))
+        viewModel.executeNavigation(
+            onPopBackStack = onPopBackStack,
+            onNavigate = onNavigate,
+            onPopAndNavigate = onPopAndNavigate
+        )
         viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnGetUserInfo)
+        viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnSetDateRange(FilterDateByDays.YESTERDAY.time))
         viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnGetAssetHistory)
         viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnGetMovements)
     }
@@ -71,7 +80,10 @@ fun CurrencyMovementsScreen(
                 )
             )
         },
-        viewAllClick = { viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnViewAllMovements) }
+        viewAllClick = { viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnViewAllMovements) },
+        buyCryptoClick = {
+            viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToBuyCrypto)
+        }
     )
 }
 
@@ -80,7 +92,8 @@ fun CurrencyDetailContent(
     uiState: CryptoCurrencyMovementsViewModel.UiState,
     backPressed: () -> Unit,
     onDateChanged: (Long) -> Unit,
-    viewAllClick: () -> Unit
+    viewAllClick: () -> Unit,
+    buyCryptoClick: () -> Unit
 ) {
 
     val movements = uiState.cryptoMovements.collectAsLazyPagingItems()
@@ -89,13 +102,26 @@ fun CurrencyDetailContent(
     val graphicColor =
         if (uiState.cryptoItem?.investedBalanceCurrency?.contains("+") == true)
             MultimoneyTheme.colors.cryptoWalletGainsColor else MultimoneyTheme.colors.cryptoLossesColor
-    val gainOrLossColor = if (uiState.cryptoItem?.investedBalanceCurrency?.contains('-') == true) MultimoneyTheme.colors.cryptoLossesColor
+    val gainOrLossColor =
+        if (uiState.cryptoItem?.investedBalanceCurrency?.contains('-') == true) MultimoneyTheme.colors.cryptoLossesColor
         else MultimoneyTheme.colors.cryptoGainsColor
     Scaffold(
         topBar = {
             TopNavBar(
                 isRightButtonVisible = false,
                 onLeftButtonClick = backPressed
+            )
+        },
+        bottomBar = {
+            val enableSendAndGive = uiState.idBrand == Brand.CostaRica.id
+            CryptoActionsSection(
+                hasSmartBalance = true,
+                enableCryptoActions = true,
+                enableSendAndGive = enableSendAndGive,
+                hasBalanceAction = { buyCryptoClick() },
+                sellAction = { /*todo go to sell crypto flow*/ },
+                sendAction = { /*todo go to send crypto flow*/ },
+                giveAction = { /*todo go to receive crypto flow*/ }
             )
         },
         modifier = Modifier.fillMaxSize(),
@@ -120,14 +146,20 @@ fun CurrencyDetailContent(
                         )
                     )
                 }
-                Text(
-                    modifier = Modifier.padding(top = 16.dp),
-                    text = stringResource(
-                        id = R.string.dollar_symbol_value,
-                        uiState.cryptoItem?.balanceDollars.toString()
-                    ),
-                    style = Typography.h4.copy(color = MultimoneyTheme.colors.text)
-                )
+                uiState.cryptoItem?.balanceDollars?.let { balance ->
+                    BalanceTextView(
+                        modifier = Modifier,
+                        balanceText = balance.toCurrencyFormat(),
+                        currencyStyle = Typography.h4.copy(
+                            color = MultimoneyTheme.colors.text,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        currencyDecimalStyle = Typography.body2.copy(
+                            color = MultimoneyTheme.colors.text,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                }
                 Text(
                     text = "${uiState.cryptoItem?.available} ${uiState.cryptoItem?.asset}",
                     style = Typography.body2,

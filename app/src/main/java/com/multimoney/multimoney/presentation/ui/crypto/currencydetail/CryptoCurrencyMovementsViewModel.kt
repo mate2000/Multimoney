@@ -21,6 +21,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
@@ -116,6 +117,9 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
         )
     }
 
+    private fun onNavigateToBuyCrypto(){
+        navigateTo("${Screen.CryptoPurchaseListScreen.baseRoute}/$user/${uiState.idBrand}")
+    }
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
@@ -125,6 +129,7 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
             is UIEvent.OnGetAssetHistory -> callQueryAssetHistory()
             is UIEvent.OnSetDateRange -> onSetDateRange(event.startDate)
             is UIEvent.OnViewAllMovements -> onNavigateToAllMovements()
+            is UIEvent.OnNavigateToBuyCrypto -> onNavigateToBuyCrypto()
         }
     }
 
@@ -135,6 +140,7 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
         object OnGetMovements : UIEvent
         object OnGetAssetHistory : UIEvent
         object OnViewAllMovements : UIEvent
+        object OnNavigateToBuyCrypto : UIEvent
     }
 
     data class UiState(

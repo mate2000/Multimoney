@@ -1,7 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.crypto.currencydetail
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -35,7 +33,6 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.LocalMultimoneyColors
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoCurrencyMovementItem
 import com.multimoney.multimoney.presentation.ui.crypto.currencydetail.CryptoCurrencyMovementsViewModel.Companion.TODAY_TEXT
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.DateFilterDWMYSection
@@ -46,7 +43,6 @@ import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.addTextStyleToTextPortion
-import com.multimoney.multimoney.presentation.util.formattedTwoDecimalsNumber
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 
 @Composable
@@ -82,7 +78,7 @@ fun CurrencyMovementsScreen(
         },
         viewAllClick = { viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnViewAllMovements) },
         buyCryptoClick = {
-            viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToBuyCrypto)
+            viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToSelectAccount)
         }
     )
 }

@@ -637,6 +637,7 @@ class ProductViewModel @Inject constructor(
             QuickActionFlow.PAY_FEE.flow -> onNavigateToPaymentScreen()
             QuickActionFlow.SAVE_SMART.flow -> onNavigateToSmartSave()
             QuickActionFlow.SEND_MONEY.flow -> onNavigateToSendMoneyScreenQuickAction()
+            QuickActionFlow.BUY_CRYPTO.flow -> onNavigateToBuyCrypto()
         }
     }
 

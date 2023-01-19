@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.database.Cursor
 import android.icu.text.NumberFormat
-import android.icu.util.Currency
 import android.net.Uri
 import android.nfc.cardemulation.CardEmulation
 import android.os.Build
@@ -367,7 +366,7 @@ fun String?.toTwoChar(): String {
             substring(0, 2)
         }
         else -> {
-            substring(0, 1)
+            substring(0, 2)
         }
     }
 

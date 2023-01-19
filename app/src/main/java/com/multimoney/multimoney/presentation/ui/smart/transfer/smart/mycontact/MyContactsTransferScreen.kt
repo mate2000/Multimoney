@@ -16,6 +16,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Divider
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -23,11 +26,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Transparent
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -44,6 +51,7 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
+import com.multimoney.multimoney.presentation.uielement.CustomSearchBar
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -54,6 +62,7 @@ fun MyContactsTransferScreen(
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: MyContactsTransferViewModel = hiltViewModel()
 ) {
+    val focusManager = LocalFocusManager.current
 
     LaunchedEffect(true) {
         viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnCallQueryRelatedContactsByPhoneUseCaseImp)
@@ -72,8 +81,9 @@ fun MyContactsTransferScreen(
             Text(
                 modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
                 text = stringResource(R.string.smart_transfer_my_contacts_title_SV),
-                style = Typography.h5.copy(
-                    fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.text
+                style = Typography.h6.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    color = MultimoneyTheme.colors.onBoardingTitleText
                 )
             )
             Row(
@@ -89,7 +99,7 @@ fun MyContactsTransferScreen(
                     modifier = Modifier.padding(end = 16.dp, start = 16.dp, top = 16.dp),
                     style = Typography.subtitle1.copy(
                         fontWeight = FontWeight.SemiBold,
-                        color = MultimoneyTheme.colors.smartCardTrending
+                        color = MultimoneyTheme.colors.bodyTextColor
                     )
                 )
                 CustomButton(
@@ -100,25 +110,13 @@ fun MyContactsTransferScreen(
                     buttonType = CustomButtonType.PrimaryTertiary
                 )
             }
-            Text(
-                text = stringResource(
-                    id = R.string.smart_mycontacts_transfer_title,
-                    viewModel.uiState.relatedContactList.count()
-                ),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(end = 16.dp, start = 16.dp, top = 16.dp),
-                style = Typography.subtitle1.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    color = MultimoneyTheme.colors.smartCardTrending
-                )
-            )
-
         } else {
             Text(
                 modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
                 text = stringResource(R.string.smart_transfer_my_contacts_title_CR),
                 style = Typography.h6.copy(
-                    fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.onBoardingTitleText
+                    fontWeight = FontWeight.SemiBold,
+                    color = MultimoneyTheme.colors.onBoardingTitleText
                 )
             )
             Text(
@@ -130,19 +128,42 @@ fun MyContactsTransferScreen(
                     color = MultimoneyTheme.colors.bodyTextColor
                 )
             )
-            Text(
-                text = stringResource(
-                    id = R.string.smart_mycontacts_total_transfer_title,
-                    viewModel.uiState.relatedContactList.count()
-                ),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(end = 16.dp, start = 16.dp, top = 8.dp),
-                style = Typography.caption.copy(
-                    fontWeight = FontWeight.Normal,
-                    color = MultimoneyTheme.colors.smartCardTrending
-                )
-            )
         }
+        Text(
+            text = stringResource(
+                id = R.string.smart_mycontacts_total_transfer_title,
+                viewModel.uiState.relatedContactList.count()
+            ),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(end = 16.dp, start = 16.dp, top = 8.dp),
+            style = Typography.caption.copy(
+                fontWeight = FontWeight.Normal,
+                color = MultimoneyTheme.colors.smartCardTrending
+            )
+        )
+        CustomSearchBar(
+            modifier = Modifier
+                .padding(top = 24.dp, start = 16.dp)
+                .clip(shape = RoundedCornerShape(30))
+                .background(MultimoneyTheme.colors.background),
+            value = viewModel.uiState.queryValue,
+            placeHolder = stringResource(id = R.string.smart_my_concts_placeholder),
+            onValueChange = {
+                viewModel.onUIEvent(
+                    MyContactsTransferViewModel.UIEvent.OnQueryValueChange(
+                        it
+                    )
+                )
+            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(onDone = {
+                focusManager.clearFocus()
+            })
+
+        )
         ContactList(viewModel)
     }
 
@@ -178,7 +199,8 @@ fun ContactItem(
         ConstraintLayout(
             Modifier
                 .background(background)
-                .fillMaxWidth()) {
+                .fillMaxWidth()
+        ) {
             val (startIconId, titleId, subTitleId, endIconId) = createRefs()
             Surface(
                 shape = CircleShape,
@@ -195,9 +217,8 @@ fun ContactItem(
                 Box(contentAlignment = Alignment.Center) {
                     Text(
                         text = title.toTwoChar(),
-                        style = Typography.body2.copy(
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 15.sp
+                        style = Typography.h6.copy(
+                            fontWeight = FontWeight.Bold
                         ),
                         color = subtitleColor
                     )
@@ -264,24 +285,36 @@ fun ContactItem(
 
 @Composable
 fun ContactList(viewModel: MyContactsTransferViewModel = hiltViewModel()) {
-    LazyColumn(modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp)) {
+    LazyColumn(modifier = Modifier.padding(top = 20.dp, start = 16.dp, end = 16.dp)) {
         items(viewModel.uiState.relatedContactList) { contact ->
-            ContactItem(
-                title = contact?.titular,
-                subtitle = stringResource(
-                    id = R.string.smart_my_concts_number_and_currency_content,
-                    contact?.number ?: "", contact?.currency ?: "",
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 12.dp, start = 16.dp),
-                endIcon = R.drawable.ic_options,
-                onEndIconClick = {
-                    viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnAddSACAccountClick)
-                }
+            if (
+                (contact?.titular?.contains(viewModel.uiState.queryValue, true) == true)
+            ) {
+                ContactItem(
+                    title = contact?.titular,
+                    subtitle = if (viewModel.idBrand == Brand.ElSalvador.id) {
+                        contact?.number
+                    } else {
+                        stringResource(
+                            id = R.string.smart_my_concts_number_and_currency_content,
+                            contact?.number ?: "", contact?.currency ?: "",
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 12.dp, start = 16.dp, bottom = 15.dp),
+                    endIcon = R.drawable.ic_options,
+                    onEndIconClick = {
+                        viewModel.onUIEvent(
+                            MyContactsTransferViewModel.UIEvent.OnAddToFavoriteAccountClick(
+                                contact
+                            )
+                        )
+                    }
 
-            )
-            Divider(color = Color.Gray, thickness = 1.dp)
+                )
+                Divider(color = MultimoneyTheme.colors.dividerWhite30, thickness = 1.dp)
+            }
         }
     }
 }

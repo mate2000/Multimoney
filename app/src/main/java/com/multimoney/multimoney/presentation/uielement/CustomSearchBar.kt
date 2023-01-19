@@ -133,7 +133,7 @@ fun CustomSearchBar(
                 },
             value = value ?: "",
 
-            shape = RoundedCornerShape(50),
+            shape = RoundedCornerShape(30),
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
             onValueChange = {

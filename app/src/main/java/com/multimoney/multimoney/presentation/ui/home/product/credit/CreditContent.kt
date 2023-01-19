@@ -14,8 +14,8 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToGtSvNonPreApproved
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardCreditFirmedAndOnfidoPending
-import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardNonPreApprovedCredit
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardGtSvCreditRejected
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardNonPreApprovedCredit
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardWithCreditInProcess
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditPreApproved
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessCreateAccountFailure
@@ -77,6 +77,56 @@ fun CreditContent(viewModel: ProductViewModel) {
                                 wording = viewModel.uiState.userStatus?.infoCredit?.wording
                             )
                         }
+                        viewModel.evaluateCardCondition(ProductViewModel.CREDIT_FIRM_MAX_ATTEMPTS, this) -> {
+                            CardWithCreditInProcess(
+                                type = CreditProcessFirmMaxAttempts,
+                                idBrand = viewModel.uiState.idBrand.toInt(),
+                                action = {
+                                    viewModel.onUIEvent(
+                                        OnMaxAttemptsCardClick(
+                                            whatsAppLink = whatsAppLink,
+                                            context = context
+                                        )
+                                    )
+                                },
+                                wording = viewModel.uiState.userStatus?.infoCredit?.wording
+                            )
+                        }
+                        viewModel.evaluateCardCondition(ProductViewModel.CREDIT_ONFIDO_REJECTED, this) -> {
+                            CardWithCreditInProcess(
+                                type = CreditProcessOnfidoReject,
+                                idBrand = viewModel.uiState.idBrand.toInt(),
+                                action = {
+                                    viewModel.onUIEvent(OnNavigateToCreditScreen(ProductViewModel.CREDIT_ONFIDO_REJECTED))
+                                },
+                                wording = viewModel.uiState.userStatus?.infoCredit?.wording
+                            )
+                        }
+                        viewModel.evaluateCardCondition(ProductViewModel.CREDIT_FIRM_REJECTED, this) -> {
+                            CardWithCreditInProcess(
+                                type = CreditProcessFirmReject,
+                                idBrand = viewModel.uiState.idBrand.toInt(),
+                                action = {
+                                    viewModel.onUIEvent(OnNavigateToCreditScreen(ProductViewModel.CREDIT_FIRM_REJECTED))
+                                },
+                                wording = viewModel.uiState.userStatus?.infoCredit?.wording
+                            )
+                        }
+                        viewModel.evaluateCardCondition(ProductViewModel.CREDIT_ONFIDO_MAX_ATTEMPTS, this) -> {
+                            CardWithCreditInProcess(
+                                type = CreditProcessOnfidoMaxAttempts,
+                                idBrand = viewModel.uiState.idBrand.toInt(),
+                                action = {
+                                    viewModel.onUIEvent(
+                                        OnMaxAttemptsCardClick(
+                                            whatsAppLink = whatsAppLink,
+                                            context = context
+                                        )
+                                    )
+                                },
+                                wording = viewModel.uiState.userStatus?.infoCredit?.wording
+                            )
+                        }
                         viewModel.evaluateCardCondition(ProductViewModel.CREDIT_IDENTITY_INCOMPLETE, this) -> {
                             CardWithCreditInProcess(
                                 type = CreditProcessOnFidoIncomplete,
@@ -103,56 +153,6 @@ fun CreditContent(viewModel: ProductViewModel) {
                         }
                         viewModel.evaluateCardCondition(ProductViewModel.CREDIT_FIRMED_ONFIDO_PENDING, this) -> {
                             CardCreditFirmedAndOnfidoPending()
-                        }
-                        viewModel.evaluateCardCondition(ProductViewModel.CREDIT_FIRM_REJECTED, this) -> {
-                            CardWithCreditInProcess(
-                                type = CreditProcessFirmReject,
-                                idBrand = viewModel.uiState.idBrand.toInt(),
-                                action = {
-                                    viewModel.onUIEvent(OnNavigateToCreditScreen(ProductViewModel.CREDIT_FIRM_REJECTED))
-                                },
-                                wording = viewModel.uiState.userStatus?.infoCredit?.wording
-                            )
-                        }
-                        viewModel.evaluateCardCondition(ProductViewModel.CREDIT_FIRM_MAX_ATTEMPTS, this) -> {
-                            CardWithCreditInProcess(
-                                type = CreditProcessFirmMaxAttempts,
-                                idBrand = viewModel.uiState.idBrand.toInt(),
-                                action = {
-                                    viewModel.onUIEvent(
-                                        OnMaxAttemptsCardClick(
-                                            whatsAppLink = whatsAppLink,
-                                            context = context
-                                        )
-                                    )
-                                },
-                                wording = viewModel.uiState.userStatus?.infoCredit?.wording
-                            )
-                        }
-                        viewModel.evaluateCardCondition(ProductViewModel.CREDIT_ONFIDO_REJECTED, this) -> {
-                            CardWithCreditInProcess(
-                                type = CreditProcessOnfidoReject,
-                                idBrand = viewModel.uiState.idBrand.toInt(),
-                                action = {
-                                    viewModel.onUIEvent(OnNavigateToCreditScreen(ProductViewModel.CREDIT_ONFIDO_REJECTED))
-                                },
-                                wording = viewModel.uiState.userStatus?.infoCredit?.wording
-                            )
-                        }
-                        viewModel.evaluateCardCondition(ProductViewModel.CREDIT_ONFIDO_MAX_ATTEMPTS, this) -> {
-                            CardWithCreditInProcess(
-                                type = CreditProcessOnfidoMaxAttempts,
-                                idBrand = viewModel.uiState.idBrand.toInt(),
-                                action = {
-                                    viewModel.onUIEvent(
-                                        OnMaxAttemptsCardClick(
-                                            whatsAppLink = whatsAppLink,
-                                            context = context
-                                        )
-                                    )
-                                },
-                                wording = viewModel.uiState.userStatus?.infoCredit?.wording
-                            )
                         }
                         viewModel.evaluateCardCondition(ProductViewModel.CREDIT_ERROR_CREATE_ACCOUNT, this) -> {
                             CardWithCreditInProcess(
@@ -185,7 +185,8 @@ fun CreditContent(viewModel: ProductViewModel) {
                                     action = {
                                         viewModel.onUIEvent(
                                             OnMaxAttemptsCardClick(
-                                                whatsAppLink = viewModel.uiState.userStatus?.infoCredit?.wording?.link ?: whatsAppLink,
+                                                whatsAppLink = viewModel.uiState.userStatus?.infoCredit?.wording?.link
+                                                    ?: whatsAppLink,
                                                 context = context
                                             )
                                         )
@@ -210,7 +211,8 @@ fun CreditContent(viewModel: ProductViewModel) {
                                 idBrand = viewModel.uiState.idBrand.toInt(),
                                 action = {
                                     viewModel.onUIEvent(OnNavigateToGtSvNonPreApproved)
-                                })
+                                }
+                            )
                         }
                     }
                     else -> Unit

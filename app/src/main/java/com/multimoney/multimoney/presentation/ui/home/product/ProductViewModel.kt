@@ -473,8 +473,17 @@ class ProductViewModel @Inject constructor(
                     (CreditStep.Search.getIdByName(infoCredit?.infoPreApprove?.currentStep) < CreditStep.Eight.id)
                 }
 
+                CREDIT_ONFIDO_REJECTED -> {
+                    infoUser?.statusOnfido == REJECTED.status
+                }
+
+                CREDIT_ONFIDO_MAX_ATTEMPTS -> {
+                    infoUser?.statusOnfido == OVER_COUNTER.status
+                }
+
                 CREDIT_IDENTITY_INCOMPLETE -> {
                     (CreditStep.Search.getIdByName(infoCredit?.infoPreApprove?.currentStep) == CreditStep.Eight.id)
+                            && infoUser?.statusOnfido != APPROVED.status
                 }
 
                 CREDIT_EL_SALVADOR_MANUAL_PROCESS -> {
@@ -517,16 +526,8 @@ class ProductViewModel @Inject constructor(
                     infoCredit?.infoPreApprove?.statusFirm == OVER_COUNTER.status
                 }
 
-                CREDIT_ONFIDO_REJECTED -> {
-                    infoUser?.statusOnfido == REJECTED.status
-                }
-
                 SMART_ONFIDO_REJECTED -> {
                     infoUser?.statusOnfido == SmartOnFidoOrFirmStatus.REJECTED.status
-                }
-
-                CREDIT_ONFIDO_MAX_ATTEMPTS -> {
-                    infoUser?.statusOnfido == OVER_COUNTER.status
                 }
 
                 SMART_ONFIDO_MAX_ATTEMPTS -> {

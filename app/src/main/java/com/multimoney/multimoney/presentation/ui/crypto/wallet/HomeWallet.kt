@@ -157,7 +157,7 @@ fun HomeWallet(
                     hasSmartBalance = true,
                     enableCryptoActions = true,
                     enableSendAndGive = enableSendAndGive,
-                    hasBalanceAction = { /*todo go to buy crypto flow*/ },
+                    hasBalanceAction = { walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnNavigateToBuyCrypto) },
                     sellAction = { /*todo go to sell crypto flow*/ },
                     sendAction = { /*todo go to send crypto flow*/ },
                     giveAction = { /*todo go to receive crypto flow*/ }

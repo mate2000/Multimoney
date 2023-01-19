@@ -80,7 +80,10 @@ fun CurrencyMovementsScreen(
                 )
             )
         },
-        viewAllClick = { viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnViewAllMovements) }
+        viewAllClick = { viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnViewAllMovements) },
+        buyCryptoClick = {
+            viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToBuyCrypto)
+        }
     )
 }
 
@@ -89,7 +92,8 @@ fun CurrencyDetailContent(
     uiState: CryptoCurrencyMovementsViewModel.UiState,
     backPressed: () -> Unit,
     onDateChanged: (Long) -> Unit,
-    viewAllClick: () -> Unit
+    viewAllClick: () -> Unit,
+    buyCryptoClick: () -> Unit
 ) {
 
     val movements = uiState.cryptoMovements.collectAsLazyPagingItems()
@@ -114,7 +118,7 @@ fun CurrencyDetailContent(
                 hasSmartBalance = true,
                 enableCryptoActions = true,
                 enableSendAndGive = enableSendAndGive,
-                hasBalanceAction = { /*todo go to buy crypto flow*/ },
+                hasBalanceAction = { buyCryptoClick() },
                 sellAction = { /*todo go to sell crypto flow*/ },
                 sendAction = { /*todo go to send crypto flow*/ },
                 giveAction = { /*todo go to receive crypto flow*/ }

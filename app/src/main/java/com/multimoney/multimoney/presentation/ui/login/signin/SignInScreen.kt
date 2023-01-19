@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.login.signin
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnFingerprintCheckedChanged
@@ -69,8 +71,9 @@ fun SignInScreen(
     forceChangeDevice: Boolean = false
 ) {
     // Properties
-    val focusManager = LocalFocusManager.current
     val fragmentActivity = LocalContext.current as FragmentActivity
+    val activity = LocalContext.current.findActivity()
+    val signOutToastText = stringResource(id = R.string.automatic_logout_dialog_sign_in_toast)
 
     // Navigation
     LaunchedEffect(true) {
@@ -95,6 +98,18 @@ fun SignInScreen(
             biometricPromptNegative = stringResource(id = R.string.cancel)
         )
     )
+
+    if (viewModel.uiState.toastIsVisible) {
+        Toast.makeText(activity, signOutToastText, Toast.LENGTH_LONG).show()
+        viewModel.onUIEvent(SignInViewModel.UIEvent.OnUpdateToastVisibility(false))
+    }
+
+    SignInContent(viewModel, fragmentActivity)
+}
+
+@Composable
+fun SignInContent(viewModel: SignInViewModel, fragmentActivity: FragmentActivity) {
+    val focusManager = LocalFocusManager.current
 
     // View
     Column(

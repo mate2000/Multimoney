@@ -57,6 +57,7 @@ import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewMod
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewModel.UIEvent.OnSetDateRange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoActionsSection
+import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
@@ -65,6 +66,8 @@ import com.multimoney.multimoney.presentation.util.calculateGainLoses
 import com.multimoney.multimoney.presentation.util.calculatePercentage
 import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlaces
 import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlacesWithoutNegatives
+import com.multimoney.multimoney.presentation.util.toCurrencyFormat
+import com.multimoney.multimoney.presentation.util.toCurrencyFormatWithoutNegatives
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -283,20 +286,27 @@ fun BalanceSection(
             text = stringResource(R.string.crypto_wallet_balance_section_label),
             style = Typography.subtitle1.copy(color = MultimoneyTheme.colors.quickActionLabelColor)
         )
-        Text(
+        Row(
             modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
-            text = stringResource(
-                id = R.string.currency_item_dollar_symbol,
-                globalCryptoBalance.roundToTwoDecimalPlacesWithoutNegatives()
-            ),
-            style = Typography.h4.copy(color = MultimoneyTheme.colors.text)
-        )
+        ) {
+            BalanceTextView(
+                balanceText = globalCryptoBalance.toCurrencyFormat(),
+                currencyStyle = Typography.h4.copy(
+                    color = MultimoneyTheme.colors.text,
+                    fontWeight = FontWeight.Bold
+                ),
+                currencyDecimalStyle = Typography.body2.copy(
+                    color = MultimoneyTheme.colors.text,
+                    fontWeight = FontWeight.Bold
+                )
+            )
+        }
         Text(
             modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
             text = stringResource(
                 id = R.string.currency_item_gain_or_losses_description,
                 gainsOrLossesSymbol,
-                gainsOrLosses.roundToTwoDecimalPlacesWithoutNegatives(),
+                gainsOrLosses.toCurrencyFormatWithoutNegatives(),
                 percentage.roundToTwoDecimalPlaces()
             ),
             style = Typography.body2.copy(color = graphicColor)

@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,6 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
@@ -45,13 +47,14 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.FullDateFilterSection
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.MarketCurrencyDetailsGraphic
+import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnGetCurrencyHistoricalPrices
 import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnGetCurrencyNews
 import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnSetPreviousInfo
 import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnOpenCryptoNew
-import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnFailureWithDialog
+import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnSetPreviousInfo
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoActionsSection
+import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
@@ -61,8 +64,9 @@ import com.multimoney.multimoney.presentation.util.calculateGainLosesMarketDetai
 import com.multimoney.multimoney.presentation.util.calculatePercentageMarketDetails
 import com.multimoney.multimoney.presentation.util.decodeURLFromUTF
 import com.multimoney.multimoney.presentation.util.openIntent
-import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlaces
 import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlacesWithoutNegatives
+import com.multimoney.multimoney.presentation.util.toCurrencyFormat
+import com.multimoney.multimoney.presentation.util.toCurrencyFormatWithoutNegatives
 
 @Composable
 fun MarketCurrencyDetailsScreen(
@@ -106,19 +110,23 @@ fun MarketCurrencyDetailsScreen(
                 link = link,
                 openCryptoNew = { openCryptoNew ->
                     context.openIntent(openCryptoNew) {
-                        marketCurrencyDetailsViewModel.onUIEvent(OnFailureWithDialog(
-                            isLoading = true,
-                            dialogParameters = marketCurrencyDetailsViewModel.defaultDialogParameters.copy(
-                                isActive = mutableStateOf(true)
+                        marketCurrencyDetailsViewModel.onUIEvent(
+                            OnFailureWithDialog(
+                                isLoading = true,
+                                dialogParameters = marketCurrencyDetailsViewModel.defaultDialogParameters.copy(
+                                    isActive = mutableStateOf(true)
+                                )
                             )
-                        ))
+                        )
                     }
                 },
                 onFailureWithDialog = { isLoading, dialogParameters ->
-                    marketCurrencyDetailsViewModel.onUIEvent(OnFailureWithDialog(
-                        isLoading = isLoading,
-                        dialogParameters = dialogParameters
-                    ))
+                    marketCurrencyDetailsViewModel.onUIEvent(
+                        OnFailureWithDialog(
+                            isLoading = isLoading,
+                            dialogParameters = dialogParameters
+                        )
+                    )
                 }
             ))
         },
@@ -263,12 +271,13 @@ fun BalanceSection(
         verticalArrangement = Arrangement.Center
     ) {
 
-        Text(
-            text = stringResource(
-                id = R.string.currency_item_dollar_symbol,
-                currentPrice.roundToTwoDecimalPlaces()
+        BalanceTextView(
+            balanceText = currentPrice.toCurrencyFormat(),
+            currencyStyle = Typography.h4.copy(
+                color = MultimoneyTheme.colors.text,
+                fontWeight = FontWeight.Bold
             ),
-            style = Typography.h4.copy(
+            currencyDecimalStyle = Typography.body2.copy(
                 color = MultimoneyTheme.colors.text,
                 fontWeight = FontWeight.Bold
             )
@@ -277,7 +286,7 @@ fun BalanceSection(
             text = stringResource(
                 id = R.string.currency_item_gain_or_losses_description,
                 gainOrLoss,
-                amountChangeValue.roundToTwoDecimalPlacesWithoutNegatives(),
+                amountChangeValue.toCurrencyFormatWithoutNegatives(),
                 percentage.roundToTwoDecimalPlacesWithoutNegatives()
             ),
             style = Typography.body2.copy(color = gainOrLossColor)
@@ -296,14 +305,15 @@ fun MarketDetailsButtonsSection(
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(horizontal = 16.dp, vertical = 16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
 
         CustomButton(
             modifier = Modifier
                 .width(164.dp)
-                .wrapContentHeight(),
+                .wrapContentHeight()
+                .padding(horizontal = 8.dp),
             buttonType = if (selected.value) CustomButtonType.PrimaryQuinary else CustomButtonType.PrimaryQuaternary,
             text = stringResource(R.string.market_details_button_history),
             onClick = onHistoryClick
@@ -311,7 +321,8 @@ fun MarketDetailsButtonsSection(
         CustomButton(
             modifier = Modifier
                 .width(164.dp)
-                .wrapContentHeight(),
+                .wrapContentHeight()
+                .padding(horizontal = 8.dp),
             buttonType = if (selected.value.not()) CustomButtonType.PrimaryQuinary else CustomButtonType.PrimaryQuaternary,
             text = stringResource(R.string.market_details_button_news),
             onClick = onNewsClick
@@ -324,17 +335,13 @@ fun NewsSection(
     currencyNews: List<New>,
     onOpenCryptoNew: (String) -> Unit
 ) {
-
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
+        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
+        verticalArrangement = Arrangement.Top,
+        contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
     ) {
-
         items(currencyNews) { new ->
-
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -388,7 +395,8 @@ fun HistorySection(information: String) {
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             text = information,
             style = Typography.body2.copy(color = MultimoneyTheme.colors.bodyTextColor),
-            maxLines = maxLines.value
+            maxLines = maxLines.value,
+            overflow = TextOverflow.Ellipsis
         )
         Row(
             modifier = Modifier

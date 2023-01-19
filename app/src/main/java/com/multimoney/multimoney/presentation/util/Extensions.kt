@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.database.Cursor
+import android.icu.text.NumberFormat
 import android.net.Uri
 import android.nfc.cardemulation.CardEmulation
 import android.os.Build
@@ -207,7 +208,7 @@ fun String.getCurrencySymbolValue(): Int {
     }
 }
 
-fun String.getCurrencySymbol(): Int {
+fun String?.getCurrencySymbol(): Int {
     return when (this) {
         Colon.value -> R.string.colon_symbol
         Dollar.value -> R.string.dollar_symbol
@@ -276,9 +277,33 @@ fun Char.isValidAmountCharacter() =
 
 fun String.filterInvalidAmountInput() = this.filter { it.isValidAmountCharacter() }
 
-fun Double.roundToTwoDecimalPlaces() = String.format("%.2f", this)
+fun Double.roundToTwoDecimalPlaces() = String.format(TWO_DECIMALS_FORMAT, this)
+fun Double.roundToTwoDecimalPlacesWithoutNegatives() =
+    String.format(TWO_DECIMALS_FORMAT, this).replace("-", "")
 
-fun Double.roundToTwoDecimalPlacesWithoutNegatives() = String.format("%.2f", this).replace("-", "")
+fun Double.toCurrencyFormat(
+    symbol: String = Dollar.symbol,
+    amountOfDecimals: Int = DEFAULT_AMOUNT_OF_DECIMALS
+): String {
+    val formatter = NumberFormat.getCurrencyInstance()
+    formatter.maximumFractionDigits = amountOfDecimals
+    // remove the default dollar symbol from the custom symbol property
+    return "$symbol${formatter.format(this).replace(Dollar.symbol, "")}"
+}
+
+fun Double.toCurrencyFormatWithoutNegatives(
+    symbol: String = Dollar.symbol,
+    amountOfDecimals: Int = DEFAULT_AMOUNT_OF_DECIMALS
+): String {
+    val formatter = NumberFormat.getCurrencyInstance()
+    formatter.maximumFractionDigits = amountOfDecimals
+    // remove the default dollar symbol from the custom symbol property
+    return "$symbol${
+    formatter.format(this)
+        .replace(Dollar.symbol, "")
+        .replace("-", "")
+    }"
+}
 
 fun String.getCardNumberOne() = this.substring(0, 4)
 fun String.getCardNumberTwo() = this.substring(4, 8)
@@ -329,6 +354,8 @@ fun String.addTextStyleToTextPortion(textToStyle: String, style: TextStyle): Ann
     }
 }
 
+fun String.isCognitoErrorCode(code: String) = contains(""""$CODE_KEYWORD":"$code"""")
+
 fun CharSequence.replaceNumbersToZero() = replace(Regex(DIGITS_REGEX), ZERO_STRING)
 
 fun getCountryCodeByIdBrand(idBrand: Int): String {
@@ -343,10 +370,23 @@ fun getCountryCodeByIdBrand(idBrand: Int): String {
 fun String.capitalizedAllWords(): String =
     splitByWhiteSpace().joinToString(WHITE_SPACE_SEPARATOR.toString()) { it.capitalized() }
 
+/**
+ * Format a phone number with a  "+Code Number" structure when you have
+ * a Phone Number with a country code and a phone number without a
+ * country code to leave the space in the correct position because
+ * some country codes have different lengths.
+ * @param phoneWithCode The phone number with the country code.
+ * @param phoneWithoutCode The phone number without the country code.
+ */
+fun formatPhoneNumber(phoneWithCode: String?, phoneWithoutCode: String?) =
+    phoneWithCode?.replace(phoneWithoutCode ?: "", " ").plus(phoneWithoutCode)
+
 private const val HEX_FORMAT = "#%02x%02x%02x"
 private const val SPECIAL_CHARACTER_REGEX = "[!\"#\$%&'()*+,-./:;\\\\<=>?@^_`{|}~]"
 private const val NUMBER_REGEX = "[0-9]"
 private const val DECIMAL_SEPARATOR = '.'
 private const val WHITE_SPACE_SEPARATOR = ' '
+private const val CODE_KEYWORD = "code"
 private const val DIGITS_REGEX = "\\d"
 private const val ZERO_STRING = "0"
+private const val DEFAULT_AMOUNT_OF_DECIMALS = 2

@@ -310,19 +310,22 @@ fun TipsAndOffer(
                     color = MultimoneyTheme.colors.labelText
                 )
             }
-            Row {
+            Row(modifier = Modifier.padding(end = 16.dp)) {
                 Icon(
                     painter = painterResource(R.drawable.ic_notification),
-                    modifier = Modifier.clickable {
-                        // todo action
-                    },
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clickable {
+                            // todo action
+                        },
                     contentDescription = "",
                     tint = MultimoneyTheme.colors.iconColor
                 )
                 Icon(
                     painter = painterResource(R.drawable.ic_profile),
                     modifier = Modifier
-                        .padding(start = 16.dp, end = 2.dp)
+                        .padding(start = 16.dp)
+                        .size(32.dp)
                         .clickable {
                             viewModel.onUIEvent(OnNavigateToProfileScreen)
                         },
@@ -357,7 +360,7 @@ fun ProductHeader(
             sharedViewModel = sharedViewModel
         )
         Text(
-            text = stringResource(id = R.string.home_product_header_title),
+            text = stringResource(id = viewModel.getProductScreenTitle()),
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 24.dp),
             style = Typography.body1.copy(
                 fontWeight = FontWeight.SemiBold
@@ -566,7 +569,7 @@ fun TipBox(content: @Composable () -> Unit) {
         modifier = Modifier
             .size(152.dp, 140.dp)
             .padding(
-                end = 13.dp
+                end = 12.dp
             )
     ) {
         CustomImage(

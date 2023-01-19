@@ -3,7 +3,6 @@ package com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -22,10 +21,12 @@ import com.multimoney.multimoney.presentation.theme.BlackTransparency16
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.HomeCryptoGraphic
+import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.util.calculateGainLoses
 import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlacesWithoutNegatives
+import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 
 @Composable
 fun CryptoCardDiscoverCrypto(wording: Wording?) {
@@ -133,11 +134,16 @@ fun CryptoCardWithBalance(
                 fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.text
             )
         )
-        Text(
-            modifier = Modifier.height(40.dp),
-            text = stringResource(id = R.string.currency_item_dollar_symbol, cryptoBalance),
-            style = Typography.h4.copy(
-                fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.text
+        BalanceTextView(
+            modifier = Modifier,
+            balanceText = cryptoBalance.toCurrencyFormat(),
+            currencyStyle = Typography.h4.copy(
+                color = MultimoneyTheme.colors.text,
+                fontWeight = FontWeight.Bold
+            ),
+            currencyDecimalStyle = Typography.body2.copy(
+                color = MultimoneyTheme.colors.text,
+                fontWeight = FontWeight.Bold
             )
         )
 

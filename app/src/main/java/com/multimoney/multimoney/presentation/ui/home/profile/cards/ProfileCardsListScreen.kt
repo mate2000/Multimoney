@@ -47,7 +47,7 @@ fun ProfileCardsListScreen(
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: ProfileCardListViewModel = hiltViewModel()
 ) {
-    //Properties
+    // Properties
     val activity = LocalContext.current.findActivity()
 
     // Navigation
@@ -61,6 +61,8 @@ fun ProfileCardsListScreen(
             }
         }
     }
+
+    // View
     if (viewModel.uiState.toastIsVisible) {
         Toast.makeText(activity, viewModel.uiState.toastMessage, Toast.LENGTH_LONG).show()
         viewModel.onUIEvent(OnHideToast)
@@ -102,7 +104,14 @@ fun ProfileCardsListContent(
                 title = stringResource(id = viewModel.uiState.openDialog.titleResource),
                 message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
                 positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+                negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
+                positiveButtonColor = if (viewModel.uiState.deleteDialogIsVisible) {
+                    MultimoneyTheme.colors.dialogNegativeButtonColor
+                } else {
+                    MultimoneyTheme.colors.dialogPositiveButtonColor
+                },
                 openDialogCustom = viewModel.uiState.openDialog.isActive,
+                onNegativeAction = viewModel.uiState.openDialog.negativeAction,
                 onPositiveAction = viewModel.uiState.openDialog.positiveAction
             )
         }

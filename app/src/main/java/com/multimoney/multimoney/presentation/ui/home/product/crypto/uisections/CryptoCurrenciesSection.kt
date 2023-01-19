@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
@@ -26,7 +24,8 @@ import com.multimoney.multimoney.presentation.util.MAX_CRYPTO_ITEMS
 @Composable
 fun CryptoCurrencies(
     items: List<BalanceCryptoAccountItems>?,
-    itemClick: (BalanceCryptoAccountItems) -> Unit
+    itemClick: (BalanceCryptoAccountItems) -> Unit,
+    viewAllClick: () -> Unit
 ) {
 
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
@@ -43,7 +42,7 @@ fun CryptoCurrencies(
                 style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                 color = MultimoneyTheme.colors.labelText
             )
-            TextButton(onClick = { }) {
+            TextButton(onClick = { viewAllClick() }) {
                 Text(
                     textAlign = TextAlign.End,
                     text = stringResource(id = R.string.crypto_currencies_see_all),

@@ -50,7 +50,7 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
         user = savedStateHandle[USER] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
         identification = savedStateHandle[IDENTIFICATION] ?: ""
-        uiState = uiState.copy(cryptoItem = savedStateHandle[ITEM_CRYPTO_CURRENCY])
+        uiState = uiState.copy(cryptoItem = savedStateHandle[ITEM_CRYPTO_CURRENCY], idBrand = idBrand)
     }
 
     private fun callQueryAssetHistory() {
@@ -111,9 +111,8 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
     }
 
     private fun onNavigateToAllMovements() {
-        popAndNavigateTo(
-            "${Screen.CryptoMovementsAllScreen.baseRoute}/${idBrand}/$identification/$user?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}",
-                    Screen.CryptoCurrencyMovementsScreen.route
+        navigateTo(
+            "${Screen.CryptoMovementsAllScreen.baseRoute}/${idBrand}/$identification/$user/${Screen.CryptoCurrencyMovementsScreen.baseRoute}?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}",
         )
     }
 
@@ -139,6 +138,7 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
     }
 
     data class UiState(
+        val idBrand: Int = 0,
         val startDate: Long? = null,
         val isLoading: Boolean = false,
         val historicalBalance: List<CurrencyHistoricPrice> = listOf(),

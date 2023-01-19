@@ -83,6 +83,16 @@ class SmartAddAccountViewModel @Inject constructor(
         uiState = uiState.copy(email = newEmail)
     }
 
+    private fun onNamesChanged(newNames: String) {
+        uiState = uiState.copy(names = newNames)
+        validateForm()
+    }
+
+    private fun onLastNamesChanged(newLastNames: String) {
+        uiState = uiState.copy(lastNames = newLastNames)
+        validateForm()
+    }
+
     private fun isUserEmailValid() {
         uiState = if (isEmailValid(uiState.email)) {
             uiState.copy(emailError = Pair(false, R.string.empty))
@@ -111,8 +121,16 @@ class SmartAddAccountViewModel @Inject constructor(
 
     private fun validateForm() {
         uiState = uiState.copy(
-            enableButton = uiState.type != null && uiState.isAccountNumberError.not()
-                    && uiState.emailError.first.not() && uiState.email.isNotEmpty() && uiState.accountNumber.isNotEmpty()
+            enableButton = when {
+                uiState.type == null -> false
+                uiState.isAccountNumberError -> false
+                uiState.emailError.first -> false
+                uiState.email.isEmpty() -> false
+                uiState.accountNumber.isEmpty() -> false
+                uiState.names.isEmpty() -> false
+                uiState.lastNames.isEmpty() -> false
+                else -> true
+            }
         )
     }
 
@@ -125,7 +143,7 @@ class SmartAddAccountViewModel @Inject constructor(
                 idAccountType = uiState.type?.typeId?.toIntOrNull() ?: 0,
                 idCustomer = smartAccount?.customerId ?: 0L,
                 accountNumber = uiState.accountNumber,
-                accountName = null,
+                accountName = "${uiState.names} ${uiState.lastNames}",
                 email = uiState.email,
                 active = true,
                 phoneNumber = null,
@@ -165,7 +183,9 @@ class SmartAddAccountViewModel @Inject constructor(
         val isAccountNumberError: Boolean = false,
         val email: String = "",
         val emailError: Pair<Boolean, Int> = Pair(false, R.string.empty),
-        val enableButton: Boolean = false
+        val enableButton: Boolean = false,
+        val names: String = "",
+        val lastNames: String = ""
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -178,6 +198,8 @@ class SmartAddAccountViewModel @Inject constructor(
             is UIEvent.OnContinueClick -> onContinueClick()
             is UIEvent.OnGetAccountTypes -> getAccountTypes()
             is UIEvent.OnValidateAccountNumber -> isAccountNumberValid()
+            is UIEvent.OnNamesChanged -> onNamesChanged(uiEvent.names)
+            is UIEvent.OnLastNamesChanged -> onLastNamesChanged(uiEvent.lastNames)
         }
     }
 
@@ -189,6 +211,8 @@ class SmartAddAccountViewModel @Inject constructor(
         object OnGetAccountTypes : UIEvent()
         data class OnAccountTypeSelected(val type: String) : UIEvent()
         data class OnAccountNumberChanged(val number: String) : UIEvent()
+        data class OnNamesChanged(val names: String) : UIEvent()
+        data class OnLastNamesChanged(val lastNames: String) : UIEvent()
         data class OnEmailChanged(val email: String) : UIEvent()
     }
 

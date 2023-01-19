@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -25,7 +26,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.domain.model.accountsmart.SmartAccountType
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -34,6 +34,8 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.Smart
 import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnEmailChanged
 import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnGetAccountTypes
+import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnLastNamesChanged
+import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnNamesChanged
 import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnValidateAccountNumber
 import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnValidateUserEmail
@@ -101,9 +103,47 @@ fun SmartAddAccountContent(viewModel: SmartAddAccountViewModel = hiltViewModel()
                     style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
                     color = MultimoneyTheme.colors.labelText
                 )
+                CustomOutlinedTextField(
+                    modifier = Modifier.padding(top = 24.dp),
+                    value = viewModel.uiState.names,
+                    labelText = stringResource(id = R.string.smart_add_sac_account_names_label),
+                    placeHolder = stringResource(id = R.string.smart_add_sac_account_names_label),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = {
+                            focusManager.moveFocus(FocusDirection.Down)
+                        }
+                    ),
+                    onValueChange = { names ->
+                        viewModel.onUIEvent(OnNamesChanged(names))
+                    },
+                    isRequired = true
+                )
+                CustomOutlinedTextField(
+                    modifier = Modifier.padding(top = 16.dp),
+                    value = viewModel.uiState.lastNames,
+                    labelText = stringResource(id = R.string.smart_add_sac_account_last_names_label),
+                    placeHolder = stringResource(id = R.string.smart_add_sac_account_last_names_label),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = {
+                            focusManager.moveFocus(FocusDirection.Down)
+                        }
+                    ),
+                    onValueChange = { lastNames ->
+                        viewModel.onUIEvent(OnLastNamesChanged(lastNames))
+                    },
+                    isRequired = true
+                )
                 CustomDropdown(
                     modifier = Modifier
-                        .padding(top = 24.dp)
+                        .padding(top = 16.dp)
                         .wrapContentSize(Alignment.TopStart)
                         .focusable(false),
                     items = viewModel.uiState.accountTypeList.map { it?.typeName.orEmpty() },
@@ -123,11 +163,11 @@ fun SmartAddAccountContent(viewModel: SmartAddAccountViewModel = hiltViewModel()
                     placeHolder = stringResource(id = R.string.smart_add_sac_account_number_placeholder),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done
+                        imeAction = ImeAction.Next
                     ),
                     keyboardActions = KeyboardActions(
-                        onDone = {
-                            focusManager.clearFocus()
+                        onNext = {
+                            focusManager.moveFocus(FocusDirection.Down)
                         }
                     ),
                     isError = viewModel.uiState.isAccountNumberError,
@@ -135,7 +175,7 @@ fun SmartAddAccountContent(viewModel: SmartAddAccountViewModel = hiltViewModel()
                     onDebounceValidation = { viewModel.onUIEvent(OnValidateAccountNumber) }
                 )
                 CustomOutlinedTextField(
-                    modifier = Modifier.padding(vertical = 16.dp),
+                    modifier = Modifier.padding(top = 16.dp, bottom = 24.dp),
                     value = viewModel.uiState.email,
                     labelText = stringResource(id = R.string.smart_add_sac_account_email_label),
                     keyboardOptions = KeyboardOptions(

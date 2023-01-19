@@ -1339,6 +1339,8 @@
     <string name="smart_add_sac_account_email_label" translatable="false">Correo electrónico</string>
     <string name="smart_add_sac_account_number_placeholder" translatable="false">000000000</string>
     <string name="smart_add_sac_account_number_validation" translatable="false">El número de cuenta debe tener de 9 a 16 dígitos</string>
+    <string name="smart_add_sac_account_names_label" translatable="false">Nombre(s)</string>
+    <string name="smart_add_sac_account_last_names_label" translatable="false">Apellido(s)</string>
 
     <!-- Card Preferences -->
     <string name="card_preferences_title" translatable="false">Preferencias de tarjeta</string>

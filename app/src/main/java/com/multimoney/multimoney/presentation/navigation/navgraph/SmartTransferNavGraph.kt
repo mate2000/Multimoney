@@ -225,7 +225,7 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(USER) { type = NavType.StringType },
-                navArgument(SMART_IDS) { type = SmartAccountIDNavType() }
+                navArgument(SMART_ACCOUNT) { type = SmartAccountIDNavType() }
             )
         ) {
             SmartAddAccountScreen(

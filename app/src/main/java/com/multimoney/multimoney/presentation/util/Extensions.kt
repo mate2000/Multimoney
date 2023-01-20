@@ -357,10 +357,10 @@ fun String?.toTwoChar(): String {
 
     return when {
         isNullOrEmpty() -> {
-            "?"
+            QUESTION_MARK
         }
-        contains(" ") -> {
-            replace("^\\s*([a-zA-Z]).*\\s+([a-zA-Z])\\S+$".toRegex(), "$1$2").uppercase()
+        contains(WHITE_SPACE_SEPARATOR) -> {
+            replace(TWO_CHARACTER_REGEX.toRegex(), "$1$2").uppercase()
         }
         length > 1 -> {
             substring(0, 2)
@@ -388,9 +388,11 @@ fun String.capitalizedAllWords(): String =
 
 private const val HEX_FORMAT = "#%02x%02x%02x"
 private const val SPECIAL_CHARACTER_REGEX = "[!\"#\$%&'()*+,-./:;\\\\<=>?@^_`{|}~]"
+private const val TWO_CHARACTER_REGEX = "^\\s*([a-zA-Z]).*\\s+([a-zA-Z])\\S+$"
 private const val NUMBER_REGEX = "[0-9]"
 private const val DECIMAL_SEPARATOR = '.'
 private const val WHITE_SPACE_SEPARATOR = ' '
 private const val DIGITS_REGEX = "\\d"
 private const val ZERO_STRING = "0"
 private const val DEFAULT_AMOUNT_OF_DECIMALS = 2
+private const val QUESTION_MARK = "?"

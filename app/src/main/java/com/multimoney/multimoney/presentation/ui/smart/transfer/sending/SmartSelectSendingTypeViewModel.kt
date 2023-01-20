@@ -134,7 +134,6 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     }
 
     private fun onNavigateToMyContacts(numbers: List<String>) {
-        // TODO navigate to HU REV-1445
         val contacts = encodeData(numbers.map {
             RelatedContact(it)
         }

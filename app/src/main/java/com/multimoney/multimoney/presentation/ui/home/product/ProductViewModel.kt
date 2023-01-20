@@ -187,18 +187,12 @@ class ProductViewModel @Inject constructor(
         }
     }
 
-    private fun navigateToMyCards() {
-        navigateTo(
-            route = "${Screen.ProfileCardListScreen.baseRoute}/${email}/${uiState.idBrand}/${identification}/${ProfileCardListOrigin.Product.value}"
-        )
-    }
-
     private fun onVisaCardExpiredDialog(
         idBrand: String,
         balance: Balance?
     ) {
         if (idBrand != Brand.CostaRica.id.toString()) {
-            if (balance?.balanceCardInformation?.cardInformation?.status == "A") {
+            if (balance?.isExpiredAutomaticDebitCard() == true) {
                 viewModelScope.launch {
                     if (dataStorePreferences.isVisaCardExpiredEnabled().first()) {
                         uiState = uiState.copy(
@@ -235,6 +229,12 @@ class ProductViewModel @Inject constructor(
                     uiState.userStatus?.infoBankAccount?.status == MyProductStatus.ACTIVE.status -> R.string.home_product_header_title
             else -> R.string.home_product_available_products_title
         }
+
+    private fun navigateToMyCards() {
+        navigateTo(
+            route = "${Screen.ProfileCardListScreen.baseRoute}/${email}/${uiState.idBrand}/${identification}/${ProfileCardListOrigin.Product.value}"
+        )
+    }
 
     private fun onNavigateToCreditScreen(
         creditStep: String

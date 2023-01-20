@@ -42,7 +42,8 @@ private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
     creditNumber = pagare,
     term = plazo,
     applyAutomaticDebit = aplica_Debito_Aut,
-    automaticDebitEnabled = debito_Aut_Activo
+    automaticDebitEnabled = debito_Aut_Activo,
+    expiredAutomaticDebitCard = expired_Debito_Aut_Card
 )
 
 private fun BalanceQuery.Account.mapToDomainModel() =

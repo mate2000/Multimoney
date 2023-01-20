@@ -47,7 +47,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.
 import com.multimoney.multimoney.presentation.ui.home.quickaction.QuickActionBottomSheetScreen
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
-import com.multimoney.multimoney.presentation.util.MMCountDownTimer.OnCountDownTimerFinish
+import com.multimoney.multimoney.presentation.util.MMCountDownTimer.OnCountDownTimerEvents
 import com.multimoney.multimoney.presentation.util.NavEvent
 import kotlinx.coroutines.launch
 
@@ -88,9 +88,15 @@ fun HomeScreen(
             onInnerNavigate = onInnerNavigate,
             onPopAndNavigate = onPopAndNavigate
         )
-        viewModel.countDownTimer.subscribe(object : OnCountDownTimerFinish {
+        viewModel.countDownTimer.subscribe(object : OnCountDownTimerEvents {
             override fun onFinished() {
-                viewModel.onUIEvent(HomeViewModel.UIEvent.OnSignOut)
+                viewModel.onUIEvent(
+                    HomeViewModel.UIEvent.OnSignOut(activity)
+                )
+            }
+
+            override fun onMaxTimeUsed(millisMainUntilFinished: Long) {
+                viewModel.onUIEvent(HomeViewModel.UIEvent.OnShowTimerDialog(millisMainUntilFinished, activity))
             }
         })
         viewModel.baseEvent.collect { event ->
@@ -187,7 +193,8 @@ fun HomeScreen(
             message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
             positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
             openDialogCustom = viewModel.uiState.openDialog.isActive,
-            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction,
+            isCancelable = viewModel.uiState.openDialog.isCancelable
         )
     }
 }

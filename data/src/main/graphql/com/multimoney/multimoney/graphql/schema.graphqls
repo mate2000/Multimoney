@@ -1613,6 +1613,8 @@ type PromissoryNoteMobile {
   debito_Aut_Activo: Boolean
 
   aplica_Debito_Aut: Boolean!
+
+  expired_Debito_Aut_Card: Boolean!
 }
 
 input balanceCreditInput {

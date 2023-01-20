@@ -36,6 +36,7 @@ import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricPromptForEncryption
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricSignInChanged
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnUpdateToastVisibility
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnUserEmailValueChange
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnUserPasswordValueChange
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnValidateUserEmail
@@ -107,7 +108,8 @@ class SignInViewModel @Inject constructor(
                 isBiometricActive = isBiometricActive,
                 showBiometricSignIn = isBiometricActive,
                 userPassword = "",
-                userPasswordError = Pair(false, R.string.error_empty)
+                userPasswordError = Pair(false, R.string.error_empty),
+                toastIsVisible = dataStorePreferences.isSignOutOnBackground().first()
             )
         }
     }
@@ -482,6 +484,13 @@ class SignInViewModel @Inject constructor(
         )
     }
 
+    private fun onUpdateToastVisibility(value: Boolean) {
+        viewModelScope.launch {
+            uiState = uiState.copy(toastIsVisible = value)
+            dataStorePreferences.isSignOutOnBackground(value)
+        }
+    }
+
     data class UIState(
         // Fields
         val userEmail: String = "",
@@ -503,7 +512,8 @@ class SignInViewModel @Inject constructor(
         val isBiometricActive: Boolean = false,
         val showBiometricSignIn: Boolean = false,
         val isLoading: Boolean = false,
-        val openDialog: DialogParameters = DialogParameters()
+        val openDialog: DialogParameters = DialogParameters(),
+        val toastIsVisible: Boolean = false
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -536,6 +546,7 @@ class SignInViewModel @Inject constructor(
             is OnCloseDialog -> onCloseDialog()
             is OnNavigateToOTPScreen -> onNavigateToOTPScreen()
             is OnNavigateToSignUp -> onNavigateToSignUp()
+            is OnUpdateToastVisibility -> onUpdateToastVisibility(event.value)
         }
     }
 
@@ -572,6 +583,7 @@ class SignInViewModel @Inject constructor(
         object OnCallCognitoSignIn : UIEvent()
         object OnNavigateToForgotPassword : UIEvent()
         object OnNavigateToSignUp : UIEvent()
+        data class OnUpdateToastVisibility(val value: Boolean) : UIEvent()
     }
 
     companion object {

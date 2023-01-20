@@ -122,6 +122,7 @@ const val DESCRIPTION_CURRENCY = "description_currency"
 const val CURRENT_CRYPTO_PRICE = "current_crypto_price"
 const val URL_IMAGE = "url_image"
 const val USER_DATA = "user_data"
+const val PROFILE_CARD_LIST_ORIGIN = "profile_card_list_origin"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -241,7 +242,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object ProfileCardListScreen : Screen(
-        "profile_card_list_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
+        "profile_card_list_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PROFILE_CARD_LIST_ORIGIN}",
         "profile_card_list_screen"
     )
 

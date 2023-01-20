@@ -41,7 +41,7 @@ fun SmartPaymentSuccessScreen(
             },
             savePayText = stringResource(
                 R.string.smart_payment_you_saved_on_your_smart_account,
-                viewModel.amountUIState.currency
+                viewModel.destinyCurrency?.symbol.orEmpty()
             ),
             amount = viewModel.getFormattedAmount(),
             exchangedAmount = if (viewModel.shouldDisplayExchange) {

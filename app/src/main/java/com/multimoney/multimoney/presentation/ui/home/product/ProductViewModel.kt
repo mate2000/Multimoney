@@ -95,10 +95,10 @@ import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.util.NovoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOf
-import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -388,7 +388,7 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToProfileScreen() {
-        navigateTo("${Screen.ProfileScreen.baseRoute}/$idClient/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/$email/${uiState.userStatus?.infoUser?.phone}/$identification/$pkUser/${uiState.userStatus?.infoUser?.userName}")
+        navigateTo("${Screen.ProfileScreen.baseRoute}/$idClient/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/$email/${uiState.userStatus?.infoUser?.phone}/$identification/$pkUser/${userName}")
     }
 
     // Todo check if the navigation to this screen is suitable for the purchase crypto flow
@@ -473,8 +473,17 @@ class ProductViewModel @Inject constructor(
                     (CreditStep.Search.getIdByName(infoCredit?.infoPreApprove?.currentStep) < CreditStep.Eight.id)
                 }
 
+                CREDIT_ONFIDO_REJECTED -> {
+                    infoUser?.statusOnfido == REJECTED.status
+                }
+
+                CREDIT_ONFIDO_MAX_ATTEMPTS -> {
+                    infoUser?.statusOnfido == OVER_COUNTER.status
+                }
+
                 CREDIT_IDENTITY_INCOMPLETE -> {
                     (CreditStep.Search.getIdByName(infoCredit?.infoPreApprove?.currentStep) == CreditStep.Eight.id)
+                            && infoUser?.statusOnfido != APPROVED.status
                 }
 
                 CREDIT_EL_SALVADOR_MANUAL_PROCESS -> {
@@ -517,16 +526,8 @@ class ProductViewModel @Inject constructor(
                     infoCredit?.infoPreApprove?.statusFirm == OVER_COUNTER.status
                 }
 
-                CREDIT_ONFIDO_REJECTED -> {
-                    infoUser?.statusOnfido == REJECTED.status
-                }
-
                 SMART_ONFIDO_REJECTED -> {
                     infoUser?.statusOnfido == SmartOnFidoOrFirmStatus.REJECTED.status
-                }
-
-                CREDIT_ONFIDO_MAX_ATTEMPTS -> {
-                    infoUser?.statusOnfido == OVER_COUNTER.status
                 }
 
                 SMART_ONFIDO_MAX_ATTEMPTS -> {

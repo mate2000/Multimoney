@@ -11,7 +11,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_CARD_VI
 import com.multimoney.multimoney.presentation.navigation.navgraph.COMING_FROM_CRYPTO
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
-import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.CURRENT_AMOUNT_VALUE
 import com.multimoney.multimoney.presentation.navigation.navgraph.DISBURSEMENT_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
@@ -30,6 +29,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_BANK_A
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_PAYMENT_SCHEDULE
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_MULTI_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_SMART_EVICERTIA
+import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.MASKED_CARD
 import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT
@@ -135,38 +135,33 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     // LoginNavGraph Screens
     object SplashScreen : Screen("splash_screen")
     object OnBoardingScreen : Screen("onboarding_screen")
-    object SignInScreen :
-        Screen("sign_in_screen?$FORCE_CHANGE_DEVICE={$FORCE_CHANGE_DEVICE}", "sign_in_screen")
+    object SignInScreen : Screen("sign_in_screen?$FORCE_CHANGE_DEVICE={$FORCE_CHANGE_DEVICE}", "sign_in_screen")
 
     object SignUpScreen : Screen("sign_up_screen/{$SIGN_UP_STEP}", "sign_up_screen")
-    object RequestForgotPassword :
-        Screen(
-            "request_forgot_password_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}",
-            "request_forgot_password_screen"
-        )
+    object RequestForgotPassword : Screen(
+        "request_forgot_password_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}",
+        "request_forgot_password_screen"
+    )
 
-    object RegisteredUserEmailScreen :
-        Screen(
-            "registered_user_email_screen?$ID_BRAND={$ID_BRAND}?$USER_DATA={$USER_DATA}",
-            "registered_user_email_screen"
-        )
+    object RegisteredUserEmailScreen : Screen(
+        "registered_user_email_screen?$ID_BRAND={$ID_BRAND}?$USER_DATA={$USER_DATA}",
+        "registered_user_email_screen"
+    )
 
-    object RegisteredUserOtpScreen :
-        Screen(
-            "registered_user_otp_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}?$ID_BRAND={$ID_BRAND}?$USER_DATA={$USER_DATA}",
-            "registered_user_otp_screen"
-        )
+    object RegisteredUserOtpScreen : Screen(
+        "registered_user_otp_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}?$ID_BRAND={$ID_BRAND}?$USER_DATA={$USER_DATA}",
+        "registered_user_otp_screen"
+    )
 
     object RegisteredUserPassword : Screen(
         "registered_user_password?$USER_DATA={$USER_DATA}?$ID_BRAND={$ID_BRAND}",
         "registered_user_password"
     )
 
-    object ProcessForgotPassword :
-        Screen(
-            "process_forgot_password_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}?$EMAIL={$EMAIL}?$ID_BRAND={$ID_BRAND}?$PK_USER={$PK_USER}",
-            "process_forgot_password_screen"
-        )
+    object ProcessForgotPassword : Screen(
+        "process_forgot_password_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}?$EMAIL={$EMAIL}?$ID_BRAND={$ID_BRAND}?$PK_USER={$PK_USER}",
+        "process_forgot_password_screen"
+    )
 
     object SignUpSplashComeBackScreen : Screen(
         "sign_up_splash_come_back_screen/{$SIGN_UP_STEP}",
@@ -240,7 +235,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object ProfileChangePasswordScreen : Screen(
-        "profile_change_password_screen/{$ID_BRAND}/{$PK_USER}/{$USER_NAME}",
+        "profile_change_password_screen/{$ID_BRAND}/{$PK_USER}/{$USER_NAME}/{$PREVIOUS_SCREEN}",
         "profile_change_password_screen"
     )
 

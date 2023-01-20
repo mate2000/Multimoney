@@ -120,7 +120,12 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                         ),
                         icon = destinyCurrency?.accountIcon
                     ),
-                    currency = destinyCurrency?.symbol ?: Dollar.symbol
+                    currency = destinyCurrency?.symbol ?: Dollar.symbol,
+                    placeholder = if (destinyCurrency == Dollar) {
+                        R.string.smart_dollar_placeholder
+                    } else {
+                        R.string.smart_colon_placeholder
+                    }
                 )
             }
             SmartTransferTypes.SmartToSmart.id -> {
@@ -143,7 +148,12 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                         sheetSubtitleResource = destinyCurrency?.currencyName,
                         icon = R.drawable.ic_multimoney_smart
                     ),
-                    currency = destinyCurrency?.symbol ?: Dollar.symbol
+                    currency = destinyCurrency?.symbol ?: Dollar.symbol,
+                    placeholder = if (destinyCurrency == Dollar) {
+                        R.string.smart_dollar_placeholder
+                    } else {
+                        R.string.smart_colon_placeholder
+                    }
                 )
             }
             SmartTransferTypes.IbanToSmart.id -> {
@@ -166,7 +176,12 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                         sheetSubtitleResource = destinyCurrency?.currencyName,
                         icon = R.drawable.ic_multimoney_smart
                     ),
-                    currency = originCurrency?.symbol ?: Dollar.symbol
+                    currency = originCurrency?.symbol ?: Dollar.symbol,
+                    placeholder = if (originCurrency == Dollar) {
+                        R.string.smart_dollar_placeholder
+                    } else {
+                        R.string.smart_colon_placeholder
+                    }
                 )
             }
             SmartTransferTypes.VisaToSmart.id -> {
@@ -188,7 +203,12 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                         sheetTitleResource = R.string.smart_payment_sheet_multimoney_smart,
                         icon = R.drawable.ic_multimoney_smart
                     ),
-                    currency = originCurrency?.symbol ?: Dollar.symbol
+                    currency = originCurrency?.symbol ?: Dollar.symbol,
+                    placeholder = if (originCurrency == Dollar) {
+                        R.string.smart_dollar_placeholder
+                    } else {
+                        R.string.smart_colon_placeholder
+                    }
                 )
             }
         }

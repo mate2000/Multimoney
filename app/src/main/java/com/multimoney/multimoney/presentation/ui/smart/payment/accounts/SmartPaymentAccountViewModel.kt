@@ -8,9 +8,8 @@ import com.multimoney.domain.model.accountsmart.IbanAccountID
 import com.multimoney.domain.model.accountsmart.SinpeAccount
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.IBAN_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.SMART_IDS
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
@@ -22,9 +21,8 @@ import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountViewModel.UIEvent.OnAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountViewModel.UIEvent.OnAddAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.util.SmartEditAmountHelper.Companion.ID_NOT_APPLICABLE
-import com.multimoney.multimoney.presentation.util.SmartEditAmountHelper.Companion.NOT_APPLICABLE
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -52,7 +50,7 @@ class SmartPaymentAccountViewModel @Inject constructor(
         identification = savedStateHandle[IDENTIFICATION] ?: ""
         idClient = savedStateHandle[ID_CLIENT] ?: ""
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: ""
-        smartAccount = savedStateHandle[SMART_IDS]
+        smartAccount = savedStateHandle[SMART_ACCOUNT]
         previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
         uiState = uiState.copy(
             sinpeAccountList = savedStateHandle.get<Array<SinpeAccount>>(SMART_PAYMENT_ACCOUNTS)
@@ -77,8 +75,9 @@ class SmartPaymentAccountViewModel @Inject constructor(
             )
         )
         navigateTo(
-            "${Screen.SmartPaymentSavingAmount.baseRoute}/${encodeData(smartAccount)}?$IBAN_ACCOUNT=" +
-                    "${ibanAccount}/$ID_NOT_APPLICABLE/${Screen.SmartPaymentAccountScreenCR.baseRoute}/$NOT_APPLICABLE/$NOT_APPLICABLE"
+            "${Screen.SmartPaymentSavingAmountCR.baseRoute}/" +
+                "${Screen.SmartPaymentAccountScreenCR.baseRoute}/" +
+                "$ibanAccount/${encodeData(smartAccount)}/${SmartTransferTypes.IbanToSmart.id}"
         )
     }
 

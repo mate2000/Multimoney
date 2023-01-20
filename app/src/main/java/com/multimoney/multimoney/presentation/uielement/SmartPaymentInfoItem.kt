@@ -80,7 +80,7 @@ fun SmartPaymentInfoItem(
                 )
                 if (subtitle.isNullOrBlank().not()) {
                     Text(
-                        text = subtitle ?: "",
+                        text = subtitle.orEmpty(),
                         style = Typography.body2,
                         color = MultimoneyTheme.colors.labelText
                     )
@@ -97,14 +97,14 @@ fun SmartPaymentInfoItem(
         Column(modifier = Modifier.padding(horizontal = 14.dp)) {
             if (rightTitle.isNullOrBlank().not()) {
                 Text(
-                    text = rightTitle ?: "",
+                    text = rightTitle.orEmpty(),
                     style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
                     color = MultimoneyTheme.colors.labelText
                 )
             }
             if (rightSubtitle.isNullOrBlank().not()) {
                 Text(
-                    text = rightSubtitle ?: "",
+                    text = rightSubtitle.orEmpty(),
                     style = Typography.body2,
                     color = MultimoneyTheme.colors.labelText
                 )

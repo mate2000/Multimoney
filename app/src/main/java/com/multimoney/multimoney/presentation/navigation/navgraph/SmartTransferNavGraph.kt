@@ -6,14 +6,17 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
+import com.multimoney.multimoney.presentation.navigation.DESTINY_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.HOME_STATE
-import com.multimoney.multimoney.presentation.navigation.IBAN_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.ORIGIN_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
-import com.multimoney.multimoney.presentation.navigation.SMART_IDS
-import com.multimoney.multimoney.presentation.navigation.SMART_IDS_LIST
+import com.multimoney.multimoney.presentation.navigation.SECOND_SMART_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT_LIST
 import com.multimoney.multimoney.presentation.navigation.SMART_TRANSFER_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.TRANSFER_TYPE
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SinpeAccountNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAccountIDListNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAccountIDNavType
@@ -36,7 +39,8 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                 navArgument(USER) { type = NavType.StringType },
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(IDENTIFICATION) { type = NavType.StringType },
-                navArgument(SMART_IDS) { type = SmartAccountIDNavType() },
+                navArgument(SMART_ACCOUNT) { type = SmartAccountIDNavType() },
+                navArgument(SECOND_SMART_ACCOUNT) { type = SmartAccountIDNavType() },
                 navArgument(ID_CLIENT) { type = NavType.IntType },
                 navArgument(PREVIOUS_SCREEN) { type = NavType.StringType }
             )
@@ -46,8 +50,14 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                     navController.navigate(it.route)
                 },
                 onPopBackStack = {
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        HOME_STATE,
+                        it.homeState
+                    )
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,
@@ -59,7 +69,7 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
         composable(
             route = Screen.SmartTransferIbanAccountScreen.route,
             arguments = listOf(
-                navArgument(SMART_IDS) {
+                navArgument(SMART_ACCOUNT) {
                     type = SmartAccountIDNavType()
                 },
                 navArgument(USER) {
@@ -84,8 +94,14 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                     navController.navigate(it.route)
                 },
                 onPopBackStack = {
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        HOME_STATE,
+                        it.homeState
+                    )
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,
@@ -97,15 +113,21 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
         composable(
             Screen.SmartTransferAmountScreen.route,
             arguments = listOf(
-                navArgument(SMART_IDS) { type = SmartAccountIDNavType() },
-                navArgument(IBAN_ACCOUNT) { type = SinpeAccountNavType() },
-                navArgument(PREVIOUS_SCREEN) { type = NavType.StringType }
+                navArgument(ORIGIN_ACCOUNT) { type = SmartAccountIDNavType() },
+                navArgument(DESTINY_ACCOUNT) { type = SinpeAccountNavType() },
+                navArgument(TRANSFER_TYPE) { type = NavType.IntType }
             )
         ) {
             SmartTransferAmountScreen(
                 onPopBackStack = {
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        HOME_STATE,
+                        it.homeState
+                    )
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,
@@ -117,7 +139,7 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
         composable(
             route = Screen.SmartSelectAccountScreen.route,
             arguments = listOf(
-                navArgument(SMART_IDS_LIST) {
+                navArgument(SMART_ACCOUNT_LIST) {
                     type = SmartAccountIDListNavType()
                 },
                 navArgument(USER) { type = NavType.StringType },
@@ -130,8 +152,14 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                     navController.navigate(it.route)
                 },
                 onPopBackStack = {
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        HOME_STATE,
+                        it.homeState
+                    )
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,
@@ -148,9 +176,7 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                 navArgument(IDENTIFICATION) { type = NavType.StringType },
                 navArgument(PREVIOUS_SCREEN) { type = NavType.StringType },
                 navArgument(ID_CLIENT) { type = NavType.IntType },
-                navArgument(SMART_IDS) {
-                    type = SmartAccountIDNavType()
-                }
+                navArgument(SMART_ACCOUNT) { type = SmartAccountIDNavType() }
             )
         ) {
             SmartTransferRegisterIbanScreen(
@@ -158,8 +184,14 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                     navController.navigate(it.route)
                 },
                 onPopBackStack = {
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        HOME_STATE,
+                        it.homeState
+                    )
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,
@@ -171,8 +203,9 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
         composable(
             Screen.OwnTransferAmountScreen.route,
             arguments = listOf(
-                navArgument(SMART_IDS) { type = SmartAccountIDNavType() },
-                navArgument(PREVIOUS_SCREEN) { type = NavType.StringType }
+                navArgument(ORIGIN_ACCOUNT) { type = SmartAccountIDNavType() },
+                navArgument(DESTINY_ACCOUNT) { type = SmartAccountIDNavType() },
+                navArgument(TRANSFER_TYPE) { type = NavType.IntType }
             )
         ) {
             OwnTransferAmountScreen(
@@ -192,7 +225,7 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(USER) { type = NavType.StringType },
-                navArgument(SMART_IDS) { type = SmartAccountIDNavType() }
+                navArgument(SMART_ACCOUNT) { type = SmartAccountIDNavType() }
             )
         ) {
             SmartAddAccountScreen(

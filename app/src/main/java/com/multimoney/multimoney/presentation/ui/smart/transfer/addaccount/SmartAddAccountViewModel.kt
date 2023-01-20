@@ -16,10 +16,9 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.SMART_IDS
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.isEmailValid
@@ -34,7 +33,7 @@ class SmartAddAccountViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
-    //Stateless
+    // Stateless
     private var idBrand = savedStateHandle[ID_BRAND] ?: 0
     private var user = savedStateHandle[USER] ?: ""
     private var smartAccount: SmartAccountID? = null
@@ -46,7 +45,7 @@ class SmartAddAccountViewModel @Inject constructor(
     init {
         user = savedStateHandle[USER] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
-        smartAccount = savedStateHandle[SMART_IDS]
+        smartAccount = savedStateHandle[SMART_ACCOUNT]
     }
 
     private fun getAccountTypes() = executeUseCase {

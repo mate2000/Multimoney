@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.common.selectsmartaccount;
+package com.multimoney.multimoney.presentation.ui.smart.common.selectsmartaccount
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -8,7 +8,7 @@ import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.SMART_IDS_LIST
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT_LIST
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
@@ -42,7 +42,7 @@ open class BaseSelectSmartAccountViewModel(
         idClient = savedStateHandle[ID_CLIENT] ?: ""
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: ""
         identification = savedStateHandle[IDENTIFICATION] ?: ""
-        smartAccountIDs = savedStateHandle.get<Array<SmartAccountID>>(SMART_IDS_LIST)?.toList()
+        smartAccountIDs = savedStateHandle.get<Array<SmartAccountID>>(SMART_ACCOUNT_LIST)?.toList()
     }
 
     protected fun onNavigateBack() {

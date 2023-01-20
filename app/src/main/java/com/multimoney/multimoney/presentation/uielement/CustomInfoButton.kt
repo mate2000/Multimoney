@@ -140,8 +140,10 @@ fun CustomInfoButton(
                     modifier = Modifier.constrainAs(subTitleId) {
                         top.linkTo(titleId.bottom, margin = 4.dp)
                         start.linkTo(titleId.start)
-                        bottom.linkTo(parent.bottom, margin = 10.dp)
-                        end.linkTo(if (endIcon != null) endIconId.start else parent.end, margin = 10.dp)
+                        if (startIcon == null) bottom.linkTo(parent.bottom, margin = 10.dp)
+                        else bottom.linkTo(startIconId.bottom)
+                        if (endIcon == null) end.linkTo(parent.end, margin = 10.dp)
+                        else end.linkTo(endIconId.start)
                         width = Dimension.fillToConstraints
                         height = Dimension.wrapContent
                     },

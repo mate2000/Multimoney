@@ -10,7 +10,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Rect
 import androidx.lifecycle.SavedStateHandle
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.accountsmart.MutationProcessSinpeTransferUseCase
 import com.multimoney.domain.interaction.accountsmart.QuerySmartExchangeRateUseCase
 import com.multimoney.domain.model.accountsmart.IbanAccountID
@@ -19,22 +18,27 @@ import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.IBAN_ACCOUNT
-import com.multimoney.multimoney.presentation.navigation.ID_VISA_CARD
-import com.multimoney.multimoney.presentation.navigation.SMART_IDS
+import com.multimoney.multimoney.presentation.navigation.DESTINY_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.ORIGIN_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.BANK_DETAIL
-import com.multimoney.multimoney.presentation.navigation.navgraph.MASKED_CARD
+import com.multimoney.multimoney.presentation.navigation.TRANSFER_TYPE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.util.ShareHelper
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Dollar
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.DisplayAccount
+import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getCurrentTime
+import com.multimoney.multimoney.presentation.util.getFullMaskedAccountIban
+import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
+import com.multimoney.multimoney.presentation.util.getMaskedVisaAccount
 import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import com.multimoney.multimoney.presentation.util.workers.startTimedNotification
@@ -62,35 +66,25 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
         protected set
 
     // stateless
-    var idCard: Long = 0
     var identification: String = ""
     var pkUser: String = ""
     var userName: String = ""
-    var idCurrency: Int = 0
-    var tokenNumber: Long = 0
+    var idBrand: Int = 0
 
-    /* For Smart to Iban
+    var transferType: Int = 0
+    var smartAccount: SmartAccountID? = null
+    var ibanAccount: IbanAccountID? = null
+    var visaAccount: CardVisaDirect? = null
+    var smartDestiny: SmartAccountID? = null
+
+    /*
     Origin refers to the account where the money's going to be taken from
     Destination is the account to receive the money
     */
-    var smartAccount: SmartAccountID? = null
-    var ibanAccount: IbanAccountID? = null
-
-    // For Smart to Smart
-    var destinationSmartAccount: SmartAccountID? = null
-
-    var smartCurrency: CurrencyType? = CurrencyType.Dollar
-    var smartDestinationCurrency: CurrencyType? = CurrencyType.Dollar
-    var ibanCurrency: CurrencyType? = null
-    var idBrand: Int = 0
     var shouldDisplayExchange: Boolean = false
-    var maskedCardNumber: String = ""
-    var bankDetail: String = ""
+    var originCurrency: CurrencyType? = null
+    var destinyCurrency: CurrencyType? = null
     var previousScreen: String = ""
-    var sheetSubtitle: Int = R.string.smart_payment_amount_bottom_sheet_from_card
-    var originTitle: Int = R.string.empty
-    var originIcon: Int = R.drawable.ic_visa_card_item
-    var accountName: String = ""
 
     abstract fun onStart()
 
@@ -99,67 +93,132 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
         identification = preferences.getIdentification().first()
         pkUser = preferences.getPkUser().first()
         userName = preferences.getUserName().first()
-        smartAccount = savedStateHandle[SMART_IDS]
-        smartCurrency = smartAccount?.currencyID?.getCurrencyFromId()
-        tokenNumber = smartAccount?.tokenAccount?.toLongOrNull() ?: 0
-        idCurrency = smartAccount?.currencyID ?: 0
         previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
+        transferType = savedStateHandle[TRANSFER_TYPE] ?: 0
 
-        if (idBrand == Brand.CostaRica.id) {
-            initializeCRValues()
-        } else {
-            initializeSVValues()
-        }
-    }
+        when (transferType) {
+            SmartTransferTypes.SmartToIban.id -> {
+                smartAccount = savedStateHandle[ORIGIN_ACCOUNT]
+                ibanAccount = savedStateHandle[DESTINY_ACCOUNT]
+                originCurrency = smartAccount?.currencyID?.getCurrencyFromId()
+                destinyCurrency = ibanAccount?.currencyId?.getCurrencyFromId()
+                shouldDisplayExchange = originCurrency != destinyCurrency
 
-    open fun initializeCRValues() {
-        ibanAccount = savedStateHandle[IBAN_ACCOUNT]
-        ibanCurrency = if (ibanAccount != null) {
-            ibanAccount?.currencyId?.getCurrencyFromId()
-        } else if (destinationSmartAccount != null) {
-            destinationSmartAccount?.currencyID?.getCurrencyFromId()
-        } else {
-            null
-        }
-        shouldDisplayExchange = smartCurrency != ibanCurrency
-        bankDetail = ibanAccount?.bank ?: ""
-        maskedCardNumber = ibanAccount?.sinpeAccount ?: ""
-        sheetSubtitle = R.string.smart_payment_amount_bottom_sheet_from_card_CR
-        originTitle = R.string.smart_payment_origin_account_label
-        originIcon =
-            ibanCurrency?.id?.getCurrencyFromId()?.accountIcon
-                ?: CurrencyType.Colon.accountIcon
-
-        accountName = ibanAccount?.nameAccount ?: ""
-        smartDestinationCurrency = when (smartCurrency?.value) {
-            CurrencyType.Dollar.value -> {
-                CurrencyType.Colon
+                amountUIState = amountUIState.copy(
+                    originAccountDisplay = DisplayAccount(
+                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_card_CR,
+                        sheetTitleResource = originCurrency?.myAccountSmart,
+                        sheetSubtitleResource = originCurrency?.currencyName,
+                        icon = R.drawable.ic_multimoney_smart
+                    ),
+                    destinyAccountDisplay = DisplayAccount(
+                        sheetLabel = R.string.smart_payment_sheet_to_account,
+                        sheetTitle = ibanAccount?.nameAccount.orEmpty(),
+                        sheetSubtitle = getFullMaskedAccountIban(
+                            ibanAccount?.bank.orEmpty(),
+                            ibanAccount?.sinpeAccount.orEmpty()
+                        ),
+                        icon = destinyCurrency?.accountIcon
+                    ),
+                    currency = destinyCurrency?.symbol ?: Dollar.symbol,
+                    placeholder = if (destinyCurrency == Dollar) {
+                        R.string.smart_dollar_placeholder
+                    } else {
+                        R.string.smart_colon_placeholder
+                    }
+                )
             }
-            CurrencyType.Colon.value -> {
-                CurrencyType.Dollar
+            SmartTransferTypes.SmartToSmart.id -> {
+                smartAccount = savedStateHandle[ORIGIN_ACCOUNT]
+                smartDestiny = savedStateHandle[DESTINY_ACCOUNT]
+                originCurrency = smartAccount?.currencyID?.getCurrencyFromId()
+                destinyCurrency = smartDestiny?.currencyID?.getCurrencyFromId()
+                shouldDisplayExchange = true
+
+                amountUIState = amountUIState.copy(
+                    originAccountDisplay = DisplayAccount(
+                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_card_CR,
+                        sheetTitleResource = originCurrency?.myAccountSmart,
+                        sheetSubtitleResource = originCurrency?.currencyName,
+                        icon = R.drawable.ic_multimoney_smart
+                    ),
+                    destinyAccountDisplay = DisplayAccount(
+                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_card_CR,
+                        sheetTitleResource = destinyCurrency?.myAccountSmart,
+                        sheetSubtitleResource = destinyCurrency?.currencyName,
+                        icon = R.drawable.ic_multimoney_smart
+                    ),
+                    currency = destinyCurrency?.symbol ?: Dollar.symbol,
+                    placeholder = if (destinyCurrency == Dollar) {
+                        R.string.smart_dollar_placeholder
+                    } else {
+                        R.string.smart_colon_placeholder
+                    }
+                )
             }
-            else -> {
-                null
+            SmartTransferTypes.IbanToSmart.id -> {
+                smartAccount = savedStateHandle[DESTINY_ACCOUNT]
+                ibanAccount = savedStateHandle[ORIGIN_ACCOUNT]
+                originCurrency = ibanAccount?.currencyId?.getCurrencyFromId()
+                destinyCurrency = smartAccount?.currencyID?.getCurrencyFromId()
+                shouldDisplayExchange = originCurrency != destinyCurrency
+
+                amountUIState = amountUIState.copy(
+                    originAccountDisplay = DisplayAccount(
+                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_card_CR,
+                        sheetTitle = ibanAccount?.bank.orEmpty(),
+                        sheetSubtitle = getMaskedAccountIban(ibanAccount?.sinpeAccount.orEmpty()),
+                        icon = originCurrency?.accountIcon
+                    ),
+                    destinyAccountDisplay = DisplayAccount(
+                        sheetLabel = R.string.smart_payment_sheet_to_account,
+                        sheetTitleResource = destinyCurrency?.myAccountSmart,
+                        sheetSubtitleResource = destinyCurrency?.currencyName,
+                        icon = R.drawable.ic_multimoney_smart
+                    ),
+                    currency = originCurrency?.symbol ?: Dollar.symbol,
+                    placeholder = if (originCurrency == Dollar) {
+                        R.string.smart_dollar_placeholder
+                    } else {
+                        R.string.smart_colon_placeholder
+                    }
+                )
+            }
+            SmartTransferTypes.VisaToSmart.id -> {
+                visaAccount = savedStateHandle[ORIGIN_ACCOUNT]
+                smartAccount = savedStateHandle[DESTINY_ACCOUNT]
+                originCurrency = Dollar
+                destinyCurrency = smartAccount?.currencyID?.getCurrencyFromId()
+                shouldDisplayExchange = originCurrency != destinyCurrency
+
+                amountUIState = amountUIState.copy(
+                    originAccountDisplay = DisplayAccount(
+                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_card,
+                        sheetTitle = visaAccount?.detail.orEmpty(),
+                        sheetSubtitle = getMaskedVisaAccount(visaAccount?.cardMaskedNumber.orEmpty()),
+                        icon = R.drawable.ic_visa_card_item
+                    ),
+                    destinyAccountDisplay = DisplayAccount(
+                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_to,
+                        sheetTitleResource = R.string.smart_payment_sheet_multimoney_smart,
+                        icon = R.drawable.ic_multimoney_smart
+                    ),
+                    currency = originCurrency?.symbol ?: Dollar.symbol,
+                    placeholder = if (originCurrency == Dollar) {
+                        R.string.smart_dollar_placeholder
+                    } else {
+                        R.string.smart_colon_placeholder
+                    }
+                )
             }
         }
-    }
-
-    open fun initializeSVValues() {
-        idCard = savedStateHandle[ID_VISA_CARD] ?: 0
-        maskedCardNumber = savedStateHandle[MASKED_CARD] ?: ""
-        bankDetail = savedStateHandle[BANK_DETAIL] ?: ""
-        sheetSubtitle = R.string.smart_payment_amount_bottom_sheet_from_card
-        originTitle = R.string.smart_payment_card_bank_label
-        originIcon = R.drawable.ic_visa_card_item
     }
 
     open fun getExchangeOnCompleted(
         isStart: Boolean = false,
-        abbreviation: String? = ibanCurrency?.disbursementValue
-            ?: smartDestinationCurrency?.disbursementValue,
-        idOriginCurrency: String = smartCurrency?.id.toString(),
-        idDestinationCurrency: String = ibanCurrency?.id?.toString()
-            ?: smartDestinationCurrency?.id.toString(),
+        abbreviation: String? = destinyCurrency?.disbursementValue,
+        idOriginCurrency: String = destinyCurrency?.id.toString(),
+        idDestinationCurrency: String = originCurrency?.id.toString(),
         currentAmount: Double = amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
     ) {
         val amount = amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
@@ -377,8 +436,8 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
         val isLoading: Boolean = false,
         val exchangeRate: Double = 0.0,
         val exchangeConvertedAmount: Double = 0.0,
-        val exchangeRateLabel: String = "0.0",
-        val convertedAmountLabel: String = "0.0",
+        val exchangeRateLabel: String? = null,
+        val convertedAmountLabel: String? = null,
         val placeholder: Int = R.string.smart_dollar_placeholder,
         val openDialog: DialogParameters = DialogParameters(),
         val idCard: Long = 0,
@@ -388,8 +447,10 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
         val showLoadingScreen: Boolean = false,
         val paymentSuccess: Boolean = false,
         val referenceNumber: String = "",
-        var currentDate: String = "",
-        var currentTime: String = ""
+        val currentDate: String = "",
+        val currentTime: String = "",
+        val originAccountDisplay: DisplayAccount? = null,
+        val destinyAccountDisplay: DisplayAccount? = null
     )
 
     open fun onAmountUIEvent(uiEvent: AmountUIEvent) {
@@ -452,8 +513,6 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
 
     companion object {
         const val DEFAULT_DESCRIPTION = "Depósito cuenta Smart"
-        const val ID_NOT_APPLICABLE = -1
-        const val NOT_APPLICABLE = "NA"
         const val CURRENCY_SEPARATOR = ','
     }
 }

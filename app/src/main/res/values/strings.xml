@@ -1336,7 +1336,6 @@
     <string name="smart_mycontacts_transfer_title" translatable="false">Contactos</string>
     <string name="smart_my_contacts_transfer_accounts_add" translatable="false">Agregar cuenta</string>
     <string name="smart_mycontacts_total_transfer_title" translatable="false">%1s contactos encontrados</string>
-    <string name="smart_my_concts_number_and_currency_content" translatable="false">%1$s | %2$s</string>
     <string name="smart_my_concts_placeholder" translatable="false">Buscar contacto</string>
 
     <!-- Card Preferences -->

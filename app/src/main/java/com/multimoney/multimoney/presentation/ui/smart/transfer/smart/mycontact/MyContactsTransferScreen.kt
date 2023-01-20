@@ -89,20 +89,21 @@ fun MyContactsTransferScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 32.dp, start = 16.dp, end = 16.dp),
-                horizontalArrangement = Arrangement.SpaceAround,
+                    .padding(top = 8.dp, start = 4.dp, end = 16.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = stringResource(id = R.string.smart_mycontacts_transfer_title),
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(end = 16.dp, start = 16.dp, top = 16.dp),
+                    modifier = Modifier.padding(start = 16.dp),
                     style = Typography.subtitle1.copy(
                         fontWeight = FontWeight.SemiBold,
                         color = MultimoneyTheme.colors.bodyTextColor
                     )
                 )
                 CustomButton(
+                    modifier = Modifier.padding(end = 4.dp),
                     text = stringResource(id = R.string.smart_my_contacts_transfer_accounts_add),
                     onClick = {
                         viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnAddSACAccountClick)
@@ -132,10 +133,10 @@ fun MyContactsTransferScreen(
         Text(
             text = stringResource(
                 id = R.string.smart_mycontacts_total_transfer_title,
-                viewModel.uiState.relatedContactList.count()
+                viewModel.uiState.relatedContactList?.count()
             ),
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(end = 16.dp, start = 16.dp, top = 8.dp),
+            modifier = Modifier.padding(end = 16.dp, start = 16.dp),
             style = Typography.caption.copy(
                 fontWeight = FontWeight.Normal,
                 color = MultimoneyTheme.colors.smartCardTrending
@@ -291,15 +292,9 @@ fun ContactList(viewModel: MyContactsTransferViewModel = hiltViewModel()) {
                 (contact?.titular?.contains(viewModel.uiState.queryValue, true) == true)
             ) {
                 ContactItem(
-                    title = contact?.titular,
-                    subtitle = if (viewModel.idBrand == Brand.ElSalvador.id) {
-                        contact?.number
-                    } else {
-                        stringResource(
-                            id = R.string.smart_my_concts_number_and_currency_content,
-                            contact?.number ?: "", contact?.currency ?: "",
-                        )
-                    },
+                    title = contact.titular,
+                    subtitle =
+                        contact.number,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 12.dp, start = 16.dp, bottom = 15.dp),

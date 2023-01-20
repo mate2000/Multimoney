@@ -51,12 +51,10 @@ class MyContactsTransferViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { accountList ->
                 uiState = uiState.copy(isLoading = false)
-                if (accountList?.phones?.isEmpty() == true) {
-                    //navigateToAddSACAccount()
-                } else {
-                    accountList?.phones?.let {
-                        uiState = uiState.copy(relatedContactList = it)
-                    }
+                accountList?.phones?.let {
+                    uiState = uiState.copy(relatedContactList = it.distinctBy { phoneSmart ->
+                        phoneSmart.identification
+                    })
                 }
             }
             result.onFailure {

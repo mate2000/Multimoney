@@ -992,7 +992,7 @@
     <string name="payment_amount_bottom_sheet_title" translatable="false">Monto a pagar</string>
     <string name="payment_amount_bottom_sheet_account" translatable="false">Desde tu cuenta</string>
     <string name="payment_amount_bottom_sheet_exchange_type" translatable="false">Tipo de cambio</string>
-    <string name="payment_amount_bottom_sheet_amount_to_debit" translatable="false">Monto a debitar</string>
+    <string name="payment_amount_bottom_sheet_amount_to_debit" translatable="false">Monto debitado</string>
     <string name="payment_amount_bottom_sheet_pay_button" translatable="false">Realizar pago</string>
     <string name="payment_amount_bottom_sheet_send_button" translatable="false">Realizar envío</string>
     <string name="payment_amount_bottom_sheet_process_payment_description_label" translatable="false">Pago unica moneda desde App</string>

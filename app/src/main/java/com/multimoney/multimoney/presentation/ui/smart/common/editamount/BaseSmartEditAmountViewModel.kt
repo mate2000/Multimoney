@@ -160,7 +160,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
         idOriginCurrency: String = smartCurrency?.id.toString(),
         idDestinationCurrency: String = ibanCurrency?.id?.toString()
             ?: smartDestinationCurrency?.id.toString(),
-        currentAmount: Double = amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0,
+        currentAmount: Double = amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
     ) {
         val amount = amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
         if (shouldDisplayExchange) {
@@ -221,9 +221,9 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
         newAmount: String? = amountUIState.currentAmountValueString,
         newMotive: String = amountUIState.motive
     ) = (newAmount?.isNotEmpty() == true) && (
-            newAmount.toDoubleOrNull()
-                ?: 0.0
-            ) > 0.0 && newMotive.isNotEmpty()
+        newAmount.toDoubleOrNull()
+            ?: 0.0
+        ) > 0.0 && newMotive.isNotEmpty()
 
     abstract fun onContinueClick()
 
@@ -277,7 +277,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                             showErrorScreen = false,
                             paymentSuccess = true,
                             currentDate = getCurrentDate(Calendar.getInstance().time),
-                            currentTime = getCurrentTime(Calendar.getInstance().time),
+                            currentTime = getCurrentTime(Calendar.getInstance().time).lowercase(),
                             referenceNumber = it?.referenceNumber ?: ""
                         )
                     }

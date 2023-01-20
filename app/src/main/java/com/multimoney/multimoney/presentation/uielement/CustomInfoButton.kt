@@ -83,13 +83,18 @@ fun CustomInfoButton(
                     colors = listOf(gradientBorderOneColor, gradientBorderTwoColor)
                 ),
                 shape = RoundedCornerShape(20.dp)
-            ).wrapContentHeight(),
+            )
+            .wrapContentHeight(),
         shape = RoundedCornerShape(20.dp),
         colors = buttonColor,
         contentPadding = PaddingValues(0.dp),
         enabled = enable
     ) {
-        ConstraintLayout(Modifier.background(background).fillMaxWidth()) {
+        ConstraintLayout(
+            Modifier
+                .background(background)
+                .fillMaxWidth()
+        ) {
             val (startIconId, titleId, subTitleId, subTitle2Id, endIconId) = createRefs()
             if (startIcon != null) {
                 Image(
@@ -138,7 +143,7 @@ fun CustomInfoButton(
                         if (startIcon == null) bottom.linkTo(parent.bottom, margin = 10.dp)
                         else bottom.linkTo(startIconId.bottom)
                         if (endIcon == null) end.linkTo(parent.end, margin = 10.dp)
-                        else end.linkTo(endIconId.start, margin = 10.dp)
+                        else end.linkTo(endIconId.start)
                         width = Dimension.fillToConstraints
                         height = Dimension.wrapContent
                     },
@@ -190,18 +195,20 @@ fun CustomInfoButton(
             if (endIcon != null) {
                 Image(
                     painter = painterResource(id = endIcon),
-                    modifier = Modifier.constrainAs(endIconId) {
-                        if (shouldCenterEndIcon) {
-                            top.linkTo(parent.top)
-                            bottom.linkTo(parent.bottom)
-                        } else {
-                            // align the icon to the top
-                            top.linkTo(parent.top, 17.dp)
+                    modifier = Modifier
+                        .constrainAs(endIconId) {
+                            if (shouldCenterEndIcon) {
+                                top.linkTo(parent.top)
+                                bottom.linkTo(parent.bottom)
+                            } else {
+                                // align the icon to the top
+                                top.linkTo(parent.top, 17.dp)
+                            }
+                            end.linkTo(parent.end, margin = 18.dp)
                         }
-                        end.linkTo(parent.end, margin = 18.dp)
-                    }.clickable {
-                        onEndIconClick()
-                    },
+                        .clickable {
+                            onEndIconClick()
+                        },
                     contentDescription = ""
                 )
             }

@@ -34,6 +34,7 @@ import com.multimoney.data.networking.graphql.apollomodel.CreditOfferQuery
 import com.multimoney.data.networking.graphql.apollomodel.DataInformationClientQuery
 import com.multimoney.data.networking.graphql.apollomodel.DeactivatedCardAutomaticDebitMutation
 import com.multimoney.data.networking.graphql.apollomodel.DeactivatedClientAutomaticDebitMutation
+import com.multimoney.data.networking.graphql.apollomodel.DeleteCardVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.DeleteTokenDeviceNVMutation
 import com.multimoney.data.networking.graphql.apollomodel.EmploymentSituationQuery
 import com.multimoney.data.networking.graphql.apollomodel.ExchangeRateQuery
@@ -48,23 +49,22 @@ import com.multimoney.data.networking.graphql.apollomodel.GetCoreBankMovementsQu
 import com.multimoney.data.networking.graphql.apollomodel.GetCountryContactQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCountryQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCryptoCurrencyMovementQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetCryptoPriceHistoryQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCryptoCurrencyNewsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCryptoMovementsQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetCryptoPriceHistoryQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetExchangeRateCreditQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetHistoricClientBalanceQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetHistoricalCurrencyPricesQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetInfoDepositQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetLinkCreditContractQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPaymentPointsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPromissoryNoteDetailQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetLinkCreditContractQuery
 import com.multimoney.data.networking.graphql.apollomodel.GlobalRequestMutation
 import com.multimoney.data.networking.graphql.apollomodel.HomeCantonQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeDistrictQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeProvinceQuery
 import com.multimoney.data.networking.graphql.apollomodel.InitialRequestSmartAccountMutation
 import com.multimoney.data.networking.graphql.apollomodel.ListCardVDQuery
-import com.multimoney.data.networking.graphql.apollomodel.DeleteCardVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.ListMiniCardsQuery
 import com.multimoney.data.networking.graphql.apollomodel.ListSinpeAccountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountSaveMutation
@@ -73,7 +73,6 @@ import com.multimoney.data.networking.graphql.apollomodel.OcupationsQuery
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoCheckProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoIntialProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.PayCreditVDMutation
-import com.multimoney.data.networking.graphql.apollomodel.UpdateCardVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.PaymentAmountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProccessPaymentListMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProcessCreditExtensionDetailMutation
@@ -95,9 +94,12 @@ import com.multimoney.data.networking.graphql.apollomodel.SaveTermsAndConditions
 import com.multimoney.data.networking.graphql.apollomodel.ScreenConfigQuery
 import com.multimoney.data.networking.graphql.apollomodel.SendCreditContractEventMutation
 import com.multimoney.data.networking.graphql.apollomodel.SendPinProcessMutation
+import com.multimoney.data.networking.graphql.apollomodel.SmartAccountTypeQuery
 import com.multimoney.data.networking.graphql.apollomodel.StepByStepQuery
 import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsSignedQuery
+import com.multimoney.data.networking.graphql.apollomodel.UpdateCardVDMutation
+import com.multimoney.data.networking.graphql.apollomodel.UpdateFavoriteContactSmartMutation
 import com.multimoney.data.networking.graphql.apollomodel.UpdateUserRegisterMutation
 import com.multimoney.data.networking.graphql.apollomodel.UserPhoneMobileSaveMutation
 import com.multimoney.data.networking.graphql.apollomodel.UserValidationMutation
@@ -472,12 +474,14 @@ class GraphqlApi @Inject constructor(
         pkUser: Long,
         user: String
     ): ApolloCall<GetLinkCreditContractQuery.Data> =
-        apolloAuthorizedClient.query(GetLinkCreditContractQuery(
-            idPrint,
-            idBrand,
-            pkUser,
-            user
-        )).fetchPolicy(FetchPolicy.NetworkOnly)
+        apolloAuthorizedClient.query(
+            GetLinkCreditContractQuery(
+                idPrint,
+                idBrand,
+                pkUser,
+                user
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationSaveCreditOperation(
         idUserRequest: Long,
@@ -1775,6 +1779,45 @@ class GraphqlApi @Inject constructor(
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
+    fun querySmartAccountType(
+        idBrand: Int,
+        user: String
+    ): ApolloCall<SmartAccountTypeQuery.Data> = apolloAuthorizedClient.query(
+        SmartAccountTypeQuery(idBrand = idBrand, user = user)
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    /*
+    To select as favorite send active as true, to unselect send active as false,
+    To add a new favorite account send idFavorite as null
+     */
+    fun mutationUpdateSmartFavoriteContact(
+        idFavorite: Long?,
+        idAccountType: Int,
+        idCustomer: Long,
+        accountNumber: String,
+        accountName: String?,
+        email: String,
+        active: Boolean,
+        phoneNumber: String?,
+        idCurrencyAccount: Int,
+        idBrand: Int,
+        user: String
+    ): ApolloCall<UpdateFavoriteContactSmartMutation.Data> = apolloAuthorizedClient.mutation(
+        UpdateFavoriteContactSmartMutation(
+            idBrand = idBrand,
+            user = user,
+            idFavorite = Optional.presentIfNotNull(idFavorite),
+            idAccountType = idAccountType,
+            idCustomer = idCustomer,
+            accountNumber = accountNumber,
+            accountName = Optional.presentIfNotNull(accountName),
+            phoneNumber = Optional.presentIfNotNull(phoneNumber),
+            email = email,
+            active = active,
+            idCurrencyAccount = Optional.presentIfNotNull(idCurrencyAccount)
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
     fun queryCryptoCurrencyMovements(
         user: String,
         idBrand: Int,
@@ -1792,7 +1835,7 @@ class GraphqlApi @Inject constructor(
                 startDate,
                 endDate
             )
-        )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryCryptoPriceHistory(
         market: String,
@@ -1815,5 +1858,5 @@ class GraphqlApi @Inject constructor(
                 paginationLimit,
                 paginationOffset
             )
-        )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

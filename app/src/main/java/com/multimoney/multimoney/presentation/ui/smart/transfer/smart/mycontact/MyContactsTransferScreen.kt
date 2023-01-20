@@ -78,9 +78,11 @@ fun MyContactsTransferScreen(
             .background(MultimoneyTheme.colors.background)
             .fillMaxSize()
     ) {
-        TopNavBar(isRightButtonVisible = true,
+        TopNavBar(
+            isRightButtonVisible = true,
             onLeftButtonClick = { viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnNavigateBack) },
-            onRightButtonClick = { viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnNavigateToHome) })
+            onRightButtonClick = { viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnNavigateToHome) }
+        )
         if (viewModel.idBrand == Brand.ElSalvador.id) {
             Text(
                 modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
@@ -284,7 +286,6 @@ fun ContactItem(
                     contentDescription = ""
                 )
             }
-
         }
     }
 }
@@ -297,11 +298,12 @@ fun ContactList(viewModel: MyContactsTransferViewModel = hiltViewModel()) {
                 (contact?.titular?.contains(viewModel.uiState.queryValue, true) == true)
             ) {
                 val getIndexColor = (0..3).random()
-                val subtitleColor = arrayOf(Primary400, Secondary400, Tertiary400, ComplementaryTwo400)
+                val subtitleColor =
+                    arrayOf(Primary400, Secondary400, Tertiary400, ComplementaryTwo400)
                 ContactItem(
                     title = contact.titular,
                     subtitle =
-                        contact.number,
+                    contact.number,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 12.dp, start = 16.dp, bottom = 15.dp),
@@ -313,7 +315,7 @@ fun ContactList(viewModel: MyContactsTransferViewModel = hiltViewModel()) {
                             )
                         )
                     },
-                    colorSubtitle = subtitleColor[getIndexColor]
+                    colorSubtitle = subtitleColor.random()
 
                 )
                 Divider(color = MultimoneyTheme.colors.dividerWhite30, thickness = 1.dp)

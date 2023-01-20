@@ -34,13 +34,13 @@ import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.Vis
 import com.multimoney.multimoney.presentation.util.catalog.PhoneCountryCode
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeType
 import com.novopayment.sdk.vts.module.payment.apdu.PaymentService
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.Locale
 import kotlin.time.Duration
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flow
 
 fun Context.openWhatsAppDeepLink(link: String, onFailure: () -> Unit = {}) {
     try {
@@ -109,7 +109,9 @@ fun Context.checkPermission(
             launcher.launch(permission)
         }
         comesFromRationale.not() && showRationale == true -> showRationaleAction(false)
-        comesFromRationale.not() && showRationale == false && isFirstRequest.not() -> showRationaleAction(true)
+        comesFromRationale.not() && showRationale == false && isFirstRequest.not() -> showRationaleAction(
+            true
+        )
         isFirstRequest && showRationale == false -> launcher.launch(permission)
         else -> launcher.launch(permission)
     }
@@ -287,7 +289,7 @@ fun Double.toCurrencyFormat(
 ): String {
     val formatter = NumberFormat.getCurrencyInstance()
     formatter.maximumFractionDigits = amountOfDecimals
-    //remove the default dollar symbol from the custom symbol property
+    // remove the default dollar symbol from the custom symbol property
     return "$symbol${formatter.format(this).replace(Dollar.symbol, "")}"
 }
 
@@ -297,8 +299,9 @@ fun Double.toCurrencyFormatWithoutNegatives(
 ): String {
     val formatter = NumberFormat.getCurrencyInstance()
     formatter.maximumFractionDigits = amountOfDecimals
-    //remove the default dollar symbol from the custom symbol property
-    return "$symbol${formatter.format(this)
+    // remove the default dollar symbol from the custom symbol property
+    return "$symbol${
+    formatter.format(this)
         .replace(Dollar.symbol, "")
         .replace("-", "")
     }"
@@ -354,7 +357,6 @@ fun String.addTextStyleToTextPortion(textToStyle: String, style: TextStyle): Ann
 }
 
 fun String?.toTwoChar(): String {
-
     return when {
         isNullOrEmpty() -> {
             "?"
@@ -369,7 +371,6 @@ fun String?.toTwoChar(): String {
             substring(0, 2)
         }
     }
-
 }
 
 fun CharSequence.replaceNumbersToZero() = replace(Regex(DIGITS_REGEX), ZERO_STRING)

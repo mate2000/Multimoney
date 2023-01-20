@@ -4,20 +4,18 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -71,7 +69,6 @@ fun CustomCatalogItem(
         }
 
         Column(
-            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxSize()
@@ -85,23 +82,27 @@ fun CustomCatalogItem(
                 contentScale = ContentScale.Inside,
                 alignment = Alignment.BottomCenter,
             )
-
-            Text(
-                modifier = Modifier
+            Box(
+                modifier = Modifier.fillMaxWidth()
+                    .heightIn(50.dp)
                     .padding(
                         top = 12.dp,
                         end = 16.dp,
                         start = 16.dp
                     )
-                    .fillMaxHeight(),
-                text = label,
-                textAlign = TextAlign.Center,
-                style = Typography.subtitle1.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    color = labelColor,
-                    textAlign = TextAlign.Center
+            ) {
+                AutoSizeText(
+                    modifier = Modifier
+                        .align(Alignment.Center),
+                    text = label,
+                    textStyle = Typography.subtitle1.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        color = labelColor,
+                        textAlign = TextAlign.Center
+                    ),
+                    softWrap = true
                 )
-            )
+            }
         }
     }
 }

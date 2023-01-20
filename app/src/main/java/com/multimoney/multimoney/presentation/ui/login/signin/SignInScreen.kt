@@ -95,7 +95,8 @@ fun SignInScreen(
         OnInitializeBiometricPrompt(
             biometricPromptTitle = stringResource(id = R.string.biometric_dialog_title),
             biometricPromptDescription = stringResource(id = R.string.biometric_dialog_description),
-            biometricPromptNegative = stringResource(id = R.string.cancel)
+            biometricPromptNegative = stringResource(id = R.string.cancel),
+            fragmentActivity = fragmentActivity
         )
     )
 

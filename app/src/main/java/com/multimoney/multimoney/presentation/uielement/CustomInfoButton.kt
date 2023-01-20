@@ -6,11 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
@@ -19,7 +15,6 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Transparent
@@ -28,9 +23,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.constraintlayout.compose.Dimension.Companion
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.GradientGrey1
 import com.multimoney.multimoney.presentation.theme.GradientGrey2
@@ -88,13 +83,18 @@ fun CustomInfoButton(
                     colors = listOf(gradientBorderOneColor, gradientBorderTwoColor)
                 ),
                 shape = RoundedCornerShape(20.dp)
-            ).wrapContentHeight(),
+            )
+            .wrapContentHeight(),
         shape = RoundedCornerShape(20.dp),
         colors = buttonColor,
         contentPadding = PaddingValues(0.dp),
         enabled = enable
     ) {
-        ConstraintLayout(Modifier.background(background).fillMaxWidth()) {
+        ConstraintLayout(
+            Modifier
+                .background(background)
+                .fillMaxWidth()
+        ) {
             val (startIconId, titleId, subTitleId, subTitle2Id, endIconId) = createRefs()
             if (startIcon != null) {
                 Image(
@@ -127,7 +127,10 @@ fun CustomInfoButton(
                         height = Dimension.fillToConstraints
                         width = Dimension.fillToConstraints
                     },
-                    style = Typography.body2.copy(fontWeight = FontWeight.SemiBold, fontSize = 15.sp),
+                    style = Typography.body2.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 15.sp
+                    ),
                     color = titleColor,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -138,7 +141,7 @@ fun CustomInfoButton(
                         top.linkTo(titleId.bottom, margin = 4.dp)
                         start.linkTo(titleId.start)
                         bottom.linkTo(parent.bottom, margin = 10.dp)
-                        end.linkTo(endIconId.start)
+                        end.linkTo(if (endIcon != null) endIconId.start else parent.end)
                         width = Dimension.fillToConstraints
                         height = Dimension.wrapContent
                     },
@@ -176,7 +179,10 @@ fun CustomInfoButton(
                         bottom.linkTo(startIconId.bottom)
                         width = Dimension.fillToConstraints
                     },
-                    style = Typography.body2.copy(fontWeight = FontWeight.SemiBold, fontSize = 15.sp),
+                    style = Typography.body2.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 15.sp
+                    ),
                     color = titleColor,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -185,18 +191,20 @@ fun CustomInfoButton(
             if (endIcon != null) {
                 Image(
                     painter = painterResource(id = endIcon),
-                    modifier = Modifier.constrainAs(endIconId) {
-                        if (shouldCenterEndIcon) {
-                            top.linkTo(parent.top)
-                            bottom.linkTo(parent.bottom)
-                        } else {
-                            // align the icon to the top
-                            top.linkTo(parent.top, 17.dp)
+                    modifier = Modifier
+                        .constrainAs(endIconId) {
+                            if (shouldCenterEndIcon) {
+                                top.linkTo(parent.top)
+                                bottom.linkTo(parent.bottom)
+                            } else {
+                                // align the icon to the top
+                                top.linkTo(parent.top, 17.dp)
+                            }
+                            end.linkTo(parent.end, margin = 18.dp)
                         }
-                        end.linkTo(parent.end, margin = 18.dp)
-                    }.clickable {
-                        onEndIconClick()
-                    },
+                        .clickable {
+                            onEndIconClick()
+                        },
                     contentDescription = ""
                 )
             }

@@ -13,5 +13,7 @@ data class DialogParameters(
     val negativeResource: Int = R.string.empty,
     var positiveAction: () -> Unit = {},
     var negativeAction: () -> Unit = {},
-    var dismissAction: () -> Unit = {}
+    var dismissAction: () -> Unit = {},
+    var isCancelable: Boolean = true,
+    var additionalText: String = ""
 )

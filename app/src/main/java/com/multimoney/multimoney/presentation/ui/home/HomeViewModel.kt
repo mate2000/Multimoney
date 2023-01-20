@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.home
 
+import android.app.Activity
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -62,6 +63,7 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnHi
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowAutomaticPaymentEdit
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowCardIssuanceError
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowTimerDialog
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowUnlinkToast
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSignOut
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
@@ -69,6 +71,7 @@ import com.multimoney.multimoney.presentation.util.INDEX_ONE
 import com.multimoney.multimoney.presentation.util.LAST_THREE
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.OPTION_BTN_6
+import com.multimoney.multimoney.presentation.util.SignOutCommunicator
 import com.multimoney.multimoney.presentation.util.boolean
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -103,6 +106,8 @@ class HomeViewModel @Inject constructor(
     private val queryGetPromissoryNoteDetail: QueryGetPromissoryNoteDetail,
     private val cognitoHelper: CognitoHelper
 ) : BaseViewModel(true) {
+
+    private var communicator: SignOutCommunicator? = null
 
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -691,7 +696,14 @@ class HomeViewModel @Inject constructor(
         emitBaseEvent(BaseEvent.OnQuickActionClicked(flow))
     }
 
-    private fun signOut() {
+    private fun signOut(activity: Activity?) {
+        activity?.let {
+            communicator = activity as SignOutCommunicator
+            if (communicator?.isAppInForeground()?.not() == true) {
+                viewModelScope.launch { dataStorePreferences.isSignOutOnBackground(true) }
+            }
+            hideTimerDialog()
+        }
         cognitoHelper.signOut(signOutError = {
             Timber.d("SignOut Error")
         })
@@ -709,6 +721,31 @@ class HomeViewModel @Inject constructor(
         R.string.card_issuance_error_description_gt
     } else {
         R.string.card_issuance_error_description
+    }
+
+    private fun showTimerDialog(time: Long, activity: Activity?) {
+        activity?.let {
+            communicator = it as SignOutCommunicator
+            communicator?.onMaxTimeUsedDialogChangeState(
+                dialogParameters = DialogParameters(
+                    titleResource = R.string.empty,
+                    descriptionResource = R.string.automatic_logout_dialog_description,
+                    positiveResource = R.string.automatic_logout_dialog_keep_button,
+                    isActive = mutableStateOf(true),
+                    positiveAction = { countDownTimer.restartTimer() },
+                    isCancelable = false,
+                    additionalText = time.toInt().toString()
+                )
+            )
+        }
+    }
+
+    private fun hideTimerDialog() {
+        communicator?.onMaxTimeUsedDialogChangeState(
+            dialogParameters = DialogParameters(
+                isActive = mutableStateOf(false)
+            )
+        )
     }
 
     data class UIState(
@@ -742,7 +779,8 @@ class HomeViewModel @Inject constructor(
                 uiEvent.innerNavHostController,
                 uiEvent.route
             )
-            is OnSignOut -> signOut()
+            is OnSignOut -> signOut(uiEvent.activity)
+            is OnShowTimerDialog -> showTimerDialog(uiEvent.time, uiEvent.activity)
             is OnSetUserData -> onsetUserData()
             is UIEvent.OnSetHomeState -> onSetHomeState(uiEvent.homeState)
             is UIEvent.OnOpenQuickActionFlow -> openQuickActionFlow(flow = uiEvent.flow)
@@ -799,7 +837,8 @@ class HomeViewModel @Inject constructor(
         data class OnMyProductPageChange(val page: PagerState) : UIEvent()
         object OnSetUserData : UIEvent()
         data class OnSetHomeState(val homeState: HomeState) : UIEvent()
-        object OnSignOut : UIEvent()
+        data class OnSignOut(val activity: Activity?) : UIEvent()
+        data class OnShowTimerDialog(val time: Long, val activity: Activity?) : UIEvent()
         object OnShowUnlinkToast : UIEvent()
         object OnHideUnlinkToast : UIEvent()
         object OnShowAutomaticPaymentEdit : UIEvent()

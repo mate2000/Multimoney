@@ -20,11 +20,13 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.ProfileCardListOrigin
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+import kotlinx.coroutines.flow.first
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
@@ -49,6 +51,11 @@ class ProfileViewModel @Inject constructor(
             idBrand = savedStateHandle[ID_BRAND] ?: 0,
             firstName = savedStateHandle[FIRST_NAME]
         )
+        viewModelScope.launch {
+            uiState = uiState.copy(
+                phoneNumberWithCode = dataStorePreferences.getUserPhoneNumberWithCode().first()
+            )
+        }
     }
 
     private fun navigateToPersonalInfoScreen() {
@@ -64,7 +71,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun navigateToMyCards() {
-        navigateTo("${Screen.ProfileCardListScreen.baseRoute}/${uiState.email}/${uiState.idBrand}/${uiState.identification}")
+        navigateTo("${Screen.ProfileCardListScreen.baseRoute}/${uiState.email}/${uiState.idBrand}/${uiState.identification}/${ProfileCardListOrigin.Profile.value}")
     }
 
     private fun signOutDialogConfirmation() {
@@ -99,6 +106,7 @@ class ProfileViewModel @Inject constructor(
         val userName: String? = null,
         val email: String? = null,
         val phoneNumber: String? = null,
+        val phoneNumberWithCode: String? = null,
         val identification: String? = null,
         val idBrand: Int? = null,
         val pkUser: String? = null,

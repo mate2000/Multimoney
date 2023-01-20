@@ -44,7 +44,11 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.theme.ComplementaryTwo400
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Primary400
+import com.multimoney.multimoney.presentation.theme.Secondary400
+import com.multimoney.multimoney.presentation.theme.Tertiary400
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency5
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
@@ -176,6 +180,7 @@ fun ContactItem(
     modifier: Modifier = Modifier,
     title: String? = "",
     subtitle: String = "",
+    colorSubtitle: Color,
     endIcon: Int? = R.drawable.ic_options,
     shouldCenterEndIcon: Boolean = true,
     onEndIconClick: () -> Unit = {}
@@ -221,7 +226,7 @@ fun ContactItem(
                         style = Typography.h6.copy(
                             fontWeight = FontWeight.Bold
                         ),
-                        color = subtitleColor
+                        color = colorSubtitle
                     )
                 }
             }
@@ -291,6 +296,8 @@ fun ContactList(viewModel: MyContactsTransferViewModel = hiltViewModel()) {
             if (
                 (contact?.titular?.contains(viewModel.uiState.queryValue, true) == true)
             ) {
+                val getIndexColor = (0..3).random()
+                val subtitleColor = arrayOf(Primary400, Secondary400, Tertiary400, ComplementaryTwo400)
                 ContactItem(
                     title = contact.titular,
                     subtitle =
@@ -305,7 +312,8 @@ fun ContactList(viewModel: MyContactsTransferViewModel = hiltViewModel()) {
                                 contact
                             )
                         )
-                    }
+                    },
+                    colorSubtitle = subtitleColor[getIndexColor]
 
                 )
                 Divider(color = MultimoneyTheme.colors.dividerWhite30, thickness = 1.dp)

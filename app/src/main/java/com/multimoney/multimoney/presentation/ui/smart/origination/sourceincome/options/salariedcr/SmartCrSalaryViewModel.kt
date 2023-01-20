@@ -89,7 +89,7 @@ class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseC
     private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
         accountSmartData?.let {
             onAmountValueChange(it.income.toString())
-            onProfessionValueChange(it.stringProfessionType.toString())
+            onProfessionValueChange(it.stringProfessionType.orEmpty())
         }
     }
 

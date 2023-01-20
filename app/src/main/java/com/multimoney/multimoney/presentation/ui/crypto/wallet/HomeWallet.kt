@@ -323,7 +323,8 @@ fun MyCoinsSection(
 ) {
 
     val filteredList = if (searchQuery.value.isNotEmpty()) balanceCryptoAccount?.items?.filter {
-        it.asset.contains(searchQuery.value) || it.descriptionCurrency.contains(searchQuery.value)
+        it.asset.contains(searchQuery.value, ignoreCase = true) ||
+                it.descriptionCurrency.contains(searchQuery.value, ignoreCase = true)
     } ?: emptyList() else balanceCryptoAccount?.items ?: emptyList()
 
     Row(

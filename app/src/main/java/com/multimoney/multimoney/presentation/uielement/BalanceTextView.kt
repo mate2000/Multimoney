@@ -16,6 +16,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
+import java.text.DecimalFormatSymbols
+import java.util.*
 
 /**
  * @param modifier - modifier only for BalanceText
@@ -36,7 +38,8 @@ fun BalanceTextView(
     currencyStyle: TextStyle,
     currencyDecimalStyle: TextStyle,
 ) {
-    val splitText = balanceText.split(splitWith)
+    val decimalFormat = DecimalFormatSymbols(Locale.getDefault())
+    val splitText = balanceText.split(decimalFormat.decimalSeparator)
     val localDensity = LocalDensity.current
     var fontPadding by remember { mutableStateOf(0.dp) }
 

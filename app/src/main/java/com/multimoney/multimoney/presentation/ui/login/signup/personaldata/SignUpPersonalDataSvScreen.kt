@@ -102,146 +102,144 @@ fun SignUpPersonalDataSvScreen(
             ) else null
         )
 
-        if (viewModel.uiState.identificationValueType.isNotBlank()) {
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp)
-            ) {
-                CustomOutlinedTextField(
-                    placeHolder = stringResource(id = R.string.sign_up_personal_data_first_name_hint),
-                    value = viewModel.uiState.firstNameValue,
-                    onValueChange = { firstName ->
-                        viewModel.onUIEvent(
-                            SignUpPersonalDataViewModel.UIEvent.OnFirstNameChange(
-                                firstName = firstName,
-                                onSharedViewModelFirstNameChange = {
-                                    sharedViewModel.onUIEvent(
-                                        SignUpViewModel.UIEvent.OnFirstNameValueChange(
-                                            firstName
-                                        )
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp)
+        ) {
+            CustomOutlinedTextField(
+                placeHolder = stringResource(id = R.string.sign_up_personal_data_first_name_hint),
+                value = viewModel.uiState.firstNameValue,
+                onValueChange = { firstName ->
+                    viewModel.onUIEvent(
+                        SignUpPersonalDataViewModel.UIEvent.OnFirstNameChange(
+                            firstName = firstName,
+                            onSharedViewModelFirstNameChange = {
+                                sharedViewModel.onUIEvent(
+                                    SignUpViewModel.UIEvent.OnFirstNameValueChange(
+                                        firstName
                                     )
-                                }
-                            )
+                                )
+                            }
                         )
-                    },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(onNext = {
-                        focusManager.moveFocus(FocusDirection.Down)
-                    }),
-                    labelText = stringResource(id = R.string.sign_up_personal_data_names),
-                    modifier = Modifier
-                        .weight(0.5f)
-                        .padding(end = 4.dp),
-                    isRequired = true,
-                    isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_name_error),
-                    isError = viewModel.uiState.nameError.first
-                )
+                    )
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(onNext = {
+                    focusManager.moveFocus(FocusDirection.Down)
+                }),
+                labelText = stringResource(id = R.string.sign_up_personal_data_names),
+                modifier = Modifier
+                    .weight(0.5f)
+                    .padding(end = 4.dp),
+                isRequired = true,
+                isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_name_error),
+                isError = viewModel.uiState.nameError.first
+            )
 
-                CustomOutlinedTextField(
-                    placeHolder = stringResource(id = R.string.sign_up_personal_data_second_name_hint),
-                    value = viewModel.uiState.secondNameValue,
-                    onValueChange = { secondName ->
-                        viewModel.onUIEvent(
-                            SignUpPersonalDataViewModel.UIEvent.OnSecondNameChange(
-                                secondName = secondName,
-                                onSharedViewModelSecondNameChange = {
-                                    sharedViewModel.onUIEvent(
-                                        SignUpViewModel.UIEvent.OnSecondNameValueChange(
-                                            secondName
-                                        )
+            CustomOutlinedTextField(
+                placeHolder = stringResource(id = R.string.sign_up_personal_data_second_name_hint),
+                value = viewModel.uiState.secondNameValue,
+                onValueChange = { secondName ->
+                    viewModel.onUIEvent(
+                        SignUpPersonalDataViewModel.UIEvent.OnSecondNameChange(
+                            secondName = secondName,
+                            onSharedViewModelSecondNameChange = {
+                                sharedViewModel.onUIEvent(
+                                    SignUpViewModel.UIEvent.OnSecondNameValueChange(
+                                        secondName
                                     )
-                                }
-                            )
+                                )
+                            }
                         )
-                    },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
-                    ),
-                    labelText = stringResource(id = R.string.error_empty),
-                    keyboardActions = KeyboardActions(onNext = {
-                        focusManager.moveFocus(FocusDirection.Down)
-                    }),
-                    isRequired = false,
-                    modifier = Modifier
-                        .weight(0.5f)
-                        .padding(start = 6.dp, top = 2.dp)
-                )
-            }
+                    )
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                ),
+                labelText = stringResource(id = R.string.error_empty),
+                keyboardActions = KeyboardActions(onNext = {
+                    focusManager.moveFocus(FocusDirection.Down)
+                }),
+                isRequired = false,
+                modifier = Modifier
+                    .weight(0.5f)
+                    .padding(start = 6.dp, top = 2.dp)
+            )
+        }
 
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp)
-            ) {
-                CustomOutlinedTextField(
-                    placeHolder = stringResource(id = R.string.sign_up_personal_data_first_lastname_hint),
-                    value = viewModel.uiState.firstLastNameValue,
-                    onValueChange = { firstLastName ->
-                        viewModel.onUIEvent(
-                            SignUpPersonalDataViewModel.UIEvent.OnFirstLastNameChange(
-                                firstLastName = firstLastName,
-                                onSharedViewModelFirstLastNameChange = {
-                                    sharedViewModel.onUIEvent(
-                                        SignUpViewModel.UIEvent.OnFirstLastNameValueChange(
-                                            firstLastName
-                                        )
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp)
+        ) {
+            CustomOutlinedTextField(
+                placeHolder = stringResource(id = R.string.sign_up_personal_data_first_lastname_hint),
+                value = viewModel.uiState.firstLastNameValue,
+                onValueChange = { firstLastName ->
+                    viewModel.onUIEvent(
+                        SignUpPersonalDataViewModel.UIEvent.OnFirstLastNameChange(
+                            firstLastName = firstLastName,
+                            onSharedViewModelFirstLastNameChange = {
+                                sharedViewModel.onUIEvent(
+                                    SignUpViewModel.UIEvent.OnFirstLastNameValueChange(
+                                        firstLastName
                                     )
-                                }
-                            )
+                                )
+                            }
                         )
-                    },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(onDone = {
-                        focusManager.clearFocus()
-                    }),
-                    labelText = stringResource(id = R.string.sign_up_personal_data_lastname),
-                    modifier = Modifier
-                        .weight(0.5f)
-                        .padding(top = 4.dp),
-                    isRequired = true,
-                    isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_lastname_error),
-                    isError = viewModel.uiState.lastNameError.first
-                )
+                    )
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(onDone = {
+                    focusManager.clearFocus()
+                }),
+                labelText = stringResource(id = R.string.sign_up_personal_data_lastname),
+                modifier = Modifier
+                    .weight(0.5f)
+                    .padding(top = 4.dp),
+                isRequired = true,
+                isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_lastname_error),
+                isError = viewModel.uiState.lastNameError.first
+            )
 
-                CustomOutlinedTextField(
-                    placeHolder = stringResource(id = R.string.sign_up_personal_data_second_lastname_hint),
-                    value = viewModel.uiState.secondLastNameValue,
-                    isRequired = false,
-                    onValueChange = { secondLastName ->
-                        viewModel.onUIEvent(
-                            SignUpPersonalDataViewModel.UIEvent.OnSecondLastNameChange(
-                                secondLastName = secondLastName,
-                                onSharedViewModelSecondLastNameChange = {
-                                    sharedViewModel.onUIEvent(
-                                        SignUpViewModel.UIEvent.OnSecondLastNameValueChange(
-                                            secondLastName
-                                        )
+            CustomOutlinedTextField(
+                placeHolder = stringResource(id = R.string.sign_up_personal_data_second_lastname_hint),
+                value = viewModel.uiState.secondLastNameValue,
+                isRequired = false,
+                onValueChange = { secondLastName ->
+                    viewModel.onUIEvent(
+                        SignUpPersonalDataViewModel.UIEvent.OnSecondLastNameChange(
+                            secondLastName = secondLastName,
+                            onSharedViewModelSecondLastNameChange = {
+                                sharedViewModel.onUIEvent(
+                                    SignUpViewModel.UIEvent.OnSecondLastNameValueChange(
+                                        secondLastName
                                     )
-                                }
-                            )
+                                )
+                            }
                         )
-                    },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
-                    ),
-                    labelText = stringResource(id = R.string.error_empty),
-                    keyboardActions = KeyboardActions(onNext = {
-                        focusManager.moveFocus(FocusDirection.Down)
-                    }),
-                    modifier = Modifier
-                        .weight(0.5f)
-                        .padding(start = 6.dp, top = 2.dp)
-                )
-            }
+                    )
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                ),
+                labelText = stringResource(id = R.string.error_empty),
+                keyboardActions = KeyboardActions(onNext = {
+                    focusManager.moveFocus(FocusDirection.Down)
+                }),
+                modifier = Modifier
+                    .weight(0.5f)
+                    .padding(start = 6.dp, top = 2.dp)
+            )
         }
     }
 }

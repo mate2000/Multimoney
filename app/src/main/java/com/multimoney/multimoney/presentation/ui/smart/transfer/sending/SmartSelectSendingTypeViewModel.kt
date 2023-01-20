@@ -93,11 +93,15 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         if (idBrand == Brand.CostaRica.id) {
             navigateTo(
                 "${Screen.OwnTransferAmountScreen.baseRoute}/" +
-                "${encodeData(selectedSmartAccount)}/${encodeData(secondSmartAccount)}/" +
-                "${SmartTransferTypes.SmartToSmart.id}"
+                    "${encodeData(selectedSmartAccount)}/${encodeData(secondSmartAccount)}/" +
+                    "${SmartTransferTypes.SmartToSmart.id}"
             )
         } else if (idBrand == Brand.ElSalvador.id) {
-            navigateTo("${Screen.SmartAddSACAccountScreen.baseRoute}/$idBrand/$user/${encodeData(smartAccount)}")
+            navigateTo(
+                "${Screen.SmartAddSACAccountScreen.baseRoute}/$idBrand/$user/${
+                encodeData(selectedSmartAccount)
+                }"
+            )
         }
     }
 

@@ -32,13 +32,13 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.flowlayout.FlowRow
 import com.multimoney.domain.model.util.onFailure
-import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.profile.settings.changepassword.ChangePasswordViewModel.UIEvent.OnNavigateToForgotPassword
+import com.multimoney.multimoney.presentation.ui.home.profile.settings.changepassword.ChangePasswordViewModel.UIEvent.OnUpdatePassword
 import com.multimoney.multimoney.presentation.ui.login.signup.password.PasswordRequirementLabels
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -71,7 +71,7 @@ fun ChangePasswordScreen(
             isLeftButtonVisible = false,
             isRightButtonVisible = false,
             onButtonClick = {
-                viewModel.onUIEvent(ChangePasswordViewModel.UIEvent.OnNavigateToHome)
+                viewModel.onUIEvent(ChangePasswordViewModel.UIEvent.OnAlertButtonClick)
             }
         )
     }
@@ -89,8 +89,6 @@ fun ChangePasswordScreen(
                 viewModel.onUIEvent(ChangePasswordViewModel.UIEvent.OnPasswordSameAsPrevious)
             }.onFailure {
                 viewModel.onUIEvent(ChangePasswordViewModel.UIEvent.OnShowAlertDialog)
-            }.onLoading {
-                viewModel.onUIEvent(ChangePasswordViewModel.UIEvent.OnUpdateLoadingState(true))
             }
         }
     }
@@ -294,7 +292,7 @@ fun ChangePasswordContent(viewModel: ChangePasswordViewModel) {
                 text = stringResource(id = R.string.profile_settings_change_password_button),
                 enable = viewModel.uiState.isButtonEnabled,
                 onClick = {
-                    viewModel.onUIEvent(ChangePasswordViewModel.UIEvent.OnUpdatePassword)
+                    viewModel.onUIEvent(OnUpdatePassword)
                 }
             )
         }

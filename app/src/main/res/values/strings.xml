@@ -116,6 +116,9 @@
     <string name="sign_in_verify_otp_blocked_subtitle" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no podés realizar el registro ahora. Inténtalo más tarde o contacta a soporte:</string>
     <string name="sign_in_dialog_user_exists_title" translatable="false">¿Eres usuario MultiMoney?</string>
     <string name="sign_in_dialog_user_exists_description" translatable="false">Si eres cliente MultiMoney o no tienes una cuenta registrada, presioná continuar y seguí unos cuantos pasos para poder ingresar a tu nueva App MultiMoney</string>
+    <string name="sign_in_expired_password_dialog_title" translatable="false">Tu contraseña ha expirado</string>
+    <string name="sign_in_expired_password_dialog_description" translatable="false">Para poder hacer login debes de actualizar tu contraseña.</string>
+    <string name="sign_in_expired_password_dialog_positive_button" translatable="false">Actualizar contraseña</string>
 
 
     <!-- Sign Up General-->
@@ -1289,8 +1292,8 @@
     <string name="currency_item_inside_parenthesis" translatable="false">(%1s)</string>
     <string name="currency_item_description" translatable="false">%1$s (%2$s)</string>
     <string name="currency_item_gain_or_losses_description" translatable="false">%1s%2s (%3s\%%)</string>
-    <string name="currency_item_percent_invested" translatable="false">%1$s\%%</string>
-    <string name="currency_item_percent_invested_with_symbol" translatable="false">%1s%2$s\%%</string>
+    <string name="currency_item_percent_invested" translatable="false">%1s\%%</string>
+    <string name="currency_item_percent_invested_with_symbol" translatable="false">%1s%2s\%%</string>
 
     <!-- Smart Transfer Iban -->
     <string name="smart_iban_transfer_accounts_title" translatable="false">Cuentas IBAN</string>
@@ -1418,5 +1421,11 @@
     <string name="profile_my_cards_delete_card_dialog_title" translatable="false">¿Estás seguro que quieres eliminar tu tarjeta?</string>
     <string name="profile_my_cards_delete_card_dialog_description" translatable="false">Los datos se borrarán del app de forma permanente</string>
     <string name="profile_my_cards_delete_card_toast_result_success" translatable="false">Tarjeta eliminada</string>
+
+    <!-- Product -> Visa Card Expired Dialog-->
+    <string name="product_visa_card_expired_dialog_title" translatable="false">Tu tarjeta ha expirado</string>
+    <string name="product_visa_card_expired_dialog_description" translatable="false">Debes de agregar una nueva tarjeta para que puedas utilizarla en tus operaciones.</string>
+    <string name="product_visa_card_expired_dialog_update_label" translatable="false">Actualizar</string>
+    <string name="product_visa_card_expired_dialog_hide_label" translatable="false">Ocultar</string>
 
 </resources>

@@ -77,7 +77,7 @@ fun ContactItem(
             Surface(
                 shape = CircleShape,
                 modifier = Modifier
-                    .size(60.dp)
+                    .size(48.dp)
                     .constrainAs(startIconId) {
                         top.linkTo(parent.top, margin = 17.dp)
                         start.linkTo(parent.start, margin = 4.dp)

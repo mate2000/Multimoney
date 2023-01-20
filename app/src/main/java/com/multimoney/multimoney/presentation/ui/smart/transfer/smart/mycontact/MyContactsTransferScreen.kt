@@ -29,11 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.theme.ComplementaryTwo400
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.theme.Primary400
-import com.multimoney.multimoney.presentation.theme.Secondary400
-import com.multimoney.multimoney.presentation.theme.Tertiary400
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.uielement.ContactItem
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -166,9 +162,12 @@ fun ContactList(viewModel: MyContactsTransferViewModel = hiltViewModel()) {
             if (
                 (contact?.titular?.contains(viewModel.uiState.queryValue, true) == true)
             ) {
-                val getIndexColor = (0..3).random()
                 val subtitleColor =
-                    arrayOf(Primary400, Secondary400, Tertiary400, ComplementaryTwo400)
+                    arrayOf(
+                        MultimoneyTheme.colors.twoCharacterOneColor,
+                        MultimoneyTheme.colors.twoCharacterTwoColor,
+                        MultimoneyTheme.colors.twoCharacterTwoColor,
+                        MultimoneyTheme.colors.twoCharacterComplementaryTwoColor)
                 ContactItem(
                     title = contact.titular,
                     subtitle =
@@ -183,7 +182,7 @@ fun ContactList(viewModel: MyContactsTransferViewModel = hiltViewModel()) {
                             )
                         )
                     },
-                    colorSubtitle = subtitleColor[getIndexColor]
+                    colorSubtitle = subtitleColor[(0..3).random()]
 
                 )
                 Divider(color = MultimoneyTheme.colors.dividerWhite30, thickness = 1.dp)

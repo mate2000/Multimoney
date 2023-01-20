@@ -14,8 +14,8 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToGtSvNonPreApproved
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardCreditFirmedAndOnfidoPending
-import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardNonPreApprovedCredit
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardGtSvCreditRejected
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardNonPreApprovedCredit
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardWithCreditInProcess
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditPreApproved
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessCreateAccountFailure
@@ -173,29 +173,25 @@ fun CreditContent(viewModel: ProductViewModel) {
                 }
             }
             CreditStatus.CREDIT_REJECTED.status -> {
-                when (viewModel.uiState.idBrand) {
-                    Brand.Guatemala.id.toString(), Brand.ElSalvador.id.toString() -> {
-                        if (viewModel.uiState.userStatus?.infoCredit?.wording?.display == true) {
-                            CustomProductBackground(
-                                modifier = Modifier
-                                    .padding(horizontal = 16.dp),
-                                type = Primary
-                            ) {
-                                CardGtSvCreditRejected(
-                                    action = {
-                                        viewModel.onUIEvent(
-                                            OnMaxAttemptsCardClick(
-                                                whatsAppLink = viewModel.uiState.userStatus?.infoCredit?.wording?.link ?: whatsAppLink,
-                                                context = context
-                                            )
-                                        )
-                                    },
-                                    wording = viewModel.uiState.userStatus?.infoCredit?.wording
+                if (viewModel.uiState.userStatus?.infoCredit?.wording?.display == true) {
+                    CustomProductBackground(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp),
+                        type = Primary
+                    ) {
+                        CardGtSvCreditRejected(
+                            action = {
+                                viewModel.onUIEvent(
+                                    OnMaxAttemptsCardClick(
+                                        whatsAppLink = viewModel.uiState.userStatus?.infoCredit?.wording?.link
+                                            ?: whatsAppLink,
+                                        context = context
+                                    )
                                 )
-                            }
-                        }
+                            },
+                            wording = viewModel.uiState.userStatus?.infoCredit?.wording
+                        )
                     }
-                    else -> Unit
                 }
             }
             CreditStatus.CREDIT_NOT_PRE_APPROVED.status -> {
@@ -210,7 +206,8 @@ fun CreditContent(viewModel: ProductViewModel) {
                                 idBrand = viewModel.uiState.idBrand.toInt(),
                                 action = {
                                     viewModel.onUIEvent(OnNavigateToGtSvNonPreApproved)
-                                })
+                                }
+                            )
                         }
                     }
                     else -> Unit

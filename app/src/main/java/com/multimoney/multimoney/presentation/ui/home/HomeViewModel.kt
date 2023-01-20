@@ -78,11 +78,11 @@ import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
 import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalPagerApi::class)
@@ -356,13 +356,7 @@ class HomeViewModel @Inject constructor(
             )
         )
 
-        val creditStatus = uiState.validateUserStatus?.infoCredit?.status
-
-        if (uiState.idBrand == Brand.CostaRica.id.toString()) {
-            if (creditStatus == CreditStatus.CREDIT_NOT_PRE_APPROVED.status || creditStatus == CreditStatus.CREDIT_REJECTED.status) {
-                productPageList.clear()
-            }
-        }
+        removeBlankCards(productPageList)
 
         // If idBrand is different from Guatemala enable Smart
         if (uiState.idBrand != Brand.Guatemala.id.toString()) {
@@ -449,6 +443,22 @@ class HomeViewModel @Inject constructor(
             uiState = uiState.copy(isLoading = false)
         }
         uiState = uiState.copy(balance = balance, productPageList = productPageList)
+    }
+
+    private fun removeBlankCards(productPageList: MutableList<ProductPage>) {
+        val creditStatus = uiState.validateUserStatus?.infoCredit
+        when (uiState.idBrand) {
+            Brand.CostaRica.id.toString() -> {
+                if (creditStatus?.status == CreditStatus.CREDIT_NOT_PRE_APPROVED.status || (creditStatus?.status == CreditStatus.CREDIT_REJECTED.status && creditStatus.wording?.display == false)) {
+                    productPageList.clear()
+                }
+            }
+            Brand.ElSalvador.id.toString() -> {
+                if (creditStatus?.status == CreditStatus.CREDIT_REJECTED.status && creditStatus.wording?.display == false) {
+                    productPageList.clear()
+                }
+            }
+        }
     }
 
     private fun callQueryGetConfigurationVersion(

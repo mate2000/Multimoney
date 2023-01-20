@@ -17,10 +17,11 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SinpeAccountNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAccountIDListNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAccountIDNavType
+import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountScreen
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.smartaccount.SelectSmartAccountContainer
-import com.multimoney.multimoney.presentation.ui.smart.transfer.register.SmartTransferRegisterIbanScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.amount.OwnTransferAmountScreen
 
@@ -176,10 +177,31 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
         ) {
             OwnTransferAmountScreen(
                 onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        PREVIOUS_IS_RESTART,
-                        it.isRestart
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
                     )
+                }
+            )
+        }
+        composable(
+            route = Screen.SmartAddSACAccountScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(USER) { type = NavType.StringType },
+                navArgument(SMART_IDS) { type = SmartAccountIDNavType() }
+            )
+        ) {
+            SmartAddAccountScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,

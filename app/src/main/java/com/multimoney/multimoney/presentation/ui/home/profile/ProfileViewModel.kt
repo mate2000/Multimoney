@@ -20,6 +20,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.ProfileCardListOrigin
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -70,7 +71,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun navigateToMyCards() {
-        navigateTo("${Screen.ProfileCardListScreen.baseRoute}/${uiState.email}/${uiState.idBrand}/${uiState.identification}")
+        navigateTo("${Screen.ProfileCardListScreen.baseRoute}/${uiState.email}/${uiState.idBrand}/${uiState.identification}/${ProfileCardListOrigin.Profile.value}")
     }
 
     private fun signOutDialogConfirmation() {

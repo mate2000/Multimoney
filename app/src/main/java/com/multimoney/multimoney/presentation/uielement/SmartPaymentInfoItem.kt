@@ -44,7 +44,7 @@ fun SmartPaymentInfoItem(
     modifier: Modifier = Modifier,
     verticalAlignment: Alignment.Vertical = Alignment.Top,
     icon: Int? = null,
-    iconTint: Color = Color.Unspecified,
+    iconTint: Color = MultimoneyTheme.colors.iconTintVoucher,
     iconModifier: Modifier = Modifier,
     title: String,
     subtitle: String? = null,

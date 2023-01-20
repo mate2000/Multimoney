@@ -69,6 +69,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNoVoConfig
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnVisaCardExpiredDialog
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditContent
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditFooter
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditFooterExpanded
@@ -121,6 +122,13 @@ fun ProductScreen(
         viewModel.executeNavigation(onNavigate = onNavigate)
         viewModel.onUIEvent(OnNoVoConfig)
         viewModel.onUIEvent(OnGetCryptoMovements)
+    }
+
+    LaunchedEffect(key1 = sharedViewModel.uiState.balance) {
+        viewModel.onUIEvent(OnVisaCardExpiredDialog(
+            idBrand = sharedViewModel.uiState.idBrand,
+            balance = sharedViewModel.uiState.balance
+        ))
     }
 
     // BaseEvent from ProductViewModel
@@ -269,7 +277,8 @@ fun ProductScreen(
             positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
             negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
             openDialogCustom = viewModel.uiState.openDialog.isActive,
-            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction,
+            onNegativeAction = viewModel.uiState.openDialog.negativeAction
         )
     }
 }
@@ -425,7 +434,10 @@ fun ProductContent(
                 )
             }
         }
-        Row(Modifier.fillMaxWidth().padding(top = 16.dp), horizontalArrangement = Arrangement.Center) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp), horizontalArrangement = Arrangement.Center) {
             CustomDotsIndicator(
                 totalDots = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
                 selectedIndex = state.currentPage,

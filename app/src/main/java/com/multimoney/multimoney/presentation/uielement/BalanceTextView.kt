@@ -16,27 +16,26 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
+import java.text.DecimalFormatSymbols
+import java.util.Locale
 
 /**
  * @param modifier - modifier only for BalanceText
  * @param balanceText - text to display with the balance
- * @param splitWith - string separator, default is "."
  * @param currencyStyle - style for currency main text
  * @param currencyDecimalStyle - style for currency decimal text
  *
  * **/
 
-const val DEFAULT_SPLIT_WITH = "."
-
 @Composable
 fun BalanceTextView(
     modifier: Modifier = Modifier,
     balanceText: String,
-    splitWith: String = DEFAULT_SPLIT_WITH,
     currencyStyle: TextStyle,
     currencyDecimalStyle: TextStyle,
 ) {
-    val splitText = balanceText.split(splitWith)
+    val decimalSeparator = DecimalFormatSymbols(Locale.getDefault()).decimalSeparator
+    val splitText = balanceText.split(decimalSeparator)
     val localDensity = LocalDensity.current
     var fontPadding by remember { mutableStateOf(0.dp) }
 
@@ -69,7 +68,7 @@ fun BalanceTextView(
             Text(
                 modifier = Modifier.offset(y = fontPadding),
                 text = buildAnnotatedString {
-                    append(splitWith)
+                    append(decimalSeparator)
                     append(splitText[1])
                 },
                 style = currencyDecimalStyle

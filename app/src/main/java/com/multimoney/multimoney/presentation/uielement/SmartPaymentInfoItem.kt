@@ -44,7 +44,7 @@ fun SmartPaymentInfoItem(
     modifier: Modifier = Modifier,
     verticalAlignment: Alignment.Vertical = Alignment.Top,
     icon: Int? = null,
-    iconTint: Color = Color.Unspecified,
+    iconTint: Color = MultimoneyTheme.colors.iconTintVoucher,
     iconModifier: Modifier = Modifier,
     title: String,
     subtitle: String? = null,
@@ -72,7 +72,7 @@ fun SmartPaymentInfoItem(
                         .width(24.dp)
                 )
             }
-            Column(modifier = Modifier.padding(start = 14.dp)) {
+            Column(modifier = Modifier.padding(horizontal = 14.dp)) {
                 Text(
                     text = title,
                     style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
@@ -94,7 +94,7 @@ fun SmartPaymentInfoItem(
                     .background(color = MultimoneyTheme.colors.dividerWhite40)
             )
         }
-        Column(modifier = Modifier.padding(end = 14.dp)) {
+        Column(modifier = Modifier.padding(horizontal = 14.dp)) {
             if (rightTitle.isNullOrBlank().not()) {
                 Text(
                     text = rightTitle.orEmpty(),

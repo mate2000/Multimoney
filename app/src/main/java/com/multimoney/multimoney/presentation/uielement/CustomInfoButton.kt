@@ -142,8 +142,10 @@ fun CustomInfoButton(
                         width = Dimension.fillToConstraints
                         height = Dimension.wrapContent
                     },
-                    style = Typography.caption.copy(fontSize = 13.sp),
-                    color = subtitleColor
+                    color = subtitleColor,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = Typography.caption.copy(fontSize = 13.sp)
                 )
                 if (subtitle2.isNotEmpty()) {
                     Text(

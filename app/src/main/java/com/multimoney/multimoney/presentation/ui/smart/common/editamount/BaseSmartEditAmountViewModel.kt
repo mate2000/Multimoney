@@ -336,7 +336,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                             showErrorScreen = false,
                             paymentSuccess = true,
                             currentDate = getCurrentDate(Calendar.getInstance().time),
-                            currentTime = getCurrentTime(Calendar.getInstance().time),
+                            currentTime = getCurrentTime(Calendar.getInstance().time).lowercase(),
                             referenceNumber = it?.referenceNumber ?: ""
                         )
                     }

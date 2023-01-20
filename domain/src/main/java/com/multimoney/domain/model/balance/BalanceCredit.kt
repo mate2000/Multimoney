@@ -7,5 +7,6 @@ data class BalanceCredit(
     val creditLimitLabel: String,
     val term: String,
     val applyAutomaticDebit: Boolean?,
-    val automaticDebitEnabled: Boolean?
+    val automaticDebitEnabled: Boolean?,
+    val expiredAutomaticDebitCard: Boolean
 )

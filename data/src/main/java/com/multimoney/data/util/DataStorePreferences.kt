@@ -81,6 +81,11 @@ class DataStorePreferences @Inject constructor(
 
     fun isBiometricsEnabled(): Flow<Boolean> = getData(BIOMETRICS_ENABLED_KEY, false)
 
+    suspend fun isSignOutOnBackground(isSignOutOnBackground: Boolean) =
+        setData(SIGN_OUT_ON_BACKGROUND, isSignOutOnBackground)
+
+    fun isSignOutOnBackground(): Flow<Boolean> = getData(SIGN_OUT_ON_BACKGROUND, false)
+
     suspend fun isOnBoardingEnabled(isOnBoardingEnabled: Boolean) =
         setData(ON_BOARDING_ENABLED_KEY, isOnBoardingEnabled)
 
@@ -94,13 +99,19 @@ class DataStorePreferences @Inject constructor(
         if (getSecuredData(UNIQUE_ID, "").first().isEmpty()) {
             setUniqueID(UUID.randomUUID().toString())
         }
-        return  getSecuredData(UNIQUE_ID,"")
+        return getSecuredData(UNIQUE_ID, "")
     }
 
     suspend fun isContactPermissionRequested(isOnBoardingEnabled: Boolean) =
         setData(CONTACT_PERMISSION_STATE_KEY, isOnBoardingEnabled)
 
     fun isContactPermissionRequested(): Flow<Boolean> = getData(CONTACT_PERMISSION_STATE_KEY, false)
+
+    suspend fun isVisaCardExpiredDialogEnabled(dialogEnabled: Boolean) {
+        setData(VISA_CARD_EXPIRED_DIALOG_KEY, dialogEnabled)
+    }
+
+    fun isVisaCardExpiredEnabled(): Flow<Boolean> = getData(VISA_CARD_EXPIRED_DIALOG_KEY, true)
 
 
     companion object {
@@ -117,5 +128,7 @@ class DataStorePreferences @Inject constructor(
         private val BIOMETRICS_ENABLED_KEY = booleanPreferencesKey("biometrics_enabled_key")
         private val ON_BOARDING_ENABLED_KEY = booleanPreferencesKey("on_boarding_enabled_key")
         private val CONTACT_PERMISSION_STATE_KEY = booleanPreferencesKey("contact_permission_state_key")
+        private val SIGN_OUT_ON_BACKGROUND = booleanPreferencesKey("sign_out_on_background")
+        private val VISA_CARD_EXPIRED_DIALOG_KEY = booleanPreferencesKey("visa_card_expired_dialog_key")
     }
 }

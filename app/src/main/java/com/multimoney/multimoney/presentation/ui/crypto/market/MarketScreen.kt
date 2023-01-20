@@ -53,6 +53,7 @@ import com.multimoney.multimoney.presentation.uielement.Size
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.encodeURLToUTF
+import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlacesWithoutNegatives
 import kotlinx.coroutines.launch
 
 @Composable
@@ -310,7 +311,11 @@ fun ListOfCoinsSection(
                 descriptionCurrency = cryptoCoin.description,
                 asset = cryptoCoin.baseAsset,
                 amountChange = cryptoCoin.amountchange,
-                percentChange = cryptoCoin.percentChange.toDouble(),
+                percentChange = stringResource(
+                    id = R.string.currency_item_percent_invested_with_symbol,
+                    if (cryptoCoin.percentChange.contains(NEGATIVE_SYMBOL)) NEGATIVE_SYMBOL else POSITIVE_SYMBOL,
+                    cryptoCoin.percentChange.toDouble().roundToTwoDecimalPlacesWithoutNegatives()
+                ),
                 currentPrice = cryptoCoin.currentPrice.toString().toDouble(),
                 onCurrencyItemClick = { onCurrencyItemClick(cryptoCoin) }
             )
@@ -321,3 +326,5 @@ fun ListOfCoinsSection(
 const val SV_DEFAULT_BASE_ASSET = "BTC"
 const val PRICE_FILTER_VALUE = "Precio"
 const val AZ_FILTER_VALUE = "A-Z"
+const val NEGATIVE_SYMBOL = "-"
+const val POSITIVE_SYMBOL = "+"

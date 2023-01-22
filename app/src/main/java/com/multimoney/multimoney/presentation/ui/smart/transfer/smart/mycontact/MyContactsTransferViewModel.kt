@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class MyContactsTransferViewModel @Inject constructor(
-    private val queryRelatedContactsByPhoneUseCaseImp: QueryRelatedContactsByPhoneUseCase,
+    private val queryRelatedContactsByPhoneUseCase: QueryRelatedContactsByPhoneUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
@@ -44,17 +44,17 @@ class MyContactsTransferViewModel @Inject constructor(
     }
 
     private fun callQueryRelatedContactsByPhoneUseCaseImp() = executeUseCase {
-        queryRelatedContactsByPhoneUseCaseImp.invoke(
+        queryRelatedContactsByPhoneUseCase.invoke(
             user = user,
             idBrand = idBrand,
             contacts = relatedContacts
         ).collectLatest { result ->
             result.onSuccess { accountList ->
                 uiState = uiState.copy(isLoading = false)
-                accountList?.phones?.let {
-                    uiState = uiState.copy(relatedContactList = it.distinctBy { phoneSmart ->
+                accountList?.phones?.let { phoneSmarts ->
+                    uiState = uiState.copy(relatedContactList = phoneSmarts.distinctBy { phoneSmart ->
                         phoneSmart.identification
-                    })
+                    }.sortedBy { it.titular })
                 }
             }
             result.onFailure {
@@ -108,7 +108,7 @@ class MyContactsTransferViewModel @Inject constructor(
             is UIEvent.OnAddSACAccountClick -> onAddSACAccountClick()
             is UIEvent.OnQueryValueChange -> onQueryValueChange(uiEvent.value)
             is UIEvent.OnNavigateToHome -> onNavigateToHome()
-            UIEvent.OnCallQueryRelatedContactsByPhoneUseCaseImp -> callQueryRelatedContactsByPhoneUseCaseImp()
+            UIEvent.OnCallQueryRelatedContactsByPhoneUseCase -> callQueryRelatedContactsByPhoneUseCaseImp()
         }
     }
 
@@ -124,7 +124,7 @@ class MyContactsTransferViewModel @Inject constructor(
         object OnNavigateToHome : UIEvent()
         object OnAddSACAccountClick : UIEvent()
         data class OnAddToFavoriteAccountClick(val contactToFavorite: PhoneSmart) : UIEvent()
-        object OnCallQueryRelatedContactsByPhoneUseCaseImp : UIEvent()
+        object OnCallQueryRelatedContactsByPhoneUseCase : UIEvent()
         data class OnQueryValueChange(val value: String) : UIEvent()
     }
 }

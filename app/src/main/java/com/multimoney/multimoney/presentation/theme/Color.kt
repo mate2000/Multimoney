@@ -200,6 +200,10 @@ data class MultimoneyColors(
     val linearProgressIndicatorStart: Color,
     val linearProgressIndicatorFinal: Color,
     val bodyTextColor: Color,
+    val twoCharacterOneColor: Color,
+    val twoCharacterTwoColor: Color,
+    val twoCharacterThreeColor: Color,
+    val twoCharacterComplementaryTwoColor: Color
 )
 
 val DarkColorPalette = MultimoneyColors(
@@ -259,6 +263,10 @@ val DarkColorPalette = MultimoneyColors(
     linearProgressIndicatorStart = Primary300,
     linearProgressIndicatorFinal = DefaultWhite,
     bodyTextColor = WhiteTransparency60,
+    twoCharacterOneColor = Primary400,
+    twoCharacterTwoColor = Secondary400,
+    twoCharacterThreeColor = Tertiary400,
+    twoCharacterComplementaryTwoColor = ComplementaryTwo400
 )
 
 val LightColorPalette = MultimoneyColors(
@@ -318,6 +326,10 @@ val LightColorPalette = MultimoneyColors(
     linearProgressIndicatorStart = Primary300,
     linearProgressIndicatorFinal = DefaultWhite,
     bodyTextColor = BlackTransparency60,
+    twoCharacterOneColor = Primary400,
+    twoCharacterTwoColor = Secondary400,
+    twoCharacterThreeColor = Tertiary400,
+     twoCharacterComplementaryTwoColor =  ComplementaryTwo400
 )
 
 val LocalMultimoneyColors = staticCompositionLocalOf {

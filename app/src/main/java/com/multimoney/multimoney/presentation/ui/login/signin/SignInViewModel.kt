@@ -152,10 +152,10 @@ class SignInViewModel @Inject constructor(
                                             session.userPoolTokens.value?.idToken.orEmpty(),
                                             authUserAttribute
                                         )
-                                        if (payload.getString(SignUpPasswordViewModel.COGNITO_CHANGE_PASSWORD_REQUIRED)
-                                            .toBoolean()
+                                        if (/*payload.getString(SignUpPasswordViewModel.COGNITO_CHANGE_PASSWORD_REQUIRED)
+                                            .toBoolean()*/true
                                         ) {
-                                            uiState = uiState.copy(
+                                            /*uiState = uiState.copy(
                                                 openDialog = DialogParameters(
                                                     titleResource = string.sign_in_expired_password_dialog_title,
                                                     descriptionResource = string.sign_in_expired_password_dialog_description,
@@ -171,7 +171,13 @@ class SignInViewModel @Inject constructor(
                                                     isActive = mutableStateOf(true)
                                                 ),
                                                 isLoading = false
-                                            )
+                                            )*/
+                                            uiState = uiState.copy(isLoading = false)
+                                            if (uiState.isFingerprintChecked) {
+                                                uiState = uiState.copy(configureBiometric = true)
+                                            } else {
+                                                navigateToHome()
+                                            }
                                         } else {
                                             uiState = uiState.copy(isLoading = false)
                                             if (uiState.isFingerprintChecked) {

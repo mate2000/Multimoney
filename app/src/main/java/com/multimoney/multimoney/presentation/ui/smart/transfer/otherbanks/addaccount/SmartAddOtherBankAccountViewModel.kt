@@ -6,22 +6,35 @@ import androidx.compose.runtime.setValue
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.multimoney.domain.interaction.accountsmart.QueryBankListTransfer365UseCase
+import com.multimoney.domain.interaction.accountsmart.QuerySmartAccountTypeUseCase
+import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCase
+import com.multimoney.domain.model.accountsmart.BankTransfer365
 import com.multimoney.domain.model.accountsmart.SmartAccountID
+import com.multimoney.domain.model.accountsmart.SmartAccountType
+import com.multimoney.domain.model.security.CatalogDocument
 import com.multimoney.domain.model.util.error.HttpError
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.SMART_IDS
+import com.multimoney.multimoney.presentation.navigation.ORIGIN_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SmartAddOtherBankAccountViewModel @Inject constructor(
+    private val queryCatalogDocumentTypeUseCase: QueryCatalogDocumentTypeUseCase,
+    private val querySmartAccountTypeUseCase: QuerySmartAccountTypeUseCase,
+    private val queryBankListTransfer365UseCase: QueryBankListTransfer365UseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true){
 
@@ -37,7 +50,7 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
     init {
         user = savedStateHandle[USER] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
-        smartAccount = savedStateHandle[SMART_IDS]
+        smartAccount = savedStateHandle[ORIGIN_ACCOUNT]
         getListValues()
     }
 
@@ -50,20 +63,57 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
     }
 
     private fun getAccountTypes() = executeUseCase {
-
+        querySmartAccountTypeUseCase.invoke(
+            idBrand = idBrand,
+            user = user
+        ).collectLatest { result ->
+            result.onSuccess { types ->
+                uiState = uiState.copy(
+                    isLoading = false,
+                    accountTypeList = types?.typeList ?: listOf()
+                )
+            }
+            result.onFailure { onFailure(it) }
+            result.onLoading { uiState = uiState.copy(isLoading = true) }
+        }
     }
 
     private fun getBanks() = executeUseCase {
-
+        queryBankListTransfer365UseCase.invoke(
+            idBrand = idBrand,
+            user = user
+        ).collectLatest { result ->
+            result.onSuccess { banks ->
+                uiState = uiState.copy(
+                    isLoading = false,
+                    bankList = banks?.bankList ?: listOf()
+                )
+            }
+            result.onFailure { onFailure(it) }
+            result.onLoading { uiState = uiState.copy(isLoading = true) }
+        }
     }
 
     private fun getDocumentTypes() = executeUseCase {
-
+        queryCatalogDocumentTypeUseCase.invoke(
+            idBrand = idBrand,
+            user = user,
+            isTransferIdentification = 1
+        ).collectLatest { result ->
+            result.onSuccess { list ->
+                uiState = uiState.copy(
+                    isLoading = false,
+                    documentList = list?.catalogDocument ?: listOf()
+                )
+            }
+            result.onFailure { onFailure(it) }
+            result.onLoading { uiState = uiState.copy(isLoading = true) }
+        }
     }
 
     private fun onAccountTypeSelected(newType: String) {
-        //val type = uiState.accountTypeList.find { it?.typeName == newType }
-        uiState = uiState.copy(type = newType)
+        val type = uiState.accountTypeList.find { it?.typeName == newType }
+        uiState = uiState.copy(type = type)
         validateForm()
     }
 
@@ -74,7 +124,8 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
     }
 
     private fun onDocumentChanged(newDocument: String) {
-        uiState = uiState.copy(document = newDocument)
+        val document = uiState.documentList.find { it.description == newDocument }
+        uiState = uiState.copy(document = document)
     }
 
     private fun onNamesChanged(newNames: String) {
@@ -142,16 +193,14 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
     data class UIState(
         val openDialog: DialogParameters = DialogParameters(),
         val isLoading: Boolean = false,
-        val accountTypeList: List<String?> = listOf(),
-        val type: String = "",
-        val document: String = "",
-        val documentFormat: String = "",
-        val documentList: List<String> = listOf(),
-        val identificationValueType: String = "",
+        val accountTypeList: List<SmartAccountType?> = listOf(),
+        val type: SmartAccountType? = null,
+        val document: CatalogDocument? = null,
+        val documentList: List<CatalogDocument> = listOf(),
         val accountNumber: String = "",
         val isAccountNumberError: Boolean = false,
-        val bank: String = "",
-        val bankList: List<String> = listOf(),
+        val bank: BankTransfer365? = null,
+        val bankList: List<BankTransfer365> = listOf(),
         val email: String = "",
         val personalIdError: Pair<Boolean, Int> = Pair(false, R.string.empty),
         val enableButton: Boolean = false,

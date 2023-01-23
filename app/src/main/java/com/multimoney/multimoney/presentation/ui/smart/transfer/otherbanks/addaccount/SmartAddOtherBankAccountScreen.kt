@@ -40,7 +40,7 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addac
 import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnValidateAccountNumber
 import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnValidateDocument
-import com.multimoney.multimoney.presentation.ui.smart.transfer.register.SmartTransferRegisterIbanViewModel
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -147,12 +147,12 @@ fun SmartAddOtherBankAccountContent(viewModel: SmartAddOtherBankAccountViewModel
                 CustomDropdownTextField(
                     modifier = Modifier.padding(top = 16.dp),
                     labelText = stringResource(id = R.string.document),
-                    value = viewModel.uiState.document,
-                    placeHolder = if (viewModel.uiState.documentFormat != "") viewModel.uiState.documentFormat.replace(
-                        viewModel.uiState.documentFormat.last(),
+                    value = viewModel.uiState.document?.description,
+                    placeHolder = if (viewModel.uiState.document?.format != "") viewModel.uiState.document?.format?.replace(
+                        viewModel.uiState.document?.format.orEmpty().last(),
                         SmartTransferRegisterIbanViewModel.FORMAT_VALUE,
                         false
-                    ) else "",
+                    ).orEmpty() else "",
                     isError = viewModel.uiState.personalIdError.first,
                     errorMessage = stringResource(id = viewModel.uiState.personalIdError.second),
                     onValueChange = { documentNumber ->
@@ -161,11 +161,11 @@ fun SmartAddOtherBankAccountContent(viewModel: SmartAddOtherBankAccountViewModel
                     onSelectionChange = { documentType, _ ->
                         viewModel.onUIEvent(OnDocumentTypeSelected(documentType))
                     },
-                    optionList = viewModel.uiState.documentList,
-                    optionSelected = viewModel.uiState.identificationValueType,
-                    customTransformation = if (viewModel.uiState.documentFormat != "") MaskVisualTransformation(
-                        viewModel.uiState.documentFormat,
-                        viewModel.uiState.documentFormat.last()
+                    optionList = viewModel.uiState.documentList.map { it.description },
+                    optionSelected = viewModel.uiState.document?.description.orEmpty(),
+                    customTransformation = if (viewModel.uiState.document?.format != "") MaskVisualTransformation(
+                        viewModel.uiState.document?.format.orEmpty(),
+                        viewModel.uiState.document?.format.orEmpty().last()
                     ) else null,
                     onDebounceValidation = {
                         viewModel.onUIEvent(OnValidateDocument)
@@ -176,8 +176,8 @@ fun SmartAddOtherBankAccountContent(viewModel: SmartAddOtherBankAccountViewModel
                         .padding(top = 16.dp)
                         .wrapContentSize(Alignment.TopStart)
                         .focusable(false),
-                    items = viewModel.uiState.bankList.map { it },
-                    value = viewModel.uiState.bank ?: "",
+                    items = viewModel.uiState.bankList.map { it.bankName.orEmpty() },
+                    value = viewModel.uiState.bank?.bankName.orEmpty(),
                     onValueChange = { valueSelected, _ ->
                         viewModel.onUIEvent(OnBankSelected(valueSelected))
                     },
@@ -189,8 +189,8 @@ fun SmartAddOtherBankAccountContent(viewModel: SmartAddOtherBankAccountViewModel
                         .padding(top = 16.dp)
                         .wrapContentSize(Alignment.TopStart)
                         .focusable(false),
-                    items = viewModel.uiState.accountTypeList.map { it.orEmpty() },
-                    value = viewModel.uiState.type,
+                    items = viewModel.uiState.accountTypeList.map { it?.typeName.orEmpty() },
+                    value = viewModel.uiState.type?.typeName.orEmpty(),
                     onValueChange = { valueSelected, _ ->
                         viewModel.onUIEvent(OnAccountTypeSelected(valueSelected))
                     },

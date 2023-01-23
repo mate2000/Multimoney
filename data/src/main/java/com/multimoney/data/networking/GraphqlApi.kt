@@ -15,6 +15,7 @@ import com.multimoney.data.networking.graphql.apollomodel.AddressLevel2Query
 import com.multimoney.data.networking.graphql.apollomodel.AddressLevel3Query
 import com.multimoney.data.networking.graphql.apollomodel.BalanceCardInformationQuery
 import com.multimoney.data.networking.graphql.apollomodel.BalanceQuery
+import com.multimoney.data.networking.graphql.apollomodel.BankListTransfer365Query
 import com.multimoney.data.networking.graphql.apollomodel.BanksAndRegularExpressionQuery
 import com.multimoney.data.networking.graphql.apollomodel.CardBlockingNVMutation
 import com.multimoney.data.networking.graphql.apollomodel.CardIssuanceNVQuery
@@ -894,10 +895,16 @@ class GraphqlApi @Inject constructor(
 
     fun queryCatalogIdentification(
         idBrand: Int,
-        user: String
+        user: String,
+        isTransferIdentification: Int?
     ): ApolloCall<CatalogTypeIndentificationQuery.Data> =
-        apolloAuthorizedClient.query(CatalogTypeIndentificationQuery(user, idBrand))
-            .fetchPolicy(FetchPolicy.NetworkOnly)
+        apolloAuthorizedClient.query(
+            CatalogTypeIndentificationQuery(
+                user,
+                idBrand,
+                Optional.presentIfNotNull(isTransferIdentification)
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryGetCountry(user: String): ApolloCall<GetCountryQuery.Data> =
         apolloAuthorizedClient.query(GetCountryQuery(user)).fetchPolicy(FetchPolicy.NetworkOnly)
@@ -1816,6 +1823,13 @@ class GraphqlApi @Inject constructor(
             active = active,
             idCurrencyAccount = Optional.presentIfNotNull(idCurrencyAccount)
         )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryBankListTransfer365(
+        idBrand: Int,
+        user: String
+    ): ApolloCall<BankListTransfer365Query.Data> = apolloAuthorizedClient.query(
+        BankListTransfer365Query(idBrand = idBrand, user = user)
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryCryptoCurrencyMovements(

@@ -1348,7 +1348,7 @@
     <string name="smart_sac_transfer_contact_rationale_message" translatable="false">Necesitamos acceso a tus contactos para que podás realizar envíos</string>
     <string name="smart_sac_transfer_contact_rationale_button" translatable="false">Permitir acceso a contactos</string>
     <string name="smart_sac_transfer_contact_permission_denied_message" translatable="false">Necesitamos acceso a tus contactos para que podás realizar envíos. Podrás activar el acceso a tus contactos cuando querás.</string>
-    
+
     <!-- Smart Other banks Transfer -->
     <string name="smart_other_bank_transfer_add_title" translatable="false">Datos de la cuenta</string>
     <string name="smart_other_bank_transfer_add_account_number_error" translatable="false"><b>Revisar formato. </b>Debe tener 9 dígitos.</string>

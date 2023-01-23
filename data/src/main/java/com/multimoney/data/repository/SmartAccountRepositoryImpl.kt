@@ -11,6 +11,7 @@ import com.multimoney.data.networking.GraphqlApi
 import com.multimoney.data.paging.SmartMovementsPagingSource
 import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
 import com.multimoney.domain.model.accountsmart.AddressesLevel
+import com.multimoney.domain.model.accountsmart.BankListTransfer365
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.CivilStatusResult
 import com.multimoney.domain.model.accountsmart.ExchangeRateResult
@@ -471,6 +472,20 @@ class SmartAccountRepositoryImpl @Inject constructor(
         user: String
     ): Flow<MultimoneyResult<SmartAccountTypeResult?>> {
         return fetchData(graphqlApi.querySmartAccountType(
+            idBrand = idBrand,
+            user = user
+        ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+    }
+
+    override suspend fun queryBankListTransfer365(
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<BankListTransfer365?>> {
+        return fetchData(graphqlApi.queryBankListTransfer365(
             idBrand = idBrand,
             user = user
         ),

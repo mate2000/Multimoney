@@ -20,6 +20,8 @@ import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelThreeUseC
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelThreeUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelTwoUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelTwoUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QueryBankListTransfer365UseCase
+import com.multimoney.domain.interaction.accountsmart.QueryBankListTransfer365UseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryCivilStatusUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryCivilStatusUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryGeneralEconomicActivityUseCase
@@ -747,6 +749,11 @@ class InteractionModule {
     @Singleton
     fun provideQuerySmartAccountType(smartAccountRepository: SmartAccountRepository): QuerySmartAccountTypeUseCase =
         QuerySmartAccountTypeUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideBankListTransfer365(smartAccountRepository: SmartAccountRepository): QueryBankListTransfer365UseCase =
+        QueryBankListTransfer365UseCaseImpl(smartAccountRepository)
 
     @Provides
     @Singleton

@@ -129,7 +129,8 @@ interface SecurityRepository {
 
     suspend fun queryCatalog(
         idBrand: Int,
-        user: String
+        user: String,
+        isTransferIdentification: Int?
     ): Flow<MultimoneyResult<CatalogType?>>
 
     suspend fun queryGetCountry(user: String): Flow<MultimoneyResult<CountryList?>>

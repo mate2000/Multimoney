@@ -16,6 +16,9 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -160,15 +163,17 @@ fun MyContactsTransferScreen(
 fun ContactList(viewModel: MyContactsTransferViewModel = hiltViewModel()) {
     LazyColumn(modifier = Modifier.padding(top = 20.dp, start = 16.dp, end = 16.dp)) {
         items(viewModel.uiState.relatedContactList) { contact ->
+            val subtitleColor =
+                arrayOf(
+                    MultimoneyTheme.colors.twoCharacterOneColor,
+                    MultimoneyTheme.colors.twoCharacterTwoColor,
+                    MultimoneyTheme.colors.twoCharacterTwoColor,
+                    MultimoneyTheme.colors.twoCharacterComplementaryTwoColor)
+            val colorSubtitle by remember { mutableStateOf(subtitleColor) }
             if (
                 (contact?.titular?.contains(viewModel.uiState.queryValue, true) == true)
             ) {
-                val subtitleColor =
-                    arrayOf(
-                        MultimoneyTheme.colors.twoCharacterOneColor,
-                        MultimoneyTheme.colors.twoCharacterTwoColor,
-                        MultimoneyTheme.colors.twoCharacterTwoColor,
-                        MultimoneyTheme.colors.twoCharacterComplementaryTwoColor)
+
                 ContactItem(
                     title = contact.titular.capitalizedAllWords(),
                     subtitle =
@@ -183,7 +188,7 @@ fun ContactList(viewModel: MyContactsTransferViewModel = hiltViewModel()) {
                             )
                         )
                     },
-                    colorSubtitle = subtitleColor[(0..3).random()]
+                    colorSubtitle = colorSubtitle[(0..3).random()]
 
                 )
                 Divider(color = MultimoneyTheme.colors.dividerWhite30, thickness = 1.dp)

@@ -26,9 +26,7 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.Companion.TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -40,31 +38,26 @@ import kotlinx.coroutines.flow.onEach
 @OptIn(FlowPreview::class)
 @Composable
 fun DocumentGenerationScreen(
-    viewModel: SignDocumentProcessViewModel,
+    onNavigateToHome: () -> Unit = {},
     icon: Int? = null,
     title: Int? = null,
     subtitle: Int? = null
 ) {
     val openStepDebounce = remember { MutableStateFlow(true) }
     val openStepFlow: Flow<Boolean> = remember {
-        openStepDebounce.debounce(TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND)
-            .onEach { status ->
-                viewModel.onUIEvent(OnNavigateToHome)
-                flowOf(status)
-            }
+        openStepDebounce.debounce(TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND).onEach { status ->
+            onNavigateToHome()
+            flowOf(status)
+        }
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MultimoneyTheme.colors.background)
-            .padding(horizontal = 16.dp),
+        modifier = Modifier.fillMaxSize().background(MultimoneyTheme.colors.background).padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxHeight(0.80f),
+            modifier = Modifier.fillMaxHeight(0.80f),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -93,8 +86,7 @@ fun DocumentGenerationScreen(
         ) {
             CircularProgressIndicator(
                 modifier = Modifier.size(32.dp),
-                color =
-                MultimoneyTheme.colors.primary
+                color = MultimoneyTheme.colors.primary
             )
             Text(
                 text = stringResource(id = string.document_generation_info),

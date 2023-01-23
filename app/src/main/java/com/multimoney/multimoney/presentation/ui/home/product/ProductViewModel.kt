@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.APPROVED
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.FAILED
@@ -34,7 +35,6 @@ import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.balance.Account
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.balance.BalanceCredit
-import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.balance.Summary
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditMovementsResult
@@ -81,6 +81,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnShareIbanAccount
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnVisaCardExpiredDialog
 import com.multimoney.multimoney.presentation.util.FilterDate
 import com.multimoney.multimoney.presentation.util.NfcHelper
 import com.multimoney.multimoney.presentation.util.PAGE_SIZE
@@ -89,19 +90,23 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentOrigin
+import com.multimoney.multimoney.presentation.util.catalog.ProfileCardListOrigin
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
 import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.util.NovoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
-import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
+    private val dataStorePreferences: DataStorePreferences,
     private val helper: ShareHelper,
     private val nfcHelper: NfcHelper,
     private val novoHelper: NovoHelper,
@@ -182,6 +187,35 @@ class ProductViewModel @Inject constructor(
         }
     }
 
+    private fun onVisaCardExpiredDialog(
+        idBrand: String,
+        balance: Balance?
+    ) {
+        if (idBrand != Brand.CostaRica.id.toString()) {
+            if (balance?.isExpiredAutomaticDebitCard() == true) {
+                viewModelScope.launch {
+                    if (dataStorePreferences.isVisaCardExpiredEnabled().first()) {
+                        uiState = uiState.copy(
+                            openDialog = DialogParameters(
+                                titleResource = R.string.product_visa_card_expired_dialog_title,
+                                descriptionResource = R.string.product_visa_card_expired_dialog_description,
+                                positiveResource = R.string.product_visa_card_expired_dialog_update_label,
+                                negativeResource = R.string.product_visa_card_expired_dialog_hide_label,
+                                positiveAction = { navigateToMyCards() },
+                                negativeAction = {
+                                    viewModelScope.launch {
+                                        dataStorePreferences.isVisaCardExpiredDialogEnabled(false)
+                                    }
+                                },
+                                isActive = mutableStateOf(true)
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     private fun setValidateUserStatus(userStatus: ValidateUserStatus?) {
         lastStep =
             CreditStep.Search.getIdByName(userStatus?.infoCredit?.infoPreApprove?.currentStep)
@@ -195,6 +229,12 @@ class ProductViewModel @Inject constructor(
                     uiState.userStatus?.infoBankAccount?.status == MyProductStatus.ACTIVE.status -> R.string.home_product_header_title
             else -> R.string.home_product_available_products_title
         }
+
+    private fun navigateToMyCards() {
+        navigateTo(
+            route = "${Screen.ProfileCardListScreen.baseRoute}/${email}/${uiState.idBrand}/${identification}/${ProfileCardListOrigin.Product.value}"
+        )
+    }
 
     private fun onNavigateToCreditScreen(
         creditStep: String
@@ -388,7 +428,7 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToProfileScreen() {
-        navigateTo("${Screen.ProfileScreen.baseRoute}/$idClient/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/$email/${uiState.userStatus?.infoUser?.phone}/$identification/$pkUser/${uiState.userStatus?.infoUser?.userName}")
+        navigateTo("${Screen.ProfileScreen.baseRoute}/$idClient/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/$email/${uiState.userStatus?.infoUser?.phone}/$identification/$pkUser/${userName}")
     }
 
     // Todo check if the navigation to this screen is suitable for the purchase crypto flow
@@ -473,8 +513,17 @@ class ProductViewModel @Inject constructor(
                     (CreditStep.Search.getIdByName(infoCredit?.infoPreApprove?.currentStep) < CreditStep.Eight.id)
                 }
 
+                CREDIT_ONFIDO_REJECTED -> {
+                    infoUser?.statusOnfido == REJECTED.status
+                }
+
+                CREDIT_ONFIDO_MAX_ATTEMPTS -> {
+                    infoUser?.statusOnfido == OVER_COUNTER.status
+                }
+
                 CREDIT_IDENTITY_INCOMPLETE -> {
                     (CreditStep.Search.getIdByName(infoCredit?.infoPreApprove?.currentStep) == CreditStep.Eight.id)
+                            && infoUser?.statusOnfido != APPROVED.status
                 }
 
                 CREDIT_EL_SALVADOR_MANUAL_PROCESS -> {
@@ -517,16 +566,8 @@ class ProductViewModel @Inject constructor(
                     infoCredit?.infoPreApprove?.statusFirm == OVER_COUNTER.status
                 }
 
-                CREDIT_ONFIDO_REJECTED -> {
-                    infoUser?.statusOnfido == REJECTED.status
-                }
-
                 SMART_ONFIDO_REJECTED -> {
                     infoUser?.statusOnfido == SmartOnFidoOrFirmStatus.REJECTED.status
-                }
-
-                CREDIT_ONFIDO_MAX_ATTEMPTS -> {
-                    infoUser?.statusOnfido == OVER_COUNTER.status
                 }
 
                 SMART_ONFIDO_MAX_ATTEMPTS -> {
@@ -740,9 +781,10 @@ class ProductViewModel @Inject constructor(
         if (uiState.idBrand == Brand.ElSalvador.id.toString()) {
             val account = balanceCredit?.balanceAccountSmart?.firstOrNull()
             smartAccount = SmartAccountID(
-                account?.tokenNumber,
-                account?.idCurrencyAccount,
-                account?.accountNumber
+                tokenAccount = account?.tokenNumber,
+                currencyID = account?.idCurrencyAccount,
+                accountNumber = account?.accountNumber,
+                customerId = account?.customerId
             )
             navigateTo(
                 "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$userName/${uiState.idBrand}/$identification/${
@@ -774,11 +816,22 @@ class ProductViewModel @Inject constructor(
             currencyID = account?.idCurrencyAccount,
             accountNumber = account?.accountNumber,
             totalBalance = account?.totalBalance,
-            ibanAccountNumber = account?.ibanAccountNumber
+            ibanAccountNumber = account?.ibanAccountNumber,
+            customerId = account?.customerId
+        )
+        val secondAccount = balanceCredit?.balanceAccountSmart?.find { accounts -> accounts?.tokenNumber != account?.tokenNumber }
+        val secondAccountSend = encodeData(
+            SmartAccountID(
+                tokenAccount = secondAccount?.tokenNumber,
+                currencyID = secondAccount?.idCurrencyAccount,
+                accountNumber = secondAccount?.accountNumber,
+                totalBalance = secondAccount?.totalBalance,
+                ibanAccountNumber = secondAccount?.ibanAccountNumber
+            )
         )
         navigateTo(
             "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$userName/${uiState.idBrand}/$identification" +
-                    "/${encodeData(smartAccount)}/$idClient/${Screen.HomeScreen.route}"
+                    "/${encodeData(smartAccount)}/$secondAccountSend/$idClient/${Screen.HomeScreen.route}"
         )
     }
 
@@ -995,6 +1048,10 @@ class ProductViewModel @Inject constructor(
             is OnCreateMultimoneyVisa -> onCreateMultimoneyVisa(uiEvent.onLoadingValueChange)
             is OnNoVoConfig -> onConfigNovoSdk()
             is OnGetSmartContent -> getSmartContent()
+            is OnVisaCardExpiredDialog -> onVisaCardExpiredDialog(
+                idBrand = uiEvent.idBrand,
+                balance = uiEvent.balance
+            )
         }
     }
 
@@ -1075,6 +1132,11 @@ class ProductViewModel @Inject constructor(
 
         object OnNoVoConfig : UIEvent()
         data class OnCartButtonClickWithoutSmartBalance(val onSavingCLick: () -> Unit) : UIEvent()
+
+        data class OnVisaCardExpiredDialog(
+            val idBrand: String,
+            val balance: Balance?
+        ) : UIEvent()
     }
 
     sealed class BaseEvent {

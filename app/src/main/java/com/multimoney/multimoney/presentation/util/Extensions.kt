@@ -287,7 +287,7 @@ fun Double.toCurrencyFormat(
 ): String {
     val formatter = NumberFormat.getCurrencyInstance()
     formatter.maximumFractionDigits = amountOfDecimals
-    //remove the default dollar symbol from the custom symbol property
+    // remove the default dollar symbol from the custom symbol property
     return "$symbol${formatter.format(this).replace(Dollar.symbol, "")}"
 }
 
@@ -297,8 +297,9 @@ fun Double.toCurrencyFormatWithoutNegatives(
 ): String {
     val formatter = NumberFormat.getCurrencyInstance()
     formatter.maximumFractionDigits = amountOfDecimals
-    //remove the default dollar symbol from the custom symbol property
-    return "$symbol${formatter.format(this)
+    // remove the default dollar symbol from the custom symbol property
+    return "$symbol${
+    formatter.format(this)
         .replace(Dollar.symbol, "")
         .replace("-", "")
     }"
@@ -372,6 +373,8 @@ fun String?.toTwoChar(): String {
 
 }
 
+fun String.isCognitoErrorCode(code: String) = contains(""""$CODE_KEYWORD":"$code"""")
+
 fun CharSequence.replaceNumbersToZero() = replace(Regex(DIGITS_REGEX), ZERO_STRING)
 
 fun getCountryCodeByIdBrand(idBrand: Int): String {
@@ -386,12 +389,24 @@ fun getCountryCodeByIdBrand(idBrand: Int): String {
 fun String.capitalizedAllWords(): String =
     splitByWhiteSpace().joinToString(WHITE_SPACE_SEPARATOR.toString()) { it.capitalized() }
 
+/**
+ * Format a phone number with a  "+Code Number" structure when you have
+ * a Phone Number with a country code and a phone number without a
+ * country code to leave the space in the correct position because
+ * some country codes have different lengths.
+ * @param phoneWithCode The phone number with the country code.
+ * @param phoneWithoutCode The phone number without the country code.
+ */
+fun formatPhoneNumber(phoneWithCode: String?, phoneWithoutCode: String?) =
+    phoneWithCode?.replace(phoneWithoutCode ?: "", " ").plus(phoneWithoutCode)
+
 private const val HEX_FORMAT = "#%02x%02x%02x"
 private const val SPECIAL_CHARACTER_REGEX = "[!\"#\$%&'()*+,-./:;\\\\<=>?@^_`{|}~]"
 private const val TWO_CHARACTER_REGEX = "^\\s*([a-zA-Z]).*\\s+([a-zA-Z])\\S+$"
 private const val NUMBER_REGEX = "[0-9]"
 private const val DECIMAL_SEPARATOR = '.'
 private const val WHITE_SPACE_SEPARATOR = ' '
+private const val CODE_KEYWORD = "code"
 private const val DIGITS_REGEX = "\\d"
 private const val ZERO_STRING = "0"
 private const val DEFAULT_AMOUNT_OF_DECIMALS = 2

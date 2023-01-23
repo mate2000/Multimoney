@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.transfer.register
+package com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,7 +21,7 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.SMART_IDS
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
@@ -31,19 +31,20 @@ import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAccountViewModel
 import com.multimoney.multimoney.presentation.util.capitalized
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class SmartTransferRegisterIbanViewModel @Inject constructor(
     private val queryCatalogDocumentTypeUseCase: QueryCatalogDocumentTypeUseCase,
     private val queryValidateBankAccountUseCase: QueryValidateBankAccountUseCase,
     private val mutationSaveSinpeAccountUseCase: MutationSaveSinpeAccountUseCase,
-    savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
     // UIState
@@ -70,7 +71,7 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
         identification = savedStateHandle[IDENTIFICATION]
         previousScreen = savedStateHandle[PREVIOUS_SCREEN]
         idClient = savedStateHandle[ID_CLIENT]
-        smartAccount = savedStateHandle[SMART_IDS]
+        smartAccount = savedStateHandle[SMART_ACCOUNT]
     }
 
     private fun onQueryDocumentList() {
@@ -119,8 +120,10 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
                                 uiState.copy(
                                     accountError = Pair(false, R.string.empty),
                                     accountInformation = Pair(false, R.string.empty),
-                                    accountValidationError = Pair(true,
-                                        response.responseMessage.capitalized())
+                                    accountValidationError = Pair(
+                                        true,
+                                        response.responseMessage.capitalized()
+                                    )
                                 )
                         }
                     }
@@ -315,7 +318,9 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
             )
         )
         navigateTo(
-            "${Screen.SmartTransferAmountScreen.baseRoute}/${encodeData(smartAccount)}/$ibanAccount/${Screen.SmartTransferIbanAccountScreen.baseRoute}"
+            "${Screen.SmartTransferAmountScreen.baseRoute}/" +
+                "${encodeData(smartAccount)}/$ibanAccount/" +
+                "${SmartTransferTypes.SmartToIban.id}"
         )
     }
 
@@ -330,12 +335,15 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
         val documentNumber: String = "",
         val documentFormat: String = "",
         val identificationValueType: String = "",
-        val personalIdError: Pair<Boolean, Int> = Pair(false, R.string.smart_iban_register_account_error),
+        val personalIdError: Pair<Boolean, Int> = Pair(
+            false,
+            R.string.smart_iban_register_account_error
+        ),
         val email: String = "",
         val userEmailError: Pair<Boolean, Int> = Pair(false, R.string.empty),
         val favoriteName: String = "",
         val addFavorite: Boolean = false,
-        val isFormValid: Boolean = false,
+        val isFormValid: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

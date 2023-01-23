@@ -65,7 +65,6 @@ class NetworkingModule {
         return ApolloClient.Builder()
             .serverUrl(BuildConfig.API_URL + SCHEMA_GRAPHQL)
             .webSocketServerUrl(BuildConfig.WEBSOCKET_URL + SCHEMA_GRAPHQL)
-            .wsProtocol(GraphQLWsProtocol.Factory())
             .addHttpInterceptor(AuthorizationInterceptor(dataStorePreferences))
             .normalizedCache(sqlNormalizedCacheFactory)
             .okHttpClient(

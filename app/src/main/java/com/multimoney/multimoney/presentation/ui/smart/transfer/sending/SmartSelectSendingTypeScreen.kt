@@ -41,7 +41,6 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.checkPermission
 import com.multimoney.multimoney.presentation.util.getPhoneNumbers
 
-
 @Composable
 fun SmartSelectSendingTypeScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
@@ -204,7 +203,7 @@ fun SendingTypeOptionsCR(
     onMyContactsClick: () -> Unit,
     onMySmartAccountClick: () -> Unit,
     onIBANAccountsClick: () -> Unit,
-    smartAccountTitleAndIconResource: Pair<Int, Int?>,
+    smartAccountTitleAndIconResource: Pair<Int, Int?>
 ) {
     CustomInfoButton(
         title = stringResource(R.string.payment_select_sending_type_favorites_cr),

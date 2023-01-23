@@ -36,23 +36,27 @@ import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricPromptForEncryption
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricSignInChanged
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnUpdateToastVisibility
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnUserEmailValueChange
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnUserPasswordValueChange
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnValidateUserEmail
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
+import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.checkIfEmulator
 import com.multimoney.multimoney.presentation.util.getAppVersion
 import com.multimoney.multimoney.presentation.util.getDeviceBrand
 import com.multimoney.multimoney.presentation.util.getDeviceModel
 import com.multimoney.multimoney.presentation.util.getNavParam
+import com.multimoney.multimoney.presentation.util.isCognitoErrorCode
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import org.json.JSONObject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
@@ -102,7 +106,10 @@ class SignInViewModel @Inject constructor(
                 userEmail = biometricUserEmail,
                 userName = dataStorePreferences.getUserName().first(),
                 isBiometricActive = isBiometricActive,
-                showBiometricSignIn = isBiometricActive
+                showBiometricSignIn = isBiometricActive,
+                userPassword = "",
+                userPasswordError = Pair(false, R.string.error_empty),
+                toastIsVisible = dataStorePreferences.isSignOutOnBackground().first()
             )
         }
     }
@@ -124,28 +131,48 @@ class SignInViewModel @Inject constructor(
             FORCE to forceDeviceChange.toString()
         )
 
-        val options = AWSCognitoAuthSignInOptions.builder()
-            .metadata(attrs)
-            .build()
+        val options = AWSCognitoAuthSignInOptions.builder().metadata(attrs).build()
 
         Amplify.Auth.signOut({
             // TODO: This line must be uncommented when logic to send metadata to cognito is implemented
-            Amplify.Auth.signIn(
-                uiState.userEmail,
-                uiState.userPassword,
-                options,
-                { authSignInResult ->
+            Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword, options, { authSignInResult ->
 //            Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword, { authSignInResult ->
-                    if (authSignInResult.isSignInComplete) {
-                        Amplify.Auth.fetchAuthSession({ authSessionSuccess ->
-                            val session = authSessionSuccess as AWSCognitoAuthSession
-                            when (session.identityId.type) {
-                                AuthSessionResult.Type.SUCCESS -> {
-                                    // Get user attributes in order to save user name for welcome message
-                                    Amplify.Auth.fetchUserAttributes({ authUserAttribute ->
-                                        viewModelScope.launch {
-                                            // If isBiometricActive false that means the userName has to be saved
-                                            saveUserData(session, authUserAttribute)
+                if (authSignInResult.isSignInComplete) {
+                    Amplify.Auth.fetchAuthSession({ authSessionSuccess ->
+                        val session = authSessionSuccess as AWSCognitoAuthSession
+                        when (session.identityId.type) {
+                            AuthSessionResult.Type.SUCCESS -> {
+                                // Get user attributes in order to save user name for welcome message
+                                Amplify.Auth.fetchUserAttributes({ authUserAttribute ->
+                                    viewModelScope.launch {
+                                        // If isBiometricActive false that means the userName has to be saved
+                                        val payload = CognitoJWTParser.getPayload(session.userPoolTokens.value?.idToken)
+                                        saveUserData(
+                                            payload,
+                                            session.userPoolTokens.value?.idToken.orEmpty(),
+                                            authUserAttribute
+                                        )
+                                        if (payload.getString(SignUpPasswordViewModel.COGNITO_CHANGE_PASSWORD_REQUIRED)
+                                            .toBoolean()
+                                        ) {
+                                            uiState = uiState.copy(
+                                                openDialog = DialogParameters(
+                                                    titleResource = string.sign_in_expired_password_dialog_title,
+                                                    descriptionResource = string.sign_in_expired_password_dialog_description,
+                                                    positiveResource = string.sign_in_expired_password_dialog_positive_button,
+                                                    positiveAction = {
+                                                        onNavigateToChangePassword(
+                                                            idBrand = payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_ID_BRAND)
+                                                                .toInt(),
+                                                            pkUser = payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_PK_USER),
+                                                            userName = uiState.userEmail
+                                                        )
+                                                    },
+                                                    isActive = mutableStateOf(true)
+                                                ),
+                                                isLoading = false
+                                            )
+                                        } else {
                                             uiState = uiState.copy(isLoading = false)
                                             if (uiState.isFingerprintChecked) {
                                                 uiState = uiState.copy(configureBiometric = true)
@@ -153,76 +180,85 @@ class SignInViewModel @Inject constructor(
                                                 navigateToHome()
                                             }
                                         }
-                                    }, {
-                                        callQueryValidationUserExistsUseCase()
-                                    })
-                                }
-                                AuthSessionResult.Type.FAILURE -> callQueryValidationUserExistsUseCase()
+                                    }
+                                }, {
+                                    callQueryValidationUserExistsUseCase()
+                                })
                             }
-                        }, {
-                            callQueryValidationUserExistsUseCase()
-                        })
-                    } else {
+                            AuthSessionResult.Type.FAILURE -> callQueryValidationUserExistsUseCase()
+                        }
+                    }, {
                         callQueryValidationUserExistsUseCase()
-                    }
-                },
-                {
-                    if (isSessionActiveOnAnotherDevice(it)) {
-                        uiState = uiState.copy(
-                            openDialog = DialogParameters(
-                                titleResource = string.sign_in_session_active_on_another_device_title,
-                                descriptionResource = string.sign_in_session_open_here_close_another,
-                                positiveResource = string.sign_in_dialog_sign_in_here_button,
-                                negativeResource = string.sign_in_dialog_exit_button,
-                                positiveAction = { onUIEvent(OnNavigateToOTPScreen) },
-                                negativeAction = { onUIEvent(OnCloseDialog) },
-                                dismissAction = { onUIEvent(OnCloseDialog) },
-                                isActive = mutableStateOf(true)
-                            )
-                        )
-                    } else {
-                        callQueryValidationUserExistsUseCase()
-                    }
+                    })
+                } else {
+                    callQueryValidationUserExistsUseCase()
                 }
-            )
+            }, {
+                checkSessionState(it)
+            })
         }, {
             callQueryValidationUserExistsUseCase()
         })
     }
 
-    private fun callQueryValidationUserExistsUseCase() =
-        executeUseCase {
-            queryValidateUserExistsUseCase(
-                email = uiState.userEmail
-            ).collectLatest { result ->
-                result.onSuccess { userData ->
-                    if (userData?.isNewUser == false) {
-                        uiState = uiState.copy(
-                            openDialog = DialogParameters(
-                                titleResource = string.sign_in_dialog_user_exists_title,
-                                descriptionResource = string.sign_in_dialog_user_exists_description,
-                                positiveResource = string.button_continue,
-                                negativeResource = string.common_return,
-                                positiveAction = { onNavigateToSignUp() },
-                                negativeAction = { onUIEvent(OnCloseDialog) },
-                                dismissAction = { onUIEvent(OnCloseDialog) },
-                                isActive = mutableStateOf(true)
-                            ),
-                            isLoading = false
-                        )
-                    } else {
-                        cognitoError()
-                    }
-                }.onMessage {
-                    cognitoError()
-                }.onFailure {
+    private fun onNavigateToChangePassword(idBrand: Int, pkUser: String, userName: String) =
+        navigateTo("${Screen.ProfileChangePasswordScreen.baseRoute}/$idBrand/$pkUser/$userName/${Screen.SignInScreen.baseRoute}")
+
+    private fun checkSessionState(authException: AuthException) = when {
+        authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.SessionActive.code) == true ->
+            uiState =
+                uiState.copy(
+                    openDialog = DialogParameters(
+                        titleResource = string.sign_in_session_active_on_another_device_title,
+                        descriptionResource = string.sign_in_session_open_here_close_another,
+                        positiveResource = string.sign_in_dialog_sign_in_here_button,
+                        negativeResource = string.sign_in_dialog_exit_button,
+                        positiveAction = { onUIEvent(OnNavigateToOTPScreen) },
+                        negativeAction = { onUIEvent(OnCloseDialog) },
+                        dismissAction = { onUIEvent(OnCloseDialog) },
+                        isActive = mutableStateOf(true)
+                    )
+                )
+        authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.SessionBlocked.code) == true ->
+            uiState =
+                uiState.copy(
+                    openDialog = DialogParameters(
+                        titleResource = string.sign_in_session_blocked_title,
+                        descriptionResource = string.sign_in_session_blocked_description,
+                        isActive = mutableStateOf(true)
+                    )
+                )
+        else -> callQueryValidationUserExistsUseCase()
+    }
+
+    private fun callQueryValidationUserExistsUseCase() = executeUseCase {
+        queryValidateUserExistsUseCase(
+            email = uiState.userEmail
+        ).collectLatest { result ->
+            result.onSuccess { userData ->
+                if (userData?.isNewUser == false) {
+                    uiState = uiState.copy(
+                        openDialog = DialogParameters(
+                            titleResource = string.sign_in_dialog_user_exists_title,
+                            descriptionResource = string.sign_in_dialog_user_exists_description,
+                            positiveResource = string.button_continue,
+                            negativeResource = string.common_return,
+                            positiveAction = { onNavigateToSignUp() },
+                            negativeAction = { onUIEvent(OnCloseDialog) },
+                            dismissAction = { onUIEvent(OnCloseDialog) },
+                            isActive = mutableStateOf(true)
+                        ),
+                        isLoading = false
+                    )
+                } else {
                     cognitoError()
                 }
+            }.onMessage {
+                cognitoError()
+            }.onFailure {
+                cognitoError()
             }
         }
-
-    private fun isSessionActiveOnAnotherDevice(exception: AuthException): Boolean {
-        return exception.cause?.message?.contains(""""$CODE_KEYWORD":"$SESSION_ACTIVE_ERROR_CODE"""") == true
     }
 
     private fun onCloseDialog() {
@@ -233,19 +269,20 @@ class SignInViewModel @Inject constructor(
     }
 
     private suspend fun saveUserData(
-        session: AWSCognitoAuthSession,
+        payload: JSONObject,
+        idToken: String,
         authUserAttribute: List<AuthUserAttribute>
     ) {
-        val payload = CognitoJWTParser.getPayload(session.userPoolTokens.value?.idToken)
         if (uiState.userEmail != biometricUserEmail) {
             dataStorePreferences.isBiometricsEnabled(false)
         }
         dataStorePreferences.setUserName("${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value.orEmpty()} ${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.familyName() }?.value.orEmpty()}")
-        dataStorePreferences.setAuthToken(session.userPoolTokens.value?.idToken ?: "")
+        dataStorePreferences.setAuthToken(idToken)
         dataStorePreferences.setIdBrand(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_ID_BRAND))
         dataStorePreferences.setPkUser(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_PK_USER))
         dataStorePreferences.setIdentification(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_IDENTIFICATION))
         dataStorePreferences.setUserEmail(uiState.userEmail)
+        dataStorePreferences.setUserPhoneNumberWithCode(authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.phoneNumber() }?.value.orEmpty())
     }
 
     private fun isFormValid() {
@@ -378,8 +415,7 @@ class SignInViewModel @Inject constructor(
                 processError = { errorCode, errString ->
                     biometricPromptError(errorCode, errString)
                 },
-                initializationVector = dataStorePreferences.getUserPasswordVector()
-                    .first()
+                initializationVector = dataStorePreferences.getUserPasswordVector().first()
             )
         }
     }
@@ -420,10 +456,9 @@ class SignInViewModel @Inject constructor(
     }
 
     private fun onNavigateToForgotPassword() = navigateTo(
-        route = Screen.RequestForgotPassword.baseRoute
-            .plus(
-                getNavParam(PREVIOUS_SCREEN, Screen.SignInScreen.route)
-            )
+        route = Screen.RequestForgotPassword.baseRoute.plus(
+            getNavParam(PREVIOUS_SCREEN, Screen.SignInScreen.route)
+        )
     )
 
     private fun onShowBiometricSignInChanged(value: Boolean) {
@@ -438,17 +473,22 @@ class SignInViewModel @Inject constructor(
         isForcePassword = value.not()
     }
 
-    fun isAccessWithBiometrics() =
-        uiState.isBiometricActive && uiState.userEmail == biometricUserEmail
+    fun isAccessWithBiometrics() = uiState.isBiometricActive && uiState.userEmail == biometricUserEmail
 
-    fun isWelcomeWithName() =
-        uiState.userName.isNotEmpty() && uiState.userEmail == biometricUserEmail
+    fun isWelcomeWithName() = uiState.userName.isNotEmpty() && uiState.userEmail == biometricUserEmail
 
     private fun onNavigateToOTPScreen() {
         popAndNavigateTo(
             "${Screen.SignInOTPScreen.baseRoute}/${uiState.userEmail}/${uiState.userPassword}/$deviceId/$uniqueId/$ipAddress/$deviceType/$deviceName/$appVersion/$deviceBrand/$deviceModel/$isEmulator",
             Screen.SignInOTPScreen.baseRoute
         )
+    }
+
+    private fun onUpdateToastVisibility(value: Boolean) {
+        viewModelScope.launch {
+            uiState = uiState.copy(toastIsVisible = value)
+            dataStorePreferences.isSignOutOnBackground(value)
+        }
     }
 
     data class UIState(
@@ -472,7 +512,8 @@ class SignInViewModel @Inject constructor(
         val isBiometricActive: Boolean = false,
         val showBiometricSignIn: Boolean = false,
         val isLoading: Boolean = false,
-        val openDialog: DialogParameters = DialogParameters()
+        val openDialog: DialogParameters = DialogParameters(),
+        val toastIsVisible: Boolean = false
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -505,6 +546,7 @@ class SignInViewModel @Inject constructor(
             is OnCloseDialog -> onCloseDialog()
             is OnNavigateToOTPScreen -> onNavigateToOTPScreen()
             is OnNavigateToSignUp -> onNavigateToSignUp()
+            is OnUpdateToastVisibility -> onUpdateToastVisibility(event.value)
         }
     }
 
@@ -521,17 +563,13 @@ class SignInViewModel @Inject constructor(
             val biometricPromptNegative: String
         ) : UIEvent()
 
-        data class OnShowBiometricPromptForEncryption(val fragmentActivity: FragmentActivity) :
-            UIEvent()
+        data class OnShowBiometricPromptForEncryption(val fragmentActivity: FragmentActivity) : UIEvent()
 
-        data class OnShowBiometricPromptForDecryption(val fragmentActivity: FragmentActivity) :
-            UIEvent()
+        data class OnShowBiometricPromptForDecryption(val fragmentActivity: FragmentActivity) : UIEvent()
 
-        data class OnShowBiometricSignInChanged(val value: Boolean) :
-            UIEvent()
+        data class OnShowBiometricSignInChanged(val value: Boolean) : UIEvent()
 
-        data class OnFingerprintCheckedChanged(val value: Boolean, val showDialog: Boolean) :
-            UIEvent()
+        data class OnFingerprintCheckedChanged(val value: Boolean, val showDialog: Boolean) : UIEvent()
 
         data class OnStart(
             val deviceId: String,
@@ -545,6 +583,7 @@ class SignInViewModel @Inject constructor(
         object OnCallCognitoSignIn : UIEvent()
         object OnNavigateToForgotPassword : UIEvent()
         object OnNavigateToSignUp : UIEvent()
+        data class OnUpdateToastVisibility(val value: Boolean) : UIEvent()
     }
 
     companion object {
@@ -557,7 +596,5 @@ class SignInViewModel @Inject constructor(
         const val DEVICE_NAME = "DeviceName"
         const val IP_ADDRESS = "IpAddress"
         const val FORCE = "Force"
-        const val SESSION_ACTIVE_ERROR_CODE = "2885"
-        const val CODE_KEYWORD = "code"
     }
 }

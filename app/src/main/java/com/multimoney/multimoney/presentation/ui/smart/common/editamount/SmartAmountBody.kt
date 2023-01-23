@@ -1,8 +1,7 @@
-package com.multimoney.multimoney.presentation.uielement
+package com.multimoney.multimoney.presentation.ui.smart.common.editamount
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -28,11 +26,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.theme.GrayScale800
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.theme.WhiteTransparency80
-import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
-import com.multimoney.multimoney.presentation.util.SmartEditAmountHelper.Companion.CURRENCY_SEPARATOR
+import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.Companion.CURRENCY_SEPARATOR
+import com.multimoney.multimoney.presentation.uielement.CurrencyAmountInput
+import com.multimoney.multimoney.presentation.uielement.CustomButton
+import com.multimoney.multimoney.presentation.uielement.CustomButtonType
+import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.uielement.VoucherCurrencyExchangeInfo
 import com.multimoney.multimoney.presentation.util.addTextStyleToTextPortion
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.filterInvalidAmountInput
@@ -59,27 +60,13 @@ fun SmartAmountBody(
     motive: String? = null,
     onMotiveChange: (String) -> Unit = {}
 ) {
-    val background: Color
-    val text: Color
-    val subText: Color
-
-    if (isSystemInDarkTheme()) {
-        background = GrayScale800
-        text = WhiteTransparency90
-        subText = WhiteTransparency80
-    } else {
-        background = GrayScale800
-        text = WhiteTransparency90
-        subText = WhiteTransparency80
-    }
-
     val focusManager = LocalFocusManager.current
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .background(background)
+            .background(MultimoneyTheme.colors.background)
             .padding(start = 16.dp, end = 16.dp, bottom = 24.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -89,7 +76,7 @@ fun SmartAmountBody(
                 text = stringResource(id = titleId),
                 style = Typography.h6.copy(
                     fontWeight = FontWeight.SemiBold,
-                    color = text
+                    color = MultimoneyTheme.colors.text
                 ),
                 textAlign = TextAlign.Left
             )
@@ -104,7 +91,7 @@ fun SmartAmountBody(
                         Typography.body2.copy(fontWeight = FontWeight.SemiBold)
                     ),
                     style = Typography.body2,
-                    color = subText
+                    color = MultimoneyTheme.colors.smartCardTrending
                 )
             }
             CurrencyAmountInput(
@@ -169,7 +156,7 @@ fun SmartAmountBody(
                     modifier = Modifier.padding(bottom = 4.dp),
                     text = stringResource(id = R.string.smart_iban_transfer_motive_label),
                     style = Typography.body2,
-                    color = text
+                    color = MultimoneyTheme.colors.text
                 )
                 CustomOutlinedTextField(
                     modifier = Modifier

@@ -37,10 +37,10 @@ import com.multimoney.multimoney.presentation.util.passwordHasMinimumCharacters
 import com.multimoney.multimoney.presentation.util.passwordHasSpecialCharacterValidation
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class SignUpPasswordViewModel @Inject constructor(
@@ -443,5 +443,6 @@ class SignUpPasswordViewModel @Inject constructor(
         const val COGNITO_CUSTOM_PK_USER = "custom:PkUser"
         const val COGNITO_CUSTOM_STATUS = "custom:Status"
         const val COGNITO_CUSTOM_ID_BRAND = "custom:IdBrand"
+        const val COGNITO_CHANGE_PASSWORD_REQUIRED = "passwordChangeRequired"
     }
 }

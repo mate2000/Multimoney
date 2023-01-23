@@ -33,17 +33,12 @@ fun MarketCurrencyItem(
     imageUrl: String,
     descriptionCurrency: String,
     asset: String,
-    percentChange: Double,
+    percentChange: String,
     currentPrice: Double,
     onCurrencyItemClick: () -> Unit,
     amountChange: String
 ) {
     val amountChangeValue = amountChange.toDouble()
-    val gainOrLoss = if (amountChangeValue < 0) {
-        stringResource(id = R.string.crypto_losses_symbol)
-    } else {
-        stringResource(id = R.string.crypto_gains_symbol)
-    }
     val gainOrLossColor =
         if (amountChangeValue < 0) MultimoneyTheme.colors.cryptoLossesColor else MultimoneyTheme.colors.cryptoGainsColor
 
@@ -107,11 +102,7 @@ fun MarketCurrencyItem(
                         )
                         Text(
                             modifier = Modifier.padding(start = 8.dp),
-                            text = stringResource(
-                                id = R.string.currency_item_percent_invested_with_symbol,
-                                gainOrLoss,
-                                percentChange
-                            ),
+                            text = percentChange,
                             style = Typography.caption,
                             color = gainOrLossColor
                         )

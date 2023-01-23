@@ -17,7 +17,6 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CryptoAccountStatus
 import com.multimoney.domain.model.balance.Account
 import com.multimoney.domain.model.balance.Balance
-import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -102,8 +101,11 @@ fun CryptoFooterExpandedContent(
                     Column(
                         modifier = Modifier.verticalScroll(rememberScrollState())
                     ) {
-                        CryptoCurrencies(items = balance?.balanceCryptoAccount?.items){
-                        }
+                        CryptoCurrencies(
+                            items = balance?.balanceCryptoAccount?.items,
+                            itemClick = {},
+                            viewAllClick = { actionWallet() }
+                        )
                         CryptoMovementsSection(
                             cryptoMovements = cryptoMovements,
                             onShowAllClick = onShowAllClick

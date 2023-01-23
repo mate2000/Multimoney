@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -52,6 +53,7 @@ import com.multimoney.multimoney.presentation.uielement.Size
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.encodeURLToUTF
+import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlacesWithoutNegatives
 import kotlinx.coroutines.launch
 
 @Composable
@@ -138,7 +140,6 @@ fun MarketScreenContent(
                         leadingIcon = R.drawable.ic_search,
                         placeHolder = stringResource(id = R.string.crypto_wallet_search_crypto_currency),
                     )
-                    FilterSection(selectedFilter = selectedFilter, sheetState = state)
                 }
                 if (marketViewModel.uiState.isLoading) {
                     MarketSkeleton()
@@ -148,6 +149,7 @@ fun MarketScreenContent(
                             crListOfCryptoCoin else svListOfCryptoCoins,
                         searchQuery = searchQuery,
                         selectedFilter = selectedFilter,
+                        sheetState = state,
                         onCurrencyItemClick = { cryptoCurrency ->
                             marketViewModel.onUIEvent(OnSetAssetBeforeNavigation(
                                 asset = cryptoCurrency.baseAsset,
@@ -275,11 +277,13 @@ enum class MarketFilter(val value: String) {
     AZ(AZ_FILTER_VALUE)
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ListOfCoinsSection(
     availableCryptoCoins: List<MarketCryptoCoin> = emptyList(),
     searchQuery: MutableState<String>,
     selectedFilter: MutableState<String>,
+    sheetState: ModalBottomSheetState,
     onCurrencyItemClick: (MarketCryptoCoin) -> Unit
 ) {
 
@@ -290,19 +294,28 @@ fun ListOfCoinsSection(
         } else emptyList()
 
     val filteredList = if (selectedFilter.value == MarketFilter.AZ.value) {
-        filteredListByQuery.sortedBy { it.baseAsset }
+        filteredListByQuery.sortedBy { it.description }
     } else {
         filteredListByQuery.sortedByDescending { it.currentPrice.toString().toDouble() }
     }
 
-    LazyColumn {
+    LazyColumn(
+        contentPadding = PaddingValues(vertical = 8.dp),
+    ) {
+        item {
+            FilterSection(selectedFilter = selectedFilter, sheetState = sheetState)
+        }
         items(filteredList) { cryptoCoin ->
             MarketCurrencyItem(
                 imageUrl = cryptoCoin.url_image,
                 descriptionCurrency = cryptoCoin.description,
                 asset = cryptoCoin.baseAsset,
                 amountChange = cryptoCoin.amountchange,
-                percentChange = cryptoCoin.percentChange.toDouble(),
+                percentChange = stringResource(
+                    id = R.string.currency_item_percent_invested_with_symbol,
+                    if (cryptoCoin.percentChange.contains(NEGATIVE_SYMBOL)) NEGATIVE_SYMBOL else POSITIVE_SYMBOL,
+                    cryptoCoin.percentChange.toDouble().roundToTwoDecimalPlacesWithoutNegatives()
+                ),
                 currentPrice = cryptoCoin.currentPrice.toString().toDouble(),
                 onCurrencyItemClick = { onCurrencyItemClick(cryptoCoin) }
             )
@@ -313,3 +326,5 @@ fun ListOfCoinsSection(
 const val SV_DEFAULT_BASE_ASSET = "BTC"
 const val PRICE_FILTER_VALUE = "Precio"
 const val AZ_FILTER_VALUE = "A-Z"
+const val NEGATIVE_SYMBOL = "-"
+const val POSITIVE_SYMBOL = "+"

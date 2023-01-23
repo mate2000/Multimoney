@@ -13,6 +13,7 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.NEW_EMAIL
 import com.multimoney.multimoney.presentation.navigation.NEW_PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
+import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER_CODE
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
@@ -36,6 +37,7 @@ class VerifyIdentityViewModel @Inject constructor(
             idBrand = savedStateHandle[ID_BRAND],
             phoneNumber = savedStateHandle[PHONE_NUMBER],
             newPhoneNumber = savedStateHandle[NEW_PHONE_NUMBER],
+            newPhoneNumberCode = savedStateHandle[PHONE_NUMBER_CODE],
             identification = savedStateHandle[IDENTIFICATION],
             userName = savedStateHandle[USER_NAME],
             firstName = savedStateHandle[FIRST_NAME],
@@ -87,7 +89,7 @@ class VerifyIdentityViewModel @Inject constructor(
             FieldToChange.PHONE.value -> uiState.newPhoneNumber
             else -> uiState.newEmail
         }
-        navigateTo("${Screen.ProfileValidateOTPScreen.baseRoute}/${uiState.idClient}/${uiState.changingField}/${newValue}/${sendMethod}/${uiState.identification}/${uiState.firstName}/${uiState.email}/${uiState.phoneNumber}/${uiState.pkUser}/${uiState.idBrand}/${uiState.userName}")
+        navigateTo("${Screen.ProfileValidateOTPScreen.baseRoute}/${uiState.idClient}/${uiState.changingField}/${newValue}/${sendMethod}/${uiState.identification}/${uiState.firstName}/${uiState.email}/${uiState.phoneNumber}/${uiState.pkUser}/${uiState.idBrand}/${uiState.userName}/${uiState.newPhoneNumberCode}")
     }
 
     data class UIState(
@@ -109,6 +111,7 @@ class VerifyIdentityViewModel @Inject constructor(
         val pkUser: String? = null,
         val changingField: String? = null,
         val titleResource: Int = R.string.empty,
+        val newPhoneNumberCode: String? = null
     )
 
     fun onUIEvent(event: UIEvent) {

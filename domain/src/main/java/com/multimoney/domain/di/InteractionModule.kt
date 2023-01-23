@@ -12,6 +12,8 @@ import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmart
 import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationSaveSinpeAccountUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationSaveSinpeAccountUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.MutationUpdateFavoriteSmartUseCase
+import com.multimoney.domain.interaction.accountsmart.MutationUpdateFavoriteSmartUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelOneUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelOneUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelThreeUseCase
@@ -36,6 +38,8 @@ import com.multimoney.domain.interaction.accountsmart.QueryRelatedContactsByPhon
 import com.multimoney.domain.interaction.accountsmart.QueryRelatedContactsByPhoneUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryRelationshipUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryRelationshipUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QuerySmartAccountTypeUseCase
+import com.multimoney.domain.interaction.accountsmart.QuerySmartAccountTypeUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QuerySmartExchangeRateUseCase
 import com.multimoney.domain.interaction.accountsmart.QuerySmartExchangeRateUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryStepByStepUseCase
@@ -740,6 +744,17 @@ class InteractionModule {
     @Singleton
     fun provideMutationChangeDevice(securityRepository: SecurityRepository): MutationChangeDeviceUseCase =
         MutationChangeDeviceUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideQuerySmartAccountType(smartAccountRepository: SmartAccountRepository): QuerySmartAccountTypeUseCase =
+        QuerySmartAccountTypeUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationUpdateFavoriteSmart(smartAccountRepository: SmartAccountRepository): MutationUpdateFavoriteSmartUseCase =
+        MutationUpdateFavoriteSmartUseCaseImpl(smartAccountRepository)
+}
 
     @Provides
     @Singleton

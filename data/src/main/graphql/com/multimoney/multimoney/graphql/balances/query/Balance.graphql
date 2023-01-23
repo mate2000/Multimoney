@@ -50,6 +50,7 @@ query Balance(
         plazo
         aplica_Debito_Aut
         debito_Aut_Activo
+        expired_Debito_Aut_Card
     }
     balanceAccountSmart(
         checkAccountInput:{

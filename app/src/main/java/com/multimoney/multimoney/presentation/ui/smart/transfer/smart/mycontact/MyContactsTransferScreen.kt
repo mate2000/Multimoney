@@ -38,6 +38,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomSearchBar
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.capitalizedAllWords
 
 @Composable
 fun MyContactsTransferScreen(
@@ -169,7 +170,7 @@ fun ContactList(viewModel: MyContactsTransferViewModel = hiltViewModel()) {
                         MultimoneyTheme.colors.twoCharacterTwoColor,
                         MultimoneyTheme.colors.twoCharacterComplementaryTwoColor)
                 ContactItem(
-                    title = contact.titular,
+                    title = contact.titular.capitalizedAllWords(),
                     subtitle =
                     contact.number,
                     modifier = Modifier

@@ -16,8 +16,6 @@ import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSma
 import com.multimoney.multimoney.presentation.uielement.PaymentSuccessResult
 import com.multimoney.multimoney.presentation.uielement.SmartPaymentInfoItem
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
-import com.multimoney.multimoney.presentation.util.CARD_NUMBER_LAST_DIGITS
-import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 
 @Composable
 fun SmartPaymentSuccessScreen(
@@ -43,7 +41,7 @@ fun SmartPaymentSuccessScreen(
             },
             savePayText = stringResource(
                 R.string.smart_payment_you_saved_on_your_smart_account,
-                viewModel.amountUIState.currency
+                viewModel.destinyCurrency?.symbol.orEmpty()
             ),
             amount = viewModel.getFormattedAmount(),
             exchangedAmount = if (viewModel.shouldDisplayExchange) {
@@ -58,21 +56,13 @@ fun SmartPaymentSuccessScreen(
         ) {
             SmartPaymentInfoItem(
                 verticalAlignment = Alignment.CenterVertically,
-                icon = viewModel.originIcon,
-                title = stringResource(viewModel.originTitle),
-                subtitle = if (viewModel.idBrand == Brand.ElSalvador.id) {
-                    stringResource(
-                        R.string.visa_card_masked_number,
-                        viewModel.maskedCardNumber.takeLast(
-                            CARD_NUMBER_LAST_DIGITS
-                        )
-                    )
+                icon = viewModel.amountUIState.originAccountDisplay?.icon ?: 0,
+                title = if (viewModel.idBrand == Brand.ElSalvador.id) {
+                    stringResource(R.string.smart_payment_card_bank_label)
                 } else {
-                    getMaskedAccountIban(
-                        viewModel.maskedCardNumber,
-                        stringResource(id = R.string.payment_account_masked_text)
-                    )
-                }
+                    stringResource(R.string.smart_payment_origin_account_label)
+                },
+                subtitle = viewModel.amountUIState.originAccountDisplay?.sheetSubtitle ?: ""
             )
 
             SmartPaymentInfoItem(

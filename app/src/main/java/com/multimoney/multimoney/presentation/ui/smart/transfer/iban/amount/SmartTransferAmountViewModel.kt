@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
-class SmartTransferAmountViewModel @Inject constructor(): BaseSmartEditAmountViewModel() {
+class SmartTransferAmountViewModel @Inject constructor() : BaseSmartEditAmountViewModel() {
 
     // stateless
     var fromSmartLabel: Int = R.string.smart_iban_transfer_smart_account_colon
@@ -24,15 +24,7 @@ class SmartTransferAmountViewModel @Inject constructor(): BaseSmartEditAmountVie
     override fun onStart() {
         viewModelScope.launch {
             initializeValues()
-            amountUIState = amountUIState.copy(
-                currency = ibanCurrency?.symbol ?: CurrencyType.Dollar.symbol,
-                placeholder = if (ibanCurrency == CurrencyType.Dollar) {
-                    R.string.smart_dollar_placeholder
-                } else {
-                    R.string.smart_colon_placeholder
-                }
-            )
-            fromSmartLabel = if (smartCurrency == CurrencyType.Colon) {
+            fromSmartLabel = if (originCurrency == CurrencyType.Colon) {
                 R.string.smart_iban_transfer_smart_account_colon
             } else {
                 R.string.smart_iban_transfer_smart_account_dolar
@@ -41,24 +33,28 @@ class SmartTransferAmountViewModel @Inject constructor(): BaseSmartEditAmountVie
                 amountUIState.currency + smartAccount?.totalBalance.toString()
             getExchangeOnCompleted(
                 isStart = true,
-                abbreviation = smartCurrency?.disbursementValue ?: "",
-                idOriginCurrency = ibanCurrency?.id.toString(),
-                idDestinationCurrency = smartCurrency?.id.toString()
+                abbreviation = originCurrency?.disbursementValue ?: "",
+                idOriginCurrency = destinyCurrency?.id.toString(),
+                idDestinationCurrency = originCurrency?.id.toString()
             )
         }
     }
 
     override fun onAmountCompleted() {
         getExchangeOnCompleted(
-            abbreviation = smartCurrency?.disbursementValue ?: "",
-            idOriginCurrency = ibanCurrency?.id.toString(),
-            idDestinationCurrency = smartCurrency?.id.toString()
+            abbreviation = originCurrency?.disbursementValue ?: "",
+            idOriginCurrency = destinyCurrency?.id.toString(),
+            idDestinationCurrency = originCurrency?.id.toString()
         )
     }
 
     override fun onContinueClick() {
-        val currentAmount = amountUIState.exchangeConvertedAmount
-        val isValidAmount = (currentAmount) <= (smartAccount?.totalBalance ?: 0.0)
+        val currentAmount = if (shouldDisplayExchange) {
+            amountUIState.exchangeConvertedAmount
+        } else {
+            amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
+        }
+        val isValidAmount = currentAmount <= (smartAccount?.totalBalance ?: 0.0)
         amountUIState = if (isValidAmount) {
             amountUIState.copy(
                 isAmountValid = true,
@@ -74,10 +70,10 @@ class SmartTransferAmountViewModel @Inject constructor(): BaseSmartEditAmountVie
             originIdentification = identification,
             originAccountNumber = smartAccount?.ibanAccountNumber ?: "",
             originCustomerName = userName,
-            originCurrency = smartCurrency?.id.toString(),
+            originCurrency = originCurrency?.id.toString(),
             destinationCustomerName = ibanAccount?.nameAccount ?: "",
             destinationAccountNumber = ibanAccount?.sinpeAccount ?: "",
-            destinationCurrency = ibanCurrency?.id.toString(),
+            destinationCurrency = destinyCurrency?.id.toString(),
             transferType = SmartSinpeTransferType.SEND,
             destinationIdentification = ibanAccount?.clientIdentification ?: ""
         )

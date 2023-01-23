@@ -19,7 +19,6 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel
 import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -95,7 +94,7 @@ fun PaymentOptions(
                         viewModel.onUIEvent(UIEvent.OnAddAccountClick)
                     },
                     buttonType = PrimaryTertiary,
-                    trailingIcon = drawable.ic_plus,
+                    trailingIcon = drawable.ic_plus
                 )
             }
         }

@@ -80,6 +80,8 @@ fun AlertResult(
                 onLeftButtonClick = onLeftButtonClick,
                 onRightButtonClick = onRightButtonClick
             )
+        } else {
+            Spacer(Modifier.height(10.dp))
         }
 
         Column(

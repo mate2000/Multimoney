@@ -13,9 +13,7 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
-import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -24,7 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val dataStorePreferences: DataStorePreferences,
-    private val savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
     // UIState
@@ -65,7 +63,7 @@ class SettingsViewModel @Inject constructor(
     }
 
     private fun onNavigateToChangePassword() {
-        navigateTo("${Screen.ProfileChangePasswordScreen.baseRoute}/${uiState.idBrand}/${uiState.pkUser}/${uiState.userName}")
+        navigateTo("${Screen.ProfileChangePasswordScreen.baseRoute}/${uiState.idBrand}/${uiState.pkUser}/${uiState.userName}/${Screen.ProfileSettingsScreen.baseRoute}")
     }
 
     data class UIState(
@@ -73,7 +71,7 @@ class SettingsViewModel @Inject constructor(
         val openDialog: DialogParameters = DialogParameters(),
         val idBrand: Int? = null,
         val pkUser: String? = null,
-        val userName : String? = null,
+        val userName: String? = null,
         val areBiometricsEnabled: Boolean? = null
     )
 

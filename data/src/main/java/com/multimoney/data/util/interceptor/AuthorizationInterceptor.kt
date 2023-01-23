@@ -1,5 +1,4 @@
 import com.amazonaws.mobile.client.AWSMobileClient
-import com.amplifyframework.core.Amplify
 import com.apollographql.apollo3.api.http.HttpRequest
 import com.apollographql.apollo3.api.http.HttpResponse
 import com.apollographql.apollo3.network.http.HttpInterceptor
@@ -10,7 +9,6 @@ import kotlinx.coroutines.flow.first
 class AuthorizationInterceptor(private val dataStorePreferences: DataStorePreferences) : HttpInterceptor {
 
     override suspend fun intercept(request: HttpRequest, chain: HttpInterceptorChain): HttpResponse {
-
         var token = dataStorePreferences.getAuthToken().first()
         val response = chain.proceed(request.newBuilder().addHeader(AUTHORIZATION_HEADER, "$BEARER $token").build())
 
@@ -21,9 +19,9 @@ class AuthorizationInterceptor(private val dataStorePreferences: DataStorePrefer
                 chain.proceed(request.newBuilder().addHeader(AUTHORIZATION_HEADER, "$BEARER $token").build())
             } catch (exeption: Exception) {
                 dataStorePreferences.setAuthToken("")
+                dataStorePreferences.isForceShowBiometricPrompt(true)
                 response
             }
-
         } else {
             response
         }

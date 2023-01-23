@@ -221,9 +221,9 @@ fun String?.getCurrencySymbol(): Int {
 
 fun String.getCurrencyFromId(): CurrencyType {
     return when (this) {
-        Colon.currency -> Colon
-        Dollar.currency -> Dollar
-        Quetzal.currency -> Quetzal
+        Colon.currency, Colon.id.toString() -> Colon
+        Dollar.currency, Dollar.id.toString() -> Dollar
+        Quetzal.currency, Quetzal.id.toString() -> Quetzal
         else -> All
     }
 }

@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -50,7 +51,8 @@ fun ContactItem(
     colorSubtitle: Color,
     endIcon: Int? = R.drawable.ic_options,
     shouldCenterEndIcon: Boolean = true,
-    onEndIconClick: () -> Unit = {}
+    onEndIconClick: () -> Unit = {},
+    onClick: () -> Unit = {}
 ) {
     val background: Color
     val titleColor: Color
@@ -68,6 +70,7 @@ fun ContactItem(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.background(background)
+            .clickable { onClick() }
     ) {
         ConstraintLayout(
             modifier = modifier
@@ -100,7 +103,7 @@ fun ContactItem(
                 Text(
                     text = title,
                     modifier = Modifier.constrainAs(titleId) {
-                        top.linkTo(startIconId.top, margin = 8.dp)
+                        top.linkTo(startIconId.top, margin = 3.dp)
                         start.linkTo(startIconId.end, margin = 22.dp)
                         if (endIcon != null) {
                             end.linkTo(endIconId.start, margin = 16.dp)
@@ -122,7 +125,7 @@ fun ContactItem(
             }
             Text(
                 modifier = Modifier.constrainAs(subTitleId) {
-                    top.linkTo(titleId.bottom, margin = 8.dp)
+                    top.linkTo(titleId.bottom, margin = 4.dp)
                     start.linkTo(titleId.start)
                     height = Dimension.fillToConstraints
                 },
@@ -150,7 +153,16 @@ fun ContactItem(
                     contentDescription = ""
                 )
             }
-
         }
     }
+}
+
+@Preview
+@Composable
+private fun ContactItemPreview() {
+    ContactItem(
+        title = "Sir Title",
+        subtitle = "+54123456",
+        colorSubtitle = Color.Red
+    )
 }

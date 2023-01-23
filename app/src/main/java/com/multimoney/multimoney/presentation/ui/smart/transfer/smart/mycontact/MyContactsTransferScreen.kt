@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,18 +9,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -28,16 +33,24 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.model.accountsmart.PhoneSmart
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAddToFavoriteAccountClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnContactClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnQueryValueChange
 import com.multimoney.multimoney.presentation.uielement.ContactItem
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
+import com.multimoney.multimoney.presentation.uielement.CustomModalBottomSheet
 import com.multimoney.multimoney.presentation.uielement.CustomSearchBar
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
+import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
+import java.util.SortedMap
 
 @Composable
 fun MyContactsTransferScreen(
@@ -134,11 +147,7 @@ fun MyContactsTransferScreen(
             value = viewModel.uiState.queryValue,
             placeHolder = stringResource(id = R.string.smart_my_concts_placeholder),
             onValueChange = {
-                viewModel.onUIEvent(
-                    MyContactsTransferViewModel.UIEvent.OnQueryValueChange(
-                        it
-                    )
-                )
+                viewModel.onUIEvent(OnQueryValueChange(it))
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
@@ -149,44 +158,129 @@ fun MyContactsTransferScreen(
             })
 
         )
-        ContactList(viewModel)
+        ContactList(
+            contactList = viewModel.uiState.relatedContactList,
+            searchedString = viewModel.uiState.queryValue,
+            onEndIconClick = { contact ->
+                viewModel.onUIEvent(
+                    OnAddToFavoriteAccountClick(contact)
+                )
+            },
+            onContactClick = { accounts ->
+                viewModel.onUIEvent(OnContactClick(accounts))
+            }
+        )
     }
-
+    ContactBottomSheet(viewModel = viewModel)
     LoadingIndicator(viewModel.uiState.isLoading)
 }
 
 @Composable
-fun ContactList(viewModel: MyContactsTransferViewModel = hiltViewModel()) {
+fun ContactList(
+    contactList: SortedMap<String, List<PhoneSmart>>,
+    searchedString: String,
+    onEndIconClick: (contact: PhoneSmart) -> Unit,
+    onContactClick: (contact: List<PhoneSmart>) -> Unit
+) {
     LazyColumn(modifier = Modifier.padding(top = 20.dp, start = 16.dp, end = 16.dp)) {
-        items(viewModel.uiState.relatedContactList) { contact ->
-            if (
-                (contact?.titular?.contains(viewModel.uiState.queryValue, true) == true)
-            ) {
-                val subtitleColor =
-                    arrayOf(
-                        MultimoneyTheme.colors.twoCharacterOneColor,
-                        MultimoneyTheme.colors.twoCharacterTwoColor,
-                        MultimoneyTheme.colors.twoCharacterTwoColor,
-                        MultimoneyTheme.colors.twoCharacterComplementaryTwoColor)
-                ContactItem(
-                    title = contact.titular,
-                    subtitle =
-                    contact.number,
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    endIcon = R.drawable.ic_options,
-                    onEndIconClick = {
-                        viewModel.onUIEvent(
-                            MyContactsTransferViewModel.UIEvent.OnAddToFavoriteAccountClick(
-                                contact
-                            )
+        contactList.forEach { (identification, contact) ->
+            item {
+                if (contact.first().titular.contains(searchedString, true)) {
+                    val subtitleColor =
+                        arrayOf(
+                            MultimoneyTheme.colors.twoCharacterOneColor,
+                            MultimoneyTheme.colors.twoCharacterTwoColor,
+                            MultimoneyTheme.colors.twoCharacterTwoColor,
+                            MultimoneyTheme.colors.twoCharacterComplementaryTwoColor
                         )
-                    },
-                    colorSubtitle = subtitleColor.random()
-
-                )
-                Divider(color = MultimoneyTheme.colors.dividerWhite30, thickness = 1.dp)
+                    ContactItem(
+                        title = contact.first().titular,
+                        subtitle = contact.first().number,
+                        modifier = Modifier.fillMaxWidth(),
+                        endIcon = R.drawable.ic_options,
+                        onEndIconClick = {
+                            onEndIconClick(contact.first())
+                        },
+                        colorSubtitle = subtitleColor.random(),
+                        onClick = {
+                            onContactClick(contact)
+                        }
+                    )
+                    Divider(color = MultimoneyTheme.colors.dividerWhite30, thickness = 1.dp)
+                }
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun ContactBottomSheet(viewModel: MyContactsTransferViewModel) {
+    CustomModalBottomSheet(
+        title = R.string.smart_iban_transfer_send_money,
+        closeIcon = R.drawable.ic_close_bottom_sheet,
+        modalBottomSheetState = viewModel.uiState.bottomSheetState,
+        coroutineScope = rememberCoroutineScope()
+    ) {
+        if (viewModel.uiState.selectedContact.isNotEmpty()) {
+            Column(Modifier.padding(vertical = 16.dp)) {
+                Text(
+                    text = viewModel.uiState.selectedContact.first().titular,
+                    style = Typography.body1.copy(
+                        fontWeight = FontWeight.Normal,
+                        color = MultimoneyTheme.colors.text
+                    )
+                )
+                Text(
+                    text = viewModel.uiState.selectedContact.first().number,
+                    style = Typography.body1.copy(
+                        fontWeight = FontWeight.Normal,
+                        color = MultimoneyTheme.colors.subTitleText
+                    )
+                )
+                viewModel.uiState.selectedContact.forEach {
+                    ContactAccountSheetDisplay(
+                        account = it,
+                        onClick = {} // todo add navigation to amount screen
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ContactAccountSheetDisplay(
+    account: PhoneSmart,
+    onClick: () -> Unit
+) {
+    Row(
+        Modifier.padding(top = 24.dp)
+            .clickable { onClick() }
+    ) {
+        Icon(
+            painter = painterResource(account.idCurrency.getCurrencyFromId().feeIcon),
+            tint = Color.Unspecified,
+            contentDescription = ""
+        )
+        Column(Modifier.padding(start = 16.dp)) {
+            Text(
+                text = "Cuenta Smart " + account.currency,
+                style = Typography.body1.copy(
+                    fontWeight = FontWeight.Normal,
+                    color = MultimoneyTheme.colors.text
+                )
+            )
+            Text(
+                text = getMaskedAccountIban(
+                    account.accountNumber,
+                    stringResource(R.string.payment_account_masked_text)
+                ),
+                style = Typography.body1.copy(
+                    fontWeight = FontWeight.Normal,
+                    color = MultimoneyTheme.colors.subTitleText
+                )
+            )
         }
     }
 }

@@ -1,5 +1,10 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact
 
+import android.util.Log
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue.Expanded
+import androidx.compose.material.ModalBottomSheetValue.Hidden
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -16,11 +21,15 @@ import com.multimoney.multimoney.presentation.navigation.CONTACTS
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAccountClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnContactClick
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import java.util.SortedMap
+import javax.inject.Inject
 
+@OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
 class MyContactsTransferViewModel @Inject constructor(
     private val queryRelatedContactsByPhoneUseCase: QueryRelatedContactsByPhoneUseCase,
@@ -52,9 +61,12 @@ class MyContactsTransferViewModel @Inject constructor(
             result.onSuccess { accountList ->
                 uiState = uiState.copy(isLoading = false)
                 accountList?.phones?.let { phoneSmarts ->
-                    uiState = uiState.copy(relatedContactList = phoneSmarts.distinctBy { phoneSmart ->
-                        phoneSmart.identification
-                    }.sortedBy { it.titular })
+                    uiState =
+                        uiState.copy(
+                            relatedContactList = phoneSmarts.groupBy { phoneSmart ->
+                                phoneSmart.identification
+                            }.toSortedMap()
+                        )
                 }
             }
             result.onFailure {
@@ -82,12 +94,25 @@ class MyContactsTransferViewModel @Inject constructor(
 
     private fun navigateToAddToFavoriteAccount(contactToFavorite: PhoneSmart) {
         // Todo Add  account to favorite REV-1449
+        Log.d("contacttransfer", "Navigate To Add To Favorite")
     }
 
     private fun onQueryValueChange(value: String) {
         uiState = uiState.copy(
             queryValue = value
         )
+    }
+
+    private fun onContactClick(accounts: List<PhoneSmart>) {
+        uiState = uiState.copy(
+            selectedContact = accounts,
+            bottomSheetState = ModalBottomSheetState(Expanded)
+        )
+    }
+
+    private fun onAccountClick(account: PhoneSmart) {
+        // todo Add navigation
+        Log.d("contacttransfer", "On Account Click")
     }
 
     private fun onAddSACAccountClick() {
@@ -98,7 +123,9 @@ class MyContactsTransferViewModel @Inject constructor(
         val queryValue: String = "",
         val openDialog: DialogParameters = DialogParameters(),
         var isLoading: Boolean = false,
-        var relatedContactList: List<PhoneSmart?> = listOf()
+        var relatedContactList: SortedMap<String, List<PhoneSmart>> = sortedMapOf(),
+        var selectedContact: List<PhoneSmart> = listOf(),
+        val bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(Hidden)
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -109,6 +136,8 @@ class MyContactsTransferViewModel @Inject constructor(
             is UIEvent.OnQueryValueChange -> onQueryValueChange(uiEvent.value)
             is UIEvent.OnNavigateToHome -> onNavigateToHome()
             UIEvent.OnCallQueryRelatedContactsByPhoneUseCase -> callQueryRelatedContactsByPhoneUseCaseImp()
+            is OnContactClick -> onContactClick(uiEvent.contact)
+            is OnAccountClick -> onAccountClick(uiEvent.account)
         }
     }
 
@@ -126,5 +155,7 @@ class MyContactsTransferViewModel @Inject constructor(
         data class OnAddToFavoriteAccountClick(val contactToFavorite: PhoneSmart) : UIEvent()
         object OnCallQueryRelatedContactsByPhoneUseCase : UIEvent()
         data class OnQueryValueChange(val value: String) : UIEvent()
+        data class OnContactClick(val contact: List<PhoneSmart>) : UIEvent()
+        data class OnAccountClick(val account: PhoneSmart) : UIEvent()
     }
 }

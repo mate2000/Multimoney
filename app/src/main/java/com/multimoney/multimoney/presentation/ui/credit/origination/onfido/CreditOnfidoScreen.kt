@@ -44,6 +44,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.Credi
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnSetCloseDialogTexts
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnSetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.RefreshOnFidoToken
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.documentgeneration.DocumentGenerationScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -252,8 +253,8 @@ fun CreditOnfidoScreen(
         CustomButton(
             onClick = { viewModel.onUIEvent(OnContinueClick) },
             text = stringResource(id = string.button_continue),
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp).fillMaxWidth()
-                .height(48.dp).constrainAs(button) {
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp).fillMaxWidth().height(48.dp)
+                .constrainAs(button) {
                     bottom.linkTo(parent.bottom)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
@@ -264,6 +265,10 @@ fun CreditOnfidoScreen(
     }
 
     LoadingIndicator(viewModel.uiState.isLoading)
+
+    if (viewModel.uiState.isCreatingAccountVisible) {
+        DocumentGenerationScreen()
+    }
 
     if (viewModel.uiState.isAlertResultVisible) {
         AlertResult(

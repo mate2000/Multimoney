@@ -85,6 +85,7 @@ class SignInViewModel @Inject constructor(
     private var deviceModel = getDeviceModel()
     private var isEmulator = checkIfEmulator()
     private var forceDeviceChange = false
+    private var forceShowBiometricsPrompt = false
 
     private fun onStart(
         deviceId: String,
@@ -102,6 +103,7 @@ class SignInViewModel @Inject constructor(
             uniqueId = dataStorePreferences.getUniqueId().first()
             val isBiometricActive = dataStorePreferences.isBiometricsEnabled().first()
             biometricUserEmail = dataStorePreferences.getUserEmail().first()
+            forceShowBiometricsPrompt = dataStorePreferences.isForceShowBiometricPrompt().first()
             uiState = uiState.copy(
                 userEmail = biometricUserEmail,
                 userName = dataStorePreferences.getUserName().first(),
@@ -441,11 +443,25 @@ class SignInViewModel @Inject constructor(
     private fun initializeBiometricPrompt(
         biometricPromptTitle: String,
         biometricPromptDescription: String,
-        biometricPromptNegative: String
+        biometricPromptNegative: String,
+        fragmentActivity: FragmentActivity
     ) {
         this.biometricPromptTitle = biometricPromptTitle
         this.biometricPromptDescription = biometricPromptDescription
         this.biometricPromptNegative = biometricPromptNegative
+        if (uiState.isBiometricActive && forceShowBiometricsPrompt) {
+            onShowBiometricPromptForDecryption(fragmentActivity = fragmentActivity)
+            deactivateForceBiometricPrompt()
+        } else {
+            deactivateForceBiometricPrompt()
+        }
+    }
+
+    private fun deactivateForceBiometricPrompt() {
+        viewModelScope.launch {
+            dataStorePreferences.isForceShowBiometricPrompt(false)
+            forceShowBiometricsPrompt = false
+        }
     }
 
     private fun onFingerprintCheckedChanged(value: Boolean, showDialog: Boolean) {
@@ -523,7 +539,8 @@ class SignInViewModel @Inject constructor(
             is OnInitializeBiometricPrompt -> initializeBiometricPrompt(
                 event.biometricPromptTitle,
                 event.biometricPromptDescription,
-                event.biometricPromptNegative
+                event.biometricPromptNegative,
+                event.fragmentActivity
             )
             is OnShowBiometricPromptForEncryption -> onShowBiometricPromptForEncryption(event.fragmentActivity)
             is OnShowBiometricPromptForDecryption -> onShowBiometricPromptForDecryption(event.fragmentActivity)
@@ -560,7 +577,8 @@ class SignInViewModel @Inject constructor(
         data class OnInitializeBiometricPrompt(
             val biometricPromptTitle: String,
             val biometricPromptDescription: String,
-            val biometricPromptNegative: String
+            val biometricPromptNegative: String,
+            val fragmentActivity: FragmentActivity
         ) : UIEvent()
 
         data class OnShowBiometricPromptForEncryption(val fragmentActivity: FragmentActivity) : UIEvent()

@@ -69,7 +69,6 @@ fun SelectSmartAccountContent(viewModel: SelectSmartAccountViewModel) {
         )
         LazyColumn() {
             items(viewModel.uiState.accounts) { account ->
-
                 //TODO replace with real info from accounts
                 CustomInfoButton(
                     modifier = Modifier.fillMaxWidth(),
@@ -78,10 +77,6 @@ fun SelectSmartAccountContent(viewModel: SelectSmartAccountViewModel) {
                         id = R.string.buy_crypto_multimoney_smart_account_template,
                         account.currencyCode ?: ""
                     ),
-                    subtitle = getMaskedAccount(
-                        account.accountNumber ?: "",
-                        stringResource(id = R.string.payment_account_masked_text)
-                    ).plus(" | ").plus(account.totalBalance )
                 )
             }
         }

@@ -40,8 +40,10 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCl
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnDeleteAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnEditAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnHideUnlinkToast
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnInitializeBiometricPrompt
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetHomeState
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetUserData
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnStartBiometrics
 import com.multimoney.multimoney.presentation.ui.home.myproducts.MyProductsBottomSheetScreen
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.AutomaticPaymentEditBottomSheet
 import com.multimoney.multimoney.presentation.ui.home.quickaction.QuickActionBottomSheetScreen
@@ -88,6 +90,7 @@ fun HomeScreen(
             onInnerNavigate = onInnerNavigate,
             onPopAndNavigate = onPopAndNavigate
         )
+        viewModel.onUIEvent(OnStartBiometrics)
         viewModel.countDownTimer.subscribe(object : OnCountDownTimerEvents {
             override fun onFinished() {
                 viewModel.onUIEvent(
@@ -111,9 +114,6 @@ fun HomeScreen(
                         myProductsModalBottomSheetState.show()
                     }
                 }
-                is HomeViewModel.BaseEvent.OnStartCountDownTimer -> viewModel.countDownTimer.startTimer(
-                    event.millisInFuture
-                )
                 is OnShowAutomaticPaymentEditBottomSheet -> {
                     coroutineScope.launch {
                         automaticPaymentEditBottomSheetState.show()
@@ -127,6 +127,14 @@ fun HomeScreen(
             }
         }
     }
+
+    viewModel.onUIEvent(
+        OnInitializeBiometricPrompt(
+            biometricPromptTitle = stringResource(id = string.automatic_logout_biometric_title),
+            biometricPromptDescription = stringResource(id = string.automatic_logout_biometric_description),
+            biometricPromptNegative = stringResource(id = string.cancel)
+        )
+    )
 
     if (viewModel.uiState.toastIsVisible) {
         Toast.makeText(activity, unlinkedToastText, Toast.LENGTH_LONG).show()

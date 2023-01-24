@@ -31,27 +31,27 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnAccountNumberChanged
 import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnAccountTypeSelected
+import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnAddFavoriteValueChange
 import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnBankSelected
 import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnDocumentChanged
 import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnDocumentTypeSelected
+import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnGetListValues
 import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnLastNamesChanged
 import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnNamesChanged
 import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnNavigateHome
 import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnValidateAccountNumber
 import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnValidateDocument
-import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnGetListValues
-import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnNavigateHome
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
+import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomDropdownTextField
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
-import com.multimoney.multimoney.presentation.util.DOCUMENT_FORMAT_VALUE
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.formatDocumentPlaceholder
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
@@ -225,6 +225,14 @@ fun SmartAddOtherBankAccountContent(viewModel: SmartAddOtherBankAccountViewModel
                     isError = viewModel.uiState.isAccountNumberError,
                     errorMessage = stringResource(id = R.string.smart_other_bank_transfer_add_account_number_error),
                     onDebounceValidation = { viewModel.onUIEvent(OnValidateAccountNumber) }
+                )
+                CustomCheckBox(
+                    modifier = Modifier.padding(top = 26.dp),
+                    checked = viewModel.uiState.isFavorite,
+                    onCheckedChange = {
+                        viewModel.onUIEvent(OnAddFavoriteValueChange(it))
+                    },
+                    text = stringResource(id = R.string.smart_iban_register_favorite_checkbox)
                 )
             }
             CustomButton(

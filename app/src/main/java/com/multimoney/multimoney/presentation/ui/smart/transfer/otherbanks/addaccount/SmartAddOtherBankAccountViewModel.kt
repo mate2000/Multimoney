@@ -17,16 +17,15 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.util.MAX_SMART_ACCOUNT_DIGITS
-import com.multimoney.multimoney.presentation.util.MIN_SMART_ACCOUNT_DIGITS
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.TRANSFER_TYPE
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.util.MAX_SMART_ACCOUNT_DIGITS
+import com.multimoney.multimoney.presentation.util.MIN_SMART_ACCOUNT_DIGITS
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.isEmailValid
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -180,6 +179,10 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
         validateForm()
     }
 
+    private fun onAddFavoriteValueChange(isChecked: Boolean) {
+        uiState = uiState.copy(isFavorite = isChecked)
+    }
+
     private fun onFailure(error: HttpError) {
         uiState = uiState.copy(
             isLoading = false,
@@ -208,7 +211,14 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
     }
 
     private fun onContinueClick() {
-
+        // Todo Navigation to edit amount
+        uiState = uiState.copy(
+            openDialog = DialogParameters(
+                isActive = mutableStateOf(true),
+                description = "TBD: Navegar a pantalla de monto REV-1463",
+                titleResource = R.string.info
+            )
+        )
     }
 
     private fun onNavigateBack() =
@@ -239,7 +249,8 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
         val personalIdError: Pair<Boolean, Int> = Pair(false, R.string.empty),
         val enableButton: Boolean = false,
         val names: String = "",
-        val lastNames: String = ""
+        val lastNames: String = "",
+        val isFavorite: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -257,6 +268,7 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
             is UIEvent.OnNamesChanged -> onNamesChanged(uiEvent.names)
             is UIEvent.OnLastNamesChanged -> onLastNamesChanged(uiEvent.lastNames)
             is UIEvent.OnNavigateHome -> onNavigateToHome()
+            is UIEvent.OnAddFavoriteValueChange -> onAddFavoriteValueChange(uiEvent.isChecked)
         }
     }
 
@@ -266,7 +278,7 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
         object OnValidateAccountNumber : UIEvent()
         object OnContinueClick : UIEvent()
         object OnGetListValues : UIEvent()
-        object OnNavigateHome :  UIEvent()
+        object OnNavigateHome : UIEvent()
         data class OnDocumentTypeSelected(val type: String) : UIEvent()
         data class OnBankSelected(val bank: String) : UIEvent()
         data class OnAccountTypeSelected(val type: String) : UIEvent()
@@ -274,5 +286,6 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
         data class OnNamesChanged(val names: String) : UIEvent()
         data class OnLastNamesChanged(val lastNames: String) : UIEvent()
         data class OnDocumentChanged(val document: String) : UIEvent()
+        data class OnAddFavoriteValueChange(val isChecked: Boolean) : UIEvent()
     }
 }

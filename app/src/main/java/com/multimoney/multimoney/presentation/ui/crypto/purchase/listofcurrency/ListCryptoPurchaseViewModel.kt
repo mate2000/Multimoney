@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.crypto.purchase
+package com.multimoney.multimoney.presentation.ui.crypto.purchase.listofcurrency
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

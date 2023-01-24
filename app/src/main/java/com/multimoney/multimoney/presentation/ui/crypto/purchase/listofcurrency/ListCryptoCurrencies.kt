@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.crypto.purchase
+package com.multimoney.multimoney.presentation.ui.crypto.purchase.listofcurrency
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -37,8 +37,7 @@ import com.multimoney.multimoney.presentation.ui.crypto.market.FilterBottomSheet
 import com.multimoney.multimoney.presentation.ui.crypto.market.FilterSection
 import com.multimoney.multimoney.presentation.ui.crypto.market.MarketFilter
 import com.multimoney.multimoney.presentation.ui.crypto.market.MarketSkeleton
-import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel
-import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewModel
+import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -47,6 +46,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ListCryptoCurrenciesScreen(
     viewModel: ListCryptoPurchaseViewModel = hiltViewModel(),
+    sharedViewModel: PurchaseCryptoSharedViewModel = hiltViewModel(),
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     ) {
     LaunchedEffect(true) {

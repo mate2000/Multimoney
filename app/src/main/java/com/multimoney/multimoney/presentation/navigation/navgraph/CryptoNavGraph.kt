@@ -25,7 +25,7 @@ import com.multimoney.multimoney.presentation.ui.crypto.currencydetail.CurrencyM
 import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreen
 import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsScreen
 import com.multimoney.multimoney.presentation.ui.crypto.movements.CryptoMovementsAllScreen
-import com.multimoney.multimoney.presentation.ui.crypto.purchase.ListCryptoCurrenciesScreen
+import com.multimoney.multimoney.presentation.ui.crypto.purchase.listofcurrency.ListCryptoCurrenciesScreen
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWallet
 
 const val ITEM_CRYPTO_CURRENCY = "item_crypto_currency"

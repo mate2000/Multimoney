@@ -170,7 +170,7 @@ class ProductViewModel @Inject constructor(
                 (balanceCredit?.getFirstSummary()?.availableBalance ?: 0.0) > 0.0
             uiState = uiState.copy(
                 canExpandCredit = it.getFirstSummary()?.canExpandState ?: false && it.getFirstSummary()?.isProductActive ?: false,
-                paymentAvailable = validateQuotas(it.balanceCredit?.first()?.summary),
+                paymentAvailable = checkPaymentAvailability(it.balanceCredit?.firstOrNull()?.summary),
                 scheduleChipIconResource = if ((balanceCredit?.getExpiredDays() ?: 0) > 0) {
                     R.drawable.ic_alert_expired_payment
                 } else if (balanceCredit?.isBalanceCreditSummaryMultiple() == true) {
@@ -393,6 +393,18 @@ class ProductViewModel @Inject constructor(
                 DialogParameters()
             }
         )
+    }
+
+    private fun checkPaymentAvailability(summaryList: List<Summary>?): Boolean {
+        summaryList?.let {
+            for (summary in summaryList) {
+                if (summary.currentBalance != ZERO)
+                    return true
+            }
+            return false
+        } ?: kotlin.run {
+            return false
+        }
     }
 
     private fun validateQuotas(summaryList: List<Summary>?): Boolean {

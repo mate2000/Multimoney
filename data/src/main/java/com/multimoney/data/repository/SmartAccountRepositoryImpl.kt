@@ -468,6 +468,23 @@ class SmartAccountRepositoryImpl @Inject constructor(
         )
     }
 
+    override suspend fun queryRelatedContactsByPhone(
+        user: String,
+        idBrand: Int,
+        contacts: List<RelatedContact>
+    ): Flow<MultimoneyResult<PhonesResult?>> {
+        return fetchData(
+            apolloCall = graphqlApi.queryRelatedContactsByPhone(
+                user = user,
+                idBrand = idBrand,
+               contacts = contacts
+            ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+    }
+
     override suspend fun querySmartAccountType(
         idBrand: Int,
         user: String
@@ -508,23 +525,6 @@ class SmartAccountRepositoryImpl @Inject constructor(
             active = active,
             idCurrencyAccount = idCurrencyAccount
         ),
-            apolloCallMapper = { data ->
-                Success(data.mapToDomainModel())
-            }
-        )
-    }
-
-    override suspend fun queryRelatedContactsByPhone(
-        user: String,
-        idBrand: Int,
-        contacts: List<RelatedContact>
-    ): Flow<MultimoneyResult<PhonesResult?>> {
-        return fetchData(
-            apolloCall = graphqlApi.queryRelatedContactsByPhone(
-                user = user,
-                idBrand = idBrand,
-               contacts = contacts
-            ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
             }

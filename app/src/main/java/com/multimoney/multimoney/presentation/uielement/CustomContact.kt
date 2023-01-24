@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency5
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
@@ -86,7 +87,7 @@ fun ContactItem(
                         start.linkTo(parent.start, margin = 4.dp)
                         bottom.linkTo(parent.bottom, margin = 17.dp)
                     },
-                border = BorderStroke(1.dp, Color.Gray),
+                border = BorderStroke(1.dp, MultimoneyTheme.colors.dividerWhite30),
                 color = background
             ) {
                 Box(contentAlignment = Alignment.Center) {
@@ -103,7 +104,7 @@ fun ContactItem(
                 Text(
                     text = title,
                     modifier = Modifier.constrainAs(titleId) {
-                        top.linkTo(startIconId.top, margin = 3.dp)
+                        top.linkTo(startIconId.top, margin = 4.dp)
                         start.linkTo(startIconId.end, margin = 22.dp)
                         if (endIcon != null) {
                             end.linkTo(endIconId.start, margin = 16.dp)

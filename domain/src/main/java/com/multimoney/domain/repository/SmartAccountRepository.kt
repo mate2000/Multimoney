@@ -17,7 +17,6 @@ import com.multimoney.domain.model.accountsmart.SaveSinpeAccount
 import com.multimoney.domain.model.accountsmart.SaveSmartAccount
 import com.multimoney.domain.model.accountsmart.SinpeAccountResult
 import com.multimoney.domain.model.accountsmart.SinpeTransferResult
-import com.multimoney.domain.model.accountsmart.SmartAccountType
 import com.multimoney.domain.model.accountsmart.SmartAccountTypeResult
 import com.multimoney.domain.model.accountsmart.SmartFavoriteResult
 import com.multimoney.domain.model.accountsmart.SmartMovement
@@ -217,6 +216,12 @@ interface SmartAccountRepository {
         user: String
     ): Flow<MultimoneyResult<SinpeTransferResult?>>
 
+    suspend fun queryRelatedContactsByPhone(
+        user: String,
+        idBrand: Int,
+        contacts: List<RelatedContact>
+    ): Flow<MultimoneyResult<PhonesResult?>>
+
     suspend fun querySmartAccountType(
         idBrand: Int,
         user: String
@@ -236,9 +241,4 @@ interface SmartAccountRepository {
         idCurrencyAccount: Int,
     ): Flow<MultimoneyResult<SmartFavoriteResult?>>
 
-    suspend fun queryRelatedContactsByPhone(
-        user: String,
-        idBrand: Int,
-        contacts: List<RelatedContact>
-    ): Flow<MultimoneyResult<PhonesResult?>>
 }

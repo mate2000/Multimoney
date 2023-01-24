@@ -22,7 +22,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,6 +51,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomSearchBar
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.capitalizedAllWords
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 import java.util.SortedMap
@@ -201,7 +201,7 @@ fun ContactList(
                 }
                 if (contact.first().titular.contains(searchedString, true)) {
                     ContactItem(
-                        title = contact.first().titular,
+                        title = contact.first().titular.capitalizedAllWords(),
                         subtitle = contact.first().number,
                         modifier = Modifier.fillMaxWidth(),
                         endIcon = R.drawable.ic_options,

@@ -356,8 +356,6 @@ fun String.addTextStyleToTextPortion(textToStyle: String, style: TextStyle): Ann
     }
 }
 
-fun String.isCognitoErrorCode(code: String) = contains(""""$CODE_KEYWORD":"$code"""")
-
 fun String?.toTwoChar(): String {
     return when {
         isNullOrEmpty() -> {
@@ -374,6 +372,8 @@ fun String?.toTwoChar(): String {
         }
     }
 }
+
+fun String.isCognitoErrorCode(code: String) = contains(""""$CODE_KEYWORD":"$code"""")
 
 fun CharSequence.replaceNumbersToZero() = replace(Regex(DIGITS_REGEX), ZERO_STRING)
 

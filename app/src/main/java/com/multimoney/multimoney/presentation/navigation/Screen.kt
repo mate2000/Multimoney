@@ -126,6 +126,8 @@ const val USER_DATA = "user_data"
 const val PROFILE_CARD_LIST_ORIGIN = "profile_card_list_origin"
 const val SMART_ACCOUNTS_FOR_BUY_CRYPTO = "smart_accounts_for_buy_crypto"
 const val CURRENCY_NAME = "currency_name"
+const val SMART_ACCOUNTS_FOR_BUY_CRYPTO = "smart_accounts_for_buy_crypto"
+const val CURRENCY_NAME = "currency_name"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"

@@ -345,7 +345,18 @@
     <string name="home_crypto_card_with_balance_label" translatable="false">Balance</string>
     <string name="home_crypto_card_smart_in_process_label" translatable="false">Cripto</string>
     <string name="home_crypto_card_with_balance_zero_label" translatable="false">0.00</string>
+
+
+
+    <!-- Buy Crypto -->
+    <string name="buy_crypto_voucher_you_have_paid" translatable="false">Has comprado</string>
     <string name="buy_crypto_multimoney_smart_account_template" translatable="false">MultiMoney Smart | %1$s</string>
+    <string name="buy_crypto_voucher_from_account" translatable="false">Desde la cuenta</string>
+    <string name="buy_crypto_voucher_exchange_rate" translatable="false">Tipo de cambio</string>
+    <string name="buy_crypto_voucher_mount_to_charge" translatable="false">Total debitado</string>
+    <string name="buy_crypto_voucher_value_in_currency_template" translatable="false">Valor en %1$s al momento de la compra</string>
+    <string name="buy_crypto_voucher_final_value_in_currency_template" translatable="false">%1$s %2$s</string>
+
 
     <string name="home_product_process_smart_label" translatable="false">Smart</string>
 
@@ -474,6 +485,7 @@
     <string name="crypto_finish_smart_alert_btn_discover_crypto" translatable="false">Explorar Cripto</string>
     <string name="crypto_finish_smart_alert_btn_saving_smart" translatable="false">Ahorrar Smart</string>
     <string name="crypto_select_smart_account_title_template" translatable="false">¿Con qué cuenta vas a comprar %1$s?</string>
+    <string name="crypto_buy_processing_transaction" translatable="false">Procesando transacción</string>
 
     <!-- Home Crypto Header Expanded-->
     <string name="home_crypto_header_expanded_title" translatable="false">Mi Cripto</string>

@@ -211,6 +211,33 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                     }
                 )
             }
+            SmartTransferTypes.SmartToContact.id -> {
+                smartAccount = savedStateHandle[ORIGIN_ACCOUNT]
+                ibanAccount = savedStateHandle[DESTINY_ACCOUNT]
+                originCurrency = Dollar
+                destinyCurrency = smartAccount?.currencyID?.getCurrencyFromId()
+                shouldDisplayExchange = originCurrency != destinyCurrency
+
+                amountUIState = amountUIState.copy(
+                    originAccountDisplay = DisplayAccount(
+                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_card,
+                        sheetTitle = visaAccount?.detail.orEmpty(),
+                        sheetSubtitle = getMaskedVisaAccount(visaAccount?.cardMaskedNumber.orEmpty()),
+                        icon = R.drawable.ic_visa_card_item
+                    ),
+                    destinyAccountDisplay = DisplayAccount(
+                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_to,
+                        sheetTitleResource = R.string.smart_payment_sheet_multimoney_smart,
+                        icon = R.drawable.ic_multimoney_smart
+                    ),
+                    currency = originCurrency?.symbol ?: Dollar.symbol,
+                    placeholder = if (originCurrency == Dollar) {
+                        R.string.smart_dollar_placeholder
+                    } else {
+                        R.string.smart_colon_placeholder
+                    }
+                )
+            }
         }
     }
 

@@ -93,13 +93,13 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         if (idBrand == Brand.CostaRica.id) {
             navigateTo(
                 "${Screen.OwnTransferAmountScreen.baseRoute}/" +
-                    "${encodeData(selectedSmartAccount)}/${encodeData(secondSmartAccount)}/" +
-                    "${SmartTransferTypes.SmartToSmart.id}"
+                        "${encodeData(selectedSmartAccount)}/${encodeData(secondSmartAccount)}/" +
+                        "${SmartTransferTypes.SmartToSmart.id}"
             )
         } else if (idBrand == Brand.ElSalvador.id) {
             navigateTo(
                 "${Screen.SmartAddSACAccountScreen.baseRoute}/$idBrand/$user/${
-                encodeData(selectedSmartAccount)
+                    encodeData(selectedSmartAccount)
                 }/${SmartTransferTypes.SmartToSmart.id}"
             )
         }
@@ -171,8 +171,13 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     }
 
     private fun onNavigateToTransfer365Mobile() {
-        // TODO navigate to HU REV-1458
-        emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
+        navigateTo(
+            "${Screen.SmartOtherBanksAccountScreen.baseRoute}/$idBrand/$user/${
+                encodeData(
+                    selectedSmartAccount
+                )
+            }/${SmartTransferTypes.SmartToMobile.id}"
+        )
     }
 
     private fun onNavigateBack() {

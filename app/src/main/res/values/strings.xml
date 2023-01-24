@@ -67,6 +67,7 @@
     <string name="document" translatable="false">Documento</string>
     <string name="destination_bank" translatable="false">Banco de destino</string>
     <string name="account_number" translatable="false">Número de cuenta</string>
+    <string name="phone_number" translatable="false">Número de teléfono</string>
 
     <string name="content_description_more_info" translatable="false">Más información</string>
 
@@ -1355,6 +1356,12 @@
     <string name="smart_other_bank_transfer_add_title" translatable="false">Datos de la cuenta</string>
     <string name="smart_other_bank_transfer_add_account_number_error" translatable="false"><b>Revisar formato. </b>Debe tener 9 dígitos.</string>
     <string name="smart_other_bank_transfer_add_account_type_label" translatable="false">Tipo de cuenta de destino</string>
+    <string name="smart_other_bank_transfer_add_phone_number_error" translatable="false">Formato incorrecto. Ingresa un número válido</string>
+
+    <!-- Smart Transfer 365 Mobile-->
+    <string name="smart_transfer_365_mobile_add_title" translatable="false">Transfer 365</string>
+    <string name="smart_transfer_365_mobile_add_subtitle" translatable="false">Cuenta destino</string>
+    <string name="smart_transfer_365_mobile_add_account_type_label" translatable="false">Tipo de cuenta</string>
 
     <!-- Smart SAC Transfer - Add SAC Account -->
     <string name="smart_add_sac_account_title" translatable="false">Datos de la cuenta</string>

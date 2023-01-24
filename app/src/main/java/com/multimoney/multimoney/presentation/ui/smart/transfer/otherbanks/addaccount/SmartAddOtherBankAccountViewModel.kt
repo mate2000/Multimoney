@@ -5,6 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.SavedStateHandle
+import com.google.i18n.phonenumbers.PhoneNumberUtil
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.accountsmart.MutationAddACHAccountUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryBankListTransfer365UseCase
 import com.multimoney.domain.interaction.accountsmart.QuerySmartAccountTypeUseCase
@@ -27,7 +29,9 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.util.MAX_SMART_ACCOUNT_DIGITS
 import com.multimoney.multimoney.presentation.util.MIN_SMART_ACCOUNT_DIGITS
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.PhoneCountryCode
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
+import com.multimoney.multimoney.presentation.util.isPhoneNumberValid
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -56,6 +60,19 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
         idBrand = savedStateHandle[ID_BRAND] ?: 0
         smartAccount = savedStateHandle[SMART_ACCOUNT]
         transferType = savedStateHandle[TRANSFER_TYPE] ?: 0
+        if (transferType == SmartTransferTypes.SmartToOtherBank.id) {
+            uiState = uiState.copy(
+                screenTitle = R.string.smart_other_bank_transfer_add_title,
+                screenSubtitle = R.string.empty,
+                typeAccountLabel = R.string.smart_other_bank_transfer_add_account_type_label
+            )
+        } else if (transferType == SmartTransferTypes.SmartToMobile.id) {
+            uiState = uiState.copy(
+                screenTitle = R.string.smart_transfer_365_mobile_add_title,
+                screenSubtitle = R.string.smart_transfer_365_mobile_add_subtitle,
+                typeAccountLabel = R.string.smart_transfer_365_mobile_add_account_type_label
+            )
+        }
     }
 
     private fun getDropdownLists() {
@@ -186,6 +203,23 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
         uiState = uiState.copy(isFavorite = isChecked)
     }
 
+    private fun onPhoneNumberChanged(phone: String) {
+        if (phone.isDigitsOnly()) {
+            uiState = uiState.copy(phoneNumber = phone)
+        }
+    }
+
+    private fun validatePhoneNumber() {
+        val isValid = isPhoneNumberValid(
+            uiState.phoneNumber,
+            "${PhoneCountryCode.EL_SALVADOR.code}${uiState.phoneNumber}",
+            Brand.ElSalvador.countryCode,
+            PhoneNumberUtil.PhoneNumberType.MOBILE
+        )
+        uiState = uiState.copy(isPhoneNumberError = isValid.not())
+        validateForm()
+    }
+
     private fun onFailure(error: HttpError) {
         uiState = uiState.copy(
             isLoading = false,
@@ -200,14 +234,20 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
         uiState = uiState.copy(
             enableButton = when {
                 uiState.type == null -> false
-                uiState.isAccountNumberError -> false
                 uiState.personalIdError.first -> false
-                uiState.accountNumber.isEmpty() -> false
+                transferType == SmartTransferTypes.SmartToOtherBank.id &&
+                        uiState.isAccountNumberError -> false
+                transferType == SmartTransferTypes.SmartToOtherBank.id &&
+                        uiState.accountNumber.isEmpty() -> false
                 uiState.names.isEmpty() -> false
                 uiState.lastNames.isEmpty() -> false
                 uiState.document == null -> false
                 uiState.bank == null -> false
                 uiState.documentNumber.isEmpty() -> false
+                transferType == SmartTransferTypes.SmartToMobile.id &&
+                        uiState.phoneNumber.isEmpty() -> false
+                transferType == SmartTransferTypes.SmartToMobile.id &&
+                        uiState.isPhoneNumberError -> false
                 else -> true
             }
         )
@@ -248,7 +288,7 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
                         isLoading = false,
                         openDialog = DialogParameters(
                             isActive = mutableStateOf(true),
-                            description = "TBD: Navegar a pantalla de monto REV-1463",
+                            description = "Cuenta guardada. TBD: Navegar a pantalla de monto REV-1463",
                             titleResource = R.string.info
                         )
                     )
@@ -288,7 +328,12 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
         val enableButton: Boolean = false,
         val names: String = "",
         val lastNames: String = "",
-        val isFavorite: Boolean = false
+        val isFavorite: Boolean = false,
+        val phoneNumber: String = "",
+        val isPhoneNumberError: Boolean = false,
+        val screenTitle: Int = R.string.smart_other_bank_transfer_add_title,
+        val screenSubtitle: Int = R.string.smart_transfer_365_mobile_add_subtitle,
+        val typeAccountLabel: Int = R.string.smart_other_bank_transfer_add_account_type_label
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -307,6 +352,8 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
             is UIEvent.OnLastNamesChanged -> onLastNamesChanged(uiEvent.lastNames)
             is UIEvent.OnNavigateHome -> onNavigateToHome()
             is UIEvent.OnAddFavoriteValueChange -> onAddFavoriteValueChange(uiEvent.isChecked)
+            is UIEvent.OnPhoneChanged -> onPhoneNumberChanged(uiEvent.phone)
+            is UIEvent.OnValidatePhoneNumber -> validatePhoneNumber()
         }
     }
 
@@ -314,6 +361,7 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
         object OnNavigateBack : UIEvent()
         object OnValidateDocument : UIEvent()
         object OnValidateAccountNumber : UIEvent()
+        object OnValidatePhoneNumber : UIEvent()
         object OnContinueClick : UIEvent()
         object OnGetListValues : UIEvent()
         object OnNavigateHome : UIEvent()
@@ -324,6 +372,7 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
         data class OnNamesChanged(val names: String) : UIEvent()
         data class OnLastNamesChanged(val lastNames: String) : UIEvent()
         data class OnDocumentChanged(val document: String) : UIEvent()
+        data class OnPhoneChanged(val phone: String) : UIEvent()
         data class OnAddFavoriteValueChange(val isChecked: Boolean) : UIEvent()
     }
 }

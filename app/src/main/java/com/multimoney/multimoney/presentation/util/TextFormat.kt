@@ -1,6 +1,8 @@
 package com.multimoney.multimoney.presentation.util
 
+import androidx.compose.ui.res.stringResource
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.multimoney.R
 import java.text.DecimalFormat
 import java.util.Locale
 import kotlin.math.abs
@@ -81,6 +83,18 @@ fun getMaskedAccountIban(accountNumber: String, maskedText: String = ACCOUNT_MAS
 fun getFullMaskedAccountIban(accountBank: String, accountNumber: String, maskedText: String = ACCOUNT_MASK) =
     accountBank.plus(" | " + getMaskedAccountIban(accountNumber, maskedText))
 
+fun formatDocumentPlaceholder(originFormat: String, outputFormat: Char = DOCUMENT_FORMAT_VALUE): String {
+    return if (originFormat.isNotBlank()) {
+        originFormat.replace(
+            originFormat.last(),
+            outputFormat,
+            false
+        )
+    } else {
+        String()
+    }
+}
+
 const val ACCOUNT_IBAN_FIRST_DIGITS = 0
 const val ACCOUNT_FIRST_DIGITS = 2
 const val ACCOUNT_LAST_DIGITS = 4
@@ -88,3 +102,4 @@ const val CARD_NUMBER_LAST_DIGITS = 4
 const val TWO_DECIMALS_FORMAT = "%.2f"
 const val ACCOUNT_MASK = "••••"
 const val VISA_MASK = "Visa"
+const val DOCUMENT_FORMAT_VALUE = '0'

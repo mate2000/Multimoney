@@ -3,12 +3,12 @@ package com.multimoney.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.apollographql.apollo3.api.Optional
 import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.smartaccount.mapToDomain
 import com.multimoney.data.mapper.smartaccount.mapToDomainModel
 import com.multimoney.data.networking.GraphqlApi
 import com.multimoney.data.paging.SmartMovementsPagingSource
+import com.multimoney.domain.model.accountsmart.ACHAccount
 import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
 import com.multimoney.domain.model.accountsmart.AddressesLevel
 import com.multimoney.domain.model.accountsmart.BankListTransfer365
@@ -34,8 +34,8 @@ import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
 import com.multimoney.domain.repository.SmartAccountRepository
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 class SmartAccountRepositoryImpl @Inject constructor(
     private val graphqlApi: GraphqlApi
@@ -488,6 +488,36 @@ class SmartAccountRepositoryImpl @Inject constructor(
         return fetchData(graphqlApi.queryBankListTransfer365(
             idBrand = idBrand,
             user = user
+        ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+    }
+
+    override suspend fun mutationAddACHAccount(
+        idBrand: Int,
+        user: String,
+        accountNumber: String,
+        titularName: String,
+        isFavorite: Boolean,
+        typeAccountId: Int,
+        destinationBankId: Int,
+        description: String,
+        identificationNumber: String,
+        identificationTypeAccount: Int
+    ): Flow<MultimoneyResult<ACHAccount?>> {
+        return fetchData(graphqlApi.mutationAddACHAccount(
+            idBrand = idBrand,
+            user = user,
+            accountNumber = accountNumber,
+            titularName = titularName,
+            isFavorite = isFavorite,
+            typeAccountId = typeAccountId,
+            destinationBankId = destinationBankId,
+            description = description,
+            identificationNumber = identificationNumber,
+            identificationTypeAccount = identificationTypeAccount
         ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())

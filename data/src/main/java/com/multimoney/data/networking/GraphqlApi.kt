@@ -10,6 +10,7 @@ import com.multimoney.data.networking.graphql.apollomodel.AccountSmartContractEv
 import com.multimoney.data.networking.graphql.apollomodel.AccountStatementQuery
 import com.multimoney.data.networking.graphql.apollomodel.ActivatedCardAutomaticDebitMutation
 import com.multimoney.data.networking.graphql.apollomodel.ActivatedClientAutomaticDebitMutation
+import com.multimoney.data.networking.graphql.apollomodel.AddACHAccountMutation
 import com.multimoney.data.networking.graphql.apollomodel.AddressLevel1Query
 import com.multimoney.data.networking.graphql.apollomodel.AddressLevel2Query
 import com.multimoney.data.networking.graphql.apollomodel.AddressLevel3Query
@@ -1830,6 +1831,32 @@ class GraphqlApi @Inject constructor(
         user: String
     ): ApolloCall<BankListTransfer365Query.Data> = apolloAuthorizedClient.query(
         BankListTransfer365Query(idBrand = idBrand, user = user)
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationAddACHAccount(
+        idBrand: Int,
+        user: String,
+        accountNumber: String,
+        titularName: String,
+        isFavorite: Boolean,
+        typeAccountId: Int,
+        destinationBankId: Int,
+        description: String,
+        identificationNumber: String,
+        identificationTypeAccount: Int
+    ): ApolloCall<AddACHAccountMutation.Data> = apolloAuthorizedClient.mutation(
+        AddACHAccountMutation(
+            idBrand = idBrand,
+            user = user,
+            accountNumber = accountNumber,
+            titularName = titularName,
+            isFavorite = isFavorite,
+            typeAccountId = typeAccountId,
+            destinationBankId = destinationBankId,
+            description = description,
+            identificationNumber = identificationNumber,
+            identificationTypeAccount = identificationTypeAccount
+        )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryCryptoCurrencyMovements(

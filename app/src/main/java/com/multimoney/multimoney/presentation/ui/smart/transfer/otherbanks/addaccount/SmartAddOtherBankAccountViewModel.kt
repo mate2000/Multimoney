@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.domain.interaction.accountsmart.MutationAddACHAccountUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryBankListTransfer365UseCase
 import com.multimoney.domain.interaction.accountsmart.QuerySmartAccountTypeUseCase
 import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCase
@@ -26,6 +27,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.util.MAX_SMART_ACCOUNT_DIGITS
 import com.multimoney.multimoney.presentation.util.MIN_SMART_ACCOUNT_DIGITS
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -35,6 +37,7 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
     private val queryCatalogDocumentTypeUseCase: QueryCatalogDocumentTypeUseCase,
     private val querySmartAccountTypeUseCase: QuerySmartAccountTypeUseCase,
     private val queryBankListTransfer365UseCase: QueryBankListTransfer365UseCase,
+    private val mutationAddACHAccountUseCase: MutationAddACHAccountUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
@@ -211,14 +214,49 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
     }
 
     private fun onContinueClick() {
-        // Todo Navigation to edit amount
-        uiState = uiState.copy(
-            openDialog = DialogParameters(
-                isActive = mutableStateOf(true),
-                description = "TBD: Navegar a pantalla de monto REV-1463",
-                titleResource = R.string.info
+        if (transferType == SmartTransferTypes.SmartToOtherBank.id) {
+            saveOtherBankAccount()
+        } else if (transferType == SmartTransferTypes.SmartToMobile.id) {
+            // Todo Navigation to edit amount
+            uiState = uiState.copy(
+                openDialog = DialogParameters(
+                    isActive = mutableStateOf(true),
+                    description = "TBD: Navegar a pantalla de monto REV-1463",
+                    titleResource = R.string.info
+                )
             )
-        )
+        }
+    }
+
+    private fun saveOtherBankAccount() {
+        executeUseCase {
+            mutationAddACHAccountUseCase.invoke(
+                idBrand = idBrand,
+                user = user,
+                accountNumber = uiState.accountNumber,
+                titularName = "${uiState.names} ${uiState.lastNames}",
+                isFavorite = uiState.isFavorite,
+                typeAccountId = uiState.type?.typeId?.toIntOrNull() ?: 0,
+                destinationBankId = uiState.bank?.bankId?.toInt() ?: 0,
+                description = uiState.bank?.bankName.orEmpty(),
+                identificationNumber = uiState.documentNumber,
+                identificationTypeAccount = uiState.document?.idDocument ?: 0
+            ).collectLatest { result ->
+                result.onSuccess { account ->
+                    // Todo navigate to edit amount REV-1463
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        openDialog = DialogParameters(
+                            isActive = mutableStateOf(true),
+                            description = "TBD: Navegar a pantalla de monto REV-1463",
+                            titleResource = R.string.info
+                        )
+                    )
+                }
+                result.onFailure { onFailure(it) }
+                result.onLoading { uiState = uiState.copy(isLoading = true) }
+            }
+        }
     }
 
     private fun onNavigateBack() =

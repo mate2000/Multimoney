@@ -1,5 +1,7 @@
 package com.multimoney.domain.di
 
+import com.multimoney.domain.interaction.accountsmart.MutationAddACHAccountUseCase
+import com.multimoney.domain.interaction.accountsmart.MutationAddACHAccountUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationInitialRequestUseCase
@@ -754,6 +756,11 @@ class InteractionModule {
     @Singleton
     fun provideBankListTransfer365(smartAccountRepository: SmartAccountRepository): QueryBankListTransfer365UseCase =
         QueryBankListTransfer365UseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationAddACHAccount(smartAccountRepository: SmartAccountRepository): MutationAddACHAccountUseCase =
+        MutationAddACHAccountUseCaseImpl(smartAccountRepository)
 
     @Provides
     @Singleton

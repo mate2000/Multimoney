@@ -170,6 +170,7 @@ class ProductViewModel @Inject constructor(
                 (balanceCredit?.getFirstSummary()?.availableBalance ?: 0.0) > 0.0
             uiState = uiState.copy(
                 canExpandCredit = it.getFirstSummary()?.canExpandState ?: false && it.getFirstSummary()?.isProductActive ?: false,
+                paymentAvailable = validateQuotas(it.balanceCredit?.first()?.summary),
                 scheduleChipIconResource = if ((balanceCredit?.getExpiredDays() ?: 0) > 0) {
                     R.drawable.ic_alert_expired_payment
                 } else if (balanceCredit?.isBalanceCreditSummaryMultiple() == true) {
@@ -971,7 +972,8 @@ class ProductViewModel @Inject constructor(
         val scheduleChipIconResource: Int? = null,
         val phoneNumber: String? = null,
         val smartContent: Pair<Boolean?, String> = Pair(null, ""),
-        val cryptoCurrencyMovements: Flow<PagingData<CryptoCurrencyMovement>> = flowOf()
+        val cryptoCurrencyMovements: Flow<PagingData<CryptoCurrencyMovement>> = flowOf(),
+        val paymentAvailable: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

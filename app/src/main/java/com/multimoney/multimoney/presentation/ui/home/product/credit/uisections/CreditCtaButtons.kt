@@ -11,6 +11,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.uielement.CustomButton
+import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimarySecondary
 
 /**
@@ -27,6 +28,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomButtonType.Primary
 fun CreditCtaButtons(
     modifier: Modifier,
     canDisburse: Boolean,
+    paymentAvailable: Boolean,
     onClickPay: () -> Unit = {},
     onClickDisbursement: () -> Unit = {}
 ) {
@@ -34,18 +36,22 @@ fun CreditCtaButtons(
         modifier = modifier,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        if (canDisburse) {
+        if (paymentAvailable) {
             CustomButton(
                 text = stringResource(string.home_pay_fee_button_text),
                 modifier = Modifier
                     .weight(1f)
                     .height(48.dp),
-                buttonType = PrimarySecondary,
+                buttonType = if (canDisburse) PrimarySecondary else PrimaryPrimary,
                 onClick = {
                     onClickPay()
                 }
             )
+        }
+        if (paymentAvailable && canDisburse) {
             Spacer(Modifier.width(16.dp))
+        }
+        if (canDisburse) {
             CustomButton(
                 text = stringResource(string.home_disburse_button_text),
                 modifier = Modifier
@@ -53,16 +59,6 @@ fun CreditCtaButtons(
                     .height(48.dp),
                 onClick = {
                     onClickDisbursement()
-                }
-            )
-        } else {
-            CustomButton(
-                text = stringResource(string.home_pay_fee_button_text),
-                modifier = Modifier
-                    .weight(1f)
-                    .height(48.dp),
-                onClick = {
-                    onClickPay()
                 }
             )
         }

@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
 import com.multimoney.domain.interaction.accountsmart.QueryBankListTransfer365UseCase
 import com.multimoney.domain.interaction.accountsmart.QuerySmartAccountTypeUseCase
 import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCase
@@ -18,16 +17,18 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.util.MAX_SMART_ACCOUNT_DIGITS
+import com.multimoney.multimoney.presentation.util.MIN_SMART_ACCOUNT_DIGITS
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.ORIGIN_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.TRANSFER_TYPE
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,12 +37,13 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
     private val querySmartAccountTypeUseCase: QuerySmartAccountTypeUseCase,
     private val queryBankListTransfer365UseCase: QueryBankListTransfer365UseCase,
     savedStateHandle: SavedStateHandle
-) : BaseViewModel(true){
+) : BaseViewModel(true) {
 
     //Stateless
-    private var idBrand = savedStateHandle[ID_BRAND] ?: 0
-    private var user = savedStateHandle[USER] ?: ""
+    private var idBrand = 0
+    private var user = ""
     private var smartAccount: SmartAccountID? = null
+    var transferType: Int = 0
 
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -50,16 +52,14 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
     init {
         user = savedStateHandle[USER] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
-        smartAccount = savedStateHandle[ORIGIN_ACCOUNT]
-        getListValues()
+        smartAccount = savedStateHandle[SMART_ACCOUNT]
+        transferType = savedStateHandle[TRANSFER_TYPE] ?: 0
     }
 
-    private fun getListValues() {
-        viewModelScope.launch {
-            getDocumentTypes()
-            getBanks()
-            getAccountTypes()
-        }
+    private fun getDropdownLists() {
+        getDocumentTypes()
+        getBanks()
+        getAccountTypes()
     }
 
     private fun getAccountTypes() = executeUseCase {
@@ -100,15 +100,23 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
             user = user,
             isTransferIdentification = 1
         ).collectLatest { result ->
-            result.onSuccess { list ->
+            result.onSuccess { catalog ->
                 uiState = uiState.copy(
                     isLoading = false,
-                    documentList = list?.catalogDocument ?: listOf()
+                    documentList = catalog?.catalogDocument ?: listOf(),
+                    document = catalog?.catalogDocument?.firstOrNull(),
+                    documentLength = getDocumentLength(catalog?.catalogDocument?.firstOrNull()?.format.orEmpty())
                 )
             }
             result.onFailure { onFailure(it) }
             result.onLoading { uiState = uiState.copy(isLoading = true) }
         }
+    }
+
+    private fun onBankSelected(newBank: String) {
+        val bank = uiState.bankList.find { it.bankName == newBank }
+        uiState = uiState.copy(bank = bank)
+        validateForm()
     }
 
     private fun onAccountTypeSelected(newType: String) {
@@ -123,9 +131,27 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
         }
     }
 
-    private fun onDocumentChanged(newDocument: String) {
+    private fun onDocumentNumberChanged(documentNumber: String) {
+        if (documentNumber.isDigitsOnly()) {
+            uiState = uiState.copy(documentNumber = documentNumber)
+        }
+    }
+
+    private fun onDocumentTypeSelected(newDocument: String) {
         val document = uiState.documentList.find { it.description == newDocument }
-        uiState = uiState.copy(document = document)
+        uiState = uiState.copy(
+            document = document,
+            documentLength = getDocumentLength(document?.format.orEmpty())
+        )
+        validateForm()
+    }
+
+    private fun getDocumentLength(format: String): Int {
+        return if (format.isNotEmpty()) {
+            format.count { format.last() == it }
+        } else {
+            Int.MAX_VALUE
+        }
     }
 
     private fun onNamesChanged(newNames: String) {
@@ -139,17 +165,17 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
     }
 
     private fun isDocumentValid() {
-        uiState = if (isEmailValid(uiState.email)) {
+        uiState = if (uiState.documentNumber.length == uiState.documentLength) {
             uiState.copy(personalIdError = Pair(false, R.string.empty))
         } else {
-            uiState.copy(personalIdError = Pair(true, R.string.smart_iban_register_email_error))
+            uiState.copy(personalIdError = Pair(true, R.string.smart_iban_register_account_error))
         }
         validateForm()
     }
 
     private fun isAccountNumberValid() {
         uiState = uiState.copy(
-            isAccountNumberError = uiState.accountNumber.length !in MIN_ACCOUNT_DIGITS..MAX_ACCOUNT_DIGITS
+            isAccountNumberError = uiState.accountNumber.length !in MIN_SMART_ACCOUNT_DIGITS..MAX_SMART_ACCOUNT_DIGITS
         )
         validateForm()
     }
@@ -170,10 +196,12 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
                 uiState.type == null -> false
                 uiState.isAccountNumberError -> false
                 uiState.personalIdError.first -> false
-                uiState.email.isEmpty() -> false
                 uiState.accountNumber.isEmpty() -> false
                 uiState.names.isEmpty() -> false
                 uiState.lastNames.isEmpty() -> false
+                uiState.document == null -> false
+                uiState.bank == null -> false
+                uiState.documentNumber.isEmpty() -> false
                 else -> true
             }
         )
@@ -183,10 +211,15 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
 
     }
 
-    // Todo change this navigation to go back to Contacts screen rev-1445
     private fun onNavigateBack() =
         navigateBack(
             popTo = Screen.SmartSelectSendingTypeScreen.route,
+            isRestart = false
+        )
+
+    private fun onNavigateToHome() =
+        navigateBack(
+            popTo = Screen.HomeScreen.route,
             isRestart = false
         )
 
@@ -197,11 +230,12 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
         val type: SmartAccountType? = null,
         val document: CatalogDocument? = null,
         val documentList: List<CatalogDocument> = listOf(),
+        val documentNumber: String = "",
+        val documentLength: Int = 0,
         val accountNumber: String = "",
         val isAccountNumberError: Boolean = false,
         val bank: BankTransfer365? = null,
         val bankList: List<BankTransfer365> = listOf(),
-        val email: String = "",
         val personalIdError: Pair<Boolean, Int> = Pair(false, R.string.empty),
         val enableButton: Boolean = false,
         val names: String = "",
@@ -211,17 +245,18 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is UIEvent.OnNavigateBack -> onNavigateBack()
-            is UIEvent.OnDocumentTypeSelected -> onAccountTypeSelected(uiEvent.type)
+            is UIEvent.OnDocumentTypeSelected -> onDocumentTypeSelected(uiEvent.type)
+            is UIEvent.OnDocumentChanged -> onDocumentNumberChanged(uiEvent.document)
             is UIEvent.OnAccountNumberChanged -> onAccountNumberChanged(uiEvent.number)
             is UIEvent.OnAccountTypeSelected -> onAccountTypeSelected(uiEvent.type)
-            is UIEvent.OnBankSelected -> onAccountTypeSelected(uiEvent.bank)
+            is UIEvent.OnBankSelected -> onBankSelected(uiEvent.bank)
             is UIEvent.OnValidateDocument -> isDocumentValid()
             is UIEvent.OnContinueClick -> onContinueClick()
-            is UIEvent.OnGetListValues -> getAccountTypes()
+            is UIEvent.OnGetListValues -> getDropdownLists()
             is UIEvent.OnValidateAccountNumber -> isAccountNumberValid()
             is UIEvent.OnNamesChanged -> onNamesChanged(uiEvent.names)
             is UIEvent.OnLastNamesChanged -> onLastNamesChanged(uiEvent.lastNames)
-            is UIEvent.OnDocumentChanged -> onDocumentChanged(uiEvent.document)
+            is UIEvent.OnNavigateHome -> onNavigateToHome()
         }
     }
 
@@ -231,6 +266,7 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
         object OnValidateAccountNumber : UIEvent()
         object OnContinueClick : UIEvent()
         object OnGetListValues : UIEvent()
+        object OnNavigateHome :  UIEvent()
         data class OnDocumentTypeSelected(val type: String) : UIEvent()
         data class OnBankSelected(val bank: String) : UIEvent()
         data class OnAccountTypeSelected(val type: String) : UIEvent()
@@ -238,10 +274,5 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
         data class OnNamesChanged(val names: String) : UIEvent()
         data class OnLastNamesChanged(val lastNames: String) : UIEvent()
         data class OnDocumentChanged(val document: String) : UIEvent()
-    }
-
-    companion object {
-        const val MIN_ACCOUNT_DIGITS = 9
-        const val MAX_ACCOUNT_DIGITS = 16
     }
 }

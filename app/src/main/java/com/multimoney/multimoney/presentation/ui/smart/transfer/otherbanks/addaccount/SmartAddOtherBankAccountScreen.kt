@@ -40,6 +40,8 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addac
 import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnValidateAccountNumber
 import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnValidateDocument
+import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnGetListValues
+import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnNavigateHome
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
@@ -49,7 +51,9 @@ import com.multimoney.multimoney.presentation.uielement.CustomDropdownTextField
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
+import com.multimoney.multimoney.presentation.util.DOCUMENT_FORMAT_VALUE
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.formatDocumentPlaceholder
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
 
 @Composable
@@ -61,6 +65,7 @@ fun SmartAddOtherBankAccountScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
+            onUIEvent(OnGetListValues)
         }
     }
 
@@ -89,17 +94,20 @@ fun SmartAddOtherBankAccountContent(viewModel: SmartAddOtherBankAccountViewModel
     ) {
         TopNavBar(
             onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
-            onRightButtonClick = {}
+            onRightButtonClick = { viewModel.onUIEvent(OnNavigateHome) }
         )
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
                 .background(MultimoneyTheme.colors.background)
                 .padding(start = 16.dp, end = 16.dp, bottom = 24.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Column {
+            Column(
+                modifier = Modifier
+                    .weight(0.9f)
+                    .verticalScroll(rememberScrollState())
+            ) {
                 Text(
                     text = stringResource(id = R.string.smart_other_bank_transfer_add_title),
                     modifier = Modifier.padding(top = 32.dp),
@@ -145,16 +153,17 @@ fun SmartAddOtherBankAccountContent(viewModel: SmartAddOtherBankAccountViewModel
                     isRequired = true
                 )
                 CustomDropdownTextField(
-                    modifier = Modifier.padding(top = 16.dp),
+                    modifier = Modifier.padding(top = 8.dp),
                     labelText = stringResource(id = R.string.document),
-                    value = viewModel.uiState.document?.description,
-                    placeHolder = if (viewModel.uiState.document?.format != "") viewModel.uiState.document?.format?.replace(
-                        viewModel.uiState.document?.format.orEmpty().last(),
-                        SmartTransferRegisterIbanViewModel.FORMAT_VALUE,
-                        false
-                    ).orEmpty() else "",
+                    value = viewModel.uiState.documentNumber,
+                    placeHolder = formatDocumentPlaceholder(
+                        originFormat = viewModel.uiState.document?.format.orEmpty()
+                    ),
                     isError = viewModel.uiState.personalIdError.first,
-                    errorMessage = stringResource(id = viewModel.uiState.personalIdError.second),
+                    errorMessage = stringResource(
+                        id = viewModel.uiState.personalIdError.second,
+                        viewModel.uiState.document?.description.orEmpty()
+                    ),
                     onValueChange = { documentNumber ->
                         viewModel.onUIEvent(OnDocumentChanged(documentNumber))
                     },
@@ -163,7 +172,7 @@ fun SmartAddOtherBankAccountContent(viewModel: SmartAddOtherBankAccountViewModel
                     },
                     optionList = viewModel.uiState.documentList.map { it.description },
                     optionSelected = viewModel.uiState.document?.description.orEmpty(),
-                    customTransformation = if (viewModel.uiState.document?.format != "") MaskVisualTransformation(
+                    customTransformation = if (viewModel.uiState.document?.format?.isNotBlank() == true) MaskVisualTransformation(
                         viewModel.uiState.document?.format.orEmpty(),
                         viewModel.uiState.document?.format.orEmpty().last()
                     ) else null,
@@ -181,7 +190,7 @@ fun SmartAddOtherBankAccountContent(viewModel: SmartAddOtherBankAccountViewModel
                     onValueChange = { valueSelected, _ ->
                         viewModel.onUIEvent(OnBankSelected(valueSelected))
                     },
-                    labelText = stringResource(id = R.string.smart_other_bank_transfer_add_account_type_label),
+                    labelText = stringResource(id = R.string.destination_bank),
                     placeHolder = stringResource(id = R.string.select)
                 )
                 CustomDropdown(
@@ -194,14 +203,14 @@ fun SmartAddOtherBankAccountContent(viewModel: SmartAddOtherBankAccountViewModel
                     onValueChange = { valueSelected, _ ->
                         viewModel.onUIEvent(OnAccountTypeSelected(valueSelected))
                     },
-                    labelText = stringResource(id = R.string.destination_bank),
+                    labelText = stringResource(id = R.string.smart_other_bank_transfer_add_account_type_label),
                     placeHolder = stringResource(id = R.string.select)
                 )
                 CustomOutlinedTextField(
                     modifier = Modifier.padding(top = 16.dp),
                     value = viewModel.uiState.accountNumber,
                     onValueChange = { viewModel.onUIEvent(OnAccountNumberChanged(it)) },
-                    leadingIcon = R.drawable.ic_account,
+                    leadingIcon = R.drawable.ic_account_new,
                     labelText = stringResource(id = R.string.account_number),
                     placeHolder = stringResource(id = R.string.nine_digits_placeholder),
                     keyboardOptions = KeyboardOptions(
@@ -220,6 +229,7 @@ fun SmartAddOtherBankAccountContent(viewModel: SmartAddOtherBankAccountViewModel
             }
             CustomButton(
                 modifier = Modifier
+                    .padding(top = 16.dp)
                     .height(48.dp)
                     .fillMaxWidth(),
                 onClick = { viewModel.onUIEvent(OnContinueClick) },

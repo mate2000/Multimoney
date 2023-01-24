@@ -144,7 +144,7 @@ fun OwnBusinessOnPersonalBasisContent(
             )
         )
         CustomOutlinedTextField(
-            modifier = Modifier.padding(vertical = 8.dp),
+            modifier = Modifier.padding(top = 24.dp),
             value = viewModel.uiState.businessActivity,
             onValueChange = {
                 viewModel.onUIEvent(
@@ -165,7 +165,7 @@ fun OwnBusinessOnPersonalBasisContent(
         )
 
         CustomOutlinedTextField(
-            modifier = Modifier.padding(vertical = 8.dp),
+            modifier = Modifier.padding(top = 16.dp),
             value = viewModel.uiState.businessIncome,
             onValueChange = {
                 viewModel.onUIEvent(
@@ -191,7 +191,7 @@ fun OwnBusinessOnPersonalBasisContent(
         )
 
         CustomOutlinedTextField(
-            modifier = Modifier.padding(vertical = 8.dp),
+            modifier = Modifier.padding(top = 16.dp),
             value = viewModel.uiState.businessIdentification,
             onValueChange = {
                 viewModel.onUIEvent(
@@ -228,7 +228,7 @@ fun OwnBusinessOnPersonalBasisContent(
                     ?: stringResource(R.string.smart_business_personal_basis_company_name_not_found),
                 color = MultimoneyTheme.colors.text,
                 modifier = Modifier
-                    .padding(start = 5.dp)
+                    .padding(top = 5.dp)
                     .wrapContentSize(),
                 style = Typography.caption
             )

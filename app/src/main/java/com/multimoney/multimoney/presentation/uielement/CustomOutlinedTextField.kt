@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
@@ -325,7 +324,10 @@ fun CustomOutlinedTextField(
             } else {
                 trailingIcon?.let {
                     {
-                        IconButton(enabled = trailingIconActionEnabled, onClick = trailingIconAction) {
+                        IconButton(
+                            enabled = trailingIconActionEnabled,
+                            onClick = trailingIconAction
+                        ) {
                             Icon(
                                 painter = painterResource(id = it),
                                 contentDescription = "",
@@ -398,7 +400,9 @@ fun CustomOutlinedTextField(
                         isRequiredMessage ?: ""
                     } else if (emptyError) {
                         stringResource(id = R.string.error_empty_field)
-                    } else if ((isError || canShowNonErrorMessage) && errorMessage.isNullOrBlank().not()) {
+                    } else if ((isError || canShowNonErrorMessage) && errorMessage.isNullOrBlank()
+                        .not()
+                    ) {
                         errorMessage ?: ""
                     } else {
                         ""
@@ -431,7 +435,7 @@ fun CustomOutlinedTextField(
                     } else {
                         ""
                     },
-                    color = MultimoneyTheme.colors.text,
+                    color = MultimoneyTheme.colors.textInformation,
                     modifier = Modifier
                         .padding(start = 5.dp)
                         .wrapContentSize(),
@@ -501,7 +505,7 @@ fun OutlinedTextField(
     shape: Shape = MaterialTheme.shapes.small,
     colors: TextFieldColors = TextFieldDefaults.outlinedTextFieldColors(),
     focusedBorderThickness: Dp = TextFieldDefaults.FocusedBorderThickness,
-    unfocusedBorderThickness: Dp = TextFieldDefaults.UnfocusedBorderThickness,
+    unfocusedBorderThickness: Dp = TextFieldDefaults.UnfocusedBorderThickness
 ) {
     // If color is not provided via the text style, use content color as a default
     val textColor = textStyle.color.takeOrElse {
@@ -510,7 +514,7 @@ fun OutlinedTextField(
     val mergedTextStyle = textStyle.merge(TextStyle(color = textColor))
 
     @OptIn(ExperimentalMaterialApi::class)
-    (BasicTextField(
+    BasicTextField(
         value = value,
         modifier = if (label != null) {
             modifier.padding(top = OutlinedTextFieldTopPadding)
@@ -560,7 +564,7 @@ fun OutlinedTextField(
                 }
             )
         }
-    ))
+    )
 }
 
 private val OutlinedTextFieldTopPadding = 8.dp

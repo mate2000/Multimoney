@@ -754,7 +754,6 @@ class InteractionModule {
     @Singleton
     fun provideMutationUpdateFavoriteSmart(smartAccountRepository: SmartAccountRepository): MutationUpdateFavoriteSmartUseCase =
         MutationUpdateFavoriteSmartUseCaseImpl(smartAccountRepository)
-}
 
     @Provides
     @Singleton

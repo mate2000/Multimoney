@@ -18,7 +18,11 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -130,7 +134,7 @@ fun MyContactsTransferScreen(
         Text(
             text = stringResource(
                 id = R.string.smart_mycontacts_total_transfer_title,
-                viewModel.uiState.relatedContactList?.count()
+                viewModel.uiState.relatedContactList.count()
             ),
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(end = 16.dp, start = 16.dp),
@@ -156,7 +160,6 @@ fun MyContactsTransferScreen(
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             })
-
         )
         ContactList(
             contactList = viewModel.uiState.relatedContactList,
@@ -183,16 +186,20 @@ fun ContactList(
     onContactClick: (contact: List<PhoneSmart>) -> Unit
 ) {
     LazyColumn(modifier = Modifier.padding(top = 20.dp, start = 16.dp, end = 16.dp)) {
-        contactList.forEach { (identification, contact) ->
+        contactList.forEach { (_, contact) ->
             item {
+                val subtitleColor =
+                    arrayOf(
+                        MultimoneyTheme.colors.twoCharacterOneColor,
+                        MultimoneyTheme.colors.twoCharacterTwoColor,
+                        MultimoneyTheme.colors.twoCharacterTwoColor,
+                        MultimoneyTheme.colors.twoCharacterComplementaryTwoColor
+                    )
+
+                val color by remember {
+                    mutableStateOf(subtitleColor.random())
+                }
                 if (contact.first().titular.contains(searchedString, true)) {
-                    val subtitleColor =
-                        arrayOf(
-                            MultimoneyTheme.colors.twoCharacterOneColor,
-                            MultimoneyTheme.colors.twoCharacterTwoColor,
-                            MultimoneyTheme.colors.twoCharacterTwoColor,
-                            MultimoneyTheme.colors.twoCharacterComplementaryTwoColor
-                        )
                     ContactItem(
                         title = contact.first().titular,
                         subtitle = contact.first().number,
@@ -201,7 +208,7 @@ fun ContactList(
                         onEndIconClick = {
                             onEndIconClick(contact.first())
                         },
-                        colorSubtitle = subtitleColor.random(),
+                        colorSubtitle = color,
                         onClick = {
                             onContactClick(contact)
                         }

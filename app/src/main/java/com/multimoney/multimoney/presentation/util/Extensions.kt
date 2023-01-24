@@ -361,7 +361,7 @@ fun String?.toTwoChar(): String {
             QUESTION_MARK
         }
         contains(WHITE_SPACE_SEPARATOR) -> {
-            replace(TWO_CHARACTER_REGEX.toRegex(), "$1$2").uppercase()
+           trim().replace(TWO_CHARACTER_REGEX.toRegex(), "$1$2").uppercase()
         }
         length > 1 -> {
             substring(0, 2)
@@ -370,7 +370,6 @@ fun String?.toTwoChar(): String {
             substring(0, 1)
         }
     }
-
 }
 
 fun String.isCognitoErrorCode(code: String) = contains(""""$CODE_KEYWORD":"$code"""")

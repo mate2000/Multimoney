@@ -25,6 +25,7 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.Sma
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.smartaccount.SelectSmartAccountContainer
+import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.amount.OwnTransferAmountScreen
 
@@ -225,10 +226,35 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(USER) { type = NavType.StringType },
-                navArgument(SMART_ACCOUNT) { type = SmartAccountIDNavType() }
+                navArgument(SMART_ACCOUNT) { type = SmartAccountIDNavType() },
+                navArgument(TRANSFER_TYPE) { type = NavType.IntType }
             )
         ) {
             SmartAddAccountScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
+        }
+        composable(
+            route = Screen.SmartOtherBanksAccountScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(USER) { type = NavType.StringType },
+                navArgument(SMART_ACCOUNT) { type = SmartAccountIDNavType() },
+                navArgument(TRANSFER_TYPE) { type = NavType.IntType }
+            )
+        ) {
+            SmartAddOtherBankAccountScreen(
                 onNavigate = {
                     navController.navigate(it.route)
                 },

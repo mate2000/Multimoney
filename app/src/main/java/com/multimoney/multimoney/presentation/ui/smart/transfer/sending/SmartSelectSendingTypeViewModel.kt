@@ -100,7 +100,7 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
             navigateTo(
                 "${Screen.SmartAddSACAccountScreen.baseRoute}/$idBrand/$user/${
                 encodeData(selectedSmartAccount)
-                }"
+                }/${SmartTransferTypes.SmartToSmart.id}"
             )
         }
     }
@@ -161,8 +161,13 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     }
 
     private fun onNavigateToOtherBankAccounts() {
-        // TODO navigate to HU REV-1458
-        emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
+        navigateTo(
+            "${Screen.SmartOtherBanksAccountScreen.baseRoute}/$idBrand/$user/${
+                encodeData(
+                    selectedSmartAccount
+                )
+            }/${SmartTransferTypes.SmartToOtherBank.id}"
+        )
     }
 
     private fun onNavigateToTransfer365Mobile() {

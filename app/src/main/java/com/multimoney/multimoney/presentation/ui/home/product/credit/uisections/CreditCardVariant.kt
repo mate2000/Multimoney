@@ -485,79 +485,82 @@ fun OngoingCredit(
                 )
             }
         }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    top = if (viewModel.uiState.isCreditAvailable) {
-                        0.dp
-                    } else {
-                        40.dp
-                    },
-                    bottom = 14.dp
-                )
-        ) {
-            Column(modifier = Modifier.weight(0.5F)) {
-                Text(
-                    text = stringResource(id = R.string.home_product_fee),
-                    modifier = Modifier.padding(top = 4.dp),
-                    style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-                    color = MultimoneyTheme.colors.text
-                )
-                Text(
-                    text = viewModel.getQuota(viewModel.balanceCredit?.balanceCredit),
-                    modifier = Modifier.padding(top = 4.dp),
-                    style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-                    color = MultimoneyTheme.colors.text
-                )
-            }
-            Column(modifier = Modifier.weight(0.5F)) {
-                Text(
-                    text = stringResource(id = viewModel.isExpiredTitle),
-                    modifier = Modifier.padding(top = 4.dp),
-                    style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-                    color = MultimoneyTheme.colors.text
-                )
-                Chip(
-                    enabled = false,
-                    colors = ChipDefaults.chipColors(
-                        disabledBackgroundColor = MultimoneyTheme.colors.productChipBackground,
-                        disabledContentColor = MultimoneyTheme.colors.text
-                    ),
-                    modifier = Modifier
-                        .height(28.dp)
-                        .padding(top = 2.dp),
-                    leadingIcon = {
-                        Box(
-                            modifier = Modifier
-                                .size(10.dp)
-                                .clip(CircleShape)
-                                .background(
-                                    if ((
-                                        viewModel.balanceCredit?.getFirstSummary()?.daysExpired
-                                            ?: 0
-                                        ) > 0
-                                    ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor
-                                )
-                        )
-                    },
-                    onClick = {
-                        // Empty on purpose
-                    },
-                    content = {
-                        Box(contentAlignment = Alignment.Center) {
-                            Text(
-                                text = getCardDateFormat(viewModel.balanceCredit?.getFirstSummary()?.paymentDateLabel),
-                                style = Typography.body1.copy(
-                                    fontWeight = FontWeight.SemiBold,
-                                    platformStyle = PlatformTextStyle(
-                                        includeFontPadding = false
+        // Check if user has a payment available to show quota information
+        if (viewModel.uiState.paymentAvailable) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        top = if (viewModel.uiState.isCreditAvailable) {
+                            0.dp
+                        } else {
+                            40.dp
+                        },
+                        bottom = 14.dp
+                    )
+            ) {
+                Column(modifier = Modifier.weight(0.5F)) {
+                    Text(
+                        text = stringResource(id = R.string.home_product_fee),
+                        modifier = Modifier.padding(top = 4.dp),
+                        style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                        color = MultimoneyTheme.colors.text
+                    )
+                    Text(
+                        text = viewModel.getQuota(viewModel.balanceCredit?.balanceCredit),
+                        modifier = Modifier.padding(top = 4.dp),
+                        style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                        color = MultimoneyTheme.colors.text
+                    )
+                }
+                Column(modifier = Modifier.weight(0.5F)) {
+                    Text(
+                        text = stringResource(id = viewModel.isExpiredTitle),
+                        modifier = Modifier.padding(top = 4.dp),
+                        style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                        color = MultimoneyTheme.colors.text
+                    )
+                    Chip(
+                        enabled = false,
+                        colors = ChipDefaults.chipColors(
+                            disabledBackgroundColor = MultimoneyTheme.colors.productChipBackground,
+                            disabledContentColor = MultimoneyTheme.colors.text
+                        ),
+                        modifier = Modifier
+                            .height(28.dp)
+                            .padding(top = 2.dp),
+                        leadingIcon = {
+                            Box(
+                                modifier = Modifier
+                                    .size(10.dp)
+                                    .clip(CircleShape)
+                                    .background(
+                                        if ((
+                                                    viewModel.balanceCredit?.getFirstSummary()?.daysExpired
+                                                        ?: 0
+                                                    ) > 0
+                                        ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor
+                                    )
+                            )
+                        },
+                        onClick = {
+                            // Empty on purpose
+                        },
+                        content = {
+                            Box(contentAlignment = Alignment.Center) {
+                                Text(
+                                    text = getCardDateFormat(viewModel.balanceCredit?.getFirstSummary()?.paymentDateLabel),
+                                    style = Typography.body1.copy(
+                                        fontWeight = FontWeight.SemiBold,
+                                        platformStyle = PlatformTextStyle(
+                                            includeFontPadding = false
+                                        )
                                     )
                                 )
-                            )
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
     }

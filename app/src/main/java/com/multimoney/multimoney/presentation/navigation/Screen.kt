@@ -574,12 +574,17 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object CryptoMovementsAllScreen : Screen(
-        "crypto_movements_all_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}?$CRYPTO_ASSET={$CRYPTO_ASSET}",
+        "crypto_movements_all_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}/{$PREVIOUS_SCREEN}?$CRYPTO_ASSET={$CRYPTO_ASSET}",
         "crypto_movements_all_screen"
     )
 
     object CryptoCurrencyDetailsScreen : Screen(
         "crypto_currency_details_screen/{$USER}/{$ID_BRAND}/{$CRYPTO_ASSET}/{$DESCRIPTION_CURRENCY}/{$CURRENT_CRYPTO_PRICE}/{$URL_IMAGE}",
         "crypto_currency_details_screen"
+    )
+
+    object CryptoPurchaseListScreen : Screen(
+        "crypto_list_purchase/{$USER}/{$ID_BRAND}",
+        "crypto_list_purchase"
     )
 }

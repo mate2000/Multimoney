@@ -149,6 +149,10 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
         val getHistoricalCurrencyPrices: List<CurrencyHistoricPrice> = emptyList()
     )
 
+    private fun onNavigateToSelectAccount(){
+        // TODO navigate to select account
+    }
+
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is UIEvent.OnNavigateBack -> navigateBack(Screen.CryptoMarketScreen.route, false)
@@ -167,6 +171,7 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
                 isLoading = event.isLoading,
                 openDialog = event.dialogParameters
             )
+            is UIEvent.OnNavigateToSelectAccount -> onNavigateToSelectAccount()
         }
     }
 
@@ -187,6 +192,7 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
             val isLoading: Boolean,
             val dialogParameters: DialogParameters
         ) : UIEvent()
+        object OnNavigateToSelectAccount : UIEvent()
     }
 }
 

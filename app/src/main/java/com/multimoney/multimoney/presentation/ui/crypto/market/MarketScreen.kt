@@ -182,7 +182,7 @@ fun MarketHeader() {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun FilterSection(
+fun FilterSection(
     selectedFilter: MutableState<String>,
     sheetState: ModalBottomSheetState
 ) {
@@ -259,7 +259,6 @@ fun FilterBottomSheet(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             items(MarketFilter.values()) { filter ->
-
                 CustomSelector(
                     text = filter.value,
                     selected = filter.value == filterQuery.value,

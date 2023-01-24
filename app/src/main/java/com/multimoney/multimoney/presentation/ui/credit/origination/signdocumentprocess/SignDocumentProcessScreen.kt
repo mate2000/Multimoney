@@ -12,6 +12,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.signdocument
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnAlertCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallGetLinkCreditContractEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallSubscriptionCreditContractEvent
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnShowDialogInformation
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.documentgeneration.DocumentGenerationScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.signdocument.SignDocumentScreen
@@ -69,7 +70,9 @@ fun SignDocumentProcessScreen(
     } else {
         when (viewModel.uiState.signDocumentProcessStep) {
             GENERATE_DOCUMENT_STEP.value -> {
-                DocumentGenerationScreen(viewModel = viewModel)
+                DocumentGenerationScreen(onNavigateToHome = {
+                    viewModel.onUIEvent(OnNavigateToHome)
+                })
             }
             SIGN_DOCUMENTS_STEP.value -> {
                 SignDocumentScreen(viewModel = viewModel)

@@ -81,6 +81,11 @@ class DataStorePreferences @Inject constructor(
 
     fun isBiometricsEnabled(): Flow<Boolean> = getData(BIOMETRICS_ENABLED_KEY, false)
 
+    suspend fun isForceShowBiometricPrompt(isForceShowBiometricPrompt: Boolean) =
+        setData(FORCE_SHOW_BIOMETRICS_PROMPT, isForceShowBiometricPrompt)
+
+    fun isForceShowBiometricPrompt(): Flow<Boolean> = getData(FORCE_SHOW_BIOMETRICS_PROMPT, false)
+
     suspend fun isSignOutOnBackground(isSignOutOnBackground: Boolean) =
         setData(SIGN_OUT_ON_BACKGROUND, isSignOutOnBackground)
 
@@ -113,7 +118,6 @@ class DataStorePreferences @Inject constructor(
 
     fun isVisaCardExpiredEnabled(): Flow<Boolean> = getData(VISA_CARD_EXPIRED_DIALOG_KEY, true)
 
-
     companion object {
         private val UNIQUE_ID = stringPreferencesKey("unique_id")
         private val TOKEN_KEY = stringPreferencesKey("auth_token")
@@ -126,6 +130,7 @@ class DataStorePreferences @Inject constructor(
         private val USER_PHONE_NUMBER_WITH_CODE_KEY = stringPreferencesKey("user_phone_number_with_code_key")
         private val USER_PASSWORD_KEY = stringPreferencesKey("user_password_key")
         private val BIOMETRICS_ENABLED_KEY = booleanPreferencesKey("biometrics_enabled_key")
+        private val FORCE_SHOW_BIOMETRICS_PROMPT = booleanPreferencesKey("force_show_biometrics_prompt")
         private val ON_BOARDING_ENABLED_KEY = booleanPreferencesKey("on_boarding_enabled_key")
         private val CONTACT_PERMISSION_STATE_KEY = booleanPreferencesKey("contact_permission_state_key")
         private val SIGN_OUT_ON_BACKGROUND = booleanPreferencesKey("sign_out_on_background")

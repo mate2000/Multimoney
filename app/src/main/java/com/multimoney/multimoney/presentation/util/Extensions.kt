@@ -367,7 +367,7 @@ fun String?.toTwoChar(): String {
             substring(0, 2)
         }
         else -> {
-            substring(0, 2)
+            substring(0, 1)
         }
     }
 

@@ -169,7 +169,7 @@ fun ContactList(viewModel: MyContactsTransferViewModel = hiltViewModel()) {
                     MultimoneyTheme.colors.twoCharacterTwoColor,
                     MultimoneyTheme.colors.twoCharacterTwoColor,
                     MultimoneyTheme.colors.twoCharacterComplementaryTwoColor)
-            val colorSubtitle by remember { mutableStateOf(subtitleColor) }
+            val colorSubtitle by remember { mutableStateOf(subtitleColor.random()) }
             if (
                 (contact?.titular?.contains(viewModel.uiState.queryValue, true) == true)
             ) {
@@ -188,7 +188,7 @@ fun ContactList(viewModel: MyContactsTransferViewModel = hiltViewModel()) {
                             )
                         )
                     },
-                    colorSubtitle = colorSubtitle[(0..3).random()]
+                    colorSubtitle = colorSubtitle
 
                 )
                 Divider(color = MultimoneyTheme.colors.dividerWhite30, thickness = 1.dp)

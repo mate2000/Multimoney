@@ -45,6 +45,7 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addac
 import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnValidateDocument
 import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnValidatePhoneNumber
 import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnPhoneChanged
+import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnNicknameChanged
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
@@ -226,11 +227,11 @@ fun SmartAddOtherBankAccountContent(viewModel: SmartAddOtherBankAccountViewModel
                         placeHolder = stringResource(id = R.string.nine_digits_placeholder),
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Next
+                            imeAction = ImeAction.Done
                         ),
                         keyboardActions = KeyboardActions(
-                            onNext = {
-                                focusManager.moveFocus(FocusDirection.Down)
+                            onDone = {
+                                focusManager.clearFocus()
                             }
                         ),
                         isError = viewModel.uiState.isAccountNumberError,
@@ -238,13 +239,34 @@ fun SmartAddOtherBankAccountContent(viewModel: SmartAddOtherBankAccountViewModel
                         onDebounceValidation = { viewModel.onUIEvent(OnValidateAccountNumber) }
                     )
                     CustomCheckBox(
-                        modifier = Modifier.padding(top = 26.dp),
+                        modifier = Modifier.padding(top = 16.dp),
                         checked = viewModel.uiState.isFavorite,
                         onCheckedChange = {
                             viewModel.onUIEvent(OnAddFavoriteValueChange(it))
                         },
                         text = stringResource(id = R.string.smart_iban_register_favorite_checkbox)
                     )
+                    if (viewModel.uiState.isFavorite) {
+                        CustomOutlinedTextField(
+                            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
+                            value = viewModel.uiState.nickname,
+                            labelText = stringResource(id = R.string.smart_iban_register_favorite_label),
+                            placeHolder = stringResource(id = R.string.smart_iban_register_favorite_label),
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Text,
+                                imeAction = ImeAction.Done
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onDone = {
+                                    focusManager.clearFocus()
+                                }
+                            ),
+                            onValueChange = { nickname ->
+                                viewModel.onUIEvent(OnNicknameChanged(nickname))
+                            },
+                            isRequired = true
+                        )
+                    }
                 } else if (viewModel.transferType == SmartTransferTypes.SmartToMobile.id) {
                     CustomOutlinedTextField(
                         modifier = Modifier.padding(top = 8.dp),

@@ -220,6 +220,11 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
         validateForm()
     }
 
+    private fun onNicknameChanged(nickname: String) {
+        uiState = uiState.copy(nickname = nickname)
+        validateForm()
+    }
+
     private fun onFailure(error: HttpError) {
         uiState = uiState.copy(
             isLoading = false,
@@ -248,6 +253,7 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
                         uiState.phoneNumber.isEmpty() -> false
                 transferType == SmartTransferTypes.SmartToMobile.id &&
                         uiState.isPhoneNumberError -> false
+                uiState.isFavorite && uiState.nickname.isEmpty() -> false
                 else -> true
             }
         )
@@ -269,16 +275,17 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
     }
 
     private fun saveOtherBankAccount() {
+        val fullName = "${uiState.names} ${uiState.lastNames}"
         executeUseCase {
             mutationAddACHAccountUseCase.invoke(
                 idBrand = idBrand,
                 user = user,
                 accountNumber = uiState.accountNumber,
-                titularName = "${uiState.names} ${uiState.lastNames}",
+                titularName = fullName,
                 isFavorite = uiState.isFavorite,
                 typeAccountId = uiState.type?.typeId?.toIntOrNull() ?: 0,
                 destinationBankId = uiState.bank?.bankId?.toInt() ?: 0,
-                description = uiState.bank?.bankName.orEmpty(),
+                description = if (uiState.isFavorite) uiState.nickname else fullName,
                 identificationNumber = uiState.documentNumber,
                 identificationTypeAccount = uiState.document?.idDocument ?: 0
             ).collectLatest { result ->
@@ -333,7 +340,8 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
         val isPhoneNumberError: Boolean = false,
         val screenTitle: Int = R.string.smart_other_bank_transfer_add_title,
         val screenSubtitle: Int = R.string.smart_transfer_365_mobile_add_subtitle,
-        val typeAccountLabel: Int = R.string.smart_other_bank_transfer_add_account_type_label
+        val typeAccountLabel: Int = R.string.smart_other_bank_transfer_add_account_type_label,
+        val nickname: String = ""
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -354,6 +362,7 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
             is UIEvent.OnAddFavoriteValueChange -> onAddFavoriteValueChange(uiEvent.isChecked)
             is UIEvent.OnPhoneChanged -> onPhoneNumberChanged(uiEvent.phone)
             is UIEvent.OnValidatePhoneNumber -> validatePhoneNumber()
+            is UIEvent.OnNicknameChanged -> onNicknameChanged(uiEvent.nickname)
         }
     }
 
@@ -374,5 +383,6 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
         data class OnDocumentChanged(val document: String) : UIEvent()
         data class OnPhoneChanged(val phone: String) : UIEvent()
         data class OnAddFavoriteValueChange(val isChecked: Boolean) : UIEvent()
+        data class OnNicknameChanged(val nickname: String) : UIEvent()
     }
 }

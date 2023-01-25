@@ -225,7 +225,6 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
             route = Screen.SmartAddSACAccountScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
-                navArgument(USER) { type = NavType.StringType },
                 navArgument(SMART_ACCOUNT) { type = SmartAccountIDNavType() },
                 navArgument(TRANSFER_TYPE) { type = NavType.IntType }
             )
@@ -249,7 +248,6 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
             route = Screen.SmartOtherBanksAccountScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
-                navArgument(USER) { type = NavType.StringType },
                 navArgument(SMART_ACCOUNT) { type = SmartAccountIDNavType() },
                 navArgument(TRANSFER_TYPE) { type = NavType.IntType }
             )

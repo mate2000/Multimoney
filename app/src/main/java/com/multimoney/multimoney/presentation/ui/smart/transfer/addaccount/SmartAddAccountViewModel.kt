@@ -19,6 +19,7 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.isEmailValid
@@ -108,6 +109,10 @@ class SmartAddAccountViewModel @Inject constructor(
         validateForm()
     }
 
+    private fun onAddFavoriteValueChange(isChecked: Boolean) {
+        uiState = uiState.copy(isFavorite = isChecked)
+    }
+
     private fun onFailure(error: HttpError) {
         uiState = uiState.copy(
             isLoading = false,
@@ -184,7 +189,8 @@ class SmartAddAccountViewModel @Inject constructor(
         val emailError: Pair<Boolean, Int> = Pair(false, R.string.empty),
         val enableButton: Boolean = false,
         val names: String = "",
-        val lastNames: String = ""
+        val lastNames: String = "",
+        val isFavorite: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -199,6 +205,7 @@ class SmartAddAccountViewModel @Inject constructor(
             is UIEvent.OnValidateAccountNumber -> isAccountNumberValid()
             is UIEvent.OnNamesChanged -> onNamesChanged(uiEvent.names)
             is UIEvent.OnLastNamesChanged -> onLastNamesChanged(uiEvent.lastNames)
+            is UIEvent.OnAddFavoriteValueChange -> onAddFavoriteValueChange(uiEvent.isChecked)
         }
     }
 
@@ -213,6 +220,7 @@ class SmartAddAccountViewModel @Inject constructor(
         data class OnNamesChanged(val names: String) : UIEvent()
         data class OnLastNamesChanged(val lastNames: String) : UIEvent()
         data class OnEmailChanged(val email: String) : UIEvent()
+        data class OnAddFavoriteValueChange(val isChecked: Boolean) : UIEvent()
     }
 
     companion object {

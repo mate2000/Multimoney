@@ -121,6 +121,7 @@ fun CreditFooterExpanded(viewModel: ProductViewModel, sharedViewModel: HomeViewM
             )
         } else {
             // Create an empty Box just to keep motion layout constraints
+            // Necessary since the MotionLayout needs the 'buttons' constraint
             Box(
                 modifier = Modifier
                     .constrainAs(buttons) {

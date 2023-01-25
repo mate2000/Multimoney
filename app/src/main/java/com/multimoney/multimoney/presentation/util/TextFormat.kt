@@ -1,8 +1,6 @@
 package com.multimoney.multimoney.presentation.util
 
-import androidx.compose.ui.res.stringResource
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.multimoney.R
 import java.text.DecimalFormat
 import java.util.Locale
 import kotlin.math.abs

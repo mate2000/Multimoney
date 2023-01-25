@@ -395,30 +395,11 @@ class ProductViewModel @Inject constructor(
         )
     }
 
-    private fun checkPaymentAvailability(summaryList: List<Summary>?): Boolean {
-        summaryList?.let {
-            for (summary in summaryList) {
-                if (summary.currentBalance != ZERO)
-                    return true
-            }
-            return false
-        } ?: kotlin.run {
-            return false
-        }
-    }
+    private fun checkPaymentAvailability(summaryList: List<Summary>?): Boolean =
+        summaryList?.firstOrNull { it.currentBalance != ZERO } != null
 
-    private fun validateQuotas(summaryList: List<Summary>?): Boolean {
-        summaryList?.let {
-            for (summary in summaryList) {
-                if (summary.currentBalance == ZERO) {
-                    return false
-                }
-            }
-            return true
-        } ?: kotlin.run {
-            return false
-        }
-    }
+    private fun validateQuotas(summaryList: List<Summary>?): Boolean =
+        summaryList?.firstOrNull { it.currentBalance == ZERO } == null
 
     private fun onNavigateToVisaActivateScreen() =
         navigateTo(

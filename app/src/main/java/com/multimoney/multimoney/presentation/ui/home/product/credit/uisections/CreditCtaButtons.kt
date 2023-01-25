@@ -36,6 +36,7 @@ fun CreditCtaButtons(
         modifier = modifier,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
+        // Check if user has payments available
         if (paymentAvailable) {
             CustomButton(
                 text = stringResource(string.home_pay_fee_button_text),
@@ -48,9 +49,12 @@ fun CreditCtaButtons(
                 }
             )
         }
+        // Add a Spacer element if user has payments available and
+        // can disburse
         if (paymentAvailable && canDisburse) {
             Spacer(Modifier.width(16.dp))
         }
+        // Check if user can disburse
         if (canDisburse) {
             CustomButton(
                 text = stringResource(string.home_disburse_button_text),

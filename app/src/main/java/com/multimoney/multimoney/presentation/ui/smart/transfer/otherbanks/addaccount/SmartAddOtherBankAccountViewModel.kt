@@ -117,7 +117,7 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
         queryCatalogDocumentTypeUseCase.invoke(
             idBrand = idBrand,
             user = user,
-            isTransferIdentification = 1
+            isTransferIdentification = TRANSFER_IDENTIFICATION_FLAG
         ).collectLatest { result ->
             result.onSuccess { catalog ->
                 uiState = uiState.copy(
@@ -384,5 +384,9 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
         data class OnPhoneChanged(val phone: String) : UIEvent()
         data class OnAddFavoriteValueChange(val isChecked: Boolean) : UIEvent()
         data class OnNicknameChanged(val nickname: String) : UIEvent()
+    }
+
+    companion object {
+        const val TRANSFER_IDENTIFICATION_FLAG = 1
     }
 }

@@ -85,11 +85,11 @@ fun CustomDropdownTextField(
     val selectedItemColor: Color
 
     if (isSystemInDarkTheme()) {
-        selectedItemColor = if (value != null && value.isNotEmpty()) WhiteTransparency90 else WhiteTransparency60
-        iconTintColor = if (value != null && value.isNotEmpty()) WhiteTransparency90 else WhiteTransparency60
+        selectedItemColor = if (value.isNullOrEmpty().not()) WhiteTransparency90 else WhiteTransparency60
+        iconTintColor = if (value.isNullOrEmpty().not()) WhiteTransparency90 else WhiteTransparency60
     } else {
-        selectedItemColor = if (value != null && value.isNotEmpty()) GrayScale200 else GrayScale500
-        iconTintColor = if (value != null && value.isNotEmpty()) GrayScale200 else GrayScale500
+        selectedItemColor = if (value.isNullOrEmpty().not()) GrayScale200 else GrayScale500
+        iconTintColor = if (value.isNullOrEmpty().not()) GrayScale200 else GrayScale500
     }
 
     Column(

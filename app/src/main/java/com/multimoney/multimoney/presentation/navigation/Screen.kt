@@ -550,7 +550,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object MyContactsTransferScreen : Screen(
-        "my_contacts_transfer_screen/{$USER}/{$ID_BRAND}/{$CONTACTS}/{$PREVIOUS_SCREEN}",
+        "my_contacts_transfer_screen/{$USER}/{$ID_BRAND}/{$CONTACTS}/{$SMART_ACCOUNT}",
         "my_contacts_transfer_screen"
     )
 

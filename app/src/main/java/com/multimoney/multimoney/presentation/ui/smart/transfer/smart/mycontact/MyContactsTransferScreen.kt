@@ -46,6 +46,7 @@ import com.multimoney.multimoney.presentation.util.capitalizedAllWords
 
 @Composable
 fun MyContactsTransferScreen(
+    onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: MyContactsTransferViewModel = hiltViewModel()
 ) {
@@ -53,7 +54,7 @@ fun MyContactsTransferScreen(
 
     LaunchedEffect(true) {
         viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnCallQueryRelatedContactsByPhoneUseCase)
-        viewModel.executeNavigation(onPopBackStack = onPopBackStack)
+        viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
     }
 
     Column(

@@ -251,10 +251,13 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(CONTACTS) { type = RelatedContactListNavType() },
                 navArgument(ID_BRAND) { type = NavType.IntType },
-                navArgument(PREVIOUS_SCREEN) { type = NavType.StringType }
+                navArgument(SMART_ACCOUNT) { type = SmartAccountIDNavType() }
             )
         ) {
             MyContactsTransferScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
                 onPopBackStack = {
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)

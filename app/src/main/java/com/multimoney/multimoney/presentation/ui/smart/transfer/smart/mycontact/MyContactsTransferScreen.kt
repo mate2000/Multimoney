@@ -38,7 +38,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.accountsmart.PhoneSmart
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme.colors
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAddToFavoriteAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnContactClick
@@ -70,7 +70,7 @@ fun MyContactsTransferScreen(
 
     Column(
         modifier = Modifier
-            .background(MultimoneyTheme.colors.background)
+            .background(colors.background)
             .fillMaxSize()
     ) {
         TopNavBar(
@@ -84,41 +84,40 @@ fun MyContactsTransferScreen(
                 text = stringResource(R.string.smart_transfer_my_contacts_title_SV),
                 style = Typography.h6.copy(
                     fontWeight = FontWeight.SemiBold,
-                    color = MultimoneyTheme.colors.onBoardingTitleText
+                    color = colors.onBoardingTitleText
                 )
             )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp, start = 4.dp, end = 16.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(id = R.string.smart_mycontacts_transfer_title),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(start = 16.dp),
-                    style = Typography.subtitle1.copy(
-                        fontWeight = FontWeight.SemiBold,
-                        color = MultimoneyTheme.colors.bodyTextColor
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp, start = 16.dp, end = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.smart_mycontacts_transfer_title),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(end = 16.dp),
+                        style = Typography.subtitle1.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            color = colors.bodyTextColor
+                        )
                     )
-                )
-                CustomButton(
-                    modifier = Modifier.padding(end = 4.dp),
-                    text = stringResource(id = R.string.smart_my_contacts_transfer_accounts_add),
-                    onClick = {
-                        viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnAddSACAccountClick)
-                    },
-                    buttonType = CustomButtonType.PrimaryTertiary
-                )
-            }
+                    CustomButton(
+                        text = stringResource(id = R.string.smart_my_contacts_transfer_accounts_add),
+                        onClick = {
+                            viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnAddSACAccountClick)
+                        },
+                        buttonType = CustomButtonType.PrimaryTertiary
+                    )
+                }
         } else {
             Text(
                 modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
                 text = stringResource(R.string.smart_transfer_my_contacts_title_CR),
                 style = Typography.h6.copy(
                     fontWeight = FontWeight.SemiBold,
-                    color = MultimoneyTheme.colors.onBoardingTitleText
+                    color = colors.onBoardingTitleText
                 )
             )
             Text(
@@ -127,7 +126,7 @@ fun MyContactsTransferScreen(
                 modifier = Modifier.padding(end = 16.dp, start = 16.dp, top = 16.dp),
                 style = Typography.subtitle1.copy(
                     fontWeight = FontWeight.SemiBold,
-                    color = MultimoneyTheme.colors.bodyTextColor
+                    color = colors.bodyTextColor
                 )
             )
         }
@@ -140,14 +139,14 @@ fun MyContactsTransferScreen(
             modifier = Modifier.padding(end = 16.dp, start = 16.dp),
             style = Typography.caption.copy(
                 fontWeight = FontWeight.Normal,
-                color = MultimoneyTheme.colors.smartCardTrending
+                color = colors.smartCardTrending
             )
         )
         CustomSearchBar(
             modifier = Modifier
                 .padding(top = 24.dp, start = 16.dp)
                 .clip(shape = RoundedCornerShape(30))
-                .background(MultimoneyTheme.colors.background),
+                .background(colors.background),
             value = viewModel.uiState.queryValue,
             placeHolder = stringResource(id = R.string.smart_my_concts_placeholder),
             onValueChange = {
@@ -188,17 +187,9 @@ fun ContactList(
     LazyColumn(modifier = Modifier.padding(top = 20.dp, start = 16.dp, end = 16.dp)) {
         contactList.forEach { (_, contact) ->
             item {
-                val subtitleColor =
-                    arrayOf(
-                        MultimoneyTheme.colors.twoCharacterOneColor,
-                        MultimoneyTheme.colors.twoCharacterTwoColor,
-                        MultimoneyTheme.colors.twoCharacterTwoColor,
-                        MultimoneyTheme.colors.twoCharacterComplementaryTwoColor
-                    )
+                val randomColor = colors.coloredInitialChar
+                val colorSubtitle by remember { mutableStateOf(randomColor.random()) }
 
-                val color by remember {
-                    mutableStateOf(subtitleColor.random())
-                }
                 if (contact.first().titular.contains(searchedString, true)) {
                     ContactItem(
                         title = contact.first().titular.capitalizedAllWords(),
@@ -208,7 +199,7 @@ fun ContactList(
                         onEndIconClick = {
                             onEndIconClick(contact.first())
                         },
-                        colorSubtitle = color,
+                        colorSubtitle = colorSubtitle,
                         onClick = {
                             onContactClick(contact)
                         }

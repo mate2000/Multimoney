@@ -70,7 +70,7 @@ class CryptoMovementsAllViewModel  @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
+            is UIEvent.OnNavigateBack -> navigateBack(Screen.CryptoCurrencyMovementsScreen.route, false)
             is UIEvent.OnGetUserInfo -> setUserData()
             is UIEvent.GetCryptoMovements -> getCryptoMovements()
         }

@@ -111,16 +111,15 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
     }
 
     private fun onNavigateToAllMovements(){
-        popAndNavigateTo(
-            "${Screen.CryptoMovementsAllScreen.baseRoute}/${idBrand}/$identification/$user?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}",
-                    Screen.CryptoCurrencyMovementsScreen.route
+        navigateTo(
+            "${Screen.CryptoMovementsAllScreen.baseRoute}/${idBrand}/$identification/$user?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}"
         )
     }
 
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
+            is UIEvent.OnNavigateBack -> navigateBack(Screen.CryptoWalletScreen.route, false)
             is UIEvent.OnGetUserInfo -> onGetUserInfo()
             is UIEvent.OnGetMovements -> callQueryMovements()
             is UIEvent.OnGetAssetHistory -> callQueryAssetHistory()

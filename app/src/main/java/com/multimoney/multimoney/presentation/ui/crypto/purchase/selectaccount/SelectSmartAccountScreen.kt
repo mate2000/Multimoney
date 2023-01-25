@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.crypto.buycrypto
+package com.multimoney.multimoney.presentation.ui.crypto.purchase.selectaccount
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -20,16 +20,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.getMaskedAccount
 
 @Composable
 fun SelectSmartAccountScreen(
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    sharedViewModel: PurchaseCryptoSharedViewModel = hiltViewModel(),
     viewModel: SelectSmartAccountViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {

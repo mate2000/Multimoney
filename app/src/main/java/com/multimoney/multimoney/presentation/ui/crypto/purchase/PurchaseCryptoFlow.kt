@@ -14,6 +14,8 @@ import com.multimoney.data.util.catalog.PurchaseCryptoSteps
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.BuyCurrencyScreen
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.listofcurrency.ListCryptoCurrenciesScreen
+import com.multimoney.multimoney.presentation.ui.crypto.purchase.selectaccount.SelectSmartAccountScreen
+import com.multimoney.multimoney.presentation.ui.crypto.purchase.voucher.BuyCryptoVoucherScreen
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -26,7 +28,6 @@ fun PurchaseCryptoFlow(
     viewModel: PurchaseCryptoSharedViewModel = hiltViewModel()
 ) {
     val comingFromCryptoDetails = false
-    val idBrand = 5
 
     LaunchedEffect(true) {
         viewModel.executeNavigation(
@@ -48,24 +49,24 @@ fun PurchaseCryptoFlow(
             modifier = Modifier.weight(0.1f),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            when (idBrand) {
+            when (viewModel.idBrand) {
                 Brand.ElSalvador.id -> {
                     if (comingFromCryptoDetails) {
-                        SvPurchaseCryptoDirectFlow(step = 1, viewModel = viewModel)
+                        SvPurchaseCryptoDirectFlow(step = viewModel.uiState.currentStep, viewModel = viewModel)
                     }
-                    SvPurchaseCryptoFlow(step = 1, viewModel = viewModel)
+                    SvPurchaseCryptoFlow(step = viewModel.uiState.currentStep, viewModel = viewModel)
                 }
                 Brand.CostaRica.id -> {
                     if (comingFromCryptoDetails) {
-                        CRPurchaseCryptoDirectFlow(step = 1, viewModel = viewModel)
+                        CRPurchaseCryptoDirectFlow(step = viewModel.uiState.currentStep, viewModel = viewModel)
                     }
-                    CRPurchaseCryptoFlow(step = 1, viewModel = viewModel)
+                    CRPurchaseCryptoFlow(step = viewModel.uiState.currentStep, viewModel = viewModel)
                 }
             }
         }
     }
 
-    LoadingIndicator(false)
+    LoadingIndicator(viewModel.uiState.isLoading)
     BackHandler {
         // exit from buy crypto flow
     }
@@ -74,35 +75,35 @@ fun PurchaseCryptoFlow(
 @Composable
 fun SvPurchaseCryptoDirectFlow(step: Int, viewModel: PurchaseCryptoSharedViewModel) {
     when (step) {
-        PurchaseCryptoSteps.BuyCryptoCurrency.id -> {}
-        PurchaseCryptoSteps.ConfirmPurchase.id -> {}
+        PurchaseCryptoSteps.One.id -> BuyCurrencyScreen(sharedViewModel = viewModel)
+        PurchaseCryptoSteps.Two.id -> BuyCryptoVoucherScreen(sharedViewModel = viewModel)
     }
 }
 
 @Composable
 fun CRPurchaseCryptoDirectFlow(step: Int, viewModel: PurchaseCryptoSharedViewModel) {
     when (step) {
-        PurchaseCryptoSteps.SelectBankAccount.id -> {}
-        PurchaseCryptoSteps.BuyCryptoCurrency.id -> BuyCurrencyScreen(sharedViewModel = viewModel)
-        PurchaseCryptoSteps.ConfirmPurchase.id -> {}
+        PurchaseCryptoSteps.One.id -> SelectSmartAccountScreen(sharedViewModel = viewModel)
+        PurchaseCryptoSteps.Two.id -> BuyCurrencyScreen(sharedViewModel = viewModel)
+        PurchaseCryptoSteps.Three.id -> BuyCryptoVoucherScreen(sharedViewModel = viewModel)
     }
 }
 
 @Composable
 fun SvPurchaseCryptoFlow(step: Int, viewModel: PurchaseCryptoSharedViewModel) {
     when (step) {
-        PurchaseCryptoSteps.ListOfCryptoCurrency.id -> ListCryptoCurrenciesScreen(sharedViewModel = viewModel)
-        PurchaseCryptoSteps.BuyCryptoCurrency.id -> BuyCurrencyScreen(sharedViewModel = viewModel)
-        PurchaseCryptoSteps.ConfirmPurchase.id -> {}
+        PurchaseCryptoSteps.One.id -> ListCryptoCurrenciesScreen(sharedViewModel = viewModel)
+        PurchaseCryptoSteps.Two.id -> BuyCurrencyScreen(sharedViewModel = viewModel)
+        PurchaseCryptoSteps.Three.id -> BuyCryptoVoucherScreen(sharedViewModel = viewModel)
     }
 }
 
 @Composable
 fun CRPurchaseCryptoFlow(step: Int, viewModel: PurchaseCryptoSharedViewModel) {
     when (step) {
-        PurchaseCryptoSteps.ListOfCryptoCurrency.id -> ListCryptoCurrenciesScreen(sharedViewModel = viewModel)
-        PurchaseCryptoSteps.SelectBankAccount.id -> {}
-        PurchaseCryptoSteps.BuyCryptoCurrency.id -> BuyCurrencyScreen(sharedViewModel = viewModel)
-        PurchaseCryptoSteps.ConfirmPurchase.id -> {}
+        PurchaseCryptoSteps.One.id -> ListCryptoCurrenciesScreen(sharedViewModel = viewModel)
+        PurchaseCryptoSteps.Two.id -> SelectSmartAccountScreen(sharedViewModel = viewModel)
+        PurchaseCryptoSteps.Three.id -> BuyCurrencyScreen(sharedViewModel = viewModel)
+        PurchaseCryptoSteps.Four.id -> BuyCryptoVoucherScreen(sharedViewModel = viewModel)
     }
 }

@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.PurchaseCryptoSteps
 import com.multimoney.domain.model.crypto.MarketCryptoCoin
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.LocalMultimoneyColors
@@ -48,25 +49,37 @@ fun ListCryptoCurrenciesScreen(
     viewModel: ListCryptoPurchaseViewModel = hiltViewModel(),
     sharedViewModel: PurchaseCryptoSharedViewModel = hiltViewModel(),
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
-    ) {
+) {
     LaunchedEffect(true) {
         viewModel.executeNavigation(
             onPopBackStack = onPopBackStack
         )
-        viewModel.onUIEvent(ListCryptoPurchaseViewModel.UIEvent.OnGetUserInfo)
+        viewModel.onUIEvent(ListCryptoPurchaseViewModel.UIEvent.OnGetUserInfo(
+            user = sharedViewModel.user,
+            idBrand = sharedViewModel.idBrand
+        ))
         viewModel.onUIEvent(ListCryptoPurchaseViewModel.UIEvent.OnGetAvailableListOfCryptoCoins)
+    }
+
+    LaunchedEffect(key1 = true) {
+        sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnSetNavigation(
+            nextAction = {},
+            nextStep = PurchaseCryptoSteps.Two.id,
+            previousStep = PurchaseCryptoSteps.One.id,
+        ))
     }
 
     ListCryptoContent(
         viewModel.uiState,
         itemClick = {
-            viewModel.onUIEvent(ListCryptoPurchaseViewModel.UIEvent.OnNavigateToSelectAccount(it))
+            //sharedViewModel.asset = it.baseAsset
+            sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNextStep)
         },
-        onBackPressed = { viewModel.onUIEvent(ListCryptoPurchaseViewModel.UIEvent.OnNavigateBack) },
+        onBackPressed = { sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep) },
     )
 
     BackHandler {
-       viewModel.onUIEvent(ListCryptoPurchaseViewModel.UIEvent.OnNavigateBack)
+        sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep)
     }
 }
 
@@ -76,7 +89,7 @@ fun ListCryptoContent(
     uiState: ListCryptoPurchaseViewModel.UiState,
     itemClick: (MarketCryptoCoin) -> Unit,
     onBackPressed: () -> Unit = {},
-    ) {
+) {
     val searchQuery = remember { mutableStateOf("") }
     val selectedFilter = remember { mutableStateOf(MarketFilter.Price.value) }
     val state = rememberModalBottomSheetState(

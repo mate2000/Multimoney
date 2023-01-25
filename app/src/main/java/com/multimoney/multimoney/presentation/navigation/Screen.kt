@@ -126,8 +126,6 @@ const val USER_DATA = "user_data"
 const val PROFILE_CARD_LIST_ORIGIN = "profile_card_list_origin"
 const val SMART_ACCOUNTS_FOR_BUY_CRYPTO = "smart_accounts_for_buy_crypto"
 const val CURRENCY_NAME = "currency_name"
-const val SMART_ACCOUNTS_FOR_BUY_CRYPTO = "smart_accounts_for_buy_crypto"
-const val CURRENCY_NAME = "currency_name"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -562,6 +560,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object ChartScreen : Screen("chart_screen/{$}")
 
     // Crypto
+    //todo add params
+    object PurchaseCryptoFlow: Screen(
+        route = "purchase_crypto_flow/{$USER}/{$ID_BRAND}",
+        baseRoute = "purchase_crypto_flow"
+    )
+
     object CryptoWalletScreen : Screen(
         "crypto_wallet_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$GLOBAL_CRYPTO_BALANCE}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$STATUS_CREDIT}/{$STATUS_SMART}/{$STATUS_CRYPTO}/{$CARD_STATUS}",
         "crypto_wallet_screen"

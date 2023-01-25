@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.crypto.buycrypto
+package com.multimoney.multimoney.presentation.ui.crypto
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column

@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.crypto.buycrypto
+package com.multimoney.multimoney.presentation.ui.crypto.purchase.selectaccount
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,7 +39,7 @@ class SelectSmartAccountViewModel @Inject constructor(
         val isBottomSheetVisible: Boolean = false
     )
 
-    fun onUIEvent(event: SelectSmartAccountViewModel.UIEvent) {
+    fun onUIEvent(event: UIEvent) {
         when (event) {
             is UIEvent.OnNavigateBack -> onNavigateBack()
             is UIEvent.OnContinueButtonClick -> onContinueClick()

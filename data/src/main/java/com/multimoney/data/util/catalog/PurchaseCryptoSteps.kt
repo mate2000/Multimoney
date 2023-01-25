@@ -1,25 +1,29 @@
 package com.multimoney.data.util.catalog
 
-import com.multimoney.data.util.catalog.PurchaseCryptoSteps.ListOfCryptoCurrency.direct
-
 sealed class PurchaseCryptoSteps(
-    val id: Int? = null,
+    val id: Int,
+    val name: String
 ) {
-    data class ListOfCryptoCurrency(
-        val direct: Boolean,
-        val comingFromDetails: Boolean
-    ) : PurchaseCryptoSteps(1) {
-        fun getDirectId() = if (direct) null else 1
-        fun getComingFromDetailsId() = if (comingFromDetails) null else 1
-    }
+    object One : PurchaseCryptoSteps(1, "List_Of_Currency")
+    object Two : PurchaseCryptoSteps(2, "Select_Bank_Account")
+    object Three : PurchaseCryptoSteps(3, "Buy_Crypto")
+    object Four : PurchaseCryptoSteps(4, "Voucher")
 
-    data class SelectBankAccount(
-        val direct: Boolean,
-        val comingFromDetails: Boolean
-    ) : PurchaseCryptoSteps(2) {
-        fun getComingFromDetailsId() = if (comingFromDetails) 1 else 2
-        fun getDirectId() = if (direct) 1 else 2
+    object Search {
+        fun getIdByName(name: String?) = when (name) {
+            One.name -> One.id
+            Two.name -> Two.id
+            Three.name -> Three.id
+            Four.name -> Four.id
+            else -> One.id
+        }
+
+        fun getNameById(id: Int) = when (id) {
+            One.id -> One.name
+            Two.id -> Two.name
+            Three.id -> Three.name
+            Four.id -> Four.name
+            else -> One.name
+        }
     }
-    object BuyCryptoCurrency : PurchaseCryptoSteps(3)
-    object ConfirmPurchase : PurchaseCryptoSteps(4)
 }

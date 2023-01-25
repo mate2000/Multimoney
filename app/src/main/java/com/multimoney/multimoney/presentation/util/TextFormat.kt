@@ -89,7 +89,7 @@ fun formatDocumentPlaceholder(originFormat: String, outputFormat: Char = DOCUMEN
             false
         )
     } else {
-        String()
+        ""
     }
 }
 

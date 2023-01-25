@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.accountsmart.QueryRelatedContactsByPhoneUseCase
 import com.multimoney.domain.model.accountsmart.PhoneSmart
 import com.multimoney.domain.model.accountsmart.RelatedContact
@@ -104,10 +105,14 @@ class MyContactsTransferViewModel @Inject constructor(
     }
 
     private fun onContactClick(accounts: List<PhoneSmart>) {
-        uiState = uiState.copy(
-            selectedContact = accounts,
-            bottomSheetState = ModalBottomSheetState(Expanded)
-        )
+        if (idBrand == Brand.ElSalvador.id) {
+            onAccountClick(accounts.first())
+        } else {
+            uiState = uiState.copy(
+                selectedContact = accounts,
+                bottomSheetState = ModalBottomSheetState(Expanded)
+            )
+        }
     }
 
     private fun onAccountClick(account: PhoneSmart) {

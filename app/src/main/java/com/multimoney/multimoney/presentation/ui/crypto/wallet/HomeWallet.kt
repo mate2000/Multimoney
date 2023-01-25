@@ -188,10 +188,11 @@ fun HomeWalletContent(
 ) {
 
     val globalCryptoBalance = walletViewModel.uiState.globalCryptoBalance?.toDouble() ?: 0.0
-    val isInGainOrLoss =
-        walletViewModel.uiState.balanceCryptoAccount?.investedBalance?.contains('-') != true
-    val graphicColor = if (walletViewModel.uiState.balanceCryptoAccount?.investedBalance?.contains('-') == true)
-        MultimoneyTheme.colors.cryptoLossesColor else MultimoneyTheme.colors.cryptoGainsColor
+    val balanceContainsLossesSymbol =
+        walletViewModel.uiState.balanceCryptoAccount?.investedBalance?.contains(stringResource(id = R.string.crypto_losses_symbol))
+    val isInGainOrLoss = balanceContainsLossesSymbol != true
+    val graphicColor = if (balanceContainsLossesSymbol == true) MultimoneyTheme.colors.cryptoLossesColor
+    else MultimoneyTheme.colors.cryptoGainsColor
 
     var selectedDateRange by remember { mutableStateOf(FilterDateByDays.YESTERDAY.time) }
 

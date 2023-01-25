@@ -177,7 +177,7 @@ fun SmartAddAccountContent(viewModel: SmartAddAccountViewModel = hiltViewModel()
                     onDebounceValidation = { viewModel.onUIEvent(OnValidateAccountNumber) }
                 )
                 CustomOutlinedTextField(
-                    modifier = Modifier.padding(top = 16.dp, bottom = 24.dp),
+                    modifier = Modifier.padding(top = 16.dp),
                     value = viewModel.uiState.email,
                     labelText = stringResource(id = R.string.smart_add_sac_account_email_label),
                     keyboardOptions = KeyboardOptions(
@@ -198,7 +198,7 @@ fun SmartAddAccountContent(viewModel: SmartAddAccountViewModel = hiltViewModel()
                     onDebounceValidation = { viewModel.onUIEvent(OnValidateUserEmail) },
                 )
                 CustomCheckBox(
-                    modifier = Modifier.padding(top = 27.dp),
+                    modifier = Modifier.padding(top = 6.dp, bottom = 24.dp),
                     checked = viewModel.uiState.isFavorite,
                     onCheckedChange = {
                         viewModel.onUIEvent(OnAddFavoriteValueChange(it))

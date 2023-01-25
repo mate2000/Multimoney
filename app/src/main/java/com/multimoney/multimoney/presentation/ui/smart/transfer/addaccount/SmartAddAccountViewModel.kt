@@ -19,8 +19,6 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel
-import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -150,8 +148,9 @@ class SmartAddAccountViewModel @Inject constructor(
                 accountName = "${uiState.names} ${uiState.lastNames}",
                 email = uiState.email,
                 active = true,
+                isFavorite = uiState.isFavorite,
                 phoneNumber = null,
-                idCurrencyAccount = CurrencyType.Dollar.id
+                idCurrencyAccount = null
             ).collectLatest { result ->
                 result.onLoading { uiState = uiState.copy(isLoading = true) }
                 result.onSuccess { account ->

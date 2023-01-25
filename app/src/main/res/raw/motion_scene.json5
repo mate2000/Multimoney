@@ -34,6 +34,14 @@
         ]
       },
       bottom_end: {
+        height: 'wrap',
+        top: [
+          'parent',
+          'bottom'
+        ]
+      },
+      cta_bottom_end: {
+        height: 'wrap',
         top: [
           'parent',
           'bottom'
@@ -69,11 +77,14 @@
         ]
       },
       bottom_end: {
-        height: 'spread',
+        height: 'footerExpandedHeight',
         top: [
           'main_card',
           'bottom'
-        ],
+        ]
+      },
+      cta_bottom_end: {
+        height: 'wrap',
         bottom: [
           'parent',
           'bottom'

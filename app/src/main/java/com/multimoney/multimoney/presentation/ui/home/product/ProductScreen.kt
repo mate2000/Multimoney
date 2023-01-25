@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,6 +24,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -41,9 +43,9 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.security.MiniCardsItem
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency30
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
-import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnDeleteAutomaticPaymentToastEvent
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent
@@ -54,8 +56,13 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.B
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.BaseEvent.OnShowTbdToastEvent
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.DEFAULT_PRODUCT_PAGES
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCreateMultimoneyVisa
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCtaFooterExpandedHeightPxValueChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnDeleteAutomaticPayment
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnFooterExpandedHeightPxValueChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetCryptoMovements
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnHeaderTitleHeightPxValueChange
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnIsSwipeEnabledValueChange
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMainCardHeightPxValueChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCryptoMarket
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCryptoMovements
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCryptoWallet
@@ -71,14 +78,17 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnVisaCardExpiredDialog
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditContent
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditCtaFooterExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditFooter
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditFooterExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditHeaderExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoContent
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoCtaFooterExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoFooter
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoFooterExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoHeaderExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartContent
+import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartCtaFooterExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartFooter
 import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartFooterExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartHeaderExpanded
@@ -125,10 +135,12 @@ fun ProductScreen(
     }
 
     LaunchedEffect(key1 = sharedViewModel.uiState.balance) {
-        viewModel.onUIEvent(OnVisaCardExpiredDialog(
-            idBrand = sharedViewModel.uiState.idBrand,
-            balance = sharedViewModel.uiState.balance
-        ))
+        viewModel.onUIEvent(
+            OnVisaCardExpiredDialog(
+                idBrand = sharedViewModel.uiState.idBrand,
+                balance = sharedViewModel.uiState.balance
+            )
+        )
     }
 
     // BaseEvent from ProductViewModel
@@ -189,6 +201,7 @@ fun ProductScreen(
     val contentPagerState = rememberPagerState()
     val footerPagerState = rememberPagerState()
     val footerExpandedPagerState = rememberPagerState()
+    val ctaFooterExpandedPagerState = rememberPagerState()
 
     LaunchedEffect(key1 = true) {
         sharedViewModel.onUIEvent(OnMyProductPageChange(contentPagerState))
@@ -203,6 +216,9 @@ fun ProductScreen(
     }
     LaunchedEffect(key1 = contentPagerState.currentPage) {
         footerExpandedPagerState.animateScrollToPage(contentPagerState.currentPage)
+    }
+    LaunchedEffect(key1 = contentPagerState.currentPage) {
+        ctaFooterExpandedPagerState.animateScrollToPage(contentPagerState.currentPage)
     }
 
     // todo we have to send the pages to the view pager when the back return
@@ -222,6 +238,11 @@ fun ProductScreen(
                     ProductHeaderExpanded(
                         modifier = Modifier
                             .fillMaxSize()
+                            .onSizeChanged { size ->
+                                if (viewModel.uiState.headerTitleHeightPx != size.height.toFloat()) {
+                                    viewModel.onUIEvent(OnHeaderTitleHeightPxValueChange(size.height.toFloat()))
+                                }
+                            }
                             .background(MultimoneyTheme.colors.background),
                         state = headerExpandedPagerState,
                         viewModel = viewModel,
@@ -230,7 +251,11 @@ fun ProductScreen(
                 },
                 content = { modifier ->
                     ProductContent(
-                        modifier = modifier,
+                        modifier = modifier.onSizeChanged { size ->
+                            if (viewModel.uiState.mainCardHeightPx != size.height.toFloat()) {
+                                viewModel.onUIEvent(OnMainCardHeightPxValueChange(size.height.toFloat()))
+                            }
+                        },
                         state = contentPagerState,
                         viewModel = viewModel,
                         sharedViewModel = sharedViewModel
@@ -246,15 +271,33 @@ fun ProductScreen(
                 },
                 footerExpanded = {
                     ProductFooterExpanded(
-                        modifier = Modifier.padding(top = 16.dp),
+                        modifier = Modifier.onSizeChanged { size ->
+                            if(viewModel.uiState.footerExpandedHeightPx != size.height.toFloat()){
+                                viewModel.onUIEvent(OnFooterExpandedHeightPxValueChange(size.height.toFloat()))
+                            }
+                        }.padding(top = 16.dp).fillMaxWidth().wrapContentHeight(),
                         state = footerExpandedPagerState,
+                        viewModel = viewModel,
+                        sharedViewModel = sharedViewModel
+                    )
+                },
+                ctaFooterExpanded = {
+                    ProductCtaFooterExpanded(
+                        modifier = Modifier.onSizeChanged { size ->
+                            if(viewModel.uiState.ctaFooterExpandedHeightPx != size.height.toFloat()){
+                                viewModel.onUIEvent(OnCtaFooterExpandedHeightPxValueChange(size.height.toFloat()))
+                            }
+                        }.padding(top = 16.dp).fillMaxWidth().wrapContentHeight(),
+                        state = ctaFooterExpandedPagerState,
                         viewModel = viewModel,
                         sharedViewModel = sharedViewModel
                     )
                 },
                 isExpanded = viewModel.uiState.isExpanded,
                 updateIsExpanded = { isExpanded ->
-                    viewModel.onUIEvent(OnUpdateIsExpanded(isExpanded))
+                    if (isExpanded != viewModel.uiState.isExpanded) {
+                        viewModel.onUIEvent(OnUpdateIsExpanded(isExpanded))
+                    }
                 },
                 forceExpanded = sharedViewModel.uiState.forceIsExpanded,
                 updateForceExpanded = { forceExpanded ->
@@ -263,7 +306,14 @@ fun ProductScreen(
                 homeState = sharedViewModel.uiState.homeState,
                 updateHomeState = { homeState ->
                     sharedViewModel.onUIEvent(UIEvent.OnSetHomeState(homeState))
-                }
+                },
+//                headerTitleHeightPx = viewModel.uiState.headerTitleHeightPx,
+//                mainCardHeightPx = viewModel.uiState.mainCardHeightPx,
+                footerExpandedHeightPx = viewModel.uiState.footerExpandedHeightPx,
+//                ctaFooterExpandedHeightPx = viewModel.uiState.ctaFooterExpandedHeightPx,
+                maxFooterExpandedScrollPx = viewModel.uiState.maxFooterExpandedScrollPx,
+                currentPage = contentPagerState.currentPage,
+                isSwipeEnabled = true//viewModel.uiState.isSwipeEnabled
             )
         }
     }
@@ -414,6 +464,11 @@ fun ProductContent(
         HorizontalPager(
             count = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
             modifier = Modifier
+//                .onSizeChanged { size ->
+//                    if (viewModel.uiState.mainCardHeightPx != size.height.toFloat()) {
+//                        viewModel.onUIEvent(OnMainCardHeightPxValueChange(size.height.toFloat()))
+//                    }
+//                }
                 .padding(top = 8.dp),
             state = state
         ) { page ->
@@ -430,6 +485,9 @@ fun ProductContent(
                     openCryptoHomeAction = { sharedViewModel.onUIEvent(OnMyProductClick(true)) },
                     openSmartCryptoAction = {
                         viewModel.onUIEvent(OnNavigateToSmartOriginationFlow(comingFromCrypto = true))
+                    },
+                    onIsSwipeEnabledValueChange = { isSwipeEnabled ->
+                        viewModel.onUIEvent(OnIsSwipeEnabledValueChange(isSwipeEnabled))
                     }
                 )
             }
@@ -437,7 +495,9 @@ fun ProductContent(
         Row(
             Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp), horizontalArrangement = Arrangement.Center) {
+                .padding(top = 16.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
             CustomDotsIndicator(
                 totalDots = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
                 selectedIndex = state.currentPage,
@@ -502,6 +562,11 @@ fun ProductFooterExpanded(
 ) {
     Column(modifier = modifier) {
         HorizontalPager(
+            modifier = Modifier.onSizeChanged { size ->
+                if(viewModel.uiState.footerExpandedHeightPx != size.height.toFloat()){
+                    viewModel.onUIEvent(OnFooterExpandedHeightPxValueChange(size.height.toFloat()))
+                }
+            }.fillMaxWidth().wrapContentHeight(),
             count = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
             state = state,
             userScrollEnabled = false
@@ -520,11 +585,52 @@ fun ProductFooterExpanded(
                 ProductType.Crypto.value -> CryptoFooterExpanded(
                     userStatus = viewModel.uiState.userStatus,
                     balance = viewModel.balanceCredit,
-                    idBrand = viewModel.uiState.idBrand,
+                    footerExpandedHeight = viewModel.uiState.footerExpandedHeightPx,
                     cryptoMovements = viewModel.uiState.cryptoCurrencyMovements,
                     onShowAllClick = { viewModel.onUIEvent(OnNavigateToCryptoMovements) },
                     actionMarket = { viewModel.onUIEvent(OnNavigateToCryptoMarket) },
                     actionWallet = { viewModel.onUIEvent(OnNavigateToCryptoWallet) },
+                    onFooterExpandedHeightValueChange = { footerExpandedHeight ->
+                        viewModel.onUIEvent(
+                            OnFooterExpandedHeightPxValueChange(footerExpandedHeight)
+                        )
+                    }
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun ProductCtaFooterExpanded(
+    modifier: Modifier,
+    state: PagerState,
+    viewModel: ProductViewModel,
+    sharedViewModel: HomeViewModel
+) {
+    Column(modifier = modifier) {
+        HorizontalPager(
+            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+            count = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
+            state = state,
+            userScrollEnabled = false
+        ) {
+            when (viewModel.uiState.productPageList?.get(currentPage)?.product) {
+                ProductType.Credit.value -> CreditCtaFooterExpanded(
+                    viewModel = viewModel,
+                    sharedViewModel = sharedViewModel
+                )
+                ProductType.Smart.value -> SmartCtaFooterExpanded(
+                    viewModel = viewModel,
+                    currentPage
+                ) {
+                    sharedViewModel.onUIEvent(UIEvent.OnLoadingValueChanged(it))
+                }
+                ProductType.Crypto.value -> CryptoCtaFooterExpanded(
+                    idBrand = viewModel.uiState.idBrand,
+                    balance = viewModel.balanceCredit,
+                    profileEnable = viewModel.uiState.userStatus?.infoCrypto?.profileEnable,
                     noBalanceAction = {
                         when (viewModel.uiState.idBrand) {
                             Brand.CostaRica.id.toString() -> {
@@ -543,7 +649,11 @@ fun ProductFooterExpanded(
                             }
                         }
                     },
-                    hasBalanceAction = { /*todo go to buy crypto flow*/ }
+                    hasBalanceAction = { /*todo go to buy crypto flow*/ },
+                    ctaFooterExpandedHeight = viewModel.uiState.ctaFooterExpandedHeightPx,
+                    onCtaFooterExpandedHeightValueChange = { ctaFooterExpandedHeight ->
+                        viewModel.onUIEvent(OnCtaFooterExpandedHeightPxValueChange(ctaFooterExpandedHeight))
+                    }
                 )
             }
         }

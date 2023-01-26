@@ -83,6 +83,7 @@ import com.multimoney.data.networking.graphql.apollomodel.ProcessTransferVisaToS
 import com.multimoney.data.networking.graphql.apollomodel.ProfessionSmartQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProfessionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.QuickActionsQuery
+import com.multimoney.data.networking.graphql.apollomodel.RelatedContactsByPhoneQuery
 import com.multimoney.data.networking.graphql.apollomodel.RelationshipQuery
 import com.multimoney.data.networking.graphql.apollomodel.RequestChangeDeviceMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveAutomatedSmartAccountMutation
@@ -112,7 +113,9 @@ import com.multimoney.data.networking.graphql.apollomodel.ValidateUserExistsQuer
 import com.multimoney.data.networking.graphql.apollomodel.ValidateUserStatusQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidationSecurityQuery
 import com.multimoney.data.networking.graphql.apollomodel.type.BeneficiaryRequestDtoInput
+import com.multimoney.data.networking.graphql.apollomodel.type.ContactsInput
 import com.multimoney.domain.model.accountsmart.Beneficiary
+import com.multimoney.domain.model.accountsmart.RelatedContact
 import com.multimoney.domain.model.credit.CreditInfoQuestion
 import com.multimoney.domain.model.credit.DestinyAccount
 import javax.inject.Inject
@@ -1784,6 +1787,21 @@ class GraphqlApi @Inject constructor(
                 exchangeRate = exchangeRate,
                 idBrand = idBrand,
                 user = user
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryRelatedContactsByPhone(
+        user: String,
+        idBrand: Int,
+        contacts: List<RelatedContact>,
+    ): ApolloCall<RelatedContactsByPhoneQuery.Data> =
+        apolloAuthorizedClient.query(
+            RelatedContactsByPhoneQuery(
+                user = Optional.presentIfNotNull(user),
+                idBrand = Optional.presentIfNotNull(idBrand),
+                contacts = contacts.map { contact ->
+                        ContactsInput(contact.phoneNumber)
+                    }
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

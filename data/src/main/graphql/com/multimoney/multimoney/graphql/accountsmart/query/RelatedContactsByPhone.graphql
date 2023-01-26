@@ -1,0 +1,28 @@
+query relatedContactsByPhone(
+    $user: String,
+    $idBrand: Int,
+    $contacts: [contactsInput!]!
+) {
+    relatedContactsByPhone(
+        relatedContactsByPhoneInput: {
+            user: $user,
+            idBrand: $idBrand,
+            contacts: $contacts
+        }
+    ) {
+        result {
+        phones{
+        number
+        titular
+        bankName
+        identification
+        accountNumber
+        email
+        id_Currency
+        currency
+
+        ibanNumber
+        }
+        }
+    }
+}

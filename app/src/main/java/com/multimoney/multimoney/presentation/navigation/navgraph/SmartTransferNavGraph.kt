@@ -6,6 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
+import com.multimoney.multimoney.presentation.navigation.CONTACTS
 import com.multimoney.multimoney.presentation.navigation.DESTINY_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.HOME_STATE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
@@ -17,6 +18,7 @@ import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT_LIST
 import com.multimoney.multimoney.presentation.navigation.SMART_TRANSFER_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.TRANSFER_TYPE
+import com.multimoney.multimoney.presentation.navigation.navtype.payment.RelatedContactListNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SinpeAccountNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAccountIDListNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAccountIDNavType
@@ -28,6 +30,7 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.smartaccoun
 import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.amount.OwnTransferAmountScreen
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferScreen
 
 fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
     navigation(
@@ -230,6 +233,29 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
             )
         ) {
             SmartAddAccountScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
+        }
+        composable(
+            route = Screen.MyContactsTransferScreen.route,
+            arguments = listOf(
+                navArgument(CONTACTS) { type = RelatedContactListNavType() },
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(SMART_ACCOUNT) { type = SmartAccountIDNavType() }
+            )
+        ) {
+            MyContactsTransferScreen(
                 onNavigate = {
                     navController.navigate(it.route)
                 },

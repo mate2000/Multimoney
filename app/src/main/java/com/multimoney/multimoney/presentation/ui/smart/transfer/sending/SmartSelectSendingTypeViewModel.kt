@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.model.accountsmart.RelatedContact
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -24,9 +25,9 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class SmartSelectSendingTypeViewModel @Inject constructor(
@@ -150,9 +151,14 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     }
 
     private fun onNavigateToMyContacts(numbers: List<String>) {
-        // TODO navigate to HU REV-1445
         showRationale(false)
-        emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
+        val contacts = encodeData(numbers.map {
+            RelatedContact(it)
+        }
+        )
+        navigateTo(
+            "${Screen.MyContactsTransferScreen.baseRoute}/$user/$idBrand/${contacts}/${encodeData(selectedSmartAccount)}"
+        )
     }
 
     private fun onNavigateToMyFavorites() {

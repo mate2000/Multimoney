@@ -459,7 +459,9 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToCryptoMovements() {
-        navigateTo("${Screen.CryptoMovementsAllScreen.baseRoute}/$userName/${uiState.idBrand}/$identification")
+        navigateTo(
+            "${Screen.CryptoMovementsAllScreen.baseRoute}/${uiState.idBrand}/$identification/$email"
+        )
     }
 
     private fun openWhatsAppLink(context: Context, whatsAppLink: String) {

@@ -31,10 +31,10 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnCallMutationSaveCreditFlowStep
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.BaseEvent.OnFormCompleted
-import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.Companion.DATE_FORMAT
-import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.Companion.DATE_MIN_DAY
-import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.Companion.DATE_MIN_MONTH
-import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.Companion.DATE_MIN_YEAR
+import com.multimoney.multimoney.presentation.util.DAY_MONTH_YEAR_PATTERN
+import com.multimoney.multimoney.presentation.util.DATE_MIN_DAY
+import com.multimoney.multimoney.presentation.util.DATE_MIN_MONTH
+import com.multimoney.multimoney.presentation.util.DATE_MIN_YEAR
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnCallCatalogs
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnDivisionOccupationValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnDivisionProfessionValueChange
@@ -148,7 +148,7 @@ fun MonthlyIncomeScreen(
                                 year,
                                 month,
                                 dayOfMonth,
-                                DATE_FORMAT
+                                DAY_MONTH_YEAR_PATTERN
                             )
                         )
                     )
@@ -191,7 +191,7 @@ fun MonthlyIncomeScreen(
                                 year,
                                 month,
                                 dayOfMonth,
-                                DATE_FORMAT
+                                DAY_MONTH_YEAR_PATTERN
                             )
                         )
                     )

@@ -28,6 +28,10 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnValidForm
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
+import com.multimoney.multimoney.presentation.util.HYPHEN
+import com.multimoney.multimoney.presentation.util.BAR
+import com.multimoney.multimoney.presentation.util.DAY_MONTH_YEAR_PATTERN
+import com.multimoney.multimoney.presentation.util.YEAR_MONTH_DAY_PATTERN
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
@@ -118,16 +122,16 @@ class MonthlyIncomeViewModel @Inject constructor(
 
     private fun onDuiEmissionDateValueChange(date: String) {
         uiState = uiState.copy(duiEmissionDate = date.replace(
-            MIDDLE_DASH,
-            VISUAL_DATE_SYMBOL
+            HYPHEN,
+            BAR
         ))
         onValidForm()
     }
 
     private fun onDuiExpirationDateValueChange(date: String) {
         uiState = uiState.copy(duiExpirationDate = date.replace(
-            MIDDLE_DASH,
-            VISUAL_DATE_SYMBOL
+            HYPHEN,
+            BAR
         ))
         onValidForm()
     }
@@ -203,7 +207,7 @@ class MonthlyIncomeViewModel @Inject constructor(
                         profession = it?.first()
                     }
                     professionList = profession?.subOptions?.filter { filter ->
-                        filter?.description != MIDDLE_DASH
+                        filter?.description != HYPHEN
                     }
 
                     uiState = uiState.copy(
@@ -254,12 +258,12 @@ class MonthlyIncomeViewModel @Inject constructor(
                         occupation = it?.first()
                     }
                     occupationList = occupation?.subOptions?.filter { filter ->
-                        filter?.description != MIDDLE_DASH
+                        filter?.description != HYPHEN
                     }
 
                     uiState = uiState.copy(
                         divisionOccupationList = occupation?.subOptions?.filter { filter ->
-                            filter?.description != MIDDLE_DASH
+                            filter?.description != HYPHEN
                         }
                     )
                     if (!occupation?.pkCatalog.isNullOrEmpty()) {
@@ -310,12 +314,12 @@ class MonthlyIncomeViewModel @Inject constructor(
                         duiEmissionPlace = it?.first()
                     }
                     duiEmissionPlaceList = duiEmissionPlace?.subOptions?.filter { filter ->
-                        filter?.description != MIDDLE_DASH
+                        filter?.description != HYPHEN
                     }
 
                     uiState = uiState.copy(
                         divisionDuiEmissionPlaceList = duiEmissionPlace?.subOptions?.filter { filter ->
-                            filter?.description != MIDDLE_DASH
+                            filter?.description != HYPHEN
                         }
                     )
                     if (!duiEmissionPlace?.pkCatalog.isNullOrEmpty()) {
@@ -363,19 +367,19 @@ class MonthlyIncomeViewModel @Inject constructor(
             duiEmissionPlaceSelected = uiState.divisionDuiEmissionPlaceSelected,
             duiEmissionDateValue = getFormatDateByString(
                 uiState.duiEmissionDate.replace(
-                    VISUAL_DATE_SYMBOL,
-                    MIDDLE_DASH
+                    BAR,
+                    HYPHEN
                 ),
-                DATE_FORMAT,
-                BACKEND_DATE_FORMAT
+                DAY_MONTH_YEAR_PATTERN,
+                YEAR_MONTH_DAY_PATTERN
             ),
             duiExpirationDateValue = getFormatDateByString(
                 uiState.duiExpirationDate.replace(
-                    VISUAL_DATE_SYMBOL,
-                    MIDDLE_DASH
+                    BAR,
+                    HYPHEN
                 ),
-                DATE_FORMAT,
-                BACKEND_DATE_FORMAT
+                DAY_MONTH_YEAR_PATTERN,
+                YEAR_MONTH_DAY_PATTERN
             )
         )
         onNextStepAction()
@@ -447,8 +451,8 @@ class MonthlyIncomeViewModel @Inject constructor(
         duiEmissionDate?.value?.let {
             val dateParsed = getFormatDateByString(
                 it,
-                BACKEND_DATE_FORMAT,
-                DATE_FORMAT
+                YEAR_MONTH_DAY_PATTERN,
+                DAY_MONTH_YEAR_PATTERN
             )
             onDuiEmissionDateValueChange(dateParsed)
         }
@@ -456,8 +460,8 @@ class MonthlyIncomeViewModel @Inject constructor(
         duiExpirationDate?.value?.let {
             val dateParsed = getFormatDateByString(
                 it,
-                BACKEND_DATE_FORMAT,
-                DATE_FORMAT
+                YEAR_MONTH_DAY_PATTERN,
+                DAY_MONTH_YEAR_PATTERN
             )
             onDuiExpirationDateValueChange(dateParsed)
         }
@@ -504,12 +508,5 @@ class MonthlyIncomeViewModel @Inject constructor(
 
     companion object {
         const val ZERO = 0
-        const val MIDDLE_DASH = "-"
-        const val VISUAL_DATE_SYMBOL = " | "
-        const val DATE_FORMAT = "dd-MM-yyyy"
-        const val BACKEND_DATE_FORMAT = "yyyy-MM-dd"
-        const val DATE_MIN_YEAR = 0
-        const val DATE_MIN_MONTH = 0
-        const val DATE_MIN_DAY = 1
     }
 }

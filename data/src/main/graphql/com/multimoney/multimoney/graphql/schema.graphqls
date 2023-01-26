@@ -1104,7 +1104,7 @@ input SmartAccountStatusDtoInput {
 }
 
 type ACHTransferFavoriteList {
-  result: [ACHTransferFavoriteDto!]!
+  result: [ACHTransferFavoriteResponse!]!
 
   status: Int
 
@@ -1236,6 +1236,8 @@ input LocalTransferFavoritesDtoInput {
 
   idCurrencyAccount: Int
 
+  isFavorite: Boolean
+
   idBrand: Int
 
   user: String
@@ -1263,6 +1265,10 @@ input ListSinpeAccountDtoInput {
   identification: String!
 
   account_number: String!
+
+  option: String
+
+  isFavorite: Boolean
 
   idBrand: Int
 
@@ -1342,7 +1348,7 @@ input GetCoreBankMovementsDtoInput {
 }
 
 type RelatedContactsByPhone {
-  result: ObjRelatedContacts!
+  result: ObjRelatedContacts
 
   status: Int
 
@@ -1614,7 +1620,7 @@ type PromissoryNoteMobile {
 
   aplica_Debito_Aut: Boolean!
 
-  expired_Debito_Aut_Card: Boolean!
+  expired_Debito_Aut_Card: Boolean
 }
 
 input balanceCreditInput {
@@ -1644,6 +1650,8 @@ input checkAccountInput {
 }
 
 type CryptoAccountBalance {
+  outOfService: Boolean
+
   globalBalance: Decimal
 
   investedBalance: String
@@ -1651,6 +1659,12 @@ type CryptoAccountBalance {
   percentageInvested: String
 
   items: [CryptoAccountBalanceItem!]
+
+  status: Int
+
+  message: String
+
+  detail: String
 }
 
 input balanceCryptoInput {
@@ -2245,6 +2259,8 @@ type CryptoMarketPrice {
   url_image: String!
 
   historico: Boolean!
+
+  crypto_network: String
 }
 
 input CryptoMarketPriceDtoInput {
@@ -2853,6 +2869,8 @@ input UserValidationDtoInput {
   firtSurname: String
 
   secondSurname: String
+
+  deviceId: String
 
   idBrand: Int
 
@@ -3596,6 +3614,12 @@ input ManageSinpeAccountDtoInput {
 
   nameAccount: String
 
+  id_Bank: Long
+
+  type_Account: Int
+
+  isFavorite: Boolean
+
   idBrand: Int
 
   user: String
@@ -3809,6 +3833,8 @@ type CreditApplication {
   fecha_Pago: String!
 
   currentStep: String!
+
+  isCrosseling: Boolean
 
   status: Int
 
@@ -4658,6 +4684,8 @@ input UpdateUserDtoInput {
 
   activateUser: Boolean
 
+  deviceId: String
+
   idBrand: Int
 
   user: String
@@ -4901,6 +4929,8 @@ input ChangePhoneDtoInput {
   identification: String!
 
   phone: String!
+
+  pkUser: Long!
 
   idBrand: Int
 
@@ -6171,6 +6201,8 @@ type CryptoAccountBalanceItem {
   priceOfTheDay: Decimal
 
   url_image: String
+
+  crypto_network: String
 }
 
 type RequestResult {
@@ -6313,6 +6345,8 @@ type PromissoryNoteResumeMobile {
   id_Moneda: Int!
 
   aplica_Ampli_Comercio: Boolean!
+
+  expired_Debito_Aut_Card: Boolean
 }
 
 type ObjectProfessionItem {
@@ -6346,7 +6380,7 @@ input contactsInput {
 }
 
 type ObjRelatedContacts {
-  phones: [ObjPhone!]!
+  phones: [ObjPhone]
 }
 
 type GetCoreBankMovementsResult {
@@ -6403,6 +6437,18 @@ type ListSinpeAccountResult {
   moneda: String!
 
   nombre_Cuenta: String!
+
+  tipo_Cuenta: Long!
+
+  id_Banco: Int!
+
+  expresion_Regular: String!
+
+  es_Favorita: Boolean!
+
+  id_Banco_CORE: Long!
+
+  tipo_Cuenta_CORE: Long!
 }
 
 type LocalTransferFavoriteResult {
@@ -6427,6 +6473,8 @@ type LocalTransferFavoriteResult {
   currencyAccount: String!
 
   ibanNumber: String!
+
+  isFavorite: Boolean!
 }
 
 type TypeAccountListResponse {
@@ -6481,54 +6529,24 @@ type ACHTransferFavoriteResult {
   destinationAccountCurrency: String!
 }
 
-type ACHTransferFavoriteDto {
-  accountForAchTransferId: Int!
+type ACHTransferFavoriteResponse {
+  accountForAchTransferId: Long!
 
   accountNumber: String!
 
   description: String!
 
-  titularName: String!
-
-  notificationEmail: String!
-
-  identificacionNumber: String!
-
-  isFavorite: Boolean!
-
-  typeAccountId: Int!
-
-  destinationBankId: Int!
-
-  typeAccountDescription: String!
-
   destinationBankDescription: String!
 
-  status: Int!
-
-  destinationIdentificationBank: String!
-
-  transferState: Boolean!
-
-  accountTypeCode: String!
-
-  aCHTypeAccountCode: String!
-
-  aCHPurposeType: String!
-
-  aPIACHAccountCode: String!
-
-  identificationNumberAccount: String!
-
-  identificationTypeAccount: Int!
-
-  destinationAccountCurrencyId: Int!
+  destinationAccountCurrencyId: Long
 
   destinationAccountCurrency: String!
 
-  idBrand: Int
+  idBank: Long
 
-  user: String
+  idTypeAccount: Long
+
+  isFavorite: Boolean
 }
 
 type SmartAccountStatusResult {
@@ -6621,21 +6639,21 @@ type CatalogAdressLevel4ListResponse {
 }
 
 type ObjPhone {
-  number: String!
+  number: String
 
-  titular: String!
+  titular: String
 
-  bankName: String!
+  bankName: String
 
-  identification: String!
+  identification: String
 
-  accountNumber: String!
+  accountNumber: String
 
-  email: String!
+  email: String
 
-  id_Currency: String!
+  id_Currency: String
 
-  currency: String!
+  currency: String
 
   ibanNumber: String
 }
@@ -6688,6 +6706,8 @@ type CreditPreApproveInfo {
   statusFirm: String
 
   currentStep: String
+
+  crosseling: Boolean
 }
 
 type RequestInfo {
@@ -6698,6 +6718,8 @@ type RequestInfo {
   currentStep: String
 
   statusRequest: String
+
+  crosseling: Boolean
 }
 
 type Wording {

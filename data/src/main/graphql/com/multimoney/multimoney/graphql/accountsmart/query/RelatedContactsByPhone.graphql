@@ -20,7 +20,6 @@ query relatedContactsByPhone(
         email
         id_Currency
         currency
-
         ibanNumber
         }
         }

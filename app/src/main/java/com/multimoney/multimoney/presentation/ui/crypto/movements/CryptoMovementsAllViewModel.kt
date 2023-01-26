@@ -46,12 +46,14 @@ class CryptoMovementsAllViewModel  @Inject constructor(
     }
 
     private fun getCryptoMovements() = executeUseCase {
+        val market: String = if (uiState.cryptoItem?.isNotEmpty() == true)
+            uiState.cryptoItem.plus(USD_CURRENCY) else EMPTY_STRING
         uiState = uiState.copy(
             cryptoMovements = queryGetCryptoCurrencyMovementsUseCase.invoke(
                 user = uiState.user ?: "",
                 idBrand = uiState.idBrand ?: 0,
                 identification = uiState.identification ?: "",
-                market = uiState.cryptoItem?.plus(USD_CURRENCY) ?: "",
+                market = market,
                 order_time_begin = getPreviousDate(FilterDate.LAST_365_DAYS),
                 order_time_end = getCurrentDateYMDPattern(),
                 pagination_limit = PAGE_SIZE
@@ -80,5 +82,9 @@ class CryptoMovementsAllViewModel  @Inject constructor(
         object OnGetUserInfo : UIEvent
         object OnNavigateBack : UIEvent
         object GetCryptoMovements: UIEvent
+    }
+
+    companion object {
+        private const val EMPTY_STRING = ""
     }
 }

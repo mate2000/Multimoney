@@ -130,6 +130,8 @@ import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCas
 import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryEmploymentSituationUseCase
 import com.multimoney.domain.interaction.credit.QueryEmploymentSituationUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryEmissionPlaceUseCase
+import com.multimoney.domain.interaction.credit.QueryEmissionPlaceUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUseCase
 import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetCurrencyHistoricalPricesUseCase
@@ -398,6 +400,11 @@ class InteractionModule {
     @Singleton
     fun provideQueryOccupationUseCase(creditRepository: CreditRepository): QueryOccupationUseCase =
         QueryOccupationUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryEmissionPlaceUseCase(creditRepository: CreditRepository): QueryEmissionPlaceUseCase =
+        QueryEmissionPlaceUseCaseImpl(creditRepository)
 
     @Provides
     @Singleton

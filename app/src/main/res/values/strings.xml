@@ -576,6 +576,7 @@
 
     <!-- Credit Monthly Income-->
     <string name="credit_monthly_income_title" translatable="false">¿Cuál es tu ingreso mensual?</string>
+    <string name="credit_monthly_income_title_sv" translatable="false">Cuéntanos sobre ti</string>
     <string name="credit_monthly_income_income_label" translatable="false">Ingreso mensual</string>
     <string name="credit_monthly_income_required_income" translatable="false">Ingresos requerido</string>
     <string name="credit_monthly_income_income_hint" translatable="false">%s 000,000</string>
@@ -584,6 +585,10 @@
     <string name="credit_monthly_income_profession_hint" translatable="false">Seleccionar</string>
     <string name="credit_monthly_income_occupation_label" translatable="false">Seleccioná tu ocupación</string>
     <string name="credit_monthly_income_occupation_hint" translatable="false">Seleccionar</string>
+    <string name="credit_monthly_income_dui_emission_date_label" translatable="false">Fecha de emisión de DUI</string>
+    <string name="credit_monthly_income_dui_expiration_date_label" translatable="false">Fecha de vencimiento de DUI</string>
+    <string name="credit_monthly_income_dui_emission_place_label" translatable="false">Lugar de emisión de DUI</string>
+    <string name="credit_monthly_income_dui_date_placeholder" translatable="false">00 | 00 | 0000</string>
 
     <!-- Credit Job-->
     <string name="credit_job_title" translatable="false">Hablemos de tu trabajo</string>

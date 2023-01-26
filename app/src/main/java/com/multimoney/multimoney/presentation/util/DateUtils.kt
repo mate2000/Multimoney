@@ -137,8 +137,10 @@ fun getCurrentTime(time: Date): String {
     return SHORT_TIME_FORMAT.format(time)
 }
 
+fun getCurrentDate(): LocalDate = LocalDate.now()
+
 fun getCurrentDateMinusYears(years: Long): LocalDate {
-    val today = LocalDate.now()
+    val today = getCurrentDate()
     return today.minusYears(years)
 }
 

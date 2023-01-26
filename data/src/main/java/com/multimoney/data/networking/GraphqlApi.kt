@@ -36,6 +36,7 @@ import com.multimoney.data.networking.graphql.apollomodel.DeactivatedCardAutomat
 import com.multimoney.data.networking.graphql.apollomodel.DeactivatedClientAutomaticDebitMutation
 import com.multimoney.data.networking.graphql.apollomodel.DeleteCardVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.DeleteTokenDeviceNVMutation
+import com.multimoney.data.networking.graphql.apollomodel.EmissionPlaceQuery
 import com.multimoney.data.networking.graphql.apollomodel.EmploymentSituationQuery
 import com.multimoney.data.networking.graphql.apollomodel.ExchangeRateQuery
 import com.multimoney.data.networking.graphql.apollomodel.GeneralEconomicActivityQuery
@@ -360,6 +361,20 @@ class GraphqlApi @Inject constructor(
         idUserRequest: Int
     ): ApolloCall<EmploymentSituationQuery.Data> =
         apolloAuthorizedClient.query(EmploymentSituationQuery(pkUser, user, idBrand, idUserRequest))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryEmissionPlace(
+        pkUser: Int,
+        idUserRequest: Int,
+        idBrand: Int,
+        user: String
+    ): ApolloCall<EmissionPlaceQuery.Data> =
+        apolloAuthorizedClient.query(EmissionPlaceQuery(
+            pkUser = pkUser,
+            idUserRequest = idUserRequest,
+            idBrand = idBrand,
+            user = user
+        ))
             .fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationTermsAndConditions(

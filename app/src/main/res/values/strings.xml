@@ -1344,6 +1344,14 @@
     <string name="smart_sac_transfer_contact_rationale_button" translatable="false">Permitir acceso a contactos</string>
     <string name="smart_sac_transfer_contact_permission_denied_message" translatable="false">Necesitamos acceso a tus contactos para que podás realizar envíos. Podrás activar el acceso a tus contactos cuando querás.</string>
 
+    <!-- Smart My Contacts Transfer -->
+    <string name="smart_transfer_my_contacts_title_CR" translatable="false">Mis contactos</string>
+    <string name="smart_transfer_my_contacts_title_SV" translatable="false">Cuentas SAC</string>
+    <string name="smart_mycontacts_transfer_title" translatable="false">Contactos</string>
+    <string name="smart_my_contacts_transfer_accounts_add" translatable="false">Agregar cuenta</string>
+    <string name="smart_mycontacts_total_transfer_title" translatable="false">%1s contactos encontrados</string>
+    <string name="smart_my_concts_placeholder" translatable="false">Buscar contacto</string>
+
     <!-- Smart SAC Transfer - Add SAC Account -->
     <string name="smart_add_sac_account_title" translatable="false">Datos de la cuenta</string>
     <string name="smart_add_sac_account_type_label" translatable="false">Tipo de cuenta</string>

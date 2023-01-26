@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -29,15 +28,16 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberAsyncImagePainter
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.LocalMultimoneyColors
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoCurrencyMovementItem
 import com.multimoney.multimoney.presentation.ui.crypto.currencydetail.CryptoCurrencyMovementsViewModel.Companion.TODAY_TEXT
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.DateFilterDWMYSection
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.MarketCurrencyDetailsGraphic
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoActionsSection
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -100,6 +100,19 @@ fun CurrencyDetailContent(
         },
         modifier = Modifier.fillMaxSize(),
         backgroundColor = MultimoneyTheme.colors.background,
+        bottomBar = {
+            val enableSendAndGive = uiState.idBrand == Brand.CostaRica.id
+
+            CryptoActionsSection(
+                hasSmartBalance = true,
+                enableCryptoActions = true,
+                enableSendAndGive = enableSendAndGive,
+                hasBalanceAction = { /*todo go to buy crypto flow*/ },
+                sellAction = { /*todo go to sell crypto flow*/ },
+                sendAction = { /*todo go to send crypto flow*/ },
+                giveAction = { /*todo go to receive crypto flow*/ }
+            )
+        }
     ) {
         Box(modifier = Modifier.padding(it)) {
             Column(modifier = Modifier.padding(horizontal = 16.dp)) {

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -67,7 +66,7 @@ fun CardNonPreApprovedCredit(
     Column(
         modifier = Modifier
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
-            .fillMaxSize()
+            .fillMaxWidth()
             .clickable {
                 action()
             },
@@ -94,6 +93,7 @@ fun CardNonPreApprovedCredit(
         }
         Column(
             modifier = Modifier
+                .padding(top = 32.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -131,7 +131,7 @@ fun CardGtSvCreditRejected(
     Column(
         modifier = Modifier
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
-            .fillMaxSize()
+            .fillMaxWidth()
             .clickable {
                 action()
             },
@@ -167,6 +167,7 @@ fun CardGtSvCreditRejected(
         }
         Column(
             modifier = Modifier
+                .padding(top = 32.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

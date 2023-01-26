@@ -1362,6 +1362,13 @@
     <string name="smart_add_sac_account_names_label" translatable="false">Nombre(s)</string>
     <string name="smart_add_sac_account_last_names_label" translatable="false">Apellido(s)</string>
 
+    <!-- Smart Transfer 365 Edit Amount -->
+    <string name="transfer_365_amount_title" translatable="false">Enviar dinero</string>
+    <string name="transfer_365_amount_from_label" translatable="false">Desde mi cuenta Smart %s</string>
+    <string name="transfer_365_amount_disclaimer" translatable="false">Si su transacción Transfer365 la realiza dentro del rango de las 10:00 PM hasta las 12:00 a.m., su transacción será enviada al Banco destino a partir de las 12:01 a.m. del siguiente día.</string>
+    <string name="transfer_365_pre_confirmation_from_label" translatable="false">Desde</string>
+    <string name="transfer_365_pre_confirmation_to_label" translatable="false">Hacia</string>
+
     <!-- Card Preferences -->
     <string name="card_preferences_title" translatable="false">Preferencias de tarjeta</string>
     <string name="card_preferences_linked_card_title" translatable="false">Tarjeta vinculada</string>

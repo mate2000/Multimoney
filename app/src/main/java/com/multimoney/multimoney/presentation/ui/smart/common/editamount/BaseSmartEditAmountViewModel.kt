@@ -23,6 +23,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.DESTINY_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.ORIGIN_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.TRANSFER_TYPE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
@@ -205,6 +206,26 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                     ),
                     currency = originCurrency?.symbol ?: Dollar.symbol,
                     placeholder = if (originCurrency == Dollar) {
+                        R.string.smart_dollar_placeholder
+                    } else {
+                        R.string.smart_colon_placeholder
+                    }
+                )
+            }
+            SmartTransferTypes.SmartToOtherBank.id -> {
+                smartAccount = savedStateHandle[SMART_ACCOUNT]
+                originCurrency = smartAccount?.currencyID?.getCurrencyFromId() ?: Dollar
+                shouldDisplayExchange = false
+
+                amountUIState = amountUIState.copy(
+                    originAccountDisplay = DisplayAccount(
+                        sheetLabel = R.string.transfer_365_pre_confirmation_from_label,
+                        sheetTitleResource = originCurrency?.myAccountSmart,
+                        sheetSubtitleResource = R.string.empty,
+                        icon = R.drawable.ic_multimoney_smart
+                    ),
+                    currency = originCurrency?.symbol ?: Dollar.symbol,
+                    placeholder = if (destinyCurrency == Dollar) {
                         R.string.smart_dollar_placeholder
                     } else {
                         R.string.smart_colon_placeholder

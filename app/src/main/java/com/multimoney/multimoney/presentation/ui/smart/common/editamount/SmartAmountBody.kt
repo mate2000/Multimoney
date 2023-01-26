@@ -32,6 +32,7 @@ import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSma
 import com.multimoney.multimoney.presentation.uielement.CurrencyAmountInput
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
+import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.VoucherCurrencyExchangeInfo
 import com.multimoney.multimoney.presentation.util.addTextStyleToTextPortion
@@ -58,7 +59,8 @@ fun SmartAmountBody(
     onContinueClick: () -> Unit,
     enableButton: Boolean,
     motive: String? = null,
-    onMotiveChange: (String) -> Unit = {}
+    onMotiveChange: (String) -> Unit = {},
+    @StringRes disclaimerResource: Int? = null
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -173,6 +175,32 @@ fun SmartAmountBody(
                     keyboardActions = KeyboardActions(
                         onDone = { focusManager.clearFocus() }
                     )
+                )
+            }
+            disclaimerResource?.let {
+                /*Row(
+                    modifier = Modifier
+                        .padding(bottom = 32.dp)
+                        .fillMaxWidth()
+                ) {
+                    Icon(
+                        modifier = Modifier.padding(end = 8.dp),
+                        painter = painterResource(id = R.drawable.ic_information),
+                        contentDescription = null
+                    )
+                    Text(
+                        text = stringResource(id = disclaimerResource),
+                        style = Typography.body2,
+                        color = MultimoneyTheme.colors.titleText
+                    )
+                }*/
+                CustomInformativeText(
+                    modifier = Modifier
+                        .padding(bottom = 32.dp)
+                        .fillMaxWidth(),
+                    leadingIcon = R.drawable.ic_information,
+                    text = stringResource(id = disclaimerResource),
+                    textStyle = Typography.body2
                 )
             }
         }

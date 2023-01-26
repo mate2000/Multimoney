@@ -59,6 +59,8 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoActionsSection
 import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.uielement.ShimmerBoxView
+import com.multimoney.multimoney.presentation.uielement.ShimmerItemView
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -186,18 +188,12 @@ fun HomeWalletContent(
 ) {
 
     val globalCryptoBalance = walletViewModel.uiState.globalCryptoBalance?.toDouble() ?: 0.0
+    val balanceContainsLossesSymbol =
+        walletViewModel.uiState.balanceCryptoAccount?.investedBalance?.contains(stringResource(id = R.string.crypto_losses_symbol))
+    val isInGainOrLoss = balanceContainsLossesSymbol != true
+    val graphicColor = if (balanceContainsLossesSymbol == true) MultimoneyTheme.colors.cryptoLossesColor
+    else MultimoneyTheme.colors.cryptoGainsColor
 
-    val gainsOrLosses = calculateGainLoses(
-        globalCryptoBalance,
-        walletViewModel.uiState.clientCryptoBalanceHistory
-    )
-    val percentage = calculatePercentage(
-        globalCryptoBalance,
-        walletViewModel.uiState.clientCryptoBalanceHistory
-    )
-    val isInGainOrLoss = gainsOrLosses >= 0
-    val graphicColor = if (isInGainOrLoss)
-        MultimoneyTheme.colors.cryptoWalletGainsColor else MultimoneyTheme.colors.cryptoLossesColor
     var selectedDateRange by remember { mutableStateOf(FilterDateByDays.YESTERDAY.time) }
 
     Column(
@@ -215,9 +211,10 @@ fun HomeWalletContent(
                 BalanceSection(
                     globalCryptoBalance = globalCryptoBalance,
                     isInGainOrLoss = isInGainOrLoss,
-                    gainsOrLosses = gainsOrLosses,
-                    percentage = percentage,
+                    gainsOrLosses = walletViewModel.uiState.balanceCryptoAccount?.investedBalance?.toDouble() ?: 0.0,
+                    percentage = walletViewModel.uiState.balanceCryptoAccount?.percentageInvested?.toDouble() ?: 0.0,
                     graphicColor = graphicColor,
+                    areCoinsLoading = walletViewModel.uiState.areCoinsLoading
                 )
                 WalletCryptoGraphic(
                     clientCryptoBalanceHistory = walletViewModel.uiState.clientCryptoBalanceHistory,
@@ -271,6 +268,7 @@ fun BalanceSection(
     graphicColor: Color,
     gainsOrLosses: Double,
     percentage: Double,
+    areCoinsLoading: Boolean
 ) {
     val gainsOrLossesSymbol =
         if (isInGainOrLoss) stringResource(R.string.crypto_gains_symbol) else stringResource(R.string.crypto_losses_symbol)
@@ -301,16 +299,20 @@ fun BalanceSection(
                 )
             )
         }
-        Text(
-            modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
-            text = stringResource(
-                id = R.string.currency_item_gain_or_losses_description,
-                gainsOrLossesSymbol,
-                gainsOrLosses.toCurrencyFormatWithoutNegatives(),
-                percentage.roundToTwoDecimalPlaces()
-            ),
-            style = Typography.body2.copy(color = graphicColor)
-        )
+        if (areCoinsLoading) {
+            ProfitSkeleton()
+        } else {
+            Text(
+                modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
+                text = stringResource(
+                    id = R.string.currency_item_gain_or_losses_description,
+                    gainsOrLossesSymbol,
+                    gainsOrLosses.toCurrencyFormatWithoutNegatives(),
+                    percentage.roundToTwoDecimalPlaces()
+                ),
+                style = Typography.body2.copy(color = graphicColor)
+            )
+        }
     }
 }
 
@@ -381,5 +383,16 @@ fun MyCoinsSection(
                 }
             )
         }
+    }
+}
+
+@Composable
+fun ProfitSkeleton() {
+    ShimmerBoxView {
+        ShimmerItemView(
+            modifier = Modifier
+                .size(width = 160.dp, height = 32.dp)
+                .padding(vertical = 4.dp, horizontal = 16.dp)
+        )
     }
 }

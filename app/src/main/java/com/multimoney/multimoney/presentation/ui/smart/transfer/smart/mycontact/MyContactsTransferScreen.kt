@@ -224,16 +224,15 @@ fun ContactBottomSheet(viewModel: MyContactsTransferViewModel) {
         if (viewModel.uiState.selectedContact.isNotEmpty()) {
             Column(Modifier.padding(vertical = 16.dp)) {
                 Text(
-                    text = viewModel.uiState.selectedContact.first().titular,
+                    text = viewModel.uiState.selectedContact.first().titular.capitalizedAllWords(),
                     style = Typography.body1.copy(
-                        fontWeight = FontWeight.Normal,
+                        fontWeight = FontWeight.SemiBold,
                         color = colors.text
                     )
                 )
                 Text(
                     text = viewModel.uiState.selectedContact.first().number,
                     style = Typography.body1.copy(
-                        fontWeight = FontWeight.Normal,
                         color = colors.subTitleText
                     )
                 )

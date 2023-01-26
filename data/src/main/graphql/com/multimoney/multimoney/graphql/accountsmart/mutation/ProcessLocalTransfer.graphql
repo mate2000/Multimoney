@@ -1,0 +1,40 @@
+mutation ProcessLocalTransfer(
+    $pkUsuario: Int!,
+    $user: String!,
+    $idBrand: Int!,
+    $originIdentification: String!,
+    $idCurrencyOrigin: String!,
+    $destinationIdentification: String!,
+    $idCurrencyDestination: String!,
+    $destinationAccountNumber: String!,
+    $amount: Decimal!,
+    $reason: String!,
+    $accountToken: Long!,
+    $exchangeRate: Decimal!
+){
+    processLocalTransfer(
+        processLocalTransferInput: {
+            idBrand : $idBrand
+            user : $user
+            pkUsuario : $pkUsuario
+            accountToken : $accountToken
+            originIdentification : $originIdentification
+            idCurrencyOrigin: $idCurrencyOrigin
+            destinationIdentification  : $destinationIdentification
+            idCurrencyDestination : $idCurrencyDestination
+            destinationAccountNumber : $destinationAccountNumber
+            amount : $amount
+            reason : $reason
+            exchangeRate : $exchangeRate
+        }
+    ) {
+        result {
+            authorization
+            currentBalance
+            destinationTitularName
+            originAccountNumber
+        }
+        status
+        message
+    }
+}

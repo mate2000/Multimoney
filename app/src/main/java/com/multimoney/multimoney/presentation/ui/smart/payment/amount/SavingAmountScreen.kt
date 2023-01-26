@@ -204,7 +204,6 @@ private fun SavingAmountBottomSheet(viewModel: SavingAmountViewModel) {
                 viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitleResource ?: R.string.empty
             ),
         toIcon = viewModel.amountUIState.destinyAccountDisplay?.icon,
-        buttonText = stringResource(R.string.button_continue),
-        buttonAction = { viewModel.onAmountUIEvent(OnCallProcessTransfer) }
-    )
+        buttonText = stringResource(R.string.button_continue)
+    ) { viewModel.onAmountUIEvent(OnCallProcessTransfer) }
 }

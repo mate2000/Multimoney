@@ -28,6 +28,7 @@ import com.multimoney.multimoney.presentation.navigation.ORIGIN_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.TRANSFER_TYPE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
+import com.multimoney.multimoney.presentation.util.SEPARATOR
 import com.multimoney.multimoney.presentation.util.ShareHelper
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Dollar
@@ -232,7 +233,8 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                     ),
                     destinyAccountDisplay = DisplayAccount(
                         sheetLabel = R.string.smart_payment_amount_bottom_sheet_to,
-                        sheetTitle = phoneAccount?.titular
+                        sheetTitle = phoneAccount?.titular,
+                        sheetSubtitle = phoneAccount?.number?.plus(SEPARATOR)?.plus(destinyCurrency?.stringName)
                     ),
                     currency = destinyCurrency?.symbol ?: Dollar.symbol,
                     placeholder = if (destinyCurrency == Dollar) {

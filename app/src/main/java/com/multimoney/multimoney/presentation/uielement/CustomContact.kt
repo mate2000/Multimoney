@@ -3,17 +3,21 @@ package com.multimoney.multimoney.presentation.uielement
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -24,6 +28,8 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.theme.GradientGrey1
+import com.multimoney.multimoney.presentation.theme.GradientGrey2
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency5
@@ -53,17 +59,24 @@ fun ContactItem(
     endIcon: Int? = R.drawable.ic_options,
     shouldCenterEndIcon: Boolean = true,
     onEndIconClick: () -> Unit = {},
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    showBorder: Boolean = false
 ) {
     val background: Color
     val titleColor: Color
     val subtitleColor: Color
+    val gradientBorderOneColor: Color
+    val gradientBorderTwoColor: Color
 
     if (isSystemInDarkTheme()) {
+        gradientBorderOneColor = GradientGrey1
+        gradientBorderTwoColor = GradientGrey2
         background = Color.Transparent
         titleColor = WhiteTransparency90
         subtitleColor = WhiteTransparency60
     } else {
+        gradientBorderOneColor = GradientGrey1
+        gradientBorderTwoColor = GradientGrey2
         background = WhiteTransparency5
         titleColor = WhiteTransparency90
         subtitleColor = WhiteTransparency60
@@ -74,8 +87,14 @@ fun ContactItem(
             .clickable { onClick() }
     ) {
         ConstraintLayout(
-            modifier = modifier
-                .background(background)
+            modifier = if (!showBorder) modifier.background(background)
+            else modifier.background(background).border(
+                width = 1.dp,
+                brush = Brush.verticalGradient(
+                    colors = listOf(gradientBorderOneColor, gradientBorderTwoColor)
+                ),
+                shape = RoundedCornerShape(20.dp)
+            ).fillMaxWidth()
         ) {
             val (startIconId, titleId, subTitleId, endIconId) = createRefs()
             Surface(
@@ -84,7 +103,7 @@ fun ContactItem(
                     .size(48.dp)
                     .constrainAs(startIconId) {
                         top.linkTo(parent.top, margin = 17.dp)
-                        start.linkTo(parent.start, margin = 4.dp)
+                        start.linkTo(parent.start, margin = 12.dp)
                         bottom.linkTo(parent.bottom, margin = 17.dp)
                     },
                 border = BorderStroke(1.dp, MultimoneyTheme.colors.dividerWhite30),
@@ -164,6 +183,8 @@ private fun ContactItemPreview() {
     ContactItem(
         title = "Sir Title",
         subtitle = "+54123456",
-        colorSubtitle = Color.Red
+        colorSubtitle = Color.Red,
+        endIcon = null,
+        showBorder = true
     )
 }

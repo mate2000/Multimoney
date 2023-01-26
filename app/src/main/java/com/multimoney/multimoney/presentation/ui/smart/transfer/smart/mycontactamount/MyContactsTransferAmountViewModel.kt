@@ -28,7 +28,7 @@ class MyContactsTransferAmountViewModel @Inject constructor() : BaseSmartEditAmo
             } else {
                 R.string.smart_iban_transfer_smart_account_dolar
             }
-            totalBalanceLabel = amountUIState.currency + smartAccount?.totalBalance.toString()
+            totalBalanceLabel = originCurrency?.symbol + smartAccount?.totalBalance.toString()
             getExchangeOnCompleted(
                 true,
                 abbreviation = originCurrency?.disbursementValue ?: "",

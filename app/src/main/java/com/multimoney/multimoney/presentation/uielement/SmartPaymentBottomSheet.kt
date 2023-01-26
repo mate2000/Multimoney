@@ -60,13 +60,14 @@ fun SmartPaymentBottomSheet(
     amount: String,
     exchangedAmount: String? = null,
     fromLabel: String,
-    fromTitle: String,
-    fromSubtitle: String?,
-    fromIcon: Int?,
+    fromTitle: String? = null,
+    fromSubtitle: String? = null,
+    fromIcon: Int? = null,
     toLabel: String,
-    toTitle: String,
-    toSubtitle: String?,
-    toIcon: Int?,
+    toTitle: String? = null,
+    toSubtitle: String? = null,
+    toIcon: Int? = null,
+    toContactInfo: @Composable (() -> Unit)? = null,
     motive: String? = null,
     buttonText: String,
     buttonAction: () -> Unit
@@ -113,7 +114,7 @@ fun SmartPaymentBottomSheet(
                     .height(78.dp),
                 imageModifier = Modifier.size(48.dp),
                 startIcon = fromIcon,
-                title = fromTitle,
+                title = fromTitle.orEmpty(),
                 subtitle = fromSubtitle.orEmpty(),
                 endIcon = null,
                 enable = false
@@ -136,16 +137,20 @@ fun SmartPaymentBottomSheet(
                     .fillMaxWidth()
             )
 
-            CustomInfoButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(78.dp),
-                startIcon = toIcon,
-                title = toTitle,
-                subtitle = toSubtitle.orEmpty(),
-                endIcon = null,
-                enable = false
-            )
+            if (toContactInfo == null) {
+                CustomInfoButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(78.dp),
+                    startIcon = toIcon,
+                    title = toTitle.orEmpty(),
+                    subtitle = toSubtitle.orEmpty(),
+                    endIcon = null,
+                    enable = false
+                )
+            } else {
+                toContactInfo()
+            }
 
             Spacer(
                 Modifier
@@ -207,7 +212,6 @@ private fun BottomSheetPreview() {
         toSubtitle = "Dólares",
         toIcon = R.drawable.ic_bank_account_dollar,
         motive = "Cena de ayer",
-        buttonText = "continuar",
-        buttonAction = {}
-    )
+        buttonText = "continuar"
+    ) {}
 }

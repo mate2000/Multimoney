@@ -3,9 +3,13 @@ package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -14,15 +18,20 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnAbandonFlow
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnAmountCompleted
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnAmountValueChange
+import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnCallProcessTransfer
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnMotiveChange
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnNavigateHome
+import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnRetryTransfer
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.SmartAmountBody
+import com.multimoney.multimoney.presentation.uielement.AlertResult
+import com.multimoney.multimoney.presentation.uielement.ContactItem
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.LoadingMultiMoney
+import com.multimoney.multimoney.presentation.uielement.SmartPaymentBottomSheet
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
@@ -42,7 +51,14 @@ fun MyContactsTransferAmountScreen(
     if (viewModel.amountUIState.showLoadingScreen) {
         LoadingMultiMoney(string.smart_processing_transaction)
     } else if (viewModel.amountUIState.showErrorScreen) {
-        // Todo add error screen
+        AlertResult(
+            titleResource = string.error_occurred_title,
+            isLeftButtonVisible = false,
+            onRightButtonClick = { viewModel.onAmountUIEvent(OnNavigateHome) },
+            descriptionResource = string.error_try_again,
+            buttonTextResource = string.error_button_try_again,
+            onButtonClick = { viewModel.onAmountUIEvent(OnRetryTransfer) }
+        )
         BackHandler {
             viewModel.onAmountUIEvent(OnNavigateHome)
         }
@@ -51,7 +67,7 @@ fun MyContactsTransferAmountScreen(
         BackHandler { viewModel.onAmountUIEvent(OnNavigateHome) }
     } else {
         MyContactsTransferAmountContent(viewModel)
-        // Todo add bottom sheet
+        MyContactsAmountBottomSheet(viewModel)
         BackHandler { viewModel.onAmountUIEvent(OnNavigateBack) }
     }
 
@@ -111,4 +127,39 @@ fun MyContactsTransferAmountContent(viewModel: MyContactsTransferAmountViewModel
             onMotiveChange = { viewModel.onAmountUIEvent(OnMotiveChange(it)) }
         )
     }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun MyContactsAmountBottomSheet(viewModel: MyContactsTransferAmountViewModel) {
+    SmartPaymentBottomSheet(
+        coroutineScope = rememberCoroutineScope(),
+        modalBottomSheetState = viewModel.amountUIState.bottomSheetState,
+        saveSendTitleResource = string.smart_payment_sheet_send_title,
+        amount = viewModel.getFormattedAmount(),
+        exchangedAmount = if (viewModel.shouldDisplayExchange) viewModel.amountUIState.convertedAmountLabel else null,
+        fromLabel = stringResource(
+            viewModel.amountUIState.originAccountDisplay?.sheetLabel ?: string.empty
+        ),
+        fromIcon = viewModel.amountUIState.originAccountDisplay?.icon,
+        fromTitle = stringResource(
+            viewModel.amountUIState.originAccountDisplay?.sheetTitleResource ?: string.empty
+        ),
+        fromSubtitle = viewModel.amountUIState.originAccountDisplay?.sheetSubtitle,
+        toLabel = stringResource(
+            viewModel.amountUIState.destinyAccountDisplay?.sheetLabel ?: string.empty
+        ),
+        toContactInfo = {
+            ContactItem(
+                modifier = Modifier.fillMaxWidth(),
+                title = viewModel.amountUIState.destinyAccountDisplay?.sheetTitle.orEmpty(),
+                subtitle = viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitle.orEmpty(),
+                colorSubtitle = Color.Red,
+                endIcon = null,
+                showBorder = true
+            )
+        },
+        motive = viewModel.amountUIState.motive,
+        buttonText = stringResource(string.payment_amount_bottom_sheet_send_button)
+    ) { viewModel.onAmountUIEvent(OnCallProcessTransfer) }
 }

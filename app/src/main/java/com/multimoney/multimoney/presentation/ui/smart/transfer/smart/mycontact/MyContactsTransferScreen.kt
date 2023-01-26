@@ -1,12 +1,12 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -56,6 +56,7 @@ import java.util.SortedMap
 
 @Composable
 fun MyContactsTransferScreen(
+    onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: MyContactsTransferViewModel = hiltViewModel()
 ) {
@@ -63,7 +64,7 @@ fun MyContactsTransferScreen(
 
     LaunchedEffect(true) {
         viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnCallQueryRelatedContactsByPhoneUseCase)
-        viewModel.executeNavigation(onPopBackStack = onPopBackStack)
+        viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
     }
 
     Column(
@@ -89,13 +90,12 @@ fun MyContactsTransferScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp, start = 16.dp, end = 16.dp),
-                horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = stringResource(id = string.smart_mycontacts_transfer_title),
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(end = 16.dp),
+                    modifier = Modifier.wrapContentWidth(Alignment.Start),
                     style = Typography.subtitle1.copy(
                         fontWeight = FontWeight.SemiBold,
                         color = colors.bodyTextColor
@@ -103,6 +103,9 @@ fun MyContactsTransferScreen(
                 )
                 CustomButton(
                     text = stringResource(id = string.smart_my_contacts_transfer_accounts_add),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentWidth(Alignment.End),
                     onClick = {
                         viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnAddSACAccountClick)
                     },
@@ -134,7 +137,7 @@ fun MyContactsTransferScreen(
                 viewModel.uiState.relatedContactList.count()
             ),
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(end = 16.dp, start = 16.dp),
+            modifier = Modifier.padding(top = 4.dp, end = 16.dp, start = 16.dp),
             style = Typography.caption.copy(
                 fontWeight = FontWeight.Normal,
                 color = colors.smartCardTrending

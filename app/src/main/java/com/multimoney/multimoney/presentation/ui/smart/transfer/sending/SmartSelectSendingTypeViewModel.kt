@@ -157,7 +157,7 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         }
         )
         navigateTo(
-            "${Screen.MyContactsTransferScreen.baseRoute}/$user/$idBrand/${contacts}/${Screen.SmartSelectSendingTypeScreen.baseRoute}"
+            "${Screen.MyContactsTransferScreen.baseRoute}/$user/$idBrand/${contacts}/${encodeData(selectedSmartAccount)}"
         )
     }
 

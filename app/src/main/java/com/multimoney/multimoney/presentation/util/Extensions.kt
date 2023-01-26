@@ -362,7 +362,7 @@ fun String?.toTwoChar(): String {
             QUESTION_MARK
         }
         contains(WHITE_SPACE_SEPARATOR) -> {
-           trim().replace(TWO_CHARACTER_REGEX.toRegex(), "$1$2").uppercase()
+            trim().replace(TWO_CHARACTER_REGEX.toRegex(), "$1$2").uppercase()
         }
         length > 1 -> {
             substring(0, 2)
@@ -381,7 +381,7 @@ fun getCountryCodeByIdBrand(idBrand: Int): String {
     return when (idBrand) {
         Brand.ElSalvador.id -> PhoneCountryCode.EL_SALVADOR.code
         Brand.CostaRica.id -> PhoneCountryCode.COSTA_RICA.code
-        Brand.ElSalvador.id -> PhoneCountryCode.GUATEMALA.code
+        Brand.Guatemala.id -> PhoneCountryCode.GUATEMALA.code
         else -> ""
     }
 }

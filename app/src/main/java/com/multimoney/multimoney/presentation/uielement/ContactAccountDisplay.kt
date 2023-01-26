@@ -43,14 +43,13 @@ fun ContactAccountDisplay(
             Text(
                 text = stringResource(currency.myAccountSmartName),
                 style = Typography.body1.copy(
-                    fontWeight = FontWeight.Normal,
+                    fontWeight = FontWeight.SemiBold,
                     color = MultimoneyTheme.colors.text
                 )
             )
             Text(
                 text = maskedAccountNumber,
                 style = Typography.body1.copy(
-                    fontWeight = FontWeight.Normal,
                     color = MultimoneyTheme.colors.subTitleText
                 )
             )

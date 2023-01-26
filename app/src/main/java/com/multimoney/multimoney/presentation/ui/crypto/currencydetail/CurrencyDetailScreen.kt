@@ -125,7 +125,7 @@ fun CurrencyDetailContent(
                         modifier = Modifier.padding(start = 12.dp),
                         text = stringResource(
                             id = R.string.currency_detail_title,
-                            uiState.cryptoItem?.asset ?: "",
+                            uiState.cryptoItem?.descriptionCurrency ?: "",
                         ),
                         style = MaterialTheme.typography.h6.copy(
                             fontWeight = FontWeight.SemiBold,

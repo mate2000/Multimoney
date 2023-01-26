@@ -10,9 +10,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Rect
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.accountsmart.MutationProcessSinpeTransferUseCase
 import com.multimoney.domain.interaction.accountsmart.QuerySmartExchangeRateUseCase
 import com.multimoney.domain.model.accountsmart.IbanAccountID
+import com.multimoney.domain.model.accountsmart.PhoneSmart
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
 import com.multimoney.domain.model.util.onFailure
@@ -71,11 +73,12 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
     var userName: String = ""
     var idBrand: Int = 0
 
-    var transferType: Int = 0
+    private var transferType: Int = 0
     var smartAccount: SmartAccountID? = null
     var ibanAccount: IbanAccountID? = null
     var visaAccount: CardVisaDirect? = null
     var smartDestiny: SmartAccountID? = null
+    var phoneAccount: PhoneSmart? = null
 
     /*
     Origin refers to the account where the money's going to be taken from
@@ -213,25 +216,26 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
             }
             SmartTransferTypes.SmartToContact.id -> {
                 smartAccount = savedStateHandle[ORIGIN_ACCOUNT]
-                ibanAccount = savedStateHandle[DESTINY_ACCOUNT]
-                originCurrency = Dollar
-                destinyCurrency = smartAccount?.currencyID?.getCurrencyFromId()
+                phoneAccount = savedStateHandle[DESTINY_ACCOUNT]
+                originCurrency = smartAccount?.currencyID?.getCurrencyFromId()
+                destinyCurrency = phoneAccount?.idCurrency?.getCurrencyFromId()
                 shouldDisplayExchange = originCurrency != destinyCurrency
 
                 amountUIState = amountUIState.copy(
                     originAccountDisplay = DisplayAccount(
-                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_card,
-                        sheetTitle = visaAccount?.detail.orEmpty(),
-                        sheetSubtitle = getMaskedVisaAccount(visaAccount?.cardMaskedNumber.orEmpty()),
-                        icon = R.drawable.ic_visa_card_item
+                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from,
+                        sheetTitleResource = originCurrency?.myAccountSmartSymbol,
+                        sheetSubtitle = if (idBrand == Brand.ElSalvador.id) null else getMaskedAccountIban(
+                            smartAccount?.ibanAccountNumber.orEmpty()
+                        ),
+                        icon = R.drawable.ic_multimoney_smart
                     ),
                     destinyAccountDisplay = DisplayAccount(
                         sheetLabel = R.string.smart_payment_amount_bottom_sheet_to,
-                        sheetTitleResource = R.string.smart_payment_sheet_multimoney_smart,
-                        icon = R.drawable.ic_multimoney_smart
+                        sheetTitle = phoneAccount?.titular
                     ),
-                    currency = originCurrency?.symbol ?: Dollar.symbol,
-                    placeholder = if (originCurrency == Dollar) {
+                    currency = destinyCurrency?.symbol ?: Dollar.symbol,
+                    placeholder = if (destinyCurrency == Dollar) {
                         R.string.smart_dollar_placeholder
                     } else {
                         R.string.smart_colon_placeholder

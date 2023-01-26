@@ -37,7 +37,9 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme.colors
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAddToFavoriteAccountClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnCallQueryRelatedContactsByPhoneUseCase
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnContactClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnQueryValueChange
 import com.multimoney.multimoney.presentation.uielement.ContactAccountDisplay
@@ -57,13 +59,14 @@ import java.util.SortedMap
 @Composable
 fun MyContactsTransferScreen(
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
+    onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: MyContactsTransferViewModel = hiltViewModel()
 ) {
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(true) {
-        viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnCallQueryRelatedContactsByPhoneUseCase)
-        viewModel.executeNavigation(onPopBackStack = onPopBackStack)
+        viewModel.onUIEvent(OnCallQueryRelatedContactsByPhoneUseCase)
+        viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
     }
 
     Column(
@@ -236,12 +239,13 @@ fun ContactBottomSheet(viewModel: MyContactsTransferViewModel) {
                 )
                 viewModel.uiState.selectedContact.forEach {
                     ContactAccountDisplay(
+                        modifier = Modifier.fillMaxWidth(),
                         currency = it.idCurrency.getCurrencyFromId(),
                         maskedAccountNumber = getMaskedAccountIban(
                             it.accountNumber,
                             stringResource(string.payment_account_masked_text)
                         ),
-                        onClick = {} // todo add navigation to amount screen
+                        onClick = { viewModel.onUIEvent(OnAccountClick(it)) }
                     )
                 }
             }

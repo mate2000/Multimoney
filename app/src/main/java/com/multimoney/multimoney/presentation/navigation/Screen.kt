@@ -550,8 +550,20 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object MyContactsTransferScreen : Screen(
-        "my_contacts_transfer_screen/{$USER}/{$ID_BRAND}/{$CONTACTS}/{$PREVIOUS_SCREEN}",
+        "my_contacts_transfer_screen/{$USER}/{$ID_BRAND}/{$CONTACTS}/{$SMART_ACCOUNT}",
         "my_contacts_transfer_screen"
+    )
+
+    /**
+     * Params in order
+     * @param ORIGIN_ACCOUNT: Origin smart account
+     * @param DESTINY_ACCOUNT: Destiny contact phone account
+     * @param TRANSFER_TYPE: Int id indicating transfer type (SmartToContact)
+     * @param ID_BRAND: Int of brand id
+     */
+    object MyContactsTransferAmountScreen : Screen(
+        "my_contacts_amount_screen/{$ORIGIN_ACCOUNT}/{$DESTINY_ACCOUNT}/{$TRANSFER_TYPE}/{$ID_BRAND}",
+        "my_contacts_amount_screen"
     )
 
     object SmartAddSACAccountScreen : Screen(

@@ -25,9 +25,9 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class SmartSelectSendingTypeViewModel @Inject constructor(
@@ -152,12 +152,15 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
 
     private fun onNavigateToMyContacts(numbers: List<String>) {
         showRationale(false)
-        val contacts = encodeData(numbers.map {
-            RelatedContact(it)
-        }
+        val contacts = encodeData(
+            numbers.map {
+                RelatedContact(it)
+            }
         )
         navigateTo(
-            "${Screen.MyContactsTransferScreen.baseRoute}/$user/$idBrand/${contacts}/${Screen.SmartSelectSendingTypeScreen.baseRoute}"
+            "${Screen.MyContactsTransferScreen.baseRoute}/$user/$idBrand/$contacts/${
+            encodeData(selectedSmartAccount)
+            }"
         )
     }
 

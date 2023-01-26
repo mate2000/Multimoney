@@ -79,7 +79,7 @@ fun getMaskedAccountIban(accountNumber: String, maskedText: String = ACCOUNT_MAS
     )
 
 fun getFullMaskedAccountIban(accountBank: String, accountNumber: String, maskedText: String = ACCOUNT_MASK) =
-    accountBank.plus(" | " + getMaskedAccountIban(accountNumber, maskedText))
+    accountBank.plus(SEPARATOR + getMaskedAccountIban(accountNumber, maskedText))
 
 const val ACCOUNT_IBAN_FIRST_DIGITS = 0
 const val ACCOUNT_FIRST_DIGITS = 2
@@ -88,3 +88,4 @@ const val CARD_NUMBER_LAST_DIGITS = 4
 const val TWO_DECIMALS_FORMAT = "%.2f"
 const val ACCOUNT_MASK = "••••"
 const val VISA_MASK = "Visa"
+const val SEPARATOR = " | "

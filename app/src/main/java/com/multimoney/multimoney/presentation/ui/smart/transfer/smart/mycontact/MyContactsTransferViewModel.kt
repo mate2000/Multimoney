@@ -13,6 +13,7 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.accountsmart.QueryRelatedContactsByPhoneUseCase
 import com.multimoney.domain.model.accountsmart.PhoneSmart
 import com.multimoney.domain.model.accountsmart.RelatedContact
+import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -20,11 +21,15 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.CONTACTS
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.Screen.MyContactsTransferAmountScreen
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnContactClick
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import java.util.SortedMap
@@ -45,10 +50,12 @@ class MyContactsTransferViewModel @Inject constructor(
     private var user: String = ""
     var idBrand: Int = 0
     var relatedContacts: List<RelatedContact> = listOf()
+    var smartAccount: SmartAccountID? = null
 
     init {
         user = savedStateHandle[USER] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
+        smartAccount = savedStateHandle[SMART_ACCOUNT]
         relatedContacts =
             savedStateHandle.get<Array<RelatedContact>>(CONTACTS)?.toList() ?: listOf()
     }
@@ -116,8 +123,11 @@ class MyContactsTransferViewModel @Inject constructor(
     }
 
     private fun onAccountClick(account: PhoneSmart) {
-        // todo Add navigation
-        Log.d("contacttransfer", "On Account Click")
+        navigateTo(
+            "${MyContactsTransferAmountScreen.baseRoute}/" +
+                "${encodeData(smartAccount)}/${encodeData(account)}/" +
+                "${SmartTransferTypes.SmartToContact.id}/$idBrand"
+        )
     }
 
     private fun onAddSACAccountClick() {

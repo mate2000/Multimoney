@@ -10,8 +10,8 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
@@ -28,8 +28,7 @@ class MyContactsTransferAmountViewModel @Inject constructor() : BaseSmartEditAmo
             } else {
                 R.string.smart_iban_transfer_smart_account_dolar
             }
-            totalBalanceLabel =
-                amountUIState.currency + smartAccount?.totalBalance.toString()
+            totalBalanceLabel = amountUIState.currency + smartAccount?.totalBalance.toString()
             getExchangeOnCompleted(
                 true,
                 abbreviation = originCurrency?.disbursementValue ?: "",
@@ -42,14 +41,14 @@ class MyContactsTransferAmountViewModel @Inject constructor() : BaseSmartEditAmo
     override fun onProcessTransfer() {
         onCallProcessSinpeTransfer(
             originIdentification = identification,
-            originAccountNumber = smartAccount?.ibanAccountNumber ?: "",
+            originAccountNumber = smartAccount?.ibanAccountNumber.orEmpty(),
             originCustomerName = userName,
             originCurrency = originCurrency?.id.toString(),
-            destinationCustomerName = userName,
-            destinationAccountNumber = smartDestiny?.ibanAccountNumber ?: "",
+            destinationCustomerName = phoneAccount?.titular.orEmpty(),
+            destinationAccountNumber = phoneAccount?.ibanNumber.orEmpty(),
             destinationCurrency = destinyCurrency?.id.toString(),
-            transferType = SmartSinpeTransferType.SEND,
-            destinationIdentification = identification
+            destinationIdentification = phoneAccount?.identification.orEmpty(),
+            transferType = SmartSinpeTransferType.SEND
         )
     }
 

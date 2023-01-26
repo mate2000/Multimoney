@@ -26,12 +26,13 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 
 @Composable
 fun ContactAccountDisplay(
+    modifier: Modifier,
     currency: CurrencyType,
     maskedAccountNumber: String,
     onClick: () -> Unit
 ) {
     Row(
-        Modifier.padding(top = 24.dp)
+        modifier.padding(top = 24.dp)
             .clickable { onClick() }
     ) {
         Icon(

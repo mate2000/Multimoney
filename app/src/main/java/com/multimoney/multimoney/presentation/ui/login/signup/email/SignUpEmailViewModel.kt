@@ -113,7 +113,7 @@ class SignUpEmailViewModel @Inject constructor(
         previousUserEmail = userData?.email ?: ""
         onUseDataValueChange()
         onLoadingValueChange()
-        if (userData?.status == VALID_EMAIL) {
+        if (userData?.status == VALID_EMAIL || userData?.status == ANOTHER_DEVICE_ALREADY_REGISTERED) {
             val step = SignUpStep.Search.getIdByName(userData.currentStep)
             if (step == currentStep && step < STEP_TO_SHOW_SPLASH) {
                 isUserStatusIncomplete = true
@@ -266,6 +266,7 @@ class SignUpEmailViewModel @Inject constructor(
     }
 
     companion object {
+        const val ANOTHER_DEVICE_ALREADY_REGISTERED = 3102
         private const val VALID_EMAIL = 0
         private const val STEP_TO_SHOW_SPLASH = 3
     }

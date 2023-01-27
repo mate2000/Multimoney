@@ -54,10 +54,10 @@ import com.multimoney.multimoney.presentation.util.validCarne
 import com.multimoney.multimoney.presentation.util.validDui
 import com.multimoney.multimoney.presentation.util.validId
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class SignUpPersonalDataViewModel @Inject constructor(
@@ -495,12 +495,12 @@ class SignUpPersonalDataViewModel @Inject constructor(
         onCallMutationUpdateUserRegisterUseCase: () -> Unit,
         onLoadingValueChange: (isLoading: Boolean) -> Unit
     ) {
-        if (userData?.isNewUser == false) {
-            onLoadingValueChange(false)
-            navigateToRegisteredUser(userData)
-        } else {
+        if (userData?.isNewUser == true || userData?.status == ANOTHER_DEVICE_ALREADY_REGISTERED) {
             onUseDataValueChange()
             onCallMutationUpdateUserRegisterUseCase()
+        } else {
+            onLoadingValueChange(false)
+            navigateToRegisteredUser(userData)
         }
     }
 
@@ -549,8 +549,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
         )
     }
 
-    private fun navigateToRegisteredUser(userData: UserData) {
-        if (previousEmail == userData.email) {
+    private fun navigateToRegisteredUser(userData: UserData?) {
+        if (previousEmail == userData?.email) {
             navigateTo(
                 route = Screen.RegisteredUserOtpScreen.baseRoute
                     .plus(
@@ -746,5 +746,6 @@ class SignUpPersonalDataViewModel @Inject constructor(
         const val FORMAT_VALUE = '0'
         const val SINGLE_DOCUMENT = 1
         const val STEP_TO_MOVE = 4
+        const val ANOTHER_DEVICE_ALREADY_REGISTERED = 3102
     }
 }

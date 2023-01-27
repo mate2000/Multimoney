@@ -123,7 +123,7 @@ fun SignUpPersonalDataScreen(
         }
         viewModel.onUserDataValidationEvent.collect { result ->
             result.onSuccess { userData ->
-                if (userData?.status == 3102) {
+                if (userData?.status == SignUpPersonalDataViewModel.ANOTHER_DEVICE_ALREADY_REGISTERED) {
                     viewModel.onUIEvent(
                         SignUpPersonalDataViewModel.UIEvent.OnShowAnotherDeviceAlreadyRegisteredDialog {
                             viewModel.onSuccessValidation(sharedViewModel, userData)

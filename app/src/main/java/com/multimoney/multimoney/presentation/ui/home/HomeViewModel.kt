@@ -794,6 +794,12 @@ class HomeViewModel @Inject constructor(
         )
     }
 
+    private fun onMyProductClick(expand: Boolean) {
+        uiState = uiState.copy(forceIsExpanded = expand)
+        /*if (expand)
+            onSetHomeState(HomeState.EXPANDED)*/
+    }
+
     data class UIState(
         // Fields
         var isLoading: Boolean = false,
@@ -851,7 +857,7 @@ class HomeViewModel @Inject constructor(
             is OnEditAutomaticPayment -> emitBaseEvent(OnEditAutomaticPaymentEvent)
             is OnDeleteAutomaticPayment -> emitBaseEvent(OnDeleteAutomaticPaymentEvent)
             is OnCallMutationDeactivateClientAutomaticDebit -> onCallGetClientAutomaticDebitUseCase()
-            is UIEvent.OnMyProductClick -> uiState = uiState.copy(forceIsExpanded = uiEvent.expand)
+            is UIEvent.OnMyProductClick -> onMyProductClick(uiEvent.expand)
             is UIEvent.OnMyProductPageChange -> uiState = uiState.copy(productScreenPagerState = uiEvent.page)
             is UIEvent.OnLoadingValueChanged -> uiState = uiState.copy(isLoading = uiEvent.isLoading)
             is OnShowCardIssuanceError -> uiState = uiState.copy(showCardIssuanceError = true)

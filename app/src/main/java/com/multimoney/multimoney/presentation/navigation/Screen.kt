@@ -550,13 +550,18 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object MyContactsTransferScreen : Screen(
-        "my_contacts_transfer_screen/{$USER}/{$ID_BRAND}/{$CONTACTS}/{$PREVIOUS_SCREEN}",
+        "my_contacts_transfer_screen/{$USER}/{$ID_BRAND}/{$CONTACTS}/{$SMART_ACCOUNT}",
         "my_contacts_transfer_screen"
     )
 
     object SmartAddSACAccountScreen : Screen(
-        "smart_add_sac_account_screen/{$ID_BRAND}/{$USER}/{$SMART_ACCOUNT}",
+        "smart_add_sac_account_screen/{$ID_BRAND}/{$USER}/{$SMART_ACCOUNT}/{$TRANSFER_TYPE}",
         "smart_add_sac_account_screen"
+    )
+
+    object SmartOtherBanksAccountScreen : Screen(
+        "smart_add_other_bank_account_screen/{$ID_BRAND}/{$USER}/{$SMART_ACCOUNT}/{$TRANSFER_TYPE}",
+        "smart_add_other_bank_account_screen"
     )
 
     // TestNavGraph Screens

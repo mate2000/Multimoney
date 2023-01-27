@@ -3,7 +3,6 @@ package com.multimoney.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.apollographql.apollo3.api.Optional
 import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.smartaccount.mapToDomain
 import com.multimoney.data.mapper.smartaccount.mapToDomainModel
@@ -503,7 +502,7 @@ class SmartAccountRepositoryImpl @Inject constructor(
         idBrand: Int,
         user: String,
         idFavorite: Long?,
-        idAccountType: Int,
+        idAccountType: Int?,
         idCustomer: Long,
         accountNumber: String,
         accountName: String?,

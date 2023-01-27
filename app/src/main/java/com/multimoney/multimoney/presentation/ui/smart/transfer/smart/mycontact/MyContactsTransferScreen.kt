@@ -38,10 +38,12 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme.colors
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAddSACAccountClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAddToFavoriteAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnCallQueryRelatedContactsByPhoneUseCase
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnQueryValueChange
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnSelectContactAsFavorite
 import com.multimoney.multimoney.presentation.uielement.ContactItem
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
@@ -168,19 +170,16 @@ fun MyContactsTransferScreen(
 
         viewModel.apply {
             ContactList(
-                uiState,
-                { onUIEvent(MyContactsTransferViewModel.UIEvent.OnClickBottomSheet) },
-                viewModel
+                uiState
             ) {
-                onUIEvent(MyContactsTransferViewModel.UIEvent.OnAddToFavoriteAccountClick(it))
+                onUIEvent(OnAddToFavoriteAccountClick(it))
             }
         }
     }
     SelectFavoriteContactBottomSheet(
         coroutineScope = rememberCoroutineScope(),
         modalBottomSheetState = viewModel.uiState.bottomSheetState,
-        onSelectClick = { },
-        onBackClick = {}
+        onSelectClick = { viewModel.onUIEvent(OnSelectContactAsFavorite) }
     )
     LoadingIndicator(viewModel.uiState.isLoading)
 }
@@ -189,8 +188,6 @@ fun MyContactsTransferScreen(
 @Composable
 fun ContactList(
     uiState: MyContactsTransferViewModel.UIState = MyContactsTransferViewModel.UIState(),
-    onBottomSheetClick: () -> Unit = {},
-    viewModel: MyContactsTransferViewModel = hiltViewModel(),
     onEndIconClick: (PhoneSmart) -> Unit = {}
 ) {
     LazyColumn(modifier = Modifier.padding(top = 20.dp, start = 16.dp, end = 16.dp)) {
@@ -208,8 +205,7 @@ fun ContactList(
                         .fillMaxWidth(),
                     endIcon = R.drawable.ic_options,
                     onEndIconClick = {
-                        //onBottomSheetClick.invoke()
-                        viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnClickBottomSheet)
+                        onEndIconClick.invoke(contact)
                     },
                     colorSubtitle = colorSubtitle
                 )

@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
@@ -18,7 +17,6 @@ fun SelectFavoriteContactBottomSheet(
     coroutineScope: CoroutineScope,
     modalBottomSheetState: ModalBottomSheetState,
     onSelectClick: () -> Unit,
-    onBackClick: () -> Unit,
 ) {
     CustomModalBottomSheet(
         title = R.string.common_options,
@@ -38,6 +36,5 @@ fun SelectFavoriteContactBottomSheet(
                 }
             )
         }
-        BackHandler { onBackClick() }
     }
 }

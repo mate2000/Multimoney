@@ -231,7 +231,7 @@ interface SmartAccountRepository {
         idBrand: Int,
         user: String,
         idFavorite: Long?,
-        idAccountType: Int,
+        idAccountType: Int?,
         idCustomer: Long,
         accountNumber: String,
         accountName: String?,

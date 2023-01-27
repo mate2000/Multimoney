@@ -69,7 +69,9 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartPaymentMethodScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNoVoConfig
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSetUserData
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsBackPressed
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpandedByClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnVisaCardExpiredDialog
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditContent
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditCtaFooterExpanded
@@ -203,19 +205,11 @@ fun ProductScreen(
 
     LaunchedEffect(key1 = contentPagerState.currentPage) {
         headerExpandedPagerState.animateScrollToPage(contentPagerState.currentPage)
-    }
-
-    LaunchedEffect(key1 = contentPagerState.currentPage) {
         footerPagerState.animateScrollToPage(contentPagerState.currentPage)
-    }
-    LaunchedEffect(key1 = contentPagerState.currentPage) {
         footerExpandedPagerState.animateScrollToPage(contentPagerState.currentPage)
-    }
-    LaunchedEffect(key1 = contentPagerState.currentPage) {
         ctaFooterExpandedPagerState.animateScrollToPage(contentPagerState.currentPage)
     }
 
-    // todo we have to send the pages to the view pager when the back return
     if (sharedViewModel.uiState.isLoading && viewModel.uiState.isExpanded.not()) {
         ProductScreenSkeleton()
     } else {
@@ -273,7 +267,16 @@ fun ProductScreen(
             updateHomeState = { homeState ->
                 sharedViewModel.onUIEvent(UIEvent.OnSetHomeState(homeState))
             },
-            isSwipeEnabled = true // viewModel.uiState.isSwipeEnabled
+            isSwipeEnabled = viewModel.uiState.isSwipeEnabled,
+            isBackPressed = viewModel.uiState.isBackPressed,
+            updateIsBackPressed = { isBackPressed ->
+                viewModel.onUIEvent(OnUpdateIsBackPressed(isBackPressed))
+            },
+            isExpandedByClick = viewModel.uiState.isExpandedByClick,
+            updateIsExpandedByClick = { isExpandedByClick ->
+                viewModel.onUIEvent(OnUpdateIsExpandedByClick(isExpandedByClick))
+            }
+
         )
     }
 

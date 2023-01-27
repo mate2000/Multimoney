@@ -2,7 +2,6 @@ package com.multimoney.multimoney.presentation.uielement
 
 import android.annotation.SuppressLint
 import android.os.CountDownTimer
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation.Vertical
@@ -26,10 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
 import androidx.constraintlayout.compose.MotionScene
@@ -37,11 +33,11 @@ import androidx.constraintlayout.compose.layoutId
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.home.HomeState
+import com.multimoney.multimoney.presentation.ui.home.HomeState.COLLAPSED
 import com.multimoney.multimoney.presentation.ui.home.HomeState.EXPANDED
-import kotlinx.coroutines.delay
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-@OptIn(ExperimentalMotionApi::class, ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMotionApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun MotionLayoutMM(
     header: @Composable () -> Unit,
@@ -56,95 +52,84 @@ fun MotionLayoutMM(
     ctaFooterExpanded: @Composable () -> Unit = {},
     homeState: HomeState,
     updateHomeState: (HomeState) -> Unit = {},
-    isSwipeEnabled: Boolean = false
+    isSwipeEnabled: Boolean = false,
+    isBackPressed: Boolean = false,
+    updateIsBackPressed: (Boolean) -> Unit = {},
+    isExpandedByClick: Boolean = false,
+    updateIsExpandedByClick: (Boolean) -> Unit = {}
 ) {
     val context = LocalContext.current
-    val swipeAbleState = rememberSwipeableState(initialValue = HomeState.UNEXPANDED)
-    val anchors = mapOf(0f to HomeState.UNEXPANDED, TOTAL_PERCENTAGE to HomeState.EXPANDED)
-    var isBackPressed by remember { mutableStateOf(false) }
+    val swipeAbleState = rememberSwipeableState(initialValue = COLLAPSED)
+    val anchors = mapOf(0f to COLLAPSED, TOTAL_PERCENTAGE to EXPANDED)
     var isAnimationRunning by remember { mutableStateOf(false) }
-//    var animationRemainingTime by remember { mutableStateOf(5000.milliseconds) }
-    var animationProgress by remember { mutableStateOf(0f) }
+    var animationProgress by remember {
+        mutableStateOf(
+            if (isExpanded) {
+                ANIMATION_EXPANDED
+            } else {
+                ANIMATION_COLLAPSED
+            }
+        )
+    }
 
     LaunchedEffect(key1 = swipeAbleState.offset.value) {
         if (isAnimationRunning.not()) {
             animationProgress = swipeAbleState.offset.value / TOTAL_PERCENTAGE
         }
-        if (swipeAbleState.targetValue == HomeState.EXPANDED) {
-            updateIsExpanded(true)
-//            updateForceExpanded(true)
-        } else if (swipeAbleState.currentValue == HomeState.UNEXPANDED && isExpanded) {
-            updateIsExpanded(false)
-            isAnimationRunning = true
-//            swipeAbleState.animateTo(HomeState.UNEXPANDED)
-            animationProgress = 1f
-            //val timer = object : CountDownTimer(1500, 90) {
-            val timer = object : CountDownTimer(1000, 60) {
-                override fun onTick(millisMainUntilFinished: Long) {
-//                    animationRemainingTime = animationRemainingTime.minus(1.milliseconds)
-                    animationProgress = animationProgress.minus(0.06f)
-                }
-
-                override fun onFinish() {
-                    animationProgress = 0f
-                    isAnimationRunning = false
-                }
-            }
-            timer.start()
-
-//            animationProgress = 1f
-//            animationRemainingTime = 5000.milliseconds
-//            tickerFlow(
-//                period = 1.milliseconds,
-//                initialDelay = 1.milliseconds,
-//                duration = animationRemainingTime
-//            )
-//                .takeWhile { isAnimationRunning }
-//                .map {
-//                    LocalDateTime.now()
-//                }
-//                .distinctUntilChanged { old, new ->
-//                    old.nano == new.nano
-//                }
-//                .onEach {
-//                    if (animationRemainingTime.inWholeMilliseconds > 0 && isAnimationRunning) {
-//                        animationRemainingTime = animationRemainingTime.minus(1.milliseconds)
-//                        animationProgress = animationProgress.minus(0.0002f)
-//                    } else if (isAnimationRunning) {
-//                        isAnimationRunning = false
-//                    }
-//                }
-//                .launchIn(this)
-        }
     }
 
-//    LaunchedEffect(key1 = swipeAbleState.offset.value) {
-// //        if (isAnimationRunning.not()) {
-// //            animationProgress = swipeAbleState.offset.value / TOTAL_PERCENTAGE
-// //        }
-//        animationProgress = swipeAbleState.offset.value / TOTAL_PERCENTAGE
-// //        updateIsExpanded(swipeAbleState.offset.value == TOTAL_PERCENTAGE)
-// //        updateForceExpanded(swipeAbleState.offset.value == TOTAL_PERCENTAGE)
-//    }
+    var timer: CountDownTimer?
+    if (isExpandedByClick) {
+        updateIsExpandedByClick(false)
+        animationProgress = ANIMATION_COLLAPSED
+        isAnimationRunning = true
+        timer = object : CountDownTimer(TIMER_FUTURE, TIMER_COUNT_DOWN) {
+            override fun onTick(millisMainUntilFinished: Long) {
+                animationProgress = animationProgress.plus(ANIMATION_FRACTION)
+            }
 
-    LaunchedEffect(key1 = isBackPressed) {
-        if ((isExpanded && isBackPressed) || (forceExpanded && isBackPressed)) {
-            isBackPressed = false
-            swipeAbleState.animateTo(HomeState.UNEXPANDED)
-            updateIsExpanded(false)
-            if (forceExpanded) {
-                updateForceExpanded(false)
+            override fun onFinish() {
+                if (isAnimationRunning) {
+                    animationProgress = ANIMATION_EXPANDED
+                    isAnimationRunning = false
+                    updateIsExpanded(true)
+                    timer = null
+                }
             }
         }
+        timer?.start()
+    }
+
+    if ((isExpanded && isBackPressed) || (forceExpanded && isBackPressed)) {
+        updateIsExpanded(false)
+        if (forceExpanded) {
+            updateForceExpanded(false)
+        }
+        isAnimationRunning = true
+        timer = object : CountDownTimer(TIMER_FUTURE, TIMER_COUNT_DOWN) {
+            override fun onTick(millisMainUntilFinished: Long) {
+                animationProgress = animationProgress.minus(ANIMATION_FRACTION)
+            }
+
+            override fun onFinish() {
+                if (isAnimationRunning) {
+                    animationProgress = ANIMATION_COLLAPSED
+                    updateIsBackPressed(false)
+                    isAnimationRunning = false
+                    timer = null
+                }
+            }
+        }
+        timer?.start()
     }
 
     LaunchedEffect(key1 = true) {
-        if (homeState == HomeState.UNEXPANDED) {
+        if (homeState == COLLAPSED) {
             updateHomeState(HomeState.OLD_STATE)
-            isBackPressed = true
+            updateIsBackPressed(true)
         }
     }
-    if (swipeAbleState.currentValue == HomeState.EXPANDED) {
+    if (animationProgress == ANIMATION_EXPANDED && isExpanded) {
         Scaffold(
             topBar = {
                 Box(
@@ -153,7 +138,7 @@ fun MotionLayoutMM(
                         .fillMaxWidth()
                 ) {
                     headerExpanded {
-                        isBackPressed = true
+                        updateIsBackPressed(true)
                     }
                 }
             },
@@ -169,7 +154,6 @@ fun MotionLayoutMM(
             content = {
                 LazyColumn(
                     modifier = Modifier
-                        .nestedScroll(rememberNestedScrollInteropConnection())
                         .background(MultimoneyTheme.colors.background)
                         .padding(it)
                         .fillMaxSize(),
@@ -177,7 +161,7 @@ fun MotionLayoutMM(
                         item {
                             content(
                                 modifier = Modifier
-                                    .background(Color.White)
+                                    .background(MultimoneyTheme.colors.background)
                                     .fillMaxWidth()
                                     .wrapContentHeight()
                                     .swipeable(
@@ -187,13 +171,14 @@ fun MotionLayoutMM(
                                         anchors = anchors,
                                         thresholds = { _, _ ->
                                             // The closer to 1 you have to scroll more for it to autocomplete the animation
-                                            FractionalThreshold(0.8f)
+                                            FractionalThreshold(EXPANDED_FRACTIONAL_THRESHOLD)
                                         },
                                         orientation = Vertical
                                     )
                             )
                             Box(
                                 modifier = Modifier
+                                    .background(MultimoneyTheme.colors.background)
                                     .fillMaxSize()
                             ) {
                                 footerExpanded()
@@ -204,6 +189,11 @@ fun MotionLayoutMM(
             }
         )
     } else {
+        if (animationProgress != ANIMATION_EXPANDED && isExpanded && swipeAbleState.isAnimationRunning.not()) {
+            updateIsBackPressed(true)
+        } else if (animationProgress == ANIMATION_EXPANDED && isExpanded.not()) {
+            updateIsExpanded(true)
+        }
         val motionSceneContent = remember {
             context.resources
                 .openRawResource(R.raw.motion_scene)
@@ -212,8 +202,7 @@ fun MotionLayoutMM(
         }
         MotionLayout(
             motionScene = MotionScene(motionSceneContent),
-            // progress = if (forceExpanded || homeState == EXPANDED) 1f else if (isExpanded.not()) (swipeAbleState.offset.value / TOTAL_PERCENTAGE) else 0f,
-            progress = if (forceExpanded || homeState == EXPANDED) 1f else animationProgress, // if (isAnimationRunning) animationProgress else (swipeAbleState.offset.value / TOTAL_PERCENTAGE),
+            progress = if (forceExpanded || homeState == EXPANDED) ANIMATION_EXPANDED else animationProgress,
             modifier = Modifier
                 .fillMaxSize()
                 .background(MultimoneyTheme.colors.background)
@@ -221,7 +210,6 @@ fun MotionLayoutMM(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-//                    .background(MultimoneyTheme.colors.background)
                     .layoutId("header_cards"),
                 contentAlignment = Alignment.Center
             ) {
@@ -230,11 +218,10 @@ fun MotionLayoutMM(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-//                    .background(MultimoneyTheme.colors.background)
                     .layoutId("header_title")
             ) {
                 headerExpanded {
-                    isBackPressed = true
+                    updateIsBackPressed(true)
                 }
             }
             content(
@@ -242,10 +229,9 @@ fun MotionLayoutMM(
                     .layoutId("main_card")
                     .fillMaxWidth()
                     .wrapContentHeight()
-//                    .background(MultimoneyTheme.colors.background)
                     .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {
                         if (isSwipeEnabled) {
-                            updateForceExpanded(true)
+                            updateIsExpandedByClick(true)
                         }
                     }
                     .swipeable(
@@ -255,7 +241,7 @@ fun MotionLayoutMM(
                         anchors = anchors,
                         thresholds = { _, _ ->
                             // The closer to 1 you have to scroll more for it to autocomplete the animation
-                            FractionalThreshold(FRACTIONAL_THRESHOLD)
+                            FractionalThreshold(COLLAPSED_FRACTIONAL_THRESHOLD)
                         },
                         orientation = Vertical
                     )
@@ -264,7 +250,6 @@ fun MotionLayoutMM(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-//                    .background(MultimoneyTheme.colors.background)
                     .layoutId("bottom_start"),
                 contentAlignment = Alignment.TopCenter
             ) {
@@ -273,7 +258,6 @@ fun MotionLayoutMM(
             Box(
                 modifier = Modifier
                     .layoutId("bottom_end")
-//                    .background(MultimoneyTheme.colors.background)
                     .fillMaxWidth()
             ) {
                 footerExpanded()
@@ -281,7 +265,7 @@ fun MotionLayoutMM(
             Box(
                 modifier = Modifier
                     .layoutId("cta_bottom_end")
-//                    .background(MultimoneyTheme.colors.background)
+                    .background(MultimoneyTheme.colors.background)
                     .fillMaxWidth()
             ) {
                 ctaFooterExpanded()
@@ -290,7 +274,11 @@ fun MotionLayoutMM(
     }
 }
 
-const val FRACTIONAL_THRESHOLD = 0.8f
-const val BEGINNING_ANIMATION = 0
-const val TOTAL_PERCENTAGE = 100F
-const val FOOTER_EXPANDED_HEIGHT_TAG = "'footerExpandedHeight'"
+const val TIMER_FUTURE = 1000L
+const val TIMER_COUNT_DOWN = 60L
+const val ANIMATION_FRACTION = 0.06f
+const val ANIMATION_EXPANDED = 1f
+const val ANIMATION_COLLAPSED = 0f
+const val COLLAPSED_FRACTIONAL_THRESHOLD = 0.8f
+const val EXPANDED_FRACTIONAL_THRESHOLD = 0.1f
+const val TOTAL_PERCENTAGE = 100f

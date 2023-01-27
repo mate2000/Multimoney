@@ -80,11 +80,12 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnQuickActionClicked
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnShareIbanAccount
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsBackPressed
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpandedByClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnVisaCardExpiredDialog
 import com.multimoney.multimoney.presentation.util.FilterDate
-import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.NfcHelper
 import com.multimoney.multimoney.presentation.util.PAGE_SIZE
 import com.multimoney.multimoney.presentation.util.ShareHelper
@@ -962,7 +963,9 @@ class ProductViewModel @Inject constructor(
         val phoneNumber: String? = null,
         val smartContent: Pair<Boolean?, String> = Pair(null, ""),
         val cryptoCurrencyMovements: Flow<PagingData<CryptoCurrencyMovement>> = flowOf(),
-        val isSwipeEnabled: Boolean = false
+        val isSwipeEnabled: Boolean = false,
+        var isBackPressed: Boolean = false,
+        var isExpandedByClick: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -1048,11 +1051,15 @@ class ProductViewModel @Inject constructor(
                 idBrand = uiEvent.idBrand,
                 balance = uiEvent.balance
             )
+            is OnUpdateIsBackPressed -> uiState = uiState.copy(isBackPressed = uiEvent.isBackPressed)
+            is OnUpdateIsExpandedByClick -> uiState = uiState.copy(isExpandedByClick = uiEvent.isExpandedByClick)
         }
     }
 
     sealed class UIEvent {
         data class OnIsSwipeEnabledValueChange(val isSwipeEnabled: Boolean) : UIEvent()
+        data class OnUpdateIsBackPressed(val isBackPressed: Boolean) : UIEvent()
+        data class OnUpdateIsExpandedByClick(val isExpandedByClick: Boolean) : UIEvent()
         data class OnUpdateIsExpanded(val isExpanded: Boolean) : UIEvent()
         data class OnBalanceSuccess(val balance: Balance) : UIEvent()
         data class OnValidateUserSuccess(val userStatus: ValidateUserStatus) : UIEvent()

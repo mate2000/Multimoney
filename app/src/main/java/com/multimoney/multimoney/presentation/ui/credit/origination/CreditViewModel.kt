@@ -132,7 +132,7 @@ class CreditViewModel @Inject constructor(
     }
 
     private fun onNavigateToHome() {
-        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
     }
 
     private fun onContinueClick(focusManager: FocusManager) {
@@ -194,7 +194,7 @@ class CreditViewModel @Inject constructor(
                 isBottomSheetVisible = false
             )
         } else {
-            navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
+            navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
         }
     }
 

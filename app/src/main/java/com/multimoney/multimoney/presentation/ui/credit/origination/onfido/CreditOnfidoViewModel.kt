@@ -287,7 +287,7 @@ class CreditOnfidoViewModel @Inject constructor(
     }
 
     private fun onNavigateToHome() {
-        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
     }
 
     fun onUIEvent(event: UIEvent) {

@@ -256,7 +256,7 @@ class SignDocumentProcessViewModel @Inject constructor(
 
     private fun onNavigateToHome() {
         emitBaseEvent(SimulateUserInteraction)
-        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
     }
 
     data class UIState(

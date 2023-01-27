@@ -22,12 +22,11 @@ import com.multimoney.multimoney.presentation.navigation.TRANSFER_TYPE
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.util.MAX_SMART_ACCOUNT_DIGITS
 import com.multimoney.multimoney.presentation.util.MIN_SMART_ACCOUNT_DIGITS
-import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class SmartAddAccountViewModel @Inject constructor(
@@ -113,6 +112,10 @@ class SmartAddAccountViewModel @Inject constructor(
         validateForm()
     }
 
+    private fun onAddFavoriteValueChange(isChecked: Boolean) {
+        uiState = uiState.copy(isFavorite = isChecked)
+    }
+
     private fun onFailure(error: HttpError) {
         uiState = uiState.copy(
             isLoading = false,
@@ -150,8 +153,9 @@ class SmartAddAccountViewModel @Inject constructor(
                 accountName = "${uiState.names} ${uiState.lastNames}",
                 email = uiState.email,
                 active = true,
+                isFavorite = uiState.isFavorite,
                 phoneNumber = null,
-                idCurrencyAccount = CurrencyType.Dollar.id
+                idCurrencyAccount = null
             ).collectLatest { result ->
                 result.onLoading { uiState = uiState.copy(isLoading = true) }
                 result.onSuccess { account ->
@@ -188,7 +192,8 @@ class SmartAddAccountViewModel @Inject constructor(
         val emailError: Pair<Boolean, Int> = Pair(false, R.string.empty),
         val enableButton: Boolean = false,
         val names: String = "",
-        val lastNames: String = ""
+        val lastNames: String = "",
+        val isFavorite: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -203,6 +208,7 @@ class SmartAddAccountViewModel @Inject constructor(
             is UIEvent.OnValidateAccountNumber -> isAccountNumberValid()
             is UIEvent.OnNamesChanged -> onNamesChanged(uiEvent.names)
             is UIEvent.OnLastNamesChanged -> onLastNamesChanged(uiEvent.lastNames)
+            is UIEvent.OnAddFavoriteValueChange -> onAddFavoriteValueChange(uiEvent.isChecked)
         }
     }
 
@@ -217,5 +223,6 @@ class SmartAddAccountViewModel @Inject constructor(
         data class OnNamesChanged(val names: String) : UIEvent()
         data class OnLastNamesChanged(val lastNames: String) : UIEvent()
         data class OnEmailChanged(val email: String) : UIEvent()
+        data class OnAddFavoriteValueChange(val isChecked: Boolean) : UIEvent()
     }
 }

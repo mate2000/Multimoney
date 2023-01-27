@@ -21,8 +21,8 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class MyContactsTransferViewModel @Inject constructor(
@@ -57,9 +57,11 @@ class MyContactsTransferViewModel @Inject constructor(
             result.onSuccess { accountList ->
                 uiState = uiState.copy(isLoading = false)
                 accountList?.phones?.let { phoneSmarts ->
-                    uiState = uiState.copy(relatedContactList = phoneSmarts.distinctBy { phoneSmart ->
-                        phoneSmart.identification
-                    }.sortedBy { it.titular })
+                    uiState = uiState.copy(
+                        relatedContactList = phoneSmarts.distinctBy { phoneSmart ->
+                            phoneSmart?.identification
+                        }.sortedBy { it?.titular }
+                    )
                 }
             }
             result.onFailure {
@@ -108,9 +110,9 @@ class MyContactsTransferViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is  UIEvent.OnAddToFavoriteAccountClick -> navigateToAddToFavoriteAccount(uiEvent.contactToFavorite)
+            is UIEvent.OnAddToFavoriteAccountClick -> navigateToAddToFavoriteAccount(uiEvent.contactToFavorite)
             is UIEvent.OnNavigateBack -> onNavigateBack()
-               UIEvent.OnAddSACAccountClick -> onAddSACAccountClick()
+            UIEvent.OnAddSACAccountClick -> onAddSACAccountClick()
             is UIEvent.OnQueryValueChange -> onQueryValueChange(uiEvent.value)
             is UIEvent.OnNavigateToHome -> onNavigateToHome()
             UIEvent.OnCallQueryRelatedContactsByPhoneUseCase -> callQueryRelatedContactsByPhoneUseCaseImp()

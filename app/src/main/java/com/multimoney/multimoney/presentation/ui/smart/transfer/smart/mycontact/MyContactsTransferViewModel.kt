@@ -27,7 +27,13 @@ import com.multimoney.multimoney.presentation.navigation.Screen.MyContactsTransf
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAccountClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAddSACAccountClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAddToFavoriteAccountClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnCallQueryRelatedContactsByPhoneUseCase
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnContactClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnNavigateToHome
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnQueryValueChange
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -153,12 +159,12 @@ class MyContactsTransferViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is UIEvent.OnAddToFavoriteAccountClick -> navigateToAddToFavoriteAccount(uiEvent.contactToFavorite)
-            is UIEvent.OnNavigateBack -> onNavigateBack()
-            UIEvent.OnAddSACAccountClick -> onAddSACAccountClick()
-            is UIEvent.OnQueryValueChange -> onQueryValueChange(uiEvent.value)
-            is UIEvent.OnNavigateToHome -> onNavigateToHome()
-            UIEvent.OnCallQueryRelatedContactsByPhoneUseCase -> callQueryRelatedContactsByPhoneUseCaseImp()
+            is OnAddToFavoriteAccountClick -> navigateToAddToFavoriteAccount(uiEvent.contactToFavorite)
+            is OnNavigateBack -> onNavigateBack()
+            is OnAddSACAccountClick -> onAddSACAccountClick()
+            is OnQueryValueChange -> onQueryValueChange(uiEvent.value)
+            is OnNavigateToHome -> onNavigateToHome()
+            is OnCallQueryRelatedContactsByPhoneUseCase -> callQueryRelatedContactsByPhoneUseCaseImp()
             is OnContactClick -> onContactClick(uiEvent.contact)
             is OnAccountClick -> onAccountClick(uiEvent.account)
         }

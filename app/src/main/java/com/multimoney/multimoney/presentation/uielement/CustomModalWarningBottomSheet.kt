@@ -4,13 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
@@ -25,6 +19,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.GrayScale600
 import com.multimoney.multimoney.presentation.theme.GrayScale700
@@ -34,24 +30,31 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CustomModalBottomSheet(
-    title: Int,
+fun CustomModalWarningBottomSheet(
+    titleResource: Int = R.string.empty,
+    titleText: String = "",
+    descriptionResource: Int = R.string.empty,
+    descriptionText: String = "",
+    buttonTextResource: Int = R.string.empty,
+    buttonText: String = "",
     closeIcon: Int,
     closeAction: () -> Unit = {},
+    titleIsVisible: Boolean = true,
+    descriptionIsVisible: Boolean = true,
+    buttonIsVisible: Boolean = true,
     closeIconVisible: Boolean = true,
     shape: Shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
     modalBottomSheetState: ModalBottomSheetState,
-    coroutineScope: CoroutineScope,
-    content: @Composable () -> Unit
+    coroutineScope: CoroutineScope
 ) {
     val backgroundColor: Color
-    val titleColor: Color
+    val textColor: Color
     if (isSystemInDarkTheme()) {
         backgroundColor = GrayScale700
-        titleColor = DefaultWhite
+        textColor = DefaultWhite
     } else {
         backgroundColor = DefaultWhite
-        titleColor = GrayScale600
+        textColor = GrayScale600
     }
 
     ModalBottomSheetLayout(
@@ -71,23 +74,14 @@ fun CustomModalBottomSheet(
                         .fillMaxWidth()
                         .padding(top = 16.dp, start = 24.dp, end = 16.dp, bottom = 16.dp)
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight(),
-                        horizontalArrangement = if (closeIconVisible) {
-                            Arrangement.SpaceBetween
-                        } else {
-                            Arrangement.Center
-                        },
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = stringResource(id = title),
-                            style = Typography.subtitle1.copy(fontWeight = FontWeight.SemiBold),
-                            color = titleColor
-                        )
-                        if (closeIconVisible) {
+                    if (closeIconVisible) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight(),
+                            horizontalArrangement = Arrangement.End,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Image(
                                 painter = painterResource(id = closeIcon),
                                 contentDescription = "",
@@ -99,8 +93,23 @@ fun CustomModalBottomSheet(
                                 }
                             )
                         }
+                        if (titleIsVisible) {
+                            Text(
+                                text = if (titleText != "") titleText else stringResource(id = titleResource),
+                                style = Typography.subtitle1.copy(fontSize = 28.sp, fontWeight = FontWeight.SemiBold),
+                                color = textColor
+                            )
+                        }
+
+                        if (descriptionIsVisible) {
+                            Spacer(modifier = Modifier.height(32.dp))
+                            Text(
+                                text = if (descriptionText != "") titleText else stringResource(id = titleResource),
+                                style = Typography.subtitle1.copy(fontSize = 28.sp, fontWeight = FontWeight.SemiBold),
+                                color = textColor
+                            )
+                        }
                     }
-                    content()
                 }
             }
         }

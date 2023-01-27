@@ -56,7 +56,11 @@ class SaveCreditStepsHelper @Inject constructor() {
         profession: CreditCatalog?,
         professionSelected: CreditCatalogOption?,
         occupation: CreditCatalog?,
-        occupationSelected: CreditCatalogOption?
+        occupationSelected: CreditCatalogOption?,
+        duiEmissionPlace: CreditCatalog?,
+        duiEmissionPlaceSelected: CreditCatalogOption?,
+        duiEmissionDateValue: String,
+        duiExpirationDateValue: String
     ) {
         val monthlyIncomeQuestion = getScreenConfigQuestion(SALARY, monthlyIncomeValue)
         saveScreenQuestionData(textQuestion(user, monthlyIncomeValue, monthlyIncomeQuestion))
@@ -64,6 +68,14 @@ class SaveCreditStepsHelper @Inject constructor() {
         saveScreenQuestionData(selectionQuestion(user, profession, professionSelected))
         if (idBrand == Brand.CostaRica.id) {
             saveScreenQuestionData(selectionQuestion(user, occupation, occupationSelected))
+        }
+
+        if (idBrand == Brand.ElSalvador.id) {
+            val duiEmissionDateQuestion = getScreenConfigQuestion(DUI_EMISSION_DATE, duiEmissionDateValue)
+            saveScreenQuestionData(textQuestion(user, duiEmissionDateValue, duiEmissionDateQuestion))
+            val duiExpirationDateQuestion = getScreenConfigQuestion(DUI_EXPIRATION_DATE, duiExpirationDateValue)
+            saveScreenQuestionData(textQuestion(user, duiExpirationDateValue, duiExpirationDateQuestion))
+            saveScreenQuestionData(selectionQuestion(user, duiEmissionPlace, duiEmissionPlaceSelected))
         }
     }
 
@@ -359,5 +371,7 @@ class SaveCreditStepsHelper @Inject constructor() {
         const val TAX_PAYER_USA = "TAX_PAYER_USA"
         const val TAX_PAYER_EXTERNAL = "TAX_PAYER_EXTERNAL"
         const val BIRTH_DATE = "Fecha Nacimiento"
+        const val DUI_EMISSION_DATE = "Fecha Emision DUI"
+        const val DUI_EXPIRATION_DATE = "Fecha Expiración DUI"
     }
 }

@@ -170,6 +170,7 @@ class ProductViewModel @Inject constructor(
                 (balanceCredit?.getFirstSummary()?.availableBalance ?: 0.0) > 0.0
             uiState = uiState.copy(
                 canExpandCredit = it.getFirstSummary()?.canExpandState ?: false && it.getFirstSummary()?.isProductActive ?: false,
+                paymentAvailable = checkPaymentAvailability(it.balanceCredit?.firstOrNull()?.summary),
                 scheduleChipIconResource = if ((balanceCredit?.getExpiredDays() ?: 0) > 0) {
                     R.drawable.ic_alert_expired_payment
                 } else if (balanceCredit?.isBalanceCreditSummaryMultiple() == true) {
@@ -394,18 +395,11 @@ class ProductViewModel @Inject constructor(
         )
     }
 
-    private fun validateQuotas(summaryList: List<Summary>?): Boolean {
-        summaryList?.let {
-            for (summary in summaryList) {
-                if (summary.currentBalance == ZERO) {
-                    return false
-                }
-            }
-            return true
-        } ?: kotlin.run {
-            return false
-        }
-    }
+    private fun checkPaymentAvailability(summaryList: List<Summary>?): Boolean =
+        summaryList?.firstOrNull { it.currentBalance != ZERO } != null
+
+    private fun validateQuotas(summaryList: List<Summary>?): Boolean =
+        summaryList?.firstOrNull { it.currentBalance == ZERO } == null
 
     private fun onNavigateToVisaActivateScreen() =
         navigateTo(
@@ -973,7 +967,8 @@ class ProductViewModel @Inject constructor(
         val scheduleChipIconResource: Int? = null,
         val phoneNumber: String? = null,
         val smartContent: Pair<Boolean?, String> = Pair(null, ""),
-        val cryptoCurrencyMovements: Flow<PagingData<CryptoCurrencyMovement>> = flowOf()
+        val cryptoCurrencyMovements: Flow<PagingData<CryptoCurrencyMovement>> = flowOf(),
+        val paymentAvailable: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

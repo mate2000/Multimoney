@@ -584,6 +584,7 @@
 
     <!-- Credit Monthly Income-->
     <string name="credit_monthly_income_title" translatable="false">¿Cuál es tu ingreso mensual?</string>
+    <string name="credit_monthly_income_title_sv" translatable="false">Cuéntanos sobre ti</string>
     <string name="credit_monthly_income_income_label" translatable="false">Ingreso mensual</string>
     <string name="credit_monthly_income_required_income" translatable="false">Ingresos requerido</string>
     <string name="credit_monthly_income_income_hint" translatable="false">%s 000,000</string>
@@ -592,6 +593,10 @@
     <string name="credit_monthly_income_profession_hint" translatable="false">Seleccionar</string>
     <string name="credit_monthly_income_occupation_label" translatable="false">Seleccioná tu ocupación</string>
     <string name="credit_monthly_income_occupation_hint" translatable="false">Seleccionar</string>
+    <string name="credit_monthly_income_dui_emission_date_label" translatable="false">Fecha de emisión de DUI</string>
+    <string name="credit_monthly_income_dui_expiration_date_label" translatable="false">Fecha de vencimiento de DUI</string>
+    <string name="credit_monthly_income_dui_emission_place_label" translatable="false">Lugar de emisión de DUI</string>
+    <string name="credit_monthly_income_dui_date_placeholder" translatable="false">00 | 00 | 0000</string>
 
     <!-- Credit Job-->
     <string name="credit_job_title" translatable="false">Hablemos de tu trabajo</string>
@@ -1012,8 +1017,8 @@
     <!-- Smart Payment Amount Bottom Sheet -->
     <string name="smart_payment_amount_bottom_sheet_my_smart_account" translatable="false">Mi cuenta Smart | %s</string>
     <string name="smart_payment_amount_bottom_sheet_save_title" translatable="false">Monto a ahorrar</string>
-    <string name="smart_payment_amount_bottom_sheet_from_card" translatable="false">Desde la tarjeta</string>
-    <string name="smart_payment_amount_bottom_sheet_from_card_CR" translatable="false">Desde la cuenta</string>
+    <string name="smart_payment_amount_bottom_sheet_from_account" translatable="false">Desde la cuenta</string>
+    <string name="smart_payment_amount_bottom_sheet_from" translatable="false">Desde</string>
     <string name="smart_payment_amount_bottom_sheet_to" translatable="false">Hacia</string>
     <string name="smart_payment_exchange_equivalent" translatable="false">Equivalente a %s</string>
 
@@ -1344,7 +1349,6 @@
     <string name="smart_payment_sheet_to_account" translatable="false">Hacia la cuenta</string>
     <string name="smart_payment_sheet_transfer_button" translatable="false">Realizar envío</string>
     <string name="smart_payment_sheet_equivalent" translatable="false">Equivalente a %1$s</string>
-    <string name="smart_payment_sheet_multimoney_smart" translatable="false">Multimoney Smart</string>
 
     <!-- Smart SAC Transfer -->
     <string name="smart_sac_transfer_contact_rationale_title" translatable="false">Lo sentimos</string>

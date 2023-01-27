@@ -74,12 +74,11 @@ class MyContactsTransferViewModel @Inject constructor(
             result.onSuccess { accountList ->
                 uiState = uiState.copy(isLoading = false)
                 accountList?.phones?.let { phoneSmarts ->
-                    uiState =
-                        uiState.copy(
-                            relatedContactList = phoneSmarts.groupBy { phoneSmart ->
-                                phoneSmart.identification
-                            }.toSortedMap()
-                        )
+                    uiState = uiState.copy(
+                        relatedContactList = phoneSmarts.groupBy { phoneSmart ->
+                            phoneSmart?.identification.orEmpty()
+                        }.toSortedMap()
+                    )
                 }
             }
             result.onFailure {
@@ -116,12 +115,12 @@ class MyContactsTransferViewModel @Inject constructor(
         )
     }
 
-    private fun onContactClick(accounts: List<PhoneSmart>) {
+    private fun onContactClick(accounts: List<PhoneSmart?>) {
         if (idBrand == Brand.ElSalvador.id) {
-            onAccountClick(accounts.first())
+            accounts.first()?.let { onAccountClick(it) }
         } else {
             uiState = uiState.copy(
-                selectedContact = accounts,
+                selectedContact = accounts.filterNotNull(),
                 bottomSheetState = ModalBottomSheetState(Expanded)
             )
         }
@@ -135,7 +134,7 @@ class MyContactsTransferViewModel @Inject constructor(
     private fun onAddSACAccountClick() {
         navigateTo(
             "${Screen.SmartAddSACAccountScreen.baseRoute}/$idBrand/$user/${
-                encodeData(selectedSmartAccount)
+            encodeData(selectedSmartAccount)
             }/${SmartTransferTypes.SmartToSmart.id}"
         )
     }
@@ -144,7 +143,7 @@ class MyContactsTransferViewModel @Inject constructor(
         val queryValue: String = "",
         val openDialog: DialogParameters = DialogParameters(),
         var isLoading: Boolean = false,
-        var relatedContactList: SortedMap<String, List<PhoneSmart>> = sortedMapOf(),
+        var relatedContactList: SortedMap<String, List<PhoneSmart?>> = sortedMapOf(),
         var selectedContact: List<PhoneSmart> = listOf(),
         val bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(Hidden)
     )
@@ -176,7 +175,7 @@ class MyContactsTransferViewModel @Inject constructor(
         data class OnAddToFavoriteAccountClick(val contactToFavorite: PhoneSmart) : UIEvent()
         object OnCallQueryRelatedContactsByPhoneUseCase : UIEvent()
         data class OnQueryValueChange(val value: String) : UIEvent()
-        data class OnContactClick(val contact: List<PhoneSmart>) : UIEvent()
+        data class OnContactClick(val contact: List<PhoneSmart?>) : UIEvent()
         data class OnAccountClick(val account: PhoneSmart) : UIEvent()
     }
 }

@@ -25,6 +25,7 @@ import androidx.constraintlayout.compose.MotionScene
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.home.HomeState
+import kotlin.math.ceil
 
 @OptIn(ExperimentalMotionApi::class, ExperimentalMaterialApi::class)
 @Composable
@@ -54,8 +55,8 @@ fun MotionLayoutMM(
     var isBackPressed by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = swipeAbleState.offset.value) {
-        updateIsExpanded(swipeAbleState.offset.value == TOTAL_PERCENTAGE)
-        updateForceExpanded(swipeAbleState.offset.value == TOTAL_PERCENTAGE)
+        updateIsExpanded(ceil(swipeAbleState.offset.value) == TOTAL_PERCENTAGE)
+        updateForceExpanded(ceil(swipeAbleState.offset.value) == TOTAL_PERCENTAGE)
     }
 
     LaunchedEffect(key1 = isBackPressed) {
@@ -73,6 +74,13 @@ fun MotionLayoutMM(
             updateHomeState(HomeState.OLD_STATE)
             isBackPressed = true
         }
+    }
+
+    LaunchedEffect(key1 = forceExpanded) {
+        updateForceExpanded(forceExpanded)
+        updateIsExpanded(forceExpanded)
+        if (forceExpanded)
+            swipeAbleState.animateTo(ENDING_ANIMATION)
     }
 
     MotionLayout(
@@ -133,6 +141,7 @@ fun MotionLayoutMM(
     }
 }
 
-const val FRACTIONAL_THRESHOLD = 0.8f
+const val FRACTIONAL_THRESHOLD = 0.7f
 const val BEGINNING_ANIMATION = 0
+const val ENDING_ANIMATION = 1
 const val TOTAL_PERCENTAGE = 100F

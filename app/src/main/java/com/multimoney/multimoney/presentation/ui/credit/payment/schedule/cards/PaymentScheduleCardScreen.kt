@@ -3,20 +3,19 @@ package com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -39,15 +38,14 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.P
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnOpenDisclaimerDialog
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnProgramClick
 import com.multimoney.multimoney.presentation.uielement.AlertResult
-import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomButton
-import com.multimoney.multimoney.presentation.uielement.CustomButtonType
-import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
-import com.multimoney.multimoney.presentation.uielement.CustomImage
-import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
-import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
-import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.uielement.CustomImage
+import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
+import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
@@ -212,8 +210,6 @@ private fun PaymentScheduleCard(viewModel: PaymentScheduleCardViewModel) {
 fun PaymentScheduleCardEmptyState(
     viewModel: PaymentScheduleCardViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
-
     Column(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)
@@ -225,7 +221,7 @@ fun PaymentScheduleCardEmptyState(
         )
         Text(
             modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp),
-            text = stringResource(id = R.string.payment_cards_list_title),
+            text = stringResource(id = R.string.payment_schedule_card_title),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText,
             textAlign = TextAlign.Left

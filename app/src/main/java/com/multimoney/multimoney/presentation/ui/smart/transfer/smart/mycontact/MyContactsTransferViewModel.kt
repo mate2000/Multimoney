@@ -47,12 +47,14 @@ class MyContactsTransferViewModel @Inject constructor(
         private set
 
     // Stateless
+    var selectedSmartAccount: SmartAccountID? = null
     private var user: String = ""
     var idBrand: Int = 0
     var relatedContacts: List<RelatedContact> = listOf()
     var smartAccount: SmartAccountID? = null
 
     init {
+        selectedSmartAccount = savedStateHandle[SMART_ACCOUNT]
         user = savedStateHandle[USER] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
         smartAccount = savedStateHandle[SMART_ACCOUNT]
@@ -131,7 +133,13 @@ class MyContactsTransferViewModel @Inject constructor(
     }
 
     private fun onAddSACAccountClick() {
-        // Todo Add SAC account of transfer recipient REV-1447
+        navigateTo(
+            "${Screen.SmartAddSACAccountScreen.baseRoute}/$idBrand/$user/${
+            encodeData(
+                selectedSmartAccount
+            )
+            }"
+        )
     }
 
     data class UIState(
@@ -147,7 +155,7 @@ class MyContactsTransferViewModel @Inject constructor(
         when (uiEvent) {
             is UIEvent.OnAddToFavoriteAccountClick -> navigateToAddToFavoriteAccount(uiEvent.contactToFavorite)
             is UIEvent.OnNavigateBack -> onNavigateBack()
-            is UIEvent.OnAddSACAccountClick -> onAddSACAccountClick()
+            UIEvent.OnAddSACAccountClick -> onAddSACAccountClick()
             is UIEvent.OnQueryValueChange -> onQueryValueChange(uiEvent.value)
             is UIEvent.OnNavigateToHome -> onNavigateToHome()
             UIEvent.OnCallQueryRelatedContactsByPhoneUseCase -> callQueryRelatedContactsByPhoneUseCaseImp()

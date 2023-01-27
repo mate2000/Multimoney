@@ -23,8 +23,8 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class SmartAddAccountViewModel @Inject constructor(
@@ -166,10 +166,9 @@ class SmartAddAccountViewModel @Inject constructor(
         }
     }
 
-    // Todo change this navigation to go back to Contacts screen rev-1445
     private fun onNavigateBack() =
         navigateBack(
-            popTo = Screen.HomeScreen.route,
+            popTo = Screen.MyContactsTransferScreen.route,
             isRestart = false
         )
 

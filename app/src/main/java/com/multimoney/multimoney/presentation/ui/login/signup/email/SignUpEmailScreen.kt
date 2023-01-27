@@ -84,6 +84,11 @@ fun SignUpEmailScreen(
         viewModel.onUIEvent(SignUpEmailViewModel.UIEvent.OnValidateForm)
         viewModel.onValidateUserExistsEvent.collect { event ->
             event.onSuccess { userData ->
+                sharedViewModel.onUIEvent(
+                    SignUpViewModel.UIEvent.OnLoadingValueChange(
+                        false
+                    )
+                )
                 if (userData?.status == SignUpEmailViewModel.ANOTHER_DEVICE_ALREADY_REGISTERED) {
                     viewModel.onUIEvent(
                         OnShowAnotherDeviceAlreadyRegisteredDialog {

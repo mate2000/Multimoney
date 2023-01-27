@@ -100,19 +100,17 @@ class SignUpEmailViewModel @Inject constructor(
         }
     }
 
-    fun onValidationUserExistsSuccess(
+    private fun onValidationUserExistsSuccess(
         context: Context,
         currentStep: Int,
         userData: UserData?,
         onUseDataValueChange: () -> Unit,
         nextStepAction: () -> Unit,
         openSignUpSplashComeBack: () -> Unit,
-        onLoadingValueChange: () -> Unit,
         onOpenDialog: (DialogParameters) -> Unit
     ) {
         previousUserEmail = userData?.email ?: ""
         onUseDataValueChange()
-        onLoadingValueChange()
         if (userData?.status == VALID_EMAIL || userData?.status == ANOTHER_DEVICE_ALREADY_REGISTERED) {
             val step = SignUpStep.Search.getIdByName(userData.currentStep)
             if (step == currentStep && step < STEP_TO_SHOW_SPLASH) {
@@ -186,13 +184,6 @@ class SignUpEmailViewModel @Inject constructor(
                         SignUpStep.Search.getIdByName(
                             userData?.currentStep
                         )
-                    )
-                )
-            },
-            onLoadingValueChange = {
-                sharedViewModel.onUIEvent(
-                    SignUpViewModel.UIEvent.OnLoadingValueChange(
-                        false
                     )
                 )
             },

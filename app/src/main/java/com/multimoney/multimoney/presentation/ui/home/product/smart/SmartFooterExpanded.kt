@@ -3,14 +3,14 @@ package com.multimoney.multimoney.presentation.ui.home.product.smart
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnFooterExpandedHeightPxValueChange
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.SmartAccountDetail
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.SmartMovementsLatest
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
@@ -26,12 +26,7 @@ fun SmartFooterExpanded(
     val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: decrement)
 
     Column(
-        Modifier.fillMaxWidth().wrapContentHeight()
-//            .onSizeChanged { size ->
-//            if(viewModel.uiState.footerExpandedHeightPx != size.height.toFloat()){
-//                viewModel.onUIEvent(OnFooterExpandedHeightPxValueChange(size.height.toFloat()))
-//            }
-//        }
+        Modifier.padding(top = 16.dp).fillMaxWidth().wrapContentHeight()
     ) {
         viewModel.balanceCredit?.balanceAccountSmart?.let {
             if (it.isNotEmpty()) {

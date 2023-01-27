@@ -3,7 +3,9 @@ package com.multimoney.multimoney.presentation.ui.home.product.credit
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,8 +21,8 @@ import com.multimoney.multimoney.presentation.uielement.TopNavBar
 fun CreditHeaderExpanded(backPressed: () -> Unit) {
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .background(MultimoneyTheme.colors.background)
+            .fillMaxWidth()
+            .wrapContentHeight()
     ) {
         TopNavBar(
             isRightButtonVisible = false,

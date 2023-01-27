@@ -471,11 +471,11 @@ class HomeViewModel @Inject constructor(
                 configurationVersion?.let {
                     uiState = uiState.copy(configurationVersion = configurationVersion)
                 }
-                emitBaseEvent(
-                    OnStartCountDownTimer(
-                        configurationVersion?.configuration?.timeSession?.toLong() ?: 0
-                    )
-                )
+//                emitBaseEvent(
+//                    OnStartCountDownTimer(
+//                        configurationVersion?.configuration?.timeSession?.toLong() ?: 0
+//                    )
+//                )
             }
             result.onFailure {
                 onFailure(it)

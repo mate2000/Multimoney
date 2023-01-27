@@ -1,7 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.home.product.credit
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,17 +10,13 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovementsLatest
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCreateMultimoneyVisa
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnFooterExpandedHeightPxValueChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToHomeMultimoneyVisa
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnShareIbanAccount
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditDetail
@@ -34,14 +29,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.
 @Composable
 fun CreditFooterExpanded(viewModel: ProductViewModel, sharedViewModel: HomeViewModel) {
     Column(
-        Modifier
-//            .onSizeChanged { size ->
-//            if(viewModel.uiState.footerExpandedHeightPx != size.height.toFloat()){
-//                viewModel.onUIEvent(OnFooterExpandedHeightPxValueChange(size.height.toFloat()))
-//            }
-//        }
-            .fillMaxWidth().wrapContentHeight()
-
+        Modifier.padding(top = 16.dp).fillMaxWidth().wrapContentHeight()
     ) {
         ScheduleAutomaticPayment(viewModel, sharedViewModel)
         Spacer(modifier = Modifier.height(24.dp))

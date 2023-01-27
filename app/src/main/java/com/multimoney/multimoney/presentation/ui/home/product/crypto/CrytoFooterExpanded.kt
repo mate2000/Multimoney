@@ -27,24 +27,20 @@ import kotlinx.coroutines.flow.Flow
 @Composable
 fun CryptoFooterExpanded(
     balance: Balance?,
-    footerExpandedHeight: Float = 0f,
     userStatus: ValidateUserStatus?,
     cryptoMovements: Flow<PagingData<CryptoCurrencyMovement>>,
     actionMarket: () -> Unit,
     actionWallet: () -> Unit,
-    onShowAllClick: () -> Unit,
-    onFooterExpandedHeightValueChange: (Float) -> Unit
+    onShowAllClick: () -> Unit
 ) {
     if (userStatus?.infoCrypto?.status == CryptoAccountStatus.ACTIVE.status) {
         CryptoFooterExpandedContent(
             balance,
-            footerExpandedHeight,
             userStatus.infoCrypto?.profileEnable,
             cryptoMovements,
             actionMarket,
             actionWallet,
-            onShowAllClick,
-            onFooterExpandedHeightValueChange
+            onShowAllClick
         )
     }
 }
@@ -52,23 +48,14 @@ fun CryptoFooterExpanded(
 @Composable
 fun CryptoFooterExpandedContent(
     balance: Balance?,
-    footerExpandedHeight: Float = 0f,
     profileEnable: Boolean?,
     cryptoMovements: Flow<PagingData<CryptoCurrencyMovement>>,
     actionMarket: () -> Unit,
     actionWallet: () -> Unit,
-    onShowAllClick: () -> Unit,
-    onFooterExpandedHeightValueChange: (Float) -> Unit
+    onShowAllClick: () -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth().wrapContentHeight().background(MultimoneyTheme.colors.background)
-            .padding(16.dp)
-//            .onSizeChanged { size ->
-//                if (footerExpandedHeight != size.height.toFloat()) {
-//                    onFooterExpandedHeightValueChange(size.height.toFloat())
-//                }
-//            }
-        ,
+        modifier = Modifier.padding(top = 16.dp).fillMaxWidth().wrapContentHeight(),
         verticalArrangement = Arrangement.Top
     ) {
         ButtonsSection(

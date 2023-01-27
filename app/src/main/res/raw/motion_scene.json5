@@ -77,7 +77,7 @@
         ]
       },
       bottom_end: {
-        height: 'footerExpandedHeight',
+        height: 'wrap',
         top: [
           'main_card',
           'bottom'

@@ -1,17 +1,21 @@
 package com.multimoney.multimoney.presentation.uielement
 
+import android.annotation.SuppressLint
+import android.os.CountDownTimer
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation.Vertical
-import androidx.compose.foundation.gestures.rememberScrollableState
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
+import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material.swipeable
 import androidx.compose.runtime.Composable
@@ -22,19 +26,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
 import androidx.constraintlayout.compose.MotionScene
+import androidx.constraintlayout.compose.layoutId
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.ui.home.HomeState.EXPANDED
-import kotlin.math.absoluteValue
+import kotlinx.coroutines.delay
 
-@OptIn(ExperimentalMotionApi::class, ExperimentalMaterialApi::class)
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@OptIn(ExperimentalMotionApi::class, ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun MotionLayoutMM(
     header: @Composable () -> Unit,
@@ -49,79 +56,82 @@ fun MotionLayoutMM(
     ctaFooterExpanded: @Composable () -> Unit = {},
     homeState: HomeState,
     updateHomeState: (HomeState) -> Unit = {},
-//    headerTitleHeightPx: Float = 0f,
-//    mainCardHeightPx: Float = 0f,
-    footerExpandedHeightPx: Float = 0f,
-//    ctaFooterExpandedHeightPx: Float = 0f,
-    maxFooterExpandedScrollPx: Float = 0f,
-    currentPage: Int = 0,
     isSwipeEnabled: Boolean = false
 ) {
-    var offset by remember { mutableStateOf(0f) }
-//    var columnHeightPx by remember {
-//        mutableStateOf(0f)
-//    }
-//    val configuration = LocalConfiguration.current
-//    val localDensity = LocalDensity.current
-//    val screenHeightPx = with(localDensity) { configuration.screenHeightDp.dp.toPx() }
-
-//    var previousFooterExpandedHeightPx by remember { mutableStateOf(-1f) }
-//    var headerTitleHeightPx by remember { mutableStateOf(0f) }
-//    var mainCardHeightPx by remember { mutableStateOf(0f) }
-//    var ctaFooterExpandedHeightPx by remember { mutableStateOf(0f) }
-//    var maxFooterExpandedScrollPx by remember { mutableStateOf(columnHeightPx - screenHeightPx + headerTitleHeightPx) }
-
-//    var footerExpandedHeight by remember { mutableStateOf(0f) }
-//    var ctaFooterExpandedHeightPx by remember { mutableStateOf(0f) }
-
-//    var maxFooterExpandedScrollPx by remember { mutableStateOf(0f) }
-
-//    maxFooterExpandedScrollPx = columnHeightPx - screenHeightPx + headerTitleHeightPx
-
     val context = LocalContext.current
-
-//    maxFooterExpandedScrollPx =
-//        footerExpandedHeightPx + ctaFooterExpandedHeightPx //- mainCardHeightPx - (headerTitleHeightPx / 2) + ctaFooterExpandedHeightPx
-//    LaunchedEffect(
-//        keys = arrayOf(
-//            footerExpandedHeight,
-//            mainCardHeightPx,
-//            headerTitleHeightPx,
-//            ctaFooterExpandedHeightPx
-//        )
-//    ) {
-//        maxFooterExpandedScrollPx =
-//            footerExpandedHeight - mainCardHeightPx - (headerTitleHeightPx / 2) + ctaFooterExpandedHeightPx
-//    }
-
-    // This if is needed to avoid unnecessary recompositions
-//    if (previousFooterExpandedHeightPx != footerExpandedHeight) {
-//        maxFooterExpandedScrollPx =
-//            footerExpandedHeight - mainCardHeightPx - (headerTitleHeightPx / 2) + ctaFooterExpandedHeightPx
-//        val motionSceneResource =
-//        motionSceneContent = motionSceneContent.replace("'footerExpandedHeight'", footerExpandedHeight.toInt().toString())
-//        previousFooterExpandedHeightPx = footerExpandedHeight
-//    }
-
-    val swipeAbleState = rememberSwipeableState(initialValue = 0)
-    val anchors = mapOf(0f to 0, TOTAL_PERCENTAGE to 1)
+    val swipeAbleState = rememberSwipeableState(initialValue = HomeState.UNEXPANDED)
+    val anchors = mapOf(0f to HomeState.UNEXPANDED, TOTAL_PERCENTAGE to HomeState.EXPANDED)
     var isBackPressed by remember { mutableStateOf(false) }
-
-    LaunchedEffect(key1 = currentPage) {
-        offset = 0f
-    }
+    var isAnimationRunning by remember { mutableStateOf(false) }
+//    var animationRemainingTime by remember { mutableStateOf(5000.milliseconds) }
+    var animationProgress by remember { mutableStateOf(0f) }
 
     LaunchedEffect(key1 = swipeAbleState.offset.value) {
-        offset = 0f
-        updateIsExpanded(swipeAbleState.offset.value == TOTAL_PERCENTAGE)
-        updateForceExpanded(swipeAbleState.offset.value == TOTAL_PERCENTAGE)
+        if (isAnimationRunning.not()) {
+            animationProgress = swipeAbleState.offset.value / TOTAL_PERCENTAGE
+        }
+        if (swipeAbleState.targetValue == HomeState.EXPANDED) {
+            updateIsExpanded(true)
+//            updateForceExpanded(true)
+        } else if (swipeAbleState.currentValue == HomeState.UNEXPANDED && isExpanded) {
+            updateIsExpanded(false)
+            isAnimationRunning = true
+//            swipeAbleState.animateTo(HomeState.UNEXPANDED)
+            animationProgress = 1f
+            //val timer = object : CountDownTimer(1500, 90) {
+            val timer = object : CountDownTimer(1000, 60) {
+                override fun onTick(millisMainUntilFinished: Long) {
+//                    animationRemainingTime = animationRemainingTime.minus(1.milliseconds)
+                    animationProgress = animationProgress.minus(0.06f)
+                }
+
+                override fun onFinish() {
+                    animationProgress = 0f
+                    isAnimationRunning = false
+                }
+            }
+            timer.start()
+
+//            animationProgress = 1f
+//            animationRemainingTime = 5000.milliseconds
+//            tickerFlow(
+//                period = 1.milliseconds,
+//                initialDelay = 1.milliseconds,
+//                duration = animationRemainingTime
+//            )
+//                .takeWhile { isAnimationRunning }
+//                .map {
+//                    LocalDateTime.now()
+//                }
+//                .distinctUntilChanged { old, new ->
+//                    old.nano == new.nano
+//                }
+//                .onEach {
+//                    if (animationRemainingTime.inWholeMilliseconds > 0 && isAnimationRunning) {
+//                        animationRemainingTime = animationRemainingTime.minus(1.milliseconds)
+//                        animationProgress = animationProgress.minus(0.0002f)
+//                    } else if (isAnimationRunning) {
+//                        isAnimationRunning = false
+//                    }
+//                }
+//                .launchIn(this)
+        }
     }
+
+//    LaunchedEffect(key1 = swipeAbleState.offset.value) {
+// //        if (isAnimationRunning.not()) {
+// //            animationProgress = swipeAbleState.offset.value / TOTAL_PERCENTAGE
+// //        }
+//        animationProgress = swipeAbleState.offset.value / TOTAL_PERCENTAGE
+// //        updateIsExpanded(swipeAbleState.offset.value == TOTAL_PERCENTAGE)
+// //        updateForceExpanded(swipeAbleState.offset.value == TOTAL_PERCENTAGE)
+//    }
 
     LaunchedEffect(key1 = isBackPressed) {
         if ((isExpanded && isBackPressed) || (forceExpanded && isBackPressed)) {
-            offset = 0f
-            swipeAbleState.animateTo(BEGINNING_ANIMATION)
             isBackPressed = false
+            swipeAbleState.animateTo(HomeState.UNEXPANDED)
+            updateIsExpanded(false)
             if (forceExpanded) {
                 updateForceExpanded(false)
             }
@@ -134,150 +144,147 @@ fun MotionLayoutMM(
             isBackPressed = true
         }
     }
-//    var columnHeightPx = remember{ 0f }
-    var motionSceneContent = remember {
-        context.resources
-            .openRawResource(R.raw.motion_scene)
-            .readBytes()
-            .decodeToString()
-    }
-
-    motionSceneContent =
-        motionSceneContent.replace(FOOTER_EXPANDED_HEIGHT_TAG, footerExpandedHeightPx.toInt().toString())
-
-    MotionLayout(
-        motionScene = MotionScene(motionSceneContent),
-        progress = if (forceExpanded || homeState == EXPANDED) 1f else (swipeAbleState.offset.value / TOTAL_PERCENTAGE),
-        modifier = Modifier.fillMaxHeight()
-//            .onGloballyPositioned { coordinates ->
-//                columnHeightPx = coordinates.size.height.toFloat()
-//        }
-    ) {
-        content(
-            modifier = Modifier.offset {
-                if (maxFooterExpandedScrollPx > 0) {
-                    IntOffset(0, offset.toInt())
-                } else {
-                    IntOffset(0, 0)
+    if (swipeAbleState.currentValue == HomeState.EXPANDED) {
+        Scaffold(
+            topBar = {
+                Box(
+                    modifier = Modifier
+                        .background(MultimoneyTheme.colors.background)
+                        .fillMaxWidth()
+                ) {
+                    headerExpanded {
+                        isBackPressed = true
+                    }
+                }
+            },
+            bottomBar = {
+                Box(
+                    modifier = Modifier
+                        .background(MultimoneyTheme.colors.background)
+                        .fillMaxWidth()
+                ) {
+                    ctaFooterExpanded()
+                }
+            },
+            content = {
+                LazyColumn(
+                    modifier = Modifier
+                        .nestedScroll(rememberNestedScrollInteropConnection())
+                        .background(MultimoneyTheme.colors.background)
+                        .padding(it)
+                        .fillMaxSize(),
+                    content = {
+                        item {
+                            content(
+                                modifier = Modifier
+                                    .background(Color.White)
+                                    .fillMaxWidth()
+                                    .wrapContentHeight()
+                                    .swipeable(
+                                        enabled = isSwipeEnabled,
+                                        reverseDirection = true,
+                                        state = swipeAbleState,
+                                        anchors = anchors,
+                                        thresholds = { _, _ ->
+                                            // The closer to 1 you have to scroll more for it to autocomplete the animation
+                                            FractionalThreshold(0.8f)
+                                        },
+                                        orientation = Vertical
+                                    )
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                            ) {
+                                footerExpanded()
+                            }
+                        }
+                    }
+                )
+            }
+        )
+    } else {
+        val motionSceneContent = remember {
+            context.resources
+                .openRawResource(R.raw.motion_scene)
+                .readBytes()
+                .decodeToString()
+        }
+        MotionLayout(
+            motionScene = MotionScene(motionSceneContent),
+            // progress = if (forceExpanded || homeState == EXPANDED) 1f else if (isExpanded.not()) (swipeAbleState.offset.value / TOTAL_PERCENTAGE) else 0f,
+            progress = if (forceExpanded || homeState == EXPANDED) 1f else animationProgress, // if (isAnimationRunning) animationProgress else (swipeAbleState.offset.value / TOTAL_PERCENTAGE),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MultimoneyTheme.colors.background)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+//                    .background(MultimoneyTheme.colors.background)
+                    .layoutId("header_cards"),
+                contentAlignment = Alignment.Center
+            ) {
+                header()
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+//                    .background(MultimoneyTheme.colors.background)
+                    .layoutId("header_title")
+            ) {
+                headerExpanded {
+                    isBackPressed = true
                 }
             }
-                .fillMaxWidth()
-                .layoutId("main_card")
-//                .onSizeChanged { size ->
-// //                    if (mainCardHeightPx != size.height.toFloat()) {
-// //                        mainCardHeightPx = size.height.toFloat()
-// //                    }
-//                }
-//                .scrollable(
-//                    orientation = Vertical,
-//                    state = rememberScrollableState { delta ->
-//                        if (isExpanded && ((offset + delta).absoluteValue <= maxFooterExpandedScrollPx) && (offset + delta) <= 0) {
-//                            offset += delta
-//                        }
-//                        delta
-//                    }
-//                )
-                .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {
-//                .clickable {
-                    if (isSwipeEnabled) {
-                        offset = 0f
-                        updateIsExpanded(true)
-                        updateForceExpanded(true)
-                    }
-                }
-                .swipeable(
-                    enabled = isSwipeEnabled,
-                    reverseDirection = true,
-                    state = swipeAbleState,
-                    anchors = anchors,
-                    thresholds = { _, _ ->
-                        // The closer to 1 you have to scroll more for it to autocomplete the animation
-                        FractionalThreshold(FRACTIONAL_THRESHOLD)
-                    },
-                    orientation = Vertical
-                )
-        )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MultimoneyTheme.colors.background)
-                .layoutId("bottom_start"),
-            contentAlignment = Alignment.TopCenter
-        ) {
-            footer()
-        }
-        Box(
-            modifier = Modifier
-                .layoutId("bottom_end")
-                .fillMaxWidth()
-//                .wrapContentHeight().onSizeChanged { size ->
-// //                    if (footerExpandedHeight != size.height.toFloat()) {
-//                    footerExpandedHeight = size.height.toFloat()
-// //                    }
-//                }
-                .offset {
-                    if (maxFooterExpandedScrollPx > 0) {
-                        IntOffset(0, offset.toInt())
-                    } else {
-                        IntOffset(0, 0)
-                    }
-                }
-                .scrollable(
-                    orientation = Vertical,
-                    state = rememberScrollableState { delta ->
-                        if (isExpanded && ((offset + delta).absoluteValue <= maxFooterExpandedScrollPx) && (offset + delta) <= 0) {
-                            offset += delta
+            content(
+                modifier = Modifier
+                    .layoutId("main_card")
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+//                    .background(MultimoneyTheme.colors.background)
+                    .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {
+                        if (isSwipeEnabled) {
+                            updateForceExpanded(true)
                         }
-                        delta
                     }
-                )
-        ) {
-            footerExpanded()
-        }
-        Box(
-            modifier = Modifier
-                .layoutId("cta_bottom_end")
-                .background(MultimoneyTheme.colors.background)
-                .fillMaxWidth()
-//                .wrapContentHeight()
-//                .onSizeChanged { size ->
-//                    if (ctaFooterExpandedHeightPx != size.height.toFloat()) {
-//                        ctaFooterExpandedHeightPx = size.height.toFloat()
-//                    }
-//                }
-                .scrollable(
-                    orientation = Vertical,
-                    state = rememberScrollableState { delta ->
-                        if (isExpanded && ((offset + delta).absoluteValue <= maxFooterExpandedScrollPx) && (offset + delta) <= 0) {
-                            offset += delta
-                        }
-                        delta
-                    }
-                )
-        ) {
-            ctaFooterExpanded()
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MultimoneyTheme.colors.background)
-                .layoutId("header_cards"),
-            contentAlignment = Alignment.Center
-        ) {
-            header()
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .layoutId("header_title")
-//                .onSizeChanged { size ->
-//                    if (headerTitleHeightPx != size.height.toFloat()) {
-//                        headerTitleHeightPx = size.height.toFloat()
-//                    }
-//                }
-        ) {
-            headerExpanded {
-                isBackPressed = true
+                    .swipeable(
+                        enabled = isSwipeEnabled,
+                        reverseDirection = true,
+                        state = swipeAbleState,
+                        anchors = anchors,
+                        thresholds = { _, _ ->
+                            // The closer to 1 you have to scroll more for it to autocomplete the animation
+                            FractionalThreshold(FRACTIONAL_THRESHOLD)
+                        },
+                        orientation = Vertical
+                    )
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+//                    .background(MultimoneyTheme.colors.background)
+                    .layoutId("bottom_start"),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                footer()
+            }
+            Box(
+                modifier = Modifier
+                    .layoutId("bottom_end")
+//                    .background(MultimoneyTheme.colors.background)
+                    .fillMaxWidth()
+            ) {
+                footerExpanded()
+            }
+            Box(
+                modifier = Modifier
+                    .layoutId("cta_bottom_end")
+//                    .background(MultimoneyTheme.colors.background)
+                    .fillMaxWidth()
+            ) {
+                ctaFooterExpanded()
             }
         }
     }

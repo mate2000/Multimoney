@@ -1,12 +1,12 @@
 package com.multimoney.multimoney.presentation.ui.home.product.smart
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCtaFooterExpandedHeightPxValueChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentSmartFlow
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSendMoneyFlow
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.SmartCtaButtons
@@ -25,13 +25,7 @@ fun SmartCtaFooterExpanded(
         if (viewModel.uiState.productPageList?.any { it.product == ProductType.Credit.value } == true) 1 else 0
     val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: decrement)
     SmartCtaButtons(
-        modifier = Modifier
-//            .onSizeChanged { size ->
-//                if (viewModel.uiState.ctaFooterExpandedHeightPx != size.height.toFloat()) {
-//                    viewModel.onUIEvent(OnCtaFooterExpandedHeightPxValueChange(size.height.toFloat()))
-//                }
-//            }
-            .padding(16.dp),
+        modifier = Modifier.padding(16.dp).fillMaxWidth().wrapContentHeight(),
         onClickPay = {
             viewModel.onUIEvent(
                 OnNavigateToPaymentSmartFlow(

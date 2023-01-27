@@ -55,14 +55,10 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCartButtonClickWithoutSmartBalance
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnChipQuotaClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCreateMultimoneyVisa
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCtaFooterExpandedHeightPxValueChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnDeleteAutomaticPayment
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnFooterExpandedHeightPxValueChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetSmartContent
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnHeaderTitleHeightPxValueChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnIsSwipeEnabledValueChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnLastStepChange
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMainCardHeightPxValueChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMaxAttemptsCardClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMiniCardsClicked
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditMovementsScreen
@@ -88,6 +84,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnVisaCardExpiredDialog
 import com.multimoney.multimoney.presentation.util.FilterDate
+import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.NfcHelper
 import com.multimoney.multimoney.presentation.util.PAGE_SIZE
 import com.multimoney.multimoney.presentation.util.ShareHelper
@@ -951,9 +948,6 @@ class ProductViewModel @Inject constructor(
         )
     }
 
-    private fun getMaxFooterExpandedScrollPx() =
-        uiState.footerExpandedHeightPx - uiState.mainCardHeightPx - (uiState.headerTitleHeightPx / 2) + uiState.ctaFooterExpandedHeightPx
-
     data class UIState(
         // Fields
         var idBrand: String = "0",
@@ -968,11 +962,6 @@ class ProductViewModel @Inject constructor(
         val phoneNumber: String? = null,
         val smartContent: Pair<Boolean?, String> = Pair(null, ""),
         val cryptoCurrencyMovements: Flow<PagingData<CryptoCurrencyMovement>> = flowOf(),
-        val headerTitleHeightPx: Float = 0f,
-        val mainCardHeightPx: Float = 0f,
-        val footerExpandedHeightPx: Float = 0f,
-        val ctaFooterExpandedHeightPx: Float = 0f,
-        val maxFooterExpandedScrollPx: Float = 0f,
         val isSwipeEnabled: Boolean = false
     )
 
@@ -981,33 +970,8 @@ class ProductViewModel @Inject constructor(
             is OnIsSwipeEnabledValueChange ->
                 uiState =
                     uiState.copy(isSwipeEnabled = uiEvent.isSwipeEnabled)
-            is OnHeaderTitleHeightPxValueChange ->
-                uiState =
-                    uiState.copy(
-                        headerTitleHeightPx = uiEvent.headerTitleHeightPx,
-                        maxFooterExpandedScrollPx = getMaxFooterExpandedScrollPx()
-                    )
-            is OnMainCardHeightPxValueChange ->
-                uiState =
-                    uiState.copy(
-                        mainCardHeightPx = uiEvent.mainCardHeightPx,
-                        maxFooterExpandedScrollPx = getMaxFooterExpandedScrollPx()
-                    )
-            is OnFooterExpandedHeightPxValueChange ->
-                uiState =
-                    uiState.copy(
-                        footerExpandedHeightPx = uiEvent.footerExpandedHeightPx,
-                        maxFooterExpandedScrollPx = getMaxFooterExpandedScrollPx()
-                    )
-            is OnCtaFooterExpandedHeightPxValueChange ->
-                uiState =
-                    uiState.copy(
-                        ctaFooterExpandedHeightPx = uiEvent.ctaFooterExpandedPxHeight,
-                        maxFooterExpandedScrollPx = getMaxFooterExpandedScrollPx()
-                    )
             is OnUpdateIsExpanded -> uiState = uiState.copy(
-                isExpanded = uiEvent.isExpanded,
-                maxFooterExpandedScrollPx = getMaxFooterExpandedScrollPx()
+                isExpanded = uiEvent.isExpanded
             )
             is OnBalanceSuccess -> balanceCredit = uiEvent.balance
             is OnValidateUserSuccess -> setValidateUserStatus(uiEvent.userStatus)
@@ -1089,10 +1053,6 @@ class ProductViewModel @Inject constructor(
 
     sealed class UIEvent {
         data class OnIsSwipeEnabledValueChange(val isSwipeEnabled: Boolean) : UIEvent()
-        data class OnHeaderTitleHeightPxValueChange(val headerTitleHeightPx: Float) : UIEvent()
-        data class OnMainCardHeightPxValueChange(val mainCardHeightPx: Float) : UIEvent()
-        data class OnFooterExpandedHeightPxValueChange(val footerExpandedHeightPx: Float) : UIEvent()
-        data class OnCtaFooterExpandedHeightPxValueChange(val ctaFooterExpandedPxHeight: Float) : UIEvent()
         data class OnUpdateIsExpanded(val isExpanded: Boolean) : UIEvent()
         data class OnBalanceSuccess(val balance: Balance) : UIEvent()
         data class OnValidateUserSuccess(val userStatus: ValidateUserStatus) : UIEvent()

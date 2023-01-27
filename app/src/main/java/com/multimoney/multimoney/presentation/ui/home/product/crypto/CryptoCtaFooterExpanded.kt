@@ -20,20 +20,11 @@ fun CryptoCtaFooterExpanded(
     balance: Balance?,
     profileEnable: Boolean?,
     noBalanceAction: () -> Unit,
-    hasBalanceAction: () -> Unit,
-    ctaFooterExpandedHeight: Float = 0f,
-    onCtaFooterExpandedHeightValueChange: (Float) -> Unit
+    hasBalanceAction: () -> Unit
 ) {
     val hasSmartBalance by remember { mutableStateOf(verifyIfHasSmartBalance(balance?.balanceAccountSmart)) }
 
     CryptoActionsSection(
-        modifier = Modifier
-//            .onSizeChanged { size ->
-//            if (ctaFooterExpandedHeight != size.height.toFloat()) {
-//                onCtaFooterExpandedHeightValueChange(size.height.toFloat())
-//            }
-//        }
-        ,
         hasSmartBalance = hasSmartBalance,
         enableCryptoActions = profileEnable ?: false,
         enableSendAndGive = idBrand.toIntOrNull() == CostaRica.id,

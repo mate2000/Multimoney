@@ -34,6 +34,7 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnQueryValueChange
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import java.util.SortedMap
@@ -134,10 +135,8 @@ class MyContactsTransferViewModel @Inject constructor(
     private fun onAddSACAccountClick() {
         navigateTo(
             "${Screen.SmartAddSACAccountScreen.baseRoute}/$idBrand/$user/${
-            encodeData(
-                selectedSmartAccount
-            )
-            }"
+                encodeData(selectedSmartAccount)
+            }/${SmartTransferTypes.SmartToSmart.id}"
         )
     }
 

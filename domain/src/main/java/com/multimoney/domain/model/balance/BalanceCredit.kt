@@ -8,5 +8,5 @@ data class BalanceCredit(
     val term: String,
     val applyAutomaticDebit: Boolean?,
     val automaticDebitEnabled: Boolean?,
-    val expiredAutomaticDebitCard: Boolean
+    val expiredAutomaticDebitCard: Boolean?
 )

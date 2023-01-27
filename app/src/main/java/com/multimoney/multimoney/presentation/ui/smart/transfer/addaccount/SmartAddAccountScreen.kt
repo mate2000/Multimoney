@@ -31,6 +31,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnAccountNumberChanged
 import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnAccountTypeSelected
+import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnAddFavoriteValueChange
 import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnEmailChanged
 import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnGetAccountTypes
@@ -41,6 +42,7 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.Smart
 import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnValidateUserEmail
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
+import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
@@ -175,7 +177,7 @@ fun SmartAddAccountContent(viewModel: SmartAddAccountViewModel = hiltViewModel()
                     onDebounceValidation = { viewModel.onUIEvent(OnValidateAccountNumber) }
                 )
                 CustomOutlinedTextField(
-                    modifier = Modifier.padding(top = 16.dp, bottom = 24.dp),
+                    modifier = Modifier.padding(top = 16.dp),
                     value = viewModel.uiState.email,
                     labelText = stringResource(id = R.string.smart_add_sac_account_email_label),
                     keyboardOptions = KeyboardOptions(
@@ -194,6 +196,14 @@ fun SmartAddAccountContent(viewModel: SmartAddAccountViewModel = hiltViewModel()
                     errorMessage = stringResource(id = viewModel.uiState.emailError.second),
                     isRequired = true,
                     onDebounceValidation = { viewModel.onUIEvent(OnValidateUserEmail) },
+                )
+                CustomCheckBox(
+                    modifier = Modifier.padding(top = 6.dp, bottom = 24.dp),
+                    checked = viewModel.uiState.isFavorite,
+                    onCheckedChange = {
+                        viewModel.onUIEvent(OnAddFavoriteValueChange(it))
+                    },
+                    text = stringResource(id = R.string.smart_iban_register_favorite_checkbox)
                 )
             }
             CustomButton(

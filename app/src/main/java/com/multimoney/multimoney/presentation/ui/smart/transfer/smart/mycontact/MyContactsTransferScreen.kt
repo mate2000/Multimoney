@@ -196,8 +196,8 @@ fun ContactList(
 
                 if (contact.first().titular.contains(searchedString, true)) {
                     ContactItem(
-                        title = contact.first().titular.capitalizedAllWords(),
-                        subtitle = contact.first().number,
+                        title = contact.first().titular.orEmpty().capitalizedAllWords(),
+                        subtitle = contact.first().number.orEmpty(),
                         modifier = Modifier.fillMaxWidth(),
                         endIcon = R.drawable.ic_options,
                         onEndIconClick = {

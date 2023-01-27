@@ -1,21 +1,24 @@
 package com.multimoney.domain.repository
 
 import androidx.paging.PagingData
+import com.multimoney.domain.model.accountsmart.ACHAccount
 import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
 import com.multimoney.domain.model.accountsmart.AddressesLevel
+import com.multimoney.domain.model.accountsmart.BankListTransfer365
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.CivilStatusResult
 import com.multimoney.domain.model.accountsmart.ExchangeRateResult
 import com.multimoney.domain.model.accountsmart.GeneralEconomicActivityResult
 import com.multimoney.domain.model.accountsmart.GlobalRequest
 import com.multimoney.domain.model.accountsmart.Nationalities
+import com.multimoney.domain.model.accountsmart.PhonesResult
 import com.multimoney.domain.model.accountsmart.Professions
+import com.multimoney.domain.model.accountsmart.RelatedContact
 import com.multimoney.domain.model.accountsmart.RelationshipData
 import com.multimoney.domain.model.accountsmart.SaveSinpeAccount
 import com.multimoney.domain.model.accountsmart.SaveSmartAccount
 import com.multimoney.domain.model.accountsmart.SinpeAccountResult
 import com.multimoney.domain.model.accountsmart.SinpeTransferResult
-import com.multimoney.domain.model.accountsmart.SmartAccountType
 import com.multimoney.domain.model.accountsmart.SmartAccountTypeResult
 import com.multimoney.domain.model.accountsmart.SmartFavoriteResult
 import com.multimoney.domain.model.accountsmart.SmartMovement
@@ -215,10 +218,34 @@ interface SmartAccountRepository {
         user: String
     ): Flow<MultimoneyResult<SinpeTransferResult?>>
 
+    suspend fun queryRelatedContactsByPhone(
+        user: String,
+        idBrand: Int,
+        contacts: List<RelatedContact>
+    ): Flow<MultimoneyResult<PhonesResult?>>
+
     suspend fun querySmartAccountType(
         idBrand: Int,
         user: String
     ): Flow<MultimoneyResult<SmartAccountTypeResult?>>
+
+    suspend fun queryBankListTransfer365(
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<BankListTransfer365?>>
+
+    suspend fun mutationAddACHAccount(
+        idBrand: Int,
+        user: String,
+        accountNumber: String,
+        titularName: String,
+        isFavorite: Boolean,
+        typeAccountId: Int,
+        destinationBankId: Int,
+        description: String,
+        identificationNumber: String,
+        identificationTypeAccount: Int
+    ): Flow<MultimoneyResult<ACHAccount?>>
 
     suspend fun mutationUpdateFavoriteContactSmart(
         idBrand: Int,
@@ -234,4 +261,5 @@ interface SmartAccountRepository {
         phoneNumber: String?,
         idCurrencyAccount: Int?,
     ): Flow<MultimoneyResult<SmartFavoriteResult?>>
+
 }

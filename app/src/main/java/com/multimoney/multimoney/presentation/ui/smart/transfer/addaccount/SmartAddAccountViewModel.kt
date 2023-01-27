@@ -18,7 +18,10 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.TRANSFER_TYPE
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.util.MAX_SMART_ACCOUNT_DIGITS
+import com.multimoney.multimoney.presentation.util.MIN_SMART_ACCOUNT_DIGITS
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,6 +39,7 @@ class SmartAddAccountViewModel @Inject constructor(
     private var idBrand = savedStateHandle[ID_BRAND] ?: 0
     private var user = savedStateHandle[USER] ?: ""
     private var smartAccount: SmartAccountID? = null
+    private var transferType: Int = 0
 
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -45,6 +49,7 @@ class SmartAddAccountViewModel @Inject constructor(
         user = savedStateHandle[USER] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
         smartAccount = savedStateHandle[SMART_ACCOUNT]
+        transferType = savedStateHandle[TRANSFER_TYPE] ?: 0
     }
 
     private fun getAccountTypes() = executeUseCase {
@@ -102,7 +107,7 @@ class SmartAddAccountViewModel @Inject constructor(
 
     private fun isAccountNumberValid() {
         uiState = uiState.copy(
-            isAccountNumberError = uiState.accountNumber.length !in MIN_ACCOUNT_DIGITS..MAX_ACCOUNT_DIGITS
+            isAccountNumberError = uiState.accountNumber.length !in MIN_SMART_ACCOUNT_DIGITS..MAX_SMART_ACCOUNT_DIGITS
         )
         validateForm()
     }
@@ -170,10 +175,9 @@ class SmartAddAccountViewModel @Inject constructor(
         }
     }
 
-    // Todo change this navigation to go back to Contacts screen rev-1445
     private fun onNavigateBack() =
         navigateBack(
-            popTo = Screen.HomeScreen.route,
+            popTo = Screen.MyContactsTransferScreen.route,
             isRestart = false
         )
 
@@ -220,10 +224,5 @@ class SmartAddAccountViewModel @Inject constructor(
         data class OnLastNamesChanged(val lastNames: String) : UIEvent()
         data class OnEmailChanged(val email: String) : UIEvent()
         data class OnAddFavoriteValueChange(val isChecked: Boolean) : UIEvent()
-    }
-
-    companion object {
-        const val MIN_ACCOUNT_DIGITS = 9
-        const val MAX_ACCOUNT_DIGITS = 16
     }
 }

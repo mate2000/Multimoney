@@ -122,6 +122,7 @@ const val CRYPTO_ASSET = "asset"
 const val DESCRIPTION_CURRENCY = "description_currency"
 const val CURRENT_CRYPTO_PRICE = "current_crypto_price"
 const val URL_IMAGE = "url_image"
+const val CONTACTS = "contacts"
 const val USER_DATA = "user_data"
 const val PROFILE_CARD_LIST_ORIGIN = "profile_card_list_origin"
 
@@ -548,9 +549,19 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "own_transfer_amount_screen"
     )
 
+    object MyContactsTransferScreen : Screen(
+        "my_contacts_transfer_screen/{$USER}/{$ID_BRAND}/{$CONTACTS}/{$SMART_ACCOUNT}",
+        "my_contacts_transfer_screen"
+    )
+
     object SmartAddSACAccountScreen : Screen(
-        "smart_add_sac_account_screen/{$ID_BRAND}/{$USER}/{$SMART_ACCOUNT}",
+        "smart_add_sac_account_screen/{$ID_BRAND}/{$USER}/{$SMART_ACCOUNT}/{$TRANSFER_TYPE}",
         "smart_add_sac_account_screen"
+    )
+
+    object SmartOtherBanksAccountScreen : Screen(
+        "smart_add_other_bank_account_screen/{$ID_BRAND}/{$USER}/{$SMART_ACCOUNT}/{$TRANSFER_TYPE}",
+        "smart_add_other_bank_account_screen"
     )
 
     // TestNavGraph Screens

@@ -20,9 +20,10 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class MyContactsTransferViewModel @Inject constructor(
@@ -58,8 +59,8 @@ class MyContactsTransferViewModel @Inject constructor(
                 uiState = uiState.copy(isLoading = false)
                 accountList?.phones?.let { phoneSmarts ->
                     uiState = uiState.copy(relatedContactList = phoneSmarts.distinctBy { phoneSmart ->
-                        phoneSmart.identification
-                    }.sortedBy { it.titular })
+                        phoneSmart?.identification
+                    }.sortedBy { it?.titular })
                 }
             }
             result.onFailure {
@@ -96,7 +97,11 @@ class MyContactsTransferViewModel @Inject constructor(
     }
 
     private fun onAddSACAccountClick() {
-        navigateTo("${Screen.SmartAddSACAccountScreen.baseRoute}/$idBrand/$user/${encodeData(selectedSmartAccount)}")
+        navigateTo(
+            "${Screen.SmartAddSACAccountScreen.baseRoute}/$idBrand/$user/${
+                encodeData(selectedSmartAccount)
+            }/${SmartTransferTypes.SmartToSmart.id}"
+        )
     }
 
     data class UIState(

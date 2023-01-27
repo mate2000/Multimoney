@@ -181,9 +181,9 @@ fun ContactList(
                 (contact?.titular?.contains(uiState.queryValue, true) == true)
             ) {
                 ContactItem(
-                    title = contact.titular.capitalizedAllWords(),
+                    title = contact.titular.orEmpty().capitalizedAllWords(),
                     subtitle =
-                    contact.number,
+                    contact.number.orEmpty(),
                     modifier = Modifier
                         .fillMaxWidth(),
                     endIcon = R.drawable.ic_options,

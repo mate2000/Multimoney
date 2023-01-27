@@ -17,20 +17,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.SelectSmartAccountBuyOrSell
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.getMaskedAccount
 
 @Composable
 fun SelectSmartAccountScreen(
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-    viewModel: SelectSmartAccountViewModel = hiltViewModel()
+    viewModel: SelectSmartAccountViewModel = hiltViewModel(), //replace with sharedViewModel
+    buyOrSell: SelectSmartAccountBuyOrSell //Used for know which text show in the screen either if is selling or buying crypto
 ) {
     LaunchedEffect(true) {
         viewModel.executeNavigation(
@@ -40,11 +41,14 @@ fun SelectSmartAccountScreen(
         )
     }
     BackHandler { viewModel.onUIEvent(SelectSmartAccountViewModel.UIEvent.OnNavigateBack) }
-    SelectSmartAccountContent(viewModel)
+    SelectSmartAccountContent(viewModel, buyOrSell)
 }
 
 @Composable
-fun SelectSmartAccountContent(viewModel: SelectSmartAccountViewModel) {
+fun SelectSmartAccountContent(
+    viewModel: SelectSmartAccountViewModel,
+    buyOrSell: SelectSmartAccountBuyOrSell
+) {
     Column(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)
@@ -55,18 +59,31 @@ fun SelectSmartAccountContent(viewModel: SelectSmartAccountViewModel) {
             onLeftButtonClick = { viewModel.onUIEvent(SelectSmartAccountViewModel.UIEvent.OnNavigateBack) },
             isRightButtonVisible = false
         )
+        when (buyOrSell) {
+            SelectSmartAccountBuyOrSell.BUY_CRYPTO -> {
+                //ToDo replace with incoming currency
+                Text(
+                    modifier = Modifier.padding(top = 8.dp, bottom = 24.dp),
+                    text = stringResource(
+                        id = R.string.crypto_select_smart_account_title_template,
+                        viewModel.uiState.currency
+                    ),
+                    style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+                    color = MultimoneyTheme.colors.labelText,
+                    textAlign = TextAlign.Left
+                )
+            }
+            SelectSmartAccountBuyOrSell.SELL_CRYPTO -> {
+                Text(
+                    modifier = Modifier.padding(top = 8.dp, bottom = 24.dp),
+                    text = stringResource(id = R.string.sell_crypto_where_to_receive_money),
+                    style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+                    color = MultimoneyTheme.colors.labelText,
+                    textAlign = TextAlign.Left
+                )
+            }
+        }
 
-        //ToDo replace with incoming currency
-        Text(
-            modifier = Modifier.padding(top = 8.dp, bottom = 24.dp),
-            text = stringResource(
-                id = R.string.crypto_select_smart_account_title_template,
-                viewModel.uiState.currency
-            ),
-            style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.labelText,
-            textAlign = TextAlign.Left
-        )
         LazyColumn() {
             items(viewModel.uiState.accounts) { account ->
                 //TODO replace with real info from accounts

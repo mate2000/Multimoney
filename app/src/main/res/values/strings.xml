@@ -442,6 +442,8 @@
     <string name="crypto_finish_smart_alert_btn_discover_crypto" translatable="false">Explorar Cripto</string>
     <string name="crypto_finish_smart_alert_btn_saving_smart" translatable="false">Ahorrar Smart</string>
     <string name="crypto_select_smart_account_title_template" translatable="false">¿Con qué cuenta vas a comprar %1$s?</string>
+    <string name="sell_crypto_where_to_receive_money" translatable="false">¿En cuál cuenta quieres recibir el dinero?</string>
+
 
     <!-- Home Crypto Header Expanded-->
     <string name="home_crypto_header_expanded_title" translatable="false">Mi Cripto</string>

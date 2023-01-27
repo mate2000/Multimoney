@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.crypto.currencydetail
+package com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

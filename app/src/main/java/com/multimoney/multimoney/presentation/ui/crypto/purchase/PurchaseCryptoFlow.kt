@@ -8,15 +8,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.PurchaseCryptoSteps
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.BuyCurrencyScreen
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.listofcurrency.ListCryptoCurrenciesScreen
-import com.multimoney.multimoney.presentation.ui.crypto.purchase.listofcurrency.ListCryptoPurchaseViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.selectaccount.SelectSmartAccountScreen
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.voucher.BuyCryptoVoucherScreen
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -28,7 +29,6 @@ fun PurchaseCryptoFlow(
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: PurchaseCryptoSharedViewModel = hiltViewModel()
 ) {
-    val comingFromCryptoDetails = false
 
     LaunchedEffect(true) {
         viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnGetUserInfo)
@@ -46,7 +46,16 @@ fun PurchaseCryptoFlow(
             .background(MultimoneyTheme.colors.background)
     ) {
         Column {
-            TopNavBar()
+            TopNavBar(
+                isLeftButtonVisible = true,
+                isRightButtonVisible = true,
+                onRightButtonClick = {
+                    viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnCloseClick)
+                },
+                onLeftButtonClick = {
+                    viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep)
+                },
+            )
         }
         Column(
             modifier = Modifier.weight(0.1f),
@@ -54,16 +63,28 @@ fun PurchaseCryptoFlow(
         ) {
             when (viewModel.idBrand) {
                 Brand.ElSalvador.id -> {
-                    if (comingFromCryptoDetails) {
-                        SvPurchaseCryptoDirectFlow(step = viewModel.uiState.currentStep, viewModel = viewModel)
+                    if (viewModel.comingFromDetails) {
+                        SvPurchaseCryptoDirectFlow(
+                            step = viewModel.uiState.currentStep,
+                            viewModel = viewModel
+                        )
                     }
-                    SvPurchaseCryptoFlow(step = viewModel.uiState.currentStep, viewModel = viewModel)
+                    SvPurchaseCryptoFlow(
+                        step = viewModel.uiState.currentStep,
+                        viewModel = viewModel
+                    )
                 }
                 Brand.CostaRica.id -> {
-                    if (comingFromCryptoDetails) {
-                        CRPurchaseCryptoDirectFlow(step = viewModel.uiState.currentStep, viewModel = viewModel)
+                    if (viewModel.comingFromDetails) {
+                        CRPurchaseCryptoDirectFlow(
+                            step = viewModel.uiState.currentStep,
+                            viewModel = viewModel
+                        )
                     }
-                    CRPurchaseCryptoFlow(step = viewModel.uiState.currentStep, viewModel = viewModel)
+                    CRPurchaseCryptoFlow(
+                        step = viewModel.uiState.currentStep,
+                        viewModel = viewModel
+                    )
                 }
             }
         }
@@ -71,7 +92,20 @@ fun PurchaseCryptoFlow(
 
     LoadingIndicator(viewModel.uiState.isLoading)
     BackHandler {
-        // exit from buy crypto flow
+        viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnCloseClick)
+    }
+
+    if (viewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            message = viewModel.uiState.openDialog.description.ifBlank {
+                stringResource(viewModel.uiState.openDialog.descriptionResource)
+            },
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
+            openDialogCustom = viewModel.uiState.openDialog.isActive,
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+        )
     }
 }
 

@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.crypto.currencydetail
+package com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -34,7 +34,7 @@ import com.multimoney.multimoney.presentation.theme.LocalMultimoneyColors
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoCurrencyMovementItem
-import com.multimoney.multimoney.presentation.ui.crypto.currencydetail.CryptoCurrencyMovementsViewModel.Companion.TODAY_TEXT
+import com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail.CryptoCurrencyMovementsViewModel.Companion.TODAY_TEXT
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.DateFilterDWMYSection
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.MarketCurrencyDetailsGraphic
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoActionsSection

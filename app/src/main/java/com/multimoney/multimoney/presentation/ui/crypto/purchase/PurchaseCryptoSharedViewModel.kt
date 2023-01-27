@@ -56,22 +56,19 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     var nextAction: () -> Unit = {}
 
     //bundle parameters
-    // la necesaria
     val status = 1
-    var idBrand = 0
+    var idBrand = DEFAULT_ID_BRAND_ERROR
+    var pkUser = ""
     var identification = ""
     var email = ""
-    var pkUser = ""
+    var abvCurrency: String = ""
     var asset: String? = savedStateHandle[CRYPTO_ASSET]
     var assetDescription: String? = savedStateHandle[DESCRIPTION_CURRENCY] ?: ""
-    val comingFromDetails: Boolean = asset != null
     val market = asset.plus(CurrencyType.Dollar.disbursementValue)
     val side = CryptoOperationSide.BUY.value
-
-    // la de smart
     //val cryptoNetwork: String = ""
-    val accountToken: String = ""
-    var abvCurrency: String = ""
+    var accountToken: String = ""
+    val comingFromDetails: Boolean = asset != null
 
     private fun setUserData() {
         viewModelScope.launch {
@@ -100,7 +97,11 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
             ).collectLatest {result ->
                 result.onSuccess {
                     it?.let {
-                    uiState = uiState.copy(accounts = it)
+                        if (idBrand == Brand.ElSalvador.id) {
+                            accountToken = it[0].accountToken
+                        } else {
+                            uiState = uiState.copy(accounts = it)
+                        }
                     }
                 }
                 result.onFailure {

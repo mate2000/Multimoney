@@ -9,6 +9,7 @@ class QueryCatalogDocumentTypeUseCaseImpl(private val serviceRepository: Securit
     QueryCatalogDocumentTypeUseCase {
     override suspend fun invoke(
         idBrand: Int,
-        user: String
-    ): Flow<MultimoneyResult<CatalogType?>> = serviceRepository.queryCatalog(idBrand, user)
+        user: String,
+        isTransferIdentification: Int?
+    ): Flow<MultimoneyResult<CatalogType?>> = serviceRepository.queryCatalog(idBrand, user, isTransferIdentification)
 }

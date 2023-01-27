@@ -290,9 +290,10 @@ class SecurityRepositoryImpl @Inject constructor(
 
     override suspend fun queryCatalog(
         idBrand: Int,
-        user: String
+        user: String,
+        isTransferIdentification: Int?
     ): Flow<MultimoneyResult<CatalogType?>> = fetchData(
-        apolloCall = graphqlApi.queryCatalogIdentification(idBrand, user),
+        apolloCall = graphqlApi.queryCatalogIdentification(idBrand, user, isTransferIdentification),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }

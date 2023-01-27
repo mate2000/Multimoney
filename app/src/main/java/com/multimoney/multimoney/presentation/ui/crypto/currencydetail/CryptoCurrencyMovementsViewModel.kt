@@ -20,7 +20,6 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
@@ -111,17 +110,16 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateToAllMovements(){
-        popAndNavigateTo(
-            "${Screen.CryptoMovementsAllScreen.baseRoute}/${uiState.idBrand}/$identification/$user?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}",
-                    Screen.CryptoCurrencyMovementsScreen.route
+    private fun onNavigateToAllMovements() {
+        navigateTo(
+            "${Screen.CryptoMovementsAllScreen.baseRoute}/${uiState.idBrand}/$identification/$user?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}"
         )
     }
 
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
+            is UIEvent.OnNavigateBack -> navigateBack(Screen.CryptoWalletScreen.route, false)
             is UIEvent.OnGetUserInfo -> onGetUserInfo()
             is UIEvent.OnGetMovements -> callQueryMovements()
             is UIEvent.OnGetAssetHistory -> callQueryAssetHistory()

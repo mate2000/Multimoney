@@ -6,6 +6,7 @@ mutation UpdateFavoriteContactSmart(
     $accountName: String
     $email: String!
     $active: Boolean!
+    $isFavorite: Boolean!
     $phoneNumber: String
     $idCurrencyAccount: Int
     $idBrand: Int!
@@ -20,6 +21,7 @@ mutation UpdateFavoriteContactSmart(
             accountName: $accountName
             email: $email
             activo: $active
+            isFavorite: $isFavorite
             phoneNumber: $phoneNumber
             idCurrencyAccount: $idCurrencyAccount
             idBrand: $idBrand

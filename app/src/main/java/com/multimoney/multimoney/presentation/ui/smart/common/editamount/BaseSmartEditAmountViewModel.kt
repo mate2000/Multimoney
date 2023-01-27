@@ -106,8 +106,8 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
 
                 amountUIState = amountUIState.copy(
                     originAccountDisplay = DisplayAccount(
-                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_card_CR,
-                        sheetTitleResource = originCurrency?.myAccountSmart,
+                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_account,
+                        sheetTitleResource = originCurrency?.myAccountSmartSymbol,
                         sheetSubtitleResource = originCurrency?.currencyName,
                         icon = R.drawable.ic_multimoney_smart
                     ),
@@ -137,14 +137,14 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
 
                 amountUIState = amountUIState.copy(
                     originAccountDisplay = DisplayAccount(
-                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_card_CR,
-                        sheetTitleResource = originCurrency?.myAccountSmart,
+                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_account,
+                        sheetTitleResource = originCurrency?.myAccountSmartSymbol,
                         sheetSubtitleResource = originCurrency?.currencyName,
                         icon = R.drawable.ic_multimoney_smart
                     ),
                     destinyAccountDisplay = DisplayAccount(
-                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_card_CR,
-                        sheetTitleResource = destinyCurrency?.myAccountSmart,
+                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_account,
+                        sheetTitleResource = destinyCurrency?.myAccountSmartSymbol,
                         sheetSubtitleResource = destinyCurrency?.currencyName,
                         icon = R.drawable.ic_multimoney_smart
                     ),
@@ -165,14 +165,14 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
 
                 amountUIState = amountUIState.copy(
                     originAccountDisplay = DisplayAccount(
-                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_card_CR,
+                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_account,
                         sheetTitle = ibanAccount?.bank.orEmpty(),
                         sheetSubtitle = getMaskedAccountIban(ibanAccount?.sinpeAccount.orEmpty()),
                         icon = originCurrency?.accountIcon
                     ),
                     destinyAccountDisplay = DisplayAccount(
                         sheetLabel = R.string.smart_payment_sheet_to_account,
-                        sheetTitleResource = destinyCurrency?.myAccountSmart,
+                        sheetTitleResource = destinyCurrency?.myAccountSmartSymbol,
                         sheetSubtitleResource = destinyCurrency?.currencyName,
                         icon = R.drawable.ic_multimoney_smart
                     ),
@@ -193,14 +193,14 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
 
                 amountUIState = amountUIState.copy(
                     originAccountDisplay = DisplayAccount(
-                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_card,
+                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from,
                         sheetTitle = visaAccount?.detail.orEmpty(),
                         sheetSubtitle = getMaskedVisaAccount(visaAccount?.cardMaskedNumber.orEmpty()),
                         icon = R.drawable.ic_visa_card_item
                     ),
                     destinyAccountDisplay = DisplayAccount(
                         sheetLabel = R.string.smart_payment_amount_bottom_sheet_to,
-                        sheetTitleResource = R.string.smart_payment_sheet_multimoney_smart,
+                        sheetTitleResource = destinyCurrency?.myAccountSmartSymbol,
                         icon = R.drawable.ic_multimoney_smart
                     ),
                     currency = originCurrency?.symbol ?: Dollar.symbol,

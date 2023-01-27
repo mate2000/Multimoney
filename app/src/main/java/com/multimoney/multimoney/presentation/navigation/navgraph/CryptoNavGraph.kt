@@ -136,7 +136,8 @@ fun NavGraphBuilder.cryptoNavGraph(
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(CRYPTO_ASSET) {
-                    defaultValue = ""
+                    defaultValue = null
+                    nullable = true
                     type = NavType.StringType
                 },
             )

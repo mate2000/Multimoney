@@ -37,15 +37,17 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme.colors
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.theme.subHead
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAddToFavoriteAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnCallQueryRelatedContactsByPhoneUseCase
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnContactClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnQueryValueChange
 import com.multimoney.multimoney.presentation.uielement.ContactAccountDisplay
-import com.multimoney.multimoney.presentation.uielement.ContactItem
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
+import com.multimoney.multimoney.presentation.uielement.CustomContactIcon
+import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.CustomModalBottomSheet
 import com.multimoney.multimoney.presentation.uielement.CustomSearchBar
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
@@ -192,18 +194,27 @@ fun ContactList(
                 val colorSubtitle by remember { mutableStateOf(randomColor.random()) }
 
                 if (contact.first().titular.contains(searchedString, true)) {
-                    ContactItem(
+                    CustomInfoButton(
                         title = contact.first().titular.capitalizedAllWords(),
                         subtitle = contact.first().number,
                         modifier = Modifier.fillMaxWidth(),
+                        startIcon = null,
+                        composableIcon = { modifier ->
+                            CustomContactIcon(
+                                name = contact.first().titular,
+                                color = colorSubtitle,
+                                modifier = modifier
+                            )
+                        },
                         endIcon = R.drawable.ic_options,
                         onEndIconClick = {
                             onEndIconClick(contact.first())
                         },
-                        colorSubtitle = colorSubtitle,
                         onClick = {
                             onContactClick(contact)
-                        }
+                        },
+                        showBorder = false,
+                        transparent = true
                     )
                     Divider(color = colors.dividerWhite30, thickness = 1.dp)
                 }
@@ -225,14 +236,14 @@ fun ContactBottomSheet(viewModel: MyContactsTransferViewModel) {
             Column(Modifier.padding(vertical = 16.dp)) {
                 Text(
                     text = viewModel.uiState.selectedContact.first().titular.capitalizedAllWords(),
-                    style = Typography.body1.copy(
+                    style = Typography.subHead.copy(
                         fontWeight = FontWeight.SemiBold,
                         color = colors.text
                     )
                 )
                 Text(
                     text = viewModel.uiState.selectedContact.first().number,
-                    style = Typography.body1.copy(
+                    style = Typography.subHead.copy(
                         color = colors.subTitleText
                     )
                 )

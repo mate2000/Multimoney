@@ -8,6 +8,7 @@ import com.multimoney.domain.model.accountsmart.CivilStatusResult
 import com.multimoney.domain.model.accountsmart.ExchangeRateResult
 import com.multimoney.domain.model.accountsmart.GeneralEconomicActivityResult
 import com.multimoney.domain.model.accountsmart.GlobalRequest
+import com.multimoney.domain.model.accountsmart.LocalTransferResult
 import com.multimoney.domain.model.accountsmart.Nationalities
 import com.multimoney.domain.model.accountsmart.PhonesResult
 import com.multimoney.domain.model.accountsmart.Professions
@@ -216,6 +217,21 @@ interface SmartAccountRepository {
         user: String
     ): Flow<MultimoneyResult<SinpeTransferResult?>>
 
+    suspend fun mutationProcessLocalTransfer(
+        pkUsuario: Int,
+        user: String,
+        idBrand: Int,
+        originIdentification: String,
+        idCurrencyOrigin: String,
+        destinationIdentification: String,
+        idCurrencyDestination: String,
+        destinationAccountNumber: String,
+        amount: Double,
+        reason: String,
+        accountToken: Long,
+        exchangeRate: Double
+    ): Flow<MultimoneyResult<LocalTransferResult?>>
+
     suspend fun queryRelatedContactsByPhone(
         user: String,
         idBrand: Int,
@@ -238,7 +254,6 @@ interface SmartAccountRepository {
         email: String,
         active: Boolean,
         phoneNumber: String?,
-        idCurrencyAccount: Int,
+        idCurrencyAccount: Int
     ): Flow<MultimoneyResult<SmartFavoriteResult?>>
-
 }

@@ -3,16 +3,15 @@ package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnAbandonFlow
@@ -23,17 +22,17 @@ import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSma
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnMotiveChange
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnNavigateHome
-import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnRetryTransfer
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.SmartAmountBody
-import com.multimoney.multimoney.presentation.uielement.AlertResult
-import com.multimoney.multimoney.presentation.uielement.ContactItem
+import com.multimoney.multimoney.presentation.uielement.CustomContactIcon
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.LoadingMultiMoney
 import com.multimoney.multimoney.presentation.uielement.SmartPaymentBottomSheet
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 
 @Composable
@@ -51,14 +50,7 @@ fun MyContactsTransferAmountScreen(
     if (viewModel.amountUIState.showLoadingScreen) {
         LoadingMultiMoney(string.smart_processing_transaction)
     } else if (viewModel.amountUIState.showErrorScreen) {
-        AlertResult(
-            titleResource = string.error_occurred_title,
-            isLeftButtonVisible = false,
-            onRightButtonClick = { viewModel.onAmountUIEvent(OnNavigateHome) },
-            descriptionResource = string.error_try_again,
-            buttonTextResource = string.error_button_try_again,
-            onButtonClick = { viewModel.onAmountUIEvent(OnRetryTransfer) }
-        )
+        // todo add error screen
         BackHandler {
             viewModel.onAmountUIEvent(OnNavigateHome)
         }
@@ -101,10 +93,16 @@ fun MyContactsTransferAmountContent(viewModel: MyContactsTransferAmountViewModel
             titleId = string.smart_iban_transfer_send_money,
             originAccountSubtitle = stringResource(
                 id = viewModel.fromSmartLabel,
-                getMaskedAccountIban(
-                    viewModel.smartAccount?.ibanAccountNumber.orEmpty(),
-                    stringResource(id = string.payment_account_masked_text)
-                )
+                if (viewModel.idBrand == Brand.CostaRica.id) {
+                    getMaskedAccountIban(
+                        viewModel.smartAccount?.ibanAccountNumber.orEmpty()
+                    )
+                } else {
+                    getMaskedAccount(
+                        accountNumber = viewModel.smartAccount?.accountNumber.orEmpty(),
+                        prefix = Brand.ElSalvador.initials
+                    )
+                }
             ),
             currentAmount = viewModel.amountUIState.currentAmountValueString,
             amountPlaceHolderId = viewModel.amountUIState.placeholder,
@@ -150,16 +148,23 @@ private fun MyContactsAmountBottomSheet(viewModel: MyContactsTransferAmountViewM
             viewModel.amountUIState.destinyAccountDisplay?.sheetLabel ?: string.empty
         ),
         toContactInfo = {
-            ContactItem(
-                modifier = Modifier.fillMaxWidth(),
+            CustomInfoButton(
                 title = viewModel.amountUIState.destinyAccountDisplay?.sheetTitle.orEmpty(),
                 subtitle = viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitle.orEmpty(),
-                colorSubtitle = Color.Red,
                 endIcon = null,
-                showBorder = true
+                startIcon = null,
+                composableIcon = {
+                    CustomContactIcon(
+                        modifier = it,
+                        name = viewModel.amountUIState.destinyAccountDisplay?.sheetTitle.orEmpty(),
+                        color = MultimoneyTheme.colors.coloredInitialChar.random()
+                    )
+                },
+                enable = false
             )
         },
         motive = viewModel.amountUIState.motive,
-        buttonText = stringResource(string.payment_amount_bottom_sheet_send_button)
-    ) { viewModel.onAmountUIEvent(OnCallProcessTransfer) }
+        buttonText = stringResource(string.payment_amount_bottom_sheet_send_button),
+        buttonAction = { viewModel.onAmountUIEvent(OnCallProcessTransfer) }
+    )
 }

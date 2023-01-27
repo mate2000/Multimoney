@@ -1796,7 +1796,7 @@ class GraphqlApi @Inject constructor(
         reason: String,
         accountToken: Long,
         exchangeRate: Double
-    ) {
+    ): ApolloCall<ProcessLocalTransferMutation.Data> =
         apolloAuthorizedClient.mutation(
             ProcessLocalTransferMutation(
                 pkUsuario = pkUsuario,
@@ -1812,8 +1812,7 @@ class GraphqlApi @Inject constructor(
                 accountToken = accountToken,
                 exchangeRate = exchangeRate
             )
-        )
-    }
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryRelatedContactsByPhone(
         user: String,

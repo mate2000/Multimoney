@@ -1469,7 +1469,7 @@
 
     <!-- Product -> Visa Card Expired Dialog-->
     <string name="product_visa_card_expired_dialog_title" translatable="false">Tu tarjeta ha expirado</string>
-    <string name="product_visa_card_expired_dialog_description" translatable="false">Debes de agregar una nueva tarjeta para que puedas utilizarla en tus operaciones.</string>
+    <string name="product_visa_card_expired_dialog_description" translatable="false">Actualiza los datos de tu tarjeta para continuar con tu pago programado.</string>
     <string name="product_visa_card_expired_dialog_update_label" translatable="false">Actualizar</string>
     <string name="product_visa_card_expired_dialog_hide_label" translatable="false">Ocultar</string>
 

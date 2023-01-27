@@ -751,11 +751,6 @@ class InteractionModule {
 
     @Provides
     @Singleton
-    fun provideQueryRelatedContactsByPhoneUseCase(smartAccountRepository: SmartAccountRepository): QueryRelatedContactsByPhoneUseCase =
-        QueryRelatedContactsByPhoneUseCaseImpl(smartAccountRepository)
-
-    @Provides
-    @Singleton
     fun provideQuerySmartAccountType(smartAccountRepository: SmartAccountRepository): QuerySmartAccountTypeUseCase =
         QuerySmartAccountTypeUseCaseImpl(smartAccountRepository)
 
@@ -773,4 +768,9 @@ class InteractionModule {
     @Singleton
     fun provideMutationUpdateFavoriteSmart(smartAccountRepository: SmartAccountRepository): MutationUpdateFavoriteSmartUseCase =
         MutationUpdateFavoriteSmartUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryRelatedContactsByPhoneUseCase(smartAccountRepository: SmartAccountRepository): QueryRelatedContactsByPhoneUseCase =
+        QueryRelatedContactsByPhoneUseCaseImpl(smartAccountRepository)
 }

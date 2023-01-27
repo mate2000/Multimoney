@@ -38,7 +38,6 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnCallQueryGetCountry
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNationalityChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNextActionClick
-import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -123,15 +122,8 @@ fun SignUpPersonalDataScreen(
         }
         viewModel.onUserDataValidationEvent.collect { result ->
             result.onSuccess { userData ->
-                if (userData?.status == SignUpPersonalDataViewModel.ANOTHER_DEVICE_ALREADY_REGISTERED) {
-                    viewModel.onUIEvent(
-                        SignUpPersonalDataViewModel.UIEvent.OnShowAnotherDeviceAlreadyRegisteredDialog {
-                            viewModel.onSuccessValidation(sharedViewModel, userData)
-                        }
-                    )
-                } else {
-                    viewModel.onSuccessValidation(sharedViewModel, userData)
-                }
+                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(false))
+                viewModel.onSuccessValidation(sharedViewModel, userData)
             }.onLoading {
                 sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(true))
             }.onMessage {
@@ -205,15 +197,5 @@ fun SignUpPersonalDataScreen(
             Nationalities.ElSalvadorDui.country -> SignUpPersonalDataSvScreen()
             Nationalities.Guatemala.country -> SignUpPersonalDataGtScreen()
         }
-    }
-    if (viewModel.uiState.openDialog.isActive.value) {
-        CustomDialog(
-            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
-            message = stringResource(id = viewModel.uiState.openDialog.descriptionResource),
-            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
-            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
-            openDialogCustom = viewModel.uiState.openDialog.isActive,
-            onPositiveAction = viewModel.uiState.openDialog.positiveAction
-        )
     }
 }

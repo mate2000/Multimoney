@@ -41,12 +41,10 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnSecondLastNameChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnSecondNameChange
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnShowAnotherDeviceAlreadyRegisteredDialog
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnUpdateAllNames
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnValidateDocument
 import com.multimoney.multimoney.presentation.util.catalog.CrDocuments
-import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SvDocuments
 import com.multimoney.multimoney.presentation.util.getDeviceId
 import com.multimoney.multimoney.presentation.util.getNavParam
@@ -492,14 +490,12 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private fun onUserDataValidationSuccess(
         userData: UserData?,
         onUseDataValueChange: () -> Unit,
-        onCallMutationUpdateUserRegisterUseCase: () -> Unit,
-        onLoadingValueChange: (isLoading: Boolean) -> Unit
+        onCallMutationUpdateUserRegisterUseCase: () -> Unit
     ) {
         if (userData?.isNewUser == true || userData?.status == ANOTHER_DEVICE_ALREADY_REGISTERED) {
             onUseDataValueChange()
             onCallMutationUpdateUserRegisterUseCase()
         } else {
-            onLoadingValueChange(false)
             navigateToRegisteredUser(userData)
         }
     }
@@ -529,23 +525,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
             },
             onCallMutationUpdateUserRegisterUseCase = {
                 sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase)
-            },
-            onLoadingValueChange = { isLoading ->
-                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(isLoading))
             }
-        )
-    }
-
-    private fun onShowAnotherDeviceAlreadyRegisteredDialog(onPositiveClick: () -> Unit) {
-        uiState = uiState.copy(
-            openDialog = DialogParameters(
-                titleResource = R.string.sign_up_email_another_device_registered_dialog_title,
-                descriptionResource = R.string.sign_up_email_another_device_registered_dialog_description,
-                positiveResource = R.string.button_continue,
-                negativeResource = R.string.cancel,
-                isActive = mutableStateOf(true),
-                positiveAction = onPositiveClick
-            )
         )
     }
 
@@ -598,8 +578,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
         val nameError: Pair<Boolean, Int> = Pair(false, 0),
         val lastNameError: Pair<Boolean, Int> = Pair(false, 0),
         val closeKeyboard: Boolean = false,
-        val isLoading: Boolean = false,
-        val openDialog: DialogParameters = DialogParameters()
+        val isLoading: Boolean = false
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -656,7 +635,6 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 event.onLoadingValueChange
             )
             is UIEvent.OnValidateForm -> isFormValid()
-            is OnShowAnotherDeviceAlreadyRegisteredDialog -> onShowAnotherDeviceAlreadyRegisteredDialog(event.onPositiveClick)
         }
     }
 
@@ -733,7 +711,6 @@ class SignUpPersonalDataViewModel @Inject constructor(
             UIEvent()
 
         object OnValidateForm : UIEvent()
-        data class OnShowAnotherDeviceAlreadyRegisteredDialog(val onPositiveClick: () -> Unit) : UIEvent()
     }
 
     sealed class BaseEvent {

@@ -727,7 +727,7 @@ class GraphqlApi @Inject constructor(
         email: String,
         deviceId: String
     ): ApolloCall<ValidateUserExistsQuery.Data> =
-        apolloAuthorizedClient.query(ValidateUserExistsQuery(email, "deviceId")).fetchPolicy(
+        apolloAuthorizedClient.query(ValidateUserExistsQuery(email, deviceId)).fetchPolicy(
             FetchPolicy.NetworkOnly
         )
 
@@ -753,7 +753,7 @@ class GraphqlApi @Inject constructor(
             Optional.Present(secondName),
             firstSurname,
             Optional.Present(secondSurname),
-            "deviceId"
+            deviceId
         )
     ).fetchPolicy(
         FetchPolicy.NetworkOnly
@@ -1788,15 +1788,15 @@ class GraphqlApi @Inject constructor(
     fun queryRelatedContactsByPhone(
         user: String,
         idBrand: Int,
-        contacts: List<RelatedContact>,
+        contacts: List<RelatedContact>
     ): ApolloCall<RelatedContactsByPhoneQuery.Data> =
         apolloAuthorizedClient.query(
             RelatedContactsByPhoneQuery(
                 user = Optional.presentIfNotNull(user),
                 idBrand = Optional.presentIfNotNull(idBrand),
                 contacts = contacts.map { contact ->
-                        ContactsInput(contact.phoneNumber)
-                    }
+                    ContactsInput(contact.phoneNumber)
+                }
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

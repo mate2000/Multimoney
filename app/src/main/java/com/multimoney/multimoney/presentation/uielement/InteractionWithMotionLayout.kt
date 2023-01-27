@@ -108,7 +108,7 @@ fun MotionLayoutMM(
         isAnimationRunning = true
         timer = object : CountDownTimer(TIMER_FUTURE, TIMER_COUNT_DOWN) {
             override fun onTick(millisMainUntilFinished: Long) {
-                animationProgress = animationProgress.minus(ANIMATION_FRACTION)
+                animationProgress = if (animationProgress > 0f) animationProgress.minus(ANIMATION_FRACTION) else 0f
             }
 
             override fun onFinish() {
@@ -281,5 +281,5 @@ const val ANIMATION_FRACTION = 0.06f
 const val ANIMATION_EXPANDED = 1f
 const val ANIMATION_COLLAPSED = 0f
 const val COLLAPSED_FRACTIONAL_THRESHOLD = 0.8f
-const val EXPANDED_FRACTIONAL_THRESHOLD = 0.1f
+const val EXPANDED_FRACTIONAL_THRESHOLD = 0.5f
 const val TOTAL_PERCENTAGE = 100f

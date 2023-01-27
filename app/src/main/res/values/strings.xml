@@ -873,11 +873,11 @@
     <string name="smart_account_retired_title" translatable="false">Jubilado</string>
     <string name="smart_account_retired_institution_label" translatable="false">Institución con la que recibe la pensión</string>
     <string name="smart_account_retired_institution_placeholder" translatable="false">Nombre institución</string>
-    <string name="smart_account_retired_amount_label" translatable="false">Ingreso mensual</string>
+    <string name="smart_account_retired_amount_label" translatable="false">Ingreso promedio mensual</string>
     <string name="smart_account_retired_amount_placeholder" translatable="false">$000</string>
     <string name="smart_origin_main_income_title" translatable="false">¿Cuál es tu principal fuente de ingresos?</string>
     <string name="smart_account_formal_title" translatable="false">Asalariado formal</string>
-    <string name="smart_account_formal_monthly" translatable="false">Ingreso mensual</string>
+    <string name="smart_account_formal_monthly" translatable="false">Ingreso promedio mensual</string>
     <string name="smart_account_formal_placeholder" translatable="false">₡00.0</string>
     <string name="smart_account_formal_select_occupation" translatable="false">Seleccioná tu ocupación</string>
     <string name="smart_account_formal_select_profession" translatable="false">Selecciona tu profesión</string>
@@ -1085,7 +1085,7 @@
     <string name="smart_business_personal_title" translatable="false">Negocio propio a título personal</string>
     <string name="smart_business_personal_name" translatable="false">Nombre del emprendimiento</string>
     <string name="smart_business_personal_name_required" translatable="false">Nombre del emprendimiento requerido</string>
-    <string name="smart_business_personal_income_label" translatable="false">Ingreso mensual</string>
+    <string name="smart_business_personal_income_label" translatable="false">Ingreso promedio mensual</string>
     <string name="smart_business_personal_income_label_required" translatable="false">Ingreso mensual requerido</string>
 
     <!--Smart Facta screen-->

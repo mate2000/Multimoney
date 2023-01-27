@@ -76,33 +76,33 @@ fun MyContactsTransferScreen(
                     color = colors.onBoardingTitleText
                 )
             )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp, start = 16.dp, end = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(id = R.string.smart_mycontacts_transfer_title),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .wrapContentWidth(Alignment.Start),
-                    style = Typography.subtitle1.copy(
-                        fontWeight = FontWeight.SemiBold,
-                        color = colors.bodyTextColor
-                    )
-                )
-                CustomButton(
-                    text = stringResource(id = R.string.smart_my_contacts_transfer_accounts_add),
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentWidth(Alignment.End),
-                    onClick = {
-                        viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnAddSACAccountClick)
-                    },
-                    buttonType = CustomButtonType.PrimaryTertiary
-                )
-            }
+                        .padding(top = 8.dp, start = 16.dp, end = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.smart_mycontacts_transfer_title),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .wrapContentWidth(Alignment.Start),
+                        style = Typography.subtitle1.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            color = colors.bodyTextColor
+                        )
+                    )
+                    CustomButton(
+                        text = stringResource(id = R.string.smart_my_contacts_transfer_accounts_add),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentWidth(Alignment.End),
+                        onClick = {
+                            viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnAddSACAccountClick)
+                        },
+                        buttonType = CustomButtonType.PrimaryTertiary
+                    )
+                }
         } else {
             Text(
                 modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
@@ -128,7 +128,7 @@ fun MyContactsTransferScreen(
                 viewModel.uiState.relatedContactList?.count()
             ),
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = 4.dp, end = 16.dp, start = 16.dp),
+            modifier = Modifier.padding(top= 4.dp, end = 16.dp, start = 16.dp),
             style = Typography.caption.copy(
                 fontWeight = FontWeight.Normal,
                 color = colors.smartCardTrending
@@ -181,13 +181,13 @@ fun ContactList(
                 (contact?.titular?.contains(uiState.queryValue, true) == true)
             ) {
                 ContactItem(
-                    title = contact.titular?.capitalizedAllWords(),
+                    title = contact.titular.orEmpty().capitalizedAllWords(),
                     subtitle =
-                    contact.number ?: "",
+                    contact.number.orEmpty(),
                     modifier = Modifier
                         .fillMaxWidth(),
                     endIcon = R.drawable.ic_options,
-                    onEndIconClick = { onEndIconClick.invoke(contact) },
+                    onEndIconClick = { onEndIconClick.invoke(contact)},
                     colorSubtitle = colorSubtitle
                 )
                 Divider(color = colors.dividerWhite30, thickness = 1.dp)

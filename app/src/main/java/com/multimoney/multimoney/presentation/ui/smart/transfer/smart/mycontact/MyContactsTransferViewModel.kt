@@ -59,8 +59,8 @@ class MyContactsTransferViewModel @Inject constructor(
                 uiState = uiState.copy(isLoading = false)
                 accountList?.phones?.let { phoneSmarts ->
                     uiState = uiState.copy(relatedContactList = phoneSmarts.distinctBy { phoneSmart ->
-                        phoneSmart.identification
-                    }.sortedBy { it.titular })
+                        phoneSmart?.identification
+                    }.sortedBy { it?.titular })
                 }
             }
             result.onFailure {

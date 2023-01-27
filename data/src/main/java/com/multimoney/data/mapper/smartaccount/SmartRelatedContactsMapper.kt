@@ -5,7 +5,7 @@ import com.multimoney.domain.model.accountsmart.PhoneSmart
 import com.multimoney.domain.model.accountsmart.PhonesResult
 
 private fun RelatedContactsByPhoneQuery.RelatedContactsByPhone.mapToDomainModel() = PhonesResult(
-    phones = result.phones.map { it.mapToDomainModel() }
+    phones = result?.phones?.map { it?.mapToDomainModel() }
 )
 
 fun RelatedContactsByPhoneQuery.Data.mapToDomainModel() = relatedContactsByPhone?.mapToDomainModel()

@@ -65,6 +65,7 @@ fun CustomDatePicker(
     minYear: Int,
     minMonth: Int,
     minDay: Int,
+    maxDateToday: Boolean = true,
     leadingIcon: Int? = null,
     leadingIconComposable: @Composable ((Color) -> Unit)? = null,
     trailingIcon: Int? = null,
@@ -184,7 +185,9 @@ fun CustomDatePicker(
                         minDay
                     )
                     datePicker.datePicker.minDate = calendar.timeInMillis
-                    datePicker.datePicker.maxDate = Date().time
+                    if (maxDateToday) {
+                        datePicker.datePicker.maxDate = Date().time
+                    }
                     datePicker.show()
                 }
                 .bringIntoViewRequester(bringIntoViewRequester)

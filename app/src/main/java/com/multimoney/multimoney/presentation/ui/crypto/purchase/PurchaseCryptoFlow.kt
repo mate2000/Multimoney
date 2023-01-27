@@ -68,11 +68,12 @@ fun PurchaseCryptoFlow(
                             step = viewModel.uiState.currentStep,
                             viewModel = viewModel
                         )
+                    } else{
+                        SvPurchaseCryptoFlow(
+                            step = viewModel.uiState.currentStep,
+                            viewModel = viewModel
+                        )
                     }
-                    SvPurchaseCryptoFlow(
-                        step = viewModel.uiState.currentStep,
-                        viewModel = viewModel
-                    )
                 }
                 Brand.CostaRica.id -> {
                     if (viewModel.comingFromDetails) {
@@ -81,10 +82,12 @@ fun PurchaseCryptoFlow(
                             viewModel = viewModel
                         )
                     }
-                    CRPurchaseCryptoFlow(
-                        step = viewModel.uiState.currentStep,
-                        viewModel = viewModel
-                    )
+                    else {
+                        CRPurchaseCryptoFlow(
+                            step = viewModel.uiState.currentStep,
+                            viewModel = viewModel
+                        )
+                    }
                 }
             }
         }

@@ -10,6 +10,7 @@ import com.multimoney.multimoney.presentation.navigation.CARD_STATUS
 import com.multimoney.multimoney.presentation.navigation.CRYPTO_ASSET
 import com.multimoney.multimoney.presentation.navigation.CRYPTO_ROUTE
 import com.multimoney.multimoney.presentation.navigation.CURRENT_CRYPTO_PRICE
+import com.multimoney.multimoney.presentation.navigation.DESCRIPTION_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.GLOBAL_CRYPTO_BALANCE
 import com.multimoney.multimoney.presentation.navigation.HOME_STATE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
@@ -42,6 +43,11 @@ fun NavGraphBuilder.cryptoNavGraph(
             route= Screen.PurchaseCryptoFlow.route,
             arguments = listOf(
                 navArgument(CRYPTO_ASSET) {
+                    nullable = true
+                    defaultValue = null
+                    type = NavType.StringType
+                },
+                navArgument(DESCRIPTION_CURRENCY) {
                     nullable = true
                     defaultValue = null
                     type = NavType.StringType

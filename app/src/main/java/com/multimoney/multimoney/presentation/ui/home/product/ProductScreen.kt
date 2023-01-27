@@ -544,7 +544,7 @@ fun ProductFooterExpanded(
                         }
                     },
                     hasBalanceAction = {
-                        viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToBuyCrypto)
+                        viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToPurchaseCryptoFlow)
                     }
                 )
             }

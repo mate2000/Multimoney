@@ -562,7 +562,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     // Crypto
     //todo add params
     object PurchaseCryptoFlow: Screen(
-        route = "purchase_crypto_flow/{$USER}/{$ID_BRAND}",
+        route = "purchase_crypto_flow?$CRYPTO_ASSET={$CRYPTO_ASSET}&$DESCRIPTION_CURRENCY={$DESCRIPTION_CURRENCY}",
         baseRoute = "purchase_crypto_flow"
     )
 
@@ -589,10 +589,5 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object CryptoCurrencyDetailsScreen : Screen(
         "crypto_currency_details_screen/{$USER}/{$ID_BRAND}/{$CRYPTO_ASSET}/{$DESCRIPTION_CURRENCY}/{$CURRENT_CRYPTO_PRICE}/{$URL_IMAGE}",
         "crypto_currency_details_screen"
-    )
-
-    object CryptoPurchaseListScreen : Screen(
-        "crypto_list_purchase/{$USER}/{$ID_BRAND}",
-        "crypto_list_purchase"
     )
 }

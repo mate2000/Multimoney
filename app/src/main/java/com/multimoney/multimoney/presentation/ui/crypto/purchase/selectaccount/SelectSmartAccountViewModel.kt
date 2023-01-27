@@ -33,9 +33,22 @@ class SelectSmartAccountViewModel @Inject constructor(
         //TODO navigate to next screen
     }
 
+    private fun setAccounts(
+        list: List<AccountSmartForBuyCrypto>,
+        currency: String?,
+        currencyDescription: String?
+    ) {
+        uiState = uiState.copy(
+            accounts = list,
+            currency = currency ?: "",
+            currencyDescription = currencyDescription ?: ""
+        )
+    }
+
     data class UIState(
         val accounts: List<AccountSmartForBuyCrypto> = listOf(),
         val currency: String = "",
+        val currencyDescription: String = "",
         val isBottomSheetVisible: Boolean = false
     )
 
@@ -43,11 +56,22 @@ class SelectSmartAccountViewModel @Inject constructor(
         when (event) {
             is UIEvent.OnNavigateBack -> onNavigateBack()
             is UIEvent.OnContinueButtonClick -> onContinueClick()
+            is UIEvent.OnSetAccounts -> setAccounts(
+                event.list,
+                event.currency,
+                event.currencyDescription
+            )
         }
     }
 
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()
+        data class OnSetAccounts(
+            val list: List<AccountSmartForBuyCrypto>,
+            val currency: String?,
+            val currencyDescription: String?
+        ) : UIEvent()
+
         object OnContinueButtonClick : UIEvent()
     }
 }

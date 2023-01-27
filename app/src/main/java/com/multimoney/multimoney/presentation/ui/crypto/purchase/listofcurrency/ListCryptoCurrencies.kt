@@ -47,7 +47,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ListCryptoCurrenciesScreen(
     viewModel: ListCryptoPurchaseViewModel = hiltViewModel(),
-    sharedViewModel: PurchaseCryptoSharedViewModel = hiltViewModel(),
+    sharedViewModel: PurchaseCryptoSharedViewModel,
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
 ) {
     LaunchedEffect(true) {
@@ -55,7 +55,7 @@ fun ListCryptoCurrenciesScreen(
             onPopBackStack = onPopBackStack
         )
         viewModel.onUIEvent(ListCryptoPurchaseViewModel.UIEvent.OnGetUserInfo(
-            user = sharedViewModel.user,
+            user = sharedViewModel.email,
             idBrand = sharedViewModel.idBrand
         ))
         viewModel.onUIEvent(ListCryptoPurchaseViewModel.UIEvent.OnGetAvailableListOfCryptoCoins)
@@ -72,7 +72,7 @@ fun ListCryptoCurrenciesScreen(
     ListCryptoContent(
         viewModel.uiState,
         itemClick = {
-            //sharedViewModel.asset = it.baseAsset
+            sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnCryptoSelected(it))
             sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNextStep)
         },
         onBackPressed = { sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep) },
@@ -99,10 +99,6 @@ fun ListCryptoContent(
     val coroutineScope = rememberCoroutineScope()
 
     Column(modifier = Modifier.background(MultimoneyTheme.colors.background)) {
-        TopNavBar(
-            isRightButtonVisible = false,
-            onLeftButtonClick = onBackPressed
-        )
         ModalBottomSheetLayout(
             sheetState = state,
             sheetContent = {

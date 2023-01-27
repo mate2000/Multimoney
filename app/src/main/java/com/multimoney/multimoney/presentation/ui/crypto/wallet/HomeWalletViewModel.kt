@@ -163,7 +163,7 @@ class HomeWalletViewModel @Inject constructor(
     }
 
     private fun onNavigateToBuyCrypto(){
-        navigateTo("${Screen.CryptoPurchaseListScreen.baseRoute}/${uiState.user}/${uiState.idBrand}")
+        navigateTo(Screen.PurchaseCryptoFlow.baseRoute)
     }
 
     data class UiState(

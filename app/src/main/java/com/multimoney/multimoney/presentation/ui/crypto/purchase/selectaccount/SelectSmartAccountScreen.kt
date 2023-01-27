@@ -30,7 +30,7 @@ fun SelectSmartAccountScreen(
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-    sharedViewModel: PurchaseCryptoSharedViewModel = hiltViewModel(),
+    sharedViewModel: PurchaseCryptoSharedViewModel,
     viewModel: SelectSmartAccountViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
@@ -38,6 +38,13 @@ fun SelectSmartAccountScreen(
             onPopBackStack = onPopBackStack,
             onNavigate = onNavigate,
             onPopAndNavigate = onPopAndNavigate
+        )
+        viewModel.onUIEvent(
+            SelectSmartAccountViewModel.UIEvent.OnSetAccounts(
+                sharedViewModel.uiState.accounts,
+                sharedViewModel.uiState.asset,
+                sharedViewModel.uiState.assetDescription
+            )
         )
     }
     BackHandler { viewModel.onUIEvent(SelectSmartAccountViewModel.UIEvent.OnNavigateBack) }
@@ -52,17 +59,13 @@ fun SelectSmartAccountContent(viewModel: SelectSmartAccountViewModel) {
             .padding(horizontal = 16.dp)
             .fillMaxSize()
     ) {
-        TopNavBar(
-            onLeftButtonClick = { viewModel.onUIEvent(SelectSmartAccountViewModel.UIEvent.OnNavigateBack) },
-            isRightButtonVisible = false
-        )
 
         //ToDo replace with incoming currency
         Text(
             modifier = Modifier.padding(top = 8.dp, bottom = 24.dp),
             text = stringResource(
                 id = R.string.crypto_select_smart_account_title_template,
-                viewModel.uiState.currency
+                viewModel.uiState.currencyDescription
             ),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText,

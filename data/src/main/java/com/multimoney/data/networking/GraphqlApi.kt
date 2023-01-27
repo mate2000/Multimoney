@@ -59,6 +59,7 @@ import com.multimoney.data.networking.graphql.apollomodel.GetInfoDepositQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetLinkCreditContractQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPaymentPointsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPromissoryNoteDetailQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetSmartAccountsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GlobalRequestMutation
 import com.multimoney.data.networking.graphql.apollomodel.HomeCantonQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeDistrictQuery
@@ -1857,6 +1858,21 @@ class GraphqlApi @Inject constructor(
                 maxPoints,
                 paginationLimit,
                 paginationOffset
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun querySmartAccounts(
+        user: String,
+        identification: String,
+        idBrand: Int,
+        accountStatus: Int
+    ): ApolloCall<GetSmartAccountsQuery.Data> =
+        apolloAuthorizedClient.query(
+            GetSmartAccountsQuery(
+                user,
+                identification,
+                idBrand,
+                accountStatus,
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

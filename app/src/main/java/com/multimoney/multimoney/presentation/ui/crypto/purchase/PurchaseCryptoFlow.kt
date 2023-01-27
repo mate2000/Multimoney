@@ -14,6 +14,7 @@ import com.multimoney.data.util.catalog.PurchaseCryptoSteps
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.BuyCurrencyScreen
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.listofcurrency.ListCryptoCurrenciesScreen
+import com.multimoney.multimoney.presentation.ui.crypto.purchase.listofcurrency.ListCryptoPurchaseViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.selectaccount.SelectSmartAccountScreen
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.voucher.BuyCryptoVoucherScreen
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
@@ -30,6 +31,8 @@ fun PurchaseCryptoFlow(
     val comingFromCryptoDetails = false
 
     LaunchedEffect(true) {
+        viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnGetUserInfo)
+        viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnQueryAccounts)
         viewModel.executeNavigation(
             onNavigate = onNavigate,
             onPopAndNavigate = onPopAndNavigate,

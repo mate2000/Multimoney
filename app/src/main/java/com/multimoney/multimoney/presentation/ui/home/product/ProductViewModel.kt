@@ -678,7 +678,7 @@ class ProductViewModel @Inject constructor(
             QuickActionFlow.PAY_FEE.flow -> onNavigateToPaymentScreen()
             QuickActionFlow.SAVE_SMART.flow -> onNavigateToSmartSave()
             QuickActionFlow.SEND_MONEY.flow -> onNavigateToSendMoneyScreenQuickAction()
-            QuickActionFlow.BUY_CRYPTO.flow -> onNavigateToPurchaseCryptoFlow(false)
+            QuickActionFlow.BUY_CRYPTO.flow -> onNavigateToPurchaseCryptoFlow()
         }
     }
 
@@ -924,10 +924,8 @@ class ProductViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateToPurchaseCryptoFlow(
-        comingFromDetails: Boolean
-    ) {
-        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/$email/${uiState.idBrand.toInt()}")
+    private fun onNavigateToPurchaseCryptoFlow() {
+        navigateTo(Screen.PurchaseCryptoFlow.baseRoute)
     }
 
     private fun getSmartContent() {
@@ -1055,7 +1053,7 @@ class ProductViewModel @Inject constructor(
             is OnCreateMultimoneyVisa -> onCreateMultimoneyVisa(uiEvent.onLoadingValueChange)
             is OnNoVoConfig -> onConfigNovoSdk()
             is OnGetSmartContent -> getSmartContent()
-            is UIEvent.OnNavigateToPurchaseCryptoFlow -> onNavigateToPurchaseCryptoFlow(uiEvent.comingFromDetails)
+            is UIEvent.OnNavigateToPurchaseCryptoFlow -> onNavigateToPurchaseCryptoFlow()
             is OnVisaCardExpiredDialog -> onVisaCardExpiredDialog(
                 idBrand = uiEvent.idBrand,
                 balance = uiEvent.balance
@@ -1105,7 +1103,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToCryptoWallet : UIEvent()
         object OnNavigateToCryptoMarket : UIEvent()
         object OnNavigateToCryptoMovements : UIEvent()
-        data class OnNavigateToPurchaseCryptoFlow(val comingFromDetails: Boolean = false) : UIEvent()
+        object OnNavigateToPurchaseCryptoFlow : UIEvent()
         object OnGetSmartContent : UIEvent()
 
         data class OnSetUserData(
@@ -1141,8 +1139,6 @@ class ProductViewModel @Inject constructor(
 
         object OnNoVoConfig : UIEvent()
         data class OnCartButtonClickWithoutSmartBalance(val onSavingCLick: () -> Unit) : UIEvent()
-        object OnNavigateToBuyCrypto : UIEvent()
-
         data class OnVisaCardExpiredDialog(
             val idBrand: String,
             val balance: Balance?

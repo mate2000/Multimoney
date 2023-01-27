@@ -37,7 +37,6 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
-import java.util.SortedMap
 import javax.inject.Inject
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -75,9 +74,9 @@ class MyContactsTransferViewModel @Inject constructor(
                 uiState = uiState.copy(isLoading = false)
                 accountList?.phones?.let { phoneSmarts ->
                     uiState = uiState.copy(
-                        relatedContactList = phoneSmarts.groupBy { phoneSmart ->
-                            phoneSmart?.identification.orEmpty()
-                        }.toSortedMap()
+                        relatedContactList = phoneSmarts.sortedBy { phoneSmart ->
+                            phoneSmart?.titular.orEmpty()
+                        }.groupBy { phone -> phone?.identification.orEmpty() }
                     )
                 }
             }
@@ -143,7 +142,7 @@ class MyContactsTransferViewModel @Inject constructor(
         val queryValue: String = "",
         val openDialog: DialogParameters = DialogParameters(),
         var isLoading: Boolean = false,
-        var relatedContactList: SortedMap<String, List<PhoneSmart?>> = sortedMapOf(),
+        var relatedContactList: Map<String, List<PhoneSmart?>> = mapOf(),
         var selectedContact: List<PhoneSmart> = listOf(),
         val bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(Hidden)
     )

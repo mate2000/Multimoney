@@ -56,7 +56,6 @@ import com.multimoney.multimoney.presentation.util.capitalizedAllWords
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Dollar
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
-import java.util.SortedMap
 
 @Composable
 fun MyContactsTransferScreen(
@@ -184,7 +183,7 @@ fun MyContactsTransferScreen(
 
 @Composable
 fun ContactList(
-    contactList: SortedMap<String, List<PhoneSmart?>>,
+    contactList: Map<String, List<PhoneSmart?>>,
     searchedString: String,
     onEndIconClick: (contact: PhoneSmart) -> Unit,
     onContactClick: (contact: List<PhoneSmart?>) -> Unit
@@ -196,7 +195,11 @@ fun ContactList(
                 val randomColor = colors.coloredInitialChar
                 val colorSubtitle by remember { mutableStateOf(randomColor.random()) }
 
-                if (firstAccount != null && firstAccount.titular?.contains(searchedString, true) == true) {
+                if (firstAccount != null && firstAccount.titular?.contains(
+                        searchedString,
+                        true
+                    ) == true
+                ) {
                     ContactItem(
                         title = firstAccount.titular.orEmpty().capitalizedAllWords(),
                         subtitle = firstAccount.number.orEmpty(),
@@ -229,7 +232,8 @@ fun ContactBottomSheet(viewModel: MyContactsTransferViewModel) {
         if (viewModel.uiState.selectedContact.isNotEmpty()) {
             Column(Modifier.padding(vertical = 16.dp)) {
                 Text(
-                    text = viewModel.uiState.selectedContact.first().titular?.capitalizedAllWords().orEmpty(),
+                    text = viewModel.uiState.selectedContact.first().titular?.capitalizedAllWords()
+                        .orEmpty(),
                     style = Typography.body1.copy(
                         fontWeight = FontWeight.SemiBold,
                         color = colors.text

@@ -45,6 +45,7 @@ import kotlinx.coroutines.CoroutineScope
  * @param toLabel: String indicating label of destination account
  * @param toTitle: String indicating title of destination account
  * @param toSubtitle: String indicating subtitle of destination account
+ * @param toSubtitle2: String indicating second line subtitle of destination account
  * @param toIcon: Resource indicating icon of destination account
  * @param motive: String of motive (null to not include field, empty string will show field empty)
  * @param buttonText: String indicating label text of button
@@ -66,6 +67,7 @@ fun SmartPaymentBottomSheet(
     toLabel: String,
     toTitle: String,
     toSubtitle: String?,
+    toSubtitle2: String? = null,
     toIcon: Int?,
     motive: String? = null,
     buttonText: String,
@@ -143,6 +145,7 @@ fun SmartPaymentBottomSheet(
                 startIcon = toIcon,
                 title = toTitle,
                 subtitle = toSubtitle.orEmpty(),
+                subtitle2 = toSubtitle2.orEmpty(),
                 endIcon = null,
                 enable = false
             )

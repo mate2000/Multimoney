@@ -78,9 +78,6 @@ fun getMaskedAccountIban(accountNumber: String, maskedText: String = ACCOUNT_MAS
             .plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
     )
 
-fun getFullMaskedAccountIban(accountBank: String, accountNumber: String, maskedText: String = ACCOUNT_MASK) =
-    accountBank.plus(" | " + getMaskedAccountIban(accountNumber, maskedText))
-
 fun formatDocumentPlaceholder(originFormat: String, outputFormat: Char = DOCUMENT_FORMAT_VALUE): String {
     return if (originFormat.isNotBlank()) {
         originFormat.replace(

@@ -42,6 +42,8 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnCallQueryProfessionUseCase
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnCompanyNameChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnJobPositionChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnLoadCurrentStepData
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnPaymentAmountChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnProfessionChange
@@ -103,6 +105,8 @@ fun SmartCrSalaryScreen(
                                 idJobLevel3 = sourceIncomeSharedViewModel.uiState.divisionThreeSelected?.id?.toLongOrNull(),
                                 fullJobAddress = sourceIncomeSharedViewModel.uiState.address,
                                 income = viewModel.uiState.paymentAmount.toFloat(),
+                                companyName = viewModel.uiState.companyName,
+                                positionJob = viewModel.uiState.jobPosition,
                                 currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep)
                             )
                         )
@@ -135,7 +139,7 @@ fun SmartCrSalaryScreen(
 
     Column(
         modifier = Modifier
-            .padding(vertical = 16.dp, horizontal = 16.dp)
+            .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
         Text(
@@ -154,9 +158,39 @@ fun SmartCrSalaryScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
+        CustomOutlinedTextField(
+            value = viewModel.uiState.companyName,
+            onValueChange = { viewModel.onUIEvent(OnCompanyNameChange(it)) },
+            labelText = stringResource(string.smart_salaried_company_name),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(onNext = {
+                focusManager.moveFocus(FocusDirection.Down)
+            }),
+            isRequiredMessage = stringResource(string.smart_salaried_company_name_required),
+            modifier = Modifier.padding(top = 24.dp)
+        )
+
+        CustomOutlinedTextField(
+            value = viewModel.uiState.jobPosition,
+            onValueChange = { viewModel.onUIEvent(OnJobPositionChange(it)) },
+            labelText = stringResource(string.smart_salaried_profession),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(onNext = {
+                focusManager.moveFocus(FocusDirection.Down)
+            }),
+            isRequiredMessage = stringResource(string.smart_salaried_profession_required),
+            modifier = Modifier.padding(top = 16.dp)
+        )
+
         CustomDropdown(
             modifier = Modifier
-                .padding(top = 44.dp)
+                .padding(top = 16.dp)
                 .wrapContentSize(Alignment.TopStart)
                 .focusable(false),
             items = viewModel.uiState.professionSmartList.map { professionStatus ->
@@ -184,12 +218,11 @@ fun SmartCrSalaryScreen(
             }),
             labelText = stringResource(id = string.smart_account_formal_monthly),
             modifier = Modifier
-                .padding(top = 24.dp),
+                .padding(top = 16.dp),
             placeHolder = stringResource(id = string.smart_account_formal_placeholder),
             customTransformation = formatDecimalMoney(
                 stringResource(
-                    id = sharedViewModel.idBrandAsInt
-                        .getCurrencySymbol()
+                    id = sharedViewModel.idBrandAsInt.getCurrencySymbol()
                 )
             ),
             leadingIcon = R.drawable.ic_quick_action_money

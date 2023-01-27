@@ -200,7 +200,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                     ),
                     destinyAccountDisplay = DisplayAccount(
                         sheetLabel = R.string.smart_payment_amount_bottom_sheet_to,
-                        sheetTitleResource = destinyCurrency?.myAccountSmart,
+                        sheetTitleResource = destinyCurrency?.myAccountSmartSymbol,
                         icon = R.drawable.ic_multimoney_smart
                     ),
                     currency = originCurrency?.symbol ?: Dollar.symbol,

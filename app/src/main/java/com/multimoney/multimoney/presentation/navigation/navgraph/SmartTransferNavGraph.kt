@@ -220,11 +220,6 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                         inclusive = false,
                         saveState = false
                     )
-                    navController.popBackStack(
-                        route = it.popTo,
-                        inclusive = false,
-                        saveState = false
-                    )
                 }
             )
         }

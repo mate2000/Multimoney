@@ -28,8 +28,8 @@ class MMCountDownTimer {
             }
             override fun onFinish() {
                 if (isTimerStopped.not()) {
-                    onCountDownTimerFinish?.onFinished()
                     discardTimer()
+                    onCountDownTimerFinish?.onFinished()
                 }
             }
         }

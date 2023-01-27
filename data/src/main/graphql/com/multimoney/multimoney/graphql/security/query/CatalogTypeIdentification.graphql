@@ -1,8 +1,9 @@
-query CatalogTypeIndentification($user:String!, $idBrand:Int!){
+query CatalogTypeIndentification($user:String!, $idBrand:Int!, $isTransferIdentification: Int){
     catalogTypeIndentification(
         catalogTypeIndentificationInput: {
             user: $user,
-            idBrand: $idBrand
+            idBrand: $idBrand,
+            isTransferIdentifaction: $isTransferIdentification
         }
     ) {
         pk_Suv_Cat_Catalogo,

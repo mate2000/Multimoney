@@ -1,0 +1,45 @@
+mutation UpdateFavoriteContactSmart(
+    $idFavorite: Long
+    $idAccountType: Int!
+    $idCustomer: Long!
+    $accountNumber: String!
+    $accountName: String
+    $email: String!
+    $active: Boolean!
+    $isFavorite: Boolean!
+    $phoneNumber: String
+    $idCurrencyAccount: Int
+    $idBrand: Int!
+    $user: String!
+) {
+    localTransferFavoriteMan(
+        localTransferFavoriteManInput: {
+            idFavorite: $idFavorite
+            idCustomer: $idCustomer
+            idAccounType: $idAccountType
+            accountNumber: $accountNumber
+            accountName: $accountName
+            email: $email
+            activo: $active
+            isFavorite: $isFavorite
+            phoneNumber: $phoneNumber
+            idCurrencyAccount: $idCurrencyAccount
+            idBrand: $idBrand
+            user: $user
+        }
+    ) {
+        message
+        result {
+            idFavorite
+            idCustomer
+            idAccounType
+            accountNumber
+            accountName
+            email
+            activo
+            phoneNumber
+            idCurrencyAccount
+            currencyAccount
+        }
+    }
+}

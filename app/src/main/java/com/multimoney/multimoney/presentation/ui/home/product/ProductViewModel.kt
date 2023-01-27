@@ -462,7 +462,9 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToCryptoMovements() {
-        navigateTo("${Screen.CryptoMovementsAllScreen.baseRoute}/$userName/${uiState.idBrand}/$identification")
+        navigateTo(
+            "${Screen.CryptoMovementsAllScreen.baseRoute}/${uiState.idBrand}/$identification/$email"
+        )
     }
 
     private fun openWhatsAppLink(context: Context, whatsAppLink: String) {
@@ -784,9 +786,10 @@ class ProductViewModel @Inject constructor(
         if (uiState.idBrand == Brand.ElSalvador.id.toString()) {
             val account = balanceCredit?.balanceAccountSmart?.firstOrNull()
             smartAccount = SmartAccountID(
-                account?.tokenNumber,
-                account?.idCurrencyAccount,
-                account?.accountNumber
+                tokenAccount = account?.tokenNumber,
+                currencyID = account?.idCurrencyAccount,
+                accountNumber = account?.accountNumber,
+                customerId = account?.customerId
             )
             navigateTo(
                 "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$userName/${uiState.idBrand}/$identification/${
@@ -818,11 +821,22 @@ class ProductViewModel @Inject constructor(
             currencyID = account?.idCurrencyAccount,
             accountNumber = account?.accountNumber,
             totalBalance = account?.totalBalance,
-            ibanAccountNumber = account?.ibanAccountNumber
+            ibanAccountNumber = account?.ibanAccountNumber,
+            customerId = account?.customerId
+        )
+        val secondAccount = balanceCredit?.balanceAccountSmart?.find { accounts -> accounts?.tokenNumber != account?.tokenNumber }
+        val secondAccountSend = encodeData(
+            SmartAccountID(
+                tokenAccount = secondAccount?.tokenNumber,
+                currencyID = secondAccount?.idCurrencyAccount,
+                accountNumber = secondAccount?.accountNumber,
+                totalBalance = secondAccount?.totalBalance,
+                ibanAccountNumber = secondAccount?.ibanAccountNumber
+            )
         )
         navigateTo(
             "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$userName/${uiState.idBrand}/$identification" +
-                "/${encodeData(smartAccount)}/$idClient/${Screen.HomeScreen.route}"
+                    "/${encodeData(smartAccount)}/$secondAccountSend/$idClient/${Screen.HomeScreen.route}"
         )
     }
 

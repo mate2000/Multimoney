@@ -4,6 +4,7 @@ import android.app.Activity
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -50,7 +51,6 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.On
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnEditAutomaticPaymentEvent
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnHideAutomaticPaymentEditBottomSheet
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnShowAutomaticPaymentEditBottomSheet
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnStartCountDownTimer
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnBottomNavigationItemClick
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCallMutationDeactivateClientAutomaticDebit
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCloseCardIssuanceError
@@ -60,12 +60,14 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnGe
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnGetSmartMovements
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnHideAutomaticPaymentEdit
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnHideUnlinkToast
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnInitializeBiometricPrompt
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowAutomaticPaymentEdit
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowCardIssuanceError
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowTimerDialog
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowUnlinkToast
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSignOut
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnStartBiometrics
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.INDEX_ONE
 import com.multimoney.multimoney.presentation.util.LAST_THREE
@@ -79,13 +81,14 @@ import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
 import com.multimoney.multimoney.presentation.util.getPreviousDate
+import com.multimoney.multimoney.util.BiometricHelper
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalPagerApi::class)
@@ -104,10 +107,16 @@ class HomeViewModel @Inject constructor(
     private val mutationDeactivateCardAutomaticDebitUseCase: MutationDeactivateCardAutomaticDebitUseCase,
     private val queryGetCoreBankMovements: QueryGetCoreBankMovementsUseCase,
     private val queryGetPromissoryNoteDetail: QueryGetPromissoryNoteDetail,
+    private val biometricHelper: BiometricHelper,
     private val cognitoHelper: CognitoHelper
 ) : BaseViewModel(true) {
 
+    // Stateless
     private var communicator: SignOutCommunicator? = null
+    private var biometricPromptTitle = ""
+    private var biometricPromptDescription = ""
+    private var biometricPromptNegative = ""
+    private var isBiometricActive = false
 
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -361,13 +370,7 @@ class HomeViewModel @Inject constructor(
             )
         )
 
-        val creditStatus = uiState.validateUserStatus?.infoCredit?.status
-
-        if (uiState.idBrand == Brand.CostaRica.id.toString()) {
-            if (creditStatus == CreditStatus.CREDIT_NOT_PRE_APPROVED.status || creditStatus == CreditStatus.CREDIT_REJECTED.status) {
-                productPageList.clear()
-            }
-        }
+        removeBlankCards(productPageList)
 
         // If idBrand is different from Guatemala enable Smart
         if (uiState.idBrand != Brand.Guatemala.id.toString()) {
@@ -456,6 +459,22 @@ class HomeViewModel @Inject constructor(
         uiState = uiState.copy(balance = balance, productPageList = productPageList)
     }
 
+    private fun removeBlankCards(productPageList: MutableList<ProductPage>) {
+        val creditStatus = uiState.validateUserStatus?.infoCredit
+        when (uiState.idBrand) {
+            Brand.CostaRica.id.toString() -> {
+                if (creditStatus?.status == CreditStatus.CREDIT_NOT_PRE_APPROVED.status || (creditStatus?.status == CreditStatus.CREDIT_REJECTED.status && creditStatus.wording?.display == false)) {
+                    productPageList.clear()
+                }
+            }
+            Brand.ElSalvador.id.toString() -> {
+                if (creditStatus?.status == CreditStatus.CREDIT_REJECTED.status && creditStatus.wording?.display == false) {
+                    productPageList.clear()
+                }
+            }
+        }
+    }
+
     private fun callQueryGetConfigurationVersion(
         idBrand: Int
     ) = executeUseCase {
@@ -471,11 +490,9 @@ class HomeViewModel @Inject constructor(
                 configurationVersion?.let {
                     uiState = uiState.copy(configurationVersion = configurationVersion)
                 }
-                emitBaseEvent(
-                    OnStartCountDownTimer(
-                        configurationVersion?.configuration?.timeSession?.toLong() ?: 0
-                    )
-                )
+                viewModelScope.launch {
+                    countDownTimer.startTimer(configurationVersion?.configuration?.timeSession?.toLong() ?: 0)
+                }
             }
             result.onFailure {
                 onFailure(it)
@@ -687,24 +704,63 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun signOut(activity: Activity?) {
-        activity?.let {
-            communicator = activity as SignOutCommunicator
+        hideTimerDialog()
+        activity?.let { safeActivity ->
+            communicator = safeActivity as SignOutCommunicator
             if (communicator?.isAppInForeground()?.not() == true) {
                 viewModelScope.launch { dataStorePreferences.isSignOutOnBackground(true) }
             }
-            hideTimerDialog()
+            if (isBiometricActive) {
+                onShowBiometricPromptForDecryption(safeActivity as FragmentActivity)
+            } else {
+                executeLogOut()
+            }
         }
-        cognitoHelper.signOut(signOutError = {
-            Timber.d("SignOut Error")
-        })
+    }
+
+    private fun executeLogOut() {
+        cognitoHelper.signOut { Timber.d("SignOut Error") }
+        viewModelScope.launch { dataStorePreferences.setAuthToken("") }
+        popAndNavigateTo(Screen.SignInScreen.route, Screen.HomeScreen.route)
+    }
+
+    private fun onStartBiometrics() {
         viewModelScope.launch {
-            dataStorePreferences.setAuthToken("")
+            isBiometricActive = dataStorePreferences.isBiometricsEnabled().first()
         }
-        countDownTimer.discardTimer()
-        popAndNavigateTo(
-            Screen.SignInScreen.route,
-            Screen.HomeScreen.route
-        )
+    }
+
+    private fun initializeBiometricPrompt(
+        biometricPromptTitle: String,
+        biometricPromptDescription: String,
+        biometricPromptNegative: String
+    ) {
+        this.biometricPromptTitle = biometricPromptTitle
+        this.biometricPromptDescription = biometricPromptDescription
+        this.biometricPromptNegative = biometricPromptNegative
+    }
+
+    private fun biometricPromptError(errorCode: Int, errString: CharSequence) {
+        executeLogOut()
+    }
+
+    private fun onShowBiometricPromptForDecryption(fragmentActivity: FragmentActivity) {
+        viewModelScope.launch {
+            biometricHelper.showBiometricPrompt(
+                title = biometricPromptTitle,
+                description = biometricPromptDescription,
+                negative = biometricPromptNegative,
+                activity = fragmentActivity,
+                processSuccess = {
+                    countDownTimer.startTimer(uiState.configurationVersion?.configuration?.timeSession?.toLong() ?: 0)
+                },
+                processError = { errorCode, errString ->
+                    biometricPromptError(errorCode, errString)
+                },
+                initializationVector = dataStorePreferences.getUserPasswordVector()
+                    .first()
+            )
+        }
     }
 
     fun getCardIssuanceDescriptionError() = if (uiState.idBrand.toInt() == Brand.Guatemala.id) {
@@ -736,6 +792,12 @@ class HomeViewModel @Inject constructor(
                 isActive = mutableStateOf(false)
             )
         )
+    }
+
+    private fun onMyProductClick(expand: Boolean) {
+        uiState = uiState.copy(forceIsExpanded = expand)
+        /*if (expand)
+            onSetHomeState(HomeState.EXPANDED)*/
     }
 
     data class UIState(
@@ -795,11 +857,17 @@ class HomeViewModel @Inject constructor(
             is OnEditAutomaticPayment -> emitBaseEvent(OnEditAutomaticPaymentEvent)
             is OnDeleteAutomaticPayment -> emitBaseEvent(OnDeleteAutomaticPaymentEvent)
             is OnCallMutationDeactivateClientAutomaticDebit -> onCallGetClientAutomaticDebitUseCase()
-            is UIEvent.OnMyProductClick -> uiState = uiState.copy(forceIsExpanded = uiEvent.expand)
+            is UIEvent.OnMyProductClick -> onMyProductClick(uiEvent.expand)
             is UIEvent.OnMyProductPageChange -> uiState = uiState.copy(productScreenPagerState = uiEvent.page)
             is UIEvent.OnLoadingValueChanged -> uiState = uiState.copy(isLoading = uiEvent.isLoading)
             is OnShowCardIssuanceError -> uiState = uiState.copy(showCardIssuanceError = true)
             is OnCloseCardIssuanceError -> uiState = uiState.copy(showCardIssuanceError = false)
+            is OnStartBiometrics -> onStartBiometrics()
+            is OnInitializeBiometricPrompt -> initializeBiometricPrompt(
+                uiEvent.biometricPromptTitle,
+                uiEvent.biometricPromptDescription,
+                uiEvent.biometricPromptNegative
+            )
         }
     }
 
@@ -839,12 +907,17 @@ class HomeViewModel @Inject constructor(
         data class OnLoadingValueChanged(val isLoading: Boolean) : UIEvent()
         object OnShowCardIssuanceError : UIEvent()
         object OnCloseCardIssuanceError : UIEvent()
+        object OnStartBiometrics : UIEvent()
+        data class OnInitializeBiometricPrompt(
+            val biometricPromptTitle: String,
+            val biometricPromptDescription: String,
+            val biometricPromptNegative: String
+        ) : UIEvent()
     }
 
     sealed class BaseEvent {
         object OnOpenQuickActionsBottomSheet : BaseEvent()
         object OnOpenMyProductsBottomSheet : BaseEvent()
-        data class OnStartCountDownTimer(val millisInFuture: Long?)
         data class OnQuickActionClicked(val flow: String)
         data class OnMiniCardsClicked(val flow: String)
         object OnShowAutomaticPaymentEditBottomSheet : BaseEvent()

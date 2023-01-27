@@ -51,8 +51,8 @@ import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENE
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class SignDocumentProcessViewModel @Inject constructor(
@@ -120,7 +120,7 @@ class SignDocumentProcessViewModel @Inject constructor(
                 .collectLatest { result ->
                     result.onSuccess {
                         handleEvents(creditContractEvent = it)
-                    }.onFailure {
+                    }.onFailure { error ->
                         while (numAttemptsToStartSubscription < MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION) {
                             onListenCreditContractEventSubscription(idPrint, idBrand)
                             numAttemptsToStartSubscription++

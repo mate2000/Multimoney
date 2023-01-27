@@ -129,6 +129,7 @@ fun MotionLayoutMM(
             updateIsBackPressed(true)
         }
     }
+
     if (animationProgress == ANIMATION_EXPANDED && isExpanded) {
         Scaffold(
             topBar = {

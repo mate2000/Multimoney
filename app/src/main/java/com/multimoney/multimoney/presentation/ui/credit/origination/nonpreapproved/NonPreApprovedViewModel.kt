@@ -304,7 +304,7 @@ class NonPreApprovedViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess {
                 uiState = uiState.copy(isLoading = false)
-                if (it?.rejectedBlaze?.not() == false) {
+                if (it?.rejectedBlaze?.not() == true) {
                     setSuccessAlertResult(it.products?.firstOrNull()?.maximumDisbursement ?: "")
                 } else {
                     setErrorAlertResult()
@@ -330,11 +330,10 @@ class NonPreApprovedViewModel @Inject constructor(
         )
 
     private fun onNavigateToOrigination() = popAndNavigateTo(
-        route = "${Screen.CreditScreen.baseRoute}/${idBrand ?: 0}/${pkUser ?: 0}/${identification ?: ""}/${email ?: ""}/${lastStep ?: CreditStep.One.id}/" +
-                "${idUserRequest ?: 0}/${firstName ?: ""}/" +
-                "${lastName ?: ""}/${statusOnfido ?: ""}/" +
-                "${statusEvicertia ?: ""}/${idPrint ?: 0}/" +
-                "",
+        route = "${Screen.CreditScreen.baseRoute}/${idBrand ?: 0}/${pkUser ?: 0}/${identification.orEmpty()}/${email.orEmpty()}/${lastStep ?: CreditStep.One.id}/" +
+                "${idUserRequest ?: 0}/${firstName.orEmpty()}/" +
+                "${lastName.orEmpty()}/${statusOnfido.orEmpty()}/" +
+                "${statusEvicertia.orEmpty()}/${idPrint ?: 0}",
         popTo = Screen.NonPreApprovedScreen.route
     )
 

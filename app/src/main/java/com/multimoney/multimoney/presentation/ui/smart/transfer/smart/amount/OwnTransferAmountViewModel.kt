@@ -4,6 +4,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.lifecycle.viewModelScope
+import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel
@@ -23,35 +24,51 @@ class OwnTransferAmountViewModel @Inject constructor() : BaseSmartEditAmountView
     override fun onStart() {
         viewModelScope.launch {
             initializeValues()
-            maskedCardNumber = smartAccount?.ibanAccountNumber ?: ""
-            shouldDisplayExchange = true
-            fromSmartLabel = if (smartCurrency == CurrencyType.Colon) {
+            fromSmartLabel = if (originCurrency == CurrencyType.Colon) {
                 R.string.smart_iban_transfer_smart_account_colon
             } else {
                 R.string.smart_iban_transfer_smart_account_dolar
             }
-            amountUIState = amountUIState.copy(
-                currency = smartCurrency?.symbol ?: CurrencyType.Dollar.symbol,
-                placeholder = if (smartCurrency == CurrencyType.Dollar) {
-                    R.string.smart_dollar_placeholder
-                } else {
-                    R.string.smart_colon_placeholder
-                }
-            )
             totalBalanceLabel =
                 amountUIState.currency + smartAccount?.totalBalance.toString()
-            getExchangeOnCompleted(true)
+            getExchangeOnCompleted(
+                true,
+                abbreviation = originCurrency?.disbursementValue ?: "",
+                idOriginCurrency = destinyCurrency?.id.toString(),
+                idDestinationCurrency = originCurrency?.id.toString()
+            )
         }
     }
 
     override fun onProcessTransfer() {
-        TODO("Not yet implemented")
+        onCallProcessSinpeTransfer(
+            originIdentification = identification,
+            originAccountNumber = smartAccount?.ibanAccountNumber ?: "",
+            originCustomerName = userName,
+            originCurrency = originCurrency?.id.toString(),
+            destinationCustomerName = userName,
+            destinationAccountNumber = smartDestiny?.ibanAccountNumber ?: "",
+            destinationCurrency = destinyCurrency?.id.toString(),
+            transferType = SmartSinpeTransferType.SEND,
+            destinationIdentification = identification
+        )
     }
 
+    override fun onAmountCompleted() {
+        getExchangeOnCompleted(
+            abbreviation = originCurrency?.disbursementValue ?: "",
+            idOriginCurrency = destinyCurrency?.id.toString(),
+            idDestinationCurrency = originCurrency?.id.toString()
+        )
+    }
 
     override fun onContinueClick() {
-        val isValidAmount = (amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0) <=
-                (smartAccount?.totalBalance ?: 0.0)
+        val currentAmount = if (shouldDisplayExchange) {
+            amountUIState.exchangeConvertedAmount
+        } else {
+            amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
+        }
+        val isValidAmount = currentAmount <= (smartAccount?.totalBalance ?: 0.0)
         amountUIState = if (isValidAmount) {
             amountUIState.copy(
                 isAmountValid = true,
@@ -60,19 +77,6 @@ class OwnTransferAmountViewModel @Inject constructor() : BaseSmartEditAmountView
         } else {
             amountUIState.copy(isAmountValid = false)
         }
-    }
-
-    private fun onCallProcessSinpeTransfer() {
-        TODO("Not yet implemented")
-    }
-
-    override fun onRetryTransfer() {
-        amountUIState = amountUIState.copy(
-            showErrorScreen = false,
-            showLoadingScreen = true,
-            paymentSuccess = false
-        )
-        onCallProcessSinpeTransfer()
     }
 
     override fun onNavigateBack() {

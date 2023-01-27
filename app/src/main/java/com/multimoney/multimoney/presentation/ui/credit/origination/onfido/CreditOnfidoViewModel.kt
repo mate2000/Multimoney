@@ -14,7 +14,6 @@ import com.multimoney.domain.interaction.security.MutationOnfidoCheckProcessUseC
 import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.onFailure
-import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.BuildConfig
 import com.multimoney.multimoney.R.string
@@ -55,11 +54,11 @@ import com.onfido.android.sdk.capture.Onfido.OnfidoResultListener
 import com.onfido.android.sdk.capture.errors.OnfidoException
 import com.onfido.android.sdk.capture.upload.Captures
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class CreditOnfidoViewModel @Inject constructor(
@@ -171,6 +170,7 @@ class CreditOnfidoViewModel @Inject constructor(
                     override fun userCompleted(captures: Captures) {
                         onCallOnfidoCheckProcess(pkUser, identification, idBrand ?: 0, idUserRequest, email)
                         if (idPrint == ID_PRINT_EMPTY) {
+                            uiState = uiState.copy(isCreatingAccountVisible = true)
                             onCallSaveCreditOperation()
                         } else {
                             navigateToCorrectScreen(SignDocumentOrigin.OnFidoSecondTime)
@@ -241,11 +241,8 @@ class CreditOnfidoViewModel @Inject constructor(
                 }
                 result.onFailure {
                     uiState = uiState.copy(
-                        isLoading = false,
                         isAlertResultVisible = true
                     )
-                }.onLoading {
-                    uiState = uiState.copy(isLoading = true)
                 }
             }
         }
@@ -326,7 +323,8 @@ class CreditOnfidoViewModel @Inject constructor(
         val isAlertVisible: Boolean = false,
         val isContinueEnabled: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
-        var isAlertResultVisible: Boolean = false
+        var isAlertResultVisible: Boolean = false,
+        var isCreatingAccountVisible: Boolean = false
     )
 
     sealed class UIEvent {

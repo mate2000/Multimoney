@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.transfer.register
+package com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -32,18 +32,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.smart.transfer.register.SmartTransferRegisterIbanViewModel.Companion.FORMAT_VALUE
-import com.multimoney.multimoney.presentation.ui.smart.transfer.register.SmartTransferRegisterIbanViewModel.UIEvent.OnAccountValueChange
-import com.multimoney.multimoney.presentation.ui.smart.transfer.register.SmartTransferRegisterIbanViewModel.UIEvent.OnAddFavoriteValueChange
-import com.multimoney.multimoney.presentation.ui.smart.transfer.register.SmartTransferRegisterIbanViewModel.UIEvent.OnContinueButtonClick
-import com.multimoney.multimoney.presentation.ui.smart.transfer.register.SmartTransferRegisterIbanViewModel.UIEvent.OnEmailNameValueChange
-import com.multimoney.multimoney.presentation.ui.smart.transfer.register.SmartTransferRegisterIbanViewModel.UIEvent.OnFavoriteNameValueChange
-import com.multimoney.multimoney.presentation.ui.smart.transfer.register.SmartTransferRegisterIbanViewModel.UIEvent.OnIdentificationTypeChange
-import com.multimoney.multimoney.presentation.ui.smart.transfer.register.SmartTransferRegisterIbanViewModel.UIEvent.OnIdentificationValueChange
-import com.multimoney.multimoney.presentation.ui.smart.transfer.register.SmartTransferRegisterIbanViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.smart.transfer.register.SmartTransferRegisterIbanViewModel.UIEvent.OnQueryDocumentList
-import com.multimoney.multimoney.presentation.ui.smart.transfer.register.SmartTransferRegisterIbanViewModel.UIEvent.OnValidateDocument
-import com.multimoney.multimoney.presentation.ui.smart.transfer.register.SmartTransferRegisterIbanViewModel.UIEvent.OnValidateUserEmail
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.Companion.FORMAT_VALUE
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.UIEvent.OnAccountValueChange
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.UIEvent.OnAddFavoriteValueChange
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.UIEvent.OnContinueButtonClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.UIEvent.OnEmailNameValueChange
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.UIEvent.OnFavoriteNameValueChange
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.UIEvent.OnIdentificationTypeChange
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.UIEvent.OnIdentificationValueChange
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.UIEvent.OnQueryDocumentList
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.UIEvent.OnValidateDocument
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.UIEvent.OnValidateUserEmail
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox

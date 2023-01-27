@@ -18,7 +18,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnAmountCompleted
@@ -30,19 +29,17 @@ import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSma
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnRetryTransfer
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnTryLater
+import com.multimoney.multimoney.presentation.ui.smart.common.editamount.SmartAmountBody
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnSuggestedAmountClick
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.LoadingMultiMoney
 import com.multimoney.multimoney.presentation.uielement.RoundedPaymentButton
-import com.multimoney.multimoney.presentation.ui.smart.common.editamount.SmartAmountBody
 import com.multimoney.multimoney.presentation.uielement.SmartPaymentBottomSheet
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
-import com.multimoney.multimoney.presentation.util.CARD_NUMBER_LAST_DIGITS
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.SuggestionOrder
-import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 
 @Composable
 fun SavingAmountScreen(
@@ -82,7 +79,7 @@ fun SavingAmountScreen(
             }
         )
         BackHandler {
-            viewModel.onAmountUIEvent(OnNavigateHome)
+            viewModel.onAmountUIEvent(OnNavigateBack)
         }
     } else if (viewModel.amountUIState.paymentSuccess) {
         SmartPaymentSuccessScreen(viewModel)
@@ -131,8 +128,8 @@ fun SavingAmountContent(viewModel: SavingAmountViewModel = hiltViewModel()) {
             },
             onDebounceValidation = { viewModel.onAmountUIEvent(OnAmountCompleted(it)) },
             currency = viewModel.amountUIState.currency,
-            exchangeRate = viewModel.amountUIState.exchangeRateLabel,
-            convertedTotal = viewModel.amountUIState.convertedAmountLabel,
+            exchangeRate = viewModel.amountUIState.exchangeRateLabel.orEmpty(),
+            convertedTotal = viewModel.amountUIState.convertedAmountLabel.orEmpty(),
             shouldDisplayExchange = viewModel.shouldDisplayExchange,
             onContinueClick = { viewModel.onAmountUIEvent(OnContinueClick) },
             enableButton = viewModel.amountUIState.enableButton,
@@ -186,38 +183,27 @@ private fun SavingAmountBottomSheet(viewModel: SavingAmountViewModel) {
     SmartPaymentBottomSheet(
         coroutineScope = rememberCoroutineScope(),
         modalBottomSheetState = viewModel.amountUIState.bottomSheetState,
-        saveSendTitleResource = R.string.smart_payment_amount_bottom_sheet_title,
+        saveSendTitleResource = R.string.smart_payment_amount_bottom_sheet_save_title,
         amount = viewModel.getFormattedAmount(),
         exchangedAmount = if (viewModel.shouldDisplayExchange) {
             viewModel.amountUIState.convertedAmountLabel
         } else {
             null
         },
-        fromLabel = stringResource(viewModel.sheetSubtitle),
-        fromTitle = viewModel.bankDetail,
-        fromSubtitle = if (viewModel.idBrand == Brand.CostaRica.id) {
-            getMaskedAccountIban(
-                viewModel.ibanAccount?.sinpeAccount ?: "",
-                stringResource(R.string.payment_account_masked_text)
-            )
-        } else {
-            stringResource(
-                R.string.visa_card_masked_number,
-                viewModel.maskedCardNumber.takeLast(CARD_NUMBER_LAST_DIGITS)
-            )
-        },
-        fromIcon = viewModel.originIcon,
+        fromLabel = stringResource(viewModel.amountUIState.originAccountDisplay?.sheetLabel ?: R.string.empty),
+        fromTitle = viewModel.amountUIState.originAccountDisplay?.sheetTitle
+            ?: stringResource(viewModel.amountUIState.originAccountDisplay?.sheetTitleResource ?: R.string.empty),
+        fromSubtitle = viewModel.amountUIState.originAccountDisplay?.sheetSubtitle
+            ?: stringResource(viewModel.amountUIState.originAccountDisplay?.sheetSubtitleResource ?: R.string.empty),
+        fromIcon = viewModel.amountUIState.originAccountDisplay?.icon,
         toLabel = stringResource(R.string.smart_payment_amount_bottom_sheet_to),
-        toTitle = stringResource(
-            R.string.smart_payment_amount_bottom_sheet_my_smart_account,
-            viewModel.smartCurrency?.symbol ?: ""
-        ),
-        toSubtitle = if (viewModel.idBrand == Brand.CostaRica.id) {
-            stringResource(viewModel.smartCurrency?.currencyName ?: R.string.empty)
-        } else {
-            null
-        },
-        toIcon = R.drawable.ic_multimoney_smart,
+        toTitle = viewModel.amountUIState.destinyAccountDisplay?.sheetTitle
+            ?: stringResource(viewModel.amountUIState.destinyAccountDisplay?.sheetTitleResource ?: R.string.empty),
+        toSubtitle = viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitle
+            ?: stringResource(
+                viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitleResource ?: R.string.empty
+            ),
+        toIcon = viewModel.amountUIState.destinyAccountDisplay?.icon,
         buttonText = stringResource(R.string.button_continue),
         buttonAction = { viewModel.onAmountUIEvent(OnCallProcessTransfer) }
     )

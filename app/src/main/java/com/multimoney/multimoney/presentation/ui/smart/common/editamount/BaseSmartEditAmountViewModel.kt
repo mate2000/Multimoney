@@ -106,7 +106,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                 amountUIState = amountUIState.copy(
                     originAccountDisplay = DisplayAccount(
                         sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_card_CR,
-                        sheetTitleResource = originCurrency?.myAccountSmart,
+                        sheetTitleResource = originCurrency?.myAccountSmartSymbol,
                         sheetSubtitleResource = originCurrency?.currencyName,
                         icon = R.drawable.ic_multimoney_smart
                     ),
@@ -135,13 +135,13 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                 amountUIState = amountUIState.copy(
                     originAccountDisplay = DisplayAccount(
                         sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_card_CR,
-                        sheetTitleResource = originCurrency?.myAccountSmart,
+                        sheetTitleResource = originCurrency?.myAccountSmartSymbol,
                         sheetSubtitleResource = originCurrency?.currencyName,
                         icon = R.drawable.ic_multimoney_smart
                     ),
                     destinyAccountDisplay = DisplayAccount(
                         sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_card_CR,
-                        sheetTitleResource = destinyCurrency?.myAccountSmart,
+                        sheetTitleResource = destinyCurrency?.myAccountSmartSymbol,
                         sheetSubtitleResource = destinyCurrency?.currencyName,
                         icon = R.drawable.ic_multimoney_smart
                     ),
@@ -169,7 +169,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                     ),
                     destinyAccountDisplay = DisplayAccount(
                         sheetLabel = R.string.smart_payment_sheet_to_account,
-                        sheetTitleResource = destinyCurrency?.myAccountSmart,
+                        sheetTitleResource = destinyCurrency?.myAccountSmartSymbol,
                         sheetSubtitleResource = destinyCurrency?.currencyName,
                         icon = R.drawable.ic_multimoney_smart
                     ),

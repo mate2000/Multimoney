@@ -1,5 +1,9 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact
 
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -24,6 +28,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 
+@OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
 class MyContactsTransferViewModel @Inject constructor(
     private val queryRelatedContactsByPhoneUseCase: QueryRelatedContactsByPhoneUseCase,
@@ -95,6 +100,18 @@ class MyContactsTransferViewModel @Inject constructor(
         )
     }
 
+    private fun onClickBottomSheet() {
+        uiState = if (uiState.bottomSheetState.isVisible) {
+            uiState.copy(
+                bottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden)
+            )
+        } else {
+            uiState.copy(
+                bottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Expanded)
+            )
+        }
+    }
+
     private fun onAddSACAccountClick() {
         navigateTo("${Screen.SmartAddSACAccountScreen.baseRoute}/$idBrand/$user/${encodeData(selectedSmartAccount)}")
     }
@@ -103,13 +120,16 @@ class MyContactsTransferViewModel @Inject constructor(
         val queryValue: String = "",
         val openDialog: DialogParameters = DialogParameters(),
         var isLoading: Boolean = false,
-        var relatedContactList: List<PhoneSmart?> = listOf()
+        var relatedContactList: List<PhoneSmart?> = listOf(),
+        var bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
+        var bottomSheet: (@Composable () -> Unit) = {}
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is  UIEvent.OnAddToFavoriteAccountClick -> navigateToAddToFavoriteAccount(uiEvent.contactToFavorite)
             is UIEvent.OnNavigateBack -> onNavigateBack()
+            is UIEvent.OnClickBottomSheet -> onClickBottomSheet()
                UIEvent.OnAddSACAccountClick -> onAddSACAccountClick()
             is UIEvent.OnQueryValueChange -> onQueryValueChange(uiEvent.value)
             is UIEvent.OnNavigateToHome -> onNavigateToHome()
@@ -131,5 +151,6 @@ class MyContactsTransferViewModel @Inject constructor(
         data class OnAddToFavoriteAccountClick(val contactToFavorite: PhoneSmart) : UIEvent()
         object OnCallQueryRelatedContactsByPhoneUseCase : UIEvent()
         data class OnQueryValueChange(val value: String) : UIEvent()
+        object OnClickBottomSheet : UIEvent()
     }
 }

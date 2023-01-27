@@ -13,12 +13,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,6 +37,11 @@ import com.multimoney.domain.model.accountsmart.PhoneSmart
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme.colors
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAddSACAccountClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnCallQueryRelatedContactsByPhoneUseCase
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnNavigateToHome
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnQueryValueChange
 import com.multimoney.multimoney.presentation.uielement.ContactItem
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
@@ -44,6 +51,7 @@ import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.capitalizedAllWords
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MyContactsTransferScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
@@ -53,7 +61,7 @@ fun MyContactsTransferScreen(
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(true) {
-        viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnCallQueryRelatedContactsByPhoneUseCase)
+        viewModel.onUIEvent(OnCallQueryRelatedContactsByPhoneUseCase)
         viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
     }
 
@@ -64,8 +72,8 @@ fun MyContactsTransferScreen(
     ) {
         TopNavBar(
             isRightButtonVisible = true,
-            onLeftButtonClick = { viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnNavigateBack) },
-            onRightButtonClick = { viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnNavigateToHome) }
+            onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
+            onRightButtonClick = { viewModel.onUIEvent(OnNavigateToHome) }
         )
         if (viewModel.idBrand == Brand.ElSalvador.id) {
             Text(
@@ -76,33 +84,33 @@ fun MyContactsTransferScreen(
                     color = colors.onBoardingTitleText
                 )
             )
-                Row(
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp, start = 16.dp, end = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(id = R.string.smart_mycontacts_transfer_title),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .wrapContentWidth(Alignment.Start),
+                    style = Typography.subtitle1.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        color = colors.bodyTextColor
+                    )
+                )
+                CustomButton(
+                    text = stringResource(id = R.string.smart_my_contacts_transfer_accounts_add),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 8.dp, start = 16.dp, end = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.smart_mycontacts_transfer_title),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .wrapContentWidth(Alignment.Start),
-                        style = Typography.subtitle1.copy(
-                            fontWeight = FontWeight.SemiBold,
-                            color = colors.bodyTextColor
-                        )
-                    )
-                    CustomButton(
-                        text = stringResource(id = R.string.smart_my_contacts_transfer_accounts_add),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentWidth(Alignment.End),
-                        onClick = {
-                            viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnAddSACAccountClick)
-                        },
-                        buttonType = CustomButtonType.PrimaryTertiary
-                    )
-                }
+                        .wrapContentWidth(Alignment.End),
+                    onClick = {
+                        viewModel.onUIEvent(OnAddSACAccountClick)
+                    },
+                    buttonType = CustomButtonType.PrimaryTertiary
+                )
+            }
         } else {
             Text(
                 modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
@@ -128,7 +136,7 @@ fun MyContactsTransferScreen(
                 viewModel.uiState.relatedContactList?.count()
             ),
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top= 4.dp, end = 16.dp, start = 16.dp),
+            modifier = Modifier.padding(top = 4.dp, end = 16.dp, start = 16.dp),
             style = Typography.caption.copy(
                 fontWeight = FontWeight.Normal,
                 color = colors.smartCardTrending
@@ -143,7 +151,7 @@ fun MyContactsTransferScreen(
             placeHolder = stringResource(id = R.string.smart_my_concts_placeholder),
             onValueChange = {
                 viewModel.onUIEvent(
-                    MyContactsTransferViewModel.UIEvent.OnQueryValueChange(
+                    OnQueryValueChange(
                         it
                     )
                 )
@@ -159,18 +167,30 @@ fun MyContactsTransferScreen(
         )
 
         viewModel.apply {
-            ContactList(uiState) {
+            ContactList(
+                uiState,
+                { onUIEvent(MyContactsTransferViewModel.UIEvent.OnClickBottomSheet) },
+                viewModel
+            ) {
                 onUIEvent(MyContactsTransferViewModel.UIEvent.OnAddToFavoriteAccountClick(it))
             }
         }
     }
-
+    SelectFavoriteContactBottomSheet(
+        coroutineScope = rememberCoroutineScope(),
+        modalBottomSheetState = viewModel.uiState.bottomSheetState,
+        onSelectClick = { },
+        onBackClick = {}
+    )
     LoadingIndicator(viewModel.uiState.isLoading)
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ContactList(
     uiState: MyContactsTransferViewModel.UIState = MyContactsTransferViewModel.UIState(),
+    onBottomSheetClick: () -> Unit = {},
+    viewModel: MyContactsTransferViewModel = hiltViewModel(),
     onEndIconClick: (PhoneSmart) -> Unit = {}
 ) {
     LazyColumn(modifier = Modifier.padding(top = 20.dp, start = 16.dp, end = 16.dp)) {
@@ -187,7 +207,10 @@ fun ContactList(
                     modifier = Modifier
                         .fillMaxWidth(),
                     endIcon = R.drawable.ic_options,
-                    onEndIconClick = { onEndIconClick.invoke(contact)},
+                    onEndIconClick = {
+                        //onBottomSheetClick.invoke()
+                        viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnClickBottomSheet)
+                    },
                     colorSubtitle = colorSubtitle
                 )
                 Divider(color = colors.dividerWhite30, thickness = 1.dp)

@@ -1351,6 +1351,7 @@
     <string name="smart_my_contacts_transfer_accounts_add" translatable="false">Agregar cuenta</string>
     <string name="smart_mycontacts_total_transfer_title" translatable="false">%1s contactos encontrados</string>
     <string name="smart_my_concts_placeholder" translatable="false">Buscar contacto</string>
+    <string name="smart_my_contacts_select_favorite_account" translatable="false">Seleccionar como favorito</string>
 
     <!-- Smart SAC Transfer - Add SAC Account -->
     <string name="smart_add_sac_account_title" translatable="false">Datos de la cuenta</string>

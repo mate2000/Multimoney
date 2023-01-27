@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.amount
+package com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.amount
 
 import androidx.lifecycle.viewModelScope
 import com.multimoney.domain.model.accountsmart.Transfer365Account

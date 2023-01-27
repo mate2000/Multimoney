@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount
+package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.addaccount
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

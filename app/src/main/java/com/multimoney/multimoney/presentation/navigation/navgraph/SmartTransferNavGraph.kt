@@ -24,13 +24,13 @@ import com.multimoney.multimoney.presentation.navigation.navtype.payment.SinpeAc
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAccountIDListNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAccountIDNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.Transfer365AccountNavType
-import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountScreen
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.addaccount.SmartAddAccountScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.smartaccount.SelectSmartAccountContainer
-import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.amount.Transfer365AmountScreen
-import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountScreen
+import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.amount.Transfer365AmountScreen
+import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAddOtherBankAccountScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.amount.OwnTransferAmountScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferScreen

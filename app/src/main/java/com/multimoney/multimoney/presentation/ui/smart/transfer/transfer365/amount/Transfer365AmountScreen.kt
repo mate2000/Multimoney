@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.amount
+package com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.amount
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column

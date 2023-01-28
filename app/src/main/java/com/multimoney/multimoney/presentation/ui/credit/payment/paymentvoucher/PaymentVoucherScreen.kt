@@ -123,7 +123,7 @@ fun PaymentVoucherScreen(
                     ) {
                         Text(
                             text = stringResource(string.payment_voucher_transaction_success),
-                            modifier = Modifier.padding(top = 16.dp),
+                            modifier = Modifier.padding(top = 32.dp),
                             style = Typography.subtitle1.copy(fontWeight = FontWeight.SemiBold),
                             color = MultimoneyTheme.colors.text
                         )
@@ -201,7 +201,7 @@ fun PaymentVoucherScreen(
 
                     VoucherAccountInfo(
                         modifier = Modifier.padding(start = 27.dp, top = 24.dp),
-                        icon = drawable.ic_bank,
+                        icon = drawable.ic_bank_account_colon,
                         title = stringResource(string.payment_voucher_origin_account_label),
                         subTitle = getMaskedAccount(
                             viewModel.clientBankAccount?.accountNumber ?: "",

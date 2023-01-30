@@ -39,6 +39,7 @@ mutation ProcessSinpeTransfer(
         result {
             nUMERO_REFERENCIA_INTERNO
         }
+        status
         message
     }
 }

@@ -9,6 +9,7 @@ import com.multimoney.domain.interaction.accountsmart.MutationProcessLocalTransf
 import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -99,6 +100,15 @@ class MyContactsTransferAmountViewModel @Inject constructor(
                         showLoadingScreen = false,
                         paymentSuccess = false,
                         showErrorScreen = true
+                    )
+                }
+                result.onMessage {
+                    amountUIState = amountUIState.copy(
+                        errorMessage = it?.messageError?.message ?: "",
+                        errorDetail = it?.messageError?.detail ?: "",
+                        showLoadingScreen = false,
+                        showErrorScreen = true,
+                        paymentSuccess = false
                     )
                 }
             }

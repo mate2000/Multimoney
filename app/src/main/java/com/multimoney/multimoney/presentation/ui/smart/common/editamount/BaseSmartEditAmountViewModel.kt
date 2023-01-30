@@ -19,6 +19,7 @@ import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.multimoney.R
@@ -234,7 +235,8 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                     destinyAccountDisplay = DisplayAccount(
                         sheetLabel = R.string.smart_payment_amount_bottom_sheet_to,
                         sheetTitle = phoneAccount?.titular,
-                        sheetSubtitle = phoneAccount?.number?.plus(SEPARATOR)?.plus(destinyCurrency?.stringName)
+                        sheetSubtitle = phoneAccount?.number?.plus(SEPARATOR)
+                            ?.plus(destinyCurrency?.stringName)
                     ),
                     currency = destinyCurrency?.symbol ?: Dollar.symbol,
                     placeholder = if (destinyCurrency == Dollar) {
@@ -388,6 +390,15 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                         paymentSuccess = false
                     )
                 }
+                result.onMessage {
+                    amountUIState = amountUIState.copy(
+                        errorMessage = it?.messageError?.message ?: "",
+                        errorDetail = it?.messageError?.detail ?: "",
+                        showLoadingScreen = false,
+                        showErrorScreen = true,
+                        paymentSuccess = false
+                    )
+                }
             }
         }
     }
@@ -476,7 +487,9 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
         val idCard: Long = 0,
         val bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
         val cardBankName: String = "",
-        var showErrorScreen: Boolean = false,
+        val errorMessage: String = "",
+        val errorDetail: String = "",
+        val showErrorScreen: Boolean = false,
         val showLoadingScreen: Boolean = false,
         val paymentSuccess: Boolean = false,
         val referenceNumber: String = "",

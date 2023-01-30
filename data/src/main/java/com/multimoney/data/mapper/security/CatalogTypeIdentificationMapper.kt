@@ -8,7 +8,8 @@ private fun CatalogTypeIndentificationQuery.CatalogTypeIndentification.mapToDoma
     CatalogDocument(
         description = descripcion,
         format = formato,
-        idDocument = pk_Suv_Cat_Catalogo.toString().toInt()
+        idDocument = pk_Suv_Cat_Catalogo.toString().toInt(),
+        value = valor
     )
 
 fun CatalogTypeIndentificationQuery.Data.mapToDomainModel() =

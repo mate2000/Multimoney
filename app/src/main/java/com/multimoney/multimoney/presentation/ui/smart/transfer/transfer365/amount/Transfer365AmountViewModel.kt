@@ -59,11 +59,7 @@ class Transfer365AmountViewModel @Inject constructor() : BaseSmartEditAmountView
 
     override fun onContinueClick() {
         amountUIState = amountUIState.copy(
-            bottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Expanded),
-            openDialog = DialogParameters(
-                titleResource = R.string.info,
-                description = "TBD: Mostrar preconfirmacion REV- 1465"
-            )
+            bottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Expanded)
         )
     }
 

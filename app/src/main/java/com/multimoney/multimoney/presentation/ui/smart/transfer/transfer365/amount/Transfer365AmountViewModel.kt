@@ -10,6 +10,10 @@ import com.multimoney.multimoney.presentation.navigation.ACCOUNT_365
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.DisplayAccount
+import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
+import com.multimoney.multimoney.presentation.util.formatPhoneNumber
+import com.multimoney.multimoney.presentation.util.getMaskedSmartAccount
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -30,6 +34,26 @@ class Transfer365AmountViewModel @Inject constructor() : BaseSmartEditAmountView
             transfer365Account = savedStateHandle[ACCOUNT_365] ?: Transfer365Account()
             totalBalanceLabel =
                 amountUIState.currency + smartAccount?.totalBalance.toString()
+            val destinationInfo = if (transferType == SmartTransferTypes.SmartToMobile.id) {
+                transfer365Account.phone
+            } else if (transferType == SmartTransferTypes.SmartToOtherBank.id) {
+                "${transfer365Account.bankName} | ${
+                    getMaskedSmartAccount(
+                        prefix = "",
+                        accountNumber = transfer365Account.accountNumber.orEmpty()
+                    )
+                }"
+            } else {
+                ""
+            }
+            amountUIState = amountUIState.copy(
+                destinyAccountDisplay = DisplayAccount(
+                    sheetLabel = R.string.smart_payment_amount_bottom_sheet_to,
+                    sheetTitle = "${transfer365Account.name} ${transfer365Account.lastname}",
+                    sheetSubtitle = destinationInfo,
+                    icon = R.drawable.ic_bank_account_dollar
+                )
+            )
         }
     }
 

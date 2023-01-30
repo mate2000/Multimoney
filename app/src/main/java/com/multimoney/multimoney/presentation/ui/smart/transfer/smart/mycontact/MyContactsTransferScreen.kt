@@ -212,7 +212,7 @@ fun ContactList(
                         startIcon = null,
                         composableIcon = { modifier ->
                             CustomContactIcon(
-                                name = contact.firstAccount.titular,
+                                name = firstAccount.titular.orEmpty(),
                                 color = colorSubtitle,
                                 modifier = modifier
                             )

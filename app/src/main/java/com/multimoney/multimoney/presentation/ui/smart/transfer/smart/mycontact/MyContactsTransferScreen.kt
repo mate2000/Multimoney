@@ -215,10 +215,8 @@ fun EmptyContactsText(idBrand: Int) {
         )
         Text(
             text = stringResource(
-                id = if (idBrand == Brand.CostaRica.id)
-                    string.smart_my_contacts_invite_CR
-                else
-                    string.smart_my_contacts_invite_SV
+                id = if (idBrand == Brand.CostaRica.id) string.smart_my_contacts_invite_CR
+                else string.smart_my_contacts_invite_SV
             ),
             textAlign = TextAlign.Center,
             style = Typography.body1.copy(

@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +14,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -36,6 +39,7 @@ import com.multimoney.domain.model.accountsmart.PhoneSmart
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme.colors
+import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAddToFavoriteAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnCallQueryRelatedContactsByPhoneUseCase
@@ -148,7 +152,7 @@ fun MyContactsTransferScreen(
         )
         CustomSearchBar(
             modifier = Modifier
-                .padding(top = 24.dp, start = 16.dp)
+                .padding(top = 24.dp, start = 16.dp, end = 16.dp)
                 .clip(shape = RoundedCornerShape(30))
                 .background(colors.background),
             value = viewModel.uiState.queryValue,
@@ -164,21 +168,58 @@ fun MyContactsTransferScreen(
                 focusManager.clearFocus()
             })
         )
-        ContactList(
-            contactList = viewModel.uiState.relatedContactList,
-            searchedString = viewModel.uiState.queryValue,
-            onEndIconClick = { contact ->
-                viewModel.onUIEvent(
-                    OnAddToFavoriteAccountClick(contact)
+        if (!viewModel.uiState.isLoading) {
+            if (viewModel.uiState.relatedContactList.isNotEmpty()) {
+                ContactList(
+                    contactList = viewModel.uiState.relatedContactList,
+                    searchedString = viewModel.uiState.queryValue,
+                    onEndIconClick = { contact ->
+                        viewModel.onUIEvent(
+                            OnAddToFavoriteAccountClick(contact)
+                        )
+                    },
+                    onContactClick = { accounts ->
+                        viewModel.onUIEvent(OnContactClick(accounts))
+                    }
                 )
-            },
-            onContactClick = { accounts ->
-                viewModel.onUIEvent(OnContactClick(accounts))
+            } else {
+                EmptyContactsText(viewModel.idBrand)
             }
-        )
+        }
     }
     ContactBottomSheet(viewModel = viewModel)
     LoadingIndicator(viewModel.uiState.isLoading)
+}
+
+@Composable
+fun EmptyContactsText(idBrand: Int) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.ic_novo_waiting_smartphone),
+            contentDescription = null,
+            tint = Primary500
+        )
+        Text(
+            text = stringResource(
+                id = if (idBrand == Brand.CostaRica.id)
+                    string.smart_my_contacts_invite_CR
+                else
+                    string.smart_my_contacts_invite_SV
+            ),
+            textAlign = TextAlign.Center,
+            style = Typography.body1.copy(
+                fontWeight = FontWeight.Light,
+                color = colors.text
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
+        )
+    }
 }
 
 @Composable

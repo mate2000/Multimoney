@@ -38,13 +38,13 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme.colors
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAddSACAccountClick
-import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnSelectContactAsFavorite
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAddToFavoriteAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnCallQueryRelatedContactsByPhoneUseCase
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnContactClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnQueryValueChange
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnSelectContactAsFavorite
 import com.multimoney.multimoney.presentation.uielement.ContactAccountDisplay
 import com.multimoney.multimoney.presentation.uielement.ContactItem
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -192,7 +192,6 @@ fun MyContactsTransferScreen(
     LoadingIndicator(viewModel.uiState.isLoading)
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ContactList(
     contactList: Map<String, List<PhoneSmart?>>,

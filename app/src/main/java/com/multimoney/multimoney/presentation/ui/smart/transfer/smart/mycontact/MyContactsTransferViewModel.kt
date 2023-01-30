@@ -3,7 +3,6 @@ package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact
 import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.ModalBottomSheetValue.Expanded
 import androidx.compose.material.ModalBottomSheetValue.Hidden
 import androidx.compose.runtime.getValue
@@ -113,11 +112,11 @@ class MyContactsTransferViewModel @Inject constructor(
         contactAccountSelected = contactToFavorite
         uiState = if (uiState.bottomSheetState.isVisible) {
             uiState.copy(
-                bottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden)
+                bottomSheetState = ModalBottomSheetState(Hidden)
             )
         } else {
             uiState.copy(
-                bottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Expanded)
+                bottomSheetState = ModalBottomSheetState(Expanded)
             )
         }
     }
@@ -189,13 +188,13 @@ class MyContactsTransferViewModel @Inject constructor(
                 accountName = contactAccountSelected?.titular,
                 email = contactAccountSelected?.email ?: "",
                 active = true,
-                isFavorite = true,
+                isFavorite = true ,
                 phoneNumber = contactAccountSelected?.number,
                 idCurrencyAccount = contactAccountSelected?.currency?.getCurrencyFromValue()?.id ?: 0
             ).collectLatest { result ->
                 result.onLoading { uiState = uiState.copy(isLoading = true) }
                 result.onSuccess { account ->
-                    val registeredAccount = account?.results?.first()
+                    val favoriteContact = account?.results?.first()
                 }
                 result.onFailure { onFailure(it) }
             }

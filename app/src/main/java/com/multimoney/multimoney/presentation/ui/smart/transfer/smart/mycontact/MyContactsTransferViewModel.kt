@@ -193,8 +193,8 @@ class MyContactsTransferViewModel @Inject constructor(
                 idCurrencyAccount = contactAccountSelected?.currency?.getCurrencyFromValue()?.id ?: 0
             ).collectLatest { result ->
                 result.onLoading { uiState = uiState.copy(isLoading = true) }
-                result.onSuccess { account ->
-                    val favoriteContact = account?.results?.first()
+                result.onSuccess {
+                    uiState = uiState.copy(isLoading = false)
                 }
                 result.onFailure { onFailure(it) }
             }

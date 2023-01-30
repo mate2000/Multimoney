@@ -64,7 +64,7 @@ class MyContactsTransferAmountViewModel @Inject constructor(
         }
     }
 
-    fun onProcessLocalTransfer() {
+    private fun onProcessLocalTransfer() {
         executeUseCase {
             processLocalTransfer.invoke(
                 pkUsuario = pkUser.toIntOrNull() ?: 0,
@@ -82,21 +82,21 @@ class MyContactsTransferAmountViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess {
                     amountUIState = amountUIState.copy(
-                        isLoading = false,
+                        showLoadingScreen = false,
                         paymentSuccess = true,
                         showErrorScreen = false
                     )
                 }
                 result.onLoading {
                     amountUIState = amountUIState.copy(
-                        isLoading = true,
+                        showLoadingScreen = true,
                         paymentSuccess = false,
                         showErrorScreen = false
                     )
                 }
                 result.onFailure {
                     amountUIState = amountUIState.copy(
-                        isLoading = false,
+                        showLoadingScreen = false,
                         paymentSuccess = false,
                         showErrorScreen = true
                     )

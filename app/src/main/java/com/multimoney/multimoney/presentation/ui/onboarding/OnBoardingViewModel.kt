@@ -1,5 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.onboarding
 
+import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,10 +33,10 @@ class OnBoardingViewModel @Inject constructor(
     var currentStep = STEP_ONE
     private var maxWidth = 0
 
-    private fun goToNextScreen() {
+    private fun goToNextScreen(context: Context) {
         if (currentStep < MAX_STEPS) {
             currentStep++
-            val newValues = getStepContent(currentStep)
+            val newValues = getStepContent(currentStep, context)
             uiState = uiState.copy(
                 title = newValues[STEP_TITLE],
                 subtitle = newValues[STEP_SUBTITLE],
@@ -43,10 +45,10 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
-    private fun goToPreviousScreen() {
+    private fun goToPreviousScreen(context: Context) {
         if (currentStep - 1 > 0) {
             currentStep--
-            val newValues = getStepContent(currentStep)
+            val newValues = getStepContent(currentStep, context)
             uiState = uiState.copy(
                 title = newValues[STEP_TITLE],
                 subtitle = newValues[STEP_SUBTITLE],
@@ -55,7 +57,7 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
-    private fun onPress(pressGestureScope: PointerInputScope) {
+    private fun onPress(pressGestureScope: PointerInputScope, context: Context) {
         maxWidth = pressGestureScope.size.width
         viewModelScope.launch {
             pressGestureScope.detectTapGestures(
@@ -68,9 +70,9 @@ class OnBoardingViewModel @Inject constructor(
                     if (totalPressTime < TOTAL_PRESS_TIME) {
                         val isTapOnRightThreeQuarters = (it.x > (maxWidth / QUARTER))
                         if (isTapOnRightThreeQuarters) {
-                            goToNextScreen()
+                            goToNextScreen(context)
                         } else {
-                            goToPreviousScreen()
+                            goToPreviousScreen(context)
                         }
                     }
                     uiState = uiState.copy(isPressed = false)
@@ -79,30 +81,68 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
-    private fun getStepContent(step: Int): List<Int> = when (step) {
+    private fun getStepContent(step: Int, context: Context): List<Int> = when (step) {
         STEP_ONE -> {
             provideFireBaseEventHelper.logEvent(FireBaseEvents.OnboardingOne)
-            listOf(
-                R.string.onboarding_step_one_title,
-                R.string.onboarding_step_one_sub_title,
-                R.drawable.ic_onboarding_step_one
-            )
+
+            when (context.resources.configuration.locale.isO3Country) {
+                "CRI" -> listOf(
+                    R.string.onboarding_costa_rica_step_one_title,
+                    R.string.onboarding_costa_rica_step_one_sub_title,
+                    R.drawable.ic_onboarding_step_one
+                )
+                "GTM" -> listOf(
+                    R.string.onboarding_guatemala_step_one_title,
+                    R.string.onboarding_guatemala_step_one_sub_title,
+                    R.drawable.ic_onboarding_step_one
+                )
+                else -> listOf(
+                    R.string.onboarding_step_one_title,
+                    R.string.onboarding_step_one_sub_title,
+                    R.drawable.ic_onboarding_step_one
+                )
+            }
+
         }
         STEP_TWO -> {
             provideFireBaseEventHelper.logEvent(FireBaseEvents.OnboardingTwo)
-            listOf(
-                R.string.onboarding_step_two_title,
-                R.string.onboarding_step_two_sub_title,
-                R.drawable.ic_onboarding_step_two
-            )
+            when (context.resources.configuration.locale.isO3Country) {
+                "CRI" -> listOf(
+                    R.string.onboarding_costa_rica_step_two_title,
+                    R.string.onboarding_costa_rica_step_two_sub_title,
+                    R.drawable.ic_onboarding_step_two
+                )
+                "GTM" -> listOf(
+                    R.string.onboarding_guatemala_step_two_title,
+                    R.string.onboarding_guatemala_step_two_sub_title,
+                    R.drawable.ic_onboarding_step_two
+                )
+                else -> listOf(
+                    R.string.onboarding_step_two_title,
+                    R.string.onboarding_step_two_sub_title,
+                    R.drawable.ic_onboarding_step_two
+                )
+            }
         }
         else -> {
             provideFireBaseEventHelper.logEvent(FireBaseEvents.OnboardingThree)
-            listOf(
-                R.string.onboarding_step_three_title,
-                R.string.onboarding_step_three_sub_title,
-                R.drawable.ic_onboarding_step_three
-            )
+            when (context.resources.configuration.locale.isO3Country) {
+                "CRI" -> listOf(
+                    R.string.onboarding_costa_rica_step_three_title,
+                    R.string.onboarding_costa_rica_step_three_sub_title,
+                    R.drawable.ic_onboarding_step_three
+                )
+                "GTM" -> listOf(
+                    R.string.onboarding_guatemala_step_three_title,
+                    R.string.onboarding_guatemala_step_three_sub_title,
+                    R.drawable.ic_onboarding_step_three
+                )
+                else -> listOf(
+                    R.string.onboarding_step_three_title,
+                    R.string.onboarding_step_three_sub_title,
+                    R.drawable.ic_onboarding_step_three
+                )
+            }
         }
     }
 
@@ -131,11 +171,11 @@ class OnBoardingViewModel @Inject constructor(
         val isPressed: Boolean = false,
     )
 
-    fun onUIEvent(event: UIEvent) {
+    fun onUIEvent(event: UIEvent, context: Context) {
         when (event) {
             is OnNavigateToNextScreen -> navigateToNextScreen(event.screen)
-            is OnGoToNextScreen -> goToNextScreen()
-            is OnPress -> onPress(event.pressGestureScope)
+            is OnGoToNextScreen -> goToNextScreen(context)
+            is OnPress -> onPress(event.pressGestureScope, context)
         }
     }
 

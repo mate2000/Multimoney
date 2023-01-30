@@ -89,9 +89,11 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
             user = user
         ).collectLatest { result ->
             result.onSuccess { types ->
+                val selectedType = types?.typeList?.find { it == uiState.type }
                 uiState = uiState.copy(
                     isLoading = false,
-                    accountTypeList = types?.typeList ?: listOf()
+                    accountTypeList = types?.typeList ?: listOf(),
+                    type = selectedType
                 )
             }
             result.onFailure { onFailure(it) }
@@ -105,9 +107,11 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
             user = user
         ).collectLatest { result ->
             result.onSuccess { banks ->
+                val selectedBank = banks?.bankList?.find { it == uiState.bank }
                 uiState = uiState.copy(
                     isLoading = false,
-                    bankList = banks?.bankList ?: listOf()
+                    bankList = banks?.bankList ?: listOf(),
+                    bank = selectedBank
                 )
             }
             result.onFailure { onFailure(it) }
@@ -271,6 +275,7 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
                 name = uiState.names,
                 lastname = uiState.lastNames,
                 bankId = uiState.bank?.bankId.toString(),
+                bankName = uiState.bank?.bankName.orEmpty(),
                 accountTypeId = uiState.type?.typeId.toString()
             )
             navigateTo(
@@ -302,6 +307,7 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
                         name = uiState.names,
                         lastname = uiState.lastNames,
                         bankId = uiState.bank?.bankId.toString(),
+                        bankName = uiState.bank?.bankName.orEmpty(),
                         accountTypeId = uiState.type?.typeId.toString()
                     )
                     navigateTo(

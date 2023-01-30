@@ -19,7 +19,10 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
+import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAccountViewModel.UIEvent.OnAccountValueChange
 import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAccountViewModel.UIEvent.OnBackClick
@@ -161,10 +164,12 @@ class AddIbanAccountViewModel @Inject constructor(
             idBrand = idBrand ?: 0
         ).collectLatest { result ->
             result.onSuccess {
-                if (previousScreen == Screen.DisbursementAccountScreen.baseRoute) {
-                    navigateBack(Screen.DisbursementAccountScreen.route, true)
-                } else {
-                    navigateBack(Screen.PaymentAccountScreen.route, true)
+                when(previousScreen){
+                    Screen.DisbursementAccountScreen.baseRoute ->navigateBack(Screen.DisbursementAccountScreen.route, true)
+                    Screen.SmartPaymentAccountScreenCR.baseRoute -> navigateBack(Screen.SmartPaymentAccountScreenCR.route, true)
+                    else ->{
+                        navigateBack(Screen.PaymentAccountScreen.route, true)
+                    }
                 }
             }.onFailure {
                 uiState = uiState.copy(

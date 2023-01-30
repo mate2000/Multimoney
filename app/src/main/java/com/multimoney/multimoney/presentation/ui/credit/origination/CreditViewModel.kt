@@ -88,7 +88,7 @@ class CreditViewModel @Inject constructor(
     var idPrint: Long = 0
     var statusOnfido: String = ""
     var statusEvicertia: String = ""
-    private var crosseling: Boolean = false
+    var crosseling: Boolean = false
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: ""

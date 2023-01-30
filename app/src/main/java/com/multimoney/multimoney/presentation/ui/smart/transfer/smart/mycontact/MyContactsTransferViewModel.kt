@@ -151,31 +151,6 @@ class MyContactsTransferViewModel @Inject constructor(
         )
     }
 
-    data class UIState(
-        val queryValue: String = "",
-        val openDialog: DialogParameters = DialogParameters(),
-        var isLoading: Boolean = false,
-        var relatedContactList: Map<String, List<PhoneSmart?>> = mapOf(),
-        var selectedContact: List<PhoneSmart> = listOf(),
-        val bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(Hidden)
-    )
-
-    fun onUIEvent(uiEvent: UIEvent) {
-        when (uiEvent) {
-            is OnAddToFavoriteAccountClick -> navigateToAddToFavoriteAccount(uiEvent.contactToFavorite)
-            is OnNavigateBack -> onNavigateBack()
-            is OnSelectContactAsFavorite -> onSelectContactAsFavorite()
-               OnAddSACAccountClick -> onAddSACAccountClick()
-            OnCallQueryRelatedContactsByPhoneUseCase -> callQueryRelatedContactsByPhoneUseCaseImp()
-            is OnAddSACAccountClick -> onAddSACAccountClick()
-            is OnQueryValueChange -> onQueryValueChange(uiEvent.value)
-            is OnNavigateToHome -> onNavigateToHome()
-            is OnCallQueryRelatedContactsByPhoneUseCase -> callQueryRelatedContactsByPhoneUseCaseImp()
-            is OnContactClick -> onContactClick(uiEvent.contact)
-            is OnAccountClick -> onAccountClick(uiEvent.account)
-        }
-    }
-
     private fun onSelectContactAsFavorite() {
         executeUseCase {
             mutationUpdateFavoriteSmartUseCase.invoke(
@@ -206,6 +181,31 @@ class MyContactsTransferViewModel @Inject constructor(
             popTo = Screen.HomeScreen.route,
             isRestart = true
         )
+    }
+
+    data class UIState(
+        val queryValue: String = "",
+        val openDialog: DialogParameters = DialogParameters(),
+        var isLoading: Boolean = false,
+        var relatedContactList: Map<String, List<PhoneSmart?>> = mapOf(),
+        var selectedContact: List<PhoneSmart> = listOf(),
+        val bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(Hidden)
+    )
+
+    fun onUIEvent(uiEvent: UIEvent) {
+        when (uiEvent) {
+            is OnAddToFavoriteAccountClick -> navigateToAddToFavoriteAccount(uiEvent.contactToFavorite)
+            is OnNavigateBack -> onNavigateBack()
+            is OnSelectContactAsFavorite -> onSelectContactAsFavorite()
+               OnAddSACAccountClick -> onAddSACAccountClick()
+            OnCallQueryRelatedContactsByPhoneUseCase -> callQueryRelatedContactsByPhoneUseCaseImp()
+            is OnAddSACAccountClick -> onAddSACAccountClick()
+            is OnQueryValueChange -> onQueryValueChange(uiEvent.value)
+            is OnNavigateToHome -> onNavigateToHome()
+            is OnCallQueryRelatedContactsByPhoneUseCase -> callQueryRelatedContactsByPhoneUseCaseImp()
+            is OnContactClick -> onContactClick(uiEvent.contact)
+            is OnAccountClick -> onAccountClick(uiEvent.account)
+        }
     }
 
     sealed class UIEvent {

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
@@ -112,7 +113,7 @@ fun SmartPaymentBottomSheet(
             CustomInfoButton(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(78.dp),
+                    .wrapContentHeight(),
                 imageModifier = Modifier.size(48.dp),
                 startIcon = fromIcon,
                 title = fromTitle,
@@ -141,7 +142,7 @@ fun SmartPaymentBottomSheet(
             CustomInfoButton(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(78.dp),
+                    .wrapContentHeight(),
                 startIcon = toIcon,
                 title = toTitle,
                 subtitle = toSubtitle.orEmpty(),

@@ -183,7 +183,7 @@ fun MyContactsTransferScreen(
 
     SelectFavoriteContactBottomSheet(
         coroutineScope = rememberCoroutineScope(),
-        modalBottomSheetState = viewModel.uiState.bottomSheetState,
+        modalBottomSheetState = viewModel.uiState.selectFavoriteContactBottomSheetState,
         onSelectClick = { viewModel.onUIEvent(OnSelectContactAsFavorite) }
     )
 
@@ -237,7 +237,7 @@ fun ContactBottomSheet(viewModel: MyContactsTransferViewModel) {
     CustomModalBottomSheet(
         title = string.smart_iban_transfer_send_money,
         closeIcon = R.drawable.ic_close_bottom_sheet,
-        modalBottomSheetState = viewModel.uiState.bottomSheetState,
+        modalBottomSheetState = viewModel.uiState.contactClickBottomSheetState,
         coroutineScope = rememberCoroutineScope()
     ) {
         if (viewModel.uiState.selectedContact.isNotEmpty()) {

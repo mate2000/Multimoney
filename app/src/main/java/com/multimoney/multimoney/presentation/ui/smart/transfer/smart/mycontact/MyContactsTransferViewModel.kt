@@ -110,13 +110,13 @@ class MyContactsTransferViewModel @Inject constructor(
 
     private fun navigateToAddToFavoriteAccount(contactToFavorite: PhoneSmart) {
         contactAccountSelected = contactToFavorite
-        uiState = if (uiState.bottomSheetState.isVisible) {
+        uiState = if (uiState.selectFavoriteContactBottomSheetState.isVisible) {
             uiState.copy(
-                bottomSheetState = ModalBottomSheetState(Hidden)
+                selectFavoriteContactBottomSheetState = ModalBottomSheetState(Hidden)
             )
         } else {
             uiState.copy(
-                bottomSheetState = ModalBottomSheetState(Expanded)
+                selectFavoriteContactBottomSheetState = ModalBottomSheetState(Expanded)
             )
         }
     }
@@ -133,7 +133,7 @@ class MyContactsTransferViewModel @Inject constructor(
         } else {
             uiState = uiState.copy(
                 selectedContact = accounts.filterNotNull(),
-                bottomSheetState = ModalBottomSheetState(Expanded)
+                contactClickBottomSheetState = ModalBottomSheetState(Expanded)
             )
         }
     }
@@ -189,7 +189,8 @@ class MyContactsTransferViewModel @Inject constructor(
         var isLoading: Boolean = false,
         var relatedContactList: Map<String, List<PhoneSmart?>> = mapOf(),
         var selectedContact: List<PhoneSmart> = listOf(),
-        val bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(Hidden)
+        val selectFavoriteContactBottomSheetState: ModalBottomSheetState = ModalBottomSheetState(Hidden),
+        val contactClickBottomSheetState: ModalBottomSheetState = ModalBottomSheetState(Hidden)
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

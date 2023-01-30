@@ -6683,6 +6683,8 @@ type CreditPreApproveInfo {
 
   idPrint: Long
 
+  crosseling: Boolean
+
   selectedAmount: Decimal
 
   statusFirm: String

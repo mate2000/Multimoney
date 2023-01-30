@@ -11,9 +11,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -46,12 +51,16 @@ import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.uielement.CustomModalWarningBottomSheet
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.CustomPasswordRequirementLabel
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun RegisteredUserPasswordScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
@@ -61,6 +70,8 @@ fun RegisteredUserPasswordScreen(
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
     val fragmentActivity = LocalContext.current as FragmentActivity
+    val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Expanded)
+    val coroutineScope: CoroutineScope = rememberCoroutineScope()
 
     viewModel.onUIEvent(
         RegisteredUserPasswordViewModel.UIEvent.OnInitializeDialogTexts(
@@ -115,13 +126,22 @@ fun RegisteredUserPasswordScreen(
         viewModel.uiState.isContinueEnabled,
         onContinueClick = {
             viewModel.onUIEvent(OnCallPasswordSave)
-        }
+        },
+        bottomSheetState,
+        coroutineScope
     )
 
     LoadingIndicator(viewModel.uiState.isLoading)
 
     BackHandler {
-        viewModel.onUIEvent(OnCloseClick(focusManager = focusManager))
+        when {
+            bottomSheetState.isVisible -> {
+                coroutineScope.launch {
+                    bottomSheetState.hide()
+                }
+            }
+            else -> viewModel.onUIEvent(OnCloseClick(focusManager = focusManager))
+        }
     }
 
     // Dialog
@@ -139,6 +159,7 @@ fun RegisteredUserPasswordScreen(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun RegisteredUserPasswordContent(
@@ -158,7 +179,9 @@ fun RegisteredUserPasswordContent(
     isFingerprintChecked: Boolean = false,
     onFingerprintCheckedChanged: (Boolean, Boolean) -> Unit = { _, _ -> },
     isContinueEnabled: Boolean = false,
-    onContinueClick: () -> Unit = {}
+    onContinueClick: () -> Unit = {},
+    bottomSheetState: ModalBottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Expanded),
+    coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -283,6 +306,28 @@ fun RegisteredUserPasswordContent(
             enable = isContinueEnabled
         )
     }
+    CustomModalWarningBottomSheet(
+        titleResource = string.password_security_bottom_sheet_general_title,
+        descriptionText = buildAnnotatedString {
+            withStyle(
+                style = Typography.body1.toSpanStyle().copy(
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            ) {
+                append(stringResource(id = string.password_security_bottom_sheet_general_description))
+            }
+            withStyle(
+                style = Typography.body2.toSpanStyle().copy(
+                    fontWeight = FontWeight.Normal
+                )
+            ) {
+                append(stringResource(id = string.password_security_bottom_sheet_signup_description))
+            }
+        },
+        modalBottomSheetState = bottomSheetState,
+        coroutineScope = coroutineScope
+    )
 }
 
 @Composable

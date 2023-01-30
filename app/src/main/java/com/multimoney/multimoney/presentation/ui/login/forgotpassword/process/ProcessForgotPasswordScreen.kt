@@ -12,22 +12,30 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.flowlayout.FlowRow
 import com.multimoney.multimoney.R
@@ -48,12 +56,16 @@ import com.multimoney.multimoney.presentation.ui.login.signup.password.PasswordR
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
+import com.multimoney.multimoney.presentation.uielement.CustomModalWarningBottomSheet
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.OtpTextField
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ProcessForgotPasswordScreen(
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
@@ -64,6 +76,8 @@ fun ProcessForgotPasswordScreen(
     val context = LocalContext.current
     val resendOtpToastText =
         stringResource(id = R.string.process_forgot_password_resend_otp_toast)
+    val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Expanded)
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(true) {
         viewModel.apply {
@@ -80,7 +94,14 @@ fun ProcessForgotPasswordScreen(
     }
 
     BackHandler {
-        viewModel.onUIEvent(OnCloseClick(focusManager))
+        when {
+            bottomSheetState.isVisible -> {
+                coroutineScope.launch {
+                    bottomSheetState.hide()
+                }
+            }
+            else -> viewModel.onUIEvent(OnCloseClick(focusManager))
+        }
     }
     ProcessForgotPasswordContent(
         focusManager = focusManager,
@@ -91,10 +112,13 @@ fun ProcessForgotPasswordScreen(
         onResendClick = { viewModel.onUIEvent(OnResendOtpClick(focusManager)) },
         onNewPasswordValueChange = { value -> viewModel.onUIEvent(OnNewPasswordValueChange(value)) },
         onNewPasswordConfirmationValueChange = { value -> viewModel.onUIEvent(OnNewPasswordConfirmationValueChange(value)) },
-        onAlertButtonClick = { viewModel.onUIEvent(OnAlertButtonClick(focusManager)) }
+        onAlertButtonClick = { viewModel.onUIEvent(OnAlertButtonClick(focusManager)) },
+        bottomSheetState = bottomSheetState,
+        coroutineScope = coroutineScope
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 @Preview
 fun ProcessForgotPasswordContent(
@@ -106,7 +130,9 @@ fun ProcessForgotPasswordContent(
     onResendClick: () -> Unit = {},
     onNewPasswordValueChange: (String) -> Unit = {},
     onNewPasswordConfirmationValueChange: (String) -> Unit = {},
-    onAlertButtonClick: () -> Unit = {}
+    onAlertButtonClick: () -> Unit = {},
+    bottomSheetState: ModalBottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Expanded),
+    coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
     if (uiState.isAlertResultVisible) {
         AlertResult(
@@ -249,4 +275,26 @@ fun ProcessForgotPasswordContent(
         }
     }
     LoadingIndicator(uiState.isLoading)
+    CustomModalWarningBottomSheet(
+        titleResource = string.password_security_bottom_sheet_general_title,
+        descriptionText = buildAnnotatedString {
+            withStyle(
+                style = Typography.body1.toSpanStyle().copy(
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            ) {
+                append(stringResource(id = string.password_security_bottom_sheet_general_description))
+            }
+            withStyle(
+                style = Typography.body2.toSpanStyle().copy(
+                    fontWeight = FontWeight.Normal
+                )
+            ) {
+                append(stringResource(id = string.password_security_bottom_sheet_signup_description))
+            }
+        },
+        modalBottomSheetState = bottomSheetState,
+        coroutineScope = coroutineScope
+    )
 }

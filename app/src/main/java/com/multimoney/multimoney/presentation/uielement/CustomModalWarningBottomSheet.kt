@@ -4,7 +4,15 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
@@ -17,14 +25,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.GrayScale600
 import com.multimoney.multimoney.presentation.theme.GrayScale700
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -34,10 +44,12 @@ fun CustomModalWarningBottomSheet(
     titleResource: Int = R.string.empty,
     titleText: String = "",
     descriptionResource: Int = R.string.empty,
-    descriptionText: String = "",
-    buttonTextResource: Int = R.string.empty,
+    descriptionText: AnnotatedString = buildAnnotatedString { },
+    buttonTextResource: Int = R.string.understood,
     buttonText: String = "",
-    closeIcon: Int,
+    enableButton: Boolean = true,
+    onButtonClick: () -> Unit = {},
+    closeIcon: Int = R.drawable.ic_close_bottom_sheet,
     closeAction: () -> Unit = {},
     titleIsVisible: Boolean = true,
     descriptionIsVisible: Boolean = true,
@@ -51,9 +63,9 @@ fun CustomModalWarningBottomSheet(
     val textColor: Color
     if (isSystemInDarkTheme()) {
         backgroundColor = GrayScale700
-        textColor = DefaultWhite
+        textColor = WhiteTransparency70
     } else {
-        backgroundColor = DefaultWhite
+        backgroundColor = WhiteTransparency70
         textColor = GrayScale600
     }
 
@@ -72,7 +84,7 @@ fun CustomModalWarningBottomSheet(
                 Column(
                     Modifier
                         .fillMaxWidth()
-                        .padding(top = 16.dp, start = 24.dp, end = 16.dp, bottom = 16.dp)
+                        .padding(top = 16.dp, start = 24.dp, end = 16.dp, bottom = 24.dp)
                 ) {
                     if (closeIconVisible) {
                         Row(
@@ -93,21 +105,49 @@ fun CustomModalWarningBottomSheet(
                                 }
                             )
                         }
-                        if (titleIsVisible) {
-                            Text(
-                                text = if (titleText != "") titleText else stringResource(id = titleResource),
-                                style = Typography.subtitle1.copy(fontSize = 28.sp, fontWeight = FontWeight.SemiBold),
-                                color = textColor
-                            )
-                        }
-
-                        if (descriptionIsVisible) {
-                            Spacer(modifier = Modifier.height(32.dp))
-                            Text(
-                                text = if (descriptionText != "") titleText else stringResource(id = titleResource),
-                                style = Typography.subtitle1.copy(fontSize = 28.sp, fontWeight = FontWeight.SemiBold),
-                                color = textColor
-                            )
+                        Column(modifier = Modifier.padding(end = 8.dp)) {
+                            if (titleIsVisible) {
+                                Spacer(modifier = Modifier.height(24.dp))
+                                Text(
+                                    modifier = Modifier.wrapContentHeight(),
+                                    text = if (titleText != "") titleText else stringResource(id = titleResource),
+                                    style = Typography.body1.copy(fontSize = 28.sp, fontWeight = FontWeight.SemiBold),
+                                    color = textColor
+                                )
+                            }
+                            if (descriptionIsVisible) {
+                                Spacer(modifier = Modifier.height(24.dp))
+                                if (descriptionText.isNotEmpty()) {
+                                    Text(
+                                        modifier = Modifier.wrapContentHeight(),
+                                        text = descriptionText,
+                                        color = textColor
+                                    )
+                                } else {
+                                    Text(
+                                        text = stringResource(id = descriptionResource),
+                                        color = textColor
+                                    )
+                                }
+                            }
+                            if (buttonIsVisible) {
+                                Spacer(modifier = Modifier.height(40.dp))
+                                CustomButton(
+                                    modifier = Modifier
+                                        .height(48.dp)
+                                        .fillMaxWidth(),
+                                    onClick = {
+                                        onButtonClick()
+                                        coroutineScope.launch {
+                                            modalBottomSheetState.hide()
+                                        }
+                                    },
+                                    text = if (buttonText != "") titleText else stringResource(id = buttonTextResource),
+                                    buttonType = CustomButtonType.PrimaryPrimary,
+                                    enable = enableButton
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(24.dp))
                         }
                     }
                 }

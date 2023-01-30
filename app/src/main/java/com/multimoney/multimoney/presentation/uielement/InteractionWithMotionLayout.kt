@@ -45,9 +45,7 @@ fun MotionLayoutMM(
     content: @Composable (modifier: Modifier) -> Unit,
     footer: @Composable () -> Unit,
     isExpanded: Boolean = false,
-    forceExpanded: Boolean = false,
     updateIsExpanded: (Boolean) -> Unit = {},
-    updateForceExpanded: (Boolean) -> Unit = {},
     footerExpanded: @Composable () -> Unit = {},
     ctaFooterExpanded: @Composable () -> Unit = {},
     homeState: HomeState,
@@ -81,7 +79,6 @@ fun MotionLayoutMM(
     var timer: CountDownTimer?
     if (isExpandedByClick) {
         updateIsExpandedByClick(false)
-        animationProgress = ANIMATION_COLLAPSED
         isAnimationRunning = true
         timer = object : CountDownTimer(TIMER_FUTURE, TIMER_COUNT_DOWN) {
             override fun onTick(millisMainUntilFinished: Long) {
@@ -100,11 +97,8 @@ fun MotionLayoutMM(
         timer?.start()
     }
 
-    if ((isExpanded && isBackPressed) || (forceExpanded && isBackPressed)) {
+    if (isExpanded && isBackPressed) {
         updateIsExpanded(false)
-        if (forceExpanded) {
-            updateForceExpanded(false)
-        }
         isAnimationRunning = true
         timer = object : CountDownTimer(TIMER_FUTURE, TIMER_COUNT_DOWN) {
             override fun onTick(millisMainUntilFinished: Long) {
@@ -203,7 +197,7 @@ fun MotionLayoutMM(
         }
         MotionLayout(
             motionScene = MotionScene(motionSceneContent),
-            progress = if (forceExpanded || homeState == EXPANDED) ANIMATION_EXPANDED else animationProgress,
+            progress = if (homeState == EXPANDED) ANIMATION_EXPANDED else animationProgress,
             modifier = Modifier
                 .fillMaxSize()
                 .background(MultimoneyTheme.colors.background)

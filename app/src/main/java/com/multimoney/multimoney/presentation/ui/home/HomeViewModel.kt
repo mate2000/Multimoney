@@ -68,6 +68,8 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSh
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowUnlinkToast
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSignOut
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnStartBiometrics
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnUpdateIsExpandedByClick
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.INDEX_ONE
 import com.multimoney.multimoney.presentation.util.LAST_THREE
@@ -84,11 +86,11 @@ import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.util.BiometricHelper
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalPagerApi::class)
@@ -795,9 +797,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun onMyProductClick(expand: Boolean) {
-        uiState = uiState.copy(forceIsExpanded = expand)
-        /*if (expand)
-            onSetHomeState(HomeState.EXPANDED)*/
+        uiState = uiState.copy(isExpandedByClick = expand)
     }
 
     data class UIState(
@@ -815,14 +815,14 @@ class HomeViewModel @Inject constructor(
         var identification: String = "",
         var email: String = "",
         var userName: String = "",
-        var forceIsExpanded: Boolean = false,
         var homeState: HomeState = HomeState.OLD_STATE,
         var productScreenPagerState: PagerState? = null,
         var productPageList: List<ProductPage> = emptyList(),
         val smartMovementsList: List<SmartMovementsResult> = emptyList(),
         val creditMovementsList: List<CreditMovementsResult> = emptyList(),
         val showCardIssuanceError: Boolean = false,
-        val toastIsVisible: Boolean = false
+        val toastIsVisible: Boolean = false,
+        var isExpandedByClick: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -868,10 +868,12 @@ class HomeViewModel @Inject constructor(
                 uiEvent.biometricPromptDescription,
                 uiEvent.biometricPromptNegative
             )
+            is OnUpdateIsExpandedByClick -> uiState = uiState.copy(isExpandedByClick = uiEvent.isExpandedByClick)
         }
     }
 
     sealed class UIEvent {
+        data class OnUpdateIsExpandedByClick(val isExpandedByClick: Boolean) : UIEvent()
         data class OnOpenQuickActionFlow(val flow: String) : UIEvent()
         data class OnBottomNavigationItemClick(
             val innerNavHostController: NavHostController,

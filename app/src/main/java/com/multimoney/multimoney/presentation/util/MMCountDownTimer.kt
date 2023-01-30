@@ -33,7 +33,7 @@ class MMCountDownTimer {
                 }
             }
         }
-        timer?.start()
+//        timer?.start()
     }
 
     fun restartTimer() {

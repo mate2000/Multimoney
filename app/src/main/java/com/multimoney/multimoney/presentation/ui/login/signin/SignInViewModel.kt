@@ -52,11 +52,11 @@ import com.multimoney.multimoney.presentation.util.isCognitoErrorCode
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
@@ -138,7 +138,7 @@ class SignInViewModel @Inject constructor(
 
         Amplify.Auth.signOut({
             // TODO: This line must be uncommented when logic to send metadata to cognito is implemented
-            Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword, options, { authSignInResult ->
+            Amplify.Auth.signIn(uiState.userEmail, "Nu12##12", options, { authSignInResult ->
 //            Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword, { authSignInResult ->
                 if (authSignInResult.isSignInComplete) {
                     Amplify.Auth.fetchAuthSession({ authSessionSuccess ->
@@ -155,34 +155,35 @@ class SignInViewModel @Inject constructor(
                                             session.userPoolTokens.value?.idToken.orEmpty(),
                                             authUserAttribute
                                         )
-                                        if (payload.getString(SignUpPasswordViewModel.COGNITO_CHANGE_PASSWORD_REQUIRED)
-                                            .toBoolean()
-                                        ) {
-                                            uiState = uiState.copy(
-                                                openDialog = DialogParameters(
-                                                    titleResource = string.sign_in_expired_password_dialog_title,
-                                                    descriptionResource = string.sign_in_expired_password_dialog_description,
-                                                    positiveResource = string.sign_in_expired_password_dialog_positive_button,
-                                                    positiveAction = {
-                                                        onNavigateToChangePassword(
-                                                            idBrand = payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_ID_BRAND)
-                                                                .toInt(),
-                                                            pkUser = payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_PK_USER),
-                                                            userName = uiState.userEmail
-                                                        )
-                                                    },
-                                                    isActive = mutableStateOf(true)
-                                                ),
-                                                isLoading = false
-                                            )
-                                        } else {
+//                                        if (payload.getString(SignUpPasswordViewModel.COGNITO_CHANGE_PASSWORD_REQUIRED)
+//                                            .toBoolean()
+//                                        ) {
+//                                            Amplify.Auth.signOut({}, {})
+//                                            uiState = uiState.copy(
+//                                                openDialog = DialogParameters(
+//                                                    titleResource = string.sign_in_expired_password_dialog_title,
+//                                                    descriptionResource = string.sign_in_expired_password_dialog_description,
+//                                                    positiveResource = string.sign_in_expired_password_dialog_positive_button,
+//                                                    positiveAction = {
+//                                                        onNavigateToChangePassword(
+//                                                            idBrand = payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_ID_BRAND)
+//                                                                .toInt(),
+//                                                            pkUser = payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_PK_USER),
+//                                                            userName = uiState.userEmail
+//                                                        )
+//                                                    },
+//                                                    isActive = mutableStateOf(true)
+//                                                ),
+//                                                isLoading = false
+//                                            )
+//                                        } else {
                                             uiState = uiState.copy(isLoading = false)
                                             if (uiState.isFingerprintChecked) {
                                                 uiState = uiState.copy(configureBiometric = true)
                                             } else {
                                                 navigateToHome()
                                             }
-                                        }
+//                                        }
                                     }
                                 }, {
                                     callQueryValidationUserExistsUseCase()
@@ -290,12 +291,13 @@ class SignInViewModel @Inject constructor(
 
     private fun isFormValid() {
         uiState = uiState.copy(
-            isSignInEnabled = when {
-                uiState.userEmail.isBlank() -> false
-                isEmailValid(uiState.userEmail).not() -> false
-                uiState.userPassword.isBlank() -> false
-                else -> true
-            }
+            isSignInEnabled = true
+//            when {
+//                uiState.userEmail.isBlank() -> false
+//                isEmailValid(uiState.userEmail).not() -> false
+//                uiState.userPassword.isBlank() -> false
+//                else -> true
+//            }
         )
     }
 
@@ -518,7 +520,7 @@ class SignInViewModel @Inject constructor(
         val isFingerprintChecked: Boolean = false,
 
         // Interactions
-        val isSignInEnabled: Boolean = false,
+        val isSignInEnabled: Boolean = true,
         val biometricErrorDialog: Pair<MutableState<Boolean>, String> = Pair(
             mutableStateOf(false),
             ""

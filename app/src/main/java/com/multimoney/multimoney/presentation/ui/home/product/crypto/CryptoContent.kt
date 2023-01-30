@@ -23,8 +23,6 @@ fun CryptoContent(
     cryptoBalance: BalanceCryptoAccount?,
     clientBalanceHistory: List<HistoricalBalanceClient>,
     cryptoEmptyState: Boolean,
-    openActionEnable: Boolean = false,
-    openCryptoHomeAction: () -> Unit = {},
     openSmartCryptoAction: () -> Unit = {},
     onIsSwipeEnabledValueChange: (Boolean) -> Unit = {}
 ) {
@@ -38,8 +36,7 @@ fun CryptoContent(
                         // show balance 0 card
                         CustomProductBackground(
                             modifier = Modifier
-                                .padding(horizontal = 16.dp)
-                                .clickable(enabled = openActionEnable) { openCryptoHomeAction.invoke() },
+                                .padding(horizontal = 16.dp),
                             type = ProductBackGroundType.ComplementaryTwo
                         ) {
                             CryptoCardWithBalance(
@@ -52,8 +49,7 @@ fun CryptoContent(
                     // show card with balance and gains/loses
                     CustomProductBackground(
                         modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .clickable(enabled = openActionEnable) { openCryptoHomeAction.invoke() },
+                            .padding(horizontal = 16.dp),
                         type = ProductBackGroundType.ComplementaryTwo
                     ) {
                         CryptoCardWithBalance(

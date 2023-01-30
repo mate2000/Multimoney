@@ -50,6 +50,7 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCallMutationDeactivateClientAutomaticDebit
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnMyProductClick
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnMyProductPageChange
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnUpdateIsExpandedByClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.BaseEvent.OnShowCardIssuanceError
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.BaseEvent.OnShowTbdToastEvent
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.DEFAULT_PRODUCT_PAGES
@@ -71,7 +72,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsBackPressed
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpandedByClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnVisaCardExpiredDialog
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditContent
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditCtaFooterExpanded
@@ -259,10 +259,6 @@ fun ProductScreen(
                     viewModel.onUIEvent(OnUpdateIsExpanded(isExpanded))
                 }
             },
-            forceExpanded = sharedViewModel.uiState.forceIsExpanded,
-            updateForceExpanded = { forceExpanded ->
-                sharedViewModel.onUIEvent(OnMyProductClick(forceExpanded))
-            },
             homeState = sharedViewModel.uiState.homeState,
             updateHomeState = { homeState ->
                 sharedViewModel.onUIEvent(UIEvent.OnSetHomeState(homeState))
@@ -272,11 +268,10 @@ fun ProductScreen(
             updateIsBackPressed = { isBackPressed ->
                 viewModel.onUIEvent(OnUpdateIsBackPressed(isBackPressed))
             },
-            isExpandedByClick = viewModel.uiState.isExpandedByClick,
+            isExpandedByClick = sharedViewModel.uiState.isExpandedByClick,
             updateIsExpandedByClick = { isExpandedByClick ->
-                viewModel.onUIEvent(OnUpdateIsExpandedByClick(isExpandedByClick))
+                sharedViewModel.onUIEvent(OnUpdateIsExpandedByClick(isExpandedByClick))
             }
-
         )
     }
 
@@ -434,9 +429,7 @@ fun ProductContent(
                     cryptoBalance = viewModel.balanceCredit?.balanceCryptoAccount,
                     cryptoEmptyState = viewModel.uiState.userStatus?.infoCrypto?.profileEnable
                         ?: false,
-                    openActionEnable = !sharedViewModel.uiState.forceIsExpanded,
                     clientBalanceHistory = sharedViewModel.uiState.cryptoHistoricalBalance,
-                    openCryptoHomeAction = { sharedViewModel.onUIEvent(OnMyProductClick(true)) },
                     openSmartCryptoAction = {
                         viewModel.onUIEvent(OnNavigateToSmartOriginationFlow(comingFromCrypto = true))
                     },

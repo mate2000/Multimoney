@@ -1,0 +1,40 @@
+mutation ProcessTransfer365(
+    $identification: String!
+    $destinationAccount: String!
+    $destinatinBankId: String!
+    $destinationType: String!
+    $typeAccountId: String!
+    $destinationName: String!
+    $destinationLastName: String!
+    $amount: Decimal!
+    $motive: String!
+    $user: String!
+    $idBrand: Int!
+) {
+    transfer365(
+        transfer365Input: {
+            identification: $identification
+            destinationAccount: $destinationAccount
+            destinationBank: $destinatinBankId
+            destinationName: $destinationName
+            destinationLastName: $destinationLastName
+            destinationType: $destinationType
+            typeAccount: $typeAccountId
+            amountToTransfer: $amount
+            reasonForTransfer: $motive
+            user: $user
+            idBrand: $idBrand
+        }
+    ) {
+        result {
+            bankAuthorization {
+                authorizationId
+                message
+            }
+            transfer365 {
+                message
+            }
+        }
+        message
+    }
+}

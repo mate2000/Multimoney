@@ -31,6 +31,7 @@ import com.multimoney.domain.model.accountsmart.SmartFavoriteResult
 import com.multimoney.domain.model.accountsmart.SmartMovement
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.accountsmart.StepByStep
+import com.multimoney.domain.model.accountsmart.Transfer365Result
 import com.multimoney.domain.model.accountsmart.VisaSmartPayment
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Success
@@ -571,6 +572,38 @@ class SmartAccountRepositoryImpl @Inject constructor(
             active = active,
             isFavorite = isFavorite,
             idCurrencyAccount = idCurrencyAccount
+        ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+    }
+
+    override suspend fun mutationProcessTransfer365(
+        identification: String,
+        destinationAccount: String,
+        destinationBankId: String,
+        destinationType: String,
+        typeAccountId: String,
+        destinationName: String,
+        destinationLastName: String,
+        amount: Double,
+        motive: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<Transfer365Result?>> {
+        return fetchData(graphqlApi.mutationProcessTransfer365(
+            idBrand = idBrand,
+            user = user,
+            identification = identification,
+            destinationAccount = destinationAccount,
+            destinationBankId = destinationBankId,
+            destinationName = destinationName,
+            destinationLastName = destinationLastName,
+            destinationType = destinationType,
+            typeAccountId = typeAccountId,
+            amount = amount,
+            motive = motive
         ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())

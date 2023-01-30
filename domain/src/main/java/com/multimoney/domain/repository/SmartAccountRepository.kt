@@ -24,6 +24,7 @@ import com.multimoney.domain.model.accountsmart.SmartFavoriteResult
 import com.multimoney.domain.model.accountsmart.SmartMovement
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.accountsmart.StepByStep
+import com.multimoney.domain.model.accountsmart.Transfer365Result
 import com.multimoney.domain.model.accountsmart.VisaSmartPayment
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
@@ -259,7 +260,21 @@ interface SmartAccountRepository {
         active: Boolean,
         isFavorite: Boolean,
         phoneNumber: String?,
-        idCurrencyAccount: Int?,
+        idCurrencyAccount: Int?
     ): Flow<MultimoneyResult<SmartFavoriteResult?>>
+
+    suspend fun mutationProcessTransfer365(
+        identification: String,
+        destinationAccount: String,
+        destinationBankId: String,
+        destinationType: String,
+        typeAccountId: String,
+        destinationName: String,
+        destinationLastName: String,
+        amount: Double,
+        motive: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<Transfer365Result?>>
 
 }

@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.focus.FocusManager
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
@@ -23,20 +22,16 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.CRYPTO_ASSET
 import com.multimoney.multimoney.presentation.navigation.DESCRIPTION_CURRENCY
-import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
-import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
-import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoOperationSide
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
@@ -56,7 +51,6 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     var nextAction: () -> Unit = {}
 
     //bundle parameters
-    val status = 1
     var idBrand = DEFAULT_ID_BRAND_ERROR
     var pkUser = ""
     var identification = ""
@@ -66,7 +60,6 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     var assetDescription: String? = savedStateHandle[DESCRIPTION_CURRENCY] ?: ""
     val market = asset.plus(CurrencyType.Dollar.disbursementValue)
     val side = CryptoOperationSide.BUY.value
-    //val cryptoNetwork: String = ""
     var accountToken: String = ""
     val comingFromDetails: Boolean = asset != null
 
@@ -212,8 +205,18 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         var bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
         var bottomSheet: (@Composable () -> Unit) = {},
         var asset: String = "",
-        var assetDescription: String = ""
+        var assetDescription: String = "",
+        var cryptoNetwork: String = "",
+        val smartAccountAvailableBalance: Double = 0.0,
     )
+
+    private fun onCryptoSelected(selectedCrypto: MarketCryptoCoin) {
+        uiState = uiState.copy(
+            asset = selectedCrypto.baseAsset,
+            assetDescription = selectedCrypto.description,
+            cryptoNetwork = selectedCrypto.cryptoNetwork
+        )
+    }
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
@@ -230,12 +233,15 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
             is UIEvent.OnCloseClick -> onCloseClick()
             is UIEvent.OnGetUserInfo -> setUserData()
             is UIEvent.OnQueryAccounts -> querySmartAccounts()
+            is UIEvent.OnSetAccountToken -> accountToken = event.accountToken
             is UIEvent.OnCryptoSelected -> onCryptoSelected(event.selectedCrypto)
+            is UIEvent.OnSetSelectedAccount -> {
+                accountToken = event.accountToken
+                uiState = uiState.copy(
+                    smartAccountAvailableBalance = event.totalBalance
+                )
+            }
         }
-    }
-
-    private fun onCryptoSelected(selectedCrypto: MarketCryptoCoin) {
-        uiState = uiState.copy(asset = selectedCrypto.baseAsset, assetDescription = selectedCrypto.description)
     }
 
     sealed class UIEvent {
@@ -249,12 +255,19 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
 
         object OnNextStep : UIEvent()
         object OnQueryAccounts : UIEvent()
+        data class OnSetAccountToken(val accountToken: String) : UIEvent()
         object OnPreviousStep : UIEvent()
         object OnClickBottomSheet : UIEvent()
         data class OverridePreviousAction(val action: (() -> Unit)?) : UIEvent()
         data class OnCryptoSelected(
             val selectedCrypto: MarketCryptoCoin
         ) : UIEvent()
+
+        data class OnSetSelectedAccount(
+            val accountToken: String,
+            val totalBalance: Double
+        ) : UIEvent()
+
         object OnGetUserInfo : UIEvent()
     }
 

@@ -2245,6 +2245,8 @@ type CryptoMarketPrice {
   url_image: String!
 
   historico: Boolean!
+
+  crypto_network: String!
 }
 
 input CryptoMarketPriceDtoInput {

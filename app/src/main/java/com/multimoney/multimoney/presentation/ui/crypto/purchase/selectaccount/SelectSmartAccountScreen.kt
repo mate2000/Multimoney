@@ -17,12 +17,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.PurchaseCryptoSteps
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
-import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
@@ -46,13 +46,34 @@ fun SelectSmartAccountScreen(
                 sharedViewModel.uiState.assetDescription
             )
         )
+        if (sharedViewModel.comingFromDetails) {
+            sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnQueryAccounts)
+        }
     }
-    BackHandler { viewModel.onUIEvent(SelectSmartAccountViewModel.UIEvent.OnNavigateBack) }
-    SelectSmartAccountContent(viewModel)
+    sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnSetNavigation(
+        nextAction = {},
+        nextStep = PurchaseCryptoSteps.Three.id,
+        previousStep = PurchaseCryptoSteps.Two.id,
+        overridePreviousAction = { sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep) }
+    ))
+
+    BackHandler { sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep) }
+    SelectSmartAccountContent(viewModel) { accountToken, totalBalance ->
+        sharedViewModel.onUIEvent(
+            PurchaseCryptoSharedViewModel.UIEvent.OnSetSelectedAccount(
+                accountToken,
+                totalBalance
+            )
+        )
+        sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNextStep)
+    }
 }
 
 @Composable
-fun SelectSmartAccountContent(viewModel: SelectSmartAccountViewModel) {
+fun SelectSmartAccountContent(
+    viewModel: SelectSmartAccountViewModel,
+    onNextStep: (String, Double) -> Unit = { _, _ -> }
+) {
     Column(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)
@@ -81,6 +102,12 @@ fun SelectSmartAccountContent(viewModel: SelectSmartAccountViewModel) {
                         id = R.string.buy_crypto_multimoney_smart_account_template,
                         account.currencyCode ?: ""
                     ),
+                    onClick = {
+                        onNextStep(
+                            account.accountToken,
+                            account.totalBalance ?: 0.0
+                        )
+                    }
                 )
             }
         }

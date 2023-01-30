@@ -68,7 +68,7 @@ fun PurchaseCryptoFlow(
                             step = viewModel.uiState.currentStep,
                             viewModel = viewModel
                         )
-                    } else{
+                    } else {
                         SvPurchaseCryptoFlow(
                             step = viewModel.uiState.currentStep,
                             viewModel = viewModel

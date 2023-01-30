@@ -1383,7 +1383,7 @@
 
     <!-- Smart Transfer 365 Edit Amount -->
     <string name="transfer_365_amount_title" translatable="false">Enviar dinero</string>
-    <string name="transfer_365_amount_from_label" translatable="false">Desde mi cuenta Smart %s</string>
+    <string name="transfer_365_amount_from_label" translatable="false">Smart %s</string>
     <string name="transfer_365_amount_disclaimer" translatable="false">Si su transacción Transfer365 la realiza dentro del rango de las 10:00 PM hasta las 12:00 a.m., su transacción será enviada al Banco destino a partir de las 12:01 a.m. del siguiente día.</string>
     <string name="transfer_365_pre_confirmation_from_label" translatable="false">Desde</string>
     <string name="transfer_365_pre_confirmation_to_label" translatable="false">Hacia</string>

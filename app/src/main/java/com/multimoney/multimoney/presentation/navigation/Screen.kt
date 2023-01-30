@@ -561,7 +561,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SmartTransfer365EditAmountScreen : Screen(
-        "smart_transfer_365_edit_amount_screen/{$SMART_ACCOUNT}/{$ACCOUNT_365}/{$TRANSFER_TYPE}",
+        "smart_transfer_365_edit_amount_screen/{$SMART_ACCOUNT}/{$ACCOUNT_365}/{$TRANSFER_TYPE}/{$PREVIOUS_SCREEN}",
         "smart_transfer_365_edit_amount_screen"
     )
     object SmartOtherBanksAccountScreen : Screen(

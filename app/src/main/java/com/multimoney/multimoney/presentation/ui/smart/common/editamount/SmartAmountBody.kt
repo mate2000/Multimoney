@@ -178,29 +178,15 @@ fun SmartAmountBody(
                 )
             }
             disclaimerResource?.let {
-                /*Row(
-                    modifier = Modifier
-                        .padding(bottom = 32.dp)
-                        .fillMaxWidth()
-                ) {
-                    Icon(
-                        modifier = Modifier.padding(end = 8.dp),
-                        painter = painterResource(id = R.drawable.ic_information),
-                        contentDescription = null
-                    )
-                    Text(
-                        text = stringResource(id = disclaimerResource),
-                        style = Typography.body2,
-                        color = MultimoneyTheme.colors.titleText
-                    )
-                }*/
                 CustomInformativeText(
                     modifier = Modifier
                         .padding(bottom = 32.dp)
                         .fillMaxWidth(),
                     leadingIcon = R.drawable.ic_information,
                     text = stringResource(id = disclaimerResource),
-                    textStyle = Typography.body2
+                    textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.titleText),
+                    alignmentVertical = Alignment.Top,
+                    iconSize = 20.dp
                 )
             }
         }

@@ -786,7 +786,8 @@ class ProductViewModel @Inject constructor(
                 tokenAccount = account?.tokenNumber,
                 currencyID = account?.idCurrencyAccount,
                 accountNumber = account?.accountNumber,
-                customerId = account?.customerId
+                customerId = account?.customerId,
+                totalBalance = account?.totalBalance
             )
             navigateTo(
                 "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$userName/${uiState.idBrand}/$identification/${

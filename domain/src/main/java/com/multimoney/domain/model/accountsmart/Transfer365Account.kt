@@ -11,6 +11,5 @@ data class Transfer365Account(
     val lastname: String = "",
     val bankId: String = "",
     val accountTypeId: String = "",
-    val paymentType: String? = null,
     val destinationType: String? = null
 ) : Parcelable

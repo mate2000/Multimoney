@@ -122,7 +122,7 @@ fun CustomInfoButton(
                     text = title,
                     modifier = Modifier.constrainAs(titleId) {
                         if (startIcon != null || composableIcon != null) {
-                            top.linkTo(startIconId.top)
+                            top.linkTo(parent.top, margin = 16.dp)
                             start.linkTo(startIconId.end, margin = 22.dp)
                         } else {
                             top.linkTo(parent.top, margin = 16.dp)
@@ -134,7 +134,7 @@ fun CustomInfoButton(
                             end.linkTo(parent.end, margin = 16.dp)
                         }
                         bottom.linkTo(subTitleId.top)
-                        height = Dimension.fillToConstraints
+                        height = Dimension.wrapContent
                         width = Dimension.fillToConstraints
                     },
                     style = Typography.body2.copy(
@@ -150,13 +150,10 @@ fun CustomInfoButton(
                     modifier = Modifier.constrainAs(subTitleId) {
                         top.linkTo(titleId.bottom, margin = 4.dp)
                         start.linkTo(titleId.start)
-                        if (startIcon == null && composableIcon == null) bottom.linkTo(
-                            parent.bottom,
-                            margin = 10.dp
-                        )
-                        else bottom.linkTo(startIconId.bottom)
-                        if (endIcon == null) end.linkTo(parent.end, margin = 10.dp)
-                        else end.linkTo(endIconId.start)
+                        bottom.linkTo(parent.bottom, margin = 16.dp)
+                        if (subtitle2.isNotEmpty()) bottom.linkTo(subTitle2Id.top)
+                        if (endIcon == null) end.linkTo(parent.end, margin = 16.dp)
+                        else end.linkTo(endIconId.start, margin = 16.dp)
                         width = Dimension.fillToConstraints
                         height = Dimension.wrapContent
                     },
@@ -172,7 +169,13 @@ fun CustomInfoButton(
                             top.linkTo(subTitleId.bottom, margin = 4.dp)
                             start.linkTo(subTitleId.start)
                             bottom.linkTo(parent.bottom, margin = 16.dp)
+                            if (endIcon == null) end.linkTo(parent.end, margin = 16.dp)
+                            else end.linkTo(endIconId.start, margin = 16.dp)
+                            width = Dimension.fillToConstraints
+                            height = Dimension.wrapContent
                         },
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
                         style = Typography.caption.copy(fontSize = 13.sp),
                         color = subtitleColor
                     )

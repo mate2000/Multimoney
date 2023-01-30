@@ -3,6 +3,7 @@ package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue.Expanded
+import androidx.compose.material.ModalBottomSheetValue.Hidden
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.accountsmart.MutationProcessLocalTransferUseCase
@@ -131,6 +132,12 @@ class MyContactsTransferAmountViewModel @Inject constructor(
     }
 
     override fun onNavigateBack() {
-        navigateBack(popTo = Screen.SmartSelectSendingTypeScreen.route, isRestart = false)
+        if (amountUIState.bottomSheetState.isVisible) {
+            amountUIState = amountUIState.copy(
+                bottomSheetState = ModalBottomSheetState(Hidden)
+            )
+        } else {
+            navigateBack(popTo = Screen.SmartSelectSendingTypeScreen.route, isRestart = false)
+        }
     }
 }

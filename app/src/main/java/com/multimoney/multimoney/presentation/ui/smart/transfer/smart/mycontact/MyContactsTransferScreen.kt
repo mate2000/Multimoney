@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -199,6 +200,7 @@ fun MyContactsTransferScreen(
         onAccountClick = { account -> viewModel.onUIEvent(OnAccountClick(account)) }
     )
     LoadingIndicator(viewModel.uiState.isLoading)
+    BackHandler { viewModel.onUIEvent(OnNavigateBack) }
 }
 
 @Composable

@@ -285,10 +285,11 @@ fun Double.toCurrencyFormat(
     symbol: String = Dollar.symbol,
     amountOfDecimals: Int = DEFAULT_AMOUNT_OF_DECIMALS
 ): String {
-    val formatter = NumberFormat.getCurrencyInstance()
+    val formatter = NumberFormat.getCurrencyInstance(Locale.ENGLISH)
+    val re = Regex("[^0-9,.\\s]")
     formatter.maximumFractionDigits = amountOfDecimals
     // remove the default dollar symbol from the custom symbol property
-    return "$symbol${formatter.format(this).replace(Dollar.symbol, "")}"
+    return "$symbol${re.replace(formatter.format(this),"")}"
 }
 
 fun Double.toCurrencyFormatWithoutNegatives(

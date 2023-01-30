@@ -60,6 +60,14 @@
     <string name="success" translatable="false">Exito</string>
     <string name="got_it" translatable="false">Entendido</string>
     <string name="motive" translatable="false">Motivo</string>
+    <string name="nine_digits_placeholder" translatable="false">000000000</string>
+    <string name="generic_document_placeholder" translatable="false">0000 0000</string>
+    <string name="names" translatable="false">Nombre(s)</string>
+    <string name="last_names" translatable="false">Apellido(s)</string>
+    <string name="document" translatable="false">Documento</string>
+    <string name="destination_bank" translatable="false">Banco de destino</string>
+    <string name="account_number" translatable="false">Número de cuenta</string>
+    <string name="phone_number" translatable="false">Número de teléfono</string>
 
     <string name="content_description_more_info" translatable="false">Más información</string>
 
@@ -576,6 +584,7 @@
 
     <!-- Credit Monthly Income-->
     <string name="credit_monthly_income_title" translatable="false">¿Cuál es tu ingreso mensual?</string>
+    <string name="credit_monthly_income_title_sv" translatable="false">Cuéntanos sobre ti</string>
     <string name="credit_monthly_income_income_label" translatable="false">Ingreso mensual</string>
     <string name="credit_monthly_income_required_income" translatable="false">Ingresos requerido</string>
     <string name="credit_monthly_income_income_hint" translatable="false">%s 000,000</string>
@@ -584,6 +593,10 @@
     <string name="credit_monthly_income_profession_hint" translatable="false">Seleccionar</string>
     <string name="credit_monthly_income_occupation_label" translatable="false">Seleccioná tu ocupación</string>
     <string name="credit_monthly_income_occupation_hint" translatable="false">Seleccionar</string>
+    <string name="credit_monthly_income_dui_emission_date_label" translatable="false">Fecha de emisión de DUI</string>
+    <string name="credit_monthly_income_dui_expiration_date_label" translatable="false">Fecha de vencimiento de DUI</string>
+    <string name="credit_monthly_income_dui_emission_place_label" translatable="false">Lugar de emisión de DUI</string>
+    <string name="credit_monthly_income_dui_date_placeholder" translatable="false">00 | 00 | 0000</string>
 
     <!-- Credit Job-->
     <string name="credit_job_title" translatable="false">Hablemos de tu trabajo</string>
@@ -873,11 +886,11 @@
     <string name="smart_account_retired_title" translatable="false">Jubilado</string>
     <string name="smart_account_retired_institution_label" translatable="false">Institución con la que recibe la pensión</string>
     <string name="smart_account_retired_institution_placeholder" translatable="false">Nombre institución</string>
-    <string name="smart_account_retired_amount_label" translatable="false">Ingreso mensual</string>
+    <string name="smart_account_retired_amount_label" translatable="false">Ingreso promedio mensual</string>
     <string name="smart_account_retired_amount_placeholder" translatable="false">$000</string>
     <string name="smart_origin_main_income_title" translatable="false">¿Cuál es tu principal fuente de ingresos?</string>
     <string name="smart_account_formal_title" translatable="false">Asalariado formal</string>
-    <string name="smart_account_formal_monthly" translatable="false">Ingreso mensual</string>
+    <string name="smart_account_formal_monthly" translatable="false">Ingreso promedio mensual</string>
     <string name="smart_account_formal_placeholder" translatable="false">₡00.0</string>
     <string name="smart_account_formal_select_occupation" translatable="false">Seleccioná tu ocupación</string>
     <string name="smart_account_formal_select_profession" translatable="false">Selecciona tu profesión</string>
@@ -1004,8 +1017,8 @@
     <!-- Smart Payment Amount Bottom Sheet -->
     <string name="smart_payment_amount_bottom_sheet_my_smart_account" translatable="false">Mi cuenta Smart | %s</string>
     <string name="smart_payment_amount_bottom_sheet_save_title" translatable="false">Monto a ahorrar</string>
-    <string name="smart_payment_amount_bottom_sheet_from_card" translatable="false">Desde la tarjeta</string>
-    <string name="smart_payment_amount_bottom_sheet_from_card_CR" translatable="false">Desde la cuenta</string>
+    <string name="smart_payment_amount_bottom_sheet_from_account" translatable="false">Desde la cuenta</string>
+    <string name="smart_payment_amount_bottom_sheet_from" translatable="false">Desde</string>
     <string name="smart_payment_amount_bottom_sheet_to" translatable="false">Hacia</string>
     <string name="smart_payment_amount_bottom_sheet_from" translatable="false">Desde</string>
     <string name="smart_payment_exchange_equivalent" translatable="false">Equivalente a %s</string>
@@ -1086,7 +1099,7 @@
     <string name="smart_business_personal_title" translatable="false">Negocio propio a título personal</string>
     <string name="smart_business_personal_name" translatable="false">Nombre del emprendimiento</string>
     <string name="smart_business_personal_name_required" translatable="false">Nombre del emprendimiento requerido</string>
-    <string name="smart_business_personal_income_label" translatable="false">Ingreso mensual</string>
+    <string name="smart_business_personal_income_label" translatable="false">Ingreso promedio mensual</string>
     <string name="smart_business_personal_income_label_required" translatable="false">Ingreso mensual requerido</string>
 
     <!--Smart Facta screen-->
@@ -1337,13 +1350,23 @@
     <string name="smart_payment_sheet_to_account" translatable="false">Hacia la cuenta</string>
     <string name="smart_payment_sheet_transfer_button" translatable="false">Realizar envío</string>
     <string name="smart_payment_sheet_equivalent" translatable="false">Equivalente a %1$s</string>
-    <string name="smart_payment_sheet_multimoney_smart" translatable="false">Multimoney Smart</string>
 
     <!-- Smart SAC Transfer -->
     <string name="smart_sac_transfer_contact_rationale_title" translatable="false">Lo sentimos</string>
     <string name="smart_sac_transfer_contact_rationale_message" translatable="false">Necesitamos acceso a tus contactos para que podás realizar envíos</string>
     <string name="smart_sac_transfer_contact_rationale_button" translatable="false">Permitir acceso a contactos</string>
     <string name="smart_sac_transfer_contact_permission_denied_message" translatable="false">Necesitamos acceso a tus contactos para que podás realizar envíos. Podrás activar el acceso a tus contactos cuando querás.</string>
+
+    <!-- Smart Other banks Transfer -->
+    <string name="smart_other_bank_transfer_add_title" translatable="false">Datos de la cuenta</string>
+    <string name="smart_other_bank_transfer_add_account_number_error" translatable="false"><![CDATA[<b>Revisar formato. </b>]]>Debe tener 9 dígitos.</string>
+    <string name="smart_other_bank_transfer_add_account_type_label" translatable="false">Tipo de cuenta de destino</string>
+    <string name="smart_other_bank_transfer_add_phone_number_error" translatable="false">Formato incorrecto. Ingresa un número válido</string>
+
+    <!-- Smart Transfer 365 Mobile-->
+    <string name="smart_transfer_365_mobile_add_title" translatable="false">Transfer 365</string>
+    <string name="smart_transfer_365_mobile_add_subtitle" translatable="false">Cuenta destino</string>
+    <string name="smart_transfer_365_mobile_add_account_type_label" translatable="false">Tipo de cuenta</string>
 
     <!-- Smart My Contacts Transfer -->
     <string name="smart_transfer_my_contacts_title_CR" translatable="false">Mis contactos</string>

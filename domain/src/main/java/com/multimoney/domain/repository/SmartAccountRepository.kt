@@ -1,8 +1,10 @@
 package com.multimoney.domain.repository
 
 import androidx.paging.PagingData
+import com.multimoney.domain.model.accountsmart.ACHAccount
 import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
 import com.multimoney.domain.model.accountsmart.AddressesLevel
+import com.multimoney.domain.model.accountsmart.BankListTransfer365
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.CivilStatusResult
 import com.multimoney.domain.model.accountsmart.ExchangeRateResult
@@ -243,6 +245,24 @@ interface SmartAccountRepository {
         user: String
     ): Flow<MultimoneyResult<SmartAccountTypeResult?>>
 
+    suspend fun queryBankListTransfer365(
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<BankListTransfer365?>>
+
+    suspend fun mutationAddACHAccount(
+        idBrand: Int,
+        user: String,
+        accountNumber: String,
+        titularName: String,
+        isFavorite: Boolean,
+        typeAccountId: Int,
+        destinationBankId: Int,
+        description: String,
+        identificationNumber: String,
+        identificationTypeAccount: Int
+    ): Flow<MultimoneyResult<ACHAccount?>>
+
     suspend fun mutationUpdateFavoriteContactSmart(
         idBrand: Int,
         user: String,
@@ -253,7 +273,8 @@ interface SmartAccountRepository {
         accountName: String?,
         email: String,
         active: Boolean,
+        isFavorite: Boolean,
         phoneNumber: String?,
-        idCurrencyAccount: Int
+        idCurrencyAccount: Int?,
     ): Flow<MultimoneyResult<SmartFavoriteResult?>>
 }

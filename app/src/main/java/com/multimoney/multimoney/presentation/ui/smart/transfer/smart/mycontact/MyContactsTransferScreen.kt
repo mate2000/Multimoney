@@ -57,9 +57,9 @@ import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.capitalizedAllWords
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Dollar
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
-import java.util.SortedMap
 
 @Composable
 fun MyContactsTransferScreen(
@@ -188,33 +188,38 @@ fun MyContactsTransferScreen(
 
 @Composable
 fun ContactList(
-    contactList: SortedMap<String, List<PhoneSmart>>,
+    contactList: Map<String, List<PhoneSmart?>>,
     searchedString: String,
     onEndIconClick: (contact: PhoneSmart) -> Unit,
-    onContactClick: (contact: List<PhoneSmart>) -> Unit
+    onContactClick: (contact: List<PhoneSmart?>) -> Unit
 ) {
     LazyColumn(modifier = Modifier.padding(top = 20.dp, start = 16.dp, end = 16.dp)) {
         contactList.forEach { (_, contact) ->
+            val firstAccount = contact.first()
             item {
                 val randomColor = colors.coloredInitialChar
                 val colorSubtitle by remember { mutableStateOf(randomColor.random()) }
 
-                if (contact.first().titular.contains(searchedString, true)) {
+                if (firstAccount != null && firstAccount.titular?.contains(
+                        searchedString,
+                        true
+                    ) == true
+                ) {
                     CustomInfoButton(
-                        title = contact.first().titular.capitalizedAllWords(),
-                        subtitle = contact.first().number,
+                        title = firstAccount.titular.orEmpty().capitalizedAllWords(),
+                        subtitle = firstAccount.number.orEmpty(),
                         modifier = Modifier.fillMaxWidth(),
                         startIcon = null,
                         composableIcon = { modifier ->
                             CustomContactIcon(
-                                name = contact.first().titular,
+                                name = contact.firstAccount.titular,
                                 color = colorSubtitle,
                                 modifier = modifier
                             )
                         },
                         endIcon = R.drawable.ic_options,
                         onEndIconClick = {
-                            onEndIconClick(contact.first())
+                            onEndIconClick(firstAccount)
                         },
                         onClick = {
                             onContactClick(contact)
@@ -241,14 +246,15 @@ fun ContactBottomSheet(viewModel: MyContactsTransferViewModel) {
         if (viewModel.uiState.selectedContact.isNotEmpty()) {
             Column(Modifier.padding(vertical = 16.dp)) {
                 Text(
-                    text = viewModel.uiState.selectedContact.first().titular.capitalizedAllWords(),
+                    text = viewModel.uiState.selectedContact.first().titular?.capitalizedAllWords()
+                        .orEmpty(),
                     style = Typography.subHead.copy(
                         fontWeight = FontWeight.SemiBold,
                         color = colors.text
                     )
                 )
                 Text(
-                    text = viewModel.uiState.selectedContact.first().number,
+                    text = viewModel.uiState.selectedContact.first().number.orEmpty(),
                     style = Typography.subHead.copy(
                         color = colors.subTitleText
                     )
@@ -256,9 +262,9 @@ fun ContactBottomSheet(viewModel: MyContactsTransferViewModel) {
                 viewModel.uiState.selectedContact.forEach {
                     ContactAccountDisplay(
                         modifier = Modifier.fillMaxWidth(),
-                        currency = it.idCurrency.getCurrencyFromId(),
+                        currency = it.idCurrency?.getCurrencyFromId() ?: Dollar,
                         maskedAccountNumber = getMaskedAccountIban(
-                            it.accountNumber,
+                            it.accountNumber.orEmpty(),
                             stringResource(string.payment_account_masked_text)
                         ),
                         onClick = { viewModel.onUIEvent(OnAccountClick(it)) }

@@ -6,7 +6,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.accountsmart.RelatedContact
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.multimoney.R
@@ -89,21 +88,11 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     }
 
     private fun onNavigateToSmartAccount() {
-        // Temporary check until rev-1445 is merged, when this is merged, if the user is from SV
-        // it should navigate to my contacts screen
-        if (idBrand == Brand.CostaRica.id) {
-            navigateTo(
-                "${Screen.OwnTransferAmountScreen.baseRoute}/" +
+        navigateTo(
+            "${Screen.OwnTransferAmountScreen.baseRoute}/" +
                     "${encodeData(selectedSmartAccount)}/${encodeData(secondSmartAccount)}/" +
                     "${SmartTransferTypes.SmartToSmart.id}"
-            )
-        } else if (idBrand == Brand.ElSalvador.id) {
-            navigateTo(
-                "${Screen.SmartAddSACAccountScreen.baseRoute}/$idBrand/$user/${
-                encodeData(selectedSmartAccount)
-                }"
-            )
-        }
+        )
     }
 
     private fun onPermissionPermanentlyDenied() {
@@ -170,13 +159,23 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     }
 
     private fun onNavigateToOtherBankAccounts() {
-        // TODO navigate to HU REV-1458
-        emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
+        navigateTo(
+            "${Screen.SmartOtherBanksAccountScreen.baseRoute}/$idBrand/$user/${
+                encodeData(
+                    selectedSmartAccount
+                )
+            }/${SmartTransferTypes.SmartToOtherBank.id}"
+        )
     }
 
     private fun onNavigateToTransfer365Mobile() {
-        // TODO navigate to HU REV-1458
-        emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
+        navigateTo(
+            "${Screen.SmartOtherBanksAccountScreen.baseRoute}/$idBrand/$user/${
+                encodeData(
+                    selectedSmartAccount
+                )
+            }/${SmartTransferTypes.SmartToMobile.id}"
+        )
     }
 
     private fun onNavigateBack() {

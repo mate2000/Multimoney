@@ -8,8 +8,10 @@ import com.multimoney.data.mapper.smartaccount.mapToDomain
 import com.multimoney.data.mapper.smartaccount.mapToDomainModel
 import com.multimoney.data.networking.GraphqlApi
 import com.multimoney.data.paging.SmartMovementsPagingSource
+import com.multimoney.domain.model.accountsmart.ACHAccount
 import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
 import com.multimoney.domain.model.accountsmart.AddressesLevel
+import com.multimoney.domain.model.accountsmart.BankListTransfer365
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.CivilStatusResult
 import com.multimoney.domain.model.accountsmart.ExchangeRateResult
@@ -535,6 +537,50 @@ class SmartAccountRepositoryImpl @Inject constructor(
         )
     }
 
+    override suspend fun queryBankListTransfer365(
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<BankListTransfer365?>> {
+        return fetchData(graphqlApi.queryBankListTransfer365(
+            idBrand = idBrand,
+            user = user
+        ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+    }
+
+    override suspend fun mutationAddACHAccount(
+        idBrand: Int,
+        user: String,
+        accountNumber: String,
+        titularName: String,
+        isFavorite: Boolean,
+        typeAccountId: Int,
+        destinationBankId: Int,
+        description: String,
+        identificationNumber: String,
+        identificationTypeAccount: Int
+    ): Flow<MultimoneyResult<ACHAccount?>> {
+        return fetchData(graphqlApi.mutationAddACHAccount(
+            idBrand = idBrand,
+            user = user,
+            accountNumber = accountNumber,
+            titularName = titularName,
+            isFavorite = isFavorite,
+            typeAccountId = typeAccountId,
+            destinationBankId = destinationBankId,
+            description = description,
+            identificationNumber = identificationNumber,
+            identificationTypeAccount = identificationTypeAccount
+        ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+    }
+
     override suspend fun mutationUpdateFavoriteContactSmart(
         idBrand: Int,
         user: String,
@@ -545,8 +591,9 @@ class SmartAccountRepositoryImpl @Inject constructor(
         accountName: String?,
         email: String,
         active: Boolean,
+        isFavorite: Boolean,
         phoneNumber: String?,
-        idCurrencyAccount: Int
+        idCurrencyAccount: Int?
     ): Flow<MultimoneyResult<SmartFavoriteResult?>> {
         return fetchData(
             graphqlApi.mutationUpdateSmartFavoriteContact(
@@ -560,7 +607,7 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 phoneNumber = phoneNumber,
                 email = email,
                 active = active,
-                idCurrencyAccount = idCurrencyAccount
+                isFavorite = isFavorite,idCurrencyAccount = idCurrencyAccount
             ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())

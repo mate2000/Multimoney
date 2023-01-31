@@ -230,9 +230,12 @@ fun PaymentVoucherScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 24.dp, top = 32.dp, end = 24.dp, bottom = 24.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Icon(
                                 modifier = Modifier.size(24.dp),
                                 painter = painterResource(id = drawable.ic_calendar_voucher),
@@ -240,14 +243,12 @@ fun PaymentVoucherScreen(
                                 contentDescription = ""
                             )
                             Text(
-                                modifier = Modifier.padding(top = 2.dp),
                                 text = viewModel.currentDate,
                                 style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
                                 color = MultimoneyTheme.colors.labelText
                             )
                         }
                         Text(
-                            modifier = Modifier.padding(top = 2.dp),
                             text = viewModel.currentTime,
                             style = Typography.body2,
                             color = MultimoneyTheme.colors.labelText

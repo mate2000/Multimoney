@@ -22,8 +22,8 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
-import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 
 @Composable
 fun SelectSmartAccountScreen(
@@ -71,12 +71,13 @@ fun SelectSmartAccountContent(viewModel: SelectSmartAccountViewModel) {
             color = MultimoneyTheme.colors.labelText,
             textAlign = TextAlign.Left
         )
-        LazyColumn() {
+        LazyColumn {
             items(viewModel.uiState.accounts) { account ->
-                //TODO replace with real info from accounts
                 CustomInfoButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    startIcon = R.drawable.ic_multimoney_green_logo,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    startIcon = getCurrencyLogo(account.currencyCode),
                     title = stringResource(
                         id = R.string.buy_crypto_multimoney_smart_account_template,
                         account.currencyCode ?: ""
@@ -84,5 +85,13 @@ fun SelectSmartAccountContent(viewModel: SelectSmartAccountViewModel) {
                 )
             }
         }
+    }
+}
+
+fun getCurrencyLogo(currency: String?): Int? {
+    return when (currency) {
+        CurrencyType.Dollar.value -> R.drawable.ic_payment_dollar
+        CurrencyType.Colon.value -> R.drawable.ic_payment_colon
+        else -> null
     }
 }

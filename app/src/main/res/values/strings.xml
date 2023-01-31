@@ -610,6 +610,7 @@
     <string name="credit_job_joined_date" translatable="false">Fecha en la que ingresaste</string>
     <string name="credit_job_joined_date_first_job" translatable="false">Fecha en que ingresaste a tu primer trabajo</string>
     <string name="credit_job_phone_number" translatable="false">Número de teléfono</string>
+    <string name="credit_job_phone_number_crosseling" translatable="false">Teléfono de la empresa</string>
     <string name="credit_job_phone_placeholder_sv" translatable="false">0000 0000</string>
     <string name="credit_job_phone_placeholder_cr" translatable="false">0000 0000</string>
     <string name="credit_job_phone_placeholder_gt" translatable="false">0000 0000</string>

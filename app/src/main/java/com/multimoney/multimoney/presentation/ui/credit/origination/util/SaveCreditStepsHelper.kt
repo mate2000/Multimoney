@@ -85,7 +85,10 @@ class SaveCreditStepsHelper @Inject constructor() {
         companyName: String,
         startedJobDate: String,
         companyPhone: String,
-        dateFirstJob: String
+        dateFirstJob: String,
+        isCrosseling: Boolean,
+        profession: CreditCatalog?,
+        professionSelected: CreditCatalogOption?
     ) {
         val companyNameQuestion = getScreenConfigQuestion(COMPANY_NAME, companyName)
         val companyStartedJobDateQuestion = getScreenConfigQuestion(STARTED_JOB_DATE, startedJobDate)
@@ -100,6 +103,10 @@ class SaveCreditStepsHelper @Inject constructor() {
 
         val creditInfoQuestionCompanyPhone = textQuestion(user, companyPhone, companyPhoneQuestion)
         saveScreenQuestionData(creditInfoQuestionCompanyPhone)
+
+        if (isCrosseling) {
+            saveScreenQuestionData(selectionQuestion(user, profession, professionSelected))
+        }
 
         if (idBrand == Brand.CostaRica.id) {
             val creditInfoQuestionStartedFirstJobDate = textQuestion(user, dateFirstJob, companyStartedFirstJobDateQuestion)
@@ -243,26 +250,31 @@ class SaveCreditStepsHelper @Inject constructor() {
         employmentSituationSelected: CreditCatalogOption?
     ) {
         val monthlyIncomeQuestion = getScreenConfigQuestion(SALARY, monthlyIncomeValue)
-        saveScreenQuestionData(textQuestion(
-            user = user,
-            value = monthlyIncomeValue,
-            textQuestionData = monthlyIncomeQuestion
-        ))
+        saveScreenQuestionData(
+            textQuestion(
+                user = user,
+                value = monthlyIncomeValue,
+                textQuestionData = monthlyIncomeQuestion
+            )
+        )
 
         val birthDateQuestion = getScreenConfigQuestion(BIRTH_DATE, birthDate)
-        saveScreenQuestionData(textQuestion(
-            user = user,
-            value = birthDate,
-            textQuestionData = birthDateQuestion
-        ))
+        saveScreenQuestionData(
+            textQuestion(
+                user = user,
+                value = birthDate,
+                textQuestionData = birthDateQuestion
+            )
+        )
 
-        saveScreenQuestionData(selectionQuestion(
-            user = user,
-            selectionQuestionData = employmentSituation,
-            selectionQuestionOption = employmentSituationSelected
-        ))
+        saveScreenQuestionData(
+            selectionQuestion(
+                user = user,
+                selectionQuestionData = employmentSituation,
+                selectionQuestionOption = employmentSituationSelected
+            )
+        )
     }
-
 
     /**
      * This function is use to save all the questions that the value will be got from a textField
@@ -335,7 +347,7 @@ class SaveCreditStepsHelper @Inject constructor() {
             useValue = selectionQuestionData?.useValue,
             maximumAmount = selectionQuestionData?.maximumAmount ?: "",
             description = selectionQuestionOption?.description ?: "",
-            valueCatalogue = if (selectionQuestionData?.isCatalogBrandOffice ?: false .and(
+            valueCatalogue = if (selectionQuestionData?.isCatalogBrandOffice ?: false.and(
                     selectionQuestionData?.useValue == true
                 )
             ) {
@@ -344,7 +356,7 @@ class SaveCreditStepsHelper @Inject constructor() {
                 ""
             },
             idIdentificatorCatalogue = if (selectionQuestionData?.isCatalogBrandOffice?.not()
-                    ?: false .or(
+                ?: false.or(
                         selectionQuestionData?.useValue?.not() == true
                     )
             ) {

@@ -6,10 +6,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ButtonDefaults
@@ -122,7 +124,7 @@ fun PaymentVoucherScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = stringResource(string.payment_voucher_transaction_success),
+                            text = "Hello, pal!",//stringResource(string.payment_voucher_transaction_success),
                             modifier = Modifier.padding(top = 32.dp),
                             style = Typography.subtitle1.copy(fontWeight = FontWeight.SemiBold),
                             color = MultimoneyTheme.colors.text
@@ -200,7 +202,7 @@ fun PaymentVoucherScreen(
                     )
 
                     VoucherAccountInfo(
-                        modifier = Modifier.padding(start = 27.dp, top = 24.dp),
+                        modifier = Modifier.padding(start = 24.dp, top = 16.dp),
                         icon = drawable.ic_bank_account_colon,
                         title = stringResource(string.payment_voucher_origin_account_label),
                         subTitle = getMaskedAccount(
@@ -210,7 +212,7 @@ fun PaymentVoucherScreen(
                     )
 
                     VoucherNumberInfo(
-                        modifier = Modifier.padding(start = 27.dp, top = 32.dp),
+                        modifier = Modifier.padding(start = 24.dp, top = 32.dp),
                         icon = drawable.ic_receipt,
                         title = stringResource(string.payment_voucher_reference_number_label),
                         subTitle = viewModel.referenceNumber ?: ""
@@ -228,25 +230,26 @@ fun PaymentVoucherScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 27.dp, top = 34.dp, end = 24.dp),
+                            .padding(start = 24.dp, top = 32.dp, end = 24.dp, bottom = 24.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Row {
                             Icon(
+                                modifier = Modifier.size(24.dp),
                                 painter = painterResource(id = drawable.ic_calendar_voucher),
                                 tint = MultimoneyTheme.colors.iconTintVoucher,
                                 contentDescription = ""
                             )
                             Text(
+                                modifier = Modifier.padding(top = 2.dp),
                                 text = viewModel.currentDate,
-                                modifier = Modifier.padding(start = 15.dp),
                                 style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
                                 color = MultimoneyTheme.colors.labelText
                             )
                         }
                         Text(
+                            modifier = Modifier.padding(top = 2.dp),
                             text = viewModel.currentTime,
-                            modifier = Modifier.padding(bottom = 16.dp),
                             style = Typography.body2,
                             color = MultimoneyTheme.colors.labelText
                         )

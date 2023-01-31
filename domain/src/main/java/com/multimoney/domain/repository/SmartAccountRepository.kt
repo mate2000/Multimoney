@@ -277,4 +277,17 @@ interface SmartAccountRepository {
         idBrand: Int
     ): Flow<MultimoneyResult<Transfer365Result?>>
 
+    suspend fun mutationProcessTransfer365Mobile(
+        identification: String,
+        phoneNumber: String,
+        destinationBankId: String,
+        typeAccountId: String,
+        destinationName: String,
+        destinationLastName: String,
+        amount: Double,
+        motive: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<Transfer365Result?>>
+
 }

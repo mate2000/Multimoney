@@ -276,7 +276,8 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
                 lastname = uiState.lastNames,
                 bankId = uiState.bank?.bankId.toString(),
                 bankName = uiState.bank?.bankName.orEmpty(),
-                accountTypeId = uiState.type?.typeId.toString()
+                accountTypeId = uiState.type?.typeId.toString(),
+                destinationType = uiState.document?.value
             )
             navigateTo(
                 "${Screen.SmartTransfer365EditAmountScreen.baseRoute}/${
@@ -308,7 +309,8 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
                         lastname = uiState.lastNames,
                         bankId = uiState.bank?.bankId.toString(),
                         bankName = uiState.bank?.bankName.orEmpty(),
-                        accountTypeId = uiState.type?.typeId.toString()
+                        accountTypeId = uiState.type?.typeId.toString(),
+                        destinationType = uiState.document?.value
                     )
                     navigateTo(
                         "${Screen.SmartTransfer365EditAmountScreen.baseRoute}/${

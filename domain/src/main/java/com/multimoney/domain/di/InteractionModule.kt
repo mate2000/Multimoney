@@ -8,6 +8,8 @@ import com.multimoney.domain.interaction.accountsmart.MutationInitialRequestUseC
 import com.multimoney.domain.interaction.accountsmart.MutationInitialUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationProcessSinpeTransferUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationProcessSinpeTransferUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.MutationProcessTransfer365MobileUseCase
+import com.multimoney.domain.interaction.accountsmart.MutationProcessTransfer365MobileUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationProcessTransfer365UseCase
 import com.multimoney.domain.interaction.accountsmart.MutationProcessTransfer365UseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationProcessTransferVisaToSmartVDUseCase
@@ -780,4 +782,9 @@ class InteractionModule {
     @Singleton
     fun provideMutationProcessTransfer365(smartAccountRepository: SmartAccountRepository): MutationProcessTransfer365UseCase =
         MutationProcessTransfer365UseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationProcessTransfer365Mobile(smartAccountRepository: SmartAccountRepository): MutationProcessTransfer365MobileUseCase =
+        MutationProcessTransfer365MobileUseCaseImpl(smartAccountRepository)
 }

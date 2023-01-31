@@ -79,6 +79,7 @@ import com.multimoney.data.networking.graphql.apollomodel.PaymentAmountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProccessPaymentListMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProcessCreditExtensionDetailMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProcessSinpeTransferMutation
+import com.multimoney.data.networking.graphql.apollomodel.ProcessTransfer365MobileMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProcessTransfer365Mutation
 import com.multimoney.data.networking.graphql.apollomodel.ProcessTransferVisaToSmartVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProfessionSmartQuery
@@ -1902,6 +1903,32 @@ class GraphqlApi @Inject constructor(
             destinationName = destinationName,
             destinationLastName = destinationLastName,
             destinationType = destinationType,
+            typeAccountId = typeAccountId,
+            amount = amount,
+            motive = motive
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationProcessTransfer365Mobile(
+        identification: String,
+        phoneNumber: String,
+        destinationBankId: String,
+        typeAccountId: String,
+        destinationName: String,
+        destinationLastName: String,
+        amount: Double,
+        motive: String,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<ProcessTransfer365MobileMutation.Data> = apolloAuthorizedClient.mutation(
+        ProcessTransfer365MobileMutation(
+            idBrand = idBrand,
+            user = user,
+            identification = identification,
+            destinationPhone = phoneNumber,
+            destinationBankId = destinationBankId,
+            destinationName = destinationName,
+            destinationLastName = destinationLastName,
             typeAccountId = typeAccountId,
             amount = amount,
             motive = motive

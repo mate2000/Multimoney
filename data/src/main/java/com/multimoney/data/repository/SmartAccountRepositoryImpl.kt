@@ -610,4 +610,34 @@ class SmartAccountRepositoryImpl @Inject constructor(
             }
         )
     }
+
+    override suspend fun mutationProcessTransfer365Mobile(
+        identification: String,
+        phoneNumber: String,
+        destinationBankId: String,
+        typeAccountId: String,
+        destinationName: String,
+        destinationLastName: String,
+        amount: Double,
+        motive: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<Transfer365Result?>> {
+        return fetchData(graphqlApi.mutationProcessTransfer365Mobile(
+            idBrand = idBrand,
+            user = user,
+            identification = identification,
+            phoneNumber = phoneNumber,
+            destinationBankId = destinationBankId,
+            destinationName = destinationName,
+            destinationLastName = destinationLastName,
+            typeAccountId = typeAccountId,
+            amount = amount,
+            motive = motive
+        ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+    }
 }

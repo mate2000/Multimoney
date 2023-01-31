@@ -71,7 +71,7 @@ fun MotionLayoutMM(
     }
 
     LaunchedEffect(key1 = swipeAbleState.offset.value) {
-        if (isAnimationRunning.not()) {
+        if (isAnimationRunning.not() && swipeAbleState.offset.value != ANIMATION_COLLAPSED) {
             animationProgress = swipeAbleState.offset.value / TOTAL_PERCENTAGE
         }
     }
@@ -121,7 +121,8 @@ fun MotionLayoutMM(
     LaunchedEffect(key1 = true) {
         if (homeState == COLLAPSED) {
             updateHomeState(HomeState.OLD_STATE)
-            updateIsBackPressed(true)
+            animationProgress = ANIMATION_COLLAPSED
+            updateIsBackPressed(false)
         }
     }
 
@@ -220,29 +221,33 @@ fun MotionLayoutMM(
                     updateIsBackPressed(true)
                 }
             }
-            content(
-                modifier = Modifier
-                    .layoutId("main_card")
+            Box(
+                modifier = Modifier.layoutId("main_card")
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {
-                        if (isSwipeEnabled) {
+            ) {
+                content(
+                    modifier = Modifier
+                        .swipeable(
+                            enabled = isSwipeEnabled,
+                            reverseDirection = true,
+                            state = swipeAbleState,
+                            anchors = anchors,
+                            thresholds = { _, _ ->
+                                // The closer to 1 you have to scroll more for it to autocomplete the animation
+                                FractionalThreshold(COLLAPSED_FRACTIONAL_THRESHOLD)
+                            },
+                            orientation = Vertical
+                        )
+                        .clickable(
+                            enabled = isSwipeEnabled,
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) {
                             updateIsExpandedByClick(true)
                         }
-                    }
-                    .swipeable(
-                        enabled = isSwipeEnabled,
-                        reverseDirection = true,
-                        state = swipeAbleState,
-                        anchors = anchors,
-                        thresholds = { _, _ ->
-                            // The closer to 1 you have to scroll more for it to autocomplete the animation
-                            FractionalThreshold(COLLAPSED_FRACTIONAL_THRESHOLD)
-                        },
-                        orientation = Vertical
-                    )
-            )
-
+                )
+            }
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

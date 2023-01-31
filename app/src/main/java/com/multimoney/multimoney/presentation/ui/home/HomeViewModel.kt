@@ -119,6 +119,7 @@ class HomeViewModel @Inject constructor(
     private var biometricPromptDescription = ""
     private var biometricPromptNegative = ""
     private var isBiometricActive = false
+    private var apiCallCount = 0
 
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -236,7 +237,8 @@ class HomeViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { quickActions ->
                 quickActions?.let {
-                    if (uiState.configurationVersion != null && uiState.balance != null) {
+                    apiCallCount = apiCallCount++
+                    if (apiCallCount == API_CALLS_TOTAL) {
                         uiState = uiState.copy(isLoading = false)
                     }
                     uiState = uiState.copy(
@@ -245,6 +247,7 @@ class HomeViewModel @Inject constructor(
                 }
             }
             result.onFailure {
+                apiCallCount = apiCallCount++
                 onFailure(it)
             }
             result.onLoading {
@@ -270,11 +273,8 @@ class HomeViewModel @Inject constructor(
             idBrand = idBrand
         ).collectLatest { result ->
             result.onSuccess { miniCards ->
-                if (
-                    uiState.configurationVersion != null &&
-                    uiState.balance != null &&
-                    uiState.quickActions != null
-                ) {
+                apiCallCount = apiCallCount++
+                if (apiCallCount == API_CALLS_TOTAL) {
                     uiState = uiState.copy(isLoading = false)
                 }
                 uiState = uiState.copy(
@@ -340,7 +340,8 @@ class HomeViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { historicBalance ->
                 historicBalance?.let {
-                    if (uiState.configurationVersion != null && uiState.balance != null) {
+                    apiCallCount = apiCallCount++
+                    if (apiCallCount == API_CALLS_TOTAL) {
                         uiState = uiState.copy(isLoading = false)
                     }
                     uiState = uiState.copy(
@@ -454,8 +455,8 @@ class HomeViewModel @Inject constructor(
                 )
             )
         }
-
-        if (uiState.configurationVersion != null && uiState.quickActions != null) {
+        apiCallCount = apiCallCount++
+        if (apiCallCount == API_CALLS_TOTAL) {
             uiState = uiState.copy(isLoading = false)
         }
         uiState = uiState.copy(balance = balance, productPageList = productPageList)
@@ -486,7 +487,8 @@ class HomeViewModel @Inject constructor(
             idBrand = idBrand
         ).collectLatest { result ->
             result.onSuccess { configurationVersion ->
-                if (uiState.balance != null && uiState.quickActions != null && uiState.validateUserStatus != null) {
+                apiCallCount = apiCallCount++
+                if (apiCallCount == API_CALLS_TOTAL) {
                     uiState = uiState.copy(isLoading = false)
                 }
                 configurationVersion?.let {
@@ -518,6 +520,7 @@ class HomeViewModel @Inject constructor(
             idBrand
         ).collectLatest { result ->
             result.onSuccess { validateUserStatus ->
+                apiCallCount = apiCallCount++
                 dataStorePreferences.setUserPhoneNumber(validateUserStatus?.infoUser?.phone.orEmpty())
                 uiState = uiState.copy(validateUserStatus = validateUserStatus)
                 callQueryBalanceUseCase(
@@ -548,17 +551,17 @@ class HomeViewModel @Inject constructor(
                     infoCryptoStatus = validateUserStatus?.infoCrypto?.status ?: 0,
                     infoBankAccountStatus = validateUserStatus?.infoBankAccount?.status ?: 0
                 )
-                if (uiState.idBrand != Brand.Guatemala.id.toString()) {
-                    if (validateUserStatus?.infoBankAccount?.status == SmartAccountStatus.EXIST_IN_CORE.status &&
-                        validateUserStatus.infoCrypto?.status == CryptoAccountStatus.ACTIVE.status
-                    ) {
-                        callQueryGetHistoricalBalanceUseCase(
-                            user = email,
-                            identification = identification,
-                            idBrand = idBrand,
-                            baseAsset = uiState.balance?.balanceCryptoAccount?.items?.firstOrNull()?.asset ?: ""
-                        )
-                    }
+                if (uiState.idBrand != Brand.Guatemala.id.toString() && validateUserStatus?.infoBankAccount?.status == SmartAccountStatus.EXIST_IN_CORE.status &&
+                    validateUserStatus.infoCrypto?.status == CryptoAccountStatus.ACTIVE.status
+                ) {
+                    callQueryGetHistoricalBalanceUseCase(
+                        user = email,
+                        identification = identification,
+                        idBrand = idBrand,
+                        baseAsset = uiState.balance?.balanceCryptoAccount?.items?.firstOrNull()?.asset ?: ""
+                    )
+                } else {
+                    apiCallCount = apiCallCount++
                 }
             }
             result.onFailure {
@@ -929,5 +932,9 @@ class HomeViewModel @Inject constructor(
         object OnDeleteAutomaticPaymentToastEvent : BaseEvent()
         object OnPhoneNumberChangedToastEvent : BaseEvent()
         object OnEmailChangedToastEvent : BaseEvent()
+    }
+
+    companion object {
+        const val API_CALLS_TOTAL = 6
     }
 }

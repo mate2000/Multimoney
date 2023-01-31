@@ -203,26 +203,22 @@ fun ProductScreen(
 
     LaunchedEffect(key1 = contentPagerState.currentPage) {
         contentPagerState.scrollToPage(contentPagerState.currentPage)
-//        headerExpandedPagerState.scrollToPage(contentPagerState.currentPage)
-//        footerPagerState.scrollToPage(contentPagerState.currentPage)
-//        footerExpandedPagerState.scrollToPage(contentPagerState.currentPage)
-//        ctaFooterExpandedPagerState.scrollToPage(contentPagerState.currentPage)
     }
 
     LaunchedEffect(key1 = contentPagerState.currentPage) {
-        headerExpandedPagerState.animateScrollToPage(contentPagerState.currentPage)
+        headerExpandedPagerState.scrollToPage(contentPagerState.currentPage)
     }
 
     LaunchedEffect(key1 = contentPagerState.currentPage) {
-        footerPagerState.animateScrollToPage(contentPagerState.currentPage)
+        footerPagerState.scrollToPage(contentPagerState.currentPage)
     }
 
     LaunchedEffect(key1 = contentPagerState.currentPage) {
-        footerExpandedPagerState.animateScrollToPage(contentPagerState.currentPage)
+        footerExpandedPagerState.scrollToPage(contentPagerState.currentPage)
     }
 
     LaunchedEffect(key1 = contentPagerState.currentPage) {
-        ctaFooterExpandedPagerState.animateScrollToPage(contentPagerState.currentPage)
+        ctaFooterExpandedPagerState.scrollToPage(contentPagerState.currentPage)
     }
 
     if (sharedViewModel.uiState.isLoading && viewModel.uiState.isExpanded.not()) {
@@ -278,7 +274,11 @@ fun ProductScreen(
             updateHomeState = { homeState ->
                 sharedViewModel.onUIEvent(UIEvent.OnSetHomeState(homeState))
             },
-            isSwipeEnabled = viewModel.uiState.productPageList?.get(contentPagerState.currentPage)?.enabled ?: false,
+            isSwipeEnabled = if (viewModel.uiState.productPageList?.isNotEmpty() == true) {
+                viewModel.uiState.productPageList?.get(contentPagerState.currentPage)?.enabled ?: false
+            } else {
+                false
+            },
             isBackPressed = viewModel.uiState.isBackPressed,
             updateIsBackPressed = { isBackPressed ->
                 viewModel.onUIEvent(OnUpdateIsBackPressed(isBackPressed))

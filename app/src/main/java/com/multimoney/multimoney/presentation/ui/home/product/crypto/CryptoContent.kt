@@ -78,8 +78,7 @@ fun CryptoContent(
         SmartAccountStatus.NO_EXIST.status -> {
             //show offer card with no action when smart is in process
             userStatus.infoBankAccount?.infoRequest?.let {
-                if (it.idRequestSysde != 0L && it.statusRequest != "" && it.idRequestGlobal != 0L && it.currentStep != "") {
-
+                if (it.statusRequest != "" && it.idRequestGlobal != 0L && it.currentStep != "") {
                     CustomProductBackground(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         type = ProductBackGroundType.ComplementaryTwo

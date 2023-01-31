@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.home.product.credit
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -17,11 +18,15 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.
  */
 @Composable
 fun CreditCtaFooterExpanded(viewModel: ProductViewModel, sharedViewModel: HomeViewModel) {
-    CreditCtaButtons(
-        modifier = Modifier
-            .padding(16.dp).fillMaxWidth().wrapContentHeight(),
-        onClickPay = { viewModel.onUIEvent(OnNavigateToPaymentProcess) },
-        onClickDisbursement = { viewModel.onUIEvent(OnNavigateToDisbursement) },
-        canDisburse = viewModel.uiState.canExpandCredit
-    )
+    // Check if the user can disburse or has payments available
+    if (viewModel.uiState.canExpandCredit || viewModel.uiState.paymentAvailable) {
+        CreditCtaButtons(
+            modifier = Modifier
+                .padding(16.dp).fillMaxWidth().wrapContentHeight(),
+            onClickPay = { viewModel.onUIEvent(OnNavigateToPaymentProcess) },
+            onClickDisbursement = { viewModel.onUIEvent(OnNavigateToDisbursement) },
+            canDisburse = viewModel.uiState.canExpandCredit,
+            paymentAvailable = viewModel.uiState.paymentAvailable
+        )
+    }
 }

@@ -100,7 +100,7 @@ class PaymentScheduleCardViewModel @Inject constructor(
             result.onSuccess { cardsList ->
                 uiState = uiState.copy(
                     isLoading = false,
-                    cardVisaDirect = cardsList?.first(),
+                    cardVisaDirect = cardsList?.firstOrNull(),
                     isCardListEmpty = cardsList.isNullOrEmpty()
                 )
             }.onFailure {

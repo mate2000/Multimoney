@@ -39,12 +39,8 @@ fun SelectSmartAccountScreen(
             onNavigate = onNavigate,
             onPopAndNavigate = onPopAndNavigate
         )
-        if (sharedViewModel.comingFromDetails) {
-            sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnQueryAccounts)
-        }
         viewModel.onUIEvent(
             SelectSmartAccountViewModel.UIEvent.OnSetAccounts(
-                sharedViewModel.uiState.accounts,
                 sharedViewModel.asset,
                 sharedViewModel.assetDescription
             )
@@ -52,7 +48,7 @@ fun SelectSmartAccountScreen(
     }
 
     BackHandler { sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep) }
-    SelectSmartAccountContent(viewModel) { accountToken, totalBalance ->
+    SelectSmartAccountContent(viewModel, sharedViewModel) { accountToken, totalBalance ->
         sharedViewModel.onUIEvent(
             PurchaseCryptoSharedViewModel.UIEvent.OnSetSelectedAccount(
                 accountToken,
@@ -66,6 +62,7 @@ fun SelectSmartAccountScreen(
 @Composable
 fun SelectSmartAccountContent(
     viewModel: SelectSmartAccountViewModel,
+    sharedViewModel: PurchaseCryptoSharedViewModel,
     onNextStep: (String, Double) -> Unit = { _, _ -> }
 ) {
     Column(
@@ -85,7 +82,7 @@ fun SelectSmartAccountContent(
             textAlign = TextAlign.Left
         )
         LazyColumn {
-            items(viewModel.uiState.accounts) { account ->
+            items(sharedViewModel.uiState.accounts) { account ->
                 CustomInfoButton(
                     modifier = Modifier
                         .fillMaxWidth()

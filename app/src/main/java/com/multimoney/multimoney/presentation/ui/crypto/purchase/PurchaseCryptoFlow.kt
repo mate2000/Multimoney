@@ -6,9 +6,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.BottomSheetScaffold
+import androidx.compose.material.BottomSheetState
+import androidx.compose.material.BottomSheetValue
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.rememberBottomSheetScaffoldState
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -34,6 +40,8 @@ fun PurchaseCryptoFlow(
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: PurchaseCryptoSharedViewModel = hiltViewModel()
 ) {
+    val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.HalfExpanded)
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(true) {
         viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnGetUserInfo)
@@ -86,8 +94,7 @@ fun PurchaseCryptoFlow(
                             step = viewModel.uiState.currentStep,
                             viewModel = viewModel
                         )
-                    }
-                    else {
+                    } else {
                         CRPurchaseCryptoFlow(
                             step = viewModel.uiState.currentStep,
                             viewModel = viewModel
@@ -96,20 +103,13 @@ fun PurchaseCryptoFlow(
                 }
             }
         }
+
     }
 
     LoadingIndicator(viewModel.uiState.isLoading)
     BackHandler {
         viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnCloseClick)
     }
-
-    BottomSheetScaffold(
-        scaffoldState = ,
-        sheetContent =  {
-            ConfirmationBottomSheet()
-        },
-        sheetPeekHeight = 0.dp
-    ){}
 
     if (viewModel.uiState.openDialog.isActive.value) {
         CustomDialog(
@@ -121,6 +121,12 @@ fun PurchaseCryptoFlow(
             negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
             openDialogCustom = viewModel.uiState.openDialog.isActive,
             onPositiveAction = viewModel.uiState.openDialog.positiveAction
+        )
+    }
+    if (viewModel.uiState.isBottomSheetVisible) {
+        ConfirmationBottomSheet(
+            modalBottomSheetState = bottomSheetState,
+            coroutineScope = coroutineScope
         )
     }
 }

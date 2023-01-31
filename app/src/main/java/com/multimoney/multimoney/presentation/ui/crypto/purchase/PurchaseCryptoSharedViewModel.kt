@@ -169,6 +169,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         var bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
         var bottomSheet: (@Composable () -> Unit) = {},
         val smartAccountAvailableBalance: Double = 0.0,
+        var isBottomSheetVisible: Boolean = false
     )
 
     fun onUIEvent(event: UIEvent) {

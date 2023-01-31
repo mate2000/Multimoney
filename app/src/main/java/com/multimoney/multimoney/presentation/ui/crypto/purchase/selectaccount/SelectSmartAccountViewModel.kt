@@ -18,27 +18,17 @@ class SelectSmartAccountViewModel @Inject constructor(
     var uiState by mutableStateOf(UIState())
         private set
 
-    init {
-        uiState = uiState.copy(
-            accounts = savedStateHandle[SMART_ACCOUNTS_FOR_BUY_CRYPTO] ?: listOf(),
-            currency = savedStateHandle[CURRENCY_NAME] ?: ""
-        )
-    }
-
     private fun setAccounts(
-        list: List<AccountSmartForBuyCrypto>,
         currency: String?,
         currencyDescription: String?
     ) {
         uiState = uiState.copy(
-            accounts = list,
             currency = currency ?: "",
             currencyDescription = currencyDescription ?: ""
         )
     }
 
     data class UIState(
-        val accounts: List<AccountSmartForBuyCrypto> = listOf(),
         val currency: String = "",
         val currencyDescription: String = "",
         val isBottomSheetVisible: Boolean = false
@@ -47,7 +37,6 @@ class SelectSmartAccountViewModel @Inject constructor(
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is UIEvent.OnSetAccounts -> setAccounts(
-                event.list,
                 event.currency,
                 event.currencyDescription
             )
@@ -56,7 +45,6 @@ class SelectSmartAccountViewModel @Inject constructor(
 
     sealed class UIEvent {
         data class OnSetAccounts(
-            val list: List<AccountSmartForBuyCrypto>,
             val currency: String?,
             val currencyDescription: String?
         ) : UIEvent()

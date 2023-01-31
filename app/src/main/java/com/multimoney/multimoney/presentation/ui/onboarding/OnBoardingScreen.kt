@@ -85,7 +85,6 @@ fun OnBoardingScreen(
                 text = stringResource(id = viewModel.uiState.title),
                 textAlign = TextAlign.Left,
                 modifier = Modifier
-                    .fillMaxHeight()
                     .weight(
                         0.14f,
                         false
@@ -100,7 +99,6 @@ fun OnBoardingScreen(
                 text = stringResource(id = viewModel.uiState.subtitle),
                 textAlign = TextAlign.Left,
                 modifier = Modifier
-                    .fillMaxWidth()
                     .padding(top = 34.dp, bottom = 70.dp)
                     .weight(0.14f, false),
                 style = Typography.h6.copy(

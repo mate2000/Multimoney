@@ -857,6 +857,7 @@
     <string name="smart_payment_you_saved_on_your_smart_account" translatable="false">Has ahorrado en tu cuenta Smart | %s</string>
     <string name="smart_payment_from_label" translatable="false">Desde</string>
     <string name="smart_payment_origin_account_label" translatable="false">Cuenta de origen</string>
+    <string name="smart_payment_destiny_account_label" translatable="false">Cuenta de destino</string>
     <string name="smart_payment_motive" translatable="false">Motivo</string>
     <string name="smart_payment_amount_debited" translatable="false">Monto debitado</string>
     <string name="smart_payment_exchange_rate_label" translatable="false">Tipo de cambio</string>

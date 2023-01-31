@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -16,6 +17,7 @@ import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSma
 import com.multimoney.multimoney.presentation.uielement.PaymentSuccessResult
 import com.multimoney.multimoney.presentation.uielement.SmartPaymentInfoItem
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
+import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 
 @Composable
@@ -55,12 +57,18 @@ fun MyContactsTransferSuccess(
         ) {
             SmartPaymentInfoItem(
                 verticalAlignment = Alignment.CenterVertically,
-                icon = viewModel.amountUIState.originAccountDisplay?.icon,
-                title = stringResource(string.smart_payment_origin_account_label),
-                subtitle = getMaskedAccountIban(
-                    viewModel.smartAccount?.ibanAccountNumber ?: "",
-                    stringResource(string.payment_account_masked_text)
-                )
+                icon = viewModel.destinyCurrency?.accountIcon,
+                title = stringResource(string.smart_payment_destiny_account_label),
+                subtitle = if (Brand.CostaRica.id == viewModel.idBrand) {
+                    getMaskedAccountIban(
+                        viewModel.phoneAccount?.ibanNumber ?: ""
+                    )
+                } else {
+                    getMaskedAccount(
+                        accountNumber = viewModel.phoneAccount?.accountNumber ?: "",
+                        prefix = Brand.ElSalvador.iban
+                    )
+                }
             )
 
             SmartPaymentInfoItem(

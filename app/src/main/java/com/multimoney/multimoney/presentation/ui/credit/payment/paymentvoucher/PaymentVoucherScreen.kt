@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -124,7 +123,7 @@ fun PaymentVoucherScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Hello, pal!",//stringResource(string.payment_voucher_transaction_success),
+                            text = stringResource(string.payment_voucher_transaction_success),
                             modifier = Modifier.padding(top = 32.dp),
                             style = Typography.subtitle1.copy(fontWeight = FontWeight.SemiBold),
                             color = MultimoneyTheme.colors.text

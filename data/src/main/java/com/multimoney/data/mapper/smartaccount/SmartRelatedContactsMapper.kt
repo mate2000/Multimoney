@@ -12,7 +12,7 @@ fun RelatedContactsByPhoneQuery.Data.mapToDomainModel() = relatedContactsByPhone
 
 fun RelatedContactsByPhoneQuery.Phone.mapToDomainModel() = PhoneSmart(
     number = number,
-    titular =  titular,
+    titular = titular,
     bankName = bankName,
     identification = identification,
     accountNumber = accountNumber,

@@ -1833,7 +1833,7 @@ class GraphqlApi @Inject constructor(
      */
     fun mutationUpdateSmartFavoriteContact(
         idFavorite: Long?,
-        idAccountType: Int,
+        idAccountType: Int?,
         idCustomer: Long,
         accountNumber: String,
         accountName: String?,
@@ -1849,7 +1849,7 @@ class GraphqlApi @Inject constructor(
             idBrand = idBrand,
             user = user,
             idFavorite = Optional.presentIfNotNull(idFavorite),
-            idAccountType = idAccountType,
+            idAccountType = Optional.presentIfNotNull(idAccountType),
             idCustomer = idCustomer,
             accountNumber = accountNumber,
             accountName = Optional.presentIfNotNull(accountName),

@@ -71,7 +71,7 @@ fun MotionLayoutMM(
     }
 
     LaunchedEffect(key1 = swipeAbleState.offset.value) {
-        if (isAnimationRunning.not() && swipeAbleState.offset.value != ANIMATION_COLLAPSED) {
+        if (isAnimationRunning.not() && swipeAbleState.offset.value != ANIMATION_COLLAPSED && swipeAbleState.offset.value != TOTAL_PERCENTAGE) {
             animationProgress = swipeAbleState.offset.value / TOTAL_PERCENTAGE
         }
     }

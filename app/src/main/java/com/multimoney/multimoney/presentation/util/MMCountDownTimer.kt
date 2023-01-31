@@ -26,6 +26,7 @@ class MMCountDownTimer {
                     }
                 }
             }
+
             override fun onFinish() {
                 if (isTimerStopped.not()) {
                     discardTimer()
@@ -33,7 +34,7 @@ class MMCountDownTimer {
                 }
             }
         }
-//        timer?.start()
+        timer?.start()
     }
 
     fun restartTimer() {

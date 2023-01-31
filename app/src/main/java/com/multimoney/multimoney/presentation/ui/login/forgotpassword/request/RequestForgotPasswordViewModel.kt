@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.SavedStateHandle
 import com.amplifyframework.core.Amplify
 import com.multimoney.data.util.catalog.Brand
@@ -26,6 +27,7 @@ import com.multimoney.multimoney.presentation.ui.login.forgotpassword.request.Re
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.request.RequestForgotPasswordViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.request.RequestForgotPasswordViewModel.UIEvent.OnValidateEmail
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.getDeviceId
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -89,10 +91,11 @@ class RequestForgotPasswordViewModel @Inject constructor(
         )
     }
 
-    private fun callQueryValidationUserExistsUseCase() =
+    private fun callQueryValidationUserExistsUseCase(activity: FragmentActivity) =
         executeUseCase {
             queryValidateUserExistsUseCase(
-                email = uiState.email
+                email = uiState.email,
+                deviceId = getDeviceId(activity)
             ).collectLatest { result ->
                 result.onSuccess {
                     idBrand = Brand.Default.id
@@ -120,9 +123,9 @@ class RequestForgotPasswordViewModel @Inject constructor(
         }
     )
 
-    private fun onContinueClick(focusManager: FocusManager) {
+    private fun onContinueClick(activity: FragmentActivity, focusManager: FocusManager) {
         focusManager.clearFocus()
-        callQueryValidationUserExistsUseCase()
+        callQueryValidationUserExistsUseCase(activity)
     }
 
     private fun onChangePasswordClick() = popAndNavigateTo(
@@ -156,7 +159,7 @@ class RequestForgotPasswordViewModel @Inject constructor(
         when (uiEvent) {
             is OnNavigateBack -> onNavigateBack(uiEvent.focusManager)
             is OnCloseClick -> onCloseClick(uiEvent.focusManager)
-            is OnContinueClick -> onContinueClick(uiEvent.focusManager)
+            is OnContinueClick -> onContinueClick(uiEvent.activity, uiEvent.focusManager)
             is OnChangePasswordClick -> onChangePasswordClick()
             is OnEmailValueChange -> onEmailValueChange(uiEvent.value)
             is OnValidateEmail -> isEmailValid()
@@ -166,7 +169,7 @@ class RequestForgotPasswordViewModel @Inject constructor(
     sealed class UIEvent {
         data class OnNavigateBack(val focusManager: FocusManager) : UIEvent()
         data class OnCloseClick(val focusManager: FocusManager) : UIEvent()
-        data class OnContinueClick(val focusManager: FocusManager) : UIEvent()
+        data class OnContinueClick(val activity: FragmentActivity, val focusManager: FocusManager) : UIEvent()
         object OnChangePasswordClick : UIEvent()
         data class OnEmailValueChange(val value: String) : UIEvent()
         object OnValidateEmail : UIEvent()

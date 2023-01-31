@@ -149,6 +149,8 @@
     <string name="sign_up_email_user_completed_dialog_positive" translatable="false">Iniciar sesión</string>
     <string name="sign_up_email_blocked_dialog_title" translatable="false">Usuario bloqueado.</string>
     <string name="sign_up_email_blocked_dialog_description" translatable="false">Tu usuario ha sido bloqueado porque no hemos podido verificar tu número de teléfono. \nContactá a servicio al cliente</string>
+    <string name="sign_up_email_another_device_registered_dialog_title" translatable="false">Registro en proceso en otro dispositivo</string>
+    <string name="sign_up_email_another_device_registered_dialog_description" translatable="false">Al ingresar aquí, cerrarás la sesion que se encuentra abierta en otro dispositivo y deberás empezar el registro desde el principio</string>
 
     <!-- Sign Up Phone -->
     <string name="sign_up_phone_title" translatable="false">¿Cuál es tu número de teléfono \ncelular?</string>
@@ -1471,7 +1473,7 @@
 
     <!-- Product -> Visa Card Expired Dialog-->
     <string name="product_visa_card_expired_dialog_title" translatable="false">Tu tarjeta ha expirado</string>
-    <string name="product_visa_card_expired_dialog_description" translatable="false">Debes de agregar una nueva tarjeta para que puedas utilizarla en tus operaciones.</string>
+    <string name="product_visa_card_expired_dialog_description" translatable="false">Actualiza los datos de tu tarjeta para continuar con tu pago programado.</string>
     <string name="product_visa_card_expired_dialog_update_label" translatable="false">Actualizar</string>
     <string name="product_visa_card_expired_dialog_hide_label" translatable="false">Ocultar</string>
 

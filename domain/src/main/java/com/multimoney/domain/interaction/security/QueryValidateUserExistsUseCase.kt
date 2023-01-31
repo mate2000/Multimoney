@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface QueryValidateUserExistsUseCase {
     suspend operator fun invoke(
-        email: String
+        email: String,
+        deviceId: String
     ): Flow<MultimoneyResult<UserData?>>
 }

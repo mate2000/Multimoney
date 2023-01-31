@@ -11,9 +11,10 @@ class MutationUserValidationUseCaseImpl(private val securityRepository: Security
         idDocument: Int,
         identification: String,
         firstName: String,
-        secondName:String,
+        secondName: String,
         firstSurname: String,
-        secondSurname:String
+        secondSurname: String,
+        deviceId: String
     ) = securityRepository.mutationUserValidation(
         email,
         currentStep,
@@ -23,6 +24,7 @@ class MutationUserValidationUseCaseImpl(private val securityRepository: Security
         firstName,
         secondName,
         firstSurname,
-        secondSurname
+        secondSurname,
+        deviceId
     )
 }

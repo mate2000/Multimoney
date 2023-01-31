@@ -57,7 +57,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCreateMultimoneyVisa
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnDeleteAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetSmartContent
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnIsSwipeEnabledValueChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnLastStepChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMaxAttemptsCardClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMiniCardsClicked
@@ -976,15 +975,11 @@ class ProductViewModel @Inject constructor(
         val phoneNumber: String? = null,
         val smartContent: Pair<Boolean?, String> = Pair(null, ""),
         val cryptoCurrencyMovements: Flow<PagingData<CryptoCurrencyMovement>> = flowOf(),
-        val isSwipeEnabled: Boolean = false,
         var isBackPressed: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnIsSwipeEnabledValueChange ->
-                uiState =
-                    uiState.copy(isSwipeEnabled = uiEvent.isSwipeEnabled)
             is OnUpdateIsExpanded -> uiState = uiState.copy(
                 isExpanded = uiEvent.isExpanded
             )
@@ -1068,7 +1063,6 @@ class ProductViewModel @Inject constructor(
     }
 
     sealed class UIEvent {
-        data class OnIsSwipeEnabledValueChange(val isSwipeEnabled: Boolean) : UIEvent()
         data class OnUpdateIsBackPressed(val isBackPressed: Boolean) : UIEvent()
         data class OnUpdateIsExpanded(val isExpanded: Boolean) : UIEvent()
         data class OnBalanceSuccess(val balance: Balance) : UIEvent()

@@ -10,7 +10,6 @@ import com.multimoney.data.util.catalog.SmartAccountStatus
 import com.multimoney.domain.model.balance.BalanceCryptoAccount
 import com.multimoney.domain.model.crypto.HistoricalBalanceClient
 import com.multimoney.domain.model.security.ValidateUserStatus
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnIsSwipeEnabledValueChange
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoCardDiscoverCrypto
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoCardSmartInProcess
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoCardWithBalance
@@ -23,15 +22,12 @@ fun CryptoContent(
     cryptoBalance: BalanceCryptoAccount?,
     clientBalanceHistory: List<HistoricalBalanceClient>,
     cryptoEmptyState: Boolean,
-    openSmartCryptoAction: () -> Unit = {},
-    onIsSwipeEnabledValueChange: (Boolean) -> Unit = {}
+    openSmartCryptoAction: () -> Unit = {}
 ) {
-    onIsSwipeEnabledValueChange(false)
     when (userStatus?.infoBankAccount?.status) {
         SmartAccountStatus.EXIST_IN_CORE.status -> {
             when (userStatus.infoCrypto?.status) {
                 CryptoAccountStatus.ACTIVE.status -> {
-                    onIsSwipeEnabledValueChange(true)
                     if (cryptoBalance == null) {
                         // show balance 0 card
                         CustomProductBackground(

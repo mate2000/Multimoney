@@ -80,6 +80,7 @@ fun MotionLayoutMM(
     if (isExpandedByClick) {
         updateIsExpandedByClick(false)
         isAnimationRunning = true
+        animationProgress = ANIMATION_COLLAPSED
         timer = object : CountDownTimer(TIMER_FUTURE, TIMER_COUNT_DOWN) {
             override fun onTick(millisMainUntilFinished: Long) {
                 animationProgress = animationProgress.plus(ANIMATION_FRACTION)

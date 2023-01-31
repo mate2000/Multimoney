@@ -10,7 +10,6 @@ import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnIsSwipeEnabledValueChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.CardInactiveSmartProduct
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.CardSmartProduct
@@ -34,7 +33,6 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
     val decrement =
         if (viewModel.uiState.productPageList?.any { it.product == ProductType.Credit.value } == true) 1 else 0
     val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: decrement)
-    viewModel.onUIEvent(OnIsSwipeEnabledValueChange(false))
     CustomProductBackground(
         modifier = Modifier.padding(horizontal = 16.dp),
         type = ProductBackGroundType.Secondary
@@ -60,7 +58,6 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
                 false -> {
                     viewModel.balanceCredit?.balanceAccountSmart?.let {
                         if (it.isNotEmpty()) {
-                            viewModel.onUIEvent(OnIsSwipeEnabledValueChange(true))
                             CardSmartProduct(
                                 currency = it[index]?.currencyCode ?: "",
                                 profitMonthly = it[index]?.gainedInterest.toString(),

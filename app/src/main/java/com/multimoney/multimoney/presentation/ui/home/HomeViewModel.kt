@@ -365,7 +365,7 @@ class HomeViewModel @Inject constructor(
         productPageList.add(
             ProductPage(
                 product = ProductType.Credit.value,
-                enabled = true,
+                enabled = uiState.validateUserStatus?.infoCredit?.status == CreditStatus.EXIST_IN_CORE.status,
                 index = defaultIndex,
                 resourceIcon = R.drawable.ic_my_credit,
                 resourceText = R.string.home_my_products_label_credit
@@ -383,7 +383,7 @@ class HomeViewModel @Inject constructor(
                         ProductPage(
                             product = ProductType.Smart.value,
                             productSmartIndex = index,
-                            enabled = true,
+                            enabled = uiState.validateUserStatus?.infoBankAccount?.status == SmartAccountStatus.EXIST_IN_CORE.status,
                             index = productPageList.lastIndex + 1,
                             resourceText = run {
                                 when (account?.currencyCode) {
@@ -417,7 +417,7 @@ class HomeViewModel @Inject constructor(
                 productPageList.add(
                     ProductPage(
                         product = ProductType.Crypto.value,
-                        enabled = true,
+                        enabled = uiState.validateUserStatus?.infoCrypto?.status == CryptoAccountStatus.ACTIVE.status,
                         index = productPageList.lastIndex + 1,
                         resourceIcon = R.drawable.ic_union,
                         resourceText = R.string.home_my_products_label_crypto
@@ -428,7 +428,7 @@ class HomeViewModel @Inject constructor(
                 productPageList.add(
                     ProductPage(
                         product = ProductType.Smart.value,
-                        enabled = true,
+                        enabled = uiState.validateUserStatus?.infoBankAccount?.status == SmartAccountStatus.EXIST_IN_CORE.status,
                         index = productPageList.lastIndex + 1,
                         resourceText = R.string.home_my_products_label_smart,
                         resourceIcon = R.drawable.ic_dollars_strong
@@ -437,7 +437,7 @@ class HomeViewModel @Inject constructor(
                 productPageList.add(
                     ProductPage(
                         product = ProductType.Crypto.value,
-                        enabled = true,
+                        enabled = uiState.validateUserStatus?.infoCrypto?.status == CryptoAccountStatus.ACTIVE.status,
                         index = productPageList.lastIndex + 1,
                         resourceIcon = R.drawable.ic_union,
                         resourceText = R.string.home_my_products_label_crypto

@@ -138,7 +138,7 @@ class SignInViewModel @Inject constructor(
 
         Amplify.Auth.signOut({
             // TODO: This line must be uncommented when logic to send metadata to cognito is implemented
-            Amplify.Auth.signIn(uiState.userEmail, "Nu12##12", options, { authSignInResult ->
+            Amplify.Auth.signIn("katherinez2445@gmail.com", "Nu12##12", options, { authSignInResult ->
 //            Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword, { authSignInResult ->
                 if (authSignInResult.isSignInComplete) {
                     Amplify.Auth.fetchAuthSession({ authSessionSuccess ->

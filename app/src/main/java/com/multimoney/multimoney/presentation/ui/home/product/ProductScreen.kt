@@ -48,7 +48,6 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnDeleteAutomaticPaymentToastEvent
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCallMutationDeactivateClientAutomaticDebit
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnMyProductClick
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnMyProductPageChange
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnUpdateIsExpandedByClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.BaseEvent.OnShowCardIssuanceError
@@ -57,7 +56,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.C
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCreateMultimoneyVisa
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnDeleteAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetCryptoMovements
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnIsSwipeEnabledValueChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCryptoMarket
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCryptoMovements
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCryptoWallet
@@ -204,9 +202,26 @@ fun ProductScreen(
     }
 
     LaunchedEffect(key1 = contentPagerState.currentPage) {
+        contentPagerState.scrollToPage(contentPagerState.currentPage)
+//        headerExpandedPagerState.scrollToPage(contentPagerState.currentPage)
+//        footerPagerState.scrollToPage(contentPagerState.currentPage)
+//        footerExpandedPagerState.scrollToPage(contentPagerState.currentPage)
+//        ctaFooterExpandedPagerState.scrollToPage(contentPagerState.currentPage)
+    }
+
+    LaunchedEffect(key1 = contentPagerState.currentPage) {
         headerExpandedPagerState.animateScrollToPage(contentPagerState.currentPage)
+    }
+
+    LaunchedEffect(key1 = contentPagerState.currentPage) {
         footerPagerState.animateScrollToPage(contentPagerState.currentPage)
+    }
+
+    LaunchedEffect(key1 = contentPagerState.currentPage) {
         footerExpandedPagerState.animateScrollToPage(contentPagerState.currentPage)
+    }
+
+    LaunchedEffect(key1 = contentPagerState.currentPage) {
         ctaFooterExpandedPagerState.animateScrollToPage(contentPagerState.currentPage)
     }
 
@@ -263,7 +278,7 @@ fun ProductScreen(
             updateHomeState = { homeState ->
                 sharedViewModel.onUIEvent(UIEvent.OnSetHomeState(homeState))
             },
-            isSwipeEnabled = viewModel.uiState.isSwipeEnabled,
+            isSwipeEnabled = viewModel.uiState.productPageList?.get(contentPagerState.currentPage)?.enabled ?: false,
             isBackPressed = viewModel.uiState.isBackPressed,
             updateIsBackPressed = { isBackPressed ->
                 viewModel.onUIEvent(OnUpdateIsBackPressed(isBackPressed))
@@ -414,11 +429,13 @@ fun ProductContent(
     viewModel: ProductViewModel,
     sharedViewModel: HomeViewModel
 ) {
+    val pagerCount = if (viewModel.uiState.isExpanded) viewModel.uiState.productPageList?.count { it.enabled }
+        ?: DEFAULT_PRODUCT_PAGES else viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES
     Column(modifier = modifier) {
         HorizontalPager(
             modifier = Modifier
                 .padding(top = 8.dp),
-            count = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
+            count = pagerCount,
             state = state
         ) { page ->
             when (viewModel.uiState.productPageList?.get(page)?.product) {
@@ -432,9 +449,6 @@ fun ProductContent(
                     clientBalanceHistory = sharedViewModel.uiState.cryptoHistoricalBalance,
                     openSmartCryptoAction = {
                         viewModel.onUIEvent(OnNavigateToSmartOriginationFlow(comingFromCrypto = true))
-                    },
-                    onIsSwipeEnabledValueChange = { isSwipeEnabled ->
-                        viewModel.onUIEvent(OnIsSwipeEnabledValueChange(isSwipeEnabled))
                     }
                 )
             }
@@ -446,7 +460,7 @@ fun ProductContent(
             horizontalArrangement = Arrangement.Center
         ) {
             CustomDotsIndicator(
-                totalDots = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
+                totalDots = pagerCount,
                 selectedIndex = state.currentPage,
                 selectedColor = WhiteTransparency90,
                 unSelectedColor = WhiteTransparency30,

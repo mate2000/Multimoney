@@ -10,7 +10,6 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStatus
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnIsSwipeEnabledValueChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMaxAttemptsCardClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToGtSvNonPreApproved
@@ -39,11 +38,9 @@ fun CreditContent(viewModel: ProductViewModel) {
         id = R.string.whatsapp_deep_link,
         SignUpViewModel.PHONE_HARDCODED
     )
-    viewModel.onUIEvent(OnIsSwipeEnabledValueChange(false))
     viewModel.uiState.userStatus?.apply {
         when (infoCredit?.status) {
             CreditStatus.EXIST_IN_CORE.status -> {
-                viewModel.onUIEvent(OnIsSwipeEnabledValueChange(true))
                 CustomProductBackground(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     type = Primary

@@ -291,13 +291,12 @@ class SignInViewModel @Inject constructor(
 
     private fun isFormValid() {
         uiState = uiState.copy(
-            isSignInEnabled = true
-//            when {
-//                uiState.userEmail.isBlank() -> false
-//                isEmailValid(uiState.userEmail).not() -> false
-//                uiState.userPassword.isBlank() -> false
-//                else -> true
-//            }
+            isSignInEnabled = when {
+                uiState.userEmail.isBlank() -> false
+                isEmailValid(uiState.userEmail).not() -> false
+                uiState.userPassword.isBlank() -> false
+                else -> true
+            }
         )
     }
 
@@ -520,7 +519,7 @@ class SignInViewModel @Inject constructor(
         val isFingerprintChecked: Boolean = false,
 
         // Interactions
-        val isSignInEnabled: Boolean = true,
+        val isSignInEnabled: Boolean = false,
         val biometricErrorDialog: Pair<MutableState<Boolean>, String> = Pair(
             mutableStateOf(false),
             ""

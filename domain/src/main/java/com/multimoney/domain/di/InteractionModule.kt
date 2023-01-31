@@ -134,6 +134,8 @@ import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventU
 import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventUseCaseImpl
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCase
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryEmissionPlaceUseCase
+import com.multimoney.domain.interaction.credit.QueryEmissionPlaceUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUseCase
 import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCase
@@ -404,6 +406,11 @@ class InteractionModule {
     @Singleton
     fun provideQueryOccupationUseCase(creditRepository: CreditRepository): QueryOccupationUseCase =
         QueryOccupationUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryEmissionPlaceUseCase(creditRepository: CreditRepository): QueryEmissionPlaceUseCase =
+        QueryEmissionPlaceUseCaseImpl(creditRepository)
 
     @Provides
     @Singleton
@@ -751,11 +758,6 @@ class InteractionModule {
 
     @Provides
     @Singleton
-    fun provideQueryRelatedContactsByPhoneUseCase(smartAccountRepository: SmartAccountRepository): QueryRelatedContactsByPhoneUseCase =
-        QueryRelatedContactsByPhoneUseCaseImpl(smartAccountRepository)
-
-    @Provides
-    @Singleton
     fun provideQuerySmartAccountType(smartAccountRepository: SmartAccountRepository): QuerySmartAccountTypeUseCase =
         QuerySmartAccountTypeUseCaseImpl(smartAccountRepository)
 
@@ -773,4 +775,9 @@ class InteractionModule {
     @Singleton
     fun provideMutationUpdateFavoriteSmart(smartAccountRepository: SmartAccountRepository): MutationUpdateFavoriteSmartUseCase =
         MutationUpdateFavoriteSmartUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryRelatedContactsByPhoneUseCase(smartAccountRepository: SmartAccountRepository): QueryRelatedContactsByPhoneUseCase =
+        QueryRelatedContactsByPhoneUseCaseImpl(smartAccountRepository)
 }

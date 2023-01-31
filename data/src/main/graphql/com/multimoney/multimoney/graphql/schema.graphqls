@@ -6701,11 +6701,15 @@ type CreditPreApproveInfo {
 
   idPrint: Long
 
+  crosseling: Boolean
+
   selectedAmount: Decimal
 
   statusFirm: String
 
   currentStep: String
+
+  crosseling: Boolean
 }
 
 type RequestInfo {
@@ -6716,6 +6720,8 @@ type RequestInfo {
   currentStep: String
 
   statusRequest: String
+
+  crosseling: Boolean
 }
 
 type Wording {

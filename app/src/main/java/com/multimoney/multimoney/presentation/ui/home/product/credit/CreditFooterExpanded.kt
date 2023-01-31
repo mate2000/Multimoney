@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.home.product.credit
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -54,13 +55,20 @@ fun CreditFooterExpanded(viewModel: ProductViewModel, sharedViewModel: HomeViewM
             ScheduleAutomaticPayment(viewModel, sharedViewModel)
             Spacer(modifier = Modifier.height(24.dp))
             Divider(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).height(1.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .height(1.dp),
                 color = MultimoneyTheme.colors.dividerWhite16
             )
             CreditVisa(
                 uiState = viewModel.uiState,
                 balance = viewModel.balanceCredit,
-                onNavigateToVisaActivateScreen = { viewModel.onUIEvent(OnNavigateToHomeMultimoneyVisa) },
+                onNavigateToVisaActivateScreen = {
+                    viewModel.onUIEvent(
+                        OnNavigateToHomeMultimoneyVisa
+                    )
+                },
                 onCreateMultimoneyVisa = {
                     viewModel.onUIEvent(
                         OnCreateMultimoneyVisa(onLoadingValueChange = {
@@ -96,17 +104,32 @@ fun CreditFooterExpanded(viewModel: ProductViewModel, sharedViewModel: HomeViewM
             )
             CreditMovementsLatest(viewModel)
         }
-        CreditCtaButtons(
-            modifier = Modifier
-                .padding(16.dp)
-                .constrainAs(buttons) {
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    bottom.linkTo(parent.bottom)
-                },
-            onClickPay = { viewModel.onUIEvent(OnNavigateToPaymentProcess) },
-            onClickDisbursement = { viewModel.onUIEvent(OnNavigateToDisbursement) },
-            canDisburse = viewModel.uiState.canExpandCredit
-        )
+        // Check if the user can disburse or has payments available
+        if (viewModel.uiState.canExpandCredit || viewModel.uiState.paymentAvailable) {
+            CreditCtaButtons(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .constrainAs(buttons) {
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        bottom.linkTo(parent.bottom)
+                    },
+                onClickPay = { viewModel.onUIEvent(OnNavigateToPaymentProcess) },
+                onClickDisbursement = { viewModel.onUIEvent(OnNavigateToDisbursement) },
+                canDisburse = viewModel.uiState.canExpandCredit,
+                paymentAvailable = viewModel.uiState.paymentAvailable
+            )
+        } else {
+            // Create an empty Box just to keep motion layout constraints
+            // Necessary since the MotionLayout needs the 'buttons' constraint
+            Box(
+                modifier = Modifier
+                    .constrainAs(buttons) {
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        bottom.linkTo(parent.bottom)
+                    }
+            )
+        }
     }
 }

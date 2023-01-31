@@ -149,6 +149,8 @@
     <string name="sign_up_email_user_completed_dialog_positive" translatable="false">Iniciar sesión</string>
     <string name="sign_up_email_blocked_dialog_title" translatable="false">Usuario bloqueado.</string>
     <string name="sign_up_email_blocked_dialog_description" translatable="false">Tu usuario ha sido bloqueado porque no hemos podido verificar tu número de teléfono. \nContactá a servicio al cliente</string>
+    <string name="sign_up_email_another_device_registered_dialog_title" translatable="false">Registro en proceso en otro dispositivo</string>
+    <string name="sign_up_email_another_device_registered_dialog_description" translatable="false">Al ingresar aquí, cerrarás la sesion que se encuentra abierta en otro dispositivo y deberás empezar el registro desde el principio</string>
 
     <!-- Sign Up Phone -->
     <string name="sign_up_phone_title" translatable="false">¿Cuál es tu número de teléfono \ncelular?</string>
@@ -584,6 +586,7 @@
 
     <!-- Credit Monthly Income-->
     <string name="credit_monthly_income_title" translatable="false">¿Cuál es tu ingreso mensual?</string>
+    <string name="credit_monthly_income_title_sv" translatable="false">Cuéntanos sobre ti</string>
     <string name="credit_monthly_income_income_label" translatable="false">Ingreso mensual</string>
     <string name="credit_monthly_income_required_income" translatable="false">Ingresos requerido</string>
     <string name="credit_monthly_income_income_hint" translatable="false">%s 000,000</string>
@@ -592,6 +595,10 @@
     <string name="credit_monthly_income_profession_hint" translatable="false">Seleccionar</string>
     <string name="credit_monthly_income_occupation_label" translatable="false">Seleccioná tu ocupación</string>
     <string name="credit_monthly_income_occupation_hint" translatable="false">Seleccionar</string>
+    <string name="credit_monthly_income_dui_emission_date_label" translatable="false">Fecha de emisión de DUI</string>
+    <string name="credit_monthly_income_dui_expiration_date_label" translatable="false">Fecha de vencimiento de DUI</string>
+    <string name="credit_monthly_income_dui_emission_place_label" translatable="false">Lugar de emisión de DUI</string>
+    <string name="credit_monthly_income_dui_date_placeholder" translatable="false">00 | 00 | 0000</string>
 
     <!-- Credit Job-->
     <string name="credit_job_title" translatable="false">Hablemos de tu trabajo</string>
@@ -1012,8 +1019,8 @@
     <!-- Smart Payment Amount Bottom Sheet -->
     <string name="smart_payment_amount_bottom_sheet_my_smart_account" translatable="false">Mi cuenta Smart | %s</string>
     <string name="smart_payment_amount_bottom_sheet_save_title" translatable="false">Monto a ahorrar</string>
-    <string name="smart_payment_amount_bottom_sheet_from_card" translatable="false">Desde la tarjeta</string>
-    <string name="smart_payment_amount_bottom_sheet_from_card_CR" translatable="false">Desde la cuenta</string>
+    <string name="smart_payment_amount_bottom_sheet_from_account" translatable="false">Desde la cuenta</string>
+    <string name="smart_payment_amount_bottom_sheet_from" translatable="false">Desde</string>
     <string name="smart_payment_amount_bottom_sheet_to" translatable="false">Hacia</string>
     <string name="smart_payment_exchange_equivalent" translatable="false">Equivalente a %s</string>
 
@@ -1315,7 +1322,7 @@
     <string name="currency_detail_title" translatable="false">Inversión en %s</string>
     <string name="currency_detail_daily_invest" translatable="false">Hoy %1$s (%2$s)</string>
     <string name="currency_detail_my_movements" translatable="false">Mis movimientos</string>
-    <string name="currency_detail_see_all" translatable="false">Ver todas</string>
+    <string name="currency_detail_see_all" translatable="false">Ver todos</string>
 
     <!-- Smart IBAN Register -->
     <string name="smart_iban_register_title" translatable="false">Registro de cuenta</string>
@@ -1344,7 +1351,6 @@
     <string name="smart_payment_sheet_to_account" translatable="false">Hacia la cuenta</string>
     <string name="smart_payment_sheet_transfer_button" translatable="false">Realizar envío</string>
     <string name="smart_payment_sheet_equivalent" translatable="false">Equivalente a %1$s</string>
-    <string name="smart_payment_sheet_multimoney_smart" translatable="false">Multimoney Smart</string>
 
     <!-- Smart SAC Transfer -->
     <string name="smart_sac_transfer_contact_rationale_title" translatable="false">Lo sentimos</string>
@@ -1370,6 +1376,8 @@
     <string name="smart_my_contacts_transfer_accounts_add" translatable="false">Agregar cuenta</string>
     <string name="smart_mycontacts_total_transfer_title" translatable="false">%1s contactos encontrados</string>
     <string name="smart_my_concts_placeholder" translatable="false">Buscar contacto</string>
+    <string name="smart_my_contacts_invite_CR" translatable="false">Invitá a tus amigos a usar MultiMoney.\nTus contactos que la tengan\naparecerán aquí.</string>
+    <string name="smart_my_contacts_invite_SV" translatable="false">Invita a tus amigos a usar MultiMoney.\nTus contactos que la tengan\naparecerán aquí.</string>
 
     <!-- Smart SAC Transfer - Add SAC Account -->
     <string name="smart_add_sac_account_title" translatable="false">Datos de la cuenta</string>
@@ -1472,7 +1480,7 @@
 
     <!-- Product -> Visa Card Expired Dialog-->
     <string name="product_visa_card_expired_dialog_title" translatable="false">Tu tarjeta ha expirado</string>
-    <string name="product_visa_card_expired_dialog_description" translatable="false">Debes de agregar una nueva tarjeta para que puedas utilizarla en tus operaciones.</string>
+    <string name="product_visa_card_expired_dialog_description" translatable="false">Actualiza los datos de tu tarjeta para continuar con tu pago programado.</string>
     <string name="product_visa_card_expired_dialog_update_label" translatable="false">Actualizar</string>
     <string name="product_visa_card_expired_dialog_hide_label" translatable="false">Ocultar</string>
 

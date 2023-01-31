@@ -59,11 +59,16 @@ class SecurityRepositoryImpl @Inject constructor(
         )
 
     override suspend fun queryValidateUserExists(
-        email: String
+        email: String,
+        deviceId: String
     ): Flow<MultimoneyResult<UserData?>> = fetchData(
-        apolloCall = graphqlApi.queryValidateUserExists(email),
+        apolloCall = graphqlApi.queryValidateUserExists(email, deviceId),
         apolloCallMapper = { data ->
-            if (data.validateUserExists.status == null || data.validateUserExists.status == 0) {
+            if (
+                data.validateUserExists.status == null ||
+                data.validateUserExists.status == 0 ||
+                data.validateUserExists.status == ANOTHER_DEVICE_ALREADY_REGISTERED_CODE // Can continue signup but from scratch
+            ) {
                 Success(data.mapToDomainModel())
             } else {
                 Message(data.mapToDomainModel())
@@ -80,7 +85,8 @@ class SecurityRepositoryImpl @Inject constructor(
         firstName: String,
         secondName: String,
         firstSurname: String,
-        secondSurname: String
+        secondSurname: String,
+        deviceId: String
     ): Flow<MultimoneyResult<UserData?>> = fetchData(
         apolloCall = graphqlApi.mutationUserValidation(
             email,
@@ -91,10 +97,14 @@ class SecurityRepositoryImpl @Inject constructor(
             firstName,
             secondName,
             firstSurname,
-            secondSurname
+            secondSurname,
+            deviceId
         ),
         apolloCallMapper = { data ->
-            if (data.userValidation.status == null || data.userValidation.status == 0) {
+            if (data.userValidation.status == null ||
+                data.userValidation.status == 0 ||
+                data.userValidation.status == ANOTHER_DEVICE_ALREADY_REGISTERED_CODE // Can continue signup but from scratch
+            ) {
                 Success(data.mapToDomainModel())
             } else {
                 Message(data.mapToDomainModel())
@@ -423,23 +433,23 @@ class SecurityRepositoryImpl @Inject constructor(
     override suspend fun mutationRequestChangeDevice(
         email: String
     ): Flow<MultimoneyResult<RequestChangeDevice>> =
-        fetchData(apolloCall = graphqlApi.mutationResquestChangeDevice(email),
+        fetchData(
+            apolloCall = graphqlApi.mutationResquestChangeDevice(email),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
             }
         )
-
 
     override suspend fun mutationChangeDevice(
         email: String,
         otp: String
     ): Flow<MultimoneyResult<ChangeDevice>> =
-        fetchData(apolloCall = graphqlApi.mutationChangeDevice(email, otp),
+        fetchData(
+            apolloCall = graphqlApi.mutationChangeDevice(email, otp),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
             }
         )
-
 
     override suspend fun mutationChangePhone(
         identification: String,
@@ -479,4 +489,8 @@ class SecurityRepositoryImpl @Inject constructor(
                 Success(data.mapToDomainModel())
             }
         )
+
+    companion object {
+        private const val ANOTHER_DEVICE_ALREADY_REGISTERED_CODE = 3102
+    }
 }

@@ -33,7 +33,8 @@ interface SecurityRepository {
     ): Flow<MultimoneyResult<Company?>>
 
     suspend fun queryValidateUserExists(
-        email: String
+        email: String,
+        deviceId: String
     ): Flow<MultimoneyResult<UserData?>>
 
     suspend fun mutationUserValidation(
@@ -45,7 +46,8 @@ interface SecurityRepository {
         firstName: String,
         secondName: String,
         firstSurname: String,
-        secondSurname: String
+        secondSurname: String,
+        deviceId: String
     ): Flow<MultimoneyResult<UserData?>>
 
     suspend fun mutationUpdateUserRegister(

@@ -34,13 +34,13 @@ import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.Vis
 import com.multimoney.multimoney.presentation.util.catalog.PhoneCountryCode
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeType
 import com.novopayment.sdk.vts.module.payment.apdu.PaymentService
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.Locale
 import kotlin.time.Duration
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flow
 
 fun Context.openWhatsAppDeepLink(link: String, onFailure: () -> Unit = {}) {
     try {
@@ -109,7 +109,9 @@ fun Context.checkPermission(
             launcher.launch(permission)
         }
         comesFromRationale.not() && showRationale == true -> showRationaleAction(false)
-        comesFromRationale.not() && showRationale == false && isFirstRequest.not() -> showRationaleAction(true)
+        comesFromRationale.not() && showRationale == false && isFirstRequest.not() -> showRationaleAction(
+            true
+        )
         isFirstRequest && showRationale == false -> launcher.launch(permission)
         else -> launcher.launch(permission)
     }
@@ -219,9 +221,9 @@ fun String?.getCurrencySymbol(): Int {
 
 fun String.getCurrencyFromId(): CurrencyType {
     return when (this) {
-        Colon.currency -> Colon
-        Dollar.currency -> Dollar
-        Quetzal.currency -> Quetzal
+        Colon.currency, Colon.id.toString() -> Colon
+        Dollar.currency, Dollar.id.toString() -> Dollar
+        Quetzal.currency, Quetzal.id.toString() -> Quetzal
         else -> All
     }
 }
@@ -355,13 +357,12 @@ fun String.addTextStyleToTextPortion(textToStyle: String, style: TextStyle): Ann
 }
 
 fun String?.toTwoChar(): String {
-
     return when {
         isNullOrEmpty() -> {
             QUESTION_MARK
         }
         contains(WHITE_SPACE_SEPARATOR) -> {
-           trim().replace(TWO_CHARACTER_REGEX.toRegex(), "$1$2").uppercase()
+            trim().replace(TWO_CHARACTER_REGEX.toRegex(), "$1$2").uppercase()
         }
         length > 1 -> {
             substring(0, 2)
@@ -380,7 +381,7 @@ fun getCountryCodeByIdBrand(idBrand: Int): String {
     return when (idBrand) {
         Brand.ElSalvador.id -> PhoneCountryCode.EL_SALVADOR.code
         Brand.CostaRica.id -> PhoneCountryCode.COSTA_RICA.code
-        Brand.ElSalvador.id -> PhoneCountryCode.GUATEMALA.code
+        Brand.Guatemala.id -> PhoneCountryCode.GUATEMALA.code
         else -> ""
     }
 }

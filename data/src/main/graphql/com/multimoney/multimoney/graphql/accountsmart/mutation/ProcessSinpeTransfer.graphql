@@ -41,5 +41,6 @@ mutation ProcessSinpeTransfer(
         }
         status
         message
+        detail
     }
 }

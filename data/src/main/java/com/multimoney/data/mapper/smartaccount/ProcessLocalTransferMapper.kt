@@ -4,14 +4,6 @@ import com.multimoney.data.networking.graphql.apollomodel.ProcessLocalTransferMu
 import com.multimoney.domain.model.accountsmart.LocalTransferResult
 import com.multimoney.domain.model.util.error.MessageError
 
-//private fun ProcessLocalTransferMutation.Result.mapToDomainModel() =
-//    LocalTransferResult(
-//        authorization = authorization ?: "",
-//        currentBalance = currentBalance.toString().toDoubleOrNull() ?: 0.0,
-//        destinationTitularName = destinationTitularName ?: "",
-//        originAccountNumber = originAccountNumber ?: ""
-//    )
-
 private fun ProcessLocalTransferMutation.ProcessLocalTransfer.mapToDomainModel(): LocalTransferResult {
     return LocalTransferResult(
         authorization = result?.authorization ?: "",
@@ -21,7 +13,7 @@ private fun ProcessLocalTransferMutation.ProcessLocalTransfer.mapToDomainModel()
         messageError = MessageError(
             status = status,
             message = message,
-            detail = "placeholder"
+            detail = detail
         )
     )
 }

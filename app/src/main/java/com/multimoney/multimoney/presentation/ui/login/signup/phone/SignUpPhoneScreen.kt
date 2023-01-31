@@ -72,7 +72,10 @@ fun SignUpPhoneScreen(
                         )
                         viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SignUpThree)
                     },
-                    nextStep = SignUpStep.Six.id,
+                    nextStep = viewModel.getNextStep(
+                        sharedViewModel.isPhoneVerified,
+                        isOnFidoVerified
+                    ).id,
                     previousStep = SignUpStep.Two.id
                 )
             )

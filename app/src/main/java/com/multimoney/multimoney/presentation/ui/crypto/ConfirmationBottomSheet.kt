@@ -1,5 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.crypto
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
@@ -8,4 +10,7 @@ fun PurchaseConfirmationBottomSheet(
     modifier: Modifier = Modifier
 ) {
 
+    Column {
+        Text(text = "klk")
+    }
 }

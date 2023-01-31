@@ -53,12 +53,15 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     //bundle parameters
     var idBrand = DEFAULT_ID_BRAND_ERROR
     var pkUser = ""
+    var user = ""
     var identification = ""
     var email = ""
     var abvCurrency: String = ""
     var asset: String? = savedStateHandle[CRYPTO_ASSET]
     var assetDescription: String? = savedStateHandle[DESCRIPTION_CURRENCY] ?: ""
-    val market = asset.plus(CurrencyType.Dollar.disbursementValue)
+    var market = asset?.plus(CurrencyType.Dollar.disbursementValue)
+    var cryptoNetWork = ""
+    var assetImageBaseUrl = ""
     val side = CryptoOperationSide.BUY.value
     var accountToken: String = ""
     val comingFromDetails: Boolean = asset != null
@@ -67,15 +70,13 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         viewModelScope.launch {
             idBrand = dataStorePreferences.getIdBrand().first().toInt()
             pkUser = dataStorePreferences.getPkUser().first()
+            user = dataStorePreferences.getUserName().first()
             identification = dataStorePreferences.getIdentification().first()
             email = dataStorePreferences.getUserEmail().first()
             abvCurrency = if (idBrand == Brand.CostaRica.id) {
                 CurrencyType.Colon.disbursementValue
             } else {
                 CurrencyType.Dollar.disbursementValue
-            }
-            if (comingFromDetails){
-                uiState = uiState.copy(asset = asset ?: "", assetDescription = assetDescription ?: "")
             }
         }
     }
@@ -204,19 +205,8 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         val openDialog: DialogParameters = DialogParameters(),
         var bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
         var bottomSheet: (@Composable () -> Unit) = {},
-        var asset: String = "",
-        var assetDescription: String = "",
-        var cryptoNetwork: String = "",
         val smartAccountAvailableBalance: Double = 0.0,
     )
-
-    private fun onCryptoSelected(selectedCrypto: MarketCryptoCoin) {
-        uiState = uiState.copy(
-            asset = selectedCrypto.baseAsset,
-            assetDescription = selectedCrypto.description,
-            cryptoNetwork = selectedCrypto.cryptoNetwork
-        )
-    }
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
@@ -234,7 +224,13 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
             is UIEvent.OnGetUserInfo -> setUserData()
             is UIEvent.OnQueryAccounts -> querySmartAccounts()
             is UIEvent.OnSetAccountToken -> accountToken = event.accountToken
-            is UIEvent.OnCryptoSelected -> onCryptoSelected(event.selectedCrypto)
+            is UIEvent.OnCryptoSelected -> {
+                asset = if (asset.isNullOrEmpty()) event.selectedCrypto.baseAsset else asset
+                assetDescription = if (assetDescription.isNullOrEmpty()) event.selectedCrypto.description else assetDescription
+                cryptoNetWork = event.selectedCrypto.cryptoNetwork
+                assetImageBaseUrl = event.selectedCrypto.url_image
+                market = asset.plus(CurrencyType.Dollar.disbursementValue)
+            }
             is UIEvent.OnSetSelectedAccount -> {
                 accountToken = event.accountToken
                 uiState = uiState.copy(

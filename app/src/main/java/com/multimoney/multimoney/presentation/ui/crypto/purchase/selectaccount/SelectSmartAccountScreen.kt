@@ -42,8 +42,8 @@ fun SelectSmartAccountScreen(
         viewModel.onUIEvent(
             SelectSmartAccountViewModel.UIEvent.OnSetAccounts(
                 sharedViewModel.uiState.accounts,
-                sharedViewModel.uiState.asset,
-                sharedViewModel.uiState.assetDescription
+                sharedViewModel.asset,
+                sharedViewModel.assetDescription
             )
         )
         if (sharedViewModel.comingFromDetails) {
@@ -53,7 +53,7 @@ fun SelectSmartAccountScreen(
     sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnSetNavigation(
         nextAction = {},
         nextStep = PurchaseCryptoSteps.Three.id,
-        previousStep = PurchaseCryptoSteps.Two.id,
+        previousStep = PurchaseCryptoSteps.One.id,
         overridePreviousAction = { sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep) }
     ))
 

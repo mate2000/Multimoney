@@ -1152,6 +1152,13 @@
     <string name="market_details_button_show_less" translatable="false">Ver Menos</string>
     <string name="market_details_button_read_more" translatable="false">Leer más</string>
 
+    <!--Crypto Purchase Flow-->
+    <string name="crypto_purchase_flow_title" translatable="false">¿Cúanto querés comprar?</string>
+    <string name="crypto_purchase_flow_exchange_reference" translatable="false">%1s %2 = $%3s</string>
+    <string name="crypto_purchase_flow_exchange_reference_edittext" translatable="false">≈ %1s %2s</string>
+    <string name="crypto_purchase_flow_available_smart_amount" translatable="false">Disponible para compra</string>
+    <string name="crypto_purchase_flow_price_expires_in" translatable="false">Precio de compra expira en</string>
+
     <!-- Evicertia screen -->
     <string name="smart_evicertia_missing_signature_title_card" translatable="false">¡Solo falta tu firma!</string>
     <string name="smart_evicertia_missing_signature_subtitle_card" translatable="false">Firmá el contrato para que podás empezar a invertir de forma Smart</string>

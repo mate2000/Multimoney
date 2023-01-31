@@ -27,7 +27,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.PurchaseCryptoSteps
 import com.multimoney.domain.model.crypto.MarketCryptoCoin
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.LocalMultimoneyColors
@@ -40,7 +39,6 @@ import com.multimoney.multimoney.presentation.ui.crypto.market.MarketFilter
 import com.multimoney.multimoney.presentation.ui.crypto.market.MarketSkeleton
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import kotlinx.coroutines.launch
 
@@ -61,21 +59,12 @@ fun ListCryptoCurrenciesScreen(
         viewModel.onUIEvent(ListCryptoPurchaseViewModel.UIEvent.OnGetAvailableListOfCryptoCoins)
     }
 
-    LaunchedEffect(key1 = true) {
-        sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnSetNavigation(
-            nextAction = {},
-            nextStep = PurchaseCryptoSteps.Two.id,
-            previousStep = PurchaseCryptoSteps.One.id,
-        ))
-    }
-
     ListCryptoContent(
         viewModel.uiState,
         itemClick = {
             sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnCryptoSelected(it))
             sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNextStep)
-        },
-        onBackPressed = { sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep) },
+        }
     )
 
     BackHandler {
@@ -87,8 +76,7 @@ fun ListCryptoCurrenciesScreen(
 @Composable
 fun ListCryptoContent(
     uiState: ListCryptoPurchaseViewModel.UiState,
-    itemClick: (MarketCryptoCoin) -> Unit,
-    onBackPressed: () -> Unit = {},
+    itemClick: (MarketCryptoCoin) -> Unit
 ) {
     val searchQuery = remember { mutableStateOf("") }
     val selectedFilter = remember { mutableStateOf(MarketFilter.Price.value) }

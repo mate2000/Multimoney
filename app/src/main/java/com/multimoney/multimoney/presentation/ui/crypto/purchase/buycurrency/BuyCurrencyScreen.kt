@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
@@ -21,7 +21,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -29,10 +28,9 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
-import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.PurchaseCryptoSteps
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -49,23 +47,6 @@ fun BuyCurrencyScreen(
 ) {
 
     LaunchedEffect(key1 = true) {
-        sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnSetNavigation(
-            nextAction = {},
-            nextStep = when {
-                sharedViewModel.idBrand == Brand.ElSalvador.id -> PurchaseCryptoSteps.Three.id
-                sharedViewModel.idBrand == Brand.ElSalvador.id
-                        && sharedViewModel.comingFromDetails -> PurchaseCryptoSteps.Two.id
-                sharedViewModel.idBrand == Brand.CostaRica.id
-                        && sharedViewModel.comingFromDetails -> PurchaseCryptoSteps.Three.id
-                else -> PurchaseCryptoSteps.Four.id
-            },
-            previousStep = when {
-                sharedViewModel.idBrand == Brand.CostaRica.id
-                        && sharedViewModel.comingFromDetails.not() -> PurchaseCryptoSteps.Two.id
-                else -> PurchaseCryptoSteps.One.id
-            },
-            overridePreviousAction = { sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep) }
-        ))
         viewModel.onUIEvent(
             BuyCurrencyScreenViewModel.UIEvent.OnSetUserData(
                 asset = sharedViewModel.asset ?: "",
@@ -87,6 +68,9 @@ fun BuyCurrencyScreen(
     }
 
     BuyCurrencyScreenContent(viewModel)
+    BackHandler {
+        sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep)
+    }
 }
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
@@ -99,7 +83,7 @@ fun BuyCurrencyScreenContent(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = true
     )
-    val focusManager = LocalFocusManager.current
+    //val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
     keyboardController?.show()
 
@@ -114,66 +98,69 @@ fun BuyCurrencyScreenContent(
                 .fillMaxSize()
                 .background(MultimoneyTheme.colors.background)
         ) {
-            Column(
+            ConstraintLayout(
                 modifier = Modifier.fillMaxSize()
             ) {
-                //val (title, conversionCurrencyToDollars, amountInput, availableBalance, counter, button) = createRefs()
+                val (title, conversionCurrencyToDollars, amountInput, counter, button) = createRefs()
                 TitleSection(
-                    /*modifier = Modifier.constrainAs(title) {
+                    modifier = Modifier.constrainAs(title) {
                         top.linkTo(parent.top)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                         bottom.linkTo(conversionCurrencyToDollars.top)
-                    }*/
+                    },
+                    imageUrl = viewModel.assetImageUrl,
+                    currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price ?: 0.0,
+                    asset = viewModel.asset
                 )
-                ConversionCurrencySection(
-                    /*modifier = Modifier.constrainAs(
+                /*ConversionCurrencySection(
+                    modifier = Modifier.constrainAs(
                         conversionCurrencyToDollars
                     ) {
                         top.linkTo(title.bottom)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                         bottom.linkTo(amountInput.top)
-                    },*/
+                    },
                     imageUrl = viewModel.assetImageUrl,
-                    currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price?: 0.0,
+                    currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price ?: 0.0,
                     asset = viewModel.asset
-                )
+                )*/
                 AmountInputSection(
-                    /*modifier = Modifier.constrainAs(amountInput) {
-                        top.linkTo(conversionCurrencyToDollars.bottom)
+                    modifier = Modifier.constrainAs(amountInput) {
+                        top.linkTo(title.bottom)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
-                    },*/
+                    },
                     asset = viewModel.asset,
                     exchangeRate = viewModel.uiState.pricesQuoteAndCommissions?.base_amount ?: 0.0,
                 )
-                AvailableBalanceSection(
-                    /*modifier = Modifier.constrainAs(availableBalance) {
+                /*AvailableBalanceSection(
+                    modifier = Modifier.constrainAs(availableBalance) {
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                         bottom.linkTo(counter.top)
-                    },*/
+                    },
                     smartAccountAvailableBalance = viewModel.smartAccountAvailableBalance
-                )
+                )*/
                 CounterSection(
-                    /*modifier = Modifier.constrainAs(counter) {
-                        top.linkTo(availableBalance.bottom)
+                    modifier = Modifier.constrainAs(counter) {
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                         bottom.linkTo(button.top)
-                    },*/
+                    },
+                    smartAccountAvailableBalance = viewModel.smartAccountAvailableBalance,
                     downCounter = viewModel.timerCount
                 )
                 CustomButton(
                     modifier = Modifier
+                        .constrainAs(button) {
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            bottom.linkTo(parent.bottom)
+                        }
                         .fillMaxWidth()
-                    /*.constrainAs(button) {
-                        top.linkTo(availableBalance.bottom)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        bottom.linkTo(parent.bottom)
-                    }*/
+                        .padding(horizontal = 16.dp)
                 )
             }
         }
@@ -183,66 +170,67 @@ fun BuyCurrencyScreenContent(
 @Composable
 fun CounterSection(
     modifier: Modifier = Modifier,
-    downCounter: Int
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Start
-    ) {
-        Text(
-            text = buildAnnotatedString {
-                withStyle(
-                    style = SpanStyle(
-                        color = MultimoneyTheme.colors.bodyTextColor,
-                    )
-                ) {
-                    append(stringResource(id = R.string.crypto_purchase_flow_price_expires_in))
-                }
-                append(" ")
-                withStyle(
-                    style = SpanStyle(
-                        color = MultimoneyTheme.colors.bodyTextColor,
-                        fontWeight = FontWeight.Bold
-                    )
-                ) {
-                    append(downCounter.toString())
-                    append(" seg")
-                }
-            }
-        )
-    }
-}
-
-@Composable
-fun AvailableBalanceSection(
-    modifier: Modifier = Modifier,
+    downCounter: Int,
     smartAccountAvailableBalance: Double
 ) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Start
-    ) {
-        Text(
-            text = buildAnnotatedString {
-                withStyle(
-                    style = SpanStyle(
-                        color = MultimoneyTheme.colors.bodyTextColor,
-                    )
-                ) {
-                    append(stringResource(id = R.string.crypto_purchase_flow_available_smart_amount))
+    Column(modifier = modifier) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(
+                        style = SpanStyle(
+                            color = MultimoneyTheme.colors.bodyTextColor,
+                        )
+                    ) {
+                        append(stringResource(id = R.string.crypto_purchase_flow_available_smart_amount))
+                    }
+                    append(" ")
+                    withStyle(
+                        style = SpanStyle(
+                            color = MultimoneyTheme.colors.bodyTextColor,
+                            fontWeight = FontWeight.Bold
+                        )
+                    ) {
+                        append(smartAccountAvailableBalance.toCurrencyFormat())
+                    }
                 }
-                append(" ")
-                withStyle(
-                    style = SpanStyle(
-                        color = MultimoneyTheme.colors.bodyTextColor,
-                        fontWeight = FontWeight.Bold
-                    )
-                ) {
-                    append(smartAccountAvailableBalance.toCurrencyFormat())
+            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(
+                        style = SpanStyle(
+                            color = MultimoneyTheme.colors.bodyTextColor,
+                        )
+                    ) {
+                        append(stringResource(id = R.string.crypto_purchase_flow_price_expires_in))
+                    }
+                    append(" ")
+                    withStyle(
+                        style = SpanStyle(
+                            color = MultimoneyTheme.colors.bodyTextColor,
+                            fontWeight = FontWeight.Bold
+                        )
+                    ) {
+                        append(downCounter.toString())
+                        append(" seg")
+                    }
                 }
-            }
-        )
+            )
+        }
     }
+
 }
 
 @Composable
@@ -253,8 +241,7 @@ fun AmountInputSection(
 ) {
 
     Column(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         //custom edittext
@@ -276,54 +263,50 @@ fun AmountInputSection(
 }
 
 @Composable
-fun ConversionCurrencySection(
+fun TitleSection(
     modifier: Modifier = Modifier,
     imageUrl: String,
     asset: String,
     currencyPrice: Double
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.Start,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            modifier = Modifier.size(24.dp),
-            painter = rememberAsyncImagePainter(model = imageUrl),
-            contentDescription = null
-        )
-        Text(
-            text = buildAnnotatedString {
-                append("1 ")
-                append(asset)
-                append(" = ")
-                append(currencyPrice.toCurrencyFormat())
-            },
-            style = Typography.subtitle1.copy(
-                color = MultimoneyTheme.colors.text
+    Column(modifier = modifier) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Text(
+                text = stringResource(id = R.string.crypto_purchase_flow_title),
+                style = Typography.h6.copy(
+                    color = MultimoneyTheme.colors.text,
+                    fontWeight = FontWeight.Bold
+                )
             )
-        )
-    }
-}
-
-@Composable
-fun TitleSection(
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.Start
-    ) {
-        Text(
-            text = stringResource(id = R.string.crypto_purchase_flow_title),
-            style = Typography.h6.copy(
-                color = MultimoneyTheme.colors.text,
-                fontWeight = FontWeight.Bold
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                modifier = Modifier.size(24.dp),
+                painter = rememberAsyncImagePainter(model = imageUrl),
+                contentDescription = null
             )
-        )
+            Text(
+                text = buildAnnotatedString {
+                    append("1 ")
+                    append(asset)
+                    append(" = ")
+                    append(currencyPrice.toCurrencyFormat())
+                },
+                style = Typography.subtitle1.copy(
+                    color = MultimoneyTheme.colors.text
+                )
+            )
+        }
     }
 }

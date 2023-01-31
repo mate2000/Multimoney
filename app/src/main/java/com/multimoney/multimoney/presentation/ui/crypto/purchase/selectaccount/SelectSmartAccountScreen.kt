@@ -50,12 +50,6 @@ fun SelectSmartAccountScreen(
             sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnQueryAccounts)
         }
     }
-    sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnSetNavigation(
-        nextAction = {},
-        nextStep = PurchaseCryptoSteps.Three.id,
-        previousStep = PurchaseCryptoSteps.One.id,
-        overridePreviousAction = { sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep) }
-    ))
 
     BackHandler { sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep) }
     SelectSmartAccountContent(viewModel) { accountToken, totalBalance ->
@@ -80,8 +74,6 @@ fun SelectSmartAccountContent(
             .padding(horizontal = 16.dp)
             .fillMaxSize()
     ) {
-
-        //ToDo replace with incoming currency
         Text(
             modifier = Modifier.padding(top = 8.dp, bottom = 24.dp),
             text = stringResource(
@@ -94,7 +86,6 @@ fun SelectSmartAccountContent(
         )
         LazyColumn() {
             items(viewModel.uiState.accounts) { account ->
-                //TODO replace with real info from accounts
                 CustomInfoButton(
                     modifier = Modifier.fillMaxWidth(),
                     startIcon = R.drawable.ic_multimoney_green_logo,

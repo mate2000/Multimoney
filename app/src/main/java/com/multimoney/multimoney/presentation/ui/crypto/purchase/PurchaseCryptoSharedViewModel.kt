@@ -45,10 +45,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         private set
 
     //stateless
-    private var overridePreviousAction: (() -> Unit)? = null
-    private var nextStep: Int = PurchaseCryptoSteps.One.id
-    private var previousStep: Int = PurchaseCryptoSteps.One.id
-    var nextAction: () -> Unit = {}
+    private var currentFlowStep: Int = PurchaseCryptoSteps.One.id
 
     //bundle parameters
     var idBrand = DEFAULT_ID_BRAND_ERROR
@@ -105,7 +102,6 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         }
     }
 
-
     private fun onFailure(error: HttpError) {
         uiState = uiState.copy(
             isLoading = false,
@@ -117,42 +113,21 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     }
 
     private fun previousStep() {
-        if (overridePreviousAction != null) {
-            overridePreviousAction?.invoke()
+        if (currentFlowStep == PurchaseCryptoSteps.One.id) {
+            navigateBackToHome()
         } else {
-            if (previousStep > PurchaseCryptoSteps.One.id || uiState.currentStep == PurchaseCryptoSteps.Two.id) {
-                uiState = uiState.copy(
-                    currentStep = previousStep
-                )
-            } else {
-                navigateBackToHome()
-            }
+            currentFlowStep--
+            uiState = uiState.copy(
+                currentStep = currentFlowStep
+            )
         }
-    }
-
-    private fun getTotalSteps(): Int {
-        val counter = if (idBrand == Brand.CostaRica.id) {
-            PURCHASE_CRYPTO_TOTAL_STEPS_CR
-        } else if (idBrand == Brand.ElSalvador.id) {
-            PURCHASE_CRYPTO_TOTAL_STEPS_SV
-        } else if (idBrand == Brand.CostaRica.id && comingFromDetails) {
-            PURCHASE_CRYPTO_TOTAL_STEPS_CR_DETAILS
-        } else {
-            PURCHASE_CRYPTO_TOTAL_STEPS_SV_DETAILS
-        }
-        return counter
-    }
-
-    private fun overridePreviousAction(overridePreviousAction: (() -> Unit)?) {
-        this.overridePreviousAction = overridePreviousAction
     }
 
     private fun nextStep() {
-        if (nextStep <= getTotalSteps()) {
-            uiState = uiState.copy(
-                currentStep = nextStep
-            )
-        }
+        currentFlowStep++
+        uiState = uiState.copy(
+            currentStep = currentFlowStep
+        )
     }
 
     private fun navigateBackToHome() =
@@ -161,18 +136,6 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
             isRestart = true,
             homeState = HomeState.UNEXPANDED
         )
-
-    private fun onSetNavigation(
-        nextAction: () -> Unit,
-        overridePreviousAction: (() -> Unit)?,
-        nextStep: Int,
-        previousStep: Int
-    ) {
-        this.nextAction = nextAction
-        this.overridePreviousAction = overridePreviousAction
-        this.nextStep = nextStep
-        this.previousStep = previousStep
-    }
 
     private fun onShowBottomSheet() {
         uiState = if (uiState.bottomSheetState.isVisible) {
@@ -199,7 +162,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     }
 
     data class UIState(
-        val currentStep: Int = 1,
+        val currentStep: Int = PurchaseCryptoSteps.One.id,
         val isLoading: Boolean = false,
         val accounts: List<AccountSmartForBuyCrypto> = listOf(),
         val openDialog: DialogParameters = DialogParameters(),
@@ -210,16 +173,9 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is UIEvent.OnSetNavigation -> onSetNavigation(
-                nextAction = event.nextAction,
-                overridePreviousAction = event.overridePreviousAction,
-                nextStep = event.nextStep,
-                previousStep = event.previousStep
-            )
             is UIEvent.OnNextStep -> nextStep()
             is UIEvent.OnPreviousStep -> previousStep()
             is UIEvent.OnClickBottomSheet -> onShowBottomSheet()
-            is UIEvent.OverridePreviousAction -> overridePreviousAction(event.action)
             is UIEvent.OnCloseClick -> onCloseClick()
             is UIEvent.OnGetUserInfo -> setUserData()
             is UIEvent.OnQueryAccounts -> querySmartAccounts()
@@ -242,37 +198,23 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
 
     sealed class UIEvent {
         object OnCloseClick : UIEvent()
-        data class OnSetNavigation(
-            val nextAction: () -> Unit = {},
-            val overridePreviousAction: (() -> Unit)? = null,
-            val nextStep: Int,
-            val previousStep: Int
-        ) : UIEvent()
-
         object OnNextStep : UIEvent()
         object OnQueryAccounts : UIEvent()
         data class OnSetAccountToken(val accountToken: String) : UIEvent()
         object OnPreviousStep : UIEvent()
         object OnClickBottomSheet : UIEvent()
-        data class OverridePreviousAction(val action: (() -> Unit)?) : UIEvent()
         data class OnCryptoSelected(
             val selectedCrypto: MarketCryptoCoin
         ) : UIEvent()
-
         data class OnSetSelectedAccount(
             val accountToken: String,
             val totalBalance: Double
         ) : UIEvent()
-
         object OnGetUserInfo : UIEvent()
     }
 
     companion object {
         const val ACTIVE_ACCOUNT = 1
         const val DEFAULT_ID_BRAND_ERROR = -1
-        const val PURCHASE_CRYPTO_TOTAL_STEPS_CR = 4
-        const val PURCHASE_CRYPTO_TOTAL_STEPS_SV = 3
-        const val PURCHASE_CRYPTO_TOTAL_STEPS_CR_DETAILS = 3
-        const val PURCHASE_CRYPTO_TOTAL_STEPS_SV_DETAILS = 2
     }
 }

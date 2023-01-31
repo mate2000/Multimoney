@@ -39,28 +39,41 @@ fun SelectSmartAccountScreen(
             onNavigate = onNavigate,
             onPopAndNavigate = onPopAndNavigate
         )
+        if (sharedViewModel.comingFromDetails) {
+            sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnQueryAccounts)
+        }
         viewModel.onUIEvent(
             SelectSmartAccountViewModel.UIEvent.OnSetAccounts(
                 sharedViewModel.uiState.accounts,
-                sharedViewModel.uiState.asset,
-                sharedViewModel.uiState.assetDescription
+                sharedViewModel.asset,
+                sharedViewModel.assetDescription
             )
         )
     }
-    BackHandler { viewModel.onUIEvent(SelectSmartAccountViewModel.UIEvent.OnNavigateBack) }
-    SelectSmartAccountContent(viewModel)
+
+    BackHandler { sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep) }
+    SelectSmartAccountContent(viewModel) { accountToken, totalBalance ->
+        sharedViewModel.onUIEvent(
+            PurchaseCryptoSharedViewModel.UIEvent.OnSetSelectedAccount(
+                accountToken,
+                totalBalance
+            )
+        )
+        sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNextStep)
+    }
 }
 
 @Composable
-fun SelectSmartAccountContent(viewModel: SelectSmartAccountViewModel) {
+fun SelectSmartAccountContent(
+    viewModel: SelectSmartAccountViewModel,
+    onNextStep: (String, Double) -> Unit = { _, _ -> }
+) {
     Column(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)
             .padding(horizontal = 16.dp)
             .fillMaxSize()
     ) {
-
-        //ToDo replace with incoming currency
         Text(
             modifier = Modifier.padding(top = 8.dp, bottom = 24.dp),
             text = stringResource(
@@ -82,6 +95,12 @@ fun SelectSmartAccountContent(viewModel: SelectSmartAccountViewModel) {
                         id = R.string.buy_crypto_multimoney_smart_account_template,
                         account.currencyCode ?: ""
                     ),
+                    onClick = {
+                        onNextStep(
+                            account.accountToken,
+                            account.totalBalance ?: 0.0
+                        )
+                    }
                 )
             }
         }

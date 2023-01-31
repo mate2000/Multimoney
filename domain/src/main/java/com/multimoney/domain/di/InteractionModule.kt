@@ -132,6 +132,8 @@ import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCas
 import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryEmploymentSituationUseCase
 import com.multimoney.domain.interaction.credit.QueryEmploymentSituationUseCaseImpl
+import com.multimoney.domain.interaction.crypto.BuyCryptoCurrencyUseCase
+import com.multimoney.domain.interaction.crypto.BuyCryptoCurrencyUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUseCase
 import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetCurrencyHistoricalPricesUseCase
@@ -140,6 +142,8 @@ import com.multimoney.domain.interaction.crypto.GetCurrencyNewsUseCase
 import com.multimoney.domain.interaction.crypto.GetCurrencyNewsUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCase
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCaseImpl
+import com.multimoney.domain.interaction.crypto.GetPriceQuoteAndCommissionUseCaseImpl
+import com.multimoney.domain.interaction.crypto.GetPriceQuoteAndCommissionsUseCase
 import com.multimoney.domain.interaction.mmvisa.MutationDeleteTokenDeviceNVUseCase
 import com.multimoney.domain.interaction.mmvisa.MutationDeleteTokenDeviceNVUseCaseImpl
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
@@ -680,6 +684,16 @@ class InteractionModule {
     @Provides
     fun provideQueryGetCurrencyHistoricalPrices(cryptoRepository: CryptoRepository): GetCurrencyHistoricalPricesUseCase =
         GetCurrencyHistoricalPricesUseCaseImpl(cryptoRepository)
+
+    @Singleton
+    @Provides
+    fun provideQueryGetPriceQuoteAndCommissions(cryptoRepository: CryptoRepository): GetPriceQuoteAndCommissionsUseCase =
+        GetPriceQuoteAndCommissionUseCaseImpl(cryptoRepository)
+
+    @Singleton
+    @Provides
+    fun provideQueryBuyCryptoCurrency(cryptoRepository: CryptoRepository): BuyCryptoCurrencyUseCase =
+        BuyCryptoCurrencyUseCaseImpl(cryptoRepository)
 
     // Virtual Card
 

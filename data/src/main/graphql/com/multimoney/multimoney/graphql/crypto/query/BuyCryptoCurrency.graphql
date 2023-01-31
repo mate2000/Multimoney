@@ -1,0 +1,50 @@
+mutation BuyCryptoCurrencyHQR(
+    $pkUser: Int!
+    $identification: String!
+    $market: String!
+    $commissionAmount: Decimal!
+    $taxAmount: Decimal!,
+    $accountToken: Long!
+    $exchangeRate: Decimal!
+    $idBrand: Int!
+    $user: String!
+    $quoteId: String!
+    $quoteAmount: Decimal!
+    $fee: Decimal!
+    $internalFee: Decimal!
+    $totalFee: Decimal!
+) {
+    buyHQR(
+        buyHQRInput: {
+            pkUser: $pkUser
+            identification: $identification
+            market: $market
+            commissionAmount: $commissionAmount
+            taxAmount: $taxAmount,
+            accountToken: $accountToken
+            exchangeRate: $exchangeRate
+            idBrand: $idBrand
+            user: $user
+            quoteId: $quoteId
+            quoteAmount: $quoteAmount
+            fee: $fee
+            internalFee: $internalFee
+            totalFee: $totalFee
+        }
+    ) {
+        status
+        message
+        result {
+            sysdeTransactionNumber
+            paxosSendTransferId
+            paxosReceivedTransferId
+            paxosIdOrder
+            orderComplete
+            filledAmount
+            averagePrice
+            status
+            taxAmount
+            commissionAmount
+        }
+    }
+}

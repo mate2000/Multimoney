@@ -13,6 +13,7 @@ query GetAvailableListOfCryptoCoins(
         priority,
         currentPrice,
         url_image,
-        historico
+        historico,
+        crypto_network
     }
 }

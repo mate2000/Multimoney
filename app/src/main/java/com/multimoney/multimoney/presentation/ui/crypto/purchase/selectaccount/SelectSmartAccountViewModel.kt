@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SelectSmartAccountViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
 ) : BaseViewModel(true) {
     var uiState by mutableStateOf(UIState())
         private set
@@ -23,14 +23,6 @@ class SelectSmartAccountViewModel @Inject constructor(
             accounts = savedStateHandle[SMART_ACCOUNTS_FOR_BUY_CRYPTO] ?: listOf(),
             currency = savedStateHandle[CURRENCY_NAME] ?: ""
         )
-    }
-
-    private fun onNavigateBack() {
-        //TODO navigate to home
-    }
-
-    private fun onContinueClick() {
-        //TODO navigate to next screen
     }
 
     private fun setAccounts(
@@ -54,8 +46,6 @@ class SelectSmartAccountViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is UIEvent.OnNavigateBack -> onNavigateBack()
-            is UIEvent.OnContinueButtonClick -> onContinueClick()
             is UIEvent.OnSetAccounts -> setAccounts(
                 event.list,
                 event.currency,
@@ -65,13 +55,10 @@ class SelectSmartAccountViewModel @Inject constructor(
     }
 
     sealed class UIEvent {
-        object OnNavigateBack : UIEvent()
         data class OnSetAccounts(
             val list: List<AccountSmartForBuyCrypto>,
             val currency: String?,
             val currencyDescription: String?
         ) : UIEvent()
-
-        object OnContinueButtonClick : UIEvent()
     }
 }

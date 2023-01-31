@@ -6708,6 +6708,8 @@ type CreditPreApproveInfo {
   statusFirm: String
 
   currentStep: String
+
+  crosseling: Boolean
 }
 
 type RequestInfo {
@@ -6718,6 +6720,8 @@ type RequestInfo {
   currentStep: String
 
   statusRequest: String
+
+  crosseling: Boolean
 }
 
 type Wording {

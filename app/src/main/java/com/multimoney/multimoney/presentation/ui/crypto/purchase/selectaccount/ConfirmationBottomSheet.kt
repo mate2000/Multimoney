@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.crypto.buycrypto
+package com.multimoney.multimoney.presentation.ui.crypto.purchase.selectaccount
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth

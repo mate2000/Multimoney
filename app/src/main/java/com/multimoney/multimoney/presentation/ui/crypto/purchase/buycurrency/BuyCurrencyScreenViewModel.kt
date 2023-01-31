@@ -3,8 +3,6 @@ package com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.multimoney.domain.interaction.accountsmart.QuerySmartExchangeRateUseCase
 import com.multimoney.domain.interaction.crypto.BuyCryptoCurrencyUseCase
@@ -33,8 +31,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
     var timerCount by mutableStateOf(15)
         private set
 
-    var isTimerRunning by mutableStateOf(true)
-        private set
+    var isTimerRunning by mutableStateOf(false)
 
     //data from sharedViewModel
     var asset = ""
@@ -73,6 +70,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         assetImageUrl: String,
         smartAccountAvailableBalance: Double
     ) {
+        this.isTimerRunning = true
         this.asset = asset
         this.cryptoNetWork = cryptoNetwork
         this.idBrand = idBrand
@@ -83,7 +81,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         this.side = side
         this.assetImageUrl = assetImageUrl
         this.smartAccountAvailableBalance = smartAccountAvailableBalance
-        timer()
+        timer() // to run timer at the beginning of the screen
     }
 
     private fun updateDataWithNewExchangeRate() = executeUseCase {

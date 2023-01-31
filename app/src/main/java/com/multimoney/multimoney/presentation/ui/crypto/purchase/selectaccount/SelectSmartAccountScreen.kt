@@ -17,7 +17,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.PurchaseCryptoSteps
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -40,6 +39,9 @@ fun SelectSmartAccountScreen(
             onNavigate = onNavigate,
             onPopAndNavigate = onPopAndNavigate
         )
+        if (sharedViewModel.comingFromDetails) {
+            sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnQueryAccounts)
+        }
         viewModel.onUIEvent(
             SelectSmartAccountViewModel.UIEvent.OnSetAccounts(
                 sharedViewModel.uiState.accounts,
@@ -47,9 +49,6 @@ fun SelectSmartAccountScreen(
                 sharedViewModel.assetDescription
             )
         )
-        if (sharedViewModel.comingFromDetails) {
-            sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnQueryAccounts)
-        }
     }
 
     BackHandler { sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep) }

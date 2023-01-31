@@ -69,6 +69,7 @@ fun BuyCurrencyScreen(
 
     BuyCurrencyScreenContent(viewModel)
     BackHandler {
+        viewModel.isTimerRunning = false
         sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep)
     }
 }

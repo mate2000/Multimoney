@@ -741,9 +741,10 @@ class GraphqlApi @Inject constructor(
 
     // Security
     fun queryValidateUserExists(
-        email: String
+        email: String,
+        deviceId: String
     ): ApolloCall<ValidateUserExistsQuery.Data> =
-        apolloAuthorizedClient.query(ValidateUserExistsQuery(email)).fetchPolicy(
+        apolloAuthorizedClient.query(ValidateUserExistsQuery(email, deviceId)).fetchPolicy(
             FetchPolicy.NetworkOnly
         )
 
@@ -756,7 +757,8 @@ class GraphqlApi @Inject constructor(
         firstName: String,
         secondName: String,
         firstSurname: String,
-        secondSurname: String
+        secondSurname: String,
+        deviceId: String
     ): ApolloCall<UserValidationMutation.Data> = apolloAuthorizedClient.mutation(
         UserValidationMutation(
             email,
@@ -767,7 +769,8 @@ class GraphqlApi @Inject constructor(
             firstName,
             Optional.Present(secondName),
             firstSurname,
-            Optional.Present(secondSurname)
+            Optional.Present(secondSurname),
+            deviceId
         )
     ).fetchPolicy(
         FetchPolicy.NetworkOnly
@@ -1282,7 +1285,7 @@ class GraphqlApi @Inject constructor(
         pkUser: String,
         idBrand: Int
     ): ApolloCall<ChangePhoneMutation.Data> =
-        apolloAuthorizedClient.mutation(ChangePhoneMutation(identification, phone, pkUser, idBrand))
+        apolloAuthorizedClient.mutation(ChangePhoneMutation(identification, phone, pkUser.toLong(), idBrand))
             .fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationChangeEmail(
@@ -1593,7 +1596,7 @@ class GraphqlApi @Inject constructor(
         identification: String,
         user: String,
         idBrand: Int,
-        idCard: Long,
+        idCard: Long
     ): ApolloCall<DeleteCardVDMutation.Data> = apolloAuthorizedClient.mutation(
         DeleteCardVDMutation(
             identification = identification,
@@ -1808,15 +1811,15 @@ class GraphqlApi @Inject constructor(
     fun queryRelatedContactsByPhone(
         user: String,
         idBrand: Int,
-        contacts: List<RelatedContact>,
+        contacts: List<RelatedContact>
     ): ApolloCall<RelatedContactsByPhoneQuery.Data> =
         apolloAuthorizedClient.query(
             RelatedContactsByPhoneQuery(
                 user = Optional.presentIfNotNull(user),
                 idBrand = Optional.presentIfNotNull(idBrand),
                 contacts = contacts.map { contact ->
-                        ContactsInput(contact.phoneNumber)
-                    }
+                    ContactsInput(contact.phoneNumber)
+                }
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -1921,7 +1924,7 @@ class GraphqlApi @Inject constructor(
         endDate: String,
         maxPoints: Long,
         paginationLimit: Int,
-        paginationOffset: Int,
+        paginationOffset: Int
     ): ApolloCall<GetCryptoPriceHistoryQuery.Data> =
         apolloAuthorizedClient.query(
             GetCryptoPriceHistoryQuery(

@@ -9,11 +9,12 @@ interface MutationUserValidationUseCase {
         email: String,
         currentStep: String,
         idBrand: Int,
-        idDocument:Int,
-        identification:String,
-        firstName:String,
-        secondName:String,
-        firstSurname:String,
-        secondSurname:String
+        idDocument: Int,
+        identification: String,
+        firstName: String,
+        secondName: String,
+        firstSurname: String,
+        secondSurname: String,
+        deviceId: String
     ): Flow<MultimoneyResult<UserData?>>
 }

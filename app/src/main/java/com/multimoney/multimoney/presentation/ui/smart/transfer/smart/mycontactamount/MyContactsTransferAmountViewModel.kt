@@ -15,9 +15,12 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
+import com.multimoney.multimoney.presentation.util.getCurrentDate
+import com.multimoney.multimoney.presentation.util.getCurrentTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
@@ -83,6 +86,9 @@ class MyContactsTransferAmountViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess {
                     amountUIState = amountUIState.copy(
+                        currentDate = getCurrentDate(Calendar.getInstance().time),
+                        currentTime = getCurrentTime(Calendar.getInstance().time).lowercase(),
+                        referenceNumber = it?.authorization ?: "",
                         showLoadingScreen = false,
                         paymentSuccess = true,
                         showErrorScreen = false

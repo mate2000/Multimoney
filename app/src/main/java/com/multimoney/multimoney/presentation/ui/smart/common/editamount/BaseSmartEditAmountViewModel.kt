@@ -221,7 +221,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                 amountUIState = amountUIState.copy(
                     originAccountDisplay = DisplayAccount(
                         sheetLabel = R.string.transfer_365_pre_confirmation_from_label,
-                        sheetTitleResource = originCurrency?.myAccountSmart,
+                        sheetTitleResource = originCurrency?.myAccountSmartName,
                         sheetSubtitleResource = R.string.empty,
                         icon = R.drawable.ic_multimoney_smart
                     ),

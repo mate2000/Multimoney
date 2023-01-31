@@ -4,24 +4,32 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.lifecycle.viewModelScope
+import java.util.Calendar
+import com.multimoney.domain.interaction.accountsmart.MutationProcessTransfer365UseCase
 import com.multimoney.domain.model.accountsmart.Transfer365Account
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.ACCOUNT_365
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel
-import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.DisplayAccount
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
-import com.multimoney.multimoney.presentation.util.formatPhoneNumber
+import com.multimoney.multimoney.presentation.util.getCurrentDate
+import com.multimoney.multimoney.presentation.util.getCurrentTime
 import com.multimoney.multimoney.presentation.util.getMaskedSmartAccount
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
-class Transfer365AmountViewModel @Inject constructor() : BaseSmartEditAmountViewModel() {
+class Transfer365AmountViewModel @Inject constructor(
+    private val processTransfer365UseCase: MutationProcessTransfer365UseCase
+) : BaseSmartEditAmountViewModel() {
 
     // stateless
     var fromSmartLabel: Int = R.string.transfer_365_amount_from_label
@@ -91,8 +99,63 @@ class Transfer365AmountViewModel @Inject constructor() : BaseSmartEditAmountView
         }
     }
 
+    private fun processTransfer365() {
+        executeUseCase {
+            processTransfer365UseCase.invoke(
+                identification = identification,
+                destinationAccount = transfer365Account.accountNumber.orEmpty(),
+                destinationBankId = transfer365Account.bankId,
+                destinationType = transfer365Account.destinationType.orEmpty(),
+                typeAccountId = transfer365Account.accountTypeId,
+                destinationName = transfer365Account.name,
+                destinationLastName = transfer365Account.lastname,
+                amount = amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0,
+                motive = amountUIState.motive,
+                user = pkUser,
+                idBrand = idBrand
+            ).collectLatest { result ->
+                result.onSuccess { reference ->
+                    if (reference?.referenceNumber.isNullOrBlank()) {
+                        amountUIState = amountUIState.copy(
+                            showLoadingScreen = false,
+                            showErrorScreen = true,
+                            paymentSuccess = false
+                        )
+                    } else {
+                        amountUIState = amountUIState.copy(
+                            showLoadingScreen = false,
+                            showErrorScreen = false,
+                            paymentSuccess = true,
+                            currentDate = getCurrentDate(Calendar.getInstance().time),
+                            currentTime = getCurrentTime(Calendar.getInstance().time).lowercase(),
+                            referenceNumber = reference?.referenceNumber ?: ""
+                        )
+                    }
+                }
+                result.onFailure {
+                    amountUIState = amountUIState.copy(
+                        showLoadingScreen = false,
+                        showErrorScreen = true,
+                        paymentSuccess = false
+                    )
+                }
+                result.onLoading {
+                    amountUIState = amountUIState.copy(
+                        showLoadingScreen = true,
+                        showErrorScreen = false,
+                        paymentSuccess = false
+                    )
+                }
+            }
+        }
+    }
+
     override fun onProcessTransfer() {
-        TODO("Not yet implemented")
+        if (transferType == SmartTransferTypes.SmartToOtherBank.id) {
+            processTransfer365()
+        } else if (transferType == SmartTransferTypes.SmartToMobile.id) {
+
+        }
     }
 
     override fun onNavigateBack() {

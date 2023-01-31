@@ -1360,7 +1360,7 @@
 
     <!-- Smart Other banks Transfer -->
     <string name="smart_other_bank_transfer_add_title" translatable="false">Datos de la cuenta</string>
-    <string name="smart_other_bank_transfer_add_account_number_error" translatable="false"><![CDATA[<b>Revisar formato. </b>]]>Debe tener 9 dígitos.</string>
+    <string name="smart_other_bank_transfer_add_account_number_error" translatable="false"><![CDATA[<b>Revisar formato. </b>]]>Debe tener entre 9 - 16 dígitos.</string>
     <string name="smart_other_bank_transfer_add_account_type_label" translatable="false">Tipo de cuenta de destino</string>
     <string name="smart_other_bank_transfer_add_phone_number_error" translatable="false">Formato incorrecto. Ingresa un número válido</string>
 

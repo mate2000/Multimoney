@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -37,21 +38,23 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            MultimoneyTheme {
-                Navigation()
-                if (dialogParameters.value.isActive.value) {
-                    CustomDialog(
-                        title = stringResource(id = dialogParameters.value.titleResource),
-                        message = stringResource(id = dialogParameters.value.descriptionResource, dialogParameters.value.additionalText).ifEmpty { dialogParameters.value.description },
-                        positiveButtonText = stringResource(id = dialogParameters.value.positiveResource),
-                        openDialogCustom = dialogParameters.value.isActive,
-                        onPositiveAction = dialogParameters.value.positiveAction,
-                        isCancelable = dialogParameters.value.isCancelable
-                    )
-                }
-            }
-        }
+//        setContent {
+//            MultimoneyTheme {
+//                Navigation()
+//                if (dialogParameters.value.isActive.value) {
+//                    CustomDialog(
+//                        title = stringResource(id = dialogParameters.value.titleResource),
+//                        message = stringResource(id = dialogParameters.value.descriptionResource, dialogParameters.value.additionalText).ifEmpty { dialogParameters.value.description },
+//                        positiveButtonText = stringResource(id = dialogParameters.value.positiveResource),
+//                        openDialogCustom = dialogParameters.value.isActive,
+//                        onPositiveAction = dialogParameters.value.positiveAction,
+//                        isCancelable = dialogParameters.value.isCancelable
+//                    )
+//                }
+//            }
+//        }
+        // TODO this is an example, remove and replace into the required location
+        startActivity(Intent(this, ReactActivity::class.java))
     }
 
     override fun onUserInteraction() {

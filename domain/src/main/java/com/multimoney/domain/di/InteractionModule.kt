@@ -16,6 +16,8 @@ import com.multimoney.domain.interaction.accountsmart.MutationSaveSinpeAccountUs
 import com.multimoney.domain.interaction.accountsmart.MutationSaveSinpeAccountUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationUpdateFavoriteSmartUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationUpdateFavoriteSmartUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteListUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteListUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelOneUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelOneUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelThreeUseCase
@@ -96,6 +98,8 @@ import com.multimoney.domain.interaction.credit.QueryCreditExtensionMessageUseCa
 import com.multimoney.domain.interaction.credit.QueryCreditExtensionMessageUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryCreditOfferUseCase
 import com.multimoney.domain.interaction.credit.QueryCreditOfferUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryEmissionPlaceUseCase
+import com.multimoney.domain.interaction.credit.QueryEmissionPlaceUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryEmploymentSituationUseCase
 import com.multimoney.domain.interaction.credit.QueryEmploymentSituationUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryGetCardAutomaticDebitUseCase
@@ -134,8 +138,6 @@ import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventU
 import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventUseCaseImpl
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCase
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCaseImpl
-import com.multimoney.domain.interaction.credit.QueryEmissionPlaceUseCase
-import com.multimoney.domain.interaction.credit.QueryEmissionPlaceUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUseCase
 import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCase
@@ -780,4 +782,9 @@ class InteractionModule {
     @Singleton
     fun provideQueryRelatedContactsByPhoneUseCase(smartAccountRepository: SmartAccountRepository): QueryRelatedContactsByPhoneUseCase =
         QueryRelatedContactsByPhoneUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryACHTransferFavoriteListUseCase(smartAccountRepository: SmartAccountRepository): QueryACHTransferFavoriteListUseCase =
+        QueryACHTransferFavoriteListUseCaseImpl(smartAccountRepository)
 }

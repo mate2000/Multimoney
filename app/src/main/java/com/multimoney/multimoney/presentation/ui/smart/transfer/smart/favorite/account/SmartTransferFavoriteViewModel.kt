@@ -4,14 +4,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
-import com.multimoney.domain.interaction.accountsmart.QueryListSinpeAccountUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteListUseCase
 import com.multimoney.domain.model.accountsmart.IbanAccountID
 import com.multimoney.domain.model.accountsmart.SinpeAccount
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.util.error.HttpError
-import com.multimoney.domain.model.util.onFailure
-import com.multimoney.domain.model.util.onLoading
-import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
@@ -29,11 +26,10 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class SmartTransferFavoriteViewModel @Inject constructor(
-    private val queryListSinpeAccountUseCaseImpl: QueryListSinpeAccountUseCase,
+    private val queryACHTransferFavoriteListUseCaseImpl: QueryACHTransferFavoriteListUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
@@ -57,32 +53,32 @@ class SmartTransferFavoriteViewModel @Inject constructor(
     }
 
     private fun callQueryListSinpeAccountUseCaseImpl() = executeUseCase {
-        queryListSinpeAccountUseCaseImpl.invoke(
-            user = user,
-            identification = identification ?: "",
-            idBrand = idBrand.toInt(),
-            country = "",
-            idAccount = 0,
-            accountNumber = ""
-        ).collectLatest { result ->
-            result.onSuccess { accountList ->
-                uiState = uiState.copy(isLoading = false)
-                if (accountList?.data?.isEmpty() == true) {
-                    navigateToAddIbanAccount()
-                } else {
-                    accountList?.data?.let {
-                        uiState = uiState.copy(sinpeAccountList = it)
-                    }
-                }
-            }
-            result.onFailure {
-                uiState = uiState.copy(isLoading = false)
-                onFailure(it)
-            }
-            result.onLoading {
-                uiState = uiState.copy(isLoading = true)
-            }
-        }
+//        queryListSinpeAccountUseCaseImpl.invoke(
+//            user = user,
+//            identification = identification ?: "",
+//            idBrand = idBrand.toInt(),
+//            country = "",
+//            idAccount = 0,
+//            accountNumber = ""
+//        ).collectLatest { result ->
+//            result.onSuccess { accountList ->
+//                uiState = uiState.copy(isLoading = false)
+//                if (accountList?.data?.isEmpty() == true) {
+//                    navigateToAddIbanAccount()
+//                } else {
+//                    accountList?.data?.let {
+//                        uiState = uiState.copy(sinpeAccountList = it)
+//                    }
+//                }
+//            }
+//            result.onFailure {
+//                uiState = uiState.copy(isLoading = false)
+//                onFailure(it)
+//            }
+//            result.onLoading {
+//                uiState = uiState.copy(isLoading = true)
+//            }
+//        }
     }
 
     private fun onFailure(error: HttpError) {

@@ -6,6 +6,7 @@ import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.multimoney.data.mapper.credit.mapToApolloModel
+import com.multimoney.data.networking.graphql.apollomodel.ACHTransferFavoriteListQuery
 import com.multimoney.data.networking.graphql.apollomodel.AccountSmartContractEventSubscription
 import com.multimoney.data.networking.graphql.apollomodel.AccountStatementQuery
 import com.multimoney.data.networking.graphql.apollomodel.ActivatedCardAutomaticDebitMutation
@@ -1933,6 +1934,21 @@ class GraphqlApi @Inject constructor(
                 maxPoints,
                 paginationLimit,
                 paginationOffset
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryACHTransferFavoriteList(
+        user: String,
+        idBrand: Int,
+        isFavorite: Boolean,
+        identification: String,
+    ): ApolloCall<ACHTransferFavoriteListQuery.Data> =
+        apolloAuthorizedClient.query(
+            ACHTransferFavoriteListQuery(
+                Optional.presentIfNotNull(user),
+                Optional.presentIfNotNull(idBrand),
+                isFavorite,
+                Optional.presentIfNotNull(identification),
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

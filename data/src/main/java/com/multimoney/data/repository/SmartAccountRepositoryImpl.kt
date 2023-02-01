@@ -15,6 +15,7 @@ import com.multimoney.domain.model.accountsmart.BankListTransfer365
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.CivilStatusResult
 import com.multimoney.domain.model.accountsmart.ExchangeRateResult
+import com.multimoney.domain.model.accountsmart.FavoriteACHResult
 import com.multimoney.domain.model.accountsmart.GeneralEconomicActivityResult
 import com.multimoney.domain.model.accountsmart.GlobalRequest
 import com.multimoney.domain.model.accountsmart.Nationalities
@@ -36,8 +37,8 @@ import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
 import com.multimoney.domain.repository.SmartAccountRepository
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class SmartAccountRepositoryImpl @Inject constructor(
     private val graphqlApi: GraphqlApi
@@ -572,6 +573,25 @@ class SmartAccountRepositoryImpl @Inject constructor(
             isFavorite = isFavorite,
             idCurrencyAccount = idCurrencyAccount
         ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+    }
+
+    override suspend fun queryACHTransferFavoriteList(
+        user: String,
+        idBrand: Int,
+        isFavorite: Boolean,
+        identification: String
+    ): Flow<MultimoneyResult<FavoriteACHResult?>> {
+        return fetchData(
+            apolloCall = graphqlApi.queryACHTransferFavoriteList(
+                user,
+                idBrand,
+                isFavorite,
+                identification,
+            ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
             }

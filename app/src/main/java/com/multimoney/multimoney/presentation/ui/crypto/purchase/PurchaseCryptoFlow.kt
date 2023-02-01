@@ -40,7 +40,7 @@ fun PurchaseCryptoFlow(
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: PurchaseCryptoSharedViewModel = hiltViewModel()
 ) {
-    val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.HalfExpanded)
+    val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(true) {
@@ -123,6 +123,9 @@ fun PurchaseCryptoFlow(
             onPositiveAction = viewModel.uiState.openDialog.positiveAction
         )
     }
+    // TODO, make a sharedviewmodel event that can be
+    //  triggered from child views, and change bottom
+    //  sheet state to show the dialog
     if (viewModel.uiState.isBottomSheetVisible) {
         ConfirmationBottomSheet(
             modalBottomSheetState = bottomSheetState,

@@ -152,7 +152,7 @@ fun SmartAddressFields(
         CustomDropdown(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 32.dp),
+                .padding(top = 16.dp),
             items = sourceIncomeSharedViewModel.uiState.divisionOneList?.map { it?.name.orEmpty() }
                 ?: listOf(),
             value = sourceIncomeSharedViewModel.uiState.divisionOneSelected?.name ?: "",
@@ -173,7 +173,7 @@ fun SmartAddressFields(
     CustomDropdown(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 32.dp),
+            .padding(top = 16.dp),
         items = sourceIncomeSharedViewModel.uiState.divisionTwoList?.map { it?.name.orEmpty() }
             ?: listOf(),
         value = sourceIncomeSharedViewModel.uiState.divisionTwoSelected?.name ?: "",
@@ -193,7 +193,7 @@ fun SmartAddressFields(
     CustomDropdown(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 32.dp),
+            .padding(top = 16.dp),
         items = sourceIncomeSharedViewModel.uiState.divisionThreeList?.map { it?.name.orEmpty() }
             ?: listOf(),
         value = sourceIncomeSharedViewModel.uiState.divisionThreeSelected?.name ?: "",

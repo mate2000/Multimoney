@@ -100,7 +100,7 @@ class PaymentScheduleCardViewModel @Inject constructor(
             result.onSuccess { cardsList ->
                 uiState = uiState.copy(
                     isLoading = false,
-                    cardVisaDirect = cardsList?.first(),
+                    cardVisaDirect = cardsList?.firstOrNull(),
                     isCardListEmpty = cardsList.isNullOrEmpty()
                 )
             }.onFailure {
@@ -120,10 +120,11 @@ class PaymentScheduleCardViewModel @Inject constructor(
             idLoanClient = idLoanClient.toLong()
         ).collectLatest { result ->
             getPaymentScheduleAttempts++
-            result.onSuccess {
+            result.onSuccess { cardsList ->
                 uiState = uiState.copy(
-                    cardVisaDirect = it?.first(),
-                    isLoading = false
+                    cardVisaDirect = cardsList?.first(),
+                    isLoading = false,
+                    isCardListEmpty = cardsList.isNullOrEmpty()
                 )
             }.onFailure {
                 setErrorAlertResult(attempts = getPaymentScheduleAttempts)

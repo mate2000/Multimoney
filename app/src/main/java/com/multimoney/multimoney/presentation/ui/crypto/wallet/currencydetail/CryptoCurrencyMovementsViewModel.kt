@@ -39,7 +39,6 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
 ) : BaseViewModel(true) {
 
     private var user = ""
-    private var idBrand = 0
     private var identification = ""
 
     // UIState
@@ -48,15 +47,17 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
 
     private fun onGetUserInfo() {
         user = savedStateHandle[USER] ?: ""
-        idBrand = savedStateHandle[ID_BRAND] ?: 0
         identification = savedStateHandle[IDENTIFICATION] ?: ""
-        uiState = uiState.copy(cryptoItem = savedStateHandle[ITEM_CRYPTO_CURRENCY], idBrand = idBrand)
+        uiState = uiState.copy(
+            cryptoItem = savedStateHandle[ITEM_CRYPTO_CURRENCY],
+            idBrand = savedStateHandle[ID_BRAND] ?: 0
+        )
     }
 
     private fun callQueryAssetHistory() {
         executeUseCase {
             queryGetCurrencyHistoricalPricesUseCase(
-                idBrand = idBrand,
+                idBrand = uiState.idBrand ?: 0,
                 user = user,
                 market = uiState.cryptoItem?.asset.plus(USD_CURRENCY),
                 max_data_points = MAX_POINTS.toLong(),
@@ -83,7 +84,7 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
             uiState = uiState.copy(
                 cryptoMovements = cryptoMovementsUseCase(
                     user = user,
-                    idBrand = idBrand,
+                    idBrand = uiState.idBrand ?: 0,
                     identification = identification,
                     market = uiState.cryptoItem?.asset.plus(USD_CURRENCY),
                     order_time_begin = getPreviousDate(uiState.startDate ?: FilterDateByDays.YESTERDAY.time),
@@ -112,7 +113,7 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
 
     private fun onNavigateToAllMovements() {
         navigateTo(
-            "${Screen.CryptoMovementsAllScreen.baseRoute}/${idBrand}/$identification/$user/${Screen.CryptoCurrencyMovementsScreen.baseRoute}?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}",
+            "${Screen.CryptoMovementsAllScreen.baseRoute}/${uiState.idBrand}/$identification/$user?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}"
         )
     }
 
@@ -122,7 +123,7 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
+            is UIEvent.OnNavigateBack -> navigateBack(Screen.CryptoWalletScreen.route, false)
             is UIEvent.OnGetUserInfo -> onGetUserInfo()
             is UIEvent.OnGetMovements -> callQueryMovements()
             is UIEvent.OnGetAssetHistory -> callQueryAssetHistory()
@@ -143,13 +144,13 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
     }
 
     data class UiState(
-        val idBrand: Int = 0,
         val startDate: Long? = null,
         val isLoading: Boolean = false,
         val historicalBalance: List<CurrencyHistoricPrice> = listOf(),
         val cryptoMovements: Flow<PagingData<CryptoCurrencyMovement>> = flowOf(),
         val cryptoItem: BalanceCryptoAccountItems? = null,
-        val openDialog: DialogParameters = DialogParameters()
+        val openDialog: DialogParameters = DialogParameters(),
+        val idBrand: Int? = null,
     )
 
     companion object {

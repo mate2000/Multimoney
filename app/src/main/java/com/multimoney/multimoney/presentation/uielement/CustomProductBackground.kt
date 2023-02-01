@@ -71,7 +71,7 @@ fun CustomProductBackground(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(min = 200.dp)
+                    .heightIn(min = 230.dp)
                     .paint(painterResource(id = cardResourceId), contentScale = ContentScale.FillBounds)
                     .clip(RoundedCornerShape(24.dp))
                     .blur(0.24.dp)

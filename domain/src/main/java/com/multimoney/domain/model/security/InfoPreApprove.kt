@@ -7,5 +7,6 @@ data class InfoPreApprove(
     val idPrint: Long,
     val selectedAmount: Float?,
     val statusFirm: String?,
-    val currentStep: String?
+    val currentStep: String?,
+    val crosseling: Boolean?
 )

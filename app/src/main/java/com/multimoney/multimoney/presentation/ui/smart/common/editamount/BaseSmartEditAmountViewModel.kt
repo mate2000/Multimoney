@@ -5,16 +5,15 @@ import android.view.View
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.ModalBottomSheetValue.Hidden
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Rect
 import androidx.lifecycle.SavedStateHandle
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.accountsmart.MutationProcessSinpeTransferUseCase
 import com.multimoney.domain.interaction.accountsmart.QuerySmartExchangeRateUseCase
 import com.multimoney.domain.model.accountsmart.IbanAccountID
-import com.multimoney.domain.model.accountsmart.PhoneSmart
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
 import com.multimoney.domain.model.util.onFailure
@@ -29,7 +28,6 @@ import com.multimoney.multimoney.presentation.navigation.ORIGIN_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.TRANSFER_TYPE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
-import com.multimoney.multimoney.presentation.util.SEPARATOR
 import com.multimoney.multimoney.presentation.util.ShareHelper
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Dollar
@@ -75,12 +73,11 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
     var userName: String = ""
     var idBrand: Int = 0
 
-    private var transferType: Int = 0
+    var transferType: Int = 0
     var smartAccount: SmartAccountID? = null
     var ibanAccount: IbanAccountID? = null
     var visaAccount: CardVisaDirect? = null
     var smartDestiny: SmartAccountID? = null
-    var phoneAccount: PhoneSmart? = null
 
     /*
     Origin refers to the account where the money's going to be taken from
@@ -216,36 +213,6 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                     }
                 )
             }
-            SmartTransferTypes.SmartToContact.id -> {
-                smartAccount = savedStateHandle[ORIGIN_ACCOUNT]
-                phoneAccount = savedStateHandle[DESTINY_ACCOUNT]
-                originCurrency = smartAccount?.currencyID?.getCurrencyFromId()
-                destinyCurrency = phoneAccount?.idCurrency?.getCurrencyFromId()
-                shouldDisplayExchange = originCurrency != destinyCurrency
-
-                amountUIState = amountUIState.copy(
-                    originAccountDisplay = DisplayAccount(
-                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from,
-                        sheetTitleResource = originCurrency?.myAccountSmartSymbol,
-                        sheetSubtitle = if (idBrand == Brand.ElSalvador.id) null else getMaskedAccountIban(
-                            smartAccount?.ibanAccountNumber.orEmpty()
-                        ),
-                        icon = R.drawable.ic_multimoney_smart
-                    ),
-                    destinyAccountDisplay = DisplayAccount(
-                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_to,
-                        sheetTitle = phoneAccount?.titular,
-                        sheetSubtitle = phoneAccount?.number?.plus(SEPARATOR)
-                            ?.plus(destinyCurrency?.stringName)
-                    ),
-                    currency = destinyCurrency?.symbol ?: Dollar.symbol,
-                    placeholder = if (destinyCurrency == Dollar) {
-                        R.string.smart_dollar_placeholder
-                    } else {
-                        R.string.smart_colon_placeholder
-                    }
-                )
-            }
         }
     }
 
@@ -258,7 +225,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
     ) {
         val amount = amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
         if (shouldDisplayExchange) {
-            if ((amountUIState.isAmountValid && amount > 0.0) || isStart) {
+            if (amount > 0.0 || isStart) {
                 executeUseCase {
                     querySmartExchangeRateUseCase.invoke(
                         user = userName,
@@ -288,6 +255,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                                 convertedAmountLabel = rate?.convertedAmountLabel
                                     ?: "${idDestinationCurrency.getCurrencySymbol()}0.0"
                             )
+                            validateAmount()
                         }
                     }
                 }
@@ -301,23 +269,37 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
         getExchangeOnCompleted()
     }
 
+    open fun validateAmount() {
+        val currentAmount = if (shouldDisplayExchange) {
+            amountUIState.exchangeConvertedAmount
+        } else {
+            amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
+        }
+
+        val isAmountValid = currentAmount <= (smartAccount?.totalBalance ?: 0.0)
+        amountUIState = amountUIState.copy(
+            isAmountValid = isAmountValid,
+            bottomSheetState = ModalBottomSheetState(Hidden),
+            enableButton = validateForm(isAmountValid = isAmountValid)
+        )
+    }
+
     open fun onAmountChanged(newAmount: String) {
         if (validateDecimalIncome(newAmount)) {
             amountUIState = amountUIState.copy(
-                currentAmountValueString = newAmount,
-                enableButton = validateForm(newAmount = newAmount),
-                isAmountValid = true
+                currentAmountValueString = newAmount
             )
         }
     }
 
     open fun validateForm(
         newAmount: String? = amountUIState.currentAmountValueString,
-        newMotive: String = amountUIState.motive
-    ) = (newAmount?.isNotEmpty() == true) && (
-        newAmount.toDoubleOrNull()
-            ?: 0.0
-        ) > 0.0 && newMotive.isNotEmpty()
+        newMotive: String = amountUIState.motive,
+        isAmountValid: Boolean = amountUIState.isAmountValid
+    ) = (newAmount?.isNotEmpty() == true) &&
+        (newAmount.toDoubleOrNull() ?: 0.0) > 0.0 &&
+        newMotive.isNotEmpty() &&
+        isAmountValid
 
     abstract fun onContinueClick()
 

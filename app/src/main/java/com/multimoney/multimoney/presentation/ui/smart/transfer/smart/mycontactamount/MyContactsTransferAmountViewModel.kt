@@ -5,18 +5,27 @@ import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue.Expanded
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.Brand.ElSalvador
 import com.multimoney.domain.interaction.accountsmart.MutationProcessLocalTransferUseCase
+import com.multimoney.domain.model.accountsmart.PhoneSmart
 import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.navigation.DESTINY_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.ORIGIN_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel
+import com.multimoney.multimoney.presentation.util.SEPARATOR
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Dollar
+import com.multimoney.multimoney.presentation.util.catalog.DisplayAccount
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getCurrentTime
+import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -31,10 +40,40 @@ class MyContactsTransferAmountViewModel @Inject constructor(
     // stateless
     var fromSmartLabel: Int = R.string.smart_iban_transfer_smart_account_colon
     var totalBalanceLabel: String = ""
+    var phoneAccount: PhoneSmart? = null
 
     override fun onStart() {
         viewModelScope.launch {
             initializeValues()
+            smartAccount = savedStateHandle[ORIGIN_ACCOUNT]
+            phoneAccount = savedStateHandle[DESTINY_ACCOUNT]
+            originCurrency = smartAccount?.currencyID?.getCurrencyFromId()
+            destinyCurrency = phoneAccount?.idCurrency?.getCurrencyFromId()
+            shouldDisplayExchange = originCurrency != destinyCurrency
+
+            amountUIState = amountUIState.copy(
+                originAccountDisplay = DisplayAccount(
+                    sheetLabel = R.string.smart_payment_amount_bottom_sheet_from,
+                    sheetTitleResource = originCurrency?.myAccountSmartSymbol,
+                    sheetSubtitle = if (idBrand == ElSalvador.id) null else getMaskedAccountIban(
+                        smartAccount?.ibanAccountNumber.orEmpty()
+                    ),
+                    icon = R.drawable.ic_multimoney_smart
+                ),
+                destinyAccountDisplay = DisplayAccount(
+                    sheetLabel = R.string.smart_payment_amount_bottom_sheet_to,
+                    sheetTitle = phoneAccount?.titular,
+                    sheetSubtitle = phoneAccount?.number?.plus(SEPARATOR)
+                        ?.plus(destinyCurrency?.stringName)
+                ),
+                currency = destinyCurrency?.symbol ?: Dollar.symbol,
+                placeholder = if (destinyCurrency == Dollar) {
+                    R.string.smart_dollar_placeholder
+                } else {
+                    R.string.smart_colon_placeholder
+                }
+            )
+
             fromSmartLabel = if (originCurrency == CurrencyType.Colon) {
                 R.string.smart_iban_transfer_smart_account_colon
             } else {
@@ -122,28 +161,21 @@ class MyContactsTransferAmountViewModel @Inject constructor(
     }
 
     override fun onAmountCompleted() {
-        getExchangeOnCompleted(
-            abbreviation = originCurrency?.disbursementValue ?: "",
-            idOriginCurrency = destinyCurrency?.id.toString(),
-            idDestinationCurrency = originCurrency?.id.toString()
-        )
+        if (shouldDisplayExchange) {
+            getExchangeOnCompleted(
+                abbreviation = originCurrency?.disbursementValue ?: "",
+                idOriginCurrency = destinyCurrency?.id.toString(),
+                idDestinationCurrency = originCurrency?.id.toString()
+            )
+        } else {
+            validateAmount()
+        }
     }
 
     override fun onContinueClick() {
-        val currentAmount = if (shouldDisplayExchange) {
-            amountUIState.exchangeConvertedAmount
-        } else {
-            amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
-        }
-        val isValidAmount = currentAmount <= (smartAccount?.totalBalance ?: 0.0)
-        amountUIState = if (isValidAmount) {
-            amountUIState.copy(
-                isAmountValid = true,
-                bottomSheetState = ModalBottomSheetState(Expanded)
-            )
-        } else {
-            amountUIState.copy(isAmountValid = false)
-        }
+        amountUIState = amountUIState.copy(
+            bottomSheetState = ModalBottomSheetState(Expanded)
+        )
     }
 
     override fun onNavigateBack() {

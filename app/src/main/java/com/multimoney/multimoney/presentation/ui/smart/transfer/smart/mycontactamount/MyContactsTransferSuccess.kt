@@ -11,7 +11,6 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnNavigateHome
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnShareVoucherImage
 import com.multimoney.multimoney.presentation.uielement.PaymentSuccessResult
@@ -22,7 +21,7 @@ import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 
 @Composable
 fun MyContactsTransferSuccess(
-    viewModel: BaseSmartEditAmountViewModel
+    viewModel: MyContactsTransferAmountViewModel
 ) {
     Column(
         modifier = Modifier

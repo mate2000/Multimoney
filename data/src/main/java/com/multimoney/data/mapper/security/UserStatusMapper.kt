@@ -47,7 +47,8 @@ private fun ValidateUserStatusQuery.InfoPreApprove.mapToDomainModel() = InfoPreA
     statusFirm = statusFirm,
     currentStep = currentStep,
     infoProducts = infoProducts?.map { it.mapToDomainModel() },
-    idPrint = idPrint?.toString()?.toLong() ?: 0
+    idPrint = idPrint?.toString()?.toLong() ?: 0,
+    crosseling = crosseling
 )
 
 private fun ValidateUserStatusQuery.InfoProduct.mapToDomainModel() =

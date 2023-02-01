@@ -9,7 +9,6 @@ import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmart
 import com.multimoney.domain.interaction.accountsmart.SubscriptionAccountSmartContractUseCase
 import com.multimoney.domain.model.credit.CreditContractEvent
 import com.multimoney.domain.model.util.onFailure
-import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
@@ -192,7 +191,7 @@ class SmartSignViewModel @Inject constructor(
 
     private fun onNavigateToHome() {
         emitBaseEvent(SimulateUserInteraction)
-        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
     }
 
     private fun onNavigateToOnfidoAndEvicertiaError(error: String) {

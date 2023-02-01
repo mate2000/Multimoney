@@ -1,5 +1,8 @@
 package com.multimoney.multimoney.presentation.ui.login.signup
 
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -24,6 +27,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFirstLastNameValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFirstNameValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnHidePasswordBottomSheet
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnMoveToStep
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNationalityValueChange
@@ -38,6 +42,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSecondNameValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSharedIdentificationValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnShowPasswordBottomSheet
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUpdateUserNames
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -46,6 +51,7 @@ import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @HiltViewModel
+@OptIn(ExperimentalMaterialApi::class)
 class SignUpViewModel @Inject constructor(
     private val mutationUpdateUserRegisterUseCase: MutationUpdateUserRegisterUseCase
 ) : BaseViewModel(false) {
@@ -213,13 +219,22 @@ class SignUpViewModel @Inject constructor(
         this.previousStep = previousStep
     }
 
+    private fun onShowPasswordBottomSheet() {
+        uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded))
+    }
+
+    private fun onHidePasswordBottomSheet() {
+        uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Hidden))
+    }
+
     data class UIState(
         // Interactions
         val currentStep: Int = SignUpStep.One.id,
         val isCloseVisible: Boolean = true,
         val isContinueEnabled: Boolean = false,
         val isLoading: Boolean = false,
-        val openDialog: DialogParameters = DialogParameters()
+        val openDialog: DialogParameters = DialogParameters(),
+        val bottomSheetVisibleState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden)
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -273,6 +288,8 @@ class SignUpViewModel @Inject constructor(
             is OnPhoneVerifiedChanged -> isPhoneVerified = event.isPhoneVerified
             is OnOnFidoVerifiedChanged -> isOnFidoVerified = event.isOnFidoVerified
             is UIEvent.OnShowCloseIcon -> uiState = uiState.copy(isCloseVisible = event.showIcon)
+            is OnHidePasswordBottomSheet -> onHidePasswordBottomSheet()
+            is OnShowPasswordBottomSheet -> onShowPasswordBottomSheet()
         }
     }
 
@@ -325,6 +342,8 @@ class SignUpViewModel @Inject constructor(
 
         object OnCallMutationUpdateUserRegisterUseCase : UIEvent()
         data class OnShowCloseIcon(val showIcon: Boolean) : UIEvent()
+        object OnHidePasswordBottomSheet : UIEvent()
+        object OnShowPasswordBottomSheet : UIEvent()
     }
 
     companion object {

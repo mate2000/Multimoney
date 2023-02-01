@@ -173,7 +173,7 @@ class DownloadCreditMovementsWorker @Inject constructor(
         return intent
     }
 
-    @SuppressLint("InlinedApi")
+    @SuppressLint("InlinedApi", "MissingPermission") // FIXME, remove 'MissingPermission" when implementing the permission
     private fun sendNotification(status: DownloadCreditMovementsStatus, uri: Uri? = null) {
         val notificationManager = NotificationManagerCompat.from(context)
         createNotificationChannel(notificationManager)
@@ -224,6 +224,7 @@ class DownloadCreditMovementsWorker @Inject constructor(
                     setAutoCancel(isAutoCancel)
                 }.build()
 
+        // TODO, handle permissions properly
         notificationManager.notify(DOWNLOAD_CREDIT_MOVEMENTS_NOTIFICATION_ID, notificationBuilder)
     }
 

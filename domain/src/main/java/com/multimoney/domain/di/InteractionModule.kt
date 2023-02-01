@@ -1,5 +1,7 @@
 package com.multimoney.domain.di
 
+import com.multimoney.domain.interaction.accountsmart.MutationAccountStatusUseCase
+import com.multimoney.domain.interaction.accountsmart.MutationAccountStatusUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationAddACHAccountUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationAddACHAccountUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCase
@@ -778,6 +780,9 @@ class InteractionModule {
 
     @Provides
     @Singleton
+    fun provideMutationAccountStatus(smartAccountRepository: SmartAccountRepository): MutationAccountStatusUseCase =
+        MutationAccountStatusUseCaseImpl(smartAccountRepository)
+
     fun provideQueryRelatedContactsByPhoneUseCase(smartAccountRepository: SmartAccountRepository): QueryRelatedContactsByPhoneUseCase =
         QueryRelatedContactsByPhoneUseCaseImpl(smartAccountRepository)
 }

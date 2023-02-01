@@ -25,6 +25,7 @@ import com.multimoney.data.util.catalog.SmartAccountStatusRequest.CREATED
 import com.multimoney.data.util.catalog.SmartAccountStatusRequest.SENT
 import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.SmartSteps
+import com.multimoney.domain.interaction.accountsmart.MutationAccountStatusUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryListSinpeAccountUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceCardInformationUseCase
 import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCase
@@ -93,6 +94,7 @@ import com.multimoney.multimoney.presentation.util.catalog.ProfileCardListOrigin
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentOrigin
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
+import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
 import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
@@ -114,7 +116,8 @@ class ProductViewModel @Inject constructor(
     private val cardIssuanceNVUseCase: QueryCardIssuanceNVUseCase,
     private val balanceCardInformationUseCase: QueryBalanceCardInformationUseCase,
     private val queryListSinpeAccountUseCaseImpl: QueryListSinpeAccountUseCase,
-    private val queryGetCryptoCurrencyMovementsUseCase: GetCryptoCurrencyMovementsUseCase
+    private val queryGetCryptoCurrencyMovementsUseCase: GetCryptoCurrencyMovementsUseCase,
+    private val mutationAccountStatusUseCase: MutationAccountStatusUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -283,6 +286,7 @@ class ProductViewModel @Inject constructor(
                 // TODO get the new evicertia url
             }
             SMART_ONFIDO_MAX_ATTEMPTS -> onIntent()
+            PENDING.status -> onCallMutationAccountStatusUseCase()
             else -> {
                 navigateTo(
                     "${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
@@ -816,7 +820,8 @@ class ProductViewModel @Inject constructor(
             ibanAccountNumber = account?.ibanAccountNumber,
             customerId = account?.customerId
         )
-        val secondAccount = balanceCredit?.balanceAccountSmart?.find { accounts -> accounts?.tokenNumber != account?.tokenNumber }
+        val secondAccount =
+            balanceCredit?.balanceAccountSmart?.find { accounts -> accounts?.tokenNumber != account?.tokenNumber }
         val secondAccountSend = encodeData(
             SmartAccountID(
                 tokenAccount = secondAccount?.tokenNumber,
@@ -866,6 +871,28 @@ class ProductViewModel @Inject constructor(
                 pagination_limit = PAGE_SIZE
             ).cachedIn(viewModelScope)
         )
+    }
+
+    private fun onCallMutationAccountStatusUseCase() = executeUseCase {
+        mutationAccountStatusUseCase.invoke(
+            user = userName,
+            idBrand = uiState.idBrand.toInt(),
+            identificationNumber = identification,
+            newState = DEFAULT_NEW_STATE,
+            typeState = DEFAULT_TYPE_STATE,
+            idAccountSysde = uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde ?: 0,
+            idAccountRequest = uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal
+                ?: 0L
+        ).collectLatest { result ->
+            result.onSuccess {
+                popAndNavigateTo(
+                    "${Screen.SmartSignScreen.baseRoute}/${SIGN_DOCUMENTS_STEP.value}/${it?.urlFirmDocument}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/${uiState.idBrand.toInt()}/$pkUser/$identification/$email/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/$firstName/${uiState.userStatus?.infoUser?.lastName}/${true}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/$userName",
+                    Screen.HomeScreen.route
+                )
+            }.onFailure {
+
+            }
+        }
     }
 
     private fun onCallQueryBalanceCardInformation(onLoadingValueChange: (isLoading: Boolean) -> Unit) {
@@ -1177,6 +1204,8 @@ class ProductViewModel @Inject constructor(
         const val SMART_FIRMED_ONFIDO_PENDING = "SMART_FIRMED_ONFIDO_PENDING"
         const val SMART_STEP_PENDING = "SMART_STEP_PENDING"
         const val PENDING_TO_CHECK_STATUS = "Pendiente Revision"
+        const val DEFAULT_NEW_STATE = "PG"
+        const val DEFAULT_TYPE_STATE = "S"
         private const val CARD_INFORMATION_STATUS = 1
     }
 }

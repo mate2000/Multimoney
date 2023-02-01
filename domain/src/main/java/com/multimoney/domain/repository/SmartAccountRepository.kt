@@ -19,6 +19,7 @@ import com.multimoney.domain.model.accountsmart.SaveSinpeAccount
 import com.multimoney.domain.model.accountsmart.SaveSmartAccount
 import com.multimoney.domain.model.accountsmart.SinpeAccountResult
 import com.multimoney.domain.model.accountsmart.SinpeTransferResult
+import com.multimoney.domain.model.accountsmart.SmartAccountStatusResult
 import com.multimoney.domain.model.accountsmart.SmartAccountTypeResult
 import com.multimoney.domain.model.accountsmart.SmartFavoriteResult
 import com.multimoney.domain.model.accountsmart.SmartMovement
@@ -262,4 +263,13 @@ interface SmartAccountRepository {
         idCurrencyAccount: Int?,
     ): Flow<MultimoneyResult<SmartFavoriteResult?>>
 
+    suspend fun mutationUpdateSmartAccountStatus(
+        user: String,
+        idBrand: Int,
+        identificationNumber: String,
+        newState: String,
+        typeState: String,
+        idAccountSysde: Long,
+        idAccountRequest: Long
+    ) : Flow<MultimoneyResult<SmartAccountStatusResult?>>
 }

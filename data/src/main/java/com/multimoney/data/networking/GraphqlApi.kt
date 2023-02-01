@@ -113,6 +113,7 @@ import com.multimoney.data.networking.graphql.apollomodel.ValidatePinQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidateUserExistsQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidateUserStatusQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidationSecurityQuery
+import com.multimoney.data.networking.graphql.apollomodel.UpdateSmartAccountStatusMutation
 import com.multimoney.data.networking.graphql.apollomodel.type.BeneficiaryRequestDtoInput
 import com.multimoney.data.networking.graphql.apollomodel.type.ContactsInput
 import com.multimoney.domain.model.accountsmart.Beneficiary
@@ -1938,4 +1939,24 @@ class GraphqlApi @Inject constructor(
                 paginationOffset
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationUpdateSmartAccountStatus(
+        user: String,
+        idBrand: Int,
+        identificationNumber: String,
+        newState: String,
+        typeState: String,
+        idAccountSysde: Long,
+        idAccountRequest: Long
+    ): ApolloCall<UpdateSmartAccountStatusMutation.Data> = apolloAuthorizedClient.mutation(
+        UpdateSmartAccountStatusMutation(
+            user,
+            idBrand,
+            identificationNumber,
+            newState,
+            typeState,
+            idAccountSysde,
+            idAccountRequest
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

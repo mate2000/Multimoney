@@ -11,6 +11,6 @@ fun PurchaseConfirmationBottomSheet(
 ) {
 
     Column {
-        Text(text = "klk")
+        Text(text = "PurchaseConfirmationBottomSheet")
     }
 }

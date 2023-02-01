@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.ExperimentalMaterialApi
@@ -18,6 +20,8 @@ import androidx.compose.material.TextField
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -36,6 +40,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.PurchaseConfirmationBottomSheet
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
+import com.multimoney.multimoney.presentation.uielement.CryptoCurrencyInputLayout
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlaces
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
@@ -85,8 +90,6 @@ fun BuyCurrencyScreenContent(
         skipHalfExpanded = true
     )
     //val focusManager = LocalFocusManager.current
-    val keyboardController = LocalSoftwareKeyboardController.current
-    keyboardController?.show()
 
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
@@ -114,19 +117,6 @@ fun BuyCurrencyScreenContent(
                     currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price ?: 0.0,
                     asset = viewModel.asset
                 )
-                /*ConversionCurrencySection(
-                    modifier = Modifier.constrainAs(
-                        conversionCurrencyToDollars
-                    ) {
-                        top.linkTo(title.bottom)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        bottom.linkTo(amountInput.top)
-                    },
-                    imageUrl = viewModel.assetImageUrl,
-                    currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price ?: 0.0,
-                    asset = viewModel.asset
-                )*/
                 AmountInputSection(
                     modifier = Modifier.constrainAs(amountInput) {
                         top.linkTo(title.bottom)
@@ -136,14 +126,6 @@ fun BuyCurrencyScreenContent(
                     asset = viewModel.asset,
                     exchangeRate = viewModel.uiState.pricesQuoteAndCommissions?.base_amount ?: 0.0,
                 )
-                /*AvailableBalanceSection(
-                    modifier = Modifier.constrainAs(availableBalance) {
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        bottom.linkTo(counter.top)
-                    },
-                    smartAccountAvailableBalance = viewModel.smartAccountAvailableBalance
-                )*/
                 CounterSection(
                     modifier = Modifier.constrainAs(counter) {
                         start.linkTo(parent.start)
@@ -161,7 +143,8 @@ fun BuyCurrencyScreenContent(
                             bottom.linkTo(parent.bottom)
                         }
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                        .height(48.dp)
+                        .padding(start = 16.dp, end = 16.dp, bottom = 40.dp),
                 )
             }
         }
@@ -234,6 +217,7 @@ fun CounterSection(
 
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AmountInputSection(
     modifier: Modifier = Modifier,
@@ -241,18 +225,19 @@ fun AmountInputSection(
     exchangeRate: Double
 ) {
 
+    val klk = remember { mutableStateOf("") }
+    val klk2 = remember { mutableStateOf(false) }
+
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         //custom edittext
-        TextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            value = "",
-            placeholder = { Text(text = "BTC") },
-            onValueChange = {}
+        CryptoCurrencyInputLayout(
+            query = klk,
+            focused = klk2,
+            iconCurrency = asset,
+            onSearchClick = {},
         )
         Text(
             text = buildAnnotatedString { append("${exchangeRate.roundToTwoDecimalPlaces()} $asset") },

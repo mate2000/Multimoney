@@ -495,7 +495,7 @@ class HomeViewModel @Inject constructor(
                     uiState = uiState.copy(configurationVersion = configurationVersion)
                 }
                 viewModelScope.launch {
-                    countDownTimer.startTimer(30*60000L)
+                    countDownTimer.startTimer(configurationVersion?.configuration?.timeSession?.toLong() ?: 0)
                 }
             }
             result.onFailure {

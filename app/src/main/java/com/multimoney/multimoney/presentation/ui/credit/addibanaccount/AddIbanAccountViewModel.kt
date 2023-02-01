@@ -19,10 +19,7 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
-import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAccountViewModel.UIEvent.OnAccountValueChange
 import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAccountViewModel.UIEvent.OnBackClick
@@ -125,7 +122,10 @@ class AddIbanAccountViewModel @Inject constructor(
                                 uiState.copy(
                                     accountError = Pair(false, R.string.empty),
                                     accountInformation = Pair(false, R.string.empty),
-                                    validationError = Pair(true, response.responseMessage.capitalized())
+                                    validationError = Pair(
+                                        true,
+                                        response.responseMessage.capitalized()
+                                    )
                                 )
                         }
                     }
@@ -164,10 +164,16 @@ class AddIbanAccountViewModel @Inject constructor(
             idBrand = idBrand ?: 0
         ).collectLatest { result ->
             result.onSuccess {
-                when(previousScreen){
-                    Screen.DisbursementAccountScreen.baseRoute ->navigateBack(Screen.DisbursementAccountScreen.route, true)
-                    Screen.SmartPaymentAccountScreenCR.baseRoute -> navigateBack(Screen.SmartPaymentAccountScreenCR.route, true)
-                    else ->{
+                when (previousScreen) {
+                    Screen.DisbursementAccountScreen.baseRoute -> navigateBack(
+                        Screen.DisbursementAccountScreen.route,
+                        true
+                    )
+                    Screen.SmartPaymentAccountScreenCR.baseRoute -> navigateBack(
+                        Screen.SmartPaymentAccountScreenCR.route,
+                        true
+                    )
+                    else -> {
                         navigateBack(Screen.PaymentAccountScreen.route, true)
                     }
                 }

@@ -740,6 +740,7 @@
     <string name="visa_card_masked_number" translatable="false">Visa ••••%s</string>
     <string name="visa_card_dialog_title" translatable="false">Vincular tarjeta</string>
     <string name="visa_card_dialog_description" translatable="false">¿Estás seguro que deseas vincular tu tarjeta a este dispositivo?</string>
+    <string name="visa_card_dialog_description_cr" translatable="false">¿Estás seguro que deseás vincular tu tarjeta a este dispositivo?</string>
     <string name="visa_card_success_message_label" translatable="false">La tarjeta fue tokenizada exitosamente</string>
     <string name="visa_card_password_message_title" translatable="false">Validación de identidad</string>
     <string name="visa_card_password_message_subtitle" translatable="false">No es posible validar tu identidad con biometricos.</string>
@@ -1396,11 +1397,13 @@
     <string name="card_preferences_unlinked_card_title" translatable="false">Tarjeta desvinculada</string>
     <string name="card_preferences_linked_card_description" translatable="false">Al desvincular tu tarjeta no podrás\nrealizar ninguna transacción con\nMultiMoney Visa</string>
     <string name="card_preferences_linked_card_dialog_title" translatable="false">Vincular tarjeta</string>
-    <string name="card_preferences_linked_card_dialog_description" translatable="false">¿Estás seguro que deseás vincular tu tarjeta a este dispositivo?</string>
+    <string name="card_preferences_linked_card_dialog_description_cr" translatable="false">¿Estás seguro que deseás vincular tu tarjeta a este dispositivo?</string>
+    <string name="card_preferences_linked_card_dialog_description" translatable="false">¿Estás seguro que deseas vincular tu tarjeta a este dispositivo?</string>
     <string name="card_preferences_linked_card_dialog_positive_button" translatable="false">Vincular</string>
     <string name="card_preferences_linked_card_dialog_negative_button" translatable="false">Cancelar</string>
     <string name="card_preferences_unlinked_card_dialog_title" translatable="false">Desvincular tarjeta</string>
-    <string name="card_preferences_unlinked_card_dialog_description" translatable="false">¿Estás seguro que deseás desvincular tu tarjeta?</string>
+    <string name="card_preferences_unlinked_card_dialog_description_cr" translatable="false">¿Estás seguro que deseás desvincular tu tarjeta?</string>
+    <string name="card_preferences_unlinked_card_dialog_description" translatable="false">¿Estás seguro que deseas desvincular tu tarjeta?</string>
     <string name="card_preferences_unlinked_card_dialog_positive_button" translatable="false">Desvincular</string>
     <string name="card_preferences_unlinked_card_dialog_negative_button" translatable="false">Cancelar</string>
     <string name="card_preferences_unlinked_card_toast" translatable="false">Tu tarjeta ha sido desvinculada</string>

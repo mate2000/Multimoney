@@ -18,19 +18,19 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.credit.origination.companyaddress.CompanyAddressViewModel
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.BaseEvent.OnFormCompleted
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnCallCatalogs
+import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnDivisionDuiEmissionPlaceValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnDivisionOccupationValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnDivisionProfessionValueChange
-import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnDivisionDuiEmissionPlaceValueChange
-import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnIncomeValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnDuiEmissionDateValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnDuiExpirationDateValueChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnIncomeValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnLoadCreditSteps
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnValidForm
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
-import com.multimoney.multimoney.presentation.util.HYPHEN
 import com.multimoney.multimoney.presentation.util.BAR
 import com.multimoney.multimoney.presentation.util.DAY_MONTH_YEAR_PATTERN
+import com.multimoney.multimoney.presentation.util.HYPHEN
 import com.multimoney.multimoney.presentation.util.YEAR_MONTH_DAY_PATTERN
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDate
@@ -121,18 +121,22 @@ class MonthlyIncomeViewModel @Inject constructor(
     }
 
     private fun onDuiEmissionDateValueChange(date: String) {
-        uiState = uiState.copy(duiEmissionDate = date.replace(
-            HYPHEN,
-            BAR
-        ))
+        uiState = uiState.copy(
+            duiEmissionDate = date.replace(
+                HYPHEN,
+                BAR
+            )
+        )
         onValidForm()
     }
 
     private fun onDuiExpirationDateValueChange(date: String) {
-        uiState = uiState.copy(duiExpirationDate = date.replace(
-            HYPHEN,
-            BAR
-        ))
+        uiState = uiState.copy(
+            duiExpirationDate = date.replace(
+                HYPHEN,
+                BAR
+            )
+        )
         onValidForm()
     }
 
@@ -385,6 +389,29 @@ class MonthlyIncomeViewModel @Inject constructor(
         onNextStepAction()
     }
 
+    private fun loadStepsInfo(list: List<CreditCatalog?>?) {
+        val salary = list?.find { it?.description == SaveCreditStepsHelper.SALARY }
+        uiState = uiState.copy(income = salary?.value ?: "")
+        val duiEmissionDate = list?.find { it?.description == SaveCreditStepsHelper.DUI_EMISSION_DATE }
+        duiEmissionDate?.value?.let {
+            val dateParsed = getFormatDateByString(
+                it,
+                YEAR_MONTH_DAY_PATTERN,
+                DAY_MONTH_YEAR_PATTERN
+            )
+            onDuiEmissionDateValueChange(dateParsed)
+        }
+        val duiExpirationDate = list?.find { it?.description == SaveCreditStepsHelper.DUI_EXPIRATION_DATE }
+        duiExpirationDate?.value?.let {
+            val dateParsed = getFormatDateByString(
+                it,
+                YEAR_MONTH_DAY_PATTERN,
+                DAY_MONTH_YEAR_PATTERN
+            )
+            onDuiExpirationDateValueChange(dateParsed)
+        }
+    }
+
     data class UIState(
         val titleResource: Int = R.string.empty,
         val income: String = "",
@@ -441,29 +468,6 @@ class MonthlyIncomeViewModel @Inject constructor(
             is OnDuiExpirationDateValueChange -> {
                 onDuiExpirationDateValueChange(uiEvent.date)
             }
-        }
-    }
-
-    private fun loadStepsInfo(list: List<CreditCatalog?>?) {
-        val salary = list?.find { it?.description == SaveCreditStepsHelper.SALARY }
-        uiState = uiState.copy(income = salary?.value ?: "")
-        val duiEmissionDate = list?.find { it?.description == SaveCreditStepsHelper.DUI_EMISSION_DATE }
-        duiEmissionDate?.value?.let {
-            val dateParsed = getFormatDateByString(
-                it,
-                YEAR_MONTH_DAY_PATTERN,
-                DAY_MONTH_YEAR_PATTERN
-            )
-            onDuiEmissionDateValueChange(dateParsed)
-        }
-        val duiExpirationDate = list?.find { it?.description == SaveCreditStepsHelper.DUI_EXPIRATION_DATE }
-        duiExpirationDate?.value?.let {
-            val dateParsed = getFormatDateByString(
-                it,
-                YEAR_MONTH_DAY_PATTERN,
-                DAY_MONTH_YEAR_PATTERN
-            )
-            onDuiExpirationDateValueChange(dateParsed)
         }
     }
 

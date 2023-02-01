@@ -5,19 +5,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.BottomSheetScaffold
-import androidx.compose.material.BottomSheetState
-import androidx.compose.material.BottomSheetValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.PurchaseCryptoSteps
@@ -137,35 +132,35 @@ fun PurchaseCryptoFlow(
 @Composable
 fun SvPurchaseCryptoDirectFlow(step: Int, viewModel: PurchaseCryptoSharedViewModel) {
     when (step) {
-        PurchaseCryptoSteps.One.id -> BuyCurrencyScreen(sharedViewModel = viewModel)
-        PurchaseCryptoSteps.Two.id -> BuyCryptoVoucherScreen(sharedViewModel = viewModel)
+        PurchaseCryptoSteps.One.pageNumber -> BuyCurrencyScreen(sharedViewModel = viewModel)
+        PurchaseCryptoSteps.Two.pageNumber -> BuyCryptoVoucherScreen(sharedViewModel = viewModel)
     }
 }
 
 @Composable
 fun CRPurchaseCryptoDirectFlow(step: Int, viewModel: PurchaseCryptoSharedViewModel) {
     when (step) {
-        PurchaseCryptoSteps.One.id -> SelectSmartAccountScreen(sharedViewModel = viewModel)
-        PurchaseCryptoSteps.Two.id -> BuyCurrencyScreen(sharedViewModel = viewModel)
-        PurchaseCryptoSteps.Three.id -> BuyCryptoVoucherScreen(sharedViewModel = viewModel)
+        PurchaseCryptoSteps.One.pageNumber -> SelectSmartAccountScreen(sharedViewModel = viewModel)
+        PurchaseCryptoSteps.Two.pageNumber -> BuyCurrencyScreen(sharedViewModel = viewModel)
+        PurchaseCryptoSteps.Three.pageNumber -> BuyCryptoVoucherScreen(sharedViewModel = viewModel)
     }
 }
 
 @Composable
 fun SvPurchaseCryptoFlow(step: Int, viewModel: PurchaseCryptoSharedViewModel) {
     when (step) {
-        PurchaseCryptoSteps.One.id -> ListCryptoCurrenciesScreen(sharedViewModel = viewModel)
-        PurchaseCryptoSteps.Two.id -> BuyCurrencyScreen(sharedViewModel = viewModel)
-        PurchaseCryptoSteps.Three.id -> BuyCryptoVoucherScreen(sharedViewModel = viewModel)
+        PurchaseCryptoSteps.One.pageNumber -> ListCryptoCurrenciesScreen(sharedViewModel = viewModel)
+        PurchaseCryptoSteps.Two.pageNumber -> BuyCurrencyScreen(sharedViewModel = viewModel)
+        PurchaseCryptoSteps.Three.pageNumber -> BuyCryptoVoucherScreen(sharedViewModel = viewModel)
     }
 }
 
 @Composable
 fun CRPurchaseCryptoFlow(step: Int, viewModel: PurchaseCryptoSharedViewModel) {
     when (step) {
-        PurchaseCryptoSteps.One.id -> ListCryptoCurrenciesScreen(sharedViewModel = viewModel)
-        PurchaseCryptoSteps.Two.id -> SelectSmartAccountScreen(sharedViewModel = viewModel)
-        PurchaseCryptoSteps.Three.id -> BuyCurrencyScreen(sharedViewModel = viewModel)
-        PurchaseCryptoSteps.Four.id -> BuyCryptoVoucherScreen(sharedViewModel = viewModel)
+        PurchaseCryptoSteps.One.pageNumber -> ListCryptoCurrenciesScreen(sharedViewModel = viewModel)
+        PurchaseCryptoSteps.Two.pageNumber -> SelectSmartAccountScreen(sharedViewModel = viewModel)
+        PurchaseCryptoSteps.Three.pageNumber -> BuyCurrencyScreen(sharedViewModel = viewModel)
+        PurchaseCryptoSteps.Four.pageNumber -> BuyCryptoVoucherScreen(sharedViewModel = viewModel)
     }
 }

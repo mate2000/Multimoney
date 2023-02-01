@@ -45,7 +45,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         private set
 
     //stateless
-    private var currentFlowStep: Int = PurchaseCryptoSteps.One.id
+    private var currentFlowStep: Int = PurchaseCryptoSteps.One.pageNumber
 
     //bundle parameters
     var idBrand = DEFAULT_ID_BRAND_ERROR
@@ -116,7 +116,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     }
 
     private fun previousStep() {
-        if (currentFlowStep == PurchaseCryptoSteps.One.id) {
+        if (currentFlowStep == PurchaseCryptoSteps.One.pageNumber) {
             navigateBackToHome()
         } else {
             currentFlowStep--
@@ -165,7 +165,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     }
 
     data class UIState(
-        val currentStep: Int = PurchaseCryptoSteps.One.id,
+        val currentStep: Int = PurchaseCryptoSteps.One.pageNumber,
         val isLoading: Boolean = false,
         val accounts: List<AccountSmartForBuyCrypto> = listOf(),
         val openDialog: DialogParameters = DialogParameters(),

@@ -85,7 +85,7 @@ fun CryptoActionsSection(
             if (enableSendAndGive) {
                 item {
                     CryptoAction(
-                        enable = true,
+                        enable = enableCryptoActions,
                         title = stringResource(id = R.string.crypto_footer_expanded_get_crypto_label),
                         icon = R.drawable.ic_arrow_get,
                         action = giveAction

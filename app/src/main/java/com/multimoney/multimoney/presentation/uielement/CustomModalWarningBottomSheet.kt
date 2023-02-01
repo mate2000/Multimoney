@@ -29,7 +29,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.GrayScale600
 import com.multimoney.multimoney.presentation.theme.GrayScale700
@@ -111,7 +110,7 @@ fun CustomModalWarningBottomSheet(
                                 Text(
                                     modifier = Modifier.wrapContentHeight(),
                                     text = if (titleText != "") titleText else stringResource(id = titleResource),
-                                    style = Typography.body1.copy(fontSize = 28.sp, fontWeight = FontWeight.SemiBold),
+                                    style = Typography.h4.copy(fontWeight = FontWeight.Black),
                                     color = textColor
                                 )
                             }

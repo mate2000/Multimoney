@@ -35,7 +35,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -332,17 +331,14 @@ fun ChangePasswordContent(
         titleResource = R.string.password_security_bottom_sheet_general_title,
         descriptionText = buildAnnotatedString {
             withStyle(
-                style = Typography.body1.toSpanStyle().copy(
-                    fontSize = 15.sp,
+                style = Typography.subtitle1.toSpanStyle().copy(
                     fontWeight = FontWeight.Bold
                 )
             ) {
                 append(stringResource(id = R.string.password_security_bottom_sheet_general_description))
             }
             withStyle(
-                style = Typography.body2.toSpanStyle().copy(
-                    fontWeight = FontWeight.Normal
-                )
+                style = Typography.subtitle1.toSpanStyle()
             ) {
                 append(stringResource(id = R.string.password_security_bottom_sheet_signup_description))
             }

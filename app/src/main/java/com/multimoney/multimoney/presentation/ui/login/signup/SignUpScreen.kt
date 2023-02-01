@@ -21,7 +21,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
@@ -126,17 +125,14 @@ fun SignUpScreen(
             titleResource = R.string.password_security_bottom_sheet_general_title,
             descriptionText = buildAnnotatedString {
                 withStyle(
-                    style = Typography.body1.toSpanStyle().copy(
-                        fontSize = 15.sp,
+                    style = Typography.subtitle1.toSpanStyle().copy(
                         fontWeight = FontWeight.Bold
                     )
                 ) {
                     append(stringResource(id = R.string.password_security_bottom_sheet_general_description))
                 }
                 withStyle(
-                    style = Typography.body2.toSpanStyle().copy(
-                        fontWeight = FontWeight.Normal
-                    )
+                    style = Typography.subtitle1.toSpanStyle()
                 ) {
                     append(stringResource(id = R.string.password_security_bottom_sheet_signup_description))
                 }

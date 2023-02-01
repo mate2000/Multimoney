@@ -310,17 +310,14 @@ fun RegisteredUserPasswordContent(
         titleResource = string.password_security_bottom_sheet_general_title,
         descriptionText = buildAnnotatedString {
             withStyle(
-                style = Typography.body1.toSpanStyle().copy(
-                    fontSize = 15.sp,
+                style = Typography.subtitle1.toSpanStyle().copy(
                     fontWeight = FontWeight.Bold
                 )
             ) {
                 append(stringResource(id = string.password_security_bottom_sheet_general_description))
             }
             withStyle(
-                style = Typography.body2.toSpanStyle().copy(
-                    fontWeight = FontWeight.Normal
-                )
+                style = Typography.subtitle1.toSpanStyle()
             ) {
                 append(stringResource(id = string.password_security_bottom_sheet_signup_description))
             }

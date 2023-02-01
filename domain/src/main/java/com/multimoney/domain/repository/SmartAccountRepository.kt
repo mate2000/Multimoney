@@ -28,6 +28,7 @@ import com.multimoney.domain.model.accountsmart.VisaSmartPayment
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
 import kotlinx.coroutines.flow.Flow
+import java.util.*
 
 interface SmartAccountRepository {
 
@@ -173,7 +174,8 @@ interface SmartAccountRepository {
         identification: String,
         country: String,
         idAccount: Long,
-        accountNumber: String
+        accountNumber: String,
+        isFavorite: Boolean?
     ): Flow<MultimoneyResult<SinpeAccountResult?>>
 
     suspend fun querySmartExchangeRate(

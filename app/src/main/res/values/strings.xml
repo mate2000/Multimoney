@@ -388,6 +388,11 @@
     <string name="profile_change_email_title" translatable="false">Cambiar correo electrónico</string>
     <string name="profile_change_email_enter_new" translatable="false">Nuevo correo electrónico</string>
     <string name="profile_change_email_enter_new_confirmation" translatable="false">Confirmar nuevo correo electrónico</string>
+    <string name="profile_accounts_favorites" translatable="false">Favoritas</string>
+    <string name="profile_accounts_registered" translatable="false">Cuentas registradas</string>
+
+
+
 
     <!-- Automatic Logout -->
     <string name="automatic_logout_dialog_description" translatable="false">No detectamos actividad en la aplicación, por motivos de seguridad la app se cerrará en %s segundos.</string>

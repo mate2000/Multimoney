@@ -3,6 +3,7 @@ package com.multimoney.multimoney.presentation.ui.login.signup.personaldata
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Nationalities.CostaRicaDimex
 import com.multimoney.data.util.catalog.Nationalities.CostaRicaId
@@ -28,6 +29,7 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.USER_DATA
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnGetCountriesSuccess
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnCallQueryGetCountry
@@ -41,10 +43,10 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnSecondNameChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnUpdateAllNames
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnUserDataValidationSuccess
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnValidateDocument
 import com.multimoney.multimoney.presentation.util.catalog.CrDocuments
 import com.multimoney.multimoney.presentation.util.catalog.SvDocuments
+import com.multimoney.multimoney.presentation.util.getDeviceId
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.validCarne
 import com.multimoney.multimoney.presentation.util.validDui
@@ -302,7 +304,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
         )
     }
 
-    private fun onCallMutationUserValidationUseCase(email: String, nextStep: String, idBrand: Int) =
+    private fun onCallMutationUserValidationUseCase(email: String, nextStep: String, idBrand: Int, activity: FragmentActivity) =
         executeUseCase {
             mutationUserValidationUseCase(
                 email = email,
@@ -313,7 +315,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 firstName = uiState.firstNameValue,
                 secondName = uiState.secondNameValue,
                 firstSurname = uiState.firstLastNameValue,
-                secondSurname = uiState.secondLastNameValue
+                secondSurname = uiState.secondLastNameValue,
+                deviceId = getDeviceId(activity)
             ).collectLatest { result ->
                 onUserDataValidationEvent.emit(result)
             }
@@ -457,11 +460,12 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private fun onNextActionClick(
         email: String,
         nextStep: String,
-        idBrand: Int
+        idBrand: Int,
+        activity: FragmentActivity
     ) {
         previousEmail = email
         this.idBrand = idBrand
-        onCallMutationUserValidationUseCase(email, nextStep, idBrand)
+        onCallMutationUserValidationUseCase(email, nextStep, idBrand, activity)
     }
 
     private fun validateDocument(email: String?) {
@@ -486,20 +490,47 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private fun onUserDataValidationSuccess(
         userData: UserData?,
         onUseDataValueChange: () -> Unit,
-        onCallMutationUpdateUserRegisterUseCase: () -> Unit,
-        onLoadingValueChange: (isLoading: Boolean) -> Unit
+        onCallMutationUpdateUserRegisterUseCase: () -> Unit
     ) {
-        if (userData?.isNewUser == false) {
-            onLoadingValueChange(false)
-            navigateToRegisteredUser(userData)
-        } else {
+        if (userData?.isNewUser == true || userData?.status == ANOTHER_DEVICE_ALREADY_REGISTERED) {
             onUseDataValueChange()
             onCallMutationUpdateUserRegisterUseCase()
+        } else {
+            navigateToRegisteredUser(userData)
         }
     }
 
-    private fun navigateToRegisteredUser(userData: UserData) {
-        if (previousEmail == userData.email) {
+    fun onSuccessValidation(
+        sharedViewModel: SignUpViewModel,
+        userData: UserData?
+    ) {
+        onUserDataValidationSuccess(
+            userData = userData,
+            onUseDataValueChange = {
+                sharedViewModel.strIdIdentification = uiState.identificationValueType
+                sharedViewModel.onUIEvent(
+                    SignUpViewModel.UIEvent.OnUseDataValueChange(
+                        sharedViewModel.userData?.copy(
+                            pkUser = userData?.pkUser,
+                            fullName = getFullName(),
+                            firstName = userData?.firstName,
+                            secondName = userData?.secondName,
+                            firstLastName = userData?.firstLastName,
+                            secondLastName = userData?.secondLastName,
+                            identification = userData?.identification,
+                            currentStep = userData?.currentStep
+                        )
+                    )
+                )
+            },
+            onCallMutationUpdateUserRegisterUseCase = {
+                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase)
+            }
+        )
+    }
+
+    private fun navigateToRegisteredUser(userData: UserData?) {
+        if (previousEmail == userData?.email) {
             navigateTo(
                 route = Screen.RegisteredUserOtpScreen.baseRoute
                     .plus(
@@ -597,13 +628,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 event.identification,
                 event.identificationShareViewModelChange
             )
-            is OnNextActionClick -> onNextActionClick(event.email, event.nextStep, event.idBrand)
-            is OnUserDataValidationSuccess -> onUserDataValidationSuccess(
-                event.userData,
-                event.onUseDataValueChange,
-                event.onCallMutationUpdateUserRegisterUseCase,
-                event.onLoadingValueChange
-            )
+            is OnNextActionClick -> onNextActionClick(event.email, event.nextStep, event.idBrand, event.activity)
             is OnValidateDocument -> validateDocument(event.document)
             is OnCallQueryGetCountry -> callQueryGetCountryUseCase(
                 event.user,
@@ -671,7 +696,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
         data class OnNextActionClick(
             val email: String,
             val nextStep: String,
-            val idBrand: Int
+            val idBrand: Int,
+            val activity: FragmentActivity
         ) : UIEvent()
 
         data class OnValidateDocument(
@@ -683,13 +709,6 @@ class SignUpPersonalDataViewModel @Inject constructor(
             val onLoadingValueChange: (isLoading: Boolean) -> Unit
         ) :
             UIEvent()
-
-        data class OnUserDataValidationSuccess(
-            val userData: UserData?,
-            val onUseDataValueChange: () -> Unit,
-            val onCallMutationUpdateUserRegisterUseCase: () -> Unit,
-            val onLoadingValueChange: (isLoading: Boolean) -> Unit
-        ) : UIEvent()
 
         object OnValidateForm : UIEvent()
     }
@@ -704,5 +723,6 @@ class SignUpPersonalDataViewModel @Inject constructor(
         const val FORMAT_VALUE = '0'
         const val SINGLE_DOCUMENT = 1
         const val STEP_TO_MOVE = 4
+        const val ANOTHER_DEVICE_ALREADY_REGISTERED = 3102
     }
 }

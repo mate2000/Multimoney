@@ -40,6 +40,8 @@ import com.multimoney.multimoney.presentation.ui.crypto.market.MarketSkeleton
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.formattedTwoDecimalsNumber
+import com.multimoney.multimoney.presentation.util.transformation.formatWithComma
 import kotlinx.coroutines.launch
 
 @Composable
@@ -170,7 +172,7 @@ fun ListCryptoBody(
                 imageUrl = it.url_image,
                 descriptionCurrency = it.description,
                 asset = it.baseAsset,
-                priceOfTheDay = it.currentPrice.toString().toDouble(),
+                priceOfTheDay = it.currentPrice.toString().toDouble().formatWithComma(),
                 percentageInvestedCurrency = it.percentChange
             ) {
                 itemClick(it)

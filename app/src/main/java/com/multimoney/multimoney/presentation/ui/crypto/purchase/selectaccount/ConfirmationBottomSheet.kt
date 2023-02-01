@@ -64,6 +64,8 @@ fun ConfirmationBottomSheetContent() {
                 .height(48.dp)
                 .padding(top = 8.dp),
             onClick = {
+                      // todo save preference using setVolatileDialogVisible
+                      //  and save the value depending on the checkbox value
                 //ToDo on navigate to next step
             },
             text = stringResource(id = R.string.button_continue),

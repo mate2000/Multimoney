@@ -151,6 +151,7 @@ fun MarketScreenContent(
                         searchQuery = searchQuery,
                         selectedFilter = selectedFilter,
                         sheetState = state,
+                        showFilterChip = marketViewModel.uiState.idBrand == Brand.CostaRica.id,
                         onCurrencyItemClick = { cryptoCurrency ->
                             marketViewModel.onUIEvent(
                                 OnSetAssetBeforeNavigation(
@@ -286,6 +287,7 @@ fun ListOfCoinsSection(
     searchQuery: MutableState<String>,
     selectedFilter: MutableState<String>,
     sheetState: ModalBottomSheetState,
+    showFilterChip: Boolean = false,
     onCurrencyItemClick: (MarketCryptoCoin) -> Unit
 ) {
 
@@ -304,8 +306,10 @@ fun ListOfCoinsSection(
     LazyColumn(
         contentPadding = PaddingValues(vertical = 8.dp),
     ) {
-        item {
-            FilterSection(selectedFilter = selectedFilter, sheetState = sheetState)
+        if (showFilterChip) {
+            item {
+                FilterSection(selectedFilter = selectedFilter, sheetState = sheetState)
+            }
         }
         items(filteredList) { cryptoCoin ->
             MarketCurrencyItem(

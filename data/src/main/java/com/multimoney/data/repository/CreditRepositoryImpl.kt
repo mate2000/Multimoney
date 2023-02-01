@@ -280,6 +280,23 @@ class CreditRepositoryImpl @Inject constructor(
         }
     )
 
+    override suspend fun queryEmissionPlace(
+        pkUser: Int,
+        idUserRequest: Int,
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<List<CreditCatalog?>?>> = fetchData(
+        apolloCall = graphqlApi.queryEmissionPlace(
+            pkUser = pkUser,
+            idUserRequest = idUserRequest,
+            idBrand = idBrand,
+            user = user
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
     override suspend fun mutationSaveCreditFlowStep(
         user: String,
         idBrand: Int,

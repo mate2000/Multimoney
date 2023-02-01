@@ -30,6 +30,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
+import com.multimoney.multimoney.presentation.navigation.CROSSELING
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateMinusYears
@@ -76,6 +77,7 @@ class NonPreApprovedViewModel @Inject constructor(
     private var firstName: String? = ""
     private var lastName: String? = ""
     private var idPrint: Long? = 0
+    private var crosseling: Boolean? = false
     private var statusOnfido: String? = ""
     private var statusEvicertia: String? = ""
     private var lastStep: Int? = null
@@ -97,6 +99,7 @@ class NonPreApprovedViewModel @Inject constructor(
         statusEvicertia = savedStateHandle[EVICERTIA_STATUS]
         idPrint = savedStateHandle[SIGN_DOCUMENT_ID_PRINT]
         lastStep = savedStateHandle[CREDIT_STEP]
+        crosseling = savedStateHandle[CROSSELING]
         getTextResources()
         setBirthdayMinAndMaxDates(minDate = DATE_MIN_YEARS, maxDate = DATE_MAX_YEARS)
     }
@@ -304,7 +307,7 @@ class NonPreApprovedViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess {
                 uiState = uiState.copy(isLoading = false)
-                if (it?.rejectedBlaze?.not() == false) {
+                if (it?.rejectedBlaze?.not() == true) {
                     setSuccessAlertResult(it.products?.firstOrNull()?.maximumDisbursement ?: "")
                 } else {
                     setErrorAlertResult()
@@ -330,11 +333,11 @@ class NonPreApprovedViewModel @Inject constructor(
         )
 
     private fun onNavigateToOrigination() = popAndNavigateTo(
-        route = "${Screen.CreditScreen.baseRoute}/${idBrand ?: 0}/${pkUser ?: 0}/${identification ?: ""}/${email ?: ""}/${lastStep ?: CreditStep.One.id}/" +
-                "${idUserRequest ?: 0}/${firstName ?: ""}/" +
-                "${lastName ?: ""}/${statusOnfido ?: ""}/" +
-                "${statusEvicertia ?: ""}/${idPrint ?: 0}/" +
-                "",
+        route = "${Screen.CreditScreen.baseRoute}/${idBrand ?: 0}/${pkUser ?: 0}/${identification.orEmpty()}/${email.orEmpty()}/${lastStep ?: CreditStep.One.id}/" +
+                "${idUserRequest ?: 0}/${firstName.orEmpty()}/" +
+                "${lastName.orEmpty()}/${statusOnfido.orEmpty()}/" +
+                "${statusEvicertia.orEmpty()}/${idPrint ?: 0}" +
+                "${crosseling ?: false}",
         popTo = Screen.NonPreApprovedScreen.route
     )
 

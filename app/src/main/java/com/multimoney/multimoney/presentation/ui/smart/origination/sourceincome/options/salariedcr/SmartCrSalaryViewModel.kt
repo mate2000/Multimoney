@@ -12,7 +12,9 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnCallQueryProfessionUseCase
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnCompanyNameChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnFailureWithDialog
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnJobPositionChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnLoadCurrentStepData
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnPaymentAmountChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnProfessionChange
@@ -21,8 +23,8 @@ import com.multimoney.multimoney.presentation.util.MIN_INCOME
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseCase: QueryProfessionUseCase) :
@@ -46,10 +48,18 @@ class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseC
         validateForm()
     }
 
-    private fun onProfessionValueChange(
-        profession: String
-    ) {
+    private fun onProfessionValueChange(profession: String) {
         uiState = uiState.copy(profession = profession)
+        validateForm()
+    }
+
+    private fun onCompanyNameChange(companyName: String) {
+        uiState = uiState.copy(companyName = companyName)
+        validateForm()
+    }
+
+    private fun onJobPositionChange(jobPosition: String) {
+        uiState = uiState.copy(jobPosition = jobPosition)
         validateForm()
     }
 
@@ -90,6 +100,8 @@ class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseC
         accountSmartData?.let {
             onAmountValueChange(it.income.toString())
             onProfessionValueChange(it.stringProfessionType.orEmpty())
+            onCompanyNameChange(it.companyName.orEmpty())
+            onJobPositionChange(it.positionJob.orEmpty())
         }
     }
 
@@ -99,7 +111,9 @@ class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseC
         val paymentAmount: String = "",
         val professionSmartList: List<ProfessionSmart?> = listOf(),
         val isLoading: Boolean = false,
-        val openDialog: DialogParameters = DialogParameters()
+        val openDialog: DialogParameters = DialogParameters(),
+        val companyName: String = "",
+        val jobPosition: String = ""
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -112,13 +126,16 @@ class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseC
                     uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnCallQueryProfessionUseCase -> callQueryProfessionUseCase(event.user, event.idBrand)
             is OnLoadCurrentStepData -> onLoadCurrentStepData(event.accountSmartData)
+            is OnCompanyNameChange -> onCompanyNameChange(event.companyName)
+            is OnJobPositionChange -> onJobPositionChange(event.jobPosition)
         }
     }
 
     sealed class UIEvent {
         data class OnPaymentAmountChange(val paymentAmount: String) : UIEvent()
         data class OnProfessionChange(val profession: String) : UIEvent()
-
+        data class OnCompanyNameChange(val companyName: String) : UIEvent()
+        data class OnJobPositionChange(val jobPosition: String) : UIEvent()
         data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) :
             UIEvent()
 

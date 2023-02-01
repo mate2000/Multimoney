@@ -109,7 +109,9 @@ fun Context.checkPermission(
             launcher.launch(permission)
         }
         comesFromRationale.not() && showRationale == true -> showRationaleAction(false)
-        comesFromRationale.not() && showRationale == false && isFirstRequest.not() -> showRationaleAction(true)
+        comesFromRationale.not() && showRationale == false && isFirstRequest.not() -> showRationaleAction(
+            true
+        )
         isFirstRequest && showRationale == false -> launcher.launch(permission)
         else -> launcher.launch(permission)
     }
@@ -219,9 +221,9 @@ fun String?.getCurrencySymbol(): Int {
 
 fun String.getCurrencyFromId(): CurrencyType {
     return when (this) {
-        Colon.currency -> Colon
-        Dollar.currency -> Dollar
-        Quetzal.currency -> Quetzal
+        Colon.currency, Colon.id.toString() -> Colon
+        Dollar.currency, Dollar.id.toString() -> Dollar
+        Quetzal.currency, Quetzal.id.toString() -> Quetzal
         else -> All
     }
 }
@@ -354,6 +356,23 @@ fun String.addTextStyleToTextPortion(textToStyle: String, style: TextStyle): Ann
     }
 }
 
+fun String?.toTwoChar(): String {
+    return when {
+        isNullOrEmpty() -> {
+            QUESTION_MARK
+        }
+        contains(WHITE_SPACE_SEPARATOR) -> {
+            trim().replace(TWO_CHARACTER_REGEX.toRegex(), "$1$2").uppercase()
+        }
+        length > 1 -> {
+            substring(0, 2)
+        }
+        else -> {
+            substring(0, 1)
+        }
+    }
+}
+
 fun String.isCognitoErrorCode(code: String) = contains(""""$CODE_KEYWORD":"$code"""")
 
 fun CharSequence.replaceNumbersToZero() = replace(Regex(DIGITS_REGEX), ZERO_STRING)
@@ -362,7 +381,7 @@ fun getCountryCodeByIdBrand(idBrand: Int): String {
     return when (idBrand) {
         Brand.ElSalvador.id -> PhoneCountryCode.EL_SALVADOR.code
         Brand.CostaRica.id -> PhoneCountryCode.COSTA_RICA.code
-        Brand.ElSalvador.id -> PhoneCountryCode.GUATEMALA.code
+        Brand.Guatemala.id -> PhoneCountryCode.GUATEMALA.code
         else -> ""
     }
 }
@@ -383,6 +402,7 @@ fun formatPhoneNumber(phoneWithCode: String?, phoneWithoutCode: String?) =
 
 private const val HEX_FORMAT = "#%02x%02x%02x"
 private const val SPECIAL_CHARACTER_REGEX = "[!\"#\$%&'()*+,-./:;\\\\<=>?@^_`{|}~]"
+private const val TWO_CHARACTER_REGEX = "^\\s*([a-zA-Z]).*\\s+([a-zA-Z])\\S+$"
 private const val NUMBER_REGEX = "[0-9]"
 private const val DECIMAL_SEPARATOR = '.'
 private const val WHITE_SPACE_SEPARATOR = ' '
@@ -390,3 +410,4 @@ private const val CODE_KEYWORD = "code"
 private const val DIGITS_REGEX = "\\d"
 private const val ZERO_STRING = "0"
 private const val DEFAULT_AMOUNT_OF_DECIMALS = 2
+private const val QUESTION_MARK = "?"

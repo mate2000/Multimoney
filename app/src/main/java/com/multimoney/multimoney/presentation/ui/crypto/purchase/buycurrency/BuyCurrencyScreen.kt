@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.ExperimentalMaterialApi
@@ -52,15 +51,15 @@ fun BuyCurrencyScreen(
     LaunchedEffect(key1 = true) {
         viewModel.onUIEvent(
             BuyCurrencyScreenViewModel.UIEvent.OnSetUserData(
-                asset = sharedViewModel.asset ?: "",
-                cryptoNetwork = sharedViewModel.cryptoNetWork,
+                asset = sharedViewModel.uiState.asset ?: "",
+                cryptoNetwork = sharedViewModel.uiState.cryptoNetWork,
                 idBrand = sharedViewModel.idBrand,
                 user = sharedViewModel.user,
-                market = sharedViewModel.market ?: "",
+                market = sharedViewModel.uiState.market,
                 identification = sharedViewModel.identification,
                 baseAmount = 0.0,
                 side = sharedViewModel.side,
-                assetImageUrl = sharedViewModel.assetImageBaseUrl,
+                assetImageUrl = sharedViewModel.uiState.assetImageBaseUrl,
                 smartAccountAvailableBalance = sharedViewModel.uiState.smartAccountAvailableBalance,
             )
         )
@@ -141,7 +140,6 @@ fun BuyCurrencyScreenContent(
                             bottom.linkTo(parent.bottom)
                         }
                         .fillMaxWidth()
-                        .height(48.dp)
                         .padding(start = 16.dp, end = 16.dp, bottom = 40.dp),
                 )
             }

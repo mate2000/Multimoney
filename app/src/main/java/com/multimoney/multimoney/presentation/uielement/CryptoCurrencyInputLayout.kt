@@ -113,10 +113,9 @@ fun CustomTextField(
                 fontWeight = FontWeight.Bold,
                 fontSize = when {
                     value.value.length <= 10 -> 34.sp
-                    value.value.length <= 19 -> 24.sp
-                    value.value.length <= 28 -> 16.sp
-                    value.value.length <= 39 -> 12.sp
-                    else -> 10.sp
+                    value.value.length <= 17 -> 24.sp
+                    value.value.length <= 26 -> 16.sp
+                    else -> 12.sp
                 }
             ),
             onValueChange = { value.value = it },
@@ -151,7 +150,7 @@ fun CustomTextField(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(end = 24.dp),
+                .padding(end = 28.dp),
             contentAlignment = Alignment.CenterEnd
         ) {
             IconButton(

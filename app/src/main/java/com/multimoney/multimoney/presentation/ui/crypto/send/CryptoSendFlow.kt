@@ -39,24 +39,6 @@ fun CryptoSendFlow(
         )
     }
 
-    LaunchedEffect(key1 = true) {
-        when (viewModel.idBrand) {
-            Brand.ElSalvador.id -> {
-                /* Sending crypto is temporarily disabled to El Salvador. */
-            }
-            Brand.CostaRica.id -> {
-                val step: Int = if (viewModel.comingFromCurrencyDetails) {
-                    // If the user comes from the currency details screen, we start
-                    // the flow on the Crypto Address Screen(Second Step)
-                    CryptoSendSteps.Two.id
-                } else {
-                    CryptoSendSteps.One.id
-                }
-                viewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.SetCurrentStep(step))
-            }
-        }
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -78,7 +60,24 @@ fun CryptoSendFlow(
             modifier = Modifier.weight(0.1f),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            CRCryptoSendFlow(viewModel.uiState.currentStep, viewModel)
+            when (viewModel.idBrand) {
+                Brand.ElSalvador.id -> {
+                    /* Sending crypto is temporarily disabled to El Salvador. */
+                }
+                Brand.CostaRica.id -> {
+                    if (viewModel.comingFromCurrencyDetails) {
+                        CRSendCryptoDirectFlow(
+                            step = viewModel.uiState.currentStep,
+                            viewModel = viewModel
+                        )
+                    } else {
+                        CRSendCryptoFlow(
+                            step = viewModel.uiState.currentStep,
+                            viewModel = viewModel
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -102,21 +101,21 @@ fun CryptoSendFlow(
 }
 
 @Composable
-fun CRCryptoSendFlow(step: Int, viewModel: CryptoSendSharedViewModel) {
+fun CRSendCryptoDirectFlow(step: Int, viewModel: CryptoSendSharedViewModel) {
     when (step) {
-        CryptoSendSteps.One.id -> {
-            CryptoSendListOfCurrenciesScreen(sharedViewModel = viewModel)
-        }
-        CryptoSendSteps.Two.id -> {
-            /* TODO: Crypto Address Screen */
-            TemporalScreen(text = "Crypto Address Screen")
-        }
-        CryptoSendSteps.Three.id -> {
-            /* TODO: Send Amount Screen */
-        }
-        CryptoSendSteps.Four.id -> {
-            /* TODO: Voucher Screen */
-        }
+        CryptoSendSteps.One.pageNumber -> TemporalScreen(text = "Crypto Address Screen")
+        CryptoSendSteps.Two.pageNumber -> { /* TODO: Send Amount Screen */ }
+        CryptoSendSteps.Three.pageNumber -> { /* TODO: Voucher Screen */ }
+    }
+}
+
+@Composable
+fun CRSendCryptoFlow(step: Int, viewModel: CryptoSendSharedViewModel) {
+    when (step) {
+        CryptoSendSteps.One.pageNumber -> CryptoSendListOfCurrenciesScreen(sharedViewModel = viewModel)
+        CryptoSendSteps.Two.pageNumber -> TemporalScreen(text = "Crypto Address Screen")
+        CryptoSendSteps.Three.pageNumber -> { /* TODO: Send Amount Screen */ }
+        CryptoSendSteps.Four.pageNumber -> { /* TODO: Voucher Screen */ }
     }
 }
 

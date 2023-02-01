@@ -55,15 +55,6 @@ fun CryptoSendListOfCurrenciesScreen(
         viewModel.onUIEvent(CryptoSendCurrenciesListViewModel.UIEvent.OnGetBalanceCrypto)
     }
 
-    LaunchedEffect(key1 = true) {
-        sharedViewModel.onUIEvent(
-            CryptoSendSharedViewModel.UIEvent.OnSetNavigation(
-                nextStep = CryptoSendSteps.Two.id,
-                previousStep = CryptoSendSteps.One.id,
-            )
-        )
-    }
-
     CryptoSendContent(
         viewModel.uiState,
         itemClick = {

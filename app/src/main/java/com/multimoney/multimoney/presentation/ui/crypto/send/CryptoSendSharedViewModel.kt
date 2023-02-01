@@ -30,9 +30,7 @@ class CryptoSendSharedViewModel @Inject constructor(
         private set
 
     //stateless
-    private var overridePreviousAction: (() -> Unit)? = null
-    private var nextStep: Int = CryptoSendSteps.One.id
-    private var previousStep: Int = CryptoSendSteps.One.id
+    private var currentFlowStep: Int = CryptoSendSteps.One.pageNumber
 
     //bundle parameters
     var idBrand = DEFAULT_ID_BRAND
@@ -74,59 +72,21 @@ class CryptoSendSharedViewModel @Inject constructor(
         )
 
     private fun previousStep() {
-        if (overridePreviousAction != null) {
-            overridePreviousAction?.invoke()
+        if (currentFlowStep == CryptoSendSteps.One.pageNumber) {
+            navigateBackToHome()
         } else {
-            when {
-                uiState.currentStep == CryptoSendSteps.Two.id && comingFromCurrencyDetails -> {
-                    navigateBackToHome()
-                }
-                previousStep > CryptoSendSteps.One.id || uiState.currentStep == CryptoSendSteps.Two.id -> {
-                    uiState = uiState.copy(
-                        currentStep = previousStep
-                    )
-                }
-                else -> {
-                    navigateBackToHome()
-                }
-            }
-        }
-    }
-
-    private fun nextStep() {
-        if (nextStep <= getTotalSteps()) {
+            currentFlowStep--
             uiState = uiState.copy(
-                currentStep = nextStep
+                currentStep = currentFlowStep
             )
         }
     }
 
-    private fun getTotalSteps(): Int {
-        return when {
-            idBrand == Brand.CostaRica.id -> SEND_CRYPTO_TOTAL_STEPS_CR
-            idBrand == Brand.CostaRica.id && comingFromCurrencyDetails -> SEND_CRYPTO_TOTAL_STEPS_CR_DETAILS
-            else -> throw IllegalArgumentException("case not supported")
-        }
-    }
-
-    private fun onSetCurrentStep(step: Int) {
+    private fun nextStep() {
+        currentFlowStep++
         uiState = uiState.copy(
-            currentStep = step
+            currentStep = currentFlowStep
         )
-    }
-
-    private fun onSetNavigation(
-        overridePreviousAction: (() -> Unit)?,
-        nextStep: Int,
-        previousStep: Int
-    ) {
-        this.overridePreviousAction = overridePreviousAction
-        this.nextStep = nextStep
-        this.previousStep = previousStep
-    }
-
-    private fun overridePreviousAction(overridePreviousAction: (() -> Unit)?) {
-        this.overridePreviousAction = overridePreviousAction
     }
 
     private fun onCryptoSelected(cryptoAccount: BalanceCryptoAccountItems) {
@@ -137,7 +97,7 @@ class CryptoSendSharedViewModel @Inject constructor(
     }
 
     data class UIState(
-        val currentStep: Int = 1,
+        val currentStep: Int = CryptoSendSteps.One.pageNumber,
         val isLoading: Boolean = false,
         val accounts: List<Any> = listOf(),
         val openDialog: DialogParameters = DialogParameters(),
@@ -151,13 +111,6 @@ class CryptoSendSharedViewModel @Inject constructor(
             is UIEvent.OnCloseClick -> onCloseClick()
             is UIEvent.OnPreviousStep -> previousStep()
             is UIEvent.OnNextStep -> nextStep()
-            is UIEvent.SetCurrentStep -> onSetCurrentStep(event.step)
-            is UIEvent.OnSetNavigation -> onSetNavigation(
-                event.overridePreviousAction,
-                event.nextStep,
-                event.previousStep
-            )
-            is UIEvent.OverridePreviousAction -> overridePreviousAction(event.action)
             is UIEvent.OnCryptoSelected -> onCryptoSelected(event.cryptoAccount)
         }
     }
@@ -167,19 +120,7 @@ class CryptoSendSharedViewModel @Inject constructor(
         object OnCloseClick : UIEvent
         object OnPreviousStep : UIEvent
         object OnNextStep : UIEvent
-        data class SetCurrentStep(val step: Int) : UIEvent
-        data class OnSetNavigation(
-            val overridePreviousAction: (() -> Unit)? = null,
-            val nextStep: Int,
-            val previousStep: Int
-        ) : UIEvent
-        data class OverridePreviousAction(val action: (() -> Unit)?) : UIEvent
         data class OnCryptoSelected(val cryptoAccount: BalanceCryptoAccountItems): UIEvent
-        /*
-        data class OnCryptoSelected(
-            val selectedCrypto: MarketCryptoCoin
-        ) : UIEvent
-        object OnGetUserInfo : UIEvent*/
     }
 
     companion object {

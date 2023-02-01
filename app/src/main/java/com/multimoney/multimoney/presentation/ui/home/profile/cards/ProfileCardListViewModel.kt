@@ -16,6 +16,7 @@ import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.PROFILE_CARD_LIST_ORIGIN
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
@@ -25,11 +26,11 @@ import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardL
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnDeleteCard
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnEditCard
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnNavigateBackHome
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnEditCardShowToast
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnDeleteCardShowToast
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnHideToast
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.ProfileCardListOrigin
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -50,11 +51,13 @@ class ProfileCardListViewModel @Inject constructor(
     private var user: String = ""
     private var idBrand: Int = 0
     private var identification: String? = null
+    private var origin: String = ""
 
     init {
         user = savedStateHandle[USER] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
         identification = savedStateHandle[IDENTIFICATION] ?: ""
+        origin = savedStateHandle[PROFILE_CARD_LIST_ORIGIN] ?: ProfileCardListOrigin.Profile.value
     }
 
     private fun onCallQueryGetClientCardsUseCase(fromDelete: Boolean) {
@@ -178,10 +181,13 @@ class ProfileCardListViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateBack() =
-        navigateBack(popTo = Screen.ProfileScreen.route, isRestart = false)
-
-    private fun onNavigateBackHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
+    private fun onNavigateBack() {
+        if (origin == ProfileCardListOrigin.Profile.value) {
+            navigateBack(popTo = Screen.ProfileScreen.route, isRestart = false)
+        } else {
+            navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
+        }
+    }
 
     data class UIState(
         // Interactions
@@ -200,7 +206,6 @@ class ProfileCardListViewModel @Inject constructor(
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnNavigateBack -> onNavigateBack()
-            is OnNavigateBackHome -> onNavigateBackHome()
             is OnCallQueryGetClientCards -> onCallQueryGetClientCardsUseCase(fromDelete = false)
             is OnCardThreePointsSelected -> onCardThreePointsSelected(uiEvent.cardSelected)
             is OnEditCard -> onEditCard(uiEvent.card)
@@ -218,7 +223,6 @@ class ProfileCardListViewModel @Inject constructor(
 
         class OnCardThreePointsSelected(val cardSelected: CardVisaDirect?) : UIEvent()
         object OnNavigateBack : UIEvent()
-        object OnNavigateBackHome : UIEvent()
         object OnEditCardShowToast : UIEvent()
         object OnDeleteCardShowToast : UIEvent()
         object OnHideToast: UIEvent()

@@ -1,36 +1,43 @@
 package com.multimoney.domain.interaction.crypto
 
-import com.multimoney.domain.model.crypto.BuyCryptoCurrencyOrder
+import com.multimoney.domain.model.crypto.BuyCryptoCurrencyData
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.repository.CryptoRepository
 import kotlinx.coroutines.flow.Flow
 
 class BuyCryptoCurrencyUseCaseImpl(
     val repository: CryptoRepository
-) : BuyCryptoCurrencyUseCase {
+): BuyCryptoCurrencyUseCase {
     override suspend fun invoke(
         pkUser: Int,
         identification: String,
         market: String,
-        orderAmount: Double,
         commissionAmount: Double,
         taxAmount: Double,
-        accountToken: Long,
+        accountToken: Double,
         exchangeRate: Double,
         idBrand: Int,
-        user: String
-    ): Flow<MultimoneyResult<BuyCryptoCurrencyOrder>> {
-        return repository.mutationBuyCryptoCurrency(
+        user: String,
+        quoteId: String,
+        quoteAmount: Double,
+        fee: Double,
+        internalFee: Double,
+        totalFee: Double
+    ): Flow<MultimoneyResult<BuyCryptoCurrencyData>> =
+        repository.buyCryptoCurrency(
             pkUser,
             identification,
             market,
-            orderAmount,
             commissionAmount,
             taxAmount,
             accountToken,
             exchangeRate,
             idBrand,
-            user
+            user,
+            quoteId,
+            quoteAmount,
+            fee,
+            internalFee,
+            totalFee
         )
-    }
 }

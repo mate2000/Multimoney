@@ -12,7 +12,9 @@ sealed class CurrencyType(
     val accountTitle: Int,
     val feeIcon: Int,
     val feeInfoButtonTitle: Int,
-    val symbol: String
+    val symbol: String,
+    val myAccountSmartSymbol: Int,
+    val myAccountSmartName: Int
 ) {
     object Colon : CurrencyType(
         1,
@@ -24,7 +26,9 @@ sealed class CurrencyType(
         R.string.payment_account_title_colon,
         R.drawable.ic_payment_colon,
         R.string.payment_fee_one_option,
-        "₡"
+        "₡",
+        R.string.home_my_products_label_smart_colones,
+        R.string.payment_select_sending_type_smart_account_colones
     )
 
     object Dollar : CurrencyType(
@@ -37,7 +41,9 @@ sealed class CurrencyType(
         R.string.payment_account_title_dollar,
         R.drawable.ic_payment_dollar,
         R.string.payment_fee_one_option,
-        "$"
+        "$",
+        R.string.home_my_products_label_smart,
+        R.string.payment_select_sending_type_smart_account_dollars
     )
 
     object Quetzal : CurrencyType(
@@ -50,7 +56,9 @@ sealed class CurrencyType(
         R.string.payment_account_title_dollar,
         R.drawable.ic_payment_fee_icon,
         R.string.empty,
-        "Q"
+        "Q",
+        R.string.empty,
+        R.string.empty
     )
 
     object All : CurrencyType(
@@ -63,6 +71,8 @@ sealed class CurrencyType(
         R.string.payment_account_title_all,
         R.drawable.ic_payment_fee_icon,
         R.string.payment_fee_both_options,
-        "$"
+        "$",
+        R.string.empty,
+        R.string.empty
     )
 }

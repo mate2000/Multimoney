@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -53,6 +54,7 @@ import com.multimoney.multimoney.presentation.uielement.Size
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.encodeURLToUTF
+import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlacesWithoutNegatives
 import kotlinx.coroutines.launch
 
 @Composable
@@ -149,13 +151,16 @@ fun MarketScreenContent(
                         searchQuery = searchQuery,
                         selectedFilter = selectedFilter,
                         sheetState = state,
+                        showFilterChip = marketViewModel.uiState.idBrand == Brand.CostaRica.id,
                         onCurrencyItemClick = { cryptoCurrency ->
-                            marketViewModel.onUIEvent(OnSetAssetBeforeNavigation(
-                                asset = cryptoCurrency.baseAsset,
-                                description = cryptoCurrency.description,
-                                currentPrice = cryptoCurrency.currentPrice.toString().toFloat(),
-                                urlImage = cryptoCurrency.url_image.encodeURLToUTF()
-                            ))
+                            marketViewModel.onUIEvent(
+                                OnSetAssetBeforeNavigation(
+                                    asset = cryptoCurrency.baseAsset,
+                                    description = cryptoCurrency.description,
+                                    currentPrice = cryptoCurrency.currentPrice.toString().toFloat(),
+                                    urlImage = cryptoCurrency.url_image.encodeURLToUTF()
+                                )
+                            )
                             marketViewModel.onUIEvent(OnNavigateToCurrencyDetails)
                         }
                     )
@@ -282,6 +287,7 @@ fun ListOfCoinsSection(
     searchQuery: MutableState<String>,
     selectedFilter: MutableState<String>,
     sheetState: ModalBottomSheetState,
+    showFilterChip: Boolean = false,
     onCurrencyItemClick: (MarketCryptoCoin) -> Unit
 ) {
 
@@ -300,8 +306,10 @@ fun ListOfCoinsSection(
     LazyColumn(
         contentPadding = PaddingValues(vertical = 8.dp),
     ) {
-        item {
-            FilterSection(selectedFilter = selectedFilter, sheetState = sheetState)
+        if (showFilterChip) {
+            item {
+                FilterSection(selectedFilter = selectedFilter, sheetState = sheetState)
+            }
         }
         items(filteredList) { cryptoCoin ->
             MarketCurrencyItem(
@@ -309,7 +317,11 @@ fun ListOfCoinsSection(
                 descriptionCurrency = cryptoCoin.description,
                 asset = cryptoCoin.baseAsset,
                 amountChange = cryptoCoin.amountchange,
-                percentChange = cryptoCoin.percentChange.toDouble(),
+                percentChange = stringResource(
+                    id = R.string.currency_item_percent_invested_with_symbol,
+                    if (cryptoCoin.percentChange.contains(NEGATIVE_SYMBOL)) NEGATIVE_SYMBOL else POSITIVE_SYMBOL,
+                    cryptoCoin.percentChange.toDouble().roundToTwoDecimalPlacesWithoutNegatives()
+                ),
                 currentPrice = cryptoCoin.currentPrice.toString().toDouble(),
                 onCurrencyItemClick = { onCurrencyItemClick(cryptoCoin) }
             )
@@ -320,3 +332,5 @@ fun ListOfCoinsSection(
 const val SV_DEFAULT_BASE_ASSET = "BTC"
 const val PRICE_FILTER_VALUE = "Precio"
 const val AZ_FILTER_VALUE = "A-Z"
+const val NEGATIVE_SYMBOL = "-"
+const val POSITIVE_SYMBOL = "+"

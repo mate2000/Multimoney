@@ -1,20 +1,25 @@
 package com.multimoney.data.mapper.crypto
 
-import com.multimoney.data.networking.graphql.apollomodel.BuyCryptoCurrencyMutation
-import com.multimoney.domain.model.crypto.BuyCryptoCurrencyOrder
+import com.multimoney.data.networking.graphql.apollomodel.BuyCryptoCurrencyHQRMutation
+import com.multimoney.domain.model.crypto.BuyCryptoCurrencyData
+import com.multimoney.domain.model.crypto.BuyCryptoCurrencyResponse
 import com.multimoney.domain.model.crypto.BuyCryptoCurrencyResult
 
-fun BuyCryptoCurrencyMutation.Data.mapToDomainModel() = buyOrder.mapToDomainModel()
-
-private fun BuyCryptoCurrencyMutation.BuyOrder.mapToDomainModel() = BuyCryptoCurrencyOrder(
-    result = result.mapToDomainModel()
+fun BuyCryptoCurrencyHQRMutation.Data.mapToDomainModel() = BuyCryptoCurrencyData(
+    buyHQR = buyHQR.mapToDomainModel()
 )
 
-private fun BuyCryptoCurrencyMutation.Result.mapToDomainModel() = BuyCryptoCurrencyResult(
+fun BuyCryptoCurrencyHQRMutation.BuyHQR.mapToDomainModel() = BuyCryptoCurrencyResponse(
+    status = status,
+    message = message,
+    result = result?.mapToDomainModel()
+)
+
+fun BuyCryptoCurrencyHQRMutation.Result.mapToDomainModel() = BuyCryptoCurrencyResult(
     sysdeTransactionNumber = sysdeTransactionNumber,
     paxosSendTransferId = paxosSendTransferId,
-    paxosIdOrder = paxosIdOrder,
     paxosReceivedTransferId = paxosReceivedTransferId,
+    paxosIdOrder = paxosIdOrder,
     orderComplete = orderComplete,
     filledAmount = filledAmount.toString().toDouble(),
     averagePrice = averagePrice.toString().toDouble(),

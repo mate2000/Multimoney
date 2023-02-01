@@ -19,7 +19,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
-import com.multimoney.multimoney.presentation.ui.crypto.currencydetail.CryptoCurrencyMovementsViewModel
+import com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail.CryptoCurrencyMovementsViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
@@ -163,7 +163,7 @@ class HomeWalletViewModel @Inject constructor(
     }
 
     private fun onNavigateToBuyCrypto(){
-        navigateTo("${Screen.CryptoPurchaseListScreen.baseRoute}/${uiState.user}/${uiState.idBrand}")
+        navigateTo(Screen.PurchaseCryptoFlow.baseRoute)
     }
 
     data class UiState(

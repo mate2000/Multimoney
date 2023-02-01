@@ -14,7 +14,7 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.SMART_IDS
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
@@ -26,9 +26,10 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.Sma
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnCallQueryListSinpeAccountUseCaseImpl
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class SmartTransferIbanViewModel @Inject constructor(
@@ -52,7 +53,7 @@ class SmartTransferIbanViewModel @Inject constructor(
         idBrand = savedStateHandle[ID_BRAND] ?: ""
         idClient = savedStateHandle[ID_CLIENT] ?: ""
         identification = savedStateHandle[IDENTIFICATION] ?: ""
-        smartAccount = savedStateHandle[SMART_IDS]
+        smartAccount = savedStateHandle[SMART_ACCOUNT]
     }
 
     private fun callQueryListSinpeAccountUseCaseImpl() = executeUseCase {
@@ -95,11 +96,15 @@ class SmartTransferIbanViewModel @Inject constructor(
     }
 
     private fun onNavigateBack() =
-        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
 
     private fun navigateToAddIbanAccount() {
         navigateTo(
-            "${Screen.SmartTransferRegisterIbanScreen.baseRoute}/$user/$idBrand/$identification/${Screen.SmartTransferIbanAccountScreen.baseRoute}/$idClient/${encodeData(smartAccount)}",
+            "${Screen.SmartTransferRegisterIbanScreen.baseRoute}/$user/$idBrand/$identification/${Screen.SmartTransferIbanAccountScreen.baseRoute}/$idClient/${
+            encodeData(
+                smartAccount
+            )
+            }"
         )
     }
 
@@ -114,7 +119,9 @@ class SmartTransferIbanViewModel @Inject constructor(
             )
         )
         navigateTo(
-            "${Screen.SmartTransferAmountScreen.baseRoute}/${encodeData(smartAccount)}/$ibanAccount/${Screen.SmartTransferIbanAccountScreen.baseRoute}"
+            "${Screen.SmartTransferAmountScreen.baseRoute}/" +
+                "${encodeData(smartAccount)}/$ibanAccount/" +
+                "${SmartTransferTypes.SmartToIban.id}"
         )
     }
 

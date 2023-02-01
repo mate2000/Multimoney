@@ -136,6 +136,10 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
         )
     }
 
+    private fun onNavigateToSelectAccount(){
+        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}?$CRYPTO_ASSET=${uiState.asset}&$DESCRIPTION_CURRENCY=${uiState.description}")
+    }
+
     data class UiState(
         val user: String? = null,
         val idBrand: Int? = null,
@@ -148,10 +152,6 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
         val currencyNews: CryptoNewsFeed? = null,
         val getHistoricalCurrencyPrices: List<CurrencyHistoricPrice> = emptyList()
     )
-
-    private fun onNavigateToSelectAccount(){
-        // TODO navigate to select account
-    }
 
     fun onUIEvent(event: UIEvent) {
         when (event) {

@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.crypto.purchase
+package com.multimoney.multimoney.presentation.ui.crypto.purchase.listofcurrency
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -37,36 +37,40 @@ import com.multimoney.multimoney.presentation.ui.crypto.market.FilterBottomSheet
 import com.multimoney.multimoney.presentation.ui.crypto.market.FilterSection
 import com.multimoney.multimoney.presentation.ui.crypto.market.MarketFilter
 import com.multimoney.multimoney.presentation.ui.crypto.market.MarketSkeleton
-import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel
-import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewModel
+import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.formattedTwoDecimalsNumber
+import com.multimoney.multimoney.presentation.util.transformation.formatWithComma
 import kotlinx.coroutines.launch
 
 @Composable
 fun ListCryptoCurrenciesScreen(
     viewModel: ListCryptoPurchaseViewModel = hiltViewModel(),
+    sharedViewModel: PurchaseCryptoSharedViewModel,
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
-    ) {
+) {
     LaunchedEffect(true) {
         viewModel.executeNavigation(
             onPopBackStack = onPopBackStack
         )
-        viewModel.onUIEvent(ListCryptoPurchaseViewModel.UIEvent.OnGetUserInfo)
+        viewModel.onUIEvent(ListCryptoPurchaseViewModel.UIEvent.OnGetUserInfo(
+            user = sharedViewModel.email,
+            idBrand = sharedViewModel.idBrand
+        ))
         viewModel.onUIEvent(ListCryptoPurchaseViewModel.UIEvent.OnGetAvailableListOfCryptoCoins)
     }
 
     ListCryptoContent(
         viewModel.uiState,
         itemClick = {
-            viewModel.onUIEvent(ListCryptoPurchaseViewModel.UIEvent.OnNavigateToSelectAccount(it))
-        },
-        onBackPressed = { viewModel.onUIEvent(ListCryptoPurchaseViewModel.UIEvent.OnNavigateBack) },
+            sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnCryptoSelected(it))
+            sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNextStep)
+        }
     )
 
     BackHandler {
-       viewModel.onUIEvent(ListCryptoPurchaseViewModel.UIEvent.OnNavigateBack)
+        sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep)
     }
 }
 
@@ -74,9 +78,8 @@ fun ListCryptoCurrenciesScreen(
 @Composable
 fun ListCryptoContent(
     uiState: ListCryptoPurchaseViewModel.UiState,
-    itemClick: (MarketCryptoCoin) -> Unit,
-    onBackPressed: () -> Unit = {},
-    ) {
+    itemClick: (MarketCryptoCoin) -> Unit
+) {
     val searchQuery = remember { mutableStateOf("") }
     val selectedFilter = remember { mutableStateOf(MarketFilter.Price.value) }
     val state = rememberModalBottomSheetState(
@@ -86,10 +89,6 @@ fun ListCryptoContent(
     val coroutineScope = rememberCoroutineScope()
 
     Column(modifier = Modifier.background(MultimoneyTheme.colors.background)) {
-        TopNavBar(
-            isRightButtonVisible = false,
-            onLeftButtonClick = onBackPressed
-        )
         ModalBottomSheetLayout(
             sheetState = state,
             sheetContent = {
@@ -173,7 +172,7 @@ fun ListCryptoBody(
                 imageUrl = it.url_image,
                 descriptionCurrency = it.description,
                 asset = it.baseAsset,
-                priceOfTheDay = it.currentPrice.toString().toDouble(),
+                priceOfTheDay = it.currentPrice.toString().toDouble().formatWithComma(),
                 percentageInvestedCurrency = it.percentChange
             ) {
                 itemClick(it)

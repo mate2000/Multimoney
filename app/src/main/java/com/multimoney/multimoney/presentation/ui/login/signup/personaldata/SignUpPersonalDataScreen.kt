@@ -11,11 +11,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Nationalities
 import com.multimoney.data.util.catalog.SignUpStep
@@ -49,6 +51,8 @@ fun SignUpPersonalDataScreen(
     viewModel: SignUpPersonalDataViewModel = hiltViewModel(),
     sharedViewModel: SignUpViewModel = hiltViewModel()
 ) {
+    val fragmentActivity = LocalContext.current as FragmentActivity
+
     viewModel.apply {
         isOnRestart = isRestart
         LaunchedEffect(isOnRestart) {
@@ -105,7 +109,8 @@ fun SignUpPersonalDataScreen(
                             OnNextActionClick(
                                 email = userData?.email ?: "",
                                 nextStep = Three.name,
-                                idBrand = idBrand ?: 0
+                                idBrand = idBrand ?: 0,
+                                activity = fragmentActivity
                             )
                         )
                         viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SingUpTwo)
@@ -117,34 +122,8 @@ fun SignUpPersonalDataScreen(
         }
         viewModel.onUserDataValidationEvent.collect { result ->
             result.onSuccess { userData ->
-                viewModel.onUIEvent(
-                    SignUpPersonalDataViewModel.UIEvent.OnUserDataValidationSuccess(
-                        userData = userData,
-                        onUseDataValueChange = {
-                            sharedViewModel.strIdIdentification = viewModel.uiState.identificationValueType
-                            sharedViewModel.onUIEvent(
-                                SignUpViewModel.UIEvent.OnUseDataValueChange(
-                                    sharedViewModel.userData?.copy(
-                                        pkUser = userData?.pkUser,
-                                        fullName = viewModel.getFullName(),
-                                        firstName = userData?.firstName,
-                                        secondName = userData?.secondName,
-                                        firstLastName = userData?.firstLastName,
-                                        secondLastName = userData?.secondLastName,
-                                        identification = userData?.identification,
-                                        currentStep = userData?.currentStep
-                                    )
-                                )
-                            )
-                        },
-                        onCallMutationUpdateUserRegisterUseCase = {
-                            sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase)
-                        },
-                        onLoadingValueChange = { isLoading ->
-                            sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(isLoading))
-                        }
-                    )
-                )
+                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(false))
+                viewModel.onSuccessValidation(sharedViewModel, userData)
             }.onLoading {
                 sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(true))
             }.onMessage {

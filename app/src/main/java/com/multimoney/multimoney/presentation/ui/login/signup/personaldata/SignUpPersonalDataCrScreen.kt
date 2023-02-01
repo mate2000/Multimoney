@@ -108,7 +108,7 @@ fun SignUpPersonalDataCrScreen(
             }
         )
 
-        if (viewModel.uiState.identificationValueType != CrDocuments.IdDocument.document) {
+        if (viewModel.uiState.identificationValueType.isNotBlank() && viewModel.uiState.identificationValueType != CrDocuments.IdDocument.document) {
             Row(
                 Modifier
                     .fillMaxWidth()

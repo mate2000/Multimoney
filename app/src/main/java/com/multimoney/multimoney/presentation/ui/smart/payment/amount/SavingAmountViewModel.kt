@@ -13,7 +13,6 @@ import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnSuggestedAmountClick
@@ -41,33 +40,25 @@ class SavingAmountViewModel @Inject constructor(
     override fun onStart() {
         viewModelScope.launch {
             initializeValues()
-            amountUIState = amountUIState.copy(
-                currency = ibanCurrency?.symbol ?: Dollar.symbol,
-                placeholder = if (ibanCurrency == Dollar) {
-                    R.string.smart_dollar_placeholder
-                } else {
-                    R.string.smart_colon_placeholder
-                }
-            )
             uiState = uiState.copy(
                 minSuggestion = SuggestedAmount.createSuggestion(
-                    ibanCurrency == Dollar,
+                    originCurrency == Dollar,
                     SuggestionOrder.MIN
                 ),
                 mediumSuggestion = SuggestedAmount.createSuggestion(
-                    ibanCurrency == Dollar,
+                    originCurrency == Dollar,
                     SuggestionOrder.MEDIUM
                 ),
                 maxSuggestion = SuggestedAmount.createSuggestion(
-                    ibanCurrency == Dollar,
+                    originCurrency == Dollar,
                     SuggestionOrder.MAX
                 )
             )
             getExchangeOnCompleted(
                 isStart = true,
-                abbreviation = smartCurrency?.disbursementValue ?: "",
-                idOriginCurrency = ibanCurrency?.id.toString(),
-                idDestinationCurrency = smartCurrency?.id.toString()
+                abbreviation = destinyCurrency?.disbursementValue ?: "",
+                idOriginCurrency = originCurrency?.id.toString(),
+                idDestinationCurrency = destinyCurrency?.id.toString()
             )
         }
     }
@@ -77,11 +68,11 @@ class SavingAmountViewModel @Inject constructor(
             onCallProcessSinpeTransfer(
                 originIdentification = ibanAccount?.clientIdentification ?: "",
                 originAccountNumber = ibanAccount?.sinpeAccount ?: "",
-                originCustomerName = userName,
-                originCurrency = ibanCurrency?.id.toString(),
+                originCustomerName = ibanAccount?.nameAccount ?: "",
+                originCurrency = originCurrency?.id.toString(),
                 destinationIdentification = identification,
                 destinationAccountNumber = smartAccount?.ibanAccountNumber ?: "",
-                destinationCurrency = smartCurrency?.id.toString(),
+                destinationCurrency = destinyCurrency?.id.toString(),
                 destinationCustomerName = userName,
                 transferType = SmartSinpeTransferType.REQUEST
             )
@@ -93,13 +84,13 @@ class SavingAmountViewModel @Inject constructor(
     private fun onCallProcessTransferVisaToSmart() {
         executeUseCase {
             processTransferVisaToSmart.invoke(
-                idCard,
-                tokenNumber,
+                visaAccount?.idCard?.toLong() ?: 0,
+                smartAccount?.tokenAccount?.toLongOrNull() ?: 0,
                 identification,
                 amountUIState.currentAmountValueString ?: "",
-                idCurrency,
+                smartAccount?.currencyID ?: 0,
                 DEFAULT_DESCRIPTION,
-                maskedCardNumber,
+                visaAccount?.cardMaskedNumber ?: "",
                 pkUser,
                 idBrand
             ).collectLatest { result ->
@@ -141,9 +132,9 @@ class SavingAmountViewModel @Inject constructor(
 
     override fun onAmountCompleted() {
         getExchangeOnCompleted(
-            abbreviation = smartCurrency?.disbursementValue ?: "",
-            idOriginCurrency = ibanCurrency?.id.toString(),
-            idDestinationCurrency = smartCurrency?.id.toString()
+            abbreviation = destinyCurrency?.disbursementValue ?: "",
+            idOriginCurrency = originCurrency?.id.toString(),
+            idDestinationCurrency = destinyCurrency?.id.toString()
         )
     }
 
@@ -176,7 +167,7 @@ class SavingAmountViewModel @Inject constructor(
     private fun selectSuggestion(amount: SuggestedAmount) {
         amountUIState = amountUIState.copy(
             enableButton = amount.value.isNotEmpty() && amount.value.toDouble() > 0,
-            currentAmountValueString = amount.value,
+            currentAmountValueString = amount.value
         )
         uiState = uiState.copy(
             suggestedAmountSelected = amount
@@ -191,15 +182,6 @@ class SavingAmountViewModel @Inject constructor(
         amountUIState = amountUIState.copy(
             bottomSheetState = ModalBottomSheetState(Expanded)
         )
-    }
-
-    override fun onRetryTransfer() {
-        amountUIState = amountUIState.copy(
-            showErrorScreen = false,
-            showLoadingScreen = true,
-            paymentSuccess = false
-        )
-        onProcessTransfer()
     }
 
     override fun onNavigateBack() {

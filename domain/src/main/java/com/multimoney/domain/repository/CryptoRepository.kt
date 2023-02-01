@@ -1,13 +1,13 @@
 package com.multimoney.domain.repository
 
-import androidx.paging.PagingData
-import com.multimoney.domain.model.crypto.BuyCryptoCurrencyOrder
 import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
+import androidx.paging.PagingData
+import com.multimoney.domain.model.crypto.BuyCryptoCurrencyData
 import com.multimoney.domain.model.crypto.CryptoCurrencyNews
 import com.multimoney.domain.model.crypto.GetHistoricalClientBalance
 import com.multimoney.domain.model.crypto.GetHistoricalCurrencyPrices
 import com.multimoney.domain.model.crypto.GetListOfAvailableCryptoCoins
-import com.multimoney.domain.model.crypto.GetPaxosChargeData
+import com.multimoney.domain.model.crypto.PricesQuoteAndCommissionData
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
@@ -54,23 +54,32 @@ interface CryptoRepository {
         idBrand: Int
     ): Flow<MultimoneyResult<CryptoCurrencyNews>>
 
-    suspend fun queryGetPaxosCharges(
-        user: String,
+    suspend fun getPriceQuoteAndCommission(
+        asset: String,
+        crypto_network: String,
         idBrand: Int,
-        key: String,
-        transaction: String,
-    ): Flow<MultimoneyResult<GetPaxosChargeData>>
+        user: String,
+        market: String,
+        identification: String,
+        quote_amount: Double,
+        base_amount: Double,
+        side: String
+    ): Flow<MultimoneyResult<PricesQuoteAndCommissionData>>
 
-    suspend fun mutationBuyCryptoCurrency(
+    suspend fun buyCryptoCurrency(
         pkUser: Int,
         identification: String,
         market: String,
-        orderAmount: Double,
         commissionAmount: Double,
         taxAmount: Double,
-        accountToken: Long,
+        accountToken: Double,
         exchangeRate: Double,
         idBrand: Int,
-        user: String
-    ): Flow<MultimoneyResult<BuyCryptoCurrencyOrder>>
+        user: String,
+        quoteId: String,
+        quoteAmount: Double,
+        fee: Double,
+        internalFee: Double,
+        totalFee: Double
+    ): Flow<MultimoneyResult<BuyCryptoCurrencyData>>
 }

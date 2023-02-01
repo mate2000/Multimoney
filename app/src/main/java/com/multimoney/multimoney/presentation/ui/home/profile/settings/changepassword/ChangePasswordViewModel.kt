@@ -20,6 +20,7 @@ import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.ui.home.profile.settings.changepassword.ChangePasswordViewModel.UIEvent.OnNavigateToForgotPassword
+import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeConsecutiveLetterOrNumber
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeEqualConsecutiveLetterOrNumber
@@ -29,17 +30,21 @@ import com.multimoney.multimoney.presentation.util.passwordHasANumberValidation
 import com.multimoney.multimoney.presentation.util.passwordHasAUppercaseLetterValidation
 import com.multimoney.multimoney.presentation.util.passwordHasMinimumCharacters
 import com.multimoney.multimoney.presentation.util.passwordHasSpecialCharacterValidation
+import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class ChangePasswordViewModel @Inject constructor(
     private val dataStorePreferences: DataStorePreferences,
     private val savedStateHandle: SavedStateHandle,
-    private val queryValidationSecurityUseCase: QueryValidationSecurityUseCase
+    private val queryValidationSecurityUseCase: QueryValidationSecurityUseCase,
+    private val cognitoHelper: CognitoHelper,
+    private val mmCountDownTimer: MMCountDownTimer
 ) : BaseViewModel(true) {
 
     // UIState
@@ -48,12 +53,16 @@ class ChangePasswordViewModel @Inject constructor(
     var onPasswordSaveEvents = MutableSharedFlow<MultimoneyResult<ValidateSecurity?>>()
     var onCognitoPasswordUpdateEvents = MutableSharedFlow<Pair<Boolean, Int>>()
 
+    // Stateless
+    private var previousScreen: String
+
     init {
         uiState = uiState.copy(
             idBrand = savedStateHandle[ID_BRAND] ?: 0,
             pkUser = savedStateHandle[PK_USER] ?: "",
             userName = savedStateHandle[USER_NAME] ?: ""
         )
+        previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
     }
 
     private fun validatePassword() {
@@ -112,7 +121,7 @@ class ChangePasswordViewModel @Inject constructor(
     private fun isFormValid(): Boolean {
         return uiState.oneLowercaseState ?: false && uiState.oneUppercaseState ?: false && uiState.oneNumberState ?: false &&
             uiState.oneCharacterState ?: false && passwordHasMinimumCharacters(uiState.newPassword) &&
-            (uiState.newPasswordConfirmation == uiState.newPassword) && !uiState.newPasswordConfirmationError.first
+            (uiState.newPasswordConfirmation == uiState.newPassword) && !uiState.newPasswordConfirmationError.first && uiState.currentPassword.isNotEmpty()
     }
 
     private fun onNewPasswordValueChange(password: String?) {
@@ -132,6 +141,7 @@ class ChangePasswordViewModel @Inject constructor(
             currentPassword = password.toString(),
             currentPasswordError = Pair(false, R.string.empty)
         )
+        uiState = uiState.copy(isButtonEnabled = isFormValid())
     }
 
     private fun cleanErrors() {
@@ -144,6 +154,7 @@ class ChangePasswordViewModel @Inject constructor(
 
     private fun onUpdatePassword() = executeUseCase {
         cleanErrors()
+        onUpdateLoadingState(true)
         queryValidationSecurityUseCase.invoke(
             idBrand = uiState.idBrand,
             pkUser = uiState.pkUser,
@@ -230,6 +241,27 @@ class ChangePasswordViewModel @Inject constructor(
             )
     )
 
+    private fun onAlertButtonClick() = when (previousScreen) {
+        Screen.ProfileSettingsScreen.baseRoute -> navigateBack(Screen.HomeScreen.route, isRestart = true)
+        else -> signOut()
+    }
+
+    private fun onNavigateBack() = when (previousScreen) {
+        Screen.ProfileSettingsScreen.baseRoute -> navigateBack(Screen.ProfileSettingsScreen.route, false)
+        else -> signOut()
+    }
+
+    private fun signOut() {
+        cognitoHelper.signOut(signOutError = {
+            Timber.d("SignOut Error")
+        })
+        viewModelScope.launch {
+            dataStorePreferences.setAuthToken("")
+        }
+        mmCountDownTimer.discardTimer()
+        navigateBack(Screen.SignInScreen.route, isRestart = false)
+    }
+
     data class UIState(
         // Fields
         val currentPassword: String = "",
@@ -262,7 +294,7 @@ class ChangePasswordViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is UIEvent.OnNavigateBack -> navigateBack(Screen.ProfileSettingsScreen.route, false)
+            is UIEvent.OnNavigateBack -> onNavigateBack()
             is UIEvent.OnNewPasswordValueChange -> onNewPasswordValueChange(event.password)
             is UIEvent.OnNewPasswordConfirmationValueChange -> onNewPasswordConfirmationValueChange(
                 event.password
@@ -274,7 +306,7 @@ class ChangePasswordViewModel @Inject constructor(
             is UIEvent.OnUpdateLocallyStoredPassword -> onUpdateLocallyStoredPassword()
             is UIEvent.OnUpdateLoadingState -> onUpdateLoadingState(event.state)
             is UIEvent.OnShowAlertDialog -> onShowAlertDialog()
-            is UIEvent.OnNavigateToHome -> navigateBack(Screen.HomeScreen.route, isRestart = true)
+            is UIEvent.OnAlertButtonClick -> onAlertButtonClick()
             is OnNavigateToForgotPassword -> onNavigateToForgotPassword()
         }
     }
@@ -297,7 +329,7 @@ class ChangePasswordViewModel @Inject constructor(
         ) : UIEvent()
 
         object OnNavigateBack : UIEvent()
-        object OnNavigateToHome : UIEvent()
+        object OnAlertButtonClick : UIEvent()
         object OnPasswordSameAsPrevious : UIEvent()
         object OnShowAlertDialog : UIEvent()
         object OnCallCognitoUpdatePassword : UIEvent()

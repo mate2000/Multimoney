@@ -33,7 +33,6 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
     val decrement =
         if (viewModel.uiState.productPageList?.any { it.product == ProductType.Credit.value } == true) 1 else 0
     val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: decrement)
-
     CustomProductBackground(
         modifier = Modifier.padding(horizontal = 16.dp),
         type = ProductBackGroundType.Secondary

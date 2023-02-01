@@ -31,6 +31,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.P
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnEditCardVisaDirect
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnGetClientCardVisaDirect
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnNavigateToAddCard
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnOpenDisclaimerDialog
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnProgramClick
 import com.multimoney.multimoney.presentation.ui.home.HomeState
@@ -99,7 +100,8 @@ class PaymentScheduleCardViewModel @Inject constructor(
             result.onSuccess { cardsList ->
                 uiState = uiState.copy(
                     isLoading = false,
-                    cardVisaDirect = cardsList?.first()
+                    cardVisaDirect = cardsList?.firstOrNull(),
+                    isCardListEmpty = cardsList.isNullOrEmpty()
                 )
             }.onFailure {
                 setErrorAlertResult(attempts = getCardAttempts)
@@ -118,10 +120,11 @@ class PaymentScheduleCardViewModel @Inject constructor(
             idLoanClient = idLoanClient.toLong()
         ).collectLatest { result ->
             getPaymentScheduleAttempts++
-            result.onSuccess {
+            result.onSuccess { cardsList ->
                 uiState = uiState.copy(
-                    cardVisaDirect = it?.first(),
-                    isLoading = false
+                    cardVisaDirect = cardsList?.first(),
+                    isLoading = false,
+                    isCardListEmpty = cardsList.isNullOrEmpty()
                 )
             }.onFailure {
                 setErrorAlertResult(attempts = getPaymentScheduleAttempts)
@@ -219,6 +222,10 @@ class PaymentScheduleCardViewModel @Inject constructor(
         else -> onNavigateBackHome(true)
     }
 
+    private fun onNavigateToAddCard() {
+        // TODO - navigate to add card screen
+    }
+
     private fun onNavigateBackHome(isRestart: Boolean) =
         navigateBack(popTo = Screen.HomeScreen.route, isRestart = isRestart)
 
@@ -231,7 +238,7 @@ class PaymentScheduleCardViewModel @Inject constructor(
     }
 
     private fun onAlertCloseClick() = if (uiState.isAlertResultSuccess) {
-        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
     } else {
         navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
     }
@@ -266,6 +273,7 @@ class PaymentScheduleCardViewModel @Inject constructor(
         val alertResultDescriptionResource: Int = R.string.empty,
         val alertResultButtonResource: Int = R.string.empty,
         val isLoading: Boolean = false,
+        val isCardListEmpty: Boolean = true,
         val openDialog: DialogParameters = DialogParameters()
     )
 
@@ -279,6 +287,7 @@ class PaymentScheduleCardViewModel @Inject constructor(
             is OnEditCardVisaDirect -> onEditCardVisaDirect()
             is OnOpenDisclaimerDialog -> onOpenDisclaimerDialog()
             is OnNavigateBack -> onNavigateBack()
+            is OnNavigateToAddCard -> onNavigateToAddCard()
         }
     }
 
@@ -291,6 +300,7 @@ class PaymentScheduleCardViewModel @Inject constructor(
         object OnEditCardVisaDirect : UIEvent()
         object OnOpenDisclaimerDialog : UIEvent()
         object OnNavigateBack : UIEvent()
+        object OnNavigateToAddCard : UIEvent()
     }
 
     companion object {

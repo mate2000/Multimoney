@@ -25,8 +25,6 @@ import coil.compose.rememberAsyncImagePainter
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlaces
-import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlacesWithoutNegatives
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 
 @Composable
@@ -35,7 +33,7 @@ fun MarketCurrencyItem(
     imageUrl: String,
     descriptionCurrency: String,
     asset: String,
-    percentChange: Double,
+    percentChange: String,
     currentPrice: Double,
     onCurrencyItemClick: () -> Unit,
     amountChange: String
@@ -104,7 +102,7 @@ fun MarketCurrencyItem(
                         )
                         Text(
                             modifier = Modifier.padding(start = 8.dp),
-                            text = percentChange.roundToTwoDecimalPlaces(),
+                            text = percentChange,
                             style = Typography.caption,
                             color = gainOrLossColor
                         )

@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.crypto.purchase
+package com.multimoney.multimoney.presentation.ui.crypto.purchase.listofcurrency
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,10 +29,13 @@ class ListCryptoPurchaseViewModel @Inject constructor(
     var uiState by mutableStateOf(UiState())
         private set
 
-    private fun onGetUserInfo() {
+    private fun onGetUserInfo(
+        user: String?,
+        idBrand: Int?
+    ) {
         uiState = uiState.copy(
-            user = savedStateHandle[USER] ?: "",
-            idBrand = savedStateHandle[ID_BRAND] ?: 0
+            user = user ?: "",
+            idBrand = idBrand ?: 0
         )
     }
 
@@ -58,10 +61,6 @@ class ListCryptoPurchaseViewModel @Inject constructor(
         }
     }
 
-    private fun navigateToSelectBankAccount(market: MarketCryptoCoin) {
-        // todo use ite info to navigate
-    }
-
     private fun onFailure(error: HttpError) {
         uiState = uiState.copy(
             isLoading = false,
@@ -83,16 +82,14 @@ class ListCryptoPurchaseViewModel @Inject constructor(
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
-            is UIEvent.OnGetUserInfo -> onGetUserInfo()
+            is UIEvent.OnGetUserInfo -> onGetUserInfo(event.user, event.idBrand)
             is UIEvent.OnGetAvailableListOfCryptoCoins -> getAvailableListOfCryptoCoins()
-            is UIEvent.OnNavigateToSelectAccount -> navigateToSelectBankAccount(event.market)
         }
     }
 
     sealed interface UIEvent {
-        object OnGetUserInfo : UIEvent
+        data class OnGetUserInfo(val user: String?, val idBrand: Int?) : UIEvent
         object OnNavigateBack : UIEvent
         object OnGetAvailableListOfCryptoCoins : UIEvent
-        data class OnNavigateToSelectAccount(val market: MarketCryptoCoin) : UIEvent
     }
 }

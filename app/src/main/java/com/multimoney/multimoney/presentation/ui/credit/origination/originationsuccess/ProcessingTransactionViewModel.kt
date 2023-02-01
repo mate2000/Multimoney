@@ -92,7 +92,7 @@ class ProcessingTransactionViewModel @Inject constructor(
     }
 
     private fun onNavigateToHome() {
-        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
     }
 
     fun getDateFormatted(): String {

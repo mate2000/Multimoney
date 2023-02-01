@@ -1,0 +1,15 @@
+query SmartAccountType(
+    $idBrand: Int!
+    $user: String!
+) {
+    typeAccount(typeAccountInput: {
+        idBrand: $idBrand
+        user: $user }
+    ) {
+        result {
+            id
+            name
+        }
+        message
+    }
+}

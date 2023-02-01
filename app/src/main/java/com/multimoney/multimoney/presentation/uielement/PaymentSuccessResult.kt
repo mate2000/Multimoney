@@ -62,9 +62,10 @@ fun PaymentSuccessResult(
     exchangedAmount: String? = null,
     isTransferOperation: Boolean = true,
     fromToText: String,
-    buttonText: String,
-    onButtonClick: () -> Unit,
-    infoContent: @Composable () -> Unit
+    buttonText: String = "",
+    showButton: Boolean = true,
+    onButtonClick: () -> Unit = {},
+    infoContent: @Composable () -> Unit = {}
 ) {
     val view = LocalView.current
     var capturingViewBounds by remember { mutableStateOf<Rect?>(null) }
@@ -142,7 +143,7 @@ fun PaymentSuccessResult(
                     if (exchangedAmount.isNullOrBlank().not() && isTransferOperation) {
                         ExchangeTotalLabel(
                             showIcon = false,
-                            totalConverted = exchangedAmount ?: ""
+                            totalConverted = exchangedAmount.orEmpty()
                         )
                     }
                 }
@@ -166,21 +167,22 @@ fun PaymentSuccessResult(
                 Spacer(Modifier.height(16.dp))
             }
         }
-
-        CustomButton(
-            onClick = onButtonClick,
-            text = buttonText,
-            modifier = Modifier
-                .padding(
-                    start = 16.dp,
-                    end = 16.dp,
-                    bottom = 32.dp,
-                    top = 16.dp
-                )
-                .fillMaxWidth()
-                .height(48.dp),
-            buttonType = PrimaryPrimary
-        )
+        if (showButton) {
+            CustomButton(
+                onClick = onButtonClick,
+                text = buttonText,
+                modifier = Modifier
+                    .padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = 32.dp,
+                        top = 16.dp
+                    )
+                    .fillMaxWidth()
+                    .height(48.dp),
+                buttonType = PrimaryPrimary
+            )
+        }
     }
 }
 
@@ -193,6 +195,7 @@ private fun PaymentSuccessResultPreview() {
         amount = "$500",
         exchangedAmount = "Q3200",
         fromToText = "Desde",
+        showButton = true,
         buttonText = "Hacer otro ahorro",
         onButtonClick = {}
     ) {

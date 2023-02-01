@@ -42,7 +42,7 @@ fun CryptoCurrencyPurchaseItem(
     imageUrl: String,
     descriptionCurrency: String,
     asset: String,
-    priceOfTheDay: Double,
+    priceOfTheDay: String,
     percentageInvestedCurrency: String,
     onClick: () -> Unit
 ) {

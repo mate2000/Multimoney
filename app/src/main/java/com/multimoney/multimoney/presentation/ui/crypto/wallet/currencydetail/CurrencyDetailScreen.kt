@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.crypto.currencydetail
+package com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -34,7 +34,7 @@ import com.multimoney.multimoney.presentation.theme.LocalMultimoneyColors
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoCurrencyMovementItem
-import com.multimoney.multimoney.presentation.ui.crypto.currencydetail.CryptoCurrencyMovementsViewModel.Companion.TODAY_TEXT
+import com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail.CryptoCurrencyMovementsViewModel.Companion.TODAY_TEXT
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.DateFilterDWMYSection
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.MarketCurrencyDetailsGraphic
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoActionsSection
@@ -134,7 +134,7 @@ fun CurrencyDetailContent(
                         modifier = Modifier.padding(start = 12.dp),
                         text = stringResource(
                             id = R.string.currency_detail_title,
-                            uiState.cryptoItem?.asset ?: "",
+                            uiState.cryptoItem?.descriptionCurrency ?: "",
                         ),
                         style = MaterialTheme.typography.h6.copy(
                             fontWeight = FontWeight.SemiBold,

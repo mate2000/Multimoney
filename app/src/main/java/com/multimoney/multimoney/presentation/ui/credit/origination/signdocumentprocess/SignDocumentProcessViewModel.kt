@@ -120,7 +120,7 @@ class SignDocumentProcessViewModel @Inject constructor(
                 .collectLatest { result ->
                     result.onSuccess {
                         handleEvents(creditContractEvent = it)
-                    }.onFailure {
+                    }.onFailure { error ->
                         while (numAttemptsToStartSubscription < MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION) {
                             onListenCreditContractEventSubscription(idPrint, idBrand)
                             numAttemptsToStartSubscription++
@@ -256,7 +256,7 @@ class SignDocumentProcessViewModel @Inject constructor(
 
     private fun onNavigateToHome() {
         emitBaseEvent(SimulateUserInteraction)
-        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
     }
 
     data class UIState(
@@ -310,7 +310,7 @@ class SignDocumentProcessViewModel @Inject constructor(
 
     companion object {
         const val MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION = 3
-        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 40000L
+        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 60000L
         const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 40000L
         const val ID_PRINT_EMPTY = 0L
     }

@@ -1477,4 +1477,9 @@
     <string name="product_visa_card_expired_dialog_update_label" translatable="false">Actualizar</string>
     <string name="product_visa_card_expired_dialog_hide_label" translatable="false">Ocultar</string>
 
+    <!-- Security -->
+    <string name="password_security_bottom_sheet_general_title" translatable="false">Por tu seguridad,\nNO compartás tu\ncontraseña</string>
+    <string name="password_security_bottom_sheet_general_description" translatable="false">Nunca te solicitaremos tu contraseña\nfuera de la aplicación.\n</string>
+    <string name="password_security_bottom_sheet_signup_description" translatable="false">Nadie más debe de pedírtela.\nTu contraseña es personal y privada, con\nella autorizarás todas tus transferencias.</string>
+
 </resources>

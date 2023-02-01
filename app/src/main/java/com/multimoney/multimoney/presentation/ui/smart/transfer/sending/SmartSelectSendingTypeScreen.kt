@@ -160,7 +160,7 @@ fun SendingTypeOptionsContent(
                         SendingTypeOptionsSV(
                             modifier = sendingTypeOptionModifier,
                             onMyFavoritesClick = { viewModel.onUIEvent(OnMyFavoritesSelected) },
-                            onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected) },
+                            onMySmartAccountClick = { permissionFlow() },
                             onOtherBankAccountsClick = {
                                 viewModel.onUIEvent(
                                     OnOtherBankAccountsSelected

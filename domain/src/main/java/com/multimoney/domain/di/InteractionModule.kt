@@ -2,6 +2,8 @@ package com.multimoney.domain.di
 
 import com.multimoney.domain.interaction.accountsmart.MutationAccountStatusUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationAccountStatusUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.MutationAddACHAccountUseCase
+import com.multimoney.domain.interaction.accountsmart.MutationAddACHAccountUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationInitialRequestUseCase
@@ -22,6 +24,8 @@ import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelThreeUseC
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelThreeUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelTwoUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelTwoUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QueryBankListTransfer365UseCase
+import com.multimoney.domain.interaction.accountsmart.QueryBankListTransfer365UseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryCivilStatusUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryCivilStatusUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryGeneralEconomicActivityUseCase
@@ -36,6 +40,8 @@ import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryProfessionUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryProfessionUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QueryRelatedContactsByPhoneUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryRelatedContactsByPhoneUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryRelationshipUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryRelationshipUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QuerySmartAccountTypeUseCase
@@ -130,6 +136,8 @@ import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventU
 import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventUseCaseImpl
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCase
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryEmissionPlaceUseCase
+import com.multimoney.domain.interaction.credit.QueryEmissionPlaceUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUseCase
 import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCase
@@ -400,6 +408,11 @@ class InteractionModule {
     @Singleton
     fun provideQueryOccupationUseCase(creditRepository: CreditRepository): QueryOccupationUseCase =
         QueryOccupationUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryEmissionPlaceUseCase(creditRepository: CreditRepository): QueryEmissionPlaceUseCase =
+        QueryEmissionPlaceUseCaseImpl(creditRepository)
 
     @Provides
     @Singleton
@@ -752,6 +765,16 @@ class InteractionModule {
 
     @Provides
     @Singleton
+    fun provideBankListTransfer365(smartAccountRepository: SmartAccountRepository): QueryBankListTransfer365UseCase =
+        QueryBankListTransfer365UseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationAddACHAccount(smartAccountRepository: SmartAccountRepository): MutationAddACHAccountUseCase =
+        MutationAddACHAccountUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
     fun provideMutationUpdateFavoriteSmart(smartAccountRepository: SmartAccountRepository): MutationUpdateFavoriteSmartUseCase =
         MutationUpdateFavoriteSmartUseCaseImpl(smartAccountRepository)
 
@@ -759,4 +782,7 @@ class InteractionModule {
     @Singleton
     fun provideMutationAccountStatus(smartAccountRepository: SmartAccountRepository): MutationAccountStatusUseCase =
         MutationAccountStatusUseCaseImpl(smartAccountRepository)
+
+    fun provideQueryRelatedContactsByPhoneUseCase(smartAccountRepository: SmartAccountRepository): QueryRelatedContactsByPhoneUseCase =
+        QueryRelatedContactsByPhoneUseCaseImpl(smartAccountRepository)
 }

@@ -158,6 +158,13 @@ interface CreditRepository {
         idUserRequest: Int
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
 
+    suspend fun queryEmissionPlace(
+        pkUser: Int,
+        idUserRequest: Int,
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
+
     suspend fun queryGetLinkCreditContract(
         idPrint: Long,
         idBrand: Int,

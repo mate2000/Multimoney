@@ -200,6 +200,7 @@ data class MultimoneyColors(
     val linearProgressIndicatorStart: Color,
     val linearProgressIndicatorFinal: Color,
     val bodyTextColor: Color,
+    val coloredInitialChar: Array<Color>
 )
 
 val DarkColorPalette = MultimoneyColors(
@@ -229,7 +230,7 @@ val DarkColorPalette = MultimoneyColors(
     labelText = WhiteTransparency80,
     chipBackground = BlackTransparency20,
     shimmerItemColor = WhiteTransparency50,
-    bottomNavigationDividerColor = WhiteTransparency40,
+    bottomNavigationDividerColor = GrayScale400,
     bottomNavigationIconSelectedColor = DefaultWhite,
     bottomNavigationIconUnselectedColor = WhiteTransparency50,
     quickActionLabelColor = WhiteTransparency70,
@@ -259,6 +260,7 @@ val DarkColorPalette = MultimoneyColors(
     linearProgressIndicatorStart = Primary300,
     linearProgressIndicatorFinal = DefaultWhite,
     bodyTextColor = WhiteTransparency60,
+    coloredInitialChar = arrayOf(Primary400, Secondary400, Tertiary400, ComplementaryTwo400)
 )
 
 val LightColorPalette = MultimoneyColors(
@@ -288,7 +290,7 @@ val LightColorPalette = MultimoneyColors(
     labelText = WhiteTransparency80,
     chipBackground = BlackTransparency20,
     shimmerItemColor = GrayScale300,
-    bottomNavigationDividerColor = WhiteTransparency40,
+    bottomNavigationDividerColor = GrayScale400,
     bottomNavigationIconSelectedColor = DefaultWhite,
     bottomNavigationIconUnselectedColor = WhiteTransparency50,
     quickActionLabelColor = GrayScale500,
@@ -318,6 +320,7 @@ val LightColorPalette = MultimoneyColors(
     linearProgressIndicatorStart = Primary300,
     linearProgressIndicatorFinal = DefaultWhite,
     bodyTextColor = BlackTransparency60,
+    coloredInitialChar = arrayOf(Primary400, Secondary400, Tertiary400, ComplementaryTwo400)
 )
 
 val LocalMultimoneyColors = staticCompositionLocalOf {

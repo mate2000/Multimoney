@@ -18,6 +18,7 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.CROSSELING
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
@@ -87,6 +88,7 @@ class CreditViewModel @Inject constructor(
     var idPrint: Long = 0
     var statusOnfido: String = ""
     var statusEvicertia: String = ""
+    var crosseling: Boolean = false
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: ""
@@ -99,6 +101,7 @@ class CreditViewModel @Inject constructor(
         statusOnfido = savedStateHandle[ONFIDO_STATUS] ?: ""
         statusEvicertia = savedStateHandle[EVICERTIA_STATUS] ?: ""
         idPrint = savedStateHandle[SIGN_DOCUMENT_ID_PRINT] ?: 0
+        crosseling = savedStateHandle[CROSSELING] ?: false
         uiState = uiState.copy(
             lastStep = savedStateHandle[CREDIT_STEP] ?: CreditStep.One.id,
             loadContent = true
@@ -132,7 +135,7 @@ class CreditViewModel @Inject constructor(
     }
 
     private fun onNavigateToHome() {
-        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
     }
 
     private fun onContinueClick(focusManager: FocusManager) {
@@ -194,7 +197,7 @@ class CreditViewModel @Inject constructor(
                 isBottomSheetVisible = false
             )
         } else {
-            navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
+            navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
         }
     }
 

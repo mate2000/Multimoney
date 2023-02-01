@@ -46,6 +46,7 @@ query ValidateUserStatus($pkUser: Long!, $identification: String!, $user: String
                     symbolCurrency
                 }
                 idPrint
+                crosseling
                 selectedAmount
                 statusFirm
                 currentStep

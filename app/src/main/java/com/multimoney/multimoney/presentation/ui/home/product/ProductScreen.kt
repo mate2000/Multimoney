@@ -590,7 +590,10 @@ fun ProductCtaFooterExpanded(
                         }
                     }
                 },
-                hasBalanceAction = { /*todo go to buy crypto flow*/ }
+                hasBalanceAction = { /*todo go to buy crypto flow*/ },
+                onSendActionClicked = {
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSendCryptoFlow)
+                }
             )
         }
     }

@@ -594,4 +594,9 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "crypto_currency_details_screen/{$USER}/{$ID_BRAND}/{$CRYPTO_ASSET}/{$DESCRIPTION_CURRENCY}/{$CURRENT_CRYPTO_PRICE}/{$URL_IMAGE}",
         "crypto_currency_details_screen"
     )
+
+    object CryptoSendFlow: Screen(
+        route = "crypto_send_flow?$CRYPTO_ASSET={$CRYPTO_ASSET}&$DESCRIPTION_CURRENCY={$DESCRIPTION_CURRENCY}",
+        baseRoute = "crypto_send_flow"
+    )
 }

@@ -43,6 +43,7 @@ import com.multimoney.data.networking.graphql.apollomodel.EmploymentSituationQue
 import com.multimoney.data.networking.graphql.apollomodel.ExchangeRateQuery
 import com.multimoney.data.networking.graphql.apollomodel.GeneralEconomicActivityQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetAvailableListOfCryptoCoinsQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetBalanceCryptoAccountQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCardAutomaticDebitQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetClientAutomaticDebitQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetClientBankAccountQuery
@@ -1527,6 +1528,19 @@ class GraphqlApi @Inject constructor(
                 idBrand
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryGetBalanceCryptoAccount(
+        user: String,
+        idBrand: Int,
+        identification: String,
+    ): ApolloCall<GetBalanceCryptoAccountQuery.Data> = apolloAuthorizedClient.query(
+        GetBalanceCryptoAccountQuery(
+            user = user,
+            idBrand = idBrand,
+            identification = identification,
+            status = 1
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     // Virtual Card
 

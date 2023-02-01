@@ -15,6 +15,7 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.CRYPTO_ASSET
+import com.multimoney.multimoney.presentation.navigation.DESCRIPTION_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
@@ -117,6 +118,10 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
     }
 
 
+    private fun onNavigateToSendCrypto() {
+        navigateTo("${Screen.CryptoSendFlow.baseRoute}?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}&$DESCRIPTION_CURRENCY=${uiState.cryptoItem?.descriptionCurrency}")
+    }
+
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is UIEvent.OnNavigateBack -> navigateBack(Screen.CryptoWalletScreen.route, false)
@@ -125,6 +130,7 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
             is UIEvent.OnGetAssetHistory -> callQueryAssetHistory()
             is UIEvent.OnSetDateRange -> onSetDateRange(event.startDate)
             is UIEvent.OnViewAllMovements -> onNavigateToAllMovements()
+            is UIEvent.OnNavigateToSendCrypto -> onNavigateToSendCrypto()
         }
     }
 
@@ -135,6 +141,7 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
         object OnGetMovements : UIEvent
         object OnGetAssetHistory : UIEvent
         object OnViewAllMovements : UIEvent
+        object OnNavigateToSendCrypto : UIEvent
     }
 
     data class UiState(

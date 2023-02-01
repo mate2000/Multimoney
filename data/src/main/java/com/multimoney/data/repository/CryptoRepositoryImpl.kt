@@ -7,6 +7,7 @@ import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.crypto.mapToDomainModel
 import com.multimoney.data.networking.GraphqlApi
 import com.multimoney.data.paging.CryptoMovementsPagingSource
+import com.multimoney.domain.model.balance.BalanceCryptoAccount
 import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
 import com.multimoney.domain.model.crypto.CryptoCurrencyNews
 import com.multimoney.domain.model.crypto.GetHistoricalClientBalance
@@ -104,6 +105,19 @@ class CryptoRepositoryImpl @Inject constructor(
         idBrand: Int
     ): Flow<MultimoneyResult<CryptoCurrencyNews>> = fetchData(
         apolloCall = graphqlApi.queryCurrencyNews(baseAsset, user, idBrand),
+        apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
+    )
+
+    override suspend fun getBalanceCryptoAccount(
+        user: String,
+        idBrand: Int,
+        identification: String,
+    ): Flow<MultimoneyResult<BalanceCryptoAccount>> = fetchData(
+        apolloCall = graphqlApi.queryGetBalanceCryptoAccount(
+            user,
+            idBrand,
+            identification,
+        ),
         apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
     )
 }

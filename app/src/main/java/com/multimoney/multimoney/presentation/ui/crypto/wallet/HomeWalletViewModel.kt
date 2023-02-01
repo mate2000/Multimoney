@@ -162,6 +162,10 @@ class HomeWalletViewModel @Inject constructor(
         )
     }
 
+    private fun onNavigateToSendCrypto() {
+        navigateTo(Screen.CryptoSendFlow.baseRoute)
+    }
+
     data class UiState(
         val user: String? = null,
         val idBrand: Int? = null,
@@ -188,7 +192,8 @@ class HomeWalletViewModel @Inject constructor(
             is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
             is UIEvent.OnGetUserInfo -> onGetUserInfo()
             is UIEvent.OnNavigateToCryptoDetailScreen -> onNavigateToCryptoDetail(event.cryptoItem)
-            UIEvent.OnGetBalanceClient -> onGetBalanceClient()
+            is UIEvent.OnGetBalanceClient -> onGetBalanceClient()
+            is UIEvent.OnNavigateToSendCrypto -> onNavigateToSendCrypto()
         }
     }
 
@@ -197,7 +202,7 @@ class HomeWalletViewModel @Inject constructor(
         object OnNavigateBack : UIEvent
         object OnGetBalanceClient : UIEvent
         data class OnSetDateRange(val startDate: Long): UIEvent
-        data class OnNavigateToCryptoDetailScreen(val cryptoItem: BalanceCryptoAccountItems) :
-            UIEvent
+        data class OnNavigateToCryptoDetailScreen(val cryptoItem: BalanceCryptoAccountItems) : UIEvent
+        object OnNavigateToSendCrypto : UIEvent
     }
 }

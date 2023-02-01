@@ -140,6 +140,8 @@ import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUse
 import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCase
 import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCaseImpl
+import com.multimoney.domain.interaction.crypto.GetBalanceCryptoAccountUseCase
+import com.multimoney.domain.interaction.crypto.GetBalanceCryptoAccountUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetCurrencyHistoricalPricesUseCase
 import com.multimoney.domain.interaction.crypto.GetCurrencyHistoricalPricesUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetCurrencyNewsUseCase
@@ -691,6 +693,11 @@ class InteractionModule {
     @Provides
     fun provideQueryGetCurrencyHistoricalPrices(cryptoRepository: CryptoRepository): GetCurrencyHistoricalPricesUseCase =
         GetCurrencyHistoricalPricesUseCaseImpl(cryptoRepository)
+
+    @Singleton
+    @Provides
+    fun provideQueryGetBalanceCryptoAccountUseCase(cryptoRepository: CryptoRepository): GetBalanceCryptoAccountUseCase =
+        GetBalanceCryptoAccountUseCaseImpl(cryptoRepository)
 
     // Virtual Card
 

@@ -16,7 +16,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -225,8 +223,8 @@ fun AmountInputSection(
     exchangeRate: Double
 ) {
 
-    val klk = remember { mutableStateOf("") }
-    val klk2 = remember { mutableStateOf(false) }
+    val testingTest = remember { mutableStateOf("") }
+    val testingBoolean = remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -234,8 +232,8 @@ fun AmountInputSection(
     ) {
         //custom edittext
         CryptoCurrencyInputLayout(
-            query = klk,
-            focused = klk2,
+            query = testingTest,
+            focused = testingBoolean,
             iconCurrency = asset,
             onSearchClick = {},
         )

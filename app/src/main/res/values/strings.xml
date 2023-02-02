@@ -355,6 +355,19 @@
     <string name="home_crypto_card_with_balance_label" translatable="false">Balance</string>
     <string name="home_crypto_card_smart_in_process_label" translatable="false">Cripto</string>
     <string name="home_crypto_card_with_balance_zero_label" translatable="false">0.00</string>
+
+
+
+    <!-- Buy Crypto -->
+    <string name="buy_crypto_voucher_you_have_paid" translatable="false">Has comprado</string>
+    <string name="buy_crypto_multimoney_smart_account_template" translatable="false">Mi cuenta Smart | %1$s</string>
+    <string name="buy_crypto_voucher_from_account" translatable="false">Desde la cuenta</string>
+    <string name="buy_crypto_voucher_exchange_rate" translatable="false">Tipo de cambio</string>
+    <string name="buy_crypto_voucher_mount_to_charge" translatable="false">Total debitado</string>
+    <string name="buy_crypto_voucher_value_in_currency_template" translatable="false">Valor en %1$s al momento de la compra</string>
+    <string name="buy_crypto_voucher_final_value_in_currency_template" translatable="false">%1$s %2$s</string>
+
+
     <string name="home_product_process_smart_label" translatable="false">Smart</string>
 
     <!-- Credit in progress firm incomplete -->
@@ -481,6 +494,8 @@
     <string name="crypto_finish_smart_alert_description" translatable="false">Tu cuenta Cripto se ha activado como un beneficio extra de tu cuenta Smart</string>
     <string name="crypto_finish_smart_alert_btn_discover_crypto" translatable="false">Explorar Cripto</string>
     <string name="crypto_finish_smart_alert_btn_saving_smart" translatable="false">Ahorrar Smart</string>
+    <string name="crypto_select_smart_account_title_template" translatable="false">¿Con qué cuenta vas a comprar %s?</string>
+    <string name="crypto_buy_processing_transaction" translatable="false">Procesando transacción</string>
 
     <!-- Home Crypto Header Expanded-->
     <string name="home_crypto_header_expanded_title" translatable="false">Mi Cripto</string>
@@ -498,6 +513,11 @@
     <string name="crypto_footer_expanded_dialog_description" translatable="false">Para poder comprar criptomonedas debes hacerlo con los fondos de tu cuenta Smart</string>
     <string name="crypto_footer_expanded_dialog_btn_cancel" translatable="false">Cancelar</string>
     <string name="crypto_footer_expanded_dialog_btn_saving" translatable="false">Ahorrar</string>
+    <string name="buy_crypto_warning_bs_content" translatable="false">Las criptomonedas son activos altamente volátiles que pueden generar pérdidas de capital. \nEsta inversión es por voluntad y riesgo propio del inversionista ya que Multimoney no se hace responsable ante eventuales perjuicios. Te recomendamos tomar decisiones de inversión informadas.</string>
+    <string name="buy_crypto_warning_dont_show_again" translatable="false">No volver a mostrar</string>
+
+
+
 
     <!-- Home Smart - Account Details -->
     <string name="smart_account_detail_title" translatable="false">Detalles de cuenta</string>
@@ -1149,6 +1169,13 @@
     <string name="market_details_button_show_less" translatable="false">Ver Menos</string>
     <string name="market_details_button_read_more" translatable="false">Leer más</string>
 
+    <!--Crypto Purchase Flow-->
+    <string name="crypto_purchase_flow_title" translatable="false">¿Cúanto querés comprar?</string>
+    <string name="crypto_purchase_flow_exchange_reference" translatable="false">%1s %2 = $%3s</string>
+    <string name="crypto_purchase_flow_exchange_reference_edittext" translatable="false">≈ %1s %2s</string>
+    <string name="crypto_purchase_flow_available_smart_amount" translatable="false">Disponible para compra</string>
+    <string name="crypto_purchase_flow_price_expires_in" translatable="false">Precio de compra expira en</string>
+
     <!-- Evicertia screen -->
     <string name="smart_evicertia_missing_signature_title_card" translatable="false">¡Solo falta tu firma!</string>
     <string name="smart_evicertia_missing_signature_subtitle_card" translatable="false">Firmá el contrato para que podás empezar a invertir de forma Smart</string>
@@ -1437,6 +1464,9 @@
     <string name="process_forgot_password_alert_failure_description" translatable="false">Lo sentimos, volvé a intentar más \ntarde</string>
     <string name="process_forgot_password_alert_failure_description_gt" translatable="false">Lo sentimos, vuelve a intentar más tarde</string>
     <string name="process_forgot_password_alert_failure_button_try_again" translatable="false">Intentar nuevamente</string>
+
+    <!-- Crypto list currencies for purchase -->
+    <string name="crypt_list_purchase_title" translatable="false">¿Cuál moneda querés comprar?</string>
 
     <!-- Registeres User Email -->
     <string name="registered_user_email_title" translatable="false">Tenemos tu correo  %s registrado en MultiMoney</string>

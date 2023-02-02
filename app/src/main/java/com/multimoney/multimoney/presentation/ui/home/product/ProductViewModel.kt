@@ -458,9 +458,7 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToCryptoMovements() {
-        navigateTo(
-            "${Screen.CryptoMovementsAllScreen.baseRoute}/${uiState.idBrand}/$identification/$email"
-        )
+        navigateTo("${Screen.CryptoMovementsAllScreen.baseRoute}/${uiState.idBrand}/$identification/$email/${Screen.HomeScreen.route}")
     }
 
     private fun openWhatsAppLink(context: Context, whatsAppLink: String) {
@@ -679,6 +677,7 @@ class ProductViewModel @Inject constructor(
             QuickActionFlow.PAY_FEE.flow -> onNavigateToPaymentScreen()
             QuickActionFlow.SAVE_SMART.flow -> onNavigateToSmartSave()
             QuickActionFlow.SEND_MONEY.flow -> onNavigateToSendMoneyScreenQuickAction()
+            QuickActionFlow.BUY_CRYPTO.flow -> onNavigateToPurchaseCryptoFlow()
         }
     }
 
@@ -947,6 +946,10 @@ class ProductViewModel @Inject constructor(
         )
     }
 
+    private fun onNavigateToPurchaseCryptoFlow() {
+        navigateTo(Screen.PurchaseCryptoFlow.baseRoute)
+    }
+
     private fun getSmartContent() {
         val statusRequest = uiState.userStatus?.infoBankAccount?.infoRequest?.statusRequest
         val statusFirm = uiState.userStatus?.infoBankAccount?.statusFirm
@@ -1076,6 +1079,7 @@ class ProductViewModel @Inject constructor(
             is OnCreateMultimoneyVisa -> onCreateMultimoneyVisa(uiEvent.onLoadingValueChange)
             is OnNoVoConfig -> onConfigNovoSdk()
             is OnGetSmartContent -> getSmartContent()
+            is UIEvent.OnNavigateToPurchaseCryptoFlow -> onNavigateToPurchaseCryptoFlow()
             is OnVisaCardExpiredDialog -> onVisaCardExpiredDialog(
                 idBrand = uiEvent.idBrand,
                 balance = uiEvent.balance
@@ -1127,6 +1131,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToCryptoWallet : UIEvent()
         object OnNavigateToCryptoMarket : UIEvent()
         object OnNavigateToCryptoMovements : UIEvent()
+        object OnNavigateToPurchaseCryptoFlow : UIEvent()
         object OnGetSmartContent : UIEvent()
 
         data class OnSetUserData(
@@ -1162,7 +1167,6 @@ class ProductViewModel @Inject constructor(
 
         object OnNoVoConfig : UIEvent()
         data class OnCartButtonClickWithoutSmartBalance(val onSavingCLick: () -> Unit) : UIEvent()
-
         data class OnVisaCardExpiredDialog(
             val idBrand: String,
             val balance: Balance?

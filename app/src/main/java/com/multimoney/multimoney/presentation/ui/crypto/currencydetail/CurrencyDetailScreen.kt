@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.crypto.currencydetail
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -38,10 +39,12 @@ import com.multimoney.multimoney.presentation.ui.crypto.currencydetail.CryptoCur
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.DateFilterDWMYSection
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.MarketCurrencyDetailsGraphic
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoActionsSection
+import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.addTextStyleToTextPortion
+import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 
 @Composable
 fun CurrencyMovementsScreen(
@@ -133,14 +136,18 @@ fun CurrencyDetailContent(
                         )
                     )
                 }
-                Text(
-                    modifier = Modifier.padding(top = 16.dp),
-                    text = stringResource(
-                        id = R.string.dollar_symbol_value,
-                        uiState.cryptoItem?.balanceDollars.toString()
+                BalanceTextView(
+                    balanceText = uiState.cryptoItem?.balanceDollars?.toCurrencyFormat(useCurrentCurrency = false) ?: "0.0",
+                    currencyStyle = Typography.h4.copy(
+                        color = MultimoneyTheme.colors.text,
+                        fontWeight = FontWeight.Bold
                     ),
-                    style = Typography.h4.copy(color = MultimoneyTheme.colors.text)
+                    currencyDecimalStyle = Typography.body2.copy(
+                        color = MultimoneyTheme.colors.text,
+                        fontWeight = FontWeight.Bold
+                    )
                 )
+
                 Text(
                     text = "${uiState.cryptoItem?.available} ${uiState.cryptoItem?.asset}",
                     style = Typography.body2,
@@ -171,7 +178,7 @@ fun CurrencyDetailContent(
                 )
                 Row(
                     modifier = Modifier
-                        .padding(horizontal = 4.dp)
+                        .padding(top = 24.dp)
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically

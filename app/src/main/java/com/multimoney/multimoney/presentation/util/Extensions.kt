@@ -12,6 +12,7 @@ import android.nfc.cardemulation.CardEmulation
 import android.os.Build
 import android.provider.ContactsContract
 import android.provider.Settings.Secure
+import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
@@ -260,12 +261,12 @@ val Int.boolean
 fun getNavParam(param: String, value: Any?) = "?$param=$value"
 
 fun getDeviceManufacture(): String = (
-    if (Build.MODEL.startsWith(Build.MANUFACTURER, ignoreCase = true)) {
-        Build.MODEL
-    } else {
-        "${Build.MANUFACTURER} ${Build.MODEL}"
-    }
-    ).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+        if (Build.MODEL.startsWith(Build.MANUFACTURER, ignoreCase = true)) {
+            Build.MODEL
+        } else {
+            "${Build.MANUFACTURER} ${Build.MODEL}"
+        }
+        ).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
 
 fun Context.getAndroidId(): String {
     return Secure.getString(
@@ -285,12 +286,16 @@ fun Double.roundToTwoDecimalPlacesWithoutNegatives() =
 
 fun Double.toCurrencyFormat(
     symbol: String = Dollar.symbol,
-    amountOfDecimals: Int = DEFAULT_AMOUNT_OF_DECIMALS
+    amountOfDecimals: Int = DEFAULT_AMOUNT_OF_DECIMALS,
+    useCurrentCurrency: Boolean = true
 ): String {
     val formatter = NumberFormat.getCurrencyInstance()
     formatter.maximumFractionDigits = amountOfDecimals
     // remove the default dollar symbol from the custom symbol property
-    return "$symbol${formatter.format(this).replace(Dollar.symbol, "")}"
+    Log.d("EXTENTION", "$symbol${formatter.format(this).replace(Dollar.symbol, "")}")
+    return if (useCurrentCurrency) "$symbol${
+        formatter.format(this).replace(Dollar.symbol, "")
+    }" else "$symbol $this"
 }
 
 fun Double.toCurrencyFormatWithoutNegatives(
@@ -301,9 +306,9 @@ fun Double.toCurrencyFormatWithoutNegatives(
     formatter.maximumFractionDigits = amountOfDecimals
     // remove the default dollar symbol from the custom symbol property
     return "$symbol${
-    formatter.format(this)
-        .replace(Dollar.symbol, "")
-        .replace("-", "")
+        formatter.format(this)
+            .replace(Dollar.symbol, "")
+            .replace("-", "")
     }"
 }
 

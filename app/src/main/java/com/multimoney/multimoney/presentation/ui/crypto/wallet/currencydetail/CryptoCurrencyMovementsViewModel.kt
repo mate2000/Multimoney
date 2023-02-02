@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.crypto.currencydetail
+package com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -15,12 +15,12 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.CRYPTO_ASSET
+import com.multimoney.multimoney.presentation.navigation.DESCRIPTION_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
@@ -111,22 +111,30 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateToAllMovements(){
-        popAndNavigateTo(
-            "${Screen.CryptoMovementsAllScreen.baseRoute}/${uiState.idBrand}/$identification/$user?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}",
-                    Screen.CryptoCurrencyMovementsScreen.route
+    private fun onNavigateToAllMovements() {
+        navigateTo(
+            "${Screen.CryptoMovementsAllScreen.baseRoute}/${uiState.idBrand}/$identification/$user?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}"
         )
     }
 
+    private fun onNavigateToSelectAccount(){
+        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}&$DESCRIPTION_CURRENCY=${uiState.cryptoItem?.descriptionCurrency}")
+    }
+
+    private fun onNavigateToSendCrypto() {
+        navigateTo("${Screen.CryptoSendFlow.baseRoute}?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}&$DESCRIPTION_CURRENCY=${uiState.cryptoItem?.descriptionCurrency}")
+    }
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
+            is UIEvent.OnNavigateBack -> navigateBack(Screen.CryptoWalletScreen.route, false)
             is UIEvent.OnGetUserInfo -> onGetUserInfo()
             is UIEvent.OnGetMovements -> callQueryMovements()
             is UIEvent.OnGetAssetHistory -> callQueryAssetHistory()
             is UIEvent.OnSetDateRange -> onSetDateRange(event.startDate)
             is UIEvent.OnViewAllMovements -> onNavigateToAllMovements()
+            is UIEvent.OnNavigateToSelectAccount -> onNavigateToSelectAccount()
+            is UIEvent.OnNavigateToSendCrypto -> onNavigateToSendCrypto()
         }
     }
 
@@ -137,6 +145,8 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
         object OnGetMovements : UIEvent
         object OnGetAssetHistory : UIEvent
         object OnViewAllMovements : UIEvent
+        object OnNavigateToSelectAccount : UIEvent
+        object OnNavigateToSendCrypto : UIEvent
     }
 
     data class UiState(

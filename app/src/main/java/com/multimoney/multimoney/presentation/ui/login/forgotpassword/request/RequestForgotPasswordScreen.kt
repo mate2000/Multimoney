@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
@@ -25,9 +26,11 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
+import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.request.RequestForgotPasswordViewModel.UIEvent.OnChangePasswordClick
@@ -54,6 +57,7 @@ fun RequestForgotPasswordScreen(
 ) {
     // Properties
     val focusManager = LocalFocusManager.current
+    val activity = LocalContext.current.findActivity() as FragmentActivity
 
     LaunchedEffect(true) {
         viewModel.apply {
@@ -76,7 +80,7 @@ fun RequestForgotPasswordScreen(
         onNavigateBack = { viewModel.onUIEvent(OnNavigateBack(focusManager)) },
         onCloseClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) },
         onChangePasswordClick = { viewModel.onUIEvent(OnChangePasswordClick) },
-        onContinueClick = { viewModel.onUIEvent(OnContinueClick(focusManager)) }
+        onContinueClick = { viewModel.onUIEvent(OnContinueClick(activity, focusManager)) }
     )
 }
 

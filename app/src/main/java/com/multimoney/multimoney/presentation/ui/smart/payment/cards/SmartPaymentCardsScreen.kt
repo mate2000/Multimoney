@@ -116,7 +116,7 @@ fun PaymentCardList(
         items(cardList) { card ->
             card?.let {
                 CustomInfoButton(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
                     imageModifier = Modifier.size(48.dp),
                     startIcon = R.drawable.ic_visa_card_item,
                     title = card.detail ?: "",

@@ -1,0 +1,33 @@
+mutation AddACHAccount(
+    $accountNumber: String!
+    $titularName: String!
+    $isFavorite: Boolean!
+    $typeAccountId: Int!
+    $destinationBankId: Int!
+    $description: String!
+    $identificationNumber: String!
+    $identificationTypeAccount: Int!
+    $idBrand: Int!
+    $user: String!
+) {
+    aCHTransferFavoriteAdd(
+        aCHTransferFavoriteAddInput: {
+            accountNumber: $accountNumber
+            titularName: $titularName
+            isFavorite: $isFavorite
+            typeAccountId: $typeAccountId
+            destinationBankId: $destinationBankId
+            description: $description
+            identificacionNumber: $identificationNumber
+            identificationTypeAccount: $identificationTypeAccount
+            idBrand: $idBrand
+            user: $user
+        }
+    ) {
+        result {
+            accountForAchTransferId
+            accountNumber
+        }
+        message
+    }
+}

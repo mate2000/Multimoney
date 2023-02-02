@@ -85,7 +85,8 @@ class PaymentScheduleCardViewModel @Inject constructor(
         isEditBankAccount || previousScreen == Screen.PaymentCardVoucherScreen.baseRoute ->
             uiState =
                 uiState.copy(
-                    cardVisaDirect = savedStateHandle[CLIENT_CARD_VISA_DIRECT]
+                    cardVisaDirect = savedStateHandle[CLIENT_CARD_VISA_DIRECT],
+                    isCardListEmpty = false
                 )
         previousScreen == Screen.HomeScreen.route && isEditPaymentSchedule.not() -> onCallQueryGetCardsUseCase()
         else -> onCallGetCardsAutomaticDebitUseCase()
@@ -100,7 +101,7 @@ class PaymentScheduleCardViewModel @Inject constructor(
             result.onSuccess { cardsList ->
                 uiState = uiState.copy(
                     isLoading = false,
-                    cardVisaDirect = cardsList?.first(),
+                    cardVisaDirect = cardsList?.firstOrNull(),
                     isCardListEmpty = cardsList.isNullOrEmpty()
                 )
             }.onFailure {
@@ -120,10 +121,11 @@ class PaymentScheduleCardViewModel @Inject constructor(
             idLoanClient = idLoanClient.toLong()
         ).collectLatest { result ->
             getPaymentScheduleAttempts++
-            result.onSuccess {
+            result.onSuccess { cardsList ->
                 uiState = uiState.copy(
-                    cardVisaDirect = it?.first(),
-                    isLoading = false
+                    isLoading = false,
+                    cardVisaDirect = cardsList?.firstOrNull(),
+                    isCardListEmpty = cardsList.isNullOrEmpty()
                 )
             }.onFailure {
                 setErrorAlertResult(attempts = getPaymentScheduleAttempts)
@@ -237,7 +239,7 @@ class PaymentScheduleCardViewModel @Inject constructor(
     }
 
     private fun onAlertCloseClick() = if (uiState.isAlertResultSuccess) {
-        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
     } else {
         navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
     }

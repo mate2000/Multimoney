@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -152,12 +153,14 @@ fun MarketScreenContent(
                         sheetState = state,
                         showFilterChip = marketViewModel.uiState.idBrand == Brand.CostaRica.id,
                         onCurrencyItemClick = { cryptoCurrency ->
-                            marketViewModel.onUIEvent(OnSetAssetBeforeNavigation(
-                                asset = cryptoCurrency.baseAsset,
-                                description = cryptoCurrency.description,
-                                currentPrice = cryptoCurrency.currentPrice.toString().toFloat(),
-                                urlImage = cryptoCurrency.url_image.encodeURLToUTF()
-                            ))
+                            marketViewModel.onUIEvent(
+                                OnSetAssetBeforeNavigation(
+                                    asset = cryptoCurrency.baseAsset,
+                                    description = cryptoCurrency.description,
+                                    currentPrice = cryptoCurrency.currentPrice.toString().toFloat(),
+                                    urlImage = cryptoCurrency.url_image.encodeURLToUTF()
+                                )
+                            )
                             marketViewModel.onUIEvent(OnNavigateToCurrencyDetails)
                         }
                     )
@@ -183,7 +186,7 @@ fun MarketHeader() {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun FilterSection(
+fun FilterSection(
     selectedFilter: MutableState<String>,
     sheetState: ModalBottomSheetState
 ) {
@@ -260,7 +263,6 @@ fun FilterBottomSheet(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             items(MarketFilter.values()) { filter ->
-
                 CustomSelector(
                     text = filter.value,
                     selected = filter.value == filterQuery.value,

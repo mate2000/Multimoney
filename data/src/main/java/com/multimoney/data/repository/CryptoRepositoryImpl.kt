@@ -7,11 +7,13 @@ import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.crypto.mapToDomainModel
 import com.multimoney.data.networking.GraphqlApi
 import com.multimoney.data.paging.CryptoMovementsPagingSource
+import com.multimoney.domain.model.crypto.BuyCryptoCurrencyData
 import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
 import com.multimoney.domain.model.crypto.CryptoCurrencyNews
 import com.multimoney.domain.model.crypto.GetHistoricalClientBalance
 import com.multimoney.domain.model.crypto.GetHistoricalCurrencyPrices
 import com.multimoney.domain.model.crypto.GetListOfAvailableCryptoCoins
+import com.multimoney.domain.model.crypto.PricesQuoteAndCommissionData
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.CryptoRepository
@@ -104,6 +106,66 @@ class CryptoRepositoryImpl @Inject constructor(
         idBrand: Int
     ): Flow<MultimoneyResult<CryptoCurrencyNews>> = fetchData(
         apolloCall = graphqlApi.queryCurrencyNews(baseAsset, user, idBrand),
+        apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
+    )
+
+    override suspend fun getPriceQuoteAndCommission(
+        asset: String,
+        crypto_network: String,
+        idBrand: Int,
+        user: String,
+        market: String,
+        identification: String,
+        quote_amount: Double,
+        base_amount: Double,
+        side: String
+    ): Flow<MultimoneyResult<PricesQuoteAndCommissionData>> = fetchData(
+        apolloCall = graphqlApi.queryGetPriceQuoteAndCommission(
+            asset,
+            crypto_network,
+            idBrand,
+            user,
+            market,
+            identification,
+            quote_amount,
+            base_amount,
+            side
+        ),
+        apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
+    )
+
+    override suspend fun buyCryptoCurrency(
+        pkUser: Int,
+        identification: String,
+        market: String,
+        commissionAmount: Double,
+        taxAmount: Double,
+        accountToken: Double,
+        exchangeRate: Double,
+        idBrand: Int,
+        user: String,
+        quoteId: String,
+        quoteAmount: Double,
+        fee: Double,
+        internalFee: Double,
+        totalFee: Double
+    ): Flow<MultimoneyResult<BuyCryptoCurrencyData>> = fetchData(
+        apolloCall = graphqlApi.mutationBuyCryptoCurrency(
+            pkUser,
+            identification,
+            market,
+            commissionAmount,
+            taxAmount,
+            accountToken,
+            exchangeRate,
+            idBrand,
+            user,
+            quoteId,
+            quoteAmount,
+            fee,
+            internalFee,
+            totalFee
+        ),
         apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
     )
 }

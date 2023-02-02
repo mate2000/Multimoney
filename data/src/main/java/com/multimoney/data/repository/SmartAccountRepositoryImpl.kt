@@ -10,6 +10,7 @@ import com.multimoney.data.networking.GraphqlApi
 import com.multimoney.data.paging.SmartMovementsPagingSource
 import com.multimoney.domain.model.accountsmart.ACHAccount
 import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
+import com.multimoney.domain.model.accountsmart.AccountSmartForBuyCrypto
 import com.multimoney.domain.model.accountsmart.AddressesLevel
 import com.multimoney.domain.model.accountsmart.BankListTransfer365
 import com.multimoney.domain.model.accountsmart.Beneficiary
@@ -572,6 +573,24 @@ class SmartAccountRepositoryImpl @Inject constructor(
             active = active,
             isFavorite = isFavorite,
             idCurrencyAccount = idCurrencyAccount
+        ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+    }
+
+    override suspend fun querySmartAccounts(
+        user: String,
+        identification: String,
+        idBrand: Int,
+        accountStatus: Int
+    ): Flow<MultimoneyResult<List<AccountSmartForBuyCrypto>?>> {
+        return fetchData(graphqlApi.querySmartAccounts(
+            user,
+            identification,
+            idBrand,
+            accountStatus
         ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())

@@ -1,7 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.onboarding
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -86,12 +85,12 @@ class OnBoardingViewModel @Inject constructor(
             provideFireBaseEventHelper.logEvent(FireBaseEvents.OnboardingOne)
 
             when (context.resources.configuration.locale.isO3Country) {
-                "CRI" -> listOf(
+                ISO3_COSTA_RICA -> listOf(
                     R.string.onboarding_costa_rica_step_one_title,
                     R.string.onboarding_costa_rica_step_one_sub_title,
                     R.drawable.ic_onboarding_step_one
                 )
-                "GTM" -> listOf(
+                ISO3_GUATEMALA -> listOf(
                     R.string.onboarding_guatemala_step_one_title,
                     R.string.onboarding_guatemala_step_one_sub_title,
                     R.drawable.ic_onboarding_step_one
@@ -107,12 +106,12 @@ class OnBoardingViewModel @Inject constructor(
         STEP_TWO -> {
             provideFireBaseEventHelper.logEvent(FireBaseEvents.OnboardingTwo)
             when (context.resources.configuration.locale.isO3Country) {
-                "CRI" -> listOf(
+                ISO3_COSTA_RICA -> listOf(
                     R.string.onboarding_costa_rica_step_two_title,
                     R.string.onboarding_costa_rica_step_two_sub_title,
                     R.drawable.ic_onboarding_step_two
                 )
-                "GTM" -> listOf(
+                ISO3_GUATEMALA -> listOf(
                     R.string.onboarding_guatemala_step_two_title,
                     R.string.onboarding_guatemala_step_two_sub_title,
                     R.drawable.ic_onboarding_step_two
@@ -127,12 +126,12 @@ class OnBoardingViewModel @Inject constructor(
         else -> {
             provideFireBaseEventHelper.logEvent(FireBaseEvents.OnboardingThree)
             when (context.resources.configuration.locale.isO3Country) {
-                "CRI" -> listOf(
+                ISO3_COSTA_RICA -> listOf(
                     R.string.onboarding_costa_rica_step_three_title,
                     R.string.onboarding_costa_rica_step_three_sub_title,
                     R.drawable.ic_onboarding_step_three
                 )
-                "GTM" -> listOf(
+                ISO3_GUATEMALA -> listOf(
                     R.string.onboarding_guatemala_step_three_title,
                     R.string.onboarding_guatemala_step_three_sub_title,
                     R.drawable.ic_onboarding_step_three
@@ -194,5 +193,7 @@ class OnBoardingViewModel @Inject constructor(
         const val STEP_ICON = 2
         const val TOTAL_PRESS_TIME = 300
         const val QUARTER = 4
+        const val ISO3_COSTA_RICA = "CRI"
+        const val ISO3_GUATEMALA = "GTM"
     }
 }

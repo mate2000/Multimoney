@@ -1,7 +1,14 @@
 package com.multimoney.multimoney.presentation.ui.onboarding
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -9,7 +16,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -55,7 +61,7 @@ fun OnBoardingScreen(
             .background(MultimoneyTheme.colors.background)
             .fillMaxSize()
             .pointerInput(Unit) {
-                viewModel.onUIEvent(OnPress(this),context)
+                viewModel.onUIEvent(OnPress(this), context)
             }
     ) {
         Column(Modifier.weight(0.3f)) {
@@ -77,7 +83,7 @@ fun OnBoardingScreen(
         Column(
             Modifier
                 .fillMaxSize()
-                .padding(top = 16.dp,start = 16.dp, end = 16.dp)
+                .padding(top = 16.dp, start = 16.dp, end = 16.dp)
                 .weight(0.7f),
             verticalArrangement = Arrangement.Bottom
         ) {

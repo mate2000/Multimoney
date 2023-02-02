@@ -2,6 +2,6 @@ package com.multimoney.multimoney.presentation.ui.home
 
 enum class HomeState {
     EXPANDED,
-    UNEXPANDED,
+    COLLAPSED,
     OLD_STATE
 }

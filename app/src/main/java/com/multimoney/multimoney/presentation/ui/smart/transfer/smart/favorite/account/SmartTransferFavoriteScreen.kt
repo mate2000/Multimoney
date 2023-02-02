@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -16,19 +15,22 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.multimoney.R.drawable
+import com.multimoney.domain.model.accountsmart.ACHFavoriteAccount
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.SmartTransferFavoriteViewModel.UIEvent.OnAccountClick
-import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.SmartTransferFavoriteViewModel.UIEvent.OnCallQueryListSinpeAccountUseCaseImpl
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.SmartTransferFavoriteViewModel.UIEvent.OnCallQueryACHTransferFavoriteListUseCase
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.SmartTransferFavoriteViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.SmartTransferFavoriteViewModel.UIEvent.OnNavigateToHome
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.SmartTransferFavoriteViewModel.UIEvent.OnOptionsClick
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
-import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
+import com.multimoney.multimoney.presentation.util.getMaskedAccount
 
 @Composable
 fun SmartTransferFavoriteScreen(
@@ -37,7 +39,7 @@ fun SmartTransferFavoriteScreen(
     viewModel: SmartTransferFavoriteViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
-        viewModel.onUIEvent(OnCallQueryListSinpeAccountUseCaseImpl)
+        viewModel.onUIEvent(OnCallQueryACHTransferFavoriteListUseCase)
         viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
     }
 
@@ -48,7 +50,7 @@ fun SmartTransferFavoriteScreen(
     ) {
         TopNavBar(
             isRightButtonVisible = true,
-            onRightButtonClick = { },
+            onRightButtonClick = { viewModel.onUIEvent(OnNavigateToHome) },
             onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) }
         )
         Text(
@@ -60,43 +62,63 @@ fun SmartTransferFavoriteScreen(
             )
         )
 
-        PaymentOptions(viewModel)
+        if (!viewModel.uiState.isLoading) {
+            ACHFavoriteContentList(
+                AHCFavoriteList = viewModel.uiState.ACHFavoriteAccountList,
+                onEndIconClick = { favorite ->
+                    viewModel.onUIEvent(OnOptionsClick(favorite))
+                },
+                onFavoriteClick = { favorites ->
+                    viewModel.onUIEvent(
+                        SmartTransferFavoriteViewModel.UIEvent.OnFavoriteClick(
+                            favorites
+                        )
+                    )
+                }
+            )
+        }
     }
 
     LoadingIndicator(viewModel.uiState.isLoading)
 
-//    if (viewModel.uiState.openDialog.isActive.value) {
-//        CustomDialog(
-//            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
-//            message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
-//            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
-//            openDialogCustom = viewModel.uiState.openDialog.isActive,
-//            onPositiveAction = viewModel.uiState.openDialog.positiveAction
-//        )
-//    }
+    if (viewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            openDialogCustom = viewModel.uiState.openDialog.isActive,
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+        )
+    }
 }
 
 @Composable
-fun PaymentOptions(viewModel: SmartTransferFavoriteViewModel = hiltViewModel()) {
+fun ACHFavoriteContentList(
+    AHCFavoriteList: Map<String, List<ACHFavoriteAccount?>>,
+    onEndIconClick: (contact: ACHFavoriteAccount) -> Unit,
+    onFavoriteClick: (contact: List<ACHFavoriteAccount?>) -> Unit
+) {
     LazyColumn(modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp)) {
-        items(viewModel.uiState.sinpeAccountList) { account ->
-            CustomInfoButton(
-                title = account?.nameAccount ?: "",
-                subtitle = account?.bank ?: "",
-                subtitle2 = getMaskedAccountIban(
-                    account?.sinpeAccount ?: "",
-                    stringResource(id = string.payment_account_masked_text)
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(top = 12.dp),
-                endIcon = drawable.ic_options,
-                startIcon = account?.currencyId?.getCurrencyFromId()?.accountIcon,
-                onClick = {
-                    viewModel.onUIEvent(OnAccountClick(account))
-                }
-            )
+        AHCFavoriteList.forEach { (_, favorite) ->
+            item {
+                CustomInfoButton(
+                    title = favorite?.first()?.description.orEmpty(),
+                    subtitle = favorite?.first()?.destinationBankDescription.orEmpty(),
+                    subtitle2 = getMaskedAccount(
+                        favorite?.first()?.accountNumber.orEmpty()
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(top = 12.dp),
+                    endIcon = R.drawable.ic_options,
+                    startIcon = favorite?.first()?.destinationAccountCurrencyId?.getCurrencyFromId()?.accountIcon,
+                    onEndIconClick = { favorite.first()?.let { onEndIconClick(it) } },
+                    onClick = {
+                        onFavoriteClick(favorite)
+                    }
+                )
+            }
         }
     }
 }

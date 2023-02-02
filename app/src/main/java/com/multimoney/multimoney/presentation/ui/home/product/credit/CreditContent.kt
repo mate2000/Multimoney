@@ -38,7 +38,6 @@ fun CreditContent(viewModel: ProductViewModel) {
         id = R.string.whatsapp_deep_link,
         SignUpViewModel.PHONE_HARDCODED
     )
-
     viewModel.uiState.userStatus?.apply {
         when (infoCredit?.status) {
             CreditStatus.EXIST_IN_CORE.status -> {

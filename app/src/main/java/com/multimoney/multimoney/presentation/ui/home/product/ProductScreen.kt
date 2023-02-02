@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.home.product
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -15,8 +16,11 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -44,6 +48,8 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency30
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
+import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
+import com.multimoney.multimoney.presentation.ui.crypto.purchase.selectaccount.ConfirmationBottomSheet
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnDeleteAutomaticPaymentToastEvent
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent
@@ -95,13 +101,14 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun ProductScreen(
     sharedViewModel: HomeViewModel,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: ProductViewModel = hiltViewModel()
 ) {
+    val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val deleteAutomaticPaymentToastText =
@@ -143,6 +150,9 @@ fun ProductScreen(
             when (event) {
                 is OnShowCardIssuanceError -> sharedViewModel.onUIEvent(UIEvent.OnShowCardIssuanceError)
                 is OnShowTbdToastEvent -> Toast.makeText(context, "TBD", Toast.LENGTH_SHORT).show()
+                is ProductViewModel.BaseEvent.OnShowDisclaimer -> {
+                    bottomSheetState.show()
+                }
             }
         }
     }
@@ -304,6 +314,21 @@ fun ProductScreen(
             onNegativeAction = viewModel.uiState.openDialog.negativeAction
         )
     }
+    ConfirmationBottomSheet(
+        modalBottomSheetState = bottomSheetState,
+        coroutineScope = coroutineScope,
+        onCheckedChange = {
+            viewModel.onUIEvent(ProductViewModel.UIEvent.OnDisclaimerChecked(it))
+        },
+        onContinueClicked = {
+            viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToPurchaseCryptoFlow)
+            viewModel.onUIEvent(ProductViewModel.UIEvent.OnUpdateShouldShowDisclaimer(viewModel.uiState.dontShowAgainChecked))
+            coroutineScope.launch {
+                bottomSheetState.hide()
+            }
+        },
+        checked = viewModel.uiState.dontShowAgainChecked
+    )
 }
 
 @Composable

@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.crypto.purchase
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +27,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -46,6 +48,14 @@ fun PurchaseCryptoFlow(
             onPopAndNavigate = onPopAndNavigate,
             onPopBackStack = onPopBackStack
         )
+
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                is PurchaseCryptoSharedViewModel.BaseEvent.OnShowDisclaimer -> {
+                    bottomSheetState.show()
+                }
+            }
+        }
     }
 
     Column(
@@ -118,15 +128,21 @@ fun PurchaseCryptoFlow(
             onPositiveAction = viewModel.uiState.openDialog.positiveAction
         )
     }
-    // TODO, make a sharedviewmodel event that can be
-    //  triggered from child views, and change bottom
-    //  sheet state to show the dialog
-    if (viewModel.uiState.isBottomSheetVisible) {
-        ConfirmationBottomSheet(
-            modalBottomSheetState = bottomSheetState,
-            coroutineScope = coroutineScope
-        )
-    }
+    ConfirmationBottomSheet(
+        modalBottomSheetState = bottomSheetState,
+        coroutineScope = coroutineScope,
+        onCheckedChange = {
+            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnDisclaimerChecked(it))
+        },
+        onContinueClicked = {
+            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNextStep)
+            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnUpdateShouldShowDisclaimer(viewModel.uiState.dontShowAgainChecked))
+            coroutineScope.launch {
+                bottomSheetState.hide()
+            }
+        },
+        checked = viewModel.uiState.dontShowAgainChecked
+    )
 }
 
 @Composable

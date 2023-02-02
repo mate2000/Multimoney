@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -18,6 +20,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +40,8 @@ import com.multimoney.multimoney.presentation.ui.crypto.CryptoCurrencyMovementIt
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail.CryptoCurrencyMovementsViewModel.Companion.TODAY_TEXT
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.DateFilterDWMYSection
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.MarketCurrencyDetailsGraphic
+import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel
+import com.multimoney.multimoney.presentation.ui.crypto.purchase.selectaccount.ConfirmationBottomSheet
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoActionsSection
 import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
@@ -45,6 +50,7 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.addTextStyleToTextPortion
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CurrencyMovementsScreen(
     viewModel: CryptoCurrencyMovementsViewModel = hiltViewModel(),
@@ -52,6 +58,8 @@ fun CurrencyMovementsScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
 ) {
+    val coroutineScope = rememberCoroutineScope()
+
     LaunchedEffect(true) {
         viewModel.executeNavigation(
             onPopBackStack = onPopBackStack,
@@ -78,8 +86,32 @@ fun CurrencyMovementsScreen(
         },
         viewAllClick = { viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnViewAllMovements) },
         buyCryptoClick = {
-            viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToSelectAccount)
+            if(viewModel.uiState.idBrand == Brand.ElSalvador.id){
+                if (viewModel.uiState.shouldDisplayDisclaimer) {
+                    viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnShowDisclaimer)
+                } else {
+                    viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToSelectAccount)
+                }
+            }
+            else{
+                viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToSelectAccount)
+            }
         }
+    )
+
+    ConfirmationBottomSheet(
+        modalBottomSheetState = viewModel.uiState.bottomSheetVisibleState,
+        coroutineScope = coroutineScope,
+        onCheckedChange = {
+            viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnDisclaimerChecked(it))
+        },
+        onContinueClicked = {
+            viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnUpdateShouldShowDisclaimer(viewModel.uiState.dontShowAgainChecked))
+            viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnHideDisclaimer)
+            viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToSelectAccount)
+
+        },
+        checked = viewModel.uiState.dontShowAgainChecked
     )
 }
 

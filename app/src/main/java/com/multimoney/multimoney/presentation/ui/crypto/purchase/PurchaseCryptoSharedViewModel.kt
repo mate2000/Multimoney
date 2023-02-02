@@ -74,7 +74,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
                 asset = savedStateHandle[CRYPTO_ASSET] ?: "",
                 assetDescription = savedStateHandle[DESCRIPTION_CURRENCY] ?: "",
                 market = confirmationAsset?.plus(abvCurrency) ?: "",
-                isBottomSheetVisible = preferences.isVolatileDialogVisible().first()
+                shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first()
             )
         }
     }
@@ -86,7 +86,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
                 idBrand = idBrand,
                 identification = identification,
                 accountStatus = ACTIVE_ACCOUNT
-            ).collectLatest {result ->
+            ).collectLatest { result ->
                 result.onSuccess {
                     it?.let {
                         uiState = if (idBrand == Brand.ElSalvador.id) {
@@ -162,6 +162,21 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         )
     }
 
+    private fun OnShowDisclaimer() {
+        emitBaseEvent(BaseEvent.OnShowDisclaimer)
+    }
+
+    private fun updateShouldShowDisclaimer(value: Boolean) {
+        viewModelScope.launch {
+            dataStorePreferences.setVolatileDialogVisible(!value)
+            uiState = uiState.copy(shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first())
+        }
+    }
+
+    private fun onDisclaimerChecked(checked: Boolean) {
+        uiState = uiState.copy(dontShowAgainChecked = checked)
+    }
+
     data class UIState(
         val currentStep: Int = PurchaseCryptoSteps.One.pageNumber,
         val isLoading: Boolean = false,
@@ -170,7 +185,8 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         var bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
         var bottomSheet: (@Composable () -> Unit) = {},
         val smartAccountAvailableBalance: Double = 0.0,
-        var isBottomSheetVisible: Boolean = true,
+        var shouldDisplayDisclaimer: Boolean = true,
+        val dontShowAgainChecked: Boolean = false,
         val asset: String? = null,
         val assetDescription: String? = null,
         val market: String = "",
@@ -188,7 +204,8 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
             is UIEvent.OnCloseClick -> onCloseClick()
             is UIEvent.OnGetUserInfo -> setUserData()
             is UIEvent.OnQueryAccounts -> querySmartAccounts()
-            is UIEvent.OnSetAccountToken -> uiState = uiState.copy(accountToken = event.accountToken)
+            is UIEvent.OnSetAccountToken -> uiState =
+                uiState.copy(accountToken = event.accountToken)
             is UIEvent.OnCryptoSelected -> {
                 uiState = uiState.copy(
                     asset = event.selectedCrypto.baseAsset,
@@ -204,7 +221,14 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
                     smartAccountAvailableBalance = event.totalBalance
                 )
             }
+            is BaseEvent.OnShowDisclaimer -> OnShowDisclaimer()
+            is UIEvent.OnDisclaimerChecked -> onDisclaimerChecked(event.checked)
+            is UIEvent.OnUpdateShouldShowDisclaimer -> updateShouldShowDisclaimer(event.checked)
         }
+    }
+
+    sealed class BaseEvent {
+        object OnShowDisclaimer : UIEvent()
     }
 
     sealed class UIEvent {
@@ -217,11 +241,16 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         data class OnCryptoSelected(
             val selectedCrypto: MarketCryptoCoin
         ) : UIEvent()
+
         data class OnSetSelectedAccount(
             val accountToken: String,
             val totalBalance: Double
         ) : UIEvent()
+
         object OnGetUserInfo : UIEvent()
+        data class OnDisclaimerChecked(val checked: Boolean) : UIEvent()
+        data class OnUpdateShouldShowDisclaimer(val checked: Boolean) : UIEvent()
+
     }
 
     companion object {

@@ -8,9 +8,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -25,6 +29,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SelectSmartAccountScreen(
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
@@ -33,6 +38,14 @@ fun SelectSmartAccountScreen(
     sharedViewModel: PurchaseCryptoSharedViewModel,
     viewModel: SelectSmartAccountViewModel = hiltViewModel()
 ) {
+
+    val coroutineScope = rememberCoroutineScope()
+    val bottomSheetState =
+        rememberModalBottomSheetState(
+            initialValue = ModalBottomSheetValue.Expanded,
+            skipHalfExpanded = true
+        )
+
     LaunchedEffect(true) {
         viewModel.executeNavigation(
             onPopBackStack = onPopBackStack,
@@ -55,7 +68,9 @@ fun SelectSmartAccountScreen(
                 totalBalance
             )
         )
-        sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNextStep)
+        if (!sharedViewModel.uiState.shouldDisplayDisclaimer) {
+            sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNextStep)
+        }
     }
 }
 
@@ -93,10 +108,20 @@ fun SelectSmartAccountContent(
                         account.currencyCode ?: ""
                     ),
                     onClick = {
-                        onNextStep(
-                            account.accountToken,
-                            account.totalBalance ?: 0.0
+                        viewModel.onUIEvent(
+                            SelectSmartAccountViewModel.UIEvent.OnUpdateValues(
+                                account.accountToken,
+                                account.totalBalance ?: 0.0
+                            )
                         )
+                        if (sharedViewModel.uiState.shouldDisplayDisclaimer) {
+                            sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.BaseEvent.OnShowDisclaimer)
+                        } else {
+                            onNextStep(
+                                account.accountToken,
+                                account.totalBalance ?: 0.0
+                            )
+                        }
                     }
                 )
             }

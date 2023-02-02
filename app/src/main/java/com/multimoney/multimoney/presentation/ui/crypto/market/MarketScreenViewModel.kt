@@ -1,9 +1,16 @@
+@file:OptIn(ExperimentalMaterialApi::class)
+
 package com.multimoney.multimoney.presentation.ui.crypto.market
 
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUseCase
 import com.multimoney.domain.model.crypto.GetListOfAvailableCryptoCoins
 import com.multimoney.domain.model.util.error.HttpError
@@ -17,22 +24,26 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MarketScreenViewModel @Inject constructor(
     private val getAvailableListOfCryptoCoinsUseCase: GetAvailableListOfCryptoCoinsUseCase,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
 ) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UiState())
         private set
 
     private fun onGetUserInfo() {
-        uiState = uiState.copy(
-            user = savedStateHandle[USER] ?: "",
-            idBrand = savedStateHandle[ID_BRAND] ?: 0
-        )
+        viewModelScope.launch {
+            uiState = uiState.copy(
+                user = savedStateHandle[USER] ?: "",
+                idBrand = savedStateHandle[ID_BRAND] ?: 0,
+            )
+        }
     }
 
     private fun getAvailableListOfCryptoCoins(
@@ -105,7 +116,7 @@ class MarketScreenViewModel @Inject constructor(
         val currentPrice: Float? = null,
         val urlImage: String? = null,
         val openDialog: DialogParameters = DialogParameters(),
-        val availableCryptoCoins: GetListOfAvailableCryptoCoins? = null
+        val availableCryptoCoins: GetListOfAvailableCryptoCoins? = null,
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -123,16 +134,16 @@ class MarketScreenViewModel @Inject constructor(
         }
     }
 
-    sealed interface UIEvent {
-        object OnGetUserInfo : UIEvent
-        object OnNavigateBack : UIEvent
-        object OnGetAvailableListOfCryptoCoins : UIEvent
-        object OnNavigateToCurrencyDetails : UIEvent
+    sealed class UIEvent {
+        object OnGetUserInfo : UIEvent()
+        object OnNavigateBack : UIEvent()
+        object OnGetAvailableListOfCryptoCoins : UIEvent()
+        object OnNavigateToCurrencyDetails : UIEvent()
         data class OnSetAssetBeforeNavigation(
             val asset: String,
             val description: String,
             val currentPrice: Float,
             val urlImage: String
-        ) : UIEvent
+        ) : UIEvent()
     }
 }

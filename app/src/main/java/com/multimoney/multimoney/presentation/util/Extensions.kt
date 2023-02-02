@@ -12,7 +12,6 @@ import android.nfc.cardemulation.CardEmulation
 import android.os.Build
 import android.provider.ContactsContract
 import android.provider.Settings.Secure
-import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
@@ -292,7 +291,6 @@ fun Double.toCurrencyFormat(
     val formatter = NumberFormat.getCurrencyInstance()
     formatter.maximumFractionDigits = amountOfDecimals
     // remove the default dollar symbol from the custom symbol property
-    Log.d("EXTENTION", "$symbol${formatter.format(this).replace(Dollar.symbol, "")}")
     return if (useCurrentCurrency) "$symbol${
         formatter.format(this).replace(Dollar.symbol, "")
     }" else "$symbol $this"

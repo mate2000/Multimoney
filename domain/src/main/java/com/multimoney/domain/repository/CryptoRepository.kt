@@ -3,6 +3,7 @@ package com.multimoney.domain.repository
 import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
 import androidx.paging.PagingData
 import com.multimoney.domain.model.crypto.BuyCryptoCurrencyData
+import com.multimoney.domain.model.balance.BalanceCryptoAccount
 import com.multimoney.domain.model.crypto.CryptoCurrencyNews
 import com.multimoney.domain.model.crypto.GetHistoricalClientBalance
 import com.multimoney.domain.model.crypto.GetHistoricalCurrencyPrices
@@ -82,4 +83,10 @@ interface CryptoRepository {
         internalFee: Double,
         totalFee: Double
     ): Flow<MultimoneyResult<BuyCryptoCurrencyData>>
+
+    suspend fun getBalanceCryptoAccount(
+        user: String,
+        idBrand: Int,
+        identification: String
+    ): Flow<MultimoneyResult<BalanceCryptoAccount>>
 }

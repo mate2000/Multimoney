@@ -121,6 +121,10 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
         navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}&$DESCRIPTION_CURRENCY=${uiState.cryptoItem?.descriptionCurrency}")
     }
 
+    private fun onNavigateToSendCrypto() {
+        navigateTo("${Screen.CryptoSendFlow.baseRoute}?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}&$DESCRIPTION_CURRENCY=${uiState.cryptoItem?.descriptionCurrency}")
+    }
+
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is UIEvent.OnNavigateBack -> navigateBack(Screen.CryptoWalletScreen.route, false)
@@ -130,6 +134,7 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
             is UIEvent.OnSetDateRange -> onSetDateRange(event.startDate)
             is UIEvent.OnViewAllMovements -> onNavigateToAllMovements()
             is UIEvent.OnNavigateToSelectAccount -> onNavigateToSelectAccount()
+            is UIEvent.OnNavigateToSendCrypto -> onNavigateToSendCrypto()
         }
     }
 
@@ -141,6 +146,7 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
         object OnGetAssetHistory : UIEvent
         object OnViewAllMovements : UIEvent
         object OnNavigateToSelectAccount : UIEvent
+        object OnNavigateToSendCrypto : UIEvent
     }
 
     data class UiState(

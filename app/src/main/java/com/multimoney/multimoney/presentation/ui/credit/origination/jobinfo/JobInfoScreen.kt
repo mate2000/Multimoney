@@ -1,14 +1,17 @@
 package com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -17,7 +20,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStep
@@ -34,12 +36,14 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobI
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.UIEvent.OnCompanyNameValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.UIEvent.OnDateFirstJobValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.UIEvent.OnDateValueChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.UIEvent.OnDivisionProfessionValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.UIEvent.OnInitData
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.UIEvent.OnLoadCreditSteps
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.UIEvent.OnPhoneNumberValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.UIEvent.OnValidForm
 import com.multimoney.multimoney.presentation.uielement.CustomDatePicker
+import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.getPickedDateAsString
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
@@ -88,7 +92,22 @@ fun JobInfoScreen(
         viewModel.onUIEvent(OnValidForm)
         viewModel.onUIEvent(
             OnInitData(
-                idBrand = sharedViewModel.idBrand.toInt()
+                sharedViewModel.pkUser,
+                sharedViewModel.email,
+                sharedViewModel.idBrand.toInt(),
+                idUserRequest = sharedViewModel.idUserRequest,
+                onLoadingValueChange = { isLoading ->
+                    sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
+                },
+                onFailureWithDialog = { isLoading, dialogParameters ->
+                    sharedViewModel.onUIEvent(
+                        CreditViewModel.UIEvent.OnFailureWithDialog(
+                            isLoading,
+                            dialogParameters
+                        )
+                    )
+                },
+                isCrosseling = sharedViewModel.crosseling
             )
         )
         viewModel.onUIEvent(OnLoadCreditSteps(sharedViewModel.saveCreditStepsHelper.inputTextInfoList))
@@ -174,7 +193,7 @@ fun JobInfoScreen(
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             }),
-            labelText = stringResource(id = R.string.credit_job_phone_number),
+            labelText = if (sharedViewModel.crosseling) stringResource(id = R.string.credit_job_phone_number_crosseling) else stringResource(id = R.string.credit_job_phone_number),
             modifier = Modifier.padding(top = 16.dp),
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.credit_job_phone_required),
@@ -183,6 +202,20 @@ fun JobInfoScreen(
                 PHONE_TRANSFORMATION_MASK.maskChar
             )
         )
+
+        if (sharedViewModel.crosseling) {
+            CustomDropdown(
+                modifier = Modifier
+                    .padding(top = 16.dp)
+                    .wrapContentSize(Alignment.TopStart)
+                    .focusable(false),
+                items = viewModel.uiState.divisionProfessionList,
+                value = viewModel.uiState.divisionProfessionSelected,
+                onValueChange = { viewModel.onUIEvent(OnDivisionProfessionValueChange(it)) },
+                labelText = stringResource(id = R.string.credit_monthly_income_profession_label),
+                placeHolder = stringResource(id = R.string.credit_monthly_income_profession_hint)
+            )
+        }
 
         if (sharedViewModel.idBrand.toInt() == Brand.CostaRica.id) {
             CustomDatePicker(

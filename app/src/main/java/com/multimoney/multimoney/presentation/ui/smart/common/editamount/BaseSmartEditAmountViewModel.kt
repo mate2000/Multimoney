@@ -38,7 +38,6 @@ import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getCurrentTime
-import com.multimoney.multimoney.presentation.util.getFullMaskedAccountIban
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 import com.multimoney.multimoney.presentation.util.getMaskedVisaAccount
 import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
@@ -116,10 +115,8 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                     destinyAccountDisplay = DisplayAccount(
                         sheetLabel = R.string.smart_payment_sheet_to_account,
                         sheetTitle = ibanAccount?.nameAccount.orEmpty(),
-                        sheetSubtitle = getFullMaskedAccountIban(
-                            ibanAccount?.bank.orEmpty(),
-                            ibanAccount?.sinpeAccount.orEmpty()
-                        ),
+                        sheetSubtitle = ibanAccount?.bank.orEmpty(),
+                        sheetSubtitle2 = getMaskedAccountIban(ibanAccount?.sinpeAccount.orEmpty()),
                         icon = destinyCurrency?.accountIcon
                     ),
                     currency = destinyCurrency?.symbol ?: Dollar.symbol,
@@ -218,6 +215,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
 
     open fun getExchangeOnCompleted(
         isStart: Boolean = false,
+        isPayment: Boolean = false,
         abbreviation: String? = destinyCurrency?.disbursementValue,
         idOriginCurrency: String = destinyCurrency?.id.toString(),
         idDestinationCurrency: String = originCurrency?.id.toString(),
@@ -255,7 +253,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                                 convertedAmountLabel = rate?.convertedAmountLabel
                                     ?: "${idDestinationCurrency.getCurrencySymbol()}0.0"
                             )
-                            validateAmount()
+                            if (isPayment.not()) validateAmount()
                         }
                     }
                 }

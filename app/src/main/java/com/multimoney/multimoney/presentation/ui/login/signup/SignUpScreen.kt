@@ -10,16 +10,22 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.SIGN_UP_INDICATOR_TOTAL_STEPS
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCloseClick
@@ -35,11 +41,13 @@ import com.multimoney.multimoney.presentation.ui.login.signup.splash.DEFAULT_STE
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.uielement.CustomModalWarningBottomSheet
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.StepProgressBar
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SignUpScreen(
     isRestart: Boolean = true,
@@ -49,6 +57,7 @@ fun SignUpScreen(
     viewModel: SignUpViewModel = hiltViewModel()
 ) {
     val focusManager = LocalFocusManager.current
+    val coroutineScope = rememberCoroutineScope()
 
     // Navigation
     LaunchedEffect(true) {
@@ -109,6 +118,28 @@ fun SignUpScreen(
 
     BackHandler {
         viewModel.onUIEvent(OnBackClick(focusManager))
+    }
+
+    if (viewModel.uiState.currentStep == SignUpStep.Six.id) {
+        CustomModalWarningBottomSheet(
+            titleResource = R.string.password_security_bottom_sheet_general_title,
+            descriptionText = buildAnnotatedString {
+                withStyle(
+                    style = Typography.subtitle1.toSpanStyle().copy(
+                        fontWeight = FontWeight.Bold
+                    )
+                ) {
+                    append(stringResource(id = R.string.password_security_bottom_sheet_general_description))
+                }
+                withStyle(
+                    style = Typography.subtitle1.toSpanStyle()
+                ) {
+                    append(stringResource(id = R.string.password_security_bottom_sheet_signup_description))
+                }
+            },
+            modalBottomSheetState = viewModel.uiState.bottomSheetVisibleState,
+            coroutineScope = coroutineScope
+        )
     }
 
     if (viewModel.uiState.openDialog.isActive.value) {

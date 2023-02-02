@@ -3,6 +3,7 @@ package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue.Expanded
+import androidx.compose.material.ModalBottomSheetValue.Hidden
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.Brand.ElSalvador
@@ -27,6 +28,7 @@ import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getCurrentTime
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.Calendar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -179,6 +181,12 @@ class MyContactsTransferAmountViewModel @Inject constructor(
     }
 
     override fun onNavigateBack() {
-        navigateBack(popTo = Screen.SmartSelectSendingTypeScreen.route, isRestart = false)
+        if (amountUIState.bottomSheetState.isVisible) {
+            amountUIState = amountUIState.copy(
+                bottomSheetState = ModalBottomSheetState(Hidden)
+            )
+        } else {
+            navigateBack(popTo = Screen.SmartSelectSendingTypeScreen.route, isRestart = false)
+        }
     }
 }

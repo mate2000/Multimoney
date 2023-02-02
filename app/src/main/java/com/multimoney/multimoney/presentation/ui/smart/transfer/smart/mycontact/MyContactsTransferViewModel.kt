@@ -103,8 +103,15 @@ class MyContactsTransferViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateBack() =
-        navigateBack(popTo = Screen.SmartSelectSendingTypeScreen.route, isRestart = false)
+    private fun onNavigateBack() {
+        if (uiState.bottomSheetState.isVisible) {
+            uiState = uiState.copy(
+                bottomSheetState = ModalBottomSheetState(Hidden)
+            )
+        } else {
+            navigateBack(popTo = Screen.SmartSelectSendingTypeScreen.route, isRestart = false)
+        }
+    }
 
     private fun navigateToAddToFavoriteAccount(contactToFavorite: PhoneSmart) {
         // Todo Add  account to favorite REV-1449

@@ -40,11 +40,15 @@ class SmartTransferAmountViewModel @Inject constructor() : BaseSmartEditAmountVi
     }
 
     override fun onAmountCompleted() {
-        getExchangeOnCompleted(
-            abbreviation = originCurrency?.disbursementValue ?: "",
-            idOriginCurrency = destinyCurrency?.id.toString(),
-            idDestinationCurrency = originCurrency?.id.toString()
-        )
+        if (shouldDisplayExchange) {
+            getExchangeOnCompleted(
+                abbreviation = originCurrency?.disbursementValue ?: "",
+                idOriginCurrency = destinyCurrency?.id.toString(),
+                idDestinationCurrency = originCurrency?.id.toString()
+            )
+        } else {
+            validateAmount()
+        }
     }
 
     override fun onContinueClick() {

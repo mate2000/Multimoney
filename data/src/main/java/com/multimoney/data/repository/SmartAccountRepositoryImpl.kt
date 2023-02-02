@@ -10,6 +10,7 @@ import com.multimoney.data.networking.GraphqlApi
 import com.multimoney.data.paging.SmartMovementsPagingSource
 import com.multimoney.domain.model.accountsmart.ACHAccount
 import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
+import com.multimoney.domain.model.accountsmart.AccountSmartForBuyCrypto
 import com.multimoney.domain.model.accountsmart.AddressesLevel
 import com.multimoney.domain.model.accountsmart.BankListTransfer365
 import com.multimoney.domain.model.accountsmart.Beneficiary
@@ -27,6 +28,7 @@ import com.multimoney.domain.model.accountsmart.SaveSinpeAccount
 import com.multimoney.domain.model.accountsmart.SaveSmartAccount
 import com.multimoney.domain.model.accountsmart.SinpeAccountResult
 import com.multimoney.domain.model.accountsmart.SinpeTransferResult
+import com.multimoney.domain.model.accountsmart.SmartAccountStatusResult
 import com.multimoney.domain.model.accountsmart.SmartAccountTypeResult
 import com.multimoney.domain.model.accountsmart.SmartFavoriteResult
 import com.multimoney.domain.model.accountsmart.SmartMovement
@@ -630,5 +632,43 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 Success(data.mapToDomainModel())
             }
         )
+    }
+
+    override suspend fun querySmartAccounts(
+        user: String,
+        identification: String,
+        idBrand: Int,
+        accountStatus: Int
+    ): Flow<MultimoneyResult<List<AccountSmartForBuyCrypto>?>> {
+        return fetchData(graphqlApi.querySmartAccounts(
+            user,
+            identification,
+            idBrand,
+            accountStatus
+        ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+    }
+
+    override suspend fun mutationUpdateSmartAccountStatus(
+        user: String,
+        idBrand: Int,
+        identificationNumber: String,
+        newState: String,
+        typeState: String,
+        idAccountSysde: Long,
+        idAccountRequest: Long
+    ): Flow<MultimoneyResult<SmartAccountStatusResult?>> {
+        return fetchData(graphqlApi.mutationUpdateSmartAccountStatus(
+            user,
+            idBrand,
+            identificationNumber,
+            newState,
+            typeState,
+            idAccountSysde,
+            idAccountRequest
+        ), apolloCallMapper = { data -> Success(data.mapToDomain()) })
     }
 }

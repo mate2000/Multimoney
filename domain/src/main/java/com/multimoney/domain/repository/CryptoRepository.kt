@@ -2,10 +2,12 @@ package com.multimoney.domain.repository
 
 import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
 import androidx.paging.PagingData
+import com.multimoney.domain.model.crypto.BuyCryptoCurrencyData
 import com.multimoney.domain.model.crypto.CryptoCurrencyNews
 import com.multimoney.domain.model.crypto.GetHistoricalClientBalance
 import com.multimoney.domain.model.crypto.GetHistoricalCurrencyPrices
 import com.multimoney.domain.model.crypto.GetListOfAvailableCryptoCoins
+import com.multimoney.domain.model.crypto.PricesQuoteAndCommissionData
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
@@ -51,4 +53,33 @@ interface CryptoRepository {
         user: String,
         idBrand: Int
     ): Flow<MultimoneyResult<CryptoCurrencyNews>>
+
+    suspend fun getPriceQuoteAndCommission(
+        asset: String,
+        crypto_network: String,
+        idBrand: Int,
+        user: String,
+        market: String,
+        identification: String,
+        quote_amount: Double,
+        base_amount: Double,
+        side: String
+    ): Flow<MultimoneyResult<PricesQuoteAndCommissionData>>
+
+    suspend fun buyCryptoCurrency(
+        pkUser: Int,
+        identification: String,
+        market: String,
+        commissionAmount: Double,
+        taxAmount: Double,
+        accountToken: Double,
+        exchangeRate: Double,
+        idBrand: Int,
+        user: String,
+        quoteId: String,
+        quoteAmount: Double,
+        fee: Double,
+        internalFee: Double,
+        totalFee: Double
+    ): Flow<MultimoneyResult<BuyCryptoCurrencyData>>
 }

@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
+import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -64,6 +66,7 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Dollar
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MyContactsTransferScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
@@ -191,8 +194,13 @@ fun MyContactsTransferScreen(
             }
         }
     }
-    ContactBottomSheet(viewModel = viewModel)
+    ContactBottomSheet(
+        selectedContact = viewModel.uiState.selectedContact,
+        sheetState = viewModel.uiState.bottomSheetState,
+        onAccountClick = { account -> viewModel.onUIEvent(OnAccountClick(account)) }
+    )
     LoadingIndicator(viewModel.uiState.isLoading)
+    BackHandler { viewModel.onUIEvent(OnNavigateBack) }
 }
 
 @Composable
@@ -209,10 +217,8 @@ fun EmptyContactsText(idBrand: Int) {
         )
         Text(
             text = stringResource(
-                id = if (idBrand == Brand.CostaRica.id)
-                    string.smart_my_contacts_invite_CR
-                else
-                    string.smart_my_contacts_invite_SV
+                id = if (idBrand == Brand.CostaRica.id) string.smart_my_contacts_invite_CR
+                else string.smart_my_contacts_invite_SV
             ),
             textAlign = TextAlign.Center,
             style = Typography.body1.copy(
@@ -276,30 +282,33 @@ fun ContactList(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ContactBottomSheet(viewModel: MyContactsTransferViewModel) {
+fun ContactBottomSheet(
+    selectedContact: List<PhoneSmart>,
+    sheetState: ModalBottomSheetState,
+    onAccountClick: (PhoneSmart) -> Unit
+) {
     CustomModalBottomSheet(
         title = string.smart_iban_transfer_send_money,
         closeIcon = R.drawable.ic_close_bottom_sheet,
-        modalBottomSheetState = viewModel.uiState.bottomSheetState,
+        modalBottomSheetState = sheetState,
         coroutineScope = rememberCoroutineScope()
     ) {
-        if (viewModel.uiState.selectedContact.isNotEmpty()) {
+        if (selectedContact.isNotEmpty()) {
             Column(Modifier.padding(vertical = 16.dp)) {
                 Text(
-                    text = viewModel.uiState.selectedContact.first().titular?.capitalizedAllWords()
-                        .orEmpty(),
+                    text = selectedContact.first().titular?.capitalizedAllWords().orEmpty(),
                     style = Typography.subHead.copy(
                         fontWeight = FontWeight.SemiBold,
                         color = colors.text
                     )
                 )
                 Text(
-                    text = viewModel.uiState.selectedContact.first().number.orEmpty(),
+                    text = selectedContact.first().number.orEmpty(),
                     style = Typography.subHead.copy(
                         color = colors.subTitleText
                     )
                 )
-                viewModel.uiState.selectedContact.forEach {
+                selectedContact.forEach {
                     ContactAccountDisplay(
                         modifier = Modifier.fillMaxWidth(),
                         currency = it.idCurrency?.getCurrencyFromId() ?: Dollar,
@@ -307,7 +316,7 @@ fun ContactBottomSheet(viewModel: MyContactsTransferViewModel) {
                             it.accountNumber.orEmpty(),
                             stringResource(string.payment_account_masked_text)
                         ),
-                        onClick = { viewModel.onUIEvent(OnAccountClick(it)) }
+                        onClick = { onAccountClick(it) }
                     )
                 }
             }

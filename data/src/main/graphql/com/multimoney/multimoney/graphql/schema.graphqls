@@ -2260,7 +2260,8 @@ type CryptoMarketPrice {
 
   historico: Boolean!
 
-  crypto_network: String
+  crypto_network: String!
+
 }
 
 input CryptoMarketPriceDtoInput {

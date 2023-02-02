@@ -249,7 +249,7 @@ class SmartOnfidoViewModel @Inject constructor(
         navigateBack(
             popTo = Screen.HomeScreen.route,
             isRestart = true,
-            homeState = HomeState.UNEXPANDED
+            homeState = HomeState.COLLAPSED
         )
 
     fun onUIEvent(event: UIEvent) {

@@ -1,0 +1,37 @@
+query GetPricesQuoteAndCommission(
+    $asset: String!
+    $crypto_network: String!
+    $idBrand: Int!
+    $user: String!
+    $market: String!
+    $identification: String!
+    $quote_amount: Decimal!
+    $base_amount: Decimal!
+    $side: String!
+) {
+    pricesQuote(
+        pricesQuoteInput: {
+            asset: $asset
+            crypto_network: $crypto_network
+            idBrand: $idBrand
+            user: $user
+            market: $market
+            identification: $identification
+            quote_amount: $quote_amount
+            base_amount: $base_amount
+            side: $side
+        }
+    ) {
+        fee
+        internal_fee
+        taxAmount
+        totalFee
+        quote_id
+        side
+        price
+        created_at
+        expires_at
+        quote_amount
+        base_amount
+    }
+}

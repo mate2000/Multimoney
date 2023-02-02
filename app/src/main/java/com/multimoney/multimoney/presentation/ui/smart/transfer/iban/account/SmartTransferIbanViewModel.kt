@@ -96,11 +96,7 @@ class SmartTransferIbanViewModel @Inject constructor(
     }
 
     private fun onNavigateBack() =
-        navigateBack(
-            popTo = Screen.HomeScreen.route,
-            isRestart = true,
-            homeState = HomeState.UNEXPANDED
-        )
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
 
     private fun navigateToAddIbanAccount() {
         navigateTo(

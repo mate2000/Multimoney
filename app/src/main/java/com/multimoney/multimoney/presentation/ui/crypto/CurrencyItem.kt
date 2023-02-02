@@ -47,7 +47,7 @@ fun CurrencyItem(
         ).clickable { onClick() }) {
             Row(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
                     .padding(16.dp)
             ) {
                 Image(

@@ -34,7 +34,7 @@ fun BalanceTextView(
     currencyStyle: TextStyle,
     currencyDecimalStyle: TextStyle
 ) {
-    val decimalSeparator = DecimalFormatSymbols(Locale.getDefault()).decimalSeparator
+    val decimalSeparator = DecimalFormatSymbols(Locale.ENGLISH).decimalSeparator
     val splitText = balanceText.split(decimalSeparator)
     val localDensity = LocalDensity.current
     var fontPadding by remember { mutableStateOf(0.dp) }

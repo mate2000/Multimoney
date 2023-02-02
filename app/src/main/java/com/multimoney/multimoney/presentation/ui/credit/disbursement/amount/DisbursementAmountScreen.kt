@@ -101,7 +101,7 @@ fun DisbursementAmountScreen(
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, top = 35.dp, bottom = 32.dp),
+                        .padding(start = 16.dp, end = 16.dp, top = 35.dp, bottom = 24.dp),
                     text = stringResource(id = viewModel.uiState.titleResource),
                     style = Typography.h5.copy(
                         color = MultimoneyTheme.colors.text,
@@ -135,7 +135,9 @@ fun DisbursementAmountScreen(
                     keyboardActions = KeyboardActions(onDone = {
                         focusManager.clearFocus()
                     }),
-                    modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
+                    modifier = if (viewModel.uiState.isMultipleCurrency) {
+                        Modifier.padding(top = 30.dp, start = 16.dp, end = 16.dp)
+                    } else { Modifier.padding(top = 0.dp, start = 16.dp, end = 16.dp) },
                     isRequired = true,
                     isRequiredMessage = stringResource(id = R.string.credit_amount_disbursement_minimum_error_message),
                     isError = viewModel.uiState.disbursementError.first,

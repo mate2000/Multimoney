@@ -40,6 +40,7 @@ fun CustomInfoButton(
     modifier: Modifier = Modifier,
     imageModifier: Modifier = Modifier,
     startIcon: Int? = R.drawable.ic_payment_fee_icon,
+    titleIcon: Int? = R.drawable.ic_star_filled,
     title: String = "",
     subtitle: String = "",
     subtitle2: String = "",
@@ -95,7 +96,7 @@ fun CustomInfoButton(
                 .background(background)
                 .fillMaxWidth()
         ) {
-            val (startIconId, titleId, subTitleId, subTitle2Id, endIconId) = createRefs()
+            val (startIconId, titleId, subTitleId, subTitle2Id, endIconId, titleIconId) = createRefs()
             if (startIcon != null) {
                 Image(
                     painter = painterResource(id = startIcon),
@@ -135,6 +136,16 @@ fun CustomInfoButton(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
+//                if (titleIcon != null) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_star_filled),
+                        contentDescription = "",
+                        modifier = imageModifier.constrainAs(titleIconId) {
+                            top.linkTo(titleId.top)
+                            start.linkTo(titleId.absoluteRight)
+                        }
+                    )
+//                }
                 Text(
                     text = subtitle,
                     modifier = Modifier.constrainAs(subTitleId) {

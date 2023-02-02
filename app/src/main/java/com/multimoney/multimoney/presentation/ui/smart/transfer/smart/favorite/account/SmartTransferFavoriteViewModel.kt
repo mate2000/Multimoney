@@ -89,30 +89,11 @@ class SmartTransferFavoriteViewModel @Inject constructor(
     )
 
     private fun onShowOptionsClick(selectedACHFavorite:ACHFavoriteAccount?) {
-//        navigateTo(
-//            "${Screen.SmartTransferRegisterIbanScreen.baseRoute}/$user/$idBrand/$identification/${Screen.SmartTransferIbanAccountScreen.baseRoute}/$idClient/${
-//            encodeData(
-//                smartAccount
-//            )
-//            }"
-//        )
+      // TODO REV-3466
     }
 
     private fun onACHFavoriteClick(selectedACHFavoriteAccount: List<ACHFavoriteAccount?>) {
-//        val ibanAccount = encodeData(
-//            IbanAccountID(
-//                bank = selectedSinpeAccount?.bank,
-//                clientIdentification = selectedSinpeAccount?.clientIdentification,
-//                sinpeAccount = selectedSinpeAccount?.sinpeAccount,
-//                currencyId = selectedSinpeAccount?.currencyId,
-//                nameAccount = selectedSinpeAccount?.nameAccount
-//            )
-//        )
-//        navigateTo(
-//            "${Screen.SmartTransferAmountScreen.baseRoute}/" +
-//                "${encodeData(smartAccount)}/$ibanAccount/" +
-//                "${SmartTransferTypes.SmartToIban.id}"
-//        )
+//      TODO REV-3654
     }
 
     private fun onNavigateToHome() {

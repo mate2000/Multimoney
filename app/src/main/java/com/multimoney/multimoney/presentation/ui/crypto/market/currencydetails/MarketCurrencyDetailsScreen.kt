@@ -130,6 +130,7 @@ fun MarketCurrencyDetailsScreen(
                 }
             ))
         },
+        onNavigateToBuyCrypto = { marketCurrencyDetailsViewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnNavigateToSelectAccount) },
         onBackPressed = { marketCurrencyDetailsViewModel.onUIEvent(OnNavigateBack) },
         onNavigateToSendCrypto = { marketCurrencyDetailsViewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnNavigateToCryptoSendFlow) },
     )
@@ -145,6 +146,7 @@ fun MarketCurrencyDetailsScreenContent(
     urlImage: String,
     onDateFilterSelected: (Long) -> Unit = {},
     onOpenCryptoNew: (String) -> Unit = {},
+    onNavigateToBuyCrypto: () -> Unit = {},
     onBackPressed: () -> Unit = {},
     onNavigateToSendCrypto: () -> Unit = {},
 ) {
@@ -161,7 +163,7 @@ fun MarketCurrencyDetailsScreenContent(
                 hasSmartBalance = true,
                 enableCryptoActions = true,
                 enableSendAndGive = idBrand == Brand.CostaRica.id,
-                hasBalanceAction = { /* todo: go to buy crypto flow */ },
+                hasBalanceAction = { onNavigateToBuyCrypto() },
                 sellAction = { /* todo: go to sell crypto flow */ },
                 giveAction = { /* todo: go to receive crypto flow */ },
                 sendAction = { onNavigateToSendCrypto() },

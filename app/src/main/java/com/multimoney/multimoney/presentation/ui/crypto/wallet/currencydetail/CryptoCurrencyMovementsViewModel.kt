@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.crypto.currencydetail
+package com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -117,6 +117,9 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
         )
     }
 
+    private fun onNavigateToSelectAccount(){
+        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}&$DESCRIPTION_CURRENCY=${uiState.cryptoItem?.descriptionCurrency}")
+    }
 
     private fun onNavigateToSendCrypto() {
         navigateTo("${Screen.CryptoSendFlow.baseRoute}?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}&$DESCRIPTION_CURRENCY=${uiState.cryptoItem?.descriptionCurrency}")
@@ -130,6 +133,7 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
             is UIEvent.OnGetAssetHistory -> callQueryAssetHistory()
             is UIEvent.OnSetDateRange -> onSetDateRange(event.startDate)
             is UIEvent.OnViewAllMovements -> onNavigateToAllMovements()
+            is UIEvent.OnNavigateToSelectAccount -> onNavigateToSelectAccount()
             is UIEvent.OnNavigateToSendCrypto -> onNavigateToSendCrypto()
         }
     }
@@ -141,6 +145,7 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
         object OnGetMovements : UIEvent
         object OnGetAssetHistory : UIEvent
         object OnViewAllMovements : UIEvent
+        object OnNavigateToSelectAccount : UIEvent
         object OnNavigateToSendCrypto : UIEvent
     }
 

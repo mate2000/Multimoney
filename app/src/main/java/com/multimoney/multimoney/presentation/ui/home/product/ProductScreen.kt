@@ -275,7 +275,8 @@ fun ProductScreen(
                 sharedViewModel.onUIEvent(UIEvent.OnSetHomeState(homeState))
             },
             isSwipeEnabled = if (viewModel.uiState.productPageList?.isNotEmpty() == true) {
-                viewModel.uiState.productPageList?.get(contentPagerState.currentPage)?.enabled ?: false
+                viewModel.uiState.productPageList?.get(contentPagerState.currentPage)?.enabled
+                    ?: false
             } else {
                 false
             },
@@ -386,13 +387,19 @@ fun ProductHeader(
 ) {
     Column {
         TipsAndOffer(
-            modifier = Modifier.padding(start = 16.dp, top = 20.dp).fillMaxWidth().wrapContentHeight(),
+            modifier = Modifier
+                .padding(start = 16.dp, top = 20.dp)
+                .fillMaxWidth()
+                .wrapContentHeight(),
             viewModel = viewModel,
             sharedViewModel = sharedViewModel
         )
         Text(
             text = stringResource(id = viewModel.getProductScreenTitle()),
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 24.dp).fillMaxWidth().wrapContentHeight(),
+            modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp, top = 24.dp)
+                .fillMaxWidth()
+                .wrapContentHeight(),
             style = Typography.body1.copy(
                 fontWeight = FontWeight.SemiBold
             ),
@@ -429,8 +436,10 @@ fun ProductContent(
     viewModel: ProductViewModel,
     sharedViewModel: HomeViewModel
 ) {
-    val pagerCount = if (viewModel.uiState.isExpanded) viewModel.uiState.productPageList?.count { it.enabled }
-        ?: DEFAULT_PRODUCT_PAGES else viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES
+    val pagerCount =
+        if (viewModel.uiState.isExpanded) viewModel.uiState.productPageList?.count { it.enabled }
+            ?: DEFAULT_PRODUCT_PAGES else viewModel.uiState.productPageList?.count()
+            ?: DEFAULT_PRODUCT_PAGES
     Column(modifier = modifier) {
         HorizontalPager(
             modifier = Modifier
@@ -569,8 +578,8 @@ fun ProductCtaFooterExpanded(
                 sharedViewModel.onUIEvent(UIEvent.OnLoadingValueChanged(it))
             }
             ProductType.Crypto.value -> CryptoCtaFooterExpanded(
-                idBrand = viewModel.uiState.idBrand,
                 balance = viewModel.balanceCredit,
+                idBrand = viewModel.uiState.idBrand,
                 profileEnable = viewModel.uiState.userStatus?.infoCrypto?.profileEnable,
                 noBalanceAction = {
                     when (viewModel.uiState.idBrand) {
@@ -590,7 +599,9 @@ fun ProductCtaFooterExpanded(
                         }
                     }
                 },
-                hasBalanceAction = { /*todo go to buy crypto flow*/ },
+                hasBalanceAction = {
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToPurchaseCryptoFlow)
+                },
                 onSendActionClicked = {
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSendCryptoFlow)
                 }

@@ -1,5 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency
 
+import android.os.CountDownTimer
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -13,6 +15,7 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -23,15 +26,25 @@ class BuyCurrencyScreenViewModel @Inject constructor(
     private val getExchangeRate: QuerySmartExchangeRateUseCase,
     private val getPriceQuoteAndCommissionsUseCase: GetPriceQuoteAndCommissionsUseCase,
     private val buyCryptoCurrencyUseCase: BuyCryptoCurrencyUseCase
-): BaseViewModel(false) {
+) : BaseViewModel(false) {
 
     var uiState by mutableStateOf(UIState())
         private set
 
-    var timerCount by mutableStateOf(15)
+    var timerCount by mutableStateOf<Int?>(null)
         private set
 
-    var isTimerRunning by mutableStateOf(false)
+    var isTimerRunning by mutableStateOf(timerCount != null || timerCount != 0)
+
+    private val timer = object : CountDownTimer(15000, 1000) {
+        override fun onTick(millisUntilFinished: Long) {
+            timerCount = (millisUntilFinished / 1000).toInt()
+        }
+
+        override fun onFinish() {
+            updateDataWithNewExchangeRate()
+        }
+    }
 
     //data from sharedViewModel
     var asset = ""
@@ -40,23 +53,24 @@ class BuyCurrencyScreenViewModel @Inject constructor(
     var user = ""
     var market = ""
     var identification = ""
-    var baseAmount = 0.0
     var side = ""
     var assetImageUrl = ""
     var smartAccountAvailableBalance = 0.0
 
-    private fun timer() {
+    // working on timer
+    /*private fun timer() {
         viewModelScope.launch {
             while (isTimerRunning) {
                 delay(1000)
                 timerCount--
                 if (timerCount == 0) {
                     updateDataWithNewExchangeRate()
+                    isTimerRunning = false
                     timerCount = 15
                 }
             }
         }
-    }
+    }*/
 
     private fun onSetUserData(
         asset: String,
@@ -65,7 +79,6 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         user: String,
         market: String,
         identification: String,
-        baseAmount: Double,
         side: String,
         assetImageUrl: String,
         smartAccountAvailableBalance: Double
@@ -77,24 +90,27 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         this.user = user
         this.market = market
         this.identification = identification
-        this.baseAmount = baseAmount
         this.side = side
         this.assetImageUrl = assetImageUrl
         this.smartAccountAvailableBalance = smartAccountAvailableBalance
-        timer() // to run timer at the beginning of the screen
+        if (isTimerRunning.not()) {
+            updateDataWithNewExchangeRate()
+        }
     }
 
-    private fun updateDataWithNewExchangeRate() = executeUseCase {
+    private fun updateDataWithNewExchangeRate(): Unit = executeUseCase {
         getPriceQuoteAndCommissionsUseCase.invoke(
-                asset = asset,
-                crypto_network = cryptoNetWork,
-                idBrand = idBrand,
-                user = user,
-                market = market,
-                identification = identification,
-                base_amount = baseAmount,
-                side = side,
-                quote_amount = uiState.quoteAmount
+            asset = asset,
+            crypto_network = cryptoNetWork,
+            idBrand = idBrand,
+            user = user,
+            market = market,
+            identification = identification,
+            side = side,
+            base_amount = uiState.baseAmount.value.ifEmpty { "0.0" }.toDouble(),
+            quote_amount = uiState.quoteAmount.value.ifEmpty {
+                if (uiState.baseAmount.value.isNotEmpty()) "0.0" else "1.0"
+            }.toDouble()
         ).collectLatest { result ->
             result.onLoading {
                 uiState = uiState.copy(isLoading = true)
@@ -104,9 +120,11 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                     isLoading = false,
                     pricesQuoteAndCommissions = pricesQuotesAndCommission.pricesQuote
                 )
+                timer.start()
             }
             result.onFailure {
                 uiState = uiState.copy(isLoading = false)
+                timer.cancel()
             }
         }
     }
@@ -162,12 +180,13 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         val asset: String = "",
         val availableSmartAmount: Double = 0.0,
         val isLoading: Boolean = false,
-        val quoteAmount: Double = 1.0,
+        val quoteAmount: MutableState<String> = mutableStateOf(""),
+        val baseAmount: MutableState<String> = mutableStateOf(""),
         val pricesQuoteAndCommissions: PricesQuoteAndCommissions? = null
     )
 
     fun onUIEvent(event: UIEvent) {
-        when(event) {
+        when (event) {
             is UIEvent.OnGetExchangeRate -> updateDataWithNewExchangeRate()
             is UIEvent.OnPurchaseCryptoCurrency -> purchaseCryptoCurrency(
                 pkUser = event.pkUser,
@@ -192,11 +211,11 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 user = event.user,
                 market = event.market,
                 identification = event.identification,
-                baseAmount = event.baseAmount,
                 side = event.side,
                 assetImageUrl = event.assetImageUrl,
                 smartAccountAvailableBalance = event.smartAccountAvailableBalance
             )
+            is UIEvent.OnSetQuoteAmount -> {}
         }
     }
 
@@ -208,12 +227,13 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             val user: String,
             val market: String,
             val identification: String,
-            val baseAmount: Double,
             val side: String,
             val assetImageUrl: String,
             val smartAccountAvailableBalance: Double
         ) : UIEvent()
+
         object OnGetExchangeRate : UIEvent()
+        data class OnSetQuoteAmount(val quoteAmount: Double) : UIEvent()
         data class OnPurchaseCryptoCurrency(
             val pkUser: Int,
             val identification: String,

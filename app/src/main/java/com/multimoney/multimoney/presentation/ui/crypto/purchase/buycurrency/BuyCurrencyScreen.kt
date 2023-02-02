@@ -18,11 +18,14 @@ import androidx.compose.material.Text
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -39,7 +42,7 @@ import com.multimoney.multimoney.presentation.ui.crypto.PurchaseConfirmationBott
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.uielement.CryptoCurrencyInputLayout
 import com.multimoney.multimoney.presentation.uielement.CustomButton
-import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlaces
+import com.multimoney.multimoney.presentation.util.roundToEightDecimalPlaces
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 
 @Composable
@@ -57,7 +60,6 @@ fun BuyCurrencyScreen(
                 user = sharedViewModel.user,
                 market = sharedViewModel.uiState.market,
                 identification = sharedViewModel.identification,
-                baseAmount = 0.0,
                 side = sharedViewModel.side,
                 assetImageUrl = sharedViewModel.uiState.assetImageBaseUrl,
                 smartAccountAvailableBalance = sharedViewModel.uiState.smartAccountAvailableBalance,
@@ -76,7 +78,7 @@ fun BuyCurrencyScreen(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BuyCurrencyScreenContent(
     viewModel: BuyCurrencyScreenViewModel
@@ -86,7 +88,6 @@ fun BuyCurrencyScreenContent(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = true
     )
-    //val focusManager = LocalFocusManager.current
 
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
@@ -121,7 +122,9 @@ fun BuyCurrencyScreenContent(
                         end.linkTo(parent.end)
                     },
                     asset = viewModel.asset,
-                    exchangeRate = viewModel.uiState.pricesQuoteAndCommissions?.base_amount ?: 0.0,
+                    currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price ?: 0.0,
+                    quoteAmount = viewModel.uiState.quoteAmount,
+                    baseAmount = viewModel.uiState.baseAmount,
                 )
                 CounterSection(
                     modifier = Modifier.constrainAs(counter) {
@@ -130,7 +133,7 @@ fun BuyCurrencyScreenContent(
                         bottom.linkTo(button.top)
                     },
                     smartAccountAvailableBalance = viewModel.smartAccountAvailableBalance,
-                    downCounter = viewModel.timerCount
+                    downCounter = viewModel.timerCount ?: 15
                 )
                 CustomButton(
                     modifier = Modifier
@@ -140,7 +143,9 @@ fun BuyCurrencyScreenContent(
                             bottom.linkTo(parent.bottom)
                         }
                         .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, bottom = 40.dp),
+                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                    enable = viewModel.uiState.quoteAmount.value.isNotEmpty()
+                            || viewModel.uiState.baseAmount.value.isNotEmpty(),
                 )
             }
         }
@@ -213,30 +218,54 @@ fun CounterSection(
 
 }
 
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun AmountInputSection(
     modifier: Modifier = Modifier,
     asset: String,
-    exchangeRate: Double
+    currencyPrice: Double,
+    quoteAmount: MutableState<String>,
+    baseAmount: MutableState<String>
 ) {
 
-    val testingTest = remember { mutableStateOf("") }
-    val testingBoolean = remember { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val quoteAmountText = remember { quoteAmount }
+    val baseAmountText = remember { baseAmount }
+    val isTransformationCurrency = remember { mutableStateOf(false) }
+    val baseOrQuote = if (isTransformationCurrency.value.not()) quoteAmountText else baseAmountText
+
+    LaunchedEffect(key1 = true) {
+        focusRequester.requestFocus()
+        keyboardController?.show()
+    }
 
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        //custom edittext
         CryptoCurrencyInputLayout(
-            query = testingTest,
-            focused = testingBoolean,
+            value = baseOrQuote,
             iconCurrency = asset,
-            onSearchClick = {},
+            focusRequester = focusRequester,
+            isTransformationCurrency = isTransformationCurrency,
+            onImeClick = {
+                keyboardController?.hide()
+            }
         )
         Text(
-            text = buildAnnotatedString { append("${exchangeRate.roundToTwoDecimalPlaces()} $asset") },
+            text = if (isTransformationCurrency.value.not()) {
+                stringResource(
+                    id = R.string.crypto_purchase_flow_exchange_reference_edittext,
+                    (quoteAmountText.value.ifEmpty { EMPTY_CURRENCY }.toDouble() / currencyPrice).roundToEightDecimalPlaces(),
+                    asset
+                )
+            } else {
+                stringResource(
+                    id = R.string.crypto_purchase_flow_exchange_reference_edittext_dollars,
+                    (currencyPrice * baseAmountText.value.ifEmpty { EMPTY_CURRENCY }.toDouble()).toCurrencyFormat()
+                )
+            },
             style = Typography.body2.copy(
                 color = MultimoneyTheme.colors.bodyTextColor
             )
@@ -279,12 +308,12 @@ fun TitleSection(
                 contentDescription = null
             )
             Text(
-                text = buildAnnotatedString {
-                    append("1 ")
-                    append(asset)
-                    append(" = ")
-                    append(currencyPrice.toCurrencyFormat())
-                },
+                modifier = Modifier.padding(start = 8.dp),
+                text = stringResource(
+                    id = R.string.crypto_purchase_flow_exchange_reference,
+                    asset,
+                    currencyPrice.toCurrencyFormat()
+                ),
                 style = Typography.subtitle1.copy(
                     color = MultimoneyTheme.colors.text
                 )
@@ -292,3 +321,5 @@ fun TitleSection(
         }
     }
 }
+
+const val EMPTY_CURRENCY = "0.00"

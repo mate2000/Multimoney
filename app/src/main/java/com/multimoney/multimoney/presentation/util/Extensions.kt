@@ -280,6 +280,9 @@ fun Char.isValidAmountCharacter() =
 fun String.filterInvalidAmountInput() = this.filter { it.isValidAmountCharacter() }
 
 fun Double.roundToTwoDecimalPlaces() = String.format(TWO_DECIMALS_FORMAT, this)
+
+fun Double.roundToEightDecimalPlaces() = String.format(EIGHT_DECIMALS_FORMAT, this)
+
 fun Double.roundToTwoDecimalPlacesWithoutNegatives() =
     String.format(TWO_DECIMALS_FORMAT, this).replace("-", "")
 

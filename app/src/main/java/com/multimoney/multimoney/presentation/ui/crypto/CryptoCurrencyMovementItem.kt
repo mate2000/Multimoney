@@ -28,7 +28,6 @@ import com.multimoney.multimoney.presentation.util.parseApiDateToCardDate
 fun CryptoCurrencyMovementItem(
     cryptoCurrencyMovement: CryptoCurrencyMovement?
 ) {
-
     cryptoCurrencyMovement?.let { movement ->
         val icon = if (movement.side == MovementSide.BUY.side)
             R.drawable.ic_gains_crypto else R.drawable.ic_crypto_subtract

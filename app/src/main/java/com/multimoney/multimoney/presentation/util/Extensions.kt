@@ -288,12 +288,11 @@ fun Double.toCurrencyFormat(
     amountOfDecimals: Int = DEFAULT_AMOUNT_OF_DECIMALS,
     useCurrentCurrency: Boolean = true
 ): String {
-    val formatter = NumberFormat.getCurrencyInstance()
+    val formatter = NumberFormat.getCurrencyInstance(Locale.ENGLISH)
+    val regex = Regex(NUMBER_FORMAT_REGEX)
     formatter.maximumFractionDigits = amountOfDecimals
     // remove the default dollar symbol from the custom symbol property
-    return if (useCurrentCurrency) "$symbol${
-        formatter.format(this).replace(Dollar.symbol, "")
-    }" else "$symbol $this"
+    return "$symbol${regex.replace(formatter.format(this),"")}"
 }
 
 fun Double.toCurrencyFormatWithoutNegatives(
@@ -404,6 +403,7 @@ fun formatPhoneNumber(phoneWithCode: String?, phoneWithoutCode: String?) =
     phoneWithCode?.replace(phoneWithoutCode ?: "", " ").plus(phoneWithoutCode)
 
 private const val HEX_FORMAT = "#%02x%02x%02x"
+private const val NUMBER_FORMAT_REGEX = "[^0-9,.\\s]"
 private const val SPECIAL_CHARACTER_REGEX = "[!\"#\$%&'()*+,-./:;\\\\<=>?@^_`{|}~]"
 private const val TWO_CHARACTER_REGEX = "^\\s*([a-zA-Z]).*\\s+([a-zA-Z])\\S+$"
 private const val NUMBER_REGEX = "[0-9]"

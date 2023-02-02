@@ -41,8 +41,8 @@ fun SelectSmartAccountScreen(
         )
         viewModel.onUIEvent(
             SelectSmartAccountViewModel.UIEvent.OnSetAccounts(
-                sharedViewModel.asset,
-                sharedViewModel.assetDescription
+                sharedViewModel.uiState.asset,
+                sharedViewModel.uiState.assetDescription
             )
         )
     }

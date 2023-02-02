@@ -36,7 +36,7 @@ import javax.inject.Inject
 @OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
 class PurchaseCryptoSharedViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
     private val dataStorePreferences: DataStorePreferences,
     private val getSmartAccountsUseCase: QuerySmartAccountsUseCase
 ) : BaseViewModel(true) {
@@ -45,7 +45,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         private set
 
     //stateless
-    private var currentFlowStep: Int = PurchaseCryptoSteps.One.id
+    private var currentFlowStep: Int = PurchaseCryptoSteps.One.pageNumber
 
     //bundle parameters
     var idBrand = DEFAULT_ID_BRAND_ERROR
@@ -53,15 +53,10 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     var user = ""
     var identification = ""
     var email = ""
+    private var confirmationAsset: String? = savedStateHandle[CRYPTO_ASSET]
     var abvCurrency: String = ""
-    var asset: String? = savedStateHandle[CRYPTO_ASSET]
-    var assetDescription: String? = savedStateHandle[DESCRIPTION_CURRENCY] ?: ""
-    var market = asset?.plus(CurrencyType.Dollar.disbursementValue)
-    var cryptoNetWork = ""
-    var assetImageBaseUrl = ""
     val side = CryptoOperationSide.BUY.value
-    var accountToken: String = ""
-    val comingFromDetails: Boolean = asset != null
+    val comingFromDetails: Boolean = confirmationAsset != null
 
     private fun setUserData() {
         viewModelScope.launch {
@@ -76,6 +71,9 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
                 CurrencyType.Dollar.disbursementValue
             }
             uiState = uiState.copy(
+                asset = savedStateHandle[CRYPTO_ASSET] ?: "",
+                assetDescription = savedStateHandle[DESCRIPTION_CURRENCY] ?: "",
+                market = confirmationAsset?.plus(abvCurrency) ?: "",
                 isBottomSheetVisible = preferences.isVolatileDialogVisible().first()
             )
         }
@@ -91,10 +89,10 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
             ).collectLatest {result ->
                 result.onSuccess {
                     it?.let {
-                        if (idBrand == Brand.ElSalvador.id) {
-                            accountToken = it[0].accountToken
+                        uiState = if (idBrand == Brand.ElSalvador.id) {
+                            uiState.copy(accountToken = it[0].accountToken)
                         } else {
-                            uiState = uiState.copy(accounts = it)
+                            uiState.copy(accounts = it)
                         }
                     }
                 }
@@ -116,7 +114,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     }
 
     private fun previousStep() {
-        if (currentFlowStep == PurchaseCryptoSteps.One.id) {
+        if (currentFlowStep == PurchaseCryptoSteps.One.pageNumber) {
             navigateBackToHome()
         } else {
             currentFlowStep--
@@ -165,14 +163,21 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     }
 
     data class UIState(
-        val currentStep: Int = PurchaseCryptoSteps.One.id,
+        val currentStep: Int = PurchaseCryptoSteps.One.pageNumber,
         val isLoading: Boolean = false,
         val accounts: List<AccountSmartForBuyCrypto> = listOf(),
         val openDialog: DialogParameters = DialogParameters(),
         var bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
         var bottomSheet: (@Composable () -> Unit) = {},
         val smartAccountAvailableBalance: Double = 0.0,
-        var isBottomSheetVisible: Boolean = true
+        var isBottomSheetVisible: Boolean = true,
+        val asset: String? = null,
+        val assetDescription: String? = null,
+        val market: String = "",
+        val cryptoNetWork: String = "",
+        val assetImageBaseUrl: String = "",
+        val accountToken: String = "",
+        val comingFromDetails: Boolean = false
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -183,16 +188,18 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
             is UIEvent.OnCloseClick -> onCloseClick()
             is UIEvent.OnGetUserInfo -> setUserData()
             is UIEvent.OnQueryAccounts -> querySmartAccounts()
-            is UIEvent.OnSetAccountToken -> accountToken = event.accountToken
+            is UIEvent.OnSetAccountToken -> uiState = uiState.copy(accountToken = event.accountToken)
             is UIEvent.OnCryptoSelected -> {
-                asset = if (asset.isNullOrEmpty()) event.selectedCrypto.baseAsset else asset
-                assetDescription = if (assetDescription.isNullOrEmpty()) event.selectedCrypto.description else assetDescription
-                cryptoNetWork = event.selectedCrypto.cryptoNetwork
-                assetImageBaseUrl = event.selectedCrypto.url_image
-                market = asset.plus(CurrencyType.Dollar.disbursementValue)
+                uiState = uiState.copy(
+                    asset = event.selectedCrypto.baseAsset,
+                    assetDescription = event.selectedCrypto.description,
+                    cryptoNetWork = event.selectedCrypto.cryptoNetwork,
+                    assetImageBaseUrl = event.selectedCrypto.url_image,
+                    market = event.selectedCrypto.baseAsset.plus(CurrencyType.Dollar.disbursementValue)
+                )
             }
             is UIEvent.OnSetSelectedAccount -> {
-                accountToken = event.accountToken
+                uiState = uiState.copy(accountToken = event.accountToken)
                 uiState = uiState.copy(
                     smartAccountAvailableBalance = event.totalBalance
                 )

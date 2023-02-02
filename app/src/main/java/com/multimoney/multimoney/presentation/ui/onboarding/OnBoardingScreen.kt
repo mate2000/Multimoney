@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Text
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -71,7 +70,7 @@ fun OnBoardingScreen(
                 currentStep = viewModel.currentStep,
                 paused = viewModel.uiState.isPressed,
                 onFinished = {
-                    viewModel.onUIEvent(OnGoToNextScreen,context)
+                    viewModel.onUIEvent(OnGoToNextScreen, context)
                 },
                 backgroundColor = WhiteTransparency20,
                 progressColor = WhiteTransparency70,
@@ -120,7 +119,10 @@ fun OnBoardingScreen(
                 buttonType = CustomButtonType.PrimaryPrimary,
                 text = stringResource(id = R.string.registration),
                 onClick = {
-                    viewModel.onUIEvent(OnNavigateToNextScreen(Screen.SignUpScreen.baseRoute),context)
+                    viewModel.onUIEvent(
+                        OnNavigateToNextScreen(Screen.SignUpScreen.baseRoute),
+                        context
+                    )
                 }
             )
             Row(
@@ -152,7 +154,10 @@ fun OnBoardingScreen(
                         .wrapContentSize()
                         .padding(start = 4.dp),
                     onClick = {
-                        viewModel.onUIEvent(OnNavigateToNextScreen(Screen.SignInScreen.baseRoute),context)
+                        viewModel.onUIEvent(
+                            OnNavigateToNextScreen(Screen.SignInScreen.baseRoute),
+                            context
+                        )
                     }
                 )
             }

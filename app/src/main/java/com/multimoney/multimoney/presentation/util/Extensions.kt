@@ -285,8 +285,7 @@ fun Double.roundToTwoDecimalPlacesWithoutNegatives() =
 
 fun Double.toCurrencyFormat(
     symbol: String = Dollar.symbol,
-    amountOfDecimals: Int = DEFAULT_AMOUNT_OF_DECIMALS,
-    useCurrentCurrency: Boolean = true
+    amountOfDecimals: Int = DEFAULT_AMOUNT_OF_DECIMALS
 ): String {
     val formatter = NumberFormat.getCurrencyInstance(Locale.ENGLISH)
     val regex = Regex(NUMBER_FORMAT_REGEX)

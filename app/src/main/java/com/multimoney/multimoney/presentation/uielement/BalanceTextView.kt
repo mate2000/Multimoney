@@ -32,7 +32,7 @@ fun BalanceTextView(
     modifier: Modifier = Modifier,
     balanceText: String,
     currencyStyle: TextStyle,
-    currencyDecimalStyle: TextStyle,
+    currencyDecimalStyle: TextStyle
 ) {
     val decimalSeparator = DecimalFormatSymbols(Locale.getDefault()).decimalSeparator
     val splitText = balanceText.split(decimalSeparator)

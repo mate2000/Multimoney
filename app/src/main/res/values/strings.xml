@@ -716,7 +716,7 @@
     <string name="sign_credit_dialog_continue" translatable="false">Continuar</string>
 
     <string name="continue_validating_identity_title" translatable="false">Estás cerca de recibir tu crédito</string>
-    <string name="continue_validating_identity_subtitle" translatable="false">Estamos terminando de validar tus datos</string>
+    <string name="continue_validating_identity_subtitle" translatable="false">Estamos validando tus datos. Pronto te daremos una respuesta.</string>
 
     <!-- Sign Documents limit reached -->
     <string name="sign_credit_max_attempts_title" translatable="false">!Te vamos a extrañar!</string>

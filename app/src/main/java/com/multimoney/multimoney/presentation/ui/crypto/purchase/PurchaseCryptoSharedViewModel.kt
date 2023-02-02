@@ -137,7 +137,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         navigateBack(
             popTo = Screen.HomeScreen.route,
             isRestart = true,
-            homeState = HomeState.UNEXPANDED
+            homeState = HomeState.COLLAPSED
         )
 
     private fun onShowBottomSheet() {

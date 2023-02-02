@@ -1450,4 +1450,13 @@
     <string name="product_visa_card_expired_dialog_update_label" translatable="false">Actualizar</string>
     <string name="product_visa_card_expired_dialog_hide_label" translatable="false">Ocultar</string>
 
+    <!-- Crosseling-->
+    <string name="crosseling_account_sv_title" translatable="false">¿Dónde querés recibir tu crédito?</string>
+    <string name="crosseling_account_gt_title" translatable="false">¿Dónde quieres recibir tu crédito?</string>
+    <string name="crosseling_account_cr_title" translatable="false">¿En cúal cuenta IBAN querés \nrecibir tu dinero?</string>
+    <string name="crosseling_close_dialog_title" translatable="false">Abandonar proceso</string>
+    <string name="crosseling_close_dialog_description" translatable="false">¿Estás seguro de abandonar el proceso?</string>
+    <string name="crosseling_close_dialog_positive_button_text" translatable="false">Cancelar</string>
+    <string name="crosseling_close_dialog_negative_button_text" translatable="false">Continuar</string>
+
 </resources>

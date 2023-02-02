@@ -5,16 +5,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.accountsmart.QueryListSinpeAccountUseCase
+import com.multimoney.domain.interaction.credit.QueryBanksAndRegularExpressionUseCase
 import com.multimoney.domain.model.accountsmart.SinpeAccount
-import com.multimoney.domain.model.credit.ClientBankAccount
+import com.multimoney.domain.model.credit.CreditCatalog
+import com.multimoney.domain.model.credit.CreditCatalogOption
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.ui.credit.origination.account.CrosselingAccountViewModel.UIEvent.*
-import com.multimoney.multimoney.presentation.util.*
+import com.multimoney.multimoney.presentation.ui.credit.origination.account.CrosselingAccountViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.credit.origination.account.CrosselingAccountViewModel.UIEvent.OnNextActionClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.account.CrosselingAccountViewModel.UIEvent.OnClientBankAccountSelected
+import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -22,7 +25,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CrosselingAccountViewModel @Inject constructor(
-    private val queryListSinpeAccountUseCase: QueryListSinpeAccountUseCase
+    private val queryListSinpeAccountUseCase: QueryListSinpeAccountUseCase,
+    private val queryBanksAndRegularExpressionUseCase: QueryBanksAndRegularExpressionUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -33,37 +37,115 @@ class CrosselingAccountViewModel @Inject constructor(
     private var idBrand: Int = 0
     private var identification: String = ""
     private var email: String = ""
+    private var bank: CreditCatalog? = null
+    private var bankList: List<CreditCatalogOption?>? = listOf()
 
-    private fun onCallQueryListSinpeAccount() = executeUseCase {
+    private fun onStart(
+        pkUser: Int,
+        user: String,
+        idBrand: Int,
+        idUserRequest: Int,
+        identification: String,
+        country: String,
+        idAccount: Long,
+        accountNumber: String,
+        onLoadingValueChange: (isLoading: Boolean) -> Unit,
+        onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit,
+        onSuccess: (Boolean) -> Unit
+    ) {
+        this.email = user
+        this.idBrand = idBrand
+        this.identification = identification
+
+        getTextResources()
+
+        onCallQueryListSinpeAccount(
+            user = user,
+            identification = identification,
+            idBrand = idBrand,
+            country = country,
+            idAccount = idAccount,
+            accountNumber = accountNumber,
+            onSuccess = onSuccess,
+            onLoadingValueChange = onLoadingValueChange,
+            onFailureWithDialog = onFailureWithDialog
+        )
+
+        onCallQueryBanksAndRegularExpressions(
+            pkUser = pkUser,
+            user = user,
+            idBrand = idBrand,
+            idUserRequest = idUserRequest,
+            onLoadingValueChange = onLoadingValueChange,
+            onFailureWithDialog = onFailureWithDialog
+        )
+
+    }
+
+    private fun onCallQueryListSinpeAccount(
+        user: String,
+        identification: String,
+        idBrand: Int,
+        country: String,
+        idAccount: Long,
+        accountNumber: String,
+        onSuccess: (Boolean) -> Unit,
+        onLoadingValueChange: (isLoading: Boolean) -> Unit,
+        onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
+    ) = executeUseCase {
         queryListSinpeAccountUseCase.invoke(
-            user = email,
-            identification = identification ?: "",
-            idBrand = idBrand.toInt(),
-            country = "",
-            idAccount = 0,
-            accountNumber = ""
+            user = user,
+            identification = identification,
+            idBrand = idBrand,
+            country = country,
+            idAccount = idAccount,
+            accountNumber = accountNumber
         ).collectLatest { result ->
             result.onSuccess { accountList ->
-                uiState = uiState.copy(isLoading = false)
-                if (accountList?.data?.isEmpty() == true) {
-                    //navigateToAddIbanAccount()
-                } else {
-                    accountList?.data?.let {
-                        uiState = uiState.copy(clientBankAccountList = it)
-                    }
+                onLoadingValueChange(false)
+                onSuccess(accountList?.data?.isEmpty() == true)
+                accountList?.data?.let {
+                    uiState = uiState.copy(clientBankAccountList = it)
                 }
             }
             result.onFailure {
-                uiState = uiState.copy(isLoading = false)
-                uiState = uiState.copy(
-                    openDialog = DialogParameters(
-                        description = it.getError() ?: "",
+                onLoadingValueChange(false)
+                onFailureWithDialog(
+                    false,
+                    DialogParameters(
+                        description = it.getError().toString(),
                         isActive = mutableStateOf(true)
                     )
                 )
             }
             result.onLoading {
-                uiState = uiState.copy(isLoading = true)
+                onLoadingValueChange(true)
+            }
+        }
+    }
+
+    private fun onCallQueryBanksAndRegularExpressions(
+        pkUser: Int,
+        user: String,
+        idBrand: Int,
+        idUserRequest: Int,
+        onLoadingValueChange: (isLoading: Boolean) -> Unit,
+        onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
+    ) = executeUseCase {
+        queryBanksAndRegularExpressionUseCase.invoke(pkUser, user, idBrand, idUserRequest).collectLatest { result ->
+            result.onSuccess {
+                bank = it.banks?.first()
+                bankList = bank?.subOptions?.filter { filter ->
+                    filter?.description != MIDDLE_DASH
+                }
+            }.onFailure {
+                onFailureWithDialog(
+                    false,
+                    DialogParameters(
+                        description = it.getError().toString(),
+                        isActive = mutableStateOf(true)
+                    )
+                )
             }
         }
     }
@@ -71,72 +153,103 @@ class CrosselingAccountViewModel @Inject constructor(
     private fun getTextResources() {
         uiState = uiState.copy(
             titleResource = when (idBrand) {
-                Brand.ElSalvador.id -> R.string.disbursement_account_sv_title
-                Brand.Guatemala.id -> R.string.disbursement_account_gt_title
-                else -> R.string.disbursement_account_cr_title
+                Brand.ElSalvador.id -> R.string.crosseling_account_sv_title
+                Brand.Guatemala.id -> R.string.crosseling_account_gt_title
+                else -> R.string.crosseling_account_cr_title
             }
         )
     }
 
-    private fun onClientBankAccountSelected(clientBankAccount: ClientBankAccount?) {
-        uiState = uiState.copy(clientBankAccountSelected = clientBankAccount)
-    }
-
-    private fun onLoadingValueChange(loading: Boolean) {
-        uiState = uiState.copy(isLoading = loading)
-    }
-
-    private fun onNavigateToDisbursementAddAccount() {
-
-    }
-
-    private fun onMaxAccountNumberDialog() {
+    private fun onClientBankAccountSelected(clientBankAccount: SinpeAccount?) {
         uiState = uiState.copy(
-            openDialog = DialogParameters(
-                titleResource = R.string.disbursement_account_max_number_title,
-                descriptionResource = R.string.disbursement_account_max_number_description,
-                positiveResource = R.string.understood,
-                isActive = mutableStateOf(true)
-            )
+            bankSelected = bankList?.first { filter ->
+                filter?.description != clientBankAccount?.bank.orEmpty()
+            },
+            accountTypeSelectedString = clientBankAccount?.accountType.toString(),
+            accountNumber = clientBankAccount?.sinpeAccount ?: ""
         )
+    }
+
+    private fun onNextActionClick(
+        user: String,
+        nextStepAction: () -> Unit,
+        saveCreditStepsHelper: SaveCreditStepsHelper
+    ) {
+        saveCreditStepsHelper.saveStepOne(
+            user,
+            bank,
+            uiState.bankSelected,
+            uiState.accountTypeSelectedString,
+            uiState.accountNumber
+        )
+        nextStepAction()
     }
 
     data class UIState(
         // Interactions
         val titleResource: Int = R.string.empty,
         val clientBankAccountList: List<SinpeAccount?>? = null,
-        val clientBankAccountSelected: ClientBankAccount? = null,
-        val isLoading: Boolean = false,
+        val clientBankAccountSelected: SinpeAccount? = null,
+        val accountTypeSelectedString: String = "",
+        val accountNumber: String = "",
+        val bankSelected: CreditCatalogOption? = null,
         val openDialog: DialogParameters = DialogParameters(),
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnCallQueryGetSinpeAccount -> onCallQueryListSinpeAccount()
+            is OnStart -> onStart(
+                uiEvent.pkUser,
+                uiEvent.user,
+                uiEvent.idBrand,
+                uiEvent.idUserRequest,
+                uiEvent.identification,
+                uiEvent.country,
+                uiEvent.idAccount,
+                uiEvent.accountNumber,
+                uiEvent.onLoadingValueChange,
+                uiEvent.onFailureWithDialog,
+                uiEvent.onSuccess
+            )
+            is OnNextActionClick -> onNextActionClick(
+                uiEvent.user,
+                uiEvent.nextStepAction,
+                uiEvent.saveCreditStepsHelper
+            )
             is OnClientBankAccountSelected -> onClientBankAccountSelected(uiEvent.clientBankAccount)
-            is OnNavigateToDisbursementAddAccount -> onNavigateToDisbursementAddAccount()
-            is OnLoadingValueChange -> onLoadingValueChange(uiEvent.isLoading)
-            is OnDisclaimerClick -> onMaxAccountNumberDialog()
         }
     }
 
     sealed class UIEvent {
-        object OnCallQueryGetSinpeAccount : UIEvent()
-        class OnClientBankAccountSelected(val clientBankAccount: ClientBankAccount?) : UIEvent()
-        object OnNavigateToDisbursementAddAccount : UIEvent()
+        data class OnNextActionClick(
+            val user: String,
+            val nextStepAction: () -> Unit,
+            val saveCreditStepsHelper: SaveCreditStepsHelper
+        ) : UIEvent()
+
+        data class OnStart(
+            val pkUser: Int,
+            val user: String,
+            val idBrand: Int,
+            val idUserRequest: Int,
+            val identification: String,
+            val country: String,
+            val idAccount: Long,
+            val accountNumber: String,
+            val onLoadingValueChange: (isLoading: Boolean) -> Unit,
+            val onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit,
+            val onSuccess: (Boolean) -> Unit
+        ) : UIEvent()
+
+        class OnClientBankAccountSelected(val clientBankAccount: SinpeAccount?) : UIEvent()
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
-        object OnDisclaimerClick : UIEvent()
+    }
+
+    sealed class BaseEvent {
+        data class OnFormCompleted(val isFormCompleted: Boolean) : BaseEvent()
     }
 
     companion object {
-        private const val ID_LOAN_FORM_HARDCODED =
-            4 // TODO Change to 1-4 depending on preferences user previously selected (new HU)
-        private const val LOAN_FORM_HARDCODED =
-            "Transferencia" // TODO Change to Transferencia-PEX depending on preferences user previously selected (new HU)
-        const val MAX_ACCOUNT_NUMBER = 3
-        private const val DISBURSEMENT_PROCESS =
-            "DESEMBOLSO"
+        const val MIDDLE_DASH = "-"
     }
-
-
 }

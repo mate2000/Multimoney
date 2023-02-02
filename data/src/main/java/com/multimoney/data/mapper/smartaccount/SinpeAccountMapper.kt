@@ -13,7 +13,8 @@ private fun ListSinpeAccountQuery.Result.mapToDomainModel() = SinpeAccount(
     active,
     currencyId.toString().toInt(),
     currency,
-    nameAccount
+    nameAccount,
+    accountType
 )
 
 private fun ListSinpeAccountQuery.ListSinpeAccount.mapToDomainModel() = SinpeAccountResult(data = result.map { it.mapToDomainModel() })

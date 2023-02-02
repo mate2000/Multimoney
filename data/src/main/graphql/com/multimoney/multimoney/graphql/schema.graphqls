@@ -6403,6 +6403,8 @@ type ListSinpeAccountResult {
   moneda: String!
 
   nombre_Cuenta: String!
+
+  tipo_Cuenta: Int!
 }
 
 type LocalTransferFavoriteResult {

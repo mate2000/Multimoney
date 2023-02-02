@@ -94,7 +94,7 @@ fun MyProductsContent(
         modalBottomSheetState,
         productScreenPagerState,
         Primary500,
-        stringResource(id = string.home_my_products_title_credit),
+        stringResource(id = string.home_my_products_title_credit)
     )
 
     // smart section

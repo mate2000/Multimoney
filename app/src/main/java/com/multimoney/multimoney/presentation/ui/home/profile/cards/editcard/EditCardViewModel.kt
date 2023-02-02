@@ -170,8 +170,6 @@ class EditCardViewModel @Inject constructor(
     }
 
     sealed class UIEvent {
-        object OnStart : UIEvent()
-        object OnValidateForm : UIEvent()
         data class OnNicknameValueChange(val nickname: String) : UIEvent()
         data class OnCvvValueChange(val cvv: String) : UIEvent()
 
@@ -185,7 +183,6 @@ class EditCardViewModel @Inject constructor(
             val onEditCardShowToastBaseEvent: () -> Unit
         ) : UIEvent()
 
-        data class OnCloseClick(val focusManager: FocusManager) : UIEvent()
         data class OnDisclaimerClick(val focusManager: FocusManager) : UIEvent()
     }
 

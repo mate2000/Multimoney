@@ -242,11 +242,6 @@ class CrosselingAccountViewModel @Inject constructor(
         ) : UIEvent()
 
         class OnClientBankAccountSelected(val clientBankAccount: SinpeAccount?) : UIEvent()
-        data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
-    }
-
-    sealed class BaseEvent {
-        data class OnFormCompleted(val isFormCompleted: Boolean) : BaseEvent()
     }
 
     companion object {

@@ -28,7 +28,6 @@ import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getCurrentTime
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.Calendar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -104,7 +103,7 @@ class MyContactsTransferAmountViewModel @Inject constructor(
                 destinationIdentification = phoneAccount?.identification.orEmpty(),
                 transferType = SmartSinpeTransferType.SEND
             )
-        } else if (idBrand == Brand.ElSalvador.id) {
+        } else if (idBrand == ElSalvador.id) {
             onProcessLocalTransfer()
         }
     }

@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.mmvisa.MutationDeleteTokenDeviceNVUseCase
 import com.multimoney.domain.model.balance.BalanceCardInformation
 import com.multimoney.domain.model.util.onFailure
@@ -77,7 +78,7 @@ class VisaPreferencesViewModel @Inject constructor(
         uiState = uiState.copy(
             openDialog = DialogParameters(
                 titleResource = R.string.card_preferences_linked_card_dialog_title,
-                descriptionResource = R.string.card_preferences_linked_card_dialog_description,
+                descriptionResource = if (idBrand == Brand.CostaRica.id) R.string.card_preferences_linked_card_dialog_description_cr else R.string.card_preferences_linked_card_dialog_description,
                 positiveResource = R.string.card_preferences_linked_card_dialog_positive_button,
                 negativeResource = R.string.card_preferences_linked_card_dialog_negative_button,
                 positiveAction = { onNavigateToVisaTokenizationScreen() },
@@ -91,7 +92,7 @@ class VisaPreferencesViewModel @Inject constructor(
         uiState = uiState.copy(
             openDialog = DialogParameters(
                 titleResource = R.string.card_preferences_unlinked_card_dialog_title,
-                descriptionResource = R.string.card_preferences_unlinked_card_dialog_description,
+                descriptionResource = if (idBrand == Brand.CostaRica.id) R.string.card_preferences_unlinked_card_dialog_description_cr else R.string.card_preferences_unlinked_card_dialog_description,
                 positiveResource = R.string.card_preferences_unlinked_card_dialog_positive_button,
                 negativeResource = R.string.card_preferences_unlinked_card_dialog_negative_button,
                 positiveAction = { onDeleteTokenDevice(onDeleteTokenBaseEvent) },

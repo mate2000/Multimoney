@@ -121,6 +121,47 @@ fun VoucherNumberInfo(
     }
 }
 
+
+@Composable
+fun VoucherTotalAmountInfo(
+    modifier: Modifier = Modifier,
+    icon: Int? = null,
+    title: String,
+    subTitle: String
+) {
+    val titleColor: Color
+    val subtitleColor: Color
+    val tintIconColor: Color
+
+    if (isSystemInDarkTheme()) {
+        titleColor = WhiteTransparency90
+        subtitleColor = WhiteTransparency90
+        tintIconColor = WhiteTransparency40
+    } else {
+        titleColor = WhiteTransparency90
+        subtitleColor = WhiteTransparency90
+        tintIconColor = WhiteTransparency40
+    }
+
+    Row(modifier = modifier) {
+        icon?.let {
+            Icon(painter = painterResource(id = it), contentDescription = "", tint = tintIconColor)
+        }
+        Column(modifier = Modifier.padding(start = 13.5.dp)) {
+            Text(
+                text = title,
+                style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
+                color = titleColor
+            )
+            Text(
+                text = subTitle,
+                style = Typography.body2,
+                color = subtitleColor
+            )
+        }
+    }
+}
+
 @Composable
 fun VoucherCurrencyExchangeInfo(
     leftTitleResource: Int = R.string.empty,

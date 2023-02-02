@@ -790,6 +790,8 @@ class InteractionModule {
     fun provideMutationAccountStatus(smartAccountRepository: SmartAccountRepository): MutationAccountStatusUseCase =
         MutationAccountStatusUseCaseImpl(smartAccountRepository)
 
+    @Provides
+    @Singleton
     fun provideQueryRelatedContactsByPhoneUseCase(smartAccountRepository: SmartAccountRepository): QueryRelatedContactsByPhoneUseCase =
         QueryRelatedContactsByPhoneUseCaseImpl(smartAccountRepository)
 }

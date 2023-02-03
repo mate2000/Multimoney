@@ -40,7 +40,7 @@ fun CustomInfoButton(
     modifier: Modifier = Modifier,
     imageModifier: Modifier = Modifier,
     startIcon: Int? = R.drawable.ic_payment_fee_icon,
-    titleIcon: Int? = R.drawable.ic_star_filled,
+    titleIcon: Int? = null,
     title: String = "",
     subtitle: String = "",
     subtitle2: String = "",

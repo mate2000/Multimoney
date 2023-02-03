@@ -44,10 +44,10 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     var uiState by mutableStateOf(UIState())
         private set
 
-    //stateless
+    // stateless
     private var currentFlowStep: Int = PurchaseCryptoSteps.One.pageNumber
 
-    //bundle parameters
+    // bundle parameters
     var idBrand = DEFAULT_ID_BRAND_ERROR
     var pkUser = ""
     var user = ""
@@ -86,7 +86,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
                 idBrand = idBrand,
                 identification = identification,
                 accountStatus = ACTIVE_ACCOUNT
-            ).collectLatest {result ->
+            ).collectLatest { result ->
                 result.onSuccess {
                     it?.let {
                         uiState = if (idBrand == Brand.ElSalvador.id) {
@@ -174,7 +174,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         val asset: String? = null,
         val assetDescription: String? = null,
         val market: String = "",
-        val cryptoNetWork: String = "",
+        val cryptoNetWork: String? = "",
         val assetImageBaseUrl: String = "",
         val accountToken: String = "",
         val comingFromDetails: Boolean = false

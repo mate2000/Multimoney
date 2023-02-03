@@ -9,5 +9,5 @@ data class MarketCryptoCoin(
     val currentPrice: Any,
     val url_image: String,
     val historico: Boolean,
-    val cryptoNetwork: String
+    val cryptoNetwork: String?
 )

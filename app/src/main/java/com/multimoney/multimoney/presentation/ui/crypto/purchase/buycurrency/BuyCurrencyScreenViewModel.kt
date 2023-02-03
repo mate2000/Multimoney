@@ -23,7 +23,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
     private val getExchangeRate: QuerySmartExchangeRateUseCase,
     private val getPriceQuoteAndCommissionsUseCase: GetPriceQuoteAndCommissionsUseCase,
     private val buyCryptoCurrencyUseCase: BuyCryptoCurrencyUseCase
-): BaseViewModel(false) {
+) : BaseViewModel(false) {
 
     var uiState by mutableStateOf(UIState())
         private set
@@ -33,9 +33,9 @@ class BuyCurrencyScreenViewModel @Inject constructor(
 
     var isTimerRunning by mutableStateOf(false)
 
-    //data from sharedViewModel
+    // data from sharedViewModel
     var asset = ""
-    var cryptoNetWork = ""
+    var cryptoNetWork: String? = ""
     var idBrand = -1
     var user = ""
     var market = ""
@@ -60,7 +60,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
 
     private fun onSetUserData(
         asset: String,
-        cryptoNetwork: String,
+        cryptoNetwork: String?,
         idBrand: Int,
         user: String,
         market: String,
@@ -86,15 +86,15 @@ class BuyCurrencyScreenViewModel @Inject constructor(
 
     private fun updateDataWithNewExchangeRate() = executeUseCase {
         getPriceQuoteAndCommissionsUseCase.invoke(
-                asset = asset,
-                crypto_network = cryptoNetWork,
-                idBrand = idBrand,
-                user = user,
-                market = market,
-                identification = identification,
-                base_amount = baseAmount,
-                side = side,
-                quote_amount = uiState.quoteAmount
+            asset = asset,
+            crypto_network = cryptoNetWork ?: "",
+            idBrand = idBrand,
+            user = user,
+            market = market,
+            identification = identification,
+            base_amount = baseAmount,
+            side = side,
+            quote_amount = uiState.quoteAmount
         ).collectLatest { result ->
             result.onLoading {
                 uiState = uiState.copy(isLoading = true)
@@ -167,7 +167,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
     )
 
     fun onUIEvent(event: UIEvent) {
-        when(event) {
+        when (event) {
             is UIEvent.OnGetExchangeRate -> updateDataWithNewExchangeRate()
             is UIEvent.OnPurchaseCryptoCurrency -> purchaseCryptoCurrency(
                 pkUser = event.pkUser,
@@ -203,7 +203,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
     sealed class UIEvent {
         data class OnSetUserData(
             val asset: String,
-            val cryptoNetwork: String,
+            val cryptoNetwork: String?,
             val idBrand: Int,
             val user: String,
             val market: String,

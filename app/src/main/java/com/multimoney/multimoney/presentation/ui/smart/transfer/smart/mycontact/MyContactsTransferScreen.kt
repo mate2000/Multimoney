@@ -41,12 +41,14 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme.colors
 import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAddSACAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAddToFavoriteAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnCallQueryRelatedContactsByPhoneUseCase
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnContactClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnQueryValueChange
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnSelectContactAsFavorite
 import com.multimoney.multimoney.presentation.uielement.ContactAccountDisplay
 import com.multimoney.multimoney.presentation.uielement.ContactItem
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -61,6 +63,7 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Dollar
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MyContactsTransferScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
@@ -97,7 +100,7 @@ fun MyContactsTransferScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp, start = 16.dp, end = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
+                     verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = stringResource(id = string.smart_mycontacts_transfer_title),
@@ -114,7 +117,7 @@ fun MyContactsTransferScreen(
                         .fillMaxWidth()
                         .wrapContentWidth(Alignment.End),
                     onClick = {
-                        viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnAddSACAccountClick)
+                        viewModel.onUIEvent(OnAddSACAccountClick)
                     },
                     buttonType = CustomButtonType.PrimaryTertiary
                 )
@@ -187,7 +190,15 @@ fun MyContactsTransferScreen(
             }
         }
     }
+
+    SelectFavoriteContactBottomSheet(
+        coroutineScope = rememberCoroutineScope(),
+        modalBottomSheetState = viewModel.uiState.selectFavoriteContactBottomSheetState,
+        onSelectClick = { viewModel.onUIEvent(OnSelectContactAsFavorite) }
+    )
+
     ContactBottomSheet(viewModel = viewModel)
+
     LoadingIndicator(viewModel.uiState.isLoading)
 }
 
@@ -267,7 +278,7 @@ fun ContactBottomSheet(viewModel: MyContactsTransferViewModel) {
     CustomModalBottomSheet(
         title = string.smart_iban_transfer_send_money,
         closeIcon = R.drawable.ic_close_bottom_sheet,
-        modalBottomSheetState = viewModel.uiState.bottomSheetState,
+        modalBottomSheetState = viewModel.uiState.contactClickBottomSheetState,
         coroutineScope = rememberCoroutineScope()
     ) {
         if (viewModel.uiState.selectedContact.isNotEmpty()) {

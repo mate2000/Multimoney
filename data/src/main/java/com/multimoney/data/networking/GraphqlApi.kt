@@ -52,6 +52,7 @@ import com.multimoney.data.networking.graphql.apollomodel.GetCompanyNameByIdenti
 import com.multimoney.data.networking.graphql.apollomodel.GetConfigurationVersionQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCoreBankMovementsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCountryContactQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetCountryPhoneCodesQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCountryQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCryptoCurrencyMovementQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCryptoCurrencyNewsQuery
@@ -120,6 +121,7 @@ import com.multimoney.data.networking.graphql.apollomodel.ValidationSecurityQuer
 import com.multimoney.data.networking.graphql.apollomodel.UpdateSmartAccountStatusMutation
 import com.multimoney.data.networking.graphql.apollomodel.type.BeneficiaryRequestDtoInput
 import com.multimoney.data.networking.graphql.apollomodel.type.ContactsInput
+import com.multimoney.data.networking.graphql.apollomodel.type.GetCountry
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.RelatedContact
 import com.multimoney.domain.model.credit.CreditInfoQuestion
@@ -1292,6 +1294,13 @@ class GraphqlApi @Inject constructor(
     ): ApolloCall<ChangePhoneMutation.Data> =
         apolloAuthorizedClient.mutation(ChangePhoneMutation(identification, phone, pkUser.toLong(), idBrand))
             .fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryGetCountryPhoneCodes(
+        idBrand: Int
+    ): ApolloCall<GetCountryPhoneCodesQuery.Data> =
+        apolloAuthorizedClient.query(GetCountryPhoneCodesQuery(idBrand))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
+
 
     fun mutationChangeEmail(
         idClient: Int,

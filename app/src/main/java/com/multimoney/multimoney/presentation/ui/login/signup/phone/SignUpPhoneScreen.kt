@@ -112,7 +112,8 @@ fun SignUpPhoneScreen(
                             false
                         )
                     )
-                }
+                },
+                idBrand = sharedViewModel.idBrand ?: 0
             )
         )
     }
@@ -180,7 +181,8 @@ fun SignUpPhoneScreen(
                         }
                     )
                 )
-            }
+            },
+            countriesList = viewModel.uiState.countriesList
         )
     }
 }

@@ -1,0 +1,6 @@
+query GetCountryPhoneCodes($idBrand:Int!){
+    countryPhoneCodes(getCountryPhone: {idBrand: $idBrand}) {
+        country
+        code
+    }
+}

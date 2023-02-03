@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
+import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.data.util.catalog.SignUpStep.Search
 import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCase
@@ -16,6 +17,7 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.Screen.SignInScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnBackClick
@@ -53,7 +55,8 @@ import javax.inject.Inject
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
 class SignUpViewModel @Inject constructor(
-    private val mutationUpdateUserRegisterUseCase: MutationUpdateUserRegisterUseCase
+    private val mutationUpdateUserRegisterUseCase: MutationUpdateUserRegisterUseCase,
+    private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel(false) {
 
     // UIState
@@ -70,6 +73,8 @@ class SignUpViewModel @Inject constructor(
     var nextAction: () -> Unit = {}
     private var nextStep: Int = SignUpStep.One.id
     private var previousStep: Int = SignUpStep.One.id
+
+
 
     private fun nextStep() {
         if (nextStep <= SIGN_UP_TOTAL_STEPS) {
@@ -95,7 +100,7 @@ class SignUpViewModel @Inject constructor(
     }
 
     private fun navigateToSplashComeBack(step: Int) {
-        navigateTo("${Screen.SignUpSplashComeBackScreen.baseRoute}/".plus(step))
+        navigateTo("${Screen.SignUpSplashComeBackScreen.baseRoute}/".plus(step).plus("/$idBrand"))
     }
 
     private fun moveToStep(step: Int) {
@@ -220,11 +225,17 @@ class SignUpViewModel @Inject constructor(
     }
 
     private fun onShowPasswordBottomSheet() {
-        uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded))
+        uiState =
+            uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded))
     }
 
     private fun onHidePasswordBottomSheet() {
-        uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Hidden))
+        uiState =
+            uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Hidden))
+    }
+
+    private fun onSetIdBrand(idBrand: Int){
+        this.idBrand = idBrand
     }
 
     data class UIState(
@@ -234,7 +245,9 @@ class SignUpViewModel @Inject constructor(
         val isContinueEnabled: Boolean = false,
         val isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
-        val bottomSheetVisibleState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden)
+        val bottomSheetVisibleState: ModalBottomSheetState = ModalBottomSheetState(
+            ModalBottomSheetValue.Hidden
+        )
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -290,6 +303,8 @@ class SignUpViewModel @Inject constructor(
             is UIEvent.OnShowCloseIcon -> uiState = uiState.copy(isCloseVisible = event.showIcon)
             is OnHidePasswordBottomSheet -> onHidePasswordBottomSheet()
             is OnShowPasswordBottomSheet -> onShowPasswordBottomSheet()
+            is UIEvent.OnSetIdBrand -> onSetIdBrand(event.idBrand)
+
         }
     }
 
@@ -309,7 +324,8 @@ class SignUpViewModel @Inject constructor(
             val previousStep: Int
         ) : UIEvent()
 
-        data class OnUseDataValueChange(val userData: UserData?, val idBrand: Int? = null) : UIEvent()
+        data class OnUseDataValueChange(val userData: UserData?, val idBrand: Int? = null) :
+            UIEvent()
 
         data class OnMoveToStep(val step: Int) : UIEvent()
         data class OnSharedIdentificationValueChange(val identificationValue: String) : UIEvent()
@@ -344,6 +360,7 @@ class SignUpViewModel @Inject constructor(
         data class OnShowCloseIcon(val showIcon: Boolean) : UIEvent()
         object OnHidePasswordBottomSheet : UIEvent()
         object OnShowPasswordBottomSheet : UIEvent()
+        data class OnSetIdBrand(val idBrand: Int) : UIEvent()
     }
 
     companion object {

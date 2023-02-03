@@ -276,7 +276,8 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
                 lastname = uiState.lastNames,
                 bankId = uiState.bank?.bankId.toString(),
                 bankName = uiState.bank?.bankName.orEmpty(),
-                accountTypeId = uiState.type?.typeId.toString()
+                accountTypeId = uiState.type?.typeId.toString(),
+                isFavorite = false
             )
             navigateTo(
                 "${Screen.SmartTransfer365EditAmountScreen.baseRoute}/${
@@ -303,12 +304,13 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess { account ->
                     val savedAccount = Transfer365Account(
-                        accountNumber = account?.accountNumber,
+                        accountNumber = account?.accountNumber ?: uiState.accountNumber,
                         name = uiState.names,
                         lastname = uiState.lastNames,
                         bankId = uiState.bank?.bankId.toString(),
                         bankName = uiState.bank?.bankName.orEmpty(),
-                        accountTypeId = uiState.type?.typeId.toString()
+                        accountTypeId = uiState.type?.typeId.toString(),
+                        isFavorite = uiState.isFavorite
                     )
                     navigateTo(
                         "${Screen.SmartTransfer365EditAmountScreen.baseRoute}/${

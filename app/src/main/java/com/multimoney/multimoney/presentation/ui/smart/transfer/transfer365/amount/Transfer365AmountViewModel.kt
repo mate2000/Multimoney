@@ -12,7 +12,6 @@ import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSma
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.DisplayAccount
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
-import com.multimoney.multimoney.presentation.util.formatPhoneNumber
 import com.multimoney.multimoney.presentation.util.getMaskedSmartAccount
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -96,7 +95,7 @@ class Transfer365AmountViewModel @Inject constructor() : BaseSmartEditAmountView
     }
 
     override fun onProcessTransfer() {
-        TODO("Not yet implemented")
+        // Todo process transfer
     }
 
     override fun onNavigateBack() {

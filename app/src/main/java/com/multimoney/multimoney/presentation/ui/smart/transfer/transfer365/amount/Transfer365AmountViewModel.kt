@@ -54,17 +54,21 @@ class Transfer365AmountViewModel @Inject constructor() : BaseSmartEditAmountView
             )
             totalBalanceLabel =
                 amountUIState.currency + smartAccount?.totalBalance.toString()
-            val destinationInfo = if (transferType == SmartTransferTypes.SmartToMobile.id) {
-                transfer365Account.phone
-            } else if (transferType == SmartTransferTypes.SmartToOtherBank.id) {
-                "${transfer365Account.bankName} | ${
-                    getMaskedSmartAccount(
-                        prefix = "",
-                        accountNumber = transfer365Account.accountNumber.orEmpty()
-                    )
-                }"
-            } else {
-                ""
+            val destinationInfo = when (transferType) {
+                SmartTransferTypes.SmartToMobile.id -> {
+                    transfer365Account.phone
+                }
+                SmartTransferTypes.SmartToOtherBank.id -> {
+                    "${transfer365Account.bankName} | ${
+                        getMaskedSmartAccount(
+                            prefix = "",
+                            accountNumber = transfer365Account.accountNumber.orEmpty()
+                        )
+                    }"
+                }
+                else -> {
+                    ""
+                }
             }
             amountUIState = amountUIState.copy(
                 destinyAccountDisplay = DisplayAccount(

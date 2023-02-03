@@ -72,17 +72,23 @@ fun CreditBankScreen(
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnValidateForm)
         sharedViewModel.onUIEvent(
-            CreditViewModel.UIEvent.OnSetNavigation(nextAction = {
-                viewModel.onUIEvent(
-                    OnNextActionClick(
-                        user = sharedViewModel.email,
-                        nextStepAction = {
-                            sharedViewModel.onUIEvent(OnCallMutationSaveCreditFlowStep)
-                        },
-                        saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
+            CreditViewModel.UIEvent.OnSetNavigation(
+                nextAction = {
+                    viewModel.onUIEvent(
+                        OnNextActionClick(
+                            user = sharedViewModel.email,
+                            nextStepAction = {
+                                sharedViewModel.onUIEvent(OnCallMutationSaveCreditFlowStep)
+                            },
+                            saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
+                        )
                     )
-                )
-            }, nextStep = CreditStep.Three.id, previousStep = CreditStep.One.id)
+                }, nextStep = if (sharedViewModel.idBrand.toInt() == Brand.ElSalvador.id) {
+                    CreditStep.Three.id
+                } else {
+                    CreditStep.Four.id
+                }, previousStep = CreditStep.One.id
+            )
         )
         viewModel.onUIEvent(
             OnCallQueryBanksAndRegularExpression(

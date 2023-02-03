@@ -251,7 +251,7 @@ class CreditViewModel @Inject constructor(
                 result.onSuccess {
                     uiState = uiState.copy(isLoading = false)
                     if (crosseling) {
-                        if (uiState.currentStep == CreditStep.Four.id) {
+                        if ((idBrand.toInt() == Brand.ElSalvador.id && uiState.currentStep == CreditStep.Three.id) || (idBrand.toInt() == Brand.CostaRica.id && uiState.currentStep == CreditStep.Four.id)) {
                             onCallSaveCreditOperation()
                         } else {
                             nextStep()

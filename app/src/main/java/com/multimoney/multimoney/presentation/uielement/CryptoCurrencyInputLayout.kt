@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -48,6 +49,8 @@ fun CryptoCurrencyInputLayout(
     iconCurrency: String,
     isTransformationCurrency: MutableState<Boolean>,
     focusRequester: FocusRequester,
+    isError: Boolean = false,
+    errorText: String? = null,
     onImeClick: () -> Unit
 ) {
     Row(
@@ -68,9 +71,26 @@ fun CryptoCurrencyInputLayout(
                 focusRequester = focusRequester,
                 onSearchClick = onImeClick
             )
-            // textView with error
-            AnimatedVisibility(visible = true) {
-                Text(text = "")
+            AnimatedVisibility(visible = isError && errorText?.isNotEmpty() == true) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        modifier = Modifier.wrapContentSize().padding(end = 8.dp),
+                        painter = painterResource(id = R.drawable.ic_alert_text_error),
+                        contentDescription = null
+                    )
+                    Text(
+                        modifier = Modifier.wrapContentWidth(),
+                        text = errorText ?: "",
+                        style = Typography.subtitle1.copy(
+                            color = MultimoneyTheme.colors.textAlertColor
+                        )
+                    )
+                }
+
             }
         }
     }
@@ -85,7 +105,6 @@ fun CustomTextField(
     focusRequester: FocusRequester,
     onSearchClick: () -> Unit
 ) {
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -112,33 +131,27 @@ fun CustomTextField(
                 if (it.length <= LOT_OF_CHARACTERS && it.matches(Regex(DECIMAL_AND_NUMBER_REGEX))) {
                     value.value = when {
                         it.isEmpty() -> EMPTY_STRING
-                        it.length == ONE_LENGTH && it.last().toString() == SIMPLE_DOT -> EMPTY_STRING
+                        it.length == ONE_LENGTH && it.last()
+                            .toString() == SIMPLE_DOT -> EMPTY_STRING
                         else -> it
                     }
                 }
             },
             placeholder = {
-                if (isTransformationCurrency.value.not()) {
-                    Text(
-                        text = CURRENCY_DEFAULT_PLACEHOLDER,
-                        style = Typography.h4.copy(
-                            color = MultimoneyTheme.colors.bodyTextColor,
-                            fontWeight = FontWeight.Bold
-                        )
-                    )
-                } else {
-                    Text(
-                        text = stringResource(
+                Text(
+                    text = if (isTransformationCurrency.value.not()) {
+                        CURRENCY_DEFAULT_PLACEHOLDER
+                    } else {
+                        stringResource(
                             id = R.string.crypto_purchase_flow_amount_asset_placeholder,
                             iconCurrency
-                        ),
-                        style = Typography.h4.copy(
-                            color = MultimoneyTheme.colors.bodyTextColor,
-                            fontWeight = FontWeight.Bold
                         )
+                    },
+                    style = Typography.h4.copy(
+                        color = MultimoneyTheme.colors.bodyTextColor,
+                        fontWeight = FontWeight.Bold
                     )
-                }
-
+                )
             },
             visualTransformation = if (isTransformationCurrency.value.not()) {
                 VisualTransformation.None
@@ -222,7 +235,7 @@ class CurrencyMaskTransformation : VisualTransformation {
 
             override fun transformedToOriginal(offset: Int): Int {
                 if (offset <= 2) return offset
-                return offset -2
+                return offset - 2
             }
         }
 

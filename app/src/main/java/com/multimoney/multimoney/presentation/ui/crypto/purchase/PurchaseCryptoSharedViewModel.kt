@@ -89,11 +89,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess {
                     it?.let {
-                        uiState = if (idBrand == Brand.ElSalvador.id) {
-                            uiState.copy(accountToken = it[0].accountToken)
-                        } else {
-                            uiState.copy(accounts = it)
-                        }
+                        uiState = uiState.copy(accounts = it)
                     }
                 }
                 result.onFailure {
@@ -185,14 +181,16 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         var bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
         var bottomSheet: (@Composable () -> Unit) = {},
         val smartAccountAvailableBalance: Double = 0.0,
+        val accountNumber: String = "",
+        val ibanAccountNumber: String = "",
         var shouldDisplayDisclaimer: Boolean = true,
         val dontShowAgainChecked: Boolean = false,
+        val idCurrency: Int = CurrencyType.Dollar.id,
         val asset: String? = null,
         val assetDescription: String? = null,
         val market: String = "",
         val cryptoNetWork: String = "",
         val assetImageBaseUrl: String = "",
-        val accountToken: String = "",
         val comingFromDetails: Boolean = false
     )
 
@@ -204,8 +202,6 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
             is UIEvent.OnCloseClick -> onCloseClick()
             is UIEvent.OnGetUserInfo -> setUserData()
             is UIEvent.OnQueryAccounts -> querySmartAccounts()
-            is UIEvent.OnSetAccountToken -> uiState =
-                uiState.copy(accountToken = event.accountToken)
             is UIEvent.OnCryptoSelected -> {
                 uiState = uiState.copy(
                     asset = event.selectedCrypto.baseAsset,
@@ -216,9 +212,11 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
                 )
             }
             is UIEvent.OnSetSelectedAccount -> {
-                uiState = uiState.copy(accountToken = event.accountToken)
                 uiState = uiState.copy(
-                    smartAccountAvailableBalance = event.totalBalance
+                    smartAccountAvailableBalance = event.totalBalance,
+                    idCurrency = event.idCurrency,
+                    accountNumber = event.accountNumber,
+                    ibanAccountNumber = event.ibanAccountNumber,
                 )
             }
             is BaseEvent.OnShowDisclaimer -> OnShowDisclaimer()
@@ -235,7 +233,6 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         object OnCloseClick : UIEvent()
         object OnNextStep : UIEvent()
         object OnQueryAccounts : UIEvent()
-        data class OnSetAccountToken(val accountToken: String) : UIEvent()
         object OnPreviousStep : UIEvent()
         object OnClickBottomSheet : UIEvent()
         data class OnCryptoSelected(
@@ -243,8 +240,11 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnSetSelectedAccount(
+            val totalBalance: Double,
+            val idCurrency: Int,
             val accountToken: String,
-            val totalBalance: Double
+            val accountNumber: String,
+            val ibanAccountNumber: String
         ) : UIEvent()
 
         object OnGetUserInfo : UIEvent()

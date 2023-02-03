@@ -1564,7 +1564,7 @@ class GraphqlApi @Inject constructor(
         market: String,
         commissionAmount: Double,
         taxAmount: Double,
-        accountToken: Double,
+        accountToken: Long,
         exchangeRate: Double,
         idBrand: Int,
         user: String,

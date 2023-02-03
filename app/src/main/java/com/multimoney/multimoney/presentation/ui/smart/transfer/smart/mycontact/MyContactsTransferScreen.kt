@@ -43,9 +43,9 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme.colors
 import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAddSACAccountClick
 import com.multimoney.multimoney.presentation.theme.subHead
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAccountClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAddSACAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAddToFavoriteAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnCallQueryRelatedContactsByPhoneUseCase
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnContactClick
@@ -105,7 +105,6 @@ fun MyContactsTransferScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp, start = 16.dp, end = 16.dp),
-                     horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -250,7 +249,7 @@ fun ContactList(
 ) {
     LazyColumn(modifier = Modifier.padding(top = 20.dp, start = 16.dp, end = 16.dp)) {
         contactList.forEach { (_, contact) ->
-            val firstAccount = contact.first()
+            val firstAccount = contact.firstOrNull()
             item {
                 val randomColor = colors.coloredInitialChar
                 val colorSubtitle by remember { mutableStateOf(randomColor.random()) }
@@ -305,14 +304,14 @@ fun ContactBottomSheet(
         if (selectedContact.isNotEmpty()) {
             Column(Modifier.padding(vertical = 16.dp)) {
                 Text(
-                    text = selectedContact.first().titular?.capitalizedAllWords().orEmpty(),
+                    text = selectedContact.firstOrNull()?.titular?.capitalizedAllWords().orEmpty(),
                     style = Typography.subHead.copy(
                         fontWeight = FontWeight.SemiBold,
                         color = colors.text
                     )
                 )
                 Text(
-                    text = selectedContact.first().number.orEmpty(),
+                    text = selectedContact.firstOrNull()?.number.orEmpty(),
                     style = Typography.subHead.copy(
                         color = colors.subTitleText
                     )

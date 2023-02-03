@@ -81,7 +81,7 @@ fun CryptoCurrencyMovementItem(
                 )
             }
         }
-        Divider(modifier = Modifier.fillMaxWidth(), color = MultimoneyTheme.colors.dividerWhite30)
+        Divider(modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp), color = MultimoneyTheme.colors.dividerWhite30)
     }
 }
 

@@ -53,11 +53,11 @@ import com.multimoney.multimoney.presentation.util.isCognitoErrorCode
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
@@ -100,6 +100,7 @@ class SignInViewModel @Inject constructor(
         this.deviceName = deviceName
         this.deviceType = deviceType
         this.forceDeviceChange = forceDeviceChange
+        onUserPasswordValueChange("")
         viewModelScope.launch {
             uniqueId = dataStorePreferences.getUniqueId().first()
             val isBiometricActive = dataStorePreferences.isBiometricsEnabled().first()
@@ -137,9 +138,7 @@ class SignInViewModel @Inject constructor(
         val options = AWSCognitoAuthSignInOptions.builder().metadata(attrs).build()
 
         Amplify.Auth.signOut({
-            // TODO: This line must be uncommented when logic to send metadata to cognito is implemented
-            Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword, options, { authSignInResult ->
-//            Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword, { authSignInResult ->
+            Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword, { authSignInResult ->
                 if (authSignInResult.isSignInComplete) {
                     Amplify.Auth.fetchAuthSession({ authSessionSuccess ->
                         val session = authSessionSuccess as AWSCognitoAuthSession
@@ -158,6 +157,7 @@ class SignInViewModel @Inject constructor(
                                         if (payload.getString(SignUpPasswordViewModel.COGNITO_CHANGE_PASSWORD_REQUIRED)
                                             .toBoolean()
                                         ) {
+                                            Amplify.Auth.signOut({}, {})
                                             uiState = uiState.copy(
                                                 openDialog = DialogParameters(
                                                     titleResource = string.sign_in_expired_password_dialog_title,

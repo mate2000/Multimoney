@@ -14,8 +14,9 @@ import com.multimoney.multimoney.presentation.navigation.CRYPTO_ASSET
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.ui.crypto.currencydetail.CryptoCurrencyMovementsViewModel.Companion.USD_CURRENCY
+import com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail.CryptoCurrencyMovementsViewModel.Companion.USD_CURRENCY
 import com.multimoney.multimoney.presentation.util.FilterDate
 import com.multimoney.multimoney.presentation.util.PAGE_SIZE
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
@@ -31,6 +32,8 @@ class CryptoMovementsAllViewModel  @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ): BaseViewModel(true) {
 
+    var previousScreen: String? = null
+
     var uiState by mutableStateOf(UIState())
         private set
 
@@ -41,6 +44,8 @@ class CryptoMovementsAllViewModel  @Inject constructor(
             idBrand = savedStateHandle[ID_BRAND],
             identification = savedStateHandle[IDENTIFICATION]
         )
+        previousScreen = savedStateHandle[PREVIOUS_SCREEN]
+
     }
 
     private fun getCryptoMovements() = executeUseCase {
@@ -70,7 +75,14 @@ class CryptoMovementsAllViewModel  @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is UIEvent.OnNavigateBack -> navigateBack(Screen.CryptoCurrencyMovementsScreen.route, false)
+            is UIEvent.OnNavigateBack -> {
+                when (previousScreen) {
+                    Screen.CryptoCurrencyMovementsScreen.baseRoute -> {
+                        navigateBack(popTo = Screen.CryptoCurrencyMovementsScreen.route, isRestart = false)
+                    }
+                    else -> navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
+                }
+            }
             is UIEvent.OnGetUserInfo -> setUserData()
             is UIEvent.GetCryptoMovements -> getCryptoMovements()
         }

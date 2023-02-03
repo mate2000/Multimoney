@@ -85,7 +85,8 @@ class Transfer365AmountViewModel @Inject constructor() : BaseSmartEditAmountView
 
     override fun validateForm(
         newAmount: String?,
-        newMotive: String
+        newMotive: String,
+        isAmountValid: Boolean
     ): Boolean {
         return when {
             newAmount?.isEmpty() == true -> false

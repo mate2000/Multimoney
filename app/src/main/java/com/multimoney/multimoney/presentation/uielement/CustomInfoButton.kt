@@ -40,6 +40,7 @@ fun CustomInfoButton(
     modifier: Modifier = Modifier,
     imageModifier: Modifier = Modifier,
     startIcon: Int? = R.drawable.ic_payment_fee_icon,
+    composableIcon: @Composable ((modifier: Modifier) -> Unit)? = null,
     title: String = "",
     subtitle: String = "",
     subtitle2: String = "",
@@ -47,7 +48,9 @@ fun CustomInfoButton(
     shouldCenterEndIcon: Boolean = true,
     onClick: () -> Unit = {},
     onEndIconClick: () -> Unit = {},
-    enable: Boolean = true
+    enable: Boolean = true,
+    showBorder: Boolean = true,
+    transparent: Boolean = false
 ) {
     val buttonColor: ButtonColors = ButtonDefaults.buttonColors(
         backgroundColor = Transparent,
@@ -63,28 +66,27 @@ fun CustomInfoButton(
     if (isSystemInDarkTheme()) {
         gradientBorderOneColor = GradientGrey1
         gradientBorderTwoColor = GradientGrey2
-        background = if (enable) WhiteTransparency5 else Transparent
+        background = if (enable.not() || transparent) Transparent else WhiteTransparency5
         titleColor = WhiteTransparency90
         subtitleColor = WhiteTransparency60
     } else {
         gradientBorderOneColor = GradientGrey1
         gradientBorderTwoColor = GradientGrey2
-        background = if (enable) WhiteTransparency5 else Transparent
+        background = if (enable.not() || transparent) Transparent else WhiteTransparency5
         titleColor = WhiteTransparency90
         subtitleColor = WhiteTransparency60
     }
 
     Button(
         onClick = onClick,
-        modifier = modifier
-            .border(
-                width = 1.dp,
-                brush = Brush.verticalGradient(
-                    colors = listOf(gradientBorderOneColor, gradientBorderTwoColor)
-                ),
-                shape = RoundedCornerShape(20.dp)
-            )
-            .wrapContentHeight(),
+        modifier = if (showBorder) modifier.border(
+            width = 1.dp,
+            brush = Brush.verticalGradient(
+                colors = listOf(gradientBorderOneColor, gradientBorderTwoColor)
+            ),
+            shape = RoundedCornerShape(20.dp)
+        ).wrapContentHeight()
+        else modifier.wrapContentHeight(),
         shape = RoundedCornerShape(20.dp),
         colors = buttonColor,
         contentPadding = PaddingValues(0.dp),
@@ -106,12 +108,20 @@ fun CustomInfoButton(
                         bottom.linkTo(parent.bottom, margin = 17.dp)
                     }
                 )
+            } else if (composableIcon != null) {
+                composableIcon(
+                    modifier = Modifier.constrainAs(startIconId) {
+                        top.linkTo(parent.top, margin = 17.dp)
+                        start.linkTo(parent.start, margin = 18.dp)
+                        bottom.linkTo(parent.bottom, margin = 17.dp)
+                    }
+                )
             }
             if (subtitle.isNotEmpty()) {
                 Text(
                     text = title,
                     modifier = Modifier.constrainAs(titleId) {
-                        if (startIcon != null) {
+                        if (startIcon != null || composableIcon != null) {
                             top.linkTo(parent.top, margin = 16.dp)
                             start.linkTo(startIconId.end, margin = 22.dp)
                         } else {
@@ -174,7 +184,7 @@ fun CustomInfoButton(
                 Text(
                     text = title,
                     modifier = Modifier.constrainAs(titleId) {
-                        if (startIcon != null) {
+                        if (startIcon != null || composableIcon != null) {
                             top.linkTo(startIconId.top, margin = 4.dp)
                             start.linkTo(startIconId.end, margin = 16.dp)
                         } else {

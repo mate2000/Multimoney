@@ -83,6 +83,7 @@ import com.multimoney.data.networking.graphql.apollomodel.PayCreditVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.PaymentAmountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProccessPaymentListMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProcessCreditExtensionDetailMutation
+import com.multimoney.data.networking.graphql.apollomodel.ProcessLocalTransferMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProcessSinpeTransferMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProcessTransferVisaToSmartVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProfessionSmartQuery
@@ -1886,6 +1887,37 @@ class GraphqlApi @Inject constructor(
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
+    fun mutationProcessLocalTransfer(
+        pkUsuario: Int,
+        user: String,
+        idBrand: Int,
+        originIdentification: String,
+        idCurrencyOrigin: String,
+        destinationIdentification: String,
+        idCurrencyDestination: String,
+        destinationAccountNumber: String,
+        amount: Double,
+        reason: String,
+        accountToken: Long,
+        exchangeRate: Double
+    ): ApolloCall<ProcessLocalTransferMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            ProcessLocalTransferMutation(
+                pkUsuario = pkUsuario,
+                user = user,
+                idBrand = idBrand,
+                originIdentification = originIdentification,
+                idCurrencyOrigin = idCurrencyOrigin,
+                destinationIdentification = destinationIdentification,
+                idCurrencyDestination = idCurrencyDestination,
+                destinationAccountNumber = destinationAccountNumber,
+                amount = amount,
+                reason = reason,
+                accountToken = accountToken,
+                exchangeRate = exchangeRate
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
     fun queryRelatedContactsByPhone(
         user: String,
         idBrand: Int,
@@ -1914,7 +1946,7 @@ class GraphqlApi @Inject constructor(
      */
     fun mutationUpdateSmartFavoriteContact(
         idFavorite: Long?,
-        idAccountType: Int,
+        idAccountType: Int?,
         idCustomer: Long,
         accountNumber: String,
         accountName: String?,
@@ -1930,7 +1962,7 @@ class GraphqlApi @Inject constructor(
             idBrand = idBrand,
             user = user,
             idFavorite = Optional.presentIfNotNull(idFavorite),
-            idAccountType = idAccountType,
+            idAccountType = Optional.presentIfNotNull(idAccountType),
             idCustomer = idCustomer,
             accountNumber = accountNumber,
             accountName = Optional.presentIfNotNull(accountName),

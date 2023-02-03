@@ -132,6 +132,7 @@ class SavingAmountViewModel @Inject constructor(
 
     override fun onAmountCompleted() {
         getExchangeOnCompleted(
+            isPayment = true,
             abbreviation = destinyCurrency?.disbursementValue ?: "",
             idOriginCurrency = originCurrency?.id.toString(),
             idDestinationCurrency = destinyCurrency?.id.toString()

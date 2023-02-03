@@ -131,7 +131,6 @@ fun RegisteredUserOtpScreen(
     viewModel.apply {
         RegisteredUserOtpContent(
             uiState = uiState,
-            maskedPhoneNumber = userData?.maskedPhoneNumber.orEmpty(),
             onOtpValueChange = { value -> onUIEvent(OnOtpValueChange(value)) },
             onOtherPhoneNumberClick = { onUIEvent(OnOtherPhoneNumberClick) },
             getPhaseResourceString = { getPhaseResourceString() },
@@ -146,7 +145,6 @@ fun RegisteredUserOtpScreen(
 @Preview
 fun RegisteredUserOtpContent(
     uiState: UIState = UIState(),
-    maskedPhoneNumber: String = "",
     onOtpValueChange: (String) -> Unit = {},
     onOtherPhoneNumberClick: () -> Unit = {},
     getPhaseResourceString: () -> Int = { R.string.empty },
@@ -176,8 +174,8 @@ fun RegisteredUserOtpContent(
                         fontWeight = FontWeight.SemiBold
                     ),
                     text = stringResource(
-                        id = R.string.registered_user_otp_title,
-                        maskedPhoneNumber
+                        id = uiState.titleResource,
+                        uiState.titleOtpMethod
                     ),
                     textAlign = TextAlign.Start,
                     modifier = Modifier.padding(top = 24.dp).fillMaxWidth()

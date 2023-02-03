@@ -1514,8 +1514,18 @@
     <string name="registered_user_email_placeholder" translatable="false">nombre@email.com</string>
     <string name="registered_user_email_required" translatable="false">El correo electrónico es requerido</string>
 
+    <!-- Registered User Otp Options-->
+    <string name="registered_user_otp_options_title" translatable="false">Verificación de identidad</string>
+    <string name="registered_user_otp_options_title_cr" translatable="false">Verificación de identidad</string>
+    <string name="registered_user_otp_options_message" translatable="false">¿Dónde quieres recibir el código?</string>
+    <string name="registered_user_otp_options_message_cr" translatable="false">¿Dónde querés recibir el código?</string>
+    <string name="registered_user_otp_options_email" translatable="false">Correo electrónico anterior</string>
+    <string name="registered_user_otp_options_sms" translatable="false">SMS</string>
+    <string name="registered_user_otp_options_button" translatable="false">Enviar código</string>
+
     <!-- Registered User Otp -->
-    <string name="registered_user_otp_title" translatable="false">Te enviamos un SMS \na tu celular %s</string>
+    <string name="registered_user_otp_title_sms" translatable="false">Te enviamos un SMS \na tu celular %s</string>
+    <string name="registered_user_otp_title_email" translatable="false">Te enviamos un correo \nal %s</string>
     <string name="registered_user_otp_subtitle" translatable="false">Ingresá el código que te enviamos para verificar tu identidad.</string>
     <string name="registered_user_otp_blocked_dialog_title" translatable="false">Usuario bloqueado.</string>
     <string name="registered_user_otp_blocked_dialog_description" translatable="false">Tu usuario ha sido bloqueado porque no hemos podido verificar tu número de teléfono. \nContactá a servicio al cliente</string>

@@ -716,7 +716,7 @@
     <string name="sign_credit_dialog_continue" translatable="false">Continuar</string>
 
     <string name="continue_validating_identity_title" translatable="false">Estás cerca de recibir tu crédito</string>
-    <string name="continue_validating_identity_subtitle" translatable="false">Estamos terminando de validar tus datos</string>
+    <string name="continue_validating_identity_subtitle" translatable="false">Estamos validando tus datos. Pronto te daremos una respuesta.</string>
 
     <!-- Sign Documents limit reached -->
     <string name="sign_credit_max_attempts_title" translatable="false">!Te vamos a extrañar!</string>
@@ -760,6 +760,7 @@
     <string name="visa_card_masked_number" translatable="false">Visa ••••%s</string>
     <string name="visa_card_dialog_title" translatable="false">Vincular tarjeta</string>
     <string name="visa_card_dialog_description" translatable="false">¿Estás seguro que deseas vincular tu tarjeta a este dispositivo?</string>
+    <string name="visa_card_dialog_description_cr" translatable="false">¿Estás seguro que deseás vincular tu tarjeta a este dispositivo?</string>
     <string name="visa_card_success_message_label" translatable="false">La tarjeta fue tokenizada exitosamente</string>
     <string name="visa_card_password_message_title" translatable="false">Validación de identidad</string>
     <string name="visa_card_password_message_subtitle" translatable="false">No es posible validar tu identidad con biometricos.</string>
@@ -1423,11 +1424,13 @@
     <string name="card_preferences_unlinked_card_title" translatable="false">Tarjeta desvinculada</string>
     <string name="card_preferences_linked_card_description" translatable="false">Al desvincular tu tarjeta no podrás\nrealizar ninguna transacción con\nMultiMoney Visa</string>
     <string name="card_preferences_linked_card_dialog_title" translatable="false">Vincular tarjeta</string>
-    <string name="card_preferences_linked_card_dialog_description" translatable="false">¿Estás seguro que deseás vincular tu tarjeta a este dispositivo?</string>
+    <string name="card_preferences_linked_card_dialog_description_cr" translatable="false">¿Estás seguro que deseás vincular tu tarjeta a este dispositivo?</string>
+    <string name="card_preferences_linked_card_dialog_description" translatable="false">¿Estás seguro que deseas vincular tu tarjeta a este dispositivo?</string>
     <string name="card_preferences_linked_card_dialog_positive_button" translatable="false">Vincular</string>
     <string name="card_preferences_linked_card_dialog_negative_button" translatable="false">Cancelar</string>
     <string name="card_preferences_unlinked_card_dialog_title" translatable="false">Desvincular tarjeta</string>
-    <string name="card_preferences_unlinked_card_dialog_description" translatable="false">¿Estás seguro que deseás desvincular tu tarjeta?</string>
+    <string name="card_preferences_unlinked_card_dialog_description_cr" translatable="false">¿Estás seguro que deseás desvincular tu tarjeta?</string>
+    <string name="card_preferences_unlinked_card_dialog_description" translatable="false">¿Estás seguro que deseas desvincular tu tarjeta?</string>
     <string name="card_preferences_unlinked_card_dialog_positive_button" translatable="false">Desvincular</string>
     <string name="card_preferences_unlinked_card_dialog_negative_button" translatable="false">Cancelar</string>
     <string name="card_preferences_unlinked_card_toast" translatable="false">Tu tarjeta ha sido desvinculada</string>
@@ -1464,6 +1467,9 @@
 
     <!-- Crypto list currencies for purchase -->
     <string name="crypt_list_purchase_title" translatable="false">¿Cuál moneda querés comprar?</string>
+
+    <!-- Crypto list currencies for send -->
+    <string name="crypt_list_send_title" translatable="false">¿Cuál moneda querés enviar?</string>
 
     <!-- Registeres User Email -->
     <string name="registered_user_email_title" translatable="false">Tenemos tu correo  %s registrado en MultiMoney</string>

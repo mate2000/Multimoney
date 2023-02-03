@@ -140,6 +140,7 @@ fun MarketCurrencyDetailsScreen(
                 }
             ))
         },
+
         onNavigateToBuyCrypto = {
             if(viewModel.uiState.idBrand == Brand.ElSalvador.id){
                 if (viewModel.uiState.shouldDisplayDisclaimer) {
@@ -153,6 +154,7 @@ fun MarketCurrencyDetailsScreen(
             }
         },
         onBackPressed = { viewModel.onUIEvent(OnNavigateBack) },
+        onNavigateToSendCrypto = { viewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnNavigateToCryptoSendFlow) },
     )
     ConfirmationBottomSheet(
         modalBottomSheetState = viewModel.uiState.bottomSheetVisibleState,
@@ -180,7 +182,8 @@ fun MarketCurrencyDetailsScreenContent(
     onDateFilterSelected: (Long) -> Unit = {},
     onOpenCryptoNew: (String) -> Unit = {},
     onNavigateToBuyCrypto: () -> Unit = {},
-    onBackPressed: () -> Unit = {}
+    onBackPressed: () -> Unit = {},
+    onNavigateToSendCrypto: () -> Unit = {},
 ) {
     val selected = remember { mutableStateOf(true) }
     var selectedDateRange by remember { mutableStateOf(FilterDateByDays.YESTERDAY.time) }
@@ -198,7 +201,7 @@ fun MarketCurrencyDetailsScreenContent(
                 hasBalanceAction = { onNavigateToBuyCrypto() },
                 sellAction = { /* todo: go to sell crypto flow */ },
                 giveAction = { /* todo: go to receive crypto flow */ },
-                sendAction = { /* todo: go to send crypto flow */ }
+                sendAction = { onNavigateToSendCrypto() },
             )
         }
     ) { paddingValues ->

@@ -627,6 +627,9 @@ fun ProductCtaFooterExpanded(
                 hasBalanceAction = {
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToPurchaseCryptoFlow)
                 },
+                onSendActionClicked = {
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSendCryptoFlow)
+                }
             )
         }
     }

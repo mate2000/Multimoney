@@ -44,15 +44,15 @@ fun OwnTransferSuccessScreen(
             ),
             amount = viewModel.getFormattedAmount(),
             exchangedAmount = viewModel.amountUIState.convertedAmountLabel,
-            fromToText = stringResource(R.string.smart_payment_to_account),
+            fromToText = stringResource(R.string.smart_payment_amount_bottom_sheet_to),
             showButton = false
         ) {
             SmartPaymentInfoItem(
                 verticalAlignment = Alignment.CenterVertically,
-                icon = viewModel.amountUIState.originAccountDisplay?.icon ?: 0,
-                title = stringResource(R.string.smart_payment_origin_account_label),
+                icon = viewModel.amountUIState.destinyAccountDisplay?.icon ?: 0,
+                title = viewModel.amountUIState.destinyAccountDisplay?.sheetTitle ?: "",
                 subtitle = getMaskedAccountIban(
-                    viewModel.smartAccount?.ibanAccountNumber ?: ""
+                    viewModel.smartDestiny?.ibanAccountNumber ?: ""
                 )
             )
 

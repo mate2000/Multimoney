@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -60,7 +60,6 @@ fun PaymentSuccessResult(
     savePayText: String,
     amount: String,
     exchangedAmount: String? = null,
-    isTransferOperation: Boolean = true,
     fromToText: String,
     buttonText: String = "",
     showButton: Boolean = true,
@@ -83,7 +82,7 @@ fun PaymentSuccessResult(
                 .onGloballyPositioned {
                     capturingViewBounds = it.boundsInRoot()
                 },
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.TopCenter
         ) {
             CustomImage(
                 modifier = Modifier.fillMaxSize(),
@@ -92,7 +91,6 @@ fun PaymentSuccessResult(
             )
             Column(
                 modifier = Modifier.fillMaxWidth()
-                    .padding(bottom = 16.dp)
             ) {
                 Column(
                     modifier = Modifier.fillMaxWidth()
@@ -101,7 +99,7 @@ fun PaymentSuccessResult(
                 ) {
                     Text(
                         text = stringResource(string.smart_payment_success),
-                        modifier = Modifier.padding(top = 16.dp),
+                        modifier = Modifier.padding(top = 32.dp),
                         style = Typography.subtitle1.copy(fontWeight = FontWeight.SemiBold),
                         color = MultimoneyTheme.colors.text
                     )
@@ -115,8 +113,7 @@ fun PaymentSuccessResult(
                         modifier = Modifier
                             .padding(
                                 start = 24.dp,
-                                end = 24.dp,
-                                top = 12.dp
+                                end = 24.dp
                             )
                             .fillMaxWidth(),
                         elevation = ButtonDefaults.elevation(
@@ -129,22 +126,20 @@ fun PaymentSuccessResult(
                     )
                     Text(
                         text = savePayText,
-                        modifier = Modifier.padding(top = 12.dp),
-                        style = Typography.body1,
+                        style = Typography.body1.copy(letterSpacing = -(0.32.sp)),
                         color = MultimoneyTheme.colors.text
                     )
                     Text(
                         modifier = Modifier.fillMaxWidth(),
                         text = amount,
-                        style = Typography.h4.copy(fontWeight = FontWeight.W600),
+                        style = Typography.h4.copy(
+                            fontWeight = FontWeight.W600
+                        ),
                         color = MultimoneyTheme.colors.text,
                         textAlign = TextAlign.Center
                     )
-                    if (exchangedAmount.isNullOrBlank().not() && isTransferOperation) {
-                        ExchangeTotalLabel(
-                            showIcon = false,
-                            totalConverted = exchangedAmount.orEmpty()
-                        )
+                    if (exchangedAmount.isNullOrBlank().not()) {
+                        ExchangeTotalLabel(totalConverted = exchangedAmount.orEmpty())
                     }
                 }
                 Box(
@@ -159,12 +154,11 @@ fun PaymentSuccessResult(
                 )
                 Text(
                     text = fromToText,
-                    modifier = Modifier.padding(start = 21.dp, top = 16.dp),
+                    modifier = Modifier.padding(start = 21.dp, top = 16.dp, bottom = 8.dp),
                     style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
                     color = MultimoneyTheme.colors.labelText
                 )
                 infoContent()
-                Spacer(Modifier.height(16.dp))
             }
         }
         if (showButton) {
@@ -172,12 +166,7 @@ fun PaymentSuccessResult(
                 onClick = onButtonClick,
                 text = buttonText,
                 modifier = Modifier
-                    .padding(
-                        start = 16.dp,
-                        end = 16.dp,
-                        bottom = 32.dp,
-                        top = 16.dp
-                    )
+                    .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
                     .fillMaxWidth()
                     .height(48.dp),
                 buttonType = PrimaryPrimary
@@ -191,7 +180,7 @@ fun PaymentSuccessResult(
 private fun PaymentSuccessResultPreview() {
     PaymentSuccessResult(
         onShareClick = { _, _ -> },
-        savePayText = "Ahorrado",
+        savePayText = "Monto ahorrado a tu cuenta smart | $",
         amount = "$500",
         exchangedAmount = "Q3200",
         fromToText = "Desde",

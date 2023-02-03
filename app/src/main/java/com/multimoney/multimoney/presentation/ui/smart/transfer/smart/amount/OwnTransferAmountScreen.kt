@@ -12,7 +12,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnAbandonFlow
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnAmountCompleted
@@ -139,9 +138,7 @@ private fun OwnTransferAmountBottomSheet(viewModel: OwnTransferAmountViewModel) 
         saveSendTitleResource = R.string.smart_payment_sheet_send_title,
         amount = viewModel.getFormattedAmount(),
         exchangedAmount = viewModel.amountUIState.convertedAmountLabel,
-        fromLabel = stringResource(
-            viewModel.amountUIState.originAccountDisplay?.sheetLabel ?: R.string.empty
-        ),
+        fromLabel = stringResource(R.string.smart_payment_amount_bottom_sheet_from),
         fromTitle = viewModel.amountUIState.originAccountDisplay?.sheetTitle
             ?: stringResource(
                 viewModel.amountUIState.originAccountDisplay?.sheetTitleResource ?: R.string.empty
@@ -163,7 +160,7 @@ private fun OwnTransferAmountBottomSheet(viewModel: OwnTransferAmountViewModel) 
             ),
         toIcon = viewModel.amountUIState.destinyAccountDisplay?.icon,
         motive = viewModel.amountUIState.motive,
-        buttonText = stringResource(string.button_continue),
+        buttonText = stringResource(R.string.button_continue),
         buttonAction = { viewModel.onAmountUIEvent(OnCallProcessTransfer) }
     )
 }

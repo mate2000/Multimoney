@@ -28,17 +28,13 @@ import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.Companion.CURRENCY_SEPARATOR
 import com.multimoney.multimoney.presentation.uielement.CurrencyAmountInput
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.VoucherCurrencyExchangeInfo
 import com.multimoney.multimoney.presentation.util.addTextStyleToTextPortion
-import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
-import com.multimoney.multimoney.presentation.util.filterInvalidAmountInput
-import com.multimoney.multimoney.presentation.util.transformation.CurrencyDoubleTransformation
-import com.multimoney.multimoney.presentation.util.transformation.CurrencyIntegerTransformation
+import com.multimoney.multimoney.presentation.util.transformation.formatDecimalMoney
 
 @Composable
 fun SmartAmountBody(
@@ -96,15 +92,13 @@ fun SmartAmountBody(
             }
             CurrencyAmountInput(
                 modifier = Modifier.padding(top = 24.dp),
+                textStyle = Typography.h4.copy(
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.W700
+                ),
                 value = currentAmount,
                 placeHolder = stringResource(id = amountPlaceHolderId),
-                onValueChange = {
-                    if (currency == CurrencyType.Colon.symbol) {
-                        onAmountChange(it.filter { value -> value.isDigit() })
-                    } else {
-                        onAmountChange(it.filterInvalidAmountInput())
-                    }
-                },
+                onValueChange = { onAmountChange(it) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                     imeAction = if (motive != null) {
@@ -122,17 +116,7 @@ fun SmartAmountBody(
                     }
                 ),
                 isRequired = true,
-                customTransformation = if (currency == CurrencyType.Colon.symbol) {
-                    CurrencyIntegerTransformation(
-                        currency,
-                        CURRENCY_SEPARATOR
-                    )
-                } else {
-                    CurrencyDoubleTransformation(
-                        currency,
-                        CURRENCY_SEPARATOR
-                    )
-                },
+                customTransformation = formatDecimalMoney(currency),
                 onDebounceValidation = onDebounceValidation,
                 errorMessage = amountErrorMessage,
                 isError = isAmountError == true

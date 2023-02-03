@@ -190,7 +190,7 @@ private fun SavingAmountBottomSheet(viewModel: SavingAmountViewModel) {
         } else {
             null
         },
-        fromLabel = stringResource(viewModel.amountUIState.originAccountDisplay?.sheetLabel ?: R.string.empty),
+        fromLabel = stringResource(R.string.smart_payment_amount_bottom_sheet_from),
         fromTitle = viewModel.amountUIState.originAccountDisplay?.sheetTitle
             ?: stringResource(viewModel.amountUIState.originAccountDisplay?.sheetTitleResource ?: R.string.empty),
         fromSubtitle = viewModel.amountUIState.originAccountDisplay?.sheetSubtitle

@@ -56,7 +56,7 @@ fun SmartPaymentInfoItem(
         modifier = modifier
             .height(IntrinsicSize.Min)
             .fillMaxWidth()
-            .padding(start = 24.dp, top = 24.dp, end = 24.dp),
+            .padding(start = 24.dp, end = 24.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Row(

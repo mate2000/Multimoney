@@ -83,14 +83,32 @@
     <string name="error_try_again" translatable="false">Intentalo nuevamente</string>
     <string name="error_button_try_again" translatable="false">Intentar de nuevo</string>
 
-    <!-- OnBoarding -->
-    <string name="onboarding_step_one_title" translatable="false">Multiplicá tus ahorros</string>
-    <string name="onboarding_step_one_sub_title" translatable="false">Ganá 3.5% de interés anual.</string>
-    <string name="onboarding_step_two_title" translatable="false">Tu crédito en 5 minutos</string>
-    <string name="onboarding_step_two_sub_title" translatable="false">Recibí hasta [moneda] [monto máx] con solo tu identificación.</string>
-    <string name="onboarding_step_three_title" translatable="false">Invierte en cripto</string>
-    <string name="onboarding_step_three_sub_title" translatable="false">Comprá, vendé y transferí cripto de forma simple y segura.</string>
+    <!-- OnBoarding Salvador-->
+    <string name="onboarding_salvador_step_one_title" translatable="false">Multiplicá tus ahorros</string>
+    <string name="onboarding_salvador_step_one_sub_title" translatable="false">Ganá 3.5% de interés anual.</string>
+    <string name="onboarding_salvador_step_two_title" translatable="false">Tu crédito en 5 minutos</string>
+    <string name="onboarding_salvador_step_two_sub_title" translatable="false">Recibe hasta $25,000 con solo tu DUI.</string>
+    <string name="onboarding_salvador_step_three_title" translatable="false">Invierte en cripto</string>
+    <string name="onboarding_salvador_step_three_sub_title" translatable="false">Compra y vende cripto de forma simple y segura.</string>
     <string name="onboarding_account_already_created" translatable="false">Ya tengo cuenta</string>
+
+    <!-- OnBoarding Costa Rica-->
+    <string name="onboarding_costa_rica_step_one_title" translatable="false">Multiplicá tus ahorros</string>
+    <string name="onboarding_costa_rica_step_one_sub_title" translatable="false">Ganá 7% de interés anual en colones y 3.25% en dólares.</string>
+    <string name="onboarding_costa_rica_step_two_title" translatable="false">Tu crédito en 5 minutos</string>
+    <string name="onboarding_costa_rica_step_two_sub_title" translatable="false">Recibí hasta ₡20 millones con solo tu identificación.</string>
+    <string name="onboarding_costa_rica_step_three_title" translatable="false">Invertí en cripto</string>
+    <string name="onboarding_costa_rica_step_three_sub_title" translatable="false">Comprá, vendé y transferí cripto de forma simple y segura.</string>
+
+
+    <!-- OnBoarding Guatemala-->
+    <string name="onboarding_guatemala_step_one_title" translatable="false">Compra con MultiMoney Visa</string>
+    <string name="onboarding_guatemala_step_one_sub_title" translatable="false">Actívala en 5 minutos.</string>
+    <string name="onboarding_guatemala_step_two_title" translatable="false">Tu crédito en 5 minutos</string>
+    <string name="onboarding_guatemala_step_two_sub_title" translatable="false">Recibe hasta Q200 mil con solo tu DPI.</string>
+    <string name="onboarding_guatemala_step_three_title" translatable="false">Paga tu crédito desde la app</string>
+    <string name="onboarding_guatemala_step_three_sub_title" translatable="false">Sin salir de tu casa, en el momento que quieras.</string>
+
 
     <!-- Sign In -->
     <string name="sign_in_title" translatable="false">¡Que bueno \ntenerte por acá!</string>
@@ -619,6 +637,14 @@
     <string name="credit_monthly_income_dui_expiration_date_label" translatable="false">Fecha de vencimiento de DUI</string>
     <string name="credit_monthly_income_dui_emission_place_label" translatable="false">Lugar de emisión de DUI</string>
     <string name="credit_monthly_income_dui_date_placeholder" translatable="false">00 | 00 | 0000</string>
+    <string name="credit_monthly_income_job_workplace_label" translatable="false">Nombre de la empresa</string>
+    <string name="credit_monthly_income_job_workplace_required" translatable="false">Nombre de la empresa requerido</string>
+    <string name="credit_monthly_income_job_joined_date" translatable="false">Fecha en que ingresaste</string>
+    <string name="credit_monthly_income_job_date_placeholder" translatable="false">00 | 00 | 0000</string>
+    <string name="credit_monthly_income_job_phone_placeholder_sv" translatable="false">0000 0000</string>
+    <string name="credit_monthly_income_job_phone_number_crosseling" translatable="false">Teléfono de la empresa</string>
+    <string name="credit_monthly_income_job_phone_required" translatable="false">Número de teléfono requerido</string>
+    <string name="credit_monthly_income_job_phone_error" translatable="false">Número invalido</string>
 
     <!-- Credit Job-->
     <string name="credit_job_title" translatable="false">Hablemos de tu trabajo</string>
@@ -882,6 +908,7 @@
     <string name="smart_payment_you_saved_on_your_smart_account" translatable="false">Has ahorrado en tu cuenta Smart | %s</string>
     <string name="smart_payment_from_label" translatable="false">Desde</string>
     <string name="smart_payment_origin_account_label" translatable="false">Cuenta de origen</string>
+    <string name="smart_payment_destiny_account_label" translatable="false">Cuenta de destino</string>
     <string name="smart_payment_motive" translatable="false">Motivo</string>
     <string name="smart_payment_amount_debited" translatable="false">Monto debitado</string>
     <string name="smart_payment_exchange_rate_label" translatable="false">Tipo de cambio</string>
@@ -1406,6 +1433,7 @@
     <string name="smart_my_contacts_transfer_accounts_add" translatable="false">Agregar cuenta</string>
     <string name="smart_mycontacts_total_transfer_title" translatable="false">%1s contactos encontrados</string>
     <string name="smart_my_concts_placeholder" translatable="false">Buscar contacto</string>
+    <string name="smart_my_contacts_select_favorite_account" translatable="false">Seleccionar como favorito</string>
     <string name="smart_my_contacts_invite_CR" translatable="false">Invitá a tus amigos a usar MultiMoney.\nTus contactos que la tengan\naparecerán aquí.</string>
     <string name="smart_my_contacts_invite_SV" translatable="false">Invita a tus amigos a usar MultiMoney.\nTus contactos que la tengan\naparecerán aquí.</string>
 
@@ -1519,5 +1547,14 @@
     <string name="password_security_bottom_sheet_general_title" translatable="false">Por tu seguridad,\nNO compartás tu\ncontraseña</string>
     <string name="password_security_bottom_sheet_general_description" translatable="false">Nunca te solicitaremos tu contraseña\nfuera de la aplicación.\n</string>
     <string name="password_security_bottom_sheet_signup_description" translatable="false">Nadie más debe de pedírtela.\nTu contraseña es personal y privada, con\nella autorizarás todas tus transferencias.</string>
+
+    <!-- Crosseling-->
+    <string name="crosseling_account_sv_title" translatable="false">¿Dónde querés recibir tu crédito?</string>
+    <string name="crosseling_account_gt_title" translatable="false">¿Dónde quieres recibir tu crédito?</string>
+    <string name="crosseling_account_cr_title" translatable="false">¿En cúal cuenta IBAN querés \nrecibir tu dinero?</string>
+    <string name="crosseling_close_dialog_title" translatable="false">Abandonar proceso</string>
+    <string name="crosseling_close_dialog_description" translatable="false">¿Estás seguro de abandonar el proceso?</string>
+    <string name="crosseling_close_dialog_positive_button_text" translatable="false">Cancelar</string>
+    <string name="crosseling_close_dialog_negative_button_text" translatable="false">Continuar</string>
 
 </resources>

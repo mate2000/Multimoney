@@ -603,7 +603,7 @@ class VisaCardViewModel @Inject constructor(
             is OnOpenDialogConfirmToStartTokenizationProcess -> uiState = uiState.copy(
                 dialogParameters = DialogParameters(
                     titleResource = string.visa_card_dialog_title,
-                    descriptionResource = string.visa_card_dialog_description,
+                    descriptionResource = if (idBrand == CostaRica.id) string.visa_card_dialog_description_cr else string.visa_card_dialog_description,
                     positiveResource = string.link,
                     negativeResource = string.cancel,
                     positiveAction = {

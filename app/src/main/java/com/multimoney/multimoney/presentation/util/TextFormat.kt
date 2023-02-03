@@ -65,12 +65,23 @@ fun String.capitalized(): String {
     }
 }
 
-fun getMaskedAccount(accountNumber: String, maskedText: String = ACCOUNT_MASK) =
-    accountNumber.take(ACCOUNT_FIRST_DIGITS).plus(maskedText)
-        .plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
+fun getMaskedAccount(
+    accountNumber: String,
+    maskedText: String = ACCOUNT_MASK,
+    prefix: String = accountNumber.take(ACCOUNT_FIRST_DIGITS)
+) = prefix.plus(maskedText)
+    .plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
 
 fun getMaskedVisaAccount(accountNumber: String, maskedText: String = ACCOUNT_MASK) =
     VISA_MASK.plus(maskedText)
+        .plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
+
+fun getMaskedSmartAccount(
+    prefix: String = Brand.ElSalvador.countryCode.capitalized(),
+    accountNumber: String,
+    maskedText: String = ACCOUNT_MASK
+) =
+    prefix.plus(maskedText)
         .plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
 
 fun getMaskedAccountIban(accountNumber: String, maskedText: String = ACCOUNT_MASK) =
@@ -99,3 +110,4 @@ const val TWO_DECIMALS_FORMAT = "%.2f"
 const val ACCOUNT_MASK = "••••"
 const val VISA_MASK = "Visa"
 const val DOCUMENT_FORMAT_VALUE = '0'
+const val SEPARATOR = " | "

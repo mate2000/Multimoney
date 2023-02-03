@@ -10,6 +10,7 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.interaction.credit.MutationSaveCreditFlowStepUseCase
+import com.multimoney.domain.interaction.credit.MutationSaveCreditOperationUseCase
 import com.multimoney.domain.interaction.credit.QueryScreenConfigUseCase
 import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.util.onFailure
@@ -64,7 +65,8 @@ class CreditViewModel @Inject constructor(
     val dataStorePreferences: DataStorePreferences,
     val saveCreditStepsHelper: SaveCreditStepsHelper,
     private val mutationSaveCreditFlowStepUseCase: MutationSaveCreditFlowStepUseCase,
-    val queryScreenConfigUseCase: QueryScreenConfigUseCase
+    val queryScreenConfigUseCase: QueryScreenConfigUseCase,
+    private val mutationSaveCreditOperationUseCase: MutationSaveCreditOperationUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -226,6 +228,39 @@ class CreditViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess {
                     uiState = uiState.copy(isLoading = false)
+                    if (crosseling) {
+                        if (uiState.currentStep == CreditStep.Three.id) {
+                            onCallSaveCreditOperation()
+                        } else {
+                            nextStep()
+                        }
+                    } else {
+                        nextStep()
+                    }
+                }.onFailure {
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        openDialog = DialogParameters(
+                            description = it.getError() ?: "",
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                }.onLoading {
+                    uiState = uiState.copy(isLoading = true)
+                }
+            }
+        }
+    }
+
+    private fun onCallSaveCreditOperation() {
+        executeUseCase {
+            mutationSaveCreditOperationUseCase.invoke(
+                idUserRequest.toLong(),
+                pkUser.toLong(),
+                email,
+                idBrand.toInt()
+            ).collectLatest { result ->
+                result.onSuccess {
                     nextStep()
                 }.onFailure {
                     uiState = uiState.copy(
@@ -238,6 +273,7 @@ class CreditViewModel @Inject constructor(
                 }.onLoading {
                     uiState = uiState.copy(isLoading = true)
                 }
+
             }
         }
     }

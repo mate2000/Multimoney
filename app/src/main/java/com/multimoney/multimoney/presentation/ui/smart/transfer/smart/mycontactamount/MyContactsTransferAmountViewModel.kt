@@ -12,6 +12,7 @@ import com.multimoney.domain.model.accountsmart.PhoneSmart
 import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.DESTINY_ACCOUNT
@@ -27,9 +28,9 @@ import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getCurrentTime
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.Calendar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
@@ -102,7 +103,7 @@ class MyContactsTransferAmountViewModel @Inject constructor(
                 destinationIdentification = phoneAccount?.identification.orEmpty(),
                 transferType = SmartSinpeTransferType.SEND
             )
-        } else if (idBrand == Brand.ElSalvador.id) {
+        } else if (idBrand == ElSalvador.id) {
             onProcessLocalTransfer()
         }
     }
@@ -145,6 +146,15 @@ class MyContactsTransferAmountViewModel @Inject constructor(
                         showLoadingScreen = false,
                         paymentSuccess = false,
                         showErrorScreen = true
+                    )
+                }
+                result.onMessage {
+                    amountUIState = amountUIState.copy(
+                        errorMessage = it?.messageError?.message ?: "",
+                        errorDetail = it?.messageError?.detail ?: "",
+                        showLoadingScreen = false,
+                        showErrorScreen = true,
+                        paymentSuccess = false
                     )
                 }
             }

@@ -36,6 +36,7 @@ import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.accountsmart.StepByStep
 import com.multimoney.domain.model.accountsmart.VisaSmartPayment
 import com.multimoney.domain.model.util.MultimoneyResult
+import com.multimoney.domain.model.util.MultimoneyResult.Message
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
 import com.multimoney.domain.repository.SmartAccountRepository
@@ -467,7 +468,14 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 user = user
             ),
             apolloCallMapper = { data ->
-                Success(data.mapToDomainModel())
+                if (
+                    (data.sinpeTransfer?.status ?: null) == null ||
+                    (data.sinpeTransfer?.status ?: 0) == 0
+                ) {
+                    Success(data.mapToDomainModel())
+                } else {
+                    Message(data.mapToDomainModel())
+                }
             }
         )
     }
@@ -502,7 +510,14 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 exchangeRate = exchangeRate
             ),
             apolloCallMapper = { data ->
-                Success(data.mapToDomainModel())
+                if (
+                    (data.processLocalTransfer?.status ?: null) == null ||
+                    (data.processLocalTransfer?.status ?: 0) == 0
+                ) {
+                    Success(data.mapToDomainModel())
+                } else {
+                    Message(data.mapToDomainModel())
+                }
             }
         )
     }
@@ -543,10 +558,11 @@ class SmartAccountRepositoryImpl @Inject constructor(
         idBrand: Int,
         user: String
     ): Flow<MultimoneyResult<BankListTransfer365?>> {
-        return fetchData(graphqlApi.queryBankListTransfer365(
-            idBrand = idBrand,
-            user = user
-        ),
+        return fetchData(
+            graphqlApi.queryBankListTransfer365(
+                idBrand = idBrand,
+                user = user
+            ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
             }
@@ -565,18 +581,19 @@ class SmartAccountRepositoryImpl @Inject constructor(
         identificationNumber: String,
         identificationTypeAccount: Int
     ): Flow<MultimoneyResult<ACHAccount?>> {
-        return fetchData(graphqlApi.mutationAddACHAccount(
-            idBrand = idBrand,
-            user = user,
-            accountNumber = accountNumber,
-            titularName = titularName,
-            isFavorite = isFavorite,
-            typeAccountId = typeAccountId,
-            destinationBankId = destinationBankId,
-            description = description,
-            identificationNumber = identificationNumber,
-            identificationTypeAccount = identificationTypeAccount
-        ),
+        return fetchData(
+            graphqlApi.mutationAddACHAccount(
+                idBrand = idBrand,
+                user = user,
+                accountNumber = accountNumber,
+                titularName = titularName,
+                isFavorite = isFavorite,
+                typeAccountId = typeAccountId,
+                destinationBankId = destinationBankId,
+                description = description,
+                identificationNumber = identificationNumber,
+                identificationTypeAccount = identificationTypeAccount
+            ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
             }
@@ -609,7 +626,7 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 phoneNumber = phoneNumber,
                 email = email,
                 active = active,
-                isFavorite = isFavorite,idCurrencyAccount = idCurrencyAccount
+                isFavorite = isFavorite, idCurrencyAccount = idCurrencyAccount
             ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())

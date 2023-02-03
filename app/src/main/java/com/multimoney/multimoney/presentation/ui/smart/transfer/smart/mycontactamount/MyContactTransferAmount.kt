@@ -22,8 +22,10 @@ import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSma
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnMotiveChange
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnNavigateHome
+import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnRetryTransfer
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.SmartAmountBody
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomContactIcon
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
@@ -50,12 +52,20 @@ fun MyContactsTransferAmountScreen(
     if (viewModel.amountUIState.showLoadingScreen) {
         LoadingMultiMoney(string.smart_processing_transaction)
     } else if (viewModel.amountUIState.showErrorScreen) {
-        // todo add error screen
+        AlertResult(
+            titleString = viewModel.amountUIState.errorMessage,
+            isLeftButtonVisible = false,
+            onRightButtonClick = { viewModel.onAmountUIEvent(OnNavigateHome) },
+            descriptionString = viewModel.amountUIState.errorDetail,
+            buttonTextResource = string.error_button_try_again,
+            onButtonClick = { viewModel.onAmountUIEvent(OnRetryTransfer) }
+        )
+
         BackHandler {
             viewModel.onAmountUIEvent(OnNavigateHome)
         }
     } else if (viewModel.amountUIState.paymentSuccess) {
-        // Todo add success screen
+        MyContactsTransferSuccess(viewModel)
         BackHandler { viewModel.onAmountUIEvent(OnNavigateHome) }
     } else {
         MyContactsTransferAmountContent(viewModel)

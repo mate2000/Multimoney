@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact
 
-import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue.Expanded
@@ -40,8 +39,8 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import com.multimoney.multimoney.presentation.util.getCurrencyFromValue
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
@@ -109,9 +108,10 @@ class MyContactsTransferViewModel @Inject constructor(
     }
 
     private fun onNavigateBack() {
-        if (uiState.contactClickBottomSheetState.isVisible) {
+        if (uiState.contactClickBottomSheetState.isVisible || uiState.selectFavoriteContactBottomSheetState.isVisible) {
             uiState = uiState.copy(
-                contactClickBottomSheetState = ModalBottomSheetState(Hidden)
+                contactClickBottomSheetState = ModalBottomSheetState(Hidden),
+                selectFavoriteContactBottomSheetState = ModalBottomSheetState(Hidden)
             )
         } else {
             navigateBack(popTo = Screen.SmartSelectSendingTypeScreen.route, isRestart = false)
@@ -176,9 +176,10 @@ class MyContactsTransferViewModel @Inject constructor(
                 accountName = contactAccountSelected?.titular,
                 email = contactAccountSelected?.email ?: "",
                 active = true,
-                isFavorite = true ,
+                isFavorite = true,
                 phoneNumber = contactAccountSelected?.number,
-                idCurrencyAccount = contactAccountSelected?.currency?.getCurrencyFromValue()?.id ?: 0
+                idCurrencyAccount = contactAccountSelected?.currency?.getCurrencyFromValue()?.id
+                    ?: 0
             ).collectLatest { result ->
                 result.onLoading { uiState = uiState.copy(isLoading = true) }
                 result.onSuccess {
@@ -202,7 +203,9 @@ class MyContactsTransferViewModel @Inject constructor(
         var isLoading: Boolean = false,
         var relatedContactList: Map<String, List<PhoneSmart?>> = mapOf(),
         var selectedContact: List<PhoneSmart> = listOf(),
-        val selectFavoriteContactBottomSheetState: ModalBottomSheetState = ModalBottomSheetState(Hidden),
+        val selectFavoriteContactBottomSheetState: ModalBottomSheetState = ModalBottomSheetState(
+            Hidden
+        ),
         val contactClickBottomSheetState: ModalBottomSheetState = ModalBottomSheetState(Hidden)
     )
 
@@ -211,8 +214,6 @@ class MyContactsTransferViewModel @Inject constructor(
             is OnAddToFavoriteAccountClick -> navigateToAddToFavoriteAccount(uiEvent.contactToFavorite)
             is OnNavigateBack -> onNavigateBack()
             is OnSelectContactAsFavorite -> onSelectContactAsFavorite()
-               OnAddSACAccountClick -> onAddSACAccountClick()
-            OnCallQueryRelatedContactsByPhoneUseCase -> callQueryRelatedContactsByPhoneUseCaseImp()
             is OnAddSACAccountClick -> onAddSACAccountClick()
             is OnQueryValueChange -> onQueryValueChange(uiEvent.value)
             is OnNavigateToHome -> onNavigateToHome()

@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -30,6 +31,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetCloseDialogTexts
+import com.multimoney.multimoney.presentation.ui.credit.origination.account.CrosselingAccountScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.additionalinformation.AdditionalInformationBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.origination.additionalinformation.AdditionalInformationScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountScreen
@@ -91,15 +93,35 @@ fun CreditScreen(
         if (viewModel.idBrand.toInt() == Brand.Guatemala.id) {
             viewModel.onUIEvent(
                 OnSetCloseDialogTexts(
-                    R.string.credit_close_dialog_gt_title,
-                    stringResource(id = R.string.credit_close_dialog_gt_description)
+                    if (viewModel.crosseling) {
+                        R.string.crosseling_close_dialog_title
+                    } else {
+                        R.string.credit_close_dialog_gt_title
+                    },
+                    stringResource(
+                        id = if (viewModel.crosseling) {
+                            R.string.crosseling_close_dialog_description
+                        } else {
+                            R.string.credit_close_dialog_gt_description
+                        }
+                    )
                 )
             )
         } else {
             viewModel.onUIEvent(
                 OnSetCloseDialogTexts(
-                    R.string.credit_close_dialog_title,
-                    stringResource(id = R.string.credit_close_dialog_description)
+                    if (viewModel.crosseling) {
+                        R.string.crosseling_close_dialog_title
+                    } else {
+                        R.string.credit_close_dialog_title
+                    },
+                    stringResource(
+                        id = if (viewModel.crosseling) {
+                            R.string.crosseling_close_dialog_description
+                        } else {
+                            R.string.credit_close_dialog_description
+                        }
+                    )
                 )
             )
         }
@@ -121,56 +143,43 @@ fun CreditScreen(
                 Column {
                     TopNavBar(
                         isLeftButtonVisible = viewModel.uiState.currentStep != CreditStep.One.id && viewModel.uiState.currentStep < CreditStep.Eight.id,
-                        isRightButtonVisible = viewModel.uiState.currentStep <= CreditStep.One.id,
+                        isRightButtonVisible = viewModel.uiState.currentStep <= CreditStep.One.id || viewModel.crosseling,
                         onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
                         onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) }
                     )
-                    if (viewModel.uiState.currentStep > CreditStep.One.id && viewModel.uiState.currentStep < CreditStep.Eight.id) {
-                        StepProgressBar(
-                            steps = if (viewModel.idBrand.toInt() == Brand.CostaRica.id || viewModel.idBrand.toInt() == Brand.Guatemala.id) CREDIT_INDICATOR_TOTAL_STEPS - 1 else CREDIT_INDICATOR_TOTAL_STEPS,
-                            currentStep = if (viewModel.idBrand.toInt() == Brand.CostaRica.id && viewModel.uiState.currentStep > CreditStep.Four.id) viewModel.uiState.currentStep - 2 else viewModel.uiState.currentStep - 1,
-                            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                        )
-                    }
-                }
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState()),
-                    verticalArrangement = Arrangement.SpaceBetween
-                ) {
-                    GetStepContent(
-                        step = viewModel.uiState.currentStep,
-                        onNavigate = onNavigate,
-                        viewModel = viewModel
-                    )
-
-                    Column {
-                        CustomButton(
-                            onClick = { viewModel.onUIEvent(OnContinueClick(focusManager)) },
-                            text = stringResource(id = R.string.button_continue),
-                            modifier = Modifier
-                                .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
-                                .fillMaxWidth()
-                                .height(56.dp),
-                            buttonType = PrimaryPrimary,
-                            enable = viewModel.uiState.isContinueEnabled
-                        )
-                        if (viewModel.uiState.isCurrentLocationButtonVisible) {
-                            CustomButton(
-                                text = stringResource(id = R.string.credit_home_address_select_current_location),
-                                modifier = Modifier
-                                    .padding(top = 12.dp)
-                                    .fillMaxWidth()
-                                    .height(48.dp),
-                                onClick = {
-                                    // active the location to select de current location
-                                },
-                                buttonType = PrimaryTertiaryUnderLined
+                    if (viewModel.crosseling.not()) {
+                        if (viewModel.uiState.currentStep > CreditStep.One.id && viewModel.uiState.currentStep < CreditStep.Eight.id) {
+                            StepProgressBar(
+                                steps = if (viewModel.idBrand.toInt() == Brand.CostaRica.id || viewModel.idBrand.toInt() == Brand.Guatemala.id) CREDIT_INDICATOR_TOTAL_STEPS - 1 else CREDIT_INDICATOR_TOTAL_STEPS,
+                                currentStep = if (viewModel.idBrand.toInt() == Brand.CostaRica.id && viewModel.uiState.currentStep > CreditStep.Four.id) viewModel.uiState.currentStep - 2 else viewModel.uiState.currentStep - 1,
+                                modifier = Modifier.padding(
+                                    start = 16.dp,
+                                    end = 16.dp,
+                                    bottom = 16.dp
+                                )
                             )
                         }
                     }
                 }
+                if (viewModel.crosseling && viewModel.uiState.currentStep == CreditStep.Two.id) {
+                    GetCreditContent(
+                        viewModel = viewModel,
+                        onNavigate = onNavigate,
+                        focusManager = focusManager,
+                        modifier = Modifier
+                            .fillMaxSize()
+                    )
+                } else {
+                    GetCreditContent(
+                        viewModel = viewModel,
+                        onNavigate = onNavigate,
+                        focusManager = focusManager,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                    )
+                }
+
             }
         }
     }
@@ -194,8 +203,56 @@ fun CreditScreen(
     }
 
     if (viewModel.uiState.isBottomSheetVisible) {
-        AdditionalInformationBottomSheet(coroutineScope = coroutineScope, modalBottomSheetState = bottomSheetState) {
+        AdditionalInformationBottomSheet(
+            coroutineScope = coroutineScope,
+            modalBottomSheetState = bottomSheetState
+        ) {
             viewModel.onHideBottomSheet()
+        }
+    }
+}
+
+@Composable
+fun GetCreditContent(
+    viewModel: CreditViewModel = hiltViewModel(),
+    onNavigate: (NavEvent.Navigate) -> Unit = {},
+    focusManager: FocusManager,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        GetStepContent(
+            step = viewModel.uiState.currentStep,
+            onNavigate = onNavigate,
+            viewModel = viewModel
+        )
+
+        Column {
+            CustomButton(
+                onClick = { viewModel.onUIEvent(OnContinueClick(focusManager)) },
+                text = stringResource(id = R.string.button_continue),
+                modifier = Modifier
+                    .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
+                    .fillMaxWidth()
+                    .height(56.dp),
+                buttonType = PrimaryPrimary,
+                enable = viewModel.uiState.isContinueEnabled
+            )
+            if (viewModel.uiState.isCurrentLocationButtonVisible) {
+                CustomButton(
+                    text = stringResource(id = R.string.credit_home_address_select_current_location),
+                    modifier = Modifier
+                        .padding(top = 12.dp)
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    onClick = {
+                        // active the location to select de current location
+                    },
+                    buttonType = PrimaryTertiaryUnderLined
+                )
+            }
         }
     }
 }
@@ -204,14 +261,21 @@ fun CreditScreen(
 fun GetStepContent(
     step: Int,
     onNavigate: (NavEvent.Navigate) -> Unit,
-    viewModel: CreditViewModel
+    viewModel: CreditViewModel,
 ) {
     when (step) {
-        CreditStep.One.id -> CreditAmountScreen(onNavigate = onNavigate, sharedViewModel = viewModel)
-        CreditStep.Two.id -> if (viewModel.idBrand.toInt() == Brand.CostaRica.id) {
-            IbanAccountScreen(sharedViewModel = viewModel)
+        CreditStep.One.id -> CreditAmountScreen(
+            onNavigate = onNavigate,
+            sharedViewModel = viewModel
+        )
+        CreditStep.Two.id -> if (viewModel.crosseling && viewModel.uiState.crosselingNewAccount.not()) {
+            CrosselingAccountScreen(sharedViewModel = viewModel)
         } else {
-            CreditBankScreen(sharedViewModel = viewModel)
+            if (viewModel.idBrand.toInt() == Brand.CostaRica.id) {
+                IbanAccountScreen(sharedViewModel = viewModel)
+            } else {
+                CreditBankScreen(sharedViewModel = viewModel)
+            }
         }
         CreditStep.Three.id -> MonthlyIncomeScreen(sharedViewModel = viewModel)
         CreditStep.Four.id -> JobInfoScreen(sharedViewModel = viewModel)

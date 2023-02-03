@@ -128,6 +128,7 @@ const val PROFILE_CARD_LIST_ORIGIN = "profile_card_list_origin"
 const val SMART_ACCOUNTS_FOR_BUY_CRYPTO = "smart_accounts_for_buy_crypto"
 const val CURRENCY_NAME = "currency_name"
 const val CROSSELING = "crosseling"
+const val OTP_METHOD = "otp_method"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -155,8 +156,13 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "registered_user_email_screen"
     )
 
+    object RegisteredUserOtpOptionsScreen : Screen(
+        "registered_user_otp_options_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}?$ID_BRAND={$ID_BRAND}?$USER_DATA={$USER_DATA}",
+        "registered_user_otp_options_screen"
+    )
+
     object RegisteredUserOtpScreen : Screen(
-        "registered_user_otp_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}?$ID_BRAND={$ID_BRAND}?$USER_DATA={$USER_DATA}",
+        "registered_user_otp_screen?$ID_BRAND={$ID_BRAND}?$USER_DATA={$USER_DATA}?$OTP_METHOD={$OTP_METHOD}",
         "registered_user_otp_screen"
     )
 
@@ -631,7 +637,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "crypto_currency_details_screen"
     )
 
-    object CryptoSendFlow: Screen(
+    object CryptoSendFlow : Screen(
         route = "crypto_send_flow?$CRYPTO_ASSET={$CRYPTO_ASSET}&$DESCRIPTION_CURRENCY={$DESCRIPTION_CURRENCY}",
         baseRoute = "crypto_send_flow"
     )

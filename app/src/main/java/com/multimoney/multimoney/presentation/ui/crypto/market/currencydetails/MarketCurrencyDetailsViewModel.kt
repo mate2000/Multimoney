@@ -18,12 +18,8 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.CRYPTO_ASSET
-import com.multimoney.multimoney.presentation.navigation.CURRENT_CRYPTO_PRICE
 import com.multimoney.multimoney.presentation.navigation.DESCRIPTION_CURRENCY
-import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.URL_IMAGE
-import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
@@ -141,7 +137,7 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
     }
 
     private fun onNavigateToCryptoSendFlow() {
-        navigateTo("${Screen.CryptoSendFlow.baseRoute}?$CRYPTO_ASSET=${uiState.asset}&$DESCRIPTION_CURRENCY=${uiState.description}")
+        navigateTo("${Screen.CryptoSendFlow.baseRoute}?$CRYPTO_ASSET=${uiState.selectedCryptoCoin?.baseAsset}&$DESCRIPTION_CURRENCY=${uiState.selectedCryptoCoin?.description}")
     }
 
     data class UiState(

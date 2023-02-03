@@ -126,7 +126,7 @@ fun CustomInfoButton(
                         }
                         bottom.linkTo(subTitleId.top)
                         height = Dimension.wrapContent
-                        width = Dimension.fillToConstraints
+                        width = Dimension.wrapContent
                     },
                     style = Typography.body2.copy(
                         fontWeight = FontWeight.SemiBold,
@@ -136,16 +136,16 @@ fun CustomInfoButton(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-//                if (titleIcon != null) {
+                if (titleIcon != null) {
                     Image(
                         painter = painterResource(id = R.drawable.ic_star_filled),
                         contentDescription = "",
                         modifier = imageModifier.constrainAs(titleIconId) {
-                            top.linkTo(titleId.top)
-                            start.linkTo(titleId.absoluteRight)
+                            top.linkTo(parent.top, margin = 19.dp)
+                            start.linkTo(titleId.end, margin = 4.64.dp)
                         }
                     )
-//                }
+                }
                 Text(
                     text = subtitle,
                     modifier = Modifier.constrainAs(subTitleId) {

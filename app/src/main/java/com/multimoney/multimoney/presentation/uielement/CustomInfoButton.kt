@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.ButtonDefaults
@@ -19,6 +21,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.ui.text.PlaceholderVerticalAlign
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -109,8 +114,36 @@ fun CustomInfoButton(
                 )
             }
             if (subtitle.isNotEmpty()) {
+                val myId = "inlineContent"
+                val textWithIcon = buildAnnotatedString {
+                    append(title)
+                    append(" ")
+                    appendInlineContent(myId, "[icon]")
+                }
+
+                val inlineContent = mapOf(
+                    Pair(
+                        myId,
+                        InlineTextContent(
+                            Placeholder(
+                                width = 12.sp,
+                                height = 12.sp,
+                                placeholderVerticalAlign = PlaceholderVerticalAlign.AboveBaseline,
+                            )
+                        ) {
+                            if (titleIcon!=null){
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_star_filled),
+                                    contentDescription = "",
+                                )
+                            } else {
+                                R.string.empty
+                            }
+                        }
+                    )
+                )
                 Text(
-                    text = title,
+                    text = textWithIcon,
                     modifier = Modifier.constrainAs(titleId) {
                         if (startIcon != null) {
                             top.linkTo(parent.top, margin = 16.dp)
@@ -126,7 +159,7 @@ fun CustomInfoButton(
                         }
                         bottom.linkTo(subTitleId.top)
                         height = Dimension.wrapContent
-                        width = Dimension.wrapContent
+                        width = Dimension.fillToConstraints
                     },
                     style = Typography.body2.copy(
                         fontWeight = FontWeight.SemiBold,
@@ -134,18 +167,9 @@ fun CustomInfoButton(
                     ),
                     color = titleColor,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    inlineContent = inlineContent
                 )
-                if (titleIcon != null) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_star_filled),
-                        contentDescription = "",
-                        modifier = imageModifier.constrainAs(titleIconId) {
-                            top.linkTo(parent.top, margin = 19.dp)
-                            start.linkTo(titleId.end, margin = 4.64.dp)
-                        }
-                    )
-                }
                 Text(
                     text = subtitle,
                     modifier = Modifier.constrainAs(subTitleId) {

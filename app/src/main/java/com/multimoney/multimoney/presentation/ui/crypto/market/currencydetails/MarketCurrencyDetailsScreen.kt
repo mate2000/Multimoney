@@ -97,9 +97,9 @@ fun MarketCurrencyDetailsScreen(
         currencyHistoricalPrices = marketCurrencyDetailsViewModel.uiState.getHistoricalCurrencyPrices,
         currencyNews = marketCurrencyDetailsViewModel.uiState.currencyNews,
         idBrand = marketCurrencyDetailsViewModel.uiState.idBrand ?: 0,
-        description = marketCurrencyDetailsViewModel.uiState.description ?: "",
-        currentPrice = marketCurrencyDetailsViewModel.uiState.currentPrice?.toDouble() ?: 0.0,
-        urlImage = marketCurrencyDetailsViewModel.uiState.urlImage ?: "",
+        description = marketCurrencyDetailsViewModel.uiState.selectedCryptoCoin?.description ?: "",
+        currentPrice = marketCurrencyDetailsViewModel.uiState.selectedCryptoCoin?.currentPrice ?: 0.0,
+        urlImage = marketCurrencyDetailsViewModel.uiState.selectedCryptoCoin?.url_image ?: "",
         onDateFilterSelected = { dateFilter ->
             marketCurrencyDetailsViewModel.onUIEvent(
                 OnGetCurrencyHistoricalPrices(daysToSubtract = dateFilter)

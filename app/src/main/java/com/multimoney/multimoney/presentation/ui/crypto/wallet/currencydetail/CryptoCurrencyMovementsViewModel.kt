@@ -10,6 +10,7 @@ import com.multimoney.domain.interaction.crypto.GetCurrencyHistoricalPricesUseCa
 import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
 import com.multimoney.domain.model.crypto.CurrencyHistoricPrice
+import com.multimoney.domain.model.crypto.MarketCryptoCoin
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onSuccess
@@ -20,7 +21,9 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_CURRENCY
+import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
@@ -118,7 +121,17 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
     }
 
     private fun onNavigateToSelectAccount(){
-        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}&$DESCRIPTION_CURRENCY=${uiState.cryptoItem?.descriptionCurrency}")
+        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}?$ITEM_CRYPTO_MARKET=${encodeData(MarketCryptoCoin(
+            description = uiState.cryptoItem?.descriptionCurrency ?: "",
+            baseAsset = uiState.cryptoItem?.asset ?: "",
+            url_image = uiState.cryptoItem?.url_image ?: "",
+            cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: "",
+            amountchange = "",
+            priority = 0,
+            currentPrice = 0.0,
+            historico = false,
+            percentChange = ""
+        ))}")
     }
 
     fun onUIEvent(event: UIEvent) {

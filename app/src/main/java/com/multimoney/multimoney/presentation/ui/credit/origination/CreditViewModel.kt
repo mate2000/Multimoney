@@ -229,7 +229,7 @@ class CreditViewModel @Inject constructor(
                 result.onSuccess {
                     uiState = uiState.copy(isLoading = false)
                     if (crosseling) {
-                        if (uiState.currentStep == CreditStep.Three.id) {
+                        if (uiState.currentStep == CreditStep.Four.id) {
                             onCallSaveCreditOperation()
                         } else {
                             nextStep()

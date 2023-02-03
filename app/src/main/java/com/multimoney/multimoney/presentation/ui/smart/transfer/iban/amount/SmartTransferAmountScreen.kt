@@ -139,7 +139,6 @@ private fun SmartTransferBottomSheet(viewModel: SmartTransferAmountViewModel) {
         saveSendTitleResource = R.string.smart_payment_sheet_send_title,
         amount = viewModel.getFormattedAmount(),
         exchangedAmount = if (viewModel.shouldDisplayExchange) viewModel.amountUIState.convertedAmountLabel else null,
-        fromLabel = stringResource(R.string.smart_payment_amount_bottom_sheet_from),
         fromIcon = viewModel.amountUIState.originAccountDisplay?.icon,
         fromTitle = viewModel.amountUIState.originAccountDisplay?.sheetTitle
             ?: stringResource(
@@ -150,7 +149,6 @@ private fun SmartTransferBottomSheet(viewModel: SmartTransferAmountViewModel) {
                 viewModel.amountUIState.originAccountDisplay?.sheetSubtitleResource
                     ?: R.string.empty
             ),
-        toLabel = stringResource(R.string.smart_payment_amount_bottom_sheet_to),
         toIcon = viewModel.amountUIState.destinyAccountDisplay?.icon,
         toTitle = viewModel.amountUIState.destinyAccountDisplay?.sheetTitle.orEmpty(),
         toSubtitle = viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitle,

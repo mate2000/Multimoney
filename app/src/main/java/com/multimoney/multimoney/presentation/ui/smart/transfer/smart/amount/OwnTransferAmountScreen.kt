@@ -138,26 +138,20 @@ private fun OwnTransferAmountBottomSheet(viewModel: OwnTransferAmountViewModel) 
         saveSendTitleResource = R.string.smart_payment_sheet_send_title,
         amount = viewModel.getFormattedAmount(),
         exchangedAmount = viewModel.amountUIState.convertedAmountLabel,
-        fromLabel = stringResource(R.string.smart_payment_amount_bottom_sheet_from),
-        fromTitle = viewModel.amountUIState.originAccountDisplay?.sheetTitle
-            ?: stringResource(
-                viewModel.amountUIState.originAccountDisplay?.sheetTitleResource ?: R.string.empty
-            ),
-        fromSubtitle = viewModel.amountUIState.originAccountDisplay?.sheetSubtitle
-            ?: stringResource(
-                viewModel.amountUIState.originAccountDisplay?.sheetSubtitleResource
-                    ?: R.string.empty
-            ),
+        fromTitle = stringResource(
+            viewModel.amountUIState.originAccountDisplay?.sheetTitleResource ?: R.string.empty
+        ),
+        fromSubtitle = stringResource(
+            viewModel.amountUIState.originAccountDisplay?.sheetSubtitleResource ?: R.string.empty
+        ),
         fromIcon = viewModel.amountUIState.originAccountDisplay?.icon,
-        toLabel = stringResource(R.string.smart_payment_amount_bottom_sheet_to),
-        toTitle = viewModel.amountUIState.destinyAccountDisplay?.sheetTitle ?: stringResource(
+        toTitle = stringResource(
             viewModel.amountUIState.destinyAccountDisplay?.sheetTitleResource ?: R.string.empty
         ),
-        toSubtitle = viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitle
-            ?: stringResource(
-                viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitleResource
-                    ?: R.string.empty
-            ),
+        toSubtitle = stringResource(
+            viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitleResource
+                ?: R.string.empty
+        ),
         toIcon = viewModel.amountUIState.destinyAccountDisplay?.icon,
         motive = viewModel.amountUIState.motive,
         buttonText = stringResource(R.string.button_continue),

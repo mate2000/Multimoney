@@ -54,7 +54,6 @@ class MyContactsTransferAmountViewModel @Inject constructor(
 
             amountUIState = amountUIState.copy(
                 originAccountDisplay = DisplayAccount(
-                    sheetLabel = R.string.smart_payment_amount_bottom_sheet_from,
                     sheetTitleResource = originCurrency?.myAccountSmartSymbol,
                     sheetSubtitle = if (idBrand == ElSalvador.id) null else getMaskedAccountIban(
                         smartAccount?.ibanAccountNumber.orEmpty()
@@ -62,7 +61,6 @@ class MyContactsTransferAmountViewModel @Inject constructor(
                     icon = R.drawable.ic_multimoney_smart
                 ),
                 destinyAccountDisplay = DisplayAccount(
-                    sheetLabel = R.string.smart_payment_amount_bottom_sheet_to,
                     sheetTitle = phoneAccount?.titular,
                     sheetSubtitle = phoneAccount?.number?.plus(SEPARATOR)
                         ?.plus(destinyCurrency?.stringName)

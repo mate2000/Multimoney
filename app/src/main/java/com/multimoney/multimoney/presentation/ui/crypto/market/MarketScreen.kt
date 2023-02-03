@@ -39,7 +39,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.MarketCurrencyItem
-import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreenViewModel.UIEvent.*
+import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreenViewModel.UIEvent
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
@@ -66,11 +66,11 @@ fun MarketScreen(
             onPopAndNavigate = onPopAndNavigate
         )
 
-        viewModel.onUIEvent(OnGetUserInfo)
-        viewModel.onUIEvent(OnGetAvailableListOfCryptoCoins)
+        viewModel.onUIEvent(UIEvent.OnGetUserInfo)
+        viewModel.onUIEvent(UIEvent.OnGetAvailableListOfCryptoCoins)
     }
 
-    BackHandler { viewModel.onUIEvent(OnNavigateBack) }
+    BackHandler { viewModel.onUIEvent(UIEvent.OnNavigateBack) }
     MarketScreenContent()
 }
 
@@ -96,7 +96,7 @@ fun MarketScreenContent(
     Column(modifier = Modifier.background(MultimoneyTheme.colors.background)) {
         TopNavBar(
             isRightButtonVisible = false,
-            onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) }
+            onLeftButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateBack) }
         )
         ModalBottomSheetLayout(
             sheetState = state,
@@ -148,14 +148,14 @@ fun MarketScreenContent(
                         showFilterChip = viewModel.uiState.idBrand == Brand.CostaRica.id,
                         onCurrencyItemClick = { cryptoCurrency ->
                             viewModel.onUIEvent(
-                                OnSetAssetBeforeNavigation(
+                                UIEvent.OnSetAssetBeforeNavigation(
                                     asset = cryptoCurrency.baseAsset,
                                     description = cryptoCurrency.description,
                                     currentPrice = cryptoCurrency.currentPrice.toString().toFloat(),
                                     urlImage = cryptoCurrency.url_image.encodeURLToUTF()
                                 )
                             )
-                            viewModel.onUIEvent(OnNavigateToCurrencyDetails)
+                            viewModel.onUIEvent(UIEvent.OnNavigateToCurrencyDetails)
                         }
                     )
                 }

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -53,7 +52,6 @@ import com.multimoney.multimoney.presentation.uielement.CustomSelector
 import com.multimoney.multimoney.presentation.uielement.Size
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.encodeURLToUTF
 import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlacesWithoutNegatives
 import kotlinx.coroutines.launch
 
@@ -155,10 +153,7 @@ fun MarketScreenContent(
                         onCurrencyItemClick = { cryptoCurrency ->
                             marketViewModel.onUIEvent(
                                 OnSetAssetBeforeNavigation(
-                                    asset = cryptoCurrency.baseAsset,
-                                    description = cryptoCurrency.description,
-                                    currentPrice = cryptoCurrency.currentPrice.toString().toFloat(),
-                                    urlImage = cryptoCurrency.url_image.encodeURLToUTF()
+                                    cryptoCurrency
                                 )
                             )
                             marketViewModel.onUIEvent(OnNavigateToCurrencyDetails)

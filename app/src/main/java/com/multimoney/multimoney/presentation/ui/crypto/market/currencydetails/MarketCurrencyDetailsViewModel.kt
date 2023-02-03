@@ -10,6 +10,7 @@ import com.multimoney.domain.interaction.crypto.GetCurrencyHistoricalPricesUseCa
 import com.multimoney.domain.interaction.crypto.GetCurrencyNewsUseCase
 import com.multimoney.domain.model.crypto.CryptoNewsFeed
 import com.multimoney.domain.model.crypto.CurrencyHistoricPrice
+import com.multimoney.domain.model.crypto.MarketCryptoCoin
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -22,7 +23,10 @@ import com.multimoney.multimoney.presentation.navigation.DESCRIPTION_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.URL_IMAGE
+import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_CURRENCY
+import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -48,11 +52,7 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
     private fun setPreviousInfo() {
         uiState = uiState.copy(
             user = savedStateHandle[USER] ?: "",
-            description = savedStateHandle[DESCRIPTION_CURRENCY] ?: "",
-            idBrand = savedStateHandle[ID_BRAND] ?: 0,
-            asset = savedStateHandle[CRYPTO_ASSET] ?: "",
-            currentPrice = savedStateHandle[CURRENT_CRYPTO_PRICE] ?: 0.0f,
-            urlImage = savedStateHandle[URL_IMAGE] ?: ""
+            selectedCryptoCoin = savedStateHandle[ITEM_CRYPTO_MARKET]
         )
     }
 
@@ -61,7 +61,7 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
         daysToSubtract: Long
     ) = executeUseCase {
         queryGetCurrencyHistoricalPricesUseCase.invoke(
-            market = uiState.asset.plus(CurrencyType.Dollar.disbursementValue),
+            market = uiState.selectedCryptoCoin?.baseAsset.plus(CurrencyType.Dollar.disbursementValue),
             max_data_points = dataPoints,
             range_begin = getPreviousDate(daysToSubtract),
             range_end = getCurrentDateYMDPattern(),
@@ -89,7 +89,7 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
         queryGetCurrencyNewsUseCase.invoke(
             user = uiState.user ?: "",
             idBrand = uiState.idBrand ?: 0,
-            baseAsset = uiState.asset ?: ""
+            baseAsset = uiState.selectedCryptoCoin?.baseAsset ?: ""
         ).collectLatest { result ->
             result.onSuccess { currencyNews ->
                 currencyNews.let {
@@ -137,7 +137,7 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
     }
 
     private fun onNavigateToSelectAccount(){
-        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}?$CRYPTO_ASSET=${uiState.asset}&$DESCRIPTION_CURRENCY=${uiState.description}")
+        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}?$ITEM_CRYPTO_MARKET=${encodeData(uiState.selectedCryptoCoin)}")
     }
 
     private fun onNavigateToCryptoSendFlow() {
@@ -147,10 +147,7 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
     data class UiState(
         val user: String? = null,
         val idBrand: Int? = null,
-        val asset: String? = null,
-        val description: String? = null,
-        val currentPrice: Float? = null,
-        val urlImage: String? = null,
+        val selectedCryptoCoin: MarketCryptoCoin? = null,
         val isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         val currencyNews: CryptoNewsFeed? = null,

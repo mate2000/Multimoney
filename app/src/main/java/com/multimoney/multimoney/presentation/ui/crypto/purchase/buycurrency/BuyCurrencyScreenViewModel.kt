@@ -59,27 +59,27 @@ class BuyCurrencyScreenViewModel @Inject constructor(
     }
 
     private fun onSetUserData(
-        asset: String,
-        cryptoNetwork: String,
+        asset: String?,
+        cryptoNetwork: String?,
         idBrand: Int,
         user: String,
-        market: String,
+        market: String?,
         identification: String,
         baseAmount: Double,
         side: String,
-        assetImageUrl: String,
+        assetImageUrl: String?,
         smartAccountAvailableBalance: Double
     ) {
         this.isTimerRunning = true
-        this.asset = asset
-        this.cryptoNetWork = cryptoNetwork
+        this.asset = asset ?: ""
+        this.cryptoNetWork = cryptoNetwork ?: ""
         this.idBrand = idBrand
         this.user = user
-        this.market = market
+        this.market = market ?: ""
         this.identification = identification
         this.baseAmount = baseAmount
         this.side = side
-        this.assetImageUrl = assetImageUrl
+        this.assetImageUrl = assetImageUrl ?: ""
         this.smartAccountAvailableBalance = smartAccountAvailableBalance
         timer() // to run timer at the beginning of the screen
     }
@@ -203,14 +203,14 @@ class BuyCurrencyScreenViewModel @Inject constructor(
     sealed class UIEvent {
         data class OnSetUserData(
             val asset: String,
-            val cryptoNetwork: String,
+            val cryptoNetwork: String?,
             val idBrand: Int,
             val user: String,
-            val market: String,
+            val market: String?,
             val identification: String,
             val baseAmount: Double,
             val side: String,
-            val assetImageUrl: String,
+            val assetImageUrl: String?,
             val smartAccountAvailableBalance: Double
         ) : UIEvent()
         object OnGetExchangeRate : UIEvent()

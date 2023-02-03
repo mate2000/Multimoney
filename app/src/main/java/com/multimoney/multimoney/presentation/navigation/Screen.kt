@@ -29,6 +29,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_PAYMEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_MULTI_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_SMART_EVICERTIA
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_CURRENCY
+import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT_LABEL
@@ -605,9 +606,9 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object ChartScreen : Screen("chart_screen/{$}")
 
     // Crypto
-    // todo add params
-    object PurchaseCryptoFlow : Screen(
-        route = "purchase_crypto_flow?$CRYPTO_ASSET={$CRYPTO_ASSET}&$DESCRIPTION_CURRENCY={$DESCRIPTION_CURRENCY}",
+    //todo add params
+    object PurchaseCryptoFlow: Screen(
+        route = "purchase_crypto_flow?$ITEM_CRYPTO_MARKET={$ITEM_CRYPTO_MARKET}",
         baseRoute = "purchase_crypto_flow"
     )
 
@@ -632,7 +633,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object CryptoCurrencyDetailsScreen : Screen(
-        "crypto_currency_details_screen/{$USER}/{$ID_BRAND}/{$CRYPTO_ASSET}/{$DESCRIPTION_CURRENCY}/{$CURRENT_CRYPTO_PRICE}/{$URL_IMAGE}",
+        "crypto_currency_details_screen/{$USER}/{$ID_BRAND}/{$ITEM_CRYPTO_MARKET}",
         "crypto_currency_details_screen"
     )
 

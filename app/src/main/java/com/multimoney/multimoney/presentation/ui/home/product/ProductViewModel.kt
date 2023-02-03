@@ -683,6 +683,7 @@ class ProductViewModel @Inject constructor(
             QuickActionFlow.SAVE_SMART.flow -> onNavigateToSmartSave()
             QuickActionFlow.SEND_MONEY.flow -> onNavigateToSendMoneyScreenQuickAction()
             QuickActionFlow.BUY_CRYPTO.flow -> onNavigateToPurchaseCryptoFlow()
+            QuickActionFlow.SEND_CRYPTO.flow -> onNavigateToSendCryptoFlow()
         }
     }
 
@@ -955,6 +956,10 @@ class ProductViewModel @Inject constructor(
         navigateTo(Screen.PurchaseCryptoFlow.baseRoute)
     }
 
+    private fun onNavigateToSendCryptoFlow() {
+        navigateTo(Screen.CryptoSendFlow.baseRoute)
+    }
+
     private fun getSmartContent() {
         val statusRequest = uiState.userStatus?.infoBankAccount?.infoRequest?.statusRequest
         val statusFirm = uiState.userStatus?.infoBankAccount?.statusFirm
@@ -1100,6 +1105,7 @@ class ProductViewModel @Inject constructor(
             is OnNoVoConfig -> onConfigNovoSdk()
             is OnGetSmartContent -> getSmartContent()
             is UIEvent.OnNavigateToPurchaseCryptoFlow -> onNavigateToPurchaseCryptoFlow()
+            is UIEvent.OnNavigateToSendCryptoFlow -> onNavigateToSendCryptoFlow()
             is OnVisaCardExpiredDialog -> onVisaCardExpiredDialog(
                 idBrand = uiEvent.idBrand,
                 balance = uiEvent.balance
@@ -1155,6 +1161,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToCryptoMarket : UIEvent()
         object OnNavigateToCryptoMovements : UIEvent()
         object OnNavigateToPurchaseCryptoFlow : UIEvent()
+        object OnNavigateToSendCryptoFlow : UIEvent()
         object OnGetSmartContent : UIEvent()
 
         data class OnSetUserData(

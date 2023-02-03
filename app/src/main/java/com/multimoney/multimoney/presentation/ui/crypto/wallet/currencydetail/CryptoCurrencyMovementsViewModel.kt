@@ -148,6 +148,10 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
         navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}&$DESCRIPTION_CURRENCY=${uiState.cryptoItem?.descriptionCurrency}")
     }
 
+    private fun onNavigateToSendCrypto() {
+        navigateTo("${Screen.CryptoSendFlow.baseRoute}?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}&$DESCRIPTION_CURRENCY=${uiState.cryptoItem?.descriptionCurrency}")
+    }
+
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is UIEvent.OnNavigateBack -> navigateBack(Screen.CryptoWalletScreen.route, false)
@@ -161,6 +165,7 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
             is UIEvent.OnUpdateShouldShowDisclaimer -> updateShouldShowDisclaimer(event.checked)
             is UIEvent.OnShowDisclaimer -> uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded))
             is UIEvent.OnHideDisclaimer -> uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Hidden))
+            is UIEvent.OnNavigateToSendCrypto -> onNavigateToSendCrypto()
         }
     }
 
@@ -176,7 +181,9 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
         data class OnUpdateShouldShowDisclaimer(val checked: Boolean) : UIEvent()
         object OnShowDisclaimer : UIEvent()
         object OnHideDisclaimer : UIEvent()
+        object OnNavigateToSendCrypto : UIEvent()
     }
+
 
     data class UiState(
         val startDate: Long? = null,

@@ -167,6 +167,10 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
         navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}?$CRYPTO_ASSET=${uiState.asset}&$DESCRIPTION_CURRENCY=${uiState.description}")
     }
 
+    private fun onNavigateToCryptoSendFlow() {
+        navigateTo("${Screen.CryptoSendFlow.baseRoute}?$CRYPTO_ASSET=${uiState.asset}&$DESCRIPTION_CURRENCY=${uiState.description}")
+    }
+
     data class UiState(
         val user: String? = null,
         val idBrand: Int? = null,
@@ -203,10 +207,12 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
                 openDialog = event.dialogParameters
             )
             is UIEvent.OnNavigateToSelectAccount -> onNavigateToSelectAccount()
+
             is UIEvent.OnDisclaimerChecked -> onDisclaimerChecked(event.checked)
             is UIEvent.OnUpdateShouldShowDisclaimer -> updateShouldShowDisclaimer(event.checked)
             is UIEvent.OnShowDisclaimer -> uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded))
             is UIEvent.OnHideDisclaimer -> uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Hidden))
+            is UIEvent.OnNavigateToCryptoSendFlow -> onNavigateToCryptoSendFlow()
         }
     }
 
@@ -228,11 +234,12 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
             val dialogParameters: DialogParameters
         ) : UIEvent()
         object OnNavigateToSelectAccount : UIEvent()
+
         data class OnDisclaimerChecked(val checked: Boolean) : UIEvent()
         data class OnUpdateShouldShowDisclaimer(val checked: Boolean) : UIEvent()
         object OnShowDisclaimer : UIEvent()
         object OnHideDisclaimer : UIEvent()
-
+        object OnNavigateToCryptoSendFlow : UIEvent()
     }
 }
 

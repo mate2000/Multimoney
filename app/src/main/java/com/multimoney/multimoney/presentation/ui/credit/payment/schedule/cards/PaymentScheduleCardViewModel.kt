@@ -85,7 +85,8 @@ class PaymentScheduleCardViewModel @Inject constructor(
         isEditBankAccount || previousScreen == Screen.PaymentCardVoucherScreen.baseRoute ->
             uiState =
                 uiState.copy(
-                    cardVisaDirect = savedStateHandle[CLIENT_CARD_VISA_DIRECT]
+                    cardVisaDirect = savedStateHandle[CLIENT_CARD_VISA_DIRECT],
+                    isCardListEmpty = false
                 )
         previousScreen == Screen.HomeScreen.route && isEditPaymentSchedule.not() -> onCallQueryGetCardsUseCase()
         else -> onCallGetCardsAutomaticDebitUseCase()
@@ -122,8 +123,8 @@ class PaymentScheduleCardViewModel @Inject constructor(
             getPaymentScheduleAttempts++
             result.onSuccess { cardsList ->
                 uiState = uiState.copy(
-                    cardVisaDirect = cardsList?.first(),
                     isLoading = false,
+                    cardVisaDirect = cardsList?.firstOrNull(),
                     isCardListEmpty = cardsList.isNullOrEmpty()
                 )
             }.onFailure {

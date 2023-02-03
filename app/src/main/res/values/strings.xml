@@ -1447,6 +1447,13 @@
     <string name="smart_add_sac_account_names_label" translatable="false">Nombre(s)</string>
     <string name="smart_add_sac_account_last_names_label" translatable="false">Apellido(s)</string>
 
+    <!-- Smart Transfer 365 Edit Amount -->
+    <string name="transfer_365_amount_title" translatable="false">Enviar dinero</string>
+    <string name="transfer_365_amount_from_label" translatable="false">Smart %s</string>
+    <string name="transfer_365_amount_disclaimer" translatable="false">Si su transacción Transfer365 la realiza dentro del rango de las 10:00 PM hasta las 12:00 a.m., su transacción será enviada al Banco destino a partir de las 12:01 a.m. del siguiente día.</string>
+    <string name="transfer_365_pre_confirmation_from_label" translatable="false">Desde</string>
+    <string name="transfer_365_pre_confirmation_to_label" translatable="false">Hacia</string>
+
     <!-- Card Preferences -->
     <string name="card_preferences_title" translatable="false">Preferencias de tarjeta</string>
     <string name="card_preferences_linked_card_title" translatable="false">Tarjeta vinculada</string>
@@ -1508,8 +1515,18 @@
     <string name="registered_user_email_placeholder" translatable="false">nombre@email.com</string>
     <string name="registered_user_email_required" translatable="false">El correo electrónico es requerido</string>
 
+    <!-- Registered User Otp Options-->
+    <string name="registered_user_otp_options_title" translatable="false">Verificación de identidad</string>
+    <string name="registered_user_otp_options_title_cr" translatable="false">Verificación de identidad</string>
+    <string name="registered_user_otp_options_message" translatable="false">¿Dónde quieres recibir el código?</string>
+    <string name="registered_user_otp_options_message_cr" translatable="false">¿Dónde querés recibir el código?</string>
+    <string name="registered_user_otp_options_email" translatable="false">Correo electrónico anterior</string>
+    <string name="registered_user_otp_options_sms" translatable="false">SMS</string>
+    <string name="registered_user_otp_options_button" translatable="false">Enviar código</string>
+
     <!-- Registered User Otp -->
-    <string name="registered_user_otp_title" translatable="false">Te enviamos un SMS \na tu celular %s</string>
+    <string name="registered_user_otp_title_sms" translatable="false">Te enviamos un SMS \na tu celular %s</string>
+    <string name="registered_user_otp_title_email" translatable="false">Te enviamos un correo \nal %s</string>
     <string name="registered_user_otp_subtitle" translatable="false">Ingresá el código que te enviamos para verificar tu identidad.</string>
     <string name="registered_user_otp_blocked_dialog_title" translatable="false">Usuario bloqueado.</string>
     <string name="registered_user_otp_blocked_dialog_description" translatable="false">Tu usuario ha sido bloqueado porque no hemos podido verificar tu número de teléfono. \nContactá a servicio al cliente</string>

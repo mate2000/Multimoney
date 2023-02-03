@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount
+package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.addaccount
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
@@ -29,17 +29,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnAccountNumberChanged
-import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnAccountTypeSelected
-import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnAddFavoriteValueChange
-import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnContinueClick
-import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnEmailChanged
-import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnGetAccountTypes
-import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnLastNamesChanged
-import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnNamesChanged
-import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnValidateAccountNumber
-import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountViewModel.UIEvent.OnValidateUserEmail
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.addaccount.SmartAddAccountViewModel.UIEvent.OnAccountNumberChanged
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.addaccount.SmartAddAccountViewModel.UIEvent.OnAccountTypeSelected
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.addaccount.SmartAddAccountViewModel.UIEvent.OnAddFavoriteValueChange
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.addaccount.SmartAddAccountViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.addaccount.SmartAddAccountViewModel.UIEvent.OnEmailChanged
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.addaccount.SmartAddAccountViewModel.UIEvent.OnGetAccountTypes
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.addaccount.SmartAddAccountViewModel.UIEvent.OnLastNamesChanged
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.addaccount.SmartAddAccountViewModel.UIEvent.OnNamesChanged
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.addaccount.SmartAddAccountViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.addaccount.SmartAddAccountViewModel.UIEvent.OnValidateAccountNumber
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.addaccount.SmartAddAccountViewModel.UIEvent.OnValidateUserEmail
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox

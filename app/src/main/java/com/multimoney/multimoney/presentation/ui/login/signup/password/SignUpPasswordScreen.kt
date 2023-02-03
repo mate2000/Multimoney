@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,6 +44,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomPasswordRequiremen
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 @Preview
 fun SignUpPasswordScreen(
@@ -55,7 +57,12 @@ fun SignUpPasswordScreen(
     val fragmentActivity = LocalContext.current as FragmentActivity
 
     BackHandler {
-        sharedViewModel.onUIEvent(OnCloseClick(focusManager))
+        when {
+            sharedViewModel.uiState.bottomSheetVisibleState.isVisible -> {
+                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnHidePasswordBottomSheet)
+            }
+            else -> sharedViewModel.onUIEvent(OnCloseClick(focusManager))
+        }
     }
 
     viewModel.onUIEvent(
@@ -102,6 +109,7 @@ fun SignUpPasswordScreen(
                 }
             )
         )
+        sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnShowPasswordBottomSheet)
         sharedViewModel.apply {
             onUIEvent(
                 SignUpViewModel.UIEvent.OnSetNavigation(nextAction = {

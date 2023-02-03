@@ -2,6 +2,7 @@ package com.multimoney.multimoney.presentation.ui.home.product.smart.uisections
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,24 +39,26 @@ import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 
-
 /**
  * Composable function to show the different statuses of an inactive smart account
  */
 @Composable
 @Preview
 fun CardInactiveSmartProduct(
-    textOne : String = "",
-    textTwo : String = "",
+    textOne: String = "",
+    textTwo: String = "",
     cTA: String = "",
-    onClick :() -> Unit = {}
+    onClick: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(top = 24.dp, start = 24.dp, end = 24.dp, bottom = 12.dp)
-            .clickable { onClick.invoke() }
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) { onClick.invoke() }
     ) {
         Row(
             modifier = Modifier
@@ -62,7 +66,7 @@ fun CardInactiveSmartProduct(
                 .background(BlackTransparency16),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             CustomImage(
                 modifier = Modifier
                     .padding(start = 12.dp, end = 6.dp),
@@ -70,10 +74,11 @@ fun CardInactiveSmartProduct(
             )
             Text(
                 modifier = Modifier
-                    .padding(end = 12.dp,top = 4.dp),
+                    .padding(end = 12.dp, top = 4.dp),
                 text = stringResource(id = R.string.smart_card_smart_title),
                 style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.text)
+                color = MultimoneyTheme.colors.text
+            )
         }
         Text(
             text = textOne,
@@ -96,7 +101,6 @@ fun CardInactiveSmartProduct(
         Text(
             text = cTA,
             modifier = Modifier
-
                 .align(Alignment.CenterHorizontally),
             style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.text
@@ -277,7 +281,10 @@ fun CardWithSmartInProcess(
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
             .fillMaxWidth()
             .wrapContentHeight()
-            .clickable {
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
                 action.invoke()
             }
     ) {

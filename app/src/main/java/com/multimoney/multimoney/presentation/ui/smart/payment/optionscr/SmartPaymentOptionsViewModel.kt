@@ -63,7 +63,7 @@ class SmartPaymentOptionsViewModel @Inject constructor(
 
     private fun navigateToAddIbanAccount() {
         navigateTo(
-            route = "${Screen.AddIbanAccountScreen.baseRoute}/$user/$idBrand/$identification/${Screen.PaymentAccountScreen.baseRoute}/$idClient/$idLoanClient"
+            route = "${Screen.AddIbanAccountScreen.baseRoute}/$user/$idBrand/$identification/${Screen.SmartPaymentOptionsScreenCR.baseRoute}/$idClient/$idLoanClient"
         )
     }
 

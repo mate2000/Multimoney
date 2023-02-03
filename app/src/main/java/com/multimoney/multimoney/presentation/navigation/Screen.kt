@@ -124,7 +124,10 @@ const val URL_IMAGE = "url_image"
 const val CONTACTS = "contacts"
 const val USER_DATA = "user_data"
 const val PROFILE_CARD_LIST_ORIGIN = "profile_card_list_origin"
+const val SMART_ACCOUNTS_FOR_BUY_CRYPTO = "smart_accounts_for_buy_crypto"
+const val CURRENCY_NAME = "currency_name"
 const val CROSSELING = "crosseling"
+const val OTP_METHOD = "otp_method"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -152,8 +155,13 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "registered_user_email_screen"
     )
 
+    object RegisteredUserOtpOptionsScreen : Screen(
+        "registered_user_otp_options_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}?$ID_BRAND={$ID_BRAND}?$USER_DATA={$USER_DATA}",
+        "registered_user_otp_options_screen"
+    )
+
     object RegisteredUserOtpScreen : Screen(
-        "registered_user_otp_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}?$ID_BRAND={$ID_BRAND}?$USER_DATA={$USER_DATA}",
+        "registered_user_otp_screen?$ID_BRAND={$ID_BRAND}?$USER_DATA={$USER_DATA}?$OTP_METHOD={$OTP_METHOD}",
         "registered_user_otp_screen"
     )
 
@@ -554,6 +562,18 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "my_contacts_transfer_screen"
     )
 
+    /**
+     * Params in order
+     * @param ORIGIN_ACCOUNT: Origin smart account
+     * @param DESTINY_ACCOUNT: Destiny contact phone account
+     * @param TRANSFER_TYPE: Int id indicating transfer type (SmartToContact)
+     * @param ID_BRAND: Int of brand id
+     */
+    object MyContactsTransferAmountScreen : Screen(
+        "my_contacts_amount_screen/{$ORIGIN_ACCOUNT}/{$DESTINY_ACCOUNT}/{$TRANSFER_TYPE}/{$ID_BRAND}",
+        "my_contacts_amount_screen"
+    )
+
     object SmartAddSACAccountScreen : Screen(
         "smart_add_sac_account_screen/{$ID_BRAND}/{$USER}/{$SMART_ACCOUNT}/{$TRANSFER_TYPE}",
         "smart_add_sac_account_screen"
@@ -585,6 +605,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object ChartScreen : Screen("chart_screen/{$}")
 
     // Crypto
+    // todo add params
+    object PurchaseCryptoFlow : Screen(
+        route = "purchase_crypto_flow?$CRYPTO_ASSET={$CRYPTO_ASSET}&$DESCRIPTION_CURRENCY={$DESCRIPTION_CURRENCY}",
+        baseRoute = "purchase_crypto_flow"
+    )
+
     object CryptoWalletScreen : Screen(
         "crypto_wallet_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$GLOBAL_CRYPTO_BALANCE}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$STATUS_CREDIT}/{$STATUS_SMART}/{$STATUS_CRYPTO}/{$CARD_STATUS}",
         "crypto_wallet_screen"
@@ -601,12 +627,17 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object CryptoMovementsAllScreen : Screen(
-        "crypto_movements_all_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}?$CRYPTO_ASSET={$CRYPTO_ASSET}",
+        "crypto_movements_all_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}/{$PREVIOUS_SCREEN}?$CRYPTO_ASSET={$CRYPTO_ASSET}",
         "crypto_movements_all_screen"
     )
 
     object CryptoCurrencyDetailsScreen : Screen(
         "crypto_currency_details_screen/{$USER}/{$ID_BRAND}/{$CRYPTO_ASSET}/{$DESCRIPTION_CURRENCY}/{$CURRENT_CRYPTO_PRICE}/{$URL_IMAGE}",
         "crypto_currency_details_screen"
+    )
+
+    object CryptoSendFlow : Screen(
+        route = "crypto_send_flow?$CRYPTO_ASSET={$CRYPTO_ASSET}&$DESCRIPTION_CURRENCY={$DESCRIPTION_CURRENCY}",
+        baseRoute = "crypto_send_flow"
     )
 }

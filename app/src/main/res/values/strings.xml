@@ -637,6 +637,14 @@
     <string name="credit_monthly_income_dui_expiration_date_label" translatable="false">Fecha de vencimiento de DUI</string>
     <string name="credit_monthly_income_dui_emission_place_label" translatable="false">Lugar de emisión de DUI</string>
     <string name="credit_monthly_income_dui_date_placeholder" translatable="false">00 | 00 | 0000</string>
+    <string name="credit_monthly_income_job_workplace_label" translatable="false">Nombre de la empresa</string>
+    <string name="credit_monthly_income_job_workplace_required" translatable="false">Nombre de la empresa requerido</string>
+    <string name="credit_monthly_income_job_joined_date" translatable="false">Fecha en que ingresaste</string>
+    <string name="credit_monthly_income_job_date_placeholder" translatable="false">00 | 00 | 0000</string>
+    <string name="credit_monthly_income_job_phone_placeholder_sv" translatable="false">0000 0000</string>
+    <string name="credit_monthly_income_job_phone_number_crosseling" translatable="false">Teléfono de la empresa</string>
+    <string name="credit_monthly_income_job_phone_required" translatable="false">Número de teléfono requerido</string>
+    <string name="credit_monthly_income_job_phone_error" translatable="false">Número invalido</string>
 
     <!-- Credit Job-->
     <string name="credit_job_title" translatable="false">Hablemos de tu trabajo</string>

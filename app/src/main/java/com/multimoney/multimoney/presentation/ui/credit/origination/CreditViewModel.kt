@@ -50,6 +50,9 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnShowBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnUpdateScreenConfigData
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.NavigateToAccountScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnRestartCrosselingNewAccount
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetBankListEmpty
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -115,7 +118,18 @@ class CreditViewModel @Inject constructor(
 
     private fun onBackClick(focusManager: FocusManager) {
         focusManager.clearFocus()
-        previousStep()
+        if (crosseling && uiState.crosselingNewAccount && uiState.currentStep == CreditStep.Two.id && uiState.crosselingIsBankAccountListEmpty) {
+            previousStep()
+        } else if (crosseling && uiState.crosselingNewAccount && uiState.currentStep == CreditStep.Two.id && uiState.crosselingIsBankAccountListEmpty.not()) {
+            onRestartCrosselingNewAccount()
+        } else if (crosseling && uiState.crosselingNewAccount.not() && uiState.currentStep == CreditStep.Two.id) {
+            previousStep()
+        } else {
+            if (crosseling && uiState.currentStep == CreditStep.Three.id) {
+                onRestartCrosselingNewAccount()
+            }
+            previousStep()
+        }
     }
 
     private fun onCloseClick(focusManager: FocusManager) {
@@ -124,8 +138,16 @@ class CreditViewModel @Inject constructor(
             openDialog = DialogParameters(
                 titleResource = closeDialogTitle,
                 description = closeDialogDescription,
-                positiveResource = string.credit_close_dialog_positive_button_text,
-                negativeResource = string.credit_close_dialog_negative_button_text,
+                positiveResource = if (crosseling) {
+                    string.crosseling_close_dialog_positive_button_text
+                } else {
+                    string.credit_close_dialog_positive_button_text
+                },
+                negativeResource = if (crosseling) {
+                    string.crosseling_close_dialog_negative_button_text
+                } else {
+                    string.credit_close_dialog_negative_button_text
+                },
                 positiveAction = {
                     onNavigateToHome()
                 },
@@ -278,6 +300,24 @@ class CreditViewModel @Inject constructor(
         string.empty
     }
 
+    private fun onNavigateToAccountScreen() {
+        uiState = uiState.copy(
+            crosselingNewAccount = true
+        )
+    }
+
+    private fun onRestartCrosselingNewAccount() {
+        uiState = uiState.copy(
+            crosselingNewAccount = false
+        )
+    }
+
+    private fun onSetBankListEmpty(ifBankListEmpty: Boolean) {
+        uiState = uiState.copy(
+            crosselingIsBankAccountListEmpty = ifBankListEmpty
+        )
+    }
+
     data class UIState(
         // Interactions
         val currentStep: Int = CreditStep.One.id,
@@ -289,7 +329,9 @@ class CreditViewModel @Inject constructor(
         val openDialog: DialogParameters = DialogParameters(),
         var lastStep: Int = 1,
         var loadContent: Boolean = false,
-        val isBottomSheetVisible: Boolean = false
+        val isBottomSheetVisible: Boolean = false,
+        val crosselingNewAccount: Boolean = false,
+        val crosselingIsBankAccountListEmpty: Boolean = false
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -325,6 +367,9 @@ class CreditViewModel @Inject constructor(
             is OnShowBottomSheet -> onShowBottomSheet()
             is OnHideBottomSheet -> onHideBottomSheet()
             is OnNavigateToHome -> onNavigateToHome()
+            is NavigateToAccountScreen -> onNavigateToAccountScreen()
+            is OnRestartCrosselingNewAccount -> onRestartCrosselingNewAccount()
+            is OnSetBankListEmpty -> onSetBankListEmpty(event.ifBankListEmpty)
         }
     }
 
@@ -353,9 +398,14 @@ class CreditViewModel @Inject constructor(
         data class OnUpdateScreenConfigData(val screenConfigData: List<CreditCatalog?>?) : UIEvent()
         object OnCallMutationSaveCreditFlowStep : UIEvent()
         data class OnBackVisibilityValueChanged(val isVisible: Boolean) : UIEvent()
+        data class OnSetBankListEmpty(val ifBankListEmpty: Boolean) : UIEvent()
         object OnShowBottomSheet : UIEvent()
         object OnHideBottomSheet : UIEvent()
         object OnNavigateToHome : UIEvent()
+        object NavigateToAccountScreen : UIEvent()
+        object OnRestartCrosselingNewAccount : UIEvent() {
+
+        }
     }
 
     sealed class BaseEvent {

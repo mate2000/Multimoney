@@ -237,17 +237,16 @@ class HomeViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { quickActions ->
                 quickActions?.let {
-                    apiCallCount = apiCallCount++
-                    if (apiCallCount == API_CALLS_TOTAL) {
-                        uiState = uiState.copy(isLoading = false)
-                    }
                     uiState = uiState.copy(
                         quickActions = it.quickActions
                     )
                 }
+                apiCallCount++
+                if (apiCallCount == API_CALLS_TOTAL) {
+                    uiState = uiState.copy(isLoading = false)
+                }
             }
             result.onFailure {
-                apiCallCount = apiCallCount++
                 onFailure(it)
             }
             result.onLoading {
@@ -273,13 +272,13 @@ class HomeViewModel @Inject constructor(
             idBrand = idBrand
         ).collectLatest { result ->
             result.onSuccess { miniCards ->
-                apiCallCount = apiCallCount++
-                if (apiCallCount == API_CALLS_TOTAL) {
-                    uiState = uiState.copy(isLoading = false)
-                }
                 uiState = uiState.copy(
                     miniCardList = miniCards.miniCardsList.toMutableList().sortedBy { it.priority }
                 )
+                apiCallCount++
+                if (apiCallCount == API_CALLS_TOTAL) {
+                    uiState = uiState.copy(isLoading = false)
+                }
             }
             result.onFailure {
                 onFailure(it)
@@ -314,6 +313,10 @@ class HomeViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { balance ->
                 balance?.let { setBalance(it) }
+                apiCallCount++
+                if (apiCallCount == API_CALLS_TOTAL) {
+                    uiState = uiState.copy(isLoading = false)
+                }
             }
             result.onFailure {
                 onFailure(it)
@@ -340,13 +343,13 @@ class HomeViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { historicBalance ->
                 historicBalance?.let {
-                    apiCallCount = apiCallCount++
-                    if (apiCallCount == API_CALLS_TOTAL) {
-                        uiState = uiState.copy(isLoading = false)
-                    }
                     uiState = uiState.copy(
                         cryptoHistoricalBalance = it.historicalBalanceClient
                     )
+                }
+                apiCallCount++
+                if (apiCallCount == API_CALLS_TOTAL) {
+                    uiState = uiState.copy(isLoading = false)
                 }
             }
             result.onFailure {
@@ -455,10 +458,6 @@ class HomeViewModel @Inject constructor(
                 )
             )
         }
-        apiCallCount = apiCallCount++
-        if (apiCallCount == API_CALLS_TOTAL) {
-            uiState = uiState.copy(isLoading = false)
-        }
         uiState = uiState.copy(balance = balance, productPageList = productPageList)
     }
 
@@ -487,15 +486,15 @@ class HomeViewModel @Inject constructor(
             idBrand = idBrand
         ).collectLatest { result ->
             result.onSuccess { configurationVersion ->
-                apiCallCount = apiCallCount++
-                if (apiCallCount == API_CALLS_TOTAL) {
-                    uiState = uiState.copy(isLoading = false)
-                }
                 configurationVersion?.let {
                     uiState = uiState.copy(configurationVersion = configurationVersion)
                 }
                 viewModelScope.launch {
                     countDownTimer.startTimer(configurationVersion?.configuration?.timeSession?.toLong() ?: 0)
+                }
+                apiCallCount++
+                if (apiCallCount == API_CALLS_TOTAL) {
+                    uiState = uiState.copy(isLoading = false)
                 }
             }
             result.onFailure {
@@ -520,7 +519,7 @@ class HomeViewModel @Inject constructor(
             idBrand
         ).collectLatest { result ->
             result.onSuccess { validateUserStatus ->
-                apiCallCount = apiCallCount++
+                apiCallCount++
                 dataStorePreferences.setUserPhoneNumber(validateUserStatus?.infoUser?.phone.orEmpty())
                 uiState = uiState.copy(validateUserStatus = validateUserStatus)
                 callQueryBalanceUseCase(
@@ -561,7 +560,10 @@ class HomeViewModel @Inject constructor(
                         baseAsset = uiState.balance?.balanceCryptoAccount?.items?.firstOrNull()?.asset ?: ""
                     )
                 } else {
-                    apiCallCount = apiCallCount++
+                    apiCallCount++
+                    if (apiCallCount == API_CALLS_TOTAL) {
+                        uiState = uiState.copy(isLoading = false)
+                    }
                 }
             }
             result.onFailure {
@@ -681,6 +683,10 @@ class HomeViewModel @Inject constructor(
         }
 
     private fun onFailure(error: HttpError) {
+        apiCallCount++
+        if (apiCallCount == API_CALLS_TOTAL) {
+            uiState = uiState.copy(isLoading = false)
+        }
         uiState = uiState.copy(
             isLoading = false,
             openDialog = DialogParameters(

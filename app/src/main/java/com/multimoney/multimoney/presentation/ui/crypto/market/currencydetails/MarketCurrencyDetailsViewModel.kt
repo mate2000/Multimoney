@@ -140,6 +140,10 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
         navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}?$CRYPTO_ASSET=${uiState.asset}&$DESCRIPTION_CURRENCY=${uiState.description}")
     }
 
+    private fun onNavigateToCryptoSendFlow() {
+        navigateTo("${Screen.CryptoSendFlow.baseRoute}?$CRYPTO_ASSET=${uiState.asset}&$DESCRIPTION_CURRENCY=${uiState.description}")
+    }
+
     data class UiState(
         val user: String? = null,
         val idBrand: Int? = null,
@@ -172,6 +176,7 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
                 openDialog = event.dialogParameters
             )
             is UIEvent.OnNavigateToSelectAccount -> onNavigateToSelectAccount()
+            is UIEvent.OnNavigateToCryptoSendFlow -> onNavigateToCryptoSendFlow()
         }
     }
 
@@ -193,6 +198,7 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
             val dialogParameters: DialogParameters
         ) : UIEvent()
         object OnNavigateToSelectAccount : UIEvent()
+        object OnNavigateToCryptoSendFlow : UIEvent()
     }
 }
 

@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
+import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,6 +43,8 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme.colors
 import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.theme.subHead
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAddSACAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAddToFavoriteAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnCallQueryRelatedContactsByPhoneUseCase
@@ -50,9 +54,10 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnQueryValueChange
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnSelectContactAsFavorite
 import com.multimoney.multimoney.presentation.uielement.ContactAccountDisplay
-import com.multimoney.multimoney.presentation.uielement.ContactItem
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
+import com.multimoney.multimoney.presentation.uielement.CustomContactIcon
+import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.CustomModalBottomSheet
 import com.multimoney.multimoney.presentation.uielement.CustomSearchBar
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
@@ -100,7 +105,8 @@ fun MyContactsTransferScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp, start = 16.dp, end = 16.dp),
-                     verticalAlignment = Alignment.CenterVertically
+                     horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = stringResource(id = string.smart_mycontacts_transfer_title),
@@ -197,9 +203,13 @@ fun MyContactsTransferScreen(
         onSelectClick = { viewModel.onUIEvent(OnSelectContactAsFavorite) }
     )
 
-    ContactBottomSheet(viewModel = viewModel)
-
+    ContactBottomSheet(
+        selectedContact = viewModel.uiState.selectedContact,
+        sheetState = viewModel.uiState.contactClickBottomSheetState,
+        onAccountClick = { account -> viewModel.onUIEvent(OnAccountClick(account)) }
+    )
     LoadingIndicator(viewModel.uiState.isLoading)
+    BackHandler { viewModel.onUIEvent(OnNavigateBack) }
 }
 
 @Composable
@@ -216,10 +226,8 @@ fun EmptyContactsText(idBrand: Int) {
         )
         Text(
             text = stringResource(
-                id = if (idBrand == Brand.CostaRica.id)
-                    string.smart_my_contacts_invite_CR
-                else
-                    string.smart_my_contacts_invite_SV
+                id = if (idBrand == Brand.CostaRica.id) string.smart_my_contacts_invite_CR
+                else string.smart_my_contacts_invite_SV
             ),
             textAlign = TextAlign.Center,
             style = Typography.body1.copy(
@@ -252,18 +260,27 @@ fun ContactList(
                         true
                     ) == true
                 ) {
-                    ContactItem(
+                    CustomInfoButton(
                         title = firstAccount.titular.orEmpty().capitalizedAllWords(),
                         subtitle = firstAccount.number.orEmpty(),
                         modifier = Modifier.fillMaxWidth(),
+                        startIcon = null,
+                        composableIcon = { modifier ->
+                            CustomContactIcon(
+                                name = firstAccount.titular.orEmpty(),
+                                color = colorSubtitle,
+                                modifier = modifier
+                            )
+                        },
                         endIcon = R.drawable.ic_options,
                         onEndIconClick = {
                             onEndIconClick(firstAccount)
                         },
-                        colorSubtitle = colorSubtitle,
                         onClick = {
                             onContactClick(contact)
-                        }
+                        },
+                        showBorder = false,
+                        transparent = true
                     )
                     Divider(color = colors.dividerWhite30, thickness = 1.dp)
                 }
@@ -274,37 +291,41 @@ fun ContactList(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ContactBottomSheet(viewModel: MyContactsTransferViewModel) {
+fun ContactBottomSheet(
+    selectedContact: List<PhoneSmart>,
+    sheetState: ModalBottomSheetState,
+    onAccountClick: (PhoneSmart) -> Unit
+) {
     CustomModalBottomSheet(
         title = string.smart_iban_transfer_send_money,
         closeIcon = R.drawable.ic_close_bottom_sheet,
-        modalBottomSheetState = viewModel.uiState.contactClickBottomSheetState,
+        modalBottomSheetState = sheetState,
         coroutineScope = rememberCoroutineScope()
     ) {
-        if (viewModel.uiState.selectedContact.isNotEmpty()) {
+        if (selectedContact.isNotEmpty()) {
             Column(Modifier.padding(vertical = 16.dp)) {
                 Text(
-                    text = viewModel.uiState.selectedContact.first().titular?.capitalizedAllWords()
-                        .orEmpty(),
-                    style = Typography.body1.copy(
+                    text = selectedContact.first().titular?.capitalizedAllWords().orEmpty(),
+                    style = Typography.subHead.copy(
                         fontWeight = FontWeight.SemiBold,
                         color = colors.text
                     )
                 )
                 Text(
-                    text = viewModel.uiState.selectedContact.first().number.orEmpty(),
-                    style = Typography.body1.copy(
+                    text = selectedContact.first().number.orEmpty(),
+                    style = Typography.subHead.copy(
                         color = colors.subTitleText
                     )
                 )
-                viewModel.uiState.selectedContact.forEach {
+                selectedContact.forEach {
                     ContactAccountDisplay(
+                        modifier = Modifier.fillMaxWidth(),
                         currency = it.idCurrency?.getCurrencyFromId() ?: Dollar,
                         maskedAccountNumber = getMaskedAccountIban(
                             it.accountNumber.orEmpty(),
                             stringResource(string.payment_account_masked_text)
                         ),
-                        onClick = {} // todo add navigation to amount screen
+                        onClick = { onAccountClick(it) }
                     )
                 }
             }

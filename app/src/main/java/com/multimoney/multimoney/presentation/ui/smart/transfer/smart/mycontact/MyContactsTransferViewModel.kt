@@ -24,6 +24,7 @@ import com.multimoney.multimoney.presentation.navigation.CONTACTS
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.Screen.MyContactsTransferAmountScreen
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAccountClick
@@ -59,12 +60,14 @@ class MyContactsTransferViewModel @Inject constructor(
     private var user: String = ""
     var idBrand: Int = 0
     var relatedContacts: List<RelatedContact> = listOf()
+    var smartAccount: SmartAccountID? = null
     var contactAccountSelected: PhoneSmart? = null
 
     init {
         selectedSmartAccount = savedStateHandle[SMART_ACCOUNT]
         user = savedStateHandle[USER] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
+        smartAccount = savedStateHandle[SMART_ACCOUNT]
         relatedContacts =
             savedStateHandle.get<Array<RelatedContact>>(CONTACTS)?.toList() ?: listOf()
     }
@@ -105,8 +108,15 @@ class MyContactsTransferViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateBack() =
-        navigateBack(popTo = Screen.SmartSelectSendingTypeScreen.route, isRestart = false)
+    private fun onNavigateBack() {
+        if (uiState.contactClickBottomSheetState.isVisible) {
+            uiState = uiState.copy(
+                contactClickBottomSheetState = ModalBottomSheetState(Hidden)
+            )
+        } else {
+            navigateBack(popTo = Screen.SmartSelectSendingTypeScreen.route, isRestart = false)
+        }
+    }
 
     private fun navigateToAddToFavoriteAccount(contactToFavorite: PhoneSmart) {
         contactAccountSelected = contactToFavorite
@@ -139,8 +149,11 @@ class MyContactsTransferViewModel @Inject constructor(
     }
 
     private fun onAccountClick(account: PhoneSmart) {
-        // todo Add navigation
-        Log.d("contacttransfer", "On Account Click")
+        navigateTo(
+            "${MyContactsTransferAmountScreen.baseRoute}/" +
+                "${encodeData(smartAccount)}/${encodeData(account)}/" +
+                "${SmartTransferTypes.SmartToContact.id}/$idBrand"
+        )
     }
 
     private fun onAddSACAccountClick() {

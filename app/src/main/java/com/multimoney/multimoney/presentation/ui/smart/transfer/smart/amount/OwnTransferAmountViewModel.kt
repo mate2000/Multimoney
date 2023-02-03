@@ -29,8 +29,7 @@ class OwnTransferAmountViewModel @Inject constructor() : BaseSmartEditAmountView
             } else {
                 R.string.smart_iban_transfer_smart_account_dolar
             }
-            totalBalanceLabel =
-                amountUIState.currency + smartAccount?.totalBalance.toString()
+            totalBalanceLabel = originCurrency?.symbol + smartAccount?.totalBalance.toString()
             getExchangeOnCompleted(
                 true,
                 abbreviation = originCurrency?.disbursementValue ?: "",
@@ -55,11 +54,15 @@ class OwnTransferAmountViewModel @Inject constructor() : BaseSmartEditAmountView
     }
 
     override fun onAmountCompleted() {
-        getExchangeOnCompleted(
-            abbreviation = originCurrency?.disbursementValue ?: "",
-            idOriginCurrency = destinyCurrency?.id.toString(),
-            idDestinationCurrency = originCurrency?.id.toString()
-        )
+        if (shouldDisplayExchange) {
+            getExchangeOnCompleted(
+                abbreviation = originCurrency?.disbursementValue ?: "",
+                idOriginCurrency = destinyCurrency?.id.toString(),
+                idDestinationCurrency = originCurrency?.id.toString()
+            )
+        } else {
+            validateAmount()
+        }
     }
 
     override fun onContinueClick() {

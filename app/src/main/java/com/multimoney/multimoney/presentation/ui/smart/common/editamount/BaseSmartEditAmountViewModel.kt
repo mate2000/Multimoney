@@ -5,6 +5,7 @@ import android.view.View
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.ModalBottomSheetValue.Hidden
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -17,6 +18,7 @@ import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.multimoney.R
@@ -213,6 +215,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
 
     open fun getExchangeOnCompleted(
         isStart: Boolean = false,
+        isPayment: Boolean = false,
         abbreviation: String? = destinyCurrency?.disbursementValue,
         idOriginCurrency: String = destinyCurrency?.id.toString(),
         idDestinationCurrency: String = originCurrency?.id.toString(),
@@ -220,7 +223,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
     ) {
         val amount = amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
         if (shouldDisplayExchange) {
-            if ((amountUIState.isAmountValid && amount > 0.0) || isStart) {
+            if (amount > 0.0 || isStart) {
                 executeUseCase {
                     querySmartExchangeRateUseCase.invoke(
                         user = userName,
@@ -250,6 +253,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                                 convertedAmountLabel = rate?.convertedAmountLabel
                                     ?: "${idDestinationCurrency.getCurrencySymbol()}0.0"
                             )
+                            if (isPayment.not()) validateAmount()
                         }
                     }
                 }
@@ -263,23 +267,37 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
         getExchangeOnCompleted()
     }
 
+    open fun validateAmount() {
+        val currentAmount = if (shouldDisplayExchange) {
+            amountUIState.exchangeConvertedAmount
+        } else {
+            amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
+        }
+
+        val isAmountValid = currentAmount <= (smartAccount?.totalBalance ?: 0.0)
+        amountUIState = amountUIState.copy(
+            isAmountValid = isAmountValid,
+            bottomSheetState = ModalBottomSheetState(Hidden),
+            enableButton = validateForm(isAmountValid = isAmountValid)
+        )
+    }
+
     open fun onAmountChanged(newAmount: String) {
         if (validateDecimalIncome(newAmount)) {
             amountUIState = amountUIState.copy(
-                currentAmountValueString = newAmount,
-                enableButton = validateForm(newAmount = newAmount),
-                isAmountValid = true
+                currentAmountValueString = newAmount
             )
         }
     }
 
     open fun validateForm(
         newAmount: String? = amountUIState.currentAmountValueString,
-        newMotive: String = amountUIState.motive
-    ) = (newAmount?.isNotEmpty() == true) && (
-        newAmount.toDoubleOrNull()
-            ?: 0.0
-        ) > 0.0 && newMotive.isNotEmpty()
+        newMotive: String = amountUIState.motive,
+        isAmountValid: Boolean = amountUIState.isAmountValid
+    ) = (newAmount?.isNotEmpty() == true) &&
+        (newAmount.toDoubleOrNull() ?: 0.0) > 0.0 &&
+        newMotive.isNotEmpty() &&
+        isAmountValid
 
     abstract fun onContinueClick()
 
@@ -349,6 +367,15 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                     amountUIState = amountUIState.copy(
                         showLoadingScreen = true,
                         showErrorScreen = false,
+                        paymentSuccess = false
+                    )
+                }
+                result.onMessage {
+                    amountUIState = amountUIState.copy(
+                        errorMessage = it?.messageError?.message ?: "",
+                        errorDetail = it?.messageError?.detail ?: "",
+                        showLoadingScreen = false,
+                        showErrorScreen = true,
                         paymentSuccess = false
                     )
                 }
@@ -440,7 +467,9 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
         val idCard: Long = 0,
         val bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
         val cardBankName: String = "",
-        var showErrorScreen: Boolean = false,
+        val errorMessage: String = "",
+        val errorDetail: String = "",
+        val showErrorScreen: Boolean = false,
         val showLoadingScreen: Boolean = false,
         val paymentSuccess: Boolean = false,
         val referenceNumber: String = "",

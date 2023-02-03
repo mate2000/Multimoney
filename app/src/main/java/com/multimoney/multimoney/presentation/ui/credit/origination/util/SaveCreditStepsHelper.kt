@@ -60,7 +60,11 @@ class SaveCreditStepsHelper @Inject constructor() {
         duiEmissionPlace: CreditCatalog?,
         duiEmissionPlaceSelected: CreditCatalogOption?,
         duiEmissionDateValue: String,
-        duiExpirationDateValue: String
+        duiExpirationDateValue: String,
+        companyName: String,
+        companyStartDate: String,
+        companyPhoneNumber: String,
+        isCrosseling: Boolean
     ) {
         val monthlyIncomeQuestion = getScreenConfigQuestion(SALARY, monthlyIncomeValue)
         saveScreenQuestionData(textQuestion(user, monthlyIncomeValue, monthlyIncomeQuestion))
@@ -76,6 +80,17 @@ class SaveCreditStepsHelper @Inject constructor() {
             val duiExpirationDateQuestion = getScreenConfigQuestion(DUI_EXPIRATION_DATE, duiExpirationDateValue)
             saveScreenQuestionData(textQuestion(user, duiExpirationDateValue, duiExpirationDateQuestion))
             saveScreenQuestionData(selectionQuestion(user, duiEmissionPlace, duiEmissionPlaceSelected))
+
+            if (isCrosseling) {
+                val companyNameQuestion = getScreenConfigQuestion(COMPANY_NAME, companyName)
+                saveScreenQuestionData(textQuestion(user, companyName, companyNameQuestion))
+
+                val companyStartedJobDateQuestion = getScreenConfigQuestion(STARTED_JOB_DATE, companyStartDate)
+                saveScreenQuestionData(textQuestion(user, companyStartDate, companyStartedJobDateQuestion))
+
+                val companyPhoneQuestion = getScreenConfigQuestion(COMPANY_PHONE, companyPhoneNumber)
+                saveScreenQuestionData(textQuestion(user, companyPhoneNumber, companyPhoneQuestion))
+            }
         }
     }
 

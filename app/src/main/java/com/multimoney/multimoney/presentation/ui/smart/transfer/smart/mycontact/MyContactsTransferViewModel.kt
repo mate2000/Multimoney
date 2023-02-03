@@ -59,8 +59,8 @@ class MyContactsTransferViewModel @Inject constructor(
     private var user: String = ""
     var idBrand: Int = 0
     var relatedContacts: List<RelatedContact> = listOf()
-    var contactAccountSelected: PhoneSmart? = null
     var smartAccount: SmartAccountID? = null
+    var contactAccountSelected: PhoneSmart? = null
 
     init {
         selectedSmartAccount = savedStateHandle[SMART_ACCOUNT]

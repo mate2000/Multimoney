@@ -23,7 +23,7 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.ORIGIN_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.TRANSFER_TYPE
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
@@ -39,7 +39,7 @@ import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @HiltViewModel
-class SmartAddOtherBankAccountViewModel @Inject constructor(
+class SmartAdd365AccountViewModel @Inject constructor(
     private val queryCatalogDocumentTypeUseCase: QueryCatalogDocumentTypeUseCase,
     private val querySmartAccountTypeUseCase: QuerySmartAccountTypeUseCase,
     private val queryBankListTransfer365UseCase: QueryBankListTransfer365UseCase,
@@ -60,7 +60,7 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
     init {
         user = savedStateHandle[USER] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
-        smartAccount = savedStateHandle[SMART_ACCOUNT]
+        smartAccount = savedStateHandle[ORIGIN_ACCOUNT]
         transferType = savedStateHandle[TRANSFER_TYPE] ?: 0
         if (transferType == SmartTransferTypes.SmartToOtherBank.id) {
             uiState = uiState.copy(
@@ -282,7 +282,7 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
             navigateTo(
                 "${Screen.SmartTransfer365EditAmountScreen.baseRoute}/${
                     encodeData(smartAccount)
-                }/${encodeData(account)}/$transferType/${Screen.SmartOtherBanksAccountScreen.baseRoute}"
+                }/${encodeData(account)}/$transferType/${Screen.SmartAdd365AccountScreen.baseRoute}"
             )
         }
     }
@@ -315,7 +315,7 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
                     navigateTo(
                         "${Screen.SmartTransfer365EditAmountScreen.baseRoute}/${
                             encodeData(smartAccount)
-                        }/${encodeData(savedAccount)}/$transferType/${Screen.SmartOtherBanksAccountScreen.baseRoute}"
+                        }/${encodeData(savedAccount)}/$transferType/${Screen.SmartAdd365AccountScreen.baseRoute}"
                     )
                 }
                 result.onFailure { onFailure(it) }

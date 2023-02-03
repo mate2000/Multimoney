@@ -73,7 +73,7 @@ fun getMaskedVisaAccount(accountNumber: String, maskedText: String = ACCOUNT_MAS
         .plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
 
 fun getMaskedSmartAccount(
-    prefix: String = SV_PREFIX,
+    prefix: String = Brand.ElSalvador.countryCode.capitalized(),
     accountNumber: String,
     maskedText: String = ACCOUNT_MASK
 ) =
@@ -109,4 +109,3 @@ const val TWO_DECIMALS_FORMAT = "%.2f"
 const val ACCOUNT_MASK = "••••"
 const val VISA_MASK = "Visa"
 const val DOCUMENT_FORMAT_VALUE = '0'
-const val SV_PREFIX = "SV"

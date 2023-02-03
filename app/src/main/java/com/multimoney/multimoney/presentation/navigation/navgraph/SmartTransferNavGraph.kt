@@ -6,7 +6,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
-import com.multimoney.multimoney.presentation.navigation.ACCOUNT_365
 import com.multimoney.multimoney.presentation.navigation.CONTACTS
 import com.multimoney.multimoney.presentation.navigation.DESTINY_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.HOME_STATE
@@ -24,16 +23,16 @@ import com.multimoney.multimoney.presentation.navigation.navtype.payment.SinpeAc
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAccountIDListNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAccountIDNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.Transfer365AccountNavType
-import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.addaccount.SmartAddAccountScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.smartaccount.SelectSmartAccountContainer
-import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.amount.Transfer365AmountScreen
-import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAddOtherBankAccountScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeScreen
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.addaccount.SmartAddAccountScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.amount.OwnTransferAmountScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferScreen
+import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountScreen
+import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.amount.Transfer365AmountScreen
 
 fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
     navigation(
@@ -274,14 +273,14 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
             )
         }
         composable(
-            route = Screen.SmartOtherBanksAccountScreen.route,
+            route = Screen.SmartAdd365AccountScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
-                navArgument(SMART_ACCOUNT) { type = SmartAccountIDNavType() },
+                navArgument(ORIGIN_ACCOUNT) { type = SmartAccountIDNavType() },
                 navArgument(TRANSFER_TYPE) { type = NavType.IntType }
             )
         ) {
-            SmartAddOtherBankAccountScreen(
+            SmartAdd365AccountScreen(
                 onNavigate = {
                     navController.navigate(it.route)
                 },
@@ -299,8 +298,8 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
         composable(
             Screen.SmartTransfer365EditAmountScreen.route,
             arguments = listOf(
-                navArgument(SMART_ACCOUNT) { type = SmartAccountIDNavType() },
-                navArgument(ACCOUNT_365) { type = Transfer365AccountNavType() },
+                navArgument(ORIGIN_ACCOUNT) { type = SmartAccountIDNavType() },
+                navArgument(DESTINY_ACCOUNT) { type = Transfer365AccountNavType() },
                 navArgument(TRANSFER_TYPE) { type = NavType.IntType }
             )
         ) {

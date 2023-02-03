@@ -212,27 +212,6 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                     }
                 )
             }
-            SmartTransferTypes.SmartToOtherBank.id, SmartTransferTypes.SmartToMobile.id -> {
-                smartAccount = savedStateHandle[SMART_ACCOUNT]
-                originCurrency = smartAccount?.currencyID?.getCurrencyFromId() ?: Dollar
-                if (originCurrency == CurrencyType.All) originCurrency = Dollar
-                shouldDisplayExchange = false
-
-                amountUIState = amountUIState.copy(
-                    originAccountDisplay = DisplayAccount(
-                        sheetLabel = R.string.transfer_365_pre_confirmation_from_label,
-                        sheetTitleResource = originCurrency?.myAccountSmartName,
-                        sheetSubtitleResource = R.string.empty,
-                        icon = R.drawable.ic_multimoney_smart
-                    ),
-                    currency = originCurrency?.symbol ?: Dollar.symbol,
-                    placeholder = if (originCurrency == Dollar) {
-                        R.string.smart_dollar_placeholder
-                    } else {
-                        R.string.smart_colon_placeholder
-                    }
-                )
-            }
         }
     }
 

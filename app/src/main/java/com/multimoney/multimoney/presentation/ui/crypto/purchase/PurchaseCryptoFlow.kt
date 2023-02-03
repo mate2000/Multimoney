@@ -107,7 +107,6 @@ fun PurchaseCryptoFlow(
                 }
             }
         }
-
     }
 
     LoadingIndicator(viewModel.uiState.isLoading)

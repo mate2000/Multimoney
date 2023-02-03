@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,11 +19,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -52,14 +49,12 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.FullDateFilterSection
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.MarketCurrencyDetailsGraphic
-import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreenViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnGetCurrencyHistoricalPrices
 import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnGetCurrencyNews
 import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnOpenCryptoNew
 import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnSetPreviousInfo
-import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.selectaccount.ConfirmationBottomSheet
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoActionsSection
 import com.multimoney.multimoney.presentation.uielement.BalanceTextView
@@ -75,7 +70,6 @@ import com.multimoney.multimoney.presentation.util.openIntent
 import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlacesWithoutNegatives
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 import com.multimoney.multimoney.presentation.util.toCurrencyFormatWithoutNegatives
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -107,9 +101,9 @@ fun MarketCurrencyDetailsScreen(
         currencyHistoricalPrices = viewModel.uiState.getHistoricalCurrencyPrices,
         currencyNews = viewModel.uiState.currencyNews,
         idBrand = viewModel.uiState.idBrand ?: 0,
-        description = viewModel.uiState.description ?: "",
-        currentPrice = viewModel.uiState.currentPrice?.toDouble() ?: 0.0,
-        urlImage = viewModel.uiState.urlImage ?: "",
+        description = viewModel.uiState.selectedCryptoCoin?.description ?: "",
+        currentPrice = viewModel.uiState.selectedCryptoCoin?.currentPrice ?: 0.0,
+        urlImage = viewModel.uiState.selectedCryptoCoin?.url_image ?: "",
         onDateFilterSelected = { dateFilter ->
             viewModel.onUIEvent(
                 OnGetCurrencyHistoricalPrices(daysToSubtract = dateFilter)

@@ -99,8 +99,6 @@ const val DESTINY_ACCOUNT = "destiny_account"
 const val SMART_ACCOUNT_LIST = "smart_id_list"
 const val SMART_ACCOUNT = "smart_account"
 const val SECOND_SMART_ACCOUNT = "second_smart_account"
-const val ACCOUNT_365 = "account_365"
-const val IBAN_ACCOUNT = "iban_account"
 const val GLOBAL_CRYPTO_BALANCE = "global_crypto_balance"
 const val PASSWORD = "password"
 const val DEVICE_ID = "device_id"
@@ -561,13 +559,25 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "smart_add_sac_account_screen"
     )
 
+    /**
+     * Params in order
+     * @param ORIGIN_ACCOUNT: Origin smart account
+     * @param DESTINY_ACCOUNT: Destiny 365 account
+     * @param TRANSFER_TYPE: Int id indicating transfer type (SmartToOther or SmartToMobile)
+     */
     object SmartTransfer365EditAmountScreen : Screen(
-        "smart_transfer_365_edit_amount_screen/{$SMART_ACCOUNT}/{$ACCOUNT_365}/{$TRANSFER_TYPE}/{$PREVIOUS_SCREEN}",
+        "smart_transfer_365_edit_amount_screen/{$ORIGIN_ACCOUNT}/{$DESTINY_ACCOUNT}/{$TRANSFER_TYPE}/{$PREVIOUS_SCREEN}",
         "smart_transfer_365_edit_amount_screen"
     )
-    object SmartOtherBanksAccountScreen : Screen(
-        "smart_add_other_bank_account_screen/{$ID_BRAND}/{$USER}/{$SMART_ACCOUNT}/{$TRANSFER_TYPE}",
-        "smart_add_other_bank_account_screen"
+
+    /**
+     * Params in order
+     * @param ORIGIN_ACCOUNT: Origin smart account
+     * @param TRANSFER_TYPE: Int id indicating transfer type (SmartToOther or SmartToMobile)
+     */
+    object SmartAdd365AccountScreen : Screen(
+        "smart_add_365_account_screen/{$ID_BRAND}/{$USER}/{$ORIGIN_ACCOUNT}/{$TRANSFER_TYPE}",
+        "smart_add_365_account_screen"
     )
 
     // TestNavGraph Screens

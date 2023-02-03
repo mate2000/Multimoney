@@ -12,7 +12,6 @@ import com.multimoney.domain.model.credit.CreditContractEvent
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -28,18 +27,17 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ORIGIN
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.OpenWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.SimulateUserInteraction
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnAlertButtonClick
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnAlertCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallGetLinkCreditContractEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallSubscriptionCreditContractEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnChangeScreen
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnInitializeText
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToContinueValidatingIdentity
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnShowDialogInformation
 import com.multimoney.multimoney.presentation.ui.home.HomeState
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.EVICERTIA_REJECTED_FIRST_TIME
@@ -51,8 +49,8 @@ import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENE
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class SignDocumentProcessViewModel @Inject constructor(
@@ -67,7 +65,6 @@ class SignDocumentProcessViewModel @Inject constructor(
     var dialogDescription = ""
     var idBrand: Int = 0
     var idPrint: Long = 0
-    var numAttemptsToStartSubscription: Int = 0
     var pkUser: Long = 0
     var identification: String = ""
     var email: String = ""
@@ -120,11 +117,8 @@ class SignDocumentProcessViewModel @Inject constructor(
                 .collectLatest { result ->
                     result.onSuccess {
                         handleEvents(creditContractEvent = it)
-                    }.onFailure { error ->
-                        while (numAttemptsToStartSubscription < MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION) {
-                            onListenCreditContractEventSubscription(idPrint, idBrand)
-                            numAttemptsToStartSubscription++
-                        }
+                    }.onFailure {
+                        showSubscriptionError()
                     }
                 }
         }
@@ -198,15 +192,32 @@ class SignDocumentProcessViewModel @Inject constructor(
         }
     }
 
+    private fun showSubscriptionError() {
+        uiState = uiState.copy(
+            isAlertResultVisible = true,
+            alertResultIsRightButtonVisible = true,
+            alertResultIconResource = drawable.ic_error_symbol,
+            alertResultTitleResource = string.error_occurred_title,
+            alertResultDescriptionResource = string.document_generation_error_description,
+            alertResultButtonResource = string.contact,
+            alertResultRightButtonClick = { onUIEvent(OnNavigateToHome) },
+            alertResultButtonAction = {
+                emitBaseEvent(OpenWhatsAppLink)
+                onUIEvent(OnNavigateToHome)
+            }
+        )
+    }
+
     private fun setSuccessAlertResult() {
         uiState = uiState.copy(
             isAlertResultVisible = true,
-            isAlertResultSuccess = true,
-            alertResultIconResource = R.drawable.ic_success_symbol,
-            alertResultTitleResource = R.string.credit_request_sent_successfully,
-            alertResultDescription = "",
-            alertResultDescriptionResource = R.string.credit_request_info_verification_wait,
-            alertResultButtonResource = R.string.understood
+            alertResultIsRightButtonVisible = true,
+            alertResultIconResource = drawable.ic_success_symbol,
+            alertResultTitleResource = string.credit_request_sent_successfully,
+            alertResultDescriptionResource = string.credit_request_info_verification_wait,
+            alertResultButtonResource = string.understood,
+            alertResultRightButtonClick = { onUIEvent(OnNavigateToHome) },
+            alertResultButtonAction = { onUIEvent(OnNavigateToHome) }
         )
     }
 
@@ -265,15 +276,15 @@ class SignDocumentProcessViewModel @Inject constructor(
         val dialogParameters: DialogParameters = DialogParameters(),
         val signDocumentUrl: String = "",
         val loadingIcon: Int = drawable.ic_frame,
-        val loadingTitle: Int = string.document_generation_title,
-        val loadingSubtitle: Int = string.document_generation_subtitle,
-        val isAlertResultSuccess: Boolean = true,
         val isAlertResultVisible: Boolean = false,
         val alertResultIconResource: Int = 0,
-        val alertResultTitleResource: Int = R.string.empty,
-        val alertResultDescription: String = "",
-        val alertResultDescriptionResource: Int = R.string.empty,
-        val alertResultButtonResource: Int = R.string.empty
+        val alertResultIsLeftButtonVisible: Boolean = false,
+        val alertResultIsRightButtonVisible: Boolean = false,
+        val alertResultTitleResource: Int = string.empty,
+        val alertResultDescriptionResource: Int = string.empty,
+        val alertResultButtonResource: Int = string.empty,
+        val alertResultRightButtonClick: () -> Unit = {},
+        val alertResultButtonAction: () -> Unit = {}
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -282,12 +293,9 @@ class SignDocumentProcessViewModel @Inject constructor(
             is OnCallGetLinkCreditContractEvent -> onShouldCallGetLinkCreditContract()
             is OnChangeScreen -> uiState = uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
             is OnInitializeText -> dialogDescription = uiEvent.dialogDescription
-            is OnCloseClick -> onNavigateToHome()
             is OnShowDialogInformation -> createDialog()
             is OnNavigateToHome -> onNavigateToHome()
             is OnNavigateToContinueValidatingIdentity -> onNavigateToContinueValidatingIdentity()
-            is OnAlertButtonClick -> onNavigateToHome()
-            is OnAlertCloseClick -> onNavigateToHome()
         }
     }
 
@@ -295,23 +303,21 @@ class SignDocumentProcessViewModel @Inject constructor(
         object OnCallSubscriptionCreditContractEvent : UIEvent()
         object OnCallGetLinkCreditContractEvent : UIEvent()
         data class OnInitializeText(val dialogDescription: String) : UIEvent()
-        object OnCloseClick : UIEvent()
         object OnShowDialogInformation : UIEvent()
         data class OnChangeScreen(val signDocumentStep: String) : UIEvent()
         object OnNavigateToHome : UIEvent()
         object OnNavigateToContinueValidatingIdentity : UIEvent()
-        object OnAlertButtonClick : UIEvent()
-        object OnAlertCloseClick : UIEvent()
     }
 
     sealed class BaseEvent {
         object SimulateUserInteraction : BaseEvent()
+        object OpenWhatsAppLink : BaseEvent()
     }
 
     companion object {
-        const val MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION = 3
         const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 60000L
         const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 40000L
         const val ID_PRINT_EMPTY = 0L
+        const val PHONE_HARDCODED = "50371680915"
     }
 }

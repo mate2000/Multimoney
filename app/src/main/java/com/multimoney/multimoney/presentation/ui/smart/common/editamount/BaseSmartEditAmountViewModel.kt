@@ -25,6 +25,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.DESTINY_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.ORIGIN_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.TRANSFER_TYPE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN

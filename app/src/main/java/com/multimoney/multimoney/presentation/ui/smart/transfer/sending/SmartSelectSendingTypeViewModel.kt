@@ -160,7 +160,7 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
 
     private fun onNavigateToOtherBankAccounts() {
         navigateTo(
-            "${Screen.SmartOtherBanksAccountScreen.baseRoute}/$idBrand/$user/${
+            "${Screen.SmartAdd365AccountScreen.baseRoute}/$idBrand/$user/${
                 encodeData(
                     selectedSmartAccount
                 )
@@ -170,7 +170,7 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
 
     private fun onNavigateToTransfer365Mobile() {
         navigateTo(
-            "${Screen.SmartOtherBanksAccountScreen.baseRoute}/$idBrand/$user/${
+            "${Screen.SmartAdd365AccountScreen.baseRoute}/$idBrand/$user/${
                 encodeData(
                     selectedSmartAccount
                 )

@@ -58,8 +58,9 @@ fun CryptoMovementsSection(
                 }
             }
 
-            repeat(MAX_CRYPTO_ITEMS) {
-                CryptoCurrencyMovementItem(cryptoCurrencyMovement = movements[it])
+            movements.itemSnapshotList.items.forEachIndexed { index, cryptoCurrencyMovement ->
+                if (index >= MAX_CRYPTO_ITEMS) return@forEachIndexed
+                CryptoCurrencyMovementItem(cryptoCurrencyMovement = cryptoCurrencyMovement)
             }
         }
     }

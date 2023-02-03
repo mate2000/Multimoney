@@ -346,20 +346,22 @@ fun MyCoinsSection(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                TextButton(onClick = { isFocused.value = isFocused.value.not() }) {
-                    Text(
-                        textAlign = TextAlign.End,
-                        text = stringResource(id = R.string.crypto_wallet_show_all_coins),
-                        style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                        color = MultimoneyTheme.colors.textLink
-                    )
-                }
-                IconButton(onClick = { isFocused.value = isFocused.value.not() }) {
-                    Icon(
-                        imageVector = Icons.Filled.Search,
-                        contentDescription = null,
-                        tint = MultimoneyTheme.colors.labelText
-                    )
+                if ((balanceCryptoAccount?.items?.size ?: 0) > HomeWalletViewModel.SHOW_COIN_SEARCH_THRESHOLD) {
+                    TextButton(onClick = { isFocused.value = isFocused.value.not() }) {
+                        Text(
+                            textAlign = TextAlign.End,
+                            text = stringResource(id = R.string.crypto_wallet_show_all_coins),
+                            style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
+                            color = MultimoneyTheme.colors.textLink
+                        )
+                    }
+                    IconButton(onClick = { isFocused.value = isFocused.value.not() }) {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = null,
+                            tint = MultimoneyTheme.colors.labelText
+                        )
+                    }
                 }
             }
         }

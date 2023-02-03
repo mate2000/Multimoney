@@ -211,4 +211,8 @@ class HomeWalletViewModel @Inject constructor(
         object OnNavigateToBuyCrypto : UIEvent
         object OnNavigateToSendCrypto : UIEvent
     }
+
+    companion object {
+        const val SHOW_COIN_SEARCH_THRESHOLD = 3
+    }
 }

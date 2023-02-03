@@ -13,5 +13,6 @@ data class SinpeAccount(
     val active: Boolean,
     val currencyId: Int,
     val currency: String,
-    val nameAccount: String
+    val nameAccount: String,
+    val accountType: Int
 ) : Parcelable

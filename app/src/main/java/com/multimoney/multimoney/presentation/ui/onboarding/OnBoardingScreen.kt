@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -46,6 +47,9 @@ fun OnBoardingScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit,
     viewModel: OnBoardingViewModel = hiltViewModel()
 ) {
+
+    val context = LocalContext.current
+
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
     }
@@ -57,16 +61,16 @@ fun OnBoardingScreen(
             .background(MultimoneyTheme.colors.background)
             .fillMaxSize()
             .pointerInput(Unit) {
-                viewModel.onUIEvent(OnPress(this))
+                viewModel.onUIEvent(OnPress(this), context)
             }
     ) {
-        Column(Modifier.weight(0.4f)) {
+        Column(Modifier.weight(0.3f)) {
             StoryProgressBar(
                 steps = OnBoardingViewModel.MAX_STEPS,
                 currentStep = viewModel.currentStep,
                 paused = viewModel.uiState.isPressed,
                 onFinished = {
-                    viewModel.onUIEvent(OnGoToNextScreen)
+                    viewModel.onUIEvent(OnGoToNextScreen, context)
                 },
                 backgroundColor = WhiteTransparency20,
                 progressColor = WhiteTransparency70,
@@ -80,15 +84,13 @@ fun OnBoardingScreen(
             Modifier
                 .fillMaxSize()
                 .padding(top = 16.dp, start = 16.dp, end = 16.dp)
-                .weight(0.6f),
+                .weight(0.7f),
             verticalArrangement = Arrangement.Bottom
         ) {
             Text(
                 text = stringResource(id = viewModel.uiState.title),
                 textAlign = TextAlign.Left,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 30.dp)
                     .weight(
                         0.14f,
                         false
@@ -103,9 +105,8 @@ fun OnBoardingScreen(
                 text = stringResource(id = viewModel.uiState.subtitle),
                 textAlign = TextAlign.Left,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 24.dp, bottom = 80.dp)
-                    .weight(0.14f, true),
+                    .padding(top = 34.dp, bottom = 70.dp)
+                    .weight(0.14f, false),
                 style = Typography.h6.copy(
                     color = MultimoneyTheme.colors.onBoardingSubText,
                     fontSize = 20.sp
@@ -118,7 +119,10 @@ fun OnBoardingScreen(
                 buttonType = CustomButtonType.PrimaryPrimary,
                 text = stringResource(id = R.string.registration),
                 onClick = {
-                    viewModel.onUIEvent(OnNavigateToNextScreen(Screen.SignUpScreen.baseRoute))
+                    viewModel.onUIEvent(
+                        OnNavigateToNextScreen(Screen.SignUpScreen.baseRoute),
+                        context
+                    )
                 }
             )
             Row(
@@ -150,7 +154,10 @@ fun OnBoardingScreen(
                         .wrapContentSize()
                         .padding(start = 4.dp),
                     onClick = {
-                        viewModel.onUIEvent(OnNavigateToNextScreen(Screen.SignInScreen.baseRoute))
+                        viewModel.onUIEvent(
+                            OnNavigateToNextScreen(Screen.SignInScreen.baseRoute),
+                            context
+                        )
                     }
                 )
             }

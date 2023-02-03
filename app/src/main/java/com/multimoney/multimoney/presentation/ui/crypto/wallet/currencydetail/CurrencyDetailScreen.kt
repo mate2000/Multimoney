@@ -223,7 +223,7 @@ fun CurrencyDetailContent(
                 )
                 Row(
                     modifier = Modifier
-                        .padding(horizontal = 4.dp)
+                        .padding(top = 24.dp)
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically

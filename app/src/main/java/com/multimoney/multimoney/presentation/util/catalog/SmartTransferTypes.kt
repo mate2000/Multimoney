@@ -7,6 +7,7 @@ sealed class SmartTransferTypes(val id: Int) {
     object SmartToOtherBank : SmartTransferTypes(4)
     object IbanToSmart : SmartTransferTypes(5)
     object VisaToSmart : SmartTransferTypes(6)
+    object SmartToContact : SmartTransferTypes(7)
 }
 
 data class DisplayAccount(
@@ -17,5 +18,5 @@ data class DisplayAccount(
     val sheetTitleResource: Int? = null,
     val sheetSubtitleResource: Int? = null,
     val sheetSubtitleResource2: Int? = null,
-    val icon: Int?
+    val icon: Int? = null
 )

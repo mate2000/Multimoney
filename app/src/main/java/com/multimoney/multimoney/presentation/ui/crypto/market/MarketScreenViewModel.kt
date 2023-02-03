@@ -13,6 +13,7 @@ import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUseCase
 import com.multimoney.domain.model.crypto.GetListOfAvailableCryptoCoins
+import com.multimoney.domain.model.crypto.MarketCryptoCoin
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -21,6 +22,7 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -77,23 +79,17 @@ class MarketScreenViewModel @Inject constructor(
     }
 
     private fun onSetAssetBeforeNavigate(
-        asset: String,
-        description: String,
-        currentPrice: Float,
-        urlImage: String
+        marketCryptoCoin: MarketCryptoCoin
     ) {
         uiState = uiState.copy(
-            asset = asset,
-            description = description,
-            currentPrice = currentPrice,
-            urlImage = urlImage
+           selectedCryptoCoin = marketCryptoCoin
         )
     }
 
     private fun onNavigateToCurrencyDetails() {
         navigateTo(
             "${Screen.CryptoCurrencyDetailsScreen.baseRoute}/${uiState.user}"
-                    + "/${uiState.idBrand}/${uiState.asset}/${uiState.description}/${uiState.currentPrice}/${uiState.urlImage}"
+                    + "/${uiState.idBrand}/${encodeData(uiState.selectedCryptoCoin)}"
         )
     }
 
@@ -111,12 +107,9 @@ class MarketScreenViewModel @Inject constructor(
         val user: String? = null,
         val idBrand: Int? = null,
         val isLoading: Boolean = false,
-        val asset: String? = null,
-        val description: String? = null,
-        val currentPrice: Float? = null,
-        val urlImage: String? = null,
+        val selectedCryptoCoin: MarketCryptoCoin? = null,
         val openDialog: DialogParameters = DialogParameters(),
-        val availableCryptoCoins: GetListOfAvailableCryptoCoins? = null,
+        val availableCryptoCoins: GetListOfAvailableCryptoCoins? = null
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -126,10 +119,7 @@ class MarketScreenViewModel @Inject constructor(
             is UIEvent.OnGetAvailableListOfCryptoCoins -> onGetAvailableListOfCryptoCoins()
             is UIEvent.OnNavigateToCurrencyDetails -> onNavigateToCurrencyDetails()
             is UIEvent.OnSetAssetBeforeNavigation -> onSetAssetBeforeNavigate(
-                event.asset,
-                event.description,
-                event.currentPrice,
-                event.urlImage
+                event.asset
             )
         }
     }
@@ -140,10 +130,7 @@ class MarketScreenViewModel @Inject constructor(
         object OnGetAvailableListOfCryptoCoins : UIEvent()
         object OnNavigateToCurrencyDetails : UIEvent()
         data class OnSetAssetBeforeNavigation(
-            val asset: String,
-            val description: String,
-            val currentPrice: Float,
-            val urlImage: String
+            val asset: MarketCryptoCoin
         ) : UIEvent()
     }
 }

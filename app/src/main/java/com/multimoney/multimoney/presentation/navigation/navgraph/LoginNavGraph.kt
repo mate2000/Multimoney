@@ -19,6 +19,7 @@ import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.Pr
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.request.RequestForgotPasswordScreen
 import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailScreen
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpScreen
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otpoptions.RegisteredUserOtpOptionsScreen
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordScreen
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInOTPScreen
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInScreen
@@ -179,6 +180,26 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                 onNavigate = {
                     navController.navigate(it.route)
                 },
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
+        }
+        composable(
+            Screen.RegisteredUserOtpOptionsScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(USER_DATA) { type = UserDataNavType() }
+            )
+        ) {
+            RegisteredUserOtpOptionsScreen(
+                onNavigate = { navController.navigate(it.route) },
                 onPopBackStack = {
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)

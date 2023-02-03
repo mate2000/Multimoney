@@ -55,7 +55,6 @@ import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewMod
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewModel.UIEvent.OnGetUserInfo
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewModel.UIEvent.OnSetDateRange
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoActionsSection
 import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
@@ -64,10 +63,7 @@ import com.multimoney.multimoney.presentation.uielement.ShimmerItemView
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.calculateGainLoses
-import com.multimoney.multimoney.presentation.util.calculatePercentage
 import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlaces
-import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlacesWithoutNegatives
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 import com.multimoney.multimoney.presentation.util.toCurrencyFormatWithoutNegatives
 
@@ -355,20 +351,22 @@ fun MyCoinsSection(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                TextButton(onClick = { isFocused.value = isFocused.value.not() }) {
-                    Text(
-                        textAlign = TextAlign.End,
-                        text = stringResource(id = R.string.crypto_wallet_show_all_coins),
-                        style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                        color = MultimoneyTheme.colors.textLink
-                    )
-                }
-                IconButton(onClick = { isFocused.value = isFocused.value.not() }) {
-                    Icon(
-                        imageVector = Icons.Filled.Search,
-                        contentDescription = null,
-                        tint = MultimoneyTheme.colors.labelText
-                    )
+                if ((balanceCryptoAccount?.items?.size ?: 0) > HomeWalletViewModel.SHOW_COIN_SEARCH_THRESHOLD) {
+                    TextButton(onClick = { isFocused.value = isFocused.value.not() }) {
+                        Text(
+                            textAlign = TextAlign.End,
+                            text = stringResource(id = R.string.crypto_wallet_show_all_coins),
+                            style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
+                            color = MultimoneyTheme.colors.textLink
+                        )
+                    }
+                    IconButton(onClick = { isFocused.value = isFocused.value.not() }) {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = null,
+                            tint = MultimoneyTheme.colors.labelText
+                        )
+                    }
                 }
             }
         }

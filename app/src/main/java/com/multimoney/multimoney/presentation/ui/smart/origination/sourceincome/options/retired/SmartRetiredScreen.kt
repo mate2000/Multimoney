@@ -105,7 +105,7 @@ fun SmartRetiredScreen(
         Text(
             text = buildAnnotatedString {
                 withStyle(
-                    style = Typography.h4.toSpanStyle()
+                    style = Typography.h6.toSpanStyle()
                         .copy(
                             color = MultimoneyTheme.colors.text,
                             fontWeight = FontWeight.SemiBold
@@ -132,7 +132,7 @@ fun SmartRetiredScreen(
             }),
             labelText = stringResource(id = R.string.smart_account_retired_institution_label),
             modifier = Modifier
-                .padding(top = 44.dp),
+                .padding(top = 24.dp),
             placeHolder = stringResource(id = R.string.smart_account_retired_institution_placeholder),
             isError = viewModel.uiState.institutionError.first,
             errorMessage = stringResource(viewModel.uiState.institutionError.second)
@@ -152,7 +152,7 @@ fun SmartRetiredScreen(
             }),
             labelText = stringResource(id = R.string.smart_account_retired_amount_label),
             modifier = Modifier
-                .padding(top = 44.dp),
+                .padding(top = 24.dp),
             placeHolder = stringResource(id = R.string.smart_account_retired_amount_placeholder),
             customTransformation = formatDecimalMoney(
                 stringResource(sharedViewModel.idBrandAsInt.getCurrencySymbol())

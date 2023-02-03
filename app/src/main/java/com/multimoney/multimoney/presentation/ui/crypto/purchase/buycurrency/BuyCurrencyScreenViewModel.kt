@@ -67,30 +67,30 @@ class BuyCurrencyScreenViewModel @Inject constructor(
 
     private fun onSetUserData(
         pkUser: Int,
-        asset: String,
-        cryptoNetwork: String,
+        asset: String?,
+        cryptoNetwork: String?,
         idBrand: Int,
         user: String,
-        market: String,
+        market: String?,
         identification: String,
         accountToken: Long,
         side: String,
-        assetImageUrl: String,
+        assetImageUrl: String?,
         smartAccountAvailableBalance: Double,
         idCurrencyAccount: Int
     ) {
         this.pkUser = pkUser
         this.idCurrencyAccount = idCurrencyAccount
         this.isTimerRunning = true
-        this.asset = asset
-        this.cryptoNetWork = cryptoNetwork
+        this.asset = asset ?: ""
+        this.cryptoNetWork = cryptoNetwork ?: ""
         this.idBrand = idBrand
         this.user = user
-        this.market = market
+        this.market = market ?: ""
         this.identification = identification
         this.accountToken = accountToken
         this.side = side
-        this.assetImageUrl = assetImageUrl
+        this.assetImageUrl = assetImageUrl ?: ""
         if (idCurrencyAccount == CurrencyType.Colon.id) {
             convertColonesToDollars(smartAccountAvailableBalance)
         } else {
@@ -301,14 +301,14 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         data class OnSetUserData(
             val pkUser: Int,
             val asset: String,
-            val cryptoNetwork: String,
+            val cryptoNetwork: String?,
             val idBrand: Int,
             val user: String,
-            val market: String,
+            val market: String?,
             val identification: String,
             val accountToken: Long,
             val side: String,
-            val assetImageUrl: String,
+            val assetImageUrl: String?,
             val smartAccountAvailableBalance: Double,
             val idCurrencyAccount: Int
         ) : UIEvent()

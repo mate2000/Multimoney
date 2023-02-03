@@ -260,12 +260,12 @@ val Int.boolean
 fun getNavParam(param: String, value: Any?) = "?$param=$value"
 
 fun getDeviceManufacture(): String = (
-    if (Build.MODEL.startsWith(Build.MANUFACTURER, ignoreCase = true)) {
-        Build.MODEL
-    } else {
-        "${Build.MANUFACTURER} ${Build.MODEL}"
-    }
-    ).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+        if (Build.MODEL.startsWith(Build.MANUFACTURER, ignoreCase = true)) {
+            Build.MODEL
+        } else {
+            "${Build.MANUFACTURER} ${Build.MODEL}"
+        }
+        ).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
 
 fun Context.getAndroidId(): String {
     return Secure.getString(
@@ -305,9 +305,9 @@ fun Double.toCurrencyFormatWithoutNegatives(
     formatter.maximumFractionDigits = amountOfDecimals
     // remove the default dollar symbol from the custom symbol property
     return "$symbol${
-    formatter.format(this)
-        .replace(Dollar.symbol, "")
-        .replace("-", "")
+        formatter.format(this)
+            .replace(Dollar.symbol, "")
+            .replace("-", "")
     }"
 }
 

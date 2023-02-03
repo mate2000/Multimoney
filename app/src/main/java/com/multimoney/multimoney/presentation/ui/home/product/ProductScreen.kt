@@ -212,10 +212,6 @@ fun ProductScreen(
     }
 
     LaunchedEffect(key1 = contentPagerState.currentPage) {
-        contentPagerState.scrollToPage(contentPagerState.currentPage)
-    }
-
-    LaunchedEffect(key1 = contentPagerState.currentPage) {
         headerExpandedPagerState.scrollToPage(contentPagerState.currentPage)
     }
 

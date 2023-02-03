@@ -48,7 +48,6 @@ import com.multimoney.multimoney.presentation.uielement.CustomSelector
 import com.multimoney.multimoney.presentation.uielement.Size
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.encodeURLToUTF
 import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlacesWithoutNegatives
 import kotlinx.coroutines.launch
 
@@ -149,10 +148,7 @@ fun MarketScreenContent(
                         onCurrencyItemClick = { cryptoCurrency ->
                             viewModel.onUIEvent(
                                 UIEvent.OnSetAssetBeforeNavigation(
-                                    asset = cryptoCurrency.baseAsset,
-                                    description = cryptoCurrency.description,
-                                    currentPrice = cryptoCurrency.currentPrice.toString().toFloat(),
-                                    urlImage = cryptoCurrency.url_image.encodeURLToUTF()
+                                    cryptoCurrency
                                 )
                             )
                             viewModel.onUIEvent(UIEvent.OnNavigateToCurrencyDetails)

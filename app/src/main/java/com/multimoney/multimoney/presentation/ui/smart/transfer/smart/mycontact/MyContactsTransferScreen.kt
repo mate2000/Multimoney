@@ -43,6 +43,7 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme.colors
 import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAddSACAccountClick
 import com.multimoney.multimoney.presentation.theme.subHead
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAddToFavoriteAccountClick
@@ -51,6 +52,7 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnQueryValueChange
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnSelectContactAsFavorite
 import com.multimoney.multimoney.presentation.uielement.ContactAccountDisplay
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
@@ -103,7 +105,7 @@ fun MyContactsTransferScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp, start = 16.dp, end = 16.dp),
-                horizontalArrangement = Arrangement.SpaceAround,
+                     horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -121,7 +123,7 @@ fun MyContactsTransferScreen(
                         .fillMaxWidth()
                         .wrapContentWidth(Alignment.End),
                     onClick = {
-                        viewModel.onUIEvent(MyContactsTransferViewModel.UIEvent.OnAddSACAccountClick)
+                        viewModel.onUIEvent(OnAddSACAccountClick)
                     },
                     buttonType = CustomButtonType.PrimaryTertiary
                 )
@@ -194,9 +196,16 @@ fun MyContactsTransferScreen(
             }
         }
     }
+
+    SelectFavoriteContactBottomSheet(
+        coroutineScope = rememberCoroutineScope(),
+        modalBottomSheetState = viewModel.uiState.selectFavoriteContactBottomSheetState,
+        onSelectClick = { viewModel.onUIEvent(OnSelectContactAsFavorite) }
+    )
+
     ContactBottomSheet(
         selectedContact = viewModel.uiState.selectedContact,
-        sheetState = viewModel.uiState.bottomSheetState,
+        sheetState = viewModel.uiState.contactClickBottomSheetState,
         onAccountClick = { account -> viewModel.onUIEvent(OnAccountClick(account)) }
     )
     LoadingIndicator(viewModel.uiState.isLoading)

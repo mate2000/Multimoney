@@ -62,7 +62,6 @@ fun MyProductsBottomSheetScreen(
         modalBottomSheetState = modalBottomSheetState,
         coroutineScope = coroutineScope
     ) {
-
         Column(
             Modifier
                 .fillMaxWidth()
@@ -115,7 +114,7 @@ fun MyProductsContent(
         }
     }
 
-    //crypto section
+    // crypto section
     val cryptoProducts = productPageList.filter { it.product == ProductType.Crypto.value }
 
     userStatus?.infoCrypto?.let {
@@ -146,7 +145,6 @@ private fun MyProductSection(
     labelText: String,
     showDivider: Boolean = false
 ) {
-
     if (products.isNotEmpty()) {
         if (showDivider) {
             CustomDivider()
@@ -170,7 +168,7 @@ private fun MyProductSection(
                         shareViewModel.onUIEvent(OnMyProductClick(true))
                         coroutineScope.launch {
                             modalBottomSheetState.hide()
-                            productScreenPagerState?.animateScrollToPage(productPage.index)
+                            productScreenPagerState?.scrollToPage(productPage.index)
                         }
                     }
                 )
@@ -181,18 +179,19 @@ private fun MyProductSection(
 
 @Composable
 fun MyProductItem(
-    icon: Int, label: String,
+    icon: Int,
+    label: String,
     backGroundColor: Color,
     action: () -> Unit = {}
 ) {
-
     Column(
         modifier = Modifier
             .width(88.dp)
             .padding(end = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(contentAlignment = Alignment.Center,
+        Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier
                 .wrapContentSize()
                 .padding(8.dp)

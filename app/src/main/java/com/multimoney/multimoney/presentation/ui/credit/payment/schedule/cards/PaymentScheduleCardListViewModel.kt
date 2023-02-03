@@ -24,6 +24,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.P
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCardSelected
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -104,7 +105,8 @@ class PaymentScheduleCardListViewModel @Inject constructor(
                 positiveAction = {
                     navigateBack(
                         popTo = Screen.HomeScreen.route,
-                        isRestart = false
+                        isRestart = false,
+                        homeState = HomeState.COLLAPSED
                     )
                 },
                 isActive = mutableStateOf(true)

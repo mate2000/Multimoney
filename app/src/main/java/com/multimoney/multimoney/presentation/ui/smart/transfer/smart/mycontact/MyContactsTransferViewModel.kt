@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.interaction.accountsmart.MutationUpdateFavoriteSmartUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryRelatedContactsByPhoneUseCase
 import com.multimoney.domain.model.accountsmart.PhoneSmart
 import com.multimoney.domain.model.accountsmart.RelatedContact
@@ -34,15 +35,18 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnQueryValueChange
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnSelectContactAsFavorite
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
+import com.multimoney.multimoney.presentation.util.getCurrencyFromValue
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
 class MyContactsTransferViewModel @Inject constructor(
+    private val mutationUpdateFavoriteSmartUseCase: MutationUpdateFavoriteSmartUseCase,
     private val queryRelatedContactsByPhoneUseCase: QueryRelatedContactsByPhoneUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
@@ -56,6 +60,7 @@ class MyContactsTransferViewModel @Inject constructor(
     private var user: String = ""
     var idBrand: Int = 0
     var relatedContacts: List<RelatedContact> = listOf()
+    var contactAccountSelected: PhoneSmart? = null
     var smartAccount: SmartAccountID? = null
 
     init {
@@ -114,8 +119,16 @@ class MyContactsTransferViewModel @Inject constructor(
     }
 
     private fun navigateToAddToFavoriteAccount(contactToFavorite: PhoneSmart) {
-        // Todo Add  account to favorite REV-1449
-        Log.d("contacttransfer", "Navigate To Add To Favorite")
+        contactAccountSelected = contactToFavorite
+        uiState = if (uiState.selectFavoriteContactBottomSheetState.isVisible) {
+            uiState.copy(
+                selectFavoriteContactBottomSheetState = ModalBottomSheetState(Hidden)
+            )
+        } else {
+            uiState.copy(
+                selectFavoriteContactBottomSheetState = ModalBottomSheetState(Expanded)
+            )
+        }
     }
 
     private fun onQueryValueChange(value: String) {
@@ -130,7 +143,7 @@ class MyContactsTransferViewModel @Inject constructor(
         } else {
             uiState = uiState.copy(
                 selectedContact = accounts.filterNotNull(),
-                bottomSheetState = ModalBottomSheetState(Expanded)
+                contactClickBottomSheetState = ModalBottomSheetState(Expanded)
             )
         }
     }
@@ -151,25 +164,28 @@ class MyContactsTransferViewModel @Inject constructor(
         )
     }
 
-    data class UIState(
-        val queryValue: String = "",
-        val openDialog: DialogParameters = DialogParameters(),
-        var isLoading: Boolean = false,
-        var relatedContactList: Map<String, List<PhoneSmart?>> = mapOf(),
-        var selectedContact: List<PhoneSmart> = listOf(),
-        val bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(Hidden)
-    )
-
-    fun onUIEvent(uiEvent: UIEvent) {
-        when (uiEvent) {
-            is OnAddToFavoriteAccountClick -> navigateToAddToFavoriteAccount(uiEvent.contactToFavorite)
-            is OnNavigateBack -> onNavigateBack()
-            is OnAddSACAccountClick -> onAddSACAccountClick()
-            is OnQueryValueChange -> onQueryValueChange(uiEvent.value)
-            is OnNavigateToHome -> onNavigateToHome()
-            is OnCallQueryRelatedContactsByPhoneUseCase -> callQueryRelatedContactsByPhoneUseCaseImp()
-            is OnContactClick -> onContactClick(uiEvent.contact)
-            is OnAccountClick -> onAccountClick(uiEvent.account)
+    private fun onSelectContactAsFavorite() {
+        executeUseCase {
+            mutationUpdateFavoriteSmartUseCase.invoke(
+                idBrand = idBrand,
+                user = user,
+                idFavorite = 0,
+                idAccountType = null,
+                idCustomer = selectedSmartAccount?.customerId ?: 0L,
+                accountNumber = contactAccountSelected?.accountNumber ?: "",
+                accountName = contactAccountSelected?.titular,
+                email = contactAccountSelected?.email ?: "",
+                active = true,
+                isFavorite = true ,
+                phoneNumber = contactAccountSelected?.number,
+                idCurrencyAccount = contactAccountSelected?.currency?.getCurrencyFromValue()?.id ?: 0
+            ).collectLatest { result ->
+                result.onLoading { uiState = uiState.copy(isLoading = true) }
+                result.onSuccess {
+                    uiState = uiState.copy(isLoading = false)
+                }
+                result.onFailure { onFailure(it) }
+            }
         }
     }
 
@@ -180,8 +196,35 @@ class MyContactsTransferViewModel @Inject constructor(
         )
     }
 
+    data class UIState(
+        val queryValue: String = "",
+        val openDialog: DialogParameters = DialogParameters(),
+        var isLoading: Boolean = false,
+        var relatedContactList: Map<String, List<PhoneSmart?>> = mapOf(),
+        var selectedContact: List<PhoneSmart> = listOf(),
+        val selectFavoriteContactBottomSheetState: ModalBottomSheetState = ModalBottomSheetState(Hidden),
+        val contactClickBottomSheetState: ModalBottomSheetState = ModalBottomSheetState(Hidden)
+    )
+
+    fun onUIEvent(uiEvent: UIEvent) {
+        when (uiEvent) {
+            is OnAddToFavoriteAccountClick -> navigateToAddToFavoriteAccount(uiEvent.contactToFavorite)
+            is OnNavigateBack -> onNavigateBack()
+            is OnSelectContactAsFavorite -> onSelectContactAsFavorite()
+               OnAddSACAccountClick -> onAddSACAccountClick()
+            OnCallQueryRelatedContactsByPhoneUseCase -> callQueryRelatedContactsByPhoneUseCaseImp()
+            is OnAddSACAccountClick -> onAddSACAccountClick()
+            is OnQueryValueChange -> onQueryValueChange(uiEvent.value)
+            is OnNavigateToHome -> onNavigateToHome()
+            is OnCallQueryRelatedContactsByPhoneUseCase -> callQueryRelatedContactsByPhoneUseCaseImp()
+            is OnContactClick -> onContactClick(uiEvent.contact)
+            is OnAccountClick -> onAccountClick(uiEvent.account)
+        }
+    }
+
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()
+        object OnSelectContactAsFavorite : UIEvent()
         object OnNavigateToHome : UIEvent()
         object OnAddSACAccountClick : UIEvent()
         data class OnAddToFavoriteAccountClick(val contactToFavorite: PhoneSmart) : UIEvent()

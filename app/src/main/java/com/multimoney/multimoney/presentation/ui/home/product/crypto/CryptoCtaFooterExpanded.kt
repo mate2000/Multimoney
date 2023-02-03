@@ -20,7 +20,8 @@ fun CryptoCtaFooterExpanded(
     balance: Balance?,
     profileEnable: Boolean?,
     noBalanceAction: () -> Unit,
-    hasBalanceAction: () -> Unit
+    hasBalanceAction: () -> Unit,
+    onSendActionClicked: () -> Unit,
 ) {
     val hasSmartBalance by remember { mutableStateOf(verifyIfHasSmartBalance(balance?.balanceAccountSmart)) }
 
@@ -29,7 +30,8 @@ fun CryptoCtaFooterExpanded(
         enableCryptoActions = profileEnable ?: false,
         enableSendAndGive = idBrand.toIntOrNull() == CostaRica.id,
         noBalanceAction = noBalanceAction,
-        hasBalanceAction = hasBalanceAction
+        hasBalanceAction = hasBalanceAction,
+        sendAction = onSendActionClicked,
     )
 }
 

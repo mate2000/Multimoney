@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement

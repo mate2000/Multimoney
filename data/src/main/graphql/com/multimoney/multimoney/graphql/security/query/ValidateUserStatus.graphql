@@ -57,6 +57,7 @@ query ValidateUserStatus($pkUser: Long!, $identification: String!, $user: String
                 cTA
                 link
                 display
+                workFlow
             }
         }
         infoVirtualCard {

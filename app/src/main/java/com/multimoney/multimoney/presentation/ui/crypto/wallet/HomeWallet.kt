@@ -155,7 +155,9 @@ fun HomeWallet(
                     hasSmartBalance = true,
                     enableCryptoActions = true,
                     enableSendAndGive = enableSendAndGive,
-                    hasBalanceAction = { walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnNavigateToBuyCrypto) },
+                    hasBalanceAction = {
+                        walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnNavigateToBuyCrypto)
+                    },
                     sellAction = { /*todo go to sell crypto flow*/ },
                     sendAction = { walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnNavigateToSendCrypto) },
                     giveAction = { /*todo go to receive crypto flow*/ }
@@ -187,8 +189,9 @@ fun HomeWalletContent(
     val balanceContainsLossesSymbol =
         walletViewModel.uiState.balanceCryptoAccount?.investedBalance?.contains(stringResource(id = R.string.crypto_losses_symbol))
     val isInGainOrLoss = balanceContainsLossesSymbol != true
-    val graphicColor = if (balanceContainsLossesSymbol == true) MultimoneyTheme.colors.cryptoLossesColor
-    else MultimoneyTheme.colors.cryptoGainsColor
+    val graphicColor =
+        if (balanceContainsLossesSymbol == true) MultimoneyTheme.colors.cryptoLossesColor
+        else MultimoneyTheme.colors.cryptoGainsColor
 
     var selectedDateRange by remember { mutableStateOf(FilterDateByDays.YESTERDAY.time) }
 
@@ -207,8 +210,10 @@ fun HomeWalletContent(
                 BalanceSection(
                     globalCryptoBalance = globalCryptoBalance,
                     isInGainOrLoss = isInGainOrLoss,
-                    gainsOrLosses = walletViewModel.uiState.balanceCryptoAccount?.investedBalance?.toDouble() ?: 0.0,
-                    percentage = walletViewModel.uiState.balanceCryptoAccount?.percentageInvested?.toDouble() ?: 0.0,
+                    gainsOrLosses = walletViewModel.uiState.balanceCryptoAccount?.investedBalance?.toDouble()
+                        ?: 0.0,
+                    percentage = walletViewModel.uiState.balanceCryptoAccount?.percentageInvested?.toDouble()
+                        ?: 0.0,
                     graphicColor = graphicColor,
                     areCoinsLoading = walletViewModel.uiState.areCoinsLoading
                 )
@@ -233,7 +238,11 @@ fun HomeWalletContent(
                 isFocused = isFocused,
                 searchQuery = searchQuery,
                 onItemClick = {
-                    walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnNavigateToCryptoDetailScreen(it))
+                    walletViewModel.onUIEvent(
+                        HomeWalletViewModel.UIEvent.OnNavigateToCryptoDetailScreen(
+                            it
+                        )
+                    )
                 }
             )
         }

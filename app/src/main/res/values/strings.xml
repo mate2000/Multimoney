@@ -1198,10 +1198,19 @@
 
     <!--Crypto Purchase Flow-->
     <string name="crypto_purchase_flow_title" translatable="false">¿Cúanto querés comprar?</string>
-    <string name="crypto_purchase_flow_exchange_reference" translatable="false">%1s %2 = $%3s</string>
+    <string name="crypto_purchase_flow_exchange_reference" translatable="false">1 %2s = %3s</string>
     <string name="crypto_purchase_flow_exchange_reference_edittext" translatable="false">≈ %1s %2s</string>
+    <string name="crypto_purchase_flow_exchange_reference_edittext_dollars" translatable="false">≈ %1s</string>
     <string name="crypto_purchase_flow_available_smart_amount" translatable="false">Disponible para compra</string>
     <string name="crypto_purchase_flow_price_expires_in" translatable="false">Precio de compra expira en</string>
+    <string name="crypto_purchase_flow_amount_asset_placeholder" translatable="false">0 %1s</string>
+    <string name="crypto_purchase_flow_exchange_type_title" translatable="false">Tipo de cambio</string>
+    <string name="crypto_purchase_flow_exchange_total_title" translatable="false">Total a debitar</string>
+
+    <!--Crypto Purchase Flow - Errors-->
+    <string name="crypto_purchase_flow_error_minimum_amount" translatable="false">"El monto mínimo de compra es de $5"</string>
+    <string name="crypto_purchase_flow_error_available_amount" translatable="false">"El monto disponible es de %1s"</string>
+    <string name="crypto_purchase_flow_error_available_amount_commission" translatable="false">"El monto más la comisión supera el\nmonto disponible"</string>
 
     <!-- Evicertia screen -->
     <string name="smart_evicertia_missing_signature_title_card" translatable="false">¡Solo falta tu firma!</string>

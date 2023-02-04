@@ -1,11 +1,18 @@
+@file:OptIn(ExperimentalMaterialApi::class)
+
 package com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.crypto.GetCurrencyHistoricalPricesUseCase
 import com.multimoney.domain.interaction.crypto.GetCurrencyNewsUseCase
 import com.multimoney.domain.model.crypto.CryptoNewsFeed
@@ -30,13 +37,16 @@ import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
 import com.multimoney.multimoney.presentation.util.getPreviousDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MarketCurrencyDetailsViewModel @Inject constructor(
     private val queryGetCurrencyHistoricalPricesUseCase: GetCurrencyHistoricalPricesUseCase,
     private val queryGetCurrencyNewsUseCase: GetCurrencyNewsUseCase,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UiState())
@@ -50,6 +60,9 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
             user = savedStateHandle[USER] ?: "",
             selectedCryptoCoin = savedStateHandle[ITEM_CRYPTO_MARKET]
         )
+        viewModelScope.launch {
+            uiState = uiState.copy(shouldDisplayDisclaimer = dataStorePreferences.isVolatileDialogVisible().first())
+        }
     }
 
     private fun getCurrencyHistoricalPrices(
@@ -132,6 +145,19 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
         )
     }
 
+    private fun onDisclaimerChecked(checked: Boolean) {
+        uiState = uiState.copy(dontShowAgainChecked = checked)
+    }
+
+    private fun updateShouldShowDisclaimer(value: Boolean) {
+        viewModelScope.launch {
+            dataStorePreferences.setVolatileDialogVisible(!value)
+            uiState = uiState.copy(
+                shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first()
+            )
+        }
+    }
+
     private fun onNavigateToSelectAccount(){
         navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}?$ITEM_CRYPTO_MARKET=${encodeData(uiState.selectedCryptoCoin)}")
     }
@@ -147,7 +173,11 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
         val isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         val currencyNews: CryptoNewsFeed? = null,
-        val getHistoricalCurrencyPrices: List<CurrencyHistoricPrice> = emptyList()
+        val getHistoricalCurrencyPrices: List<CurrencyHistoricPrice> = emptyList(),
+        val shouldDisplayDisclaimer: Boolean = true,
+        val dontShowAgainChecked: Boolean = false,
+        val bottomSheetVisibleState: ModalBottomSheetState = ModalBottomSheetState(
+            ModalBottomSheetValue.Hidden)
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -169,6 +199,11 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
                 openDialog = event.dialogParameters
             )
             is UIEvent.OnNavigateToSelectAccount -> onNavigateToSelectAccount()
+
+            is UIEvent.OnDisclaimerChecked -> onDisclaimerChecked(event.checked)
+            is UIEvent.OnUpdateShouldShowDisclaimer -> updateShouldShowDisclaimer(event.checked)
+            is UIEvent.OnShowDisclaimer -> uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded))
+            is UIEvent.OnHideDisclaimer -> uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Hidden))
             is UIEvent.OnNavigateToCryptoSendFlow -> onNavigateToCryptoSendFlow()
         }
     }
@@ -191,6 +226,11 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
             val dialogParameters: DialogParameters
         ) : UIEvent()
         object OnNavigateToSelectAccount : UIEvent()
+
+        data class OnDisclaimerChecked(val checked: Boolean) : UIEvent()
+        data class OnUpdateShouldShowDisclaimer(val checked: Boolean) : UIEvent()
+        object OnShowDisclaimer : UIEvent()
+        object OnHideDisclaimer : UIEvent()
         object OnNavigateToCryptoSendFlow : UIEvent()
     }
 }

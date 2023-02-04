@@ -39,11 +39,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.MarketCurrencyItem
-import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreenViewModel.UIEvent.OnGetAvailableListOfCryptoCoins
-import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreenViewModel.UIEvent.OnGetUserInfo
-import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreenViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreenViewModel.UIEvent.OnNavigateToCurrencyDetails
-import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreenViewModel.UIEvent.OnSetAssetBeforeNavigation
+import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreenViewModel.UIEvent
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
@@ -57,31 +53,30 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun MarketScreen(
-    marketViewModel: MarketScreenViewModel = hiltViewModel(),
+    viewModel: MarketScreenViewModel = hiltViewModel(),
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
 ) {
-
     LaunchedEffect(key1 = true) {
-        marketViewModel.executeNavigation(
+        viewModel.executeNavigation(
             onPopBackStack = onPopBackStack,
             onNavigate = onNavigate,
             onPopAndNavigate = onPopAndNavigate
         )
 
-        marketViewModel.onUIEvent(OnGetUserInfo)
-        marketViewModel.onUIEvent(OnGetAvailableListOfCryptoCoins)
+        viewModel.onUIEvent(UIEvent.OnGetUserInfo)
+        viewModel.onUIEvent(UIEvent.OnGetAvailableListOfCryptoCoins)
     }
 
-    BackHandler { marketViewModel.onUIEvent(OnNavigateBack) }
+    BackHandler { viewModel.onUIEvent(UIEvent.OnNavigateBack) }
     MarketScreenContent()
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MarketScreenContent(
-    marketViewModel: MarketScreenViewModel = hiltViewModel()
+    viewModel: MarketScreenViewModel = hiltViewModel()
 ) {
 
     val state = rememberModalBottomSheetState(
@@ -93,14 +88,14 @@ fun MarketScreenContent(
     val selectedFilter = remember { mutableStateOf(MarketFilter.Price.value) }
 
     val crListOfCryptoCoin =
-        marketViewModel.uiState.availableCryptoCoins?.availableCryptoCoins ?: emptyList()
-    val svListOfCryptoCoins = marketViewModel.uiState.availableCryptoCoins
+        viewModel.uiState.availableCryptoCoins?.availableCryptoCoins ?: emptyList()
+    val svListOfCryptoCoins = viewModel.uiState.availableCryptoCoins
         ?.availableCryptoCoins?.filter { it.baseAsset == SV_DEFAULT_BASE_ASSET } ?: emptyList()
 
     Column(modifier = Modifier.background(MultimoneyTheme.colors.background)) {
         TopNavBar(
             isRightButtonVisible = false,
-            onLeftButtonClick = { marketViewModel.onUIEvent(OnNavigateBack) }
+            onLeftButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateBack) }
         )
         ModalBottomSheetLayout(
             sheetState = state,
@@ -128,7 +123,7 @@ fun MarketScreenContent(
                     .padding(16.dp)
             ) {
                 MarketHeader()
-                if (marketViewModel.uiState.idBrand == Brand.CostaRica.id) {
+                if (viewModel.uiState.idBrand == Brand.CostaRica.id) {
                     CustomOutlinedTextField(
                         modifier = Modifier,
                         value = searchQuery.value,
@@ -140,23 +135,23 @@ fun MarketScreenContent(
                         placeHolder = stringResource(id = R.string.crypto_wallet_search_crypto_currency),
                     )
                 }
-                if (marketViewModel.uiState.isLoading) {
+                if (viewModel.uiState.isLoading) {
                     MarketSkeleton()
                 } else {
                     ListOfCoinsSection(
-                        availableCryptoCoins = if (marketViewModel.uiState.idBrand == Brand.CostaRica.id)
+                        availableCryptoCoins = if (viewModel.uiState.idBrand == Brand.CostaRica.id)
                             crListOfCryptoCoin else svListOfCryptoCoins,
                         searchQuery = searchQuery,
                         selectedFilter = selectedFilter,
                         sheetState = state,
-                        showFilterChip = marketViewModel.uiState.idBrand == Brand.CostaRica.id,
+                        showFilterChip = viewModel.uiState.idBrand == Brand.CostaRica.id,
                         onCurrencyItemClick = { cryptoCurrency ->
-                            marketViewModel.onUIEvent(
-                                OnSetAssetBeforeNavigation(
+                            viewModel.onUIEvent(
+                                UIEvent.OnSetAssetBeforeNavigation(
                                     cryptoCurrency
                                 )
                             )
-                            marketViewModel.onUIEvent(OnNavigateToCurrencyDetails)
+                            viewModel.onUIEvent(UIEvent.OnNavigateToCurrencyDetails)
                         }
                     )
                 }

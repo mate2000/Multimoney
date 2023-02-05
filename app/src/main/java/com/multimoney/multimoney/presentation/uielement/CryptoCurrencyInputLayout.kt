@@ -2,6 +2,7 @@ package com.multimoney.multimoney.presentation.uielement
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -27,11 +29,8 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,6 +50,7 @@ fun CryptoCurrencyInputLayout(
     focusRequester: FocusRequester,
     isError: Boolean = false,
     errorText: String? = null,
+    onValueChanged: (String) -> Unit,
     onImeClick: () -> Unit
 ) {
     Row(
@@ -69,16 +69,20 @@ fun CryptoCurrencyInputLayout(
                 iconCurrency = iconCurrency,
                 isTransformationCurrency = isTransformationCurrency,
                 focusRequester = focusRequester,
-                onSearchClick = onImeClick
+                onSearchClick = onImeClick,
+                isError = isError,
+                onValueChanged = onValueChanged
             )
             AnimatedVisibility(visible = isError && errorText?.isNotEmpty() == true) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Start
                 ) {
-                    Icon(
-                        modifier = Modifier.wrapContentSize().padding(end = 8.dp),
+                    Image(
+                        modifier = Modifier
+                            .size(24.dp, 24.dp)
+                            .padding(end = 8.dp),
                         painter = painterResource(id = R.drawable.ic_alert_text_error),
                         contentDescription = null
                     )
@@ -103,6 +107,8 @@ fun CustomTextField(
     iconCurrency: String,
     isTransformationCurrency: MutableState<Boolean>,
     focusRequester: FocusRequester,
+    isError: Boolean,
+    onValueChanged: (String) -> Unit = {},
     onSearchClick: () -> Unit
 ) {
     Box(
@@ -127,13 +133,26 @@ fun CustomTextField(
                     else -> 12.sp
                 }
             ),
-            onValueChange = {
-                if (it.length <= LOT_OF_CHARACTERS && it.matches(Regex(DECIMAL_AND_NUMBER_REGEX))) {
+            onValueChange = { newValue ->
+                if (newValue.length <= LOT_OF_CHARACTERS && newValue.matches(Regex(DECIMAL_AND_NUMBER_REGEX))) {
                     value.value = when {
-                        it.isEmpty() -> EMPTY_STRING
-                        it.length == ONE_LENGTH && it.last()
-                            .toString() == SIMPLE_DOT -> EMPTY_STRING
-                        else -> it
+                        newValue.isEmpty() -> {
+                            onValueChanged("")
+                            ""
+                        }
+                        newValue.startsWith(SIMPLE_DOT) -> {
+                            onValueChanged("")
+                            ""
+                        }
+                        newValue.count { it.toString() == SIMPLE_DOT } > ONE_LENGTH
+                                && newValue.endsWith(SIMPLE_DOT) -> {
+                            onValueChanged(newValue.dropLast(ONE_LENGTH))
+                            newValue.dropLast(ONE_LENGTH)
+                        }
+                        else -> {
+                            onValueChanged(newValue)
+                            newValue
+                        }
                     }
                 }
             },
@@ -155,19 +174,23 @@ fun CustomTextField(
             },
             visualTransformation = if (isTransformationCurrency.value.not()) {
                 VisualTransformation.None
+                //CurrencyMaskTransformation()
             } else {
                 VisualTransformation.None
+                //CryptoAssetMaskTransformation(asset = iconCurrency)
             },
             shape = RoundedCornerShape(50.dp),
             singleLine = true,
+            isError = isError,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             keyboardActions = KeyboardActions { onSearchClick() },
             colors = TextFieldDefaults.textFieldColors(
                 textColor = MultimoneyTheme.colors.text,
                 cursorColor = MultimoneyTheme.colors.text,
+                errorLabelColor = MultimoneyTheme.colors.textInputErrorLabelColor,
                 disabledTextColor = MultimoneyTheme.colors.fullTransparency,
                 backgroundColor = MultimoneyTheme.colors.backgroundInformativeChip,
-                focusedIndicatorColor = MultimoneyTheme.colors.fullTransparency,
+                focusedIndicatorColor = MultimoneyTheme.colors.bodyTextColor,
                 unfocusedIndicatorColor = MultimoneyTheme.colors.fullTransparency,
                 disabledIndicatorColor = MultimoneyTheme.colors.fullTransparency
             )
@@ -182,7 +205,7 @@ fun CustomTextField(
                 modifier = Modifier.wrapContentSize(),
                 onClick = {
                     isTransformationCurrency.value = !isTransformationCurrency.value
-                    value.value = EMPTY_STRING
+                    value.value = ""
                 }
             ) {
                 Column(
@@ -215,56 +238,50 @@ const val LOT_OF_CHARACTERS = 32
 const val ONE_LENGTH = 1
 const val SIMPLE_DOT = "."
 const val CURRENCY_DEFAULT_PLACEHOLDER = "$0"
-const val EMPTY_STRING = ""
 
-class CurrencyMaskTransformation : VisualTransformation {
-    override fun filter(text: AnnotatedString): TransformedText = maskFilter(text)
+/*class CurrencyMaskTransformation : VisualTransformation {
+    override fun filter(text: AnnotatedString): TransformedText {
+        val formattedText = text.text.ifEmpty { "0.0" }.toCurrencyFormat()
 
-    private fun maskFilter(text: AnnotatedString): TransformedText {
-        var out = ""
-        for (i in text.text.indices) {
-            if (i == 0) out += ""
-            out += text.text[i]
-        }
+        val offsetMapping = object : OffsetMapping {
 
-        val numberOffsetTranslator = object : OffsetMapping {
             override fun originalToTransformed(offset: Int): Int {
                 if (offset <= 0) return offset
-                return text.text.length + 2
+                val commas = formattedText.count { it == ',' }
+                val dot = formattedText.count { it == '.' }
+                return (text.text.length + commas + dot) + 1
             }
 
             override fun transformedToOriginal(offset: Int): Int {
-                if (offset <= 2) return offset
-                return offset - 2
-            }
-        }
-
-        return TransformedText(AnnotatedString(out), numberOffsetTranslator)
-    }
-}
-
-class CryptoAssetMaskTransformation(val asset: String) : VisualTransformation {
-    override fun filter(text: AnnotatedString): TransformedText = maskFilter(text)
-
-    private fun maskFilter(text: AnnotatedString): TransformedText {
-        var out = ""
-        for (i in text.text.indices) {
-            if (i > 0) out += " $asset"
-            out += text.text[i]
-        }
-
-        val numberOffsetTranslator = object : OffsetMapping {
-            override fun originalToTransformed(offset: Int): Int {
                 if (offset <= 0) return offset
-                return text.text.length + if (asset.length <= 3) asset.length + 1 else asset.length + 2
-            }
-
-            override fun transformedToOriginal(offset: Int): Int {
-                if (offset <= 5) return offset
-                return offset - if (asset.length <= 3) asset.length + 1 else asset.length + 2
+                val commas = formattedText.count { it == ',' }
+                val dot = formattedText.count { it == '.' }
+                return (text.text.length - commas - dot) - 1
             }
         }
 
-        return TransformedText(AnnotatedString(out), numberOffsetTranslator)
+        return TransformedText(
+            text = AnnotatedString(formattedText),
+            offsetMapping = offsetMapping
+        )
     }
-}
+}*/
+
+/*class CryptoAssetMaskTransformation(val asset: String) : VisualTransformation {
+    override fun filter(text: AnnotatedString): TransformedText {
+        return TransformedText(
+            text = if (text.isEmpty()) AnnotatedString("") else AnnotatedString(text.text.plus(" $asset")),
+            offsetMapping = object : OffsetMapping {
+                override fun originalToTransformed(offset: Int): Int {
+                    if (offset <= 0) return offset
+                    return offset.plus(asset.length + 1)
+                }
+
+                override fun transformedToOriginal(offset: Int): Int {
+                    if (offset <= 0) return offset.minus(asset.length + 1)
+                    return offset.minus(asset.length + 1)
+                }
+            }
+        )
+    }
+}*/

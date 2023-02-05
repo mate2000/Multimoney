@@ -1206,6 +1206,9 @@
     <string name="crypto_purchase_flow_amount_asset_placeholder" translatable="false">0 %1s</string>
     <string name="crypto_purchase_flow_exchange_type_title" translatable="false">Tipo de cambio</string>
     <string name="crypto_purchase_flow_exchange_total_title" translatable="false">Total a debitar</string>
+    <string name="crypto_purchase_flow_exit_dialog_title" translatable="false">¿Seguro de que querés salir?</string>
+    <string name="crypto_purchase_flow_exit_dialog_body_message" translatable="false">Si cancelás el proceso no se realizará la compra de la cripto</string>
+    <string name="crypto_purchase_flow_exit_dialog_cancel_button" translatable="false">Salir</string>
 
     <!--Crypto Purchase Flow - Errors-->
     <string name="crypto_purchase_flow_error_minimum_amount" translatable="false">"El monto mínimo de compra es de $5"</string>

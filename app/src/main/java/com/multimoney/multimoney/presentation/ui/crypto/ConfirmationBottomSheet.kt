@@ -10,6 +10,7 @@ fun PurchaseConfirmationBottomSheet(
     modifier: Modifier = Modifier
 ) {
 
+    // custom info button componente para mostrar la cuenta seleccionada
     Column {
         Text(text = "PurchaseConfirmationBottomSheet")
     }

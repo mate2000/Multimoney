@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency
 
-import android.content.Context
 import android.os.CountDownTimer
 import androidx.annotation.StringRes
 import androidx.compose.runtime.MutableState
@@ -14,8 +13,11 @@ import com.multimoney.domain.model.crypto.PricesQuoteAndCommissions
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -23,21 +25,24 @@ import javax.inject.Inject
 const val ID_BRAND_ERROR = -1
 const val DEFAULT_BASE_AMOUNT_STRING = "0.0"
 const val DEFAULT_AMOUNT = "1.0" // change to 0 while backend is ready
+const val DEFAULT_AMOUNT_NUMBER = 1.0
+const val MINIMUM_AMOUNT_ALLOWED = 5.0
 
 @HiltViewModel
 class BuyCurrencyScreenViewModel @Inject constructor(
     private val getExchangeRate: QuerySmartExchangeRateUseCase,
     private val getPriceQuoteAndCommissionsUseCase: GetPriceQuoteAndCommissionsUseCase,
-    private val buyCryptoCurrencyUseCase: BuyCryptoCurrencyUseCase
+    private val buyCryptoCurrencyUseCase: BuyCryptoCurrencyUseCase,
 ) : BaseViewModel(false) {
 
     var uiState by mutableStateOf(UIState())
         private set
 
-    var timerCount by mutableStateOf<Int?>(null)
+    var timerCount by mutableStateOf<Int?>(15)
         private set
 
-    var isTimerRunning by mutableStateOf(timerCount != null || timerCount != 0)
+    /*var confirmationTimerCount by mutableStateOf(5_000L)
+        private set*/
 
     private val timer = object : CountDownTimer(15000, 1000) {
         override fun onTick(millisUntilFinished: Long) {
@@ -45,12 +50,27 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         }
 
         override fun onFinish() {
+            timerCount = null
             updateDataWithNewExchangeRate()
             if (idCurrencyAccount == CurrencyType.Colon.id) {
                 getExchangeRate()
             }
         }
     }
+
+    /*private val confirmationTimer = object : CountDownTimer(confirmationTimerCount, 1_000) {
+        override fun onTick(millisUntilFinished: Long) {
+            confirmationTimerCount = (millisUntilFinished / 1000)
+        }
+
+        override fun onFinish() {
+            updateDataWithNewExchangeRate()
+            if (idCurrencyAccount == CurrencyType.Colon.id) {
+                getExchangeRate()
+            }
+            confirmationTimerCount = 20_000L
+        }
+    }*/
 
     var pkUser = 0
     var asset = ""
@@ -81,7 +101,6 @@ class BuyCurrencyScreenViewModel @Inject constructor(
     ) {
         this.pkUser = pkUser
         this.idCurrencyAccount = idCurrencyAccount
-        this.isTimerRunning = true
         this.asset = asset ?: ""
         this.cryptoNetWork = cryptoNetwork ?: ""
         this.idBrand = idBrand
@@ -95,10 +114,6 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             convertColonesToDollars(smartAccountAvailableBalance)
         } else {
             this.smartAccountAvailableBalance = smartAccountAvailableBalance
-        }
-        if (isTimerRunning.not()) {
-            updateDataWithNewExchangeRate()
-            getExchangeRate()
         }
     }
 
@@ -128,33 +143,35 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 timer.start()
             }
             result.onFailure {
-                uiState = uiState.copy(isLoading = false)
                 timer.cancel()
+                onFailure()
             }
         }
     }
 
-    private fun convertColonesToDollars(smartAccountAvailableBalance: Double): Unit = executeUseCase {
-        getExchangeRate.invoke(
-            user = user,
-            identification = identification,
-            idBrand = idBrand,
-            abbreviation = CurrencyType.Dollar.disbursementValue,
-            idOriginCurrency = CurrencyType.Colon.id.toString(),
-            idDestinationCurrency = CurrencyType.Dollar.id.toString(),
-            amount = smartAccountAvailableBalance
-        ).collectLatest { result ->
-            result.onLoading {
-                this.smartAccountAvailableBalance = 0.0
-            }
-            result.onSuccess { exchangeRate ->
-                this.smartAccountAvailableBalance = exchangeRate?.convertedAmount ?: 0.0
-            }
-            result.onFailure {
-                this.smartAccountAvailableBalance = 0.0
+    private fun convertColonesToDollars(smartAccountAvailableBalance: Double): Unit =
+        executeUseCase {
+            getExchangeRate.invoke(
+                user = user,
+                identification = identification,
+                idBrand = idBrand,
+                abbreviation = CurrencyType.Dollar.disbursementValue,
+                idOriginCurrency = CurrencyType.Colon.id.toString(),
+                idDestinationCurrency = CurrencyType.Dollar.id.toString(),
+                amount = smartAccountAvailableBalance
+            ).collectLatest { result ->
+                result.onLoading {
+                    this.smartAccountAvailableBalance = 0.0
+                }
+                result.onSuccess { exchangeRate ->
+                    this.smartAccountAvailableBalance = exchangeRate?.convertedAmount ?: 0.0
+                }
+                result.onFailure {
+                    this.smartAccountAvailableBalance = 0.0
+                    onFailure()
+                }
             }
         }
-    }
 
     private fun getExchangeRate(): Unit = executeUseCase {
         getExchangeRate.invoke(
@@ -162,11 +179,9 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             identification = identification,
             idBrand = idBrand,
             abbreviation = CurrencyType.Colon.disbursementValue,
-            idOriginCurrency = CurrencyType.Colon.id.toString(),
-            idDestinationCurrency = CurrencyType.Dollar.id.toString(),
-            amount = uiState.quoteAmount.value.ifEmpty {
-                uiState.pricesQuoteAndCommissions?.quote_amount.toString()
-            }.toDouble()
+            idOriginCurrency = CurrencyType.Dollar.id.toString(),
+            idDestinationCurrency = CurrencyType.Colon.id.toString(),
+            amount = 0.0
         ).collectLatest { result ->
             result.onLoading { uiState = uiState.copy(isLoading = true) }
             result.onSuccess { exchangeRate ->
@@ -176,47 +191,51 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 )
             }
             result.onFailure {
-                uiState = uiState.copy(isLoading = false)
                 timer.cancel()
+                onFailure()
             }
         }
     }
 
-    /*fun validateFormWhileDollars(): MutableState<Boolean> {
-        val quoteAmount = uiState.quoteAmount.value.ifEmpty {
-            uiState.pricesQuoteAndCommissions?.quote_amount.toString()
-        }.toDoubleOrNull() ?: 0.0
-        val available = smartAccountAvailableBalance
-        val totalFee = uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
-        return when {
-            quoteAmount < 5.0 -> isError(
+    private fun validateAmountInput(amount: String) {
+        val quoteAmount = if (uiState.isTransformationCurrency.value.not()) {
+            amount.ifEmpty { DEFAULT_BASE_AMOUNT_STRING }.toDouble()
+        } else {
+            amount.ifEmpty { DEFAULT_AMOUNT }.toDouble()
+                .times(uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER)
+        }
+        val amountPlusFee = amount.ifEmpty { DEFAULT_BASE_AMOUNT_STRING }.toDouble()
+            .plus(uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0)
+
+        when {
+            quoteAmount < MINIMUM_AMOUNT_ALLOWED -> isError(
                 errorMessage = R.string.crypto_purchase_flow_error_minimum_amount,
                 isError = true
             )
-            quoteAmount >= available -> isError(
+            quoteAmount >= smartAccountAvailableBalance -> isError(
                 errorMessage = R.string.crypto_purchase_flow_error_available_amount,
-                arg = available.toCurrencyFormat(),
+                arg = smartAccountAvailableBalance.toCurrencyFormat(),
                 isError = true
             )
-            quoteAmount >= (available + totalFee) -> isError(
+            amountPlusFee >= smartAccountAvailableBalance -> isError(
                 errorMessage = R.string.crypto_purchase_flow_error_available_amount_commission,
                 isError = true
             )
             else -> isError()
         }
-    }*/
+    }
 
-    /*private fun isError(
+    private fun isError(
         @StringRes errorMessage: Int = R.string.empty,
         arg: Any = Any(),
         isError: Boolean = false
-    ): MutableState<Boolean> {
-        if (!isError) return mutableStateOf(false)
+    ) {
         uiState = uiState.copy(
-            error = ErrorTextHelper.ErrorTextResource(errorMessage, arg)
+            error = errorMessage,
+            errorMessageArg = arg,
+            isError = isError
         )
-        return mutableStateOf(true)
-    }*/
+    }
 
     private fun purchaseCryptoCurrency() {
         executeUseCase {
@@ -227,7 +246,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 identification = identification,
                 market = market,
                 accountToken = accountToken,
-                commissionAmount = 0.0,
+                commissionAmount = uiState.pricesQuoteAndCommissions?.fee?.toDouble() ?: 0.0,
                 taxAmount = uiState.pricesQuoteAndCommissions?.taxAmount ?: 0.0,
                 exchangeRate = if (idCurrencyAccount == CurrencyType.Dollar.id) 1.0 else uiState.exchangeRate,
                 quoteId = uiState.pricesQuoteAndCommissions?.quote_id ?: "",
@@ -260,18 +279,46 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         }
     }
 
+    private fun onFailure() {
+        uiState = uiState.copy(
+            isLoading = false,
+            openDialog = DialogParameters(
+                descriptionResource = R.string.error_occurred_title,
+                negativeResource = R.string.error_button_try_later,
+                positiveResource = R.string.error_button_retry,
+                isActive = mutableStateOf(true),
+                negativeAction = {
+                      uiState.failureAction()
+                },
+                positiveAction = {
+                    timerCount = null
+                    updateDataWithNewExchangeRate()
+                    if (idCurrencyAccount == CurrencyType.Colon.id) {
+                        getExchangeRate()
+                    }
+                }
+            )
+        )
+    }
+
     data class UIState(
         val exchangeRate: Double = 1.0,
         val asset: String = "",
         val availableSmartAmount: Double = 0.0,
         val isConfirmationBottomSheetOpen: MutableState<Boolean> = mutableStateOf(false),
         val isLoading: Boolean = false,
+        val openDialog: DialogParameters = DialogParameters(),
+        val failureAction: () -> Unit = {},
         val isPurchaseInProcess: Boolean = false, // to handle loading screen after purchase
-        val isPurchaseFailed : Boolean = false, // to handle error screen after purchase
-        val isPurchaseSuccess : Boolean = false, // to handle success screen after purchase
-        val error: ErrorTextHelper = ErrorTextHelper.ErrorText(""),
+        val isPurchaseFailed: Boolean = false, // to handle error screen after purchase
+        val isPurchaseSuccess: Boolean = false, // to handle success screen after purchase
+        val isError: Boolean = false,
+        @StringRes val error: Int = R.string.empty,
+        val errorMessageArg: Any = Any(),
         val quoteAmount: MutableState<String> = mutableStateOf(""),
         val baseAmount: MutableState<String> = mutableStateOf(""),
+        val isTransformationCurrency: MutableState<Boolean> = mutableStateOf(false),
+        val textIsNotEmpty: Boolean = quoteAmount.value.isNotEmpty() || baseAmount.value.isNotEmpty(),
         val pricesQuoteAndCommissions: PricesQuoteAndCommissions? = null
     )
 
@@ -293,7 +340,13 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 smartAccountAvailableBalance = event.smartAccountAvailableBalance,
                 idCurrencyAccount = event.idCurrencyAccount
             )
-            is UIEvent.OnSetQuoteAmount -> {}
+            UIEvent.OnGetExchangeRate -> if (uiState.exchangeRate == 1.0) {
+                getExchangeRate()
+            }
+            is UIEvent.ValidateAmountInput -> validateAmountInput(event.amount)
+            is UIEvent.OnSetFailureAction -> uiState = uiState.copy(
+                failureAction = event.failureAction
+            )
         }
     }
 
@@ -312,24 +365,10 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             val smartAccountAvailableBalance: Double,
             val idCurrencyAccount: Int
         ) : UIEvent()
-
+        data class ValidateAmountInput(val amount: String) : UIEvent()
+        data class OnSetFailureAction(val failureAction: () -> Unit) : UIEvent()
         object OnGetQuoteAndCommissions : UIEvent()
-        data class OnSetQuoteAmount(val quoteAmount: Double) : UIEvent()
         object OnPurchaseCryptoCurrency : UIEvent()
-    }
-}
-
-sealed interface ErrorTextHelper {
-    data class ErrorText(val text: String) : ErrorTextHelper
-    class ErrorTextResource(
-        @StringRes val stringRes: Int,
-        vararg val args: Any
-    ) : ErrorTextHelper
-
-    fun getErrorText(context: Context): String {
-        return when (this) {
-            is ErrorText -> text
-            is ErrorTextResource -> context.getString(stringRes, *args)
-        }
+        object OnGetExchangeRate : UIEvent()
     }
 }

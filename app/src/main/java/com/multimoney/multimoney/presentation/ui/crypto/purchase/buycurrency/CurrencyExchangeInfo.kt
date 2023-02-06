@@ -30,7 +30,9 @@ fun CurrencyExchangeInfo(
     leftTitleResource: Int = R.string.empty,
     rightTitleResource: Int = R.string.empty,
     exchangeRateText: String = "",
-    convertedAmountText: String = ""
+    convertedAmountText: String = "",
+    contentColumnAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
+    rightColumnWithSpacing: Boolean = true
 ) {
     val titleColor: Color
     val subtitleColor: Color
@@ -50,7 +52,7 @@ fun CurrencyExchangeInfo(
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = contentColumnAlignment
         ) {
             Text(
                 text = stringResource(id = leftTitleResource),
@@ -72,9 +74,9 @@ fun CurrencyExchangeInfo(
                 .width(1.dp),
             color = MultimoneyTheme.colors.bottomNavigationDividerColor
         )
-        Spacer(modifier = Modifier.width(8.dp))
+        if (rightColumnWithSpacing) Spacer(modifier = Modifier.width(8.dp))
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = contentColumnAlignment
         ) {
             Text(
                 text = stringResource(id = rightTitleResource),

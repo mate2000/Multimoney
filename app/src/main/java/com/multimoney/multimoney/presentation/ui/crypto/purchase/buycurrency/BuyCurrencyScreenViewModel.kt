@@ -1,11 +1,11 @@
 package com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency
 
-import android.os.CountDownTimer
 import androidx.annotation.StringRes
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewModelScope
 import com.multimoney.domain.interaction.accountsmart.QuerySmartExchangeRateUseCase
 import com.multimoney.domain.interaction.crypto.BuyCryptoCurrencyUseCase
 import com.multimoney.domain.interaction.crypto.GetPriceQuoteAndCommissionsUseCase
@@ -17,16 +17,13 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.format
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
-
-const val ID_BRAND_ERROR = -1
-const val DEFAULT_BASE_AMOUNT_STRING = "0.0"
-const val DEFAULT_AMOUNT = "1.0" // change to 0 while backend is ready
-const val DEFAULT_AMOUNT_NUMBER = 1.0
-const val MINIMUM_AMOUNT_ALLOWED = 5.0
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class BuyCurrencyScreenViewModel @Inject constructor(
@@ -38,40 +35,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
     var uiState by mutableStateOf(UIState())
         private set
 
-    var timerCount by mutableStateOf<Int?>(15)
-        private set
-
-    /*var confirmationTimerCount by mutableStateOf(5_000L)
-        private set*/
-
-    private val timer = object : CountDownTimer(15000, 1000) {
-        override fun onTick(millisUntilFinished: Long) {
-            timerCount = (millisUntilFinished / 1000).toInt()
-        }
-
-        override fun onFinish() {
-            timerCount = null
-            updateDataWithNewExchangeRate()
-            if (idCurrencyAccount == CurrencyType.Colon.id) {
-                getExchangeRate()
-            }
-        }
-    }
-
-    /*private val confirmationTimer = object : CountDownTimer(confirmationTimerCount, 1_000) {
-        override fun onTick(millisUntilFinished: Long) {
-            confirmationTimerCount = (millisUntilFinished / 1000)
-        }
-
-        override fun onFinish() {
-            updateDataWithNewExchangeRate()
-            if (idCurrencyAccount == CurrencyType.Colon.id) {
-                getExchangeRate()
-            }
-            confirmationTimerCount = 20_000L
-        }
-    }*/
-
+    //share properties
     var pkUser = 0
     var asset = ""
     private var cryptoNetWork = ""
@@ -117,17 +81,54 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         }
     }
 
+    private val timer = TimerHelper(
+        coroutineScope = viewModelScope,
+        time = DEFAULT_TIMER_COUNT,
+        onTick = { seconds ->
+            val remainingTime = seconds.seconds
+            uiState = uiState.copy(
+                remainingTime = remainingTime,
+                remainingTimeText = remainingTime.format()
+            )
+        },
+        onFinished = {
+            updateDataWithNewExchangeRate()
+            if (idCurrencyAccount == CurrencyType.Colon.id) {
+                getExchangeRate()
+            }
+        }
+    )
+
+    private val confirmationTimer = TimerHelper(
+        coroutineScope = viewModelScope,
+        time = CONFIRMATION_BOTTOM_SHEET_INITIAL_TIMER_COUNT,
+        isBottomSheetOpen = true,
+        onTick = { seconds ->
+            val remainingTime = seconds.seconds
+            uiState = uiState.copy(
+                remainingTime = remainingTime,
+                remainingTimeText = remainingTime.format()
+            )
+        },
+        onFinished = {
+            updateDataWithNewExchangeRate()
+            if (idCurrencyAccount == CurrencyType.Colon.id) {
+                getExchangeRate()
+            }
+        }
+    )
+
     private fun updateDataWithNewExchangeRate(): Unit = executeUseCase {
-        getPriceQuoteAndCommissionsUseCase.invoke(
-            asset = asset,
+        getPriceQuoteAndCommissionsUseCase.invoke(asset = asset,
             crypto_network = cryptoNetWork,
             idBrand = idBrand,
             user = user,
             market = market,
             identification = identification,
             side = side,
-            base_amount = uiState.baseAmount.value.ifEmpty { DEFAULT_BASE_AMOUNT_STRING }
-                .toDouble(),
+            base_amount = uiState.baseAmount.value.ifEmpty {
+                DEFAULT_BASE_AMOUNT_STRING
+            }.toDouble(),
             quote_amount = uiState.quoteAmount.value.ifEmpty {
                 if (uiState.baseAmount.value.isNotEmpty()) DEFAULT_BASE_AMOUNT_STRING else DEFAULT_AMOUNT
             }.toDouble()
@@ -140,10 +141,15 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                     isLoading = false,
                     pricesQuoteAndCommissions = pricesQuotesAndCommission.pricesQuote
                 )
-                timer.start()
+                if (!uiState.isConfirmationBottomSheetOpen) {
+                    timer.startTimer()
+                } else {
+                    confirmationTimer.startTimer()
+                }
             }
             result.onFailure {
-                timer.cancel()
+                timer.stopTimer()
+                confirmationTimer.stopTimer()
                 onFailure()
             }
         }
@@ -186,12 +192,12 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             result.onLoading { uiState = uiState.copy(isLoading = true) }
             result.onSuccess { exchangeRate ->
                 uiState = uiState.copy(
-                    isLoading = false,
-                    exchangeRate = exchangeRate?.exchangeRate ?: 1.0
+                    isLoading = false, exchangeRate = exchangeRate?.exchangeRate ?: 1.0
                 )
             }
             result.onFailure {
-                timer.cancel()
+                timer.stopTimer()
+                confirmationTimer.stopTimer()
                 onFailure()
             }
         }
@@ -208,9 +214,9 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             .plus(uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0)
 
         when {
+            amount.isEmpty() -> isError(isError = true)
             quoteAmount < MINIMUM_AMOUNT_ALLOWED -> isError(
-                errorMessage = R.string.crypto_purchase_flow_error_minimum_amount,
-                isError = true
+                errorMessage = R.string.crypto_purchase_flow_error_minimum_amount, isError = true
             )
             quoteAmount >= smartAccountAvailableBalance -> isError(
                 errorMessage = R.string.crypto_purchase_flow_error_available_amount,
@@ -226,14 +232,10 @@ class BuyCurrencyScreenViewModel @Inject constructor(
     }
 
     private fun isError(
-        @StringRes errorMessage: Int = R.string.empty,
-        arg: Any = Any(),
-        isError: Boolean = false
+        @StringRes errorMessage: Int = R.string.empty, arg: Any = Any(), isError: Boolean = false
     ) {
         uiState = uiState.copy(
-            error = errorMessage,
-            errorMessageArg = arg,
-            isError = isError
+            error = errorMessage, errorMessageArg = arg, isError = isError
         )
     }
 
@@ -257,22 +259,17 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onLoading {
                     uiState = uiState.copy(
-                        isLoading = true,
-                        isPurchaseInProcess = true
+                        isLoading = true, isPurchaseInProcess = true
                     )
                 }
                 result.onSuccess {
                     uiState = uiState.copy(
-                        isLoading = false,
-                        isPurchaseInProcess = false,
-                        isPurchaseSuccess = true
+                        isLoading = false, isPurchaseInProcess = false, isPurchaseSuccess = true
                     )
                 }
                 result.onFailure {
                     uiState = uiState.copy(
-                        isLoading = false,
-                        isPurchaseInProcess = false,
-                        isPurchaseFailed = true
+                        isLoading = false, isPurchaseInProcess = false, isPurchaseFailed = true
                     )
                 }
             }
@@ -282,44 +279,47 @@ class BuyCurrencyScreenViewModel @Inject constructor(
     private fun onFailure() {
         uiState = uiState.copy(
             isLoading = false,
-            openDialog = DialogParameters(
-                descriptionResource = R.string.error_occurred_title,
+            openDialog = DialogParameters(descriptionResource = R.string.error_occurred_title,
                 negativeResource = R.string.error_button_try_later,
                 positiveResource = R.string.error_button_retry,
                 isActive = mutableStateOf(true),
                 negativeAction = {
-                      uiState.failureAction()
+                    uiState.failureAction()
                 },
                 positiveAction = {
-                    timerCount = null
                     updateDataWithNewExchangeRate()
                     if (idCurrencyAccount == CurrencyType.Colon.id) {
                         getExchangeRate()
                     }
-                }
-            )
+                })
         )
     }
 
     data class UIState(
+        // ** mutable data
         val exchangeRate: Double = 1.0,
         val asset: String = "",
         val availableSmartAmount: Double = 0.0,
-        val isConfirmationBottomSheetOpen: MutableState<Boolean> = mutableStateOf(false),
+        val quoteAmount: MutableState<String> = mutableStateOf(""),
+        val baseAmount: MutableState<String> = mutableStateOf(""),
+        val pricesQuoteAndCommissions: PricesQuoteAndCommissions? = null,
+        // ** interactions
+        val isConfirmationBottomSheetOpen: Boolean = false,
         val isLoading: Boolean = false,
+        //* timer
+        val remainingTime: Duration = Duration.ZERO,
+        val remainingTimeText: String = remainingTime.format(),
+        // timer *
         val openDialog: DialogParameters = DialogParameters(),
         val failureAction: () -> Unit = {},
         val isPurchaseInProcess: Boolean = false, // to handle loading screen after purchase
         val isPurchaseFailed: Boolean = false, // to handle error screen after purchase
         val isPurchaseSuccess: Boolean = false, // to handle success screen after purchase
+        //** validations
         val isError: Boolean = false,
         @StringRes val error: Int = R.string.empty,
         val errorMessageArg: Any = Any(),
-        val quoteAmount: MutableState<String> = mutableStateOf(""),
-        val baseAmount: MutableState<String> = mutableStateOf(""),
-        val isTransformationCurrency: MutableState<Boolean> = mutableStateOf(false),
-        val textIsNotEmpty: Boolean = quoteAmount.value.isNotEmpty() || baseAmount.value.isNotEmpty(),
-        val pricesQuoteAndCommissions: PricesQuoteAndCommissions? = null
+        val isTransformationCurrency: MutableState<Boolean> = mutableStateOf(false)
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -347,6 +347,20 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             is UIEvent.OnSetFailureAction -> uiState = uiState.copy(
                 failureAction = event.failureAction
             )
+            UIEvent.OnOpenPurchaseConfirmationBottomSheet -> {
+                timer.stopTimer()
+                uiState = uiState.copy(
+                    isConfirmationBottomSheetOpen = true
+                )
+                confirmationTimer.startTimer()
+            }
+            UIEvent.OnClosePurchaseConfirmationBottomSheet -> {
+                confirmationTimer.stopTimer()
+                uiState = uiState.copy(
+                    isConfirmationBottomSheetOpen = false
+                )
+                timer.startTimer()
+            }
         }
     }
 
@@ -365,10 +379,23 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             val smartAccountAvailableBalance: Double,
             val idCurrencyAccount: Int
         ) : UIEvent()
+
         data class ValidateAmountInput(val amount: String) : UIEvent()
         data class OnSetFailureAction(val failureAction: () -> Unit) : UIEvent()
         object OnGetQuoteAndCommissions : UIEvent()
         object OnPurchaseCryptoCurrency : UIEvent()
         object OnGetExchangeRate : UIEvent()
+        object OnOpenPurchaseConfirmationBottomSheet : UIEvent()
+        object OnClosePurchaseConfirmationBottomSheet : UIEvent()
+    }
+
+    companion object {
+        const val ID_BRAND_ERROR = -1
+        const val DEFAULT_BASE_AMOUNT_STRING = "0.0"
+        const val DEFAULT_AMOUNT = "1.0" // change to 0 while backend is ready
+        const val DEFAULT_AMOUNT_NUMBER = 1.0
+        const val MINIMUM_AMOUNT_ALLOWED = 5.0
+        const val DEFAULT_TIMER_COUNT = 15
+        const val CONFIRMATION_BOTTOM_SHEET_INITIAL_TIMER_COUNT = 5
     }
 }

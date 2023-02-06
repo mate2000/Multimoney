@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
@@ -30,6 +31,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -51,6 +53,11 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.roundToEightDecimalPlaces
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 import kotlinx.coroutines.launch
+
+const val DEFAULT_CURRENCY_PRICE = 0.0
+const val TIMER_UNIT_INDICATOR = " seg"
+const val SPACE_BETWEEN = " "
+const val EMPTY_CURRENCY = "0.00"
 
 @Composable
 fun BuyCurrencyScreen(
@@ -82,6 +89,7 @@ fun BuyCurrencyScreen(
         if (sharedViewModel.uiState.idCurrency == CurrencyType.Colon.id) {
             viewModel.onUIEvent(BuyCurrencyScreenViewModel.UIEvent.OnGetExchangeRate)
         }
+        viewModel.onUIEvent(BuyCurrencyScreenViewModel.UIEvent.ValidateAmountInput(""))
         viewModel.onUIEvent(BuyCurrencyScreenViewModel.UIEvent.OnSetFailureAction(
             failureAction = {
                 sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep)
@@ -89,7 +97,9 @@ fun BuyCurrencyScreen(
         ))
     }
 
-    BuyCurrencyScreenContent(viewModel)
+    BuyCurrencyScreenContent(viewModel) {
+        //todo go to next step / set data etc
+    }
     BackHandler {
         sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep)
     }
@@ -108,12 +118,15 @@ fun BuyCurrencyScreen(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun BuyCurrencyScreenContent(
-    viewModel: BuyCurrencyScreenViewModel
+    viewModel: BuyCurrencyScreenViewModel,
+    onConfirm: () -> Unit = {}
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
     val modalBottomSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = true
@@ -121,8 +134,14 @@ fun BuyCurrencyScreenContent(
 
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
+        sheetShape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
         sheetContent = {
-            PurchaseConfirmationBottomSheet()
+            PurchaseConfirmationBottomSheet(
+                modalBottomSheetState = modalBottomSheetState,
+                coroutineScope = coroutineScope,
+                viewModel = viewModel,
+                onConfirm = onConfirm
+            )
         }
     ) {
         Column(
@@ -154,6 +173,8 @@ fun BuyCurrencyScreenContent(
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     },
+                    keyboardController = keyboardController,
+                    focusRequester = focusRequester,
                     asset = viewModel.asset,
                     currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price
                         ?: DEFAULT_CURRENCY_PRICE,
@@ -206,7 +227,7 @@ fun BuyCurrencyScreenContent(
                 }) {
                     CounterSection(
                         smartAccountAvailableBalance = viewModel.smartAccountAvailableBalance,
-                        downCounter = viewModel.timerCount ?: DEFAULT_TIMER_REMAINING_SECS,
+                        downCounter = viewModel.uiState.remainingTimeText
                     )
                 }
                 CustomButton(
@@ -219,9 +240,11 @@ fun BuyCurrencyScreenContent(
                         .fillMaxWidth()
                         .height(64.dp)
                         .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                    enable = viewModel.uiState.isError.not() && viewModel.uiState.textIsNotEmpty,
+                    enable = viewModel.uiState.isError.not(),
                     onClick = {
                         coroutineScope.launch {
+                            keyboardController?.hide()
+                            viewModel.onUIEvent(BuyCurrencyScreenViewModel.UIEvent.OnOpenPurchaseConfirmationBottomSheet)
                             modalBottomSheetState.show()
                         }
                     }
@@ -247,7 +270,7 @@ fun WhileLoadingSection(
 @Composable
 fun CounterSection(
     modifier: Modifier = Modifier,
-    downCounter: Int,
+    downCounter: String,
     smartAccountAvailableBalance: Double,
 ) {
     Column(modifier = modifier) {
@@ -301,7 +324,7 @@ fun CounterSection(
                             fontWeight = FontWeight.Bold
                         )
                     ) {
-                        append(downCounter.toString())
+                        append(downCounter)
                         append(TIMER_UNIT_INDICATOR)
                     }
                 },
@@ -323,10 +346,10 @@ fun AmountInputSection(
     quoteAmount: MutableState<String>,
     baseAmount: MutableState<String>,
     isTransformationCurrency: MutableState<Boolean>,
+    keyboardController: SoftwareKeyboardController?,
+    focusRequester: FocusRequester,
     onAmountChanged: (String) -> Unit
 ) {
-    val focusRequester = remember { FocusRequester() }
-    val keyboardController = LocalSoftwareKeyboardController.current
     val quoteAmountText = remember { quoteAmount }
     val baseAmountText = remember { baseAmount }
     val isTransformationCurrencyValue = remember { isTransformationCurrency }
@@ -355,15 +378,17 @@ fun AmountInputSection(
             text = if (isTransformationCurrencyValue.value.not()) {
                 stringResource(
                     id = R.string.crypto_purchase_flow_exchange_reference_edittext,
-                    (quoteAmountText.value.ifEmpty { EMPTY_CURRENCY }
-                        .toDouble() / currencyPrice).roundToEightDecimalPlaces(),
+                    (quoteAmountText.value.ifEmpty {
+                        EMPTY_CURRENCY
+                    }.toDouble() / currencyPrice).roundToEightDecimalPlaces(),
                     asset
                 )
             } else {
                 stringResource(
                     id = R.string.crypto_purchase_flow_exchange_reference_edittext_dollars,
-                    (currencyPrice * baseAmountText.value.ifEmpty { EMPTY_CURRENCY }
-                        .toDouble()).toCurrencyFormat()
+                    (currencyPrice * baseAmountText.value.ifEmpty {
+                        EMPTY_CURRENCY
+                    }.toDouble()).toCurrencyFormat()
                 )
             },
             style = Typography.body2.copy(
@@ -436,9 +461,3 @@ fun TitleSection(
         }
     }
 }
-
-const val DEFAULT_CURRENCY_PRICE = 0.0
-const val DEFAULT_TIMER_REMAINING_SECS = 15
-const val TIMER_UNIT_INDICATOR = " seg"
-const val SPACE_BETWEEN = " "
-const val EMPTY_CURRENCY = "0.00"

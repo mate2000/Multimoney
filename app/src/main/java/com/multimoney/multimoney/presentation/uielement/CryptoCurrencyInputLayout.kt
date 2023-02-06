@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.uielement
 
+import android.icu.text.NumberFormat
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
@@ -29,8 +30,11 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,6 +43,8 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.util.DECIMAL_AND_NUMBER_REGEX
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
+import java.util.*
+import kotlin.math.max
 
 @ExperimentalAnimationApi
 @Composable
@@ -174,10 +180,9 @@ fun CustomTextField(
             },
             visualTransformation = if (isTransformationCurrency.value.not()) {
                 VisualTransformation.None
-                //CurrencyMaskTransformation()
+                //todo use when is completed: CurrencyMaskTransformation()
             } else {
-                VisualTransformation.None
-                //CryptoAssetMaskTransformation(asset = iconCurrency)
+                CryptoAssetMaskTransformation(asset = iconCurrency)
             },
             shape = RoundedCornerShape(50.dp),
             singleLine = true,
@@ -239,24 +244,47 @@ const val ONE_LENGTH = 1
 const val SIMPLE_DOT = "."
 const val CURRENCY_DEFAULT_PLACEHOLDER = "$0"
 
-/*class CurrencyMaskTransformation : VisualTransformation {
+class CurrencyMaskTransformation : VisualTransformation {
+
+    private val numberFormat = NumberFormat.getCurrencyInstance(Locale.getDefault())
+
     override fun filter(text: AnnotatedString): TransformedText {
-        val formattedText = text.text.ifEmpty { "0.0" }.toCurrencyFormat()
+        val original = text.text
+        val formattedText = numberFormat.format(original.ifEmpty { "0" }.toDouble())
 
         val offsetMapping = object : OffsetMapping {
-
             override fun originalToTransformed(offset: Int): Int {
-                if (offset <= 0) return offset
-                val commas = formattedText.count { it == ',' }
-                val dot = formattedText.count { it == '.' }
-                return (text.text.length + commas + dot) + 1
+                var originalIndex = 0
+                var newTextIndex = 0
+
+                while (originalIndex < offset && originalIndex < original.length) {
+                    if (original[originalIndex] == '.') {
+                        break
+                    }
+                    originalIndex++
+                    newTextIndex++
+                }
+
+                while (newTextIndex < formattedText.length && formattedText[newTextIndex] != '.') {
+                    newTextIndex++
+                }
+
+                return newTextIndex
             }
 
             override fun transformedToOriginal(offset: Int): Int {
-                if (offset <= 0) return offset
-                val commas = formattedText.count { it == ',' }
-                val dot = formattedText.count { it == '.' }
-                return (text.text.length - commas - dot) - 1
+                var originalIndex = 0
+                var newTextIndex = 0
+
+                while (newTextIndex < offset && originalIndex < original.length) {
+                    if (formattedText[newTextIndex] == ',') {
+                        break
+                    }
+                    originalIndex++
+                    newTextIndex++
+                }
+
+                return originalIndex
             }
         }
 
@@ -265,23 +293,23 @@ const val CURRENCY_DEFAULT_PLACEHOLDER = "$0"
             offsetMapping = offsetMapping
         )
     }
-}*/
+}
 
-/*class CryptoAssetMaskTransformation(val asset: String) : VisualTransformation {
+class CryptoAssetMaskTransformation(val asset: String) : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
+        val transformedText = if (text.isEmpty()) "" else text.text.plus(" $asset")
+        val originalLength = text.text.length
         return TransformedText(
-            text = if (text.isEmpty()) AnnotatedString("") else AnnotatedString(text.text.plus(" $asset")),
+            text = AnnotatedString(transformedText),
             offsetMapping = object : OffsetMapping {
                 override fun originalToTransformed(offset: Int): Int {
-                    if (offset <= 0) return offset
-                    return offset.plus(asset.length + 1)
+                    return if (offset <= text.length - (asset.length + 1)) 0 else offset
                 }
 
                 override fun transformedToOriginal(offset: Int): Int {
-                    if (offset <= 0) return offset.minus(asset.length + 1)
-                    return offset.minus(asset.length + 1)
+                    return if (offset >= transformedText.length - (asset.length + 1)) originalLength else max(0, offset - (asset.length + 1))
                 }
             }
         )
     }
-}*/
+}

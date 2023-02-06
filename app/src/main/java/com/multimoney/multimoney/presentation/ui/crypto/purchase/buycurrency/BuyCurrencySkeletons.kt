@@ -34,6 +34,25 @@ fun BuyCurrencyTitleSectionSkeleton() {
 }
 
 @Composable
+fun BuyCurrencyTitleConfirmationSectionSkeleton() {
+    ShimmerBoxView {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            ShimmerItemView(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(24.dp),
+                radius = 1.dp
+            )
+        }
+    }
+}
+
+@Composable
 fun VoucherCurrencyExchangeInfoSkeleton() {
     ShimmerBoxView {
         Row(

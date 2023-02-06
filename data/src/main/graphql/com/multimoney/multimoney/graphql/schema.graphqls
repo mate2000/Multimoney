@@ -858,6 +858,8 @@ type AddressLevel4 {
 
   message: String
 
+  detail: String
+
   _HaveError: Boolean
 
   _ErrorMessage: String
@@ -882,6 +884,8 @@ type AddressLevel3 {
 
   message: String
 
+  detail: String
+
   _HaveError: Boolean
 
   _ErrorMessage: String
@@ -904,6 +908,8 @@ type AddressLevel2 {
 
   message: String
 
+  detail: String
+
   _HaveError: Boolean
 
   _ErrorMessage: String
@@ -923,6 +929,8 @@ type AddressLevel1 {
   status: Int
 
   message: String
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -944,6 +952,8 @@ type Nationality {
 
   message: String
 
+  detail: String
+
   _HaveError: Boolean
 
   _ErrorMessage: String
@@ -964,6 +974,8 @@ type Country {
 
   message: String
 
+  detail: String
+
   _HaveError: Boolean
 
   _ErrorMessage: String
@@ -983,6 +995,8 @@ type CivilStatus {
   status: Int
 
   message: String
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -1009,6 +1023,8 @@ type GeneralEconomicActivity {
   status: Int
 
   message: String
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -1037,6 +1053,8 @@ type Ocupation {
   status: Int
 
   message: String
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -1084,6 +1102,8 @@ type SmartAccountStatus {
 
   message: String
 
+  detail: String
+
   _HaveError: Boolean
 
   _ErrorMessage: String
@@ -1109,6 +1129,8 @@ type ACHTransferFavoriteList {
   status: Int
 
   message: String
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -1174,6 +1196,8 @@ type ACHTransferFavorite {
 
   message: String
 
+  detail: String
+
   _HaveError: Boolean
 
   _ErrorMessage: String
@@ -1187,6 +1211,8 @@ type TypeAccount {
   status: Int
 
   message: String
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -1207,6 +1233,8 @@ type LocalTransferFavorite {
   message: String!
 
   result: [LocalTransferFavoriteResult!]
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -1250,6 +1278,8 @@ type ListSinpeAccount {
 
   message: String
 
+  detail: String
+
   _HaveError: Boolean
 
   _ErrorMessage: String
@@ -1281,6 +1311,8 @@ type GetExchangeRate {
   status: Int
 
   message: String
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -1320,6 +1352,8 @@ type GetCoreBankMovements {
 
   message: String
 
+  detail: String
+
   _HaveError: Boolean
 
   _ErrorMessage: String
@@ -1353,6 +1387,8 @@ type RelatedContactsByPhone {
   status: Int
 
   message: String
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -1557,6 +1593,8 @@ type VerifiedExternalAccount {
   status: Int
 
   message: String
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -2260,7 +2298,8 @@ type CryptoMarketPrice {
 
   historico: Boolean!
 
-  crypto_network: String
+  crypto_network: String!
+
 }
 
 input CryptoMarketPriceDtoInput {
@@ -3115,6 +3154,8 @@ type GetCountryPhoneCode {
   country: String!
 
   code: Int!
+
+  phoneMask: String
 }
 
 input GetCountryPhoneCodeDtoInput {
@@ -3286,6 +3327,8 @@ type GlobalRequest {
 
   message: String
 
+  detail: String
+
   _HaveError: Boolean
 
   _ErrorMessage: String
@@ -3384,6 +3427,8 @@ type AttachmentsAccount {
 
   status: Int
 
+  detail: String
+
   _HaveError: Boolean
 
   _ErrorMessage: String
@@ -3407,6 +3452,8 @@ type ActivatedExternalAccount {
   status: Int
 
   message: String
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -3452,6 +3499,8 @@ type UpdateSmartAccountStatus {
 
   message: String
 
+  detail: String
+
   _HaveError: Boolean
 
   _ErrorMessage: String
@@ -3482,6 +3531,8 @@ type SaveAutomatedSmartAccount {
 
   message: String
 
+  detail: String
+
   _HaveError: Boolean
 
   _ErrorMessage: String
@@ -3505,6 +3556,8 @@ type ACHTransfer {
   status: Int
 
   message: String
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -3547,6 +3600,8 @@ type ProcessLocalTransfer {
   status: Int
 
   message: String
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -3592,6 +3647,8 @@ type ManageSinpeAccount {
 
   message: String
 
+  detail: String
+
   _HaveError: Boolean
 
   _ErrorMessage: String
@@ -3631,6 +3688,8 @@ type SinpeTransfer {
   status: Int
 
   message: String
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -3679,6 +3738,8 @@ type Transfer365 {
   status: Int
 
   message: String
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -6546,6 +6607,8 @@ type ACHTransferFavoriteResponse {
 
   idTypeAccount: Long
 
+  identificationTypeAccount: Long
+
   isFavorite: Boolean
 }
 
@@ -6701,11 +6764,15 @@ type CreditPreApproveInfo {
 
   idPrint: Long
 
+  crosseling: Boolean
+
   selectedAmount: Decimal
 
   statusFirm: String
 
   currentStep: String
+
+  crosseling: Boolean
 }
 
 type RequestInfo {
@@ -6716,6 +6783,8 @@ type RequestInfo {
   currentStep: String
 
   statusRequest: String
+
+  crosseling: Boolean
 }
 
 type Wording {
@@ -6728,6 +6797,8 @@ type Wording {
   link: String
 
   display: Boolean
+
+  workFlow: String
 }
 
 type VirtualcardConfigurationType {

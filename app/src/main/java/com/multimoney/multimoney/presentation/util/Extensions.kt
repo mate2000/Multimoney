@@ -260,12 +260,12 @@ val Int.boolean
 fun getNavParam(param: String, value: Any?) = "?$param=$value"
 
 fun getDeviceManufacture(): String = (
-    if (Build.MODEL.startsWith(Build.MANUFACTURER, ignoreCase = true)) {
-        Build.MODEL
-    } else {
-        "${Build.MANUFACTURER} ${Build.MODEL}"
-    }
-    ).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+        if (Build.MODEL.startsWith(Build.MANUFACTURER, ignoreCase = true)) {
+            Build.MODEL
+        } else {
+            "${Build.MANUFACTURER} ${Build.MODEL}"
+        }
+        ).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
 
 fun Context.getAndroidId(): String {
     return Secure.getString(
@@ -280,6 +280,9 @@ fun Char.isValidAmountCharacter() =
 fun String.filterInvalidAmountInput() = this.filter { it.isValidAmountCharacter() }
 
 fun Double.roundToTwoDecimalPlaces() = String.format(TWO_DECIMALS_FORMAT, this)
+
+fun Double.roundToEightDecimalPlaces() = String.format(EIGHT_DECIMALS_FORMAT, this)
+
 fun Double.roundToTwoDecimalPlacesWithoutNegatives() =
     String.format(TWO_DECIMALS_FORMAT, this).replace("-", "")
 
@@ -287,10 +290,11 @@ fun Double.toCurrencyFormat(
     symbol: String = Dollar.symbol,
     amountOfDecimals: Int = DEFAULT_AMOUNT_OF_DECIMALS
 ): String {
-    val formatter = NumberFormat.getCurrencyInstance()
+    val formatter = NumberFormat.getCurrencyInstance(Locale.ENGLISH)
+    val regex = Regex(NUMBER_FORMAT_REGEX)
     formatter.maximumFractionDigits = amountOfDecimals
     // remove the default dollar symbol from the custom symbol property
-    return "$symbol${formatter.format(this).replace(Dollar.symbol, "")}"
+    return "$symbol${regex.replace(formatter.format(this),"")}"
 }
 
 fun Double.toCurrencyFormatWithoutNegatives(
@@ -301,9 +305,9 @@ fun Double.toCurrencyFormatWithoutNegatives(
     formatter.maximumFractionDigits = amountOfDecimals
     // remove the default dollar symbol from the custom symbol property
     return "$symbol${
-    formatter.format(this)
-        .replace(Dollar.symbol, "")
-        .replace("-", "")
+        formatter.format(this)
+            .replace(Dollar.symbol, "")
+            .replace("-", "")
     }"
 }
 
@@ -401,6 +405,7 @@ fun formatPhoneNumber(phoneWithCode: String?, phoneWithoutCode: String?) =
     phoneWithCode?.replace(phoneWithoutCode ?: "", " ").plus(phoneWithoutCode)
 
 private const val HEX_FORMAT = "#%02x%02x%02x"
+private const val NUMBER_FORMAT_REGEX = "[^0-9,.\\s]"
 private const val SPECIAL_CHARACTER_REGEX = "[!\"#\$%&'()*+,-./:;\\\\<=>?@^_`{|}~]"
 private const val TWO_CHARACTER_REGEX = "^\\s*([a-zA-Z]).*\\s+([a-zA-Z])\\S+$"
 private const val NUMBER_REGEX = "[0-9]"

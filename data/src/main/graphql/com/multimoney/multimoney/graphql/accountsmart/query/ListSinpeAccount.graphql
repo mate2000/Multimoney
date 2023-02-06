@@ -26,6 +26,7 @@ query listSinpeAccount(
             currencyId: id_Moneda
             currency: moneda
             nameAccount: nombre_Cuenta
+            accountType: tipo_Cuenta
         }
     }
 }

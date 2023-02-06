@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.theme.subHead
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 
 /**
@@ -26,12 +27,13 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 
 @Composable
 fun ContactAccountDisplay(
+    modifier: Modifier,
     currency: CurrencyType,
     maskedAccountNumber: String,
     onClick: () -> Unit
 ) {
     Row(
-        Modifier.padding(top = 24.dp)
+        modifier.padding(top = 24.dp)
             .clickable { onClick() }
     ) {
         Icon(
@@ -42,14 +44,14 @@ fun ContactAccountDisplay(
         Column(Modifier.padding(start = 16.dp)) {
             Text(
                 text = stringResource(currency.myAccountSmartName),
-                style = Typography.body1.copy(
+                style = Typography.subHead.copy(
                     fontWeight = FontWeight.SemiBold,
                     color = MultimoneyTheme.colors.text
                 )
             )
             Text(
                 text = maskedAccountNumber,
-                style = Typography.body1.copy(
+                style = Typography.subHead.copy(
                     color = MultimoneyTheme.colors.subTitleText
                 )
             )

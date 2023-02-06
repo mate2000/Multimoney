@@ -28,17 +28,14 @@ import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.Companion.CURRENCY_SEPARATOR
 import com.multimoney.multimoney.presentation.uielement.CurrencyAmountInput
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
+import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.VoucherCurrencyExchangeInfo
 import com.multimoney.multimoney.presentation.util.addTextStyleToTextPortion
-import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
-import com.multimoney.multimoney.presentation.util.filterInvalidAmountInput
-import com.multimoney.multimoney.presentation.util.transformation.CurrencyDoubleTransformation
-import com.multimoney.multimoney.presentation.util.transformation.CurrencyIntegerTransformation
+import com.multimoney.multimoney.presentation.util.transformation.formatDecimalMoney
 
 @Composable
 fun SmartAmountBody(
@@ -58,7 +55,8 @@ fun SmartAmountBody(
     onContinueClick: () -> Unit,
     enableButton: Boolean,
     motive: String? = null,
-    onMotiveChange: (String) -> Unit = {}
+    onMotiveChange: (String) -> Unit = {},
+    @StringRes disclaimerResource: Int? = null
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -98,13 +96,7 @@ fun SmartAmountBody(
                 modifier = Modifier.padding(top = 24.dp),
                 value = currentAmount,
                 placeHolder = stringResource(id = amountPlaceHolderId),
-                onValueChange = {
-                    if (currency == CurrencyType.Colon.symbol) {
-                        onAmountChange(it.filter { value -> value.isDigit() })
-                    } else {
-                        onAmountChange(it.filterInvalidAmountInput())
-                    }
-                },
+                onValueChange = { onAmountChange(it) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                     imeAction = if (motive != null) {
@@ -122,17 +114,7 @@ fun SmartAmountBody(
                     }
                 ),
                 isRequired = true,
-                customTransformation = if (currency == CurrencyType.Colon.symbol) {
-                    CurrencyIntegerTransformation(
-                        currency,
-                        CURRENCY_SEPARATOR
-                    )
-                } else {
-                    CurrencyDoubleTransformation(
-                        currency,
-                        CURRENCY_SEPARATOR
-                    )
-                },
+                customTransformation = formatDecimalMoney(currency),
                 onDebounceValidation = onDebounceValidation,
                 errorMessage = amountErrorMessage,
                 isError = isAmountError == true
@@ -173,6 +155,18 @@ fun SmartAmountBody(
                     keyboardActions = KeyboardActions(
                         onDone = { focusManager.clearFocus() }
                     )
+                )
+            }
+            disclaimerResource?.let {
+                CustomInformativeText(
+                    modifier = Modifier
+                        .padding(bottom = 32.dp)
+                        .fillMaxWidth(),
+                    leadingIcon = R.drawable.ic_information,
+                    text = stringResource(id = disclaimerResource),
+                    textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.titleText),
+                    alignmentVertical = Alignment.Top,
+                    iconSize = 20.dp
                 )
             }
         }

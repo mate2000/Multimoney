@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -27,7 +28,6 @@ import com.multimoney.multimoney.presentation.util.parseApiDateToCardDate
 fun CryptoCurrencyMovementItem(
     cryptoCurrencyMovement: CryptoCurrencyMovement?
 ) {
-
     cryptoCurrencyMovement?.let { movement ->
         val icon = if (movement.side == MovementSide.BUY.side)
             R.drawable.ic_gains_crypto else R.drawable.ic_crypto_subtract
@@ -36,7 +36,8 @@ fun CryptoCurrencyMovementItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(MultimoneyTheme.colors.fullTransparency)
-                .height(56.dp),
+                .height(70.dp)
+                .padding(top = 10.dp, bottom = 1.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -80,7 +81,7 @@ fun CryptoCurrencyMovementItem(
                 )
             }
         }
-        Divider(modifier = Modifier.fillMaxWidth(), color = MultimoneyTheme.colors.dividerWhite30)
+        Divider(modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp), color = MultimoneyTheme.colors.dividerWhite30)
     }
 }
 

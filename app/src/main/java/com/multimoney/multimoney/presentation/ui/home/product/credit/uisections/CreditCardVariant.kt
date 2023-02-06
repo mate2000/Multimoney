@@ -267,17 +267,31 @@ fun CreditPreApproved(
                 action()
             }
     ) {
+        CustomInformativeChip(
+            text = stringResource(id = string.home_my_products_title_credit),
+            textStyle = Typography.body2.copy(
+                fontWeight = FontWeight.SemiBold,
+                color = MultimoneyTheme.colors.text
+            ),
+            modifier = Modifier.padding(top = 12.dp),
+            shape = RoundedCornerShape(12.dp),
+            background = if (isSystemInDarkTheme()) {
+                BlackTransparency20
+            } else {
+                WhiteTransparency10
+            }
+        )
         Text(
             text = wording?.textOne?.filter { wording.textOne != notDefinedValue } ?: "",
             modifier = Modifier.padding(top = 20.dp),
-            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.creditNotApprovedText
+            style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.text
         )
         Text(
             text = wording?.textTwo?.filter { wording.textTwo != notDefinedValue } ?: "",
             modifier = Modifier.padding(top = 4.dp),
-            style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.text
+            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.creditNotApprovedText
         )
         CustomImage(
             modifier = Modifier

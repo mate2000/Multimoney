@@ -84,7 +84,7 @@ import com.togitech.ccp.utils.searchCountry
 fun PhoneCountryDialog(
     modifier: Modifier = Modifier,
     padding: Dp = 15.dp,
-    defaultSelectedCountry: CountryData = getLibCountries().first(),
+    defaultSelectedCountry: CountryData = getLibCountries.first(),
     showCountryCode: Boolean = true,
     showCountryFlag: Boolean = true,
     pickedCountry: (CountryData) -> Unit = {},
@@ -94,9 +94,9 @@ fun PhoneCountryDialog(
     dialogAppBarTextColor: Color = DefaultWhite,
     dialogFocusedBorderColorSearch: Color = MultimoneyTheme.colors.primary,
     dialogUnFocusedBorderColorSearch: Color = MultimoneyTheme.colors.secondary,
-    dialogCursorColorSearch: Color = MultimoneyTheme.colors.primary,
+    dialogCursorColorSearch: Color = MultimoneyTheme.colors.primary
 ) {
-    val countryList: List<CountryData> = getLibCountries()
+    val countryList: List<CountryData> = getLibCountries
     var isPickCountry by remember { mutableStateOf(defaultSelectedCountry) }
     var isOpenDialog by remember { mutableStateOf(false) }
     var searchValue by remember { mutableStateOf("") }
@@ -110,7 +110,7 @@ fun PhoneCountryDialog(
             .clickable(
                 interactionSource = interactionSource,
                 indication = null
-            ) { isOpenDialog = true },
+            ) { isOpenDialog = true }
     ) {
         Row(
             horizontalArrangement = Arrangement.Start,
@@ -122,7 +122,8 @@ fun PhoneCountryDialog(
                     id = getFlags(
                         isPickCountry.countryCode
                     )
-                ), contentDescription = null
+                ),
+                contentDescription = null
             )
             if (showCountryCode) {
                 Text(
@@ -141,13 +142,13 @@ fun PhoneCountryDialog(
         }
     }
 
-    //Select Country Dialog
+    // Select Country Dialog
     if (isOpenDialog) {
         Dialog(
             onDismissRequest = { isOpenDialog = false },
             properties = DialogProperties(
                 usePlatformDefaultWidth = false
-            ),
+            )
         ) {
             Scaffold(
                 topBar = {
@@ -185,33 +186,35 @@ fun PhoneCountryDialog(
                     )
                 }
             ) { paddingValue ->
-                Surface(modifier = modifier
-                    .fillMaxSize()
-                    .padding(paddingValue)) {
+                Surface(
+                    modifier = modifier
+                        .fillMaxSize()
+                        .padding(paddingValue)
+                ) {
                     Card(
                         Modifier
                             .fillMaxWidth()
                             .fillMaxHeight(),
-                        elevation = 4.dp,
+                        elevation = 4.dp
                     ) {
                         Column {
                             if (isSearch) {
                                 searchValue = dialogSearchView(
                                     focusedBorderColor = dialogFocusedBorderColorSearch,
                                     unfocusedBorderColor = dialogUnFocusedBorderColorSearch,
-                                    cursorColor = dialogCursorColorSearch,
+                                    cursorColor = dialogCursorColorSearch
                                 )
                             }
                             LazyColumn {
                                 items(
-                                    (if (searchValue.isEmpty()) {
+                                    if (searchValue.isEmpty()) {
                                         countryList
                                     } else {
                                         countryList.searchCountry(
                                             searchValue,
                                             context = context
                                         )
-                                    })
+                                    }
                                 ) { countryItem ->
                                     Row(
                                         Modifier
@@ -223,14 +226,16 @@ fun PhoneCountryDialog(
                                                 pickedCountry(countryItem)
                                                 isPickCountry = countryItem
                                                 isOpenDialog = false
-                                            }) {
+                                            }
+                                    ) {
                                         Image(
                                             modifier = modifier.width(30.dp),
                                             painter = painterResource(
                                                 id = getFlags(
                                                     countryItem.countryCode
                                                 )
-                                            ), contentDescription = null
+                                            ),
+                                            contentDescription = null
                                         )
                                         Text(
                                             stringResource(id = getCountryName(countryItem.countryCode.lowercase())),
@@ -251,7 +256,7 @@ fun PhoneCountryDialog(
 private fun dialogSearchView(
     focusedBorderColor: Color = MaterialTheme.colors.primary,
     unfocusedBorderColor: Color = MaterialTheme.colors.onSecondary,
-    cursorColor: Color = MaterialTheme.colors.primary,
+    cursorColor: Color = MaterialTheme.colors.primary
 ): String {
     var searchVal by remember { mutableStateOf("") }
     Row {
@@ -272,7 +277,6 @@ private fun dialogSearchView(
     return searchVal
 }
 
-
 @Composable
 private fun SearchTextField(
     modifier: Modifier = Modifier,
@@ -283,7 +287,7 @@ private fun SearchTextField(
     textAlign: TextAlign = TextAlign.Center,
     focusedBorderColor: Color = MaterialTheme.colors.primary,
     unfocusedBorderColor: Color = MaterialTheme.colors.onSecondary,
-    cursorColor: Color = MaterialTheme.colors.primary,
+    cursorColor: Color = MaterialTheme.colors.primary
 ) {
     Box(
         modifier = modifier
@@ -313,7 +317,7 @@ private fun SearchTextField(
                 focusedIndicatorColor = focusedBorderColor,
                 disabledIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = unfocusedBorderColor,
-                cursorColor = cursorColor,
+                cursorColor = cursorColor
             )
         )
         if (value.isEmpty()) {

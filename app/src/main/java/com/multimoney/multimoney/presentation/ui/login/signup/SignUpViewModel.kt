@@ -17,7 +17,6 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.Screen.SignInScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCloseClick
@@ -199,7 +198,7 @@ class SignUpViewModel @Inject constructor(
                 negativeResource = string.sign_up_close_dialog_negative_button_text,
                 positiveAction = {
                     popAndNavigateTo(
-                        route = SignInScreen.route,
+                        route = Screen.SignInScreen.route,
                         popTo = Screen.SignUpScreen.route
                     )
                 },
@@ -231,6 +230,7 @@ class SignUpViewModel @Inject constructor(
         // Interactions
         val currentStep: Int = SignUpStep.One.id,
         val isCloseVisible: Boolean = true,
+        val isBackVisible: Boolean = true,
         val isContinueEnabled: Boolean = false,
         val isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),

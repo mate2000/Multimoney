@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.login.signup.phone
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -8,6 +9,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -16,7 +18,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SignUpStep
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -25,6 +26,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.uielement.PhoneTextField
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
+import com.togitech.ccp.data.utils.getCountryName
 import com.togitech.ccp.data.utils.getDefaultLangCode
 import com.togitech.ccp.data.utils.getDefaultPhoneCode
 import com.togitech.ccp.data.utils.getLibCountries
@@ -35,18 +37,27 @@ fun SignUpPhoneScreen(
     viewModel: SignUpPhoneViewModel = hiltViewModel(),
     sharedViewModel: SignUpViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     // Properties
     val focusManager = LocalFocusManager.current
-    val getDefaultCountryCode = getDefaultLangCode()
-    val getDefaultPhoneCode = getDefaultPhoneCode()
+    val getDefaultCountryCode = getDefaultLangCode(context)
+    val getDefaultPhoneCode = getDefaultPhoneCode(context)
     val selectedCountry =
-        getLibCountries().first {
+        getLibCountries.first {
             it.countryPhoneCode == if (sharedViewModel.userData?.countryCode.isNullOrEmpty()) {
                 getDefaultPhoneCode
             } else {
                 sharedViewModel.userData?.countryCode
             }
         }
+
+    Log.d("PhoneTest", "country: ${getCountryName("es")}")
+    Log.d("PhoneTest", "country: ${context.getString(getCountryName("es"))}")
+    Log.d("PhoneTest", "country: ${stringResource(getCountryName("es"))}")
+    Log.d("PhoneTest", "error 1: ${string.profile_settings_error_new_password_something_went_wrong}")
+    Log.d("PhoneTest", "error 1: ${stringResource(string.profile_settings_error_new_password_something_went_wrong)}")
+    Log.d("PhoneTest", "error 2: ${string.something_went_wrong}")
+    Log.d("PhoneTest", "error 2: ${stringResource(string.something_went_wrong)}")
 
     LaunchedEffect(true) {
         sharedViewModel.apply {
@@ -123,7 +134,7 @@ fun SignUpPhoneScreen(
                 color = MultimoneyTheme.colors.text,
                 fontWeight = FontWeight.SemiBold
             ),
-            text = stringResource(id = R.string.sign_up_phone_title),
+            text = stringResource(id = string.sign_up_phone_title),
             textAlign = TextAlign.Start,
             modifier = Modifier.fillMaxWidth()
         )
@@ -157,10 +168,10 @@ fun SignUpPhoneScreen(
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             }),
-            labelText = stringResource(id = R.string.sign_up_phone_label_phone),
+            labelText = stringResource(id = string.sign_up_phone_label_phone),
             modifier = Modifier.padding(top = 24.dp),
             isRequired = true,
-            isRequiredMessage = stringResource(id = R.string.sign_up_phone_required),
+            isRequiredMessage = stringResource(id = string.sign_up_phone_required),
             isError = viewModel.uiState.phoneNumberError.first,
             errorMessage = stringResource(id = viewModel.uiState.phoneNumberError.second),
             defaultCountry = selectedCountry,

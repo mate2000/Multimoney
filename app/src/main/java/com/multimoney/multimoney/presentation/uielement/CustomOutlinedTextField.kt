@@ -147,7 +147,8 @@ fun CustomOutlinedTextField(
     isSuccess: Boolean = false,
     successMessage: String? = null,
     showInfo: Boolean = false,
-    infoMessage: String? = null
+    infoMessage: String? = null,
+    singleLine: Boolean = true
 ) {
     val context = LocalContext.current
     val activity = context.findActivity()
@@ -369,7 +370,8 @@ fun CustomOutlinedTextField(
             textStyle = Typography.body2.copy(
                 color = WhiteTransparency90
             ),
-            maxLines = if (isTextArea) 2 else 1,
+            maxLines = if (isTextArea) 2 else Int.MAX_VALUE,
+            singleLine = if (isTextArea) false else singleLine,
             focusedBorderThickness = FOCUSED_BORDER_WIDTH,
             unfocusedBorderThickness = UNFOCUSED_BORDER_WIDTH
         )

@@ -15,6 +15,7 @@ import com.multimoney.domain.model.crypto.GetHistoricalClientBalance
 import com.multimoney.domain.model.crypto.GetHistoricalCurrencyPrices
 import com.multimoney.domain.model.crypto.GetListOfAvailableCryptoCoins
 import com.multimoney.domain.model.crypto.PricesQuoteAndCommissionData
+import com.multimoney.domain.model.crypto.ValidateDepositAddressResponse
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.CryptoRepository
@@ -179,6 +180,23 @@ class CryptoRepositoryImpl @Inject constructor(
             user,
             idBrand,
             identification,
+        ),
+        apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
+    )
+
+    override suspend fun validateDepositAddress(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        market: String,
+        address: String
+    ): Flow<MultimoneyResult<ValidateDepositAddressResponse>> = fetchData(
+        apolloCall = graphqlApi.mutationValidateDepositAddress(
+            user,
+            idBrand,
+            identification,
+            market,
+            address
         ),
         apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
     )

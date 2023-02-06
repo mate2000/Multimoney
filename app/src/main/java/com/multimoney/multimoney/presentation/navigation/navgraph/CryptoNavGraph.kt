@@ -75,45 +75,7 @@ fun NavGraphBuilder.cryptoNavGraph(
                 }
             )
         }
-        composable(
-            route = Screen.CryptoSendFlow.route,
-            arguments = listOf(
-                navArgument(CRYPTO_ASSET) {
-                    nullable = true
-                    defaultValue = null
-                    type = NavType.StringType
-                },
-                navArgument(DESCRIPTION_CURRENCY) {
-                    nullable = true
-                    defaultValue = null
-                    type = NavType.StringType
-                }
-            )
-        ) {
-            CryptoSendFlow(
-                onNavigate = { navController.navigate(it.route) },
-                onPopAndNavigate = {
-                    navController.navigate(it.route) {
-                        popUpTo(it.popTo) { inclusive = true }
-                    }
-                },
-                onPopBackStack = {
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
-                        PREVIOUS_IS_RESTART,
-                        it.isRestart
-                    )
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
-                        HOME_STATE,
-                        it.homeState
-                    )
-                    navController.popBackStack(
-                        route = it.popTo,
-                        inclusive = false,
-                        saveState = false
-                    )
-                }
-            )
-        }
+        cryptoSendNavGraph(navController)
         composable(
             route = Screen.CryptoWalletScreen.route,
             arguments = listOf(

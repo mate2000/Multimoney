@@ -133,6 +133,7 @@ const val CROSSELING = "crosseling"
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
 const val HOME_STATE = "home_state"
 const val PREVIOUS_IS_RETURN_TO_HOME = "previous_is_return_to_home"
+const val QR_CODE_RESULT = "qr_code"
 
 /**
  * Use this class to declare all your new screens and their routes
@@ -607,4 +608,6 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         route = "crypto_send_flow?$CRYPTO_ASSET={$CRYPTO_ASSET}&$DESCRIPTION_CURRENCY={$DESCRIPTION_CURRENCY}",
         baseRoute = "crypto_send_flow"
     )
+
+    object QrCodeScannerScreen: Screen(route = "qr_code_scanner_screen")
 }

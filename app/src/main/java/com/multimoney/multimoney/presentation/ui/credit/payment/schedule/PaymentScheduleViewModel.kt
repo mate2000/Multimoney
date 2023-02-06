@@ -233,7 +233,7 @@ class PaymentScheduleViewModel @Inject constructor(
     }
 
     private fun onAlertCloseClick() = if (uiState.isAlertResultSuccess) {
-        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
     } else {
         navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
     }

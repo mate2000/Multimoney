@@ -55,7 +55,6 @@ import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewMod
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewModel.UIEvent.OnGetUserInfo
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewModel.UIEvent.OnSetDateRange
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoActionsSection
 import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
@@ -64,10 +63,7 @@ import com.multimoney.multimoney.presentation.uielement.ShimmerItemView
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.calculateGainLoses
-import com.multimoney.multimoney.presentation.util.calculatePercentage
 import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlaces
-import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlacesWithoutNegatives
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 import com.multimoney.multimoney.presentation.util.toCurrencyFormatWithoutNegatives
 
@@ -159,9 +155,11 @@ fun HomeWallet(
                     hasSmartBalance = true,
                     enableCryptoActions = true,
                     enableSendAndGive = enableSendAndGive,
-                    hasBalanceAction = { /*todo go to buy crypto flow*/ },
+                    hasBalanceAction = {
+                        walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnNavigateToBuyCrypto)
+                    },
                     sellAction = { /*todo go to sell crypto flow*/ },
-                    sendAction = { /*todo go to send crypto flow*/ },
+                    sendAction = { walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnNavigateToSendCrypto) },
                     giveAction = { /*todo go to receive crypto flow*/ }
                 )
             }
@@ -191,8 +189,9 @@ fun HomeWalletContent(
     val balanceContainsLossesSymbol =
         walletViewModel.uiState.balanceCryptoAccount?.investedBalance?.contains(stringResource(id = R.string.crypto_losses_symbol))
     val isInGainOrLoss = balanceContainsLossesSymbol != true
-    val graphicColor = if (balanceContainsLossesSymbol == true) MultimoneyTheme.colors.cryptoLossesColor
-    else MultimoneyTheme.colors.cryptoGainsColor
+    val graphicColor =
+        if (balanceContainsLossesSymbol == true) MultimoneyTheme.colors.cryptoLossesColor
+        else MultimoneyTheme.colors.cryptoGainsColor
 
     var selectedDateRange by remember { mutableStateOf(FilterDateByDays.YESTERDAY.time) }
 
@@ -211,8 +210,10 @@ fun HomeWalletContent(
                 BalanceSection(
                     globalCryptoBalance = globalCryptoBalance,
                     isInGainOrLoss = isInGainOrLoss,
-                    gainsOrLosses = walletViewModel.uiState.balanceCryptoAccount?.investedBalance?.toDouble() ?: 0.0,
-                    percentage = walletViewModel.uiState.balanceCryptoAccount?.percentageInvested?.toDouble() ?: 0.0,
+                    gainsOrLosses = walletViewModel.uiState.balanceCryptoAccount?.investedBalance?.toDouble()
+                        ?: 0.0,
+                    percentage = walletViewModel.uiState.balanceCryptoAccount?.percentageInvested?.toDouble()
+                        ?: 0.0,
                     graphicColor = graphicColor,
                     areCoinsLoading = walletViewModel.uiState.areCoinsLoading
                 )
@@ -237,7 +238,11 @@ fun HomeWalletContent(
                 isFocused = isFocused,
                 searchQuery = searchQuery,
                 onItemClick = {
-                    walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnNavigateToCryptoDetailScreen(it))
+                    walletViewModel.onUIEvent(
+                        HomeWalletViewModel.UIEvent.OnNavigateToCryptoDetailScreen(
+                            it
+                        )
+                    )
                 }
             )
         }
@@ -346,20 +351,22 @@ fun MyCoinsSection(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                TextButton(onClick = { isFocused.value = isFocused.value.not() }) {
-                    Text(
-                        textAlign = TextAlign.End,
-                        text = stringResource(id = R.string.crypto_wallet_show_all_coins),
-                        style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                        color = MultimoneyTheme.colors.textLink
-                    )
-                }
-                IconButton(onClick = { isFocused.value = isFocused.value.not() }) {
-                    Icon(
-                        imageVector = Icons.Filled.Search,
-                        contentDescription = null,
-                        tint = MultimoneyTheme.colors.labelText
-                    )
+                if ((balanceCryptoAccount?.items?.size ?: 0) > HomeWalletViewModel.SHOW_COIN_SEARCH_THRESHOLD) {
+                    TextButton(onClick = { isFocused.value = isFocused.value.not() }) {
+                        Text(
+                            textAlign = TextAlign.End,
+                            text = stringResource(id = R.string.crypto_wallet_show_all_coins),
+                            style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
+                            color = MultimoneyTheme.colors.textLink
+                        )
+                    }
+                    IconButton(onClick = { isFocused.value = isFocused.value.not() }) {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = null,
+                            tint = MultimoneyTheme.colors.labelText
+                        )
+                    }
                 }
             }
         }

@@ -59,7 +59,7 @@ class SmartMovementsViewModel @Inject constructor(
     }
 
     private fun navigateBackToHome() {
-        navigateBack(popTo = Screen.HomeScreen.route, isRestart = false, HomeState.UNEXPANDED)
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = false, HomeState.COLLAPSED)
     }
 
     private fun onErrorLoading(failureDialog: DialogParameters) {

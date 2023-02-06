@@ -2301,6 +2301,9 @@ type CryptoMarketPrice {
   crypto_network: String
 
   network: String
+
+  crypto_network: String!
+
 }
 
 input CryptoMarketPriceDtoInput {
@@ -6778,6 +6781,8 @@ type CreditPreApproveInfo {
   infoProducts: [PreApproveProducts!]
 
   idPrint: Long
+
+  crosseling: Boolean
 
   selectedAmount: Decimal
 

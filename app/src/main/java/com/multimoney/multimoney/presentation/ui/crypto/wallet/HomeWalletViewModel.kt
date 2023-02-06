@@ -19,7 +19,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
 import com.multimoney.multimoney.presentation.util.getPreviousDate
@@ -157,9 +156,16 @@ class HomeWalletViewModel @Inject constructor(
 
     private fun onNavigateToCryptoDetail(cryptoItem: BalanceCryptoAccountItems) {
         navigateTo(
-            "${Screen.CryptoCurrencyMovementsScreen.baseRoute}/${uiState.idBrand}/${uiState.identification}/${uiState.user}/${encodeData(cryptoItem)
-            }"
+            "${Screen.CryptoCurrencyMovementsScreen.baseRoute}/${uiState.idBrand}/${uiState.identification}/${uiState.user}/${encodeData(cryptoItem)}"
         )
+    }
+
+    private fun onNavigateToBuyCrypto(){
+        navigateTo(Screen.PurchaseCryptoFlow.baseRoute)
+    }
+
+    private fun onNavigateToSendCrypto() {
+        navigateTo(Screen.CryptoSendFlow.baseRoute)
     }
 
     data class UiState(
@@ -188,7 +194,9 @@ class HomeWalletViewModel @Inject constructor(
             is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
             is UIEvent.OnGetUserInfo -> onGetUserInfo()
             is UIEvent.OnNavigateToCryptoDetailScreen -> onNavigateToCryptoDetail(event.cryptoItem)
-            UIEvent.OnGetBalanceClient -> onGetBalanceClient()
+            is UIEvent.OnGetBalanceClient -> onGetBalanceClient()
+            is UIEvent.OnNavigateToBuyCrypto -> onNavigateToBuyCrypto()
+            is UIEvent.OnNavigateToSendCrypto -> onNavigateToSendCrypto()
         }
     }
 
@@ -197,7 +205,12 @@ class HomeWalletViewModel @Inject constructor(
         object OnNavigateBack : UIEvent
         object OnGetBalanceClient : UIEvent
         data class OnSetDateRange(val startDate: Long): UIEvent
-        data class OnNavigateToCryptoDetailScreen(val cryptoItem: BalanceCryptoAccountItems) :
-            UIEvent
+        data class OnNavigateToCryptoDetailScreen(val cryptoItem: BalanceCryptoAccountItems) : UIEvent
+        object OnNavigateToBuyCrypto : UIEvent
+        object OnNavigateToSendCrypto : UIEvent
+    }
+
+    companion object {
+        const val SHOW_COIN_SEARCH_THRESHOLD = 3
     }
 }

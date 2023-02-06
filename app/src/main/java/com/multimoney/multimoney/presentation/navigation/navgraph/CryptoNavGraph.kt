@@ -9,7 +9,7 @@ import androidx.navigation.navigation
 import com.multimoney.multimoney.presentation.navigation.CARD_STATUS
 import com.multimoney.multimoney.presentation.navigation.CRYPTO_ASSET
 import com.multimoney.multimoney.presentation.navigation.CRYPTO_ROUTE
-import com.multimoney.multimoney.presentation.navigation.CURRENT_CRYPTO_PRICE
+import com.multimoney.multimoney.presentation.navigation.DESCRIPTION_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.GLOBAL_CRYPTO_BALANCE
 import com.multimoney.multimoney.presentation.navigation.HOME_STATE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
@@ -20,14 +20,18 @@ import com.multimoney.multimoney.presentation.navigation.STATUS_CREDIT
 import com.multimoney.multimoney.presentation.navigation.STATUS_CRYPTO
 import com.multimoney.multimoney.presentation.navigation.STATUS_SMART
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navtype.crypto.CryptoCurrencyNavType
-import com.multimoney.multimoney.presentation.ui.crypto.currencydetail.CurrencyMovementsScreen
+import com.multimoney.multimoney.presentation.navigation.navtype.crypto.CryptoBalanceNavType
+import com.multimoney.multimoney.presentation.navigation.navtype.crypto.CryptoCoinNavType
+import com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail.CurrencyMovementsScreen
 import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreen
 import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsScreen
 import com.multimoney.multimoney.presentation.ui.crypto.movements.CryptoMovementsAllScreen
+import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoFlow
+import com.multimoney.multimoney.presentation.ui.crypto.send.CryptoSendFlow
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWallet
 
 const val ITEM_CRYPTO_CURRENCY = "item_crypto_currency"
+const val ITEM_CRYPTO_MARKET = "item_crypto_MARKET"
 
 fun NavGraphBuilder.cryptoNavGraph(
     navController: NavHostController
@@ -36,6 +40,81 @@ fun NavGraphBuilder.cryptoNavGraph(
         startDestination = Screen.CryptoWalletScreen.route,
         route = CRYPTO_ROUTE
     ) {
+        composable(
+            route = Screen.PurchaseCryptoFlow.route,
+            arguments = listOf(
+                navArgument(ITEM_CRYPTO_MARKET) {
+                    nullable = true
+                    defaultValue = null
+                    type = CryptoCoinNavType()
+                }
+            )
+        ) {
+            PurchaseCryptoFlow(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                },
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        HOME_STATE,
+                        it.homeState
+                    )
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
+        }
+        composable(
+            route = Screen.CryptoSendFlow.route,
+            arguments = listOf(
+                navArgument(CRYPTO_ASSET) {
+                    nullable = true
+                    defaultValue = null
+                    type = NavType.StringType
+                },
+                navArgument(DESCRIPTION_CURRENCY) {
+                    nullable = true
+                    defaultValue = null
+                    type = NavType.StringType
+                }
+            )
+        ) {
+            CryptoSendFlow(
+                onNavigate = { navController.navigate(it.route) },
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                },
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        HOME_STATE,
+                        it.homeState
+                    )
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
+        }
         composable(
             route = Screen.CryptoWalletScreen.route,
             arguments = listOf(
@@ -79,7 +158,7 @@ fun NavGraphBuilder.cryptoNavGraph(
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(IDENTIFICATION) { type = NavType.StringType },
                 navArgument(ITEM_CRYPTO_CURRENCY) {
-                    type = CryptoCurrencyNavType()
+                    type = CryptoBalanceNavType()
                 },
             ),
         ) {
@@ -136,10 +215,10 @@ fun NavGraphBuilder.cryptoNavGraph(
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(CRYPTO_ASSET) {
-                    defaultValue = null
                     nullable = true
+                    defaultValue = null
                     type = NavType.StringType
-                },
+                }
             )
         ) {
             CryptoMovementsAllScreen(
@@ -166,7 +245,11 @@ fun NavGraphBuilder.cryptoNavGraph(
             route = Screen.CryptoCurrencyDetailsScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
-                navArgument(CURRENT_CRYPTO_PRICE) { type = NavType.FloatType }
+                navArgument(ITEM_CRYPTO_MARKET) {
+                    nullable = true
+                    defaultValue = null
+                    type = CryptoCoinNavType()
+                }
             )
         ) {
             MarketCurrencyDetailsScreen(

@@ -118,6 +118,12 @@ class DataStorePreferences @Inject constructor(
 
     fun isVisaCardExpiredEnabled(): Flow<Boolean> = getData(VISA_CARD_EXPIRED_DIALOG_KEY, true)
 
+    suspend fun setVolatileDialogVisible(isVisible: Boolean){
+        setData(VOLATILE_DIALOG_KEY, isVisible)
+    }
+
+    fun isVolatileDialogVisible(): Flow<Boolean> = getData(VOLATILE_DIALOG_KEY, true)
+
     companion object {
         private val UNIQUE_ID = stringPreferencesKey("unique_id")
         private val TOKEN_KEY = stringPreferencesKey("auth_token")
@@ -135,5 +141,6 @@ class DataStorePreferences @Inject constructor(
         private val CONTACT_PERMISSION_STATE_KEY = booleanPreferencesKey("contact_permission_state_key")
         private val SIGN_OUT_ON_BACKGROUND = booleanPreferencesKey("sign_out_on_background")
         private val VISA_CARD_EXPIRED_DIALOG_KEY = booleanPreferencesKey("visa_card_expired_dialog_key")
+        private val VOLATILE_DIALOG_KEY = booleanPreferencesKey("volatile_dialog_key")
     }
 }

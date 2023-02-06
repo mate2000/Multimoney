@@ -71,7 +71,7 @@ class PaymentCardVoucherViewModel @Inject constructor(
     }
 
     private fun onNavigateToHome() =
-        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
 
     private fun onScheduleAutomaticPayment() = navigateTo(
         route = "${Screen.PaymentScheduleCardScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/${

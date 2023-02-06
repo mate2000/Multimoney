@@ -22,7 +22,8 @@ private fun UserValidationMutation.UserValidation.mapToDomainModel() = UserData(
     maskedMail = maskedMail,
     maskedPhoneNumber = maskedPhoneNumber,
     message = message,
-    status = status
+    status = status,
+    detail = detail
 )
 
 fun UserValidationMutation.Data.mapToDomainModel() = userValidation.mapToDomainModel()

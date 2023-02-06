@@ -80,6 +80,7 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
         })
         lifecycleScope.launch {
             dataStorePreferences.setAuthToken("")
+            dataStorePreferences.setVolatileDialogVisible(true)
         }
         mmCountDownTimer.discardTimer()
     }

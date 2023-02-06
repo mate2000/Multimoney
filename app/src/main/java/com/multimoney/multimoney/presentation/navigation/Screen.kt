@@ -571,7 +571,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
      * @param ID_BRAND: Int of brand id
      */
     object MyContactsTransferAmountScreen : Screen(
-        "my_contacts_amount_screen/{$ORIGIN_ACCOUNT}/{$DESTINY_ACCOUNT}/{$TRANSFER_TYPE}/{$ID_BRAND}",
+        "my_contacts_amount_screen/{$ORIGIN_ACCOUNT}/{$DESTINY_ACCOUNT}/{$TRANSFER_TYPE}/{$ID_BRAND}/{$PREVIOUS_SCREEN}",
         "my_contacts_amount_screen"
     )
 

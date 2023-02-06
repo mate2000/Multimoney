@@ -185,7 +185,26 @@ class MyContactsTransferAmountViewModel @Inject constructor(
                 bottomSheetState = ModalBottomSheetState(Hidden)
             )
         } else {
-            navigateBack(popTo = Screen.SmartSelectSendingTypeScreen.route, isRestart = false)
+            when(previousScreen) {
+                Screen.MyContactsTransferScreen.baseRoute -> {
+                    navigateBack(
+                        popTo = Screen.MyContactsTransferScreen.route,
+                        isRestart = false
+                    )
+                }
+                Screen.SmartAddSACAccountScreen.baseRoute -> {
+                    navigateBack(
+                        popTo = Screen.SmartAddSACAccountScreen.route,
+                        isRestart = false
+                    )
+                }
+                else -> {
+                    navigateBack(
+                        popTo = Screen.SmartSelectSendingTypeScreen.route,
+                        isRestart = false
+                    )
+                }
+            }
         }
     }
 }

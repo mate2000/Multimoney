@@ -32,23 +32,19 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.Companion.FORMAT_VALUE
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.UIEvent.OnAccountValueChange
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.UIEvent.OnAddFavoriteValueChange
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.UIEvent.OnContinueButtonClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.UIEvent.OnEmailNameValueChange
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.UIEvent.OnFavoriteNameValueChange
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.UIEvent.OnIdentificationTypeChange
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.UIEvent.OnIdentificationValueChange
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.UIEvent.OnQueryDocumentList
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.UIEvent.OnValidateDocument
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.UIEvent.OnValidateUserEmail
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.UIEvent.OnAccountValueCompleted
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
-import com.multimoney.multimoney.presentation.uielement.CustomDropdownTextField
+import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
@@ -66,7 +62,6 @@ fun SmartTransferRegisterIbanScreen(
 
     LaunchedEffect(true) {
         viewModel.apply {
-            onUIEvent(OnQueryDocumentList)
             executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
         }
     }
@@ -129,10 +124,11 @@ fun SmartTransferRegisterIbanScreen(
                 keyboardActions = KeyboardActions(onNext = {
                     focusManager.clearFocus()
                 }),
-                isRequired = false,
+                isRequired = true,
                 placeHolder = stringResource(id = R.string.iban_account_hint),
                 onValueChange = { viewModel.onUIEvent(OnAccountValueChange(it)) },
                 canShowNonErrorMessage = true,
+                onDebounceValidation = { viewModel.onUIEvent(OnAccountValueCompleted) },
                 showInfo = viewModel.uiState.accountInformation.first,
                 infoMessage = stringResource(id = viewModel.uiState.accountInformation.second),
                 isError = viewModel.uiState.accountError.first || viewModel.uiState.accountValidationError?.first == true,
@@ -144,33 +140,31 @@ fun SmartTransferRegisterIbanScreen(
                 )
             )
 
-            CustomDropdownTextField(
-                modifier = Modifier.padding(top = 15.dp),
-                labelText = stringResource(id = R.string.smart_iban_register_document_label),
-                value = viewModel.uiState.documentNumber,
-                placeHolder = if (viewModel.uiState.documentFormat != "") viewModel.uiState.documentFormat.replace(
-                    viewModel.uiState.documentFormat.last(),
-                    FORMAT_VALUE,
-                    false
-                ) else "",
-                isError = viewModel.uiState.personalIdError.first,
-                errorMessage = stringResource(id = viewModel.uiState.personalIdError.second),
-                onValueChange = { documentNumber ->
-                    viewModel.onUIEvent(OnIdentificationValueChange(documentNumber))
-                },
-                onSelectionChange = { documentType, _ ->
-                    viewModel.onUIEvent(OnIdentificationTypeChange(documentType))
-                },
-                optionList = viewModel.uiState.documentList,
-                optionSelected = viewModel.uiState.identificationValueType,
-                customTransformation = if (viewModel.uiState.documentFormat != "") MaskVisualTransformation(
-                    viewModel.uiState.documentFormat,
-                    viewModel.uiState.documentFormat.last()
-                ) else null,
-                onDebounceValidation = {
-                    viewModel.onUIEvent(OnValidateDocument(it))
-                }
-            )
+            if (viewModel.uiState.accountValidationError?.first == false && viewModel.uiState.validationFinish) {
+                CustomInformativeText(
+                    modifier = Modifier.padding(top = 24.dp),
+                    leadingIcon = R.drawable.ic_check,
+                    text = stringResource(id = R.string.smart_iban_register_full_name_label),
+                    textStyle = Typography.caption.copy(color = MultimoneyTheme.colors.textSuccess)
+                )
+                Text(
+                    modifier = Modifier.padding(top = 8.dp, bottom = 28.dp),
+                    text = viewModel.uiState.proprietary,
+                    style = Typography.caption,
+                    color = MultimoneyTheme.colors.titleText
+                )
+                CustomInformativeText(
+                    leadingIcon = R.drawable.ic_check,
+                    text = stringResource(id = R.string.smart_iban_register_identification_label),
+                    textStyle = Typography.caption.copy(color = MultimoneyTheme.colors.textSuccess)
+                )
+                Text(
+                    modifier = Modifier.padding(top = 8.dp),
+                    text = viewModel.uiState.documentNumber,
+                    style = Typography.caption,
+                    color = MultimoneyTheme.colors.titleText
+                )
+            }
 
             CustomOutlinedTextField(
                 modifier = Modifier.padding(top = 24.dp),
@@ -229,7 +223,7 @@ fun SmartTransferRegisterIbanScreen(
             CustomButton(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(vertical = 16.dp)
                     .height(56.dp),
                 onClick = {
                     viewModel.onUIEvent(OnContinueButtonClick)

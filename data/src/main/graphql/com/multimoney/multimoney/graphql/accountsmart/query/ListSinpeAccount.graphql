@@ -28,6 +28,8 @@ query listSinpeAccount(
             currencyId: id_Moneda
             currency: moneda
             nameAccount: nombre_Cuenta,
+            idBank: id_Banco,
+            typeAccount: tipo_Cuenta_CORE
             isFavorite: es_Favorita
         }
     }

@@ -390,6 +390,14 @@
     <string name="profile_change_email_enter_new_confirmation" translatable="false">Confirmar nuevo correo electrónico</string>
     <string name="profile_accounts_favorites" translatable="false">Favoritas</string>
     <string name="profile_accounts_registered" translatable="false">Cuentas registradas</string>
+    <string name="profile_my_acounts_bottom_sheet_title" translatable="false">Mis cuentas</string>
+    <string name="profile_my_accounts_edit_nickname" translatable="false">Editar apodo</string>
+    <string name="profile_my_account_account_updated" translatable="false">Cuenta actualizada</string>
+    <string name="profile_my_account_nickname_is_required" translatable="false">El apodo es requerido</string>
+
+
+
+
 
 
 

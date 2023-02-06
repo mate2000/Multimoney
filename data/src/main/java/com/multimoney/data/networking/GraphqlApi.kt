@@ -71,6 +71,7 @@ import com.multimoney.data.networking.graphql.apollomodel.ListCardVDQuery
 import com.multimoney.data.networking.graphql.apollomodel.ListMiniCardsQuery
 import com.multimoney.data.networking.graphql.apollomodel.ListSinpeAccountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountSaveMutation
+import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountUpdateMutation
 import com.multimoney.data.networking.graphql.apollomodel.NationalityQuery
 import com.multimoney.data.networking.graphql.apollomodel.OcupationsQuery
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoCheckProcessMutation
@@ -1372,6 +1373,33 @@ class GraphqlApi @Inject constructor(
                 country = Optional.presentIfNotNull(country),
                 id_account = Optional.presentIfNotNull(idAccount),
                 option = Optional.presentIfNotNull(option)
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationManageSinpeAccountUpdate(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        accountNumber: String,
+        idCurrency: Long,
+        nameAccount: String,
+        idAccount: Int?,
+        isFavorite: Boolean,
+        idBank: Long,
+        typeAccount: Long
+    ): ApolloCall<ManageSinpeAccountUpdateMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            ManageSinpeAccountUpdateMutation(
+                user = Optional.presentIfNotNull(user),
+                idBrand = Optional.presentIfNotNull(idBrand),
+                identification = Optional.presentIfNotNull(identification),
+                accountNumber = Optional.presentIfNotNull(accountNumber),
+                idCurrency = Optional.presentIfNotNull(idCurrency),
+                nameAccount = Optional.presentIfNotNull(nameAccount),
+                idAccount = Optional.presentIfNotNull(idAccount),
+                isFavorite = Optional.presentIfNotNull(isFavorite),
+                typeAccount = Optional.presentIfNotNull(typeAccount.toInt()),
+                idBank = Optional.presentIfNotNull(idBank)
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

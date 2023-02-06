@@ -428,6 +428,34 @@ class SmartAccountRepositoryImpl @Inject constructor(
             Success(data.mapToDomainModel())
         }
     )
+    override suspend fun mutationManageSinpeAccountUpdate(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        accountNumber: String,
+        idCurrency: Long,
+        nameAccount: String,
+        idAccount: Int?,
+        isFavorite: Boolean,
+        idBank: Long,
+        typeAccount: Long
+    ): Flow<MultimoneyResult<SaveSinpeAccount?>> = fetchData(
+        apolloCall = graphqlApi.mutationManageSinpeAccountUpdate(
+            user,
+            idBrand,
+            identification,
+            accountNumber,
+            idCurrency,
+            nameAccount,
+            idAccount,
+            isFavorite,
+            idBank,
+            typeAccount
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
 
     override suspend fun mutationProcessSinpeTransfer(
         pkUser: Int,

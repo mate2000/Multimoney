@@ -14,5 +14,8 @@ data class SinpeAccount(
     val currencyId: Int,
     val currency: String,
     val nameAccount: String,
+    val idBank: Long,
+    val typeAccount: Long,
     val isFavorite: Boolean
 ) : Parcelable
+

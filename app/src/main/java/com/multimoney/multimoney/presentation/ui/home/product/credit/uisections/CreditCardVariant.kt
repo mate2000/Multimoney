@@ -474,17 +474,6 @@ fun OngoingCredit(
                 style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                 color = MultimoneyTheme.colors.text
             )
-            if (viewModel.uiState.isCreditAvailable) {
-                Text(
-                    text = stringResource(
-                        id = R.string.home_product_amount,
-                        viewModel.balanceCredit?.getFirstCredit()?.creditLimitLabel.toString()
-                    ),
-                    modifier = Modifier.padding(top = 4.dp, start = 3.dp),
-                    style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-                    color = MultimoneyTheme.colors.text
-                )
-            }
         }
         // Check if user has a payment available to show quota information
         if (viewModel.uiState.paymentAvailable) {

@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency
+package com.multimoney.multimoney.util
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -7,7 +7,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
-class TimerHelper(
+class PurchaseCryptoTimerHelper(
     val coroutineScope: CoroutineScope ,
     val time: Int,
     val isBottomSheetOpen: Boolean = false,
@@ -19,7 +19,9 @@ class TimerHelper(
 
     fun startTimer() {
         job?.let {
-            if (it.isActive) {
+            if (isBottomSheetOpen) {
+                resetTimerWithSpecificTime()
+            } else {
                 resetTimer()
             }
         }
@@ -36,6 +38,11 @@ class TimerHelper(
 
     fun stopTimer() {
         job?.cancel()
+    }
+
+    private fun resetTimerWithSpecificTime() {
+        stopTimer()
+        counter = TIME_WITH_BOTTOM_SHEET_OPEN
     }
 
     private fun resetTimer() {

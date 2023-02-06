@@ -32,8 +32,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.BuyCurrencyScreenViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.BuyCurrencyTitleConfirmationSectionSkeleton
-import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.CurrencyExchangeInfo
-import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.EMPTY_CURRENCY
+import com.multimoney.multimoney.presentation.uielement.CurrencyExchangeInfo
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.VoucherCurrencyExchangeInfoSkeleton
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.WhileLoadingSection
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -85,7 +84,10 @@ fun PurchaseConfirmationBottomSheet(
             )
         }
         ConfirmationBottomSheetContent(
-            quoteAmount = viewModel.uiState.quoteAmount.value,
+            quoteAmount = viewModel.uiState.quoteAmount.value.ifEmpty {
+                viewModel.uiState.baseAmount.value.ifEmpty { DEFAULT_AMOUNT }.toDouble()
+                    .times(viewModel.uiState.pricesQuoteAndCommissions?.price ?: 0.0)
+            }.toString().toDouble().toCurrencyFormat(),
             baseAmount = viewModel.uiState.baseAmount.value.ifEmpty {
                 viewModel.uiState.quoteAmount.value.ifEmpty { DEFAULT_AMOUNT }.toDouble()
                     .div(viewModel.uiState.pricesQuoteAndCommissions?.price ?: 0.0)
@@ -99,7 +101,9 @@ fun PurchaseConfirmationBottomSheet(
                 symbol = CurrencyType.Colon.symbol
             ),
             convertedAmount = (viewModel.uiState.quoteAmount.value.ifEmpty {
-                EMPTY_CURRENCY
+                (viewModel.uiState.baseAmount.value.toDoubleOrNull() ?: 0.0)
+                    .times(viewModel.uiState.pricesQuoteAndCommissions?.price ?: 0.0)
+                    .toString()
             }.toDouble() * viewModel.uiState.exchangeRate).toCurrencyFormat(
                 symbol = CurrencyType.Colon.symbol
             ),
@@ -135,7 +139,13 @@ fun ConfirmationBottomSheetContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TitleSection(quoteAmount)
-        PurchaseInfoSection(assetImageUrl, isLoading, asset, baseAmount, secondsRemaining)
+        PurchaseInfoSection(
+            assetImageUrl,
+            isLoading,
+            asset,
+            baseAmount,
+            secondsRemaining
+        )
         AccountInfoSection(idCurrency)
         if (idCurrency == CurrencyType.Colon.id) {
             WhileLoadingSection(
@@ -178,7 +188,7 @@ private fun TitleSection(quoteAmount: String) {
     ) {
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
-            text = quoteAmount.ifEmpty { DEFAULT_AMOUNT }.toDouble().toCurrencyFormat(),
+            text = quoteAmount,
             style = Typography.h4.copy(
                 color = MultimoneyTheme.colors.text,
                 fontWeight = FontWeight.Bold

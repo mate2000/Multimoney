@@ -15,10 +15,12 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.format
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
+import com.multimoney.multimoney.util.PurchaseCryptoTimerHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -81,7 +83,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         }
     }
 
-    private val timer = TimerHelper(
+    private val timer = PurchaseCryptoTimerHelper(
         coroutineScope = viewModelScope,
         time = DEFAULT_TIMER_COUNT,
         onTick = { seconds ->
@@ -99,7 +101,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         }
     )
 
-    private val confirmationTimer = TimerHelper(
+    private val confirmationTimer = PurchaseCryptoTimerHelper(
         coroutineScope = viewModelScope,
         time = CONFIRMATION_BOTTOM_SHEET_INITIAL_TIMER_COUNT,
         isBottomSheetOpen = true,
@@ -248,7 +250,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 identification = identification,
                 market = market,
                 accountToken = accountToken,
-                commissionAmount = uiState.pricesQuoteAndCommissions?.fee?.toDouble() ?: 0.0,
+                commissionAmount = uiState.pricesQuoteAndCommissions?.internal_fee ?: 0.0,
                 taxAmount = uiState.pricesQuoteAndCommissions?.taxAmount ?: 0.0,
                 exchangeRate = if (idCurrencyAccount == CurrencyType.Dollar.id) 1.0 else uiState.exchangeRate,
                 quoteId = uiState.pricesQuoteAndCommissions?.quote_id ?: "",
@@ -263,6 +265,35 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                     )
                 }
                 result.onSuccess {
+                    when (it.buyHQR.status) {
+                        CryptoProcessErrorCodes.WeeklyLimitExceeded.status -> {
+                            confirmationTimer.stopTimer()
+                            timer.stopTimer()
+                            isError(
+                                errorMessage = R.string.crypto_purchase_flow_error_weekly_amount_exceeded,
+                                isError = true
+                            )
+                            return@onSuccess
+                        }
+                        CryptoProcessErrorCodes.InsufficientFundsBuy.status -> {
+                            confirmationTimer.stopTimer()
+                            timer.stopTimer()
+                            isError(
+                                errorMessage = R.string.crypto_purchase_flow_error_no_funds,
+                                isError = true
+                            )
+                            return@onSuccess
+                        }
+                        CryptoProcessErrorCodes.ExpiredPriceBuy.status -> {
+                            confirmationTimer.stopTimer()
+                            timer.stopTimer()
+                            isError(
+                                errorMessage = R.string.crypto_purchase_flow_error_price_expired,
+                                isError = true
+                            )
+                            return@onSuccess
+                        }
+                    }
                     uiState = uiState.copy(
                         isLoading = false, isPurchaseInProcess = false, isPurchaseSuccess = true
                     )
@@ -292,6 +323,13 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                         getExchangeRate()
                     }
                 })
+        )
+    }
+
+    private fun clearInputData() {
+        uiState = uiState.copy(
+            baseAmount = mutableStateOf(""),
+            quoteAmount = mutableStateOf("")
         )
     }
 
@@ -361,6 +399,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 )
                 timer.startTimer()
             }
+            UIEvent.OnClearInputData -> clearInputData()
         }
     }
 
@@ -387,6 +426,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         object OnGetExchangeRate : UIEvent()
         object OnOpenPurchaseConfirmationBottomSheet : UIEvent()
         object OnClosePurchaseConfirmationBottomSheet : UIEvent()
+        object OnClearInputData : UIEvent()
     }
 
     companion object {

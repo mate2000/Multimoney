@@ -47,6 +47,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.PurchaseConfirmationBottomSheet
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.uielement.CryptoCurrencyInputLayout
+import com.multimoney.multimoney.presentation.uielement.CurrencyExchangeInfo
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
@@ -56,7 +57,7 @@ import kotlinx.coroutines.launch
 
 const val DEFAULT_CURRENCY_PRICE = 0.0
 const val TIMER_UNIT_INDICATOR = " seg"
-const val SPACE_BETWEEN = " "
+const val WHITE_SPACE = " "
 const val EMPTY_CURRENCY = "0.00"
 
 @Composable
@@ -82,6 +83,9 @@ fun BuyCurrencyScreen(
                 smartAccountAvailableBalance = sharedViewModel.uiState.smartAccountAvailableBalance
             )
         )
+        sharedViewModel.uiState.previousAction = {
+            viewModel.onUIEvent(BuyCurrencyScreenViewModel.UIEvent.OnClearInputData)
+        }
     }
 
     LaunchedEffect(key1 = true) {
@@ -101,6 +105,7 @@ fun BuyCurrencyScreen(
         //todo go to next step / set data etc
     }
     BackHandler {
+        sharedViewModel.uiState.previousAction()
         sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep)
     }
 
@@ -185,7 +190,9 @@ fun BuyCurrencyScreenContent(
                     errorText = viewModel.uiState.error,
                     textArg = viewModel.uiState.errorMessageArg,
                     onAmountChanged = {
-                        viewModel.onUIEvent(BuyCurrencyScreenViewModel.UIEvent.ValidateAmountInput(it))
+                        viewModel.onUIEvent(
+                            BuyCurrencyScreenViewModel.UIEvent.ValidateAmountInput(it)
+                        )
                     }
                 )
                 if (viewModel.idCurrencyAccount == CurrencyType.Colon.id) {
@@ -211,7 +218,9 @@ fun BuyCurrencyScreenContent(
                                         symbol = CurrencyType.Colon.symbol
                                     ),
                                     convertedAmountText = (viewModel.uiState.quoteAmount.value.ifEmpty {
-                                        EMPTY_CURRENCY
+                                        (viewModel.uiState.baseAmount.value.toDoubleOrNull() ?: 0.0)
+                                            .times(viewModel.uiState.pricesQuoteAndCommissions?.price ?: 0.0)
+                                            .toString()
                                     }.toDouble() * viewModel.uiState.exchangeRate).toCurrencyFormat(
                                         symbol = CurrencyType.Colon.symbol
                                     )
@@ -289,7 +298,7 @@ fun CounterSection(
                     ) {
                         append(stringResource(id = R.string.crypto_purchase_flow_available_smart_amount))
                     }
-                    append(SPACE_BETWEEN)
+                    append(WHITE_SPACE)
                     withStyle(
                         style = SpanStyle(
                             color = MultimoneyTheme.colors.bodyTextColor,
@@ -317,7 +326,7 @@ fun CounterSection(
                     ) {
                         append(stringResource(id = R.string.crypto_purchase_flow_price_expires_in))
                     }
-                    append(SPACE_BETWEEN)
+                    append(WHITE_SPACE)
                     withStyle(
                         style = SpanStyle(
                             color = MultimoneyTheme.colors.bodyTextColor,
@@ -353,7 +362,8 @@ fun AmountInputSection(
     val quoteAmountText = remember { quoteAmount }
     val baseAmountText = remember { baseAmount }
     val isTransformationCurrencyValue = remember { isTransformationCurrency }
-    val baseOrQuote = if (isTransformationCurrencyValue.value.not()) quoteAmountText else baseAmountText
+    val baseOrQuote =
+        if (isTransformationCurrencyValue.value.not()) quoteAmountText else baseAmountText
 
     LaunchedEffect(key1 = true) {
         focusRequester.requestFocus()

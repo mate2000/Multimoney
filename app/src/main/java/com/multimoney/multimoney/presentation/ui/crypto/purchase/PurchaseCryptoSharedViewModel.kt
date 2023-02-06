@@ -112,6 +112,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
             uiState = uiState.copy(
                 currentStep = currentFlowStep
             )
+            uiState.previousAction()
         }
     }
 
@@ -120,6 +121,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         uiState = uiState.copy(
             currentStep = currentFlowStep
         )
+        uiState.nextAction()
     }
 
     private fun navigateBackToHome() =
@@ -170,25 +172,29 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     }
 
     data class UIState(
+        // interaction
         val currentStep: Int = PurchaseCryptoSteps.One.pageNumber,
         val isLoading: Boolean = false,
-        val accounts: List<AccountSmartForBuyCrypto> = listOf(),
         val openDialog: DialogParameters = DialogParameters(),
         var bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
         var bottomSheet: (@Composable () -> Unit) = {},
+        var shouldDisplayDisclaimer: Boolean = true,
+        val dontShowAgainChecked: Boolean = false,
+        val comingFromDetails: Boolean = false,
+        var previousAction: () -> Unit = {},
+        val nextAction: () -> Unit = {},
+        // mutable data
+        val accounts: List<AccountSmartForBuyCrypto> = listOf(),
         val smartAccountAvailableBalance: Double = 0.0,
         val accountNumber: String = "",
         val ibanAccountNumber: String = "",
-        var shouldDisplayDisclaimer: Boolean = true,
-        val dontShowAgainChecked: Boolean = false,
         val idCurrency: Int = CurrencyType.Dollar.id,
         val asset: String? = null,
         val assetDescription: String? = null,
         val market: String? = "",
         val cryptoNetWork: String? = "",
         val assetImageBaseUrl: String? = "",
-        val accountToken: String = "",
-        val comingFromDetails: Boolean = false
+        val accountToken: String = ""
     )
 
     fun onUIEvent(event: UIEvent) {

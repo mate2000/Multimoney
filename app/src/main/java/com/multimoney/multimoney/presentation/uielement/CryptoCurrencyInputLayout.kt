@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.uielement
 
-import android.icu.text.NumberFormat
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
@@ -30,12 +29,8 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.multimoney.multimoney.R
@@ -43,8 +38,8 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.util.DECIMAL_AND_NUMBER_REGEX
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
-import java.util.*
-import kotlin.math.max
+import com.multimoney.multimoney.presentation.util.transformation.CryptoAssetMaskTransformation
+import com.multimoney.multimoney.presentation.util.transformation.CurrencyDoubleTransformation
 
 @ExperimentalAnimationApi
 @Composable
@@ -140,7 +135,9 @@ fun CustomTextField(
                 }
             ),
             onValueChange = { newValue ->
-                if (newValue.length <= LOT_OF_CHARACTERS && newValue.matches(Regex(DECIMAL_AND_NUMBER_REGEX))) {
+                if (newValue.length <= LOT_OF_CHARACTERS && newValue
+                        .matches(Regex(DECIMAL_AND_NUMBER_REGEX))
+                ) {
                     value.value = when {
                         newValue.isEmpty() -> {
                             onValueChanged("")
@@ -179,8 +176,7 @@ fun CustomTextField(
                 )
             },
             visualTransformation = if (isTransformationCurrency.value.not()) {
-                VisualTransformation.None
-                //todo use when is completed: CurrencyMaskTransformation()
+                CurrencyDoubleTransformation(currency = CurrencyType.Dollar.symbol, separator = ',')
             } else {
                 CryptoAssetMaskTransformation(asset = iconCurrency)
             },
@@ -237,79 +233,9 @@ fun CustomTextField(
 }
 
 const val FEW_CHARACTERS = 10
-const val MANY_CHARACTERS = 17
-const val TOO_MANY_CHARACTERS = 26
+const val MANY_CHARACTERS = 14
+const val TOO_MANY_CHARACTERS = 23
 const val LOT_OF_CHARACTERS = 32
 const val ONE_LENGTH = 1
 const val SIMPLE_DOT = "."
 const val CURRENCY_DEFAULT_PLACEHOLDER = "$0"
-
-class CurrencyMaskTransformation : VisualTransformation {
-
-    private val numberFormat = NumberFormat.getCurrencyInstance(Locale.getDefault())
-
-    override fun filter(text: AnnotatedString): TransformedText {
-        val original = text.text
-        val formattedText = numberFormat.format(original.ifEmpty { "0" }.toDouble())
-
-        val offsetMapping = object : OffsetMapping {
-            override fun originalToTransformed(offset: Int): Int {
-                var originalIndex = 0
-                var newTextIndex = 0
-
-                while (originalIndex < offset && originalIndex < original.length) {
-                    if (original[originalIndex] == '.') {
-                        break
-                    }
-                    originalIndex++
-                    newTextIndex++
-                }
-
-                while (newTextIndex < formattedText.length && formattedText[newTextIndex] != '.') {
-                    newTextIndex++
-                }
-
-                return newTextIndex
-            }
-
-            override fun transformedToOriginal(offset: Int): Int {
-                var originalIndex = 0
-                var newTextIndex = 0
-
-                while (newTextIndex < offset && originalIndex < original.length) {
-                    if (formattedText[newTextIndex] == ',') {
-                        break
-                    }
-                    originalIndex++
-                    newTextIndex++
-                }
-
-                return originalIndex
-            }
-        }
-
-        return TransformedText(
-            text = AnnotatedString(formattedText),
-            offsetMapping = offsetMapping
-        )
-    }
-}
-
-class CryptoAssetMaskTransformation(val asset: String) : VisualTransformation {
-    override fun filter(text: AnnotatedString): TransformedText {
-        val transformedText = if (text.isEmpty()) "" else text.text.plus(" $asset")
-        val originalLength = text.text.length
-        return TransformedText(
-            text = AnnotatedString(transformedText),
-            offsetMapping = object : OffsetMapping {
-                override fun originalToTransformed(offset: Int): Int {
-                    return if (offset <= text.length - (asset.length + 1)) 0 else offset
-                }
-
-                override fun transformedToOriginal(offset: Int): Int {
-                    return if (offset >= transformedText.length - (asset.length + 1)) originalLength else max(0, offset - (asset.length + 1))
-                }
-            }
-        )
-    }
-}

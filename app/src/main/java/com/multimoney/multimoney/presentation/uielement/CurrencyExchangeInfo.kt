@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency
+package com.multimoney.multimoney.presentation.uielement
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement

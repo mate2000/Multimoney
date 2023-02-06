@@ -1253,7 +1253,7 @@
     <!-- Payment Cards List -->
     <string name="payment_cards_list_empty_state_description" translatable="false">Agregá una tarjeta para que podás realizar tus abonos</string>
     <string name="payment_cards_list_create" translatable="false">Agregar tarjeta</string>
-    <string name="payment_cards_list_title" translatable="false">Tarjetas Visa</string>
+    <string name="payment_cards_list_title" translatable="false">Mis Tarjetas</string>
     <string name="smart_payment_cards_list_card_title" translatable="false">Seleccioná la tarjeta con la que querés ahorrar</string>
 
     <!-- Payment Amount Card -->

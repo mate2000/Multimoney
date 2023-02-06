@@ -4,6 +4,7 @@ package com.multimoney.multimoney.presentation.ui.home.profile.accounts
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -37,10 +39,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.accountsmart.SinpeAccount
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
@@ -66,6 +70,8 @@ fun MyAccountsScreen(
     val coroutineScope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
     val focusManager = LocalFocusManager.current
+
+    viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnStart)
 
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
@@ -122,6 +128,9 @@ fun MyAccountsScreen(
                 )
             } else {
                 if (viewModel.uiState.favoritesLoaded && viewModel.uiState.registeredLoaded) {
+                    if (viewModel.uiState.favoriteAccounts.isEmpty() && viewModel.uiState.registeredAccounts.isEmpty()) {
+                        MyAccountsEmptyState(viewModel.uiState.idBrand)
+                    }
                     MyAccountsContent(
                         favoriteAccounts = viewModel.uiState.favoriteAccounts,
                         registeredAccounts = viewModel.uiState.registeredAccounts,
@@ -137,9 +146,9 @@ fun MyAccountsScreen(
             modalBottomSheetState = viewModel.uiState.bottomSheetVisibleState,
             coroutineScope = coroutineScope,
             firstActionTitle = stringResource(id = viewModel.uiState.favoriteTextResource),
-            firstActionIcon = R.drawable.ic_error_green,
+            firstActionIcon = if( viewModel.uiState.selectedAccount?.isFavorite == true) R.drawable.ic_error_green else R.drawable.ic_star_outline,
             firstActionClick = {
-                viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnToggleFavorite)
+                viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnChangeFavorite)
             },
             secondActionTitle = stringResource(id = R.string.profile_my_accounts_edit_nickname),
             secondActionIcon = R.drawable.ic_edit_green,
@@ -162,6 +171,19 @@ fun MyAccountsScreen(
                 openDialogCustom = viewModel.uiState.favoriteDialogParemeters.isActive,
                 onPositiveAction = {
                     viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnDeleteAccount)
+                }
+            )
+        }
+
+        if (viewModel.uiState.showErrorDialog) {
+            AlertResult(
+                titleString = stringResource(id = R.string.profile_settings_error_new_password_something_went_wrong),
+                descriptionString = stringResource(id = R.string.profile_settings_error_we_are_sorry_try_again_later),
+                buttonTextResource = R.string.profile_error_changing_phone_button,
+                isLeftButtonVisible = false,
+                isRightButtonVisible = false,
+                onButtonClick = {
+                    viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnNavigateBack)
                 }
             )
         }
@@ -345,7 +367,7 @@ fun EditAccountScreen(
             keyboardActions = KeyboardActions(onNext = {
                 focusManager.moveFocus(FocusDirection.Down)
             }),
-            labelText = "Apodo de la cuenta",
+            labelText = stringResource(id = R.string.profile_my_accounts_account_nickname),
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.profile_my_account_nickname_is_required),
             value = viewModel.uiState.accountNickname
@@ -410,5 +432,42 @@ fun MyAccountsSkeleton() {
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun MyAccountsEmptyState(idBrand: Int = 1) {
+    ConstraintLayout(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        val (iconId, titleId) = createRefs()
+        Image(
+            painter = painterResource(id = R.drawable.ic_bank),
+            contentDescription = "",
+            modifier = Modifier
+                .constrainAs(iconId) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                    bottom.linkTo(parent.bottom)
+                    end.linkTo(parent.end)
+                }
+        )
+        Text(
+            modifier = Modifier
+                .constrainAs(titleId) {
+                    top.linkTo(iconId.bottom)
+                    end.linkTo(iconId.end)
+                    start.linkTo(iconId.start)
+                }
+                .padding(top = 24.dp),
+            text = if (idBrand == Brand.Guatemala.id) stringResource(id = R.string.profile_my_accounts_empty_state_title_gt) else stringResource(
+                id = R.string.profile_my_accounts_empty_state_title
+            ),
+            style = Typography.body1.copy(
+                fontWeight = FontWeight.SemiBold,
+                color = MultimoneyTheme.colors.labelText
+            ),
+        )
     }
 }

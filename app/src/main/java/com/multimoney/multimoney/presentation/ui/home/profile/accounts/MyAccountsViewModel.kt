@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountDeleteUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountUpdateUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryListSinpeAccountUseCase
@@ -42,13 +43,15 @@ class MyAccountsViewModel @Inject constructor(
 
     // Stateless
     private var user: String = ""
-    private var idBrand: Int = 0
     private var identification: String = ""
 
     init {
         user = savedStateHandle[USER_NAME] ?: ""
-        idBrand = savedStateHandle[ID_BRAND] ?: 0
         identification = savedStateHandle[IDENTIFICATION] ?: ""
+        uiState = uiState.copy(idBrand = savedStateHandle[ID_BRAND] ?: 0)
+    }
+
+    private fun onStart() {
         callListSinpeAccountUseCase()
         callListSinpeAccountUseCase(isFavorite = true)
     }
@@ -57,7 +60,7 @@ class MyAccountsViewModel @Inject constructor(
         queryListSinpeAccountUseCase.invoke(
             user = user,
             identification = identification,
-            idBrand = idBrand,
+            idBrand = uiState.idBrand,
             country = "",
             idAccount = 0,
             accountNumber = "",
@@ -72,7 +75,10 @@ class MyAccountsViewModel @Inject constructor(
                         uiState.copy(registeredAccounts = accounts.data, registeredLoaded = true)
                 }
             }.onFailure {
-                uiState = uiState.copy(isLoading = false)
+                uiState = uiState.copy(
+                    isLoading = false,
+                    showErrorDialog = true
+                )
             }.onLoading {
                 uiState = if (isFavorite) {
                     uiState.copy(favoritesLoaded = false)
@@ -85,7 +91,7 @@ class MyAccountsViewModel @Inject constructor(
     private fun onUpdateAccount() = executeUseCase {
         mutationManageSinpeAccountUpdate.invoke(
             user = user,
-            idBrand = idBrand,
+            idBrand = uiState.idBrand,
             identification = identification,
             accountNumber = uiState.selectedAccount?.sinpeAccount ?: "",
             idCurrency = uiState.selectedAccount?.currencyId?.toLong() ?: 0,
@@ -104,7 +110,10 @@ class MyAccountsViewModel @Inject constructor(
                 callListSinpeAccountUseCase(false)
             }
             result.onFailure {
-                uiState = uiState.copy(isLoading = false)
+                uiState = uiState.copy(
+                    isLoading = false,
+                    showErrorDialog = true
+                )
             }
             result.onLoading {
                 uiState = uiState.copy(isLoading = true)
@@ -112,11 +121,19 @@ class MyAccountsViewModel @Inject constructor(
         }
     }
 
+
+    private fun onChangeFavorite() {
+        if (uiState.selectedAccount?.isFavorite == true) {
+            onOpenRemoveFavDialog()
+        } else
+            onToggleFavorite()
+    }
+
     private fun onToggleFavorite() = executeUseCase {
         toggleBottomSheet(ModalBottomSheetState(ModalBottomSheetValue.Hidden))
         mutationManageSinpeAccountUpdate.invoke(
             user = user,
-            idBrand = idBrand,
+            idBrand = uiState.idBrand,
             identification = identification,
             accountNumber = uiState.selectedAccount?.sinpeAccount ?: "",
             idCurrency = uiState.selectedAccount?.currencyId?.toLong() ?: 0,
@@ -132,7 +149,10 @@ class MyAccountsViewModel @Inject constructor(
                 refreshAccounts()
             }
             result.onFailure {
-                uiState = uiState.copy(isLoading = false)
+                uiState = uiState.copy(
+                    isLoading = false,
+                    showErrorDialog = true
+                )
             }
             result.onLoading {
                 uiState = uiState.copy(isLoading = true)
@@ -144,7 +164,7 @@ class MyAccountsViewModel @Inject constructor(
         toggleBottomSheet(ModalBottomSheetState(ModalBottomSheetValue.Hidden))
         mutationManageSinpeAccountDelete.invoke(
             user = user,
-            idBrand = idBrand,
+            idBrand = uiState.idBrand,
             identification = identification,
             idAccount = uiState.selectedAccount?.accountId ?: 0
         ).collectLatest { result ->
@@ -153,7 +173,10 @@ class MyAccountsViewModel @Inject constructor(
                 refreshAccounts()
             }
             result.onFailure {
-                uiState = uiState.copy(isLoading = false)
+                uiState = uiState.copy(
+                    isLoading = false,
+                    showErrorDialog = true
+                )
             }
             result.onLoading {
                 uiState = uiState.copy(isLoading = true)
@@ -208,9 +231,39 @@ class MyAccountsViewModel @Inject constructor(
         uiState = uiState.copy(accountNickname = currentNickname)
     }
 
-    private fun onOpenDeleteDialog() {
+    private fun onOpenRemoveFavDialog() {
         uiState = uiState.copy(
             favoriteDialogParemeters = DialogParameters(
+                titleResource = R.string.profile_my_accounts_remove_from_fav,
+                descriptionResource = R.string.profile_my_accounts_you_can_fav_later,
+                positiveResource = R.string.button_continue,
+                negativeResource = R.string.cancel,
+                positiveAction = {
+                    onToggleFavorite()
+                },
+                isActive = mutableStateOf(true)
+            )
+        )
+    }
+
+    private fun onOpenDeleteAccountDialog() {
+        uiState = uiState.copy(
+            favoriteDialogParemeters = DialogParameters(
+                titleResource = if(uiState.idBrand == Brand.Guatemala.id) R.string.profile_my_accounts_are_you_sure_to_delete_gt else R.string.profile_my_accounts_are_you_sure_to_delete,
+                descriptionResource = R.string.profile_my_accounts_will_be_deleted_permanently,
+                positiveResource = R.string.button_continue,
+                negativeResource = R.string.cancel,
+                positiveAction = {
+                    onDeleteAccount()
+                },
+                isActive = mutableStateOf(true)
+            )
+        )
+    }
+
+    private fun onOpenDeleteDialog() {
+        uiState = uiState.copy(
+            deleteDialogParameters = DialogParameters(
                 titleResource = R.string.profile_my_accounts_remove_from_fav,
                 descriptionResource = R.string.profile_my_accounts_you_can_fav_later,
                 positiveResource = R.string.button_continue,
@@ -258,7 +311,9 @@ class MyAccountsViewModel @Inject constructor(
             is UIEvent.OnValueChanged -> onValueChanged(uiEvent.value)
             is UIEvent.OnDismissSnackBar -> onDismissSnackBar()
             is UIEvent.OnSetupNickNamePlaceholder -> onSetupNickNamePlaceholder(uiEvent.currentNickname)
-            is UIEvent.OnOpenDeleteDialog -> onOpenDeleteDialog()
+            is UIEvent.OnOpenDeleteDialog -> onOpenDeleteAccountDialog()
+            is UIEvent.OnStart -> onStart()
+            is UIEvent.OnChangeFavorite -> onChangeFavorite()
         }
     }
 
@@ -277,10 +332,13 @@ class MyAccountsViewModel @Inject constructor(
         object OnGoBackToMyAccounts : UIEvent()
         object OnUpdateAccount : UIEvent()
         object OnDismissSnackBar : UIEvent()
+        object OnChangeFavorite : UIEvent()
+        object OnStart : UIEvent()
     }
 
     data class UIState(
         // Fields
+        val idBrand: Int = 0,
         val favoriteAccounts: List<SinpeAccount?> = listOf(),
         val registeredAccounts: List<SinpeAccount?> = listOf(),
         val selectedAccount: SinpeAccount? = null,
@@ -296,6 +354,9 @@ class MyAccountsViewModel @Inject constructor(
         val favoritesLoaded: Boolean = false,
         val registeredLoaded: Boolean = false,
         val favoriteDialogParemeters: DialogParameters = DialogParameters(),
-        val isButtonEnabled: Boolean = false
+        val deleteDialogParameters: DialogParameters = DialogParameters(),
+        val isButtonEnabled: Boolean = false,
+        val showErrorDialog: Boolean = false
+
     )
 }

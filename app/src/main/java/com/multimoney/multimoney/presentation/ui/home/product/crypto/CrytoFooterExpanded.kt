@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.paging.PagingData
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CryptoAccountStatus
 import com.multimoney.domain.model.balance.Account
@@ -42,7 +43,6 @@ fun CryptoFooterExpanded(
     if (userStatus?.infoCrypto?.status == CryptoAccountStatus.ACTIVE.status) {
         CryptoFooterExpandedContent(
             balance,
-            userStatus.infoCrypto?.profileEnable,
             idBrand,
             cryptoMovements,
             actionMarket,
@@ -57,7 +57,6 @@ fun CryptoFooterExpanded(
 @Composable
 fun CryptoFooterExpandedContent(
     balance: Balance?,
-    profileEnable: Boolean?,
     idBrand: String,
     cryptoMovements: Flow<PagingData<CryptoCurrencyMovement>>,
     actionMarket: () -> Unit,
@@ -68,6 +67,9 @@ fun CryptoFooterExpandedContent(
 ) {
     val smartBalanceAvailable = verifyIfHasSmartBalance(balance?.balanceAccountSmart)
     val hasSmartBalance by remember { mutableStateOf(smartBalanceAvailable) }
+    val cryptoCurrencies = balance?.balanceCryptoAccount?.items
+    val movements = cryptoMovements.collectAsLazyPagingItems()
+    val profileEnable = !cryptoCurrencies.isNullOrEmpty() || movements.itemCount > ZERO_MOVEMENTS
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -77,7 +79,7 @@ fun CryptoFooterExpandedContent(
 
             CryptoActionsSection(
                 hasSmartBalance = hasSmartBalance,
-                enableCryptoActions = profileEnable ?: false,
+                enableCryptoActions = profileEnable,
                 enableSendAndGive = enableSendAndGive,
                 noBalanceAction = noBalanceAction,
                 hasBalanceAction = hasBalanceAction
@@ -90,27 +92,27 @@ fun CryptoFooterExpandedContent(
             verticalArrangement = Arrangement.Top
         ) {
             ButtonsSection(
-                walletEnable = profileEnable ?: false,
+                walletEnable = profileEnable,
                 actionMarket = actionMarket,
                 actionWallet = actionWallet
             )
-            profileEnable?.let {
-                if (!it) {
-                    NoticeSection()
-                } else {
+            profileEnable.let {
+                if (it) {
                     Column(
                         modifier = Modifier.verticalScroll(rememberScrollState())
                     ) {
                         CryptoCurrencies(
-                            items = balance?.balanceCryptoAccount?.items,
+                            items = cryptoCurrencies,
                             itemClick = {},
                             viewAllClick = { actionWallet() }
                         )
                         CryptoMovementsSection(
-                            cryptoMovements = cryptoMovements,
+                            cryptoMovements = movements,
                             onShowAllClick = onShowAllClick
                         )
                     }
+                } else {
+                    NoticeSection()
                 }
             }
         }
@@ -124,3 +126,5 @@ fun verifyIfHasSmartBalance(balanceAccountSmart: List<Account?>?): Boolean {
     val balances = balanceAccountSmart.map { it?.totalBalance ?: 0.0 }
     return balances.sum() > 0.0
 }
+
+private const val ZERO_MOVEMENTS = 0

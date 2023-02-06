@@ -70,6 +70,7 @@ import com.multimoney.data.networking.graphql.apollomodel.InitialRequestSmartAcc
 import com.multimoney.data.networking.graphql.apollomodel.ListCardVDQuery
 import com.multimoney.data.networking.graphql.apollomodel.ListMiniCardsQuery
 import com.multimoney.data.networking.graphql.apollomodel.ListSinpeAccountQuery
+import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountDeleteMutation
 import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountSaveMutation
 import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountUpdateMutation
 import com.multimoney.data.networking.graphql.apollomodel.NationalityQuery
@@ -1400,6 +1401,21 @@ class GraphqlApi @Inject constructor(
                 isFavorite = Optional.presentIfNotNull(isFavorite),
                 typeAccount = Optional.presentIfNotNull(typeAccount.toInt()),
                 idBank = Optional.presentIfNotNull(idBank)
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationManageSinpeAccountDelete(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        idAccount: Int?,
+    ): ApolloCall<ManageSinpeAccountDeleteMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            ManageSinpeAccountDeleteMutation(
+                user = Optional.presentIfNotNull(user),
+                idBrand = Optional.presentIfNotNull(idBrand),
+                identification = Optional.presentIfNotNull(identification),
+                id_account = Optional.presentIfNotNull(idAccount),
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

@@ -1,0 +1,19 @@
+mutation ManageSinpeAccountDelete(
+    $user: String,
+    $idBrand: Int,
+    $identification: String,
+    $id_account: Long,
+){
+    manageSinpeAccountDelete(
+        manageSinpeAccountInput: {
+            user: $user
+            idBrand: $idBrand
+            identification: $identification
+            id_account: $id_account
+        }
+    ) {
+        result {
+            id_Account_Sinpe
+        }
+    }
+}

@@ -457,6 +457,23 @@ class SmartAccountRepositoryImpl @Inject constructor(
         }
     )
 
+    override suspend fun mutationManageSinpeAccountDelete(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        idAccount: Int?,
+    ): Flow<MultimoneyResult<SaveSinpeAccount?>> = fetchData(
+        apolloCall = graphqlApi.mutationManageSinpeAccountDelete(
+            user,
+            idBrand,
+            identification,
+            idAccount,
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
     override suspend fun mutationProcessSinpeTransfer(
         pkUser: Int,
         identification: String,

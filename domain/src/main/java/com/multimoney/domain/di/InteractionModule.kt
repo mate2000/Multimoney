@@ -14,6 +14,8 @@ import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmart
 import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationSaveSinpeAccountUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationSaveSinpeAccountUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountDeleteUseCase
+import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountDeleteUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountUpdateUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountUpdateUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationUpdateFavoriteSmartUseCase
@@ -656,6 +658,9 @@ class InteractionModule {
     fun provideMutationUpdateSinpeAccountUseCase(smartAccountRepository: SmartAccountRepository): MutationSinpeAccountUpdateUseCase =
         MutationSinpeAccountUpdateUseCaseImpl(smartAccountRepository)
 
+
+
+
     // Multimoney Visa
     @Provides
     @Singleton
@@ -671,6 +676,11 @@ class InteractionModule {
     @Singleton
     fun provideQueryListSinpeAccountUseCase(smartAccountRepository: SmartAccountRepository): QueryListSinpeAccountUseCase =
         QueryListSinpeAccountUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationDeleteSinpeAccountUseCase(smartAccountRepository: SmartAccountRepository): MutationSinpeAccountDeleteUseCase =
+        MutationSinpeAccountDeleteUseCaseImpl(smartAccountRepository)
 
     // Crypto
 

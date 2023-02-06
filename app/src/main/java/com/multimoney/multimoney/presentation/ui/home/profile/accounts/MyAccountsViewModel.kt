@@ -2,7 +2,6 @@
 
 package com.multimoney.multimoney.presentation.ui.home.profile.accounts
 
-import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
@@ -10,7 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountDeleteUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountUpdateUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryListSinpeAccountUseCase
 import com.multimoney.domain.model.accountsmart.SinpeAccount
@@ -23,7 +22,6 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
-import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -33,7 +31,8 @@ import javax.inject.Inject
 class MyAccountsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val queryListSinpeAccountUseCase: QueryListSinpeAccountUseCase,
-    private val mutationManageSinpeAccountUpdate: MutationSinpeAccountUpdateUseCase
+    private val mutationManageSinpeAccountUpdate: MutationSinpeAccountUpdateUseCase,
+    private val mutationManageSinpeAccountDelete: MutationSinpeAccountDeleteUseCase
 
 ) : BaseViewModel(true) {
 
@@ -54,42 +53,6 @@ class MyAccountsViewModel @Inject constructor(
         callListSinpeAccountUseCase(isFavorite = true)
     }
 
-    private fun onUpdateAccount() = executeUseCase {
-        mutationManageSinpeAccountUpdate.invoke(
-            user = user,
-            idBrand = idBrand,
-            identification = identification,
-            accountNumber = uiState.selectedAccount?.sinpeAccount ?: "",
-            idCurrency = uiState.selectedAccount?.currencyId?.toLong() ?: 0,
-            nameAccount = uiState.accountNickname ?: "",
-            isFavorite = false,
-            idBank = uiState.selectedAccount?.idBank ?: 0,
-            typeAccount = uiState.selectedAccount?.typeAccount ?: 0,
-            idAccount = uiState.selectedAccount?.accountId ?: 0
-        ).collectLatest { result ->
-            result.onSuccess {
-                uiState = uiState.copy(isLoading = true)
-                onGoBackToMyAccounts()
-                onShowSnackBar()
-                uiState = uiState.copy(registeredAccounts = listOf(), favoriteAccounts = listOf())
-                callListSinpeAccountUseCase(true)
-                callListSinpeAccountUseCase(false)
-            }
-            result.onFailure {
-                uiState = uiState.copy(isLoading = false)
-//                uiState = uiState.copy(
-//                    openDialog = DialogParameters(
-//                        description = it.getError().toString(),
-//                        isActive = mutableStateOf(true)
-//                    )
-//                )
-            }
-            result.onLoading {
-                uiState = uiState.copy(isLoading = true)
-            }
-        }
-    }
-
     private fun callListSinpeAccountUseCase(isFavorite: Boolean = false) = executeUseCase {
         queryListSinpeAccountUseCase.invoke(
             user = user,
@@ -104,20 +67,98 @@ class MyAccountsViewModel @Inject constructor(
                 uiState = uiState.copy(isLoading = false)
                 if (accounts != null) {
                     uiState = if (isFavorite) {
-                        uiState.copy(favoriteAccounts = accounts.data)
+                        uiState.copy(favoriteAccounts = accounts.data, favoritesLoaded = true)
                     } else
-                        uiState.copy(registeredAccounts = accounts.data)
+                        uiState.copy(registeredAccounts = accounts.data, registeredLoaded = true)
                 }
             }.onFailure {
                 uiState = uiState.copy(isLoading = false)
             }.onLoading {
+                uiState = if (isFavorite) {
+                    uiState.copy(favoritesLoaded = false)
+                } else
+                    uiState.copy(registeredLoaded = false)
+            }
+        }
+    }
+
+    private fun onUpdateAccount() = executeUseCase {
+        mutationManageSinpeAccountUpdate.invoke(
+            user = user,
+            idBrand = idBrand,
+            identification = identification,
+            accountNumber = uiState.selectedAccount?.sinpeAccount ?: "",
+            idCurrency = uiState.selectedAccount?.currencyId?.toLong() ?: 0,
+            nameAccount = uiState.accountNickname ?: "",
+            isFavorite = uiState.selectedAccount?.isFavorite ?: true,
+            idBank = uiState.selectedAccount?.idBank ?: 0,
+            typeAccount = uiState.selectedAccount?.typeAccount ?: 0,
+            idAccount = uiState.selectedAccount?.accountId ?: 0
+        ).collectLatest { result ->
+            result.onSuccess {
+                uiState = uiState.copy(isLoading = true)
+                onGoBackToMyAccounts()
+                onShowSnackBar(message = R.string.profile_my_account_account_updated)
+                uiState = uiState.copy(registeredAccounts = listOf(), favoriteAccounts = listOf())
+                callListSinpeAccountUseCase(true)
+                callListSinpeAccountUseCase(false)
+            }
+            result.onFailure {
+                uiState = uiState.copy(isLoading = false)
+            }
+            result.onLoading {
                 uiState = uiState.copy(isLoading = true)
             }
         }
     }
 
-    private fun onStart(snackBarTitle: String) {
-        uiState = uiState.copy(snackBarTitle = snackBarTitle)
+    private fun onToggleFavorite() = executeUseCase {
+        toggleBottomSheet(ModalBottomSheetState(ModalBottomSheetValue.Hidden))
+        mutationManageSinpeAccountUpdate.invoke(
+            user = user,
+            idBrand = idBrand,
+            identification = identification,
+            accountNumber = uiState.selectedAccount?.sinpeAccount ?: "",
+            idCurrency = uiState.selectedAccount?.currencyId?.toLong() ?: 0,
+            nameAccount = uiState.selectedAccount?.nameAccount ?: "",
+            isFavorite = uiState.selectedAccount?.isFavorite?.not() ?: true,
+            idBank = uiState.selectedAccount?.idBank ?: 0,
+            typeAccount = uiState.selectedAccount?.typeAccount ?: 0,
+            idAccount = uiState.selectedAccount?.accountId ?: 0
+        ).collectLatest { result ->
+            result.onSuccess {
+                onGoBackToMyAccounts()
+                onShowSnackBar(message = if (uiState.selectedAccount?.isFavorite == true) R.string.profile_my_accounts_removed_from_fav else R.string.profile_my_accounts_added_as_fav)
+                refreshAccounts()
+            }
+            result.onFailure {
+                uiState = uiState.copy(isLoading = false)
+            }
+            result.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
+    private fun onDeleteAccount() = executeUseCase {
+        toggleBottomSheet(ModalBottomSheetState(ModalBottomSheetValue.Hidden))
+        mutationManageSinpeAccountDelete.invoke(
+            user = user,
+            idBrand = idBrand,
+            identification = identification,
+            idAccount = uiState.selectedAccount?.accountId ?: 0
+        ).collectLatest { result ->
+            result.onSuccess {
+                onShowSnackBar(message = R.string.profile_my_accounts_deleted)
+                refreshAccounts()
+            }
+            result.onFailure {
+                uiState = uiState.copy(isLoading = false)
+            }
+            result.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
     }
 
     private fun toggleBottomSheet(value: ModalBottomSheetState) {
@@ -126,6 +167,10 @@ class MyAccountsViewModel @Inject constructor(
 
     private fun onAccountClicked(sinpeAccount: SinpeAccount) {
         uiState = uiState.copy(selectedAccount = sinpeAccount)
+        uiState = if (sinpeAccount.isFavorite)
+            uiState.copy(favoriteTextResource = R.string.profile_my_accounts_delete_as_fav)
+        else
+            uiState.copy(favoriteTextResource = R.string.profile_my_accounts_add_as_fav)
         toggleBottomSheet(ModalBottomSheetState(ModalBottomSheetValue.Expanded))
     }
 
@@ -136,14 +181,23 @@ class MyAccountsViewModel @Inject constructor(
 
     private fun onValueChanged(value: String) {
         uiState = uiState.copy(accountNickname = value)
+        validateForm()
+    }
+
+    private fun validateForm() {
+        uiState =
+            if (uiState.accountNickname.isNullOrEmpty() || uiState.accountNickname.isNullOrBlank())
+                uiState.copy(isButtonEnabled = false)
+            else
+                uiState.copy(isButtonEnabled = true)
     }
 
     private fun onGoBackToMyAccounts() {
         uiState = uiState.copy(isEditing = false)
     }
 
-    private fun onShowSnackBar() {
-        uiState = uiState.copy(showSnackBar = true)
+    private fun onShowSnackBar(message: Int) {
+        uiState = uiState.copy(showSnackBar = true, snackBarTitleResource = message)
     }
 
     private fun onDismissSnackBar() {
@@ -152,6 +206,33 @@ class MyAccountsViewModel @Inject constructor(
 
     private fun onSetupNickNamePlaceholder(currentNickname: String) {
         uiState = uiState.copy(accountNickname = currentNickname)
+    }
+
+    private fun onOpenDeleteDialog() {
+        uiState = uiState.copy(
+            favoriteDialogParemeters = DialogParameters(
+                titleResource = R.string.profile_my_accounts_remove_from_fav,
+                descriptionResource = R.string.profile_my_accounts_you_can_fav_later,
+                positiveResource = R.string.button_continue,
+                negativeResource = R.string.cancel,
+                positiveAction = {
+                    onDeleteAccount()
+                },
+                isActive = mutableStateOf(true)
+            )
+        )
+    }
+
+    private fun refreshAccounts() {
+        uiState = uiState.copy(
+            registeredAccounts = listOf(),
+            favoriteAccounts = listOf(),
+            isLoading = true,
+            registeredLoaded = false,
+            favoritesLoaded = false
+        )
+        callListSinpeAccountUseCase(true)
+        callListSinpeAccountUseCase(false)
     }
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -169,16 +250,15 @@ class MyAccountsViewModel @Inject constructor(
                 )
             )
             UIEvent.OnGoBackToMyAccounts -> onGoBackToMyAccounts()
-            UIEvent.OnAddToFavorite -> TODO()
-            UIEvent.OnDeleteAccount -> TODO()
+            UIEvent.OnToggleFavorite -> onToggleFavorite()
+            UIEvent.OnDeleteAccount -> onDeleteAccount()
             UIEvent.OnEditNickname -> onEditNickname()
             UIEvent.OnRemoveFromFavorites -> TODO()
             UIEvent.OnUpdateAccount -> onUpdateAccount()
             is UIEvent.OnValueChanged -> onValueChanged(uiEvent.value)
-            is UIEvent.OnShowSnackBar -> onShowSnackBar()
             is UIEvent.OnDismissSnackBar -> onDismissSnackBar()
-            is UIEvent.OnStart -> onStart(uiEvent.snackBarTitle)
             is UIEvent.OnSetupNickNamePlaceholder -> onSetupNickNamePlaceholder(uiEvent.currentNickname)
+            is UIEvent.OnOpenDeleteDialog -> onOpenDeleteDialog()
         }
     }
 
@@ -187,17 +267,16 @@ class MyAccountsViewModel @Inject constructor(
         data class OnAccountClicked(val account: SinpeAccount) : UIEvent()
         data class OnValueChanged(val value: String) : UIEvent()
         data class OnSetupNickNamePlaceholder(val currentNickname: String) : UIEvent()
+        object OnOpenDeleteDialog : UIEvent()
         object OnShowBottomSheet : UIEvent()
         object OnHideBottomSheet : UIEvent()
         object OnDeleteAccount : UIEvent()
         object OnEditNickname : UIEvent()
-        object OnAddToFavorite : UIEvent()
+        object OnToggleFavorite : UIEvent()
         object OnRemoveFromFavorites : UIEvent()
         object OnGoBackToMyAccounts : UIEvent()
         object OnUpdateAccount : UIEvent()
-        object OnShowSnackBar : UIEvent()
         object OnDismissSnackBar : UIEvent()
-        data class OnStart(val snackBarTitle: String) : UIEvent()
     }
 
     data class UIState(
@@ -211,7 +290,12 @@ class MyAccountsViewModel @Inject constructor(
         val accountNickname: String? = null,
         val isEditing: Boolean = false,
         val showSnackBar: Boolean = false,
-        val snackBarTitle: String = "",
-        val isLoading: Boolean = false
+        val snackBarTitleResource: Int = R.string.empty,
+        val favoriteTextResource: Int = R.string.empty,
+        val isLoading: Boolean = false,
+        val favoritesLoaded: Boolean = false,
+        val registeredLoaded: Boolean = false,
+        val favoriteDialogParemeters: DialogParameters = DialogParameters(),
+        val isButtonEnabled: Boolean = false
     )
 }

@@ -214,6 +214,13 @@ interface SmartAccountRepository {
         typeAccount: Long
     ): Flow<MultimoneyResult<SaveSinpeAccount?>>
 
+    suspend fun mutationManageSinpeAccountDelete(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        idAccount: Int?,
+    ): Flow<MultimoneyResult<SaveSinpeAccount?>>
+
     suspend fun mutationProcessSinpeTransfer(
         pkUser: Int,
         identification: String,

@@ -2,10 +2,11 @@
 
 package com.multimoney.multimoney.presentation.ui.home.profile.accounts
 
-import android.util.Log
+import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,6 +17,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarResult
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
@@ -23,11 +25,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -36,17 +42,21 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.uielement.CustomButton
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButtonFavoriteAccount
 import com.multimoney.multimoney.presentation.uielement.CustomModalBottomSheet
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.uielement.ShimmerBoxView
+import com.multimoney.multimoney.presentation.uielement.ShimmerItemView
 import com.multimoney.multimoney.presentation.uielement.SimpleItemRow
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import kotlinx.coroutines.CoroutineScope
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun MyAccountsScreen(
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
@@ -55,34 +65,11 @@ fun MyAccountsScreen(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
-
-    viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnStart(stringResource(id = R.string.profile_my_account_account_updated)))
+    val focusManager = LocalFocusManager.current
 
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
     }
-
-
-
-    if (viewModel.uiState.showSnackBar) {
-        Log.e("TAG","show snackbar")
-        LaunchedEffect(scaffoldState.snackbarHostState) {
-            val snackBarResult = scaffoldState.snackbarHostState.showSnackbar(
-                message = viewModel.uiState.snackBarTitle
-            )
-            when (snackBarResult) {
-                SnackbarResult.Dismissed -> {
-                    Log.e("TAG","dismissed")
-                    viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnDismissSnackBar)
-                }
-                SnackbarResult.ActionPerformed -> {
-                    Log.e("TAG","performed")
-                }
-            }
-        }
-
-    }
-
 
     BackHandler {
         if (viewModel.uiState.isEditing)
@@ -91,49 +78,95 @@ fun MyAccountsScreen(
             viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnNavigateBack)
     }
 
-    Column(
-        modifier = Modifier
-            .background(MultimoneyTheme.colors.background)
-            .fillMaxSize()
-    ) {
-        TopNavBar(
-            onLeftButtonClick = {
-                if (viewModel.uiState.isEditing)
-                    viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnGoBackToMyAccounts)
-                else
-                    viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnNavigateBack)
-            },
-            isRightButtonVisible = false
-        )
-        if (viewModel.uiState.isEditing) {
-            EditAccountScreen(
-                viewModel = viewModel
+    Scaffold(scaffoldState = scaffoldState) {
+        if (viewModel.uiState.showSnackBar) {
+            val message = stringResource(id = viewModel.uiState.snackBarTitleResource)
+            LaunchedEffect(scaffoldState.snackbarHostState) {
+                val snackBarResult = scaffoldState.snackbarHostState.showSnackbar(message)
+                when (snackBarResult) {
+                    SnackbarResult.Dismissed -> {
+                        viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnDismissSnackBar)
+                    }
+                    SnackbarResult.ActionPerformed -> {
+                    }
+                }
+            }
+        }
+        Column(
+            modifier = Modifier
+                .background(MultimoneyTheme.colors.background)
+                .fillMaxSize()
+        ) {
+            TopNavBar(
+                onLeftButtonClick = {
+                    if (viewModel.uiState.isEditing)
+                        viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnGoBackToMyAccounts)
+                    else
+                        viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnNavigateBack)
+                },
+                isRightButtonVisible = false
             )
-        } else {
-            MyAccountsContent(
-                favoriteAccounts = viewModel.uiState.favoriteAccounts,
-                registeredAccounts = viewModel.uiState.registeredAccounts,
-                viewModel = viewModel
+            if (viewModel.uiState.isEditing.not()) {
+                Text(
+                    modifier = Modifier.padding(top = 8.dp, start = 16.dp, bottom = 16.dp),
+                    text = stringResource(id = R.string.profile_my_accounts),
+                    style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+                    color = MultimoneyTheme.colors.labelText,
+                    textAlign = TextAlign.Left
+                )
+            }
+            if (viewModel.uiState.isEditing) {
+                EditAccountScreen(
+                    viewModel,
+                    focusManager
+                )
+            } else {
+                if (viewModel.uiState.favoritesLoaded && viewModel.uiState.registeredLoaded) {
+                    MyAccountsContent(
+                        favoriteAccounts = viewModel.uiState.favoriteAccounts,
+                        registeredAccounts = viewModel.uiState.registeredAccounts,
+                        viewModel = viewModel
+                    )
+                } else {
+                    MyAccountsSkeleton()
+                }
+            }
+        }
+
+        BottomSheetDialog(
+            modalBottomSheetState = viewModel.uiState.bottomSheetVisibleState,
+            coroutineScope = coroutineScope,
+            firstActionTitle = stringResource(id = viewModel.uiState.favoriteTextResource),
+            firstActionIcon = R.drawable.ic_error_green,
+            firstActionClick = {
+                viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnToggleFavorite)
+            },
+            secondActionTitle = stringResource(id = R.string.profile_my_accounts_edit_nickname),
+            secondActionIcon = R.drawable.ic_edit_green,
+            secondActionClick = {
+                viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnEditNickname)
+            },
+            thirdActionTitle = stringResource(id = R.string.profile_my_accounts_delete_account),
+            thirdActionIcon = R.drawable.ic_delete,
+            thirdActionClick = {
+                viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnOpenDeleteDialog)
+            }
+        )
+
+        if (viewModel.uiState.favoriteDialogParemeters.isActive.value) {
+            CustomDialog(
+                title = stringResource(id = viewModel.uiState.favoriteDialogParemeters.titleResource),
+                message = stringResource(id = viewModel.uiState.favoriteDialogParemeters.descriptionResource),
+                negativeButtonText = stringResource(id = viewModel.uiState.favoriteDialogParemeters.negativeResource),
+                positiveButtonText = stringResource(id = viewModel.uiState.favoriteDialogParemeters.positiveResource),
+                openDialogCustom = viewModel.uiState.favoriteDialogParemeters.isActive,
+                onPositiveAction = {
+                    viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnDeleteAccount)
+                }
             )
         }
+        LoadingIndicator(viewModel.uiState.isLoading)
     }
-
-    BottomSheetDialog(
-        modalBottomSheetState = viewModel.uiState.bottomSheetVisibleState,
-        coroutineScope = coroutineScope,
-        firstActionTitle = "Agregar como favorito",
-        firstActionIcon = R.drawable.ic_error_green,
-        firstActionClick = {},
-        secondActionTitle = "Editar apodo",
-        secondActionIcon = R.drawable.ic_edit_green,
-        secondActionClick = {
-            viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnEditNickname)
-        },
-        thirdActionTitle = "Eliminar cuenta",
-        thirdActionIcon = R.drawable.ic_delete,
-        thirdActionClick = {}
-    )
-    LoadingIndicator(viewModel.uiState.isLoading)
 }
 
 @Composable
@@ -183,13 +216,6 @@ fun MyAccountsContent(
     viewModel: MyAccountsViewModel
 ) {
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-        Text(
-            modifier = Modifier.padding(top = 8.dp),
-            text = stringResource(id = R.string.profile_my_accounts),
-            style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.labelText,
-            textAlign = TextAlign.Left
-        )
         LazyColumn {
             if (favoriteAccounts.isNotEmpty()) {
                 item {
@@ -263,7 +289,8 @@ fun MyAccountsContent(
 
 @Composable
 fun EditAccountScreen(
-    viewModel: MyAccountsViewModel
+    viewModel: MyAccountsViewModel,
+    focusManager: FocusManager
 ) {
     ConstraintLayout(
         modifier = Modifier
@@ -282,7 +309,6 @@ fun EditAccountScreen(
             color = MultimoneyTheme.colors.labelText,
             textAlign = TextAlign.Left
         )
-
         CustomInfoButtonFavoriteAccount(
             modifier = Modifier
                 .fillMaxWidth()
@@ -317,15 +343,12 @@ fun EditAccountScreen(
                 imeAction = ImeAction.Next
             ),
             keyboardActions = KeyboardActions(onNext = {
-                //focusManager.moveFocus(FocusDirection.Down)
+                focusManager.moveFocus(FocusDirection.Down)
             }),
             labelText = "Apodo de la cuenta",
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.profile_my_account_nickname_is_required),
             value = viewModel.uiState.accountNickname
-//                isError = viewModel.uiState.userEmailError.first,
-//                errorMessage = stringResource(id = viewModel.uiState.userEmailError.second)
-
         )
         CustomButton(
             modifier = Modifier
@@ -336,10 +359,56 @@ fun EditAccountScreen(
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 },
-            text = "Guardar cambios",
+            text = stringResource(id = R.string.profile_my_accounts_save_changes),
             onClick = {
                 viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnUpdateAccount)
-            }
+            },
+            enable = viewModel.uiState.isButtonEnabled
         )
+    }
+}
+
+@Preview(widthDp = 360, heightDp = 800)
+@Composable
+fun MyAccountsSkeleton() {
+    ShimmerBoxView() {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 20.dp, start = 16.dp, end = 16.dp)
+        ) {
+            Row(modifier = Modifier.fillMaxWidth()) {
+                ShimmerItemView(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp),
+                    radius = 12.dp,
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 24.dp)
+            ) {
+                ShimmerItemView(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp),
+                    radius = 12.dp,
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 24.dp)
+            ) {
+                ShimmerItemView(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp),
+                    radius = 12.dp,
+                )
+            }
+        }
     }
 }

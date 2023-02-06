@@ -30,6 +30,4 @@ class MutationSinpeAccountUpdateUseCaseImpl(val repository: SmartAccountReposito
         idBank = idBank,
         typeAccount = typeAccount
     )
-
-
 }

@@ -392,13 +392,18 @@
     <string name="profile_accounts_registered" translatable="false">Cuentas registradas</string>
     <string name="profile_my_acounts_bottom_sheet_title" translatable="false">Mis cuentas</string>
     <string name="profile_my_accounts_edit_nickname" translatable="false">Editar apodo</string>
+    <string name="profile_my_accounts_delete_account" translatable="false">Eliminar cuenta</string>
     <string name="profile_my_account_account_updated" translatable="false">Cuenta actualizada</string>
     <string name="profile_my_account_nickname_is_required" translatable="false">El apodo es requerido</string>
-
-
-
-
-
+    <string name="profile_my_accounts_add_as_fav" translatable="false">Agregar como favorita</string>
+    <string name="profile_my_accounts_delete_as_fav" translatable="false">Eliminar como favorita</string>
+    <string name="profile_my_accounts_remove_from_fav" translatable="false">Quitar cuenta de favoritos</string>
+    <string name="profile_my_accounts_added_as_fav" translatable="false">Cuenta agregada a favoritos</string>
+    <string name="profile_my_accounts_updated" translatable="false">Cuenta actualizada</string>
+    <string name="profile_my_accounts_deleted" translatable="false">Cuenta eliminada</string>
+    <string name="profile_my_accounts_removed_from_fav" translatable="false">Cuenta eliminada de favoritos</string>
+    <string name="profile_my_accounts_you_can_fav_later" translatable="false">Podras seleccionarla como favorito despues</string>
+    <string name="profile_my_accounts_save_changes" translatable="false">Guardar cambios</string>
 
 
 

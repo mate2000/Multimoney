@@ -96,7 +96,7 @@ fun PhoneCountryDialog(
     dialogUnFocusedBorderColorSearch: Color = MultimoneyTheme.colors.secondary,
     dialogCursorColorSearch: Color = MultimoneyTheme.colors.primary
 ) {
-    val countryList: List<CountryData> = getLibCountries
+    var countryList by remember { mutableStateOf(getLibCountries) }
     var isPickCountry by remember { mutableStateOf(defaultSelectedCountry) }
     var isOpenDialog by remember { mutableStateOf(false) }
     var searchValue by remember { mutableStateOf("") }
@@ -216,6 +216,7 @@ fun PhoneCountryDialog(
                                         )
                                     }
                                 ) { countryItem ->
+                                    val item by remember { mutableStateOf(countryItem) }
                                     Row(
                                         Modifier
                                             .padding(
@@ -223,8 +224,8 @@ fun PhoneCountryDialog(
                                                 vertical = 18.dp
                                             )
                                             .clickable {
-                                                pickedCountry(countryItem)
-                                                isPickCountry = countryItem
+                                                pickedCountry(item)
+                                                isPickCountry = item
                                                 isOpenDialog = false
                                             }
                                     ) {
@@ -232,13 +233,13 @@ fun PhoneCountryDialog(
                                             modifier = modifier.width(30.dp),
                                             painter = painterResource(
                                                 id = getFlags(
-                                                    countryItem.countryCode
+                                                    item.countryCode
                                                 )
                                             ),
                                             contentDescription = null
                                         )
                                         Text(
-                                            stringResource(id = getCountryName(countryItem.countryCode.lowercase())),
+                                            stringResource(id = getCountryName(item.countryCode.lowercase())),
                                             Modifier.padding(horizontal = 18.dp)
                                         )
                                     }

@@ -54,8 +54,6 @@ fun SignUpPhoneScreen(
     Log.d("PhoneTest", "country: ${getCountryName("es")}")
     Log.d("PhoneTest", "country: ${context.getString(getCountryName("es"))}")
     Log.d("PhoneTest", "country: ${stringResource(getCountryName("es"))}")
-    Log.d("PhoneTest", "error 1: ${string.profile_settings_error_new_password_something_went_wrong}")
-    Log.d("PhoneTest", "error 1: ${stringResource(string.profile_settings_error_new_password_something_went_wrong)}")
     Log.d("PhoneTest", "error 2: ${string.something_went_wrong}")
     Log.d("PhoneTest", "error 2: ${stringResource(string.something_went_wrong)}")
 

@@ -199,7 +199,7 @@ fun SmartAddAccountContent(viewModel: SmartAddAccountViewModel = hiltViewModel()
                     onDebounceValidation = { viewModel.onUIEvent(OnValidateUserEmail) },
                 )
                 CustomCheckBox(
-                    modifier = Modifier.padding(top = 6.dp),
+                    modifier = Modifier.padding(top = 6.dp, bottom = 16.dp),
                     checked = viewModel.uiState.isFavorite,
                     onCheckedChange = {
                         viewModel.onUIEvent(OnAddFavoriteValueChange(it))
@@ -208,7 +208,7 @@ fun SmartAddAccountContent(viewModel: SmartAddAccountViewModel = hiltViewModel()
                 )
                 if (viewModel.uiState.isFavorite) {
                     CustomOutlinedTextField(
-                        modifier = Modifier.padding(top = 16.dp, bottom = 24.dp),
+                        modifier = Modifier.padding(bottom = 24.dp),
                         value = viewModel.uiState.nickname,
                         labelText = stringResource(id = R.string.smart_iban_register_favorite_label),
                         placeHolder = stringResource(id = R.string.smart_iban_register_favorite_label),

@@ -49,7 +49,9 @@ class MyContactsTransferAmountViewModel @Inject constructor(
             smartAccount = savedStateHandle[ORIGIN_ACCOUNT]
             phoneAccount = savedStateHandle[DESTINY_ACCOUNT]
             originCurrency = smartAccount?.currencyID?.getCurrencyFromId()
+            if (originCurrency == CurrencyType.All) originCurrency = Dollar
             destinyCurrency = phoneAccount?.idCurrency?.getCurrencyFromId()
+            if (destinyCurrency == CurrencyType.All) originCurrency = Dollar
             shouldDisplayExchange = originCurrency != destinyCurrency
 
             amountUIState = amountUIState.copy(

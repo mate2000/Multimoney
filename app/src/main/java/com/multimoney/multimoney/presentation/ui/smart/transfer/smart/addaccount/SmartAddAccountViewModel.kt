@@ -25,8 +25,10 @@ import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel
 import com.multimoney.multimoney.presentation.util.MAX_SMART_ACCOUNT_DIGITS
 import com.multimoney.multimoney.presentation.util.MIN_SMART_ACCOUNT_DIGITS
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -151,6 +153,7 @@ class SmartAddAccountViewModel @Inject constructor(
     }
 
     private fun onContinueClick() {
+        val fullName = "${uiState.names} ${uiState.lastNames}"
         executeUseCase {
             mutationUpdateFavoriteSmartUseCase.invoke(
                 idBrand = idBrand,
@@ -159,7 +162,11 @@ class SmartAddAccountViewModel @Inject constructor(
                 idAccountType = uiState.type?.typeId?.toIntOrNull() ?: 0,
                 idCustomer = smartAccount?.customerId ?: 0L,
                 accountNumber = uiState.accountNumber,
-                accountName = uiState.nickname.ifEmpty { "${uiState.names} ${uiState.lastNames}" },
+                accountName = if (uiState.isFavorite) {
+                    uiState.nickname.ifEmpty { fullName }
+                } else {
+                    fullName
+                },
                 email = uiState.email,
                 active = true,
                 isFavorite = uiState.isFavorite,
@@ -169,6 +176,11 @@ class SmartAddAccountViewModel @Inject constructor(
                 result.onLoading { uiState = uiState.copy(isLoading = true) }
                 result.onSuccess { account ->
                     val registeredAccount = account?.results?.firstOrNull()
+                    val currency = if (registeredAccount?.currencyAccount != null) {
+                        registeredAccount.currencyAccount.toString()
+                    } else {
+                        CurrencyType.Dollar.id.toString()
+                    }
                     val contactAccount = PhoneSmart(
                         number = registeredAccount?.phoneNumber,
                         titular = registeredAccount?.accountName ?: "${uiState.names} ${uiState.lastNames}",
@@ -176,8 +188,8 @@ class SmartAddAccountViewModel @Inject constructor(
                         identification = "",
                         accountNumber = registeredAccount?.accountNumber ?: uiState.accountNumber,
                         email = registeredAccount?.email ?: uiState.email,
-                        idCurrency = registeredAccount?.idCurrencyAccount.toString(),
-                        currency = registeredAccount?.currencyAccount,
+                        idCurrency = currency,
+                        currency = currency.getCurrencyFromId().currency,
                         ibanNumber = ""
                     )
                     uiState = uiState.copy(isLoading = false)

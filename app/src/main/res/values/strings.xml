@@ -1636,4 +1636,16 @@
     <string name="crosseling_close_dialog_positive_button_text" translatable="false">Cancelar</string>
     <string name="crosseling_close_dialog_negative_button_text" translatable="false">Continuar</string>
 
+    <!-- Visa Verified -->
+    <string name="visa_verified_title" translatable="false">Verifiquemos tu tarjeta</string>
+    <string name="visa_verified_description_1_bold" translatable="false">Revisa los movimientos</string>
+    <string name="visa_verified_description_1" translatable="false">de la\ncuenta asociada a tu tarjeta</string>
+    <string name="visa_verified_description_2_bold" translatable="false">Busca el monto </string>
+    <string name="visa_verified_description_2" translatable="false">del depósito que\nte hicimos</string>
+    <string name="visa_verified_description_3_bold" translatable="false">Escribe el monto</string>
+    <string name="visa_verified_description_3" translatable="false">en el siguiente\npaso</string>
+    <string name="visa_verified_dialog_title" translatable="false">Cancelar proceso</string>
+    <string name="visa_verified_dialog_description" translatable="false">¿Estás segur@ de cancelar el proceso de agregar una tarjeta?</string>
+
+
 </resources>

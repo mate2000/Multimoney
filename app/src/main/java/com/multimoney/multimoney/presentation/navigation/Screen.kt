@@ -366,6 +366,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "visa_preferences_screen"
     )
 
+    object VisaVerifiedScreen : Screen(
+        "visa_verified_screen",
+        "visa_verified_screen"
+    )
+
     // Bottom Navigation
     object HomeBNScreen : Screen("home_bn_screen")
     object QuickActionBNScreen : Screen("quick_action_bt_screen")

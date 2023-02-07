@@ -176,7 +176,7 @@ fun ConfirmationBottomSheetContent(
                 .fillMaxWidth()
                 .height(48.dp)
                 .padding(horizontal = 24.dp),
-            enable = true,
+            enable = isLoading.not(),
             onClick = onConfirm
         )
         Spacer(modifier = Modifier.height(16.dp))

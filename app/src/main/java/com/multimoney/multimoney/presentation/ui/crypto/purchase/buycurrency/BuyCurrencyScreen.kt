@@ -250,7 +250,7 @@ fun BuyCurrencyScreenContent(
                         .fillMaxWidth()
                         .height(64.dp)
                         .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                    enable = viewModel.uiState.isError.not(),
+                    enable = viewModel.uiState.isError.not() and viewModel.uiState.isLoading.not(),
                     onClick = {
                         coroutineScope.launch {
                             keyboardController?.hide()

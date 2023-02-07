@@ -174,6 +174,10 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                     this.smartAccountAvailableBalance = 0.0
                 }
                 result.onSuccess { exchangeRate ->
+                    if (smartAccountAvailableBalance == 0.0) {
+                        onFailure()
+                        return@onSuccess
+                    }
                     this.smartAccountAvailableBalance = exchangeRate?.convertedAmount ?: 0.0
                 }
                 result.onFailure {
@@ -323,6 +327,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 positiveAction = {
                     updateDataWithNewExchangeRate()
                     if (idCurrencyAccount == CurrencyType.Colon.id) {
+                        convertColonesToDollars(smartAccountAvailableBalance)
                         getExchangeRate()
                     }
                 })

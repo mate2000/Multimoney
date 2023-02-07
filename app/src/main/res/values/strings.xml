@@ -85,7 +85,7 @@
 
     <!-- OnBoarding Salvador-->
     <string name="onboarding_salvador_step_one_title" translatable="false">Multiplicá tus ahorros</string>
-    <string name="onboarding_salvador_step_one_sub_title" translatable="false">Ganá 3.5% de interés anual.</string>
+    <string name="onboarding_salvador_step_one_sub_title" translatable="false">Ganá 3.5\% de interés anual.</string>
     <string name="onboarding_salvador_step_two_title" translatable="false">Tu crédito en 5 minutos</string>
     <string name="onboarding_salvador_step_two_sub_title" translatable="false">Recibe hasta $25,000 con solo tu DUI.</string>
     <string name="onboarding_salvador_step_three_title" translatable="false">Invierte en cripto</string>
@@ -94,7 +94,7 @@
 
     <!-- OnBoarding Costa Rica-->
     <string name="onboarding_costa_rica_step_one_title" translatable="false">Multiplicá tus ahorros</string>
-    <string name="onboarding_costa_rica_step_one_sub_title" translatable="false">Ganá 7% de interés anual en colones y 3.25% en dólares.</string>
+    <string name="onboarding_costa_rica_step_one_sub_title" translatable="false">Ganá 7\% de interés anual en colones y 3.25\% en dólares.</string>
     <string name="onboarding_costa_rica_step_two_title" translatable="false">Tu crédito en 5 minutos</string>
     <string name="onboarding_costa_rica_step_two_sub_title" translatable="false">Recibí hasta ₡20 millones con solo tu identificación.</string>
     <string name="onboarding_costa_rica_step_three_title" translatable="false">Invertí en cripto</string>
@@ -369,7 +369,6 @@
     <string name="home_product_expiration" translatable="false">Vence</string>
     <string name="home_product_expired" translatable="false">Venció</string>
     <string name="home_product_remaining" translatable="false">Saldo %s</string>
-    <string name="home_product_amount" translatable="false">de %s</string>
     <string name="home_crypto_card_with_balance_label" translatable="false">Balance</string>
     <string name="home_crypto_card_smart_in_process_label" translatable="false">Cripto</string>
     <string name="home_crypto_card_with_balance_zero_label" translatable="false">0.00</string>
@@ -811,7 +810,7 @@
     <string name="visa_card_tap_and_pay_title" translatable="false">Pago con Contactless</string>
 
     <!-- visa tokenization waiting -->
-    <string name="visa_tokenization_waiting_description_one_bold" translatable="false">100% libre de plástico.</string>
+    <string name="visa_tokenization_waiting_description_one_bold" translatable="false">100\% libre de plástico.</string>
     <string name="visa_tokenization_waiting_description_one" translatable="false">Tu tarjeta\nestá segura en tu teléfono</string>
     <string name="visa_tokenization_waiting_description_two_first" translatable="false">Podrás</string>
     <string name="visa_tokenization_waiting_description_two_bold" translatable="false">utilizar tu línea de crédito</string>
@@ -1267,7 +1266,7 @@
     <!-- Payment Cards List -->
     <string name="payment_cards_list_empty_state_description" translatable="false">Agregá una tarjeta para que podás realizar tus abonos</string>
     <string name="payment_cards_list_create" translatable="false">Agregar tarjeta</string>
-    <string name="payment_cards_list_title" translatable="false">Tarjetas Visa</string>
+    <string name="payment_cards_list_title" translatable="false">Mis Tarjetas</string>
     <string name="smart_payment_cards_list_card_title" translatable="false">Seleccioná la tarjeta con la que querés ahorrar</string>
 
     <!-- Payment Amount Card -->
@@ -1412,6 +1411,8 @@
     <string name="smart_iban_register_account_error" translatable="false">Número inválido</string>
     <string name="smart_iban_register_email_error" translatable="false">Formato incorrecto. Debe contener “@” y “.”</string>
     <string name="smart_iban_register_favorite_label" translatable="false">Apodo</string>
+    <string name="smart_iban_register_full_name_label" translatable="false">Nombre completo</string>
+    <string name="smart_iban_register_identification_label" translatable="false">Cédula</string>
 
     <string name="smart_iban_transfer_send_money" translatable="false">Enviar dinero</string>
     <string name="smart_iban_transfer_from_account" translatable="false">Desde mi cuenta %s</string>

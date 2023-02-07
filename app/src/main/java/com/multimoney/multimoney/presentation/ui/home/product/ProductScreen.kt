@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.home.product
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable

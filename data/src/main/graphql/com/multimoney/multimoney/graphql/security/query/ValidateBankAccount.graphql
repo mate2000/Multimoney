@@ -10,6 +10,7 @@ query ValidateBankAccount($account:String!, $identification:String!, $queryType:
     ) {
         responseCode
         responseMessage
+        identification
         name
         currency
         sellPriceDollar

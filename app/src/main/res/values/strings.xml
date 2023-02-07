@@ -1567,6 +1567,7 @@
     <string name="crypto_send_address_permission_camera_description" translatable="false">El acceso es necesario para escanear códigos QR</string>
     <string name="crypto_send_address_verify_crypto_address_title" translatable="false">Verificá la dirección</string>
     <string name="crypto_send_address_verify_crypto_address_description" translatable="false"> Asegurate que la dirección es la correcta. En caso de que lo enviés a una dirección incorrecta no podrás recuperar el dinero</string>
+    <string name="crypto_send_address_wallet_doesnt_accept" translatable="false">Esta billetera no recibe %s</string>
 
     <!-- Registeres User Email -->
     <string name="registered_user_email_title" translatable="false">Tenemos tu correo  %s registrado en MultiMoney</string>

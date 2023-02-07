@@ -160,6 +160,12 @@ fun CryptoSendAddressContent(
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.crypto_send_address_required),
             singleLine = false,
+            isError = viewModel.uiState.showTextInputError,
+            errorMessage = if (viewModel.uiState.showTextInputError) {
+                stringResource(id = R.string.crypto_send_address_wallet_doesnt_accept, sharedViewModel.uiState.asset)
+            } else {
+                null
+            },
         )
         Spacer(Modifier.weight(1f))
         // Continue Button

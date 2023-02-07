@@ -1,3 +1,3 @@
 package com.multimoney.domain.model.accountsmart
 
-data class FavoriteACHResult(val data: List<ACHFavoriteAccount?>)
+data class FavoriteACHResult(val data: List<ACHAccount?>)

@@ -15,7 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.domain.model.accountsmart.ACHFavoriteAccount
+import com.multimoney.domain.model.accountsmart.ACHAccount
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -94,9 +94,9 @@ fun SmartTransferFavoriteScreen(
 
 @Composable
 fun ACHFavoriteContentList(
-    AHCFavoriteList: Map<String, List<ACHFavoriteAccount?>>,
-    onEndIconClick: (contact: ACHFavoriteAccount) -> Unit,
-    onFavoriteClick: (contact: List<ACHFavoriteAccount?>) -> Unit
+    AHCFavoriteList: Map<String, List<ACHAccount?>>,
+    onEndIconClick: (contact: ACHAccount) -> Unit,
+    onFavoriteClick: (contact: List<ACHAccount?>) -> Unit
 ) {
     LazyColumn(modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp)) {
         AHCFavoriteList.forEach { (_, favorite) ->

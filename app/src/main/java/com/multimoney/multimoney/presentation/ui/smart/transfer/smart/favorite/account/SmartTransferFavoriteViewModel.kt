@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteListUseCase
-import com.multimoney.domain.model.accountsmart.ACHFavoriteAccount
+import com.multimoney.domain.model.accountsmart.ACHAccount
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -88,11 +88,11 @@ class SmartTransferFavoriteViewModel @Inject constructor(
         popTo = Screen.SmartSelectSendingTypeScreen.route, isRestart = false
     )
 
-    private fun onShowOptionsClick(selectedACHFavorite:ACHFavoriteAccount?) {
+    private fun onShowOptionsClick(selectedACHFavorite:ACHAccount?) {
       // TODO REV-3466
     }
 
-    private fun onACHFavoriteClick(selectedACHFavoriteAccount: List<ACHFavoriteAccount?>) {
+    private fun onACHFavoriteClick(selectedACHFavoriteAccount: List<ACHAccount?>) {
 //      TODO REV-3654
     }
 
@@ -107,7 +107,7 @@ class SmartTransferFavoriteViewModel @Inject constructor(
     data class UIState(
         val openDialog: DialogParameters = DialogParameters(),
         var isLoading: Boolean = false,
-        var ACHFavoriteAccountList: Map<String, List<ACHFavoriteAccount?>> = mapOf(),
+        var ACHFavoriteAccountList: Map<String, List<ACHAccount?>> = mapOf(),
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -123,8 +123,8 @@ class SmartTransferFavoriteViewModel @Inject constructor(
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()
         object OnNavigateToHome : UIEvent()
-        data class OnOptionsClick(val ACHFavorite: ACHFavoriteAccount?) : UIEvent()
+        data class OnOptionsClick(val ACHFavorite: ACHAccount?) : UIEvent()
         object OnCallQueryACHTransferFavoriteListUseCase : UIEvent()
-        data class OnFavoriteClick(val ACHFavorites: List<ACHFavoriteAccount?>) : UIEvent()
+        data class OnFavoriteClick(val ACHFavorites: List<ACHAccount?>) : UIEvent()
     }
 }

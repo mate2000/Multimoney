@@ -1,10 +1,10 @@
 package com.multimoney.data.mapper.smartaccount
 
 import com.multimoney.data.networking.graphql.apollomodel.ACHTransferFavoriteListQuery
-import com.multimoney.domain.model.accountsmart.ACHFavoriteAccount
+import com.multimoney.domain.model.accountsmart.ACHAccount
 import com.multimoney.domain.model.accountsmart.FavoriteACHResult
 
-private fun ACHTransferFavoriteListQuery.Result.mapToDomainModel() = ACHFavoriteAccount(
+private fun ACHTransferFavoriteListQuery.Result.mapToDomainModel() = ACHAccount(
     accountForAchTransferId.toString().toInt(),
     accountNumber,
     description,

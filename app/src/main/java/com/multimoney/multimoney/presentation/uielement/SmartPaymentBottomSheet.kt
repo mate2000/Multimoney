@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
@@ -45,6 +46,7 @@ import kotlinx.coroutines.CoroutineScope
  * @param toLabel: String indicating label of destination account
  * @param toTitle: String indicating title of destination account
  * @param toSubtitle: String indicating subtitle of destination account
+ * @param toSubtitle2: String indicating second line subtitle of destination account
  * @param toIcon: Resource indicating icon of destination account
  * @param motive: String of motive (null to not include field, empty string will show field empty)
  * @param buttonText: String indicating label text of button
@@ -60,13 +62,16 @@ fun SmartPaymentBottomSheet(
     amount: String,
     exchangedAmount: String? = null,
     fromLabel: String,
-    fromTitle: String,
-    fromSubtitle: String?,
-    fromIcon: Int?,
+    fromTitle: String? = null,
+    fromSubtitle: String? = null,
+    fromIcon: Int? = null,
     toLabel: String,
-    toTitle: String,
-    toSubtitle: String?,
-    toIcon: Int?,
+    titleIcon: Int? = null,
+    toTitle: String? = null,
+    toSubtitle: String? = null,
+    toSubtitle2: String? = null,
+    toIcon: Int? = null,
+    toContactInfo: @Composable (() -> Unit)? = null,
     motive: String? = null,
     buttonText: String,
     buttonAction: () -> Unit
@@ -110,10 +115,10 @@ fun SmartPaymentBottomSheet(
             CustomInfoButton(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(78.dp),
+                    .wrapContentHeight(),
                 imageModifier = Modifier.size(48.dp),
                 startIcon = fromIcon,
-                title = fromTitle,
+                title = fromTitle.orEmpty(),
                 subtitle = fromSubtitle.orEmpty(),
                 endIcon = null,
                 enable = false
@@ -136,16 +141,22 @@ fun SmartPaymentBottomSheet(
                     .fillMaxWidth()
             )
 
-            CustomInfoButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(78.dp),
-                startIcon = toIcon,
-                title = toTitle,
-                subtitle = toSubtitle.orEmpty(),
-                endIcon = null,
-                enable = false
-            )
+            if (toContactInfo == null) {
+                CustomInfoButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    startIcon = toIcon,
+                    title = toTitle.orEmpty(),
+                    subtitle = toSubtitle.orEmpty(),
+                    subtitle2 = toSubtitle2.orEmpty(),
+                    titleIcon = titleIcon,
+                    endIcon = null,
+                    enable = false
+                )
+            } else {
+                toContactInfo()
+            }
 
             Spacer(
                 Modifier
@@ -206,8 +217,8 @@ private fun BottomSheetPreview() {
         toTitle = "Mi Cuenta Smart | $",
         toSubtitle = "Dólares",
         toIcon = R.drawable.ic_bank_account_dollar,
+        titleIcon = R.drawable.ic_star_filled,
         motive = "Cena de ayer",
-        buttonText = "continuar",
-        buttonAction = {}
-    )
+        buttonText = "continuar"
+    ) {}
 }

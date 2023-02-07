@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.ButtonDefaults
@@ -19,6 +21,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.ui.text.PlaceholderVerticalAlign
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,14 +45,18 @@ fun CustomInfoButton(
     modifier: Modifier = Modifier,
     imageModifier: Modifier = Modifier,
     startIcon: Int? = R.drawable.ic_payment_fee_icon,
+    composableIcon: @Composable ((modifier: Modifier) -> Unit)? = null,
     title: String = "",
     subtitle: String = "",
     subtitle2: String = "",
     endIcon: Int? = R.drawable.ic_right_chevron,
+    titleIcon: Int? = null,
     shouldCenterEndIcon: Boolean = true,
     onClick: () -> Unit = {},
     onEndIconClick: () -> Unit = {},
-    enable: Boolean = true
+    enable: Boolean = true,
+    showBorder: Boolean = true,
+    transparent: Boolean = false
 ) {
     val buttonColor: ButtonColors = ButtonDefaults.buttonColors(
         backgroundColor = Transparent,
@@ -63,28 +72,27 @@ fun CustomInfoButton(
     if (isSystemInDarkTheme()) {
         gradientBorderOneColor = GradientGrey1
         gradientBorderTwoColor = GradientGrey2
-        background = if (enable) WhiteTransparency5 else Transparent
+        background = if (enable.not() || transparent) Transparent else WhiteTransparency5
         titleColor = WhiteTransparency90
         subtitleColor = WhiteTransparency60
     } else {
         gradientBorderOneColor = GradientGrey1
         gradientBorderTwoColor = GradientGrey2
-        background = if (enable) WhiteTransparency5 else Transparent
+        background = if (enable.not() || transparent) Transparent else WhiteTransparency5
         titleColor = WhiteTransparency90
         subtitleColor = WhiteTransparency60
     }
 
     Button(
         onClick = onClick,
-        modifier = modifier
-            .border(
-                width = 1.dp,
-                brush = Brush.verticalGradient(
-                    colors = listOf(gradientBorderOneColor, gradientBorderTwoColor)
-                ),
-                shape = RoundedCornerShape(20.dp)
-            )
-            .wrapContentHeight(),
+        modifier = if (showBorder) modifier.border(
+            width = 1.dp,
+            brush = Brush.verticalGradient(
+                colors = listOf(gradientBorderOneColor, gradientBorderTwoColor)
+            ),
+            shape = RoundedCornerShape(20.dp)
+        ).wrapContentHeight()
+        else modifier.wrapContentHeight(),
         shape = RoundedCornerShape(20.dp),
         colors = buttonColor,
         contentPadding = PaddingValues(0.dp),
@@ -95,7 +103,7 @@ fun CustomInfoButton(
                 .background(background)
                 .fillMaxWidth()
         ) {
-            val (startIconId, titleId, subTitleId, subTitle2Id, endIconId) = createRefs()
+            val (startIconId, titleId, subTitleId, subTitle2Id, endIconId, titleIconId) = createRefs()
             if (startIcon != null) {
                 Image(
                     painter = painterResource(id = startIcon),
@@ -106,13 +114,50 @@ fun CustomInfoButton(
                         bottom.linkTo(parent.bottom, margin = 17.dp)
                     }
                 )
+            } else if (composableIcon != null) {
+                composableIcon(
+                    modifier = Modifier.constrainAs(startIconId) {
+                        top.linkTo(parent.top, margin = 17.dp)
+                        start.linkTo(parent.start, margin = 18.dp)
+                        bottom.linkTo(parent.bottom, margin = 17.dp)
+                    }
+                )
             }
+
             if (subtitle.isNotEmpty()) {
+                val myId = "inlineContent"
+                val textWithIcon = buildAnnotatedString {
+                    append(title)
+                    append(" ")
+                    appendInlineContent(myId, "[icon]")
+                }
+
+                val inlineContent = mapOf(
+                    Pair(
+                        myId,
+                        InlineTextContent(
+                            Placeholder(
+                                width = 12.sp,
+                                height = 12.sp,
+                                placeholderVerticalAlign = PlaceholderVerticalAlign.AboveBaseline,
+                            )
+                        ) {
+                            if (titleIcon!=null){
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_star_filled),
+                                    contentDescription = "",
+                                )
+                            } else {
+                                R.string.empty
+                            }
+                        }
+                    )
+                )
                 Text(
-                    text = title,
+                    text = textWithIcon,
                     modifier = Modifier.constrainAs(titleId) {
-                        if (startIcon != null) {
-                            top.linkTo(startIconId.top)
+                        if (startIcon != null || composableIcon != null) {
+                            top.linkTo(parent.top, margin = 16.dp)
                             start.linkTo(startIconId.end, margin = 22.dp)
                         } else {
                             top.linkTo(parent.top, margin = 16.dp)
@@ -124,7 +169,7 @@ fun CustomInfoButton(
                             end.linkTo(parent.end, margin = 16.dp)
                         }
                         bottom.linkTo(subTitleId.top)
-                        height = Dimension.fillToConstraints
+                        height = Dimension.wrapContent
                         width = Dimension.fillToConstraints
                     },
                     style = Typography.body2.copy(
@@ -133,54 +178,76 @@ fun CustomInfoButton(
                     ),
                     color = titleColor,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = subtitle,
-                    modifier = Modifier.constrainAs(subTitleId) {
-                        top.linkTo(titleId.bottom, margin = 4.dp)
-                        start.linkTo(titleId.start)
-                        if (startIcon == null) bottom.linkTo(parent.bottom, margin = 10.dp)
-                        else bottom.linkTo(startIconId.bottom)
-                        if (endIcon == null) end.linkTo(parent.end, margin = 10.dp)
-                        else end.linkTo(endIconId.start)
-                        width = Dimension.fillToConstraints
-                        height = Dimension.wrapContent
-                    },
-                    color = subtitleColor,
-                    maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    style = Typography.caption.copy(fontSize = 13.sp)
+                    inlineContent = inlineContent
                 )
+
                 if (subtitle2.isNotEmpty()) {
+                    Text(
+                        text = subtitle,
+                        modifier = Modifier.constrainAs(subTitleId) {
+                            top.linkTo(titleId.bottom, margin = 4.dp)
+                            start.linkTo(titleId.start)
+                            bottom.linkTo(subTitle2Id.top)
+                            if (endIcon != null) end.linkTo(endIconId.start) else end.linkTo(parent.end)
+                            width = Dimension.fillToConstraints
+                            height = Dimension.wrapContent
+                        },
+                        color = subtitleColor,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = Typography.caption.copy(fontSize = 13.sp)
+                    )
+
                     Text(
                         text = subtitle2,
                         modifier = Modifier.constrainAs(subTitle2Id) {
                             top.linkTo(subTitleId.bottom, margin = 4.dp)
                             start.linkTo(subTitleId.start)
                             bottom.linkTo(parent.bottom, margin = 16.dp)
+                            if (endIcon == null) end.linkTo(parent.end, margin = 16.dp)
+                            else end.linkTo(endIconId.start, margin = 16.dp)
+                            width = Dimension.fillToConstraints
+                            height = Dimension.wrapContent
                         },
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
                         style = Typography.caption.copy(fontSize = 13.sp),
                         color = subtitleColor
+                    )
+                } else {
+                    Text(
+                        text = subtitle,
+                        modifier = Modifier.constrainAs(subTitleId) {
+                            top.linkTo(titleId.bottom, margin = 4.dp)
+                            start.linkTo(titleId.start)
+                            if (startIcon == null) bottom.linkTo(parent.bottom, margin = 10.dp)
+                            else bottom.linkTo(startIconId.bottom)
+                            if (endIcon == null) end.linkTo(parent.end, margin = 10.dp)
+                            else end.linkTo(endIconId.start)
+                            width = Dimension.fillToConstraints
+                            height = Dimension.wrapContent
+                        },
+                        color = subtitleColor,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = Typography.caption.copy(fontSize = 13.sp)
                     )
                 }
             } else {
                 Text(
                     text = title,
                     modifier = Modifier.constrainAs(titleId) {
-                        if (startIcon != null) {
+                        if (startIcon != null || composableIcon != null) {
                             top.linkTo(startIconId.top, margin = 4.dp)
                             start.linkTo(startIconId.end, margin = 16.dp)
+                            bottom.linkTo(startIconId.bottom)
                         } else {
                             top.linkTo(parent.top, margin = 4.dp)
                             start.linkTo(parent.start, margin = 16.dp)
+                            bottom.linkTo(parent.bottom)
                         }
-                        if (endIcon != null) {
-                            end.linkTo(endIconId.start, margin = 16.dp)
-                        } else {
-                            end.linkTo(parent.end, margin = 16.dp)
-                        }
-                        bottom.linkTo(startIconId.bottom)
+                        height = Dimension.preferredWrapContent
                         width = Dimension.fillToConstraints
                     },
                     style = Typography.body2.copy(

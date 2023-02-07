@@ -5,10 +5,10 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -72,7 +72,8 @@ fun RadioButtonQuestion(
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
+            .wrapContentHeight()
             .background(backgroundColor),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -120,7 +121,7 @@ fun RadioButtonQuestion(
                             }
                     }
                 )
-            } else {
+            } else if (questionTextResource != R.string.empty) {
                 Text(
                     modifier = Modifier,
                     text = stringResource(id = questionTextResource),
@@ -130,17 +131,21 @@ fun RadioButtonQuestion(
                 )
             }
             Spacer(modifier = Modifier.height(26.dp))
-            CustomRadioButton(modifier = Modifier.fillMaxWidth(),
+            CustomRadioButton(
+                modifier = Modifier.fillMaxWidth(),
                 radioModifier = Modifier.size(20.dp),
                 text = stringResource(id = firstButtonTextResource),
                 selected = firstButtonIsSelected,
-                onOptionSelected = onFirstButtonOnClick)
+                onOptionSelected = onFirstButtonOnClick
+            )
             Spacer(modifier = Modifier.height(25.dp))
-            CustomRadioButton(modifier = Modifier.fillMaxWidth(),
+            CustomRadioButton(
+                modifier = Modifier.fillMaxWidth(),
                 radioModifier = Modifier.size(20.dp),
                 text = stringResource(id = secondButtonTextResource),
                 selected = secondButtonIsSelected,
-                onOptionSelected = onSecondButtonOnClick)
+                onOptionSelected = onSecondButtonOnClick
+            )
             Spacer(modifier = Modifier.height(26.dp))
         }
     }

@@ -2,6 +2,7 @@ package com.multimoney.multimoney.presentation.ui.home.product.credit.uisections
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,6 +21,7 @@ import androidx.compose.material.ChipDefaults
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -67,7 +69,10 @@ fun CardNonPreApprovedCredit(
         modifier = Modifier
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
             .fillMaxWidth()
-            .clickable {
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
                 action()
             },
         verticalArrangement = Arrangement.SpaceBetween
@@ -132,7 +137,10 @@ fun CardGtSvCreditRejected(
         modifier = Modifier
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
             .fillMaxWidth()
-            .clickable {
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
                 action()
             },
         verticalArrangement = Arrangement.SpaceBetween
@@ -197,7 +205,10 @@ fun CardGTWithoutCredit(action: () -> Unit = {}) {
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
             .fillMaxWidth()
             .wrapContentHeight()
-            .clickable {
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
                 action()
             }
     ) {
@@ -249,7 +260,10 @@ fun CreditPreApproved(
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
-            .clickable {
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
                 action()
             }
     ) {
@@ -324,7 +338,10 @@ fun CardWithCreditInProcess(
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
             .fillMaxWidth()
             .wrapContentHeight()
-            .clickable {
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
                 action.invoke()
             }
     ) {
@@ -486,79 +503,82 @@ fun OngoingCredit(
                 )
             }
         }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    top = if (viewModel.uiState.isCreditAvailable) {
-                        0.dp
-                    } else {
-                        40.dp
-                    },
-                    bottom = 14.dp
-                )
-        ) {
-            Column(modifier = Modifier.weight(0.5F)) {
-                Text(
-                    text = stringResource(id = R.string.home_product_fee),
-                    modifier = Modifier.padding(top = 4.dp),
-                    style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-                    color = MultimoneyTheme.colors.text
-                )
-                Text(
-                    text = viewModel.getQuota(viewModel.balanceCredit?.balanceCredit),
-                    modifier = Modifier.padding(top = 4.dp),
-                    style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-                    color = MultimoneyTheme.colors.text
-                )
-            }
-            Column(modifier = Modifier.weight(0.5F)) {
-                Text(
-                    text = stringResource(id = viewModel.isExpiredTitle),
-                    modifier = Modifier.padding(top = 4.dp),
-                    style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-                    color = MultimoneyTheme.colors.text
-                )
-                Chip(
-                    enabled = false,
-                    colors = ChipDefaults.chipColors(
-                        disabledBackgroundColor = MultimoneyTheme.colors.productChipBackground,
-                        disabledContentColor = MultimoneyTheme.colors.text
-                    ),
-                    modifier = Modifier
-                        .height(28.dp)
-                        .padding(top = 2.dp),
-                    leadingIcon = {
-                        Box(
-                            modifier = Modifier
-                                .size(10.dp)
-                                .clip(CircleShape)
-                                .background(
-                                    if ((
-                                        viewModel.balanceCredit?.getFirstSummary()?.daysExpired
-                                            ?: 0
-                                        ) > 0
-                                    ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor
-                                )
-                        )
-                    },
-                    onClick = {
-                        // Empty on purpose
-                    },
-                    content = {
-                        Box(contentAlignment = Alignment.Center) {
-                            Text(
-                                text = getCardDateFormat(viewModel.balanceCredit?.getFirstSummary()?.paymentDateLabel),
-                                style = Typography.body1.copy(
-                                    fontWeight = FontWeight.SemiBold,
-                                    platformStyle = PlatformTextStyle(
-                                        includeFontPadding = false
+        // Check if user has a payment available to show quota information
+        if (viewModel.uiState.paymentAvailable) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        top = if (viewModel.uiState.isCreditAvailable) {
+                            0.dp
+                        } else {
+                            40.dp
+                        },
+                        bottom = 14.dp
+                    )
+            ) {
+                Column(modifier = Modifier.weight(0.5F)) {
+                    Text(
+                        text = stringResource(id = R.string.home_product_fee),
+                        modifier = Modifier.padding(top = 4.dp),
+                        style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                        color = MultimoneyTheme.colors.text
+                    )
+                    Text(
+                        text = viewModel.getQuota(viewModel.balanceCredit?.balanceCredit),
+                        modifier = Modifier.padding(top = 4.dp),
+                        style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                        color = MultimoneyTheme.colors.text
+                    )
+                }
+                Column(modifier = Modifier.weight(0.5F)) {
+                    Text(
+                        text = stringResource(id = viewModel.isExpiredTitle),
+                        modifier = Modifier.padding(top = 4.dp),
+                        style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                        color = MultimoneyTheme.colors.text
+                    )
+                    Chip(
+                        enabled = false,
+                        colors = ChipDefaults.chipColors(
+                            disabledBackgroundColor = MultimoneyTheme.colors.productChipBackground,
+                            disabledContentColor = MultimoneyTheme.colors.text
+                        ),
+                        modifier = Modifier
+                            .height(28.dp)
+                            .padding(top = 2.dp),
+                        leadingIcon = {
+                            Box(
+                                modifier = Modifier
+                                    .size(10.dp)
+                                    .clip(CircleShape)
+                                    .background(
+                                        if ((
+                                            viewModel.balanceCredit?.getFirstSummary()?.daysExpired
+                                                ?: 0
+                                            ) > 0
+                                        ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor
+                                    )
+                            )
+                        },
+                        onClick = {
+                            // Empty on purpose
+                        },
+                        content = {
+                            Box(contentAlignment = Alignment.Center) {
+                                Text(
+                                    text = getCardDateFormat(viewModel.balanceCredit?.getFirstSummary()?.paymentDateLabel),
+                                    style = Typography.body1.copy(
+                                        fontWeight = FontWeight.SemiBold,
+                                        platformStyle = PlatformTextStyle(
+                                            includeFontPadding = false
+                                        )
                                     )
                                 )
-                            )
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
     }

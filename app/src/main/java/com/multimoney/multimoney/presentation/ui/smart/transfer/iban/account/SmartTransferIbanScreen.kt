@@ -6,13 +6,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,6 +26,7 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnAddAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnCallQueryListSinpeAccountUseCaseImpl
@@ -62,7 +62,7 @@ fun SmartTransferIbanScreen(
             isRightButtonVisible = false
         )
         Text(
-            modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
+            modifier = Modifier.padding(top = 16.dp, start = 18.dp, end = 16.dp),
             text = stringResource(string.smart_iban_transfer_accounts_title),
             style = Typography.h5.copy(
                 fontWeight = FontWeight.SemiBold,
@@ -70,9 +70,7 @@ fun SmartTransferIbanScreen(
             )
         )
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 32.dp, start = 16.dp, end = 16.dp),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -117,15 +115,15 @@ fun PaymentOptions(viewModel: SmartTransferIbanViewModel = hiltViewModel()) {
         items(viewModel.uiState.sinpeAccountList) { account ->
             CustomInfoButton(
                 title = account?.nameAccount ?: "",
-                subtitle = stringResource(
-                    id = string.smart_account_beneficiary_content,
-                    account?.bank ?: "",
-                    getMaskedAccountIban(
-                        account?.sinpeAccount ?: "",
-                        stringResource(id = string.payment_account_masked_text)
-                    )
+                subtitle = account?.bank ?: "",
+                subtitle2 = getMaskedAccountIban(
+                    account?.sinpeAccount ?: "",
+                    stringResource(id = string.payment_account_masked_text)
                 ),
-                modifier = Modifier.fillMaxWidth().wrapContentHeight().padding(top = 12.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(top = 12.dp),
                 endIcon = drawable.ic_options,
                 startIcon = account?.currencyId?.getCurrencyFromId()?.accountIcon,
                 onClick = {

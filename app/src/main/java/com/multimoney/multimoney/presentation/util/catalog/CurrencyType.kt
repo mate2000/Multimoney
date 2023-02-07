@@ -6,6 +6,7 @@ sealed class CurrencyType(
     val id: Int,
     val currency: String,
     val value: String,
+    val stringName: String,
     val disbursementValue: String,
     val currencyName: Int,
     val accountIcon: Int,
@@ -13,12 +14,14 @@ sealed class CurrencyType(
     val feeIcon: Int,
     val feeInfoButtonTitle: Int,
     val symbol: String,
-    val myAccountSmart: Int
+    val myAccountSmartSymbol: Int,
+    val myAccountSmartName: Int
 ) {
     object Colon : CurrencyType(
         1,
         "01",
         "COLONES",
+        "Colones",
         "CRC",
         R.string.colons,
         R.drawable.ic_bank_account_colon,
@@ -26,13 +29,15 @@ sealed class CurrencyType(
         R.drawable.ic_payment_colon,
         R.string.payment_fee_one_option,
         "₡",
-        R.string.home_my_products_label_smart_colones
+        R.string.home_my_products_label_smart_colones,
+        R.string.payment_select_sending_type_smart_account_colones
     )
 
     object Dollar : CurrencyType(
         2,
         "02",
         "DÓLARES",
+        "Dólares",
         "USD",
         R.string.dollars,
         R.drawable.ic_bank_account_dollar,
@@ -40,13 +45,15 @@ sealed class CurrencyType(
         R.drawable.ic_payment_dollar,
         R.string.payment_fee_one_option,
         "$",
-        R.string.home_my_products_label_smart
+        R.string.home_my_products_label_smart,
+        R.string.payment_select_sending_type_smart_account_dollars
     )
 
     object Quetzal : CurrencyType(
         3,
         "03",
         "QUETZALES",
+        "Quetzales",
         "GTQ",
         R.string.quetzales,
         R.drawable.ic_bank_account_dollar,
@@ -54,11 +61,13 @@ sealed class CurrencyType(
         R.drawable.ic_payment_fee_icon,
         R.string.empty,
         "Q",
+        R.string.empty,
         R.string.empty
     )
 
     object All : CurrencyType(
         100000,
+        "",
         "",
         "",
         "",
@@ -68,6 +77,7 @@ sealed class CurrencyType(
         R.drawable.ic_payment_fee_icon,
         R.string.payment_fee_both_options,
         "$",
+        R.string.empty,
         R.string.empty
     )
 }

@@ -153,6 +153,7 @@ private fun Transfer365AmountBottomSheet(viewModel: Transfer365AmountViewModel =
                     ?: R.string.empty
             ),
         toIcon = viewModel.amountUIState.destinyAccountDisplay?.icon,
+        titleIcon = if (viewModel.transfer365Account.isFavorite) R.drawable.ic_star_filled else null,
         motive = viewModel.amountUIState.motive,
         buttonText = stringResource(R.string.payment_amount_bottom_sheet_send_button),
         buttonAction = { viewModel.onAmountUIEvent(OnCallProcessTransfer) }

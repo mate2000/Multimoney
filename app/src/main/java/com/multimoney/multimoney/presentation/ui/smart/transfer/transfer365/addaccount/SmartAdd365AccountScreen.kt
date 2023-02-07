@@ -29,23 +29,23 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnAccountNumberChanged
-import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnAccountTypeSelected
-import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnAddFavoriteValueChange
-import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnBankSelected
-import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnContinueClick
-import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnDocumentChanged
-import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnDocumentTypeSelected
-import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnGetListValues
-import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnLastNamesChanged
-import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnNamesChanged
-import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnNavigateHome
-import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnValidateAccountNumber
-import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnValidateDocument
-import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnValidatePhoneNumber
-import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnPhoneChanged
-import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAddOtherBankAccountViewModel.UIEvent.OnNicknameChanged
+import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel.UIEvent.OnAccountNumberChanged
+import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel.UIEvent.OnAccountTypeSelected
+import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel.UIEvent.OnAddFavoriteValueChange
+import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel.UIEvent.OnBankSelected
+import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel.UIEvent.OnDocumentChanged
+import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel.UIEvent.OnDocumentTypeSelected
+import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel.UIEvent.OnGetListValues
+import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel.UIEvent.OnLastNamesChanged
+import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel.UIEvent.OnNamesChanged
+import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel.UIEvent.OnNavigateHome
+import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel.UIEvent.OnValidateAccountNumber
+import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel.UIEvent.OnValidateDocument
+import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel.UIEvent.OnValidatePhoneNumber
+import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel.UIEvent.OnPhoneChanged
+import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel.UIEvent.OnNicknameChanged
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
@@ -61,10 +61,10 @@ import com.multimoney.multimoney.presentation.util.formatDocumentPlaceholder
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
 
 @Composable
-fun SmartAddOtherBankAccountScreen(
+fun SmartAdd365AccountScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
-    viewModel: SmartAddOtherBankAccountViewModel = hiltViewModel()
+    viewModel: SmartAdd365AccountViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
         viewModel.apply {
@@ -73,7 +73,7 @@ fun SmartAddOtherBankAccountScreen(
         }
     }
 
-    SmartAddOtherBankAccountContent(viewModel)
+    SmartAdd365AccountContent(viewModel)
 
     if (viewModel.uiState.openDialog.isActive.value) {
         CustomDialog(
@@ -91,7 +91,7 @@ fun SmartAddOtherBankAccountScreen(
 }
 
 @Composable
-fun SmartAddOtherBankAccountContent(viewModel: SmartAddOtherBankAccountViewModel = hiltViewModel()) {
+fun SmartAdd365AccountContent(viewModel: SmartAdd365AccountViewModel = hiltViewModel()) {
     val focusManager = LocalFocusManager.current
     Column(
         modifier = Modifier.background(MultimoneyTheme.colors.background)

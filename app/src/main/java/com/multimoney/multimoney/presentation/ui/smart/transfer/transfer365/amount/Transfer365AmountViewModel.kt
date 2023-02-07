@@ -12,13 +12,16 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.navigation.ACCOUNT_365
+import com.multimoney.multimoney.presentation.navigation.DESTINY_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.ORIGIN_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel
 import com.multimoney.multimoney.presentation.util.catalog.DisplayAccount
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getCurrentTime
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedSmartAccount
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -41,20 +44,43 @@ class Transfer365AmountViewModel @Inject constructor(
     override fun onStart() {
         viewModelScope.launch {
             initializeValues()
-            transfer365Account = savedStateHandle[ACCOUNT_365] ?: Transfer365Account()
+            transfer365Account = savedStateHandle[DESTINY_ACCOUNT] ?: Transfer365Account()
+            smartAccount = savedStateHandle[ORIGIN_ACCOUNT]
+            originCurrency = smartAccount?.currencyID?.getCurrencyFromId() ?: CurrencyType.Dollar
+            if (originCurrency == CurrencyType.All) originCurrency = CurrencyType.Dollar
+            shouldDisplayExchange = false
+
+            amountUIState = amountUIState.copy(
+                originAccountDisplay = DisplayAccount(
+                    sheetLabel = R.string.transfer_365_pre_confirmation_from_label,
+                    sheetTitleResource = originCurrency?.myAccountSmartName,
+                    sheetSubtitleResource = R.string.empty,
+                    icon = R.drawable.ic_multimoney_smart
+                ),
+                currency = originCurrency?.symbol ?: CurrencyType.Dollar.symbol,
+                placeholder = if (originCurrency == CurrencyType.Dollar) {
+                    R.string.smart_dollar_placeholder
+                } else {
+                    R.string.empty
+                }
+            )
             totalBalanceLabel =
                 amountUIState.currency + smartAccount?.totalBalance.toString()
-            val destinationInfo = if (transferType == SmartTransferTypes.SmartToMobile.id) {
-                transfer365Account.phone
-            } else if (transferType == SmartTransferTypes.SmartToOtherBank.id) {
-                "${transfer365Account.bankName} | ${
-                    getMaskedSmartAccount(
-                        prefix = "",
-                        accountNumber = transfer365Account.accountNumber.orEmpty()
-                    )
-                }"
-            } else {
-                ""
+            val destinationInfo = when (transferType) {
+                SmartTransferTypes.SmartToMobile.id -> {
+                    transfer365Account.phone
+                }
+                SmartTransferTypes.SmartToOtherBank.id -> {
+                    "${transfer365Account.bankName} | ${
+                        getMaskedSmartAccount(
+                            prefix = "",
+                            accountNumber = transfer365Account.accountNumber.orEmpty()
+                        )
+                    }"
+                }
+                else -> {
+                    ""
+                }
             }
             amountUIState = amountUIState.copy(
                 destinyAccountDisplay = DisplayAccount(
@@ -90,7 +116,8 @@ class Transfer365AmountViewModel @Inject constructor(
 
     override fun validateForm(
         newAmount: String?,
-        newMotive: String
+        newMotive: String,
+        isAmountValid: Boolean
     ): Boolean {
         return when {
             newAmount?.isEmpty() == true -> false
@@ -213,7 +240,7 @@ class Transfer365AmountViewModel @Inject constructor(
     override fun onNavigateBack() {
         // Todo add validation to go back to list transfer 365 accounts screen
         val screen = when (previousScreen) {
-            Screen.SmartOtherBanksAccountScreen.baseRoute -> Screen.SmartOtherBanksAccountScreen.route
+            Screen.SmartAdd365AccountScreen.baseRoute -> Screen.SmartAdd365AccountScreen.route
             else -> Screen.HomeScreen.route
         }
         navigateBack(popTo = screen, isRestart = false)

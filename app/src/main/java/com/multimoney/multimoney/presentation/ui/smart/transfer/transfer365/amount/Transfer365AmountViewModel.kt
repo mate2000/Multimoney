@@ -16,7 +16,6 @@ import com.multimoney.multimoney.presentation.util.catalog.DisplayAccount
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
-import com.multimoney.multimoney.presentation.util.getMaskedSmartAccount
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -65,8 +64,8 @@ class Transfer365AmountViewModel @Inject constructor() : BaseSmartEditAmountView
                 }
                 SmartTransferTypes.SmartToOtherBank.id -> {
                     "${transfer365Account.bankName} | ${
-                        getMaskedSmartAccount(
-                            prefix = "",
+                        getMaskedAccount(
+                            prefix = Brand.ElSalvador.countryCode.uppercase(),
                             accountNumber = transfer365Account.accountNumber.orEmpty()
                         )
                     }"

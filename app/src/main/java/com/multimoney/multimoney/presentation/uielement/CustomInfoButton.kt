@@ -38,6 +38,10 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency5
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
+import com.multimoney.multimoney.presentation.util.MAX_LINE_ONE
+
+const val INLINE_CONTENT_NAME = "inlineContent"
+const val ICON_DESCRIPTION = "[icon]"
 
 @Composable
 @Preview
@@ -85,13 +89,15 @@ fun CustomInfoButton(
 
     Button(
         onClick = onClick,
-        modifier = if (showBorder) modifier.border(
-            width = 1.dp,
-            brush = Brush.verticalGradient(
-                colors = listOf(gradientBorderOneColor, gradientBorderTwoColor)
-            ),
-            shape = RoundedCornerShape(20.dp)
-        ).wrapContentHeight()
+        modifier = if (showBorder) modifier
+            .border(
+                width = 1.dp,
+                brush = Brush.verticalGradient(
+                    colors = listOf(gradientBorderOneColor, gradientBorderTwoColor)
+                ),
+                shape = RoundedCornerShape(20.dp)
+            )
+            .wrapContentHeight()
         else modifier.wrapContentHeight(),
         shape = RoundedCornerShape(20.dp),
         colors = buttonColor,
@@ -125,11 +131,11 @@ fun CustomInfoButton(
             }
 
             if (subtitle.isNotEmpty()) {
-                val myId = "inlineContent"
+                val myId = INLINE_CONTENT_NAME
                 val textWithIcon = buildAnnotatedString {
                     append(title)
                     append(" ")
-                    appendInlineContent(myId, "[icon]")
+                    appendInlineContent(myId, ICON_DESCRIPTION)
                 }
 
                 val inlineContent = mapOf(
@@ -142,7 +148,7 @@ fun CustomInfoButton(
                                 placeholderVerticalAlign = PlaceholderVerticalAlign.AboveBaseline,
                             )
                         ) {
-                            if (titleIcon!=null){
+                            if (titleIcon != null) {
                                 Image(
                                     painter = painterResource(id = R.drawable.ic_star_filled),
                                     contentDescription = "",
@@ -229,7 +235,7 @@ fun CustomInfoButton(
                             height = Dimension.wrapContent
                         },
                         color = subtitleColor,
-                        maxLines = 1,
+                        maxLines = MAX_LINE_ONE,
                         overflow = TextOverflow.Ellipsis,
                         style = Typography.caption.copy(fontSize = 13.sp)
                     )

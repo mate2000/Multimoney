@@ -10,7 +10,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.PurchaseCryptoSteps
 import com.multimoney.domain.interaction.accountsmart.QuerySmartAccountsUseCase
 import com.multimoney.domain.model.accountsmart.AccountSmartForBuyCrypto
@@ -53,7 +52,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     var identification = ""
     var email = ""
     private var marketCryptoCoin: MarketCryptoCoin? = savedStateHandle[ITEM_CRYPTO_MARKET]
-    var abvCurrency: String = ""
+    var abvCurrency: String = CurrencyType.Dollar.disbursementValue
     val side = CryptoOperationSide.BUY.value
     val comingFromDetails: Boolean = marketCryptoCoin != null
 
@@ -64,11 +63,6 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
             user = dataStorePreferences.getUserName().first()
             identification = dataStorePreferences.getIdentification().first()
             email = dataStorePreferences.getUserEmail().first()
-            abvCurrency = if (idBrand == Brand.CostaRica.id) {
-                CurrencyType.Colon.disbursementValue
-            } else {
-                CurrencyType.Dollar.disbursementValue
-            }
             uiState = uiState.copy(
                 asset = marketCryptoCoin?.baseAsset,
                 assetDescription = marketCryptoCoin?.description,
@@ -118,6 +112,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
             uiState = uiState.copy(
                 currentStep = currentFlowStep
             )
+            uiState.previousAction()
         }
     }
 
@@ -126,6 +121,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         uiState = uiState.copy(
             currentStep = currentFlowStep
         )
+        uiState.nextAction()
     }
 
     private fun navigateBackToHome() =
@@ -150,8 +146,9 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     private fun onCloseClick() {
         uiState = uiState.copy(
             openDialog = DialogParameters(
-                titleResource = R.string.smart_close_origination_dialog_title,
-                positiveResource = R.string.common_leave,
+                titleResource = R.string.crypto_purchase_flow_exit_dialog_title,
+                descriptionResource = R.string.crypto_purchase_flow_exit_dialog_body_message,
+                positiveResource = R.string.crypto_purchase_flow_exit_dialog_cancel_button,
                 negativeResource = R.string.button_continue,
                 positiveAction = { navigateBackToHome() },
                 isActive = mutableStateOf(true)
@@ -175,25 +172,29 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     }
 
     data class UIState(
+        // interaction
         val currentStep: Int = PurchaseCryptoSteps.One.pageNumber,
         val isLoading: Boolean = false,
-        val accounts: List<AccountSmartForBuyCrypto> = listOf(),
         val openDialog: DialogParameters = DialogParameters(),
         var bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
         var bottomSheet: (@Composable () -> Unit) = {},
+        var shouldDisplayDisclaimer: Boolean = true,
+        val dontShowAgainChecked: Boolean = false,
+        val comingFromDetails: Boolean = false,
+        var previousAction: () -> Unit = {},
+        val nextAction: () -> Unit = {},
+        // mutable data
+        val accounts: List<AccountSmartForBuyCrypto> = listOf(),
         val smartAccountAvailableBalance: Double = 0.0,
         val accountNumber: String = "",
         val ibanAccountNumber: String = "",
-        var shouldDisplayDisclaimer: Boolean = true,
-        val dontShowAgainChecked: Boolean = false,
         val idCurrency: Int = CurrencyType.Dollar.id,
         val asset: String? = null,
         val assetDescription: String? = null,
         val market: String? = "",
         val cryptoNetWork: String? = "",
         val assetImageBaseUrl: String? = "",
-        val accountToken: String = "",
-        val comingFromDetails: Boolean = false
+        val accountToken: String = ""
     )
 
     fun onUIEvent(event: UIEvent) {

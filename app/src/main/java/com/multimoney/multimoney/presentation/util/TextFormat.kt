@@ -76,14 +76,6 @@ fun getMaskedVisaAccount(accountNumber: String, maskedText: String = ACCOUNT_MAS
     VISA_MASK.plus(maskedText)
         .plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
 
-fun getMaskedSmartAccount(
-    prefix: String = Brand.ElSalvador.countryCode.capitalized(),
-    accountNumber: String,
-    maskedText: String = ACCOUNT_MASK
-) =
-    prefix.plus(maskedText)
-        .plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
-
 fun getMaskedAccountIban(accountNumber: String, maskedText: String = ACCOUNT_MASK) =
     Brand.CostaRica.iban.plus(
         accountNumber.take(ACCOUNT_IBAN_FIRST_DIGITS).plus(maskedText)

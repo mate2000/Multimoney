@@ -74,7 +74,9 @@ import com.multimoney.data.networking.graphql.apollomodel.InitialRequestSmartAcc
 import com.multimoney.data.networking.graphql.apollomodel.ListCardVDQuery
 import com.multimoney.data.networking.graphql.apollomodel.ListMiniCardsQuery
 import com.multimoney.data.networking.graphql.apollomodel.ListSinpeAccountQuery
+import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountDeleteMutation
 import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountSaveMutation
+import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountUpdateMutation
 import com.multimoney.data.networking.graphql.apollomodel.NationalityQuery
 import com.multimoney.data.networking.graphql.apollomodel.OcupationsQuery
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoCheckProcessMutation
@@ -1384,6 +1386,48 @@ class GraphqlApi @Inject constructor(
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
+    fun mutationManageSinpeAccountUpdate(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        accountNumber: String,
+        idCurrency: Long,
+        nameAccount: String,
+        idAccount: Int?,
+        isFavorite: Boolean,
+        idBank: Long,
+        typeAccount: Long
+    ): ApolloCall<ManageSinpeAccountUpdateMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            ManageSinpeAccountUpdateMutation(
+                user = Optional.presentIfNotNull(user),
+                idBrand = Optional.presentIfNotNull(idBrand),
+                identification = Optional.presentIfNotNull(identification),
+                accountNumber = Optional.presentIfNotNull(accountNumber),
+                idCurrency = Optional.presentIfNotNull(idCurrency),
+                nameAccount = Optional.presentIfNotNull(nameAccount),
+                idAccount = Optional.presentIfNotNull(idAccount),
+                isFavorite = Optional.presentIfNotNull(isFavorite),
+                typeAccount = Optional.presentIfNotNull(typeAccount.toInt()),
+                idBank = Optional.presentIfNotNull(idBank)
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationManageSinpeAccountDelete(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        idAccount: Int?,
+    ): ApolloCall<ManageSinpeAccountDeleteMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            ManageSinpeAccountDeleteMutation(
+                user = Optional.presentIfNotNull(user),
+                idBrand = Optional.presentIfNotNull(idBrand),
+                identification = Optional.presentIfNotNull(identification),
+                id_account = Optional.presentIfNotNull(idAccount),
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
     // Multimoney Visa
 
     fun queryCardIssuanceNV(
@@ -1430,7 +1474,8 @@ class GraphqlApi @Inject constructor(
         identification: String,
         country: String,
         idAccount: Long,
-        accountNumber: String
+        accountNumber: String,
+        isFavorite: Boolean?
     ): ApolloCall<ListSinpeAccountQuery.Data> =
         apolloAuthorizedClient.query(
             ListSinpeAccountQuery(
@@ -1439,7 +1484,8 @@ class GraphqlApi @Inject constructor(
                 identification,
                 country,
                 idAccount,
-                accountNumber
+                accountNumber,
+                Optional.presentIfNotNull( isFavorite)
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

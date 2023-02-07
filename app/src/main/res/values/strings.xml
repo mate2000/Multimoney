@@ -1205,11 +1205,24 @@
     <string name="crypto_purchase_flow_amount_asset_placeholder" translatable="false">0 %1s</string>
     <string name="crypto_purchase_flow_exchange_type_title" translatable="false">Tipo de cambio</string>
     <string name="crypto_purchase_flow_exchange_total_title" translatable="false">Total a debitar</string>
+    <string name="crypto_purchase_flow_exit_dialog_title" translatable="false">¿Seguro de que querés salir?</string>
+    <string name="crypto_purchase_flow_exit_dialog_body_message" translatable="false">Si cancelás el proceso no se realizará la compra de la cripto</string>
+    <string name="crypto_purchase_flow_exit_dialog_cancel_button" translatable="false">Salir</string>
+
+    <!--Crypto Purchase Flow - Confirmation-->
+    <string name="crypto_purchase_flow_confirmation_title" translatable="false">Monto a comprar</string>
+    <string name="crypto_purchase_flow_confirmation_from_account_title" translatable="false">Desde la cuenta</string>
+    <string name="crypto_purchase_flow_confirmation_from_account" translatable="false">Mi cuenta Smart | %1s</string>
+    <string name="crypto_purchase_flow_confirmation_estimated_amount" translatable="false">Valor aproximado en</string>
+    <string name="crypto_purchase_flow_confirmation_btn_buy" translatable="false">Comprar</string>
 
     <!--Crypto Purchase Flow - Errors-->
     <string name="crypto_purchase_flow_error_minimum_amount" translatable="false">"El monto mínimo de compra es de $5"</string>
     <string name="crypto_purchase_flow_error_available_amount" translatable="false">"El monto disponible es de %1s"</string>
     <string name="crypto_purchase_flow_error_available_amount_commission" translatable="false">"El monto más la comisión supera el\nmonto disponible"</string>
+    <string name="crypto_purchase_flow_error_weekly_amount_exceeded" translatable="false">El monto supera el limite de compra\nmensual de $10,000</string>
+    <string name="crypto_purchase_flow_error_no_funds" translatable="false">Fondos Insuficientes para aplicar la compra</string>
+    <string name="crypto_purchase_flow_error_price_expired" translatable="false">Cotización caducada</string>
 
     <!-- Evicertia screen -->
     <string name="smart_evicertia_missing_signature_title_card" translatable="false">¡Solo falta tu firma!</string>

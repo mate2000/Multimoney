@@ -135,7 +135,7 @@ fun CryptoSendAddressContent(
                 sharedViewModel.uiState.asset
             ),
             textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.titleText),
-            leadingIconAlignment = Alignment.Top
+            alignmentVertical = Alignment.Top
         )
         // Crypto Address Text field
         CustomOutlinedTextField(

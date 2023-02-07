@@ -8,5 +8,7 @@ data class AccountSmartForBuyCrypto(
     val totalBalance: Double?,
     val currencyCode: String?,
     val idCurrencyAccount: Int?,
-    val accountToken: String = ""
+    val accountToken: String = "",
+    val accountNumber: String,
+    val ibanAccountNumber: String
 ) : Parcelable

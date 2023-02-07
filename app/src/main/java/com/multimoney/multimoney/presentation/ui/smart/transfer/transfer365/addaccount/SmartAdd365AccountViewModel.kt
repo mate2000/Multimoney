@@ -89,9 +89,11 @@ class SmartAdd365AccountViewModel @Inject constructor(
             user = user
         ).collectLatest { result ->
             result.onSuccess { types ->
+                val selectedType = types?.typeList?.find { it == uiState.type }
                 uiState = uiState.copy(
                     isLoading = false,
-                    accountTypeList = types?.typeList ?: listOf()
+                    accountTypeList = types?.typeList ?: listOf(),
+                    type = selectedType
                 )
             }
             result.onFailure { onFailure(it) }
@@ -105,9 +107,11 @@ class SmartAdd365AccountViewModel @Inject constructor(
             user = user
         ).collectLatest { result ->
             result.onSuccess { banks ->
+                val selectedBank = banks?.bankList?.find { it == uiState.bank }
                 uiState = uiState.copy(
                     isLoading = false,
-                    bankList = banks?.bankList ?: listOf()
+                    bankList = banks?.bankList ?: listOf(),
+                    bank = selectedBank
                 )
             }
             result.onFailure { onFailure(it) }
@@ -270,7 +274,9 @@ class SmartAdd365AccountViewModel @Inject constructor(
                 name = uiState.names,
                 lastname = uiState.lastNames,
                 bankId = uiState.bank?.bankId.toString(),
-                accountTypeId = uiState.type?.typeId.toString()
+                bankName = uiState.bank?.bankName.orEmpty(),
+                accountTypeId = uiState.type?.typeId.toString(),
+                isFavorite = false
             )
             navigateTo(
                 "${Screen.SmartTransfer365EditAmountScreen.baseRoute}/${
@@ -297,11 +303,13 @@ class SmartAdd365AccountViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess { account ->
                     val savedAccount = Transfer365Account(
-                        accountNumber = account?.accountNumber,
+                        accountNumber = account?.accountNumber ?: uiState.accountNumber,
                         name = uiState.names,
                         lastname = uiState.lastNames,
                         bankId = uiState.bank?.bankId.toString(),
-                        accountTypeId = uiState.type?.typeId.toString()
+                        bankName = uiState.bank?.bankName.orEmpty(),
+                        accountTypeId = uiState.type?.typeId.toString(),
+                        isFavorite = uiState.isFavorite
                     )
                     navigateTo(
                         "${Screen.SmartTransfer365EditAmountScreen.baseRoute}/${

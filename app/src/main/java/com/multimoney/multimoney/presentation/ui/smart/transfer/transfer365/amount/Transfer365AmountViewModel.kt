@@ -3,8 +3,8 @@ package com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.amo
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.accountsmart.Transfer365Account
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.DESTINY_ACCOUNT
@@ -12,9 +12,10 @@ import com.multimoney.multimoney.presentation.navigation.ORIGIN_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
-import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.DisplayAccount
+import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
+import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -42,7 +43,10 @@ class Transfer365AmountViewModel @Inject constructor() : BaseSmartEditAmountView
                 originAccountDisplay = DisplayAccount(
                     sheetLabel = R.string.transfer_365_pre_confirmation_from_label,
                     sheetTitleResource = originCurrency?.myAccountSmartName,
-                    sheetSubtitleResource = R.string.empty,
+                    sheetSubtitle = getMaskedAccount(
+                        prefix = Brand.ElSalvador.countryCode.uppercase(),
+                        accountNumber = smartAccount?.accountNumber.orEmpty()
+                    ),
                     icon = R.drawable.ic_multimoney_smart
                 ),
                 currency = originCurrency?.symbol ?: CurrencyType.Dollar.symbol,
@@ -54,17 +58,36 @@ class Transfer365AmountViewModel @Inject constructor() : BaseSmartEditAmountView
             )
             totalBalanceLabel =
                 amountUIState.currency + smartAccount?.totalBalance.toString()
+            val destinationInfo = when (transferType) {
+                SmartTransferTypes.SmartToMobile.id -> {
+                    transfer365Account.phone
+                }
+                SmartTransferTypes.SmartToOtherBank.id -> {
+                    "${transfer365Account.bankName} | ${
+                        getMaskedAccount(
+                            prefix = Brand.ElSalvador.countryCode.uppercase(),
+                            accountNumber = transfer365Account.accountNumber.orEmpty()
+                        )
+                    }"
+                }
+                else -> {
+                    ""
+                }
+            }
+            amountUIState = amountUIState.copy(
+                destinyAccountDisplay = DisplayAccount(
+                    sheetLabel = R.string.smart_payment_amount_bottom_sheet_to,
+                    sheetTitle = "${transfer365Account.name} ${transfer365Account.lastname}",
+                    sheetSubtitle = destinationInfo,
+                    icon = R.drawable.ic_bank_account_dollar
+                )
+            )
         }
     }
 
     override fun onContinueClick() {
         amountUIState = amountUIState.copy(
-            bottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Expanded),
-            openDialog = DialogParameters(
-                titleResource = R.string.info,
-                description = "TBD: Mostrar preconfirmacion REV- 1465",
-                isActive = mutableStateOf(true)
-            )
+            bottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Expanded)
         )
     }
 
@@ -98,7 +121,7 @@ class Transfer365AmountViewModel @Inject constructor() : BaseSmartEditAmountView
     }
 
     override fun onProcessTransfer() {
-        TODO("Not yet implemented")
+        // Todo process transfer
     }
 
     override fun onNavigateBack() {

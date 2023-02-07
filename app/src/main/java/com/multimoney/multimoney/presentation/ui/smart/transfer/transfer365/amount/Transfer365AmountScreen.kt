@@ -1,9 +1,12 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.amount
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -13,6 +16,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnAbandonFlow
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnAmountCompleted
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnAmountValueChange
+import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnCallProcessTransfer
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnMotiveChange
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnNavigateBack
@@ -20,6 +24,7 @@ import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSma
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.SmartAmountBody
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.uielement.SmartPaymentBottomSheet
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
@@ -37,6 +42,10 @@ fun Transfer365AmountScreen(
     }
 
     Transfer365AmountContent(viewModel)
+    Transfer365AmountBottomSheet(viewModel)
+    BackHandler {
+        viewModel.onAmountUIEvent(OnNavigateBack)
+    }
 
     if (viewModel.amountUIState.openDialog.isActive.value) {
         CustomDialog(
@@ -91,4 +100,42 @@ fun Transfer365AmountContent(viewModel: Transfer365AmountViewModel = hiltViewMod
             disclaimerResource = R.string.transfer_365_amount_disclaimer
         )
     }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun Transfer365AmountBottomSheet(viewModel: Transfer365AmountViewModel = hiltViewModel()) {
+    SmartPaymentBottomSheet(
+        coroutineScope = rememberCoroutineScope(),
+        modalBottomSheetState = viewModel.amountUIState.bottomSheetState,
+        saveSendTitleResource = R.string.smart_payment_sheet_send_title,
+        amount = viewModel.getFormattedAmount(),
+        fromLabel = stringResource(
+            viewModel.amountUIState.originAccountDisplay?.sheetLabel ?: R.string.empty
+        ),
+        fromTitle = viewModel.amountUIState.originAccountDisplay?.sheetTitle
+            ?: stringResource(
+                viewModel.amountUIState.originAccountDisplay?.sheetTitleResource ?: R.string.empty
+            ),
+        fromSubtitle = viewModel.amountUIState.originAccountDisplay?.sheetSubtitle
+            ?: stringResource(
+                viewModel.amountUIState.originAccountDisplay?.sheetSubtitleResource
+                    ?: R.string.empty
+            ),
+        fromIcon = viewModel.amountUIState.originAccountDisplay?.icon,
+        toLabel = stringResource(R.string.smart_payment_amount_bottom_sheet_to),
+        toTitle = viewModel.amountUIState.destinyAccountDisplay?.sheetTitle ?: stringResource(
+            viewModel.amountUIState.destinyAccountDisplay?.sheetTitleResource ?: R.string.empty
+        ),
+        toSubtitle = viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitle
+            ?: stringResource(
+                viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitleResource
+                    ?: R.string.empty
+            ),
+        toIcon = viewModel.amountUIState.destinyAccountDisplay?.icon,
+        titleIcon = if (viewModel.transfer365Account.isFavorite) R.drawable.ic_star_filled else null,
+        motive = viewModel.amountUIState.motive,
+        buttonText = stringResource(R.string.payment_amount_bottom_sheet_send_button),
+        buttonAction = { viewModel.onAmountUIEvent(OnCallProcessTransfer) }
+    )
 }

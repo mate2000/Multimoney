@@ -50,8 +50,10 @@ import com.multimoney.multimoney.presentation.uielement.CryptoCurrencyInputLayou
 import com.multimoney.multimoney.presentation.uielement.CurrencyExchangeInfo
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.util.calculateAssetEstimated
+import com.multimoney.multimoney.presentation.util.calculateConvertedCurrencyBalance
+import com.multimoney.multimoney.presentation.util.calculateDollarEstimated
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
-import com.multimoney.multimoney.presentation.util.roundToEightDecimalPlaces
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 import kotlinx.coroutines.launch
 
@@ -217,12 +219,11 @@ fun BuyCurrencyScreenContent(
                                     exchangeRateText = viewModel.uiState.exchangeRate.toCurrencyFormat(
                                         symbol = CurrencyType.Colon.symbol
                                     ),
-                                    convertedAmountText = (viewModel.uiState.quoteAmount.value.ifEmpty {
-                                        (viewModel.uiState.baseAmount.value.toDoubleOrNull() ?: 0.0)
-                                            .times(viewModel.uiState.pricesQuoteAndCommissions?.price ?: 0.0)
-                                            .toString()
-                                    }.toDouble() * viewModel.uiState.exchangeRate).toCurrencyFormat(
-                                        symbol = CurrencyType.Colon.symbol
+                                    convertedAmountText = calculateConvertedCurrencyBalance(
+                                        quoteAmount = viewModel.uiState.quoteAmount.value,
+                                        baseAmount = viewModel.uiState.baseAmount.value,
+                                        exchangeRate = viewModel.uiState.exchangeRate,
+                                        price = viewModel.uiState.pricesQuoteAndCommissions?.price ?: 0.0
                                     )
                                 )
                             }
@@ -388,17 +389,19 @@ fun AmountInputSection(
             text = if (isTransformationCurrencyValue.value.not()) {
                 stringResource(
                     id = R.string.crypto_purchase_flow_exchange_reference_edittext,
-                    (quoteAmountText.value.ifEmpty {
-                        EMPTY_CURRENCY
-                    }.toDouble() / currencyPrice).roundToEightDecimalPlaces(),
+                    calculateAssetEstimated(
+                        quoteAmount = quoteAmountText.value,
+                        currencyPrice = currencyPrice
+                    ),
                     asset
                 )
             } else {
                 stringResource(
                     id = R.string.crypto_purchase_flow_exchange_reference_edittext_dollars,
-                    (currencyPrice * baseAmountText.value.ifEmpty {
-                        EMPTY_CURRENCY
-                    }.toDouble()).toCurrencyFormat()
+                    calculateDollarEstimated(
+                        baseAmount = baseAmountText.value,
+                        currencyPrice = currencyPrice
+                    )
                 )
             },
             style = Typography.body2.copy(

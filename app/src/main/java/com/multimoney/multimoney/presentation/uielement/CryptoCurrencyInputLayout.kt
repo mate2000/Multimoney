@@ -41,6 +41,23 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.transformation.CryptoAssetMaskTransformation
 import com.multimoney.multimoney.presentation.util.transformation.CurrencyDoubleTransformation
 
+/**
+ * CryptoCurrencyInputLayout: Custom layout to display a currency input with button to change
+ * between dollars and currency, this can handle errors
+ *
+ * Parameters:
+ * @param modifier Modifier to be applied to the layout
+ * @param value MutableState of the value to be displayed
+ * @param iconCurrency String of the icon to be displayed
+ * @param isTransformationCurrency MutableState of the transformation to be applied to the value
+ * @param focusRequester FocusRequester to be applied to the layout
+ * @param isError Boolean to indicate if the layout has an error
+ * @param errorText String to be displayed in case of error
+ * @param onValueChanged Function to be called when the value is changed
+ * @param onImeClick Function to be called when the IME is clicked
+ *
+ * **/
+
 @ExperimentalAnimationApi
 @Composable
 fun CryptoCurrencyInputLayout(

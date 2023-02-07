@@ -16,6 +16,8 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
+import com.multimoney.multimoney.presentation.util.calculateAmountPlusFee
+import com.multimoney.multimoney.presentation.util.calculateQuote
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.format
@@ -206,14 +208,15 @@ class BuyCurrencyScreenViewModel @Inject constructor(
     }
 
     private fun validateAmountInput(amount: String) {
-        val quoteAmount = if (uiState.isTransformationCurrency.value.not()) {
-            amount.ifEmpty { DEFAULT_BASE_AMOUNT_STRING }.toDouble()
-        } else {
-            amount.ifEmpty { DEFAULT_AMOUNT }.toDouble()
-                .times(uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER)
-        }
-        val amountPlusFee = amount.ifEmpty { DEFAULT_BASE_AMOUNT_STRING }.toDouble()
-            .plus(uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0)
+        val quoteAmount = calculateQuote(
+            isTransformationCurrency = uiState.isTransformationCurrency.value,
+            amount = amount,
+            price = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER
+        )
+        val amountPlusFee = calculateAmountPlusFee(
+            amount = amount,
+            fee = uiState.pricesQuoteAndCommissions?.totalFee
+        )
 
         when {
             amount.isEmpty() -> isError(isError = true)
@@ -261,7 +264,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onLoading {
                     uiState = uiState.copy(
-                        isLoading = true, isPurchaseInProcess = true
+                        isLoading = true
                     )
                 }
                 result.onSuccess {
@@ -295,12 +298,12 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                         }
                     }
                     uiState = uiState.copy(
-                        isLoading = false, isPurchaseInProcess = false, isPurchaseSuccess = true
+                        isLoading = false, isPurchaseSuccess = true
                     )
                 }
                 result.onFailure {
                     uiState = uiState.copy(
-                        isLoading = false, isPurchaseInProcess = false, isPurchaseFailed = true
+                        isLoading = false, isPurchaseFailed = true
                     )
                 }
             }
@@ -327,9 +330,12 @@ class BuyCurrencyScreenViewModel @Inject constructor(
     }
 
     private fun clearInputData() {
+        timer.stopTimer()
+        confirmationTimer.stopTimer()
         uiState = uiState.copy(
             baseAmount = mutableStateOf(""),
-            quoteAmount = mutableStateOf("")
+            quoteAmount = mutableStateOf(""),
+            remainingTime = Duration.ZERO
         )
     }
 
@@ -350,7 +356,6 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         // timer *
         val openDialog: DialogParameters = DialogParameters(),
         val failureAction: () -> Unit = {},
-        val isPurchaseInProcess: Boolean = false, // to handle loading screen after purchase
         val isPurchaseFailed: Boolean = false, // to handle error screen after purchase
         val isPurchaseSuccess: Boolean = false, // to handle success screen after purchase
         //** validations

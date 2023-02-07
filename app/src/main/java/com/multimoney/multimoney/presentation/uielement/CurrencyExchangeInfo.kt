@@ -25,6 +25,20 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 
+/**
+ * CurrencyExchangeInfo:
+ * layout for exchange rate info, in the right column converted amount will be shown, in the left column exchange rate
+ *
+ * Parameters:
+ * @param leftTitleResource - title for left column
+ * @param rightTitleResource - title for right column
+ * @param exchangeRateText - text for left column
+ * @param convertedAmountText - text for right column
+ * @param contentColumnAlignment - alignment for left and right columns
+ * @param rightColumnWithSpacing - if true, right column will have spacing from divider
+ *
+ * **/
+
 @Composable
 fun CurrencyExchangeInfo(
     leftTitleResource: Int = R.string.empty,

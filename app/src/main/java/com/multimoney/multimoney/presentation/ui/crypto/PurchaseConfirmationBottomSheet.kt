@@ -32,13 +32,15 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.BuyCurrencyScreenViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.BuyCurrencyTitleConfirmationSectionSkeleton
-import com.multimoney.multimoney.presentation.uielement.CurrencyExchangeInfo
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.VoucherCurrencyExchangeInfoSkeleton
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.WhileLoadingSection
+import com.multimoney.multimoney.presentation.uielement.CurrencyExchangeInfo
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
+import com.multimoney.multimoney.presentation.util.calculateConfirmationBaseAmount
+import com.multimoney.multimoney.presentation.util.calculateConfirmationQuoteAmount
+import com.multimoney.multimoney.presentation.util.calculateConvertedCurrencyBalance
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
-import com.multimoney.multimoney.presentation.util.roundToEightDecimalPlaces
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -84,14 +86,16 @@ fun PurchaseConfirmationBottomSheet(
             )
         }
         ConfirmationBottomSheetContent(
-            quoteAmount = viewModel.uiState.quoteAmount.value.ifEmpty {
-                viewModel.uiState.baseAmount.value.ifEmpty { DEFAULT_AMOUNT }.toDouble()
-                    .times(viewModel.uiState.pricesQuoteAndCommissions?.price ?: 0.0)
-            }.toString().toDouble().toCurrencyFormat(),
-            baseAmount = viewModel.uiState.baseAmount.value.ifEmpty {
-                viewModel.uiState.quoteAmount.value.ifEmpty { DEFAULT_AMOUNT }.toDouble()
-                    .div(viewModel.uiState.pricesQuoteAndCommissions?.price ?: 0.0)
-            }.toString().toDouble().roundToEightDecimalPlaces(),
+            quoteAmount = calculateConfirmationQuoteAmount(
+                quoteAmount = viewModel.uiState.quoteAmount.value,
+                baseAmount = viewModel.uiState.baseAmount.value,
+                currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price
+            ),
+            baseAmount = calculateConfirmationBaseAmount(
+                quoteAmount = viewModel.uiState.quoteAmount.value,
+                baseAmount = viewModel.uiState.baseAmount.value,
+                currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price
+            ),
             asset = viewModel.asset,
             assetImageUrl = viewModel.assetImageUrl,
             secondsRemaining = viewModel.uiState.remainingTimeText,
@@ -100,12 +104,11 @@ fun PurchaseConfirmationBottomSheet(
             exchangeRate = viewModel.uiState.exchangeRate.toCurrencyFormat(
                 symbol = CurrencyType.Colon.symbol
             ),
-            convertedAmount = (viewModel.uiState.quoteAmount.value.ifEmpty {
-                (viewModel.uiState.baseAmount.value.toDoubleOrNull() ?: 0.0)
-                    .times(viewModel.uiState.pricesQuoteAndCommissions?.price ?: 0.0)
-                    .toString()
-            }.toDouble() * viewModel.uiState.exchangeRate).toCurrencyFormat(
-                symbol = CurrencyType.Colon.symbol
+            convertedAmount = calculateConvertedCurrencyBalance(
+                quoteAmount = viewModel.uiState.quoteAmount.value,
+                baseAmount = viewModel.uiState.baseAmount.value,
+                price = viewModel.uiState.pricesQuoteAndCommissions?.price,
+                exchangeRate = viewModel.uiState.exchangeRate
             ),
             onConfirm = {
                 coroutineScope.launch {
@@ -140,11 +143,11 @@ fun ConfirmationBottomSheetContent(
     ) {
         TitleSection(quoteAmount)
         PurchaseInfoSection(
-            assetImageUrl,
-            isLoading,
-            asset,
-            baseAmount,
-            secondsRemaining
+            assetImageUrl = assetImageUrl,
+            isLoading = isLoading,
+            asset = asset,
+            baseAmount = baseAmount,
+            secondsRemaining = secondsRemaining
         )
         AccountInfoSection(idCurrency)
         if (idCurrency == CurrencyType.Colon.id) {

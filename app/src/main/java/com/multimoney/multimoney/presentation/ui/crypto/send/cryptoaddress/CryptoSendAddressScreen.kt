@@ -12,6 +12,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -133,7 +134,8 @@ fun CryptoSendAddressContent(
                 id = R.string.crypto_send_address_information,
                 sharedViewModel.uiState.asset
             ),
-            textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.labelText)
+            textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.titleText),
+            leadingIconAlignment = Alignment.Top
         )
         // Crypto Address Text field
         CustomOutlinedTextField(
@@ -153,6 +155,7 @@ fun CryptoSendAddressContent(
             trailingIconActionEnabled = true,
             trailingIconAction = { onScanCryptoAddressClicked() },
             trailingIconColor = MultimoneyTheme.colors.cryptoActionButtonEnable,
+            trailingIconEndPadding = 16.dp,
             placeHolder = stringResource(id = R.string.crypto_send_address_placeholder),
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.crypto_send_address_required),

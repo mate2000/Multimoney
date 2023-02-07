@@ -9,8 +9,13 @@ import com.google.mlkit.vision.common.InputImage
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
+/**
+ * This class is responsible for analyzing the camera data(frames) and extracting the QR code from it using
+ * Google's ML Kit analyzer.
+ */
+
 @androidx.annotation.OptIn(androidx.camera.core.ExperimentalGetImage::class)
-class BarCodeAnalyser(
+class QrCodeAnalyser(
     private val onBarcodeDetected: (barcodes: List<Barcode>) -> Unit,
 ) : ImageAnalysis.Analyzer {
     private var lastAnalyzedTimeStamp = 0L
@@ -31,11 +36,11 @@ class BarCodeAnalyser(
                         if (barcodes.isNotEmpty()) {
                             onBarcodeDetected(barcodes)
                         } else {
-                            Timber.d("BarCodeAnalyser", "analyze: No barcode Scanned")
+                            Timber.d("QrCodeAnalyser", "analyze: No qr code Scanned")
                         }
                     }
                     .addOnFailureListener { exception ->
-                        Timber.d("BarCodeAnalyser", "Something went wrong $exception")
+                        Timber.d("QrCodeAnalyser", "Something went wrong $exception")
                     }
                     .addOnCompleteListener {
                         image.close()

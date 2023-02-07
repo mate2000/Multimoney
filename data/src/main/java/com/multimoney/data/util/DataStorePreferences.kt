@@ -129,6 +129,11 @@ class DataStorePreferences @Inject constructor(
 
     fun getNotShowAgainVerifyCryptoAddress(): Flow<Boolean> = getData(NOT_SHOW_AGAIN_VERIFY_CRYPTO_ADDRESS, false)
 
+    suspend fun isCameraPermissionRequested(permissionRequested: Boolean) =
+        setData(CAMERA_PERMISSION_STATE_KEY, permissionRequested)
+
+    fun isCameraPermissionRequested(): Flow<Boolean> = getData(CAMERA_PERMISSION_STATE_KEY, false)
+
     companion object {
         private val UNIQUE_ID = stringPreferencesKey("unique_id")
         private val TOKEN_KEY = stringPreferencesKey("auth_token")
@@ -148,5 +153,6 @@ class DataStorePreferences @Inject constructor(
         private val VISA_CARD_EXPIRED_DIALOG_KEY = booleanPreferencesKey("visa_card_expired_dialog_key")
         private val VOLATILE_DIALOG_KEY = booleanPreferencesKey("volatile_dialog_key")
         private val NOT_SHOW_AGAIN_VERIFY_CRYPTO_ADDRESS = booleanPreferencesKey("not_show_again_verify_crypto_address")
+        private val CAMERA_PERMISSION_STATE_KEY = booleanPreferencesKey("camera_permission_state_key")
     }
 }

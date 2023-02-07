@@ -14,6 +14,7 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.util.CryptoConstants.BTC
 import com.multimoney.multimoney.presentation.util.catalog.CheckboxDialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -168,9 +169,5 @@ class CryptoSendAddressViewModel @Inject constructor(
         ) : UIEvent
 
         object GetNotShowAgainCryptoAddressFromSharedPref : UIEvent
-    }
-
-    companion object {
-        private const val BTC = "BTC"
     }
 }

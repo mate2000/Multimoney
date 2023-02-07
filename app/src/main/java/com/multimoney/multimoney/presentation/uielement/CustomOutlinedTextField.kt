@@ -128,6 +128,7 @@ fun CustomOutlinedTextField(
     trailingIconColor: Color = WhiteTransparency60,
     trailingIconAction: () -> Unit = {},
     trailingIconActionEnabled: Boolean = false,
+    trailingIconEndPadding: Dp = 0.dp,
     placeHolder: String = "",
     keyboardOptions: KeyboardOptions,
     keyboardActions: KeyboardActions,
@@ -332,7 +333,8 @@ fun CustomOutlinedTextField(
                             Icon(
                                 painter = painterResource(id = it),
                                 contentDescription = "",
-                                tint = trailingIconColor
+                                modifier = Modifier.padding(trailingIconEndPadding),
+                                tint = trailingIconColor,
                             )
                         }
                     }

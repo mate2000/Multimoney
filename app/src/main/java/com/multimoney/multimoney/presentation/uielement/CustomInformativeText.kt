@@ -38,12 +38,13 @@ fun CustomInformativeText(
     leadingIconClick: () -> Unit = {},
     trailingIconClick: () -> Unit = {},
     text: String = "",
-    textStyle: TextStyle = TextStyle()
+    textStyle: TextStyle = TextStyle(),
+    leadingIconAlignment: Alignment.Vertical = Alignment.CenterVertically
 ) {
     Row(modifier = modifier, horizontalArrangement = Arrangement.SpaceBetween) {
         leadingIcon?.let {
             Image(
-                modifier = Modifier.align(Alignment.CenterVertically).clickable { leadingIconClick() },
+                modifier = Modifier.align(leadingIconAlignment).clickable { leadingIconClick() },
                 painter = painterResource(it),
                 contentDescription = "",
                 contentScale = ContentScale.Fit

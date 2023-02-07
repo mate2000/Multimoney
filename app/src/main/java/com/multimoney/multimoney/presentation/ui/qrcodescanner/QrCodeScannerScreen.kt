@@ -3,11 +3,9 @@ package com.multimoney.multimoney.presentation.ui.qrcodescanner
 import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.Settings
 import android.view.ViewGroup
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
@@ -38,18 +36,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.common.util.concurrent.ListenableFuture
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.qrcodescanner.QrCodeScannerViewModel.Companion.SCHEME_PACKAGE
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import timber.log.Timber
 import java.util.concurrent.ExecutorService
+import com.multimoney.multimoney.presentation.util.checkPermission
 import java.util.concurrent.Executors
 
 @Composable
@@ -61,14 +59,31 @@ fun QrCodeScannerScreen(
 
     val launcherContactPermissionDialog = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        if (!isGranted) {
-            handlePermissionNotGranted(context, viewModel)
-        }
+    ) {
+        viewModel.onUIEvent(QrCodeScannerViewModel.UIEvent.OnPermissionResult)
+    }
+    val permissionFlow: (fromRationale: Boolean) -> Unit = {
+        context.checkPermission(
+            permission = Manifest.permission.CAMERA,
+            permissionGrantedAction = {},
+            showRationaleAction = { isPermanentlyDenied ->
+                if (isPermanentlyDenied) {
+                    viewModel.onUIEvent(QrCodeScannerViewModel.UIEvent.OnShowEnablePermissionsInSettingsDialog)
+                } else {
+                    viewModel.onUIEvent(QrCodeScannerViewModel.UIEvent.OnCameraPermissionMissed)
+                }
+            },
+            launchFromRationale = { isLastRetry ->
+                viewModel.setIfIsLastPermissionRetry(isLastRetry)
+            },
+            comesFromRationale = it,
+            isFirstRequest = viewModel.isCameraPermissionAlreadyRequested.not(),
+            launcher = launcherContactPermissionDialog
+        )
     }
 
     LaunchedEffect(true) {
-        checkPermission(context, launcherContactPermissionDialog)
+        permissionFlow(false)
     }
 
     QrCodeScannerContent(context, onPopBackStack)
@@ -89,14 +104,14 @@ fun QrCodeScannerScreen(
     }
 
     if (viewModel.uiState.requestCameraPermission.value) {
-        launcherContactPermissionDialog.launch(Manifest.permission.CAMERA)
+        permissionFlow(viewModel.showRationale)
     }
 
     if (viewModel.uiState.openPermissionInSettings.value) {
-        val i = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-            data = Uri.fromParts("package", context.applicationContext.packageName, null)
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+            data = Uri.fromParts(SCHEME_PACKAGE, context.applicationContext.packageName, null)
         }
-        context.startActivity(i)
+        context.startActivity(intent)
         viewModel.onUIEvent(QrCodeScannerViewModel.UIEvent.OnPermissionInSettingsOpened)
         onPopBackStack("")
     }
@@ -141,7 +156,7 @@ fun QrCodeScannerContent(context: Context, onPopBackStack: (String) -> Unit) {
                             it.setSurfaceProvider(previewView.surfaceProvider)
                         }
                         val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-                        val barcodeAnalyser = BarCodeAnalyser { barcodes ->
+                        val barcodeAnalyser = QrCodeAnalyser { barcodes ->
                             barcodes.forEach { barcode ->
                                 barcode.rawValue?.let { barcodeValue ->
                                     barCodeVal.value = barcodeValue
@@ -188,44 +203,4 @@ fun QrCodeScannerContent(context: Context, onPopBackStack: (String) -> Unit) {
             )
         }
     }
-}
-
-private fun checkPermission(
-    context: Context,
-    requestPermission: ManagedActivityResultLauncher<String, Boolean>
-) {
-    val cameraPermission = Manifest.permission.CAMERA
-
-    val isCameraPermissionGranted = ContextCompat.checkSelfPermission(
-        context,
-        cameraPermission
-    ) == PackageManager.PERMISSION_GRANTED
-
-    if (!isCameraPermissionGranted) {
-        requestPermission.launch(cameraPermission)
-    }
-}
-
-/**
- * Shows an appropriate dialog after permission was not granted.
- */
-private fun handlePermissionNotGranted(context: Context, viewModel: QrCodeScannerViewModel) {
-    context.findActivity()?.let { activity ->
-        if (ActivityCompat.shouldShowRequestPermissionRationale(
-                activity,
-                Manifest.permission.CAMERA
-            )
-        ) {
-            viewModel.onUIEvent(QrCodeScannerViewModel.UIEvent.OnCameraPermissionMissed)
-        } else {
-            showEnablePermissionsInSettingsDialog(viewModel)
-        }
-    }
-}
-
-/**
- * Shows dialog that can redirect the user to system settings screen for the app.
- */
-private fun showEnablePermissionsInSettingsDialog(viewModel: QrCodeScannerViewModel) {
-    viewModel.onUIEvent(QrCodeScannerViewModel.UIEvent.OnShowEnablePermissionsInSettingsDialog)
 }

@@ -102,10 +102,10 @@ fun ACHFavoriteContentList(
         AHCFavoriteList.forEach { (_, favorite) ->
             item {
                 CustomInfoButton(
-                    title = favorite.first()?.description.orEmpty(),
-                    subtitle = favorite.first()?.destinationBankDescription.orEmpty(),
+                    title = favorite.firstOrNull()?.description.orEmpty(),
+                    subtitle = favorite.firstOrNull()?.destinationBankDescription.orEmpty(),
                     subtitle2 = getMaskedAccount(
-                        favorite.first()?.accountNumber.orEmpty()
+                        favorite.firstOrNull()?.accountNumber.orEmpty()
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -114,7 +114,7 @@ fun ACHFavoriteContentList(
                     endIcon = R.drawable.ic_options,
                     startIcon = favorite.first()?.destinationAccountCurrencyId?.getCurrencyFromId()?.accountIcon,
                     titleIcon = R.drawable.ic_star_filled,
-                    onEndIconClick = { favorite.first()?.let { onEndIconClick(it) } },
+                    onEndIconClick = { favorite.firstOrNull()?.let { onEndIconClick(it) } },
                     onClick = {
                         onFavoriteClick(favorite)
                     }

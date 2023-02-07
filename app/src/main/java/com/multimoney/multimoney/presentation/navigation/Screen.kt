@@ -196,6 +196,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "profile_screen"
     )
 
+    object ProfileMyAccountsScreen : Screen(
+        "profile_my_accounts_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER_NAME}",
+        "profile_my_accounts_screen"
+    )
+
     object ProfileTermsAndConditionsScreen : Screen(
         "profile_terms_and_conditions_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$PK_USER}/{$USER_NAME}",
         "profile_terms_and_conditions_screen"

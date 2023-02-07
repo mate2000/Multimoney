@@ -6,7 +6,9 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
@@ -231,3 +233,146 @@ fun CustomInfoButton(
         }
     }
 }
+
+
+@Composable
+fun CustomInfoButtonFavoriteAccount(
+    modifier: Modifier = Modifier,
+    imageModifier: Modifier = Modifier,
+    startIcon: Int? = R.drawable.ic_payment_fee_icon,
+    title: String = "",
+    subtitle: String = "",
+    endIcon: Int? = R.drawable.ic_right_chevron,
+    shouldCenterEndIcon: Boolean = true,
+    onClick: () -> Unit = {},
+    onEndIconClick: () -> Unit = {},
+    enable: Boolean = true
+) {
+    val buttonColor: ButtonColors = ButtonDefaults.buttonColors(
+        backgroundColor = Color.Transparent,
+        disabledBackgroundColor = Color.Transparent
+    )
+
+    val gradientBorderOneColor: Color
+    val gradientBorderTwoColor: Color
+    val background: Color
+    val titleColor: Color
+    val subtitleColor: Color
+
+    if (isSystemInDarkTheme()) {
+        gradientBorderOneColor = GradientGrey1
+        gradientBorderTwoColor = GradientGrey2
+        background = if (enable) WhiteTransparency5 else Color.Transparent
+        titleColor = WhiteTransparency90
+        subtitleColor = WhiteTransparency60
+    } else {
+        gradientBorderOneColor = GradientGrey1
+        gradientBorderTwoColor = GradientGrey2
+        background = if (enable) WhiteTransparency5 else Color.Transparent
+        titleColor = WhiteTransparency90
+        subtitleColor = WhiteTransparency60
+    }
+
+    Button(
+        onClick = onClick,
+        modifier = modifier
+            .border(
+                width = 1.dp,
+                brush = Brush.verticalGradient(
+                    colors = listOf(gradientBorderOneColor, gradientBorderTwoColor)
+                ),
+                shape = RoundedCornerShape(20.dp)
+            )
+            .wrapContentHeight(),
+        shape = RoundedCornerShape(20.dp),
+        colors = buttonColor,
+        contentPadding = PaddingValues(0.dp),
+        enabled = enable
+    ) {
+        ConstraintLayout(
+            Modifier
+                .background(background)
+                .fillMaxWidth()
+        ) {
+            val (startIconId, titleRowId, subTitleId, subTitle2Id, endIconId) = createRefs()
+            if (startIcon != null) {
+                Image(
+                    painter = painterResource(id = startIcon),
+                    contentDescription = "",
+                    modifier = imageModifier
+                        .constrainAs(startIconId) {
+                            top.linkTo(parent.top, margin = 17.dp)
+                            start.linkTo(parent.start, margin = 18.dp)
+                            bottom.linkTo(parent.bottom, margin = 17.dp)
+                        }
+                        .padding(end = 20.dp)
+                )
+            }
+            if (subtitle.isNotEmpty()) {
+                Row(
+                    modifier = Modifier.constrainAs(titleRowId) {
+                        start.linkTo(startIconId.end)
+                        top.linkTo(startIconId.top)
+                        bottom.linkTo(subTitleId.top)
+                    },
+                ) {
+
+                    Text(
+                        text = title,
+                        style = Typography.body2.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 15.sp
+                        ),
+                        color = titleColor,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_star_filled),
+                        contentDescription = "",
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
+                }
+
+                Text(
+                    text = subtitle,
+                    modifier = Modifier.constrainAs(subTitleId) {
+                        top.linkTo(titleRowId.bottom, margin = 4.dp)
+                        start.linkTo(titleRowId.start)
+                        if (startIcon == null) bottom.linkTo(parent.bottom, margin = 10.dp)
+                        else bottom.linkTo(startIconId.bottom)
+                        if (endIcon == null) end.linkTo(parent.end, margin = 10.dp)
+                        else end.linkTo(endIconId.start)
+                        width = Dimension.fillToConstraints
+                        height = Dimension.wrapContent
+                    },
+                    color = subtitleColor,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = Typography.caption.copy(fontSize = 13.sp)
+                )
+            }
+            if (endIcon != null) {
+                Image(
+                    painter = painterResource(id = endIcon),
+                    modifier = Modifier
+                        .constrainAs(endIconId) {
+                            if (shouldCenterEndIcon) {
+                                top.linkTo(parent.top)
+                                bottom.linkTo(parent.bottom)
+                            } else {
+                                // align the icon to the top
+                                top.linkTo(parent.top, 17.dp)
+                            }
+                            end.linkTo(parent.end, margin = 18.dp)
+                        }
+                        .clickable {
+                            onEndIconClick()
+                        },
+                    contentDescription = ""
+                )
+            }
+        }
+    }
+}
+

@@ -711,7 +711,7 @@ class ProductViewModel @Inject constructor(
                 idBrand = uiState.idBrand.toIntOrNull() ?: 0,
                 country = "",
                 idAccount = 0,
-                accountNumber = ""
+                accountNumber = "",
             ).collectLatest { result ->
                 result.onSuccess { accountList ->
                     onLoadingValueChange(false)

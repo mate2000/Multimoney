@@ -4,8 +4,8 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.accountsmart.MutationProcessTransfer365MobileUseCase
-import java.util.Calendar
 import com.multimoney.domain.interaction.accountsmart.MutationProcessTransfer365UseCase
 import com.multimoney.domain.model.accountsmart.Transfer365Account
 import com.multimoney.domain.model.util.onFailure
@@ -16,15 +16,16 @@ import com.multimoney.multimoney.presentation.navigation.DESTINY_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.ORIGIN_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DisplayAccount
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getCurrentTime
-import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
-import com.multimoney.multimoney.presentation.util.getCurrencyFromId
-import com.multimoney.multimoney.presentation.util.getMaskedSmartAccount
+import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.Calendar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -54,7 +55,10 @@ class Transfer365AmountViewModel @Inject constructor(
                 originAccountDisplay = DisplayAccount(
                     sheetLabel = R.string.transfer_365_pre_confirmation_from_label,
                     sheetTitleResource = originCurrency?.myAccountSmartName,
-                    sheetSubtitleResource = R.string.empty,
+                    sheetSubtitle = getMaskedAccount(
+                        prefix = Brand.ElSalvador.countryCode.uppercase(),
+                        accountNumber = smartAccount?.accountNumber.orEmpty()
+                    ),
                     icon = R.drawable.ic_multimoney_smart
                 ),
                 currency = originCurrency?.symbol ?: CurrencyType.Dollar.symbol,
@@ -72,8 +76,8 @@ class Transfer365AmountViewModel @Inject constructor(
                 }
                 SmartTransferTypes.SmartToOtherBank.id -> {
                     "${transfer365Account.bankName} | ${
-                        getMaskedSmartAccount(
-                            prefix = "",
+                        getMaskedAccount(
+                            prefix = Brand.ElSalvador.countryCode.uppercase(),
                             accountNumber = transfer365Account.accountNumber.orEmpty()
                         )
                     }"

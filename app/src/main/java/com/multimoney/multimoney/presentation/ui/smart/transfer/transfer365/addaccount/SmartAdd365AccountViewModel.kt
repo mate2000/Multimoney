@@ -260,7 +260,6 @@ class SmartAdd365AccountViewModel @Inject constructor(
                         uiState.phoneNumber.isEmpty() -> false
                 transferType == SmartTransferTypes.SmartToMobile.id &&
                         uiState.isPhoneNumberError -> false
-                uiState.isFavorite && uiState.nickname.isEmpty() -> false
                 else -> true
             }
         )
@@ -299,7 +298,7 @@ class SmartAdd365AccountViewModel @Inject constructor(
                 isFavorite = uiState.isFavorite,
                 typeAccountId = uiState.type?.typeId?.toIntOrNull() ?: 0,
                 destinationBankId = uiState.bank?.bankId?.toInt() ?: 0,
-                description = if (uiState.isFavorite) uiState.nickname else fullName,
+                description = if (uiState.isFavorite) uiState.nickname.ifEmpty { fullName } else fullName,
                 identificationNumber = uiState.documentNumber,
                 identificationTypeAccount = uiState.document?.idDocument ?: 0
             ).collectLatest { result ->

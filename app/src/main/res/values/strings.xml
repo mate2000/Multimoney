@@ -85,7 +85,7 @@
 
     <!-- OnBoarding Salvador-->
     <string name="onboarding_salvador_step_one_title" translatable="false">Multiplicá tus ahorros</string>
-    <string name="onboarding_salvador_step_one_sub_title" translatable="false">Ganá 3.5% de interés anual.</string>
+    <string name="onboarding_salvador_step_one_sub_title" translatable="false">Ganá 3.5\% de interés anual.</string>
     <string name="onboarding_salvador_step_two_title" translatable="false">Tu crédito en 5 minutos</string>
     <string name="onboarding_salvador_step_two_sub_title" translatable="false">Recibe hasta $25,000 con solo tu DUI.</string>
     <string name="onboarding_salvador_step_three_title" translatable="false">Invierte en cripto</string>
@@ -94,7 +94,7 @@
 
     <!-- OnBoarding Costa Rica-->
     <string name="onboarding_costa_rica_step_one_title" translatable="false">Multiplicá tus ahorros</string>
-    <string name="onboarding_costa_rica_step_one_sub_title" translatable="false">Ganá 7% de interés anual en colones y 3.25% en dólares.</string>
+    <string name="onboarding_costa_rica_step_one_sub_title" translatable="false">Ganá 7\% de interés anual en colones y 3.25\% en dólares.</string>
     <string name="onboarding_costa_rica_step_two_title" translatable="false">Tu crédito en 5 minutos</string>
     <string name="onboarding_costa_rica_step_two_sub_title" translatable="false">Recibí hasta ₡20 millones con solo tu identificación.</string>
     <string name="onboarding_costa_rica_step_three_title" translatable="false">Invertí en cripto</string>
@@ -369,7 +369,6 @@
     <string name="home_product_expiration" translatable="false">Vence</string>
     <string name="home_product_expired" translatable="false">Venció</string>
     <string name="home_product_remaining" translatable="false">Saldo %s</string>
-    <string name="home_product_amount" translatable="false">de %s</string>
     <string name="home_crypto_card_with_balance_label" translatable="false">Balance</string>
     <string name="home_crypto_card_smart_in_process_label" translatable="false">Cripto</string>
     <string name="home_crypto_card_with_balance_zero_label" translatable="false">0.00</string>
@@ -421,6 +420,30 @@
     <string name="profile_change_email_title" translatable="false">Cambiar correo electrónico</string>
     <string name="profile_change_email_enter_new" translatable="false">Nuevo correo electrónico</string>
     <string name="profile_change_email_enter_new_confirmation" translatable="false">Confirmar nuevo correo electrónico</string>
+    <string name="profile_accounts_favorites" translatable="false">Favoritas</string>
+    <string name="profile_accounts_registered" translatable="false">Cuentas registradas</string>
+    <string name="profile_my_acounts_bottom_sheet_title" translatable="false">Mis cuentas</string>
+    <string name="profile_my_accounts_edit_nickname" translatable="false">Editar apodo</string>
+    <string name="profile_my_accounts_delete_account" translatable="false">Eliminar cuenta</string>
+    <string name="profile_my_account_account_updated" translatable="false">Cuenta actualizada</string>
+    <string name="profile_my_account_nickname_is_required" translatable="false">El apodo es requerido</string>
+    <string name="profile_my_accounts_add_as_fav" translatable="false">Agregar como favorita</string>
+    <string name="profile_my_accounts_delete_as_fav" translatable="false">Eliminar como favorita</string>
+    <string name="profile_my_accounts_remove_from_fav" translatable="false">Quitar cuenta de favoritos</string>
+    <string name="profile_my_accounts_added_as_fav" translatable="false">Cuenta agregada a favoritos</string>
+    <string name="profile_my_accounts_updated" translatable="false">Cuenta actualizada</string>
+    <string name="profile_my_accounts_deleted" translatable="false">Cuenta eliminada</string>
+    <string name="profile_my_accounts_removed_from_fav" translatable="false">Cuenta eliminada de favoritos</string>
+    <string name="profile_my_accounts_you_can_fav_later" translatable="false">Podras seleccionarla como favorito despues</string>
+    <string name="profile_my_accounts_save_changes" translatable="false">Guardar cambios</string>
+    <string name="profile_my_accounts_empty_state_title_gt" translatable="false">No tienes cuentas registradas</string>
+    <string name="profile_my_accounts_empty_state_title" translatable="false">No tenés cuentas registradas</string>
+    <string name="profile_my_accounts_are_you_sure_to_delete_gt" translatable="false">¿Estás seguro que quieres eliminar esta cuenta?</string>
+    <string name="profile_my_accounts_are_you_sure_to_delete" translatable="false">¿Estás seguro que querés eliminar esta cuenta?</string>
+    <string name="profile_my_accounts_will_be_deleted_permanently" translatable="false">Los datos de la cuenta serán borrados de la app de forma permanente.</string>
+    <string name="profile_my_accounts_account_nickname" translatable="false">Apodo de la cuenta</string>
+
+
 
     <!-- Automatic Logout -->
     <string name="automatic_logout_dialog_description" translatable="false">No detectamos actividad en la aplicación, por motivos de seguridad la app se cerrará en %s segundos.</string>
@@ -712,7 +735,7 @@
     <string name="non_pre_approved_additional_questions_income_label" translatable="false">Ingreso mensual</string>
     <string name="non_pre_approved_additional_questions_income_placeholder" translatable="false">%s 000</string>
     <string name="non_pre_approved_additional_questions_employment_situation_label" translatable="false">Situación laboral</string>
-    <string name="non_pre_approved_additional_questions_success_alert_result_title" translatable="false">¡Tienes %1s%2s pre aprobados!</string>
+    <string name="non_pre_approved_additional_questions_success_alert_result_title" translatable="false">¡Tienes %1s pre aprobados!</string>
     <string name="non_pre_approved_additional_questions_success_alert_result_description" translatable="false">Solicita tu dinero y recíbelo en menos de 10 minutos</string>
     <string name="non_pre_approved_additional_questions_error_alert_result_title" translatable="false">Lo sentimos, no hay opciones de crédito</string>
     <string name="non_pre_approved_additional_questions_error_alert_result_description" translatable="false">Comunícate con nosotros si tienes consultas</string>
@@ -811,7 +834,7 @@
     <string name="visa_card_tap_and_pay_title" translatable="false">Pago con Contactless</string>
 
     <!-- visa tokenization waiting -->
-    <string name="visa_tokenization_waiting_description_one_bold" translatable="false">100% libre de plástico.</string>
+    <string name="visa_tokenization_waiting_description_one_bold" translatable="false">100\% libre de plástico.</string>
     <string name="visa_tokenization_waiting_description_one" translatable="false">Tu tarjeta\nestá segura en tu teléfono</string>
     <string name="visa_tokenization_waiting_description_two_first" translatable="false">Podrás</string>
     <string name="visa_tokenization_waiting_description_two_bold" translatable="false">utilizar tu línea de crédito</string>
@@ -1198,10 +1221,32 @@
 
     <!--Crypto Purchase Flow-->
     <string name="crypto_purchase_flow_title" translatable="false">¿Cúanto querés comprar?</string>
-    <string name="crypto_purchase_flow_exchange_reference" translatable="false">%1s %2 = $%3s</string>
+    <string name="crypto_purchase_flow_exchange_reference" translatable="false">1 %2s = %3s</string>
     <string name="crypto_purchase_flow_exchange_reference_edittext" translatable="false">≈ %1s %2s</string>
+    <string name="crypto_purchase_flow_exchange_reference_edittext_dollars" translatable="false">≈ %1s</string>
     <string name="crypto_purchase_flow_available_smart_amount" translatable="false">Disponible para compra</string>
     <string name="crypto_purchase_flow_price_expires_in" translatable="false">Precio de compra expira en</string>
+    <string name="crypto_purchase_flow_amount_asset_placeholder" translatable="false">0 %1s</string>
+    <string name="crypto_purchase_flow_exchange_type_title" translatable="false">Tipo de cambio</string>
+    <string name="crypto_purchase_flow_exchange_total_title" translatable="false">Total a debitar</string>
+    <string name="crypto_purchase_flow_exit_dialog_title" translatable="false">¿Seguro de que querés salir?</string>
+    <string name="crypto_purchase_flow_exit_dialog_body_message" translatable="false">Si cancelás el proceso no se realizará la compra de la cripto</string>
+    <string name="crypto_purchase_flow_exit_dialog_cancel_button" translatable="false">Salir</string>
+
+    <!--Crypto Purchase Flow - Confirmation-->
+    <string name="crypto_purchase_flow_confirmation_title" translatable="false">Monto a comprar</string>
+    <string name="crypto_purchase_flow_confirmation_from_account_title" translatable="false">Desde la cuenta</string>
+    <string name="crypto_purchase_flow_confirmation_from_account" translatable="false">Mi cuenta Smart | %1s</string>
+    <string name="crypto_purchase_flow_confirmation_estimated_amount" translatable="false">Valor aproximado en</string>
+    <string name="crypto_purchase_flow_confirmation_btn_buy" translatable="false">Comprar</string>
+
+    <!--Crypto Purchase Flow - Errors-->
+    <string name="crypto_purchase_flow_error_minimum_amount" translatable="false">"El monto mínimo de compra es de $5"</string>
+    <string name="crypto_purchase_flow_error_available_amount" translatable="false">"El monto disponible es de %1s"</string>
+    <string name="crypto_purchase_flow_error_available_amount_commission" translatable="false">"El monto más la comisión supera el\nmonto disponible"</string>
+    <string name="crypto_purchase_flow_error_weekly_amount_exceeded" translatable="false">El monto supera el limite de compra\nmensual de $10,000</string>
+    <string name="crypto_purchase_flow_error_no_funds" translatable="false">Fondos Insuficientes para aplicar la compra</string>
+    <string name="crypto_purchase_flow_error_price_expired" translatable="false">Cotización caducada</string>
 
     <!-- Evicertia screen -->
     <string name="smart_evicertia_missing_signature_title_card" translatable="false">¡Solo falta tu firma!</string>
@@ -1245,7 +1290,7 @@
     <!-- Payment Cards List -->
     <string name="payment_cards_list_empty_state_description" translatable="false">Agregá una tarjeta para que podás realizar tus abonos</string>
     <string name="payment_cards_list_create" translatable="false">Agregar tarjeta</string>
-    <string name="payment_cards_list_title" translatable="false">Tarjetas Visa</string>
+    <string name="payment_cards_list_title" translatable="false">Mis Tarjetas</string>
     <string name="smart_payment_cards_list_card_title" translatable="false">Seleccioná la tarjeta con la que querés ahorrar</string>
 
     <!-- Payment Amount Card -->
@@ -1390,6 +1435,8 @@
     <string name="smart_iban_register_account_error" translatable="false">Número inválido</string>
     <string name="smart_iban_register_email_error" translatable="false">Formato incorrecto. Debe contener “@” y “.”</string>
     <string name="smart_iban_register_favorite_label" translatable="false">Apodo</string>
+    <string name="smart_iban_register_full_name_label" translatable="false">Nombre completo</string>
+    <string name="smart_iban_register_identification_label" translatable="false">Cédula</string>
 
     <string name="smart_iban_transfer_send_money" translatable="false">Enviar dinero</string>
     <string name="smart_iban_transfer_from_account" translatable="false">Desde mi cuenta %s</string>

@@ -10,6 +10,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnAbandonFlow
@@ -30,7 +31,7 @@ import com.multimoney.multimoney.presentation.uielement.LoadingMultiMoney
 import com.multimoney.multimoney.presentation.uielement.SmartPaymentBottomSheet
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.getMaskedSmartAccount
+import com.multimoney.multimoney.presentation.util.getMaskedAccount
 
 @Composable
 fun Transfer365AmountScreen(
@@ -98,7 +99,10 @@ fun Transfer365AmountContent(viewModel: Transfer365AmountViewModel = hiltViewMod
             titleId = R.string.transfer_365_amount_title,
             originAccountSubtitle = stringResource(
                 id = viewModel.fromSmartLabel,
-                getMaskedSmartAccount(accountNumber = viewModel.smartAccount?.accountNumber.orEmpty())
+                getMaskedAccount(
+                    accountNumber = viewModel.smartAccount?.accountNumber.orEmpty(),
+                    prefix = Brand.ElSalvador.countryCode.uppercase()
+                )
             ),
             currentAmount = viewModel.amountUIState.currentAmountValueString,
             amountPlaceHolderId = viewModel.amountUIState.placeholder,

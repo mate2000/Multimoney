@@ -3,6 +3,7 @@ package com.multimoney.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.apollographql.apollo3.api.Optional
 import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.smartaccount.mapToDomain
 import com.multimoney.data.mapper.smartaccount.mapToDomainModel
@@ -360,7 +361,8 @@ class SmartAccountRepositoryImpl @Inject constructor(
         identification: String,
         country: String,
         idAccount: Long,
-        accountNumber: String
+        accountNumber: String,
+        isFavorite: Boolean?
     ): Flow<MultimoneyResult<SinpeAccountResult?>> {
         return fetchData(
             apolloCall = graphqlApi.queryListSinpeAccount(
@@ -369,7 +371,8 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 identification,
                 country,
                 idAccount,
-                accountNumber
+                accountNumber,
+                isFavorite
             ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
@@ -425,6 +428,51 @@ class SmartAccountRepositoryImpl @Inject constructor(
             country,
             idAccount,
             option
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+    override suspend fun mutationManageSinpeAccountUpdate(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        accountNumber: String,
+        idCurrency: Long,
+        nameAccount: String,
+        idAccount: Int?,
+        isFavorite: Boolean,
+        idBank: Long,
+        typeAccount: Long
+    ): Flow<MultimoneyResult<SaveSinpeAccount?>> = fetchData(
+        apolloCall = graphqlApi.mutationManageSinpeAccountUpdate(
+            user,
+            idBrand,
+            identification,
+            accountNumber,
+            idCurrency,
+            nameAccount,
+            idAccount,
+            isFavorite,
+            idBank,
+            typeAccount
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun mutationManageSinpeAccountDelete(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        idAccount: Int?,
+    ): Flow<MultimoneyResult<SaveSinpeAccount?>> = fetchData(
+        apolloCall = graphqlApi.mutationManageSinpeAccountDelete(
+            user,
+            idBrand,
+            identification,
+            idAccount,
         ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())

@@ -31,7 +31,6 @@ import com.multimoney.domain.model.accountsmart.VisaSmartPayment
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
 import kotlinx.coroutines.flow.Flow
-import java.util.*
 
 interface SmartAccountRepository {
 
@@ -307,7 +306,7 @@ interface SmartAccountRepository {
         identification: String,
         idBrand: Int,
         accountStatus: Int
-    ) : Flow<MultimoneyResult<List<AccountSmartForBuyCrypto>?>>
+    ): Flow<MultimoneyResult<List<AccountSmartForBuyCrypto>?>>
 
     suspend fun mutationUpdateSmartAccountStatus(
         user: String,
@@ -317,5 +316,5 @@ interface SmartAccountRepository {
         typeState: String,
         idAccountSysde: Long,
         idAccountRequest: Long
-    ) : Flow<MultimoneyResult<SmartAccountStatusResult?>>
+    ): Flow<MultimoneyResult<SmartAccountStatusResult?>>
 }

@@ -99,6 +99,13 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
+    private fun onExit(){
+        popAndNavigateTo(
+            route = Screen.SignInScreen.route,
+            popTo = Screen.SignUpScreen.route
+        )
+    }
+
     private fun navigateToSplashComeBack(step: Int) {
         navigateTo("${Screen.SignUpSplashComeBackScreen.baseRoute}/".plus(step).plus("/$idBrand"))
     }
@@ -304,7 +311,7 @@ class SignUpViewModel @Inject constructor(
             is OnHidePasswordBottomSheet -> onHidePasswordBottomSheet()
             is OnShowPasswordBottomSheet -> onShowPasswordBottomSheet()
             is UIEvent.OnSetIdBrand -> onSetIdBrand(event.idBrand)
-
+            is UIEvent.OnExit -> onExit()
         }
     }
 
@@ -361,6 +368,7 @@ class SignUpViewModel @Inject constructor(
         object OnHidePasswordBottomSheet : UIEvent()
         object OnShowPasswordBottomSheet : UIEvent()
         data class OnSetIdBrand(val idBrand: Int) : UIEvent()
+        object OnExit : UIEvent()
     }
 
     companion object {

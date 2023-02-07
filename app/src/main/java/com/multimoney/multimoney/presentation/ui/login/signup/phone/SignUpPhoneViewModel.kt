@@ -7,6 +7,7 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberType.MOBILE
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.interaction.security.QueryGetCountryPhoneCodesUseCase
+import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -17,30 +18,43 @@ import com.togitech.ccp.data.CountryData
 import com.togitech.ccp.data.utils.getLibCountries
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class SignUpPhoneViewModel @Inject constructor(
     private val queryGetCountryPhoneCodesUseCase: QueryGetCountryPhoneCodesUseCase,
-
-    ) : BaseViewModel(false) {
+) : BaseViewModel(false) {
 
     // UIState
     var uiState by mutableStateOf(UIState())
         private set
 
+    private fun onSetupDefaultCountry(idBrand: Int) {
+        uiState = uiState.copy(idBrand = idBrand)
+        uiState = when (uiState.idBrand) {
+            Brand.Guatemala.id -> uiState.copy(currentBrand = Brand.Guatemala)
+            Brand.ElSalvador.id -> uiState.copy(currentBrand = Brand.ElSalvador)
+            else -> uiState.copy(currentBrand = Brand.CostaRica)
+        }
+        val defaultCountry =
+            getLibCountries().find { it.countryCode == uiState.currentBrand.countryCode }
+        if (defaultCountry != null) {
+            uiState =
+                uiState.copy(countriesList = mutableListOf(defaultCountry))
+        }
+        uiState = uiState.copy(selectedCountry = uiState.countriesList?.first())
+    }
+
     private fun onStart(
         phoneCode: String,
-        countryCode: String,
         phoneNumber: String,
         signUpStartData: () -> Unit,
-        idBrand: Int
+        onFailure: () -> Unit
     ) {
-        uiState = uiState.copy(phoneCode = phoneCode, phoneNumber = phoneNumber, idBrand = idBrand)
+        uiState = uiState.copy(phoneCode = phoneCode, phoneNumber = phoneNumber)
         signUpStartData.invoke()
-        isFormValid(countryCode)
-        callQueryGetCountryPhoneCodes(uiState.idBrand)
-
+        callQueryGetCountryPhoneCodes(uiState.idBrand, onFailure)
     }
 
     private fun isFormValid(countryCode: String) = emitBaseEvent(
@@ -117,46 +131,46 @@ class SignUpPhoneViewModel @Inject constructor(
             SignUpStep.Six
         }
 
-    private fun callQueryGetCountryPhoneCodes(idBrand: Int) = executeUseCase {
-        queryGetCountryPhoneCodesUseCase.invoke(idBrand = idBrand).collectLatest { result ->
-            result.onSuccess { response ->
-                val newCountriesList = mutableListOf<CountryData>()
-                uiState = uiState.copy(countriesList = mutableListOf())
-                response.countryPhoneCodes.forEach { country ->
-                    val newCountry = getLibCountries().find { countryFromLibrary ->
-                        countryFromLibrary.countryPhoneCode.replace("+", "").toInt() == country.code
+    private fun callQueryGetCountryPhoneCodes(idBrand: Int, onFailure: () -> Unit) =
+        executeUseCase {
+            queryGetCountryPhoneCodesUseCase.invoke(idBrand = idBrand).collectLatest { result ->
+                result.onSuccess { response ->
+                    uiState = uiState.copy(countriesList = mutableListOf())
+                    val list = response.countryPhoneCodes.flatMap { fromApi ->
+                        getLibCountries().filter { fromApi.isoCode.lowercase(Locale.getDefault()) == it.countryCode }
                     }
-                    if (newCountry != null) {
-                        newCountriesList.add(CountryData(cNames = country.country, cCodes = newCountry.countryCode, countryPhoneCode = newCountry.countryPhoneCode))
-                    }
+                    uiState = uiState.copy(
+                        countriesList = list.toMutableList(),
+                        selectedCountry = list.toMutableList().first()
+                    )
+                }.onFailure {
+                    onFailure.invoke()
                 }
-                uiState = uiState.copy(countriesList = newCountriesList)
             }
         }
-    }
 
     private fun onSetUpIdBrand(idBrand: Int) {
         uiState = uiState.copy(idBrand = idBrand)
     }
 
-    private fun initCountryCode(): String {
-        return when (uiState.idBrand) {
-            Brand.Guatemala.id -> Brand.Guatemala.countryCode
-            Brand.CostaRica.id -> Brand.CostaRica.countryCode
-            Brand.ElSalvador.id -> Brand.ElSalvador.countryCode
-            else -> ""
-        }
+    private fun onQueryError() {
+        uiState = uiState.copy(isAlertResultVisible = true)
     }
 
     data class UIState(
         // Fields
         val phoneCode: String = "",
         val phoneNumber: String = "",
-        val phoneNumberError: Pair<Boolean, Int> = Pair(false, R.string.sign_up_phone_not_valid),
+        val phoneNumberError: Pair<Boolean, Int> = Pair(
+            false,
+            R.string.sign_up_phone_not_valid
+        ),
         val countriesList: MutableList<CountryData>? = null,
         val countryCode: String? = null,
         val idBrand: Int = 0,
-        val selectedCountry: CountryData = CountryData("", "", "")
+        val selectedCountry: CountryData? = null,
+        val isAlertResultVisible: Boolean = false,
+        val currentBrand: Brand = Brand.CostaRica
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -179,12 +193,13 @@ class SignUpPhoneViewModel @Inject constructor(
             is OnClearPhoneError -> clearPhoneError()
             is OnStart -> onStart(
                 event.phoneCode,
-                event.countryCode,
                 event.phoneNumber,
                 event.signUpStartData,
-                event.idBrand
+                event.onFailure
             )
-            is UIEvent.OnSetUpIdBrand -> onSetUpIdBrand(event.idBrand)
+            is OnSetUpIdBrand -> onSetUpIdBrand(event.idBrand)
+            is OnQueryError -> onQueryError()
+            is OnSetupDefaultCountry -> onSetupDefaultCountry(event.idBrand)
         }
     }
 
@@ -212,11 +227,13 @@ class SignUpPhoneViewModel @Inject constructor(
             val countryCode: String,
             val phoneNumber: String,
             val signUpStartData: () -> Unit,
-            val idBrand: Int
+            val onFailure: () -> Unit,
         ) : UIEvent()
 
         object OnClearPhoneError : UIEvent()
+        object OnQueryError : UIEvent()
         data class OnSetUpIdBrand(val idBrand: Int) : UIEvent()
+        data class OnSetupDefaultCountry(val idBrand: Int) : UIEvent()
 
     }
 

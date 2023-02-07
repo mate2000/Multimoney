@@ -239,7 +239,7 @@ fun PhoneCountryDialog(
                                         )
                                         Text(
                                             stringResource(id = getCountryName(countryItem.countryCode.lowercase())),
-                                            Modifier.padding(horizontal = 18.dp)
+                                            Modifier.padding(horizontal = 18.dp),
                                         )
                                     }
                                 }

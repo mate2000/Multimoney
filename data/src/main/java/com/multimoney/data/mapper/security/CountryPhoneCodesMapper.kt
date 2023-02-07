@@ -8,7 +8,8 @@ fun GetCountryPhoneCodesQuery.Data.mapToDomainModel() = CountryPhoneCodes(
     countryPhoneCodes = countryPhoneCodes.map {
         CountryPhoneCodeItem(
             code = it.code,
-            country = it.country
+            country = it.country,
+            isoCode = it.isoCode ?: ""
         )
     }
 )

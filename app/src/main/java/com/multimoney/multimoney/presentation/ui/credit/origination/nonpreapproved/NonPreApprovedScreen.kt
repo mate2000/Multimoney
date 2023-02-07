@@ -90,9 +90,6 @@ fun NonPreApprovedScreen(
                 titleString = if (isAlertResultSuccess) {
                     stringResource(
                         id = alertResultTitleResource,
-                        stringResource(
-                            id = viewModel.idBrand?.getCurrencySymbol() ?: 0
-                        ),
                         maxDisbursementAmount
                     )
                 } else {

@@ -308,7 +308,7 @@ class NonPreApprovedViewModel @Inject constructor(
             result.onSuccess {
                 uiState = uiState.copy(isLoading = false)
                 if (it?.rejectedBlaze?.not() == true) {
-                    setSuccessAlertResult(it.products?.firstOrNull()?.maximumDisbursement ?: "")
+                    setSuccessAlertResult(it.products?.firstOrNull()?.maximumDisbursementLabel ?: "")
                 } else {
                     setErrorAlertResult()
                 }

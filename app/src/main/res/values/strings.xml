@@ -68,6 +68,12 @@
     <string name="destination_bank" translatable="false">Banco de destino</string>
     <string name="account_number" translatable="false">Número de cuenta</string>
     <string name="phone_number" translatable="false">Número de teléfono</string>
+    <string name="common_allow" translatable="false">Permitir</string>
+    <string name="common_deny" translatable="false">Denegar</string>
+    <string name="common_open_settings" translatable="false">Abrir configuración</string>
+    <string name="common_go_back" translatable="false">Regresar</string>
+    <string name="common_not_show_again" translatable="false">No volver a mostrar</string>
+    <string name="common_scan_qr_code" translatable="false">Escanea el código QR</string>
 
     <string name="content_description_more_info" translatable="false">Más información</string>
 
@@ -1552,6 +1558,16 @@
 
     <!-- Crypto list currencies for send -->
     <string name="crypt_list_send_title" translatable="false">¿Cuál moneda querés enviar?</string>
+    <string name="crypto_send_address_title" translatable="false">¿Dónde querés enviar %s?</string>
+    <string name="crypto_send_address_information" translatable="false">Pegá la dirección de la billetera a la que deseás enviar o escaneá el código del receptor. Asegurate que envíes a la blockchain %s.</string>
+    <string name="crypto_send_address_receiver" translatable="false">Dirección %s del receptor</string>
+    <string name="crypto_send_address_placeholder" translatable="false">Pegar dirección</string>
+    <string name="crypto_send_address_required" translatable="false">La dirección BTC del receptor es requerida</string>
+    <string name="crypto_send_address_permission_camera_title" translatable="false">“MultiMoney” quiere acceder a tu cámara</string>
+    <string name="crypto_send_address_permission_camera_description" translatable="false">El acceso es necesario para escanear códigos QR</string>
+    <string name="crypto_send_address_verify_crypto_address_title" translatable="false">Verificá la dirección</string>
+    <string name="crypto_send_address_verify_crypto_address_description" translatable="false"> Asegurate que la dirección es la correcta. En caso de que lo enviés a una dirección incorrecta no podrás recuperar el dinero</string>
+    <string name="crypto_send_address_wallet_doesnt_accept" translatable="false">Esta billetera no recibe %s</string>
 
     <!-- Registeres User Email -->
     <string name="registered_user_email_title" translatable="false">Tenemos tu correo  %s registrado en MultiMoney</string>

@@ -121,6 +121,7 @@ import com.multimoney.data.networking.graphql.apollomodel.ValidateUserExistsQuer
 import com.multimoney.data.networking.graphql.apollomodel.ValidateUserStatusQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidationSecurityQuery
 import com.multimoney.data.networking.graphql.apollomodel.UpdateSmartAccountStatusMutation
+import com.multimoney.data.networking.graphql.apollomodel.ValidateDepositAddressMutation
 import com.multimoney.data.networking.graphql.apollomodel.type.BeneficiaryRequestDtoInput
 import com.multimoney.data.networking.graphql.apollomodel.type.ContactsInput
 import com.multimoney.domain.model.accountsmart.Beneficiary
@@ -1650,6 +1651,22 @@ class GraphqlApi @Inject constructor(
             idBrand = idBrand,
             identification = identification,
             status = 1
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationValidateDepositAddress(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        market: String,
+        address: String
+    ): ApolloCall<ValidateDepositAddressMutation.Data> = apolloAuthorizedClient.mutation(
+        ValidateDepositAddressMutation(
+            user = user,
+            idBrand = idBrand,
+            identification = identification,
+            market = market,
+            address = address
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 

@@ -11,5 +11,7 @@ fun GetSmartAccountsQuery.Account.mapToDomainModel() = AccountSmartForBuyCrypto(
     totalBalance = this.totalBalance.toString().toDouble(),
     currencyCode = this.currencyCode,
     idCurrencyAccount = this.idCurrencyAccount.toString().toInt(),
-    accountToken = this.tokenNumber
+    accountToken = this.tokenNumber,
+    accountNumber = this.accountNumber,
+    ibanAccountNumber = this.ibanAccountNumber
 )

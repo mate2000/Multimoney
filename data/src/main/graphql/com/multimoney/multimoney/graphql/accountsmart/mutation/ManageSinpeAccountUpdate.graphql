@@ -1,0 +1,30 @@
+mutation ManageSinpeAccountUpdate(
+    $user: String,
+    $idBrand: Int,
+    $identification: String,
+    $accountNumber: String,
+    $idCurrency: Long,
+    $nameAccount: String,
+    $idAccount: Long?,
+    $isFavorite: Boolean,
+    $idBank: Long,
+    $typeAccount: Int
+){
+    manageSinpeAccountUpdate(manageSinpeAccountUpdateInput:{
+        user: $user
+        idBrand: $idBrand
+        identification: $identification
+        account_number: $accountNumber
+        id_Currency: $idCurrency
+        nameAccount: $nameAccount
+        id_account: $idAccount
+        isFavorite: $isFavorite
+        id_Bank: $idBank
+        type_Account: $typeAccount
+    }
+    ) {
+        result {
+            id_Account_Sinpe
+        }
+    }
+}

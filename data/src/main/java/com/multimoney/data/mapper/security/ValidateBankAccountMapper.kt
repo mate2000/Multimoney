@@ -6,6 +6,7 @@ import com.multimoney.domain.model.security.ValidateAccount
 private fun ValidateBankAccountQuery.ValidateBankAccount.mapToDomainModel() = ValidateAccount(
     responseCode = responseCode,
     responseMessage = responseMessage,
+    identification = identification,
     name = name,
     currency = currency,
     sellPriceDollar = sellPriceDollar,

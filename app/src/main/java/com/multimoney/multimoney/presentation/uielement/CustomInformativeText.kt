@@ -5,15 +5,18 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 /**
@@ -39,12 +42,16 @@ fun CustomInformativeText(
     trailingIconClick: () -> Unit = {},
     text: String = "",
     textStyle: TextStyle = TextStyle(),
-    leadingIconAlignment: Alignment.Vertical = Alignment.CenterVertically
+    alignmentVertical: Alignment.Vertical = CenterVertically,
+    iconSize: Dp = 16.dp
 ) {
     Row(modifier = modifier, horizontalArrangement = Arrangement.SpaceBetween) {
         leadingIcon?.let {
             Image(
-                modifier = Modifier.align(leadingIconAlignment).clickable { leadingIconClick() },
+                modifier = Modifier
+                    .align(alignmentVertical)
+                    .clickable { leadingIconClick() }
+                    .size(iconSize),
                 painter = painterResource(it),
                 contentDescription = "",
                 contentScale = ContentScale.Fit
@@ -56,11 +63,14 @@ fun CustomInformativeText(
             modifier = Modifier
                 .wrapContentSize()
                 .padding(start = 9.dp)
-                .align(Alignment.CenterVertically)
+                .align(alignmentVertical)
         )
         trailingIcon?.let {
             Image(
-                modifier = Modifier.align(Alignment.CenterVertically).clickable { trailingIconClick() },
+                modifier = Modifier
+                    .align(alignmentVertical)
+                    .clickable { trailingIconClick() }
+                    .size(iconSize),
                 painter = painterResource(it),
                 contentDescription = "",
                 contentScale = ContentScale.Fit

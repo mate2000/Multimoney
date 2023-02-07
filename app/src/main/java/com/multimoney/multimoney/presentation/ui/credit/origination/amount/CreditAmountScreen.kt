@@ -100,6 +100,9 @@ fun CreditAmountScreen(
                             sharedViewModel.onUIEvent(
                                 CreditViewModel.UIEvent.OnNextStep
                             )
+                            if (sharedViewModel.crosseling) {
+                                sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnRestartCrosselingNewAccount)
+                            }
                         },
                         onLoadingValueChange = { isLoading ->
                             sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))

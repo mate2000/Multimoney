@@ -24,6 +24,7 @@ query GetBalanceCryptoAccount(
             percentageInvestedCurrency,
             priceOfTheDay,
             url_image,
+            crypto_network
         }
     }
 }

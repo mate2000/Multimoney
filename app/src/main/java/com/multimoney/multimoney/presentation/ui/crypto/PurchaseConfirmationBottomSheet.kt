@@ -25,7 +25,9 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -48,6 +50,7 @@ import kotlinx.coroutines.launch
 const val WHITE_SPACE = " "
 const val SECONDS_SUFFIX = "seg"
 const val DEFAULT_AMOUNT = "0.0"
+const val MANY_ASSET_LENGTH = 4
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -122,17 +125,18 @@ fun PurchaseConfirmationBottomSheet(
 }
 
 @Composable
+@Preview
 fun ConfirmationBottomSheetContent(
-    quoteAmount: String,
-    baseAmount: String,
-    asset: String,
-    assetImageUrl: String,
-    secondsRemaining: String,
-    idCurrency: Int,
-    isLoading: Boolean,
-    exchangeRate: String,
-    convertedAmount: String,
-    onConfirm: () -> Unit
+    quoteAmount: String = DEFAULT_AMOUNT,
+    baseAmount: String = DEFAULT_AMOUNT,
+    asset: String = "",
+    assetImageUrl: String = "",
+    secondsRemaining: String = "",
+    idCurrency: Int = CurrencyType.Dollar.id,
+    isLoading: Boolean = false,
+    exchangeRate: String = DEFAULT_AMOUNT,
+    convertedAmount: String = DEFAULT_AMOUNT,
+    onConfirm: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -239,7 +243,10 @@ private fun PurchaseInfoSection(
                                 append(asset)
                             }
                         },
-                        style = Typography.body2.copy(color = MultimoneyTheme.colors.bodyTextColor)
+                        style = Typography.body2.copy(
+                            color = MultimoneyTheme.colors.bodyTextColor,
+                            fontSize = if (asset.length > MANY_ASSET_LENGTH) 13.sp else 14.sp
+                        )
                     )
                 }
             )

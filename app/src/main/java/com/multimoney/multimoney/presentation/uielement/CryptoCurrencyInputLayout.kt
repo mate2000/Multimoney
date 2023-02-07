@@ -23,6 +23,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -31,6 +32,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.multimoney.multimoney.R
@@ -119,15 +122,16 @@ fun CryptoCurrencyInputLayout(
 }
 
 @Composable
+@Preview
 fun CustomTextField(
     modifier: Modifier = Modifier,
-    value: MutableState<String>,
-    iconCurrency: String,
-    isTransformationCurrency: MutableState<Boolean>,
-    focusRequester: FocusRequester,
-    isError: Boolean,
+    value: MutableState<String> = mutableStateOf(""),
+    iconCurrency: String = "",
+    isTransformationCurrency: MutableState<Boolean> = mutableStateOf(false),
+    focusRequester: FocusRequester = FocusRequester(),
+    isError: Boolean = false,
     onValueChanged: (String) -> Unit = {},
-    onSearchClick: () -> Unit
+    onSearchClick: () -> Unit = {}
 ) {
     Box(
         modifier = Modifier
@@ -144,36 +148,19 @@ fun CustomTextField(
             textStyle = Typography.h4.copy(
                 color = MultimoneyTheme.colors.text,
                 fontWeight = FontWeight.Bold,
-                fontSize = when {
-                    value.value.length <= FEW_CHARACTERS -> 34.sp
-                    value.value.length <= MANY_CHARACTERS -> 24.sp
-                    value.value.length <= TOO_MANY_CHARACTERS -> 16.sp
-                    else -> 12.sp
-                }
+                fontSize = getCorrectAmountOfCharacters(
+                    amount = value.value,
+                    isTransformationCurrency = isTransformationCurrency.value
+                )
             ),
             onValueChange = { newValue ->
                 if (newValue.length <= LOT_OF_CHARACTERS && newValue
                         .matches(Regex(DECIMAL_AND_NUMBER_REGEX))
                 ) {
-                    value.value = when {
-                        newValue.isEmpty() -> {
-                            onValueChanged("")
-                            ""
-                        }
-                        newValue.startsWith(SIMPLE_DOT) -> {
-                            onValueChanged("")
-                            ""
-                        }
-                        newValue.count { it.toString() == SIMPLE_DOT } > ONE_LENGTH
-                                && newValue.endsWith(SIMPLE_DOT) -> {
-                            onValueChanged(newValue.dropLast(ONE_LENGTH))
-                            newValue.dropLast(ONE_LENGTH)
-                        }
-                        else -> {
-                            onValueChanged(newValue)
-                            newValue
-                        }
-                    }
+                    value.value = validateTextFormat(
+                        newValue = newValue,
+                        onValueChanged = onValueChanged,
+                    )
                 }
             },
             placeholder = {
@@ -249,10 +236,58 @@ fun CustomTextField(
     }
 }
 
+fun validateTextFormat(
+    newValue: String,
+    onValueChanged: (String) -> Unit
+): String {
+    return when {
+        newValue.isEmpty() -> {
+            onValueChanged("")
+            ""
+        }
+        newValue.startsWith(SIMPLE_DOT) -> {
+            onValueChanged("")
+            ""
+        }
+        newValue.count { it.toString() == SIMPLE_DOT } > ONE_LENGTH
+                && newValue.endsWith(SIMPLE_DOT) -> {
+            onValueChanged(newValue.dropLast(ONE_LENGTH))
+            newValue.dropLast(ONE_LENGTH)
+        }
+        else -> {
+            onValueChanged(newValue)
+            newValue
+        }
+    }
+}
+
+fun getCorrectAmountOfCharacters(
+    amount: String,
+    isTransformationCurrency: Boolean
+): TextUnit {
+
+    return if (isTransformationCurrency.not()) {
+        when {
+            amount.length <= FEW_CHARACTERS -> 34.sp
+            amount.length <= MANY_CHARACTERS -> 24.sp
+            amount.length <= TOO_MANY_CHARACTERS -> 16.sp
+            else -> 12.sp
+        }
+    } else {
+        when {
+            amount.length <= FEW_CHARACTERS.minus(ASSET_EQUIVALENT_SUBTRACTION) -> 34.sp
+            amount.length <= MANY_CHARACTERS.minus(ASSET_EQUIVALENT_SUBTRACTION) -> 24.sp
+            amount.length <= TOO_MANY_CHARACTERS.minus(ASSET_EQUIVALENT_SUBTRACTION) -> 16.sp
+            else -> 12.sp
+        }
+    }
+}
+
 const val FEW_CHARACTERS = 10
 const val MANY_CHARACTERS = 14
 const val TOO_MANY_CHARACTERS = 23
 const val LOT_OF_CHARACTERS = 32
+const val ASSET_EQUIVALENT_SUBTRACTION = 2
 const val ONE_LENGTH = 1
 const val SIMPLE_DOT = "."
 const val CURRENCY_DEFAULT_PLACEHOLDER = "$0"

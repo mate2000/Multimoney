@@ -19,7 +19,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.continuevali
 import com.multimoney.multimoney.presentation.ui.credit.origination.evisertiaandonfidoerrors.OnfidoAndEvicertiaErrorsScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoScreen
-import com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess.ProcessingTransactionScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.originationvoucher.OriginationVoucherScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessScreen
 
 const val PK_USER = "pk_user"
@@ -145,13 +145,13 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
             )
         }
         composable(
-            route = Screen.ProcessingTransactionScreen.route,
+            route = Screen.OriginationVoucherScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType }
             )
         ) {
-            ProcessingTransactionScreen(
+            OriginationVoucherScreen(
                 onPopBackStack = {
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)

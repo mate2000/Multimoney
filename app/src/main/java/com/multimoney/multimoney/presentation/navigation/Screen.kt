@@ -305,7 +305,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SignDocumentProcessScreen : Screen(
-        "sign_document_process_screen/{$SIGN_DOCUMENT_STEP_ARG}/{$SIGN_DOCUMENT_ORIGIN}/{$SIGN_DOCUMENT_ID_PRINT}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}",
+        "sign_document_process_screen?$SIGN_DOCUMENT_STEP_ARG={$SIGN_DOCUMENT_STEP_ARG}?$SIGN_DOCUMENT_ORIGIN={$SIGN_DOCUMENT_ORIGIN}?$SIGN_DOCUMENT_ID_PRINT={$SIGN_DOCUMENT_ID_PRINT}?$ID_BRAND={$ID_BRAND}?$PK_USER={$PK_USER}?$IDENTIFICATION={$IDENTIFICATION}?$EMAIL={$EMAIL}?$$ID_USER_REQUEST={$ID_USER_REQUEST}?$FIRST_NAME={$FIRST_NAME}?$LAST_NAME={$LAST_NAME}?$CROSSELING={$CROSSELING}",
         "sign_document_process_screen"
     )
 
@@ -323,9 +323,9 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     object SmartContinueValidatingOnfidoScreen : Screen("smart_continue_validating_onfido_screen")
 
-    object ProcessingTransactionScreen : Screen(
-        "processing_transaction_screen/{$ID_BRAND}/{$SIGN_DOCUMENT_ID_PRINT}/{$USER}",
-        "processing_transaction_screen"
+    object OriginationVoucherScreen : Screen(
+        "origination_voucher_screen/{$ID_BRAND}/{$SIGN_DOCUMENT_ID_PRINT}/{$USER}",
+        "origination_voucher_screen"
     )
 
     object ApprovedByOnfidoScreen : Screen(

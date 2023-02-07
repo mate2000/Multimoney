@@ -48,7 +48,18 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.CROSSELING
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
+import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
+import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ORIGIN
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.BaseEvent.OnShowCardIssuanceError
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
@@ -96,16 +107,17 @@ import com.multimoney.multimoney.presentation.util.catalog.SignDocumentOrigin
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
+import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.util.NovoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -249,27 +261,69 @@ class ProductViewModel @Inject constructor(
                 if (uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm?.lowercase() == FIRMED.status.lowercase()) {
                     navigateTo(
                         "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
-                                "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}/${uiState.userStatus?.infoUser?.firstName}/" +
-                                "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
-                                "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint}/${uiState.userStatus?.infoCredit?.infoPreApprove?.crosseling ?: false}"
+                            "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}/${uiState.userStatus?.infoUser?.firstName}/" +
+                            "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
+                            "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint}/${uiState.userStatus?.infoCredit?.infoPreApprove?.crosseling ?: false}"
                     )
                 } else {
                     navigateTo(
-                        "${Screen.SignDocumentProcessScreen.baseRoute}/${SignDocumentStep.GENERATE_DOCUMENT_STEP.value}/${SignDocumentOrigin.Product.value}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0}/${uiState.idBrand.toInt()}/$pkUser/$identification/$email/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}"
+                        Screen.SignDocumentProcessScreen.baseRoute
+                            .plus(getNavParam(SIGN_DOCUMENT_STEP_ARG, SignDocumentStep.GENERATE_DOCUMENT_STEP.value))
+                            .plus(getNavParam(SIGN_DOCUMENT_ORIGIN, SignDocumentOrigin.Product.value))
+                            .plus(
+                                getNavParam(
+                                    SIGN_DOCUMENT_ID_PRINT,
+                                    uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0
+                                )
+                            )
+                            .plus(getNavParam(ID_BRAND, uiState.idBrand.toInt()))
+                            .plus(getNavParam(PK_USER, pkUser))
+                            .plus(getNavParam(IDENTIFICATION, identification))
+                            .plus(getNavParam(EMAIL, email))
+                            .plus(
+                                getNavParam(
+                                    ID_USER_REQUEST,
+                                    uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0
+                                )
+                            )
+                            .plus(getNavParam(FIRST_NAME, uiState.userStatus?.infoUser?.firstName))
+                            .plus(getNavParam(LAST_NAME, uiState.userStatus?.infoUser?.lastName))
+                            .plus(getNavParam(CROSSELING, false))
                     )
                 }
             }
             CREDIT_FIRM_INCOMPLETE, CREDIT_FIRM_REJECTED -> {
                 navigateTo(
-                    "${Screen.SignDocumentProcessScreen.baseRoute}/${SignDocumentStep.GENERATE_DOCUMENT_STEP.value}/${SignDocumentOrigin.Product.value}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0}/${uiState.idBrand.toInt()}/$pkUser/$identification/$email/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}"
+                    Screen.SignDocumentProcessScreen.baseRoute
+                        .plus(getNavParam(SIGN_DOCUMENT_STEP_ARG, SignDocumentStep.GENERATE_DOCUMENT_STEP.value))
+                        .plus(getNavParam(SIGN_DOCUMENT_ORIGIN, SignDocumentOrigin.Product.value))
+                        .plus(
+                            getNavParam(
+                                SIGN_DOCUMENT_ID_PRINT,
+                                uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0
+                            )
+                        )
+                        .plus(getNavParam(ID_BRAND, uiState.idBrand.toInt()))
+                        .plus(getNavParam(PK_USER, pkUser))
+                        .plus(getNavParam(IDENTIFICATION, identification))
+                        .plus(getNavParam(EMAIL, email))
+                        .plus(
+                            getNavParam(
+                                ID_USER_REQUEST,
+                                uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0
+                            )
+                        )
+                        .plus(getNavParam(FIRST_NAME, uiState.userStatus?.infoUser?.firstName))
+                        .plus(getNavParam(LAST_NAME, uiState.userStatus?.infoUser?.lastName))
+                        .plus(getNavParam(CROSSELING, false))
                 )
             }
             else -> {
                 navigateTo(
                     "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
-                            "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}/${uiState.userStatus?.infoUser?.firstName}/" +
-                            "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
-                            "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint}/${uiState.userStatus?.infoCredit?.infoPreApprove?.crosseling ?: false}"
+                        "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}/${uiState.userStatus?.infoUser?.firstName}/" +
+                        "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
+                        "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint}/${uiState.userStatus?.infoCredit?.infoPreApprove?.crosseling ?: false}"
                 )
             }
         }
@@ -599,9 +653,9 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToGtSvNonPreApproved() =
         navigateTo(
             "${Screen.NonPreApprovedScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
-                    "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/${uiState.userStatus?.infoUser?.firstName}/" +
-                    "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
-                    "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0}/${uiState.userStatus?.infoCredit?.infoPreApprove?.crosseling ?: false}"
+                "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/${uiState.userStatus?.infoUser?.firstName}/" +
+                "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
+                "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0}/${uiState.userStatus?.infoCredit?.infoPreApprove?.crosseling ?: false}"
         )
 
     fun getCreditBalanceLabel(balanceCredit: List<BalanceCredit?>?): String {
@@ -834,7 +888,7 @@ class ProductViewModel @Inject constructor(
         )
         navigateTo(
             "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$userName/${uiState.idBrand}/$identification" +
-                    "/${encodeData(smartAccount)}/$secondAccountSend/$idClient/${Screen.HomeScreen.route}"
+                "/${encodeData(smartAccount)}/$secondAccountSend/$idClient/${Screen.HomeScreen.route}"
         )
     }
 
@@ -891,7 +945,6 @@ class ProductViewModel @Inject constructor(
                     Screen.HomeScreen.route
                 )
             }.onFailure {
-
             }
         }
     }

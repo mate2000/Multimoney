@@ -31,6 +31,8 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ORIGIN
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.NavigateToAccountScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnBackVisibilityValueChanged
@@ -59,10 +61,11 @@ import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentOrigin
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
+import com.multimoney.multimoney.presentation.util.getNavParam
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
-import javax.inject.Inject
 
 @HiltViewModel
 class CreditViewModel @Inject constructor(
@@ -254,7 +257,8 @@ class CreditViewModel @Inject constructor(
                     uiState = uiState.copy(isLoading = false)
                     if (crosseling) {
                         if ((idBrand.toInt() == Brand.ElSalvador.id && uiState.currentStep == CreditStep.Three.id) || (idBrand.toInt() == Brand.CostaRica.id && uiState.currentStep == CreditStep.Four.id)) {
-                            onCallSaveCreditOperation()
+                            // onCallSaveCreditOperation()
+                            uiState = uiState.copy(showSVProcessSendSuccessfully = true)
                         } else {
                             nextStep()
                         }
@@ -285,11 +289,22 @@ class CreditViewModel @Inject constructor(
                 idBrand.toInt()
             ).collectLatest { result ->
                 result.onSuccess {
-                    if (idBrand.toInt() == Brand.ElSalvador.id) {
+                    if (idBrand.toInt() == Brand.ElSalvador.id || it.idPrint == 0L) {
                         uiState = uiState.copy(showSVProcessSendSuccessfully = true)
                     } else {
                         popAndNavigateTo(
-                            "${Screen.SignDocumentProcessScreen.baseRoute}/${SignDocumentStep.GENERATE_DOCUMENT_STEP.value}/${SignDocumentOrigin.Crosseling.value}/${it.idPrint}/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName",
+                            Screen.SignDocumentProcessScreen.baseRoute
+                                .plus(getNavParam(SIGN_DOCUMENT_STEP_ARG, SignDocumentStep.GENERATE_DOCUMENT_STEP.value))
+                                .plus(getNavParam(SIGN_DOCUMENT_ORIGIN, SignDocumentOrigin.Crosseling.value))
+                                .plus(getNavParam(SIGN_DOCUMENT_ID_PRINT, it.idPrint))
+                                .plus(getNavParam(ID_BRAND, idBrand))
+                                .plus(getNavParam(PK_USER, pkUser))
+                                .plus(getNavParam(IDENTIFICATION, identification))
+                                .plus(getNavParam(EMAIL, email))
+                                .plus(getNavParam(ID_USER_REQUEST, idUserRequest))
+                                .plus(getNavParam(FIRST_NAME, firstName))
+                                .plus(getNavParam(LAST_NAME, lastName))
+                                .plus(getNavParam(CROSSELING, crosseling)),
                             Screen.CreditScreen.route
                         )
                     }

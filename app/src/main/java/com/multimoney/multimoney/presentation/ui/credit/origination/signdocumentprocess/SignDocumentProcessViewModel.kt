@@ -15,6 +15,7 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.CROSSELING
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.Screen.ContinueValidatingOnfidoScreen
@@ -37,7 +38,6 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.signdocument
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnShowDialogInformation
 import com.multimoney.multimoney.presentation.ui.home.HomeState
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.EVICERTIA_REJECTED_FIRST_TIME
@@ -46,6 +46,7 @@ import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaErr
 import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.ONFIDO_REJECTED_SECOND_TIME
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentOrigin
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
+import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.PROCESSING_TRANSACTION
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -72,6 +73,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     var firstName: String = ""
     var lastName: String = ""
     var origin: String = ""
+    var isCrosseling: Boolean = false
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -83,6 +85,7 @@ class SignDocumentProcessViewModel @Inject constructor(
         firstName = savedStateHandle[FIRST_NAME] ?: ""
         lastName = savedStateHandle[LAST_NAME] ?: ""
         origin = savedStateHandle[SIGN_DOCUMENT_ORIGIN] ?: SignDocumentOrigin.OnFidoFirstTime.value
+        isCrosseling = savedStateHandle[CROSSELING] ?: false
         uiState = uiState.copy(
             signDocumentProcessStep = savedStateHandle[SIGN_DOCUMENT_STEP_ARG] ?: ""
         )
@@ -167,7 +170,13 @@ class SignDocumentProcessViewModel @Inject constructor(
             SIGN_DOCUMENTS_STEP.value -> {
                 when (creditContractEvent?.statusEvicertia?.lowercase()) {
                     CreditOnFidoOrFirmStatus.FIRMED.status.lowercase() -> {
-                        handleOnfidoStatus(creditContractEvent)
+                        if (isCrosseling) {
+                            uiState = uiState.copy(
+                                signDocumentProcessStep = PROCESSING_TRANSACTION.value
+                            )
+                        } else {
+                            handleOnfidoStatus(creditContractEvent)
+                        }
                     }
                     CreditOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {
                         emitBaseEvent(SimulateUserInteraction)
@@ -187,6 +196,16 @@ class SignDocumentProcessViewModel @Inject constructor(
                     } else {
                         setSuccessAlertResult()
                     }
+                } else {
+                    showSubscriptionError()
+                }
+            }
+            PROCESSING_TRANSACTION.value -> {
+                emitBaseEvent(SimulateUserInteraction)
+                if (creditContractEvent?.active == true) {
+                    navigateToProcessingTransaction()
+                } else {
+                    showSubscriptionError()
                 }
             }
         }
@@ -247,7 +266,7 @@ class SignDocumentProcessViewModel @Inject constructor(
 
     private fun navigateToProcessingTransaction() =
         popAndNavigateTo(
-            route = "${Screen.ProcessingTransactionScreen.baseRoute}/$idBrand/$idPrint/$email",
+            route = "${Screen.OriginationVoucherScreen.baseRoute}/$idBrand/$idPrint/$email",
             popTo = Screen.SignDocumentProcessScreen.route
         )
 
@@ -319,5 +338,6 @@ class SignDocumentProcessViewModel @Inject constructor(
         const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 40000L
         const val ID_PRINT_EMPTY = 0L
         const val PHONE_HARDCODED = "50371680915"
+        const val ORIGINATION_ACCOUNT_INACTIVE = "ERROR AL ACTIVAR CUENTA"
     }
 }

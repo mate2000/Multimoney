@@ -14,6 +14,7 @@ import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.VISA_ROUTE
 import com.multimoney.multimoney.presentation.navigation.navtype.home.BalanceCardInformationNavType
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.visa.verification.VisaVerifiedScreen
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardScreen
 import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceScreen
@@ -134,6 +135,25 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
                     )
                 },
                 sharedViewModel = viewModel
+            )
+        }
+        composable(
+            route = Screen.VisaVerifiedScreen.route,
+            arguments = listOf()
+        ) {
+            VisaVerifiedScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
             )
         }
     }

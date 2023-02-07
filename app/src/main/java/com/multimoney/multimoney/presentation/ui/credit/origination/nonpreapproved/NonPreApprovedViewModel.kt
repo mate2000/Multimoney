@@ -308,7 +308,7 @@ class NonPreApprovedViewModel @Inject constructor(
             result.onSuccess {
                 uiState = uiState.copy(isLoading = false)
                 if (it?.rejectedBlaze?.not() == true) {
-                    setSuccessAlertResult(it.products?.firstOrNull()?.maximumDisbursement ?: "")
+                    setSuccessAlertResult(it.products?.firstOrNull()?.maximumDisbursementLabel ?: "")
                 } else {
                     setErrorAlertResult()
                 }
@@ -336,7 +336,7 @@ class NonPreApprovedViewModel @Inject constructor(
         route = "${Screen.CreditScreen.baseRoute}/${idBrand ?: 0}/${pkUser ?: 0}/${identification.orEmpty()}/${email.orEmpty()}/${lastStep ?: CreditStep.One.id}/" +
                 "${idUserRequest ?: 0}/${firstName.orEmpty()}/" +
                 "${lastName.orEmpty()}/${statusOnfido.orEmpty()}/" +
-                "${statusEvicertia.orEmpty()}/${idPrint ?: 0}" +
+                "${statusEvicertia.orEmpty()}/${idPrint ?: 0}/" +
                 "${crosseling ?: false}",
         popTo = Screen.NonPreApprovedScreen.route
     )

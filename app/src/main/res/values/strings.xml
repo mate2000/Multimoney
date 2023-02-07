@@ -735,7 +735,7 @@
     <string name="non_pre_approved_additional_questions_income_label" translatable="false">Ingreso mensual</string>
     <string name="non_pre_approved_additional_questions_income_placeholder" translatable="false">%s 000</string>
     <string name="non_pre_approved_additional_questions_employment_situation_label" translatable="false">Situación laboral</string>
-    <string name="non_pre_approved_additional_questions_success_alert_result_title" translatable="false">¡Tienes %1s%2s pre aprobados!</string>
+    <string name="non_pre_approved_additional_questions_success_alert_result_title" translatable="false">¡Tienes %1s pre aprobados!</string>
     <string name="non_pre_approved_additional_questions_success_alert_result_description" translatable="false">Solicita tu dinero y recíbelo en menos de 10 minutos</string>
     <string name="non_pre_approved_additional_questions_error_alert_result_title" translatable="false">Lo sentimos, no hay opciones de crédito</string>
     <string name="non_pre_approved_additional_questions_error_alert_result_description" translatable="false">Comunícate con nosotros si tienes consultas</string>

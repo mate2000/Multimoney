@@ -4,6 +4,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.accountsmart.Transfer365Account
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.DESTINY_ACCOUNT
@@ -14,6 +15,7 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DisplayAccount
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
+import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import com.multimoney.multimoney.presentation.util.getMaskedSmartAccount
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -42,7 +44,10 @@ class Transfer365AmountViewModel @Inject constructor() : BaseSmartEditAmountView
                 originAccountDisplay = DisplayAccount(
                     sheetLabel = R.string.transfer_365_pre_confirmation_from_label,
                     sheetTitleResource = originCurrency?.myAccountSmartName,
-                    sheetSubtitleResource = R.string.empty,
+                    sheetSubtitle = getMaskedAccount(
+                        prefix = Brand.ElSalvador.countryCode.uppercase(),
+                        accountNumber = smartAccount?.accountNumber.orEmpty()
+                    ),
                     icon = R.drawable.ic_multimoney_smart
                 ),
                 currency = originCurrency?.symbol ?: CurrencyType.Dollar.symbol,

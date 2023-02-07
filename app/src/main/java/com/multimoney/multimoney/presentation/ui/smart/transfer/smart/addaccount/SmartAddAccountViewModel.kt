@@ -7,6 +7,7 @@ import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.domain.interaction.accountsmart.MutationUpdateFavoriteSmartUseCase
 import com.multimoney.domain.interaction.accountsmart.QuerySmartAccountTypeUseCase
+import com.multimoney.domain.model.accountsmart.PhoneSmart
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.accountsmart.SmartAccountType
 import com.multimoney.domain.model.util.error.HttpError
@@ -20,9 +21,14 @@ import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.TRANSFER_TYPE
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel
 import com.multimoney.multimoney.presentation.util.MAX_SMART_ACCOUNT_DIGITS
 import com.multimoney.multimoney.presentation.util.MIN_SMART_ACCOUNT_DIGITS
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -116,6 +122,11 @@ class SmartAddAccountViewModel @Inject constructor(
         uiState = uiState.copy(isFavorite = isChecked)
     }
 
+    private fun onNicknameChanged(nickname: String) {
+        uiState = uiState.copy(nickname = nickname)
+        validateForm()
+    }
+
     private fun onFailure(error: HttpError) {
         uiState = uiState.copy(
             isLoading = false,
@@ -142,6 +153,7 @@ class SmartAddAccountViewModel @Inject constructor(
     }
 
     private fun onContinueClick() {
+        val fullName = "${uiState.names} ${uiState.lastNames}"
         executeUseCase {
             mutationUpdateFavoriteSmartUseCase.invoke(
                 idBrand = idBrand,
@@ -150,7 +162,11 @@ class SmartAddAccountViewModel @Inject constructor(
                 idAccountType = uiState.type?.typeId?.toIntOrNull() ?: 0,
                 idCustomer = smartAccount?.customerId ?: 0L,
                 accountNumber = uiState.accountNumber,
-                accountName = "${uiState.names} ${uiState.lastNames}",
+                accountName = if (uiState.isFavorite) {
+                    uiState.nickname.ifEmpty { fullName }
+                } else {
+                    fullName
+                },
                 email = uiState.email,
                 active = true,
                 isFavorite = uiState.isFavorite,
@@ -159,15 +175,29 @@ class SmartAddAccountViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onLoading { uiState = uiState.copy(isLoading = true) }
                 result.onSuccess { account ->
-                    // Todo navigate to edit amount screen (Rev-1453) and send destination account number
-                    val registeredAccount = account?.results?.first()
-                    uiState = uiState.copy(
-                        isLoading = false,
-                        openDialog = DialogParameters(
-                            titleResource = R.string.info,
-                            description = "Account Added. TBD: Navigation to edit amount in rev-1453",
-                            isActive = mutableStateOf(true)
-                        )
+                    val registeredAccount = account?.results?.firstOrNull()
+                    val currency = if (registeredAccount?.currencyAccount != null) {
+                        registeredAccount.currencyAccount.toString()
+                    } else {
+                        CurrencyType.Dollar.id.toString()
+                    }
+                    val contactAccount = PhoneSmart(
+                        number = registeredAccount?.phoneNumber,
+                        titular = registeredAccount?.accountName ?: "${uiState.names} ${uiState.lastNames}",
+                        bankName = "",
+                        identification = "",
+                        accountNumber = registeredAccount?.accountNumber ?: uiState.accountNumber,
+                        email = registeredAccount?.email ?: uiState.email,
+                        idCurrency = currency,
+                        currency = currency.getCurrencyFromId().currency,
+                        ibanNumber = ""
+                    )
+                    uiState = uiState.copy(isLoading = false)
+                    navigateTo(
+                        "${Screen.MyContactsTransferAmountScreen.baseRoute}/" +
+                                "${encodeData(smartAccount)}/${encodeData(contactAccount)}/" +
+                                "${SmartTransferTypes.SmartToContact.id}/$idBrand/" +
+                                Screen.SmartAddSACAccountScreen.baseRoute
                     )
                 }
                 result.onFailure { onFailure(it) }
@@ -193,7 +223,8 @@ class SmartAddAccountViewModel @Inject constructor(
         val enableButton: Boolean = false,
         val names: String = "",
         val lastNames: String = "",
-        val isFavorite: Boolean = false
+        val isFavorite: Boolean = false,
+        val nickname: String = ""
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -209,6 +240,7 @@ class SmartAddAccountViewModel @Inject constructor(
             is UIEvent.OnNamesChanged -> onNamesChanged(uiEvent.names)
             is UIEvent.OnLastNamesChanged -> onLastNamesChanged(uiEvent.lastNames)
             is UIEvent.OnAddFavoriteValueChange -> onAddFavoriteValueChange(uiEvent.isChecked)
+            is UIEvent.OnNicknameChanged -> onNicknameChanged(uiEvent.nickname)
         }
     }
 
@@ -224,5 +256,6 @@ class SmartAddAccountViewModel @Inject constructor(
         data class OnLastNamesChanged(val lastNames: String) : UIEvent()
         data class OnEmailChanged(val email: String) : UIEvent()
         data class OnAddFavoriteValueChange(val isChecked: Boolean) : UIEvent()
+        data class OnNicknameChanged(val nickname: String) : UIEvent()
     }
 }

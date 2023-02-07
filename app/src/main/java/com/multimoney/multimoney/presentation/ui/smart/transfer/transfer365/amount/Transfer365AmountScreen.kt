@@ -7,6 +7,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnAbandonFlow
@@ -21,7 +22,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.getMaskedSmartAccount
+import com.multimoney.multimoney.presentation.util.getMaskedAccount
 
 @Composable
 fun Transfer365AmountScreen(
@@ -52,7 +53,8 @@ fun Transfer365AmountScreen(
     LoadingIndicator(viewModel.amountUIState.isLoading)
 }
 
-@Composable fun Transfer365AmountContent(viewModel: Transfer365AmountViewModel = hiltViewModel()) {
+@Composable
+fun Transfer365AmountContent(viewModel: Transfer365AmountViewModel = hiltViewModel()) {
     Column(
         modifier = Modifier.background(MultimoneyTheme.colors.background)
     ) {
@@ -64,7 +66,10 @@ fun Transfer365AmountScreen(
             titleId = R.string.transfer_365_amount_title,
             originAccountSubtitle = stringResource(
                 id = viewModel.fromSmartLabel,
-                getMaskedSmartAccount(accountNumber = viewModel.smartAccount?.accountNumber.orEmpty())
+                getMaskedAccount(
+                    accountNumber = viewModel.smartAccount?.accountNumber.orEmpty(),
+                    prefix = Brand.ElSalvador.countryCode.uppercase()
+                )
             ),
             currentAmount = viewModel.amountUIState.currentAmountValueString,
             amountPlaceHolderId = viewModel.amountUIState.placeholder,

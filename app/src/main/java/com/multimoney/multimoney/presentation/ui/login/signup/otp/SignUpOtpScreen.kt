@@ -54,8 +54,9 @@ import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewM
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnNavigateToSignIn
 import com.multimoney.multimoney.presentation.uielement.OtpTextField
 import com.multimoney.multimoney.presentation.uielement.SystemBroadcastReceiver
-import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.transformation.PhoneNumberTransformation
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
@@ -64,10 +65,10 @@ import com.multimoney.multimoney.util.firebase.FireBaseEvents
 fun SignUpOtpScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: SignUpOtpViewModel = hiltViewModel(),
-    sharedViewModel: SignUpViewModel = hiltViewModel(),
+    sharedViewModel: SignUpViewModel = hiltViewModel()
 ) {
-
     val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
 
     // Create start activity result for SMS Retrieve
     val launchSmsActivityResult =
@@ -195,6 +196,10 @@ fun SignUpOtpScreen(
                             description = viewModel.userBlockedForMaxAttend,
                             isActive = mutableStateOf(true),
                             positiveResource = string.contact,
+                            positiveAction = {
+                                context.openWhatsAppDeepLink(viewModel.linkWhatsapp)
+                                viewModel.onUIEvent(OnNavigateToSignIn)
+                            },
                             negativeResource = string.cancel,
                             negativeAction = {
                                 viewModel.onUIEvent(OnNavigateToSignIn)

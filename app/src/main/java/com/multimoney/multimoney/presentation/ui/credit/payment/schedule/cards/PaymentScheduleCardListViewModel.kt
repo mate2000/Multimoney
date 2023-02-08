@@ -9,6 +9,7 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -21,7 +22,9 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCallQueryGetCards
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCardSelected
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -92,6 +95,25 @@ class PaymentScheduleCardListViewModel @Inject constructor(
 
     private fun onNavigateBack() = navigateBack(popTo = Screen.PaymentScheduleCardScreen.route, isRestart = false)
 
+    private fun onCloseClick() {
+        uiState = uiState.copy(
+            openDialog = DialogParameters(
+                titleResource = R.string.payment_schedule_card_list_dialog_title,
+                descriptionResource = R.string.payment_schedule_card_list_dialog_description,
+                positiveResource = R.string.accept,
+                negativeResource = R.string.cancel,
+                positiveAction = {
+                    navigateBack(
+                        popTo = Screen.HomeScreen.route,
+                        isRestart = false,
+                        homeState = HomeState.COLLAPSED
+                    )
+                },
+                isActive = mutableStateOf(true)
+            )
+        )
+    }
+
     data class UIState(
         // Interactions
         val clientCardList: List<CardVisaDirect?>? = null,
@@ -102,6 +124,7 @@ class PaymentScheduleCardListViewModel @Inject constructor(
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnNavigateBack -> onNavigateBack()
+            is OnCloseClick -> onCloseClick()
             is OnCallQueryGetCards -> onCallQueryGetCardsUseCase()
             is OnCardSelected -> onCardSelected(uiEvent.card)
         }
@@ -111,5 +134,6 @@ class PaymentScheduleCardListViewModel @Inject constructor(
         object OnCallQueryGetCards : UIEvent()
         class OnCardSelected(val card: CardVisaDirect?) : UIEvent()
         object OnNavigateBack : UIEvent()
+        object OnCloseClick : UIEvent()
     }
 }

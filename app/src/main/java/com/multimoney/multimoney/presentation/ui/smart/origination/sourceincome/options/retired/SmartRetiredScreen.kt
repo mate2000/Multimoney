@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -67,7 +68,8 @@ fun SmartRetiredScreen(
                             accountSmartData = sharedViewModel.accountSmartData?.copy(
                                 idEconomicActivity = SourceIncomeOptionType.Retired.id.toLong(),
                                 institutionPension = viewModel.uiState.institution,
-                                income = viewModel.uiState.paymentAmount.toFloat()
+                                income = viewModel.uiState.paymentAmount.toFloat(),
+                                currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep)
                             )
                         )
                     )
@@ -103,7 +105,7 @@ fun SmartRetiredScreen(
         Text(
             text = buildAnnotatedString {
                 withStyle(
-                    style = Typography.h4.toSpanStyle()
+                    style = Typography.h6.toSpanStyle()
                         .copy(
                             color = MultimoneyTheme.colors.text,
                             fontWeight = FontWeight.SemiBold
@@ -130,7 +132,7 @@ fun SmartRetiredScreen(
             }),
             labelText = stringResource(id = R.string.smart_account_retired_institution_label),
             modifier = Modifier
-                .padding(top = 44.dp),
+                .padding(top = 24.dp),
             placeHolder = stringResource(id = R.string.smart_account_retired_institution_placeholder),
             isError = viewModel.uiState.institutionError.first,
             errorMessage = stringResource(viewModel.uiState.institutionError.second)
@@ -150,7 +152,7 @@ fun SmartRetiredScreen(
             }),
             labelText = stringResource(id = R.string.smart_account_retired_amount_label),
             modifier = Modifier
-                .padding(top = 44.dp),
+                .padding(top = 24.dp),
             placeHolder = stringResource(id = R.string.smart_account_retired_amount_placeholder),
             customTransformation = formatDecimalMoney(
                 stringResource(sharedViewModel.idBrandAsInt.getCurrencySymbol())

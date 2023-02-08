@@ -20,10 +20,17 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
-import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
+import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_STATUS
+import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
+import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
+import com.multimoney.multimoney.presentation.navigation.CROSSELING
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateMinusYears
@@ -39,6 +46,8 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapprov
 import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnBackClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnCloseClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnRequestClick
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
@@ -65,6 +74,13 @@ class NonPreApprovedViewModel @Inject constructor(
     private var identification: String? = ""
     private var email: String? = ""
     private var idUserRequest: Int? = null
+    private var firstName: String? = ""
+    private var lastName: String? = ""
+    private var idPrint: Long? = 0
+    private var crosseling: Boolean? = false
+    private var statusOnfido: String? = ""
+    private var statusEvicertia: String? = ""
+    private var lastStep: Int? = null
     private var employmentSituation: CreditCatalog? = null
     private var employmentSituationList: List<CreditCatalogOption?>? = listOf()
     private var birthdayMinDate: LocalDate? = null
@@ -77,6 +93,13 @@ class NonPreApprovedViewModel @Inject constructor(
         identification = savedStateHandle[IDENTIFICATION]
         email = savedStateHandle[EMAIL]
         idUserRequest = savedStateHandle[ID_USER_REQUEST]
+        firstName = savedStateHandle[FIRST_NAME]
+        lastName = savedStateHandle[LAST_NAME]
+        statusOnfido = savedStateHandle[ONFIDO_STATUS]
+        statusEvicertia = savedStateHandle[EVICERTIA_STATUS]
+        idPrint = savedStateHandle[SIGN_DOCUMENT_ID_PRINT]
+        lastStep = savedStateHandle[CREDIT_STEP]
+        crosseling = savedStateHandle[CROSSELING]
         getTextResources()
         setBirthdayMinAndMaxDates(minDate = DATE_MIN_YEARS, maxDate = DATE_MAX_YEARS)
     }
@@ -123,7 +146,7 @@ class NonPreApprovedViewModel @Inject constructor(
         executeUseCase {
             queryScreenConfigUseCase(
                 pkUser = pkUser.toString(),
-                user = email ?: "",
+                user = email.orEmpty(),
                 idBrand = idBrand ?: 0,
                 idUserRequest = idUserRequest ?: 0
             ).collectLatest { result ->
@@ -284,7 +307,11 @@ class NonPreApprovedViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess {
                 uiState = uiState.copy(isLoading = false)
-                navigateBack(isRestart = true)
+                if (it?.rejectedBlaze?.not() == true) {
+                    setSuccessAlertResult(it.products?.firstOrNull()?.maximumDisbursementLabel ?: "")
+                } else {
+                    setErrorAlertResult()
+                }
             }.onFailure {
                 uiState = uiState.copy(
                     isLoading = false,
@@ -305,6 +332,41 @@ class NonPreApprovedViewModel @Inject constructor(
             popTo = Screen.HomeScreen.route
         )
 
+    private fun onNavigateToOrigination() = popAndNavigateTo(
+        route = "${Screen.CreditScreen.baseRoute}/${idBrand ?: 0}/${pkUser ?: 0}/${identification.orEmpty()}/${email.orEmpty()}/${lastStep ?: CreditStep.One.id}/" +
+                "${idUserRequest ?: 0}/${firstName.orEmpty()}/" +
+                "${lastName.orEmpty()}/${statusOnfido.orEmpty()}/" +
+                "${statusEvicertia.orEmpty()}/${idPrint ?: 0}/" +
+                "${crosseling ?: false}",
+        popTo = Screen.NonPreApprovedScreen.route
+    )
+
+    private fun setSuccessAlertResult(amount: String) {
+        uiState = uiState.copy(
+            isAlertResultVisible = true,
+            isAlertResultSuccess = true,
+            maxDisbursementAmount = amount,
+            alertResultIconResource = R.drawable.ic_success_symbol,
+            alertResultTitleResource = R.string.non_pre_approved_additional_questions_success_alert_result_title,
+            alertResultDescriptionResource = R.string.non_pre_approved_additional_questions_success_alert_result_description,
+            alertResultButtonResource = R.string.non_pre_approved_additional_questions_request_button_label,
+            isLoading = false
+        )
+    }
+
+    private fun setErrorAlertResult() {
+        uiState = uiState.copy(
+            isAlertResultVisible = true,
+            isAlertResultSuccess = false,
+            maxDisbursementAmount = "",
+            alertResultIconResource = R.drawable.ic_error_symbol,
+            alertResultTitleResource = R.string.non_pre_approved_additional_questions_error_alert_result_title,
+            alertResultDescriptionResource = R.string.non_pre_approved_additional_questions_error_alert_result_description,
+            alertResultButtonResource = R.string.understood,
+            isLoading = false
+        )
+    }
+
     data class UIState(
         val titleResource: Int = R.string.empty,
         val birthDate: String = "",
@@ -312,9 +374,16 @@ class NonPreApprovedViewModel @Inject constructor(
         val employmentSituationList: List<CreditCatalogOption?>? = listOf(),
         val employmentSituationSelected: CreditCatalogOption? = null,
         val paymentAmount: String = "",
+        val maxDisbursementAmount: String = "",
         val isContinueEnabled: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
-        val isLoading: Boolean = false
+        val isLoading: Boolean = false,
+        val isAlertResultSuccess: Boolean = true,
+        val isAlertResultVisible: Boolean = false,
+        val alertResultIconResource: Int = 0,
+        val alertResultTitleResource: Int = R.string.empty,
+        val alertResultDescriptionResource: Int = R.string.empty,
+        val alertResultButtonResource: Int = R.string.empty,
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -333,6 +402,8 @@ class NonPreApprovedViewModel @Inject constructor(
             is OnUpdateScreenConfigData -> {
                 saveCreditStepsHelper.start(event.screenConfigData)
             }
+            is OnRequestClick -> onNavigateToOrigination()
+            is OnCloseClick -> navigateBack(true)
         }
     }
 
@@ -350,6 +421,8 @@ class NonPreApprovedViewModel @Inject constructor(
 
         data class OnBackClick(val focusManager: FocusManager) : UIEvent()
         data class OnContinueClick(val focusManager: FocusManager) : UIEvent()
+        data class OnCloseClick(val focusManager: FocusManager) : UIEvent()
+        data class OnRequestClick(val focusManager: FocusManager) : UIEvent()
         data class OnUpdateScreenConfigData(val screenConfigData: List<CreditCatalog?>?) : UIEvent()
     }
 

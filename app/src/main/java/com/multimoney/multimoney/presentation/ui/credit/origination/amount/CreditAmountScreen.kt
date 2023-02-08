@@ -100,6 +100,9 @@ fun CreditAmountScreen(
                             sharedViewModel.onUIEvent(
                                 CreditViewModel.UIEvent.OnNextStep
                             )
+                            if (sharedViewModel.crosseling) {
+                                sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnRestartCrosselingNewAccount)
+                            }
                         },
                         onLoadingValueChange = { isLoading ->
                             sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
@@ -173,7 +176,7 @@ fun CreditAmountScreen(
                     .padding(start = 16.dp, end = 16.dp, top = 36.dp, bottom = 40.dp),
                 text = stringResource(id = title),
                 style = Typography.h5.copy(
-                    color = MultimoneyTheme.colors.text,
+                    color = MultimoneyTheme.colors.titleText,
                     fontWeight = FontWeight.SemiBold
                 )
             )
@@ -295,7 +298,7 @@ fun CreditAmountScreen(
             )
             CreditInfo(
                 iconId = drawable.ic_percentage,
-                textId = string.credit_amount_interest,
+                textId = string.credit_amount_interest_origination,
                 value = viewModel.uiState.regularInterestRateLabel
             )
             CreditInfo(
@@ -368,7 +371,7 @@ fun CreditInfo(iconId: Int, textId: Int, value: String?) {
         Icon(
             painter = painterResource(id = iconId),
             contentDescription = "",
-            modifier = Modifier.size(16.dp, 16.dp),
+            modifier = Modifier.size(18.dp, 18.dp),
             tint = MultimoneyTheme.colors.iconColor
         )
         Text(

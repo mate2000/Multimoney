@@ -11,7 +11,9 @@ data class DialogParameters(
     val isActive: MutableState<Boolean> = mutableStateOf(false),
     val positiveResource: Int = R.string.accept,
     val negativeResource: Int = R.string.empty,
-    var positiveAction: () -> Unit = { isActive.value = false },
+    var positiveAction: () -> Unit = {},
     var negativeAction: () -> Unit = {},
-    var dismissAction: () -> Unit = {}
+    var dismissAction: () -> Unit = {},
+    var isCancelable: Boolean = true,
+    var additionalText: String = ""
 )

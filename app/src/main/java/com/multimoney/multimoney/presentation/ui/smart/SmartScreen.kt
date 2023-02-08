@@ -46,13 +46,18 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 fun SmartScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: SmartViewModel = hiltViewModel()
 ) {
     val focusManager = LocalFocusManager.current
 
     // Navigation
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
+        viewModel.executeNavigation(
+            onNavigate = onNavigate,
+            onPopAndNavigate = onPopAndNavigate,
+            onPopBackStack = onPopBackStack
+        )
         viewModel.onUIEvent(OnCallMutationInitialRequest)
     }
 
@@ -149,10 +154,7 @@ fun SmartScreen(
 }
 
 @Composable
-fun GetSvStepContent(
-    step: Int,
-    viewModel: SmartViewModel
-) {
+fun GetSvStepContent(step: Int, viewModel: SmartViewModel) {
     when (step) {
         SmartSteps.One.id -> SmartDocumentScreen(sharedViewModel = viewModel)
         SmartSteps.Two.id -> SmartLivingAddressScreen(sharedViewModel = viewModel)
@@ -163,10 +165,7 @@ fun GetSvStepContent(
 }
 
 @Composable
-fun GetCrStepContent(
-    step: Int,
-    viewModel: SmartViewModel
-) {
+fun GetCrStepContent(step: Int, viewModel: SmartViewModel) {
     when (step) {
         SmartSteps.One.id -> SmartLivingAddressScreen(sharedViewModel = viewModel)
         SmartSteps.Two.id -> SourceIncomeScreen(sharedViewModel = viewModel)

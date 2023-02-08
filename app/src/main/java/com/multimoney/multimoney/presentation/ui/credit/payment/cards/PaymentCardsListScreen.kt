@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -74,7 +75,7 @@ fun PaymentCardsListContent(
             onRightButtonClick = { viewModel.onUIEvent(PaymentCardListViewModel.UIEvent.OnNavigateBackHome) }
         )
         Text(
-            modifier = Modifier.padding(top = 42.dp, start = 16.dp, end = 16.dp, bottom = 20.dp),
+            modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp),
             text = stringResource(id = R.string.payment_cards_list_title),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText,
@@ -158,19 +159,22 @@ fun PaymentCardList(
                     imageModifier = Modifier.size(48.dp),
                     startIcon = R.drawable.ic_visa_card_item,
                     title = card?.detail ?: "",
-                    subtitle = card?.cardMaskedNumber ?: "",
+                    subtitle = stringResource(
+                        id = string.visa_card_masked_number,
+                        card?.cardMaskedNumber?.takeLast(4) ?: 0
+                    ),
                     onClick = {
                         viewModel.onUIEvent(PaymentCardListViewModel.UIEvent.OnCardSelected(card))
                     }
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
             }
         }
     }
     CustomButton(
         text = stringResource(id = R.string.payment_cards_list_create),
         modifier = Modifier
-            .padding(top = 32.dp)
+            .padding(top = 28.dp)
             .fillMaxWidth(),
         onClick = {
             Toast.makeText(context, "TBD", Toast.LENGTH_SHORT).show()

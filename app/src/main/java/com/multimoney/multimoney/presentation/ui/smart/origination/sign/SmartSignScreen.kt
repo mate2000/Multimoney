@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun SmartSignScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: SmartSignViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -27,7 +28,7 @@ fun SmartSignScreen(
 
     LaunchedEffect(true) {
         viewModel.apply {
-            executeNavigation(onPopAndNavigate = onPopAndNavigate)
+            executeNavigation(onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)
             onUIEvent(OnCallSubscriptionSmartContractEvent)
             baseEvent.collectLatest { event ->
                 when (event) {
@@ -39,7 +40,7 @@ fun SmartSignScreen(
 
     when (viewModel.uiState.signDocumentProcessStep) {
         GENERATE_DOCUMENT_STEP.value -> {
-            SmartDocumenGenerationScreen(
+            SmartDocumentGenerationScreen(
                 viewModel = viewModel,
                 icon = viewModel.uiState.loadingIcon,
                 title = viewModel.uiState.loadingTitle,

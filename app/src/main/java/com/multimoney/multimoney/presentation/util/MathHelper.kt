@@ -1,6 +1,11 @@
 package com.multimoney.multimoney.presentation.util
 
+import com.multimoney.domain.model.crypto.CurrencyHistoricPrice
 import com.multimoney.domain.model.crypto.HistoricalBalanceClient
+import com.multimoney.multimoney.presentation.ui.crypto.DEFAULT_AMOUNT
+import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.BuyCurrencyScreenViewModel
+import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.EMPTY_CURRENCY
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 
 // fun to calculate gain loses based on the list of historical balance
 fun calculateGainLoses(
@@ -15,13 +20,103 @@ fun calculateGainLoses(
     return lastBalance - currentBalance
 }
 
-fun calculatePercentage(
+fun calculateGainLosesMarketDetails(
     currentBalance: Double,
-    listOfBalance: List<HistoricalBalanceClient>
+    listOfBalance: List<CurrencyHistoricPrice>
+): Double {
+
+    if (listOfBalance.isEmpty()) {
+        return 0.0
+    }
+    val firstBalance = listOfBalance.first().average_price.toDouble()
+    return currentBalance - firstBalance
+}
+
+fun calculatePercentageMarketDetails(
+    currentBalance: Double,
+    listOfBalance: List<CurrencyHistoricPrice>
 ): Double {
     if (listOfBalance.isEmpty()) {
         return 0.0
     }
-    val lastBalance = listOfBalance.last().convertedBalance
-    return ((lastBalance - currentBalance) / currentBalance) * 100
+    val firstBalance = listOfBalance.first().average_price.toDouble()
+    return ((currentBalance - firstBalance) / currentBalance) * 100
+}
+
+fun calculateConvertedCurrencyBalance(
+    quoteAmount: String,
+    baseAmount: String,
+    exchangeRate: Double,
+    price: Double?
+): String {
+    return (quoteAmount.ifEmpty {
+        (baseAmount.toDoubleOrNull() ?: 0.0).times(price ?: 0.0).toString()
+    }.toDouble() * exchangeRate).toCurrencyFormat(
+        symbol = CurrencyType.Colon.symbol
+    )
+}
+
+fun calculateDollarEstimated(
+    baseAmount: String,
+    currencyPrice: Double
+): String {
+    return (currencyPrice * baseAmount.ifEmpty {
+        EMPTY_CURRENCY
+    }.toDouble()).toCurrencyFormat()
+}
+
+fun calculateAssetEstimated(
+    quoteAmount: String,
+    currencyPrice: Double
+): String {
+    return (quoteAmount.ifEmpty {
+        EMPTY_CURRENCY
+    }.toDouble() / currencyPrice).roundToEightDecimalPlaces()
+}
+
+fun calculateConfirmationQuoteAmount(
+    quoteAmount: String,
+    baseAmount: String,
+    currencyPrice: Double?
+): String {
+    return quoteAmount.ifEmpty {
+        baseAmount.ifEmpty {
+            DEFAULT_AMOUNT
+        }.toDouble().times(currencyPrice ?: 0.0)
+    }.toString().toDouble().toCurrencyFormat()
+}
+
+fun calculateConfirmationBaseAmount(
+    quoteAmount: String,
+    baseAmount: String,
+    currencyPrice: Double?
+): String {
+    return baseAmount.ifEmpty {
+        quoteAmount.ifEmpty {
+            DEFAULT_AMOUNT
+        }.toDouble().div(currencyPrice ?: 0.0)
+    }.toString().toDouble().roundToEightDecimalPlaces()
+}
+
+fun calculateQuote(
+    isTransformationCurrency: Boolean,
+    amount: String,
+    price: Double
+): Double {
+    return if (isTransformationCurrency.not()) {
+        amount.ifEmpty { BuyCurrencyScreenViewModel.DEFAULT_BASE_AMOUNT_STRING }.toDouble()
+    } else {
+        amount.ifEmpty {
+            BuyCurrencyScreenViewModel.DEFAULT_AMOUNT
+        }.toDouble().times(price)
+    }
+}
+
+fun calculateAmountPlusFee(
+    amount: String,
+    fee: Double?
+): Double {
+    return amount.ifEmpty {
+        BuyCurrencyScreenViewModel.DEFAULT_BASE_AMOUNT_STRING
+    }.toDouble().plus(fee ?: 0.0)
 }

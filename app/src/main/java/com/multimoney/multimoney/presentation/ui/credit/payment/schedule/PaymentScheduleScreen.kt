@@ -93,10 +93,10 @@ fun PaymentScheduleContent(
             Column {
                 TopNavBar(
                     onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
-                    isRightButtonVisible = false
+                    onRightButtonClick = { viewModel.onUIEvent(OnAlertCloseClick) }
                 )
                 CustomInformativeText(
-                    modifier = Modifier.fillMaxWidth().padding(top = 34.dp, start = 7.dp, end = 16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(top = 24.dp, start = 7.dp, end = 16.dp),
                     trailingIcon = drawable.ic_information_chip,
                     trailingIconClick = { viewModel.onUIEvent(OnOpenDisclaimerDialog) },
                     text = stringResource(id = string.payment_schedule_title),

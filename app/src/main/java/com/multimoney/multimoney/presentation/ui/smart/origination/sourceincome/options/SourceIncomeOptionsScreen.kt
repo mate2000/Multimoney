@@ -2,9 +2,8 @@ package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -91,8 +90,7 @@ fun SourceIncomeContent(
             items(generalEconomicActivityList) { sourceOfIncome ->
                 CustomCatalogItem(
                     modifier = Modifier
-                        .defaultMinSize(minHeight = 140.dp)
-                        .height(140.dp)
+                        .heightIn(min = 155.dp)
                         .fillMaxWidth()
                         .padding(10.dp),
                     iconId = sourceOfIncome?.iconCode ?: 0,

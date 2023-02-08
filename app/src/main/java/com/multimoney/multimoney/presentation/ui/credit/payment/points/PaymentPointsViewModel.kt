@@ -18,8 +18,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS_DESCRIPTION
-import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LATITUDE
-import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LONGITUDE
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_SCHEDULE
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnCloseScreenClick
@@ -33,8 +31,6 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getNavParam
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
 @HiltViewModel
@@ -61,39 +57,28 @@ class PaymentPointsViewModel @Inject constructor(
         pointName: String,
         pointAddress: String,
         pointAddressDescription: String,
-        pointSchedule: String,
-        pointLatitude: String,
-        pointLongitude: String
+        pointSchedule: String
     ) = navigateTo(
         route = Screen.PaymentLocationDetailsScreen.baseRoute
             .plus(
-                getNavParam(POINT_NAME,
-                    URLEncoder.encode(
-                        pointName,
-                        StandardCharsets.UTF_8.name()
-                    )
+                getNavParam(
+                    POINT_NAME,
+                    pointName
                 )
             )
             .plus(
                 getNavParam(
                     POINT_ADDRESS,
-                    URLEncoder.encode(
-                        pointAddress,
-                        StandardCharsets.UTF_8.name()
-                    )
+                    pointAddress
                 )
             )
             .plus(
-                getNavParam(POINT_ADDRESS_DESCRIPTION,
-                    URLEncoder.encode(
-                        pointAddressDescription,
-                        StandardCharsets.UTF_8.name()
-                    )
+                getNavParam(
+                    POINT_ADDRESS_DESCRIPTION,
+                    pointAddressDescription
                 )
             )
             .plus(getNavParam(POINT_SCHEDULE, pointSchedule))
-            .plus(getNavParam(POINT_LATITUDE, pointLatitude))
-            .plus(getNavParam(POINT_LONGITUDE, pointLongitude))
             .plus(getNavParam(PAYMENT_AMOUNT, paymentAmountLabel))
             .plus(getNavParam(CREDIT_NUMBER, creditNumber))
             .plus(getNavParam(ID_BRAND, idBrand))
@@ -170,9 +155,7 @@ class PaymentPointsViewModel @Inject constructor(
                 uiEvent.pointName,
                 uiEvent.pointAddress,
                 uiEvent.pointAddressDescription,
-                uiEvent.pointSchedule,
-                uiEvent.pointLatitude,
-                uiEvent.pointLongitude
+                uiEvent.pointSchedule
             )
         }
     }
@@ -187,9 +170,7 @@ class PaymentPointsViewModel @Inject constructor(
             val pointName: String,
             val pointAddress: String,
             val pointAddressDescription: String,
-            val pointSchedule: String,
-            val pointLatitude: String,
-            val pointLongitude: String
+            val pointSchedule: String
         ) : UIEvent()
 
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()

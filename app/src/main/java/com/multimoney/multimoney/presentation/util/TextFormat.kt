@@ -2,6 +2,7 @@ package com.multimoney.multimoney.presentation.util
 
 import com.multimoney.data.util.catalog.Brand
 import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.util.Locale
 import kotlin.math.abs
 import kotlin.time.Duration
@@ -31,7 +32,12 @@ fun String.stringToIntegerFormat(separator: String? = null): String =
     if (isNotEmpty() && isValidAmount() && separator == null) {
         DecimalFormat(INTEGER_FORMAT).format(toDouble())
     } else if (isNotEmpty() && isValidAmount() && separator != null) {
-        DecimalFormat(INTEGER_FORMAT.replace(INTEGER_FORMAT_SEPARATOR, separator)).format(toDouble())
+        DecimalFormat(
+            INTEGER_FORMAT.replace(
+                INTEGER_FORMAT_SEPARATOR,
+                separator
+            ), DecimalFormatSymbols.getInstance(Locale.ENGLISH)
+        ).format(toDouble())
     } else {
         this
     }
@@ -59,19 +65,43 @@ fun String.capitalized(): String {
     }
 }
 
-fun getMaskedAccount(accountNumber: String, maskedText: String) =
-    accountNumber.take(ACCOUNT_FIRST_DIGITS).plus(maskedText).plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
+fun getMaskedAccount(
+    accountNumber: String,
+    maskedText: String = ACCOUNT_MASK,
+    prefix: String = accountNumber.take(ACCOUNT_FIRST_DIGITS)
+) = prefix.plus(maskedText)
+    .plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
 
-fun getMaskedVisa(cardNumber: String, maskedText: String) =
-    cardNumber.take(CARD_NUMBER_LAST_DIGITS).plus(maskedText).plus(cardNumber.takeLast(ACCOUNT_LAST_DIGITS))
+fun getMaskedVisaAccount(accountNumber: String, maskedText: String = ACCOUNT_MASK) =
+    VISA_MASK.plus(maskedText)
+        .plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
 
-fun getMaskedAccountIban(accountNumber: String, maskedText: String) =
+fun getMaskedAccountIban(accountNumber: String, maskedText: String = ACCOUNT_MASK) =
     Brand.CostaRica.iban.plus(
-        accountNumber.take(ACCOUNT_IBAN_FIRST_DIGITS).plus(maskedText).plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
+        accountNumber.take(ACCOUNT_IBAN_FIRST_DIGITS).plus(maskedText)
+            .plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
     )
+
+fun formatDocumentPlaceholder(originFormat: String, outputFormat: Char = DOCUMENT_FORMAT_VALUE): String {
+    return if (originFormat.isNotBlank()) {
+        originFormat.replace(
+            originFormat.last(),
+            outputFormat,
+            false
+        )
+    } else {
+        ""
+    }
+}
 
 const val ACCOUNT_IBAN_FIRST_DIGITS = 0
 const val ACCOUNT_FIRST_DIGITS = 2
 const val ACCOUNT_LAST_DIGITS = 4
 const val CARD_NUMBER_LAST_DIGITS = 4
 const val TWO_DECIMALS_FORMAT = "%.2f"
+const val EIGHT_DECIMALS_FORMAT = "%.8f"
+const val DECIMAL_AND_NUMBER_REGEX = "^[0-9.]*\$"
+const val ACCOUNT_MASK = "••••"
+const val VISA_MASK = "Visa"
+const val DOCUMENT_FORMAT_VALUE = '0'
+const val SEPARATOR = " | "

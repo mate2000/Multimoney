@@ -65,7 +65,6 @@ fun BeneficiariesScreen(
     beneficiaryViewModel: BeneficiariesViewModel = hiltViewModel(),
     sharedViewModel: SmartViewModel = hiltViewModel()
 ) {
-
     LaunchedEffect(key1 = true) {
         sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true))
         beneficiaryViewModel.baseEvent.collect { event ->
@@ -128,7 +127,6 @@ fun BeneficiariesScreen(
         } else {
             beneficiaryViewModel.onUIEvent(OnValidateForm)
         }
-
     }
 
     val generalModifier = if (beneficiaryViewModel.uiState.addBeneficiaryState) {
@@ -157,7 +155,7 @@ fun BeneficiariesScreen(
             positiveButtonText = stringResource(id = beneficiaryViewModel.uiState.openDialog.positiveResource),
             openDialogCustom = beneficiaryViewModel.uiState.openDialog.isActive,
             onNegativeAction = beneficiaryViewModel.uiState.openDialog.negativeAction,
-            onPositiveAction = beneficiaryViewModel.uiState.openDialog.positiveAction,
+            onPositiveAction = beneficiaryViewModel.uiState.openDialog.positiveAction
         )
     }
 
@@ -194,7 +192,9 @@ fun BeneficiaryForm(viewModel: BeneficiariesViewModel) {
             relationshipStatus?.description ?: ""
         },
         value = viewModel.uiState.relationship,
-        onValueChange = { viewModel.onUIEvent(OnRelationshipValueChange(it)) },
+        onValueChange = { valueSelected, _ ->
+            viewModel.onUIEvent(OnRelationshipValueChange(valueSelected))
+        },
         labelText = stringResource(id = string.relationship),
         placeHolder = stringResource(id = string.select)
     )
@@ -236,7 +236,7 @@ fun BeneficiaryList(
     }
 
     viewModel.uiState.beneficiaryList.let { beneficiaries ->
-        LazyColumn(modifier = Modifier.padding(top = 20.dp, start = 16.dp, end = 16.dp)) {
+        LazyColumn(modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp)) {
             items(beneficiaries) { beneficiary ->
                 CustomInfoButton(
                     title = beneficiary.fullName ?: "",
@@ -277,11 +277,12 @@ fun BeneficiaryList(
     if (viewModel.uiState.totalPercentage < MAX_PERCENTAGE) {
         CustomButton(
             modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
+                .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 40.dp)
                 .fillMaxWidth()
                 .height(48.dp),
             buttonType = CustomButtonType.PrimaryTertiary,
             text = stringResource(id = string.smart_account_add_beneficiaries),
+            trailingIcon = R.drawable.ic_add_beneficiary_smart,
             onClick = {
                 viewModel.onUIEvent(OnAddBeneficiaryStateChange(true))
             }

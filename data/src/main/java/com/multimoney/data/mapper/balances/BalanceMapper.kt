@@ -42,7 +42,8 @@ private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
     creditNumber = pagare,
     term = plazo,
     applyAutomaticDebit = aplica_Debito_Aut,
-    automaticDebitEnabled = debito_Aut_Activo
+    automaticDebitEnabled = debito_Aut_Activo,
+    expiredAutomaticDebitCard = expired_Debito_Aut_Card
 )
 
 private fun BalanceQuery.Account.mapToDomainModel() =
@@ -54,7 +55,9 @@ private fun BalanceQuery.Account.mapToDomainModel() =
         ibanAccountNumber = ibanAccountNumber,
         totalInterest = totalInterest.toString(),
         tokenNumber = tokenNumber,
-        idCurrencyAccount = idCurrencyAccount.toString().toIntOrNull()
+        idCurrencyAccount = idCurrencyAccount.toString().toIntOrNull(),
+        month = month,
+        customerId = customerId.toString().toLongOrNull()
     )
 
 private fun BalanceQuery.BalanceCryptoAccount.mapToDomainModel() =
@@ -74,7 +77,8 @@ private fun BalanceQuery.Item.mapToDomainModel() = BalanceCryptoAccountItems(
     investedBalanceCurrency = investedBalanceCurrency.toString(),
     percentageInvestedCurrency = percentageInvestedCurrency.toString(),
     priceOfTheDay = priceOfTheDay.toString().toDouble(),
-    url_image = url_image.toString()
+    url_image = url_image.toString(),
+    cryptoNetwork = crypto_network.toString()
 )
 
 private fun BalanceQuery.BalanceCardInformation.mapToDomainModel() = BalanceCardInformation(
@@ -97,7 +101,8 @@ private fun BalanceQuery.BalanceCardInformation.mapToDomainModel() = BalanceCard
     interestRate = tASA_INTERES,
     term = pLAZO,
     fullName = nOMBRE_COMPLETO,
-    remission = rEMISION
+    remission = rEMISION,
+    status = eSTADO
 )
 
 fun BalanceQuery.Data.mapToDomainModel() =

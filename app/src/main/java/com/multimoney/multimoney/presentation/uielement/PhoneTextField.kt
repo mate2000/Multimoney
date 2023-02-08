@@ -49,6 +49,8 @@ import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
+import com.multimoney.multimoney.presentation.util.replaceNumbersToZero
 import com.multimoney.multimoney.presentation.util.transformation.PhoneNumberTransformation
 import com.togitech.ccp.data.CountryData
 import kotlinx.coroutines.flow.Flow
@@ -141,6 +143,7 @@ fun PhoneTextField(
     val focusedIndicatorColor: Color
     val unfocusedIndicatorColor: Color
     val errorIndicatorColor: Color
+    val dropdownArrowColor: Color
 
     if (isSystemInDarkTheme()) {
         labelColor = GrayScale300
@@ -151,16 +154,19 @@ fun PhoneTextField(
         when {
             isError -> {
                 focusedIndicatorColor = SemanticNegative400
-                textColor = DefaultWhite
+                textColor = WhiteTransparency90
+                dropdownArrowColor = WhiteTransparency90
             }
             enabled -> {
                 focusedIndicatorColor = WhiteTransparency60
-                textColor = DefaultWhite
+                textColor = WhiteTransparency90
+                dropdownArrowColor = WhiteTransparency90
             }
             else -> {
                 focusedIndicatorColor = DefaultBlack
                 backgroundColor = GrayScale500
-                textColor = GrayScale400
+                textColor = WhiteTransparency60
+                dropdownArrowColor = WhiteTransparency60
             }
         }
     } else {
@@ -173,15 +179,18 @@ fun PhoneTextField(
             isError -> {
                 focusedIndicatorColor = SemanticNegative500
                 textColor = GrayScale800
+                dropdownArrowColor = WhiteTransparency60
             }
             enabled -> {
                 focusedIndicatorColor = Primary500
                 textColor = GrayScale800
+                dropdownArrowColor = WhiteTransparency90
             }
             else -> {
                 focusedIndicatorColor = GrayScale400
                 backgroundColor = GrayScale300
                 textColor = GrayScale500
+                dropdownArrowColor = WhiteTransparency60
             }
         }
     }
@@ -229,7 +238,7 @@ fun PhoneTextField(
             },
             placeholder = {
                 Text(
-                    text = phoneNumberTransformation.mobileTextExample.text,
+                    text = phoneNumberTransformation.mobileTextExample.text.replaceNumbersToZero(),
                     color = placeholderColor,
                     style = Typography.body2
                 )
@@ -247,7 +256,8 @@ fun PhoneTextField(
                     dialogFocusedBorderColorSearch = dialogFocusedBorderColorSearch,
                     dialogUnFocusedBorderColorSearch = dialogUnFocusedBorderColorSearch,
                     dialogCursorColorSearch = dialogCursorColorSearch,
-                    countryCodeTextColor = textColor
+                    countryCodeTextColor = textColor,
+                    dropdownArrowColor = dropdownArrowColor
                 )
             },
             singleLine = true,

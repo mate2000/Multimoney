@@ -3,8 +3,10 @@ package com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,10 +23,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCallQueryGetCards
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCardSelected
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
@@ -62,10 +66,10 @@ fun PaymentScheduleAccountContent(
     ) {
         TopNavBar(
             onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
-            isRightButtonVisible = false
+            onRightButtonClick = { viewModel.onUIEvent(OnCloseClick) }
         )
         Text(
-            modifier = Modifier.padding(top = 42.dp, start = 16.dp, end = 16.dp),
+            modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp),
             text = stringResource(id = R.string.payment_schedule_card_list_title),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.text,
@@ -74,16 +78,18 @@ fun PaymentScheduleAccountContent(
         val context = LocalContext.current
 
         viewModel.uiState.clientCardList?.let { cardList ->
-            LazyColumn(modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp)) {
+            LazyColumn(modifier = Modifier.padding(top = 32.dp, start = 16.dp, end = 16.dp)) {
                 items(cardList) { card ->
-
                     CustomInfoButton(
                         modifier = Modifier
                             .fillMaxWidth(),
                         imageModifier = Modifier.size(48.dp),
                         startIcon = R.drawable.ic_visa_card_item,
                         title = card?.detail ?: "",
-                        subtitle = card?.cardMaskedNumber ?: "",
+                        subtitle = stringResource(
+                            id = string.visa_card_masked_number,
+                            card?.cardMaskedNumber?.takeLast(4) ?: 0
+                        ),
                         endIcon = R.drawable.ic_right_chevron,
                         onEndIconClick = {
                             viewModel.onUIEvent(OnCardSelected(card))
@@ -93,13 +99,14 @@ fun PaymentScheduleAccountContent(
                         }
 
                     )
+                    Spacer(modifier = Modifier.height(12.dp))
                 }
             }
         }
         CustomButton(
             text = stringResource(id = R.string.payment_schedule_card_list_add_card),
             modifier = Modifier
-                .padding(top = 32.dp, start = 16.dp, end = 16.dp)
+                .padding(top = 28.dp, start = 16.dp, end = 16.dp)
                 .fillMaxWidth(),
             onClick = {
                 Toast.makeText(context, "TBD", Toast.LENGTH_SHORT).show()
@@ -112,8 +119,10 @@ fun PaymentScheduleAccountContent(
                 title = stringResource(id = viewModel.uiState.openDialog.titleResource),
                 message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
                 positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+                negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
                 openDialogCustom = viewModel.uiState.openDialog.isActive,
-                onPositiveAction = viewModel.uiState.openDialog.positiveAction
+                onPositiveAction = viewModel.uiState.openDialog.positiveAction,
+                onNegativeAction = viewModel.uiState.openDialog.negativeAction
             )
         }
     }

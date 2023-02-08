@@ -8,21 +8,19 @@ import android.os.Build
 import android.provider.Settings
 import android.util.DisplayMetrics
 import android.view.WindowManager
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.FragmentActivity
 import com.multimoney.data.util.catalog.DeviceType
 import com.multimoney.multimoney.BuildConfig
 import java.net.Inet4Address
 import java.net.InetAddress
 import java.net.NetworkInterface
-import java.util.*
+import java.util.Enumeration
 
-
-fun getDeviceId(activity: FragmentActivity): String{
+fun getDeviceId(activity: FragmentActivity): String {
     return Settings.Secure.getString(activity.contentResolver, Settings.Secure.ANDROID_ID)
 }
 
-fun getIpAddress(activity: FragmentActivity): String {
+fun getIpAddress(activity: FragmentActivity): String? {
     //check for wifi address first
     val wifiMgr = activity.getSystemService(Context.WIFI_SERVICE) as WifiManager
     if (wifiMgr.isWifiEnabled) {
@@ -34,11 +32,11 @@ fun getIpAddress(activity: FragmentActivity): String {
     //then checks for mobile data address
     val en: Enumeration<NetworkInterface> = NetworkInterface.getNetworkInterfaces()
     while (en.hasMoreElements()) {
-        val intf: NetworkInterface = en.nextElement()
-        val enumIpAddr: Enumeration<InetAddress> = intf.getInetAddresses()
-        while (enumIpAddr.hasMoreElements()) {
-            val inetAddress: InetAddress = enumIpAddr.nextElement()
-            if (!inetAddress.isLoopbackAddress() && inetAddress is Inet4Address) {
+        val networkInterface: NetworkInterface = en.nextElement()
+        val enumIpAddress: Enumeration<InetAddress> = networkInterface.inetAddresses
+        while (enumIpAddress.hasMoreElements()) {
+            val inetAddress: InetAddress = enumIpAddress.nextElement()
+            if (!inetAddress.isLoopbackAddress && inetAddress is Inet4Address) {
                 return inetAddress.getHostAddress()
             }
         }
@@ -123,7 +121,7 @@ private fun getDeviceTypeFromResourceConfiguration(context: Context): DeviceType
 }
 
 
-private fun getDeviceTypeFromPhysicalSize(context: Context):DeviceType{
+private fun getDeviceTypeFromPhysicalSize(context: Context): DeviceType {
     val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager?
     if (windowManager == null) {
         return DeviceType.UNKNOWN;

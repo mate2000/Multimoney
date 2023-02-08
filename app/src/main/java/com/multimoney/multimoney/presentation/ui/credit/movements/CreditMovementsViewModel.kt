@@ -30,6 +30,7 @@ import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovement
 import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovementsViewModel.UIEvent.OnIsLoadingChange
 import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovementsViewModel.UIEvent.OnNavigateBackToHome
 import com.multimoney.multimoney.presentation.ui.credit.movements.workmanager.DownloadCreditMovementsWorker
+import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.OPTION_BTN_6
 import com.multimoney.multimoney.presentation.util.PAGE_SIZE
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -41,7 +42,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CreditMovementsViewModel @Inject constructor(
     private val queryGetPagedCreditMovements: QueryGetPagedCreditMovementsUseCase,
-    val queryAccountStatementUseCase: QueryAccountStatementUseCase,
+    private val queryAccountStatementUseCase: QueryAccountStatementUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
@@ -55,7 +56,7 @@ class CreditMovementsViewModel @Inject constructor(
     val creditNumber = savedStateHandle[CREDIT_NUMBER] ?: ""
     val user = savedStateHandle[USER] ?: ""
 
-    private fun onGetSmartMovements() {
+    private fun onGetCreditMovements() {
         executeUseCase {
             uiState = uiState.copy(
                 movementsPage = queryGetPagedCreditMovements.invoke(
@@ -69,10 +70,7 @@ class CreditMovementsViewModel @Inject constructor(
     }
 
     private fun navigateBackToHome() {
-        popAndNavigateTo(
-            route = Screen.HomeScreen.route,
-            popTo = Screen.SmartMovementsScreen.route
-        )
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = false, HomeState.COLLAPSED)
     }
 
     private fun onErrorLoading(failureDialog: DialogParameters) {
@@ -106,7 +104,7 @@ class CreditMovementsViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is OnGetMovement -> onGetSmartMovements()
+            is OnGetMovement -> onGetCreditMovements()
             is OnNavigateBackToHome -> navigateBackToHome()
             is OnErrorLoading -> onErrorLoading(event.failureDialog)
             is OnIsLoadingChange -> onIsLoadingChange(event.isLoading)

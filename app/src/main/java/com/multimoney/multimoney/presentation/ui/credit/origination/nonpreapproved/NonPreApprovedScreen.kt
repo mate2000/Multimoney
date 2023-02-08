@@ -4,9 +4,9 @@ import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentSize
@@ -36,14 +36,6 @@ import com.multimoney.domain.model.credit.CreditCatalogOption
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
-import com.multimoney.multimoney.presentation.uielement.CustomDialog
-import com.multimoney.multimoney.presentation.uielement.CustomButton
-import com.multimoney.multimoney.presentation.uielement.CustomButtonType
-import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.uielement.CustomDropdown
-import com.multimoney.multimoney.presentation.uielement.CustomDatePicker
-import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
@@ -51,14 +43,25 @@ import com.multimoney.multimoney.presentation.util.getPickedDateAsString
 import com.multimoney.multimoney.presentation.util.transformation.formatDecimalMoney
 import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnBackClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnCloseClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnRequestClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnBirthDateValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnPaymentAmountValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnEmploymentSituationValueChanged
+import com.multimoney.multimoney.presentation.uielement.TopNavBar
+import com.multimoney.multimoney.presentation.uielement.AlertResult
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.uielement.CustomButton
+import com.multimoney.multimoney.presentation.uielement.CustomButtonType
+import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.uielement.CustomDropdown
+import com.multimoney.multimoney.presentation.uielement.CustomDatePicker
 
 @Composable
 fun NonPreApprovedScreen(
-    onNavigate: (NavEvent.Navigate) -> Unit = {},
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: NonPreApprovedViewModel = hiltViewModel()
 ) {
@@ -71,67 +74,99 @@ fun NonPreApprovedScreen(
     // Navigation
 
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
+        viewModel.executeNavigation(
+            onPopAndNavigate = onPopAndNavigate,
+            onPopBackStack = onPopBackStack
+        )
         viewModel.onUIEvent(OnStart)
     }
 
     // View
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MultimoneyTheme.colors.background)
-
-    ) {
-        Column {
-            TopBar(onBackClick = {
-                viewModel.onUIEvent(OnBackClick(focusManager))
-            })
-            Column(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .verticalScroll(rememberScrollState())
-            ) {
-                Title(title = viewModel.uiState.titleResource)
-                BirthDay(
-                    context = context,
-                    focusManager = focusManager,
-                    value = viewModel.uiState.birthDate,
-                    minYear = NonPreApprovedViewModel.BIRTH_DATE_MIN_YEAR,
-                    minMonth = NonPreApprovedViewModel.BIRTH_DATE_MIN_MONTH,
-                    minDay = NonPreApprovedViewModel.BIRTH_DATE_MIN_DAY,
-                    onValueChange = {
-                        viewModel.onUIEvent(
-                            OnBirthDateValueChange(it)
-                        )
-                    },
-                    onError = viewModel.uiState.birthDateError
-                )
-                MonthlyIncome(
-                    value = viewModel.uiState.paymentAmount,
-                    currencySymbol = viewModel.idBrand?.getCurrencySymbol() ?: 0,
-                    onValueChange = {
-                        viewModel.onUIEvent(OnPaymentAmountValueChange(it))
-                    },
-                    focusManager = focusManager
-                )
-                EmploymentSituation(
-                    items = viewModel.uiState.employmentSituationList,
-                    value = viewModel.uiState.employmentSituationSelected,
-                    onValueChange = {
-                        viewModel.onUIEvent(OnEmploymentSituationValueChanged(it))
+    if (viewModel.uiState.isAlertResultVisible) {
+        viewModel.uiState.apply {
+            AlertResult(
+                iconResource = alertResultIconResource,
+                titleString = if (isAlertResultSuccess) {
+                    stringResource(
+                        id = alertResultTitleResource,
+                        maxDisbursementAmount
+                    )
+                } else {
+                    stringResource(id = alertResultTitleResource)
+                },
+                descriptionResource = alertResultDescriptionResource,
+                buttonTextResource = alertResultButtonResource,
+                isLeftButtonVisible = false,
+                isRightButtonVisible = true,
+                onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) },
+                onButtonClick = {
+                    if (isAlertResultSuccess) {
+                        viewModel.onUIEvent(OnRequestClick(focusManager))
+                    } else {
+                        viewModel.onUIEvent(OnCloseClick(focusManager))
                     }
-                )
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            Continue(
-                enable = viewModel.uiState.isContinueEnabled,
-                onClick = {
-                    viewModel.onUIEvent(OnContinueClick(focusManager))
                 }
             )
         }
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MultimoneyTheme.colors.background)
+
+        ) {
+            Column {
+                TopBar(onBackClick = {
+                    viewModel.onUIEvent(OnBackClick(focusManager))
+                })
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    Title(title = viewModel.uiState.titleResource)
+                    BirthDay(
+                        context = context,
+                        focusManager = focusManager,
+                        value = viewModel.uiState.birthDate,
+                        minYear = NonPreApprovedViewModel.BIRTH_DATE_MIN_YEAR,
+                        minMonth = NonPreApprovedViewModel.BIRTH_DATE_MIN_MONTH,
+                        minDay = NonPreApprovedViewModel.BIRTH_DATE_MIN_DAY,
+                        onValueChange = {
+                            viewModel.onUIEvent(
+                                OnBirthDateValueChange(it)
+                            )
+                        },
+                        onError = viewModel.uiState.birthDateError
+                    )
+                    MonthlyIncome(
+                        value = viewModel.uiState.paymentAmount,
+                        currencySymbol = viewModel.idBrand?.getCurrencySymbol() ?: 0,
+                        onValueChange = {
+                            viewModel.onUIEvent(OnPaymentAmountValueChange(it))
+                        },
+                        focusManager = focusManager
+                    )
+                    EmploymentSituation(
+                        items = viewModel.uiState.employmentSituationList,
+                        value = viewModel.uiState.employmentSituationSelected,
+                        onValueChange = {
+                            viewModel.onUIEvent(OnEmploymentSituationValueChanged(it))
+                        }
+                    )
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                Continue(
+                    enable = viewModel.uiState.isContinueEnabled,
+                    onClick = {
+                        viewModel.onUIEvent(OnContinueClick(focusManager))
+                    }
+                )
+            }
+        }
     }
+
     LoadingIndicator(viewModel.uiState.isLoading)
     ErrorDialog(viewModel.uiState.openDialog)
 

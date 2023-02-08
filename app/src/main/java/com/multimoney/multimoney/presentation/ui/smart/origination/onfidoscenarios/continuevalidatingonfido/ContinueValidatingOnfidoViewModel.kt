@@ -2,6 +2,7 @@ package com.multimoney.multimoney.presentation.ui.smart.origination.onfidoscenar
 
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfidoscenarios.continuevalidatingonfido.ContinueValidatingOnfidoViewModel.UIEvent.OnNavigateToHome
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -10,10 +11,7 @@ import javax.inject.Inject
 class ContinueValidatingOnfidoViewModel @Inject constructor() : BaseViewModel(true) {
 
     private fun onNavigateToHome() {
-        popAndNavigateTo(
-            route = Screen.HomeScreen.route,
-            popTo = Screen.ContinueValidatingOnfidoScreen.route
-        )
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
     }
 
     fun onUIEvent(event: UIEvent) {

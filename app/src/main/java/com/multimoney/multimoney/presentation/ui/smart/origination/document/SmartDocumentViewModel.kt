@@ -27,15 +27,20 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.document.Smar
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnExpirationDateValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnGenderChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnLoadCurrentStepData
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnProfessionChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnValidateForm
+import com.multimoney.multimoney.presentation.util.BAR
+import com.multimoney.multimoney.presentation.util.HYPHEN
 import com.multimoney.multimoney.presentation.util.ISO_8601_API_FORMAT_PATTERN
 import com.multimoney.multimoney.presentation.util.YEAR_MONTH_DAY_PATTERN
+import com.multimoney.multimoney.presentation.util.YEAR_MONTH_DAY_PATTERN_BAR_FORMAT
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import com.multimoney.multimoney.presentation.util.onBirthDateAgeValidation
+import com.multimoney.multimoney.presentation.util.onExpirationDateValidation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
@@ -52,6 +57,33 @@ class SmartDocumentViewModel @Inject constructor(
     // UIState
     var uiState by mutableStateOf(UIState())
         private set
+
+    /**
+     * this function is intended to load the form data on the UI, after getting the
+     * data coming from the current step (provided from the backend)
+     */
+    private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
+        val birthdate = accountSmartData?.birthday?.let {
+            getFormatDateByString(
+                it,
+                ISO_8601_API_FORMAT_PATTERN,
+                YEAR_MONTH_DAY_PATTERN_BAR_FORMAT
+            )
+        } ?: ""
+        val expirationDate = accountSmartData?.expirationDate?.let {
+            getFormatDateByString(
+                it,
+                ISO_8601_API_FORMAT_PATTERN,
+                YEAR_MONTH_DAY_PATTERN_BAR_FORMAT
+            )
+        } ?: ""
+
+        if (birthdate.isNotBlank()) onBirthDateValueChange(birthdate, LocalDate.parse(birthdate.replace(BAR, HYPHEN)))
+        if (expirationDate.isNotBlank()) onExpirationDateValueChange(expirationDate)
+        onGenderChange(accountSmartData?.strGenre.orEmpty())
+        onCivilStateChange(accountSmartData?.strMaritalStatus.orEmpty())
+        onProfessionChange(accountSmartData?.stringProfessionType.orEmpty())
+    }
 
     private fun callQueryNationalitiesUseCase(user: String, idBrand: Int) =
         executeUseCase {
@@ -169,8 +201,10 @@ class SmartDocumentViewModel @Inject constructor(
         }
 
     private fun onExpirationDateValueChange(expirationDate: String) {
-        uiState = uiState.copy(expirationDate = expirationDate)
-        validateForm()
+        if (onExpirationDateValidation(expirationDate.replace(BAR, HYPHEN))) {
+            uiState = uiState.copy(expirationDate = expirationDate)
+            validateForm()
+        }
     }
 
     private fun onBirthDateValueChange(birthdate: String, pickedDate: LocalDate) {
@@ -208,42 +242,16 @@ class SmartDocumentViewModel @Inject constructor(
         emitBaseEvent(
             BaseEvent.OnFormValidateCompleted(
                 isFormValid = uiState.gender.isNotBlank() &&
-                    uiState.birthdate.isNotBlank() &&
-                    uiState.civilState.isNotBlank() &&
-                    uiState.profession.isNotBlank() &&
-                    uiState.expirationDate.isNotBlank() && !uiState.birthdateErrorStatus
+                        uiState.birthdate.isNotBlank() &&
+                        uiState.civilState.isNotBlank() &&
+                        uiState.profession.isNotBlank() &&
+                        uiState.expirationDate.isNotBlank() && !uiState.birthdateErrorStatus
             )
         )
     }
 
     private fun onNextActionClick(nextStepAction: () -> Unit) {
         nextStepAction()
-    }
-
-    /**
-     * this function is intended to load the form data on the UI, after getting the
-     * data coming from the current step (provided from the backend)
-     */
-    private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
-        uiState = uiState.copy(
-            birthdate = accountSmartData?.birthday?.let {
-                getFormatDateByString(
-                    it,
-                    ISO_8601_API_FORMAT_PATTERN,
-                    YEAR_MONTH_DAY_PATTERN
-                )
-            } ?: "",
-            expirationDate = accountSmartData?.expirationDate?.let {
-                getFormatDateByString(
-                    it,
-                    ISO_8601_API_FORMAT_PATTERN,
-                    YEAR_MONTH_DAY_PATTERN
-                )
-            } ?: ""
-        )
-        onGenderChange(accountSmartData?.strGenre.orEmpty())
-        onCivilStateChange(accountSmartData?.strMaritalStatus.orEmpty())
-        onProfessionChange(accountSmartData?.stringProfessionType.orEmpty())
     }
 
     data class UIState(
@@ -288,7 +296,9 @@ class SmartDocumentViewModel @Inject constructor(
             is OnCallQueryProfessionUseCase -> callQueryProfessionUseCase(event.user, event.idBrand)
             is OnValidateForm -> validateForm()
             is OnNextActionClick -> onNextActionClick(event.nextStepAction)
-            is UIEvent.OnLoadCurrentStepData -> onLoadCurrentStepData(event.accountSmartData)
+            is OnLoadCurrentStepData -> onLoadCurrentStepData(event.accountSmartData)
+            is OnFailureWithDialog -> TODO()
+            is OnLoadingValueChange -> TODO()
         }
     }
 

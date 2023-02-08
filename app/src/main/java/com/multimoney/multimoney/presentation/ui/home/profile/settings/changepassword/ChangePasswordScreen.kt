@@ -1,7 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.home.profile.settings.changepassword
 
-import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,44 +13,53 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.flowlayout.FlowRow
 import com.multimoney.domain.model.util.onFailure
-import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel
-import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel
+import com.multimoney.multimoney.presentation.ui.home.profile.settings.changepassword.ChangePasswordViewModel.UIEvent.OnNavigateToForgotPassword
+import com.multimoney.multimoney.presentation.ui.home.profile.settings.changepassword.ChangePasswordViewModel.UIEvent.OnUpdatePassword
 import com.multimoney.multimoney.presentation.ui.login.signup.password.PasswordRequirementLabels
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
+import com.multimoney.multimoney.presentation.uielement.CustomModalWarningBottomSheet
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ChangePasswordScreen(
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
@@ -58,11 +67,13 @@ fun ChangePasswordScreen(
     viewModel: ChangePasswordViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+    val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Expanded)
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(true) {
         viewModel.executeNavigation(
             onPopBackStack = onPopBackStack,
-            onNavigate = onNavigate,
+            onNavigate = onNavigate
         )
     }
 
@@ -74,7 +85,7 @@ fun ChangePasswordScreen(
             isLeftButtonVisible = false,
             isRightButtonVisible = false,
             onButtonClick = {
-                viewModel.onUIEvent(ChangePasswordViewModel.UIEvent.OnNavigateToHome)
+                viewModel.onUIEvent(ChangePasswordViewModel.UIEvent.OnAlertButtonClick)
             }
         )
     }
@@ -92,8 +103,6 @@ fun ChangePasswordScreen(
                 viewModel.onUIEvent(ChangePasswordViewModel.UIEvent.OnPasswordSameAsPrevious)
             }.onFailure {
                 viewModel.onUIEvent(ChangePasswordViewModel.UIEvent.OnShowAlertDialog)
-            }.onLoading {
-                viewModel.onUIEvent(ChangePasswordViewModel.UIEvent.OnUpdateLoadingState(true))
             }
         }
     }
@@ -111,15 +120,31 @@ fun ChangePasswordScreen(
             }
         }
     }
+    BackHandler {
+        when {
+            bottomSheetState.isVisible -> {
+                coroutineScope.launch {
+                    bottomSheetState.hide()
+                }
+            }
+            else -> viewModel.onUIEvent(ChangePasswordViewModel.UIEvent.OnNavigateBack)
+        }
+    }
 
     ChangePasswordContent(
-        viewModel = viewModel
+        viewModel = viewModel,
+        bottomSheetState = bottomSheetState,
+        coroutineScope = coroutineScope
     )
-    LoadingIndicator(viewModel.uiState.isLoading)
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ChangePasswordContent(viewModel: ChangePasswordViewModel) {
+fun ChangePasswordContent(
+    viewModel: ChangePasswordViewModel,
+    bottomSheetState: ModalBottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Expanded),
+    coroutineScope: CoroutineScope = rememberCoroutineScope()
+) {
     val focusManager = LocalFocusManager.current
     Column(
         modifier = Modifier
@@ -130,17 +155,19 @@ fun ChangePasswordContent(viewModel: ChangePasswordViewModel) {
         TopNavBar(
             onLeftButtonClick = {
                 viewModel.onUIEvent(ChangePasswordViewModel.UIEvent.OnNavigateBack)
-            }, isRightButtonVisible = false
+            },
+            isRightButtonVisible = false
         )
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
             val (contentColumn, changePasswordButton) = createRefs()
-            Column(modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .verticalScroll(rememberScrollState())
-                .constrainAs(contentColumn) {
-                    top.linkTo(parent.top)
-                })
-            {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .verticalScroll(rememberScrollState())
+                    .constrainAs(contentColumn) {
+                        top.linkTo(parent.top)
+                    }
+            ) {
                 Text(
                     modifier = Modifier.padding(top = 8.dp),
                     text = stringResource(id = R.string.profile_settings_change_password),
@@ -158,7 +185,8 @@ fun ChangePasswordContent(viewModel: ChangePasswordViewModel) {
                         )
                     },
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Password, imeAction = ImeAction.Next
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Next
                     ),
                     keyboardActions = KeyboardActions(onNext = {
                         focusManager.clearFocus()
@@ -176,7 +204,8 @@ fun ChangePasswordContent(viewModel: ChangePasswordViewModel) {
                     }
                 )
 
-                ClickableText(text = AnnotatedString(stringResource(id = R.string.profile_settings_forget_password)),
+                ClickableText(
+                    text = AnnotatedString(stringResource(id = R.string.profile_settings_forget_password)),
                     modifier = Modifier
                         .padding(top = 16.dp)
                         .align(Alignment.End),
@@ -184,7 +213,7 @@ fun ChangePasswordContent(viewModel: ChangePasswordViewModel) {
                         textDecoration = TextDecoration.Underline,
                         color = MultimoneyTheme.colors.textLink
                     ),
-                    onClick = { }
+                    onClick = { viewModel.onUIEvent(OnNavigateToForgotPassword) }
                 )
 
                 CustomOutlinedTextField(
@@ -197,7 +226,8 @@ fun ChangePasswordContent(viewModel: ChangePasswordViewModel) {
                         )
                     },
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Password, imeAction = ImeAction.Next
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Next
                     ),
                     keyboardActions = KeyboardActions(onNext = {
                         focusManager.clearFocus()
@@ -225,7 +255,8 @@ fun ChangePasswordContent(viewModel: ChangePasswordViewModel) {
                         )
                     },
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Password, imeAction = ImeAction.Next
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Next
                     ),
                     keyboardActions = KeyboardActions(onNext = {
                         focusManager.clearFocus()
@@ -277,22 +308,43 @@ fun ChangePasswordContent(viewModel: ChangePasswordViewModel) {
                 bottom.linkTo(parent.bottom)
                 top.linkTo(parent.top)
             }
-            CustomButton(modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp)
-                .padding(start = 16.dp, end = 16.dp)
-                .constrainAs(changePasswordButton) {
-                    bottom.linkTo(parent.bottom)
-                    top.linkTo(contentColumn.bottom)
-                    verticalChainWeight = 1f
-                },
+            CustomButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .padding(start = 16.dp, end = 16.dp)
+                    .constrainAs(changePasswordButton) {
+                        bottom.linkTo(parent.bottom)
+                        top.linkTo(contentColumn.bottom)
+                        verticalChainWeight = 1f
+                    },
                 buttonType = CustomButtonType.PrimaryPrimary,
                 text = stringResource(id = R.string.profile_settings_change_password_button),
                 enable = viewModel.uiState.isButtonEnabled,
                 onClick = {
-                    viewModel.onUIEvent(ChangePasswordViewModel.UIEvent.OnUpdatePassword)
+                    viewModel.onUIEvent(OnUpdatePassword)
                 }
             )
         }
     }
+    CustomModalWarningBottomSheet(
+        titleResource = R.string.password_security_bottom_sheet_general_title,
+        descriptionText = buildAnnotatedString {
+            withStyle(
+                style = Typography.subtitle1.toSpanStyle().copy(
+                    fontWeight = FontWeight.Bold
+                )
+            ) {
+                append(stringResource(id = R.string.password_security_bottom_sheet_general_description))
+            }
+            withStyle(
+                style = Typography.subtitle1.toSpanStyle()
+            ) {
+                append(stringResource(id = R.string.password_security_bottom_sheet_signup_description))
+            }
+        },
+        modalBottomSheetState = bottomSheetState,
+        coroutineScope = coroutineScope
+    )
+    LoadingIndicator(viewModel.uiState.isLoading)
 }

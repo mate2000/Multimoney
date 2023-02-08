@@ -32,6 +32,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.capitalized
+import com.multimoney.multimoney.presentation.util.capitalizedAllWords
 import com.multimoney.multimoney.presentation.util.catalog.CrDocuments
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
 
@@ -52,10 +53,10 @@ fun SignUpPersonalDataCrScreen(
                 .focusable(false)
                 .padding(top = 16.dp),
             items = viewModel.uiState.documentList,
-            onValueChange = {
-                viewModel.onUIEvent(OnIdentificationTypeValueChange(it))
+            onValueChange = { valueSelected, _ ->
+                viewModel.onUIEvent(OnIdentificationTypeValueChange(valueSelected))
             },
-            labelText = stringResource(id = R.string.sign_up_personal_data_document_label),
+            labelText = stringResource(id = R.string.sign_up_personal_data_document_label_cr),
             value = viewModel.uiState.identificationValueType,
             placeHolder = stringResource(id = R.string.sign_up_personal_data_document_hint)
         )
@@ -107,7 +108,7 @@ fun SignUpPersonalDataCrScreen(
             }
         )
 
-        if (viewModel.uiState.identificationValueType != CrDocuments.IdDocument.document) {
+        if (viewModel.uiState.identificationValueType.isNotBlank() && viewModel.uiState.identificationValueType != CrDocuments.IdDocument.document) {
             Row(
                 Modifier
                     .fillMaxWidth()
@@ -288,14 +289,14 @@ fun SignUpPersonalDataCrScreen(
                     Text(
                         modifier = Modifier.padding(start = 8.dp),
                         text = stringResource(id = R.string.sing_up_personal_data_cr_complete_name),
-                        style = Typography.body2.copy(
+                        style = Typography.caption.copy(
                             color = MultimoneyTheme.colors.textSuccess
                         )
                     )
                 }
                 Text(
                     modifier = Modifier.padding(top = 8.dp, start = 4.dp),
-                    text = viewModel.uiState.dataInformationClient?.name.toString(),
+                    text = viewModel.uiState.dataInformationClient?.name.toString().capitalizedAllWords(),
                     style = Typography.body2.copy(color = MultimoneyTheme.colors.text)
                 )
             }

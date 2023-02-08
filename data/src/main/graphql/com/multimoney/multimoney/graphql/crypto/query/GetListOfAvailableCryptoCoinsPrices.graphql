@@ -1,0 +1,19 @@
+query GetAvailableListOfCryptoCoins(
+    $user: String!,
+    $idBrand: Int!,
+) {
+    cryptoMarketPrice(cryptoMarketPriceInput: {
+        user: $user,
+        idBrand: $idBrand,
+    }) {
+        description,
+        baseAsset,
+        amountchange,
+        percentChange,
+        priority,
+        currentPrice,
+        url_image,
+        historico,
+        crypto_network
+    }
+}

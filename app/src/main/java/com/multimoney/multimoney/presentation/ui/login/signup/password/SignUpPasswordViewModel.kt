@@ -14,7 +14,6 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.util.MultimoneyResult
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnCallCognitoSignUp
@@ -84,8 +83,8 @@ class SignUpPasswordViewModel @Inject constructor(
 
     private fun isFormValid(): Boolean {
         return uiState.oneLowercaseState ?: false && uiState.oneUppercaseState ?: false && uiState.oneNumberState ?: false &&
-                uiState.oneCharacterState ?: false && passwordHasMinimumCharacters(uiState.password)
-                && (uiState.confirmPassword == uiState.password) && !uiState.confirmPasswordError.first
+            uiState.oneCharacterState ?: false && passwordHasMinimumCharacters(uiState.password) &&
+            (uiState.confirmPassword == uiState.password) && !uiState.confirmPasswordError.first
     }
 
     private fun onPasswordValueChange(password: String, onContinueEnable: (isEnable: Boolean) -> Unit) {
@@ -117,26 +116,26 @@ class SignUpPasswordViewModel @Inject constructor(
             noMoreThanThreeEqualConsecutiveLetterOrNumber(uiState.password) -> {
                 Pair(
                     true,
-                    R.string.sign_up_password_requirement_max_three_characters_or_number_consecutive
+                    string.sign_up_password_requirement_max_three_characters_or_number_consecutive
                 )
             }
             noMoreThanThreeConsecutiveLetterOrNumber(uiState.password) -> {
                 Pair(
                     true,
-                    R.string.sign_up_password_requirement_max_three_characters_or_number_consecutive
+                    string.sign_up_password_requirement_max_three_characters_or_number_consecutive
                 )
             }
             noMoreThanThreeLettersOrNumbers(uiState.password) -> {
                 Pair(
                     true,
-                    R.string.sign_up_password_requirement_max_three_characters_or_number_consecutive
+                    string.sign_up_password_requirement_max_three_characters_or_number_consecutive
                 )
             }
             (uiState.password.isNotEmpty() && uiState.confirmPassword.isNotEmpty() && uiState.confirmPassword != uiState.password) -> {
-                Pair(true, R.string.sign_up_password_confirm_password_error)
+                Pair(true, string.sign_up_password_confirm_password_error)
             }
             else -> {
-                Pair(false, R.string.error_empty)
+                Pair(false, string.error_empty)
             }
         }
     }
@@ -177,7 +176,7 @@ class SignUpPasswordViewModel @Inject constructor(
     private fun signUp(
         email: String,
         firstName: String,
-        secondName:String,
+        secondName: String,
         lastName: String,
         phone: String,
         identification: String,
@@ -244,7 +243,8 @@ class SignUpPasswordViewModel @Inject constructor(
                 dismissAction = {
                     onNextStep()
                 }
-            ))
+            )
+        )
     }
 
     private fun biometricPromptError(
@@ -320,11 +320,11 @@ class SignUpPasswordViewModel @Inject constructor(
     }
 
     data class UIState(
-        //Fields
+        // Fields
         var password: String = "",
-        var passwordError: Pair<Boolean, Int> = Pair(false, R.string.error_empty),
+        var passwordError: Pair<Boolean, Int> = Pair(false, string.error_empty),
         var confirmPassword: String = "",
-        var confirmPasswordError: Pair<Boolean, Int> = Pair(false, R.string.error_empty),
+        var confirmPasswordError: Pair<Boolean, Int> = Pair(false, string.error_empty),
         var eightCharactersMinimumState: Boolean? = null,
         var oneUppercaseState: Boolean? = null,
         var oneLowercaseState: Boolean? = null,
@@ -342,7 +342,7 @@ class SignUpPasswordViewModel @Inject constructor(
                 uiEvent.biometricPromptNegative,
                 uiEvent.biometricDialogDescription,
                 uiEvent.biometricDialogSuccessDescription,
-                uiEvent.biometricDialogFailureDescription,
+                uiEvent.biometricDialogFailureDescription
             )
             is OnNextActionClick -> uiEvent.nextStepAction.invoke()
             is OnPasswordValueChange -> onPasswordValueChange(uiEvent.password, uiEvent.onContinueEnable)
@@ -391,7 +391,7 @@ class SignUpPasswordViewModel @Inject constructor(
         data class OnCallCognitoSignUp(
             val email: String,
             val firstName: String,
-            val secondName:String,
+            val secondName: String,
             val lastName: String,
             val phone: String,
             val identification: String,
@@ -443,5 +443,6 @@ class SignUpPasswordViewModel @Inject constructor(
         const val COGNITO_CUSTOM_PK_USER = "custom:PkUser"
         const val COGNITO_CUSTOM_STATUS = "custom:Status"
         const val COGNITO_CUSTOM_ID_BRAND = "custom:IdBrand"
+        const val COGNITO_CHANGE_PASSWORD_REQUIRED = "passwordChangeRequired"
     }
 }

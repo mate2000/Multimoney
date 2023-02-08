@@ -11,10 +11,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Nationalities
 import com.multimoney.data.util.catalog.SignUpStep
@@ -36,21 +39,36 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNationalityChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
+import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
 @Composable
 @Preview
 fun SignUpPersonalDataScreen(
+    isRestart: Boolean = true,
+    onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: SignUpPersonalDataViewModel = hiltViewModel(),
     sharedViewModel: SignUpViewModel = hiltViewModel()
 ) {
+    val fragmentActivity = LocalContext.current as FragmentActivity
+
+    viewModel.apply {
+        isOnRestart = isRestart
+        LaunchedEffect(isOnRestart) {
+            if (isOnRestart) {
+                viewModel.executeNavigation(onNavigate = onNavigate)
+                viewModel.onUIEvent(
+                    OnCallQueryGetCountry("", onLoadingValueChange = { isLoading ->
+                        sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(isLoading))
+                    })
+                )
+                isOnRestart = false
+            }
+        }
+    }
+
     LaunchedEffect(true) {
-        viewModel.onUIEvent(
-            OnCallQueryGetCountry("", onLoadingValueChange = { isLoading ->
-                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(isLoading))
-            })
-        )
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormValidateCompleted -> sharedViewModel.onUIEvent(OnContinueEnable(event.isFormValid))
@@ -91,7 +109,8 @@ fun SignUpPersonalDataScreen(
                             OnNextActionClick(
                                 email = userData?.email ?: "",
                                 nextStep = Three.name,
-                                idBrand = idBrand ?: 0
+                                idBrand = idBrand ?: 0,
+                                activity = fragmentActivity
                             )
                         )
                         viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SingUpTwo)
@@ -103,30 +122,8 @@ fun SignUpPersonalDataScreen(
         }
         viewModel.onUserDataValidationEvent.collect { result ->
             result.onSuccess { userData ->
-                viewModel.onUIEvent(
-                    SignUpPersonalDataViewModel.UIEvent.OnUserDataValidationSuccess(
-                        onUseDataValueChange = {
-                            sharedViewModel.strIdIdentification = viewModel.uiState.identificationValueType
-                            sharedViewModel.onUIEvent(
-                                SignUpViewModel.UIEvent.OnUseDataValueChange(
-                                    sharedViewModel.userData?.copy(
-                                        pkUser = userData?.pkUser,
-                                        fullName = viewModel.getFullName(),
-                                        firstName = userData?.firstName,
-                                        secondName = userData?.secondName,
-                                        firstLastName = userData?.firstLastName,
-                                        secondLastName = userData?.secondLastName,
-                                        identification = userData?.identification,
-                                        currentStep = userData?.currentStep
-                                    )
-                                )
-                            )
-                        },
-                        onCallMutationUpdateUserRegisterUseCase = {
-                            sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase)
-                        }
-                    )
-                )
+                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(false))
+                viewModel.onSuccessValidation(sharedViewModel, userData)
             }.onLoading {
                 sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(true))
             }.onMessage {
@@ -166,7 +163,8 @@ fun SignUpPersonalDataScreen(
             text = stringResource(id = R.string.sign_up_personal_data_nationality_header),
             style = Typography.h6.copy(
                 color = MultimoneyTheme.colors.titleText,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                lineHeight = 24.sp
             )
         )
         CustomDropdown(
@@ -175,10 +173,10 @@ fun SignUpPersonalDataScreen(
                 .focusable(false)
                 .padding(top = 16.dp),
             items = viewModel.uiState.countryList,
-            onValueChange = { value ->
+            onValueChange = { valueSelected, _ ->
                 viewModel.onUIEvent(
                     OnNationalityChange(
-                        viewModel.uiState.countryList.indexOf(value),
+                        viewModel.uiState.countryList.indexOf(valueSelected),
                         updateNationality = { nationality, idBrand ->
                             sharedViewModel.onUIEvent(
                                 OnNationalityValueChange(nationality, idBrand)
@@ -196,7 +194,7 @@ fun SignUpPersonalDataScreen(
         )
         when (viewModel.uiState.nationalityValue) {
             Nationalities.CostaRicaId.country -> SignUpPersonalDataCrScreen()
-            Nationalities.ElSalvador.country -> SignUpPersonalDataSvScreen()
+            Nationalities.ElSalvadorDui.country -> SignUpPersonalDataSvScreen()
             Nationalities.Guatemala.country -> SignUpPersonalDataGtScreen()
         }
     }

@@ -15,6 +15,7 @@ import com.multimoney.domain.model.credit.CreditInfoQuestion
 import com.multimoney.domain.model.credit.CreditMovement
 import com.multimoney.domain.model.credit.CreditOffer
 import com.multimoney.domain.model.credit.DestinyAccount
+import com.multimoney.domain.model.credit.LinkCreditContract
 import com.multimoney.domain.model.credit.ExchangeRate
 import com.multimoney.domain.model.credit.GetInfoDeposit
 import com.multimoney.domain.model.credit.PaymentAmount
@@ -156,6 +157,20 @@ interface CreditRepository {
         idBrand: Int,
         idUserRequest: Int
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
+
+    suspend fun queryEmissionPlace(
+        pkUser: Int,
+        idUserRequest: Int,
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
+
+    suspend fun queryGetLinkCreditContract(
+        idPrint: Long,
+        idBrand: Int,
+        pkUser: Long,
+        user: String
+    ): Flow<MultimoneyResult<LinkCreditContract?>>
 
     suspend fun mutationSaveCreditFlowStep(
         user: String,

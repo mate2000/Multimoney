@@ -6,7 +6,7 @@ import com.multimoney.domain.model.accountsmart.StepByStep
 
 private fun StepByStepQuery.StepbyStep.mapToDomainModel() = StepByStep(
     knownFor = knownFor,
-    birthdate = birthdate?.toString().orEmpty(),
+    birthdate = birthdate?.toString(),
     idGenre = idGenre?.toString()?.toInt(),
     strGenre = strGenre,
     idMaritalStatus = idMaritalStatus?.toString()?.toInt(),

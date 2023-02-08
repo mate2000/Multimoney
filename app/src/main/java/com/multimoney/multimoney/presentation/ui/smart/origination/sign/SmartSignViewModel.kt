@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
+import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCase
 import com.multimoney.domain.interaction.accountsmart.SubscriptionAccountSmartContractUseCase
 import com.multimoney.domain.model.credit.CreditContractEvent
 import com.multimoney.domain.model.util.onFailure
@@ -20,8 +21,11 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_GLOBAL_ID
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.BaseEvent.SimulateUserInteraction
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.EVICERTIA_REJECTED_FIRST_TIME
@@ -31,12 +35,15 @@ import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaErr
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
-import javax.inject.Inject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
+@HiltViewModel
 class SmartSignViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val subscriptionAccountSmartContractUseCase: SubscriptionAccountSmartContractUseCase
+    private val subscriptionAccountSmartContractUseCase: SubscriptionAccountSmartContractUseCase,
+    private val mutationSaveSmartAccount: MutationSaveAutomatedSmartAccountUseCase
 ) : BaseViewModel(true) {
 
     // uiState
@@ -52,10 +59,13 @@ class SmartSignViewModel @Inject constructor(
     var idUserRequest: Long = 0
     var firstName: String = ""
     var lastName: String = ""
+    var user: String = ""
+    var globalId: Long? = 0
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
         pkUser = savedStateHandle[PK_USER] ?: 0
+        user = savedStateHandle[USER] ?: ""
         identification = savedStateHandle[IDENTIFICATION] ?: ""
         email = savedStateHandle[EMAIL] ?: ""
         idUserRequest = savedStateHandle[ID_USER_REQUEST] ?: 0
@@ -65,6 +75,7 @@ class SmartSignViewModel @Inject constructor(
             signDocumentProcessStep = savedStateHandle[SIGN_DOCUMENT_STEP_ARG] ?: "",
             signDocumentUrl = savedStateHandle[SIGN_DOCUMENT_URL] ?: ""
         )
+        globalId = savedStateHandle[SIGN_DOCUMENT_GLOBAL_ID] ?: 0
     }
 
     private fun createDialog() {
@@ -79,14 +90,10 @@ class SmartSignViewModel @Inject constructor(
     }
 
     private fun onShouldCallSubscription(idRequestSys: Long, idBrand: Int) {
-        if ( uiState.signDocumentProcessStep != VALIDATE_IDENTITY.value) {
-            uiState = uiState.copy(
-                loadingIcon = drawable.ic_multimoney_white_logo,
-                loadingTitle = string.smart_other_generating_document_title,
-                loadingSubtitle = string.smart_other_generating_document_subtitle
-            )
-            onListenSmartContractEventSubscription(idBrand, idRequestSys)
-        }
+        if (uiState.signDocumentProcessStep != VALIDATE_IDENTITY.value) onListenSmartContractEventSubscription(
+            idBrand,
+            idRequestSys
+        )
     }
 
     private fun onListenSmartContractEventSubscription(idBrand: Int, idRequestSys: Long) {
@@ -184,10 +191,7 @@ class SmartSignViewModel @Inject constructor(
 
     private fun onNavigateToHome() {
         emitBaseEvent(SimulateUserInteraction)
-        popAndNavigateTo(
-            route = Screen.HomeScreen.route,
-            popTo = Screen.SmartSignScreen.route
-        )
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
     }
 
     private fun onNavigateToOnfidoAndEvicertiaError(error: String) {
@@ -204,6 +208,24 @@ class SmartSignViewModel @Inject constructor(
         )
     }
 
+    private fun callMutationSaveSmartAccount() {
+        executeUseCase {
+            mutationSaveSmartAccount.invoke(
+                user = user,
+                idBrand = idBrand,
+                identificationNumber = identification,
+                idRequest = globalId ?: 0
+            ).collectLatest { result ->
+                result.onSuccess {
+                    onShouldCallSubscription(
+                        it?.idAccount ?: 0L,
+                        idBrand
+                    )
+                }
+            }
+        }
+    }
+
     data class UIState(
         // Interactions
         val signDocumentProcessStep: String = GENERATE_DOCUMENT_STEP.value,
@@ -216,7 +238,7 @@ class SmartSignViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is UIEvent.OnCallSubscriptionSmartContractEvent -> onShouldCallSubscription(idPrint, idBrand)
+            is UIEvent.OnCallSubscriptionSmartContractEvent -> callMutationSaveSmartAccount()
             is UIEvent.OnChangeScreen -> uiState =
                 uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
             is UIEvent.OnInitializeText -> dialogDescription = uiEvent.dialogDescription
@@ -243,7 +265,7 @@ class SmartSignViewModel @Inject constructor(
 
     companion object {
         const val MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION = 3
-        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 600000L
+        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 30000L
         const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 30000L
     }
 }

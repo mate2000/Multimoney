@@ -51,20 +51,19 @@ import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.uielement.VoucherAccountInfo
 import com.multimoney.multimoney.presentation.uielement.VoucherNumberInfo
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import com.multimoney.multimoney.presentation.util.shape.DottedShape
 
 @Composable
 fun PaymentVoucherVDScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: PaymentCardVoucherViewModel = hiltViewModel()
 ) {
     val view = LocalView.current
     var capturingViewBounds by remember { mutableStateOf<Rect?>(null) }
 
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate, onNavigate = onNavigate)
+        viewModel.executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
     }
 
     Column(
@@ -119,7 +118,7 @@ fun PaymentVoucherVDScreen(
                     ) {
                         Text(
                             text = stringResource(string.payment_voucher_vd_success_label),
-                            modifier = Modifier.padding(top = 16.dp),
+                            modifier = Modifier.padding(top = 32.dp),
                             style = Typography.subtitle1.copy(fontWeight = FontWeight.SemiBold),
                             color = MultimoneyTheme.colors.text
                         )
@@ -139,7 +138,7 @@ fun PaymentVoucherVDScreen(
                                 .padding(
                                     start = 24.dp,
                                     end = 24.dp,
-                                    top = 12.dp
+                                    top = 24.dp
                                 )
                                 .fillMaxWidth(),
                             elevation = ButtonDefaults.elevation(
@@ -152,7 +151,7 @@ fun PaymentVoucherVDScreen(
                         )
                         Text(
                             text = stringResource(string.payment_voucher_vd_amount),
-                            modifier = Modifier.padding(top = 12.dp),
+                            modifier = Modifier.padding(top = 24.dp),
                             style = Typography.body1,
                             color = MultimoneyTheme.colors.text
                         )
@@ -178,12 +177,12 @@ fun PaymentVoucherVDScreen(
                     )
 
                     VoucherAccountInfo(
-                        modifier = Modifier.padding(start = 27.dp, top = 24.dp),
-                        icon = drawable.ic_bank,
-                        title = stringResource(string.payment_voucher_vd_origin_account_label),
-                        subTitle = getMaskedAccount(
-                            viewModel.card?.cardMaskedNumber ?: "",
-                            stringResource(id = string.payment_account_masked_text)
+                        modifier = Modifier.padding(start = 27.dp, top = 16.dp),
+                        icon = drawable.ic_visa_card_item,
+                        title = viewModel.card?.detail.orEmpty(),
+                        subTitle = stringResource(
+                            id = string.visa_card_masked_number,
+                            viewModel.card?.cardMaskedNumber?.takeLast(4) ?: 0
                         )
                     )
 
@@ -197,7 +196,7 @@ fun PaymentVoucherVDScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 27.dp, top = 34.dp, end = 24.dp),
+                            .padding(start = 27.dp, top = 32.dp, end = 24.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Row {

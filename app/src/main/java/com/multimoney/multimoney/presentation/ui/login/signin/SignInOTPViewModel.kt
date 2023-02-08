@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.login.signin
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -33,6 +34,7 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OTPMessageStatus
 import com.multimoney.multimoney.presentation.util.format
 import com.multimoney.multimoney.presentation.util.getNavParam
+import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -124,6 +126,7 @@ class SignInOTPViewModel @Inject constructor(
     }
 
     private fun isTimerTick() = uiState.remainingTime.inWholeSeconds > 0 && uiState.isTimerRunning
+
     private fun onTimerTick() {
         val newRemainingTime = uiState.remainingTime.minus(ValidateOTPViewModel.TIMER_DELAY.seconds)
         uiState = uiState.copy(
@@ -140,7 +143,22 @@ class SignInOTPViewModel @Inject constructor(
             remainingTime = newRemainingTime,
             remainingTimeText = newRemainingTime.format(),
             phaseCount = uiState.phaseCount.plus(1)
+        )
+        if (uiState.phaseCount > PHASE_FIVE)
+            onShowBlockedDialog()
+    }
 
+    private fun onShowBlockedDialog() {
+        uiState = uiState.copy(
+            openDialog =
+            DialogParameters(
+                titleResource = R.string.sign_in_verify_otp_blocked_title,
+                descriptionResource = R.string.sign_in_verify_otp_blocked_subtitle_gt,
+                isActive = mutableStateOf(true),
+                positiveResource = R.string.contact,
+                negativeResource = R.string.cancel,
+            ),
+            isButtonEnabled = false
         )
     }
 
@@ -194,9 +212,9 @@ class SignInOTPViewModel @Inject constructor(
                     phoneNumber = it.phoneNumber ?: ""
                 )
             }.onFailure {
-                uiState = uiState.copy(isAlertResultVisible = false, isLoading = false)
+                uiState = uiState.copy(isAlertResultVisible = true, isLoading = false)
             }.onMessage {
-                uiState = uiState.copy(isAlertResultVisible = false, isLoading = false)
+                uiState = uiState.copy(isAlertResultVisible = true, isLoading = false)
             }.onLoading {
                 uiState = uiState.copy(isLoading = true)
             }
@@ -250,10 +268,15 @@ class SignInOTPViewModel @Inject constructor(
         onCallMutationRequestChangeDevice()
     }
 
+    private fun openWhatsAppLink(context: Context, whatsAppLink: String) {
+        context.openWhatsAppDeepLink(whatsAppLink)
+    }
+
     data class UIState(
 
         val isLoading: Boolean = true,
         var isAlertResultVisible: Boolean = false,
+        val isButtonEnabled: Boolean = true,
 
         // Fields
         val otp: String = "",
@@ -274,16 +297,20 @@ class SignInOTPViewModel @Inject constructor(
         val phoneNumber: String = ""
     )
 
-    fun onUIEvent(event: UIEvent) {
-        when (event) {
+    fun onUIEvent(uiEvent: UIEvent) {
+        when (uiEvent) {
             is UIEvent.OnCallMutationRequestChangeDevice -> onCallMutationRequestChangeDevice()
             is UIEvent.OnNavigateBack -> onNavigateBack()
             is UIEvent.OnValidateOTP -> onCallMutationChangeDevice()
-            is UIEvent.OnOTPValueChange -> onOtpValueChange(event.otp)
-            is UIEvent.OnInitializeTimer -> initializeTimer(event.phaseCount, event.time)
+            is UIEvent.OnOTPValueChange -> onOtpValueChange(uiEvent.otp)
+            is UIEvent.OnInitializeTimer -> initializeTimer(uiEvent.phaseCount, uiEvent.time)
             is UIEvent.OnResendOTP -> onResendOTP()
-            is UIEvent.OnGetOtpFromMessage -> getOtpFromMessage(event.message)
-
+            is UIEvent.OnGetOtpFromMessage -> getOtpFromMessage(uiEvent.message)
+            is UIEvent.OnOpenWhatsappLink -> openWhatsAppLink(
+                uiEvent.context,
+                uiEvent.whatsAppLink
+            )
+            is UIEvent.OnShowBlockedDialog -> onShowBlockedDialog()
         }
     }
 
@@ -291,10 +318,15 @@ class SignInOTPViewModel @Inject constructor(
         object OnCallMutationRequestChangeDevice : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnValidateOTP : UIEvent()
+        object OnShowBlockedDialog : UIEvent()
         data class OnOTPValueChange(val otp: String) : UIEvent()
         data class OnInitializeTimer(val phaseCount: Int, val time: Long) : UIEvent()
         data class OnGetOtpFromMessage(val message: String) : UIEvent()
         object OnResendOTP : UIEvent()
+        data class OnOpenWhatsappLink(
+            val whatsAppLink: String,
+            val context: Context
+        ) : UIEvent()
     }
 
     companion object {
@@ -302,12 +334,13 @@ class SignInOTPViewModel @Inject constructor(
         const val WRONG_CODE = 2887
         const val EXPIRED_CODE = 2886
         const val TOTAL_DIGITS = 6
-        const val TIMER_DURATION = 30L
+        const val TIMER_DURATION = 1L
         const val PHASE_ONE = 1
         const val PHASE_TWO = 2
         const val PHASE_THREE = 3
         const val PHASE_FOUR = 4
         const val PHASE_FIVE = 5
         const val PHASE_SIX = 6
+        const val FOUR_DIGITS = 4
     }
 }

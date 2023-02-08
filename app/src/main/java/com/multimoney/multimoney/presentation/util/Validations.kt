@@ -51,7 +51,7 @@ fun validId(sizeRequired: Int, errorMessage: Int, personalDocumentLength: Int) =
     }
 
 fun validDui(personalDocumentValue: String) =
-    if (personalDocumentValue.length == Nationalities.ElSalvador.documentSize) {
+    if (personalDocumentValue.length == Nationalities.ElSalvadorDui.documentSize) {
         val duiSplit = personalDocumentValue.split("").filter { it != "" }
         var verificationNumber = 0
         for (i in duiSplit.indices) {
@@ -67,6 +67,13 @@ fun validDui(personalDocumentValue: String) =
         )
     } else {
         Pair(true, R.string.sign_up_personal_data_id_not_valid)
+    }
+
+fun validCarne(sizeRequired: Int, errorMessage: Int, personalDocumentLength: Int) =
+    if (personalDocumentLength == sizeRequired) {
+        Pair(false, R.string.error_empty)
+    } else {
+        Pair(true, errorMessage)
     }
 
 fun passwordHasMinimumCharacters(value: String): Boolean {
@@ -156,3 +163,5 @@ const val DESCRIPTION_MAX_LENGTH = 150
 const val ADDRESS_MAX_LENGTH = 150
 const val MIN_INCOME = 0
 const val MAX_CRYPTO_ITEMS = 3
+const val MIN_SMART_ACCOUNT_DIGITS = 9
+const val MAX_SMART_ACCOUNT_DIGITS = 16

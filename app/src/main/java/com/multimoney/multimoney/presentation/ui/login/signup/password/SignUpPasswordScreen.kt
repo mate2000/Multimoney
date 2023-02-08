@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.flowlayout.FlowRow
@@ -42,6 +44,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomPasswordRequiremen
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 @Preview
 fun SignUpPasswordScreen(
@@ -54,7 +57,12 @@ fun SignUpPasswordScreen(
     val fragmentActivity = LocalContext.current as FragmentActivity
 
     BackHandler {
-        sharedViewModel.onUIEvent(OnCloseClick(focusManager))
+        when {
+            sharedViewModel.uiState.bottomSheetVisibleState.isVisible -> {
+                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnHidePasswordBottomSheet)
+            }
+            else -> sharedViewModel.onUIEvent(OnCloseClick(focusManager))
+        }
     }
 
     viewModel.onUIEvent(
@@ -77,6 +85,7 @@ fun SignUpPasswordScreen(
                     )
                 )
             )
+            sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnShowCloseIcon(false))
         }
         viewModel.baseEvent.collect { event ->
             when (event) {
@@ -100,6 +109,7 @@ fun SignUpPasswordScreen(
                 }
             )
         )
+        sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnShowPasswordBottomSheet)
         sharedViewModel.apply {
             onUIEvent(
                 SignUpViewModel.UIEvent.OnSetNavigation(nextAction = {
@@ -186,7 +196,8 @@ fun SignUpPasswordScreen(
                 }
             },
             textAlign = TextAlign.Start,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            lineHeight = 24.sp
         )
         CustomOutlinedTextField(
             value = viewModel.uiState.password,
@@ -285,19 +296,21 @@ fun SignUpPasswordScreen(
                 state = viewModel.uiState.oneCharacterState
             )
         }
-        CustomCheckBox(
-            checked = viewModel.uiState.isFingerprintChecked,
-            onCheckedChange = {
-                viewModel.onUIEvent(
-                    SignUpPasswordViewModel.UIEvent.OnFingerprintCheckedChanged(
-                        it,
-                        it
+        if (viewModel.biometricHelper.isBiometricAvailable(context)) {
+            CustomCheckBox(
+                checked = viewModel.uiState.isFingerprintChecked,
+                onCheckedChange = {
+                    viewModel.onUIEvent(
+                        SignUpPasswordViewModel.UIEvent.OnFingerprintCheckedChanged(
+                            it,
+                            it
+                        )
                     )
-                )
-            },
-            text = stringResource(id = R.string.sign_in_activate_fingerprint),
-            modifier = Modifier.padding(top = 24.dp)
-        )
+                },
+                text = stringResource(id = R.string.sign_in_activate_fingerprint),
+                modifier = Modifier.padding(top = 16.dp)
+            )
+        }
     }
 
     // Dialog

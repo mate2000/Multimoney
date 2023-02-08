@@ -4,6 +4,8 @@ import com.multimoney.domain.model.accountsmart.SinpeAccountResult
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
+
+
 interface QueryListSinpeAccountUseCase {
     suspend operator fun invoke(
         user: String,
@@ -11,6 +13,7 @@ interface QueryListSinpeAccountUseCase {
         identification: String,
         country: String,
         idAccount: Long,
-        accountNumber: String
+        accountNumber: String,
+        isFavorite: Boolean? = null
     ): Flow<MultimoneyResult<SinpeAccountResult?>>
 }

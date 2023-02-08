@@ -42,6 +42,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.C
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 @Preview
@@ -71,19 +72,27 @@ fun CreditBankScreen(
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnValidateForm)
         sharedViewModel.onUIEvent(
-            CreditViewModel.UIEvent.OnSetNavigation(nextAction = {
-                viewModel.onUIEvent(
-                    OnNextActionClick(
-                        user = sharedViewModel.email,
-                        nextStepAction = {
-                            sharedViewModel.onUIEvent(
-                                OnCallMutationSaveCreditFlowStep()
-                            )
-                        },
-                        saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
+            CreditViewModel.UIEvent.OnSetNavigation(
+                nextAction = {
+                    viewModel.onUIEvent(
+                        OnNextActionClick(
+                            user = sharedViewModel.email,
+                            nextStepAction = {
+                                sharedViewModel.onUIEvent(OnCallMutationSaveCreditFlowStep)
+                            },
+                            saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
+                        )
                     )
-                )
-            }, nextStep = CreditStep.Three.id, previousStep = CreditStep.One.id)
+                }, nextStep = if (sharedViewModel.crosseling) {
+                    if (sharedViewModel.idBrand.toInt() == Brand.ElSalvador.id) {
+                        CreditStep.Three.id
+                    } else {
+                        CreditStep.Four.id
+                    }
+                } else {
+                    CreditStep.Three.id
+                }, previousStep = CreditStep.One.id
+            )
         )
         viewModel.onUIEvent(
             OnCallQueryBanksAndRegularExpression(
@@ -111,8 +120,8 @@ fun CreditBankScreen(
                 .fillMaxWidth()
                 .padding(top = 8.dp),
             text = stringResource(id = title),
-            style = Typography.h5.copy(
-                color = MultimoneyTheme.colors.text,
+            style = Typography.h6.copy(
+                color = MultimoneyTheme.colors.titleText,
                 fontWeight = FontWeight.SemiBold
             )
         )
@@ -128,7 +137,7 @@ fun CreditBankScreen(
             modifier = Modifier
                 .wrapContentSize(Alignment.TopStart)
                 .focusable(false)
-                .padding(top = 16.dp),
+                .padding(top = 32.dp),
             items = viewModel.uiState.bankList,
             onValueChange = {
                 viewModel.onUIEvent(OnBankValueChanged(it))
@@ -144,10 +153,10 @@ fun CreditBankScreen(
                 .focusable(false)
                 .padding(top = 16.dp),
             items = viewModel.uiState.accountTypeListFiltered?.map { it?.description ?: "" } ?: listOf(),
-            onValueChange = { value ->
+            onValueChange = { valueSelected, _ ->
                 viewModel.onUIEvent(
                     OnAccountTypeValueChanged(
-                        viewModel.uiState.accountTypeListFiltered?.findLast { it?.description == value }
+                        viewModel.uiState.accountTypeListFiltered?.findLast { it?.description == valueSelected }
                     )
                 )
             },

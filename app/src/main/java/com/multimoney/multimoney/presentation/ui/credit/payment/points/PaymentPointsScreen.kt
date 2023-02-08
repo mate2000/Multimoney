@@ -83,14 +83,14 @@ fun PaymentPointsContent(
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {
-            Spacer(modifier = Modifier.height(42.dp))
+            Spacer(modifier = Modifier.height(24.dp))
             Text(
                 text = stringResource(id = R.string.payment_points_title),
                 style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
                 color = MultimoneyTheme.colors.labelText,
                 textAlign = TextAlign.Left
             )
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             CustomSearchBar(
                 modifier = Modifier.padding(top = 24.dp),
                 value = viewModel.uiState.queryValue,
@@ -122,9 +122,7 @@ fun PaymentPointsContent(
                                         point.name ?: "",
                                         point.address ?: "",
                                         point.addressDescription ?: "",
-                                        point.schedule ?: "",
-                                        point.latitude ?: "",
-                                        point.longitude ?: ""
+                                        point.schedule ?: ""
                                     )
                                 )
                             }

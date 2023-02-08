@@ -31,6 +31,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.Payment
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.PaymentScheduleViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.PaymentScheduleViewModel.UIEvent.OnOpenDisclaimerDialog
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.PaymentScheduleViewModel.UIEvent.OnProgramClick
+import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.API_DATE_FORMAT
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getDayFromString
@@ -232,7 +233,7 @@ class PaymentScheduleViewModel @Inject constructor(
     }
 
     private fun onAlertCloseClick() = if (uiState.isAlertResultSuccess) {
-        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true)
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
     } else {
         navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
     }

@@ -21,7 +21,11 @@ data class UserData(
     var countryCode: String? = null,
     var currentStep: String? = null,
     var userStatus: String? = null,
+    var isNewUser: Boolean? = null,
+    var maskedMail: String? = null,
+    var maskedPhoneNumber: String? = null,
     var message: String? = null,
     var status: Int? = null,
-    var detail: String? = null
-): Parcelable
+    var detail: String? = null,
+    var idBrand: Int? = 0
+) : Parcelable

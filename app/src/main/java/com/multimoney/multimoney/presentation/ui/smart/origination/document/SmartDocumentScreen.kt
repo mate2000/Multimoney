@@ -24,12 +24,14 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Gender
 import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.Companion.DATE_MIN_YEARS
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent
@@ -45,14 +47,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.document.Smar
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.util.BIRTH_DATE_MIN_DAY
-import com.multimoney.multimoney.presentation.util.BIRTH_DATE_MIN_MONTH
-import com.multimoney.multimoney.presentation.util.BIRTH_DATE_MIN_YEAR
-import com.multimoney.multimoney.presentation.util.ISO_8601_API_FORMAT_PATTERN
-import com.multimoney.multimoney.presentation.util.YEAR_MONTH_DAY_PATTERN
-import com.multimoney.multimoney.presentation.util.getFormatDateByString
-import com.multimoney.multimoney.presentation.util.getPickedDateAsString
-import java.time.LocalDate
+import com.multimoney.multimoney.presentation.util.*
 import java.util.Calendar
 import java.util.Date
 
@@ -100,12 +95,12 @@ fun SmartDocumentScreen(
                                             strGenre = viewModel.uiState.gender,
                                             expirationDate = getFormatDateByString(
                                                 viewModel.uiState.expirationDate,
-                                                YEAR_MONTH_DAY_PATTERN,
+                                                YEAR_MONTH_DAY_PATTERN_BAR_FORMAT,
                                                 ISO_8601_API_FORMAT_PATTERN
                                             ),
                                             birthday = getFormatDateByString(
                                                 viewModel.uiState.birthdate,
-                                                YEAR_MONTH_DAY_PATTERN,
+                                                YEAR_MONTH_DAY_PATTERN_BAR_FORMAT,
                                                 ISO_8601_API_FORMAT_PATTERN
                                             ),
                                             idCivilStatusType = viewModel.uiState.civilStateId,
@@ -161,10 +156,12 @@ fun SmartDocumentScreen(
         Text(
             text = buildAnnotatedString {
                 withStyle(
-                    style = Typography.h4.toSpanStyle()
+                    style = Typography.h6.toSpanStyle()
                         .copy(
-                            color = MultimoneyTheme.colors.text,
-                            fontWeight = FontWeight.SemiBold
+                            color = MultimoneyTheme.colors.labelText,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 20.sp,
+                            letterSpacing = 0.15.sp
                         )
                 ) {
                     append(stringResource(id = R.string.smart_account_document_title))
@@ -175,11 +172,11 @@ fun SmartDocumentScreen(
         )
 
         CustomOutlinedTextField(
-            leadingIcon = R.drawable.ic_calendar,
+            trailingIcon = R.drawable.ic_calendar_credit_questions,
             modifier = Modifier
                 .padding(top = 32.dp),
             labelText = stringResource(id = R.string.smart_account_document_birthdate_title),
-            placeHolder = stringResource(id = R.string.select),
+            placeHolder = stringResource(id = R.string.smart_account_date_placeholder),
             value = viewModel.uiState.birthdate,
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next
@@ -196,12 +193,13 @@ fun SmartDocumentScreen(
                 val calendar = Calendar.getInstance()
                 val datePicker = DatePickerDialog(
                     context,
+                    R.style.CustomDarkDatePickerStyle,
                     { _, year, month, day ->
                         val date = getPickedDateAsString(
                             year,
                             month,
                             day,
-                            YEAR_MONTH_DAY_PATTERN
+                            YEAR_MONTH_DAY_PATTERN_BAR_FORMAT
                         )
 
                         val calendarValidation = Calendar.getInstance()
@@ -209,7 +207,7 @@ fun SmartDocumentScreen(
                         viewModel.onUIEvent(
                             OnBirthDateValueChange(
                                 date,
-                                LocalDate.of(year, month, day)
+                                calendarValidation.toLocalDate()
                             )
                         )
                     },
@@ -218,9 +216,9 @@ fun SmartDocumentScreen(
                     calendar.get(Calendar.DAY_OF_MONTH)
                 )
                 calendar.set(
-                    BIRTH_DATE_MIN_YEAR,
-                    BIRTH_DATE_MIN_MONTH,
-                    BIRTH_DATE_MIN_DAY
+                    calendar.get(Calendar.YEAR) - DATE_MIN_YEARS.toInt(),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH)
                 )
                 datePicker.datePicker.minDate = calendar.timeInMillis
                 datePicker.datePicker.maxDate = Date().time
@@ -236,7 +234,9 @@ fun SmartDocumentScreen(
                 .focusable(false),
             items = Gender.Search.getGenderList(),
             value = viewModel.uiState.gender,
-            onValueChange = { gender -> viewModel.onUIEvent(OnGenderChange(gender)) },
+            onValueChange = { gender, _ ->
+                viewModel.onUIEvent(OnGenderChange(gender))
+            },
             labelText = stringResource(id = R.string.gender),
             placeHolder = stringResource(id = R.string.select)
         )
@@ -248,7 +248,9 @@ fun SmartDocumentScreen(
                 .focusable(false),
             items = viewModel.uiState.civilStatusList.map { it?.maritalStatusDescription.orEmpty() },
             value = viewModel.uiState.civilState,
-            onValueChange = { viewModel.onUIEvent(OnCivilStateChange(it)) },
+            onValueChange = { valueSelected, _ ->
+                viewModel.onUIEvent(OnCivilStateChange(valueSelected))
+            },
             labelText = stringResource(id = R.string.civil_state),
             placeHolder = stringResource(id = R.string.select)
         )
@@ -260,17 +262,19 @@ fun SmartDocumentScreen(
                 .focusable(false),
             items = viewModel.uiState.professionSmartList.map { it?.name.orEmpty() },
             value = viewModel.uiState.profession,
-            onValueChange = { viewModel.onUIEvent(OnProfessionChange(it)) },
+            onValueChange = { valueSelected, _ ->
+                viewModel.onUIEvent(OnProfessionChange(valueSelected))
+            },
             labelText = stringResource(id = R.string.profession),
             placeHolder = stringResource(id = R.string.select)
         )
 
         CustomOutlinedTextField(
-            leadingIcon = R.drawable.ic_calendar,
+            trailingIcon = R.drawable.ic_calendar_credit_questions,
             modifier = Modifier
                 .padding(top = 32.dp),
             labelText = stringResource(id = R.string.smart_account_document_expiration_title),
-            placeHolder = stringResource(id = R.string.select),
+            placeHolder = stringResource(id = R.string.smart_account_date_placeholder),
             value = viewModel.uiState.expirationDate,
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next
@@ -285,12 +289,13 @@ fun SmartDocumentScreen(
                 val calendar = Calendar.getInstance()
                 val datePicker = DatePickerDialog(
                     context,
+                    R.style.CustomDarkDatePickerStyle,
                     { _, year, month, day ->
                         val date = getPickedDateAsString(
                             year,
                             month,
                             day,
-                            YEAR_MONTH_DAY_PATTERN
+                            YEAR_MONTH_DAY_PATTERN_BAR_FORMAT
                         )
                         viewModel.onUIEvent(UIEvent.OnExpirationDateValueChange(date))
                     },

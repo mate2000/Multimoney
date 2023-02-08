@@ -152,16 +152,16 @@ fun SmartAddressFields(
         CustomDropdown(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 32.dp),
+                .padding(top = 16.dp),
             items = sourceIncomeSharedViewModel.uiState.divisionOneList?.map { it?.name.orEmpty() }
                 ?: listOf(),
             value = sourceIncomeSharedViewModel.uiState.divisionOneSelected?.name ?: "",
-            onValueChange = {
+            onValueChange = { valueSelected, _ ->
                 sourceIncomeSharedViewModel.onUIEvent(
                     OnDivisionOneValueChange(
                         user = user,
                         idBrand = idBrand,
-                        divisionOne = it
+                        divisionOne = valueSelected
                     )
                 )
             },
@@ -173,16 +173,16 @@ fun SmartAddressFields(
     CustomDropdown(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 32.dp),
+            .padding(top = 16.dp),
         items = sourceIncomeSharedViewModel.uiState.divisionTwoList?.map { it?.name.orEmpty() }
             ?: listOf(),
         value = sourceIncomeSharedViewModel.uiState.divisionTwoSelected?.name ?: "",
-        onValueChange = {
+        onValueChange = { valueSelected, _ ->
             sourceIncomeSharedViewModel.onUIEvent(
                 OnDivisionTwoValueChange(
                     user = user,
                     idBrand = idBrand,
-                    divisionTwo = it
+                    divisionTwo = valueSelected
                 )
             )
         },
@@ -193,16 +193,16 @@ fun SmartAddressFields(
     CustomDropdown(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 32.dp),
+            .padding(top = 16.dp),
         items = sourceIncomeSharedViewModel.uiState.divisionThreeList?.map { it?.name.orEmpty() }
             ?: listOf(),
         value = sourceIncomeSharedViewModel.uiState.divisionThreeSelected?.name ?: "",
-        onValueChange = {
+        onValueChange = { valueSelected, _ ->
             sourceIncomeSharedViewModel.onUIEvent(
                 OnDivisionThreeValueChange(
                     user = user,
                     idBrand = idBrand,
-                    divisionThree = it
+                    divisionThree = valueSelected
                 )
             )
         },
@@ -212,7 +212,7 @@ fun SmartAddressFields(
 
     CustomOutlinedTextField(
         modifier = Modifier.padding(top = 16.dp),
-        labelText = stringResource(id = R.string.credit_address_accurate_address),
+        labelText = stringResource(id = R.string.smart_salaried_working_address),
         value = sourceIncomeSharedViewModel.uiState.address,
         onValueChange = {
             sourceIncomeSharedViewModel.onUIEvent(
@@ -227,7 +227,7 @@ fun SmartAddressFields(
             focusManager.clearFocus()
         }),
         isRequired = true,
-        isRequiredMessage = stringResource(R.string.credit_company_address_accurate_address_error),
+        isRequiredMessage = stringResource(R.string.smart_salaried_working_address_required),
         isError = sourceIncomeSharedViewModel.uiState.addressError.first,
         errorMessage = stringResource(sourceIncomeSharedViewModel.uiState.addressError.second),
         isTextArea = true

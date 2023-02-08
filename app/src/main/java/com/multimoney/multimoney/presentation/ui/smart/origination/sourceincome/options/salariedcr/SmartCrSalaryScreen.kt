@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -41,6 +42,8 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnCallQueryProfessionUseCase
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnCompanyNameChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnJobPositionChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnLoadCurrentStepData
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnPaymentAmountChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnProfessionChange
@@ -101,7 +104,10 @@ fun SmartCrSalaryScreen(
                                 idJobLevel2 = sourceIncomeSharedViewModel.uiState.divisionTwoSelected?.id?.toLongOrNull(),
                                 idJobLevel3 = sourceIncomeSharedViewModel.uiState.divisionThreeSelected?.id?.toLongOrNull(),
                                 fullJobAddress = sourceIncomeSharedViewModel.uiState.address,
-                                income = viewModel.uiState.paymentAmount.toFloat()
+                                income = viewModel.uiState.paymentAmount.toFloat(),
+                                companyName = viewModel.uiState.companyName,
+                                positionJob = viewModel.uiState.jobPosition,
+                                currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep)
                             )
                         )
                     )
@@ -133,7 +139,7 @@ fun SmartCrSalaryScreen(
 
     Column(
         modifier = Modifier
-            .padding(vertical = 16.dp, horizontal = 16.dp)
+            .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
         Text(
@@ -153,6 +159,52 @@ fun SmartCrSalaryScreen(
         )
 
         CustomOutlinedTextField(
+            value = viewModel.uiState.companyName,
+            onValueChange = { viewModel.onUIEvent(OnCompanyNameChange(it)) },
+            labelText = stringResource(string.smart_salaried_company_name),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(onNext = {
+                focusManager.moveFocus(FocusDirection.Down)
+            }),
+            isRequiredMessage = stringResource(string.smart_salaried_company_name_required),
+            modifier = Modifier.padding(top = 24.dp)
+        )
+
+        CustomOutlinedTextField(
+            value = viewModel.uiState.jobPosition,
+            onValueChange = { viewModel.onUIEvent(OnJobPositionChange(it)) },
+            labelText = stringResource(string.smart_salaried_profession),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(onNext = {
+                focusManager.moveFocus(FocusDirection.Down)
+            }),
+            isRequiredMessage = stringResource(string.smart_salaried_profession_required),
+            modifier = Modifier.padding(top = 16.dp)
+        )
+
+        CustomDropdown(
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .wrapContentSize(Alignment.TopStart)
+                .focusable(false),
+            items = viewModel.uiState.professionSmartList.map { professionStatus ->
+                professionStatus?.name ?: ""
+            },
+            value = viewModel.uiState.profession,
+            onValueChange = { valueSelected, _ ->
+                viewModel.onUIEvent(OnProfessionChange(valueSelected))
+            },
+            labelText = stringResource(id = string.smart_account_formal_select_occupation),
+            placeHolder = stringResource(id = string.select)
+        )
+
+        CustomOutlinedTextField(
             value = viewModel.uiState.paymentAmount,
             onValueChange = {
                 viewModel.onUIEvent(OnPaymentAmountChange(it))
@@ -166,31 +218,14 @@ fun SmartCrSalaryScreen(
             }),
             labelText = stringResource(id = string.smart_account_formal_monthly),
             modifier = Modifier
-                .padding(top = 44.dp),
+                .padding(top = 16.dp),
             placeHolder = stringResource(id = string.smart_account_formal_placeholder),
             customTransformation = formatDecimalMoney(
                 stringResource(
-                    id = sharedViewModel.idBrandAsInt
-                        .getCurrencySymbol()
+                    id = sharedViewModel.idBrandAsInt.getCurrencySymbol()
                 )
             ),
             leadingIcon = R.drawable.ic_quick_action_money
-        )
-
-        CustomDropdown(
-            modifier = Modifier
-                .padding(top = 16.dp)
-                .wrapContentSize(Alignment.TopStart)
-                .focusable(false),
-            items = viewModel.uiState.professionSmartList.map { professionStatus ->
-                professionStatus?.name ?: ""
-            },
-            value = viewModel.uiState.profession,
-            onValueChange = {
-                viewModel.onUIEvent(OnProfessionChange(it))
-            },
-            labelText = stringResource(id = string.smart_account_formal_select_profession),
-            placeHolder = stringResource(id = string.select)
         )
 
         SmartAddressFields(

@@ -37,6 +37,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -57,6 +58,10 @@ fun SignInOTPScreen(
     viewModel: SignInOTPViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+    val whatsAppLink = stringResource(
+        id = R.string.whatsapp_deep_link,
+        SignUpViewModel.PHONE_HARDCODED
+    )
     val launchSmsActivityResult =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val data: Intent? = result.data
@@ -81,33 +86,6 @@ fun SignInOTPScreen(
         )
     }
 
-    BackHandler {
-        viewModel.onUIEvent(SignInOTPViewModel.UIEvent.OnNavigateBack)
-    }
-    if (viewModel.uiState.isAlertResultVisible) {
-        AlertResult(
-            titleString = "error title",
-            descriptionString = "error description",
-            buttonTextResource = R.string.payment_amount_error_button,
-            isLeftButtonVisible = false,
-            isRightButtonVisible = false,
-            onButtonClick = { }
-        )
-    } else {
-        SignInOTPContent(viewModel = viewModel)
-        LoadingIndicator(viewModel.uiState.isLoading)
-        if (viewModel.uiState.openDialog.isActive.value) {
-            CustomDialog(
-                title = stringResource(id = viewModel.uiState.openDialog.titleResource),
-                message = viewModel.uiState.openDialog.description,
-                positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
-                negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
-                openDialogCustom = viewModel.uiState.openDialog.isActive,
-                onPositiveAction = viewModel.uiState.openDialog.positiveAction,
-                onNegativeAction = viewModel.uiState.openDialog.negativeAction
-            )
-        }
-    }
 
     LaunchedEffect(true) {
         viewModel.onUIEvent(
@@ -118,19 +96,49 @@ fun SignInOTPScreen(
         )
     }
 
-    //full screen dialog
+    BackHandler {
+        viewModel.onUIEvent(SignInOTPViewModel.UIEvent.OnNavigateBack)
+    }
+
+
+    if (viewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            message = stringResource(viewModel.uiState.openDialog.descriptionResource),
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
+            openDialogCustom = viewModel.uiState.openDialog.isActive,
+            onPositiveAction = {
+                viewModel.onUIEvent(
+                    SignInOTPViewModel.UIEvent.OnOpenWhatsappLink(
+                        whatsAppLink,
+                        context
+                    )
+                )
+            },
+            onNegativeAction = {
+                viewModel.onUIEvent(
+                    SignInOTPViewModel.UIEvent.OnNavigateBack
+                )
+            },
+        )
+    }
     if (viewModel.uiState.isAlertResultVisible) {
         AlertResult(
-            titleString = stringResource(id = R.string.sign_in_error_alert_dialog),
-            descriptionString = stringResource(R.string.empty),
-            buttonTextResource = R.string.sign_in_error_alert_dialog_button,
+            titleString = stringResource(id = R.string.sign_in_verify_otp_error_title),
+            descriptionString = stringResource(id = R.string.sign_in_verify_otp_error_subtitle),
+            buttonTextResource = R.string.payment_amount_error_button,
             isLeftButtonVisible = false,
             isRightButtonVisible = false,
             onButtonClick = {
-                viewModel.onUIEvent(SignInOTPViewModel.UIEvent.OnNavigateBack)
+                viewModel.onUIEvent(
+                    SignInOTPViewModel.UIEvent.OnNavigateBack
+                )
             }
         )
     }
+    SignInOTPContent(viewModel = viewModel)
+    LoadingIndicator(viewModel.uiState.isLoading)
 
     // Start SMS Retriever client
     SmsRetriever.getClient(context).startSmsUserConsent(null)
@@ -184,7 +192,10 @@ fun SignInOTPContent(viewModel: SignInOTPViewModel) {
                 .constrainAs(headerText) {
                     top.linkTo(titleText.bottom)
                 },
-            text = stringResource(id = viewModel.uiState.weSentYouACodeTextResource,viewModel.uiState.phoneNumber),
+            text = stringResource(
+                id = viewModel.uiState.weSentYouACodeTextResource,
+                viewModel.uiState.phoneNumber
+            ),
             style = Typography.body2
         )
 
@@ -256,20 +267,22 @@ fun SignInOTPContent(viewModel: SignInOTPViewModel) {
                     )
                 }
             )
-            else -> Text(
-                text = buildAnnotatedString {
-                    withStyle(
-                        style = Typography.body2.toSpanStyle()
-                            .copy(color = SemanticNegative500)
-                    ) {
-                        append(stringResource(id = viewModel.getPhaseResourceString()))
-                    }
-                },
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .padding(start = 16.dp, top = 32.dp)
-                    .constrainAs(timerText) { top.linkTo(otpField.bottom, margin = 12.dp) }
-            )
+            else -> {
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(
+                            style = Typography.body2.toSpanStyle()
+                                .copy(color = SemanticNegative500)
+                        ) {
+                            append(stringResource(id = viewModel.getPhaseResourceString()))
+                        }
+                    },
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .padding(start = 16.dp, top = 32.dp)
+                        .constrainAs(timerText) { top.linkTo(otpField.bottom, margin = 12.dp) }
+                )
+            }
         }
 
         CustomButton(
@@ -282,7 +295,7 @@ fun SignInOTPContent(viewModel: SignInOTPViewModel) {
                 },
             buttonType = CustomButtonType.PrimaryPrimary,
             text = stringResource(id = R.string.sign_in_verify_otp_button),
-            enable = viewModel.isFormValid(),
+            enable = viewModel.isFormValid() && viewModel.uiState.isButtonEnabled,
             onClick = {
                 viewModel.onUIEvent(SignInOTPViewModel.UIEvent.OnValidateOTP)
             }

@@ -152,12 +152,7 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
             description = uiState.cryptoItem?.descriptionCurrency ?: "",
             baseAsset = uiState.cryptoItem?.asset ?: "",
             url_image = uiState.cryptoItem?.url_image ?: "",
-            cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: "",
-            amountchange = "",
-            priority = 0,
-            currentPrice = 0.0,
-            historico = false,
-            percentChange = ""
+            cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: ""
         ))}")
     }
 
@@ -167,11 +162,6 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
             baseAsset = uiState.cryptoItem?.asset ?: "",
             url_image = uiState.cryptoItem?.url_image ?: "",
             cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: "",
-            amountchange = "",
-            priority = 0,
-            currentPrice = 0.0,
-            historico = false,
-            percentChange = ""
         ))}")
     }
 

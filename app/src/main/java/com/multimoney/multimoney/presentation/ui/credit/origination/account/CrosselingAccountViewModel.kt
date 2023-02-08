@@ -14,14 +14,14 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.credit.origination.account.CrosselingAccountViewModel.UIEvent.OnStart
-import com.multimoney.multimoney.presentation.ui.credit.origination.account.CrosselingAccountViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.account.CrosselingAccountViewModel.UIEvent.OnClientBankAccountSelected
+import com.multimoney.multimoney.presentation.ui.credit.origination.account.CrosselingAccountViewModel.UIEvent.OnNextActionClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.account.CrosselingAccountViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class CrosselingAccountViewModel @Inject constructor(
@@ -71,15 +71,16 @@ class CrosselingAccountViewModel @Inject constructor(
             onFailureWithDialog = onFailureWithDialog
         )
 
-        onCallQueryBanksAndRegularExpressions(
-            pkUser = pkUser,
-            user = user,
-            idBrand = idBrand,
-            idUserRequest = idUserRequest,
-            onLoadingValueChange = onLoadingValueChange,
-            onFailureWithDialog = onFailureWithDialog
-        )
-
+        if (idBrand == Brand.ElSalvador.id) {
+            onCallQueryBanksAndRegularExpressions(
+                pkUser = pkUser,
+                user = user,
+                idBrand = idBrand,
+                idUserRequest = idUserRequest,
+                onLoadingValueChange = onLoadingValueChange,
+                onFailureWithDialog = onFailureWithDialog
+            )
+        }
     }
 
     private fun onCallQueryListSinpeAccount(
@@ -175,13 +176,20 @@ class CrosselingAccountViewModel @Inject constructor(
         nextStepAction: () -> Unit,
         saveCreditStepsHelper: SaveCreditStepsHelper
     ) {
-        saveCreditStepsHelper.saveStepOne(
-            user,
-            bank,
-            uiState.bankSelected,
-            uiState.accountTypeSelectedString,
-            uiState.accountNumber
-        )
+        if (idBrand == Brand.CostaRica.id) {
+            saveCreditStepsHelper.saveStepOneCR(
+                user,
+                uiState.accountNumber
+            )
+        } else {
+            saveCreditStepsHelper.saveStepOne(
+                user,
+                bank,
+                uiState.bankSelected,
+                uiState.accountTypeSelectedString,
+                uiState.accountNumber
+            )
+        }
         nextStepAction()
     }
 
@@ -193,7 +201,7 @@ class CrosselingAccountViewModel @Inject constructor(
         val accountTypeSelectedString: String = "",
         val accountNumber: String = "",
         val bankSelected: CreditCatalogOption? = null,
-        val openDialog: DialogParameters = DialogParameters(),
+        val openDialog: DialogParameters = DialogParameters()
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

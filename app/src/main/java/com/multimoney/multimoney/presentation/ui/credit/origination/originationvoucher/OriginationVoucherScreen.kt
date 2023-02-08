@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess
+package com.multimoney.multimoney.presentation.ui.credit.origination.originationvoucher
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -41,9 +41,9 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess.ProcessingTransactionViewModel.UIEvent.OnCallQueryGetInfoDebit
-import com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess.ProcessingTransactionViewModel.UIEvent.OnCloseClick
-import com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess.ProcessingTransactionViewModel.UIEvent.OnSharedVoucherImage
+import com.multimoney.multimoney.presentation.ui.credit.origination.originationvoucher.OriginationVoucherViewModel.UIEvent.OnCallQueryGetInfoDebit
+import com.multimoney.multimoney.presentation.ui.credit.origination.originationvoucher.OriginationVoucherViewModel.UIEvent.OnCloseClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.originationvoucher.OriginationVoucherViewModel.UIEvent.OnSharedVoucherImage
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiary
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -57,9 +57,9 @@ import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import com.multimoney.multimoney.presentation.util.shape.DottedShape
 
 @Composable
-fun ProcessingTransactionScreen(
+fun OriginationVoucherScreen(
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
-    viewModel: ProcessingTransactionViewModel = hiltViewModel()
+    viewModel: OriginationVoucherViewModel = hiltViewModel()
 ) {
     val view = LocalView.current
     var capturingViewBounds by remember { mutableStateOf<Rect?>(null) }

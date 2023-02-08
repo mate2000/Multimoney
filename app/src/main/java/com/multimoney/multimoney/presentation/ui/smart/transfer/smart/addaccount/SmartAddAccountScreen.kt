@@ -40,6 +40,7 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.addaccount
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.addaccount.SmartAddAccountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.addaccount.SmartAddAccountViewModel.UIEvent.OnValidateAccountNumber
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.addaccount.SmartAddAccountViewModel.UIEvent.OnValidateUserEmail
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.addaccount.SmartAddAccountViewModel.UIEvent.OnNicknameChanged
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
@@ -198,13 +199,34 @@ fun SmartAddAccountContent(viewModel: SmartAddAccountViewModel = hiltViewModel()
                     onDebounceValidation = { viewModel.onUIEvent(OnValidateUserEmail) },
                 )
                 CustomCheckBox(
-                    modifier = Modifier.padding(top = 6.dp, bottom = 24.dp),
+                    modifier = Modifier.padding(top = 6.dp, bottom = 16.dp),
                     checked = viewModel.uiState.isFavorite,
                     onCheckedChange = {
                         viewModel.onUIEvent(OnAddFavoriteValueChange(it))
                     },
                     text = stringResource(id = R.string.smart_iban_register_favorite_checkbox)
                 )
+                if (viewModel.uiState.isFavorite) {
+                    CustomOutlinedTextField(
+                        modifier = Modifier.padding(bottom = 24.dp),
+                        value = viewModel.uiState.nickname,
+                        labelText = stringResource(id = R.string.smart_iban_register_favorite_label),
+                        placeHolder = stringResource(id = R.string.smart_iban_register_favorite_label),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                focusManager.clearFocus()
+                            }
+                        ),
+                        onValueChange = { nickname ->
+                            viewModel.onUIEvent(OnNicknameChanged(nickname))
+                        },
+                        isRequired = true
+                    )
+                }
             }
             CustomButton(
                 modifier = Modifier

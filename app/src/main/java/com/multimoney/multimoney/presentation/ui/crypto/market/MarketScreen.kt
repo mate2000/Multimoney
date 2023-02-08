@@ -47,6 +47,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.CustomSelector
 import com.multimoney.multimoney.presentation.uielement.Size
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
+import com.multimoney.multimoney.presentation.util.CryptoConstants.BTC
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlacesWithoutNegatives
 import kotlinx.coroutines.launch
@@ -90,7 +91,7 @@ fun MarketScreenContent(
     val crListOfCryptoCoin =
         viewModel.uiState.availableCryptoCoins?.availableCryptoCoins ?: emptyList()
     val svListOfCryptoCoins = viewModel.uiState.availableCryptoCoins
-        ?.availableCryptoCoins?.filter { it.baseAsset == SV_DEFAULT_BASE_ASSET } ?: emptyList()
+        ?.availableCryptoCoins?.filter { it.baseAsset == BTC } ?: emptyList()
 
     Column(modifier = Modifier.background(MultimoneyTheme.colors.background)) {
         TopNavBar(
@@ -319,7 +320,6 @@ fun ListOfCoinsSection(
     }
 }
 
-const val SV_DEFAULT_BASE_ASSET = "BTC"
 const val PRICE_FILTER_VALUE = "Precio"
 const val AZ_FILTER_VALUE = "A-Z"
 const val NEGATIVE_SYMBOL = "-"

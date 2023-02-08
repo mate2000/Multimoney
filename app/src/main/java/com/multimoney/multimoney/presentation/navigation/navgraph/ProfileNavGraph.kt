@@ -15,6 +15,7 @@ import com.multimoney.multimoney.presentation.navigation.PROFILE_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.CardVDNavType
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileScreen
+import com.multimoney.multimoney.presentation.ui.home.profile.accounts.MyAccountsScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardsListScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.help.HelpScreen
@@ -77,6 +78,30 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
             )
         ) {
             PersonalInfoScreen(
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                },
+                onNavigate = {
+                    navController.navigate(it.route)
+                }
+            )
+        }
+
+        composable(
+            Screen.ProfileMyAccountsScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                },
+            )
+        ) {
+            MyAccountsScreen(
                 onPopBackStack = {
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)

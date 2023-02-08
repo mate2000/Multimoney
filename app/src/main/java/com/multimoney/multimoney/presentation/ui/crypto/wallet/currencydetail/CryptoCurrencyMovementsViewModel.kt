@@ -152,12 +152,16 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
             description = uiState.cryptoItem?.descriptionCurrency ?: "",
             baseAsset = uiState.cryptoItem?.asset ?: "",
             url_image = uiState.cryptoItem?.url_image ?: "",
+            cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: ""
+        ))}")
+    }
+
+    private fun onNavigateToSellCrypto(){
+        navigateTo("${Screen.CryptoSellFlow.baseRoute}?$ITEM_CRYPTO_MARKET=${encodeData(MarketCryptoCoin(
+            description = uiState.cryptoItem?.descriptionCurrency ?: "",
+            baseAsset = uiState.cryptoItem?.asset ?: "",
+            url_image = uiState.cryptoItem?.url_image ?: "",
             cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: "",
-            amountchange = "",
-            priority = 0,
-            currentPrice = 0.0,
-            historico = false,
-            percentChange = ""
         ))}")
     }
 
@@ -179,6 +183,7 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
             is UIEvent.OnShowDisclaimer -> uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded))
             is UIEvent.OnHideDisclaimer -> uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Hidden))
             is UIEvent.OnNavigateToSendCrypto -> onNavigateToSendCrypto()
+            is UIEvent.OnNavigateToSellCrypto -> onNavigateToSellCrypto()
         }
     }
 
@@ -190,6 +195,7 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
         object OnGetAssetHistory : UIEvent()
         object OnViewAllMovements : UIEvent()
         object OnNavigateToSelectAccount : UIEvent()
+        object OnNavigateToSellCrypto : UIEvent()
         data class OnDisclaimerChecked(val checked: Boolean) : UIEvent()
         data class OnUpdateShouldShowDisclaimer(val checked: Boolean) : UIEvent()
         object OnShowDisclaimer : UIEvent()

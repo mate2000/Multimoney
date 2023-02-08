@@ -81,16 +81,6 @@ class SellCryptoSharedViewModel @Inject constructor(
         }
     }
 
-    private fun onFailure(error: HttpError) {
-        uiState = uiState.copy(
-            isLoading = false,
-            openDialog = DialogParameters(
-                description = error.getError() ?: "",
-                isActive = mutableStateOf(true)
-            )
-        )
-    }
-
     private fun previousStep() {
         if (currentFlowStep == PurchaseCryptoSteps.One.pageNumber) {
             navigateBackToHome()
@@ -140,21 +130,6 @@ class SellCryptoSharedViewModel @Inject constructor(
         )
     }
 
-    private fun OnShowDisclaimer() {
-        emitBaseEvent(BaseEvent.OnShowDisclaimer)
-    }
-
-    private fun updateShouldShowDisclaimer(value: Boolean) {
-        viewModelScope.launch {
-            dataStorePreferences.setVolatileDialogVisible(!value)
-            uiState = uiState.copy(shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first())
-        }
-    }
-
-    private fun onDisclaimerChecked(checked: Boolean) {
-        uiState = uiState.copy(dontShowAgainChecked = checked)
-    }
-
     data class UIState(
         val currentStep: Int = PurchaseCryptoSteps.One.pageNumber,
         val isLoading: Boolean = false,
@@ -179,11 +154,10 @@ class SellCryptoSharedViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
+            is UIEvent.OnCloseClick -> onCloseClick()
             is UIEvent.OnNextStep -> nextStep()
             is UIEvent.OnPreviousStep -> previousStep()
             is UIEvent.OnClickBottomSheet -> onShowBottomSheet()
-            is UIEvent.OnCloseClick -> onCloseClick()
-            is UIEvent.OnGetUserInfo -> setUserData()
             is UIEvent.OnCryptoSelected -> {
                 uiState = uiState.copy(
                     asset = event.selectedCrypto.asset,
@@ -201,14 +175,8 @@ class SellCryptoSharedViewModel @Inject constructor(
                     ibanAccountNumber = event.ibanAccountNumber,
                 )
             }
-            is BaseEvent.OnShowDisclaimer -> OnShowDisclaimer()
-            is UIEvent.OnDisclaimerChecked -> onDisclaimerChecked(event.checked)
-            is UIEvent.OnUpdateShouldShowDisclaimer -> updateShouldShowDisclaimer(event.checked)
+            is UIEvent.OnGetUserInfo -> setUserData()
         }
-    }
-
-    sealed class BaseEvent {
-        object OnShowDisclaimer : UIEvent()
     }
 
     sealed class UIEvent {
@@ -229,13 +197,9 @@ class SellCryptoSharedViewModel @Inject constructor(
         ) : UIEvent()
 
         object OnGetUserInfo : UIEvent()
-        data class OnDisclaimerChecked(val checked: Boolean) : UIEvent()
-        data class OnUpdateShouldShowDisclaimer(val checked: Boolean) : UIEvent()
-
     }
 
     companion object {
-        const val ACTIVE_ACCOUNT = 1
         const val DEFAULT_ID_BRAND_ERROR = -1
     }
 }

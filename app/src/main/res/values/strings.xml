@@ -68,6 +68,8 @@
     <string name="destination_bank" translatable="false">Banco de destino</string>
     <string name="account_number" translatable="false">Número de cuenta</string>
     <string name="phone_number" translatable="false">Número de teléfono</string>
+    <string name="exit" translatable="false">Salir</string>
+    <string name="dot" translatable="false">.</string>
 
     <string name="content_description_more_info" translatable="false">Más información</string>
 
@@ -1583,5 +1585,16 @@
     <string name="crosseling_close_dialog_description" translatable="false">¿Estás seguro de abandonar el proceso?</string>
     <string name="crosseling_close_dialog_positive_button_text" translatable="false">Cancelar</string>
     <string name="crosseling_close_dialog_negative_button_text" translatable="false">Continuar</string>
+
+    <!-- Visa Direct Verify Deposit-->
+    <string name="visa_direct_verify_deposit_title" translatable="false">Ingresa el monto</string>
+    <string name="visa_direct_verify_deposit_subtitle" translatable="false">Lo puedes ver en el movimiento del depósito que te hicimos a tu cuenta</string>
+    <string name="visa_direct_verify_deposit_do_not_see" translatable="false">¿No ves el movimiento?</string>
+    <string name="visa_direct_verify_deposit_timer_begin" translatable="false">Monto expira en </string>
+    <string name="visa_direct_verify_deposit_timer_end" translatable="false"> Segundos</string>
+    <string name="visa_direct_verify_deposit_resend" translatable="false">Reenviar monto</string>
+    <string name="visa_direct_verify_deposit_dialog_do_not_see_title" translatable="false">¿No ves el movimiento?</string>
+    <string name="visa_direct_verify_deposit_dialog_do_not_see_description" translatable="false">La transferencia puede durar unos minutos en reflejarse. Si no puedes ver el movimiento, contacta a tu banco.</string>
+    <string name="visa_direct_verify_deposit_micro_deposit_placeholder" translatable="false">0</string>
 
 </resources>

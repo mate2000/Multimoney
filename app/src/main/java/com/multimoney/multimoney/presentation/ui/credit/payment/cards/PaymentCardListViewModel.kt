@@ -1,5 +1,8 @@
 package com.multimoney.multimoney.presentation.ui.credit.payment.cards
 
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -26,6 +29,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnCallQueryGetClientCards
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnCardSelected
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnHidePaymentBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnNavigateBackHome
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -34,6 +38,7 @@ import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @HiltViewModel
+@OptIn(ExperimentalMaterialApi::class)
 class PaymentCardListViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val queryListCardVDUseCase: QueryListCardVDUseCase
@@ -82,7 +87,8 @@ class PaymentCardListViewModel @Inject constructor(
                 result.onSuccess { cardsList ->
                     uiState = uiState.copy(
                         isLoading = false,
-                        cardVDList = cardsList,
+                        cardVDListVerified = cardsList?.filter { it?.verified == true },
+                        cardVDListNotVerified = cardsList?.filter { it?.verified != true },
                         isCardListEmpty = cardsList.isNullOrEmpty()
                     )
                 }.onFailure {
@@ -92,7 +98,8 @@ class PaymentCardListViewModel @Inject constructor(
                             description = it.getError() ?: "",
                             isActive = mutableStateOf(true)
                         ),
-                        cardVDList = listOf(),
+                        cardVDListVerified = listOf(),
+                        cardVDListNotVerified = listOf(),
                         isCardListEmpty = true
                     )
                 }.onLoading {
@@ -102,12 +109,28 @@ class PaymentCardListViewModel @Inject constructor(
         }
     }
 
-    private fun onCardSelected(cardSelected: CardVisaDirect?) =
-        navigateTo(
-            route = "${Screen.PaymentAmountCardsScreen.baseRoute}/$idBrand/$identification/$user/${
-            encodeData(cardSelected)
-            }/$creditNumber/$idClient/$idLoanClient/$minimumPayment/$minimumPaymentLabel/$maximumPayment/$maximumPaymentLabel/$idCurrency/$paymentDate"
+    private fun onCardSelected(cardSelected: CardVisaDirect?) {
+        uiState = uiState.copy(
+            cardSelected = cardSelected
         )
+        if (cardSelected?.verified == true) {
+            navigateTo(
+                route = "${Screen.PaymentAmountCardsScreen.baseRoute}/$idBrand/$identification/$user/${
+                encodeData(cardSelected)
+                }/$creditNumber/$idClient/$idLoanClient/$minimumPayment/$minimumPaymentLabel/$maximumPayment/$maximumPaymentLabel/$idCurrency/$paymentDate"
+            )
+        } else {
+            onShowPaymentBottomSheet()
+        }
+    }
+
+    private fun onShowPaymentBottomSheet() {
+        uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded))
+    }
+
+    private fun onHidePaymentBottomSheet() {
+        uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Hidden))
+    }
 
     private fun onNavigateBack() =
         navigateBack(popTo = Screen.PaymentOptionsScreen.route, isRestart = false)
@@ -116,11 +139,14 @@ class PaymentCardListViewModel @Inject constructor(
 
     data class UIState(
         // Interactions
-        val cardVDList: List<CardVisaDirect?>? = null,
+        val cardVDListVerified: List<CardVisaDirect?>? = null,
+        val cardVDListNotVerified: List<CardVisaDirect?>? = null,
         val isCardListEmpty: Boolean = true,
         val isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
-        val isVisaAnimationVisible: Boolean = false
+        val isVisaAnimationVisible: Boolean = false,
+        val bottomSheetVisibleState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
+        val cardSelected: CardVisaDirect? = null
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -129,12 +155,13 @@ class PaymentCardListViewModel @Inject constructor(
             is OnNavigateBackHome -> onNavigateBackHome()
             is OnCallQueryGetClientCards -> onCallQueryGetClientCardsUseCase()
             is OnCardSelected -> onCardSelected(uiEvent.cardSelected)
+            is OnHidePaymentBottomSheet -> onHidePaymentBottomSheet()
         }
     }
 
     sealed class UIEvent {
         object OnCallQueryGetClientCards : UIEvent()
-
+        object OnHidePaymentBottomSheet : UIEvent()
         class OnCardSelected(val cardSelected: CardVisaDirect?) : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnNavigateBackHome : UIEvent()

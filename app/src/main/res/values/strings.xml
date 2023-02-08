@@ -70,6 +70,12 @@
     <string name="phone_number" translatable="false">Número de teléfono</string>
     <string name="exit" translatable="false">Salir</string>
     <string name="dot" translatable="false">.</string>
+    <string name="common_allow" translatable="false">Permitir</string>
+    <string name="common_deny" translatable="false">Denegar</string>
+    <string name="common_open_settings" translatable="false">Abrir configuración</string>
+    <string name="common_go_back" translatable="false">Regresar</string>
+    <string name="common_not_show_again" translatable="false">No volver a mostrar</string>
+    <string name="common_scan_qr_code" translatable="false">Escanea el código QR</string>
 
     <string name="content_description_more_info" translatable="false">Más información</string>
 
@@ -371,7 +377,6 @@
     <string name="home_product_expiration" translatable="false">Vence</string>
     <string name="home_product_expired" translatable="false">Venció</string>
     <string name="home_product_remaining" translatable="false">Saldo %s</string>
-    <string name="home_product_amount" translatable="false">de %s</string>
     <string name="home_crypto_card_with_balance_label" translatable="false">Balance</string>
     <string name="home_crypto_card_smart_in_process_label" translatable="false">Cripto</string>
     <string name="home_crypto_card_with_balance_zero_label" translatable="false">0.00</string>
@@ -423,6 +428,30 @@
     <string name="profile_change_email_title" translatable="false">Cambiar correo electrónico</string>
     <string name="profile_change_email_enter_new" translatable="false">Nuevo correo electrónico</string>
     <string name="profile_change_email_enter_new_confirmation" translatable="false">Confirmar nuevo correo electrónico</string>
+    <string name="profile_accounts_favorites" translatable="false">Favoritas</string>
+    <string name="profile_accounts_registered" translatable="false">Cuentas registradas</string>
+    <string name="profile_my_acounts_bottom_sheet_title" translatable="false">Mis cuentas</string>
+    <string name="profile_my_accounts_edit_nickname" translatable="false">Editar apodo</string>
+    <string name="profile_my_accounts_delete_account" translatable="false">Eliminar cuenta</string>
+    <string name="profile_my_account_account_updated" translatable="false">Cuenta actualizada</string>
+    <string name="profile_my_account_nickname_is_required" translatable="false">El apodo es requerido</string>
+    <string name="profile_my_accounts_add_as_fav" translatable="false">Agregar como favorita</string>
+    <string name="profile_my_accounts_delete_as_fav" translatable="false">Eliminar como favorita</string>
+    <string name="profile_my_accounts_remove_from_fav" translatable="false">Quitar cuenta de favoritos</string>
+    <string name="profile_my_accounts_added_as_fav" translatable="false">Cuenta agregada a favoritos</string>
+    <string name="profile_my_accounts_updated" translatable="false">Cuenta actualizada</string>
+    <string name="profile_my_accounts_deleted" translatable="false">Cuenta eliminada</string>
+    <string name="profile_my_accounts_removed_from_fav" translatable="false">Cuenta eliminada de favoritos</string>
+    <string name="profile_my_accounts_you_can_fav_later" translatable="false">Podras seleccionarla como favorito despues</string>
+    <string name="profile_my_accounts_save_changes" translatable="false">Guardar cambios</string>
+    <string name="profile_my_accounts_empty_state_title_gt" translatable="false">No tienes cuentas registradas</string>
+    <string name="profile_my_accounts_empty_state_title" translatable="false">No tenés cuentas registradas</string>
+    <string name="profile_my_accounts_are_you_sure_to_delete_gt" translatable="false">¿Estás seguro que quieres eliminar esta cuenta?</string>
+    <string name="profile_my_accounts_are_you_sure_to_delete" translatable="false">¿Estás seguro que querés eliminar esta cuenta?</string>
+    <string name="profile_my_accounts_will_be_deleted_permanently" translatable="false">Los datos de la cuenta serán borrados de la app de forma permanente.</string>
+    <string name="profile_my_accounts_account_nickname" translatable="false">Apodo de la cuenta</string>
+
+
 
     <!-- Automatic Logout -->
     <string name="automatic_logout_dialog_description" translatable="false">No detectamos actividad en la aplicación, por motivos de seguridad la app se cerrará en %s segundos.</string>
@@ -714,7 +743,7 @@
     <string name="non_pre_approved_additional_questions_income_label" translatable="false">Ingreso mensual</string>
     <string name="non_pre_approved_additional_questions_income_placeholder" translatable="false">%s 000</string>
     <string name="non_pre_approved_additional_questions_employment_situation_label" translatable="false">Situación laboral</string>
-    <string name="non_pre_approved_additional_questions_success_alert_result_title" translatable="false">¡Tienes %1s%2s pre aprobados!</string>
+    <string name="non_pre_approved_additional_questions_success_alert_result_title" translatable="false">¡Tienes %1s pre aprobados!</string>
     <string name="non_pre_approved_additional_questions_success_alert_result_description" translatable="false">Solicita tu dinero y recíbelo en menos de 10 minutos</string>
     <string name="non_pre_approved_additional_questions_error_alert_result_title" translatable="false">Lo sentimos, no hay opciones de crédito</string>
     <string name="non_pre_approved_additional_questions_error_alert_result_description" translatable="false">Comunícate con nosotros si tienes consultas</string>
@@ -1208,11 +1237,24 @@
     <string name="crypto_purchase_flow_amount_asset_placeholder" translatable="false">0 %1s</string>
     <string name="crypto_purchase_flow_exchange_type_title" translatable="false">Tipo de cambio</string>
     <string name="crypto_purchase_flow_exchange_total_title" translatable="false">Total a debitar</string>
+    <string name="crypto_purchase_flow_exit_dialog_title" translatable="false">¿Seguro de que querés salir?</string>
+    <string name="crypto_purchase_flow_exit_dialog_body_message" translatable="false">Si cancelás el proceso no se realizará la compra de la cripto</string>
+    <string name="crypto_purchase_flow_exit_dialog_cancel_button" translatable="false">Salir</string>
+
+    <!--Crypto Purchase Flow - Confirmation-->
+    <string name="crypto_purchase_flow_confirmation_title" translatable="false">Monto a comprar</string>
+    <string name="crypto_purchase_flow_confirmation_from_account_title" translatable="false">Desde la cuenta</string>
+    <string name="crypto_purchase_flow_confirmation_from_account" translatable="false">Mi cuenta Smart | %1s</string>
+    <string name="crypto_purchase_flow_confirmation_estimated_amount" translatable="false">Valor aproximado en</string>
+    <string name="crypto_purchase_flow_confirmation_btn_buy" translatable="false">Comprar</string>
 
     <!--Crypto Purchase Flow - Errors-->
     <string name="crypto_purchase_flow_error_minimum_amount" translatable="false">"El monto mínimo de compra es de $5"</string>
     <string name="crypto_purchase_flow_error_available_amount" translatable="false">"El monto disponible es de %1s"</string>
     <string name="crypto_purchase_flow_error_available_amount_commission" translatable="false">"El monto más la comisión supera el\nmonto disponible"</string>
+    <string name="crypto_purchase_flow_error_weekly_amount_exceeded" translatable="false">El monto supera el limite de compra\nmensual de $10,000</string>
+    <string name="crypto_purchase_flow_error_no_funds" translatable="false">Fondos Insuficientes para aplicar la compra</string>
+    <string name="crypto_purchase_flow_error_price_expired" translatable="false">Cotización caducada</string>
 
     <!-- Evicertia screen -->
     <string name="smart_evicertia_missing_signature_title_card" translatable="false">¡Solo falta tu firma!</string>
@@ -1256,7 +1298,7 @@
     <!-- Payment Cards List -->
     <string name="payment_cards_list_empty_state_description" translatable="false">Agregá una tarjeta para que podás realizar tus abonos</string>
     <string name="payment_cards_list_create" translatable="false">Agregar tarjeta</string>
-    <string name="payment_cards_list_title" translatable="false">Tarjetas Visa</string>
+    <string name="payment_cards_list_title" translatable="false">Mis Tarjetas</string>
     <string name="smart_payment_cards_list_card_title" translatable="false">Seleccioná la tarjeta con la que querés ahorrar</string>
 
     <!-- Payment Amount Card -->
@@ -1518,6 +1560,16 @@
 
     <!-- Crypto list currencies for send -->
     <string name="crypt_list_send_title" translatable="false">¿Cuál moneda querés enviar?</string>
+    <string name="crypto_send_address_title" translatable="false">¿Dónde querés enviar %s?</string>
+    <string name="crypto_send_address_information" translatable="false">Pegá la dirección de la billetera a la que deseás enviar o escaneá el código del receptor. Asegurate que envíes a la blockchain %s.</string>
+    <string name="crypto_send_address_receiver" translatable="false">Dirección %s del receptor</string>
+    <string name="crypto_send_address_placeholder" translatable="false">Pegar dirección</string>
+    <string name="crypto_send_address_required" translatable="false">La dirección BTC del receptor es requerida</string>
+    <string name="crypto_send_address_permission_camera_title" translatable="false">“MultiMoney” quiere acceder a tu cámara</string>
+    <string name="crypto_send_address_permission_camera_description" translatable="false">El acceso es necesario para escanear códigos QR</string>
+    <string name="crypto_send_address_verify_crypto_address_title" translatable="false">Verificá la dirección</string>
+    <string name="crypto_send_address_verify_crypto_address_description" translatable="false"> Asegurate que la dirección es la correcta. En caso de que lo enviés a una dirección incorrecta no podrás recuperar el dinero</string>
+    <string name="crypto_send_address_wallet_doesnt_accept" translatable="false">Esta billetera no recibe %s</string>
 
     <!-- Registeres User Email -->
     <string name="registered_user_email_title" translatable="false">Tenemos tu correo  %s registrado en MultiMoney</string>
@@ -1596,5 +1648,16 @@
     <string name="visa_direct_verify_deposit_dialog_do_not_see_title" translatable="false">¿No ves el movimiento?</string>
     <string name="visa_direct_verify_deposit_dialog_do_not_see_description" translatable="false">La transferencia puede durar unos minutos en reflejarse. Si no puedes ver el movimiento, contacta a tu banco.</string>
     <string name="visa_direct_verify_deposit_micro_deposit_placeholder" translatable="false">0</string>
+
+    <!-- Visa Verified -->
+    <string name="visa_verified_title" translatable="false">Verifiquemos tu tarjeta</string>
+    <string name="visa_verified_description_1_bold" translatable="false">Revisa los movimientos</string>
+    <string name="visa_verified_description_1" translatable="false">de la\ncuenta asociada a tu tarjeta</string>
+    <string name="visa_verified_description_2_bold" translatable="false">Busca el monto </string>
+    <string name="visa_verified_description_2" translatable="false">del depósito que\nte hicimos</string>
+    <string name="visa_verified_description_3_bold" translatable="false">Escribe el monto</string>
+    <string name="visa_verified_description_3" translatable="false">en el siguiente\npaso</string>
+    <string name="visa_verified_dialog_title" translatable="false">Cancelar proceso</string>
+    <string name="visa_verified_dialog_description" translatable="false">¿Estás segur@ de cancelar el proceso de agregar una tarjeta?</string>
 
 </resources>

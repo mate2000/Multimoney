@@ -2886,6 +2886,8 @@ type UserValidation {
 
   maskedPhoneNumber: String
 
+  otpTime: Int
+
   status: Int
 
   message: String
@@ -3157,6 +3159,8 @@ type GetCountryPhoneCode {
   code: Int!
 
   phoneMask: String
+
+  isoCode: String
 }
 
 input GetCountryPhoneCodeDtoInput {
@@ -6849,6 +6853,8 @@ type CreditConfigurationType {
 type AccountsmartConfigurationType {
   activo: Boolean!
 
+  limiteTransacion: [CurrencyConfigurationType]
+
   metodoAbono: [FundingMethodConfigurationType!]!
 
   metodoTransferencia: [TransferMethodConfigurationType!]!
@@ -6858,6 +6864,8 @@ type CurrencyConfigurationType {
   codigo: String!
 
   descripcion: String!
+
+  monto: Decimal
 }
 
 type ProcessCore {

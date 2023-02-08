@@ -2,10 +2,14 @@ package com.multimoney.multimoney.presentation.util.catalog
 
 import com.multimoney.multimoney.R
 
+/**
+ * @param alternativeValue: Used when the expected value is different from the received value, i.e 'DOLARES' and 'DÓLARES'
+ * */
 sealed class CurrencyType(
     val id: Int,
     val currency: String,
     val value: String,
+    val alternativeValue: String,
     val stringName: String,
     val disbursementValue: String,
     val currencyName: Int,
@@ -21,6 +25,7 @@ sealed class CurrencyType(
         1,
         "01",
         "COLONES",
+        "",
         "Colones",
         "CRC",
         R.string.colons,
@@ -36,6 +41,7 @@ sealed class CurrencyType(
     object Dollar : CurrencyType(
         2,
         "02",
+        "DOLARES",
         "DÓLARES",
         "Dólares",
         "USD",
@@ -53,6 +59,7 @@ sealed class CurrencyType(
         3,
         "03",
         "QUETZALES",
+        "",
         "Quetzales",
         "GTQ",
         R.string.quetzales,
@@ -67,6 +74,7 @@ sealed class CurrencyType(
 
     object All : CurrencyType(
         100000,
+        "",
         "",
         "",
         "",

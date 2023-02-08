@@ -23,11 +23,7 @@ class SelectSmartAccountViewModel @Inject constructor(
     override fun onSelectSmartAccount(currencyType: CurrencyType) {
         super.onSelectSmartAccount(currencyType)
         navigateTo(
-            "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${user}/${idBrand}/${identification}/${
-                encodeData(
-                    selectedSmartAccount
-                )
-            }/$idClient/${Screen.SmartSelectAccountScreen.baseRoute}"
+            "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$user/$idBrand/$identification/${encodeData(selectedSmartAccount)}/${encodeData(secondSmartAccount)}/$idClient/${Screen.SmartSelectAccountScreen.baseRoute}"
         )
     }
 }

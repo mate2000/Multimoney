@@ -135,6 +135,7 @@ const val OTP_METHOD = "otp_method"
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
 const val HOME_STATE = "home_state"
 const val PREVIOUS_IS_RETURN_TO_HOME = "previous_is_return_to_home"
+const val QR_CODE_RESULT = "qr_code"
 
 /**
  * Use this class to declare all your new screens and their routes
@@ -195,6 +196,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object ProfileScreen : Screen(
         "profile_screen/{$ID_CLIENT}/{$ID_BRAND}/{$FIRST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$IDENTIFICATION}/{$PK_USER}/{$USER_NAME}",
         "profile_screen"
+    )
+
+    object ProfileMyAccountsScreen : Screen(
+        "profile_my_accounts_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER_NAME}",
+        "profile_my_accounts_screen"
     )
 
     object ProfileTermsAndConditionsScreen : Screen(
@@ -364,6 +370,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object VisaVerifyDepositScreen : Screen(
         "visa_verify_deposit_screen?$IDENTIFICATION={$IDENTIFICATION}?$ID_CARD={$ID_CARD}?$USER={$USER}?$ID_BRAND={$ID_BRAND}",
         "visa_verify_deposit_screen"
+    )
+
+    object VisaVerifiedScreen : Screen(
+        "visa_verified_screen",
+        "visa_verified_screen"
     )
 
     // Bottom Navigation
@@ -577,7 +588,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
      * @param ID_BRAND: Int of brand id
      */
     object MyContactsTransferAmountScreen : Screen(
-        "my_contacts_amount_screen/{$ORIGIN_ACCOUNT}/{$DESTINY_ACCOUNT}/{$TRANSFER_TYPE}/{$ID_BRAND}",
+        "my_contacts_amount_screen/{$ORIGIN_ACCOUNT}/{$DESTINY_ACCOUNT}/{$TRANSFER_TYPE}/{$ID_BRAND}/{$PREVIOUS_SCREEN}",
         "my_contacts_amount_screen"
     )
 
@@ -647,4 +658,6 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         route = "crypto_send_flow?$CRYPTO_ASSET={$CRYPTO_ASSET}&$DESCRIPTION_CURRENCY={$DESCRIPTION_CURRENCY}",
         baseRoute = "crypto_send_flow"
     )
+
+    object QrCodeScannerScreen : Screen(route = "qr_code_scanner_screen")
 }

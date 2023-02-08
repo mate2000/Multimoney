@@ -61,15 +61,15 @@ fun CustomPasswordRequirementLabel(
     } else {
         when (state) {
             null -> {
-                statusColor = GrayScale500
+                statusColor = GrayScale300
                 icon = errorIcon
             }
             true -> {
-                statusColor = SemanticPositive600
+                statusColor = SemanticPositive400
                 icon = successIcon
             }
             false -> {
-                statusColor = SemanticNegative500
+                statusColor = SemanticNegative400
                 icon = errorIcon
             }
         }

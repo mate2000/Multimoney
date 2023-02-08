@@ -36,7 +36,7 @@ fun SimpleItemRow(
     title: String = "",
     titleFontWeight: FontWeight = FontWeight.SemiBold,
     shouldShowDivider: Boolean = true,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
 ) {
     val titleColor: Color
     val backgroundColor: Color
@@ -52,10 +52,10 @@ fun SimpleItemRow(
         Row(
             modifier = Modifier
                 .background(backgroundColor)
-                .padding(start =0.dp, top = 16.dp, bottom = 16.dp)
+                .padding(start = 0.dp, top = 16.dp, bottom = 16.dp)
                 .fillMaxWidth()
                 .clickable { onClick() },
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Image(
                 painter = painterResource(id = startIcon),
@@ -68,7 +68,7 @@ fun SimpleItemRow(
                     style = Typography.subtitle2.copy(fontWeight = titleFontWeight),
                     color = titleColor,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
         }

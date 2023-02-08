@@ -51,7 +51,7 @@ fun ExpandableSectionLayout(
     val textColor: Color = if (isSystemInDarkTheme()) {
         DefaultWhite
     } else {
-        GrayScale800
+        DefaultWhite
     }
     val arrowColor: Color = if (isSystemInDarkTheme()) {
         Primary400

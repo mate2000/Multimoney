@@ -3,7 +3,6 @@ package com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
@@ -84,7 +83,8 @@ fun IbanAccountScreen(
                             saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
                         )
                     )
-                }, nextStep = if (sharedViewModel.crosseling) {
+                },
+                nextStep = if (sharedViewModel.crosseling) {
                     if (sharedViewModel.idBrand.toInt() == Brand.ElSalvador.id) {
                         CreditStep.Three.id
                     } else {
@@ -92,7 +92,8 @@ fun IbanAccountScreen(
                     }
                 } else {
                     CreditStep.Three.id
-                }, previousStep = CreditStep.One.id
+                },
+                previousStep = CreditStep.One.id
             )
         )
         viewModel.onUIEvent(
@@ -112,7 +113,7 @@ fun IbanAccountScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .background(MultimoneyTheme.colors.background)
             .padding(horizontal = 16.dp)
     ) {

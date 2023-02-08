@@ -1,8 +1,8 @@
 package com.multimoney.data.mapper.crypto
 
 import com.multimoney.data.networking.graphql.apollomodel.ValidateDepositAddressMutation
-import com.multimoney.domain.model.crypto.ValidateDepositAddressResult
 import com.multimoney.domain.model.crypto.ValidateDepositAddressResponse
+import com.multimoney.domain.model.crypto.ValidateDepositAddressResult
 
 fun ValidateDepositAddressMutation.Data.mapToDomainModel() = ValidateDepositAddressResponse(
     status = validateDepositAddress.status,
@@ -14,9 +14,9 @@ fun ValidateDepositAddressMutation.Result.mapToDomainModel() = ValidateDepositAd
     page = page,
     totalPages = totalPages,
     itemsOnPage = itemsOnPage,
-    address = address,
-    balance = balance,
-    unconfirmedBalance = unconfirmedBalance,
+    address = address.orEmpty(),
+    balance = balance.orEmpty(),
+    unconfirmedBalance = unconfirmedBalance.orEmpty(),
     unconfirmedTxs = unconfirmedTxs,
     txs = txs,
     nonTokenTxs = nonTokenTxs

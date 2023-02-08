@@ -18,6 +18,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.EXCHANGE_RATE_
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.FK_FLOW_CONTROL
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CARD
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_GLOBAL_REQUEST
@@ -366,6 +367,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "visa_preferences_screen"
     )
 
+    object VisaVerifyDepositScreen : Screen(
+        "visa_verify_deposit_screen?$IDENTIFICATION={$IDENTIFICATION}?$ID_CARD={$ID_CARD}?$USER={$USER}?$ID_BRAND={$ID_BRAND}",
+        "visa_verify_deposit_screen"
+    )
+
     object VisaVerifiedScreen : Screen(
         "visa_verified_screen",
         "visa_verified_screen"
@@ -617,8 +623,8 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object ChartScreen : Screen("chart_screen/{$}")
 
     // Crypto
-    //todo add params
-    object PurchaseCryptoFlow: Screen(
+    // todo add params
+    object PurchaseCryptoFlow : Screen(
         route = "purchase_crypto_flow?$ITEM_CRYPTO_MARKET={$ITEM_CRYPTO_MARKET}",
         baseRoute = "purchase_crypto_flow"
     )
@@ -653,5 +659,5 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         baseRoute = "crypto_send_flow"
     )
 
-    object QrCodeScannerScreen: Screen(route = "qr_code_scanner_screen")
+    object QrCodeScannerScreen : Screen(route = "qr_code_scanner_screen")
 }

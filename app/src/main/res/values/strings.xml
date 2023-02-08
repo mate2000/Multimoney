@@ -1552,6 +1552,13 @@
 
     <!-- Crypto list currencies for send -->
     <string name="crypt_list_send_title" translatable="false">¿Cuál moneda querés enviar?</string>
+    
+    <!-- Crypto send bottom sheet -->
+    <string name="crypto_send_amount_bottom_sheet_title" translatable="false">Monto a enviar</string>
+    <string name="crypto_send_amount_bottom_sheet_approximate_value_dollars" translatable="false">Valor aproximado en dólares</string>
+    <string name="crypto_send_amount_bottom_sheet_to_address" translatable="false">Hacia la dirección</string>
+    <string name="crypto_send_amount_bottom_sheet_approximate_transaction_fee" translatable="false">Tarifa aproximada de envío</string>
+    <string name="crypto_send_amount_bottom_sheet_button_send" translatable="false">Realizar envío</string>
 
     <!-- Registeres User Email -->
     <string name="registered_user_email_title" translatable="false">Tenemos tu correo  %s registrado en MultiMoney</string>

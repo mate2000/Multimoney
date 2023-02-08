@@ -61,6 +61,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ORIGIN
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.BaseEvent.OnShowCardIssuanceError
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnBalanceSuccess
@@ -177,6 +178,10 @@ class ProductViewModel @Inject constructor(
         uiState = uiState.copy(idBrand = idBrand)
         this.smartMovementsList = smartMovements
         this.creditMovements = creditMovements
+        viewModelScope.launch {
+            uiState = uiState.copy(shouldDisplayDisclaimer =  preferences.isVolatileDialogVisible().first())
+        }
+
     }
 
     private fun setBalance(balance: Balance?) {
@@ -760,7 +765,7 @@ class ProductViewModel @Inject constructor(
                 idBrand = uiState.idBrand.toIntOrNull() ?: 0,
                 country = "",
                 idAccount = 0,
-                accountNumber = ""
+                accountNumber = "",
             ).collectLatest { result ->
                 result.onSuccess { accountList ->
                     onLoadingValueChange(false)
@@ -1044,6 +1049,19 @@ class ProductViewModel @Inject constructor(
         )
     }
 
+    private fun onDisclaimerChecked(checked: Boolean) {
+        uiState = uiState.copy(dontShowAgainChecked = checked)
+    }
+    private fun updateShouldShowDisclaimer(value: Boolean) {
+        viewModelScope.launch {
+            dataStorePreferences.setVolatileDialogVisible(!value)
+            uiState = uiState.copy(shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first())
+        }
+    }
+    private fun onShowDisclaimer() {
+        emitBaseEvent(BaseEvent.OnShowDisclaimer)
+    }
+
     data class UIState(
         // Fields
         var idBrand: String = "0",
@@ -1059,7 +1077,9 @@ class ProductViewModel @Inject constructor(
         val smartContent: Pair<Boolean?, String> = Pair(null, ""),
         val cryptoCurrencyMovements: Flow<PagingData<CryptoCurrencyMovement>> = flowOf(),
         var isBackPressed: Boolean = false,
-        val paymentAvailable: Boolean = false
+        val paymentAvailable: Boolean = false,
+        val shouldDisplayDisclaimer: Boolean = true,
+        val dontShowAgainChecked: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -1145,6 +1165,9 @@ class ProductViewModel @Inject constructor(
                 balance = uiEvent.balance
             )
             is OnUpdateIsBackPressed -> uiState = uiState.copy(isBackPressed = uiEvent.isBackPressed)
+            is UIEvent.OnDisclaimerChecked -> onDisclaimerChecked(uiEvent.checked)
+            is UIEvent.OnUpdateShouldShowDisclaimer -> updateShouldShowDisclaimer(uiEvent.checked)
+            BaseEvent.OnShowDisclaimer -> onShowDisclaimer()
         }
     }
 
@@ -1232,11 +1255,16 @@ class ProductViewModel @Inject constructor(
             val idBrand: String,
             val balance: Balance?
         ) : UIEvent()
+
+        data class OnDisclaimerChecked(val checked: Boolean) : UIEvent()
+        data class OnUpdateShouldShowDisclaimer(val checked: Boolean) : UIEvent()
+
     }
 
     sealed class BaseEvent {
         object OnShowCardIssuanceError : BaseEvent()
         object OnShowTbdToastEvent : BaseEvent()
+        object OnShowDisclaimer : UIEvent()
     }
 
     companion object {

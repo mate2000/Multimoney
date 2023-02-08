@@ -112,6 +112,7 @@ query Balance(
             percentageInvestedCurrency
             priceOfTheDay
             url_image
+            crypto_network
         }
     }
     balanceCardInformation(

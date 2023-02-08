@@ -5,14 +5,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.accountsmart.MutationSaveSinpeAccountUseCase
-import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCase
 import com.multimoney.domain.interaction.security.QueryValidateBankAccountUseCase
 import com.multimoney.domain.model.accountsmart.IbanAccountID
 import com.multimoney.domain.model.accountsmart.SmartAccountID
-import com.multimoney.domain.model.security.CatalogType
 import com.multimoney.domain.model.security.ValidateAccount
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
@@ -36,12 +33,10 @@ import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SmartTransferRegisterIbanViewModel @Inject constructor(
-    private val queryCatalogDocumentTypeUseCase: QueryCatalogDocumentTypeUseCase,
     private val queryValidateBankAccountUseCase: QueryValidateBankAccountUseCase,
     private val mutationSaveSinpeAccountUseCase: MutationSaveSinpeAccountUseCase,
     savedStateHandle: SavedStateHandle
@@ -53,9 +48,7 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
     var closeKeyboard by mutableStateOf(false)
 
     // Interactions
-    private var onSuccessCatalogDocumentType: CatalogType? = null
     private var validateAccount: ValidateAccount? = null
-    private var documentLength = 0
 
     // Stateless
     private var user: String?
@@ -74,19 +67,10 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
         smartAccount = savedStateHandle[SMART_ACCOUNT]
     }
 
-    private fun onQueryDocumentList() {
-        idBrand?.let { callQueryCatalogDocumentType(it) }
-    }
-
     private fun onAccountValueValueChange(bankAccount: String) {
         if (bankAccount.isDigitsOnly() && bankAccount.length <= IBAN_MAX_LENGTH) {
             uiState = uiState.copy(
                 ibanAccountNumber = bankAccount,
-                accountError = if (bankAccount.length < AddIbanAccountViewModel.IBAN_MAX_LENGTH) {
-                    Pair(true, R.string.iban_account_error)
-                } else {
-                    Pair(false, R.string.empty)
-                },
                 accountValidationError = null
             )
             if (bankAccount.length == AddIbanAccountViewModel.IBAN_MAX_LENGTH) {
@@ -97,11 +81,25 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
         }
     }
 
+    private fun onAccountValueCompleted() {
+        val bankAccount = uiState.ibanAccountNumber
+        uiState = uiState.copy(
+            accountError = if (bankAccount.length < AddIbanAccountViewModel.IBAN_MAX_LENGTH) {
+                Pair(true, R.string.smart_iban_register_account_error)
+            } else {
+                Pair(false, R.string.empty)
+            }
+        )
+    }
+
     private fun validateIbanAccount() = executeUseCase {
-        uiState = uiState.copy(accountInformation = Pair(true, R.string.iban_account_loading))
+        uiState = uiState.copy(
+            accountInformation = Pair(true, R.string.iban_account_loading),
+            validationFinish = false
+        )
         queryValidateBankAccountUseCase(
             account = "${Brand.CostaRica.iban}${uiState.ibanAccountNumber}",
-            identification = identification.orEmpty(),
+            identification = "",
             queryType = null,
             user = user.orEmpty(),
             idBrand = idBrand ?: 0
@@ -112,13 +110,21 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
                         AddIbanAccountViewModel.IS_VALID -> {
                             validateAccount = response
                             uiState = uiState.copy(
-                                accountInformation = Pair(false, R.string.empty)
+                                accountInformation = Pair(false, R.string.empty),
+                                validationFinish = true,
+                                documentNumber = response.identification.orEmpty(),
+                                proprietary = response.name,
+                                accountValidationError = Pair(
+                                    false,
+                                    ""
+                                )
                             )
                         }
                         AddIbanAccountViewModel.HAS_ERRORS -> {
                             uiState =
                                 uiState.copy(
                                     accountError = Pair(false, R.string.empty),
+                                    validationFinish = true,
                                     accountInformation = Pair(false, R.string.empty),
                                     accountValidationError = Pair(
                                         true,
@@ -141,92 +147,6 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
                 isFormValid()
             }
         }
-    }
-
-    private fun callQueryCatalogDocumentType(idBrand: Int) {
-        viewModelScope.launch {
-            queryCatalogDocumentTypeUseCase(
-                idBrand,
-                user ?: ""
-            ).collectLatest { result ->
-                result.onSuccess {
-                    onSuccessCatalogDocumentType = it
-                    val documentList: ArrayList<String> = arrayListOf()
-                    it?.catalogDocument?.forEach { document ->
-                        documentList.add(document.description)
-                    }
-                    uiState = uiState.copy(documentList = documentList)
-                    if (uiState.identificationValueType.isEmpty().not()) {
-                        getDocumentLength(uiState.identificationValueType, true)
-                    } else {
-                        uiState = uiState.copy(identificationValueType = documentList.first())
-                        getDocumentLength(uiState.identificationValueType)
-                    }
-                    uiState = uiState.copy(isLoading = false)
-                }
-                result.onFailure { error ->
-                    uiState = uiState.copy(isLoading = false)
-                    onSuccessCatalogDocumentType = null
-                    onFailure(error)
-                }
-                result.onLoading {
-                    uiState = uiState.copy(isLoading = true)
-                }
-            }
-        }
-    }
-
-    private fun getDocumentLength(documentType: String, isFromBackend: Boolean = false) {
-        onSuccessCatalogDocumentType?.catalogDocument?.forEach { documentCatalog ->
-            if (documentCatalog.description == documentType) {
-                uiState = uiState.copy(
-                    documentFormat = documentCatalog.format,
-                    identificationValueType = documentType
-                )
-                documentLength = if (documentCatalog.format.isNotEmpty()) {
-                    documentCatalog.format.count { documentCatalog.format.last() == it }
-                } else {
-                    Int.MAX_VALUE
-                }
-            }
-        }
-        if (isFromBackend.not()) {
-            cleanUIForIdentification()
-        }
-    }
-
-    private fun cleanUIForIdentification() {
-        uiState = uiState.copy(documentNumber = "")
-    }
-
-    private fun onIdentificationTypeValueChange(documentType: String) {
-        getDocumentLength(documentType)
-        isFormValid()
-    }
-
-    private fun onIdentificationValueChange(identificationValue: String) {
-        if (identificationValue.length <= documentLength) {
-            uiState = uiState.copy(documentNumber = identificationValue)
-        }
-        isFormValid()
-    }
-
-    private fun onValidateDocument(document: String) {
-        uiState = uiState.copy(
-            personalIdError =
-            if (uiState.documentNumber.isNotBlank() && document.length < documentLength) {
-                Pair(
-                    true,
-                    R.string.smart_iban_register_account_error
-                )
-            } else {
-                Pair(
-                    false,
-                    R.string.smart_iban_register_account_error
-                )
-            }
-        )
-        isFormValid()
     }
 
     private fun onAddFavoriteValueChange(isChecked: Boolean) {
@@ -261,7 +181,6 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
                 uiState.ibanAccountNumber.isBlank() -> false
                 uiState.accountError.first -> false
                 uiState.accountValidationError?.first == true -> false
-                uiState.personalIdError.first -> false
                 isEmailValid(uiState.email).not() -> false
                 else -> true
             }
@@ -275,7 +194,11 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
             identification = uiState.documentNumber,
             accountNumber = Brand.CostaRica.iban.plus(uiState.ibanAccountNumber),
             idCurrency = validateAccount?.currency?.getCurrencyFromId()?.id?.toLong() ?: 0,
-            nameAccount = uiState.favoriteName.ifBlank { validateAccount?.name ?: "" },
+            nameAccount = if (uiState.addFavorite) {
+                uiState.favoriteName.ifBlank { validateAccount?.name ?: "" }
+            } else {
+                validateAccount?.name ?: ""
+            },
             country = Brand.CostaRica.countryCode,
             idAccount = null,
             option = null,
@@ -329,16 +252,11 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
         var isLoading: Boolean = false,
         val ibanAccountNumber: String = "",
         val accountError: Pair<Boolean, Int> = Pair(false, R.string.empty),
+        val validationFinish: Boolean = false,
+        val proprietary: String = "",
         val accountInformation: Pair<Boolean, Int> = Pair(false, R.string.empty),
         val accountValidationError: Pair<Boolean, String>? = Pair(false, ""),
-        val documentList: ArrayList<String> = arrayListOf(),
         val documentNumber: String = "",
-        val documentFormat: String = "",
-        val identificationValueType: String = "",
-        val personalIdError: Pair<Boolean, Int> = Pair(
-            false,
-            R.string.smart_iban_register_account_error
-        ),
         val email: String = "",
         val userEmailError: Pair<Boolean, Int> = Pair(false, R.string.empty),
         val favoriteName: String = "",
@@ -350,27 +268,21 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
         when (uiEvent) {
             is UIEvent.OnNavigateBack -> onNavigateBack()
             is UIEvent.OnAccountValueChange -> onAccountValueValueChange(uiEvent.accountNumber)
-            is UIEvent.OnIdentificationValueChange -> onIdentificationValueChange(uiEvent.identification)
-            is UIEvent.OnIdentificationTypeChange -> onIdentificationTypeValueChange(uiEvent.identificationType)
-            is UIEvent.OnQueryDocumentList -> onQueryDocumentList()
-            is UIEvent.OnValidateDocument -> onValidateDocument(uiEvent.document ?: "")
             is UIEvent.OnAddFavoriteValueChange -> onAddFavoriteValueChange(uiEvent.isChecked)
             is UIEvent.OnFavoriteNameValueChange -> onFavoriteNameValueChange(uiEvent.favoriteName)
             is UIEvent.OnEmailNameValueChange -> onEmailNameValueChange(uiEvent.email)
             is UIEvent.OnValidateUserEmail -> isUserEmailValid()
             is UIEvent.OnContinueButtonClick -> onContinueButtonClick()
+            is UIEvent.OnAccountValueCompleted -> onAccountValueCompleted()
         }
     }
 
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()
-        object OnQueryDocumentList : UIEvent()
         object OnValidateUserEmail : UIEvent()
         object OnContinueButtonClick : UIEvent()
+        object OnAccountValueCompleted : UIEvent()
         data class OnAccountValueChange(val accountNumber: String) : UIEvent()
-        data class OnIdentificationValueChange(val identification: String) : UIEvent()
-        data class OnIdentificationTypeChange(val identificationType: String) : UIEvent()
-        data class OnValidateDocument(val document: String? = null) : UIEvent()
         data class OnAddFavoriteValueChange(val isChecked: Boolean) : UIEvent()
         data class OnFavoriteNameValueChange(val favoriteName: String) : UIEvent()
         data class OnEmailNameValueChange(val email: String) : UIEvent()
@@ -378,6 +290,5 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
 
     companion object {
         const val IBAN_MAX_LENGTH = 20
-        const val FORMAT_VALUE = '0'
     }
 }

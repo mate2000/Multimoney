@@ -651,7 +651,7 @@ type Mutation {
   """
   Crypto
   """
-  validateDepositAddress(validateDepositAddressInput: ValidateDepositAddressDtoInput!): ValidateDepositAddressResult!
+  validateDepositAddress(validateDepositAddressInput: ValidateDepositAddressDtoInput!): ValidateDepositAddressResponse!
 
   """
   Crypto
@@ -2297,6 +2297,10 @@ type CryptoMarketPrice {
   url_image: String!
 
   historico: Boolean!
+
+  crypto_network: String
+
+  network: String
 
   crypto_network: String!
 
@@ -4396,6 +4400,18 @@ type ReleaseTransaction {
   withheld: Boolean!
 
   userResponse: Boolean!
+
+  status: Int
+
+  message: String
+
+  detail: String
+
+  _HaveError: Boolean
+
+  _ErrorMessage: String
+
+  _FullError: String
 }
 
 input ReleaseTransactionDtoInput {
@@ -4411,7 +4427,7 @@ input ReleaseTransactionDtoInput {
 
   shippingOrigin: String!
 
-  userWallet: String!
+  userWallet: String
 
   amountReceivedDollars: Decimal
 
@@ -4456,6 +4472,16 @@ input TransferOrderDtoInput {
   idBrand: Int
 
   user: String
+}
+
+type ValidateDepositAddressResponse {
+  result: ValidateDepositAddressResult
+
+  status: Int
+
+  message: String
+
+  detail: String
 }
 
 type ValidateDepositAddressResult {
@@ -5288,8 +5314,6 @@ input ResendMicroDepositDtoInput {
   identification: String!
 
   idCard: String!
-
-  code: String!
 
   idBrand: Int
 
@@ -6264,6 +6288,8 @@ type CryptoAccountBalanceItem {
   url_image: String
 
   crypto_network: String
+
+  network: String
 }
 
 type RequestResult {
@@ -6610,6 +6636,8 @@ type ACHTransferFavoriteResponse {
   identificationTypeAccount: Long
 
   isFavorite: Boolean
+
+  fullNameDestination: String
 }
 
 type SmartAccountStatusResult {

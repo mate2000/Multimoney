@@ -257,6 +257,16 @@ dependencies {
     productionImplementation(novo.novo_prod) {
         exclude group: "com.novopayment.sdk.android", module: "visa-sensory-branding"
     }
+
+    // CameraX
+    implementation cameraX.core
+    implementation cameraX.cameraX
+    implementation cameraX.lifecycle
+    implementation cameraX.view
+
+    // MLKit
+    implementation mlKit.barcode
+
 }
 
 dexguard {

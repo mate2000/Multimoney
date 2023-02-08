@@ -76,14 +76,6 @@ fun getMaskedVisaAccount(accountNumber: String, maskedText: String = ACCOUNT_MAS
     VISA_MASK.plus(maskedText)
         .plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
 
-fun getMaskedSmartAccount(
-    prefix: String = Brand.ElSalvador.countryCode.capitalized(),
-    accountNumber: String,
-    maskedText: String = ACCOUNT_MASK
-) =
-    prefix.plus(maskedText)
-        .plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
-
 fun getMaskedAccountIban(accountNumber: String, maskedText: String = ACCOUNT_MASK) =
     Brand.CostaRica.iban.plus(
         accountNumber.take(ACCOUNT_IBAN_FIRST_DIGITS).plus(maskedText)
@@ -107,6 +99,8 @@ const val ACCOUNT_FIRST_DIGITS = 2
 const val ACCOUNT_LAST_DIGITS = 4
 const val CARD_NUMBER_LAST_DIGITS = 4
 const val TWO_DECIMALS_FORMAT = "%.2f"
+const val EIGHT_DECIMALS_FORMAT = "%.8f"
+const val DECIMAL_AND_NUMBER_REGEX = "^[0-9.]*\$"
 const val ACCOUNT_MASK = "••••"
 const val VISA_MASK = "Visa"
 const val DOCUMENT_FORMAT_VALUE = '0'

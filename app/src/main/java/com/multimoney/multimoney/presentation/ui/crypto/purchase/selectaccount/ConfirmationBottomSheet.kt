@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.crypto.purchase.selectaccount
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,6 +28,9 @@ import kotlinx.coroutines.CoroutineScope
 fun ConfirmationBottomSheet(
     modalBottomSheetState: ModalBottomSheetState,
     coroutineScope: CoroutineScope,
+    onCheckedChange: (Boolean) -> Unit,
+    onContinueClicked: () -> Unit,
+    checked: Boolean
 ) {
     CustomModalBottomSheet(
         title = R.string.empty,
@@ -34,13 +38,17 @@ fun ConfirmationBottomSheet(
         modalBottomSheetState = modalBottomSheetState,
         coroutineScope = coroutineScope
     ) {
-        ConfirmationBottomSheetContent()
+        ConfirmationBottomSheetContent(onCheckedChange, onContinueClicked,checked)
     }
 }
 
 @Preview
 @Composable
-fun ConfirmationBottomSheetContent() {
+fun ConfirmationBottomSheetContent(
+    onCheckedChange: (Boolean) -> Unit = {},
+    onContinueClicked: () -> Unit = {},
+    checked: Boolean = true
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -48,13 +56,13 @@ fun ConfirmationBottomSheetContent() {
     ) {
         Text(
             text = stringResource(id = R.string.buy_crypto_warning_bs_content),
-            style = Typography.body2.copy(fontWeight = FontWeight.W600),
+            style = Typography.body2.copy(),
             color = MultimoneyTheme.colors.text,
         )
         CustomCheckBox(
-            checked = false, //ToDo add sharedViewModel viewModel uiState parameter
+            checked = checked, //ToDo add sharedViewModel viewModel uiState parameter
             onCheckedChange = {
-                //ToDo implement logic for saving state of the checkboc
+                onCheckedChange.invoke(it)
             },
             text = stringResource(id = R.string.buy_crypto_warning_dont_show_again),
         )
@@ -64,12 +72,10 @@ fun ConfirmationBottomSheetContent() {
                 .height(48.dp)
                 .padding(top = 8.dp),
             onClick = {
-                      // todo save preference using setVolatileDialogVisible
-                      //  and save the value depending on the checkbox value
-                //ToDo on navigate to next step
+                onContinueClicked.invoke()
             },
             text = stringResource(id = R.string.button_continue),
-            buttonType = CustomButtonType.PrimaryTertiary
+            buttonType = CustomButtonType.PrimaryPrimary
         )
     }
 }

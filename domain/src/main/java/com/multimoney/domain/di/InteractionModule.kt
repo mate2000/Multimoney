@@ -218,6 +218,10 @@ import com.multimoney.domain.interaction.virtualcard.MutationCardBlockingUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationCardBlockingUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.MutationCardUnblockingUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationCardUnblockingUseCaseImpl
+import com.multimoney.domain.interaction.virtualcard.MutationCreateCardVDUseCase
+import com.multimoney.domain.interaction.virtualcard.MutationCreateCardVDUseCaseImpl
+import com.multimoney.domain.interaction.virtualcard.MutationCreateUserVDUseCase
+import com.multimoney.domain.interaction.virtualcard.MutationCreateUserVDUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.MutationDeleteCardVDUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationDeleteCardVDUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.MutationPayCreditVDUseCase
@@ -740,6 +744,16 @@ class InteractionModule {
     @Singleton
     fun provideMutationUpdateCardVDUseCase(virtualCardRepository: VirtualCardRepository): MutationUpdateCardVDUseCase =
         MutationUpdateCardVDUseCaseImpl(virtualCardRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationCreateCardVDUseCase(virtualCardRepository: VirtualCardRepository): MutationCreateCardVDUseCase =
+        MutationCreateCardVDUseCaseImpl(virtualCardRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationCreateUserVDUseCase(virtualCardRepository: VirtualCardRepository): MutationCreateUserVDUseCase =
+        MutationCreateUserVDUseCaseImpl(virtualCardRepository)
 
     @Provides
     @Singleton

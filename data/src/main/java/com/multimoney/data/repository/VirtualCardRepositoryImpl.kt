@@ -13,6 +13,8 @@ import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.domain.model.virtualcard.DeleteCard
 import com.multimoney.domain.model.virtualcard.PayCreditVisaDirect
 import com.multimoney.domain.model.virtualcard.UpdateCard
+import com.multimoney.domain.model.virtualcard.CreateUser
+import com.multimoney.domain.model.virtualcard.CreateCard
 import com.multimoney.domain.repository.VirtualCardRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -91,6 +93,54 @@ class VirtualCardRepositoryImpl @Inject constructor(
             default = default,
             user = user,
             idBrand = idBrand
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun mutationCreateCardVD(
+        identification: String,
+        cardTokenID: String,
+        default: Boolean,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<CreateCard?>> = fetchData(
+        apolloCall = graphqlApi.mutationCreateCardVD(
+            identification = identification,
+            cardTokenID = cardTokenID,
+            default = default,
+            user = user,
+            idBrand = idBrand
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun mutationCreateUserVD(
+        identification: String,
+        firstName: String,
+        secondName: String,
+        lastName: String,
+        secondLastName: String,
+        email: String,
+        callerId: String,
+        user: String,
+        idBrand: Int,
+        accountToken: Long
+    ): Flow<MultimoneyResult<CreateUser?>> = fetchData(
+        apolloCall = graphqlApi.mutationCreateUserVD(
+            identification = identification,
+            firstName = firstName,
+            secondName = secondName,
+            lastName = lastName,
+            secondLastName = secondLastName,
+            email = email,
+            callerId = callerId,
+            user = user,
+            idBrand = idBrand,
+            accountToken = accountToken
         ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())

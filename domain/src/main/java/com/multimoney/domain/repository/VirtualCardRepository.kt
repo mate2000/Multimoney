@@ -5,6 +5,8 @@ import com.multimoney.domain.model.virtualcard.AutomaticCardDebit
 import com.multimoney.domain.model.virtualcard.CardBlocking
 import com.multimoney.domain.model.virtualcard.CardUnblocking
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
+import com.multimoney.domain.model.virtualcard.CreateCard
+import com.multimoney.domain.model.virtualcard.CreateUser
 import com.multimoney.domain.model.virtualcard.DeleteCard
 import com.multimoney.domain.model.virtualcard.PayCreditVisaDirect
 import com.multimoney.domain.model.virtualcard.UpdateCard
@@ -41,6 +43,27 @@ interface VirtualCardRepository {
         user: String,
         idBrand: Int
     ): Flow<MultimoneyResult<UpdateCard?>>
+
+    suspend fun mutationCreateCardVD(
+        identification: String,
+        cardTokenID: String,
+        default: Boolean,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<CreateCard?>>
+
+    suspend fun mutationCreateUserVD(
+        identification: String,
+        firstName: String,
+        secondName: String,
+        lastName: String,
+        secondLastName: String,
+        email: String,
+        callerId: String,
+        user: String,
+        idBrand: Int,
+        accountToken: Long
+    ): Flow<MultimoneyResult<CreateUser?>>
 
     suspend fun mutationDeleteCardVD(
         identification: String,

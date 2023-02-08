@@ -68,9 +68,7 @@ fun CryptoFooterExpandedContent(
         )
 
         if (profileEnable) {
-            Column(
-                modifier = Modifier.verticalScroll(rememberScrollState())
-            ) {
+            Column {
                 CryptoCurrencies(
                     items = cryptoCurrencies,
                     itemClick = {},

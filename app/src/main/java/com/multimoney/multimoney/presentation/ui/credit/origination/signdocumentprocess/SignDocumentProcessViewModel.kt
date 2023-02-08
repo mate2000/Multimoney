@@ -50,8 +50,9 @@ import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.PROC
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
+import timber.log.Timber
 
 @HiltViewModel
 class SignDocumentProcessViewModel @Inject constructor(
@@ -119,8 +120,10 @@ class SignDocumentProcessViewModel @Inject constructor(
             subscriptionCreditContractEventUseCase.invoke(idPrint, idBrand)
                 .collectLatest { result ->
                     result.onSuccess {
+                        Timber.d(LOG_SUBSCRIPTION_TAG, it?.toString())
                         handleEvents(creditContractEvent = it)
                     }.onFailure {
+                        Timber.d(LOG_SUBSCRIPTION_TAG, it.getError())
                         showSubscriptionError()
                     }
                 }
@@ -338,6 +341,6 @@ class SignDocumentProcessViewModel @Inject constructor(
         const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 40000L
         const val ID_PRINT_EMPTY = 0L
         const val PHONE_HARDCODED = "50371680915"
-        const val ORIGINATION_ACCOUNT_INACTIVE = "ERROR AL ACTIVAR CUENTA"
+        const val LOG_SUBSCRIPTION_TAG = "SUBSCRIPTION_MM"
     }
 }

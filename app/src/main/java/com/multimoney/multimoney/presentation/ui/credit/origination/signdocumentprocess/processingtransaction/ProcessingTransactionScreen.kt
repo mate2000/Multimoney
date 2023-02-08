@@ -21,7 +21,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToContinueValidatingIdentity
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,7 +35,7 @@ fun ProcessingTransactionScreen(viewModel: SignDocumentProcessViewModel) {
     val openStepFlow: Flow<Boolean> = remember {
         openStepDebounce.debounce(SignDocumentProcessViewModel.TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND)
             .onEach { status ->
-                viewModel.onUIEvent(OnNavigateToContinueValidatingIdentity)
+                viewModel.onUIEvent(OnNavigateToHome)
                 flowOf(status)
             }
     }

@@ -112,12 +112,12 @@ import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.util.NovoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -315,7 +315,7 @@ class ProductViewModel @Inject constructor(
                         )
                         .plus(getNavParam(FIRST_NAME, uiState.userStatus?.infoUser?.firstName))
                         .plus(getNavParam(LAST_NAME, uiState.userStatus?.infoUser?.lastName))
-                        .plus(getNavParam(CROSSELING, false))
+                        .plus(getNavParam(CROSSELING, uiState.userStatus?.infoCredit?.infoPreApprove?.crosseling ?: false))
                 )
             }
             else -> {
@@ -553,7 +553,7 @@ class ProductViewModel @Inject constructor(
         validateUserStatus.apply {
             return when (action) {
                 CREDIT_INITIAL_CARD -> {
-                    (infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty() || validateUserStatus.infoCredit?.infoPreApprove?.currentStep == CREDIT_STEP_PRE_APPROVED)
+                    (infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty() || validateUserStatus.infoCredit?.infoPreApprove?.currentStep == CREDIT_STEP_PRE_APPROVED) && validateUserStatus.infoCredit?.infoPreApprove?.idPrint == 0L
                 }
 
                 SMART_INITIAL_CARD -> {
@@ -563,7 +563,7 @@ class ProductViewModel @Inject constructor(
                 }
 
                 CREDIT_INFO_INCOMPLETE -> {
-                    (CreditStep.Search.getIdByName(infoCredit?.infoPreApprove?.currentStep) < CreditStep.Eight.id)
+                    (CreditStep.Search.getIdByName(infoCredit?.infoPreApprove?.currentStep) < CreditStep.Eight.id) && validateUserStatus.infoCredit?.infoPreApprove?.idPrint == 0L
                 }
 
                 CREDIT_ONFIDO_REJECTED -> {

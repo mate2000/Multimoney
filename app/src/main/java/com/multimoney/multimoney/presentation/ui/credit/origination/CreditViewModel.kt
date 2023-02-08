@@ -63,9 +63,9 @@ import com.multimoney.multimoney.presentation.util.catalog.SignDocumentOrigin
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
 import com.multimoney.multimoney.presentation.util.getNavParam
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class CreditViewModel @Inject constructor(
@@ -257,8 +257,7 @@ class CreditViewModel @Inject constructor(
                     uiState = uiState.copy(isLoading = false)
                     if (crosseling) {
                         if ((idBrand.toInt() == Brand.ElSalvador.id && uiState.currentStep == CreditStep.Three.id) || (idBrand.toInt() == Brand.CostaRica.id && uiState.currentStep == CreditStep.Four.id)) {
-                            // onCallSaveCreditOperation()
-                            uiState = uiState.copy(showSVProcessSendSuccessfully = true)
+                            onCallSaveCreditOperation()
                         } else {
                             nextStep()
                         }

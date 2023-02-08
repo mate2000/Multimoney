@@ -49,7 +49,18 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.CROSSELING
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
+import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
+import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ORIGIN
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.BaseEvent.OnShowCardIssuanceError
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
@@ -97,6 +108,7 @@ import com.multimoney.multimoney.presentation.util.catalog.SignDocumentOrigin
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
+import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.util.NovoHelper
@@ -261,13 +273,55 @@ class ProductViewModel @Inject constructor(
                     )
                 } else {
                     navigateTo(
-                        "${Screen.SignDocumentProcessScreen.baseRoute}/${SignDocumentStep.GENERATE_DOCUMENT_STEP.value}/${SignDocumentOrigin.Product.value}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0}/${uiState.idBrand.toInt()}/$pkUser/$identification/$email/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}"
+                        Screen.SignDocumentProcessScreen.baseRoute
+                            .plus(getNavParam(SIGN_DOCUMENT_STEP_ARG, SignDocumentStep.GENERATE_DOCUMENT_STEP.value))
+                            .plus(getNavParam(SIGN_DOCUMENT_ORIGIN, SignDocumentOrigin.Product.value))
+                            .plus(
+                                getNavParam(
+                                    SIGN_DOCUMENT_ID_PRINT,
+                                    uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0
+                                )
+                            )
+                            .plus(getNavParam(ID_BRAND, uiState.idBrand.toInt()))
+                            .plus(getNavParam(PK_USER, pkUser))
+                            .plus(getNavParam(IDENTIFICATION, identification))
+                            .plus(getNavParam(EMAIL, email))
+                            .plus(
+                                getNavParam(
+                                    ID_USER_REQUEST,
+                                    uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0
+                                )
+                            )
+                            .plus(getNavParam(FIRST_NAME, uiState.userStatus?.infoUser?.firstName))
+                            .plus(getNavParam(LAST_NAME, uiState.userStatus?.infoUser?.lastName))
+                            .plus(getNavParam(CROSSELING, false))
                     )
                 }
             }
             CREDIT_FIRM_INCOMPLETE, CREDIT_FIRM_REJECTED -> {
                 navigateTo(
-                    "${Screen.SignDocumentProcessScreen.baseRoute}/${SignDocumentStep.GENERATE_DOCUMENT_STEP.value}/${SignDocumentOrigin.Product.value}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0}/${uiState.idBrand.toInt()}/$pkUser/$identification/$email/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}"
+                    Screen.SignDocumentProcessScreen.baseRoute
+                        .plus(getNavParam(SIGN_DOCUMENT_STEP_ARG, SignDocumentStep.GENERATE_DOCUMENT_STEP.value))
+                        .plus(getNavParam(SIGN_DOCUMENT_ORIGIN, SignDocumentOrigin.Product.value))
+                        .plus(
+                            getNavParam(
+                                SIGN_DOCUMENT_ID_PRINT,
+                                uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0
+                            )
+                        )
+                        .plus(getNavParam(ID_BRAND, uiState.idBrand.toInt()))
+                        .plus(getNavParam(PK_USER, pkUser))
+                        .plus(getNavParam(IDENTIFICATION, identification))
+                        .plus(getNavParam(EMAIL, email))
+                        .plus(
+                            getNavParam(
+                                ID_USER_REQUEST,
+                                uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0
+                            )
+                        )
+                        .plus(getNavParam(FIRST_NAME, uiState.userStatus?.infoUser?.firstName))
+                        .plus(getNavParam(LAST_NAME, uiState.userStatus?.infoUser?.lastName))
+                        .plus(getNavParam(CROSSELING, uiState.userStatus?.infoCredit?.infoPreApprove?.crosseling ?: false))
                 )
             }
             else -> {
@@ -505,7 +559,7 @@ class ProductViewModel @Inject constructor(
         validateUserStatus.apply {
             return when (action) {
                 CREDIT_INITIAL_CARD -> {
-                    (infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty() || validateUserStatus.infoCredit?.infoPreApprove?.currentStep == CREDIT_STEP_PRE_APPROVED)
+                    (infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty() || validateUserStatus.infoCredit?.infoPreApprove?.currentStep == CREDIT_STEP_PRE_APPROVED) && validateUserStatus.infoCredit?.infoPreApprove?.idPrint == 0L
                 }
 
                 SMART_INITIAL_CARD -> {
@@ -515,7 +569,7 @@ class ProductViewModel @Inject constructor(
                 }
 
                 CREDIT_INFO_INCOMPLETE -> {
-                    (CreditStep.Search.getIdByName(infoCredit?.infoPreApprove?.currentStep) < CreditStep.Eight.id)
+                    (CreditStep.Search.getIdByName(infoCredit?.infoPreApprove?.currentStep) < CreditStep.Eight.id) && validateUserStatus.infoCredit?.infoPreApprove?.idPrint == 0L
                 }
 
                 CREDIT_ONFIDO_REJECTED -> {
@@ -712,7 +766,7 @@ class ProductViewModel @Inject constructor(
                 idBrand = uiState.idBrand.toIntOrNull() ?: 0,
                 country = "",
                 idAccount = 0,
-                accountNumber = ""
+                accountNumber = "",
             ).collectLatest { result ->
                 result.onSuccess { accountList ->
                     onLoadingValueChange(false)
@@ -957,6 +1011,10 @@ class ProductViewModel @Inject constructor(
         navigateTo(Screen.PurchaseCryptoFlow.baseRoute)
     }
 
+    private fun onNavigateToSellCryptoFlow() {
+        navigateTo(Screen.CryptoSellFlow.baseRoute)
+    }
+
     private fun onNavigateToSendCryptoFlow() {
         navigateTo(Screen.CryptoSendFlow.baseRoute)
     }
@@ -1110,6 +1168,7 @@ class ProductViewModel @Inject constructor(
             is OnNoVoConfig -> onConfigNovoSdk()
             is OnGetSmartContent -> getSmartContent()
             is UIEvent.OnNavigateToPurchaseCryptoFlow -> onNavigateToPurchaseCryptoFlow()
+            is UIEvent.OnNavigateToSellCryptoFlow -> onNavigateToSellCryptoFlow()
             is UIEvent.OnNavigateToSendCryptoFlow -> onNavigateToSendCryptoFlow()
             is OnVisaCardExpiredDialog -> onVisaCardExpiredDialog(
                 idBrand = uiEvent.idBrand,
@@ -1168,6 +1227,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToCryptoMarket : UIEvent()
         object OnNavigateToCryptoMovements : UIEvent()
         object OnNavigateToPurchaseCryptoFlow : UIEvent()
+        object OnNavigateToSellCryptoFlow : UIEvent()
         object OnNavigateToSendCryptoFlow : UIEvent()
         object OnGetSmartContent : UIEvent()
 

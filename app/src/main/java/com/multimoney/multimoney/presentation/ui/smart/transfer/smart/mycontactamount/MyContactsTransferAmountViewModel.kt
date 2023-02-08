@@ -52,13 +52,14 @@ class MyContactsTransferAmountViewModel @Inject constructor(
             smartAccount = savedStateHandle[ORIGIN_ACCOUNT]
             phoneAccount = savedStateHandle[DESTINY_ACCOUNT]
             originCurrency = smartAccount?.currencyID?.getCurrencyFromId()
+            if (originCurrency == CurrencyType.All) originCurrency = Dollar
             destinyCurrency = phoneAccount?.idCurrency?.getCurrencyFromId()
+            if (destinyCurrency == CurrencyType.All) destinyCurrency = Dollar
             shouldDisplayExchange = originCurrency != destinyCurrency
             var limits = preferences.getSmartTransferLimit().firstOrNull()
 
             amountUIState = amountUIState.copy(
                 originAccountDisplay = DisplayAccount(
-                    sheetLabel = R.string.smart_payment_amount_bottom_sheet_from,
                     sheetTitleResource = originCurrency?.myAccountSmartSymbol,
                     sheetSubtitle = if (idBrand == ElSalvador.id) null else getMaskedAccountIban(
                         smartAccount?.ibanAccountNumber.orEmpty()
@@ -66,7 +67,6 @@ class MyContactsTransferAmountViewModel @Inject constructor(
                     icon = R.drawable.ic_multimoney_smart
                 ),
                 destinyAccountDisplay = DisplayAccount(
-                    sheetLabel = R.string.smart_payment_amount_bottom_sheet_to,
                     sheetTitle = phoneAccount?.titular,
                     sheetSubtitle = phoneAccount?.number?.plus(SEPARATOR)
                         ?.plus(destinyCurrency?.stringName)
@@ -190,7 +190,26 @@ class MyContactsTransferAmountViewModel @Inject constructor(
                 bottomSheetState = ModalBottomSheetState(Hidden)
             )
         } else {
-            navigateBack(popTo = Screen.SmartSelectSendingTypeScreen.route, isRestart = false)
+            when(previousScreen) {
+                Screen.MyContactsTransferScreen.baseRoute -> {
+                    navigateBack(
+                        popTo = Screen.MyContactsTransferScreen.route,
+                        isRestart = false
+                    )
+                }
+                Screen.SmartAddSACAccountScreen.baseRoute -> {
+                    navigateBack(
+                        popTo = Screen.SmartAddSACAccountScreen.route,
+                        isRestart = false
+                    )
+                }
+                else -> {
+                    navigateBack(
+                        popTo = Screen.SmartSelectSendingTypeScreen.route,
+                        isRestart = false
+                    )
+                }
+            }
         }
     }
 }

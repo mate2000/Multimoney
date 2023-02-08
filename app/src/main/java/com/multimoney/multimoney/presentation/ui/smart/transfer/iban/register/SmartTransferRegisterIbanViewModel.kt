@@ -194,7 +194,11 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
             identification = uiState.documentNumber,
             accountNumber = Brand.CostaRica.iban.plus(uiState.ibanAccountNumber),
             idCurrency = validateAccount?.currency?.getCurrencyFromId()?.id?.toLong() ?: 0,
-            nameAccount = uiState.favoriteName.ifBlank { validateAccount?.name ?: "" },
+            nameAccount = if (uiState.addFavorite) {
+                uiState.favoriteName.ifBlank { validateAccount?.name ?: "" }
+            } else {
+                validateAccount?.name ?: ""
+            },
             country = Brand.CostaRica.countryCode,
             idAccount = null,
             option = null,

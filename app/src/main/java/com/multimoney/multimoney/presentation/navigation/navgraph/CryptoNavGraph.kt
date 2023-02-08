@@ -27,6 +27,7 @@ import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreen
 import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsScreen
 import com.multimoney.multimoney.presentation.ui.crypto.movements.CryptoMovementsAllScreen
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoFlow
+import com.multimoney.multimoney.presentation.ui.crypto.sell.SellCryptoFlow
 import com.multimoney.multimoney.presentation.ui.crypto.send.CryptoSendFlow
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWallet
 
@@ -76,45 +77,7 @@ fun NavGraphBuilder.cryptoNavGraph(
                 }
             )
         }
-        composable(
-            route = Screen.CryptoSendFlow.route,
-            arguments = listOf(
-                navArgument(CRYPTO_ASSET) {
-                    nullable = true
-                    defaultValue = null
-                    type = NavType.StringType
-                },
-                navArgument(DESCRIPTION_CURRENCY) {
-                    nullable = true
-                    defaultValue = null
-                    type = NavType.StringType
-                }
-            )
-        ) {
-            CryptoSendFlow(
-                onNavigate = { navController.navigate(it.route) },
-                onPopAndNavigate = {
-                    navController.navigate(it.route) {
-                        popUpTo(it.popTo) { inclusive = true }
-                    }
-                },
-                onPopBackStack = {
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
-                        PREVIOUS_IS_RESTART,
-                        it.isRestart
-                    )
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
-                        HOME_STATE,
-                        it.homeState
-                    )
-                    navController.popBackStack(
-                        route = it.popTo,
-                        inclusive = false,
-                        saveState = false
-                    )
-                }
-            )
-        }
+        cryptoSendNavGraph(navController)
         composable(
             route = Screen.CryptoWalletScreen.route,
             arguments = listOf(
@@ -269,6 +232,42 @@ fun NavGraphBuilder.cryptoNavGraph(
                     navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }
                     }
+                }
+            )
+        }
+        composable(
+            route = Screen.CryptoSellFlow.route,
+            arguments = listOf(
+                navArgument(ITEM_CRYPTO_MARKET) {
+                    nullable = true
+                    defaultValue = null
+                    type = CryptoCoinNavType()
+                }
+            )
+        ) {
+            SellCryptoFlow(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                },
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        HOME_STATE,
+                        it.homeState
+                    )
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
                 }
             )
         }

@@ -19,7 +19,6 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.uielement.CustomBiometricIconButton
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiary
-import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
 @Composable
 fun SignInWithBiometric(

@@ -6,7 +6,9 @@ import com.multimoney.domain.model.virtualcard.CardBlocking
 import com.multimoney.domain.model.virtualcard.CardUnblocking
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.domain.model.virtualcard.DeleteCard
+import com.multimoney.domain.model.virtualcard.MicroDepositVD
 import com.multimoney.domain.model.virtualcard.PayCreditVisaDirect
+import com.multimoney.domain.model.virtualcard.ResendMicroDepositVD
 import com.multimoney.domain.model.virtualcard.UpdateCard
 import kotlinx.coroutines.flow.Flow
 
@@ -80,4 +82,19 @@ interface VirtualCardRepository {
         user: String,
         idBrand: Int
     ): Flow<MultimoneyResult<CardUnblocking?>>
+
+    suspend fun mutationMicroDepositVD(
+        identification: String,
+        idCard: String,
+        code: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<MicroDepositVD?>>
+
+    suspend fun mutationResendMicroDepositVD(
+        identification: String,
+        idCard: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<ResendMicroDepositVD?>>
 }

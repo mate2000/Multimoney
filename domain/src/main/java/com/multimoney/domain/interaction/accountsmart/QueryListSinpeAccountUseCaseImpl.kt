@@ -4,6 +4,7 @@ import com.multimoney.domain.model.accountsmart.SinpeAccountResult
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.repository.SmartAccountRepository
 import kotlinx.coroutines.flow.Flow
+import java.util.*
 
 class QueryListSinpeAccountUseCaseImpl(val repository: SmartAccountRepository) :
     QueryListSinpeAccountUseCase {
@@ -13,7 +14,8 @@ class QueryListSinpeAccountUseCaseImpl(val repository: SmartAccountRepository) :
         identification: String,
         country: String,
         idAccount: Long,
-        accountNumber: String
+        accountNumber: String,
+        isFavorite: Boolean?
     ): Flow<MultimoneyResult<SinpeAccountResult?>> =
         repository.querySinpeAccount(
             user,
@@ -21,6 +23,7 @@ class QueryListSinpeAccountUseCaseImpl(val repository: SmartAccountRepository) :
             identification,
             country,
             idAccount,
-            accountNumber
+            accountNumber,
+            isFavorite
         )
 }

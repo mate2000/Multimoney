@@ -84,8 +84,7 @@ fun CryptoFooterExpandedContent(
         } else {
             NoticeSection()
         }
-
     }
 }
 
-private const val ZERO_MOVEMENTS = 0
+const val ZERO_MOVEMENTS = 0

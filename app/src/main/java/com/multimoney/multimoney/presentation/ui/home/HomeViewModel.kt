@@ -88,6 +88,7 @@ import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -128,11 +129,11 @@ class HomeViewModel @Inject constructor(
     private fun onsetUserData() {
         viewModelScope.launch {
             uiState = uiState.copy(
-                idBrand = dataStorePreferences.getIdBrand().first(),
-                pkUser = dataStorePreferences.getPkUser().first(),
-                identification = dataStorePreferences.getIdentification().first(),
-                email = dataStorePreferences.getUserEmail().first(),
-                userName = dataStorePreferences.getUserName().first()
+                idBrand = dataStorePreferences.getIdBrand().firstOrNull() ?: "",
+                pkUser = dataStorePreferences.getPkUser().firstOrNull() ?: "",
+                identification = dataStorePreferences.getIdentification().firstOrNull() ?: "",
+                email = dataStorePreferences.getUserEmail().firstOrNull() ?: "",
+                userName = dataStorePreferences.getUserName().firstOrNull() ?: ""
             )
             callQueryValidateUserStatus(
                 uiState.pkUser.toInt(),
@@ -490,12 +491,17 @@ class HomeViewModel @Inject constructor(
                     uiState = uiState.copy(configurationVersion = configurationVersion)
                 }
                 viewModelScope.launch {
-                    countDownTimer.startTimer(configurationVersion?.configuration?.timeSession?.toLong() ?: 0)
+                    countDownTimer.startTimer(
+                        configurationVersion?.configuration?.timeSession?.toLong() ?: 0
+                    )
                 }
                 apiCallCount++
                 if (apiCallCount == API_CALLS_TOTAL) {
                     uiState = uiState.copy(isLoading = false)
                 }
+                dataStorePreferences.setSmartTransferLimit(
+                    configurationVersion?.configuration?.accountSmart?.transferLimit ?: listOf()
+                )
             }
             result.onFailure {
                 onFailure(it)
@@ -763,7 +769,9 @@ class HomeViewModel @Inject constructor(
                 negative = biometricPromptNegative,
                 activity = fragmentActivity,
                 processSuccess = {
-                    countDownTimer.startTimer(uiState.configurationVersion?.configuration?.timeSession?.toLong() ?: 0)
+                    countDownTimer.startTimer(
+                        uiState.configurationVersion?.configuration?.timeSession?.toLong() ?: 0
+                    )
                 },
                 processError = { errorCode, errString ->
                     biometricPromptError(errorCode, errString)
@@ -867,8 +875,10 @@ class HomeViewModel @Inject constructor(
             is OnDeleteAutomaticPayment -> emitBaseEvent(OnDeleteAutomaticPaymentEvent)
             is OnCallMutationDeactivateClientAutomaticDebit -> onCallGetClientAutomaticDebitUseCase()
             is UIEvent.OnMyProductClick -> onMyProductClick(uiEvent.expand)
-            is UIEvent.OnMyProductPageChange -> uiState = uiState.copy(productScreenPagerState = uiEvent.page)
-            is UIEvent.OnLoadingValueChanged -> uiState = uiState.copy(isLoading = uiEvent.isLoading)
+            is UIEvent.OnMyProductPageChange ->
+                uiState = uiState.copy(productScreenPagerState = uiEvent.page)
+            is UIEvent.OnLoadingValueChanged ->
+                uiState = uiState.copy(isLoading = uiEvent.isLoading)
             is OnShowCardIssuanceError -> uiState = uiState.copy(showCardIssuanceError = true)
             is OnCloseCardIssuanceError -> uiState = uiState.copy(showCardIssuanceError = false)
             is OnStartBiometrics -> onStartBiometrics()
@@ -877,7 +887,8 @@ class HomeViewModel @Inject constructor(
                 uiEvent.biometricPromptDescription,
                 uiEvent.biometricPromptNegative
             )
-            is OnUpdateIsExpandedByClick -> uiState = uiState.copy(isExpandedByClick = uiEvent.isExpandedByClick)
+            is OnUpdateIsExpandedByClick ->
+                uiState = uiState.copy(isExpandedByClick = uiEvent.isExpandedByClick)
         }
     }
 

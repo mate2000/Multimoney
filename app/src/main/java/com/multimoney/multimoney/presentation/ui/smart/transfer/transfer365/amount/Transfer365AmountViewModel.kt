@@ -50,10 +50,10 @@ class Transfer365AmountViewModel @Inject constructor() : BaseSmartEditAmountView
                     R.string.smart_dollar_placeholder
                 } else {
                     R.string.empty
-                }
+                },
+                maxAmount = 0.0 // todo
             )
-            totalBalanceLabel =
-                amountUIState.currency + smartAccount?.totalBalance.toString()
+            totalBalanceLabel = amountUIState.currency + smartAccount?.totalBalance.toString()
         }
     }
 

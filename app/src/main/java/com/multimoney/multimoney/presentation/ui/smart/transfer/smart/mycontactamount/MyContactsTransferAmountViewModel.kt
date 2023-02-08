@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontactamount
 
+import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue.Expanded
@@ -9,6 +10,7 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.Brand.ElSalvador
 import com.multimoney.domain.interaction.accountsmart.MutationProcessLocalTransferUseCase
 import com.multimoney.domain.model.accountsmart.PhoneSmart
+import com.multimoney.domain.model.security.SmartTransferLimit
 import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -32,6 +34,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import javax.inject.Inject
+import kotlinx.coroutines.flow.firstOrNull
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
@@ -51,6 +54,7 @@ class MyContactsTransferAmountViewModel @Inject constructor(
             originCurrency = smartAccount?.currencyID?.getCurrencyFromId()
             destinyCurrency = phoneAccount?.idCurrency?.getCurrencyFromId()
             shouldDisplayExchange = originCurrency != destinyCurrency
+            var limits = preferences.getSmartTransferLimit().firstOrNull()
 
             amountUIState = amountUIState.copy(
                 originAccountDisplay = DisplayAccount(
@@ -72,7 +76,8 @@ class MyContactsTransferAmountViewModel @Inject constructor(
                     R.string.smart_dollar_placeholder
                 } else {
                     R.string.smart_colon_placeholder
-                }
+                },
+                maxAmount = limits?.find { a -> a?.code == originCurrency?.id.toString() }?.amount
             )
 
             fromSmartLabel = if (originCurrency == CurrencyType.Colon) {

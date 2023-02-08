@@ -651,7 +651,7 @@ type Mutation {
   """
   Crypto
   """
-  validateDepositAddress(validateDepositAddressInput: ValidateDepositAddressDtoInput!): ValidateDepositAddressResult!
+  validateDepositAddress(validateDepositAddressInput: ValidateDepositAddressDtoInput!): ValidateDepositAddress!
 
   """
   Crypto
@@ -2298,8 +2298,9 @@ type CryptoMarketPrice {
 
   historico: Boolean!
 
-  crypto_network: String!
+  crypto_network: String
 
+  network: String
 }
 
 input CryptoMarketPriceDtoInput {
@@ -2885,6 +2886,8 @@ type UserValidation {
 
   maskedPhoneNumber: String
 
+  otpTime: Int
+
   status: Int
 
   message: String
@@ -3156,6 +3159,8 @@ type GetCountryPhoneCode {
   code: Int!
 
   phoneMask: String
+
+  isoCode: String
 }
 
 input GetCountryPhoneCodeDtoInput {
@@ -4396,6 +4401,18 @@ type ReleaseTransaction {
   withheld: Boolean!
 
   userResponse: Boolean!
+
+  status: Int
+
+  message: String
+
+  detail: String
+
+  _HaveError: Boolean
+
+  _ErrorMessage: String
+
+  _FullError: String
 }
 
 input ReleaseTransactionDtoInput {
@@ -4411,7 +4428,7 @@ input ReleaseTransactionDtoInput {
 
   shippingOrigin: String!
 
-  userWallet: String!
+  userWallet: String
 
   amountReceivedDollars: Decimal
 
@@ -4458,26 +4475,14 @@ input TransferOrderDtoInput {
   user: String
 }
 
-type ValidateDepositAddressResult {
-  page: Int!
+type ValidateDepositAddress {
+  result: ValidateDepositAddressResult
 
-  totalPages: Int!
+  status: Int
 
-  itemsOnPage: Int!
+  message: String
 
-  address: String!
-
-  balance: String!
-
-  unconfirmedBalance: String!
-
-  unconfirmedTxs: Int!
-
-  txs: Int!
-
-  nonTokenTxs: Int!
-
-  txids: [String!]!
+  detail: String
 }
 
 input ValidateDepositAddressDtoInput {
@@ -5289,8 +5294,6 @@ input ResendMicroDepositDtoInput {
 
   idCard: String!
 
-  code: String!
-
   idBrand: Int
 
   user: String
@@ -5626,6 +5629,28 @@ type sellHQRResult {
   averagePrice: Decimal!
 
   status: String!
+}
+
+type ValidateDepositAddressResult {
+  page: Int!
+
+  totalPages: Int!
+
+  itemsOnPage: Int!
+
+  address: String
+
+  balance: String
+
+  unconfirmedBalance: String
+
+  unconfirmedTxs: Int!
+
+  txs: Int!
+
+  nonTokenTxs: Int!
+
+  txids: [String!]
 }
 
 type TransferOrderResult {
@@ -6264,6 +6289,8 @@ type CryptoAccountBalanceItem {
   url_image: String
 
   crypto_network: String
+
+  network: String
 }
 
 type RequestResult {
@@ -6610,6 +6637,8 @@ type ACHTransferFavoriteResponse {
   identificationTypeAccount: Long
 
   isFavorite: Boolean
+
+  fullNameDestination: String
 }
 
 type SmartAccountStatusResult {
@@ -6764,8 +6793,6 @@ type CreditPreApproveInfo {
 
   idPrint: Long
 
-  crosseling: Boolean
-
   selectedAmount: Decimal
 
   statusFirm: String
@@ -6826,6 +6853,8 @@ type CreditConfigurationType {
 type AccountsmartConfigurationType {
   activo: Boolean!
 
+  limiteTransacion: [CurrencyConfigurationType]
+
   metodoAbono: [FundingMethodConfigurationType!]!
 
   metodoTransferencia: [TransferMethodConfigurationType!]!
@@ -6835,6 +6864,8 @@ type CurrencyConfigurationType {
   codigo: String!
 
   descripcion: String!
+
+  monto: Decimal
 }
 
 type ProcessCore {

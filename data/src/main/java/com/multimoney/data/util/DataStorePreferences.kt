@@ -1,11 +1,13 @@
 package com.multimoney.data.util
 
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.multimoney.data.base.BaseDataStorePreferences
 import com.multimoney.data.util.cryptography.CryptographyHelper
+import com.multimoney.domain.model.security.SmartTransferLimit
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import java.util.UUID
@@ -124,6 +126,12 @@ class DataStorePreferences @Inject constructor(
 
     fun isVolatileDialogVisible(): Flow<Boolean> = getData(VOLATILE_DIALOG_KEY, true)
 
+    suspend fun setSmartTransferLimit(limits: List<SmartTransferLimit?>) {
+        Log.d("AAAAAAAAA", "set: $limits")
+        putList(SMART_LIMITS, list = limits)
+    }
+    fun getSmartTransferLimit() = getList<SmartTransferLimit?>(SMART_LIMITS)
+
     companion object {
         private val UNIQUE_ID = stringPreferencesKey("unique_id")
         private val TOKEN_KEY = stringPreferencesKey("auth_token")
@@ -142,5 +150,6 @@ class DataStorePreferences @Inject constructor(
         private val SIGN_OUT_ON_BACKGROUND = booleanPreferencesKey("sign_out_on_background")
         private val VISA_CARD_EXPIRED_DIALOG_KEY = booleanPreferencesKey("visa_card_expired_dialog_key")
         private val VOLATILE_DIALOG_KEY = booleanPreferencesKey("volatile_dialog_key")
+        private val SMART_LIMITS = stringPreferencesKey("smart_limits")
     }
 }

@@ -296,7 +296,17 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 user,
                 idBrand
             ),
-            apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
+            apolloCallMapper = { data ->
+                if (
+                    data.processTransferVisaToSmartVD.status == null ||
+                    data.processTransferVisaToSmartVD.status == 0
+                ) {
+                    Success(data.mapToDomainModel())
+                } else {
+                    Message(data.mapToDomainModel())
+                }
+            }
+
         )
 
     /**
@@ -640,12 +650,13 @@ class SmartAccountRepositoryImpl @Inject constructor(
         idBrand: Int,
         accountStatus: Int
     ): Flow<MultimoneyResult<List<AccountSmartForBuyCrypto>?>> {
-        return fetchData(graphqlApi.querySmartAccounts(
-            user,
-            identification,
-            idBrand,
-            accountStatus
-        ),
+        return fetchData(
+            graphqlApi.querySmartAccounts(
+                user,
+                identification,
+                idBrand,
+                accountStatus
+            ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
             }
@@ -661,14 +672,17 @@ class SmartAccountRepositoryImpl @Inject constructor(
         idAccountSysde: Long,
         idAccountRequest: Long
     ): Flow<MultimoneyResult<SmartAccountStatusResult?>> {
-        return fetchData(graphqlApi.mutationUpdateSmartAccountStatus(
-            user,
-            idBrand,
-            identificationNumber,
-            newState,
-            typeState,
-            idAccountSysde,
-            idAccountRequest
-        ), apolloCallMapper = { data -> Success(data.mapToDomain()) })
+        return fetchData(
+            graphqlApi.mutationUpdateSmartAccountStatus(
+                user,
+                idBrand,
+                identificationNumber,
+                newState,
+                typeState,
+                idAccountSysde,
+                idAccountRequest
+            ),
+            apolloCallMapper = { data -> Success(data.mapToDomain()) }
+        )
     }
 }

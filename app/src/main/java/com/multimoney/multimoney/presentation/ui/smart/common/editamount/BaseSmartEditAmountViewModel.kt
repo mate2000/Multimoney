@@ -25,7 +25,6 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.DESTINY_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.ORIGIN_ACCOUNT
-import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.TRANSFER_TYPE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
@@ -125,7 +124,8 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                         R.string.smart_dollar_placeholder
                     } else {
                         R.string.smart_colon_placeholder
-                    }
+                    },
+                    maxAmount = 0.0 // todo
                 )
             }
             SmartTransferTypes.SmartToSmart.id -> {
@@ -153,7 +153,8 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                         R.string.smart_dollar_placeholder
                     } else {
                         R.string.smart_colon_placeholder
-                    }
+                    },
+                    maxAmount = 0.0 // todo
                 )
             }
             SmartTransferTypes.IbanToSmart.id -> {
@@ -181,7 +182,8 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                         R.string.smart_dollar_placeholder
                     } else {
                         R.string.smart_colon_placeholder
-                    }
+                    },
+                    maxAmount = 0.0 // todo
                 )
             }
             SmartTransferTypes.VisaToSmart.id -> {
@@ -208,7 +210,8 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                         R.string.smart_dollar_placeholder
                     } else {
                         R.string.smart_colon_placeholder
-                    }
+                    },
+                    maxAmount = 0.0 // todo
                 )
             }
         }
@@ -275,7 +278,25 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
             amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
         }
 
-        val isAmountValid = currentAmount <= (smartAccount?.totalBalance ?: 0.0)
+        val isAmountValid = true
+        if (currentAmount <= (smartAccount?.totalBalance ?: 0.0)) {
+            amountUIState = amountUIState.copy(
+                amountError = Triple(
+                    true,
+                    R.string.smart_iban_transfer_error_balance_insufficient,
+                    amountUIState.totalBalance ?: 0.0
+                )
+            )
+        }
+        if (amountUIState.maxAmount != null && currentAmount <= (amountUIState.maxAmount ?: 0.0)) {
+            amountUIState = amountUIState.copy(
+                amountError = Triple(
+                    true,
+                    R.string.smart_iban_transfer_error_max_amount,
+                    amountUIState.totalBalance ?: 0.0
+                )
+            )
+        }
         amountUIState = amountUIState.copy(
             isAmountValid = isAmountValid,
             bottomSheetState = ModalBottomSheetState(Hidden),
@@ -477,7 +498,10 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
         val currentDate: String = "",
         val currentTime: String = "",
         val originAccountDisplay: DisplayAccount? = null,
-        val destinyAccountDisplay: DisplayAccount? = null
+        val destinyAccountDisplay: DisplayAccount? = null,
+        val maxAmount: Double? = null,
+        val totalBalance: Double? = null,
+        val amountError: Triple<Boolean, Int, Double> = Triple(false, R.string.empty, 0.0)
     )
 
     open fun onAmountUIEvent(uiEvent: AmountUIEvent) {

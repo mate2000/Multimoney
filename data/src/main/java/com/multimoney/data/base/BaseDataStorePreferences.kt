@@ -17,11 +17,13 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.IOException
 import javax.crypto.Cipher
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 
 abstract class BaseDataStorePreferences(
-    private val dataStore: DataStore<Preferences>,
+    val dataStore: DataStore<Preferences>,
     private val cryptographyHelper: CryptographyHelper,
-    val gsonHelper: GsonHelper,
+    val gsonHelper: GsonHelper
 ) {
 
     private val json = Json { encodeDefaults = true }
@@ -36,6 +38,22 @@ abstract class BaseDataStorePreferences(
     protected suspend fun <T : Any> setData(key: Preferences.Key<T>, value: T) {
         dataStore.edit { it[key] = value }
     }
+
+    protected inline fun <reified T : Any?> getList(key: Preferences.Key<String>) =
+        dataStore.data.catch { exception ->
+            if (exception is IOException) {
+                emptyPreferences()
+            } else throw exception
+        }.map {
+            gsonHelper.convertToListData<T>(it[key] ?: "")
+        }
+
+
+
+    protected suspend inline fun <reified T : Any?> putList(
+        key: Preferences.Key<String>,
+        list: List<T>
+    ) = setData(key, gsonHelper.convertToString(list))
 
     protected fun getVector(key: Preferences.Key<String>, def: ByteArray) =
         dataStore.data.catch { exception ->
@@ -93,36 +111,23 @@ abstract class BaseDataStorePreferences(
         }
     }
 
-    protected suspend inline fun <reified T : Any> getList(key: Preferences.Key<String>): List<T> {
-        var list: List<T> = listOf()
-        getData(key, "").collect { listJson ->
-            list = gsonHelper.convertToListData(listJson)
-        }
-        return list
-    }
-
-    protected suspend inline fun <reified T : Any> putList(
-        key: Preferences.Key<String>,
-        list: List<T>
-    ) = setData(key, gsonHelper.convertToString(list))
-
-    protected suspend inline fun <reified T : Any> addItemToList(
-        key: Preferences.Key<String>,
-        item: T
-    ) {
-        val savedList: MutableList<T> = getList<T>(key).toMutableList()
-        savedList.add(item)
-        putList(key, savedList.toList())
-    }
-
-    protected suspend inline fun <reified T : Any> removeItemFromList(
-        key: Preferences.Key<String>,
-        item: T
-    ) {
-        val savedList: MutableList<T> = getList<T>(key).toMutableList()
-        savedList.remove(item)
-        putList(key, savedList.toList())
-    }
+//    protected suspend inline fun <reified T : Any> addItemToList(
+//        key: Preferences.Key<String>,
+//        item: T
+//    ) {
+//        val savedList: MutableList<T> = getList<T>(key).toMutableList()
+//        savedList.add(item)
+//        putList(key, savedList.toList())
+//    }
+//
+//    protected suspend inline fun <reified T : Any> removeItemFromList(
+//        key: Preferences.Key<String>,
+//        item: T
+//    ) {
+//        val savedList: MutableList<T> = getList<T>(key).toMutableList()
+//        savedList.remove(item)
+//        putList(key, savedList.toList())
+//    }
 
     /**
      * serializes data type into string
@@ -171,19 +176,23 @@ abstract class BaseDataStorePreferences(
     ): Flow<T> {
         return map { value ->
             (
-                    if (fetchValue(value).isNotEmpty()) {
-                        val ciphertextWrapper =
-                            gsonHelper.convertToData(fetchValue(value), CiphertextWrapper::class.java)
-
-                        val decryptedValue = cryptographyHelper.decryptData(
-                            DATA_STORE_KEY,
-                            ciphertextWrapper.ciphertext,
-                            ciphertextWrapper.initializationVector
+                if (fetchValue(value).isNotEmpty()) {
+                    val ciphertextWrapper =
+                        gsonHelper.convertToData(
+                            fetchValue(value),
+                            CiphertextWrapper::class.java
                         )
-                        json.decodeFromString(decryptedValue)
-                    } else {
-                        fetchValue(value)
-                    }) as T
+
+                    val decryptedValue = cryptographyHelper.decryptData(
+                        DATA_STORE_KEY,
+                        ciphertextWrapper.ciphertext,
+                        ciphertextWrapper.initializationVector
+                    )
+                    json.decodeFromString(decryptedValue)
+                } else {
+                    fetchValue(value)
+                }
+                ) as T
         }
     }
 
@@ -198,15 +207,17 @@ abstract class BaseDataStorePreferences(
         cipher: Cipher
     ): Flow<T> {
         return map { value ->
-            (if (fetchValue(value).isNotEmpty()) {
-                val ciphertextWrapper =
-                    gsonHelper.convertToData(fetchValue(value), CiphertextWrapper::class.java)
-                val decryptedValue =
-                    cryptographyHelper.decryptData(ciphertextWrapper.ciphertext, cipher)
-                json.decodeFromString(decryptedValue)
-            } else {
-                fetchValue(value)
-            }) as T
+            (
+                if (fetchValue(value).isNotEmpty()) {
+                    val ciphertextWrapper =
+                        gsonHelper.convertToData(fetchValue(value), CiphertextWrapper::class.java)
+                    val decryptedValue =
+                        cryptographyHelper.decryptData(ciphertextWrapper.ciphertext, cipher)
+                    json.decodeFromString(decryptedValue)
+                } else {
+                    fetchValue(value)
+                }
+                ) as T
         }
     }
 }

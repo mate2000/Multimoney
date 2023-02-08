@@ -1583,4 +1583,6 @@
     <string name="crosseling_close_dialog_positive_button_text" translatable="false">Cancelar</string>
     <string name="crosseling_close_dialog_negative_button_text" translatable="false">Continuar</string>
 
+    <!-- Crypto sell list coins-->
+    <string name="crypt_list_sell_title" translatable="false">¿Cuál moneda querés vender?</string>
 </resources>

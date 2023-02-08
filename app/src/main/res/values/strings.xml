@@ -381,8 +381,6 @@
     <string name="home_crypto_card_smart_in_process_label" translatable="false">Cripto</string>
     <string name="home_crypto_card_with_balance_zero_label" translatable="false">0.00</string>
 
-
-
     <!-- Buy Crypto -->
     <string name="buy_crypto_voucher_you_have_paid" translatable="false">Has comprado</string>
     <string name="buy_crypto_multimoney_smart_account_template" translatable="false">Mi cuenta Smart | %1$s</string>
@@ -752,9 +750,11 @@
 
 
     <!-- Generate Document -->
-    <string name="document_generation_title" translatable="false">Estamos creando tu cuenta</string>
-    <string name="document_generation_subtitle" translatable="false">Firmá el contrato y recibí tu crédito</string>
+    <string name="document_generation_title" translatable="false">Estamos creando tus documentos</string>
+    <string name="document_generation_subtitle" translatable="false">Firma el contrato y recibe tu crédito</string>
     <string name="document_generation_info" translatable="false">Generando documentos…</string>
+    <string name="document_generation_error_description" translatable="false">Contactanos para ayudarte a abrir tu cuenta</string>
+    <string name="origination_processing_transaction" translatable="false">Procesando transacción…</string>
 
     <!-- Onfido errors -->
     <string name="onfido_rejected_first_time_title" translatable="false">Hubo un error al validar tu identidad</string>
@@ -1635,8 +1635,8 @@
     <string name="crosseling_account_cr_title" translatable="false">¿En cúal cuenta IBAN querés \nrecibir tu dinero?</string>
     <string name="crosseling_close_dialog_title" translatable="false">Abandonar proceso</string>
     <string name="crosseling_close_dialog_description" translatable="false">¿Estás seguro de abandonar el proceso?</string>
-    <string name="crosseling_close_dialog_positive_button_text" translatable="false">Cancelar</string>
-    <string name="crosseling_close_dialog_negative_button_text" translatable="false">Continuar</string>
+    <string name="crosseling_close_dialog_positive_button_text" translatable="false">Continuar</string>
+    <string name="crosseling_close_dialog_negative_button_text" translatable="false">Cancelar</string>
 
     <!-- Visa Direct Verify Deposit-->
     <string name="visa_direct_verify_deposit_title" translatable="false">Ingresa el monto</string>

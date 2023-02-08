@@ -160,7 +160,6 @@ private fun SmartTransferBottomSheet(viewModel: SmartTransferAmountViewModel) {
         toSubtitle = viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitle,
         toSubtitle2 = viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitle2,
         motive = viewModel.amountUIState.motive,
-        buttonText = stringResource(R.string.payment_amount_bottom_sheet_send_button),
-        buttonAction = { viewModel.onAmountUIEvent(OnCallProcessTransfer) }
-    )
+        buttonText = stringResource(R.string.payment_amount_bottom_sheet_send_button)
+    ) { viewModel.onAmountUIEvent(OnCallProcessTransfer) }
 }

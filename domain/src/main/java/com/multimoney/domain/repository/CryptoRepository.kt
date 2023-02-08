@@ -9,6 +9,7 @@ import com.multimoney.domain.model.crypto.GetHistoricalClientBalance
 import com.multimoney.domain.model.crypto.GetHistoricalCurrencyPrices
 import com.multimoney.domain.model.crypto.GetListOfAvailableCryptoCoins
 import com.multimoney.domain.model.crypto.PricesQuoteAndCommissionData
+import com.multimoney.domain.model.crypto.ValidateDepositAddressResponse
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
@@ -73,7 +74,7 @@ interface CryptoRepository {
         market: String,
         commissionAmount: Double,
         taxAmount: Double,
-        accountToken: Double,
+        accountToken: Long,
         exchangeRate: Double,
         idBrand: Int,
         user: String,
@@ -89,4 +90,12 @@ interface CryptoRepository {
         idBrand: Int,
         identification: String
     ): Flow<MultimoneyResult<BalanceCryptoAccount>>
+
+    suspend fun validateDepositAddress(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        market: String,
+        address: String
+    ): Flow<MultimoneyResult<ValidateDepositAddressResponse>>
 }

@@ -4,9 +4,8 @@ import android.os.Bundle
 import androidx.navigation.NavType
 import com.google.gson.Gson
 import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
-import com.multimoney.domain.model.virtualcard.CardVisaDirect
 
-class CryptoCurrencyNavType : NavType<BalanceCryptoAccountItems>(isNullableAllowed = false) {
+class CryptoBalanceNavType : NavType<BalanceCryptoAccountItems>(isNullableAllowed = false) {
     override fun get(bundle: Bundle, key: String): BalanceCryptoAccountItems? {
         return bundle.getParcelable(key)
     }

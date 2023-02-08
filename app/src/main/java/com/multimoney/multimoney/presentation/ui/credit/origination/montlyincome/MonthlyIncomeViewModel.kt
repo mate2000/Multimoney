@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -27,6 +28,9 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnLoadCreditSteps
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnValidForm
+import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnCompanyNameValueChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnCompanyPhoneNumberValueChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnCompanyStartDateValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.BAR
 import com.multimoney.multimoney.presentation.util.DAY_MONTH_YEAR_PATTERN
@@ -54,6 +58,7 @@ class MonthlyIncomeViewModel @Inject constructor(
     var pkUser = ""
     var user = ""
     var idBrand = Brand.ElSalvador.id
+    var isCrosseling = false
     var idUserRequest: Int = 0
     var duiExpirationMinDate: LocalDate? = null
     private var profession: CreditCatalog? = null
@@ -140,12 +145,58 @@ class MonthlyIncomeViewModel @Inject constructor(
         onValidForm()
     }
 
+    private fun onCompanyNameValueChange(companyName: String) {
+        uiState = uiState.copy(companyName = companyName)
+        onValidForm()
+    }
+
+    private fun onCompanyPhoneNumberValueChange(phoneNumber: String) {
+        if (phoneNumber.length <= PHONE_NUMBER_MAX_LENGTH) {
+            uiState = uiState.copy(
+                companyPhoneNumber = phoneNumber,
+                companyPhoneNumberError = when (phoneNumber.firstOrNull()?.digitToInt()) {
+                    PHONE_NUMBER_FIRST_DIGIT_7, PHONE_NUMBER_FIRST_DIGIT_6, PHONE_NUMBER_FIRST_DIGIT_2 -> Pair(
+                        false,
+                        R.string.empty
+                    )
+                    else ->
+                        Pair(true, R.string.credit_monthly_income_job_phone_error)
+                }
+
+            )
+            if (uiState.companyPhoneNumber.length < PHONE_NUMBER_MAX_LENGTH) {
+                uiState = uiState.copy(
+                    companyPhoneNumberError = Pair(
+                        true,
+                        R.string.credit_monthly_income_job_phone_error
+                    )
+                )
+            }
+            onValidForm()
+        }
+    }
+
+    private fun onCompanyStartDateValueChange(date: String) {
+        uiState = uiState.copy(
+            companyStartDate = date.replace(
+                HYPHEN,
+                BAR
+            )
+        )
+        onValidForm()
+    }
+
     private fun onValidForm() {
         emitBaseEvent(
             OnFormCompleted(
                 when (idBrand) {
                     Brand.CostaRica.id -> uiState.income.isNotEmpty() && uiState.income.toDouble() > ZERO && uiState.divisionProfessionSelected != null && uiState.divisionOccupationSelected != null
-                    Brand.ElSalvador.id -> uiState.income.isNotEmpty() && uiState.income.toDouble() > ZERO && uiState.divisionProfessionSelected != null && uiState.divisionDuiEmissionPlaceSelected != null && uiState.duiEmissionDate.isNotEmpty() && uiState.duiExpirationDate.isNotEmpty()
+                    Brand.ElSalvador.id ->
+                        if (isCrosseling) {
+                            uiState.divisionDuiEmissionPlaceSelected != null && uiState.duiEmissionDate.isNotEmpty() && uiState.companyName.isNotEmpty() && uiState.companyStartDate.isNotEmpty() && uiState.companyPhoneNumber.isNotEmpty() && uiState.companyPhoneNumberError.first.not()
+                        } else {
+                            uiState.income.isNotEmpty() && uiState.income.toDouble() > ZERO && uiState.divisionProfessionSelected != null && uiState.divisionDuiEmissionPlaceSelected != null && uiState.duiEmissionDate.isNotEmpty() && uiState.duiExpirationDate.isNotEmpty()
+                        }
                     else -> uiState.income.isNotEmpty() && uiState.income.toDouble() > ZERO && uiState.divisionProfessionSelected != null
                 }
             )
@@ -157,6 +208,7 @@ class MonthlyIncomeViewModel @Inject constructor(
         user: String,
         idBrand: Int,
         idUserRequest: Int,
+        isCrosseling: Boolean,
         onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
     ) {
@@ -164,6 +216,7 @@ class MonthlyIncomeViewModel @Inject constructor(
         this.user = user
         this.idBrand = idBrand
         this.idUserRequest = idUserRequest
+        this.isCrosseling = isCrosseling
         getTextResources()
         duiExpirationMinDate = getCurrentDate()
         onCallQueryProfession(
@@ -329,7 +382,8 @@ class MonthlyIncomeViewModel @Inject constructor(
                     if (!duiEmissionPlace?.pkCatalog.isNullOrEmpty()) {
                         val selectedDuiEmissionPlace =
                             duiEmissionPlaceList?.find { it?.pkCatalog == duiEmissionPlace?.pkCatalog }
-                        uiState = uiState.copy(divisionDuiEmissionPlaceSelected = selectedDuiEmissionPlace)
+                        uiState =
+                            uiState.copy(divisionDuiEmissionPlaceSelected = selectedDuiEmissionPlace)
                         onUIEvent(
                             OnDivisionDuiEmissionPlaceValueChange(
                                 selectedDuiEmissionPlace
@@ -384,31 +438,79 @@ class MonthlyIncomeViewModel @Inject constructor(
                 ),
                 DAY_MONTH_YEAR_PATTERN,
                 YEAR_MONTH_DAY_PATTERN
-            )
+            ),
+            companyName = uiState.companyName,
+            companyStartDate = getFormatDateByString(
+                uiState.companyStartDate.replace(
+                    BAR,
+                    HYPHEN
+                ),
+                DAY_MONTH_YEAR_PATTERN,
+                YEAR_MONTH_DAY_PATTERN
+            ),
+            companyPhoneNumber = uiState.companyPhoneNumber,
+            isCrosseling = isCrosseling
         )
         onNextStepAction()
     }
 
     private fun loadStepsInfo(list: List<CreditCatalog?>?) {
+
         val salary = list?.find { it?.description == SaveCreditStepsHelper.SALARY }
-        uiState = uiState.copy(income = salary?.value ?: "")
-        val duiEmissionDate = list?.find { it?.description == SaveCreditStepsHelper.DUI_EMISSION_DATE }
-        duiEmissionDate?.value?.let {
-            val dateParsed = getFormatDateByString(
-                it,
-                YEAR_MONTH_DAY_PATTERN,
-                DAY_MONTH_YEAR_PATTERN
-            )
-            onDuiEmissionDateValueChange(dateParsed)
+        salary?.value.let {
+            uiState = uiState.copy(income = salary?.value ?: "")
+            onIncomeValueChange(it.orEmpty())
         }
-        val duiExpirationDate = list?.find { it?.description == SaveCreditStepsHelper.DUI_EXPIRATION_DATE }
-        duiExpirationDate?.value?.let {
-            val dateParsed = getFormatDateByString(
-                it,
-                YEAR_MONTH_DAY_PATTERN,
-                DAY_MONTH_YEAR_PATTERN
-            )
-            onDuiExpirationDateValueChange(dateParsed)
+
+        if (idBrand == Brand.ElSalvador.id) {
+
+            val duiEmissionDate =
+                list?.find { it?.description == SaveCreditStepsHelper.DUI_EMISSION_DATE }
+            duiEmissionDate?.value?.let {
+                val dateParsed = getFormatDateByString(
+                    it,
+                    YEAR_MONTH_DAY_PATTERN,
+                    DAY_MONTH_YEAR_PATTERN
+                )
+                onDuiEmissionDateValueChange(dateParsed)
+            }
+
+            val duiExpirationDate =
+                list?.find { it?.description == SaveCreditStepsHelper.DUI_EXPIRATION_DATE }
+            duiExpirationDate?.value?.let {
+                val dateParsed = getFormatDateByString(
+                    it,
+                    YEAR_MONTH_DAY_PATTERN,
+                    DAY_MONTH_YEAR_PATTERN
+                )
+                onDuiExpirationDateValueChange(dateParsed)
+            }
+
+            if (isCrosseling) {
+                val companyName =
+                    list?.find { it?.description == SaveCreditStepsHelper.COMPANY_NAME }
+                companyName?.value?.let {
+                    uiState = uiState.copy(companyName = companyName.value ?: "")
+                    onCompanyNameValueChange(it)
+                }
+
+                val date = list?.find { it?.description == SaveCreditStepsHelper.STARTED_JOB_DATE }
+                date?.value?.let {
+                    val dateParsed = getFormatDateByString(
+                        it,
+                        YEAR_MONTH_DAY_PATTERN,
+                        DAY_MONTH_YEAR_PATTERN
+                    )
+                    onCompanyStartDateValueChange(dateParsed)
+                }
+
+                val phoneNumber =
+                    list?.find { it?.description == SaveCreditStepsHelper.COMPANY_PHONE }
+                phoneNumber?.value?.let {
+                    uiState = uiState.copy(companyPhoneNumber = phoneNumber.value ?: "")
+                    onCompanyPhoneNumberValueChange(it)
+                }
+            }
         }
     }
 
@@ -426,7 +528,11 @@ class MonthlyIncomeViewModel @Inject constructor(
         val divisionOccupationList: List<CreditCatalogOption?>? = listOf(),
         val divisionOccupationSelected: CreditCatalogOption? = null,
         val divisionDuiEmissionPlaceList: List<CreditCatalogOption?>? = listOf(),
-        val divisionDuiEmissionPlaceSelected: CreditCatalogOption? = null
+        val divisionDuiEmissionPlaceSelected: CreditCatalogOption? = null,
+        val companyName: String = "",
+        val companyStartDate: String = "",
+        val companyPhoneNumber: String = "",
+        val companyPhoneNumberError: Pair<Boolean, Int> = Pair(false, R.string.empty),
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -444,6 +550,7 @@ class MonthlyIncomeViewModel @Inject constructor(
                 uiEvent.user,
                 uiEvent.idBrand,
                 uiEvent.idUserRequest,
+                uiEvent.isCrosseling,
                 uiEvent.onLoadingValueChange,
                 uiEvent.onFailureWithDialog
             )
@@ -468,6 +575,9 @@ class MonthlyIncomeViewModel @Inject constructor(
             is OnDuiExpirationDateValueChange -> {
                 onDuiExpirationDateValueChange(uiEvent.date)
             }
+            is OnCompanyNameValueChange -> onCompanyNameValueChange(uiEvent.companyName)
+            is OnCompanyStartDateValueChange -> onCompanyStartDateValueChange(uiEvent.date)
+            is OnCompanyPhoneNumberValueChange -> onCompanyPhoneNumberValueChange(uiEvent.phoneNumber)
         }
     }
 
@@ -486,6 +596,7 @@ class MonthlyIncomeViewModel @Inject constructor(
             val user: String,
             val idBrand: Int,
             val idUserRequest: Int,
+            val isCrosseling: Boolean,
             val onLoadingValueChange: (status: Boolean) -> Unit,
             val onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
         ) : UIEvent()
@@ -504,6 +615,9 @@ class MonthlyIncomeViewModel @Inject constructor(
 
         data class OnDuiEmissionDateValueChange(val date: String) : UIEvent()
         data class OnDuiExpirationDateValueChange(val date: String) : UIEvent()
+        data class OnCompanyNameValueChange(val companyName: String) : UIEvent()
+        data class OnCompanyStartDateValueChange(val date: String) : UIEvent()
+        data class OnCompanyPhoneNumberValueChange(val phoneNumber: String) : UIEvent()
     }
 
     sealed class BaseEvent {
@@ -512,5 +626,10 @@ class MonthlyIncomeViewModel @Inject constructor(
 
     companion object {
         const val ZERO = 0
+        const val PHONE_NUMBER_MAX_LENGTH = 8
+        const val PHONE_NUMBER_FIRST_DIGIT_7 = 7
+        const val PHONE_NUMBER_FIRST_DIGIT_6 = 6
+        const val PHONE_NUMBER_FIRST_DIGIT_2 = 2
+        const val CALENDAR_MONTH = 1
     }
 }

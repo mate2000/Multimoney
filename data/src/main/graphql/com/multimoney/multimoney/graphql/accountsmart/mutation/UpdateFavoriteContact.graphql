@@ -1,6 +1,6 @@
 mutation UpdateFavoriteContactSmart(
     $idFavorite: Long
-    $idAccountType: Int!
+    $idAccountType: Int
     $idCustomer: Long!
     $accountNumber: String!
     $accountName: String

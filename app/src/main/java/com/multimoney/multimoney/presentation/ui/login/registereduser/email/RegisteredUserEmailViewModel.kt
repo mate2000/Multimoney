@@ -68,7 +68,7 @@ class RegisteredUserEmailViewModel @Inject constructor(savedStateHandle: SavedSt
         uiState = uiState.copy(emailError = Pair(true, R.string.registered_user_email_different))
     } else {
         navigateTo(
-            route = Screen.RegisteredUserOtpScreen.baseRoute
+            route = Screen.RegisteredUserOtpOptionsScreen.baseRoute
                 .plus(
                     getNavParam(PREVIOUS_SCREEN, Screen.RegisteredUserEmailScreen.baseRoute)
                 )

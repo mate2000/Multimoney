@@ -62,6 +62,5 @@ class SelectSmartAccountViewModel @Inject constructor(
             val accountToken: String,
             val accountBalance: Double
         ) : UIEvent()
-
     }
 }

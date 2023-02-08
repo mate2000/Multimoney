@@ -171,6 +171,10 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         uiState = uiState.copy(dontShowAgainChecked = checked)
     }
 
+    private fun onShowRightButton(showRightButton: Boolean){
+        uiState = uiState.copy(isRightButtonVisible = showRightButton)
+    }
+
     data class UIState(
         // interaction
         val currentStep: Int = PurchaseCryptoSteps.One.pageNumber,
@@ -194,7 +198,8 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         val market: String? = "",
         val cryptoNetWork: String? = "",
         val assetImageBaseUrl: String? = "",
-        val accountToken: String = ""
+        val accountToken: String = "",
+        val isRightButtonVisible: Boolean = true
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -225,6 +230,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
             is BaseEvent.OnShowDisclaimer -> OnShowDisclaimer()
             is UIEvent.OnDisclaimerChecked -> onDisclaimerChecked(event.checked)
             is UIEvent.OnUpdateShouldShowDisclaimer -> updateShouldShowDisclaimer(event.checked)
+            is UIEvent.OnShowRightButtom -> onShowRightButton(event.showRightButtom)
         }
     }
 
@@ -253,6 +259,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         object OnGetUserInfo : UIEvent()
         data class OnDisclaimerChecked(val checked: Boolean) : UIEvent()
         data class OnUpdateShouldShowDisclaimer(val checked: Boolean) : UIEvent()
+        data class OnShowRightButtom(val showRightButtom: Boolean) : UIEvent()
 
     }
 

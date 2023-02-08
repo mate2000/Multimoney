@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -44,6 +45,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.crypto.NativeLoaderScreen
 import com.multimoney.multimoney.presentation.ui.crypto.PurchaseConfirmationBottomSheet
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.uielement.CryptoCurrencyInputLayout
@@ -96,19 +98,36 @@ fun BuyCurrencyScreen(
             viewModel.onUIEvent(BuyCurrencyScreenViewModel.UIEvent.OnGetExchangeRate)
         }
         viewModel.onUIEvent(BuyCurrencyScreenViewModel.UIEvent.ValidateAmountInput(""))
-        viewModel.onUIEvent(BuyCurrencyScreenViewModel.UIEvent.OnSetFailureAction(
-            failureAction = {
-                sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep)
-            }
-        ))
+        viewModel.onUIEvent(
+            BuyCurrencyScreenViewModel.UIEvent.OnSetFailureAction(
+                failureAction = {
+                    sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep)
+                }
+            )
+        )
     }
 
-    BuyCurrencyScreenContent(viewModel) {
-        //todo go to next step / set data etc
+    if (viewModel.uiState.isPurchaseLoading) {
+        NativeLoaderScreen()
+    } else {
+        BuyCurrencyScreenContent(viewModel) {
+            //todo go to next step / set data etc
+        }
     }
+
     BackHandler {
         sharedViewModel.uiState.previousAction()
         sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep)
+    }
+
+    if (viewModel.uiState.isPurchaseSuccess) {
+        sharedViewModel.onUIEvent(
+            PurchaseCryptoSharedViewModel.UIEvent.OnSetupVoucherDetails(
+                viewModel.uiState.amountInUSD.toString(),
+                viewModel.uiState.referenceNumber ?: ""
+            )
+        )
+        sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNextStep)
     }
 
     if (viewModel.uiState.openDialog.isActive.value) {
@@ -223,7 +242,8 @@ fun BuyCurrencyScreenContent(
                                         quoteAmount = viewModel.uiState.quoteAmount.value,
                                         baseAmount = viewModel.uiState.baseAmount.value,
                                         exchangeRate = viewModel.uiState.exchangeRate,
-                                        price = viewModel.uiState.pricesQuoteAndCommissions?.price ?: 0.0
+                                        price = viewModel.uiState.pricesQuoteAndCommissions?.price
+                                            ?: 0.0
                                     )
                                 )
                             }

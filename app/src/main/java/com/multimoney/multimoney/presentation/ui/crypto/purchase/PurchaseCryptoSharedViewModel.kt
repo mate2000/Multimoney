@@ -25,10 +25,13 @@ import com.multimoney.multimoney.presentation.ui.crypto.CryptoOperationSide
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.getCurrentDate
+import com.multimoney.multimoney.presentation.util.getCurrentTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -163,12 +166,23 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     private fun updateShouldShowDisclaimer(value: Boolean) {
         viewModelScope.launch {
             dataStorePreferences.setVolatileDialogVisible(!value)
-            uiState = uiState.copy(shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first())
+            uiState = uiState.copy(
+                shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first()
+            )
         }
     }
 
     private fun onDisclaimerChecked(checked: Boolean) {
         uiState = uiState.copy(dontShowAgainChecked = checked)
+    }
+
+    private fun onSetupVoucherDetails(quoteAmount: String, referenceNumber: String) {
+        uiState = uiState.copy(
+            voucherQuoteAmount = quoteAmount,
+            voucherReferenceNumber = referenceNumber,
+            purchaseCurrentDate = getCurrentDate(Calendar.getInstance().time),
+            purchaseCurrentTime = getCurrentTime(Calendar.getInstance().time)
+        )
     }
 
     data class UIState(
@@ -194,7 +208,12 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         val market: String? = "",
         val cryptoNetWork: String? = "",
         val assetImageBaseUrl: String? = "",
-        val accountToken: String = ""
+        val accountToken: String = "",
+        // voucher information
+        val voucherQuoteAmount: String? = null,
+        val voucherReferenceNumber: String? = null,
+        val purchaseCurrentDate: String? = null,
+        val purchaseCurrentTime: String? = null
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -225,6 +244,10 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
             is BaseEvent.OnShowDisclaimer -> OnShowDisclaimer()
             is UIEvent.OnDisclaimerChecked -> onDisclaimerChecked(event.checked)
             is UIEvent.OnUpdateShouldShowDisclaimer -> updateShouldShowDisclaimer(event.checked)
+            is UIEvent.OnSetupVoucherDetails -> onSetupVoucherDetails(
+                event.quoteAmount,
+                event.referenceNumber
+            )
         }
     }
 
@@ -235,6 +258,9 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     sealed class UIEvent {
         object OnCloseClick : UIEvent()
         object OnNextStep : UIEvent()
+        data class OnSetupVoucherDetails(val quoteAmount: String, val referenceNumber: String) :
+            UIEvent()
+
         object OnQueryAccounts : UIEvent()
         object OnPreviousStep : UIEvent()
         object OnClickBottomSheet : UIEvent()

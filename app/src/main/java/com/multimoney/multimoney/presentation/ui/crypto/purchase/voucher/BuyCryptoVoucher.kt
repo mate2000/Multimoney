@@ -44,7 +44,6 @@ import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoS
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomImage
-import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.uielement.VoucherAccountInfo
 import com.multimoney.multimoney.presentation.uielement.VoucherCurrencyExchangeInfo
 import com.multimoney.multimoney.presentation.uielement.VoucherNumberInfo
@@ -52,6 +51,7 @@ import com.multimoney.multimoney.presentation.uielement.VoucherTotalAmountInfo
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import com.multimoney.multimoney.presentation.util.shape.DottedShape
+import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 
 @Preview
 @Composable
@@ -75,24 +75,24 @@ fun BuyCryptoVoucherScreen(
     }
     //BackHandler { viewModel.onUIEvent(SelectSmartAccountViewModel.UIEvent.OnNavigateBack) }
     BuyCryptoVoucherContent(
-        isMultiCurrency = true,
-        currentAmountValueString = "$1,000",
-        currencyName = "BTC",
+        isMultiCurrency = false,
+        baseAmount = sharedViewModel.uiState.voucherQuoteAmount ?: "",
+        currencyName = sharedViewModel.uiState.asset ?: "",
         valueInCurrency = "0.046",
-        accountNumber = "010040130303023",
-        referenceNumber = "0121212012",
-        currentDate = "12-01-2023",
-        currentTime = "08:12 am",
+        accountNumber = sharedViewModel.uiState.ibanAccountNumber,
+        referenceNumber = sharedViewModel.uiState.voucherReferenceNumber ?: "",
+        currentDate = sharedViewModel.uiState.purchaseCurrentDate ?: "",
+        currentTime = sharedViewModel.uiState.purchaseCurrentTime ?: "",
         exchangeRateLabel = "₡444",
         exchangeConvertedAmount = "₡52,323.12",
-        totalDebitedAmount = "$1,025"
+        quotedAmount = "$1,025"
     )
 }
 
 @Composable
 fun BuyCryptoVoucherContent(
-    isMultiCurrency: Boolean,
-    currentAmountValueString: String,
+    isMultiCurrency: Boolean = false,
+    baseAmount: String,
     currencyName: String,
     valueInCurrency: String,
     accountNumber: String,
@@ -101,7 +101,7 @@ fun BuyCryptoVoucherContent(
     currentTime: String,
     exchangeRateLabel: String,
     exchangeConvertedAmount: String,
-    totalDebitedAmount: String
+    quotedAmount: String
 ) {
     val view = LocalView.current
     var capturingViewBounds by remember { mutableStateOf<Rect?>(null) }
@@ -121,12 +121,6 @@ fun BuyCryptoVoucherContent(
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
         ) {
-            TopNavBar(
-                isLeftButtonVisible = false,
-                isCenterContentVisible = true,
-                onRightButtonClick = {
-                    //viewModel.onUIEvent(PaymentVoucherViewModel.UIEvent.OnCloseClick)
-                })
             ConstraintLayout(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -204,7 +198,7 @@ fun BuyCryptoVoucherContent(
                         )
                         Text(
                             modifier = Modifier.fillMaxWidth(),
-                            text = currentAmountValueString,
+                            text = baseAmount.toDouble().toCurrencyFormat(),
                             style = Typography.h4.copy(fontWeight = FontWeight.W600),
                             color = MultimoneyTheme.colors.text,
                             textAlign = TextAlign.Center
@@ -278,7 +272,7 @@ fun BuyCryptoVoucherContent(
                             modifier = Modifier.padding(start = 27.dp, top = 32.dp),
                             icon = R.drawable.ic_money_voucher,
                             title = stringResource(R.string.buy_crypto_voucher_mount_to_charge),
-                            subTitle = totalDebitedAmount
+                            subTitle = quotedAmount
                         )
                     }
                     Row(

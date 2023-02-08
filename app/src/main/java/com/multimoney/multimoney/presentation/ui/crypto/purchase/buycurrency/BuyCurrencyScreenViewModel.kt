@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency
 
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -221,6 +222,8 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             amount = amount,
             fee = uiState.pricesQuoteAndCommissions?.totalFee
         )
+        uiState = uiState.copy(amountInUSD = quoteAmount, amountPlusFee = amountPlusFee)
+
 
         when {
             amount.isEmpty() -> isError(isError = true)
@@ -268,7 +271,10 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onLoading {
                     uiState = uiState.copy(
-                        isLoading = true
+                        isLoading = true,
+                        isPurchaseFailed = false,
+                        isPurchaseSuccess = false,
+                        isPurchaseLoading = true
                     )
                 }
                 result.onSuccess {
@@ -280,6 +286,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                                 errorMessage = R.string.crypto_purchase_flow_error_weekly_amount_exceeded,
                                 isError = true
                             )
+                            uiState = uiState.copy(isLoading = false, isPurchaseSuccess = false, isPurchaseFailed = true,isPurchaseLoading = false)
                             return@onSuccess
                         }
                         CryptoProcessErrorCodes.InsufficientFundsBuy.status -> {
@@ -289,6 +296,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                                 errorMessage = R.string.crypto_purchase_flow_error_no_funds,
                                 isError = true
                             )
+                            uiState = uiState.copy(isLoading = false, isPurchaseSuccess = false, isPurchaseFailed = true,isPurchaseLoading = false)
                             return@onSuccess
                         }
                         CryptoProcessErrorCodes.ExpiredPriceBuy.status -> {
@@ -298,16 +306,17 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                                 errorMessage = R.string.crypto_purchase_flow_error_price_expired,
                                 isError = true
                             )
+                            uiState = uiState.copy(isLoading = false, isPurchaseSuccess = false, isPurchaseFailed = true,isPurchaseLoading = false)
                             return@onSuccess
                         }
                     }
                     uiState = uiState.copy(
-                        isLoading = false, isPurchaseSuccess = true
+                        isLoading = false, isPurchaseSuccess = true, isPurchaseFailed = false,referenceNumber = it.buyHQR.result?.sysdeTransactionNumber
                     )
                 }
                 result.onFailure {
                     uiState = uiState.copy(
-                        isLoading = false, isPurchaseFailed = true
+                        isLoading = false, isPurchaseFailed = true, isPurchaseSuccess = false,isPurchaseLoading = false
                     )
                 }
             }
@@ -367,7 +376,12 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         val isError: Boolean = false,
         @StringRes val error: Int = R.string.empty,
         val errorMessageArg: Any = Any(),
-        val isTransformationCurrency: MutableState<Boolean> = mutableStateOf(false)
+        val isTransformationCurrency: MutableState<Boolean> = mutableStateOf(false),
+        val isPurchaseLoading: Boolean = false,
+        //voucher information
+        val referenceNumber: String? = null,
+        val amountInUSD: Double? = null,
+        val amountPlusFee: Double? = null
     )
 
     fun onUIEvent(event: UIEvent) {

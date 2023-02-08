@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount
+package com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -14,6 +14,7 @@ import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCas
 import com.multimoney.domain.model.accountsmart.BankTransfer365
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.accountsmart.SmartAccountType
+import com.multimoney.domain.model.accountsmart.Transfer365Account
 import com.multimoney.domain.model.security.CatalogDocument
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
@@ -22,10 +23,11 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.ORIGIN_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.TRANSFER_TYPE
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.util.MAX_SMART_ACCOUNT_DIGITS
 import com.multimoney.multimoney.presentation.util.MIN_SMART_ACCOUNT_DIGITS
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -37,7 +39,7 @@ import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @HiltViewModel
-class SmartAddOtherBankAccountViewModel @Inject constructor(
+class SmartAdd365AccountViewModel @Inject constructor(
     private val queryCatalogDocumentTypeUseCase: QueryCatalogDocumentTypeUseCase,
     private val querySmartAccountTypeUseCase: QuerySmartAccountTypeUseCase,
     private val queryBankListTransfer365UseCase: QueryBankListTransfer365UseCase,
@@ -58,7 +60,7 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
     init {
         user = savedStateHandle[USER] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
-        smartAccount = savedStateHandle[SMART_ACCOUNT]
+        smartAccount = savedStateHandle[ORIGIN_ACCOUNT]
         transferType = savedStateHandle[TRANSFER_TYPE] ?: 0
         if (transferType == SmartTransferTypes.SmartToOtherBank.id) {
             uiState = uiState.copy(
@@ -87,9 +89,11 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
             user = user
         ).collectLatest { result ->
             result.onSuccess { types ->
+                val selectedType = types?.typeList?.find { it == uiState.type }
                 uiState = uiState.copy(
                     isLoading = false,
-                    accountTypeList = types?.typeList ?: listOf()
+                    accountTypeList = types?.typeList ?: listOf(),
+                    type = selectedType
                 )
             }
             result.onFailure { onFailure(it) }
@@ -103,9 +107,11 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
             user = user
         ).collectLatest { result ->
             result.onSuccess { banks ->
+                val selectedBank = banks?.bankList?.find { it == uiState.bank }
                 uiState = uiState.copy(
                     isLoading = false,
-                    bankList = banks?.bankList ?: listOf()
+                    bankList = banks?.bankList ?: listOf(),
+                    bank = selectedBank
                 )
             }
             result.onFailure { onFailure(it) }
@@ -120,10 +126,11 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
             isTransferIdentification = TRANSFER_IDENTIFICATION_FLAG
         ).collectLatest { result ->
             result.onSuccess { catalog ->
+                val selectedDocument = catalog?.catalogDocument?.find { it == uiState.document }
                 uiState = uiState.copy(
                     isLoading = false,
                     documentList = catalog?.catalogDocument ?: listOf(),
-                    document = catalog?.catalogDocument?.firstOrNull(),
+                    document = selectedDocument ?: catalog?.catalogDocument?.firstOrNull(),
                     documentLength = getDocumentLength(catalog?.catalogDocument?.firstOrNull()?.format.orEmpty())
                 )
             }
@@ -253,7 +260,6 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
                         uiState.phoneNumber.isEmpty() -> false
                 transferType == SmartTransferTypes.SmartToMobile.id &&
                         uiState.isPhoneNumberError -> false
-                uiState.isFavorite && uiState.nickname.isEmpty() -> false
                 else -> true
             }
         )
@@ -263,13 +269,19 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
         if (transferType == SmartTransferTypes.SmartToOtherBank.id) {
             saveOtherBankAccount()
         } else if (transferType == SmartTransferTypes.SmartToMobile.id) {
-            // Todo Navigation to edit amount
-            uiState = uiState.copy(
-                openDialog = DialogParameters(
-                    isActive = mutableStateOf(true),
-                    description = "TBD: Navegar a pantalla de monto REV-1463",
-                    titleResource = R.string.info
-                )
+            val account = Transfer365Account(
+                phone = uiState.phoneNumber,
+                name = uiState.names,
+                lastname = uiState.lastNames,
+                bankId = uiState.bank?.bankId.toString(),
+                bankName = uiState.bank?.bankName.orEmpty(),
+                accountTypeId = uiState.type?.typeId.toString(),
+                isFavorite = false
+            )
+            navigateTo(
+                "${Screen.SmartTransfer365EditAmountScreen.baseRoute}/${
+                    encodeData(smartAccount)
+                }/${encodeData(account)}/$transferType/${Screen.SmartAdd365AccountScreen.baseRoute}"
             )
         }
     }
@@ -285,19 +297,24 @@ class SmartAddOtherBankAccountViewModel @Inject constructor(
                 isFavorite = uiState.isFavorite,
                 typeAccountId = uiState.type?.typeId?.toIntOrNull() ?: 0,
                 destinationBankId = uiState.bank?.bankId?.toInt() ?: 0,
-                description = if (uiState.isFavorite) uiState.nickname else fullName,
+                description = if (uiState.isFavorite) uiState.nickname.ifEmpty { fullName } else fullName,
                 identificationNumber = uiState.documentNumber,
                 identificationTypeAccount = uiState.document?.idDocument ?: 0
             ).collectLatest { result ->
                 result.onSuccess { account ->
-                    // Todo navigate to edit amount REV-1463
-                    uiState = uiState.copy(
-                        isLoading = false,
-                        openDialog = DialogParameters(
-                            isActive = mutableStateOf(true),
-                            description = "Cuenta guardada. TBD: Navegar a pantalla de monto REV-1463",
-                            titleResource = R.string.info
-                        )
+                    val savedAccount = Transfer365Account(
+                        accountNumber = account?.accountNumber ?: uiState.accountNumber,
+                        name = uiState.names,
+                        lastname = uiState.lastNames,
+                        bankId = uiState.bank?.bankId.toString(),
+                        bankName = uiState.bank?.bankName.orEmpty(),
+                        accountTypeId = uiState.type?.typeId.toString(),
+                        isFavorite = uiState.isFavorite
+                    )
+                    navigateTo(
+                        "${Screen.SmartTransfer365EditAmountScreen.baseRoute}/${
+                            encodeData(smartAccount)
+                        }/${encodeData(savedAccount)}/$transferType/${Screen.SmartAdd365AccountScreen.baseRoute}"
                     )
                 }
                 result.onFailure { onFailure(it) }

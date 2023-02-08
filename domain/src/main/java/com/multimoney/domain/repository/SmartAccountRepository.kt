@@ -176,7 +176,8 @@ interface SmartAccountRepository {
         identification: String,
         country: String,
         idAccount: Long,
-        accountNumber: String
+        accountNumber: String,
+        isFavorite: Boolean?
     ): Flow<MultimoneyResult<SinpeAccountResult?>>
 
     suspend fun querySmartExchangeRate(
@@ -200,6 +201,26 @@ interface SmartAccountRepository {
         idAccount: Long?,
         option: String?,
         email: String?
+    ): Flow<MultimoneyResult<SaveSinpeAccount?>>
+
+    suspend fun mutationManageSinpeAccountUpdate(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        accountNumber: String,
+        idCurrency: Long,
+        nameAccount: String,
+        idAccount: Int?,
+        isFavorite: Boolean,
+        idBank: Long,
+        typeAccount: Long
+    ): Flow<MultimoneyResult<SaveSinpeAccount?>>
+
+    suspend fun mutationManageSinpeAccountDelete(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        idAccount: Int?,
     ): Flow<MultimoneyResult<SaveSinpeAccount?>>
 
     suspend fun mutationProcessSinpeTransfer(
@@ -285,7 +306,7 @@ interface SmartAccountRepository {
         identification: String,
         idBrand: Int,
         accountStatus: Int
-    ) : Flow<MultimoneyResult<List<AccountSmartForBuyCrypto>?>>
+    ): Flow<MultimoneyResult<List<AccountSmartForBuyCrypto>?>>
 
     suspend fun mutationUpdateSmartAccountStatus(
         user: String,
@@ -295,5 +316,5 @@ interface SmartAccountRepository {
         typeState: String,
         idAccountSysde: Long,
         idAccountRequest: Long
-    ) : Flow<MultimoneyResult<SmartAccountStatusResult?>>
+    ): Flow<MultimoneyResult<SmartAccountStatusResult?>>
 }

@@ -49,7 +49,9 @@ class MyContactsTransferAmountViewModel @Inject constructor(
             smartAccount = savedStateHandle[ORIGIN_ACCOUNT]
             phoneAccount = savedStateHandle[DESTINY_ACCOUNT]
             originCurrency = smartAccount?.currencyID?.getCurrencyFromId()
+            if (originCurrency == CurrencyType.All) originCurrency = Dollar
             destinyCurrency = phoneAccount?.idCurrency?.getCurrencyFromId()
+            if (destinyCurrency == CurrencyType.All) destinyCurrency = Dollar
             shouldDisplayExchange = originCurrency != destinyCurrency
 
             amountUIState = amountUIState.copy(
@@ -183,7 +185,26 @@ class MyContactsTransferAmountViewModel @Inject constructor(
                 bottomSheetState = ModalBottomSheetState(Hidden)
             )
         } else {
-            navigateBack(popTo = Screen.SmartSelectSendingTypeScreen.route, isRestart = false)
+            when(previousScreen) {
+                Screen.MyContactsTransferScreen.baseRoute -> {
+                    navigateBack(
+                        popTo = Screen.MyContactsTransferScreen.route,
+                        isRestart = false
+                    )
+                }
+                Screen.SmartAddSACAccountScreen.baseRoute -> {
+                    navigateBack(
+                        popTo = Screen.SmartAddSACAccountScreen.route,
+                        isRestart = false
+                    )
+                }
+                else -> {
+                    navigateBack(
+                        popTo = Screen.SmartSelectSendingTypeScreen.route,
+                        isRestart = false
+                    )
+                }
+            }
         }
     }
 }

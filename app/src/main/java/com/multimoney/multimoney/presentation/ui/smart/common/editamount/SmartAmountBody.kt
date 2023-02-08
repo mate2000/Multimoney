@@ -31,6 +31,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.uielement.CurrencyAmountInput
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
+import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.VoucherCurrencyExchangeInfo
 import com.multimoney.multimoney.presentation.util.addTextStyleToTextPortion
@@ -54,7 +55,8 @@ fun SmartAmountBody(
     onContinueClick: () -> Unit,
     enableButton: Boolean,
     motive: String? = null,
-    onMotiveChange: (String) -> Unit = {}
+    onMotiveChange: (String) -> Unit = {},
+    @StringRes disclaimerResource: Int? = null
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -157,6 +159,18 @@ fun SmartAmountBody(
                     keyboardActions = KeyboardActions(
                         onDone = { focusManager.clearFocus() }
                     )
+                )
+            }
+            disclaimerResource?.let {
+                CustomInformativeText(
+                    modifier = Modifier
+                        .padding(bottom = 32.dp)
+                        .fillMaxWidth(),
+                    leadingIcon = R.drawable.ic_information,
+                    text = stringResource(id = disclaimerResource),
+                    textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.titleText),
+                    alignmentVertical = Alignment.Top,
+                    iconSize = 20.dp
                 )
             }
         }

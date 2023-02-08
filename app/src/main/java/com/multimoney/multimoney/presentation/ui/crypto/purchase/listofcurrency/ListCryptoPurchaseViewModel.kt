@@ -1,9 +1,12 @@
 package com.multimoney.multimoney.presentation.ui.crypto.purchase.listofcurrency
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUseCase
 import com.multimoney.domain.model.crypto.GetListOfAvailableCryptoCoins
 import com.multimoney.domain.model.crypto.MarketCryptoCoin
@@ -15,15 +18,18 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class ListCryptoPurchaseViewModel @Inject constructor(
     private val getAvailableListOfCryptoCoinsUseCase: GetAvailableListOfCryptoCoinsUseCase,
-    private val savedStateHandle: SavedStateHandle
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UiState())
@@ -71,12 +77,24 @@ class ListCryptoPurchaseViewModel @Inject constructor(
         )
     }
 
+    private fun onDisclaimerChecked(checked: Boolean) {
+        uiState = uiState.copy(dontShowAgainChecked = checked)
+    }
+    private fun updateShouldShowDisclaimer(value: Boolean) {
+        viewModelScope.launch {
+            dataStorePreferences.setVolatileDialogVisible(!value)
+            uiState = uiState.copy(shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first())
+        }
+    }
+
     data class UiState(
         val user: String? = null,
         val idBrand: Int? = null,
         val isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
-        val availableCryptoCoins: GetListOfAvailableCryptoCoins? = null
+        val availableCryptoCoins: GetListOfAvailableCryptoCoins? = null,
+        val shouldDisplayDisclaimer: Boolean = true,
+        val dontShowAgainChecked: Boolean = false,
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -84,12 +102,17 @@ class ListCryptoPurchaseViewModel @Inject constructor(
             is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
             is UIEvent.OnGetUserInfo -> onGetUserInfo(event.user, event.idBrand)
             is UIEvent.OnGetAvailableListOfCryptoCoins -> getAvailableListOfCryptoCoins()
+            is UIEvent.OnDisclaimerChecked -> onDisclaimerChecked(event.checked)
+            is UIEvent.OnUpdateShouldShowDisclaimer -> updateShouldShowDisclaimer(event.checked)
         }
     }
 
-    sealed interface UIEvent {
-        data class OnGetUserInfo(val user: String?, val idBrand: Int?) : UIEvent
-        object OnNavigateBack : UIEvent
-        object OnGetAvailableListOfCryptoCoins : UIEvent
+    sealed class UIEvent {
+        data class OnGetUserInfo(val user: String?, val idBrand: Int?) : UIEvent()
+        object OnNavigateBack : UIEvent()
+        object OnGetAvailableListOfCryptoCoins : UIEvent()
+        data class OnDisclaimerChecked(val checked: Boolean) : UIEvent()
+        data class OnUpdateShouldShowDisclaimer(val checked: Boolean) : UIEvent()
     }
+
 }

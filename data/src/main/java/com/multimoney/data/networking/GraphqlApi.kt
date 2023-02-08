@@ -74,7 +74,9 @@ import com.multimoney.data.networking.graphql.apollomodel.InitialRequestSmartAcc
 import com.multimoney.data.networking.graphql.apollomodel.ListCardVDQuery
 import com.multimoney.data.networking.graphql.apollomodel.ListMiniCardsQuery
 import com.multimoney.data.networking.graphql.apollomodel.ListSinpeAccountQuery
+import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountDeleteMutation
 import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountSaveMutation
+import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountUpdateMutation
 import com.multimoney.data.networking.graphql.apollomodel.NationalityQuery
 import com.multimoney.data.networking.graphql.apollomodel.OcupationsQuery
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoCheckProcessMutation
@@ -119,6 +121,7 @@ import com.multimoney.data.networking.graphql.apollomodel.ValidateUserExistsQuer
 import com.multimoney.data.networking.graphql.apollomodel.ValidateUserStatusQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidationSecurityQuery
 import com.multimoney.data.networking.graphql.apollomodel.UpdateSmartAccountStatusMutation
+import com.multimoney.data.networking.graphql.apollomodel.ValidateDepositAddressMutation
 import com.multimoney.data.networking.graphql.apollomodel.type.BeneficiaryRequestDtoInput
 import com.multimoney.data.networking.graphql.apollomodel.type.ContactsInput
 import com.multimoney.domain.model.accountsmart.Beneficiary
@@ -1384,6 +1387,48 @@ class GraphqlApi @Inject constructor(
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
+    fun mutationManageSinpeAccountUpdate(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        accountNumber: String,
+        idCurrency: Long,
+        nameAccount: String,
+        idAccount: Int?,
+        isFavorite: Boolean,
+        idBank: Long,
+        typeAccount: Long
+    ): ApolloCall<ManageSinpeAccountUpdateMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            ManageSinpeAccountUpdateMutation(
+                user = Optional.presentIfNotNull(user),
+                idBrand = Optional.presentIfNotNull(idBrand),
+                identification = Optional.presentIfNotNull(identification),
+                accountNumber = Optional.presentIfNotNull(accountNumber),
+                idCurrency = Optional.presentIfNotNull(idCurrency),
+                nameAccount = Optional.presentIfNotNull(nameAccount),
+                idAccount = Optional.presentIfNotNull(idAccount),
+                isFavorite = Optional.presentIfNotNull(isFavorite),
+                typeAccount = Optional.presentIfNotNull(typeAccount.toInt()),
+                idBank = Optional.presentIfNotNull(idBank)
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationManageSinpeAccountDelete(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        idAccount: Int?,
+    ): ApolloCall<ManageSinpeAccountDeleteMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            ManageSinpeAccountDeleteMutation(
+                user = Optional.presentIfNotNull(user),
+                idBrand = Optional.presentIfNotNull(idBrand),
+                identification = Optional.presentIfNotNull(identification),
+                id_account = Optional.presentIfNotNull(idAccount),
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
     // Multimoney Visa
 
     fun queryCardIssuanceNV(
@@ -1430,7 +1475,8 @@ class GraphqlApi @Inject constructor(
         identification: String,
         country: String,
         idAccount: Long,
-        accountNumber: String
+        accountNumber: String,
+        isFavorite: Boolean?
     ): ApolloCall<ListSinpeAccountQuery.Data> =
         apolloAuthorizedClient.query(
             ListSinpeAccountQuery(
@@ -1439,7 +1485,8 @@ class GraphqlApi @Inject constructor(
                 identification,
                 country,
                 idAccount,
-                accountNumber
+                accountNumber,
+                Optional.presentIfNotNull( isFavorite)
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -1565,7 +1612,7 @@ class GraphqlApi @Inject constructor(
         market: String,
         commissionAmount: Double,
         taxAmount: Double,
-        accountToken: Double,
+        accountToken: Long,
         exchangeRate: Double,
         idBrand: Int,
         user: String,
@@ -1604,6 +1651,22 @@ class GraphqlApi @Inject constructor(
             idBrand = idBrand,
             identification = identification,
             status = 1
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationValidateDepositAddress(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        market: String,
+        address: String
+    ): ApolloCall<ValidateDepositAddressMutation.Data> = apolloAuthorizedClient.mutation(
+        ValidateDepositAddressMutation(
+            user = user,
+            idBrand = idBrand,
+            identification = identification,
+            market = market,
+            address = address
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 

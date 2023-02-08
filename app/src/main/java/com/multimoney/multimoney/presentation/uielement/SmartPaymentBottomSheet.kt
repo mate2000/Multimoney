@@ -62,6 +62,7 @@ fun SmartPaymentBottomSheet(
     fromTitle: String? = null,
     fromSubtitle: String? = null,
     fromIcon: Int? = null,
+    titleIcon: Int? = null,
     toTitle: String? = null,
     toSubtitle: String? = null,
     toSubtitle2: String? = null,
@@ -145,6 +146,7 @@ fun SmartPaymentBottomSheet(
                     title = toTitle.orEmpty(),
                     subtitle = toSubtitle.orEmpty(),
                     subtitle2 = toSubtitle2.orEmpty(),
+                    titleIcon = titleIcon,
                     endIcon = null,
                     enable = false
                 )
@@ -209,6 +211,7 @@ private fun BottomSheetPreview() {
         toTitle = "Mi Cuenta Smart | $",
         toSubtitle = "Dólares",
         toIcon = R.drawable.ic_bank_account_dollar,
+        titleIcon = R.drawable.ic_star_filled,
         motive = "Cena de ayer",
         buttonText = "continuar"
     ) {}

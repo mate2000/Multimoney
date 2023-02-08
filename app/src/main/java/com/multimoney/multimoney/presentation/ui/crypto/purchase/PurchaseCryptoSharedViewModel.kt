@@ -176,6 +176,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         uiState = uiState.copy(dontShowAgainChecked = checked)
     }
 
+
     private fun onSetupVoucherDetails(quoteAmount: String, referenceNumber: String) {
         uiState = uiState.copy(
             voucherQuoteAmount = quoteAmount,
@@ -183,6 +184,9 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
             purchaseCurrentDate = getCurrentDate(Calendar.getInstance().time),
             purchaseCurrentTime = getCurrentTime(Calendar.getInstance().time)
         )
+    }
+    private fun onShowRightButton(showRightButton: Boolean){
+        uiState = uiState.copy(isRightButtonVisible = showRightButton)
     }
 
     data class UIState(
@@ -213,7 +217,8 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         val voucherQuoteAmount: String? = null,
         val voucherReferenceNumber: String? = null,
         val purchaseCurrentDate: String? = null,
-        val purchaseCurrentTime: String? = null
+        val purchaseCurrentTime: String? = null,
+        val isRightButtonVisible: Boolean = true
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -244,10 +249,12 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
             is BaseEvent.OnShowDisclaimer -> OnShowDisclaimer()
             is UIEvent.OnDisclaimerChecked -> onDisclaimerChecked(event.checked)
             is UIEvent.OnUpdateShouldShowDisclaimer -> updateShouldShowDisclaimer(event.checked)
+
             is UIEvent.OnSetupVoucherDetails -> onSetupVoucherDetails(
                 event.quoteAmount,
                 event.referenceNumber
             )
+            is UIEvent.OnShowRightButtom -> onShowRightButton(event.showRightButtom)
         }
     }
 
@@ -279,6 +286,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         object OnGetUserInfo : UIEvent()
         data class OnDisclaimerChecked(val checked: Boolean) : UIEvent()
         data class OnUpdateShouldShowDisclaimer(val checked: Boolean) : UIEvent()
+        data class OnShowRightButtom(val showRightButtom: Boolean) : UIEvent()
 
     }
 

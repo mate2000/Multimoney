@@ -85,18 +85,19 @@ fun CurrencyMovementsScreen(
         },
         viewAllClick = { viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnViewAllMovements) },
         buyCryptoClick = {
-            if(viewModel.uiState.idBrand == Brand.ElSalvador.id){
+            if (viewModel.uiState.idBrand == Brand.ElSalvador.id) {
                 if (viewModel.uiState.shouldDisplayDisclaimer) {
                     viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnShowDisclaimer)
                 } else {
                     viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToSelectAccount)
                 }
-            }
-            else{
+            } else {
                 viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToSelectAccount)
             }
             viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToSelectAccount)
         },
+        sellCryptoClick = {
+            viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToSellCrypto) },
         sendCryptoClick = {
             viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToSendCrypto)
         }
@@ -109,7 +110,11 @@ fun CurrencyMovementsScreen(
             viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnDisclaimerChecked(it))
         },
         onContinueClicked = {
-            viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnUpdateShouldShowDisclaimer(viewModel.uiState.dontShowAgainChecked))
+            viewModel.onUIEvent(
+                CryptoCurrencyMovementsViewModel.UIEvent.OnUpdateShouldShowDisclaimer(
+                    viewModel.uiState.dontShowAgainChecked
+                )
+            )
             viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnHideDisclaimer)
             viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToSelectAccount)
 
@@ -126,6 +131,7 @@ fun CurrencyDetailContent(
     viewAllClick: () -> Unit,
     buyCryptoClick: () -> Unit,
     sendCryptoClick: () -> Unit,
+    sellCryptoClick: () -> Unit
 ) {
 
     val movements = uiState.cryptoMovements.collectAsLazyPagingItems()
@@ -151,7 +157,7 @@ fun CurrencyDetailContent(
                 enableCryptoActions = true,
                 enableSendAndGive = enableSendAndGive,
                 hasBalanceAction = { buyCryptoClick() },
-                sellAction = { /*todo go to sell crypto flow*/ },
+                sellAction = { sellCryptoClick() },
                 sendAction = sendCryptoClick,
                 giveAction = { /*todo go to receive crypto flow*/ }
             )

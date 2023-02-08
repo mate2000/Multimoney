@@ -39,7 +39,6 @@ import javax.inject.Inject
 class SellCryptoSharedViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val dataStorePreferences: DataStorePreferences,
-    private val getSmartAccountsUseCase: QuerySmartAccountsUseCase
 ) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())
@@ -79,26 +78,6 @@ class SellCryptoSharedViewModel @Inject constructor(
                 assetImageBaseUrl = marketCryptoCoin?.url_image,
                 shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first()
             )
-        }
-    }
-
-    private fun querySmartAccounts() {
-        executeUseCase {
-            getSmartAccountsUseCase(
-                user = email,
-                idBrand = idBrand,
-                identification = identification,
-                accountStatus = ACTIVE_ACCOUNT
-            ).collectLatest { result ->
-                result.onSuccess {
-                    it?.let {
-                        uiState = uiState.copy(accounts = it)
-                    }
-                }
-                result.onFailure {
-                    onFailure(it)
-                }
-            }
         }
     }
 
@@ -205,7 +184,6 @@ class SellCryptoSharedViewModel @Inject constructor(
             is UIEvent.OnClickBottomSheet -> onShowBottomSheet()
             is UIEvent.OnCloseClick -> onCloseClick()
             is UIEvent.OnGetUserInfo -> setUserData()
-            is UIEvent.OnQueryAccounts -> querySmartAccounts()
             is UIEvent.OnCryptoSelected -> {
                 uiState = uiState.copy(
                     asset = event.selectedCrypto.asset,
@@ -236,7 +214,6 @@ class SellCryptoSharedViewModel @Inject constructor(
     sealed class UIEvent {
         object OnCloseClick : UIEvent()
         object OnNextStep : UIEvent()
-        object OnQueryAccounts : UIEvent()
         object OnPreviousStep : UIEvent()
         object OnClickBottomSheet : UIEvent()
         data class OnCryptoSelected(

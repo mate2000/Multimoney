@@ -30,7 +30,6 @@ fun SellCryptoFlow(
 
     LaunchedEffect(true) {
         viewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnGetUserInfo)
-        viewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnQueryAccounts)
         viewModel.executeNavigation(
             onNavigate = onNavigate,
             onPopAndNavigate = onPopAndNavigate,

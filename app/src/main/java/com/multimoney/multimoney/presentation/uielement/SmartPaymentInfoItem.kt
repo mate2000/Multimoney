@@ -76,13 +76,13 @@ fun SmartPaymentInfoItem(
                 Text(
                     text = title,
                     style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                    color = MultimoneyTheme.colors.labelText
+                    color = MultimoneyTheme.colors.text
                 )
                 if (subtitle.isNullOrBlank().not()) {
                     Text(
                         text = subtitle.orEmpty(),
                         style = Typography.body2,
-                        color = MultimoneyTheme.colors.labelText
+                        color = MultimoneyTheme.colors.text
                     )
                 }
             }

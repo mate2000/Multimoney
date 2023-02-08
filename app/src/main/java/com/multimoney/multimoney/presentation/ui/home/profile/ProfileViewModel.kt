@@ -74,6 +74,10 @@ class ProfileViewModel @Inject constructor(
         navigateTo("${Screen.ProfileCardListScreen.baseRoute}/${uiState.email}/${uiState.idBrand}/${uiState.identification}/${ProfileCardListOrigin.Profile.value}")
     }
 
+    private fun navigateToMyAccountsScreen() {
+        navigateTo("${Screen.ProfileMyAccountsScreen.baseRoute}/${uiState.idBrand}/${uiState.identification}/${uiState.userName}")
+    }
+
     private fun signOutDialogConfirmation() {
         uiState = uiState.copy(
             openDialog = DialogParameters(
@@ -121,7 +125,7 @@ class ProfileViewModel @Inject constructor(
             is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
             is UIEvent.OnGetProfileInfo -> getProfileInfo()
             is UIEvent.OnUpdateProfileClick -> navigateToPersonalInfoScreen()
-            is UIEvent.OnMyAccountsClick -> Timber.d("navigate to my account screen")
+            is UIEvent.OnMyAccountsClick -> navigateToMyAccountsScreen()
             is UIEvent.OnMyCardsClick -> navigateToMyCards()
             is UIEvent.OnSettingsClick -> navigateToSettingsScreen()
             is UIEvent.OnHelpClick -> navigateToHelpAndInformation()

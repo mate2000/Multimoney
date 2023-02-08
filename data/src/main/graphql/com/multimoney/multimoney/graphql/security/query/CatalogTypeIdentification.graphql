@@ -8,6 +8,7 @@ query CatalogTypeIndentification($user:String!, $idBrand:Int!, $isTransferIdenti
     ) {
         pk_Suv_Cat_Catalogo,
         descripcion,
-        formato
+        formato,
+        valor
     }
 }

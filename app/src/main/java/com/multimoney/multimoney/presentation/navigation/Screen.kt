@@ -29,6 +29,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_PAYMEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_MULTI_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_SMART_EVICERTIA
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_CURRENCY
+import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT_LABEL
@@ -99,7 +100,6 @@ const val DESTINY_ACCOUNT = "destiny_account"
 const val SMART_ACCOUNT_LIST = "smart_id_list"
 const val SMART_ACCOUNT = "smart_account"
 const val SECOND_SMART_ACCOUNT = "second_smart_account"
-const val IBAN_ACCOUNT = "iban_account"
 const val GLOBAL_CRYPTO_BALANCE = "global_crypto_balance"
 const val PASSWORD = "password"
 const val DEVICE_ID = "device_id"
@@ -125,11 +125,16 @@ const val URL_IMAGE = "url_image"
 const val CONTACTS = "contacts"
 const val USER_DATA = "user_data"
 const val PROFILE_CARD_LIST_ORIGIN = "profile_card_list_origin"
+const val SMART_ACCOUNTS_FOR_BUY_CRYPTO = "smart_accounts_for_buy_crypto"
+const val CURRENCY_NAME = "currency_name"
+const val CROSSELING = "crosseling"
+const val OTP_METHOD = "otp_method"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
 const val HOME_STATE = "home_state"
 const val PREVIOUS_IS_RETURN_TO_HOME = "previous_is_return_to_home"
+const val QR_CODE_RESULT = "qr_code"
 
 /**
  * Use this class to declare all your new screens and their routes
@@ -152,8 +157,13 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "registered_user_email_screen"
     )
 
+    object RegisteredUserOtpOptionsScreen : Screen(
+        "registered_user_otp_options_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}?$ID_BRAND={$ID_BRAND}?$USER_DATA={$USER_DATA}",
+        "registered_user_otp_options_screen"
+    )
+
     object RegisteredUserOtpScreen : Screen(
-        "registered_user_otp_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}?$ID_BRAND={$ID_BRAND}?$USER_DATA={$USER_DATA}",
+        "registered_user_otp_screen?$ID_BRAND={$ID_BRAND}?$USER_DATA={$USER_DATA}?$OTP_METHOD={$OTP_METHOD}",
         "registered_user_otp_screen"
     )
 
@@ -185,6 +195,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object ProfileScreen : Screen(
         "profile_screen/{$ID_CLIENT}/{$ID_BRAND}/{$FIRST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$IDENTIFICATION}/{$PK_USER}/{$USER_NAME}",
         "profile_screen"
+    )
+
+    object ProfileMyAccountsScreen : Screen(
+        "profile_my_accounts_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER_NAME}",
+        "profile_my_accounts_screen"
     )
 
     object ProfileTermsAndConditionsScreen : Screen(
@@ -276,13 +291,13 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // CreditNavGraph Screens
     object CreditScreen : Screen(
-        "credit_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$ONFIDO_STATUS}/{$EVICERTIA_STATUS}/{$SIGN_DOCUMENT_ID_PRINT}",
+        "credit_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$ONFIDO_STATUS}/{$EVICERTIA_STATUS}/{$SIGN_DOCUMENT_ID_PRINT}/{$CROSSELING}",
         "credit_screen"
     )
 
     // Non Pre-Approved Screen
     object NonPreApprovedScreen : Screen(
-        "non_pre_approved_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$ONFIDO_STATUS}/{$EVICERTIA_STATUS}/{$SIGN_DOCUMENT_ID_PRINT}",
+        "non_pre_approved_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$ONFIDO_STATUS}/{$EVICERTIA_STATUS}/{$SIGN_DOCUMENT_ID_PRINT}/{$CROSSELING}",
         "non_pre_approved_screen"
     )
 
@@ -349,6 +364,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object VisaPreferencesScreen : Screen(
         "visa_preferences_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$USER}/{$PHONE_NUMBER}/{$BALANCE_CARD_INFORMATION}/{$AVAILABLE_BALANCE_LABEL}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
         "visa_preferences_screen"
+    )
+
+    object VisaVerifiedScreen : Screen(
+        "visa_verified_screen",
+        "visa_verified_screen"
     )
 
     // Bottom Navigation
@@ -554,14 +574,42 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "my_contacts_transfer_screen"
     )
 
+    /**
+     * Params in order
+     * @param ORIGIN_ACCOUNT: Origin smart account
+     * @param DESTINY_ACCOUNT: Destiny contact phone account
+     * @param TRANSFER_TYPE: Int id indicating transfer type (SmartToContact)
+     * @param ID_BRAND: Int of brand id
+     */
+    object MyContactsTransferAmountScreen : Screen(
+        "my_contacts_amount_screen/{$ORIGIN_ACCOUNT}/{$DESTINY_ACCOUNT}/{$TRANSFER_TYPE}/{$ID_BRAND}/{$PREVIOUS_SCREEN}",
+        "my_contacts_amount_screen"
+    )
+
     object SmartAddSACAccountScreen : Screen(
         "smart_add_sac_account_screen/{$ID_BRAND}/{$USER}/{$SMART_ACCOUNT}/{$TRANSFER_TYPE}",
         "smart_add_sac_account_screen"
     )
 
-    object SmartOtherBanksAccountScreen : Screen(
-        "smart_add_other_bank_account_screen/{$ID_BRAND}/{$USER}/{$SMART_ACCOUNT}/{$TRANSFER_TYPE}",
-        "smart_add_other_bank_account_screen"
+    /**
+     * Params in order
+     * @param ORIGIN_ACCOUNT: Origin smart account
+     * @param DESTINY_ACCOUNT: Destiny 365 account
+     * @param TRANSFER_TYPE: Int id indicating transfer type (SmartToOther or SmartToMobile)
+     */
+    object SmartTransfer365EditAmountScreen : Screen(
+        "smart_transfer_365_edit_amount_screen/{$ORIGIN_ACCOUNT}/{$DESTINY_ACCOUNT}/{$TRANSFER_TYPE}/{$PREVIOUS_SCREEN}",
+        "smart_transfer_365_edit_amount_screen"
+    )
+
+    /**
+     * Params in order
+     * @param ORIGIN_ACCOUNT: Origin smart account
+     * @param TRANSFER_TYPE: Int id indicating transfer type (SmartToOther or SmartToMobile)
+     */
+    object SmartAdd365AccountScreen : Screen(
+        "smart_add_365_account_screen/{$ID_BRAND}/{$USER}/{$ORIGIN_ACCOUNT}/{$TRANSFER_TYPE}",
+        "smart_add_365_account_screen"
     )
 
     // TestNavGraph Screens
@@ -569,6 +617,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object ChartScreen : Screen("chart_screen/{$}")
 
     // Crypto
+    //todo add params
+    object PurchaseCryptoFlow: Screen(
+        route = "purchase_crypto_flow?$ITEM_CRYPTO_MARKET={$ITEM_CRYPTO_MARKET}",
+        baseRoute = "purchase_crypto_flow"
+    )
+
     object CryptoWalletScreen : Screen(
         "crypto_wallet_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$GLOBAL_CRYPTO_BALANCE}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$STATUS_CREDIT}/{$STATUS_SMART}/{$STATUS_CRYPTO}/{$CARD_STATUS}",
         "crypto_wallet_screen"
@@ -585,12 +639,19 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object CryptoMovementsAllScreen : Screen(
-        "crypto_movements_all_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}?$CRYPTO_ASSET={$CRYPTO_ASSET}",
+        "crypto_movements_all_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}/{$PREVIOUS_SCREEN}?$CRYPTO_ASSET={$CRYPTO_ASSET}",
         "crypto_movements_all_screen"
     )
 
     object CryptoCurrencyDetailsScreen : Screen(
-        "crypto_currency_details_screen/{$USER}/{$ID_BRAND}/{$CRYPTO_ASSET}/{$DESCRIPTION_CURRENCY}/{$CURRENT_CRYPTO_PRICE}/{$URL_IMAGE}",
+        "crypto_currency_details_screen/{$USER}/{$ID_BRAND}/{$ITEM_CRYPTO_MARKET}",
         "crypto_currency_details_screen"
     )
+
+    object CryptoSendFlow : Screen(
+        route = "crypto_send_flow?$CRYPTO_ASSET={$CRYPTO_ASSET}&$DESCRIPTION_CURRENCY={$DESCRIPTION_CURRENCY}",
+        baseRoute = "crypto_send_flow"
+    )
+
+    object QrCodeScannerScreen: Screen(route = "qr_code_scanner_screen")
 }

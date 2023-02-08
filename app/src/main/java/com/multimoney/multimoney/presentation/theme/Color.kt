@@ -200,6 +200,7 @@ data class MultimoneyColors(
     val linearProgressIndicatorStart: Color,
     val linearProgressIndicatorFinal: Color,
     val bodyTextColor: Color,
+    val textInputErrorLabelColor: Color,
     val coloredInitialChar: Array<Color>
 )
 
@@ -230,7 +231,7 @@ val DarkColorPalette = MultimoneyColors(
     labelText = WhiteTransparency80,
     chipBackground = BlackTransparency20,
     shimmerItemColor = WhiteTransparency50,
-    bottomNavigationDividerColor = WhiteTransparency40,
+    bottomNavigationDividerColor = GrayScale400,
     bottomNavigationIconSelectedColor = DefaultWhite,
     bottomNavigationIconUnselectedColor = WhiteTransparency50,
     quickActionLabelColor = WhiteTransparency70,
@@ -260,6 +261,7 @@ val DarkColorPalette = MultimoneyColors(
     linearProgressIndicatorStart = Primary300,
     linearProgressIndicatorFinal = DefaultWhite,
     bodyTextColor = WhiteTransparency60,
+    textInputErrorLabelColor = SemanticNegative300,
     coloredInitialChar = arrayOf(Primary400, Secondary400, Tertiary400, ComplementaryTwo400)
 )
 
@@ -290,7 +292,7 @@ val LightColorPalette = MultimoneyColors(
     labelText = WhiteTransparency80,
     chipBackground = BlackTransparency20,
     shimmerItemColor = GrayScale300,
-    bottomNavigationDividerColor = WhiteTransparency40,
+    bottomNavigationDividerColor = GrayScale400,
     bottomNavigationIconSelectedColor = DefaultWhite,
     bottomNavigationIconUnselectedColor = WhiteTransparency50,
     quickActionLabelColor = GrayScale500,
@@ -320,6 +322,7 @@ val LightColorPalette = MultimoneyColors(
     linearProgressIndicatorStart = Primary300,
     linearProgressIndicatorFinal = DefaultWhite,
     bodyTextColor = BlackTransparency60,
+    textInputErrorLabelColor = SemanticNegative300,
     coloredInitialChar = arrayOf(Primary400, Secondary400, Tertiary400, ComplementaryTwo400)
 )
 

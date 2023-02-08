@@ -35,6 +35,7 @@ open class BaseSelectSmartAccountViewModel(
     protected var identification: String? = ""
     protected var smartAccountIDs: List<SmartAccountID>? = listOf()
     protected var selectedSmartAccount: SmartAccountID? = null
+    protected var secondSmartAccount: SmartAccountID? = null
 
     init {
         user = savedStateHandle[USER] ?: ""
@@ -53,9 +54,12 @@ open class BaseSelectSmartAccountViewModel(
     }
 
     protected open fun onSelectSmartAccount(currencyType: CurrencyType) {
-        selectedSmartAccount = when (currencyType) {
-            CurrencyType.Colon -> smartAccountIDs?.find { it.currencyID == CurrencyType.Colon.id }
-            else -> smartAccountIDs?.find { it.currencyID == CurrencyType.Dollar.id }
+        if (currencyType == CurrencyType.Colon) {
+                selectedSmartAccount = smartAccountIDs?.find { it.currencyID == CurrencyType.Colon.id }
+                secondSmartAccount = smartAccountIDs?.find { it.currencyID == CurrencyType.Dollar.id }
+        } else {
+                selectedSmartAccount = smartAccountIDs?.find { it.currencyID == CurrencyType.Dollar.id }
+                secondSmartAccount = smartAccountIDs?.find { it.currencyID == CurrencyType.Colon.id }
         }
     }
 

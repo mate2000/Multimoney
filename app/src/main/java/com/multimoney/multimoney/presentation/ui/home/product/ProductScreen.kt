@@ -624,6 +624,9 @@ fun ProductCtaFooterExpanded(
                 },
                 onSendActionClicked = {
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSendCryptoFlow)
+                },
+                onSellActionClicked = {
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSellCryptoFlow)
                 }
             )
         }

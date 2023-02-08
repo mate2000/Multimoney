@@ -957,6 +957,10 @@ class ProductViewModel @Inject constructor(
         navigateTo(Screen.PurchaseCryptoFlow.baseRoute)
     }
 
+    private fun onNavigateToSellCryptoFlow() {
+        navigateTo(Screen.CryptoSellFlow.baseRoute)
+    }
+
     private fun onNavigateToSendCryptoFlow() {
         navigateTo(Screen.CryptoSendFlow.baseRoute)
     }
@@ -1106,6 +1110,7 @@ class ProductViewModel @Inject constructor(
             is OnNoVoConfig -> onConfigNovoSdk()
             is OnGetSmartContent -> getSmartContent()
             is UIEvent.OnNavigateToPurchaseCryptoFlow -> onNavigateToPurchaseCryptoFlow()
+            is UIEvent.OnNavigateToSellCryptoFlow -> onNavigateToSellCryptoFlow()
             is UIEvent.OnNavigateToSendCryptoFlow -> onNavigateToSendCryptoFlow()
             is OnVisaCardExpiredDialog -> onVisaCardExpiredDialog(
                 idBrand = uiEvent.idBrand,
@@ -1162,6 +1167,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToCryptoMarket : UIEvent()
         object OnNavigateToCryptoMovements : UIEvent()
         object OnNavigateToPurchaseCryptoFlow : UIEvent()
+        object OnNavigateToSellCryptoFlow : UIEvent()
         object OnNavigateToSendCryptoFlow : UIEvent()
         object OnGetSmartContent : UIEvent()
 

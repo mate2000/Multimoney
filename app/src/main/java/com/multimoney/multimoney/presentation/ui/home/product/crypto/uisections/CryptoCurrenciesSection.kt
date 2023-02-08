@@ -52,20 +52,19 @@ fun CryptoCurrencies(
                     )
                 }
             }
-            items.let {
-                it.take(MAX_CRYPTO_ITEMS).forEach { item ->
-                    CurrencyItem(
-                        imageUrl = item.url_image,
-                        descriptionCurrency = item.descriptionCurrency,
-                        asset = item.asset,
-                        balanceDollars = item.balanceDollars,
-                        priceOfTheDay = item.priceOfTheDay,
-                        percentageInvestedCurrency = item.percentageInvestedCurrency,
-                        available = item.available,
-                        onClick = { itemClick(item) }
-                    )
-                }
+            items.take(MAX_CRYPTO_ITEMS).forEach { item ->
+                CurrencyItem(
+                    imageUrl = item.url_image,
+                    descriptionCurrency = item.descriptionCurrency,
+                    asset = item.asset,
+                    balanceDollars = item.balanceDollars,
+                    priceOfTheDay = item.priceOfTheDay,
+                    percentageInvestedCurrency = item.percentageInvestedCurrency,
+                    available = item.available,
+                    onClick = { itemClick(item) }
+                )
             }
+
         }
     }
 }

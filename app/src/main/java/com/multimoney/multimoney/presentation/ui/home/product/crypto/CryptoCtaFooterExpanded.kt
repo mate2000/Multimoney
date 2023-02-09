@@ -4,9 +4,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.paging.PagingData
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.multimoney.domain.model.balance.Account
 import com.multimoney.domain.model.balance.Balance
+import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoActionsSection
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Composable function to show the option to active crypto product
@@ -14,7 +18,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.
 @Composable
 fun CryptoCtaFooterExpanded(
     balance: Balance?,
-    profileEnable: Boolean?,
+    cryptoMovements: Flow<PagingData<CryptoCurrencyMovement>>,
     noBalanceAction: () -> Unit,
     hasBalanceAction: () -> Unit,
     onSendActionClicked: () -> Unit,
@@ -22,10 +26,13 @@ fun CryptoCtaFooterExpanded(
     isCryptoTransferEnabled: Boolean,
 ) {
     val hasSmartBalance by remember { mutableStateOf(verifyIfHasSmartBalance(balance?.balanceAccountSmart)) }
+    val cryptoCurrencies = balance?.balanceCryptoAccount?.items
+    val movements = cryptoMovements.collectAsLazyPagingItems()
+    val profileEnable = !cryptoCurrencies.isNullOrEmpty() || movements.itemCount > ZERO_MOVEMENTS
 
     CryptoActionsSection(
         hasSmartBalance = hasSmartBalance,
-        enableCryptoActions = profileEnable ?: false,
+        enableCryptoActions = profileEnable,
         enableSendAndGive = isCryptoTransferEnabled,
         noBalanceAction = noBalanceAction,
         hasBalanceAction = hasBalanceAction,

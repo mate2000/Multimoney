@@ -495,11 +495,34 @@ class ProductViewModel @Inject constructor(
     }
 
     // Todo check if the navigation to this screen is suitable for the purchase crypto flow
-    private fun onNavigateToSmartPaymentAccountScreen() =
-        navigateTo(Screen.SmartPaymentOptionsScreenCR.route)
+    private fun onNavigateToSmartPaymentAccountScreen() {
+        val smartIds = encodeData(
+            balanceCredit?.balanceAccountSmart?.map {
+                SmartAccountID(
+                    tokenAccount = it?.tokenNumber,
+                    currencyID = it?.idCurrencyAccount,
+                    accountNumber = it?.accountNumber ?: "",
+                    ibanAccountNumber = it?.ibanAccountNumber
+                )
+            }
+        )
 
-    private fun onNavigateToSmartPaymentMethodScreen() =
-        navigateTo(Screen.SmartPaymentMethodScreenSV.route)
+        navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/$smartIds/$userName/${uiState.idBrand}/$identification/$idClient/${uiState.userStatus?.infoCredit?.idLoanClient}")
+    }
+
+    private fun onNavigateToSmartPaymentMethodScreen() {
+        val account = balanceCredit?.balanceAccountSmart?.firstOrNull()
+
+        smartAccount = SmartAccountID(
+            tokenAccount = account?.tokenNumber,
+            currencyID = account?.idCurrencyAccount,
+            accountNumber = account?.accountNumber,
+            customerId = account?.customerId,
+            ibanAccountNumber = account?.ibanAccountNumber,
+            totalBalance = account?.totalBalance
+        )
+        navigateTo("${Screen.SmartPaymentMethodScreenSV.baseRoute}/${encodeData(smartAccount)}")
+    }
 
     private fun onNavigateToSmartMovements(accountToken: String) =
         navigateTo("${Screen.SmartMovementsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification/$accountToken")

@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
@@ -58,6 +59,7 @@ fun SignUpScreen(
 ) {
     val focusManager = LocalFocusManager.current
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     // Navigation
     LaunchedEffect(true) {
@@ -78,7 +80,12 @@ fun SignUpScreen(
             TopNavBar(
                 isRightButtonVisible = viewModel.uiState.isCloseVisible,
                 onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
-                onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) }
+                onRightButtonClick = {
+                    viewModel.onUIEvent(
+                        OnCloseClick(focusManager = focusManager),
+                        isO3Country = context.resources.configuration.locale.isO3Country
+                    )
+                }
             )
             if (viewModel.uiState.currentStep != SignUpStep.Five.id) {
                 StepProgressBar(

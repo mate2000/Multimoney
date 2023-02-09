@@ -224,7 +224,8 @@ class PaymentScheduleCardViewModel @Inject constructor(
     }
 
     private fun onNavigateToAddCard() {
-        // TODO - navigate to add card screen
+
+        navigateTo(Screen.AddCardVDScreen.route)
     }
 
     private fun onNavigateBackHome(isRestart: Boolean) =

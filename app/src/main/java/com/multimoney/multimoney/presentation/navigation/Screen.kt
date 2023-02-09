@@ -343,6 +343,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "visa_card_screen"
     )
 
+    object AddCardVDScreen : Screen(
+        route = "add_card_vd_screen",
+        baseRoute = "add_card_vd_screen"
+    )
+
     object VisaTokenizationWaitingScreen : Screen(
         "visa_tokenization_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$PHONE_NUMBER}/{$BALANCE_CARD_INFORMATION}",
         "visa_tokenization_screen"

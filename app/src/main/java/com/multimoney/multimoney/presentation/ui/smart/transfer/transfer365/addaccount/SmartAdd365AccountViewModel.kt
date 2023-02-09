@@ -276,6 +276,7 @@ class SmartAdd365AccountViewModel @Inject constructor(
                 bankId = uiState.bank?.bankId.toString(),
                 bankName = uiState.bank?.bankName.orEmpty(),
                 accountTypeId = uiState.type?.typeId.toString(),
+                destinationType = uiState.document?.value,
                 isFavorite = false
             )
             navigateTo(
@@ -309,6 +310,7 @@ class SmartAdd365AccountViewModel @Inject constructor(
                         bankId = uiState.bank?.bankId.toString(),
                         bankName = uiState.bank?.bankName.orEmpty(),
                         accountTypeId = uiState.type?.typeId.toString(),
+                        destinationType = uiState.document?.value,
                         isFavorite = uiState.isFavorite
                     )
                     navigateTo(

@@ -1,0 +1,39 @@
+mutation ProcessTransfer365Mobile(
+    $identification: String!
+    $destinationPhone: String!
+    $destinationBankId: String!
+    $typeAccountId: String!
+    $destinationName: String!
+    $destinationLastName: String!
+    $amount: Decimal!
+    $motive: String!
+    $user: String!
+    $idBrand: Int!
+) {
+    transferMovil365(
+        transferMovil365Input: {
+            identification: $identification
+            destinationPhone: $destinationPhone
+            destinationBank: $destinationBankId
+            destinationName: $destinationName
+            destinationLastName: $destinationLastName
+            typeAccount: $typeAccountId
+            amountToTransfer: $amount
+            reasonForTransfer: $motive
+            user: $user
+            idBrand: $idBrand
+        }
+    ) {
+        result {
+            bankAuthorization {
+                authorizationId
+                message
+            }
+            transfer365 {
+                message
+            }
+        }
+        status
+        message
+    }
+}

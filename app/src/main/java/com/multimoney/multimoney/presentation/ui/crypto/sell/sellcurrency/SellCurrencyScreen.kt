@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency
+package com.multimoney.multimoney.presentation.ui.crypto.sell.sellcurrency
 
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
@@ -44,31 +43,28 @@ import coil.compose.rememberAsyncImagePainter
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
+import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.BuyCurrencyTitleSectionSkeleton
+import com.multimoney.multimoney.presentation.ui.crypto.sell.SellCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.uielement.CryptoCurrencyInputLayout
-import com.multimoney.multimoney.presentation.uielement.CurrencyExchangeInfo
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.util.calculateAssetEstimated
-import com.multimoney.multimoney.presentation.util.calculateConvertedCurrencyBalance
 import com.multimoney.multimoney.presentation.util.calculateDollarEstimated
-import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 import kotlinx.coroutines.launch
 
 const val DEFAULT_CURRENCY_PRICE = 0.0
 const val TIMER_UNIT_INDICATOR = " seg"
 const val WHITE_SPACE = " "
-const val EMPTY_CURRENCY = "0.00"
 
 @Composable
-fun BuyCurrencyScreen(
-    sharedViewModel: PurchaseCryptoSharedViewModel = hiltViewModel(),
-    viewModel: BuyCurrencyScreenViewModel = hiltViewModel()
+fun SellCurrencyScreen(
+    sharedViewModel: SellCryptoSharedViewModel = hiltViewModel(),
+    viewModel: SellCurrencyScreenViewModel = hiltViewModel()
 ) {
     LaunchedEffect(key1 = true) {
         viewModel.onUIEvent(
-            BuyCurrencyScreenViewModel.UIEvent.OnSetUserData(
+            SellCurrencyScreenViewModel.UIEvent.OnSetUserData(
                 idCurrencyAccount = sharedViewModel.uiState.idCurrency,
                 pkUser = sharedViewModel.pkUser.toInt(),
                 asset = sharedViewModel.uiState.asset ?: "",
@@ -85,29 +81,27 @@ fun BuyCurrencyScreen(
             )
         )
         sharedViewModel.uiState.previousAction = {
-            viewModel.onUIEvent(BuyCurrencyScreenViewModel.UIEvent.OnClearInputData)
+            viewModel.onUIEvent(SellCurrencyScreenViewModel.UIEvent.OnClearInputData)
         }
     }
 
     LaunchedEffect(key1 = true) {
-        viewModel.onUIEvent(BuyCurrencyScreenViewModel.UIEvent.OnGetQuoteAndCommissions)
-        if (sharedViewModel.uiState.idCurrency == CurrencyType.Colon.id) {
-            viewModel.onUIEvent(BuyCurrencyScreenViewModel.UIEvent.OnGetExchangeRate)
-        }
-        viewModel.onUIEvent(BuyCurrencyScreenViewModel.UIEvent.ValidateAmountInput(""))
-        viewModel.onUIEvent(BuyCurrencyScreenViewModel.UIEvent.OnSetFailureAction(
+        viewModel.onUIEvent(SellCurrencyScreenViewModel.UIEvent.OnGetQuoteAndCommissions)
+        viewModel.onUIEvent(SellCurrencyScreenViewModel.UIEvent.ValidateAmountInput(""))
+        viewModel.onUIEvent(
+            SellCurrencyScreenViewModel.UIEvent.OnSetFailureAction(
             failureAction = {
-                sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep)
+                //sharedViewModel.onUIEvent(SellCurrencyScreenViewModel.UIEvent.OnPreviousStep)
             }
         ))
     }
 
-    BuyCurrencyScreenContent(viewModel) {
+    SellCurrencyScreenContent(viewModel) {
         //todo go to next step / set data etc
     }
     BackHandler {
         sharedViewModel.uiState.previousAction()
-        sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep)
+        //sharedViewModel.onUIEvent(SellCurrencyScreenViewModel.UIEvent.OnPreviousStep)
     }
 
     if (viewModel.uiState.openDialog.isActive.value) {
@@ -126,8 +120,8 @@ fun BuyCurrencyScreen(
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun BuyCurrencyScreenContent(
-    viewModel: BuyCurrencyScreenViewModel,
+fun SellCurrencyScreenContent(
+    viewModel: SellCurrencyScreenViewModel,
     onConfirm: () -> Unit = {}
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -142,7 +136,8 @@ fun BuyCurrencyScreenContent(
         sheetState = modalBottomSheetState,
         sheetShape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
         sheetContent = {
-            PurchaseConfirmationBottomSheet(
+            Text(text = "")
+            SellConfirmationBottomSheet(
                 modalBottomSheetState = modalBottomSheetState,
                 coroutineScope = coroutineScope,
                 viewModel = viewModel,
@@ -158,7 +153,7 @@ fun BuyCurrencyScreenContent(
             ConstraintLayout(
                 modifier = Modifier.fillMaxSize()
             ) {
-                val (title, conversionCurrencyToDollars, exchangeRate, amountInput, counter, button) = createRefs()
+                val (title, conversionCurrencyToDollars, disclaimer, amountInput, counter, button) = createRefs()
                 Box(modifier = Modifier.constrainAs(title) {
                     top.linkTo(parent.top)
                     start.linkTo(parent.start)
@@ -192,50 +187,17 @@ fun BuyCurrencyScreenContent(
                     textArg = viewModel.uiState.errorMessageArg,
                     onAmountChanged = {
                         viewModel.onUIEvent(
-                            BuyCurrencyScreenViewModel.UIEvent.ValidateAmountInput(it)
+                            SellCurrencyScreenViewModel.UIEvent.ValidateAmountInput(it)
                         )
                     }
                 )
-                if (viewModel.idCurrencyAccount == CurrencyType.Colon.id) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight()
-                            .constrainAs(exchangeRate) {
-                                top.linkTo(amountInput.bottom)
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                            }
-                            .padding(vertical = 16.dp)
-                    ) {
-                        WhileLoadingSection(
-                            isLoading = viewModel.uiState.isLoading,
-                            contentLoading = { VoucherCurrencyExchangeInfoSkeleton() },
-                            content = {
-                                CurrencyExchangeInfo(
-                                    leftTitleResource = R.string.crypto_purchase_flow_exchange_type_title,
-                                    rightTitleResource = R.string.crypto_purchase_flow_exchange_total_title,
-                                    exchangeRateText = viewModel.uiState.exchangeRate.toCurrencyFormat(
-                                        symbol = CurrencyType.Colon.symbol
-                                    ),
-                                    convertedAmountText = calculateConvertedCurrencyBalance(
-                                        quoteAmount = viewModel.uiState.quoteAmount.value,
-                                        baseAmount = viewModel.uiState.baseAmount.value,
-                                        exchangeRate = viewModel.uiState.exchangeRate,
-                                        price = viewModel.uiState.pricesQuoteAndCommissions?.price ?: 0.0
-                                    )
-                                )
-                            }
-                        )
-                    }
-                }
                 Box(modifier = Modifier.constrainAs(counter) {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                     bottom.linkTo(button.top)
                 }) {
                     CounterSection(
-                        smartAccountAvailableBalance = viewModel.smartAccountAvailableBalance,
+                        smartAccountAvailableBalance = viewModel.cryptoAvailableCurrencyBalance,
                         downCounter = viewModel.uiState.remainingTimeText
                     )
                 }
@@ -253,7 +215,7 @@ fun BuyCurrencyScreenContent(
                     onClick = {
                         coroutineScope.launch {
                             keyboardController?.hide()
-                            viewModel.onUIEvent(BuyCurrencyScreenViewModel.UIEvent.OnOpenPurchaseConfirmationBottomSheet)
+                            ///viewModel.onUIEvent(SellCurrencyScreenViewModel.UIEvent.OnOpenSellConfirmationBottomSheet)
                             modalBottomSheetState.show()
                         }
                     }

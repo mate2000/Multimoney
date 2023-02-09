@@ -2,7 +2,7 @@ package com.multimoney.multimoney.presentation.util
 
 import com.multimoney.domain.model.crypto.CurrencyHistoricPrice
 import com.multimoney.domain.model.crypto.HistoricalBalanceClient
-import com.multimoney.multimoney.presentation.ui.crypto.DEFAULT_AMOUNT
+import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.DEFAULT_AMOUNT
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.BuyCurrencyScreenViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.EMPTY_CURRENCY
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType

@@ -49,6 +49,7 @@
     <string name="common_remove" translatable="false">Eliminar</string>
     <string name="not_defined" translatable="false">Not Defined</string>
     <string name="common_go_home" translatable="false">Ir al inicio</string>
+    <string name="sign">Firmar</string>
     <string-array name="options_yes_no">
         <item>Si</item>
         <item>No</item>

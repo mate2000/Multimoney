@@ -10,6 +10,7 @@ import com.multimoney.domain.interaction.accountsmart.MutationProcessTransfer365
 import com.multimoney.domain.model.accountsmart.Transfer365Account
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.DESTINY_ACCOUNT
@@ -148,7 +149,7 @@ class Transfer365AmountViewModel @Inject constructor(
                 idBrand = idBrand
             ).collectLatest { result ->
                 result.onSuccess { reference ->
-                    if (reference?.referenceNumber.isNullOrBlank()) {
+                    if (reference?.bankAuthorization?.referenceNumber.isNullOrBlank()) {
                         amountUIState = amountUIState.copy(
                             showLoadingScreen = false,
                             showErrorScreen = true,
@@ -161,9 +162,18 @@ class Transfer365AmountViewModel @Inject constructor(
                             paymentSuccess = true,
                             currentDate = getCurrentDate(Calendar.getInstance().time),
                             currentTime = getCurrentTime(Calendar.getInstance().time).lowercase(),
-                            referenceNumber = reference?.referenceNumber ?: ""
+                            referenceNumber = reference?.bankAuthorization?.referenceNumber ?: ""
                         )
                     }
+                }
+                result.onMessage {
+                    amountUIState = amountUIState.copy(
+                        errorMessage = it?.messageError?.message ?: "",
+                        errorDetail = it?.messageError?.detail ?: "",
+                        showLoadingScreen = false,
+                        showErrorScreen = true,
+                        paymentSuccess = false
+                    )
                 }
                 result.onFailure {
                     amountUIState = amountUIState.copy(
@@ -186,7 +196,7 @@ class Transfer365AmountViewModel @Inject constructor(
     private fun processTransfer365Mobile() {
         executeUseCase {
             processTransfer365MobileUseCase.invoke(
-                identification = identification,
+                identification = transfer365Account.identification,
                 phoneNumber = transfer365Account.phone.orEmpty(),
                 destinationBankId = transfer365Account.bankId,
                 typeAccountId = transfer365Account.accountTypeId,
@@ -198,7 +208,7 @@ class Transfer365AmountViewModel @Inject constructor(
                 idBrand = idBrand
             ).collectLatest { result ->
                 result.onSuccess { reference ->
-                    if (reference?.referenceNumber.isNullOrBlank()) {
+                    if (reference?.bankAuthorization?.referenceNumber.isNullOrBlank()) {
                         amountUIState = amountUIState.copy(
                             showLoadingScreen = false,
                             showErrorScreen = true,
@@ -211,12 +221,21 @@ class Transfer365AmountViewModel @Inject constructor(
                             paymentSuccess = true,
                             currentDate = getCurrentDate(Calendar.getInstance().time),
                             currentTime = getCurrentTime(Calendar.getInstance().time).lowercase(),
-                            referenceNumber = reference?.referenceNumber ?: ""
+                            referenceNumber = reference?.bankAuthorization?.referenceNumber ?: ""
                         )
                     }
                 }
                 result.onFailure {
                     amountUIState = amountUIState.copy(
+                        showLoadingScreen = false,
+                        showErrorScreen = true,
+                        paymentSuccess = false
+                    )
+                }
+                result.onMessage {
+                    amountUIState = amountUIState.copy(
+                        errorMessage = it?.messageError?.message ?: "",
+                        errorDetail = it?.messageError?.detail ?: "",
                         showLoadingScreen = false,
                         showErrorScreen = true,
                         paymentSuccess = false

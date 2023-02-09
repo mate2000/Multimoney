@@ -728,7 +728,14 @@ class SmartAccountRepositoryImpl @Inject constructor(
             motive = motive
         ),
             apolloCallMapper = { data ->
-                Success(data.mapToDomainModel())
+                if (
+                    (data.transfer365?.status ?: null) == null ||
+                    (data.transfer365?.status ?: 0) == 0
+                ) {
+                    Success(data.mapToDomainModel())
+                } else {
+                    Message(data.mapToDomainModel())
+                }
             }
         )
     }
@@ -758,7 +765,14 @@ class SmartAccountRepositoryImpl @Inject constructor(
             motive = motive
         ),
             apolloCallMapper = { data ->
-                Success(data.mapToDomainModel())
+                if (
+                    (data.transferMovil365?.status ?: null) == null ||
+                    (data.transferMovil365?.status ?: 0) == 0
+                ) {
+                    Success(data.mapToDomainModel())
+                } else {
+                    Message(data.mapToDomainModel())
+                }
             }
         )
     }

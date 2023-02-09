@@ -36,5 +36,7 @@ mutation ProcessTransfer365(
             }
         }
         message
+        status
+        detail
     }
 }

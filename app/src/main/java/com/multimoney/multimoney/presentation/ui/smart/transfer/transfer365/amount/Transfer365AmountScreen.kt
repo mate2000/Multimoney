@@ -49,7 +49,9 @@ fun Transfer365AmountScreen(
         LoadingMultiMoney(R.string.smart_processing_transaction)
     } else if (viewModel.amountUIState.showErrorScreen) {
         AlertResult(
-            isTopNavBarVisible = false,
+            isTopNavBarVisible = true,
+            isLeftButtonVisible = false,
+            onRightButtonClick = { viewModel.onAmountUIEvent(OnNavigateHome) },
             titleResource = R.string.error_occurred_title,
             descriptionResource = R.string.error_try_again,
             buttonTextResource = R.string.error_button_try_again,

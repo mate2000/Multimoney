@@ -16,7 +16,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.multimoney.multimoney.presentation.theme.GrayScale500
 import com.multimoney.multimoney.presentation.theme.GrayScale800
 import com.multimoney.multimoney.presentation.theme.Primary500
@@ -39,11 +38,11 @@ fun CustomRadioButton(
     radioModifier: Modifier,
     text: String,
     onOptionSelected: () -> Unit = {},
-    selected: Boolean
+    selected: Boolean,
 ) {
     Row(
         modifier,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         var radioSelectedColor = Primary500
         var radioUnSelectedColor = GrayScale500
@@ -52,21 +51,26 @@ fun CustomRadioButton(
             radioSelectedColor = Primary500
             radioUnSelectedColor = GrayScale500
             textColor = WhiteTransparency70
+        } else {
+            radioSelectedColor = Primary500
+            radioUnSelectedColor = GrayScale500
+            textColor = WhiteTransparency70
         }
+
         RadioButton(
             colors = RadioButtonDefaults.colors(radioSelectedColor, radioUnSelectedColor),
             selected = selected,
             modifier = radioModifier,
             onClick = {
                 onOptionSelected()
-            }
+            },
         )
         Spacer(modifier = Modifier.width(18.dp))
         Text(
             modifier = Modifier.padding(top = 2.dp),
             text = text,
             style = Typography.body2,
-            color = textColor
+            color = textColor,
         )
     }
 }
@@ -86,7 +90,7 @@ fun CustomRadioButtonsLayout(
     options: List<String>,
     orientation: Orientation = Orientation.Vertical,
     optionSelected: String? = null,
-    onOptionSelected: (String) -> Unit
+    onOptionSelected: (String) -> Unit,
 ) {
     val selectedOption = remember { mutableStateOf(optionSelected ?: "") }
 
@@ -101,7 +105,7 @@ fun CustomRadioButtonsLayout(
                     onOptionSelected = {
                         selectedOption.value = text
                         onOptionSelected(text)
-                    }
+                    },
                 )
             }
         }
@@ -116,7 +120,7 @@ fun CustomRadioButtonsLayout(
                     onOptionSelected = {
                         selectedOption.value = text
                         onOptionSelected(text)
-                    }
+                    },
                 )
             }
         }

@@ -222,35 +222,31 @@ fun CustomOutlinedTextField(
             }
         }
     } else {
-        labelColor = DefaultWhite
+        labelColor = WhiteTransparency70
         backgroundColor = WhiteTransparency10
-        placeholderColor = GrayScale500
-        unfocusedIndicatorColor = GrayScale400
+        placeholderColor = WhiteTransparency60
+        unfocusedIndicatorColor = DefaultBlack
         errorIndicatorColor = if (isError || emptyError) {
-            SemanticNegative500
+            SemanticNegative400
         } else {
-            GrayScale800
+            WhiteTransparency90
         }
-        textFieldStrokeErrorColor = SemanticNegative500
+        textFieldStrokeErrorColor = SemanticNegative300
+        leadingIconComposableColor = WhiteTransparency60
+        iconTintColor = WhiteTransparency60
         when {
             isError -> {
-                focusedIndicatorColor = SemanticNegative500
-                iconTintColor = SemanticNegative500
-                leadingIconComposableColor = Primary500
-                textColor = GrayScale800
+                focusedIndicatorColor = SemanticNegative400
+                textColor = WhiteTransparency90
             }
             enabled -> {
-                focusedIndicatorColor = Primary500
-                iconTintColor = Primary500
-                leadingIconComposableColor = Primary500
-                textColor = GrayScale800
+                focusedIndicatorColor = WhiteTransparency60
+                textColor = WhiteTransparency90
             }
             else -> {
-                focusedIndicatorColor = GrayScale400
-                backgroundColor = GrayScale300
-                iconTintColor = GrayScale500
-                leadingIconComposableColor = GrayScale500
-                textColor = GrayScale500
+                focusedIndicatorColor = DefaultBlack
+                backgroundColor = GrayScale500
+                textColor = WhiteTransparency30
             }
         }
     }

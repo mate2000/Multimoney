@@ -68,6 +68,8 @@
     <string name="destination_bank" translatable="false">Banco de destino</string>
     <string name="account_number" translatable="false">Número de cuenta</string>
     <string name="phone_number" translatable="false">Número de teléfono</string>
+    <string name="exit" translatable="false">Salir</string>
+    <string name="dot" translatable="false">.</string>
     <string name="common_allow" translatable="false">Permitir</string>
     <string name="common_deny" translatable="false">Denegar</string>
     <string name="common_open_settings" translatable="false">Abrir configuración</string>
@@ -378,8 +380,6 @@
     <string name="home_crypto_card_with_balance_label" translatable="false">Balance</string>
     <string name="home_crypto_card_smart_in_process_label" translatable="false">Cripto</string>
     <string name="home_crypto_card_with_balance_zero_label" translatable="false">0.00</string>
-
-
 
     <!-- Buy Crypto -->
     <string name="buy_crypto_voucher_you_have_paid" translatable="false">Has comprado</string>
@@ -752,9 +752,11 @@
 
 
     <!-- Generate Document -->
-    <string name="document_generation_title" translatable="false">Estamos creando tu cuenta</string>
-    <string name="document_generation_subtitle" translatable="false">Firmá el contrato y recibí tu crédito</string>
+    <string name="document_generation_title" translatable="false">Estamos creando tus documentos</string>
+    <string name="document_generation_subtitle" translatable="false">Firma el contrato y recibe tu crédito</string>
     <string name="document_generation_info" translatable="false">Generando documentos…</string>
+    <string name="document_generation_error_description" translatable="false">Contactanos para ayudarte a abrir tu cuenta</string>
+    <string name="origination_processing_transaction" translatable="false">Procesando transacción…</string>
 
     <!-- Onfido errors -->
     <string name="onfido_rejected_first_time_title" translatable="false">Hubo un error al validar tu identidad</string>
@@ -935,7 +937,7 @@
 
     <!-- Smart payment success -->
     <string name="smart_payment_success" translatable="false">¡Transacción exitosa!</string>
-    <string name="smart_payment_you_saved_on_your_smart_account" translatable="false">Has ahorrado en tu cuenta Smart | %s</string>
+    <string name="smart_payment_you_saved_on_your_smart_account" translatable="false">Monto ahorrado a tu cuenta Smart | %s</string>
     <string name="smart_payment_from_label" translatable="false">Desde</string>
     <string name="smart_payment_origin_account_label" translatable="false">Cuenta de origen</string>
     <string name="smart_payment_destiny_account_label" translatable="false">Cuenta de destino</string>
@@ -947,7 +949,6 @@
     <string name="smart_payment_make_another_payment" translatable="false">Hacer otro ahorro</string>
     <string name="smart_payment_card_bank_label" translatable="false">Tarjeta Banco</string>
     <string name="smart_payment_you_sent" translatable="false">Has enviado</string>
-    <string name="smart_payment_to_account" translatable="false">Hacia la cuenta</string>
 
     <!-- Smart Card -->
     <string name="smart_card_balance" translatable="false">Saldo</string>
@@ -1135,7 +1136,7 @@
     <string name="payment_schedule_account_title" translatable="false">Seleccioná una cuenta para programar tu pago</string>
 
     <!-- Payment Schedule Cards-->
-    <string name="payment_schedule_card_title" translatable="false">Configurá tu pago \nautomático</string>
+    <string name="payment_schedule_card_title" translatable="false">Tarjetas Visa</string>
     <string name="payment_schedule_card_info_dialog_description" translatable="false">Tu pago se determina de acuerdo a la cuota mínima de cada mes.</string>
     <string name="payment_schedule_card_label_date" translatable="false">Día del mes que se hará el pago</string>
     <string name="payment_schedule_card_label_origin" translatable="false">Desde tu tarjeta</string>
@@ -1635,8 +1636,22 @@
     <string name="crosseling_account_cr_title" translatable="false">¿En cúal cuenta IBAN querés \nrecibir tu dinero?</string>
     <string name="crosseling_close_dialog_title" translatable="false">Abandonar proceso</string>
     <string name="crosseling_close_dialog_description" translatable="false">¿Estás seguro de abandonar el proceso?</string>
-    <string name="crosseling_close_dialog_positive_button_text" translatable="false">Cancelar</string>
-    <string name="crosseling_close_dialog_negative_button_text" translatable="false">Continuar</string>
+    <string name="crosseling_close_dialog_positive_button_text" translatable="false">Continuar</string>
+    <string name="crosseling_close_dialog_negative_button_text" translatable="false">Cancelar</string>
+
+    <!-- Visa Direct Verify Deposit-->
+    <string name="visa_direct_verify_deposit_title" translatable="false">Ingresa el monto</string>
+    <string name="visa_direct_verify_deposit_subtitle" translatable="false">Lo puedes ver en el movimiento del depósito que te hicimos a tu cuenta</string>
+    <string name="visa_direct_verify_deposit_do_not_see" translatable="false">¿No ves el movimiento?</string>
+    <string name="visa_direct_verify_deposit_timer_begin" translatable="false">Monto expira en </string>
+    <string name="visa_direct_verify_deposit_timer_end" translatable="false"> Segundos</string>
+    <string name="visa_direct_verify_deposit_resend" translatable="false">Reenviar monto</string>
+    <string name="visa_direct_verify_deposit_dialog_do_not_see_title" translatable="false">¿No ves el movimiento?</string>
+    <string name="visa_direct_verify_deposit_dialog_do_not_see_description" translatable="false">La transferencia puede durar unos minutos en reflejarse. Si no puedes ver el movimiento, contacta a tu banco.</string>
+    <string name="visa_direct_verify_deposit_micro_deposit_placeholder" translatable="false">0</string>
+
+    <!-- Crypto sell list coins-->
+    <string name="crypt_list_sell_title" translatable="false">¿Cuál moneda querés vender?</string>
 
     <!-- Visa Verified -->
     <string name="visa_verified_title" translatable="false">Verifiquemos tu tarjeta</string>
@@ -1648,6 +1663,4 @@
     <string name="visa_verified_description_3" translatable="false">en el siguiente\npaso</string>
     <string name="visa_verified_dialog_title" translatable="false">Cancelar proceso</string>
     <string name="visa_verified_dialog_description" translatable="false">¿Estás segur@ de cancelar el proceso de agregar una tarjeta?</string>
-
-
 </resources>

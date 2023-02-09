@@ -77,6 +77,7 @@ import com.multimoney.data.networking.graphql.apollomodel.ListSinpeAccountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountDeleteMutation
 import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountSaveMutation
 import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountUpdateMutation
+import com.multimoney.data.networking.graphql.apollomodel.MicroDepositVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.NationalityQuery
 import com.multimoney.data.networking.graphql.apollomodel.OcupationsQuery
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoCheckProcessMutation
@@ -94,6 +95,7 @@ import com.multimoney.data.networking.graphql.apollomodel.QuickActionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.RelatedContactsByPhoneQuery
 import com.multimoney.data.networking.graphql.apollomodel.RelationshipQuery
 import com.multimoney.data.networking.graphql.apollomodel.RequestChangeDeviceMutation
+import com.multimoney.data.networking.graphql.apollomodel.ResendMicroDepositVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveAutomatedSmartAccountMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveClientBankAccountMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditApplicationMutation
@@ -111,17 +113,17 @@ import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsQuer
 import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsSignedQuery
 import com.multimoney.data.networking.graphql.apollomodel.UpdateCardVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.UpdateFavoriteContactSmartMutation
+import com.multimoney.data.networking.graphql.apollomodel.UpdateSmartAccountStatusMutation
 import com.multimoney.data.networking.graphql.apollomodel.UpdateUserRegisterMutation
 import com.multimoney.data.networking.graphql.apollomodel.UserPhoneMobileSaveMutation
 import com.multimoney.data.networking.graphql.apollomodel.UserValidationMutation
 import com.multimoney.data.networking.graphql.apollomodel.ValidateBankAccountQuery
+import com.multimoney.data.networking.graphql.apollomodel.ValidateDepositAddressMutation
 import com.multimoney.data.networking.graphql.apollomodel.ValidateOTPMutation
 import com.multimoney.data.networking.graphql.apollomodel.ValidatePinQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidateUserExistsQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidateUserStatusQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidationSecurityQuery
-import com.multimoney.data.networking.graphql.apollomodel.UpdateSmartAccountStatusMutation
-import com.multimoney.data.networking.graphql.apollomodel.ValidateDepositAddressMutation
 import com.multimoney.data.networking.graphql.apollomodel.type.BeneficiaryRequestDtoInput
 import com.multimoney.data.networking.graphql.apollomodel.type.ContactsInput
 import com.multimoney.domain.model.accountsmart.Beneficiary
@@ -383,12 +385,14 @@ class GraphqlApi @Inject constructor(
         idBrand: Int,
         user: String
     ): ApolloCall<EmissionPlaceQuery.Data> =
-        apolloAuthorizedClient.query(EmissionPlaceQuery(
-            pkUser = pkUser,
-            idUserRequest = idUserRequest,
-            idBrand = idBrand,
-            user = user
-        ))
+        apolloAuthorizedClient.query(
+            EmissionPlaceQuery(
+                pkUser = pkUser,
+                idUserRequest = idUserRequest,
+                idBrand = idBrand,
+                user = user
+            )
+        )
             .fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationTermsAndConditions(
@@ -1418,14 +1422,14 @@ class GraphqlApi @Inject constructor(
         user: String,
         idBrand: Int,
         identification: String,
-        idAccount: Int?,
+        idAccount: Int?
     ): ApolloCall<ManageSinpeAccountDeleteMutation.Data> =
         apolloAuthorizedClient.mutation(
             ManageSinpeAccountDeleteMutation(
                 user = Optional.presentIfNotNull(user),
                 idBrand = Optional.presentIfNotNull(idBrand),
                 identification = Optional.presentIfNotNull(identification),
-                id_account = Optional.presentIfNotNull(idAccount),
+                id_account = Optional.presentIfNotNull(idAccount)
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -1486,7 +1490,7 @@ class GraphqlApi @Inject constructor(
                 country,
                 idAccount,
                 accountNumber,
-                Optional.presentIfNotNull( isFavorite)
+                Optional.presentIfNotNull(isFavorite)
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -1644,7 +1648,7 @@ class GraphqlApi @Inject constructor(
     fun queryGetBalanceCryptoAccount(
         user: String,
         idBrand: Int,
-        identification: String,
+        identification: String
     ): ApolloCall<GetBalanceCryptoAccountQuery.Data> = apolloAuthorizedClient.query(
         GetBalanceCryptoAccountQuery(
             user = user,
@@ -1807,6 +1811,36 @@ class GraphqlApi @Inject constructor(
             cardToken = cardToken,
             source = source,
             idLoan = idLoan,
+            user = user,
+            idBrand = idBrand
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationMicroDepositVD(
+        identification: String,
+        idCard: String,
+        code: String,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<MicroDepositVDMutation.Data> = apolloAuthorizedClient.mutation(
+        MicroDepositVDMutation(
+            identification = identification,
+            idCard = idCard,
+            code = code,
+            user = user,
+            idBrand = idBrand
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationResendMicroDepositVD(
+        identification: String,
+        idCard: String,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<ResendMicroDepositVDMutation.Data> = apolloAuthorizedClient.mutation(
+        ResendMicroDepositVDMutation(
+            identification = identification,
+            idCard = idCard,
             user = user,
             idBrand = idBrand
         )
@@ -2123,7 +2157,7 @@ class GraphqlApi @Inject constructor(
                 user,
                 identification,
                 idBrand,
-                accountStatus,
+                accountStatus
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

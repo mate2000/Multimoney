@@ -659,5 +659,10 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         baseRoute = "crypto_send_flow"
     )
 
+    object CryptoSellFlow : Screen(
+        route = "crypto_sell_flow?$ITEM_CRYPTO_MARKET={$ITEM_CRYPTO_MARKET}",
+        baseRoute = "crypto_sell_flow"
+    )
+
     object QrCodeScannerScreen : Screen(route = "qr_code_scanner_screen")
 }

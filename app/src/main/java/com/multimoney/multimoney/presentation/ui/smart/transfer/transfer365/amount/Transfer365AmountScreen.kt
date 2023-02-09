@@ -110,9 +110,6 @@ private fun Transfer365AmountBottomSheet(viewModel: Transfer365AmountViewModel =
         modalBottomSheetState = viewModel.amountUIState.bottomSheetState,
         saveSendTitleResource = R.string.smart_payment_sheet_send_title,
         amount = viewModel.getFormattedAmount(),
-        fromLabel = stringResource(
-            viewModel.amountUIState.originAccountDisplay?.sheetLabel ?: R.string.empty
-        ),
         fromTitle = viewModel.amountUIState.originAccountDisplay?.sheetTitle
             ?: stringResource(
                 viewModel.amountUIState.originAccountDisplay?.sheetTitleResource ?: R.string.empty
@@ -123,7 +120,6 @@ private fun Transfer365AmountBottomSheet(viewModel: Transfer365AmountViewModel =
                     ?: R.string.empty
             ),
         fromIcon = viewModel.amountUIState.originAccountDisplay?.icon,
-        toLabel = stringResource(R.string.smart_payment_amount_bottom_sheet_to),
         toTitle = viewModel.amountUIState.destinyAccountDisplay?.sheetTitle ?: stringResource(
             viewModel.amountUIState.destinyAccountDisplay?.sheetTitleResource ?: R.string.empty
         ),

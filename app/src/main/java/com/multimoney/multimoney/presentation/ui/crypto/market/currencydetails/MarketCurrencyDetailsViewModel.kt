@@ -162,6 +162,10 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
         navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}?$ITEM_CRYPTO_MARKET=${encodeData(uiState.selectedCryptoCoin)}")
     }
 
+    private fun onNavigateToSellCrypto(){
+        navigateTo("${Screen.CryptoSellFlow.baseRoute}?$ITEM_CRYPTO_MARKET=${encodeData(uiState.selectedCryptoCoin)}")
+    }
+
     private fun onNavigateToCryptoSendFlow() {
         navigateTo("${Screen.CryptoSendFlow.baseRoute}?$CRYPTO_ASSET=${uiState.selectedCryptoCoin?.baseAsset}&$DESCRIPTION_CURRENCY=${uiState.selectedCryptoCoin?.description}")
     }
@@ -199,7 +203,7 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
                 openDialog = event.dialogParameters
             )
             is UIEvent.OnNavigateToSelectAccount -> onNavigateToSelectAccount()
-
+            is UIEvent.OnNavigateToSellCrypto -> onNavigateToSellCrypto()
             is UIEvent.OnDisclaimerChecked -> onDisclaimerChecked(event.checked)
             is UIEvent.OnUpdateShouldShowDisclaimer -> updateShouldShowDisclaimer(event.checked)
             is UIEvent.OnShowDisclaimer -> uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded))
@@ -232,6 +236,7 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
         object OnShowDisclaimer : UIEvent()
         object OnHideDisclaimer : UIEvent()
         object OnNavigateToCryptoSendFlow : UIEvent()
+        object OnNavigateToSellCrypto : UIEvent()
     }
 }
 

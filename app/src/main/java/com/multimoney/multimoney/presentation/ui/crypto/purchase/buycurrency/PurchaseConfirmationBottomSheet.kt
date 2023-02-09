@@ -40,8 +40,7 @@ const val MANY_ASSET_LENGTH = 4
 fun PurchaseConfirmationBottomSheet(
     modalBottomSheetState: ModalBottomSheetState,
     coroutineScope: CoroutineScope,
-    viewModel: BuyCurrencyScreenViewModel,
-    onConfirm: () -> Unit
+    viewModel: BuyCurrencyScreenViewModel
 ) {
     Column(modifier = Modifier
         .wrapContentSize()
@@ -101,7 +100,6 @@ fun PurchaseConfirmationBottomSheet(
                     modalBottomSheetState.hide()
                 }
                 viewModel.onUIEvent(BuyCurrencyScreenViewModel.UIEvent.OnPurchaseCryptoCurrency)
-                onConfirm()
             }
         )
     }

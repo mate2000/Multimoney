@@ -33,7 +33,6 @@ import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.MAN
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.SECONDS_SUFFIX
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.VoucherCurrencyExchangeInfoSkeleton
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.WHITE_SPACE
-import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.WhileLoadingSection
 import com.multimoney.multimoney.presentation.uielement.CurrencyExchangeInfo
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
@@ -44,6 +43,7 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 fun ConfirmationBottomSheetContent(
     quoteAmount: String = DEFAULT_AMOUNT,
     baseAmount: String = DEFAULT_AMOUNT,
+    sellExchangeRate: Boolean = false,
     asset: String = "",
     assetImageUrl: String = "",
     secondsRemaining: String = "",
@@ -76,7 +76,11 @@ fun ConfirmationBottomSheetContent(
                 content = {
                     CurrencyExchangeInfo(
                         leftTitleResource = R.string.crypto_purchase_flow_exchange_type_title,
-                        rightTitleResource = R.string.crypto_purchase_flow_exchange_total_title,
+                        rightTitleResource = if(sellExchangeRate) {
+                            R.string.crypto_sell_flow_confirmation_sell_screen_exhange_title
+                        } else {
+                            R.string.crypto_purchase_flow_exchange_total_title
+                        },
                         exchangeRateText = exchangeRate,
                         convertedAmountText = convertedAmount,
                         contentColumnAlignment = Alignment.Start,

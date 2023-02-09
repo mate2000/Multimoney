@@ -105,6 +105,7 @@ import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOfferMutatio
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOperationMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveTermsAndConditionsCreditMutation
 import com.multimoney.data.networking.graphql.apollomodel.ScreenConfigQuery
+import com.multimoney.data.networking.graphql.apollomodel.SellCryptoCurrencyMutation
 import com.multimoney.data.networking.graphql.apollomodel.SendCreditContractEventMutation
 import com.multimoney.data.networking.graphql.apollomodel.SendPinProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.SmartAccountTypeQuery
@@ -1639,6 +1640,41 @@ class GraphqlApi @Inject constructor(
                 user,
                 quoteId,
                 quoteAmount,
+                fee,
+                internalFee,
+                totalFee
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationSellCryptoCurrency(
+        pkUser: Int,
+        identification: String,
+        market: String,
+        commissionPercentage: Double,
+        taxPercentage: Double,
+        accountToken: Double,
+        exchangeRate: Double,
+        idBrand: Int,
+        user: String,
+        quoteId: String,
+        baseAmount: Double,
+        fee: Double,
+        internalFee: Double,
+        totalFee: Double
+    ): ApolloCall<SellCryptoCurrencyMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            SellCryptoCurrencyMutation(
+                pkUser,
+                identification,
+                market,
+                commissionPercentage,
+                taxPercentage,
+                accountToken,
+                exchangeRate,
+                idBrand,
+                user,
+                quoteId,
+                baseAmount,
                 fee,
                 internalFee,
                 totalFee

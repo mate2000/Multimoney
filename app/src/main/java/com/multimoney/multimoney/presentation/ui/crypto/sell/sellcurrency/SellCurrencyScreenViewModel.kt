@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.multimoney.domain.interaction.crypto.GetPriceQuoteAndCommissionsUseCase
+import com.multimoney.domain.interaction.crypto.SellCryptoCurrencyUseCase
 import com.multimoney.domain.model.crypto.PricesQuoteAndCommissions
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -29,6 +30,7 @@ import kotlin.time.Duration.Companion.seconds
 @HiltViewModel
 class SellCurrencyScreenViewModel @Inject constructor(
     private val getPriceQuoteAndCommissionsUseCase: GetPriceQuoteAndCommissionsUseCase,
+    private val sellCryptoCurrencyUseCase: SellCryptoCurrencyUseCase
 ): BaseViewModel(false) {
 
     var uiState by mutableStateOf(UIState())

@@ -36,8 +36,7 @@ import kotlinx.coroutines.launch
 fun SellConfirmationBottomSheet(
     modalBottomSheetState: ModalBottomSheetState,
     coroutineScope: CoroutineScope,
-    viewModel: SellCurrencyScreenViewModel,
-    onConfirm: () -> Unit
+    viewModel: SellCurrencyScreenViewModel
 ) {
     Column(modifier = Modifier
         .wrapContentSize()
@@ -97,7 +96,6 @@ fun SellConfirmationBottomSheet(
                     modalBottomSheetState.hide()
                 }
                 viewModel.onUIEvent(SellCurrencyScreenViewModel.UIEvent.OnSellCryptoCurrency)
-                onConfirm()
             }
         )
     }

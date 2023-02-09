@@ -92,7 +92,7 @@
     <string name="error_button_try_again" translatable="false">Intentar de nuevo</string>
 
     <!-- OnBoarding Salvador-->
-    <string name="onboarding_salvador_step_one_title" translatable="false">Multiplicá tus ahorros</string>
+    <string name="onboarding_salvador_step_one_title" translatable="false">Multiplica tus ahorros</string>
     <string name="onboarding_salvador_step_one_sub_title" translatable="false">Ganá 3.5\% de interés anual.</string>
     <string name="onboarding_salvador_step_two_title" translatable="false">Tu crédito en 5 minutos</string>
     <string name="onboarding_salvador_step_two_sub_title" translatable="false">Recibe hasta $25,000 con solo tu DUI.</string>
@@ -101,7 +101,7 @@
     <string name="onboarding_account_already_created" translatable="false">Ya tengo cuenta</string>
 
     <!-- OnBoarding Costa Rica-->
-    <string name="onboarding_costa_rica_step_one_title" translatable="false">Multiplicá tus ahorros</string>
+    <string name="onboarding_costa_rica_step_one_title" translatable="false">Multiplica tus ahorros</string>
     <string name="onboarding_costa_rica_step_one_sub_title" translatable="false">Ganá 7\% de interés anual en colones y 3.25\% en dólares.</string>
     <string name="onboarding_costa_rica_step_two_title" translatable="false">Tu crédito en 5 minutos</string>
     <string name="onboarding_costa_rica_step_two_sub_title" translatable="false">Recibí hasta ₡20 millones con solo tu identificación.</string>

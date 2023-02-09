@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -41,9 +42,13 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 @Composable
 @Preview
 fun ConfirmationBottomSheetContent(
-    quoteAmount: String = DEFAULT_AMOUNT,
-    baseAmount: String = DEFAULT_AMOUNT,
+    amount: String = DEFAULT_AMOUNT,
     sellExchangeRate: Boolean = false,
+    evaluatedAmount: AnnotatedString = AnnotatedString(""),
+    showAssetImage: Boolean = true,
+    showTotalToReceive: Boolean = false,
+    amountToReceive: String = DEFAULT_AMOUNT,
+    ibanAccountNumber: String = "",
     asset: String = "",
     assetImageUrl: String = "",
     secondsRemaining: String = "",
@@ -60,15 +65,21 @@ fun ConfirmationBottomSheetContent(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TitleSection(quoteAmount)
-        PurchaseInfoSection(
+        TitleSection(amount)
+        InfoSection(
+            evaluatedAmount = evaluatedAmount,
             assetImageUrl = assetImageUrl,
+            showTotalToReceive = showTotalToReceive,
+            amountToReceive = amountToReceive,
             isLoading = isLoading,
             asset = asset,
-            baseAmount = baseAmount,
-            secondsRemaining = secondsRemaining
+            secondsRemaining = secondsRemaining,
+            showAssetImage = showAssetImage
         )
-        AccountInfoSection(idCurrency)
+        AccountInfoSection(
+            idCurrency = idCurrency,
+            ibanAccountNumber = ibanAccountNumber
+        )
         if (idCurrency == CurrencyType.Colon.id) {
             WhileLoadingSection(
                 isLoading = isLoading,
@@ -103,7 +114,7 @@ fun ConfirmationBottomSheetContent(
 }
 
 @Composable
-private fun TitleSection(quoteAmount: String) {
+private fun TitleSection(amount: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -114,7 +125,7 @@ private fun TitleSection(quoteAmount: String) {
     ) {
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
-            text = quoteAmount,
+            text = amount,
             style = Typography.h4.copy(
                 color = MultimoneyTheme.colors.text,
                 fontWeight = FontWeight.Bold
@@ -124,12 +135,15 @@ private fun TitleSection(quoteAmount: String) {
 }
 
 @Composable
-private fun PurchaseInfoSection(
+private fun InfoSection(
+    evaluatedAmount: AnnotatedString,
     assetImageUrl: String,
     isLoading: Boolean,
     asset: String,
-    baseAmount: String,
-    secondsRemaining: String
+    secondsRemaining: String,
+    showAssetImage: Boolean = true,
+    showTotalToReceive: Boolean = false,
+    amountToReceive: String
 ) {
     Column(
         modifier = Modifier
@@ -139,29 +153,21 @@ private fun PurchaseInfoSection(
         Row(
             modifier = Modifier.padding(vertical = 4.dp)
         ) {
-            Image(
-                modifier = Modifier
-                    .size(16.dp)
-                    .padding(end = 4.dp),
-                painter = rememberAsyncImagePainter(model = assetImageUrl),
-                contentDescription = null
-            )
+            if (showAssetImage) {
+                Image(
+                    modifier = Modifier
+                        .size(16.dp)
+                        .padding(end = 4.dp),
+                    painter = rememberAsyncImagePainter(model = assetImageUrl),
+                    contentDescription = null
+                )
+            }
             WhileLoadingSection(
                 isLoading = isLoading,
                 contentLoading = { BuyCurrencyTitleConfirmationSectionSkeleton() },
                 content = {
                     Text(
-                        text = buildAnnotatedString {
-                            append(stringResource(id = R.string.crypto_purchase_flow_confirmation_estimated_amount))
-                            append(WHITE_SPACE)
-                            append(asset)
-                            append(WHITE_SPACE)
-                            withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                                append(baseAmount)
-                                append(WHITE_SPACE)
-                                append(asset)
-                            }
-                        },
+                        text = evaluatedAmount,
                         style = Typography.body2.copy(
                             color = MultimoneyTheme.colors.bodyTextColor,
                             fontSize = if (asset.length > MANY_ASSET_LENGTH) 13.sp else 14.sp
@@ -183,11 +189,28 @@ private fun PurchaseInfoSection(
             },
             style = Typography.body2.copy(color = MultimoneyTheme.colors.bodyTextColor),
         )
+        if (showTotalToReceive) {
+            Spacer(modifier = Modifier.height(24.dp))
+            Text(
+                modifier = Modifier.padding(vertical = 4.dp),
+                text = buildAnnotatedString {
+                    append(stringResource(id = R.string.crypto_sell_flow_confirmation_sell_screen_amount_to_receive))
+                    append(WHITE_SPACE)
+                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append(amountToReceive)
+                    }
+                },
+                style = Typography.body2.copy(color = MultimoneyTheme.colors.bodyTextColor),
+            )
+        }
     }
 }
 
 @Composable
-private fun AccountInfoSection(idCurrency: Int) {
+private fun AccountInfoSection(
+    idCurrency: Int,
+    ibanAccountNumber: String
+) {
     Column(
         modifier = Modifier
             .wrapContentSize()
@@ -214,11 +237,7 @@ private fun AccountInfoSection(idCurrency: Int) {
                     CurrencyType.Dollar.symbol
                 }
             ),
-            subtitle = if (idCurrency == CurrencyType.Colon.id) {
-                CurrencyType.Colon.stringName
-            } else {
-                CurrencyType.Dollar.stringName
-            },
+            subtitle = ibanAccountNumber,
             enable = false
         )
     }

@@ -17,7 +17,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -27,6 +30,7 @@ import com.multimoney.multimoney.presentation.util.calculateConfirmationBaseAmou
 import com.multimoney.multimoney.presentation.util.calculateConfirmationQuoteAmount
 import com.multimoney.multimoney.presentation.util.calculateConvertedCurrencyBalance
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
+import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -71,16 +75,32 @@ fun PurchaseConfirmationBottomSheet(
             )
         }
         ConfirmationBottomSheetContent(
-            quoteAmount = calculateConfirmationQuoteAmount(
+            amount = calculateConfirmationQuoteAmount(
                 quoteAmount = viewModel.uiState.quoteAmount.value,
                 baseAmount = viewModel.uiState.baseAmount.value,
-                currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price
+                currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price,
+                symbol = CurrencyType.Dollar.symbol
             ),
-            baseAmount = calculateConfirmationBaseAmount(
-                quoteAmount = viewModel.uiState.quoteAmount.value,
-                baseAmount = viewModel.uiState.baseAmount.value,
-                currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price
+            evaluatedAmount = buildAnnotatedString {
+                append(stringResource(id = R.string.crypto_purchase_flow_confirmation_estimated_amount))
+                append(WHITE_SPACE)
+                append(viewModel.asset)
+                append(WHITE_SPACE)
+                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append(calculateConfirmationBaseAmount(
+                        quoteAmount = viewModel.uiState.quoteAmount.value,
+                        baseAmount = viewModel.uiState.baseAmount.value,
+                        currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price
+                    ))
+                    append(WHITE_SPACE)
+                    append(viewModel.asset)
+                }
+            },
+            ibanAccountNumber = getMaskedAccount(
+                viewModel.ibanAccountNumber,
+                stringResource(id = R.string.payment_account_masked_text)
             ),
+            showTotalToReceive = false,
             asset = viewModel.asset,
             assetImageUrl = viewModel.assetImageUrl,
             secondsRemaining = viewModel.uiState.remainingTimeText,

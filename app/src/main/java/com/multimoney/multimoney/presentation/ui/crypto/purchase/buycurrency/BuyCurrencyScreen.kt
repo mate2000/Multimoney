@@ -26,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.BuyCryptoStep
 import com.multimoney.data.util.catalog.PurchaseStatus
 import com.multimoney.multimoney.R
@@ -68,10 +69,10 @@ fun BuyCurrencyScreen(
                 user = sharedViewModel.user,
                 market = sharedViewModel.uiState.market,
                 identification = sharedViewModel.identification,
-                accountToken = sharedViewModel.uiState.accounts.firstOrNull()?.accountToken?.toLong()
-                    ?: 0L,
+                accountToken = sharedViewModel.uiState.accountToken.ifEmpty { "0" }.toLong(),
                 side = sharedViewModel.side,
                 assetImageUrl = sharedViewModel.uiState.assetImageBaseUrl,
+                ibanAccountNumber = sharedViewModel.uiState.ibanAccountNumber,
                 smartAccountAvailableBalance = sharedViewModel.uiState.smartAccountAvailableBalance
             )
         )
@@ -222,7 +223,11 @@ fun BuyCurrencyScreenContent(
                     bottom.linkTo(conversionCurrencyToDollars.top)
                 }) {
                     TitleSection(
-                        title = R.string.crypto_purchase_flow_title,
+                        title = if (viewModel.idBrand == Brand.CostaRica.id) {
+                            R.string.crypto_purchase_flow_title_cr
+                        } else {
+                            R.string.crypto_purchase_flow_title_sv
+                        },
                         cryptoAssetExchange = stringResource(
                             id = R.string.crypto_purchase_flow_exchange_reference,
                             viewModel.asset,
@@ -296,6 +301,7 @@ fun BuyCurrencyScreenContent(
                     bottom.linkTo(button.top)
                 }) {
                     CounterSection(
+                        counterTextResourceId = R.string.crypto_purchase_flow_price_expires_in,
                         smartAccountAvailableBalance = viewModel.smartAccountAvailableBalance,
                         downCounter = viewModel.uiState.remainingTimeText
                     )

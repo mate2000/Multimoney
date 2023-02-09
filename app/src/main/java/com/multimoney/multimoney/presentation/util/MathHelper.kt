@@ -86,6 +86,37 @@ fun calculateConfirmationQuoteAmount(
     }.toString().toDouble().toCurrencyFormat()
 }
 
+fun calculateConfirmationQuoteAmount(
+    quoteAmount: String,
+    baseAmount: String,
+    currencyPrice: Double?,
+    symbol: String,
+    totalFee: Double
+): String {
+    return quoteAmount.ifEmpty {
+        baseAmount.ifEmpty {
+            DEFAULT_AMOUNT
+        }.toDouble().times(currencyPrice ?: 0.0)
+    }.toString().toDouble().minus(totalFee).toCurrencyFormat(
+        symbol = symbol
+    )
+}
+
+fun calculateConfirmationQuoteAmount(
+    quoteAmount: String,
+    baseAmount: String,
+    currencyPrice: Double?,
+    symbol: String
+): String {
+    return quoteAmount.ifEmpty {
+        baseAmount.ifEmpty {
+            DEFAULT_AMOUNT
+        }.toDouble().times(currencyPrice ?: 0.0)
+    }.toString().toDouble().toCurrencyFormat(
+        symbol = symbol
+    )
+}
+
 fun calculateConfirmationBaseAmount(
     quoteAmount: String,
     baseAmount: String,

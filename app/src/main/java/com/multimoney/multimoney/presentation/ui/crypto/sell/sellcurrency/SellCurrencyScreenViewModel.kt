@@ -49,6 +49,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
     var assetImageUrl = ""
     var idCurrencyAccount = CurrencyType.Colon.id
     var cryptoAvailableCurrencyBalance = 0.0
+    var ibanAccountNumber = ""
 
     private fun onSetUserData(
         pkUser: Int,
@@ -62,7 +63,8 @@ class SellCurrencyScreenViewModel @Inject constructor(
         side: String,
         assetImageUrl: String?,
         cryptoAvailableCurrencyBalance: Double,
-        idCurrencyAccount: Int
+        idCurrencyAccount: Int,
+        ibanAccountNumber: String
     ) {
         this.pkUser = pkUser
         this.idCurrencyAccount = idCurrencyAccount
@@ -76,6 +78,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
         this.side = side
         this.assetImageUrl = assetImageUrl ?: ""
         this.cryptoAvailableCurrencyBalance = cryptoAvailableCurrencyBalance
+        this.ibanAccountNumber = ibanAccountNumber
     }
 
     private val timer = CryptoTimerHelper(
@@ -183,10 +186,23 @@ class SellCurrencyScreenViewModel @Inject constructor(
         )
     }
 
-    private fun sellCryptoCurrency() {
-        executeUseCase {
-
-        }
+    private fun sellCryptoCurrency() = executeUseCase {
+        sellCryptoCurrencyUseCase.invoke(
+            pkUser = pkUser,
+            identification = identification,
+            market = market,
+            commissionPercentage = 0.0,
+            taxPercentage = uiState.pricesQuoteAndCommissions?.taxAmount ?: 0.0,
+            accountToken = accountToken,
+            exchangeRate = uiState.exchangeRate,
+            idBrand = idBrand,
+            user = user,
+            quoteId = uiState.pricesQuoteAndCommissions?.quote_id ?: "",
+            baseAmount = uiState.baseAmount.value.toDouble(),
+            fee = uiState.pricesQuoteAndCommissions?.fee?.toDouble() ?: 0.0,
+            internalFee = uiState.pricesQuoteAndCommissions?.internal_fee ?: 0.0,
+            totalFee = uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
+        )
     }
 
     private fun onFailure() {
@@ -257,7 +273,8 @@ class SellCurrencyScreenViewModel @Inject constructor(
                 side = event.side,
                 assetImageUrl = event.assetImageUrl,
                 cryptoAvailableCurrencyBalance = event.smartAccountAvailableBalance,
-                idCurrencyAccount = event.idCurrencyAccount
+                idCurrencyAccount = event.idCurrencyAccount,
+                ibanAccountNumber = event.ibanAccountNumber
             )
             is UIEvent.ValidateAmountInput -> validateAmountInput(event.amount)
             is UIEvent.OnSetFailureAction -> uiState = uiState.copy(
@@ -294,7 +311,8 @@ class SellCurrencyScreenViewModel @Inject constructor(
             val side: String,
             val assetImageUrl: String?,
             val smartAccountAvailableBalance: Double,
-            val idCurrencyAccount: Int
+            val idCurrencyAccount: Int,
+            val ibanAccountNumber: String
         ) : UIEvent()
 
         data class ValidateAmountInput(val amount: String) : UIEvent()

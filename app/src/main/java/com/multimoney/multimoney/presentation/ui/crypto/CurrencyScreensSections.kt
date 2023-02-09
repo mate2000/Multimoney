@@ -77,37 +77,41 @@ fun WhileLoadingSection(
 @Composable
 fun CounterSection(
     modifier: Modifier = Modifier,
+    @StringRes counterTextResourceId: Int,
     downCounter: String,
+    showAvailableSmartAmount: Boolean = true,
     smartAccountAvailableBalance: Double,
 ) {
     Column(modifier = modifier) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.Start
-        ) {
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(
-                        style = SpanStyle(
-                            color = MultimoneyTheme.colors.bodyTextColor,
-                        )
-                    ) {
-                        append(stringResource(id = R.string.crypto_purchase_flow_available_smart_amount))
-                    }
-                    append(WHITE_SPACE)
-                    withStyle(
-                        style = SpanStyle(
-                            color = MultimoneyTheme.colors.bodyTextColor,
-                            fontWeight = FontWeight.Bold
-                        )
-                    ) {
-                        append(smartAccountAvailableBalance.toCurrencyFormat())
-                    }
-                },
-                style = Typography.body2
-            )
+        if (showAvailableSmartAmount) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(
+                            style = SpanStyle(
+                                color = MultimoneyTheme.colors.bodyTextColor,
+                            )
+                        ) {
+                            append(stringResource(id = R.string.crypto_purchase_flow_available_smart_amount))
+                        }
+                        append(WHITE_SPACE)
+                        withStyle(
+                            style = SpanStyle(
+                                color = MultimoneyTheme.colors.bodyTextColor,
+                                fontWeight = FontWeight.Bold
+                            )
+                        ) {
+                            append(smartAccountAvailableBalance.toCurrencyFormat())
+                        }
+                    },
+                    style = Typography.body2
+                )
+            }
         }
         Row(
             modifier = Modifier
@@ -122,7 +126,7 @@ fun CounterSection(
                             color = MultimoneyTheme.colors.bodyTextColor,
                         )
                     ) {
-                        append(stringResource(id = R.string.crypto_purchase_flow_price_expires_in))
+                        append(stringResource(id = counterTextResourceId))
                     }
                     append(WHITE_SPACE)
                     withStyle(

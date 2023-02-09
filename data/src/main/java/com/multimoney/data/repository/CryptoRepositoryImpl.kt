@@ -178,7 +178,7 @@ class CryptoRepositoryImpl @Inject constructor(
         market: String,
         commissionPercentage: Double,
         taxPercentage: Double,
-        accountToken: Double,
+        accountToken: Long,
         exchangeRate: Double,
         idBrand: Int,
         user: String,

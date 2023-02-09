@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.crypto.AmountInputSection
@@ -61,6 +62,7 @@ fun SellCurrencyScreen(
                     ?: 0L,
                 side = sharedViewModel.side,
                 assetImageUrl = sharedViewModel.uiState.assetImageBaseUrl,
+                ibanAccountNumber = sharedViewModel.uiState.ibanAccountNumber,
                 smartAccountAvailableBalance = sharedViewModel.uiState.smartAccountAvailableBalance
             )
         )
@@ -74,10 +76,10 @@ fun SellCurrencyScreen(
         viewModel.onUIEvent(SellCurrencyScreenViewModel.UIEvent.ValidateAmountInput(""))
         viewModel.onUIEvent(
             SellCurrencyScreenViewModel.UIEvent.OnSetFailureAction(
-            failureAction = {
-                sharedViewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnPreviousStep)
-            }
-        ))
+                failureAction = {
+                    sharedViewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnPreviousStep)
+                }
+            ))
     }
 
     SellCurrencyScreenContent(viewModel)
@@ -140,7 +142,11 @@ fun SellCurrencyScreenContent(
                     bottom.linkTo(disclaimer.top)
                 }) {
                     TitleSection(
-                        title = R.string.crypto_sell_flow_sell_screen_title,
+                        title = if (viewModel.idBrand == Brand.CostaRica.id) {
+                            R.string.crypto_sell_flow_sell_screen_title_cr
+                        } else {
+                            R.string.crypto_sell_flow_sell_screen_title_sv
+                        },
                         cryptoAssetExchange = stringResource(
                             id = R.string.crypto_sell_flow_sell_screen_available_equal_to,
                             viewModel.cryptoAvailableCurrencyBalance.toCurrencyFormat(),
@@ -183,6 +189,8 @@ fun SellCurrencyScreenContent(
                     bottom.linkTo(button.top)
                 }) {
                     CounterSection(
+                        counterTextResourceId = R.string.crypto_sell_flow_confirmation_sell_screen_expires_in,
+                        showAvailableSmartAmount = false,
                         smartAccountAvailableBalance = viewModel.cryptoAvailableCurrencyBalance,
                         downCounter = viewModel.uiState.remainingTimeText
                     )

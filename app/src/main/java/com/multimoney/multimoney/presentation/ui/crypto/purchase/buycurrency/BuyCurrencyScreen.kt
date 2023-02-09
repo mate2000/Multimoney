@@ -116,14 +116,16 @@ fun BuyCurrencyScreen(
         PurchaseStatus.IDLE -> {
             BuyCurrencyScreenContent(viewModel) {
                 //todo go to next step / set data etc
-                sharedViewModel.onUIEvent(
-                    PurchaseCryptoSharedViewModel.UIEvent.OnSetFlowStep(
-                        BuyCryptoStep.LOADING_SCREEN
-                    )
-                )
             }
         }
-        PurchaseStatus.LOADING -> NativeLoaderScreen()
+        PurchaseStatus.LOADING -> {
+            sharedViewModel.onUIEvent(
+                PurchaseCryptoSharedViewModel.UIEvent.OnSetFlowStep(
+                    BuyCryptoStep.LOADING_SCREEN
+                )
+            )
+            NativeLoaderScreen()
+        }
         PurchaseStatus.SUCCESS -> {
             sharedViewModel.onUIEvent(
                 PurchaseCryptoSharedViewModel.UIEvent.OnSetupVoucherDetails(

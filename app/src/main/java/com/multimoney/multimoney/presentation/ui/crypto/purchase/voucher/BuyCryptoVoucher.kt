@@ -244,7 +244,6 @@ fun BuyCryptoVoucherContent(
                         subTitle = referenceNumber
                     )
 
-
                     if (idCurrency == CurrencyType.Colon.id) {
                         Spacer(modifier = Modifier.height(32.dp))
                         VoucherCurrencyExchangeInfo(

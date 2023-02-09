@@ -69,7 +69,11 @@ fun PurchaseCryptoFlow(
                 isLeftButtonVisible = viewModel.uiState.currentStepType != BuyCryptoStep.LOADING_SCREEN && viewModel.uiState.currentStepType != BuyCryptoStep.PURCHASE_VOUCHER,
                 isRightButtonVisible = viewModel.uiState.currentStepType != BuyCryptoStep.LOADING_SCREEN && viewModel.uiState.currentStepType != BuyCryptoStep.SELECT_SMART_ACCOUNT,
                 onRightButtonClick = {
-                    viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnCloseClick)
+                    if (viewModel.uiState.currentStepType == BuyCryptoStep.PURCHASE_VOUCHER) {
+                        viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNavigateHome)
+                    } else {
+                        viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnCloseClick)
+                    }
                 },
                 onLeftButtonClick = {
                     viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep)

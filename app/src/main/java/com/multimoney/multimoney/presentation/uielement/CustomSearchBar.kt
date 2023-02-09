@@ -101,17 +101,17 @@ fun CustomSearchBar(
         }
     } else {
         backgroundColor = WhiteTransparency10
-        placeholderColor = GrayScale500
-        unfocusedIndicatorColor = GrayScale400
+        placeholderColor = WhiteTransparency30
+        unfocusedIndicatorColor = DefaultBlack
         when {
             enabled -> {
-                focusedIndicatorColor = Primary500
-                textColor = GrayScale800
+                focusedIndicatorColor = WhiteTransparency60
+                textColor = WhiteTransparency90
             }
             else -> {
-                focusedIndicatorColor = GrayScale400
-                backgroundColor = GrayScale300
-                textColor = GrayScale500
+                focusedIndicatorColor = DefaultBlack
+                backgroundColor = GrayScale500
+                textColor = WhiteTransparency30
             }
         }
     }

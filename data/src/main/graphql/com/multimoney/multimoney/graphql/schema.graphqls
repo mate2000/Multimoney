@@ -652,7 +652,7 @@ type Mutation {
   Crypto
   """
 
-  validateDepositAddress(validateDepositAddressInput: ValidateDepositAddressDtoInput!): ValidateDepositAddressResponse!
+  validateDepositAddress(validateDepositAddressInput: ValidateDepositAddressDtoInput!): ValidateDepositAddress!
 
   """
   Crypto
@@ -4478,9 +4478,6 @@ input TransferOrderDtoInput {
 
 
 type ValidateDepositAddress {
-result: ValidateDepositAddressResult
-}
-type ValidateDepositAddressResponse {
   result: ValidateDepositAddressResult
 
   status: Int

@@ -132,7 +132,7 @@ fun RoundedPaymentButton(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp, vertical = 20.dp),
+                    .padding(horizontal = 16.dp, vertical = 16.dp),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = textAlign
             ) {

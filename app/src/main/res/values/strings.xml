@@ -1506,6 +1506,10 @@
     <string name="transfer_365_pre_confirmation_from_label" translatable="false">Desde</string>
     <string name="transfer_365_pre_confirmation_to_label" translatable="false">Hacia</string>
 
+    <!-- Smart Transfer 365 Accounts list -->
+    <string name="transfer_365_account_list_title" translatable="false">Otros bancos</string>
+    <string name="transfer_365_account_list_subtitle" translatable="false">Cuentas registradas</string>
+
     <!-- Card Preferences -->
     <string name="card_preferences_title" translatable="false">Preferencias de tarjeta</string>
     <string name="card_preferences_linked_card_title" translatable="false">Tarjeta vinculada</string>

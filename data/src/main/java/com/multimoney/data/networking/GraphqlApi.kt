@@ -6,6 +6,7 @@ import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.multimoney.data.mapper.credit.mapToApolloModel
+import com.multimoney.data.networking.graphql.apollomodel.ACHTransferFavoriteListQuery
 import com.multimoney.data.networking.graphql.apollomodel.AccountSmartContractEventSubscription
 import com.multimoney.data.networking.graphql.apollomodel.AccountStatementQuery
 import com.multimoney.data.networking.graphql.apollomodel.ActivatedCardAutomaticDebitMutation
@@ -122,6 +123,7 @@ import com.multimoney.data.networking.graphql.apollomodel.ValidateUserStatusQuer
 import com.multimoney.data.networking.graphql.apollomodel.ValidationSecurityQuery
 import com.multimoney.data.networking.graphql.apollomodel.UpdateSmartAccountStatusMutation
 import com.multimoney.data.networking.graphql.apollomodel.ValidateDepositAddressMutation
+import com.multimoney.data.networking.graphql.apollomodel.type.ACHTransferFavoriteList
 import com.multimoney.data.networking.graphql.apollomodel.type.BeneficiaryRequestDtoInput
 import com.multimoney.data.networking.graphql.apollomodel.type.ContactsInput
 import com.multimoney.domain.model.accountsmart.Beneficiary
@@ -2067,6 +2069,20 @@ class GraphqlApi @Inject constructor(
             description = description,
             identificationNumber = identificationNumber,
             identificationTypeAccount = identificationTypeAccount
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryFavoriteACHAccounts(
+        idBrand: Int,
+        user: String,
+        isFavorite: Boolean,
+        identificationNumber: String
+    ): ApolloCall<ACHTransferFavoriteListQuery.Data> = apolloAuthorizedClient.query(
+        ACHTransferFavoriteListQuery(
+            idBrand = idBrand,
+            user = user,
+            isFavorite = isFavorite,
+            identificationNumber = identificationNumber,
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 

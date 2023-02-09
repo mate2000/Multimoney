@@ -3,7 +3,6 @@ package com.multimoney.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.apollographql.apollo3.api.Optional
 import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.smartaccount.mapToDomain
 import com.multimoney.data.mapper.smartaccount.mapToDomainModel
@@ -17,6 +16,7 @@ import com.multimoney.domain.model.accountsmart.BankListTransfer365
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.CivilStatusResult
 import com.multimoney.domain.model.accountsmart.ExchangeRateResult
+import com.multimoney.domain.model.accountsmart.FavoriteACHResult
 import com.multimoney.domain.model.accountsmart.GeneralEconomicActivityResult
 import com.multimoney.domain.model.accountsmart.GlobalRequest
 import com.multimoney.domain.model.accountsmart.LocalTransferResult
@@ -717,6 +717,28 @@ class SmartAccountRepositoryImpl @Inject constructor(
             typeState,
             idAccountSysde,
             idAccountRequest
-        ), apolloCallMapper = { data -> Success(data.mapToDomain()) })
+        ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomain())
+            }
+        )
+    }
+
+    override suspend fun queryACHTransferFavoriteList(
+        idBrand: Int,
+        user: String,
+        isFavorite: Boolean,
+        identificationNumber: String
+    ): Flow<MultimoneyResult<FavoriteACHResult?>> {
+        return fetchData(graphqlApi.queryFavoriteACHAccounts(
+            idBrand = idBrand,
+            user = user,
+            isFavorite = isFavorite,
+            identificationNumber = identificationNumber
+        ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
     }
 }

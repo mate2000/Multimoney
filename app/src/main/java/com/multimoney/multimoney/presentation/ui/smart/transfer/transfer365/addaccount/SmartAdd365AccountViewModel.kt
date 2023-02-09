@@ -26,6 +26,7 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.ORIGIN_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.TRANSFER_TYPE
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.util.MAX_SMART_ACCOUNT_DIGITS
@@ -51,6 +52,7 @@ class SmartAdd365AccountViewModel @Inject constructor(
     private var idBrand = 0
     private var user = ""
     private var smartAccount: SmartAccountID? = null
+    private var previousScreen: String = ""
     var transferType: Int = 0
 
     // UIState
@@ -62,6 +64,7 @@ class SmartAdd365AccountViewModel @Inject constructor(
         idBrand = savedStateHandle[ID_BRAND] ?: 0
         smartAccount = savedStateHandle[ORIGIN_ACCOUNT]
         transferType = savedStateHandle[TRANSFER_TYPE] ?: 0
+        previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
         if (transferType == SmartTransferTypes.SmartToOtherBank.id) {
             uiState = uiState.copy(
                 screenTitle = R.string.smart_other_bank_transfer_add_title,
@@ -323,11 +326,17 @@ class SmartAdd365AccountViewModel @Inject constructor(
         }
     }
 
-    private fun onNavigateBack() =
+    private fun onNavigateBack() {
+        val screen = when ( previousScreen) {
+            Screen.SmartSelectSendingTypeScreen.baseRoute -> Screen.SmartSelectSendingTypeScreen.route
+            Screen.SmartACHAccountsListScreen.baseRoute -> Screen.SmartACHAccountsListScreen.route
+            else -> Screen.HomeScreen.route
+        }
         navigateBack(
-            popTo = Screen.SmartSelectSendingTypeScreen.route,
+            popTo = screen,
             isRestart = false
         )
+    }
 
     private fun onNavigateToHome() =
         navigateBack(

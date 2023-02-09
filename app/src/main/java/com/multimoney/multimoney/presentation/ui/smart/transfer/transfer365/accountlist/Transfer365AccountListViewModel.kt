@@ -6,8 +6,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteListUseCase
 import com.multimoney.domain.model.accountsmart.ACHAccount
-import com.multimoney.domain.model.accountsmart.IbanAccountID
-import com.multimoney.domain.model.accountsmart.SinpeAccount
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.accountsmart.Transfer365Account
 import com.multimoney.domain.model.util.error.HttpError
@@ -16,16 +14,11 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.SECOND_SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
-import com.multimoney.multimoney.presentation.ui.home.HomeState
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -60,7 +53,7 @@ class Transfer365AccountListViewModel @Inject constructor(
             queryACHTransferFavoriteListUseCase.invoke(
                 user = user,
                 idBrand = idBrand,
-                isFavorite = false,
+                isFavorite = true,
                 identificationNumber = identification.orEmpty()
             ).collectLatest { result ->
                 result.onSuccess { favoriteResult ->
@@ -70,8 +63,8 @@ class Transfer365AccountListViewModel @Inject constructor(
                                 encodeData(
                                     smartAccount
                                 )
-                            }/${SmartTransferTypes.SmartToOtherBank.id}",
-                            Screen.SmartSelectSendingTypeScreen.route
+                            }/${SmartTransferTypes.SmartToOtherBank.id}/${Screen.SmartSelectSendingTypeScreen.baseRoute}",
+                            Screen.SmartACHAccountsListScreen.route
                         )
                     } else {
                         uiState = uiState.copy(
@@ -101,13 +94,13 @@ class Transfer365AccountListViewModel @Inject constructor(
     private fun onNavigateBack() =
         navigateBack(popTo = Screen.SmartSelectSendingTypeScreen.route, isRestart = false)
 
-    private fun navigateToAddIbanAccount() {
+    private fun navigateToAddACHAccount() {
         navigateTo(
             "${Screen.SmartAdd365AccountScreen.baseRoute}/$idBrand/$user/${
                 encodeData(
                     smartAccount
                 )
-            }/${SmartTransferTypes.SmartToOtherBank.id}"
+            }/${SmartTransferTypes.SmartToOtherBank.id}/${Screen.SmartACHAccountsListScreen.baseRoute}"
         )
     }
 
@@ -135,7 +128,7 @@ class Transfer365AccountListViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is UIEvent.OnAddAccountClick -> navigateToAddIbanAccount()
+            is UIEvent.OnAddAccountClick -> navigateToAddACHAccount()
             is UIEvent.OnNavigateBack -> onNavigateBack()
             is UIEvent.OnAccountClick -> onAccountClick(uiEvent.account)
             is UIEvent.OnGetAccountList -> getACHAccountList()

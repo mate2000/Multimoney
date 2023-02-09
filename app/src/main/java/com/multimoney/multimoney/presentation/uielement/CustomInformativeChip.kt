@@ -24,7 +24,6 @@ import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.uielement.Size.Large
 import com.multimoney.multimoney.presentation.uielement.Size.Small
 
-@OptIn(ExperimentalTextApi::class)
 @Composable
 fun CustomInformativeChip(
     text: String,

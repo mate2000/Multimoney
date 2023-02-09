@@ -1,8 +1,8 @@
 package com.multimoney.multimoney.presentation.uielement
 
-import android.icu.text.DecimalFormat
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,59 +10,70 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.util.DECIMAL_AND_NUMBER_REGEX
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
+import com.multimoney.multimoney.presentation.util.transformation.CryptoAssetMaskTransformation
+import com.multimoney.multimoney.presentation.util.transformation.CurrencyDoubleTransformation
 
-@OptIn(ExperimentalComposeUiApi::class)
+/**
+ * CryptoCurrencyInputLayout: Custom layout to display a currency input with button to change
+ * between dollars and currency, this can handle errors
+ *
+ * Parameters:
+ * @param modifier Modifier to be applied to the layout
+ * @param value MutableState of the value to be displayed
+ * @param iconCurrency String of the icon to be displayed
+ * @param isTransformationCurrency MutableState of the transformation to be applied to the value
+ * @param focusRequester FocusRequester to be applied to the layout
+ * @param isError Boolean to indicate if the layout has an error
+ * @param errorText String to be displayed in case of error
+ * @param onValueChanged Function to be called when the value is changed
+ * @param onImeClick Function to be called when the IME is clicked
+ *
+ * **/
+
 @ExperimentalAnimationApi
 @Composable
 fun CryptoCurrencyInputLayout(
     modifier: Modifier = Modifier,
-    query: MutableState<String>,
-    focused: MutableState<Boolean>,
+    value: MutableState<String>,
     iconCurrency: String,
-    onSearchClick: () -> Unit
-
+    isTransformationCurrency: MutableState<Boolean>,
+    focusRequester: FocusRequester,
+    isError: Boolean = false,
+    errorText: String? = null,
+    onValueChanged: (String) -> Unit,
+    onImeClick: () -> Unit
 ) {
-
-    val focusManager = LocalFocusManager.current
-    val keyboardController = LocalSoftwareKeyboardController.current
-    keyboardController?.show()
-
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -70,31 +81,58 @@ fun CryptoCurrencyInputLayout(
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        CustomTextField(
-            focused = focused,
-            value = query,
-            iconCurrency = iconCurrency,
-            onSearchClick = {
-                onSearchClick()
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            CustomTextField(
+                value = value,
+                iconCurrency = iconCurrency,
+                isTransformationCurrency = isTransformationCurrency,
+                focusRequester = focusRequester,
+                onSearchClick = onImeClick,
+                isError = isError,
+                onValueChanged = onValueChanged
+            )
+            AnimatedVisibility(visible = isError && errorText?.isNotEmpty() == true) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    Image(
+                        modifier = Modifier
+                            .size(24.dp, 24.dp)
+                            .padding(end = 8.dp),
+                        painter = painterResource(id = R.drawable.ic_alert_text_error),
+                        contentDescription = null
+                    )
+                    Text(
+                        modifier = Modifier.wrapContentWidth(),
+                        text = errorText ?: "",
+                        style = Typography.subtitle1.copy(
+                            color = MultimoneyTheme.colors.textAlertColor
+                        )
+                    )
+                }
+
             }
-        )
+        }
     }
 }
 
-
-
 @Composable
+@Preview
 fun CustomTextField(
     modifier: Modifier = Modifier,
-    focused: MutableState<Boolean>,
-    value: MutableState<String>,
-    iconCurrency: String,
-    onSearchClick: () -> Unit
+    value: MutableState<String> = mutableStateOf(""),
+    iconCurrency: String = "",
+    isTransformationCurrency: MutableState<Boolean> = mutableStateOf(false),
+    focusRequester: FocusRequester = FocusRequester(),
+    isError: Boolean = false,
+    onValueChanged: (String) -> Unit = {},
+    onSearchClick: () -> Unit = {}
 ) {
-    val focusRequester = remember { FocusRequester() }
-    val isTransformationCurrency = remember { mutableStateOf(false) }
-    //focusRequester.requestFocus()
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -105,44 +143,59 @@ fun CustomTextField(
             modifier = modifier
                 .fillMaxWidth()
                 .height(80.dp)
-                .onFocusChanged { focused.value = it.isFocused }
                 .focusRequester(focusRequester),
             value = value.value,
             textStyle = Typography.h4.copy(
                 color = MultimoneyTheme.colors.text,
                 fontWeight = FontWeight.Bold,
-                fontSize = when {
-                    value.value.length <= 10 -> 34.sp
-                    value.value.length <= 17 -> 24.sp
-                    value.value.length <= 26 -> 16.sp
-                    else -> 12.sp
-                }
+                fontSize = getCorrectAmountOfCharacters(
+                    amount = value.value,
+                    isTransformationCurrency = isTransformationCurrency.value
+                )
             ),
-            onValueChange = { value.value = it },
+            onValueChange = { newValue ->
+                if (newValue.length <= LOT_OF_CHARACTERS && newValue
+                        .matches(Regex(DECIMAL_AND_NUMBER_REGEX))
+                ) {
+                    value.value = validateTextFormat(
+                        newValue = newValue,
+                        onValueChanged = onValueChanged,
+                    )
+                }
+            },
             placeholder = {
                 Text(
-                    text = "$0",
+                    text = if (isTransformationCurrency.value.not()) {
+                        CURRENCY_DEFAULT_PLACEHOLDER
+                    } else {
+                        stringResource(
+                            id = R.string.crypto_purchase_flow_amount_asset_placeholder,
+                            iconCurrency
+                        )
+                    },
                     style = Typography.h4.copy(
                         color = MultimoneyTheme.colors.bodyTextColor,
                         fontWeight = FontWeight.Bold
                     )
                 )
             },
-            visualTransformation = if (isTransformationCurrency.value) {
-                VisualTransformation.None
+            visualTransformation = if (isTransformationCurrency.value.not()) {
+                CurrencyDoubleTransformation(currency = CurrencyType.Dollar.symbol, separator = ',')
             } else {
-                VisualTransformation.None
+                CryptoAssetMaskTransformation(asset = iconCurrency)
             },
             shape = RoundedCornerShape(50.dp),
             singleLine = true,
+            isError = isError,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             keyboardActions = KeyboardActions { onSearchClick() },
             colors = TextFieldDefaults.textFieldColors(
                 textColor = MultimoneyTheme.colors.text,
                 cursorColor = MultimoneyTheme.colors.text,
+                errorLabelColor = MultimoneyTheme.colors.textInputErrorLabelColor,
                 disabledTextColor = MultimoneyTheme.colors.fullTransparency,
                 backgroundColor = MultimoneyTheme.colors.backgroundInformativeChip,
-                focusedIndicatorColor = MultimoneyTheme.colors.fullTransparency,
+                focusedIndicatorColor = MultimoneyTheme.colors.bodyTextColor,
                 unfocusedIndicatorColor = MultimoneyTheme.colors.fullTransparency,
                 disabledIndicatorColor = MultimoneyTheme.colors.fullTransparency
             )
@@ -150,14 +203,15 @@ fun CustomTextField(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(end = 28.dp),
+                .padding(end = 24.dp),
             contentAlignment = Alignment.CenterEnd
         ) {
             IconButton(
-                modifier = Modifier
-                    .width(28.dp)
-                    .height(48.dp),
-                onClick = { isTransformationCurrency.value = !isTransformationCurrency.value }
+                modifier = Modifier.wrapContentSize(),
+                onClick = {
+                    isTransformationCurrency.value = !isTransformationCurrency.value
+                    value.value = ""
+                }
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -170,7 +224,7 @@ fun CustomTextField(
                         contentDescription = null
                     )
                     Text(
-                        text = if (isTransformationCurrency.value) "USD" else iconCurrency,
+                        text = if (isTransformationCurrency.value) CurrencyType.Dollar.disbursementValue else iconCurrency,
                         style = Typography.body2.copy(
                             color = MultimoneyTheme.colors.textLink,
                             fontWeight = FontWeight.Bold
@@ -180,5 +234,60 @@ fun CustomTextField(
             }
         }
     }
-
 }
+
+fun validateTextFormat(
+    newValue: String,
+    onValueChanged: (String) -> Unit
+): String {
+    return when {
+        newValue.isEmpty() -> {
+            onValueChanged("")
+            ""
+        }
+        newValue.startsWith(SIMPLE_DOT) -> {
+            onValueChanged("")
+            ""
+        }
+        newValue.count { it.toString() == SIMPLE_DOT } > ONE_LENGTH
+                && newValue.endsWith(SIMPLE_DOT) -> {
+            onValueChanged(newValue.dropLast(ONE_LENGTH))
+            newValue.dropLast(ONE_LENGTH)
+        }
+        else -> {
+            onValueChanged(newValue)
+            newValue
+        }
+    }
+}
+
+fun getCorrectAmountOfCharacters(
+    amount: String,
+    isTransformationCurrency: Boolean
+): TextUnit {
+
+    return if (isTransformationCurrency.not()) {
+        when {
+            amount.length <= FEW_CHARACTERS -> 34.sp
+            amount.length <= MANY_CHARACTERS -> 24.sp
+            amount.length <= TOO_MANY_CHARACTERS -> 16.sp
+            else -> 12.sp
+        }
+    } else {
+        when {
+            amount.length <= FEW_CHARACTERS.minus(ASSET_EQUIVALENT_SUBTRACTION) -> 34.sp
+            amount.length <= MANY_CHARACTERS.minus(ASSET_EQUIVALENT_SUBTRACTION) -> 24.sp
+            amount.length <= TOO_MANY_CHARACTERS.minus(ASSET_EQUIVALENT_SUBTRACTION) -> 16.sp
+            else -> 12.sp
+        }
+    }
+}
+
+const val FEW_CHARACTERS = 10
+const val MANY_CHARACTERS = 14
+const val TOO_MANY_CHARACTERS = 23
+const val LOT_OF_CHARACTERS = 32
+const val ASSET_EQUIVALENT_SUBTRACTION = 2
+const val ONE_LENGTH = 1
+const val SIMPLE_DOT = "."
+const val CURRENCY_DEFAULT_PLACEHOLDER = "$0"

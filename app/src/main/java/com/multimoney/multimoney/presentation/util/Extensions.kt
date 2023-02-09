@@ -212,9 +212,9 @@ fun String.getCurrencySymbolValue(): Int {
 
 fun String?.getCurrencySymbol(): Int {
     return when (this) {
-        Colon.value -> R.string.colon_symbol
-        Dollar.value -> R.string.dollar_symbol
-        Quetzal.value -> R.string.quetzal_symbol
+        Colon.value, Colon.alternativeValue -> R.string.colon_symbol
+        Dollar.value, Dollar.alternativeValue -> R.string.dollar_symbol
+        Quetzal.value, Quetzal.alternativeValue -> R.string.quetzal_symbol
         else -> R.string.empty
     }
 }
@@ -260,12 +260,12 @@ val Int.boolean
 fun getNavParam(param: String, value: Any?) = "?$param=$value"
 
 fun getDeviceManufacture(): String = (
-    if (Build.MODEL.startsWith(Build.MANUFACTURER, ignoreCase = true)) {
-        Build.MODEL
-    } else {
-        "${Build.MANUFACTURER} ${Build.MODEL}"
-    }
-    ).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+        if (Build.MODEL.startsWith(Build.MANUFACTURER, ignoreCase = true)) {
+            Build.MODEL
+        } else {
+            "${Build.MANUFACTURER} ${Build.MODEL}"
+        }
+        ).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
 
 fun Context.getAndroidId(): String {
     return Secure.getString(
@@ -280,6 +280,9 @@ fun Char.isValidAmountCharacter() =
 fun String.filterInvalidAmountInput() = this.filter { it.isValidAmountCharacter() }
 
 fun Double.roundToTwoDecimalPlaces() = String.format(TWO_DECIMALS_FORMAT, this)
+
+fun Double.roundToEightDecimalPlaces() = String.format(EIGHT_DECIMALS_FORMAT, this)
+
 fun Double.roundToTwoDecimalPlacesWithoutNegatives() =
     String.format(TWO_DECIMALS_FORMAT, this).replace("-", "")
 
@@ -302,9 +305,9 @@ fun Double.toCurrencyFormatWithoutNegatives(
     formatter.maximumFractionDigits = amountOfDecimals
     // remove the default dollar symbol from the custom symbol property
     return "$symbol${
-    formatter.format(this)
-        .replace(Dollar.symbol, "")
-        .replace("-", "")
+        formatter.format(this)
+            .replace(Dollar.symbol, "")
+            .replace("-", "")
     }"
 }
 

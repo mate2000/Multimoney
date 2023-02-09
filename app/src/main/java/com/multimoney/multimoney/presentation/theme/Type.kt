@@ -99,3 +99,11 @@ val Typography = Typography(
         letterSpacing = 1.5.sp
     )
 )
+
+val Typography.subHead: TextStyle
+    get() = TextStyle(
+        fontFamily = PoppinsFontFamily,
+        fontWeight = FontWeight.W400,
+        fontSize = 15.sp,
+        letterSpacing = (-0.24).sp
+    )

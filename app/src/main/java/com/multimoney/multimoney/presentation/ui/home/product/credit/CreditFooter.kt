@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.home.product.credit
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,7 +11,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.multimoney.R.string
-import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIState
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditVisa
 import com.multimoney.multimoney.presentation.uielement.CustomButton

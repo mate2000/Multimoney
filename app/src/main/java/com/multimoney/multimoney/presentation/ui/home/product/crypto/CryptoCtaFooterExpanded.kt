@@ -22,6 +22,7 @@ fun CryptoCtaFooterExpanded(
     noBalanceAction: () -> Unit,
     hasBalanceAction: () -> Unit,
     onSendActionClicked: () -> Unit,
+    onSellActionClicked: () -> Unit
 ) {
     val hasSmartBalance by remember { mutableStateOf(verifyIfHasSmartBalance(balance?.balanceAccountSmart)) }
 
@@ -32,6 +33,7 @@ fun CryptoCtaFooterExpanded(
         noBalanceAction = noBalanceAction,
         hasBalanceAction = hasBalanceAction,
         sendAction = onSendActionClicked,
+        sellAction = onSellActionClicked
     )
 }
 

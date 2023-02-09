@@ -88,8 +88,8 @@ fun CustomDropdownTextField(
         selectedItemColor = if (value.isNullOrEmpty().not()) WhiteTransparency90 else WhiteTransparency60
         iconTintColor = if (value.isNullOrEmpty().not()) WhiteTransparency90 else WhiteTransparency60
     } else {
-        selectedItemColor = if (value.isNullOrEmpty().not()) GrayScale200 else GrayScale500
-        iconTintColor = if (value.isNullOrEmpty().not()) GrayScale200 else GrayScale500
+        selectedItemColor = if (value.isNullOrEmpty().not()) WhiteTransparency90 else WhiteTransparency60
+        iconTintColor = if (value.isNullOrEmpty().not()) WhiteTransparency90 else WhiteTransparency60
     }
 
     Column(

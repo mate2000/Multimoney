@@ -114,7 +114,7 @@ fun CustomBoxVisaBackground(
             } else {
                 if (isEnable) {
                     backgroundResource = drawable.bg_visa_card_enabled
-                    textColor = WhiteTransparency90
+                    textColor = WhiteTransparency70
                     startIconColor = Primary400
                     endIconColor = DefaultWhite
                 } else {

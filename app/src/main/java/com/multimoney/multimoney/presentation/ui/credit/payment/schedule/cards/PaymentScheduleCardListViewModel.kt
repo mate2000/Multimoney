@@ -4,7 +4,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCase
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -25,6 +24,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.P
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCardSelected
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -98,24 +98,15 @@ class PaymentScheduleCardListViewModel @Inject constructor(
     private fun onCloseClick() {
         uiState = uiState.copy(
             openDialog = DialogParameters(
-                titleResource =
-                if (idBrand == Brand.Guatemala.id) {
-                    R.string.payment_schedule_card_list_dialog_title_gt
-                } else {
-                    R.string.payment_schedule_card_list_dialog_title_sv
-                },
-                descriptionResource =
-                if (idBrand == Brand.Guatemala.id) {
-                    R.string.payment_schedule_card_list_dialog_description_gt
-                } else {
-                    R.string.payment_schedule_card_list_dialog_description_sv
-                },
+                titleResource = R.string.payment_schedule_card_list_dialog_title,
+                descriptionResource = R.string.payment_schedule_card_list_dialog_description,
                 positiveResource = R.string.accept,
                 negativeResource = R.string.cancel,
                 positiveAction = {
                     navigateBack(
                         popTo = Screen.HomeScreen.route,
-                        isRestart = false
+                        isRestart = false,
+                        homeState = HomeState.COLLAPSED
                     )
                 },
                 isActive = mutableStateOf(true)

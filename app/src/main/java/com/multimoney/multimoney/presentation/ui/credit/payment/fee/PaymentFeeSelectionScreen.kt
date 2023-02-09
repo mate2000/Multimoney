@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
+import androidx.compose.ui.unit.sp
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.payment.fee.PaymentFeeSelectionViewModel.UIEvent.OnNavigateBack
@@ -56,7 +57,8 @@ fun PaymentFeeSelectionContent(
     ) {
         TopNavBar(
             onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
-            onRightButtonClick = { viewModel.onUIEvent(OnNavigateBack) }
+            onRightButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
+            isLeftButtonVisible = false,
         )
         Column(
             modifier = Modifier
@@ -65,7 +67,7 @@ fun PaymentFeeSelectionContent(
         ) {
             Text(
                 stringResource(id = R.string.payment_fee_title),
-                style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+                style = Typography.h6.copy(fontWeight = FontWeight.SemiBold, fontSize = 22.sp),
                 color = MultimoneyTheme.colors.labelText
             )
 

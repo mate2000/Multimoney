@@ -7,7 +7,8 @@ import kotlinx.parcelize.Parcelize
 data class AccountSmartForBuyCrypto(
     val totalBalance: Double?,
     val currencyCode: String?,
-    val accountNumber: String?,
-    val ibanAccountNumber: String?,
-    val idCurrencyAccount: Int?
+    val idCurrencyAccount: Int?,
+    val accountToken: String = "",
+    val accountNumber: String,
+    val ibanAccountNumber: String
 ) : Parcelable

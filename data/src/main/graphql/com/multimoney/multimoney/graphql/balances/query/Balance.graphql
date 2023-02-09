@@ -50,6 +50,7 @@ query Balance(
         plazo
         aplica_Debito_Aut
         debito_Aut_Activo
+        expired_Debito_Aut_Card
     }
     balanceAccountSmart(
         checkAccountInput:{
@@ -111,6 +112,7 @@ query Balance(
             percentageInvestedCurrency
             priceOfTheDay
             url_image
+            crypto_network
         }
     }
     balanceCardInformation(

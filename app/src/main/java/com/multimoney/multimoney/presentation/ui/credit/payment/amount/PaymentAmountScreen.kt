@@ -113,9 +113,9 @@ fun PaymentAmountContent(
             ) {
                 Column {
                     Text(
-                        modifier = Modifier.padding(top = 42.dp),
+                        modifier = Modifier.padding(top = 24.dp),
                         text = stringResource(id = R.string.payment_amount_title),
-                        style = Typography.h5.copy(
+                        style = Typography.h6.copy(
                             fontWeight = FontWeight.SemiBold,
                             color = MultimoneyTheme.colors.labelText
                         ),

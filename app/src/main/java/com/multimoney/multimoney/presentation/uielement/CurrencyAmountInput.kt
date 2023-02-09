@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -97,7 +98,8 @@ fun CurrencyAmountInput(
     enabled: Boolean = true,
     onValueChange: (newText: String) -> Unit = {},
     customTransformation: VisualTransformation? = null,
-    onDebounceValidation: (newText: String) -> Unit = {}
+    onDebounceValidation: (newText: String) -> Unit = {},
+    textStyle: TextStyle = Typography.h5.copy(textAlign = TextAlign.Center, fontWeight = FontWeight.W700)
 ) {
     val context = LocalContext.current
     val activity = context.findActivity()
@@ -149,22 +151,22 @@ fun CurrencyAmountInput(
         }
     } else {
         backgroundColor = WhiteTransparency10
-        placeholderColor = GrayScale500
-        unfocusedIndicatorColor = GrayScale400
-        errorIndicatorColor = SemanticNegative500
+        placeholderColor = WhiteTransparency60
+        unfocusedIndicatorColor = DefaultBlack
+        errorIndicatorColor = SemanticNegative400
         when {
             isError -> {
-                focusedIndicatorColor = SemanticNegative500
-                textColor = GrayScale800
+                focusedIndicatorColor = SemanticNegative400
+                textColor = WhiteTransparency90
             }
             enabled -> {
-                focusedIndicatorColor = Primary500
-                textColor = GrayScale800
+                focusedIndicatorColor = WhiteTransparency60
+                textColor = WhiteTransparency90
             }
             else -> {
-                focusedIndicatorColor = GrayScale400
-                backgroundColor = GrayScale300
-                textColor = GrayScale500
+                focusedIndicatorColor = DefaultBlack
+                backgroundColor = GrayScale500
+                textColor = WhiteTransparency30
             }
         }
     }
@@ -200,7 +202,7 @@ fun CurrencyAmountInput(
                     modifier = Modifier.fillMaxWidth(),
                     text = placeHolder,
                     color = placeholderColor,
-                    style = Typography.h4.copy(textAlign = TextAlign.Center, fontWeight = FontWeight.W600)
+                    style = textStyle
                 )
             },
             isError = isError || emptyError,
@@ -214,10 +216,7 @@ fun CurrencyAmountInput(
             ),
             enabled = enabled,
             visualTransformation = customTransformation ?: VisualTransformation.None,
-            textStyle = Typography.h4.copy(
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.W600
-            )
+            textStyle = textStyle
         )
 
         // This is required to execute the debounce

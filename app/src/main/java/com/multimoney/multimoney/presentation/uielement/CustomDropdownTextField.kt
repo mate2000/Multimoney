@@ -34,9 +34,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
+import com.multimoney.multimoney.presentation.theme.GrayScale200
 import com.multimoney.multimoney.presentation.theme.GrayScale500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 import com.multimoney.multimoney.presentation.util.gesture.detectTapAndPressUnconsumed
 
 /**
@@ -83,11 +85,11 @@ fun CustomDropdownTextField(
     val selectedItemColor: Color
 
     if (isSystemInDarkTheme()) {
-        selectedItemColor = WhiteTransparency60
-        iconTintColor = WhiteTransparency60
+        selectedItemColor = if (value.isNullOrEmpty().not()) WhiteTransparency90 else WhiteTransparency60
+        iconTintColor = if (value.isNullOrEmpty().not()) WhiteTransparency90 else WhiteTransparency60
     } else {
-        selectedItemColor = GrayScale500
-        iconTintColor = GrayScale500
+        selectedItemColor = if (value.isNullOrEmpty().not()) WhiteTransparency90 else WhiteTransparency60
+        iconTintColor = if (value.isNullOrEmpty().not()) WhiteTransparency90 else WhiteTransparency60
     }
 
     Column(

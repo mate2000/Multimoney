@@ -24,7 +24,7 @@ fun CreditFooter(
     onNavigateToVisaActivateScreen: () -> Unit,
     onCreateMultimoneyVisa: () -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.padding(top = 16.dp).fillMaxSize()) {
         if (uiState.canExpandCredit) {
             CustomButton(
                 onClick = { onNavigateToDisbursement() },

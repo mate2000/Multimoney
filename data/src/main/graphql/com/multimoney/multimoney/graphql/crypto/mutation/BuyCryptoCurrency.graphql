@@ -1,0 +1,40 @@
+mutation BuyCryptoCurrency(
+    $pkUser: Int!,
+    $indentification: String!,
+    $market: String!,
+    $orderAmount: Decimal!,
+    $comissionAmount: Decimal!,
+    $taxAmount: Decimal!,
+    $accountToken: Long!,
+    $exchangeRate: Decimal!,
+    $idBrand: Int!,
+    $user: String!
+){
+    buyOrder(
+        buyOrderInput: {
+            pkUser: $pkUser,
+            identification: $indentification,
+            market: $market,
+            orderAmount: $orderAmount,
+            commissionAmount: $comissionAmount,
+            taxAmount: $taxAmount,
+            accountToken: $accountToken,
+            exchangeRate: $exchangeRate,
+            idBrand: $idBrand,
+            user: $user
+        }
+    ) {
+        result{
+            sysdeTransactionNumber
+            paxosSendTransferId
+            paxosReceivedTransferId
+            paxosIdOrder
+            orderComplete
+            filledAmount
+            averagePrice
+            status
+            taxAmount
+            commissionAmount
+        }
+    }
+}

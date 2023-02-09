@@ -1,5 +1,7 @@
 package com.multimoney.multimoney.presentation.navigation.navgraph
 
+import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -11,14 +13,18 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.VISA_ROUTE
-import com.multimoney.multimoney.presentation.navigation.navtype.payment.BalanceCardInformationNavType
+import com.multimoney.multimoney.presentation.navigation.navtype.home.BalanceCardInformationNavType
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.visa.verification.VisaVerifiedScreen
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardScreen
 import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceScreen
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingScreen
 import com.multimoney.multimoney.presentation.ui.visa.preferences.VisaPreferencesScreen
+import com.multimoney.multimoney.presentation.ui.visadirect.verifydeposit.VisaVerifyDepositScreen
 
 const val BALANCE_CARD_INFORMATION = "balance_card_information"
 const val AVAILABLE_BALANCE_LABEL = "available_balance_label"
+const val ID_CARD = "id_card"
 
 fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
     navigation(
@@ -83,39 +89,95 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
                 }
             )
         }
-    }
-    composable(
-        route = Screen.VisaTokenizationWaitingScreen.route,
-        arguments = listOf(
-            navArgument(ID_BRAND) { type = NavType.IntType },
-            navArgument(PK_USER) { type = NavType.LongType },
-            navArgument(BALANCE_CARD_INFORMATION) { type = BalanceCardInformationNavType() }
-        )
-    ) {
-        VisaTokenizationWaitingScreen(
-            onPopBackStack = {
-                navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
-                navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
-                navController.popBackStack(
-                    route = it.popTo,
-                    inclusive = false,
-                    saveState = false
-                )
-            }
-        )
-    }
-    composable(
-        route = Screen.VisaPreferencesScreen.route
-    ) {
-        VisaPreferencesScreen(
-            onNavigate = {
-                navController.navigate(it.route)
-            },
-            onPopAndNavigate = {
-                navController.navigate(it.route) {
-                    popUpTo(it.popTo) { inclusive = true }
+        composable(
+            route = Screen.VisaTokenizationWaitingScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(PK_USER) { type = NavType.LongType },
+                navArgument(BALANCE_CARD_INFORMATION) { type = BalanceCardInformationNavType() }
+            )
+        ) {
+            VisaTokenizationWaitingScreen(
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
                 }
+            )
+        }
+        composable(
+            route = Screen.VisaPreferencesScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(PK_USER) { type = NavType.LongType },
+                navArgument(BALANCE_CARD_INFORMATION) { type = BalanceCardInformationNavType() },
+                navArgument(ID_CLIENT) { type = NavType.IntType },
+                navArgument(ID_LOAN_CLIENT) { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val parentEntry = remember(backStackEntry) {
+                navController.getBackStackEntry(Screen.HomeScreen.route)
             }
-        )
+            val viewModel = hiltViewModel<HomeViewModel>(parentEntry)
+            VisaPreferencesScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                },
+                sharedViewModel = viewModel
+            )
+        }
+        composable(
+            route = Screen.VisaVerifyDepositScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) { type = NavType.IntType }
+            )
+        ) {
+            VisaVerifyDepositScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
+        }
+        composable(
+            route = Screen.VisaVerifiedScreen.route,
+            arguments = listOf()
+        ) {
+            VisaVerifiedScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
+        }
     }
 }

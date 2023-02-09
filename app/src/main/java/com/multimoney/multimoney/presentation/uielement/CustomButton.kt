@@ -28,12 +28,10 @@ import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.DefaultBlack
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
-import com.multimoney.multimoney.presentation.theme.GrayScale200
 import com.multimoney.multimoney.presentation.theme.GrayScale400
 import com.multimoney.multimoney.presentation.theme.GrayScale500
 import com.multimoney.multimoney.presentation.theme.GrayScale700
 import com.multimoney.multimoney.presentation.theme.GrayScale800
-import com.multimoney.multimoney.presentation.theme.Primary200
 import com.multimoney.multimoney.presentation.theme.Primary400
 import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.SemanticInformative400
@@ -66,7 +64,7 @@ fun CustomButton(
     elevation: ButtonElevation = ButtonDefaults.elevation(),
     enableArrowIcon: Boolean = false,
     trailingIcon: Int? = null,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
 ) {
     // Handle pressed state
     val interactionSource = remember { MutableInteractionSource() }
@@ -90,12 +88,12 @@ fun CustomButton(
                         Primary400
                     },
                     disabledBackgroundColor = WhiteTransparency20,
-                    disabledContentColor = GrayScale500
+                    disabledContentColor = GrayScale500,
                 )
                 textColor = if (enable) {
                     GrayScale800
                 } else {
-                    GrayScale500
+                    GrayScale400
                 }
                 arrowIconTint = if (enable) {
                     GrayScale800
@@ -105,17 +103,17 @@ fun CustomButton(
             } else {
                 buttonColor = ButtonDefaults.buttonColors(
                     backgroundColor = if (isPressed) {
-                        Primary400
-                    } else {
                         Primary500
+                    } else {
+                        Primary400
                     },
                     disabledBackgroundColor = WhiteTransparency20,
-                    disabledContentColor = GrayScale500
+                    disabledContentColor = GrayScale500,
                 )
                 textColor = if (enable) {
                     GrayScale800
                 } else {
-                    GrayScale500
+                    GrayScale400
                 }
                 arrowIconTint = if (enable) {
                     GrayScale800
@@ -133,7 +131,7 @@ fun CustomButton(
                         DefaultBlack
                     },
                     disabledBackgroundColor = DefaultBlack,
-                    disabledContentColor = GrayScale400
+                    disabledContentColor = GrayScale400,
                 )
                 textColor = DefaultWhite
                 if (enable) {
@@ -146,17 +144,17 @@ fun CustomButton(
             } else {
                 buttonColor = ButtonDefaults.buttonColors(
                     backgroundColor = if (isPressed) {
-                        Primary400
+                        WhiteTransparency10
                     } else {
-                        DefaultWhite
+                        DefaultBlack
                     },
-                    disabledBackgroundColor = DefaultWhite,
-                    disabledContentColor = GrayScale400
+                    disabledBackgroundColor = DefaultBlack,
+                    disabledContentColor = GrayScale400,
                 )
-                textColor = Primary500
+                textColor = DefaultWhite
                 if (enable) {
                     borderStroke = BorderStroke(1.dp, Primary400)
-                    arrowIconTint = Primary500
+                    arrowIconTint = DefaultWhite
                 } else {
                     borderStroke = BorderStroke(1.dp, GrayScale400)
                     arrowIconTint = GrayScale400
@@ -172,7 +170,7 @@ fun CustomButton(
                         Transparent
                     },
                     disabledBackgroundColor = Transparent,
-                    disabledContentColor = GrayScale400
+                    disabledContentColor = GrayScale400,
                 )
                 textColor = if (enable) {
                     Primary400
@@ -187,16 +185,20 @@ fun CustomButton(
             } else {
                 buttonColor = ButtonDefaults.buttonColors(
                     backgroundColor = if (isPressed) {
-                        Primary200
+                        WhiteTransparency12
                     } else {
-                        DefaultWhite
+                        Transparent
                     },
-                    disabledBackgroundColor = DefaultWhite,
-                    disabledContentColor = GrayScale400
+                    disabledBackgroundColor = Transparent,
+                    disabledContentColor = GrayScale400,
                 )
-                textColor = Primary500
+                textColor = if (enable) {
+                    Primary400
+                } else {
+                    GrayScale400
+                }
                 arrowIconTint = if (enable) {
-                    Primary500
+                    Primary400
                 } else {
                     GrayScale400
                 }
@@ -212,7 +214,7 @@ fun CustomButton(
                         Transparent
                     },
                     disabledBackgroundColor = Transparent,
-                    disabledContentColor = GrayScale400
+                    disabledContentColor = GrayScale400,
                 )
                 textColor = Primary400
                 arrowIconTint = if (enable) {
@@ -221,18 +223,19 @@ fun CustomButton(
                     GrayScale400
                 }
             } else {
+                underLined = true
                 buttonColor = ButtonDefaults.buttonColors(
                     backgroundColor = if (isPressed) {
-                        Primary200
+                        WhiteTransparency12
                     } else {
-                        DefaultWhite
+                        Transparent
                     },
-                    disabledBackgroundColor = DefaultWhite,
-                    disabledContentColor = GrayScale400
+                    disabledBackgroundColor = Transparent,
+                    disabledContentColor = GrayScale400,
                 )
-                textColor = Primary500
+                textColor = Primary400
                 arrowIconTint = if (enable) {
-                    Primary500
+                    DefaultWhite
                 } else {
                     GrayScale400
                 }
@@ -247,7 +250,7 @@ fun CustomButton(
                         GrayScale700
                     },
                     disabledBackgroundColor = GrayScale700,
-                    disabledContentColor = GrayScale700
+                    disabledContentColor = GrayScale700,
                 )
                 textColor = DefaultWhite
                 arrowIconTint = if (enable) {
@@ -260,16 +263,16 @@ fun CustomButton(
                     backgroundColor = if (isPressed) {
                         WhiteTransparency12
                     } else {
-                        DefaultWhite
+                        GrayScale700
                     },
-                    disabledBackgroundColor = DefaultWhite,
-                    disabledContentColor = GrayScale400
+                    disabledBackgroundColor = GrayScale700,
+                    disabledContentColor = GrayScale700,
                 )
-                textColor = DefaultBlack
+                textColor = DefaultWhite
                 arrowIconTint = if (enable) {
-                    GrayScale700
+                    DefaultWhite
                 } else {
-                    GrayScale400
+                    GrayScale700
                 }
             }
         }
@@ -282,7 +285,7 @@ fun CustomButton(
                         GrayScale700
                     },
                     disabledBackgroundColor = Transparent,
-                    disabledContentColor = GrayScale700
+                    disabledContentColor = GrayScale700,
                 )
                 textColor = Primary400
                 arrowIconTint = if (enable) {
@@ -293,16 +296,16 @@ fun CustomButton(
             } else {
                 buttonColor = ButtonDefaults.buttonColors(
                     backgroundColor = if (isPressed) {
-                        Primary200
+                        WhiteTransparency12
                     } else {
-                        DefaultWhite
+                        GrayScale700
                     },
-                    disabledBackgroundColor = DefaultWhite,
-                    disabledContentColor = GrayScale400
+                    disabledBackgroundColor = Transparent,
+                    disabledContentColor = GrayScale700,
                 )
-                textColor = Primary500
+                textColor = Primary400
                 arrowIconTint = if (enable) {
-                    Primary500
+                    DefaultWhite
                 } else {
                     GrayScale400
                 }
@@ -317,7 +320,7 @@ fun CustomButton(
                         Transparent
                     },
                     disabledBackgroundColor = Transparent,
-                    disabledContentColor = GrayScale400
+                    disabledContentColor = GrayScale400,
                 )
                 textColor = SemanticInformative400
                 arrowIconTint = if (enable) {
@@ -328,53 +331,18 @@ fun CustomButton(
             } else {
                 buttonColor = ButtonDefaults.buttonColors(
                     backgroundColor = if (isPressed) {
-                        Primary200
-                    } else {
-                        DefaultWhite
-                    },
-                    disabledBackgroundColor = DefaultWhite,
-                    disabledContentColor = GrayScale400
-                )
-                textColor = Primary500
-                arrowIconTint = if (enable) {
-                    Primary500
-                } else {
-                    GrayScale400
-                }
-            }
-        }
-        else -> {
-            if (isSystemInDarkTheme()) {
-                buttonColor = ButtonDefaults.buttonColors(
-                    backgroundColor = if (isPressed) {
                         WhiteTransparency12
                     } else {
-                        DefaultBlack
+                        Transparent
                     },
-                    disabledBackgroundColor = DefaultBlack,
-                    disabledContentColor = GrayScale400
+                    disabledBackgroundColor = Transparent,
+                    disabledContentColor = GrayScale400,
                 )
-                textColor = DefaultWhite
+                textColor = SemanticInformative400
                 arrowIconTint = if (enable) {
                     DefaultWhite
                 } else {
                     GrayScale400
-                }
-            } else {
-                buttonColor = ButtonDefaults.buttonColors(
-                    backgroundColor = if (isPressed) {
-                        Primary200
-                    } else {
-                        Primary500
-                    },
-                    disabledBackgroundColor = Primary500,
-                    disabledContentColor = GrayScale200
-                )
-                textColor = DefaultWhite
-                arrowIconTint = if (enable) {
-                    Primary500
-                } else {
-                    GrayScale200
                 }
             }
         }
@@ -389,7 +357,7 @@ fun CustomButton(
             border = borderStroke,
             elevation = elevation,
             enabled = enable,
-            interactionSource = interactionSource
+            interactionSource = interactionSource,
         ) {
             Text(
                 text = text,
@@ -399,7 +367,7 @@ fun CustomButton(
                 } else {
                     Typography.button
                 },
-                color = textColor
+                color = textColor,
             )
             if (enableArrowIcon) {
                 Spacer(Modifier.size(ButtonDefaults.IconSpacing))
@@ -407,7 +375,7 @@ fun CustomButton(
                     painter = painterResource(id = R.drawable.ic_arrow_right),
                     contentDescription = "",
                     modifier = Modifier.size(ButtonDefaults.IconSize),
-                    tint = arrowIconTint
+                    tint = arrowIconTint,
                 )
             } else if (trailingIcon != null) {
                 Spacer(Modifier.size(ButtonDefaults.IconSpacing))
@@ -415,7 +383,7 @@ fun CustomButton(
                     painter = painterResource(id = trailingIcon),
                     contentDescription = "",
                     modifier = Modifier.size(ButtonDefaults.IconSize),
-                    tint = arrowIconTint
+                    tint = arrowIconTint,
                 )
             }
         }
@@ -428,6 +396,6 @@ sealed class CustomButtonType() {
     object PrimaryTertiary : CustomButtonType()
     object PrimaryTertiaryUnderLined : CustomButtonType()
     object PrimaryQuaternary : CustomButtonType()
-    object PrimaryQuaternaryUnderLined: CustomButtonType()
+    object PrimaryQuaternaryUnderLined : CustomButtonType()
     object PrimaryQuinary : CustomButtonType()
 }

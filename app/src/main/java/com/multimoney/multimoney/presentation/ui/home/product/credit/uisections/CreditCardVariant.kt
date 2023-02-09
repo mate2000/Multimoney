@@ -2,13 +2,13 @@ package com.multimoney.multimoney.presentation.ui.home.product.credit.uisections
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,6 +21,7 @@ import androidx.compose.material.ChipDefaults
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,10 +49,13 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnFidoIncomplete
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnfidoReject
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditStartProcessIncomplete
+import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.uielement.CustomRoundedLinearProgress
 import com.multimoney.multimoney.presentation.util.getCardDateFormat
+import com.multimoney.multimoney.presentation.util.getCurrencySymbol
+import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 
 /**
  * Composable to handle the status non-preapproved for GT and SV
@@ -64,8 +68,11 @@ fun CardNonPreApprovedCredit(
     Column(
         modifier = Modifier
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
-            .fillMaxSize()
-            .clickable {
+            .fillMaxWidth()
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
                 action()
             },
         verticalArrangement = Arrangement.SpaceBetween
@@ -91,6 +98,7 @@ fun CardNonPreApprovedCredit(
         }
         Column(
             modifier = Modifier
+                .padding(top = 32.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -128,8 +136,11 @@ fun CardGtSvCreditRejected(
     Column(
         modifier = Modifier
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
-            .fillMaxSize()
-            .clickable {
+            .fillMaxWidth()
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
                 action()
             },
         verticalArrangement = Arrangement.SpaceBetween
@@ -164,6 +175,7 @@ fun CardGtSvCreditRejected(
         }
         Column(
             modifier = Modifier
+                .padding(top = 32.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -193,7 +205,10 @@ fun CardGTWithoutCredit(action: () -> Unit = {}) {
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
             .fillMaxWidth()
             .wrapContentHeight()
-            .clickable {
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
                 action()
             }
     ) {
@@ -245,21 +260,38 @@ fun CreditPreApproved(
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
-            .clickable {
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
                 action()
             }
     ) {
+        CustomInformativeChip(
+            text = stringResource(id = string.home_my_products_title_credit),
+            textStyle = Typography.body2.copy(
+                fontWeight = FontWeight.SemiBold,
+                color = MultimoneyTheme.colors.text
+            ),
+            modifier = Modifier.padding(top = 12.dp),
+            shape = RoundedCornerShape(12.dp),
+            background = if (isSystemInDarkTheme()) {
+                BlackTransparency20
+            } else {
+                WhiteTransparency10
+            }
+        )
         Text(
             text = wording?.textOne?.filter { wording.textOne != notDefinedValue } ?: "",
             modifier = Modifier.padding(top = 20.dp),
-            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.creditNotApprovedText
+            style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.text
         )
         Text(
             text = wording?.textTwo?.filter { wording.textTwo != notDefinedValue } ?: "",
             modifier = Modifier.padding(top = 4.dp),
-            style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.text
+            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.creditNotApprovedText
         )
         CustomImage(
             modifier = Modifier
@@ -320,7 +352,10 @@ fun CardWithCreditInProcess(
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
             .fillMaxWidth()
             .wrapContentHeight()
-            .clickable {
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
                 action.invoke()
             }
     ) {
@@ -435,12 +470,22 @@ fun OngoingCredit(
             color = MultimoneyTheme.colors.text
         )
         if (viewModel.uiState.isCreditAvailable) {
-            Text(
-                text = viewModel.balanceCredit?.getFirstSummary()?.availableBalanceLabel.toString(),
-                modifier = Modifier.padding(bottom = 10.dp),
-                style = Typography.h4.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.text
-            )
+            viewModel.balanceCredit?.getFirstSummary()?.let {
+                BalanceTextView(
+                    modifier = Modifier.padding(bottom = 10.dp),
+                    balanceText = it.availableBalance?.toCurrencyFormat(
+                        stringResource(id = it.currency.getCurrencySymbol())
+                    ) ?: "",
+                    currencyStyle = Typography.h4.copy(
+                        color = MultimoneyTheme.colors.text,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    currencyDecimalStyle = Typography.body2.copy(
+                        color = MultimoneyTheme.colors.text,
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+            }
         } else {
             Spacer(modifier = Modifier.padding(bottom = 30.dp))
         }
@@ -460,91 +505,84 @@ fun OngoingCredit(
                 style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                 color = MultimoneyTheme.colors.text
             )
-            if (viewModel.uiState.isCreditAvailable) {
-                Text(
-                    text = stringResource(
-                        id = R.string.home_product_amount,
-                        viewModel.balanceCredit?.getFirstCredit()?.creditLimitLabel.toString()
-                    ),
-                    modifier = Modifier.padding(top = 4.dp, start = 3.dp),
-                    style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-                    color = MultimoneyTheme.colors.text
-                )
-            }
         }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    top = if (viewModel.uiState.isCreditAvailable) {
-                        0.dp
-                    } else {
-                        40.dp
-                    },
-                    bottom = 14.dp
-                )
-        ) {
-            Column(modifier = Modifier.weight(0.5F)) {
-                Text(
-                    text = stringResource(id = R.string.home_product_fee),
-                    modifier = Modifier.padding(top = 4.dp),
-                    style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-                    color = MultimoneyTheme.colors.text
-                )
-                Text(
-                    text = viewModel.getQuota(viewModel.balanceCredit?.balanceCredit),
-                    modifier = Modifier.padding(top = 4.dp),
-                    style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-                    color = MultimoneyTheme.colors.text
-                )
-            }
-            Column(modifier = Modifier.weight(0.5F)) {
-                Text(
-                    text = stringResource(id = viewModel.isExpiredTitle),
-                    modifier = Modifier.padding(top = 4.dp),
-                    style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-                    color = MultimoneyTheme.colors.text
-                )
-                Chip(
-                    enabled = false,
-                    colors = ChipDefaults.chipColors(
-                        disabledBackgroundColor = MultimoneyTheme.colors.productChipBackground,
-                        disabledContentColor = MultimoneyTheme.colors.text
-                    ),
-                    modifier = Modifier
-                        .height(28.dp)
-                        .padding(top = 2.dp),
-                    leadingIcon = {
-                        Box(
-                            modifier = Modifier
-                                .size(10.dp)
-                                .clip(CircleShape)
-                                .background(
-                                    if ((
-                                        viewModel.balanceCredit?.getFirstSummary()?.daysExpired
-                                            ?: 0
-                                        ) > 0
-                                    ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor
-                                )
-                        )
-                    },
-                    onClick = {
-                        // Empty on purpose
-                    },
-                    content = {
-                        Box(contentAlignment = Alignment.Center) {
-                            Text(
-                                text = getCardDateFormat(viewModel.balanceCredit?.getFirstSummary()?.paymentDateLabel),
-                                style = Typography.body1.copy(
-                                    fontWeight = FontWeight.SemiBold,
-                                    platformStyle = PlatformTextStyle(
-                                        includeFontPadding = false
+        // Check if user has a payment available to show quota information
+        if (viewModel.uiState.paymentAvailable) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        top = if (viewModel.uiState.isCreditAvailable) {
+                            0.dp
+                        } else {
+                            40.dp
+                        },
+                        bottom = 14.dp
+                    )
+            ) {
+                Column {
+                    Text(
+                        text = stringResource(id = R.string.home_product_fee),
+                        modifier = Modifier.padding(top = 4.dp),
+                        style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                        color = MultimoneyTheme.colors.text
+                    )
+                    Text(
+                        text = viewModel.getQuota(viewModel.balanceCredit?.balanceCredit),
+                        modifier = Modifier.padding(top = 4.dp),
+                        style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                        color = MultimoneyTheme.colors.text
+                    )
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                Column {
+                    Text(
+                        text = stringResource(id = viewModel.isExpiredTitle),
+                        modifier = Modifier.padding(top = 4.dp),
+                        style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                        color = MultimoneyTheme.colors.text
+                    )
+                    Chip(
+                        enabled = false,
+                        colors = ChipDefaults.chipColors(
+                            disabledBackgroundColor = MultimoneyTheme.colors.productChipBackground,
+                            disabledContentColor = MultimoneyTheme.colors.text
+                        ),
+                        modifier = Modifier
+                            .height(28.dp)
+                            .padding(top = 2.dp),
+                        leadingIcon = {
+                            Box(
+                                modifier = Modifier
+                                    .size(10.dp)
+                                    .clip(CircleShape)
+                                    .background(
+                                        if ((
+                                            viewModel.balanceCredit?.getFirstSummary()?.daysExpired
+                                                ?: 0
+                                            ) > 0
+                                        ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor
+                                    )
+                            )
+                        },
+                        onClick = {
+                            // Empty on purpose
+                        },
+                        content = {
+                            Box(contentAlignment = Alignment.Center) {
+                                Text(
+                                    text = getCardDateFormat(viewModel.balanceCredit?.getFirstSummary()?.paymentDateLabel),
+                                    style = Typography.body1.copy(
+                                        fontWeight = FontWeight.SemiBold,
+                                        platformStyle = PlatformTextStyle(
+                                            includeFontPadding = false
+                                        )
                                     )
                                 )
-                            )
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
     }

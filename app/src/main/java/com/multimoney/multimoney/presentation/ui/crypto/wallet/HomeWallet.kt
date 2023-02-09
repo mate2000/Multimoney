@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.balance.BalanceCryptoAccount
+import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -55,14 +56,16 @@ import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewMod
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewModel.UIEvent.OnSetDateRange
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoActionsSection
+import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.uielement.ShimmerBoxView
+import com.multimoney.multimoney.presentation.uielement.ShimmerItemView
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.calculateGainLoses
-import com.multimoney.multimoney.presentation.util.calculatePercentage
 import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlaces
-import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlacesWithoutNegatives
+import com.multimoney.multimoney.presentation.util.toCurrencyFormat
+import com.multimoney.multimoney.presentation.util.toCurrencyFormatWithoutNegatives
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -152,9 +155,13 @@ fun HomeWallet(
                     hasSmartBalance = true,
                     enableCryptoActions = true,
                     enableSendAndGive = enableSendAndGive,
-                    hasBalanceAction = { /*todo go to buy crypto flow*/ },
-                    sellAction = { /*todo go to sell crypto flow*/ },
-                    sendAction = { /*todo go to send crypto flow*/ },
+                    hasBalanceAction = {
+                        walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnNavigateToBuyCrypto)
+                    },
+                    sellAction = {
+                        walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnNavigateToSellCrypto)
+                    },
+                    sendAction = { walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnNavigateToSendCrypto) },
                     giveAction = { /*todo go to receive crypto flow*/ }
                 )
             }
@@ -181,18 +188,13 @@ fun HomeWalletContent(
 ) {
 
     val globalCryptoBalance = walletViewModel.uiState.globalCryptoBalance?.toDouble() ?: 0.0
+    val balanceContainsLossesSymbol =
+        walletViewModel.uiState.balanceCryptoAccount?.investedBalance?.contains(stringResource(id = R.string.crypto_losses_symbol))
+    val isInGainOrLoss = balanceContainsLossesSymbol != true
+    val graphicColor =
+        if (balanceContainsLossesSymbol == true) MultimoneyTheme.colors.cryptoLossesColor
+        else MultimoneyTheme.colors.cryptoGainsColor
 
-    val gainsOrLosses = calculateGainLoses(
-        globalCryptoBalance,
-        walletViewModel.uiState.clientCryptoBalanceHistory
-    )
-    val percentage = calculatePercentage(
-        globalCryptoBalance,
-        walletViewModel.uiState.clientCryptoBalanceHistory
-    )
-    val isInGainOrLoss = gainsOrLosses >= 0
-    val graphicColor = if (isInGainOrLoss)
-        MultimoneyTheme.colors.cryptoWalletGainsColor else MultimoneyTheme.colors.cryptoLossesColor
     var selectedDateRange by remember { mutableStateOf(FilterDateByDays.YESTERDAY.time) }
 
     Column(
@@ -210,9 +212,12 @@ fun HomeWalletContent(
                 BalanceSection(
                     globalCryptoBalance = globalCryptoBalance,
                     isInGainOrLoss = isInGainOrLoss,
-                    gainsOrLosses = gainsOrLosses,
-                    percentage = percentage,
+                    gainsOrLosses = walletViewModel.uiState.balanceCryptoAccount?.investedBalance?.toDouble()
+                        ?: 0.0,
+                    percentage = walletViewModel.uiState.balanceCryptoAccount?.percentageInvested?.toDouble()
+                        ?: 0.0,
                     graphicColor = graphicColor,
+                    areCoinsLoading = walletViewModel.uiState.areCoinsLoading
                 )
                 WalletCryptoGraphic(
                     clientCryptoBalanceHistory = walletViewModel.uiState.clientCryptoBalanceHistory,
@@ -234,6 +239,13 @@ fun HomeWalletContent(
                 walletViewModel.uiState.balanceCryptoAccount,
                 isFocused = isFocused,
                 searchQuery = searchQuery,
+                onItemClick = {
+                    walletViewModel.onUIEvent(
+                        HomeWalletViewModel.UIEvent.OnNavigateToCryptoDetailScreen(
+                            it
+                        )
+                    )
+                }
             )
         }
     }
@@ -263,6 +275,7 @@ fun BalanceSection(
     graphicColor: Color,
     gainsOrLosses: Double,
     percentage: Double,
+    areCoinsLoading: Boolean
 ) {
     val gainsOrLossesSymbol =
         if (isInGainOrLoss) stringResource(R.string.crypto_gains_symbol) else stringResource(R.string.crypto_losses_symbol)
@@ -278,24 +291,35 @@ fun BalanceSection(
             text = stringResource(R.string.crypto_wallet_balance_section_label),
             style = Typography.subtitle1.copy(color = MultimoneyTheme.colors.quickActionLabelColor)
         )
-        Text(
+        Row(
             modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
-            text = stringResource(
-                id = R.string.currency_item_dollar_symbol,
-                globalCryptoBalance.roundToTwoDecimalPlacesWithoutNegatives()
-            ),
-            style = Typography.h4.copy(color = MultimoneyTheme.colors.text)
-        )
-        Text(
-            modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
-            text = stringResource(
-                id = R.string.currency_item_gain_or_losses_description,
-                gainsOrLossesSymbol,
-                gainsOrLosses.roundToTwoDecimalPlacesWithoutNegatives(),
-                percentage.roundToTwoDecimalPlaces()
-            ),
-            style = Typography.body2.copy(color = graphicColor)
-        )
+        ) {
+            BalanceTextView(
+                balanceText = globalCryptoBalance.toCurrencyFormat(),
+                currencyStyle = Typography.h4.copy(
+                    color = MultimoneyTheme.colors.text,
+                    fontWeight = FontWeight.Bold
+                ),
+                currencyDecimalStyle = Typography.body2.copy(
+                    color = MultimoneyTheme.colors.text,
+                    fontWeight = FontWeight.Bold
+                )
+            )
+        }
+        if (areCoinsLoading) {
+            ProfitSkeleton()
+        } else {
+            Text(
+                modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
+                text = stringResource(
+                    id = R.string.currency_item_gain_or_losses_description,
+                    gainsOrLossesSymbol,
+                    gainsOrLosses.toCurrencyFormatWithoutNegatives(),
+                    percentage.roundToTwoDecimalPlaces()
+                ),
+                style = Typography.body2.copy(color = graphicColor)
+            )
+        }
     }
 }
 
@@ -303,11 +327,13 @@ fun BalanceSection(
 fun MyCoinsSection(
     balanceCryptoAccount: BalanceCryptoAccount?,
     isFocused: MutableState<Boolean>,
-    searchQuery: MutableState<String>
+    searchQuery: MutableState<String>,
+    onItemClick: (BalanceCryptoAccountItems) -> Unit = {}
 ) {
 
     val filteredList = if (searchQuery.value.isNotEmpty()) balanceCryptoAccount?.items?.filter {
-        it.asset.contains(searchQuery.value) || it.descriptionCurrency.contains(searchQuery.value)
+        it.asset.contains(searchQuery.value, ignoreCase = true) ||
+                it.descriptionCurrency.contains(searchQuery.value, ignoreCase = true)
     } ?: emptyList() else balanceCryptoAccount?.items ?: emptyList()
 
     Row(
@@ -327,20 +353,22 @@ fun MyCoinsSection(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                TextButton(onClick = { isFocused.value = isFocused.value.not() }) {
-                    Text(
-                        textAlign = TextAlign.End,
-                        text = stringResource(id = R.string.crypto_wallet_show_all_coins),
-                        style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                        color = MultimoneyTheme.colors.textLink
-                    )
-                }
-                IconButton(onClick = { isFocused.value = isFocused.value.not() }) {
-                    Icon(
-                        imageVector = Icons.Filled.Search,
-                        contentDescription = null,
-                        tint = MultimoneyTheme.colors.labelText
-                    )
+                if ((balanceCryptoAccount?.items?.size ?: 0) > HomeWalletViewModel.SHOW_COIN_SEARCH_THRESHOLD) {
+                    TextButton(onClick = { isFocused.value = isFocused.value.not() }) {
+                        Text(
+                            textAlign = TextAlign.End,
+                            text = stringResource(id = R.string.crypto_wallet_show_all_coins),
+                            style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
+                            color = MultimoneyTheme.colors.textLink
+                        )
+                    }
+                    IconButton(onClick = { isFocused.value = isFocused.value.not() }) {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = null,
+                            tint = MultimoneyTheme.colors.labelText
+                        )
+                    }
                 }
             }
         }
@@ -350,7 +378,6 @@ fun MyCoinsSection(
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp, vertical = 16.dp)
     ) {
-
         filteredList.forEach { item ->
             CurrencyItem(
                 imageUrl = item.url_image,
@@ -359,8 +386,22 @@ fun MyCoinsSection(
                 balanceDollars = item.balanceDollars,
                 priceOfTheDay = item.priceOfTheDay,
                 percentageInvestedCurrency = item.percentageInvestedCurrency,
-                available = item.available
+                available = item.available,
+                onClick = {
+                    onItemClick(item)
+                }
             )
         }
+    }
+}
+
+@Composable
+fun ProfitSkeleton() {
+    ShimmerBoxView {
+        ShimmerItemView(
+            modifier = Modifier
+                .size(width = 160.dp, height = 32.dp)
+                .padding(vertical = 4.dp, horizontal = 16.dp)
+        )
     }
 }

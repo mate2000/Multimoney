@@ -10,26 +10,26 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.theme.BlackTransparency10
-import com.multimoney.multimoney.presentation.theme.BlackTransparency70
-import com.multimoney.multimoney.presentation.theme.BlackTransparency80
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.SIGN_UP_INDICATOR_TOTAL_STEPS
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnInitializeText
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnMoveToStep
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationScreen
@@ -41,19 +41,23 @@ import com.multimoney.multimoney.presentation.ui.login.signup.splash.DEFAULT_STE
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.uielement.CustomModalWarningBottomSheet
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.StepProgressBar
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SignUpScreen(
+    isRestart: Boolean = true,
     step: String,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: SignUpViewModel = hiltViewModel()
 ) {
     val focusManager = LocalFocusManager.current
+    val coroutineScope = rememberCoroutineScope()
 
     // Navigation
     LaunchedEffect(true) {
@@ -64,8 +68,6 @@ fun SignUpScreen(
             }
         }
     }
-
-    viewModel.onUIEvent(OnInitializeText(stringResource(id = R.string.sign_up_close_dialog_description)))
 
     Column(
         modifier = Modifier
@@ -93,9 +95,11 @@ fun SignUpScreen(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             GetStepContent(
+                isRestart = isRestart,
+                onNavigate = onNavigate,
                 step = viewModel.uiState.currentStep,
                 viewModel = viewModel,
-                onPopAndNavigate
+                onPopAndNavigate = onPopAndNavigate
             )
             CustomButton(
                 onClick = { viewModel.onUIEvent(OnContinueClick(focusManager)) },
@@ -116,10 +120,32 @@ fun SignUpScreen(
         viewModel.onUIEvent(OnBackClick(focusManager))
     }
 
+    if (viewModel.uiState.currentStep == SignUpStep.Six.id) {
+        CustomModalWarningBottomSheet(
+            titleResource = R.string.password_security_bottom_sheet_general_title,
+            descriptionText = buildAnnotatedString {
+                withStyle(
+                    style = Typography.subtitle1.toSpanStyle().copy(
+                        fontWeight = FontWeight.Bold
+                    )
+                ) {
+                    append(stringResource(id = R.string.password_security_bottom_sheet_general_description))
+                }
+                withStyle(
+                    style = Typography.subtitle1.toSpanStyle()
+                ) {
+                    append(stringResource(id = R.string.password_security_bottom_sheet_signup_description))
+                }
+            },
+            modalBottomSheetState = viewModel.uiState.bottomSheetVisibleState,
+            coroutineScope = coroutineScope
+        )
+    }
+
     if (viewModel.uiState.openDialog.isActive.value) {
         CustomDialog(
             title = stringResource(id = viewModel.uiState.openDialog.titleResource),
-            message = viewModel.uiState.openDialog.description,
+            message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
             positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
             negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
             openDialogCustom = viewModel.uiState.openDialog.isActive,
@@ -130,14 +156,19 @@ fun SignUpScreen(
 
 @Composable
 fun GetStepContent(
+    isRestart: Boolean = true,
     step: Int,
+    onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: SignUpViewModel,
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {}
 ) {
-
     when (step) {
         SignUpStep.One.id -> SignUpEmailScreen(sharedViewModel = viewModel)
-        SignUpStep.Two.id -> SignUpPersonalDataScreen(sharedViewModel = viewModel)
+        SignUpStep.Two.id -> SignUpPersonalDataScreen(
+            isRestart = isRestart,
+            onNavigate = onNavigate,
+            sharedViewModel = viewModel
+        )
         SignUpStep.Three.id -> SignUpPhoneScreen(sharedViewModel = viewModel)
         SignUpStep.Four.id -> SignUpOtpScreen(
             onPopAndNavigate,

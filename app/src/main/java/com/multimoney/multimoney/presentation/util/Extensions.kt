@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.database.Cursor
+import android.icu.text.NumberFormat
 import android.net.Uri
 import android.nfc.cardemulation.CardEmulation
 import android.os.Build
@@ -30,6 +31,7 @@ import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType
 import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.CashPaymentPoint
 import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.TransferBank
 import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.VisaDirect
+import com.multimoney.multimoney.presentation.util.catalog.PhoneCountryCode
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeType
 import com.novopayment.sdk.vts.module.payment.apdu.PaymentService
 import kotlinx.coroutines.delay
@@ -107,19 +109,24 @@ fun Context.checkPermission(
             launcher.launch(permission)
         }
         comesFromRationale.not() && showRationale == true -> showRationaleAction(false)
-        comesFromRationale.not() && showRationale == false && isFirstRequest.not() -> showRationaleAction(true)
+        comesFromRationale.not() && showRationale == false && isFirstRequest.not() -> showRationaleAction(
+            true
+        )
         isFirstRequest && showRationale == false -> launcher.launch(permission)
         else -> launcher.launch(permission)
     }
 }
 
-fun Context.getPhoneNumbers() : List<String> {
+fun Context.getPhoneNumbers(): List<String> {
     val context = this
     val numbers = mutableListOf<String>()
     val contentResolver = context.contentResolver
     val phones: Cursor? = contentResolver.query(
-        ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-        null, null, null
+        ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+        null,
+        null,
+        null,
+        null
     )
     if (phones != null) {
         while (phones.moveToNext()) {
@@ -203,20 +210,20 @@ fun String.getCurrencySymbolValue(): Int {
     }
 }
 
-fun String.getCurrencySymbol(): Int {
+fun String?.getCurrencySymbol(): Int {
     return when (this) {
-        Colon.value -> R.string.colon_symbol
-        Dollar.value -> R.string.dollar_symbol
-        Quetzal.value -> R.string.quetzal_symbol
+        Colon.value, Colon.alternativeValue -> R.string.colon_symbol
+        Dollar.value, Dollar.alternativeValue -> R.string.dollar_symbol
+        Quetzal.value, Quetzal.alternativeValue -> R.string.quetzal_symbol
         else -> R.string.empty
     }
 }
 
 fun String.getCurrencyFromId(): CurrencyType {
     return when (this) {
-        Colon.currency -> Colon
-        Dollar.currency -> Dollar
-        Quetzal.currency -> Quetzal
+        Colon.currency, Colon.id.toString() -> Colon
+        Dollar.currency, Dollar.id.toString() -> Dollar
+        Quetzal.currency, Quetzal.id.toString() -> Quetzal
         else -> All
     }
 }
@@ -253,12 +260,12 @@ val Int.boolean
 fun getNavParam(param: String, value: Any?) = "?$param=$value"
 
 fun getDeviceManufacture(): String = (
-    if (Build.MODEL.startsWith(Build.MANUFACTURER, ignoreCase = true)) {
-        Build.MODEL
-    } else {
-        "${Build.MANUFACTURER} ${Build.MODEL}"
-    }
-    ).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+        if (Build.MODEL.startsWith(Build.MANUFACTURER, ignoreCase = true)) {
+            Build.MODEL
+        } else {
+            "${Build.MANUFACTURER} ${Build.MODEL}"
+        }
+        ).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
 
 fun Context.getAndroidId(): String {
     return Secure.getString(
@@ -272,9 +279,37 @@ fun Char.isValidAmountCharacter() =
 
 fun String.filterInvalidAmountInput() = this.filter { it.isValidAmountCharacter() }
 
-fun Double.roundToTwoDecimalPlaces() = String.format("%.2f", this)
+fun Double.roundToTwoDecimalPlaces() = String.format(TWO_DECIMALS_FORMAT, this)
 
-fun Double.roundToTwoDecimalPlacesWithoutNegatives() = String.format("%.2f", this).replace("-", "")
+fun Double.roundToEightDecimalPlaces() = String.format(EIGHT_DECIMALS_FORMAT, this)
+
+fun Double.roundToTwoDecimalPlacesWithoutNegatives() =
+    String.format(TWO_DECIMALS_FORMAT, this).replace("-", "")
+
+fun Double.toCurrencyFormat(
+    symbol: String = Dollar.symbol,
+    amountOfDecimals: Int = DEFAULT_AMOUNT_OF_DECIMALS
+): String {
+    val formatter = NumberFormat.getCurrencyInstance(Locale.ENGLISH)
+    val regex = Regex(NUMBER_FORMAT_REGEX)
+    formatter.maximumFractionDigits = amountOfDecimals
+    // remove the default dollar symbol from the custom symbol property
+    return "$symbol${regex.replace(formatter.format(this),"")}"
+}
+
+fun Double.toCurrencyFormatWithoutNegatives(
+    symbol: String = Dollar.symbol,
+    amountOfDecimals: Int = DEFAULT_AMOUNT_OF_DECIMALS
+): String {
+    val formatter = NumberFormat.getCurrencyInstance()
+    formatter.maximumFractionDigits = amountOfDecimals
+    // remove the default dollar symbol from the custom symbol property
+    return "$symbol${
+        formatter.format(this)
+            .replace(Dollar.symbol, "")
+            .replace("-", "")
+    }"
+}
 
 fun String.getCardNumberOne() = this.substring(0, 4)
 fun String.getCardNumberTwo() = this.substring(4, 8)
@@ -325,8 +360,59 @@ fun String.addTextStyleToTextPortion(textToStyle: String, style: TextStyle): Ann
     }
 }
 
+fun String?.toTwoChar(): String {
+    return when {
+        isNullOrEmpty() -> {
+            QUESTION_MARK
+        }
+        contains(WHITE_SPACE_SEPARATOR) -> {
+            trim().replace(TWO_CHARACTER_REGEX.toRegex(), "$1$2").uppercase()
+        }
+        length > 1 -> {
+            substring(0, 2)
+        }
+        else -> {
+            substring(0, 1)
+        }
+    }
+}
+
+fun String.isCognitoErrorCode(code: String) = contains(""""$CODE_KEYWORD":"$code"""")
+
+fun CharSequence.replaceNumbersToZero() = replace(Regex(DIGITS_REGEX), ZERO_STRING)
+
+fun getCountryCodeByIdBrand(idBrand: Int): String {
+    return when (idBrand) {
+        Brand.ElSalvador.id -> PhoneCountryCode.EL_SALVADOR.code
+        Brand.CostaRica.id -> PhoneCountryCode.COSTA_RICA.code
+        Brand.Guatemala.id -> PhoneCountryCode.GUATEMALA.code
+        else -> ""
+    }
+}
+
+fun String.capitalizedAllWords(): String =
+    splitByWhiteSpace().joinToString(WHITE_SPACE_SEPARATOR.toString()) { it.capitalized() }
+
+/**
+ * Format a phone number with a  "+Code Number" structure when you have
+ * a Phone Number with a country code and a phone number without a
+ * country code to leave the space in the correct position because
+ * some country codes have different lengths.
+ * @param phoneWithCode The phone number with the country code.
+ * @param phoneWithoutCode The phone number without the country code.
+ */
+fun formatPhoneNumber(phoneWithCode: String?, phoneWithoutCode: String?) =
+    phoneWithCode?.replace(phoneWithoutCode ?: "", " ").plus(phoneWithoutCode)
+
 private const val HEX_FORMAT = "#%02x%02x%02x"
+private const val NUMBER_FORMAT_REGEX = "[^0-9,.\\s]"
 private const val SPECIAL_CHARACTER_REGEX = "[!\"#\$%&'()*+,-./:;\\\\<=>?@^_`{|}~]"
+private const val TWO_CHARACTER_REGEX = "^\\s*([a-zA-Z]).*\\s+([a-zA-Z])\\S+$"
 private const val NUMBER_REGEX = "[0-9]"
 private const val DECIMAL_SEPARATOR = '.'
 private const val WHITE_SPACE_SEPARATOR = ' '
+private const val CODE_KEYWORD = "code"
+private const val DIGITS_REGEX = "\\d"
+private const val ZERO_STRING = "0"
+private const val DEFAULT_AMOUNT_OF_DECIMALS = 2
+private const val QUESTION_MARK = "?"

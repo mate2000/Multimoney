@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
@@ -37,13 +39,12 @@ import kotlinx.coroutines.CoroutineScope
  * @param saveSendTitleResource: Resource of title to be shown indicating save to Smart or send from Smart
  * @param amount: String of amount (Should be formatted)
  * @param exchangedAmount: String of amount exchanged for currency conversion (Should be formatted)
- * @param fromLabel: String indicating label of origin account
  * @param fromTitle: String indicating title of origin account
  * @param fromSubtitle: String indicating subtitle of origin account
  * @param fromIcon: Resource indicating icon of origin account
- * @param toLabel: String indicating label of destination account
  * @param toTitle: String indicating title of destination account
  * @param toSubtitle: String indicating subtitle of destination account
+ * @param toSubtitle2: String indicating second line subtitle of destination account
  * @param toIcon: Resource indicating icon of destination account
  * @param motive: String of motive (null to not include field, empty string will show field empty)
  * @param buttonText: String indicating label text of button
@@ -58,14 +59,15 @@ fun SmartPaymentBottomSheet(
     saveSendTitleResource: Int,
     amount: String,
     exchangedAmount: String? = null,
-    fromLabel: String,
-    fromTitle: String,
-    fromSubtitle: String?,
-    fromIcon: Int,
-    toLabel: String,
-    toTitle: String,
-    toSubtitle: String?,
-    toIcon: Int,
+    fromTitle: String? = null,
+    fromSubtitle: String? = null,
+    fromIcon: Int? = null,
+    titleIcon: Int? = null,
+    toTitle: String? = null,
+    toSubtitle: String? = null,
+    toSubtitle2: String? = null,
+    toIcon: Int? = null,
+    toContactInfo: @Composable (() -> Unit)? = null,
     motive: String? = null,
     buttonText: String,
     buttonAction: () -> Unit
@@ -93,30 +95,30 @@ fun SmartPaymentBottomSheet(
             )
             if (exchangedAmount.isNullOrBlank().not()) {
                 ExchangeTotalLabel(
-                    totalConverted = exchangedAmount ?: ""
+                    totalConverted = exchangedAmount.orEmpty()
                 )
             }
             Text(
                 modifier = Modifier
                     .padding(top = 32.dp)
                     .fillMaxWidth(),
-                text = fromLabel,
+                text = stringResource(R.string.smart_payment_amount_bottom_sheet_from),
                 style = Typography.body2.copy(fontWeight = FontWeight.W600),
                 color = MultimoneyTheme.colors.text,
                 textAlign = TextAlign.Start
             )
-            fromSubtitle?.let {
-                CustomInfoButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(78.dp),
-                    startIcon = fromIcon,
-                    title = fromTitle,
-                    subtitle = it,
-                    endIcon = null,
-                    enable = false
-                )
-            }
+
+            CustomInfoButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                imageModifier = Modifier.size(48.dp),
+                startIcon = fromIcon,
+                title = fromTitle.orEmpty(),
+                subtitle = fromSubtitle.orEmpty(),
+                endIcon = null,
+                enable = false
+            )
 
             Icon(
                 painter = painterResource(R.drawable.ic_down_arrow_from_to),
@@ -126,7 +128,7 @@ fun SmartPaymentBottomSheet(
             )
 
             Text(
-                text = toLabel,
+                text = stringResource(R.string.smart_payment_amount_bottom_sheet_to),
                 style = Typography.body2.copy(fontWeight = FontWeight.W600),
                 color = MultimoneyTheme.colors.text,
                 textAlign = TextAlign.Start,
@@ -134,16 +136,24 @@ fun SmartPaymentBottomSheet(
                     .padding(top = 8.dp)
                     .fillMaxWidth()
             )
-            CustomInfoButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(78.dp),
-                startIcon = toIcon,
-                title = toTitle,
-                subtitle = toSubtitle ?: "",
-                endIcon = null,
-                enable = false
-            )
+
+            if (toContactInfo == null) {
+                CustomInfoButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    startIcon = toIcon,
+                    title = toTitle.orEmpty(),
+                    subtitle = toSubtitle.orEmpty(),
+                    subtitle2 = toSubtitle2.orEmpty(),
+                    titleIcon = titleIcon,
+                    endIcon = null,
+                    enable = false
+                )
+            } else {
+                toContactInfo()
+            }
+
             Spacer(
                 Modifier
                     .fillMaxWidth()
@@ -192,19 +202,17 @@ private fun BottomSheetPreview() {
     SmartPaymentBottomSheet(
         coroutineScope = rememberCoroutineScope(),
         modalBottomSheetState = ModalBottomSheetState(Expanded),
-        saveSendTitleResource = R.string.smart_payment_amount_bottom_sheet_title,
+        saveSendTitleResource = R.string.smart_payment_amount_bottom_sheet_save_title,
         amount = "$500",
         exchangedAmount = "₡320,980",
-        fromLabel = "Desde tu cuenta",
         fromTitle = "Banco de Costa Rica",
         fromSubtitle = "CR••••4893",
         fromIcon = R.drawable.ic_visa_card_item,
-        toLabel = "Hacias",
         toTitle = "Mi Cuenta Smart | $",
         toSubtitle = "Dólares",
         toIcon = R.drawable.ic_bank_account_dollar,
+        titleIcon = R.drawable.ic_star_filled,
         motive = "Cena de ayer",
-        buttonText = "continuar",
-        buttonAction = {}
-    )
+        buttonText = "continuar"
+    ) {}
 }

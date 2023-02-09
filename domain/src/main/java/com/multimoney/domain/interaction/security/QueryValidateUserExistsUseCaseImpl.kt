@@ -7,8 +7,10 @@ import kotlinx.coroutines.flow.Flow
 
 class QueryValidateUserExistsUseCaseImpl(val securityRepository: SecurityRepository) : QueryValidateUserExistsUseCase {
     override suspend fun invoke(
-        email: String
+        email: String,
+        deviceId: String
     ): Flow<MultimoneyResult<UserData?>> = securityRepository.queryValidateUserExists(
-        email
+        email,
+        deviceId
     )
 }

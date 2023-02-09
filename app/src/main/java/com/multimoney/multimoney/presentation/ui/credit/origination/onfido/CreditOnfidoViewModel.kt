@@ -14,11 +14,11 @@ import com.multimoney.domain.interaction.security.MutationOnfidoCheckProcessUseC
 import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.onFailure
-import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.BuildConfig
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.CROSSELING
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
@@ -29,7 +29,8 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUES
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
-import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ORIGIN
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnCallInFidoToken
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnConfigureOnFidoSdk
@@ -50,6 +51,7 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentOrigin
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
+import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.onfido.OnFidoHelper
 import com.onfido.android.sdk.capture.ExitCode
 import com.onfido.android.sdk.capture.Onfido.OnfidoResultListener
@@ -127,7 +129,7 @@ class CreditOnfidoViewModel @Inject constructor(
                 lastNames,
                 identification,
                 BuildConfig.APPLICATION_ID,
-                Brand.CostaRica.id,
+                idBrand ?: 0,
                 user
             ).collectLatest { result ->
                 result.onSuccess {
@@ -153,7 +155,7 @@ class CreditOnfidoViewModel @Inject constructor(
                 lastNames,
                 identification,
                 BuildConfig.APPLICATION_ID,
-                Brand.CostaRica.id,
+                idBrand ?: 0,
                 user
             ).collectLatest { result ->
                 onFidoTokenEvent.emit(result)
@@ -170,12 +172,12 @@ class CreditOnfidoViewModel @Inject constructor(
                 result.data,
                 object : OnfidoResultListener {
                     override fun userCompleted(captures: Captures) {
-                        countDownTimer.resumeTimer()
                         onCallOnfidoCheckProcess(pkUser, identification, idBrand ?: 0, idUserRequest, email)
                         if (idPrint == ID_PRINT_EMPTY) {
+                            uiState = uiState.copy(isCreatingAccountVisible = true)
                             onCallSaveCreditOperation()
                         } else {
-                            navigateToCorrectScreen()
+                            navigateToCorrectScreen(SignDocumentOrigin.OnFidoSecondTime)
                         }
                     }
 
@@ -239,21 +241,18 @@ class CreditOnfidoViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess {
                     idPrint = it.idPrint
-                    navigateToCorrectScreen()
+                    navigateToCorrectScreen(SignDocumentOrigin.OnFidoFirstTime)
                 }
                 result.onFailure {
                     uiState = uiState.copy(
-                        isLoading = false,
                         isAlertResultVisible = true
                     )
-                }.onLoading {
-                    uiState = uiState.copy(isLoading = true)
                 }
             }
         }
     }
 
-    private fun navigateToCorrectScreen() {
+    private fun navigateToCorrectScreen(signDocumentOrigin: SignDocumentOrigin) {
         val signDocumentStep = if (idBrand == Brand.ElSalvador.id || idPrint == ID_PRINT_EMPTY) {
             VALIDATE_IDENTITY.value
         } else {
@@ -263,12 +262,23 @@ class CreditOnfidoViewModel @Inject constructor(
                 GENERATE_DOCUMENT_STEP.value
             }
         }
-        onNavigateToSignDocumentScreen(signDocumentStep)
+        onNavigateToSignDocumentScreen(signDocumentStep, signDocumentOrigin)
     }
 
-    private fun onNavigateToSignDocumentScreen(signDocumentStep: String) {
+    private fun onNavigateToSignDocumentScreen(signDocumentStep: String, signDocumentOrigin: SignDocumentOrigin) {
         popAndNavigateTo(
-            "${Screen.SignDocumentProcessScreen.baseRoute}/$signDocumentStep/${SignDocumentOrigin.OnFido.value}/$idPrint/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName",
+            Screen.SignDocumentProcessScreen.baseRoute
+                .plus(getNavParam(SIGN_DOCUMENT_STEP_ARG, signDocumentStep))
+                .plus(getNavParam(SIGN_DOCUMENT_ORIGIN, signDocumentOrigin.value))
+                .plus(getNavParam(SIGN_DOCUMENT_ID_PRINT, idPrint))
+                .plus(getNavParam(ID_BRAND, idBrand))
+                .plus(getNavParam(PK_USER, pkUser))
+                .plus(getNavParam(IDENTIFICATION, identification))
+                .plus(getNavParam(EMAIL, email))
+                .plus(getNavParam(ID_USER_REQUEST, idUserRequest))
+                .plus(getNavParam(FIRST_NAME, firstName))
+                .plus(getNavParam(LAST_NAME, lastName))
+                .plus(getNavParam(CROSSELING, false)),
             Screen.CreditOnfidoScreen.route
         )
     }
@@ -289,7 +299,7 @@ class CreditOnfidoViewModel @Inject constructor(
     }
 
     private fun onNavigateToHome() {
-        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.UNEXPANDED)
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
     }
 
     fun onUIEvent(event: UIEvent) {
@@ -328,7 +338,8 @@ class CreditOnfidoViewModel @Inject constructor(
         val isAlertVisible: Boolean = false,
         val isContinueEnabled: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
-        var isAlertResultVisible: Boolean = false
+        var isAlertResultVisible: Boolean = false,
+        var isCreatingAccountVisible: Boolean = false
     )
 
     sealed class UIEvent {

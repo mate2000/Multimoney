@@ -19,8 +19,8 @@ fun SmartPaymentOptionsContainer(
         onNavigate = onNavigate,
         topNavBar = {
             TopNavBar(
-                onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
-                isRightButtonVisible = false
+                onRightButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
+                isLeftButtonVisible = false
             )
         }
     )

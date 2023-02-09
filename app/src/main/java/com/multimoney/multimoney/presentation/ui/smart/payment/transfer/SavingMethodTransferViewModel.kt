@@ -7,7 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen.HomeScreen
 import com.multimoney.multimoney.presentation.navigation.Screen.SmartPaymentMethodScreenSV
-import com.multimoney.multimoney.presentation.navigation.navgraph.USER_SMART_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.navgraph.SMART_ACCOUNT_NUMBER
 import com.multimoney.multimoney.presentation.ui.smart.payment.transfer.SavingMethodTransferViewModel.BaseEvent.OnCopyTextToClipboardEvent
 import com.multimoney.multimoney.presentation.ui.smart.payment.transfer.SavingMethodTransferViewModel.UIEvent.OnCopyTextToClipboard
 import com.multimoney.multimoney.presentation.ui.smart.payment.transfer.SavingMethodTransferViewModel.UIEvent.OnNavigateBack
@@ -25,7 +25,7 @@ class SavingMethodTransferViewModel @Inject constructor(
         private set
 
     init {
-        uiState = uiState.copy(accountNumber = savedStateHandle[USER_SMART_ACCOUNT] ?: "")
+        uiState = uiState.copy(accountNumber = savedStateHandle[SMART_ACCOUNT_NUMBER] ?: "")
     }
 
     private fun onCopyTextToClipboard(text: String) {

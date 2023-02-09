@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -26,6 +28,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +36,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
@@ -45,13 +49,15 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.FullDateFilterSection
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.MarketCurrencyDetailsGraphic
+import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnGetCurrencyHistoricalPrices
 import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnGetCurrencyNews
 import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnSetPreviousInfo
 import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnOpenCryptoNew
-import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnFailureWithDialog
+import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnSetPreviousInfo
+import com.multimoney.multimoney.presentation.ui.crypto.purchase.selectaccount.ConfirmationBottomSheet
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoActionsSection
+import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
@@ -61,68 +67,102 @@ import com.multimoney.multimoney.presentation.util.calculateGainLosesMarketDetai
 import com.multimoney.multimoney.presentation.util.calculatePercentageMarketDetails
 import com.multimoney.multimoney.presentation.util.decodeURLFromUTF
 import com.multimoney.multimoney.presentation.util.openIntent
-import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlaces
 import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlacesWithoutNegatives
+import com.multimoney.multimoney.presentation.util.toCurrencyFormat
+import com.multimoney.multimoney.presentation.util.toCurrencyFormatWithoutNegatives
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MarketCurrencyDetailsScreen(
-    marketCurrencyDetailsViewModel: MarketCurrencyDetailsViewModel = hiltViewModel(),
+    viewModel: MarketCurrencyDetailsViewModel = hiltViewModel(),
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
 ) {
-
+    val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
-        marketCurrencyDetailsViewModel.executeNavigation(
+        viewModel.executeNavigation(
             onPopBackStack = onPopBackStack,
             onNavigate = onNavigate,
             onPopAndNavigate = onPopAndNavigate
         )
 
-        marketCurrencyDetailsViewModel.onUIEvent(OnSetPreviousInfo)
-        marketCurrencyDetailsViewModel.onUIEvent(OnGetCurrencyHistoricalPrices())
-        marketCurrencyDetailsViewModel.onUIEvent(OnGetCurrencyNews)
+        viewModel.onUIEvent(OnSetPreviousInfo)
+        viewModel.onUIEvent(OnGetCurrencyHistoricalPrices())
+        viewModel.onUIEvent(OnGetCurrencyNews)
     }
 
     BackHandler {
-        marketCurrencyDetailsViewModel.onUIEvent(OnNavigateBack)
+        viewModel.onUIEvent(OnNavigateBack)
     }
     MarketCurrencyDetailsScreenContent(
-        currencyHistoricalPrices = marketCurrencyDetailsViewModel.uiState.getHistoricalCurrencyPrices,
-        currencyNews = marketCurrencyDetailsViewModel.uiState.currencyNews,
-        idBrand = marketCurrencyDetailsViewModel.uiState.idBrand ?: 0,
-        description = marketCurrencyDetailsViewModel.uiState.description ?: "",
-        currentPrice = marketCurrencyDetailsViewModel.uiState.currentPrice?.toDouble() ?: 0.0,
-        urlImage = marketCurrencyDetailsViewModel.uiState.urlImage ?: "",
+        currencyHistoricalPrices = viewModel.uiState.getHistoricalCurrencyPrices,
+        currencyNews = viewModel.uiState.currencyNews,
+        idBrand = viewModel.uiState.idBrand ?: 0,
+        description = viewModel.uiState.selectedCryptoCoin?.description ?: "",
+        currentPrice = viewModel.uiState.selectedCryptoCoin?.currentPrice ?: 0.0,
+        urlImage = viewModel.uiState.selectedCryptoCoin?.url_image ?: "",
         onDateFilterSelected = { dateFilter ->
-            marketCurrencyDetailsViewModel.onUIEvent(
+            viewModel.onUIEvent(
                 OnGetCurrencyHistoricalPrices(daysToSubtract = dateFilter)
             )
         },
         onOpenCryptoNew = { link ->
-            marketCurrencyDetailsViewModel.onUIEvent(OnOpenCryptoNew(
+            viewModel.onUIEvent(OnOpenCryptoNew(
                 link = link,
                 openCryptoNew = { openCryptoNew ->
                     context.openIntent(openCryptoNew) {
-                        marketCurrencyDetailsViewModel.onUIEvent(OnFailureWithDialog(
-                            isLoading = true,
-                            dialogParameters = marketCurrencyDetailsViewModel.defaultDialogParameters.copy(
-                                isActive = mutableStateOf(true)
+                        viewModel.onUIEvent(
+                            OnFailureWithDialog(
+                                isLoading = true,
+                                dialogParameters = viewModel.defaultDialogParameters.copy(
+                                    isActive = mutableStateOf(true)
+                                )
                             )
-                        ))
+                        )
                     }
                 },
                 onFailureWithDialog = { isLoading, dialogParameters ->
-                    marketCurrencyDetailsViewModel.onUIEvent(OnFailureWithDialog(
-                        isLoading = isLoading,
-                        dialogParameters = dialogParameters
-                    ))
+                    viewModel.onUIEvent(
+                        OnFailureWithDialog(
+                            isLoading = isLoading,
+                            dialogParameters = dialogParameters
+                        )
+                    )
                 }
             ))
         },
-        onBackPressed = { marketCurrencyDetailsViewModel.onUIEvent(OnNavigateBack) },
+
+        onNavigateToBuyCrypto = {
+            if(viewModel.uiState.idBrand == Brand.ElSalvador.id){
+                if (viewModel.uiState.shouldDisplayDisclaimer) {
+                    viewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnShowDisclaimer)
+                } else {
+                    viewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnNavigateToSelectAccount)
+                }
+            }
+            else{
+                viewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnNavigateToSelectAccount)
+            }
+        },
+        onBackPressed = { viewModel.onUIEvent(OnNavigateBack) },
+        onNavigateToSendCrypto = { viewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnNavigateToCryptoSendFlow) },
+        onNavigateToSellCrypto = { viewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnNavigateToSellCrypto) },
+    )
+    ConfirmationBottomSheet(
+        modalBottomSheetState = viewModel.uiState.bottomSheetVisibleState,
+        coroutineScope = coroutineScope,
+        onCheckedChange = {
+            viewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnDisclaimerChecked(it))
+        },
+        onContinueClicked = {
+            viewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnUpdateShouldShowDisclaimer(viewModel.uiState.dontShowAgainChecked))
+            viewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnHideDisclaimer)
+            viewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnNavigateToSelectAccount)
+        },
+        checked = viewModel.uiState.dontShowAgainChecked
     )
 }
 
@@ -136,7 +176,10 @@ fun MarketCurrencyDetailsScreenContent(
     urlImage: String,
     onDateFilterSelected: (Long) -> Unit = {},
     onOpenCryptoNew: (String) -> Unit = {},
-    onBackPressed: () -> Unit = {}
+    onNavigateToBuyCrypto: () -> Unit = {},
+    onBackPressed: () -> Unit = {},
+    onNavigateToSendCrypto: () -> Unit = {},
+    onNavigateToSellCrypto: () -> Unit = {}
 ) {
     val selected = remember { mutableStateOf(true) }
     var selectedDateRange by remember { mutableStateOf(FilterDateByDays.YESTERDAY.time) }
@@ -151,10 +194,10 @@ fun MarketCurrencyDetailsScreenContent(
                 hasSmartBalance = true,
                 enableCryptoActions = true,
                 enableSendAndGive = idBrand == Brand.CostaRica.id,
-                hasBalanceAction = { /* todo: go to buy crypto flow */ },
-                sellAction = { /* todo: go to sell crypto flow */ },
+                hasBalanceAction = { onNavigateToBuyCrypto() },
+                sellAction = { onNavigateToSellCrypto() },
                 giveAction = { /* todo: go to receive crypto flow */ },
-                sendAction = { /* todo: go to send crypto flow */ }
+                sendAction = { onNavigateToSendCrypto() },
             )
         }
     ) { paddingValues ->
@@ -263,12 +306,13 @@ fun BalanceSection(
         verticalArrangement = Arrangement.Center
     ) {
 
-        Text(
-            text = stringResource(
-                id = R.string.currency_item_dollar_symbol,
-                currentPrice.roundToTwoDecimalPlaces()
+        BalanceTextView(
+            balanceText = currentPrice.toCurrencyFormat(),
+            currencyStyle = Typography.h4.copy(
+                color = MultimoneyTheme.colors.text,
+                fontWeight = FontWeight.Bold
             ),
-            style = Typography.h4.copy(
+            currencyDecimalStyle = Typography.body2.copy(
                 color = MultimoneyTheme.colors.text,
                 fontWeight = FontWeight.Bold
             )
@@ -277,7 +321,7 @@ fun BalanceSection(
             text = stringResource(
                 id = R.string.currency_item_gain_or_losses_description,
                 gainOrLoss,
-                amountChangeValue.roundToTwoDecimalPlacesWithoutNegatives(),
+                amountChangeValue.toCurrencyFormatWithoutNegatives(),
                 percentage.roundToTwoDecimalPlacesWithoutNegatives()
             ),
             style = Typography.body2.copy(color = gainOrLossColor)
@@ -296,14 +340,15 @@ fun MarketDetailsButtonsSection(
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(horizontal = 16.dp, vertical = 16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
 
         CustomButton(
             modifier = Modifier
                 .width(164.dp)
-                .wrapContentHeight(),
+                .wrapContentHeight()
+                .padding(horizontal = 8.dp),
             buttonType = if (selected.value) CustomButtonType.PrimaryQuinary else CustomButtonType.PrimaryQuaternary,
             text = stringResource(R.string.market_details_button_history),
             onClick = onHistoryClick
@@ -311,7 +356,8 @@ fun MarketDetailsButtonsSection(
         CustomButton(
             modifier = Modifier
                 .width(164.dp)
-                .wrapContentHeight(),
+                .wrapContentHeight()
+                .padding(horizontal = 8.dp),
             buttonType = if (selected.value.not()) CustomButtonType.PrimaryQuinary else CustomButtonType.PrimaryQuaternary,
             text = stringResource(R.string.market_details_button_news),
             onClick = onNewsClick
@@ -324,17 +370,13 @@ fun NewsSection(
     currencyNews: List<New>,
     onOpenCryptoNew: (String) -> Unit
 ) {
-
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
+        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
+        verticalArrangement = Arrangement.Top,
+        contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
     ) {
-
         items(currencyNews) { new ->
-
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -388,7 +430,8 @@ fun HistorySection(information: String) {
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             text = information,
             style = Typography.body2.copy(color = MultimoneyTheme.colors.bodyTextColor),
-            maxLines = maxLines.value
+            maxLines = maxLines.value,
+            overflow = TextOverflow.Ellipsis
         )
         Row(
             modifier = Modifier

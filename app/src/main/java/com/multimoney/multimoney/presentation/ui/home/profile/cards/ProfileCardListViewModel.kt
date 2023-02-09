@@ -1,32 +1,46 @@
 package com.multimoney.multimoney.presentation.ui.home.profile.cards
 
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.domain.interaction.virtualcard.MutationDeleteCardVDUseCase
 import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCase
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.PROFILE_CARD_LIST_ORIGIN
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnCallQueryGetClientCards
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnCardThreePointsSelected
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnDeleteCard
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnEditCard
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnNavigateBackHome
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnEditCardShowToast
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnDeleteCardShowToast
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnHideToast
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.ProfileCardListOrigin
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @HiltViewModel
+@OptIn(ExperimentalMaterialApi::class)
 class ProfileCardListViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val queryListCardVDUseCase: QueryListCardVDUseCase
+    private val queryListCardVDUseCase: QueryListCardVDUseCase,
+    private val mutationDeleteCardVDUseCase: MutationDeleteCardVDUseCase
 ) : BaseViewModel(true) {
 
     // uiState
@@ -37,14 +51,16 @@ class ProfileCardListViewModel @Inject constructor(
     private var user: String = ""
     private var idBrand: Int = 0
     private var identification: String? = null
+    private var origin: String = ""
 
     init {
         user = savedStateHandle[USER] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
         identification = savedStateHandle[IDENTIFICATION] ?: ""
+        origin = savedStateHandle[PROFILE_CARD_LIST_ORIGIN] ?: ProfileCardListOrigin.Profile.value
     }
 
-    private fun onCallQueryGetClientCardsUseCase() {
+    private fun onCallQueryGetClientCardsUseCase(fromDelete: Boolean) {
         executeUseCase {
             queryListCardVDUseCase.invoke(
                 user = user,
@@ -57,9 +73,13 @@ class ProfileCardListViewModel @Inject constructor(
                         cardVDList = cardsList,
                         isCardListEmpty = cardsList.isNullOrEmpty()
                     )
+                    if (fromDelete) {
+                        onDeleteCardShowToast()
+                    }
                 }.onFailure {
                     uiState = uiState.copy(
                         isLoading = false,
+                        deleteDialogIsVisible = false,
                         openDialog = DialogParameters(
                             description = it.getError() ?: "",
                             isActive = mutableStateOf(true)
@@ -74,14 +94,100 @@ class ProfileCardListViewModel @Inject constructor(
         }
     }
 
+    private fun onCallMutationDeleteCardVD(idCard: Long) =
+        executeUseCase {
+            mutationDeleteCardVDUseCase.invoke(
+                identification = identification.orEmpty(),
+                user = user,
+                idBrand = idBrand,
+                idCard = idCard
+            ).collectLatest { result ->
+                result.onSuccess {
+                    uiState = uiState.copy(isLoading = false)
+                    if (it?.isApproved.toBoolean()) {
+                        onCallQueryGetClientCardsUseCase(fromDelete = true)
+                    } else {
+                        uiState = uiState.copy(
+                            isLoading = false,
+                            deleteDialogIsVisible = false,
+                            openDialog = DialogParameters(
+                                description = it?.messageError?.message ?: "",
+                                isActive = mutableStateOf(true)
+                            )
+                        )
+                    }
+                }.onFailure {
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        deleteDialogIsVisible = false,
+                        openDialog = DialogParameters(
+                            description = it.getError() ?: "",
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                }.onLoading {
+                    uiState = uiState.copy(isLoading = true)
+                }
+            }
+        }
+
     private fun onCardThreePointsSelected(cardSelected: CardVisaDirect?) {
-        // TODO
+        uiState = uiState.copy(
+            cardVDSelected = cardSelected,
+            bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded)
+        )
     }
 
-    private fun onNavigateBack() =
-        navigateBack(popTo = Screen.ProfileScreen.route, isRestart = false)
+    private fun onDeleteCard(card: CardVisaDirect?) {
+        uiState = uiState.copy(
+            deleteDialogIsVisible = true,
+            openDialog = DialogParameters(
+                titleResource = R.string.profile_my_cards_delete_card_dialog_title,
+                descriptionResource = R.string.profile_my_cards_delete_card_dialog_description,
+                positiveResource = R.string.common_remove,
+                negativeResource = R.string.cancel,
+                positiveAction = { onCallMutationDeleteCardVD(card?.idCard?.toLong() ?: 0) },
+                negativeAction = {
+                    uiState = uiState.copy(
+                        bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded)
+                    )
+                },
+                isActive = mutableStateOf(true)
+            )
+        )
+    }
 
-    private fun onNavigateBackHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
+    private fun onEditCard(card: CardVisaDirect?) {
+        navigateTo(
+            route = "${Screen.ProfileMyCardsEditCardScreen.baseRoute}/$identification/$user/$idBrand/${
+                encodeData(
+                    card
+                )
+            }"
+        )
+    }
+
+    private fun onEditCardShowToast() {
+        uiState  = uiState.copy(
+            toastIsVisible = true,
+            toastMessage = R.string.profile_my_cards_edit_card_toast_result_success
+        )
+    }
+
+    private fun onDeleteCardShowToast() {
+        uiState  = uiState.copy(
+            toastIsVisible = true,
+            toastMessage = R.string.profile_my_cards_delete_card_toast_result_success
+        )
+    }
+
+    private fun onNavigateBack() {
+        if (origin == ProfileCardListOrigin.Profile.value) {
+            navigateBack(popTo = Screen.ProfileScreen.route, isRestart = false)
+        } else {
+            navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
+        }
+    }
 
     data class UIState(
         // Interactions
@@ -89,15 +195,26 @@ class ProfileCardListViewModel @Inject constructor(
         val isCardListEmpty: Boolean = true,
         val isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
-        val isVisaAnimationVisible: Boolean = false
+        val isVisaAnimationVisible: Boolean = false,
+        val bottomSheetVisibleState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
+        val cardVDSelected: CardVisaDirect? = null,
+        val toastIsVisible: Boolean = false,
+        val toastMessage: Int = R.string.empty,
+        val deleteDialogIsVisible: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnNavigateBack -> onNavigateBack()
-            is OnNavigateBackHome -> onNavigateBackHome()
-            is OnCallQueryGetClientCards -> onCallQueryGetClientCardsUseCase()
+            is OnCallQueryGetClientCards -> onCallQueryGetClientCardsUseCase(fromDelete = false)
             is OnCardThreePointsSelected -> onCardThreePointsSelected(uiEvent.cardSelected)
+            is OnEditCard -> onEditCard(uiEvent.card)
+            is OnDeleteCard -> onDeleteCard(uiEvent.card)
+            is OnEditCardShowToast -> onEditCardShowToast()
+            is OnDeleteCardShowToast -> onDeleteCardShowToast()
+            is OnHideToast -> uiState = uiState.copy(
+                toastIsVisible = false
+            )
         }
     }
 
@@ -106,6 +223,10 @@ class ProfileCardListViewModel @Inject constructor(
 
         class OnCardThreePointsSelected(val cardSelected: CardVisaDirect?) : UIEvent()
         object OnNavigateBack : UIEvent()
-        object OnNavigateBackHome : UIEvent()
+        object OnEditCardShowToast : UIEvent()
+        object OnDeleteCardShowToast : UIEvent()
+        object OnHideToast: UIEvent()
+        data class OnEditCard(val card: CardVisaDirect?) : UIEvent()
+        data class OnDeleteCard(val card: CardVisaDirect?) : UIEvent()
     }
 }

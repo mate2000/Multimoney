@@ -41,7 +41,6 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.checkPermission
 import com.multimoney.multimoney.presentation.util.getPhoneNumbers
 
-
 @Composable
 fun SmartSelectSendingTypeScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
@@ -161,7 +160,7 @@ fun SendingTypeOptionsContent(
                         SendingTypeOptionsSV(
                             modifier = sendingTypeOptionModifier,
                             onMyFavoritesClick = { viewModel.onUIEvent(OnMyFavoritesSelected) },
-                            onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected) },
+                            onMySmartAccountClick = { permissionFlow() },
                             onOtherBankAccountsClick = {
                                 viewModel.onUIEvent(
                                     OnOtherBankAccountsSelected
@@ -204,7 +203,7 @@ fun SendingTypeOptionsCR(
     onMyContactsClick: () -> Unit,
     onMySmartAccountClick: () -> Unit,
     onIBANAccountsClick: () -> Unit,
-    smartAccountTitleAndIconResource: Pair<Int, Int?>,
+    smartAccountTitleAndIconResource: Pair<Int, Int?>
 ) {
     CustomInfoButton(
         title = stringResource(R.string.payment_select_sending_type_favorites_cr),
@@ -262,7 +261,7 @@ fun SendingTypeOptionsSV(
         title = stringResource(id = R.string.payment_select_sending_type_to_smart_accounts),
         modifier = modifier,
         endIcon = R.drawable.ic_right_chevron,
-        startIcon = R.drawable.ic_sending_dollar,
+        startIcon = R.drawable.ic_sending_contact,
         onEndIconClick = onMySmartAccountClick,
         onClick = onMySmartAccountClick
     )

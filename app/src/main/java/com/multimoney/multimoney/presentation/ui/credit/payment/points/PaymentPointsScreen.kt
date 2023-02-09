@@ -83,7 +83,7 @@ fun PaymentPointsContent(
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {
-            Spacer(modifier = Modifier.height(42.dp))
+            Spacer(modifier = Modifier.height(24.dp))
             Text(
                 text = stringResource(id = R.string.payment_points_title),
                 style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),

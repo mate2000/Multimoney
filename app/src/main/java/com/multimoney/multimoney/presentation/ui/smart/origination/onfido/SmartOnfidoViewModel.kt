@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCase
 import com.multimoney.domain.interaction.security.MutationOnfidoCheckProcessUseCase
@@ -54,11 +53,10 @@ import com.onfido.android.sdk.capture.Onfido.OnfidoResultListener
 import com.onfido.android.sdk.capture.errors.OnfidoException
 import com.onfido.android.sdk.capture.upload.Captures
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.GlobalScope
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class SmartOnfidoViewModel @Inject constructor(
@@ -129,7 +127,7 @@ class SmartOnfidoViewModel @Inject constructor(
                 lastNames,
                 identification,
                 BuildConfig.APPLICATION_ID,
-                Brand.CostaRica.id,
+                idBrand ?: 0,
                 user
             ).collectLatest { result ->
                 result.onSuccess {
@@ -152,7 +150,7 @@ class SmartOnfidoViewModel @Inject constructor(
                 lastNames,
                 identification,
                 BuildConfig.APPLICATION_ID,
-                Brand.CostaRica.id,
+                idBrand ?: 0,
                 user
             ).collectLatest { result ->
                 onFidoTokenEvent.emit(result)
@@ -242,7 +240,7 @@ class SmartOnfidoViewModel @Inject constructor(
 
     private fun onNavigateToSignDocumentScreen(signDocumentStep: String) {
         popAndNavigateTo(
-            route = "${Screen.SmartSignScreen.baseRoute}/$signDocumentStep/$evicertiaUrl/$idPrint/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/${true}/${globalId}/{$user}",
+            route = "${Screen.SmartSignScreen.baseRoute}/$signDocumentStep/$evicertiaUrl/$idPrint/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/${true}/$globalId/{$user}",
             popTo = Screen.HomeScreen.route
         )
     }
@@ -251,7 +249,7 @@ class SmartOnfidoViewModel @Inject constructor(
         navigateBack(
             popTo = Screen.HomeScreen.route,
             isRestart = true,
-            homeState = HomeState.UNEXPANDED
+            homeState = HomeState.COLLAPSED
         )
 
     fun onUIEvent(event: UIEvent) {

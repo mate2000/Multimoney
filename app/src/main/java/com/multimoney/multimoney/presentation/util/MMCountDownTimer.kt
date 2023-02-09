@@ -6,10 +6,10 @@ class MMCountDownTimer {
 
     private var timer: CountDownTimer? = null
     private var milliInFuture: Long? = null
-    private var onCountDownTimerFinish: OnCountDownTimerFinish? = null
+    private var onCountDownTimerFinish: OnCountDownTimerEvents? = null
     private var isTimerStopped = false
 
-    fun subscribe(listener: OnCountDownTimerFinish) {
+    fun subscribe(listener: OnCountDownTimerEvents) {
         onCountDownTimerFinish = listener
     }
 
@@ -19,11 +19,18 @@ class MMCountDownTimer {
         timer = null
 
         timer = object : CountDownTimer(milliInFuture ?: 0, COUNT_DOWN_INTERVAL) {
-            override fun onTick(millisMainUntilFinished: Long) {}
+            override fun onTick(millisMainUntilFinished: Long) {
+                if (milliInFuture != null) {
+                    if (isTimerStopped.not() && millisMainUntilFinished <= FINISHING_INTERVAL) {
+                        onCountDownTimerFinish?.onMaxTimeUsed(millisMainUntilFinished.div(COUNT_DOWN_INTERVAL))
+                    }
+                }
+            }
+
             override fun onFinish() {
                 if (isTimerStopped.not()) {
-                    onCountDownTimerFinish?.onFinished()
                     discardTimer()
+                    onCountDownTimerFinish?.onFinished()
                 }
             }
         }
@@ -56,11 +63,13 @@ class MMCountDownTimer {
         timer?.cancel()
     }
 
-    interface OnCountDownTimerFinish {
+    interface OnCountDownTimerEvents {
         fun onFinished()
+        fun onMaxTimeUsed(millisMainUntilFinished: Long)
     }
 
     companion object {
         private const val COUNT_DOWN_INTERVAL = 1000L
+        private const val FINISHING_INTERVAL = 15000L
     }
 }

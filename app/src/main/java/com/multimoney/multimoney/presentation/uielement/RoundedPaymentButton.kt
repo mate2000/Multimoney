@@ -67,8 +67,8 @@ fun RoundedPaymentButton(
             GradientGrey2
         )
         selectedColors = listOf(
-            MultimoneyTheme.colors.primary,
-            MultimoneyTheme.colors.primary
+            MultimoneyTheme.colors.textLink,
+            MultimoneyTheme.colors.textLink
         )
         backgroundColor = ComplementaryBlack
         mainTextColor = MultimoneyTheme.colors.textLink
@@ -79,8 +79,8 @@ fun RoundedPaymentButton(
             GradientGrey2
         )
         selectedColors = listOf(
-            MultimoneyTheme.colors.primary,
-            MultimoneyTheme.colors.primary
+            MultimoneyTheme.colors.textLink,
+            MultimoneyTheme.colors.textLink
         )
         backgroundColor = ComplementaryBlack
         mainTextColor = MultimoneyTheme.colors.textLink
@@ -132,7 +132,7 @@ fun RoundedPaymentButton(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp, vertical = 20.dp),
+                    .padding(horizontal = 16.dp, vertical = 16.dp),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = textAlign
             ) {

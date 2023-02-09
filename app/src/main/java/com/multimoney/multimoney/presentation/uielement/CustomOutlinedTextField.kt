@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
@@ -90,6 +89,7 @@ import kotlinx.coroutines.launch
  * @param value: Variable to store the input value.
  * @param leadingIcon: Landing icon to display, by default there is no icon.
  * @param trailingIcon: Trailing icon to display, by default there is no icon.
+ * @param trailingIconColor: Trailing icon color, by default it is white.
  * @param trailingIconAction: Action to perform when the trailing icon is clicked.
  * @param trailingIconActionEnabled: Enable or disable the trailing icon action.
  * @param placeHolder: Hint for the textField.
@@ -125,8 +125,10 @@ fun CustomOutlinedTextField(
     leadingIcon: Int? = null,
     leadingIconComposable: @Composable ((Color) -> Unit)? = null,
     trailingIcon: Int? = null,
+    trailingIconColor: Color = WhiteTransparency60,
     trailingIconAction: () -> Unit = {},
     trailingIconActionEnabled: Boolean = false,
+    trailingIconEndPadding: Dp = 0.dp,
     placeHolder: String = "",
     keyboardOptions: KeyboardOptions,
     keyboardActions: KeyboardActions,
@@ -146,7 +148,8 @@ fun CustomOutlinedTextField(
     isSuccess: Boolean = false,
     successMessage: String? = null,
     showInfo: Boolean = false,
-    infoMessage: String? = null
+    infoMessage: String? = null,
+    singleLine: Boolean = true
 ) {
     val context = LocalContext.current
     val activity = context.findActivity()
@@ -219,35 +222,31 @@ fun CustomOutlinedTextField(
             }
         }
     } else {
-        labelColor = DefaultWhite
+        labelColor = WhiteTransparency70
         backgroundColor = WhiteTransparency10
-        placeholderColor = GrayScale500
-        unfocusedIndicatorColor = GrayScale400
+        placeholderColor = WhiteTransparency60
+        unfocusedIndicatorColor = DefaultBlack
         errorIndicatorColor = if (isError || emptyError) {
-            SemanticNegative500
+            SemanticNegative400
         } else {
-            GrayScale800
+            WhiteTransparency90
         }
-        textFieldStrokeErrorColor = SemanticNegative500
+        textFieldStrokeErrorColor = SemanticNegative300
+        leadingIconComposableColor = WhiteTransparency60
+        iconTintColor = WhiteTransparency60
         when {
             isError -> {
-                focusedIndicatorColor = SemanticNegative500
-                iconTintColor = SemanticNegative500
-                leadingIconComposableColor = Primary500
-                textColor = GrayScale800
+                focusedIndicatorColor = SemanticNegative400
+                textColor = WhiteTransparency90
             }
             enabled -> {
-                focusedIndicatorColor = Primary500
-                iconTintColor = Primary500
-                leadingIconComposableColor = Primary500
-                textColor = GrayScale800
+                focusedIndicatorColor = WhiteTransparency60
+                textColor = WhiteTransparency90
             }
             else -> {
-                focusedIndicatorColor = GrayScale400
-                backgroundColor = GrayScale300
-                iconTintColor = GrayScale500
-                leadingIconComposableColor = GrayScale500
-                textColor = GrayScale500
+                focusedIndicatorColor = DefaultBlack
+                backgroundColor = GrayScale500
+                textColor = WhiteTransparency30
             }
         }
     }
@@ -287,7 +286,7 @@ fun CustomOutlinedTextField(
                     }
                 },
             value = value ?: "",
-            shape = RoundedCornerShape(if (isTextArea) 25 else 50),
+            shape = RoundedCornerShape(if (isTextArea) 32 else 50),
             leadingIcon = leadingIcon?.let {
                 {
                     Icon(
@@ -323,11 +322,15 @@ fun CustomOutlinedTextField(
             } else {
                 trailingIcon?.let {
                     {
-                        IconButton(enabled = trailingIconActionEnabled, onClick = trailingIconAction) {
+                        IconButton(
+                            enabled = trailingIconActionEnabled,
+                            onClick = trailingIconAction
+                        ) {
                             Icon(
                                 painter = painterResource(id = it),
                                 contentDescription = "",
-                                tint = iconTintColor
+                                modifier = Modifier.padding(trailingIconEndPadding),
+                                tint = trailingIconColor,
                             )
                         }
                     }
@@ -362,8 +365,11 @@ fun CustomOutlinedTextField(
                 ?: if (passwordVisible || !isPassword) {
                     VisualTransformation.None
                 } else PasswordVisualTransformation(),
-            textStyle = Typography.body2,
-            maxLines = if (isTextArea) 2 else 1,
+            textStyle = Typography.body2.copy(
+                color = WhiteTransparency90
+            ),
+            maxLines = if (isTextArea) 2 else Int.MAX_VALUE,
+            singleLine = if (isTextArea) false else singleLine,
             focusedBorderThickness = FOCUSED_BORDER_WIDTH,
             unfocusedBorderThickness = UNFOCUSED_BORDER_WIDTH
         )
@@ -394,7 +400,9 @@ fun CustomOutlinedTextField(
                         isRequiredMessage ?: ""
                     } else if (emptyError) {
                         stringResource(id = R.string.error_empty_field)
-                    } else if ((isError || canShowNonErrorMessage) && errorMessage.isNullOrBlank().not()) {
+                    } else if ((isError || canShowNonErrorMessage) && errorMessage.isNullOrBlank()
+                        .not()
+                    ) {
                         errorMessage ?: ""
                     } else {
                         ""
@@ -427,7 +435,7 @@ fun CustomOutlinedTextField(
                     } else {
                         ""
                     },
-                    color = MultimoneyTheme.colors.text,
+                    color = MultimoneyTheme.colors.textInformation,
                     modifier = Modifier
                         .padding(start = 5.dp)
                         .wrapContentSize(),
@@ -497,7 +505,7 @@ fun OutlinedTextField(
     shape: Shape = MaterialTheme.shapes.small,
     colors: TextFieldColors = TextFieldDefaults.outlinedTextFieldColors(),
     focusedBorderThickness: Dp = TextFieldDefaults.FocusedBorderThickness,
-    unfocusedBorderThickness: Dp = TextFieldDefaults.UnfocusedBorderThickness,
+    unfocusedBorderThickness: Dp = TextFieldDefaults.UnfocusedBorderThickness
 ) {
     // If color is not provided via the text style, use content color as a default
     val textColor = textStyle.color.takeOrElse {
@@ -506,7 +514,7 @@ fun OutlinedTextField(
     val mergedTextStyle = textStyle.merge(TextStyle(color = textColor))
 
     @OptIn(ExperimentalMaterialApi::class)
-    (BasicTextField(
+    BasicTextField(
         value = value,
         modifier = if (label != null) {
             modifier.padding(top = OutlinedTextFieldTopPadding)
@@ -556,7 +564,7 @@ fun OutlinedTextField(
                 }
             )
         }
-    ))
+    )
 }
 
 private val OutlinedTextFieldTopPadding = 8.dp

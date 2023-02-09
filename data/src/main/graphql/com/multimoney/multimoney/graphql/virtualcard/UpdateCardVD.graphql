@@ -1,0 +1,34 @@
+mutation UpdateCardVD(
+    $idCard: Long!,
+    $identification: String!,
+    $cardDescription: String!,
+    $cardMasked: String!,
+    $expirationMonth: String!,
+    $expirationYear: String!,
+    $verificationValue: String!,
+    $default: Boolean!,
+    $user: String!,
+    $idBrand: Int!
+)
+{
+    updateCardVD(
+        updateCardVDInput: {
+            idCard: $idCard,
+            identification: $identification,
+            cardDescription: $cardDescription,
+            cardMasked: $cardMasked,
+            expirationMonth: $expirationMonth,
+            expirationYear: $expirationYear,
+            verificationValue: $verificationValue,
+            default: $default,
+            user: $user,
+            idBrand: $idBrand
+        }
+    ) {
+        applicationName
+        userName
+        isApproved
+        apiStatus
+        default
+    }
+}

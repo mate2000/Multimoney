@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.onboarding
 
-import android.content.pm.ActivityInfo
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -40,18 +39,17 @@ import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnPress
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
-import com.multimoney.multimoney.presentation.uielement.LockScreenOrientation
 import com.multimoney.multimoney.presentation.uielement.StoryProgressBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
 @Composable
 fun OnBoardingScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit,
-    viewModel: OnBoardingViewModel = hiltViewModel(),
+    viewModel: OnBoardingViewModel = hiltViewModel()
 ) {
 
-    LockScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+    val context = LocalContext.current
+
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
     }
@@ -63,16 +61,16 @@ fun OnBoardingScreen(
             .background(MultimoneyTheme.colors.background)
             .fillMaxSize()
             .pointerInput(Unit) {
-                viewModel.onUIEvent(OnPress(this))
+                viewModel.onUIEvent(OnPress(this), context)
             }
     ) {
-        Column(Modifier.weight(0.4f)) {
+        Column(Modifier.weight(0.3f)) {
             StoryProgressBar(
                 steps = OnBoardingViewModel.MAX_STEPS,
                 currentStep = viewModel.currentStep,
                 paused = viewModel.uiState.isPressed,
                 onFinished = {
-                    viewModel.onUIEvent(OnGoToNextScreen)
+                    viewModel.onUIEvent(OnGoToNextScreen, context)
                 },
                 backgroundColor = WhiteTransparency20,
                 progressColor = WhiteTransparency70,
@@ -86,17 +84,16 @@ fun OnBoardingScreen(
             Modifier
                 .fillMaxSize()
                 .padding(top = 16.dp, start = 16.dp, end = 16.dp)
-                .weight(0.6f),
+                .weight(0.7f),
             verticalArrangement = Arrangement.Bottom
         ) {
             Text(
                 text = stringResource(id = viewModel.uiState.title),
                 textAlign = TextAlign.Left,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 30.dp)
                     .weight(
-                        0.14f, false
+                        0.14f,
+                        false
                     ),
                 style = Typography.h3.copy(
                     fontSize = 48.sp,
@@ -108,9 +105,8 @@ fun OnBoardingScreen(
                 text = stringResource(id = viewModel.uiState.subtitle),
                 textAlign = TextAlign.Left,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 24.dp, bottom = 80.dp)
-                    .weight(0.14f, true),
+                    .padding(top = 34.dp, bottom = 70.dp)
+                    .weight(0.14f, false),
                 style = Typography.h6.copy(
                     color = MultimoneyTheme.colors.onBoardingSubText,
                     fontSize = 20.sp
@@ -123,7 +119,10 @@ fun OnBoardingScreen(
                 buttonType = CustomButtonType.PrimaryPrimary,
                 text = stringResource(id = R.string.registration),
                 onClick = {
-                    viewModel.onUIEvent(OnNavigateToNextScreen(Screen.SignUpScreen.baseRoute))
+                    viewModel.onUIEvent(
+                        OnNavigateToNextScreen(Screen.SignUpScreen.baseRoute),
+                        context
+                    )
                 }
             )
             Row(
@@ -155,7 +154,10 @@ fun OnBoardingScreen(
                         .wrapContentSize()
                         .padding(start = 4.dp),
                     onClick = {
-                        viewModel.onUIEvent(OnNavigateToNextScreen(Screen.SignInScreen.baseRoute))
+                        viewModel.onUIEvent(
+                            OnNavigateToNextScreen(Screen.SignInScreen.baseRoute),
+                            context
+                        )
                     }
                 )
             }

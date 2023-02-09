@@ -5,5 +5,6 @@ data class Wording(
     val textTwo : String,
     val cTA: String,
     val link: String = "",
-    val display: Boolean = false
+    val display: Boolean = false,
+    val workflow: String? = ""
 )

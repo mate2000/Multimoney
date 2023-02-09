@@ -297,8 +297,8 @@ class SmartDocumentViewModel @Inject constructor(
             is OnValidateForm -> validateForm()
             is OnNextActionClick -> onNextActionClick(event.nextStepAction)
             is OnLoadCurrentStepData -> onLoadCurrentStepData(event.accountSmartData)
-            is OnFailureWithDialog -> TODO()
-            is OnLoadingValueChange -> TODO()
+            is OnFailureWithDialog -> {}
+            is OnLoadingValueChange -> {}
         }
     }
 

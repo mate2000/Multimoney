@@ -1486,6 +1486,9 @@
     <string name="smart_my_contacts_transfer_accounts_add" translatable="false">Agregar cuenta</string>
     <string name="smart_mycontacts_total_transfer_title" translatable="false">%1s contactos encontrados</string>
     <string name="smart_my_concts_placeholder" translatable="false">Buscar contacto</string>
+
+    <!-- Smart Transfer - Favorite -->
+    <string name="smart_favorite_transfer_accounts_title" translatable="false">Mis favoritos</string>
     <string name="smart_my_contacts_select_favorite_account" translatable="false">Seleccionar como favorito</string>
     <string name="smart_my_contacts_invite_CR" translatable="false">Invitá a tus amigos a usar MultiMoney.\nTus contactos que la tengan\naparecerán aquí.</string>
     <string name="smart_my_contacts_invite_SV" translatable="false">Invita a tus amigos a usar MultiMoney.\nTus contactos que la tengan\naparecerán aquí.</string>

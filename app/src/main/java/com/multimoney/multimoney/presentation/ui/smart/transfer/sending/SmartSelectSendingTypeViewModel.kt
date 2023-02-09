@@ -160,11 +160,11 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
 
     private fun onNavigateToOtherBankAccounts() {
         navigateTo(
-            "${Screen.SmartAdd365AccountScreen.baseRoute}/$idBrand/$user/${
+            "${Screen.SmartACHAccountsListScreen.baseRoute}/${
                 encodeData(
                     selectedSmartAccount
                 )
-            }/${SmartTransferTypes.SmartToOtherBank.id}"
+            }/$user/$idBrand/$identification"
         )
     }
 

@@ -5,6 +5,7 @@ import android.view.View
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.ModalBottomSheetValue.Hidden
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -17,12 +18,14 @@ import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.DESTINY_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.ORIGIN_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.TRANSFER_TYPE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
@@ -105,13 +108,11 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
 
                 amountUIState = amountUIState.copy(
                     originAccountDisplay = DisplayAccount(
-                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_account,
                         sheetTitleResource = originCurrency?.myAccountSmartSymbol,
                         sheetSubtitleResource = originCurrency?.currencyName,
                         icon = R.drawable.ic_multimoney_smart
                     ),
                     destinyAccountDisplay = DisplayAccount(
-                        sheetLabel = R.string.smart_payment_sheet_to_account,
                         sheetTitle = ibanAccount?.nameAccount.orEmpty(),
                         sheetSubtitle = ibanAccount?.bank.orEmpty(),
                         sheetSubtitle2 = getMaskedAccountIban(ibanAccount?.sinpeAccount.orEmpty()),
@@ -134,13 +135,11 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
 
                 amountUIState = amountUIState.copy(
                     originAccountDisplay = DisplayAccount(
-                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_account,
                         sheetTitleResource = originCurrency?.myAccountSmartSymbol,
                         sheetSubtitleResource = originCurrency?.currencyName,
                         icon = R.drawable.ic_multimoney_smart
                     ),
                     destinyAccountDisplay = DisplayAccount(
-                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_account,
                         sheetTitleResource = destinyCurrency?.myAccountSmartSymbol,
                         sheetSubtitleResource = destinyCurrency?.currencyName,
                         icon = R.drawable.ic_multimoney_smart
@@ -162,13 +161,11 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
 
                 amountUIState = amountUIState.copy(
                     originAccountDisplay = DisplayAccount(
-                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_account,
                         sheetTitle = ibanAccount?.bank.orEmpty(),
                         sheetSubtitle = getMaskedAccountIban(ibanAccount?.sinpeAccount.orEmpty()),
                         icon = originCurrency?.accountIcon
                     ),
                     destinyAccountDisplay = DisplayAccount(
-                        sheetLabel = R.string.smart_payment_sheet_to_account,
                         sheetTitleResource = destinyCurrency?.myAccountSmartSymbol,
                         sheetSubtitleResource = destinyCurrency?.currencyName,
                         icon = R.drawable.ic_multimoney_smart
@@ -190,13 +187,11 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
 
                 amountUIState = amountUIState.copy(
                     originAccountDisplay = DisplayAccount(
-                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from,
                         sheetTitle = visaAccount?.detail.orEmpty(),
                         sheetSubtitle = getMaskedVisaAccount(visaAccount?.cardMaskedNumber.orEmpty()),
                         icon = R.drawable.ic_visa_card_item
                     ),
                     destinyAccountDisplay = DisplayAccount(
-                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_to,
                         sheetTitleResource = destinyCurrency?.myAccountSmartSymbol,
                         icon = R.drawable.ic_multimoney_smart
                     ),
@@ -213,6 +208,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
 
     open fun getExchangeOnCompleted(
         isStart: Boolean = false,
+        isPayment: Boolean = false,
         abbreviation: String? = destinyCurrency?.disbursementValue,
         idOriginCurrency: String = destinyCurrency?.id.toString(),
         idDestinationCurrency: String = originCurrency?.id.toString(),
@@ -220,7 +216,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
     ) {
         val amount = amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
         if (shouldDisplayExchange) {
-            if ((amountUIState.isAmountValid && amount > 0.0) || isStart) {
+            if (amount > 0.0 || isStart) {
                 executeUseCase {
                     querySmartExchangeRateUseCase.invoke(
                         user = userName,
@@ -250,6 +246,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                                 convertedAmountLabel = rate?.convertedAmountLabel
                                     ?: "${idDestinationCurrency.getCurrencySymbol()}0.0"
                             )
+                            if (isPayment.not()) validateAmount()
                         }
                     }
                 }
@@ -263,23 +260,37 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
         getExchangeOnCompleted()
     }
 
+    open fun validateAmount() {
+        val currentAmount = if (shouldDisplayExchange) {
+            amountUIState.exchangeConvertedAmount
+        } else {
+            amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
+        }
+
+        val isAmountValid = currentAmount <= (smartAccount?.totalBalance ?: 0.0)
+        amountUIState = amountUIState.copy(
+            isAmountValid = isAmountValid,
+            bottomSheetState = ModalBottomSheetState(Hidden),
+            enableButton = validateForm(isAmountValid = isAmountValid)
+        )
+    }
+
     open fun onAmountChanged(newAmount: String) {
         if (validateDecimalIncome(newAmount)) {
             amountUIState = amountUIState.copy(
-                currentAmountValueString = newAmount,
-                enableButton = validateForm(newAmount = newAmount),
-                isAmountValid = true
+                currentAmountValueString = newAmount
             )
         }
     }
 
     open fun validateForm(
         newAmount: String? = amountUIState.currentAmountValueString,
-        newMotive: String = amountUIState.motive
-    ) = (newAmount?.isNotEmpty() == true) && (
-        newAmount.toDoubleOrNull()
-            ?: 0.0
-        ) > 0.0 && newMotive.isNotEmpty()
+        newMotive: String = amountUIState.motive,
+        isAmountValid: Boolean = amountUIState.isAmountValid
+    ) = (newAmount?.isNotEmpty() == true) &&
+        (newAmount.toDoubleOrNull() ?: 0.0) > 0.0 &&
+        newMotive.isNotEmpty() &&
+        isAmountValid
 
     abstract fun onContinueClick()
 
@@ -349,6 +360,15 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                     amountUIState = amountUIState.copy(
                         showLoadingScreen = true,
                         showErrorScreen = false,
+                        paymentSuccess = false
+                    )
+                }
+                result.onMessage {
+                    amountUIState = amountUIState.copy(
+                        errorMessage = it?.messageError?.message ?: "",
+                        errorDetail = it?.messageError?.detail ?: "",
+                        showLoadingScreen = false,
+                        showErrorScreen = true,
                         paymentSuccess = false
                     )
                 }
@@ -440,7 +460,9 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
         val idCard: Long = 0,
         val bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
         val cardBankName: String = "",
-        var showErrorScreen: Boolean = false,
+        val errorMessage: String = "",
+        val errorDetail: String = "",
+        val showErrorScreen: Boolean = false,
         val showLoadingScreen: Boolean = false,
         val paymentSuccess: Boolean = false,
         val referenceNumber: String = "",

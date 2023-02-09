@@ -69,8 +69,8 @@ fun CustomSlider(
         textColor = DefaultWhite
         inactiveTrackColor = WhiteTransparency10
     } else {
-        textColor = GrayScale700
-        inactiveTrackColor = BlackTransparency10
+        textColor = DefaultWhite
+        inactiveTrackColor = WhiteTransparency10
     }
 
     Column(modifier = modifier) {

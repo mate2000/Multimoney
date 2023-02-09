@@ -1,10 +1,11 @@
 package com.multimoney.multimoney.presentation.uielement
 
 import android.annotation.SuppressLint
-import android.os.CountDownTimer
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation.Vertical
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,8 +17,11 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberSwipeableState
+import androidx.compose.material.ripple.RippleAlpha
+import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.material.swipeable
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,6 +29,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
@@ -57,65 +63,61 @@ fun MotionLayoutMM(
     updateIsExpandedByClick: (Boolean) -> Unit = {}
 ) {
     val context = LocalContext.current
-    val swipeAbleState = rememberSwipeableState(initialValue = COLLAPSED)
-    val anchors = mapOf(0f to COLLAPSED, TOTAL_PERCENTAGE to EXPANDED)
-    var isAnimationRunning by remember { mutableStateOf(false) }
+    val swipeAbleState = rememberSwipeableState(initialValue = if (isExpanded) EXPANDED else COLLAPSED)
+    val anchors = mapOf(ANIMATION_COLLAPSED to COLLAPSED, ANIMATION_EXPANDED to EXPANDED)
     var animationProgress by remember {
         mutableStateOf(
-            if (isExpanded) {
-                ANIMATION_EXPANDED
-            } else {
-                ANIMATION_COLLAPSED
-            }
+            if (isExpanded) ANIMATION_EXPANDED else ANIMATION_COLLAPSED
         )
+    }
+    val motionSceneContent = remember {
+        context.resources
+            .openRawResource(R.raw.motion_scene)
+            .readBytes()
+            .decodeToString()
+    }
+
+    LaunchedEffect(key1 = isExpandedByClick) {
+        if (isExpandedByClick) {
+            swipeAbleState.animateTo(EXPANDED, tween(TIMER_FUTURE, TIMER_COUNT_DOWN))
+        }
+    }
+
+    LaunchedEffect(key1 = isBackPressed) {
+        if (isBackPressed) {
+            updateIsExpanded(false)
+            swipeAbleState.animateTo(COLLAPSED, tween(TIMER_FUTURE, TIMER_COUNT_DOWN))
+        }
+    }
+
+    if (swipeAbleState.isAnimationRunning) {
+        DisposableEffect(Unit) {
+            onDispose {
+                when (swipeAbleState.currentValue) {
+                    EXPANDED -> {
+                        updateIsExpanded(true)
+                        updateIsBackPressed(false)
+                        updateIsExpandedByClick(false)
+                        animationProgress = ANIMATION_EXPANDED / ANIMATION_EXPANDED
+                    }
+                    COLLAPSED -> {
+                        updateIsExpanded(false)
+                        updateIsBackPressed(false)
+                        updateIsExpandedByClick(false)
+                        animationProgress = ANIMATION_COLLAPSED
+                    }
+                    else -> {
+                        return@onDispose
+                    }
+                }
+            }
+        }
     }
 
     LaunchedEffect(key1 = swipeAbleState.offset.value) {
-        if (isAnimationRunning.not() && swipeAbleState.offset.value != ANIMATION_COLLAPSED && swipeAbleState.offset.value != TOTAL_PERCENTAGE) {
-            animationProgress = swipeAbleState.offset.value / TOTAL_PERCENTAGE
+        if ((swipeAbleState.offset.value / ANIMATION_EXPANDED) > ANIMATION_COLLAPSED) {
+            animationProgress = swipeAbleState.offset.value / ANIMATION_EXPANDED
         }
-    }
-
-    var timer: CountDownTimer?
-    if (isExpandedByClick) {
-        updateIsExpandedByClick(false)
-        isAnimationRunning = true
-        animationProgress = ANIMATION_COLLAPSED
-        timer = object : CountDownTimer(TIMER_FUTURE, TIMER_COUNT_DOWN) {
-            override fun onTick(millisMainUntilFinished: Long) {
-                animationProgress = animationProgress.plus(ANIMATION_FRACTION)
-            }
-
-            override fun onFinish() {
-                if (isAnimationRunning) {
-                    animationProgress = ANIMATION_EXPANDED
-                    isAnimationRunning = false
-                    updateIsExpanded(true)
-                    timer = null
-                }
-            }
-        }
-        timer?.start()
-    }
-
-    if (isExpanded && isBackPressed) {
-        updateIsExpanded(false)
-        isAnimationRunning = true
-        timer = object : CountDownTimer(TIMER_FUTURE, TIMER_COUNT_DOWN) {
-            override fun onTick(millisMainUntilFinished: Long) {
-                animationProgress = if (animationProgress > 0f) animationProgress.minus(ANIMATION_FRACTION) else 0f
-            }
-
-            override fun onFinish() {
-                if (isAnimationRunning) {
-                    animationProgress = ANIMATION_COLLAPSED
-                    updateIsBackPressed(false)
-                    isAnimationRunning = false
-                    timer = null
-                }
-            }
-        }
-        timer?.start()
     }
 
     LaunchedEffect(key1 = true) {
@@ -126,7 +128,90 @@ fun MotionLayoutMM(
         }
     }
 
-    if (animationProgress == ANIMATION_EXPANDED && isExpanded) {
+    if (isExpanded.not() || swipeAbleState.offset.value == ANIMATION_COLLAPSED) {
+        MotionLayout(
+            motionScene = MotionScene(motionSceneContent),
+            progress = if (homeState == EXPANDED) ANIMATION_EXPANDED else animationProgress,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MultimoneyTheme.colors.background)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .layoutId("header_cards"),
+                contentAlignment = Alignment.Center
+            ) {
+                header()
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .layoutId("header_title")
+            ) {
+                headerExpanded {
+                    updateIsBackPressed(true)
+                }
+            }
+            content(
+                modifier = Modifier
+                    .layoutId("main_card")
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .swipeable(
+                        enabled = isSwipeEnabled,
+                        reverseDirection = true,
+                        state = swipeAbleState,
+                        anchors = anchors,
+                        thresholds = { _, _ ->
+                            // The closer to 1 you have to scroll more for it to autocomplete the animation
+                            FractionalThreshold(COLLAPSED_FRACTIONAL_THRESHOLD)
+                        },
+                        orientation = Vertical
+                    )
+                    .clickable(
+                        enabled = isSwipeEnabled,
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) {
+                        updateIsExpandedByClick(true)
+                    }
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .layoutId("bottom_start"),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                footer()
+            }
+            Box(
+                modifier = Modifier
+                    .layoutId("bottom_end")
+                    .fillMaxWidth()
+            ) {
+                LazyColumn(
+                    modifier = Modifier
+                        .background(MultimoneyTheme.colors.background)
+                        .fillMaxSize(),
+                    content = {
+                        item {
+                            footerExpanded()
+                        }
+                    }
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .layoutId("cta_bottom_end")
+                    .background(MultimoneyTheme.colors.background)
+                    .fillMaxWidth()
+            ) {
+                ctaFooterExpanded()
+            }
+        }
+    }
+    if (isExpanded) {
         Scaffold(
             topBar = {
                 Box(
@@ -161,17 +246,13 @@ fun MotionLayoutMM(
                                     .background(MultimoneyTheme.colors.background)
                                     .fillMaxWidth()
                                     .wrapContentHeight()
-                                    .swipeable(
-                                        enabled = isSwipeEnabled,
-                                        reverseDirection = true,
-                                        state = swipeAbleState,
-                                        anchors = anchors,
-                                        thresholds = { _, _ ->
-                                            // The closer to 1 you have to scroll more for it to autocomplete the animation
-                                            FractionalThreshold(EXPANDED_FRACTIONAL_THRESHOLD)
-                                        },
-                                        orientation = Vertical
-                                    )
+                                    .pointerInput(Unit) {
+                                        detectDragGestures { change, dragAmount ->
+                                            if (dragAmount.y > ANIMATION_COLLAPSED) {
+                                                updateIsBackPressed(true)
+                                            }
+                                        }
+                                    }
                             )
                             Box(
                                 modifier = Modifier
@@ -185,101 +266,19 @@ fun MotionLayoutMM(
                 )
             }
         )
-    } else {
-        if (animationProgress != ANIMATION_EXPANDED && isExpanded && swipeAbleState.isAnimationRunning.not()) {
-            updateIsBackPressed(true)
-        } else if (animationProgress == ANIMATION_EXPANDED && isExpanded.not()) {
-            updateIsExpanded(true)
-        }
-        val motionSceneContent = remember {
-            context.resources
-                .openRawResource(R.raw.motion_scene)
-                .readBytes()
-                .decodeToString()
-        }
-        MotionLayout(
-            motionScene = MotionScene(motionSceneContent),
-            progress = if (homeState == EXPANDED) ANIMATION_EXPANDED else animationProgress,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MultimoneyTheme.colors.background)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .layoutId("header_cards"),
-                contentAlignment = Alignment.Center
-            ) {
-                header()
-            }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .layoutId("header_title")
-            ) {
-                headerExpanded {
-                    updateIsBackPressed(true)
-                }
-            }
-            Box(
-                modifier = Modifier.layoutId("main_card")
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-            ) {
-                content(
-                    modifier = Modifier
-                        .swipeable(
-                            enabled = isSwipeEnabled,
-                            reverseDirection = true,
-                            state = swipeAbleState,
-                            anchors = anchors,
-                            thresholds = { _, _ ->
-                                // The closer to 1 you have to scroll more for it to autocomplete the animation
-                                FractionalThreshold(COLLAPSED_FRACTIONAL_THRESHOLD)
-                            },
-                            orientation = Vertical
-                        )
-                        .clickable(
-                            enabled = isSwipeEnabled,
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) {
-                            updateIsExpandedByClick(true)
-                        }
-                )
-            }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .layoutId("bottom_start"),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                footer()
-            }
-            Box(
-                modifier = Modifier
-                    .layoutId("bottom_end")
-                    .fillMaxWidth()
-            ) {
-                footerExpanded()
-            }
-            Box(
-                modifier = Modifier
-                    .layoutId("cta_bottom_end")
-                    .background(MultimoneyTheme.colors.background)
-                    .fillMaxWidth()
-            ) {
-                ctaFooterExpanded()
-            }
-        }
     }
 }
 
-const val TIMER_FUTURE = 1000L
-const val TIMER_COUNT_DOWN = 60L
-const val ANIMATION_FRACTION = 0.06f
-const val ANIMATION_EXPANDED = 1f
+private object NoRippleTheme : RippleTheme {
+    @Composable
+    override fun defaultColor() = Color.Unspecified
+
+    @Composable
+    override fun rippleAlpha(): RippleAlpha = RippleAlpha(0.0f, 0.0f, 0.0f, 0.0f)
+}
+
+const val TIMER_FUTURE = 2000
+const val TIMER_COUNT_DOWN = 30
+const val ANIMATION_EXPANDED = 100f
 const val ANIMATION_COLLAPSED = 0f
 const val COLLAPSED_FRACTIONAL_THRESHOLD = 0.8f
-const val EXPANDED_FRACTIONAL_THRESHOLD = 0.5f
-const val TOTAL_PERCENTAGE = 100f

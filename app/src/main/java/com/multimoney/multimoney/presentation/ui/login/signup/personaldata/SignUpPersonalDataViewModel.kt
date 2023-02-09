@@ -304,7 +304,12 @@ class SignUpPersonalDataViewModel @Inject constructor(
         )
     }
 
-    private fun onCallMutationUserValidationUseCase(email: String, nextStep: String, idBrand: Int, activity: FragmentActivity) =
+    private fun onCallMutationUserValidationUseCase(
+        email: String,
+        nextStep: String,
+        idBrand: Int,
+        activity: FragmentActivity
+    ) =
         executeUseCase {
             mutationUserValidationUseCase(
                 email = email,
@@ -532,7 +537,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private fun navigateToRegisteredUser(userData: UserData?) {
         if (previousEmail == userData?.email) {
             navigateTo(
-                route = Screen.RegisteredUserOtpScreen.baseRoute
+                route = Screen.RegisteredUserOtpOptionsScreen.baseRoute
                     .plus(
                         getNavParam(PREVIOUS_SCREEN, Screen.SignUpScreen.baseRoute)
                     )

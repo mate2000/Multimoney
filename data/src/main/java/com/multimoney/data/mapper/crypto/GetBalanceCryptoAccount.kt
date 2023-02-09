@@ -20,5 +20,6 @@ private fun GetBalanceCryptoAccountQuery.Item.mapToDomainModel() = BalanceCrypto
     investedBalanceCurrency = investedBalanceCurrency.toString(),
     percentageInvestedCurrency = percentageInvestedCurrency.toString(),
     priceOfTheDay = priceOfTheDay.toString().toDouble(),
-    url_image = url_image.toString()
+    url_image = url_image.toString(),
+    cryptoNetwork = crypto_network.toString()
 )

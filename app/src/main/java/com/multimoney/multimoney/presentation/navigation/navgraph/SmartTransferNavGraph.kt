@@ -22,15 +22,19 @@ import com.multimoney.multimoney.presentation.navigation.navtype.payment.Related
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SinpeAccountNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAccountIDListNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAccountIDNavType
-import com.multimoney.multimoney.presentation.ui.smart.transfer.addaccount.SmartAddAccountScreen
+import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartPhoneAccountNavType
+import com.multimoney.multimoney.presentation.navigation.navtype.payment.Transfer365AccountNavType
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.smartaccount.SelectSmartAccountContainer
-import com.multimoney.multimoney.presentation.ui.smart.transfer.otherbanks.addaccount.SmartAddOtherBankAccountScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeScreen
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.addaccount.SmartAddAccountScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.amount.OwnTransferAmountScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferScreen
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontactamount.MyContactsTransferAmountScreen
+import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountScreen
+import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.amount.Transfer365AmountScreen
 
 fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
     navigation(
@@ -214,8 +218,14 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
         ) {
             OwnTransferAmountScreen(
                 onPopBackStack = {
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        HOME_STATE,
+                        it.homeState
+                    )
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,
@@ -237,8 +247,14 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                     navController.navigate(it.route)
                 },
                 onPopBackStack = {
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        HOME_STATE,
+                        it.homeState
+                    )
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,
@@ -260,6 +276,62 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                     navController.navigate(it.route)
                 },
                 onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        HOME_STATE,
+                        it.homeState
+                    )
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
+        }
+        composable(
+            Screen.MyContactsTransferAmountScreen.route,
+            arguments = listOf(
+                navArgument(ORIGIN_ACCOUNT) { type = SmartAccountIDNavType() },
+                navArgument(DESTINY_ACCOUNT) { type = SmartPhoneAccountNavType() },
+                navArgument(TRANSFER_TYPE) { type = NavType.IntType },
+                navArgument(ID_BRAND) { type = NavType.IntType }
+            )
+        ) {
+            MyContactsTransferAmountScreen(
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        HOME_STATE,
+                        it.homeState
+                    )
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
+        }
+        composable(
+            route = Screen.SmartAdd365AccountScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(ORIGIN_ACCOUNT) { type = SmartAccountIDNavType() },
+                navArgument(TRANSFER_TYPE) { type = NavType.IntType }
+            )
+        ) {
+            SmartAdd365AccountScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopBackStack = {
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
                     navController.popBackStack(
@@ -271,17 +343,14 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
             )
         }
         composable(
-            route = Screen.SmartOtherBanksAccountScreen.route,
+            Screen.SmartTransfer365EditAmountScreen.route,
             arguments = listOf(
-                navArgument(ID_BRAND) { type = NavType.IntType },
-                navArgument(SMART_ACCOUNT) { type = SmartAccountIDNavType() },
+                navArgument(ORIGIN_ACCOUNT) { type = SmartAccountIDNavType() },
+                navArgument(DESTINY_ACCOUNT) { type = Transfer365AccountNavType() },
                 navArgument(TRANSFER_TYPE) { type = NavType.IntType }
             )
         ) {
-            SmartAddOtherBankAccountScreen(
-                onNavigate = {
-                    navController.navigate(it.route)
-                },
+            Transfer365AmountScreen(
                 onPopBackStack = {
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)

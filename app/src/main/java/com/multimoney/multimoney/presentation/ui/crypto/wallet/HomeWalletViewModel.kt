@@ -19,8 +19,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
-import com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail.CryptoCurrencyMovementsViewModel
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
 import com.multimoney.multimoney.presentation.util.getPreviousDate
@@ -166,6 +164,10 @@ class HomeWalletViewModel @Inject constructor(
         navigateTo(Screen.PurchaseCryptoFlow.baseRoute)
     }
 
+    private fun onNavigateToSellCrypto(){
+        navigateTo(Screen.CryptoSellFlow.baseRoute)
+    }
+
     private fun onNavigateToSendCrypto() {
         navigateTo(Screen.CryptoSendFlow.baseRoute)
     }
@@ -199,6 +201,7 @@ class HomeWalletViewModel @Inject constructor(
             is UIEvent.OnGetBalanceClient -> onGetBalanceClient()
             is UIEvent.OnNavigateToBuyCrypto -> onNavigateToBuyCrypto()
             is UIEvent.OnNavigateToSendCrypto -> onNavigateToSendCrypto()
+            is UIEvent.OnNavigateToSellCrypto -> onNavigateToSellCrypto()
         }
     }
 
@@ -210,5 +213,10 @@ class HomeWalletViewModel @Inject constructor(
         data class OnNavigateToCryptoDetailScreen(val cryptoItem: BalanceCryptoAccountItems) : UIEvent
         object OnNavigateToBuyCrypto : UIEvent
         object OnNavigateToSendCrypto : UIEvent
+        object OnNavigateToSellCrypto : UIEvent
+    }
+
+    companion object {
+        const val SHOW_COIN_SEARCH_THRESHOLD = 3
     }
 }

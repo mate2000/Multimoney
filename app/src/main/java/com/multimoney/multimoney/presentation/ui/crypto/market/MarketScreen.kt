@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -40,11 +39,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.MarketCurrencyItem
-import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreenViewModel.UIEvent.OnGetAvailableListOfCryptoCoins
-import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreenViewModel.UIEvent.OnGetUserInfo
-import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreenViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreenViewModel.UIEvent.OnNavigateToCurrencyDetails
-import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreenViewModel.UIEvent.OnSetAssetBeforeNavigation
+import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreenViewModel.UIEvent
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
@@ -52,38 +47,37 @@ import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.CustomSelector
 import com.multimoney.multimoney.presentation.uielement.Size
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
+import com.multimoney.multimoney.presentation.util.CryptoConstants.BTC
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.encodeURLToUTF
 import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlacesWithoutNegatives
 import kotlinx.coroutines.launch
 
 @Composable
 fun MarketScreen(
-    marketViewModel: MarketScreenViewModel = hiltViewModel(),
+    viewModel: MarketScreenViewModel = hiltViewModel(),
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
 ) {
-
     LaunchedEffect(key1 = true) {
-        marketViewModel.executeNavigation(
+        viewModel.executeNavigation(
             onPopBackStack = onPopBackStack,
             onNavigate = onNavigate,
             onPopAndNavigate = onPopAndNavigate
         )
 
-        marketViewModel.onUIEvent(OnGetUserInfo)
-        marketViewModel.onUIEvent(OnGetAvailableListOfCryptoCoins)
+        viewModel.onUIEvent(UIEvent.OnGetUserInfo)
+        viewModel.onUIEvent(UIEvent.OnGetAvailableListOfCryptoCoins)
     }
 
-    BackHandler { marketViewModel.onUIEvent(OnNavigateBack) }
+    BackHandler { viewModel.onUIEvent(UIEvent.OnNavigateBack) }
     MarketScreenContent()
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MarketScreenContent(
-    marketViewModel: MarketScreenViewModel = hiltViewModel()
+    viewModel: MarketScreenViewModel = hiltViewModel()
 ) {
 
     val state = rememberModalBottomSheetState(
@@ -95,14 +89,14 @@ fun MarketScreenContent(
     val selectedFilter = remember { mutableStateOf(MarketFilter.Price.value) }
 
     val crListOfCryptoCoin =
-        marketViewModel.uiState.availableCryptoCoins?.availableCryptoCoins ?: emptyList()
-    val svListOfCryptoCoins = marketViewModel.uiState.availableCryptoCoins
-        ?.availableCryptoCoins?.filter { it.baseAsset == SV_DEFAULT_BASE_ASSET } ?: emptyList()
+        viewModel.uiState.availableCryptoCoins?.availableCryptoCoins ?: emptyList()
+    val svListOfCryptoCoins = viewModel.uiState.availableCryptoCoins
+        ?.availableCryptoCoins?.filter { it.baseAsset == BTC } ?: emptyList()
 
     Column(modifier = Modifier.background(MultimoneyTheme.colors.background)) {
         TopNavBar(
             isRightButtonVisible = false,
-            onLeftButtonClick = { marketViewModel.onUIEvent(OnNavigateBack) }
+            onLeftButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateBack) }
         )
         ModalBottomSheetLayout(
             sheetState = state,
@@ -130,7 +124,7 @@ fun MarketScreenContent(
                     .padding(16.dp)
             ) {
                 MarketHeader()
-                if (marketViewModel.uiState.idBrand == Brand.CostaRica.id) {
+                if (viewModel.uiState.idBrand == Brand.CostaRica.id) {
                     CustomOutlinedTextField(
                         modifier = Modifier,
                         value = searchQuery.value,
@@ -142,26 +136,23 @@ fun MarketScreenContent(
                         placeHolder = stringResource(id = R.string.crypto_wallet_search_crypto_currency),
                     )
                 }
-                if (marketViewModel.uiState.isLoading) {
+                if (viewModel.uiState.isLoading) {
                     MarketSkeleton()
                 } else {
                     ListOfCoinsSection(
-                        availableCryptoCoins = if (marketViewModel.uiState.idBrand == Brand.CostaRica.id)
+                        availableCryptoCoins = if (viewModel.uiState.idBrand == Brand.CostaRica.id)
                             crListOfCryptoCoin else svListOfCryptoCoins,
                         searchQuery = searchQuery,
                         selectedFilter = selectedFilter,
                         sheetState = state,
-                        showFilterChip = marketViewModel.uiState.idBrand == Brand.CostaRica.id,
+                        showFilterChip = viewModel.uiState.idBrand == Brand.CostaRica.id,
                         onCurrencyItemClick = { cryptoCurrency ->
-                            marketViewModel.onUIEvent(
-                                OnSetAssetBeforeNavigation(
-                                    asset = cryptoCurrency.baseAsset,
-                                    description = cryptoCurrency.description,
-                                    currentPrice = cryptoCurrency.currentPrice.toString().toFloat(),
-                                    urlImage = cryptoCurrency.url_image.encodeURLToUTF()
+                            viewModel.onUIEvent(
+                                UIEvent.OnSetAssetBeforeNavigation(
+                                    cryptoCurrency
                                 )
                             )
-                            marketViewModel.onUIEvent(OnNavigateToCurrencyDetails)
+                            viewModel.onUIEvent(UIEvent.OnNavigateToCurrencyDetails)
                         }
                     )
                 }
@@ -316,11 +307,11 @@ fun ListOfCoinsSection(
                 imageUrl = cryptoCoin.url_image,
                 descriptionCurrency = cryptoCoin.description,
                 asset = cryptoCoin.baseAsset,
-                amountChange = cryptoCoin.amountchange,
+                amountChange = cryptoCoin.amountchange ?: "",
                 percentChange = stringResource(
                     id = R.string.currency_item_percent_invested_with_symbol,
-                    if (cryptoCoin.percentChange.contains(NEGATIVE_SYMBOL)) NEGATIVE_SYMBOL else POSITIVE_SYMBOL,
-                    cryptoCoin.percentChange.toDouble().roundToTwoDecimalPlacesWithoutNegatives()
+                    if (cryptoCoin.percentChange?.contains(NEGATIVE_SYMBOL) == true) NEGATIVE_SYMBOL else POSITIVE_SYMBOL,
+                    cryptoCoin.percentChange?.toDouble()?.roundToTwoDecimalPlacesWithoutNegatives() ?: ""
                 ),
                 currentPrice = cryptoCoin.currentPrice.toString().toDouble(),
                 onCurrencyItemClick = { onCurrencyItemClick(cryptoCoin) }
@@ -329,7 +320,6 @@ fun ListOfCoinsSection(
     }
 }
 
-const val SV_DEFAULT_BASE_ASSET = "BTC"
 const val PRICE_FILTER_VALUE = "Precio"
 const val AZ_FILTER_VALUE = "A-Z"
 const val NEGATIVE_SYMBOL = "-"

@@ -76,7 +76,11 @@ fun JobInfoScreen(
                 } else {
                     CreditStep.Five.id
                 },
-                previousStep = CreditStep.Three.id
+                previousStep = if (sharedViewModel.crosseling) {
+                    CreditStep.Two.id
+                } else {
+                    CreditStep.Three.id
+                }
             )
         )
         viewModel.baseEvent.collect { event ->
@@ -193,7 +197,9 @@ fun JobInfoScreen(
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             }),
-            labelText = if (sharedViewModel.crosseling) stringResource(id = R.string.credit_job_phone_number_crosseling) else stringResource(id = R.string.credit_job_phone_number),
+            labelText = if (sharedViewModel.crosseling) stringResource(id = R.string.credit_job_phone_number_crosseling) else stringResource(
+                id = R.string.credit_job_phone_number
+            ),
             modifier = Modifier.padding(top = 16.dp),
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.credit_job_phone_required),

@@ -203,7 +203,7 @@ fun ListCryptoBody(
                 descriptionCurrency = it.description,
                 asset = it.baseAsset,
                 priceOfTheDay = it.currentPrice.toString().toDouble().formatWithComma(),
-                percentageInvestedCurrency = it.percentChange
+                percentageInvestedCurrency = it.percentChange ?: ""
             ) {
                 itemClick(it)
             }

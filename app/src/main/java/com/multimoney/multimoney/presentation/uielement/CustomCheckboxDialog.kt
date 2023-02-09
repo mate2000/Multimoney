@@ -110,12 +110,12 @@ fun CustomCheckboxDialog(
         iconTintColor = DefaultWhite
         backgroundColor = GrayScale700
     } else {
-        titleColor = GrayScale800
-        messageColor = GrayScale500
+        titleColor = DefaultWhite
+        messageColor = WhiteTransparency80
         positiveButtonTextColor = positiveButtonColor
         negativeButtonTextColor = negativeButtonColor
-        iconTintColor = Primary500
-        backgroundColor = DefaultWhite
+        iconTintColor = DefaultWhite
+        backgroundColor = GrayScale700
     }
 
     // Paddings

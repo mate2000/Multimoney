@@ -785,20 +785,18 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToSendMoneyScreenQuickAction() {
         if (uiState.idBrand == Brand.ElSalvador.id.toString()) {
-            val account = balanceCredit?.balanceAccountSmart?.firstOrNull()
-            smartAccount = SmartAccountID(
-                tokenAccount = account?.tokenNumber,
-                currencyID = account?.idCurrencyAccount,
-                accountNumber = account?.accountNumber,
-                customerId = account?.customerId,
-                totalBalance = account?.totalBalance
-            )
-            navigateTo(
-                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$userName/${uiState.idBrand}/$identification/${
-                encodeData(
-                    smartAccount
+            val accounts = balanceCredit?.balanceAccountSmart?.map {
+                SmartAccountID(
+                    tokenAccount = it?.tokenNumber,
+                    currencyID = it?.idCurrencyAccount,
+                    accountNumber = it?.accountNumber,
+                    customerId = it?.customerId,
+                    totalBalance = it?.totalBalance
                 )
-                }/$idClient/${Screen.HomeScreen.route}"
+            }
+            navigateTo(
+                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$userName/${uiState.idBrand}/$identification" +
+                        "/${encodeData(accounts?.firstOrNull())}/${encodeData(accounts?.lastOrNull())}/$idClient/${Screen.HomeScreen.route}"
             )
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             val infoCredit = uiState.userStatus?.infoCredit

@@ -10,6 +10,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.BuyCryptoStep
 import com.multimoney.data.util.catalog.PurchaseCryptoSteps
 import com.multimoney.domain.interaction.accountsmart.QuerySmartAccountsUseCase
 import com.multimoney.domain.model.accountsmart.AccountSmartForBuyCrypto
@@ -37,7 +38,7 @@ import javax.inject.Inject
 @OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
 class PurchaseCryptoSharedViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val dataStorePreferences: DataStorePreferences,
     private val getSmartAccountsUseCase: QuerySmartAccountsUseCase
 ) : BaseViewModel(true) {
@@ -177,21 +178,30 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     }
 
 
-    private fun onSetupVoucherDetails(quoteAmount: String, referenceNumber: String) {
+    private fun onSetupVoucherDetails(
+        quoteAmount: String,
+        baseAmount: String,
+        totalDebitedAmount: String,
+        exchangeRate: String,
+        totalDebitedExchange: String,
+        referenceNumber: String
+    ) {
         uiState = uiState.copy(
             voucherQuoteAmount = quoteAmount,
+            voucherBaseAmount = baseAmount,
             voucherReferenceNumber = referenceNumber,
+            voucherTotalDebitedAmount = totalDebitedAmount,
+            voucherExchangeRate = exchangeRate,
+            voucherTotalDebitedExchange = totalDebitedExchange,
             purchaseCurrentDate = getCurrentDate(Calendar.getInstance().time),
             purchaseCurrentTime = getCurrentTime(Calendar.getInstance().time)
         )
-    }
-    private fun onShowRightButton(showRightButton: Boolean){
-        uiState = uiState.copy(isRightButtonVisible = showRightButton)
     }
 
     data class UIState(
         // interaction
         val currentStep: Int = PurchaseCryptoSteps.One.pageNumber,
+        val currentStepType: BuyCryptoStep = BuyCryptoStep.LIST_CRYPTO_CURRENCIES,
         val isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         var bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
@@ -215,10 +225,16 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         val accountToken: String = "",
         // voucher information
         val voucherQuoteAmount: String? = null,
+        val voucherBaseAmount: String? = null,
         val voucherReferenceNumber: String? = null,
+        val voucherTotalDebitedAmount: String? = null,
+        val voucherExchangeRate: String? = null,
+        val voucherTotalDebitedExchange: String? = null,
         val purchaseCurrentDate: String? = null,
         val purchaseCurrentTime: String? = null,
-        val isRightButtonVisible: Boolean = true
+        val isRightButtonVisible: Boolean = true,
+        val isLeftButtonVisible: Boolean = true
+
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -252,9 +268,18 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
 
             is UIEvent.OnSetupVoucherDetails -> onSetupVoucherDetails(
                 event.quoteAmount,
+                event.baseAmount,
+                event.totalDebitedAmount,
+                event.exchangeRate,
+                event.totalDebitedExchange,
                 event.referenceNumber
             )
-            is UIEvent.OnShowRightButtom -> onShowRightButton(event.showRightButtom)
+            is UIEvent.OnSetFlowStep -> uiState = uiState.copy(currentStepType = event.step)
+            is UIEvent.OnNavigateHome -> navigateBack(
+                popTo = Screen.HomeScreen.route,
+                isRestart = true,
+                homeState = HomeState.COLLAPSED
+            )
         }
     }
 
@@ -265,7 +290,14 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     sealed class UIEvent {
         object OnCloseClick : UIEvent()
         object OnNextStep : UIEvent()
-        data class OnSetupVoucherDetails(val quoteAmount: String, val referenceNumber: String) :
+        data class OnSetupVoucherDetails(
+            val quoteAmount: String,
+            val baseAmount: String,
+            val totalDebitedAmount: String,
+            val exchangeRate: String,
+            val totalDebitedExchange: String,
+            val referenceNumber: String
+        ) :
             UIEvent()
 
         object OnQueryAccounts : UIEvent()
@@ -286,8 +318,8 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         object OnGetUserInfo : UIEvent()
         data class OnDisclaimerChecked(val checked: Boolean) : UIEvent()
         data class OnUpdateShouldShowDisclaimer(val checked: Boolean) : UIEvent()
-        data class OnShowRightButtom(val showRightButtom: Boolean) : UIEvent()
-
+        data class OnSetFlowStep(val step: BuyCryptoStep) : UIEvent()
+        object OnNavigateHome : UIEvent()
     }
 
     companion object {

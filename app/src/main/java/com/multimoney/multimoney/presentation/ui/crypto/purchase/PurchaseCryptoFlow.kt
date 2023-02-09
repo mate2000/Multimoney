@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.BuyCryptoStep
 import com.multimoney.data.util.catalog.PurchaseCryptoSteps
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.BuyCurrencyScreen
@@ -57,6 +58,7 @@ fun PurchaseCryptoFlow(
         }
     }
 
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -64,14 +66,15 @@ fun PurchaseCryptoFlow(
     ) {
         Column {
             TopNavBar(
-                isLeftButtonVisible = true,
-                isRightButtonVisible = viewModel.uiState.isRightButtonVisible.not(),
+                isLeftButtonVisible = viewModel.uiState.currentStepType != BuyCryptoStep.LOADING_SCREEN && viewModel.uiState.currentStepType != BuyCryptoStep.PURCHASE_VOUCHER,
+                isRightButtonVisible = viewModel.uiState.currentStepType != BuyCryptoStep.LOADING_SCREEN && viewModel.uiState.currentStepType != BuyCryptoStep.SELECT_SMART_ACCOUNT,
                 onRightButtonClick = {
                     viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnCloseClick)
                 },
                 onLeftButtonClick = {
                     viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep)
                 },
+                isCenterContentVisible = viewModel.uiState.currentStepType == BuyCryptoStep.PURCHASE_VOUCHER
             )
         }
         Column(
@@ -134,7 +137,11 @@ fun PurchaseCryptoFlow(
         },
         onContinueClicked = {
             viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNextStep)
-            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnUpdateShouldShowDisclaimer(viewModel.uiState.dontShowAgainChecked))
+            viewModel.onUIEvent(
+                PurchaseCryptoSharedViewModel.UIEvent.OnUpdateShouldShowDisclaimer(
+                    viewModel.uiState.dontShowAgainChecked
+                )
+            )
             coroutineScope.launch {
                 bottomSheetState.hide()
             }
@@ -147,11 +154,11 @@ fun PurchaseCryptoFlow(
 fun SvPurchaseCryptoDirectFlow(step: Int, viewModel: PurchaseCryptoSharedViewModel) {
     when (step) {
         PurchaseCryptoSteps.One.pageNumber -> {
-            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnShowRightButtom(false))
+            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnSetFlowStep(BuyCryptoStep.BUY_CURRENCY))
             BuyCurrencyScreen(sharedViewModel = viewModel)
         }
         PurchaseCryptoSteps.Two.pageNumber -> {
-            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnShowRightButtom(false))
+            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnSetFlowStep(BuyCryptoStep.PURCHASE_VOUCHER))
             BuyCryptoVoucherScreen(sharedViewModel = viewModel)
         }
     }
@@ -161,15 +168,15 @@ fun SvPurchaseCryptoDirectFlow(step: Int, viewModel: PurchaseCryptoSharedViewMod
 fun CRPurchaseCryptoDirectFlow(step: Int, viewModel: PurchaseCryptoSharedViewModel) {
     when (step) {
         PurchaseCryptoSteps.One.pageNumber -> {
-            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnShowRightButtom(true))
+            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnSetFlowStep(BuyCryptoStep.SELECT_SMART_ACCOUNT))
             SelectSmartAccountScreen(sharedViewModel = viewModel)
-            }
+        }
         PurchaseCryptoSteps.Two.pageNumber -> {
-            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnShowRightButtom(false))
+            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnSetFlowStep(BuyCryptoStep.BUY_CURRENCY))
             BuyCurrencyScreen(sharedViewModel = viewModel)
         }
         PurchaseCryptoSteps.Three.pageNumber -> {
-            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnShowRightButtom(false))
+            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnSetFlowStep(BuyCryptoStep.PURCHASE_VOUCHER))
             BuyCryptoVoucherScreen(sharedViewModel = viewModel)
         }
     }
@@ -179,15 +186,15 @@ fun CRPurchaseCryptoDirectFlow(step: Int, viewModel: PurchaseCryptoSharedViewMod
 fun SvPurchaseCryptoFlow(step: Int, viewModel: PurchaseCryptoSharedViewModel) {
     when (step) {
         PurchaseCryptoSteps.One.pageNumber -> {
-            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnShowRightButtom(false))
+            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnSetFlowStep(BuyCryptoStep.LIST_CRYPTO_CURRENCIES))
             ListCryptoCurrenciesScreen(sharedViewModel = viewModel)
         }
         PurchaseCryptoSteps.Two.pageNumber -> {
-            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnShowRightButtom(false))
+            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnSetFlowStep(BuyCryptoStep.BUY_CURRENCY))
             BuyCurrencyScreen(sharedViewModel = viewModel)
         }
         PurchaseCryptoSteps.Three.pageNumber -> {
-            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnShowRightButtom(false))
+            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnSetFlowStep(BuyCryptoStep.PURCHASE_VOUCHER))
             BuyCryptoVoucherScreen(sharedViewModel = viewModel)
         }
     }
@@ -197,19 +204,19 @@ fun SvPurchaseCryptoFlow(step: Int, viewModel: PurchaseCryptoSharedViewModel) {
 fun CRPurchaseCryptoFlow(step: Int, viewModel: PurchaseCryptoSharedViewModel) {
     when (step) {
         PurchaseCryptoSteps.One.pageNumber -> {
-            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnShowRightButtom(false))
+            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnSetFlowStep(BuyCryptoStep.LIST_CRYPTO_CURRENCIES))
             ListCryptoCurrenciesScreen(sharedViewModel = viewModel)
         }
         PurchaseCryptoSteps.Two.pageNumber -> {
-            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnShowRightButtom(true))
+            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnSetFlowStep(BuyCryptoStep.SELECT_SMART_ACCOUNT))
             SelectSmartAccountScreen(sharedViewModel = viewModel)
         }
         PurchaseCryptoSteps.Three.pageNumber -> {
-            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnShowRightButtom(false))
+            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnSetFlowStep(BuyCryptoStep.BUY_CURRENCY))
             BuyCurrencyScreen(sharedViewModel = viewModel)
         }
         PurchaseCryptoSteps.Four.pageNumber -> {
-            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnShowRightButtom(false))
+            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnSetFlowStep(BuyCryptoStep.PURCHASE_VOUCHER))
             BuyCryptoVoucherScreen(sharedViewModel = viewModel)
         }
     }

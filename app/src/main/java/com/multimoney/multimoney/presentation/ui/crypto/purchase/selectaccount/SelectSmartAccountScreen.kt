@@ -55,8 +55,8 @@ fun SelectSmartAccountScreen(
                 totalBalance = account.totalBalance ?: 0.0,
                 idCurrency = account.idCurrencyAccount ?: CurrencyType.Dollar.id,
                 accountToken = account.accountToken,
-                accountNumber = account.accountToken,
-                ibanAccountNumber = account.accountToken,
+                accountNumber = account.accountNumber,
+                ibanAccountNumber = account.ibanAccountNumber,
             )
         )
         if (!sharedViewModel.uiState.shouldDisplayDisclaimer) {

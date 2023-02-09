@@ -1,6 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency
 
-import android.util.Log
+
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -42,17 +42,23 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
+import com.multimoney.data.util.catalog.BuyCryptoStep
+import com.multimoney.data.util.catalog.PurchaseStatus
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.NativeLoaderScreen
 import com.multimoney.multimoney.presentation.ui.crypto.PurchaseConfirmationBottomSheet
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CryptoCurrencyInputLayout
 import com.multimoney.multimoney.presentation.uielement.CurrencyExchangeInfo
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.util.calculateAmountPlusFee
 import com.multimoney.multimoney.presentation.util.calculateAssetEstimated
+import com.multimoney.multimoney.presentation.util.calculateConfirmationBaseAmount
+import com.multimoney.multimoney.presentation.util.calculateConfirmationQuoteAmount
 import com.multimoney.multimoney.presentation.util.calculateConvertedCurrencyBalance
 import com.multimoney.multimoney.presentation.util.calculateDollarEstimated
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
@@ -106,29 +112,81 @@ fun BuyCurrencyScreen(
             )
         )
     }
-
-    if (viewModel.uiState.isPurchaseLoading) {
-        NativeLoaderScreen()
-    } else {
-        BuyCurrencyScreenContent(viewModel) {
-            //todo go to next step / set data etc
+    when (viewModel.uiState.purchaseStatus) {
+        PurchaseStatus.IDLE -> {
+            BuyCurrencyScreenContent(viewModel) {
+                //todo go to next step / set data etc
+                sharedViewModel.onUIEvent(
+                    PurchaseCryptoSharedViewModel.UIEvent.OnSetFlowStep(
+                        BuyCryptoStep.LOADING_SCREEN
+                    )
+                )
+            }
+        }
+        PurchaseStatus.LOADING -> NativeLoaderScreen()
+        PurchaseStatus.SUCCESS -> {
+            sharedViewModel.onUIEvent(
+                PurchaseCryptoSharedViewModel.UIEvent.OnSetupVoucherDetails(
+                    quoteAmount = calculateConfirmationQuoteAmount(
+                        quoteAmount = viewModel.uiState.quoteAmount.value,
+                        baseAmount = viewModel.uiState.baseAmount.value,
+                        currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price
+                    ),
+                    baseAmount = calculateConfirmationBaseAmount(
+                        quoteAmount = viewModel.uiState.quoteAmount.value,
+                        baseAmount = viewModel.uiState.baseAmount.value,
+                        currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price
+                    ),
+                    totalDebitedAmount = calculateAmountPlusFee(
+                        amount = calculateConfirmationQuoteAmount(
+                            quoteAmount = viewModel.uiState.quoteAmount.value,
+                            baseAmount = viewModel.uiState.baseAmount.value,
+                            currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price
+                        ).drop(1), fee = viewModel.uiState.pricesQuoteAndCommissions?.totalFee
+                    ).toCurrencyFormat(),
+                    exchangeRate = viewModel.uiState.exchangeRate.toCurrencyFormat(
+                        symbol = CurrencyType.Colon.symbol
+                    ),
+                    totalDebitedExchange = calculateConvertedCurrencyBalance(
+                        quoteAmount = viewModel.uiState.quoteAmount.value,
+                        baseAmount = viewModel.uiState.baseAmount.value,
+                        exchangeRate = viewModel.uiState.exchangeRate,
+                        price = viewModel.uiState.pricesQuoteAndCommissions?.price
+                            ?: 0.0
+                    ),
+                    referenceNumber = viewModel.uiState.referenceNumber ?: ""
+                )
+            )
+            sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNextStep)
+        }
+        PurchaseStatus.FAILED -> {
+            sharedViewModel.onUIEvent(
+                PurchaseCryptoSharedViewModel.UIEvent.OnSetFlowStep(
+                    BuyCryptoStep.PURCHASE_FAILED
+                )
+            )
+            AlertResult(
+                titleString = stringResource(id = R.string.crypto_purchase_flow_error_processing_purchase),
+                descriptionString = stringResource(R.string.common_sorry_try_again_later),
+                buttonTextResource = R.string.profile_error_changing_phone_button,
+                isRightButtonVisible = true,
+                isLeftButtonVisible = false,
+                onButtonClick = {
+                    sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNavigateHome)
+                },
+                onRightButtonClick = {
+                    sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNavigateHome)
+                }
+            )
         }
     }
+
 
     BackHandler {
         sharedViewModel.uiState.previousAction()
         sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep)
     }
 
-    if (viewModel.uiState.isPurchaseSuccess) {
-        sharedViewModel.onUIEvent(
-            PurchaseCryptoSharedViewModel.UIEvent.OnSetupVoucherDetails(
-                viewModel.uiState.amountInUSD.toString(),
-                viewModel.uiState.referenceNumber ?: ""
-            )
-        )
-        sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNextStep)
-    }
 
     if (viewModel.uiState.openDialog.isActive.value) {
         CustomDialog(

@@ -37,7 +37,7 @@ fun CustomContactIcon(
     val background: Color = if (isSystemInDarkTheme()) {
         Color.Transparent
     } else {
-        WhiteTransparency5
+        Color.Transparent
     }
 
     Surface(

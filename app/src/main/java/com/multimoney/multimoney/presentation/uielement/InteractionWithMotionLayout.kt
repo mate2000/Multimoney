@@ -120,11 +120,14 @@ fun MotionLayoutMM(
         }
     }
 
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(key1 = homeState) {
         if (homeState == COLLAPSED) {
             updateHomeState(HomeState.OLD_STATE)
-            animationProgress = ANIMATION_COLLAPSED
+            updateIsExpanded(false)
             updateIsBackPressed(false)
+            updateIsExpandedByClick(false)
+            swipeAbleState.snapTo(COLLAPSED)
+            animationProgress = ANIMATION_COLLAPSED
         }
     }
 

@@ -104,6 +104,7 @@ import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOperationMut
 import com.multimoney.data.networking.graphql.apollomodel.SaveTermsAndConditionsCreditMutation
 import com.multimoney.data.networking.graphql.apollomodel.ScreenConfigQuery
 import com.multimoney.data.networking.graphql.apollomodel.SendCreditContractEventMutation
+import com.multimoney.data.networking.graphql.apollomodel.SendCryptoToAddressMutation
 import com.multimoney.data.networking.graphql.apollomodel.SendPinProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.SmartAccountTypeQuery
 import com.multimoney.data.networking.graphql.apollomodel.StepByStepQuery
@@ -2127,6 +2128,38 @@ class GraphqlApi @Inject constructor(
             typeState,
             idAccountSysde,
             idAccountRequest
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationSendCryptoToAddress(
+        pkUser: Int,
+        identification: String,
+        destinationAddress: String,
+        feeId: String,
+        asset: String,
+        market: String,
+        cryptoNetwork: String,
+        amount: Any,
+        fee: Any,
+        internalFee: Any,
+        taxAmount: Any,
+        idBrand: Int,
+        user: String
+    ): ApolloCall<SendCryptoToAddressMutation.Data> = apolloAuthorizedClient.mutation(
+        SendCryptoToAddressMutation(
+            pkUser,
+            identification,
+            destinationAddress,
+            feeId,
+            asset,
+            market,
+            cryptoNetwork,
+            amount,
+            fee,
+            internalFee,
+            taxAmount,
+            idBrand,
+            user
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

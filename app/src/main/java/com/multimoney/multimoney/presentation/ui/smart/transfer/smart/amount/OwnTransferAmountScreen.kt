@@ -114,8 +114,8 @@ fun OwnTransferAmountContent(viewModel: OwnTransferAmountViewModel = hiltViewMod
             onDebounceValidation = { viewModel.onAmountUIEvent(OnAmountCompleted(it)) },
             isAmountError = viewModel.amountUIState.amountError.first,
             amountErrorMessage = stringResource(
-                id = R.string.smart_iban_transfer_error_balance_insufficient,
-                viewModel.totalBalanceLabel
+                viewModel.amountUIState.amountError.second,
+                viewModel.amountUIState.amountError.third
             ),
             currency = viewModel.amountUIState.currency,
             exchangeRate = viewModel.amountUIState.exchangeRateLabel.orEmpty(),

@@ -1,8 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.payment.amount
 
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue.Expanded
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -188,12 +186,6 @@ class SavingAmountViewModel @Inject constructor(
 
     fun verifySuggestionSelected(order: SuggestionOrder) =
         uiState.suggestedAmountSelected?.isSelected(order) == true
-
-    override fun onContinueClick() {
-        amountUIState = amountUIState.copy(
-            bottomSheetState = ModalBottomSheetState(Expanded)
-        )
-    }
 
     override fun onNavigateBack() {
         val screen = when (previousScreen) {

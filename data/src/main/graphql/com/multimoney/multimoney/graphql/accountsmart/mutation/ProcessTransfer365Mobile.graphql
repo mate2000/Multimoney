@@ -35,5 +35,6 @@ mutation ProcessTransfer365Mobile(
         }
         status
         message
+        detail
     }
 }

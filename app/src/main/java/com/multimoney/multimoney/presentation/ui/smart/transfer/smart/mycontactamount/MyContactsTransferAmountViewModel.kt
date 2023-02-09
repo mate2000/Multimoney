@@ -1,16 +1,13 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontactamount
 
-import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue.Expanded
 import androidx.compose.material.ModalBottomSheetValue.Hidden
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.Brand.ElSalvador
 import com.multimoney.domain.interaction.accountsmart.MutationProcessLocalTransferUseCase
 import com.multimoney.domain.model.accountsmart.PhoneSmart
-import com.multimoney.domain.model.security.SmartTransferLimit
 import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -31,10 +28,10 @@ import com.multimoney.multimoney.presentation.util.getCurrentTime
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import javax.inject.Inject
-import kotlinx.coroutines.flow.firstOrNull
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
@@ -43,7 +40,6 @@ class MyContactsTransferAmountViewModel @Inject constructor(
 ) : BaseSmartEditAmountViewModel() {
     // stateless
     var fromSmartLabel: Int = R.string.smart_iban_transfer_smart_account_colon
-    var totalBalanceLabel: String = ""
     var phoneAccount: PhoneSmart? = null
 
     override fun onStart() {
@@ -56,7 +52,7 @@ class MyContactsTransferAmountViewModel @Inject constructor(
             destinyCurrency = phoneAccount?.idCurrency?.getCurrencyFromId()
             if (destinyCurrency == CurrencyType.All) destinyCurrency = Dollar
             shouldDisplayExchange = originCurrency != destinyCurrency
-            var limits = preferences.getSmartTransferLimit().firstOrNull()
+            limits = preferences.getSmartTransferLimit().firstOrNull()
 
             amountUIState = amountUIState.copy(
                 originAccountDisplay = DisplayAccount(
@@ -77,7 +73,7 @@ class MyContactsTransferAmountViewModel @Inject constructor(
                 } else {
                     R.string.smart_colon_placeholder
                 },
-                maxAmount = limits?.find { a -> a?.code == originCurrency?.id.toString() }?.amount
+                maxAmount = limits?.find { a -> a?.code == destinyCurrency?.id.toString() }?.amount
             )
 
             fromSmartLabel = if (originCurrency == CurrencyType.Colon) {
@@ -85,7 +81,6 @@ class MyContactsTransferAmountViewModel @Inject constructor(
             } else {
                 R.string.smart_iban_transfer_smart_account_dolar
             }
-            totalBalanceLabel = originCurrency?.symbol + smartAccount?.totalBalance.toString()
             getExchangeOnCompleted(
                 true,
                 abbreviation = originCurrency?.disbursementValue ?: "",
@@ -178,19 +173,13 @@ class MyContactsTransferAmountViewModel @Inject constructor(
         }
     }
 
-    override fun onContinueClick() {
-        amountUIState = amountUIState.copy(
-            bottomSheetState = ModalBottomSheetState(Expanded)
-        )
-    }
-
     override fun onNavigateBack() {
         if (amountUIState.bottomSheetState.isVisible) {
             amountUIState = amountUIState.copy(
                 bottomSheetState = ModalBottomSheetState(Hidden)
             )
         } else {
-            when(previousScreen) {
+            when (previousScreen) {
                 Screen.MyContactsTransferScreen.baseRoute -> {
                     navigateBack(
                         popTo = Screen.MyContactsTransferScreen.route,

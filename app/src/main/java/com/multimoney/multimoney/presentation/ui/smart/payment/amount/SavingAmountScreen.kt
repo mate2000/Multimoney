@@ -62,7 +62,7 @@ fun SavingAmountScreen(
         AlertResult(
             isTopNavBarVisible = false,
             titleString = viewModel.amountUIState.errorMessage,
-            descriptionString = viewModel.amountUIState.errorMessage,
+            descriptionString = viewModel.amountUIState.errorDetail,
             buttonTextResource = R.string.error_button_retry,
             onButtonClick = { viewModel.onAmountUIEvent(OnRetryTransfer) },
             isSecondaryButtonVisible = true,

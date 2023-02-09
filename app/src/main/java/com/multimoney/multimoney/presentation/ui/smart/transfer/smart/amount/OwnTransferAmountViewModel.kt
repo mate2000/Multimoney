@@ -1,16 +1,20 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.amount
 
-import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.lifecycle.viewModelScope
 import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.drawable
+import com.multimoney.multimoney.presentation.navigation.DESTINY_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.ORIGIN_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Dollar
+import com.multimoney.multimoney.presentation.util.catalog.DisplayAccount
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,17 +24,43 @@ class OwnTransferAmountViewModel @Inject constructor() : BaseSmartEditAmountView
 
     // stateless
     var fromSmartLabel: Int = R.string.smart_iban_transfer_smart_account_colon
-    var totalBalanceLabel: String = ""
 
     override fun onStart() {
         viewModelScope.launch {
             initializeValues()
+            smartAccount = savedStateHandle[ORIGIN_ACCOUNT]
+            smartDestiny = savedStateHandle[DESTINY_ACCOUNT]
+            originCurrency = smartAccount?.currencyID?.getCurrencyFromId()
+            destinyCurrency = smartDestiny?.currencyID?.getCurrencyFromId()
+            shouldDisplayExchange = true
+            limits = preferences.getSmartTransferLimit().firstOrNull()
+
+            amountUIState = amountUIState.copy(
+                originAccountDisplay = DisplayAccount(
+                    sheetTitleResource = originCurrency?.myAccountSmartSymbol,
+                    sheetSubtitleResource = originCurrency?.currencyName,
+                    icon = drawable.ic_multimoney_smart
+                ),
+                destinyAccountDisplay = DisplayAccount(
+                    sheetTitleResource = destinyCurrency?.myAccountSmartSymbol,
+                    sheetSubtitleResource = destinyCurrency?.currencyName,
+                    icon = drawable.ic_multimoney_smart
+                ),
+                currency = destinyCurrency?.symbol ?: Dollar.symbol,
+                placeholder = if (destinyCurrency == Dollar) {
+                    R.string.smart_dollar_placeholder
+                } else {
+                    R.string.smart_colon_placeholder
+                },
+                totalBalance = smartAccount?.totalBalance,
+                maxAmount = limits?.find { a -> a?.code == destinyCurrency?.id.toString() }?.amount
+            )
+
             fromSmartLabel = if (originCurrency == CurrencyType.Colon) {
                 R.string.smart_iban_transfer_smart_account_colon
             } else {
                 R.string.smart_iban_transfer_smart_account_dolar
             }
-            totalBalanceLabel = originCurrency?.symbol + smartAccount?.totalBalance.toString()
             getExchangeOnCompleted(
                 true,
                 abbreviation = originCurrency?.disbursementValue ?: "",
@@ -63,23 +93,6 @@ class OwnTransferAmountViewModel @Inject constructor() : BaseSmartEditAmountView
             )
         } else {
             validateAmount()
-        }
-    }
-
-    override fun onContinueClick() {
-        val currentAmount = if (shouldDisplayExchange) {
-            amountUIState.exchangeConvertedAmount
-        } else {
-            amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
-        }
-        val isValidAmount = currentAmount <= (smartAccount?.totalBalance ?: 0.0)
-        amountUIState = if (isValidAmount) {
-            amountUIState.copy(
-                isAmountValid = true,
-                bottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Expanded)
-            )
-        } else {
-            amountUIState.copy(isAmountValid = false)
         }
     }
 

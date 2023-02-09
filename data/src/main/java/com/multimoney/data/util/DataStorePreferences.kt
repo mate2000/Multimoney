@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.google.gson.reflect.TypeToken
 import com.multimoney.data.base.BaseDataStorePreferences
 import com.multimoney.data.util.cryptography.CryptographyHelper
 import com.multimoney.domain.model.security.SmartTransferLimit
@@ -119,7 +120,7 @@ class DataStorePreferences @Inject constructor(
 
     fun isVisaCardExpiredEnabled(): Flow<Boolean> = getData(VISA_CARD_EXPIRED_DIALOG_KEY, true)
 
-    suspend fun setVolatileDialogVisible(isVisible: Boolean){
+    suspend fun setVolatileDialogVisible(isVisible: Boolean) {
         setData(VOLATILE_DIALOG_KEY, isVisible)
     }
 
@@ -136,10 +137,9 @@ class DataStorePreferences @Inject constructor(
     fun isCameraPermissionRequested(): Flow<Boolean> = getData(CAMERA_PERMISSION_STATE_KEY, false)
 
     suspend fun setSmartTransferLimit(limits: List<SmartTransferLimit?>) {
-        Log.d("AAAAAAAAA", "set: $limits")
-        putList(SMART_LIMITS, list = limits)
+        putListFlow(SMART_LIMITS, list = limits)
     }
-    fun getSmartTransferLimit() = getList<SmartTransferLimit?>(SMART_LIMITS)
+    fun getSmartTransferLimit() = getListFlow<SmartTransferLimit?>(SMART_LIMITS, object : TypeToken<List<SmartTransferLimit>>() {}.type)
 
     companion object {
         private val UNIQUE_ID = stringPreferencesKey("unique_id")

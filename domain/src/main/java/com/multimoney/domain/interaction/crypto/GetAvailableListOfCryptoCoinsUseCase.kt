@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface GetAvailableListOfCryptoCoinsUseCase {
     suspend operator fun invoke(
         user: String,
-        idBrand: Int
+        idBrand: Int,
+        origin: String
     ): Flow<MultimoneyResult<GetListOfAvailableCryptoCoins?>>
 }

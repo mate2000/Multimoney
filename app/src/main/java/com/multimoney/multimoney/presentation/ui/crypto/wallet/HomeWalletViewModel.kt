@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCase
 import com.multimoney.domain.model.balance.BalanceCryptoAccount
@@ -19,18 +20,21 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
 import com.multimoney.multimoney.presentation.util.getPreviousDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeWalletViewModel @Inject constructor(
     private val queryGetHistoricalClientBalanceUseCase: GetHistoricalClientBalanceUseCase,
     private val queryBalanceUseCase: QueryBalanceUseCase,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val cryptoHelper: CryptoHelper
 ): BaseViewModel(true) {
 
     var uiState by mutableStateOf(UiState())
@@ -49,6 +53,9 @@ class HomeWalletViewModel @Inject constructor(
             statusCrypto = savedStateHandle[STATUS_CRYPTO] ?: 0,
             cardStatus = savedStateHandle[CARD_STATUS] ?: 0
         )
+        viewModelScope.launch {
+            uiState = uiState.copy(isCryptoTransferEnabled = cryptoHelper.isCryptoTransferEnabled())
+        }
     }
 
     private fun callQueryBalanceUseCase(
@@ -190,6 +197,7 @@ class HomeWalletViewModel @Inject constructor(
         val clientCryptoBalanceHistory: List<HistoricalBalanceClient> = emptyList(),
         val openDialog: DialogParameters = DialogParameters(),
         val startDate: Long? = null,
+        val isCryptoTransferEnabled: Boolean = false
     )
 
     fun onUIEvent(event: UIEvent) {

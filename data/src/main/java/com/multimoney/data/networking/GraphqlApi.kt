@@ -1517,12 +1517,14 @@ class GraphqlApi @Inject constructor(
 
     fun queryGetAvailableListOfCryptoCoins(
         user: String,
-        idBrand: Int
+        idBrand: Int,
+        origin: String
     ): ApolloCall<GetAvailableListOfCryptoCoinsQuery.Data> =
         apolloAuthorizedClient.query(
             GetAvailableListOfCryptoCoinsQuery(
                 user,
-                idBrand
+                idBrand,
+                origin
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

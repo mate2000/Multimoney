@@ -30,6 +30,7 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -46,7 +47,8 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
     private val queryGetCurrencyHistoricalPricesUseCase: GetCurrencyHistoricalPricesUseCase,
     private val queryGetCurrencyNewsUseCase: GetCurrencyNewsUseCase,
     private val savedStateHandle: SavedStateHandle,
-    private val dataStorePreferences: DataStorePreferences
+    private val dataStorePreferences: DataStorePreferences,
+    private val cryptoHelper: CryptoHelper
 ) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UiState())
@@ -61,7 +63,10 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
             selectedCryptoCoin = savedStateHandle[ITEM_CRYPTO_MARKET]
         )
         viewModelScope.launch {
-            uiState = uiState.copy(shouldDisplayDisclaimer = dataStorePreferences.isVolatileDialogVisible().first())
+            uiState = uiState.copy(
+                shouldDisplayDisclaimer = dataStorePreferences.isVolatileDialogVisible().first(),
+                isCryptoTransferEnabled = cryptoHelper.isCryptoTransferEnabled()
+            )
         }
     }
 
@@ -181,7 +186,8 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
         val shouldDisplayDisclaimer: Boolean = true,
         val dontShowAgainChecked: Boolean = false,
         val bottomSheetVisibleState: ModalBottomSheetState = ModalBottomSheetState(
-            ModalBottomSheetValue.Hidden)
+            ModalBottomSheetValue.Hidden),
+        val isCryptoTransferEnabled: Boolean = false
     )
 
     fun onUIEvent(event: UIEvent) {

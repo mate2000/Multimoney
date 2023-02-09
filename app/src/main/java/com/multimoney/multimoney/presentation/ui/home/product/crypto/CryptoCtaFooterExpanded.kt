@@ -4,9 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onSizeChanged
-import com.multimoney.data.util.catalog.Brand.CostaRica
 import com.multimoney.domain.model.balance.Account
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoActionsSection
@@ -16,20 +13,20 @@ import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.
  */
 @Composable
 fun CryptoCtaFooterExpanded(
-    idBrand: String,
     balance: Balance?,
     profileEnable: Boolean?,
     noBalanceAction: () -> Unit,
     hasBalanceAction: () -> Unit,
     onSendActionClicked: () -> Unit,
-    onSellActionClicked: () -> Unit
+    onSellActionClicked: () -> Unit,
+    isCryptoTransferEnabled: Boolean,
 ) {
     val hasSmartBalance by remember { mutableStateOf(verifyIfHasSmartBalance(balance?.balanceAccountSmart)) }
 
     CryptoActionsSection(
         hasSmartBalance = hasSmartBalance,
         enableCryptoActions = profileEnable ?: false,
-        enableSendAndGive = idBrand.toIntOrNull() == CostaRica.id,
+        enableSendAndGive = isCryptoTransferEnabled,
         noBalanceAction = noBalanceAction,
         hasBalanceAction = hasBalanceAction,
         sendAction = onSendActionClicked,

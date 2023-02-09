@@ -150,11 +150,10 @@ fun CurrencyDetailContent(
             )
         },
         bottomBar = {
-            val enableSendAndGive = uiState.idBrand == Brand.CostaRica.id
             CryptoActionsSection(
                 hasSmartBalance = true,
                 enableCryptoActions = true,
-                enableSendAndGive = enableSendAndGive,
+                enableSendAndGive = uiState.isCryptoTransferEnabled,
                 hasBalanceAction = { buyCryptoClick() },
                 sellAction = { sellCryptoClick() },
                 sendAction = sendCryptoClick,

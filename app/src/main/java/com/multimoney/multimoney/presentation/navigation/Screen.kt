@@ -18,6 +18,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.EXCHANGE_RATE_
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.FK_FLOW_CONTROL
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CARD
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_GLOBAL_REQUEST
@@ -312,7 +313,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SignDocumentProcessScreen : Screen(
-        "sign_document_process_screen/{$SIGN_DOCUMENT_STEP_ARG}/{$SIGN_DOCUMENT_ORIGIN}/{$SIGN_DOCUMENT_ID_PRINT}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}",
+        "sign_document_process_screen?$SIGN_DOCUMENT_STEP_ARG={$SIGN_DOCUMENT_STEP_ARG}?$SIGN_DOCUMENT_ORIGIN={$SIGN_DOCUMENT_ORIGIN}?$SIGN_DOCUMENT_ID_PRINT={$SIGN_DOCUMENT_ID_PRINT}?$ID_BRAND={$ID_BRAND}?$PK_USER={$PK_USER}?$IDENTIFICATION={$IDENTIFICATION}?$EMAIL={$EMAIL}?$ID_USER_REQUEST={$ID_USER_REQUEST}?$FIRST_NAME={$FIRST_NAME}?$LAST_NAME={$LAST_NAME}?$CROSSELING={$CROSSELING}",
         "sign_document_process_screen"
     )
 
@@ -330,9 +331,9 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     object SmartContinueValidatingOnfidoScreen : Screen("smart_continue_validating_onfido_screen")
 
-    object ProcessingTransactionScreen : Screen(
-        "processing_transaction_screen/{$ID_BRAND}/{$SIGN_DOCUMENT_ID_PRINT}/{$USER}",
-        "processing_transaction_screen"
+    object OriginationVoucherScreen : Screen(
+        "origination_voucher_screen/{$ID_BRAND}/{$SIGN_DOCUMENT_ID_PRINT}/{$USER}",
+        "origination_voucher_screen"
     )
 
     object ApprovedByOnfidoScreen : Screen(
@@ -364,6 +365,16 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object VisaPreferencesScreen : Screen(
         "visa_preferences_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$USER}/{$PHONE_NUMBER}/{$BALANCE_CARD_INFORMATION}/{$AVAILABLE_BALANCE_LABEL}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
         "visa_preferences_screen"
+    )
+
+    object VisaVerifyDepositScreen : Screen(
+        "visa_verify_deposit_screen?$IDENTIFICATION={$IDENTIFICATION}?$ID_CARD={$ID_CARD}?$USER={$USER}?$ID_BRAND={$ID_BRAND}",
+        "visa_verify_deposit_screen"
+    )
+
+    object VisaVerifiedScreen : Screen(
+        "visa_verified_screen",
+        "visa_verified_screen"
     )
 
     // Bottom Navigation
@@ -607,13 +618,18 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "smart_add_365_account_screen"
     )
 
+    object SmartTransferFavoriteAccountScreen : Screen(
+        "transfer_favorite_account_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
+        "transfer_favorite_account_screen"
+    )
+
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")
     object ChartScreen : Screen("chart_screen/{$}")
 
     // Crypto
-    //todo add params
-    object PurchaseCryptoFlow: Screen(
+    // todo add params
+    object PurchaseCryptoFlow : Screen(
         route = "purchase_crypto_flow?$ITEM_CRYPTO_MARKET={$ITEM_CRYPTO_MARKET}",
         baseRoute = "purchase_crypto_flow"
     )
@@ -648,5 +664,10 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         baseRoute = "crypto_send_flow"
     )
 
-    object QrCodeScannerScreen: Screen(route = "qr_code_scanner_screen")
+    object CryptoSellFlow : Screen(
+        route = "crypto_sell_flow?$ITEM_CRYPTO_MARKET={$ITEM_CRYPTO_MARKET}",
+        baseRoute = "crypto_sell_flow"
+    )
+
+    object QrCodeScannerScreen : Screen(route = "qr_code_scanner_screen")
 }

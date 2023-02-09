@@ -24,6 +24,8 @@ import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountUpdate
 import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountUpdateUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationUpdateFavoriteSmartUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationUpdateFavoriteSmartUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteListUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteListUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelOneUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelOneUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelThreeUseCase
@@ -150,10 +152,10 @@ import com.multimoney.domain.interaction.crypto.BuyCryptoCurrencyUseCase
 import com.multimoney.domain.interaction.crypto.BuyCryptoCurrencyUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUseCase
 import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUseCaseImpl
-import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCase
-import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetBalanceCryptoAccountUseCase
 import com.multimoney.domain.interaction.crypto.GetBalanceCryptoAccountUseCaseImpl
+import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCase
+import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetCurrencyHistoricalPricesUseCase
 import com.multimoney.domain.interaction.crypto.GetCurrencyHistoricalPricesUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetCurrencyNewsUseCase
@@ -226,8 +228,12 @@ import com.multimoney.domain.interaction.virtualcard.MutationCardUnblockingUseCa
 import com.multimoney.domain.interaction.virtualcard.MutationCardUnblockingUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.MutationDeleteCardVDUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationDeleteCardVDUseCaseImpl
+import com.multimoney.domain.interaction.virtualcard.MutationMicroDepositVDUseCase
+import com.multimoney.domain.interaction.virtualcard.MutationMicroDepositVDUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.MutationPayCreditVDUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationPayCreditVDUseCaseImpl
+import com.multimoney.domain.interaction.virtualcard.MutationResendMicroDepositVDUseCase
+import com.multimoney.domain.interaction.virtualcard.MutationResendMicroDepositVDUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.MutationUpdateCardVDUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationUpdateCardVDUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCase
@@ -785,6 +791,16 @@ class InteractionModule {
     fun provideMutationCardUnblockingUseCase(virtualCardRepository: VirtualCardRepository): MutationCardUnblockingUseCase =
         MutationCardUnblockingUseCaseImpl(virtualCardRepository)
 
+    @Provides
+    @Singleton
+    fun provideMutationMicroDepositVDUseCase(virtualCardRepository: VirtualCardRepository): MutationMicroDepositVDUseCase =
+        MutationMicroDepositVDUseCaseImpl(virtualCardRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationResendMicroDepositVDUseCase(virtualCardRepository: VirtualCardRepository): MutationResendMicroDepositVDUseCase =
+        MutationResendMicroDepositVDUseCaseImpl(virtualCardRepository)
+
     // Profile
 
     @Provides
@@ -846,4 +862,9 @@ class InteractionModule {
     @Singleton
     fun provideQueryRelatedContactsByPhoneUseCase(smartAccountRepository: SmartAccountRepository): QueryRelatedContactsByPhoneUseCase =
         QueryRelatedContactsByPhoneUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryACHTransferFavoriteListUseCase(smartAccountRepository: SmartAccountRepository): QueryACHTransferFavoriteListUseCase =
+        QueryACHTransferFavoriteListUseCaseImpl(smartAccountRepository)
 }

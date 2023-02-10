@@ -1,24 +1,19 @@
 package com.multimoney.multimoney.presentation.ui.crypto.purchase.listofcurrency
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUseCase
 import com.multimoney.domain.model.crypto.GetListOfAvailableCryptoCoins
-import com.multimoney.domain.model.crypto.MarketCryptoCoin
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
+import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -29,7 +24,8 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class ListCryptoPurchaseViewModel @Inject constructor(
     private val getAvailableListOfCryptoCoinsUseCase: GetAvailableListOfCryptoCoinsUseCase,
-    private val dataStorePreferences: DataStorePreferences
+    private val dataStorePreferences: DataStorePreferences,
+    private val cryptoHelper: CryptoHelper
 ) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UiState())
@@ -50,7 +46,12 @@ class ListCryptoPurchaseViewModel @Inject constructor(
 
     private fun getAvailableListOfCryptoCoins() {
         executeUseCase {
-            getAvailableListOfCryptoCoinsUseCase.invoke(uiState.user ?: "", uiState.idBrand ?: 0)
+            val cryptoOrigin = cryptoHelper.getCryptoOrigin()
+            getAvailableListOfCryptoCoinsUseCase.invoke(
+                uiState.user ?: "",
+                uiState.idBrand ?: 0,
+                cryptoOrigin
+            )
                 .collectLatest { result ->
                     result.onSuccess { availableCryptoCoins ->
                         availableCryptoCoins.let {

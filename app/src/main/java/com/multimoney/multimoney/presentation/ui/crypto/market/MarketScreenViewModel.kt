@@ -24,6 +24,7 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -34,6 +35,7 @@ import javax.inject.Inject
 class MarketScreenViewModel @Inject constructor(
     private val getAvailableListOfCryptoCoinsUseCase: GetAvailableListOfCryptoCoinsUseCase,
     private val savedStateHandle: SavedStateHandle,
+    private val cryptoHelper: CryptoHelper
 ) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UiState())
@@ -54,7 +56,8 @@ class MarketScreenViewModel @Inject constructor(
         user: String,
         idBrand: Int
     ) = executeUseCase {
-        getAvailableListOfCryptoCoinsUseCase.invoke(user, idBrand)
+        val cryptoOrigin = cryptoHelper.getCryptoOrigin()
+        getAvailableListOfCryptoCoinsUseCase.invoke(user, idBrand, cryptoOrigin)
             .collectLatest { result ->
                 result.onSuccess { availableCryptoCoins ->
                     availableCryptoCoins.let {

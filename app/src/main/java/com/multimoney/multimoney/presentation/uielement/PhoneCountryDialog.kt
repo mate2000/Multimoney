@@ -217,7 +217,6 @@ fun PhoneCountryDialog(
                                         )
                                     }
                                 ) { countryItem ->
-                                    val item by remember { mutableStateOf(countryItem) }
                                     Row(
                                         Modifier
                                             .padding(
@@ -225,8 +224,8 @@ fun PhoneCountryDialog(
                                                 vertical = 18.dp
                                             )
                                             .clickable {
-                                                pickedCountry(item)
-                                                isPickCountry = item
+                                                pickedCountry(countryItem)
+                                                isPickCountry = countryItem
                                                 isOpenDialog = false
                                             }
                                     ) {
@@ -234,13 +233,13 @@ fun PhoneCountryDialog(
                                             modifier = modifier.width(30.dp),
                                             painter = painterResource(
                                                 id = getFlags(
-                                                    item.countryCode
+                                                    countryItem.countryCode
                                                 )
                                             ),
                                             contentDescription = null
                                         )
                                         Text(
-                                            stringResource(id = getCountryName(item.countryCode.lowercase())),
+                                            stringResource(id = getCountryName(countryItem.countryCode.lowercase())),
                                             Modifier.padding(horizontal = 18.dp)
                                         )
                                     }

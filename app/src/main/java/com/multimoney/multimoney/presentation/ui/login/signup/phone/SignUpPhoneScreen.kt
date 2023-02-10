@@ -17,12 +17,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.uielement.PhoneTextField
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
@@ -40,16 +42,6 @@ fun SignUpPhoneScreen(
     val context = LocalContext.current
     // Properties
     val focusManager = LocalFocusManager.current
-    val getDefaultCountryCode = getDefaultLangCode(context)
-    val getDefaultPhoneCode = getDefaultPhoneCode(context)
-    val selectedCountry =
-        getLibCountries.first {
-            it.countryPhoneCode == if (sharedViewModel.userData?.countryCode.isNullOrEmpty()) {
-                getDefaultPhoneCode
-            } else {
-                sharedViewModel.userData?.countryCode
-            }
-        }
 
     Log.d("PhoneTest", "country: ${getCountryName("es")}")
     Log.d("PhoneTest", "country: ${context.getString(getCountryName("es"))}")
@@ -99,31 +91,34 @@ fun SignUpPhoneScreen(
             }
         }
     }
-
-    LaunchedEffect(true) {
-        var countryCodeValue = ""
-        sharedViewModel.userData?.countryCode?.let {
-            countryCodeValue = selectedCountry.countryCode
-        } ?: run {
-            countryCodeValue = getDefaultCountryCode
-        }
-
-        viewModel.onUIEvent(
-            SignUpPhoneViewModel.UIEvent.OnStart(
-                phoneCode = selectedCountry.countryPhoneCode.ifBlank { getDefaultPhoneCode },
-                countryCode = countryCodeValue,
-                phoneNumber = sharedViewModel.userData?.phoneNumber ?: "",
-                signUpStartData = {
-                    sharedViewModel.onUIEvent(
-                        SignUpViewModel.UIEvent.OnCountryCountryCodeValueChange(
-                            countryCodeValue,
-                            selectedCountry.countryPhoneCode,
-                            false
-                        )
-                    )
-                }
-            )
+    viewModel.onUIEvent(
+        SignUpPhoneViewModel.UIEvent.OnSetupDefaultCountry(
+            sharedViewModel.idBrand ?: 0
         )
+    )
+
+    LaunchedEffect(key1 = true) {
+        viewModel.uiState.selectedCountry?.let { countryData ->
+            viewModel.onUIEvent(
+                SignUpPhoneViewModel.UIEvent.OnStart(
+                    phoneCode = countryData.countryPhoneCode,
+                    countryCode = countryData.countryCode,
+                    phoneNumber = sharedViewModel.userData?.phoneNumber ?: "",
+                    signUpStartData = {
+                        sharedViewModel.onUIEvent(
+                            SignUpViewModel.UIEvent.OnCountryCountryCodeValueChange(
+                                countryData.countryCode,
+                                countryData.countryPhoneCode,
+                                false
+                            )
+                        )
+                    },
+                    onFailure = {
+                        viewModel.onUIEvent(SignUpPhoneViewModel.UIEvent.OnQueryError)
+                    }
+                )
+            )
+        }
     }
 
     Column(modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp)) {
@@ -172,7 +167,7 @@ fun SignUpPhoneScreen(
             isRequiredMessage = stringResource(id = string.sign_up_phone_required),
             isError = viewModel.uiState.phoneNumberError.first,
             errorMessage = stringResource(id = viewModel.uiState.phoneNumberError.second),
-            defaultCountry = selectedCountry,
+            defaultCountry = getLibCountries().find { it -> it.countryCode == viewModel.uiState.currentBrand.countryCode }!!,
             pickedCountry = {
                 viewModel.onUIEvent(
                     SignUpPhoneViewModel.UIEvent.OnCountryCodeValueChanged(
@@ -189,6 +184,21 @@ fun SignUpPhoneScreen(
                         }
                     )
                 )
+            },
+            countriesList = viewModel.uiState.countriesList
+        )
+    }
+
+    if (viewModel.uiState.isAlertResultVisible) {
+        AlertResult(
+            titleString = stringResource(id = R.string.profile_help_error_title),
+            descriptionString = if (viewModel.uiState.idBrand == Brand.Guatemala.id)
+                stringResource(id = R.string.process_forgot_password_alert_failure_description_gt)
+            else
+                stringResource(id = R.string.process_forgot_password_alert_failure_description),
+            buttonTextResource = R.string.common_go_home,
+            onButtonClick = {
+                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnExit)
             }
         )
     }

@@ -94,9 +94,10 @@ fun PhoneCountryDialog(
     dialogAppBarTextColor: Color = DefaultWhite,
     dialogFocusedBorderColorSearch: Color = MultimoneyTheme.colors.primary,
     dialogUnFocusedBorderColorSearch: Color = MultimoneyTheme.colors.secondary,
-    dialogCursorColorSearch: Color = MultimoneyTheme.colors.primary
+    dialogCursorColorSearch: Color = MultimoneyTheme.colors.primary,
+    countryList :MutableList<CountryData>? = mutableListOf<CountryData>()
 ) {
-    var countryList by remember { mutableStateOf(getLibCountries) }
+    var innerCountryList = mutableListOf<CountryData>()
     var isPickCountry by remember { mutableStateOf(defaultSelectedCountry) }
     var isOpenDialog by remember { mutableStateOf(false) }
     var searchValue by remember { mutableStateOf("") }
@@ -206,11 +207,15 @@ fun PhoneCountryDialog(
                                 )
                             }
                             LazyColumn {
+                                innerCountryList = if(!countryList.isNullOrEmpty())
+                                    countryList
+                                else
+                                    getLibCountries() as MutableList<CountryData>
                                 items(
                                     if (searchValue.isEmpty()) {
-                                        countryList
+                                        innerCountryList
                                     } else {
-                                        countryList.searchCountry(
+                                        innerCountryList.searchCountry(
                                             searchValue,
                                             context = context
                                         )
@@ -240,7 +245,7 @@ fun PhoneCountryDialog(
                                         )
                                         Text(
                                             stringResource(id = getCountryName(item.countryCode.lowercase())),
-                                            Modifier.padding(horizontal = 18.dp)
+                                            Modifier.padding(horizontal = 18.dp),
                                         )
                                     }
                                 }

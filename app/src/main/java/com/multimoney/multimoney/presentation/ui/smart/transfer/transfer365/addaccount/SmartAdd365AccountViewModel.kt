@@ -89,9 +89,11 @@ class SmartAdd365AccountViewModel @Inject constructor(
             user = user
         ).collectLatest { result ->
             result.onSuccess { types ->
+                val selectedType = types?.typeList?.find { it == uiState.type }
                 uiState = uiState.copy(
                     isLoading = false,
-                    accountTypeList = types?.typeList ?: listOf()
+                    accountTypeList = types?.typeList ?: listOf(),
+                    type = selectedType
                 )
             }
             result.onFailure { onFailure(it) }
@@ -105,9 +107,11 @@ class SmartAdd365AccountViewModel @Inject constructor(
             user = user
         ).collectLatest { result ->
             result.onSuccess { banks ->
+                val selectedBank = banks?.bankList?.find { it == uiState.bank }
                 uiState = uiState.copy(
                     isLoading = false,
-                    bankList = banks?.bankList ?: listOf()
+                    bankList = banks?.bankList ?: listOf(),
+                    bank = selectedBank
                 )
             }
             result.onFailure { onFailure(it) }
@@ -256,7 +260,6 @@ class SmartAdd365AccountViewModel @Inject constructor(
                         uiState.phoneNumber.isEmpty() -> false
                 transferType == SmartTransferTypes.SmartToMobile.id &&
                         uiState.isPhoneNumberError -> false
-                uiState.isFavorite && uiState.nickname.isEmpty() -> false
                 else -> true
             }
         )
@@ -271,7 +274,9 @@ class SmartAdd365AccountViewModel @Inject constructor(
                 name = uiState.names,
                 lastname = uiState.lastNames,
                 bankId = uiState.bank?.bankId.toString(),
-                accountTypeId = uiState.type?.typeId.toString()
+                bankName = uiState.bank?.bankName.orEmpty(),
+                accountTypeId = uiState.type?.typeId.toString(),
+                isFavorite = false
             )
             navigateTo(
                 "${Screen.SmartTransfer365EditAmountScreen.baseRoute}/${
@@ -292,17 +297,19 @@ class SmartAdd365AccountViewModel @Inject constructor(
                 isFavorite = uiState.isFavorite,
                 typeAccountId = uiState.type?.typeId?.toIntOrNull() ?: 0,
                 destinationBankId = uiState.bank?.bankId?.toInt() ?: 0,
-                description = if (uiState.isFavorite) uiState.nickname else fullName,
+                description = if (uiState.isFavorite) uiState.nickname.ifEmpty { fullName } else fullName,
                 identificationNumber = uiState.documentNumber,
                 identificationTypeAccount = uiState.document?.idDocument ?: 0
             ).collectLatest { result ->
                 result.onSuccess { account ->
                     val savedAccount = Transfer365Account(
-                        accountNumber = account?.accountNumber,
+                        accountNumber = account?.accountNumber ?: uiState.accountNumber,
                         name = uiState.names,
                         lastname = uiState.lastNames,
                         bankId = uiState.bank?.bankId.toString(),
-                        accountTypeId = uiState.type?.typeId.toString()
+                        bankName = uiState.bank?.bankName.orEmpty(),
+                        accountTypeId = uiState.type?.typeId.toString(),
+                        isFavorite = uiState.isFavorite
                     )
                     navigateTo(
                         "${Screen.SmartTransfer365EditAmountScreen.baseRoute}/${

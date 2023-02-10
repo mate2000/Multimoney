@@ -14,9 +14,14 @@ private fun ListSinpeAccountQuery.Result.mapToDomainModel() = SinpeAccount(
     currencyId.toString().toInt(),
     currency,
     nameAccount,
+    idBank.toLong(),
+    typeAccount.toString().toLong(),
+    isFavorite,
     accountType.toString().toInt()
 )
 
 private fun ListSinpeAccountQuery.ListSinpeAccount.mapToDomainModel() = SinpeAccountResult(data = result.map { it.mapToDomainModel() })
 
 fun ListSinpeAccountQuery.Data.mapToDomainModel() = this.listSinpeAccount?.mapToDomainModel()
+
+

@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
@@ -52,12 +53,17 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 fun SignUpScreen(
     isRestart: Boolean = true,
     step: String,
+    idBrand: Int? = 0,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: SignUpViewModel = hiltViewModel()
 ) {
     val focusManager = LocalFocusManager.current
     val coroutineScope = rememberCoroutineScope()
+
+    if(step != DEFAULT_STEP)
+        viewModel.onUIEvent(SignUpViewModel.UIEvent.OnSetIdBrand(idBrand = idBrand?: 0))
+    val context = LocalContext.current
 
     // Navigation
     LaunchedEffect(true) {
@@ -69,6 +75,7 @@ fun SignUpScreen(
         }
     }
 
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -79,7 +86,12 @@ fun SignUpScreen(
                 isRightButtonVisible = viewModel.uiState.isCloseVisible,
                 isLeftButtonVisible = viewModel.uiState.isBackVisible,
                 onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
-                onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) }
+                onRightButtonClick = {
+                    viewModel.onUIEvent(
+                        OnCloseClick(focusManager = focusManager),
+                        isO3Country = context.resources.configuration.locale.isO3Country
+                    )
+                }
             )
             if (viewModel.uiState.currentStep != SignUpStep.Five.id) {
                 StepProgressBar(

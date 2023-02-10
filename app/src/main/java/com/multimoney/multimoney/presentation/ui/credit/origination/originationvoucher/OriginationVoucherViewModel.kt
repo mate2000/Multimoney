@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess
+package com.multimoney.multimoney.presentation.ui.credit.origination.originationvoucher
 
 import android.view.View
 import androidx.compose.runtime.getValue
@@ -17,10 +17,10 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess.ProcessingTransactionViewModel.UIEvent.OnCallQueryGetInfoDebit
-import com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess.ProcessingTransactionViewModel.UIEvent.OnCloseClick
-import com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess.ProcessingTransactionViewModel.UIEvent.OnNavigateToHome
-import com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess.ProcessingTransactionViewModel.UIEvent.OnSharedVoucherImage
+import com.multimoney.multimoney.presentation.ui.credit.origination.originationvoucher.OriginationVoucherViewModel.UIEvent.OnCallQueryGetInfoDebit
+import com.multimoney.multimoney.presentation.ui.credit.origination.originationvoucher.OriginationVoucherViewModel.UIEvent.OnCloseClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.originationvoucher.OriginationVoucherViewModel.UIEvent.OnNavigateToHome
+import com.multimoney.multimoney.presentation.ui.credit.origination.originationvoucher.OriginationVoucherViewModel.UIEvent.OnSharedVoucherImage
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.API_DATE_FORMAT
 import com.multimoney.multimoney.presentation.util.ShareHelper
@@ -32,7 +32,7 @@ import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @HiltViewModel
-class ProcessingTransactionViewModel @Inject constructor(
+class OriginationVoucherViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val queryGetInfoDepositUseCase: QueryGetInfoDepositUseCase,
     private val shareHelper: ShareHelper

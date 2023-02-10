@@ -128,6 +128,7 @@ fun CustomOutlinedTextField(
     trailingIconColor: Color = WhiteTransparency60,
     trailingIconAction: () -> Unit = {},
     trailingIconActionEnabled: Boolean = false,
+    trailingIconEndPadding: Dp = 0.dp,
     placeHolder: String = "",
     keyboardOptions: KeyboardOptions,
     keyboardActions: KeyboardActions,
@@ -147,7 +148,8 @@ fun CustomOutlinedTextField(
     isSuccess: Boolean = false,
     successMessage: String? = null,
     showInfo: Boolean = false,
-    infoMessage: String? = null
+    infoMessage: String? = null,
+    singleLine: Boolean = true
 ) {
     val context = LocalContext.current
     val activity = context.findActivity()
@@ -220,35 +222,31 @@ fun CustomOutlinedTextField(
             }
         }
     } else {
-        labelColor = DefaultWhite
+        labelColor = WhiteTransparency70
         backgroundColor = WhiteTransparency10
-        placeholderColor = GrayScale500
-        unfocusedIndicatorColor = GrayScale400
+        placeholderColor = WhiteTransparency60
+        unfocusedIndicatorColor = DefaultBlack
         errorIndicatorColor = if (isError || emptyError) {
-            SemanticNegative500
+            SemanticNegative400
         } else {
-            GrayScale800
+            WhiteTransparency90
         }
-        textFieldStrokeErrorColor = SemanticNegative500
+        textFieldStrokeErrorColor = SemanticNegative300
+        leadingIconComposableColor = WhiteTransparency60
+        iconTintColor = WhiteTransparency60
         when {
             isError -> {
-                focusedIndicatorColor = SemanticNegative500
-                iconTintColor = SemanticNegative500
-                leadingIconComposableColor = Primary500
-                textColor = GrayScale800
+                focusedIndicatorColor = SemanticNegative400
+                textColor = WhiteTransparency90
             }
             enabled -> {
-                focusedIndicatorColor = Primary500
-                iconTintColor = Primary500
-                leadingIconComposableColor = Primary500
-                textColor = GrayScale800
+                focusedIndicatorColor = WhiteTransparency60
+                textColor = WhiteTransparency90
             }
             else -> {
-                focusedIndicatorColor = GrayScale400
-                backgroundColor = GrayScale300
-                iconTintColor = GrayScale500
-                leadingIconComposableColor = GrayScale500
-                textColor = GrayScale500
+                focusedIndicatorColor = DefaultBlack
+                backgroundColor = GrayScale500
+                textColor = WhiteTransparency30
             }
         }
     }
@@ -331,7 +329,8 @@ fun CustomOutlinedTextField(
                             Icon(
                                 painter = painterResource(id = it),
                                 contentDescription = "",
-                                tint = trailingIconColor
+                                modifier = Modifier.padding(trailingIconEndPadding),
+                                tint = trailingIconColor,
                             )
                         }
                     }
@@ -369,7 +368,8 @@ fun CustomOutlinedTextField(
             textStyle = Typography.body2.copy(
                 color = WhiteTransparency90
             ),
-            maxLines = if (isTextArea) 2 else 1,
+            maxLines = if (isTextArea) 2 else Int.MAX_VALUE,
+            singleLine = if (isTextArea) false else singleLine,
             focusedBorderThickness = FOCUSED_BORDER_WIDTH,
             unfocusedBorderThickness = UNFOCUSED_BORDER_WIDTH
         )

@@ -51,6 +51,7 @@
     <string name="common_remove" translatable="false">Eliminar</string>
     <string name="not_defined" translatable="false">Not Defined</string>
     <string name="common_go_home" translatable="false">Ir al inicio</string>
+    <string name="sign" translatable="false">Firmar</string>
     <string-array name="options_yes_no">
         <item>Si</item>
         <item>No</item>
@@ -796,9 +797,9 @@
     <string name="sign_credit_max_attempts_contact" translatable="false">Contactar</string>
 
     <!-- Sign Document Reject -->
-    <string name="sign_document_reject_title" translatable="false">Te vamos a extrañar</string>
-    <string name="sign_document_reject_description" translatable="false">Si querés finalizar la solicitud de tu crédito debés firmar el contrato</string>
-    <string name="sign_document_reject_description_gt" translatable="false">Si quieres finalizar la solicitud de tu crédito debés firmar el contrato</string>
+    <string name="sign_document_reject_title" translatable="false">Estás solo a un paso</string>
+    <string name="sign_document_reject_description" translatable="false">Firmá el contrato y recibí tu dinero.</string>
+    <string name="sign_document_reject_description_gt" translatable="false">Firma el contrato y recibe tu dinero.</string>
 
     <!-- Origination Voucher -->
     <string name="origination_voucher_amount" translatable="false">Has recibido</string>

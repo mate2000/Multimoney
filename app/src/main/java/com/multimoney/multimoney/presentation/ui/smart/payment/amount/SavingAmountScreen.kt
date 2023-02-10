@@ -61,8 +61,8 @@ fun SavingAmountScreen(
         val notificationBody = stringResource(R.string.smart_saving_try_later_notification_body)
         AlertResult(
             isTopNavBarVisible = false,
-            titleResource = R.string.error_occurred_title,
-            descriptionResource = R.string.error_please_try_again,
+            titleString = viewModel.amountUIState.errorMessage,
+            descriptionString = viewModel.amountUIState.errorDetail,
             buttonTextResource = R.string.error_button_retry,
             onButtonClick = { viewModel.onAmountUIEvent(OnRetryTransfer) },
             isSecondaryButtonVisible = true,
@@ -190,13 +190,11 @@ private fun SavingAmountBottomSheet(viewModel: SavingAmountViewModel) {
         } else {
             null
         },
-        fromLabel = stringResource(viewModel.amountUIState.originAccountDisplay?.sheetLabel ?: R.string.empty),
         fromTitle = viewModel.amountUIState.originAccountDisplay?.sheetTitle
             ?: stringResource(viewModel.amountUIState.originAccountDisplay?.sheetTitleResource ?: R.string.empty),
         fromSubtitle = viewModel.amountUIState.originAccountDisplay?.sheetSubtitle
             ?: stringResource(viewModel.amountUIState.originAccountDisplay?.sheetSubtitleResource ?: R.string.empty),
         fromIcon = viewModel.amountUIState.originAccountDisplay?.icon,
-        toLabel = stringResource(R.string.smart_payment_amount_bottom_sheet_to),
         toTitle = viewModel.amountUIState.destinyAccountDisplay?.sheetTitle
             ?: stringResource(viewModel.amountUIState.destinyAccountDisplay?.sheetTitleResource ?: R.string.empty),
         toSubtitle = viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitle

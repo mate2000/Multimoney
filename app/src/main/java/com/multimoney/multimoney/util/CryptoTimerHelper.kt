@@ -7,7 +7,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
-class PurchaseCryptoTimerHelper(
+class CryptoTimerHelper(
     val coroutineScope: CoroutineScope ,
     val time: Int,
     val isBottomSheetOpen: Boolean = false,

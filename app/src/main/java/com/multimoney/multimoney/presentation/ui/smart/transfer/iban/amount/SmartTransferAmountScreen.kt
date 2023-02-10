@@ -49,10 +49,10 @@ fun SmartTransferAmountScreen(
         LoadingMultiMoney(R.string.smart_processing_transaction)
     } else if (viewModel.amountUIState.showErrorScreen) {
         AlertResult(
-            titleResource = R.string.error_occurred_title,
             isLeftButtonVisible = false,
             onRightButtonClick = { viewModel.onAmountUIEvent(OnNavigateHome) },
-            descriptionResource = R.string.error_try_again,
+            titleString = viewModel.amountUIState.errorMessage,
+            descriptionString = viewModel.amountUIState.errorDetail,
             buttonTextResource = R.string.error_button_try_again,
             onButtonClick = { viewModel.onAmountUIEvent(OnRetryTransfer) }
         )
@@ -113,10 +113,10 @@ fun SmartTransferAmountContent(viewModel: SmartTransferAmountViewModel = hiltVie
                 viewModel.onAmountUIEvent(OnAmountValueChange(it))
             },
             onDebounceValidation = { viewModel.onAmountUIEvent(OnAmountCompleted(it)) },
-            isAmountError = viewModel.amountUIState.isAmountValid.not(),
+            isAmountError = viewModel.amountUIState.amountError.first,
             amountErrorMessage = stringResource(
-                id = R.string.smart_iban_transfer_error_balance_insufficient,
-                viewModel.totalBalanceLabel
+                viewModel.amountUIState.amountError.second,
+                viewModel.amountUIState.amountError.third
             ),
             currency = viewModel.amountUIState.currency,
             exchangeRate = viewModel.amountUIState.exchangeRateLabel.orEmpty(),
@@ -139,9 +139,6 @@ private fun SmartTransferBottomSheet(viewModel: SmartTransferAmountViewModel) {
         saveSendTitleResource = R.string.smart_payment_sheet_send_title,
         amount = viewModel.getFormattedAmount(),
         exchangedAmount = if (viewModel.shouldDisplayExchange) viewModel.amountUIState.convertedAmountLabel else null,
-        fromLabel = stringResource(
-            viewModel.amountUIState.originAccountDisplay?.sheetLabel ?: R.string.empty
-        ),
         fromIcon = viewModel.amountUIState.originAccountDisplay?.icon,
         fromTitle = viewModel.amountUIState.originAccountDisplay?.sheetTitle
             ?: stringResource(
@@ -152,9 +149,6 @@ private fun SmartTransferBottomSheet(viewModel: SmartTransferAmountViewModel) {
                 viewModel.amountUIState.originAccountDisplay?.sheetSubtitleResource
                     ?: R.string.empty
             ),
-        toLabel = stringResource(
-            viewModel.amountUIState.destinyAccountDisplay?.sheetLabel ?: R.string.empty
-        ),
         toIcon = viewModel.amountUIState.destinyAccountDisplay?.icon,
         toTitle = viewModel.amountUIState.destinyAccountDisplay?.sheetTitle.orEmpty(),
         toSubtitle = viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitle,

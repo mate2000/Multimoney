@@ -12,7 +12,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnAbandonFlow
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnAmountCompleted
@@ -51,8 +50,8 @@ fun OwnTransferAmountScreen(
     } else if (viewModel.amountUIState.showErrorScreen) {
         AlertResult(
             isTopNavBarVisible = false,
-            titleResource = R.string.error_occurred_title,
-            descriptionResource = R.string.error_try_again,
+            titleString = viewModel.amountUIState.errorMessage,
+            descriptionString = viewModel.amountUIState.errorMessage,
             buttonTextResource = R.string.error_button_try_again,
             onButtonClick = { viewModel.onAmountUIEvent(OnRetryTransfer) }
         )
@@ -113,10 +112,10 @@ fun OwnTransferAmountContent(viewModel: OwnTransferAmountViewModel = hiltViewMod
                 viewModel.onAmountUIEvent(OnAmountValueChange(it))
             },
             onDebounceValidation = { viewModel.onAmountUIEvent(OnAmountCompleted(it)) },
-            isAmountError = viewModel.amountUIState.isAmountValid.not(),
+            isAmountError = viewModel.amountUIState.amountError.first,
             amountErrorMessage = stringResource(
-                id = R.string.smart_iban_transfer_error_balance_insufficient,
-                viewModel.totalBalanceLabel
+                viewModel.amountUIState.amountError.second,
+                viewModel.amountUIState.amountError.third
             ),
             currency = viewModel.amountUIState.currency,
             exchangeRate = viewModel.amountUIState.exchangeRateLabel.orEmpty(),
@@ -139,31 +138,23 @@ private fun OwnTransferAmountBottomSheet(viewModel: OwnTransferAmountViewModel) 
         saveSendTitleResource = R.string.smart_payment_sheet_send_title,
         amount = viewModel.getFormattedAmount(),
         exchangedAmount = viewModel.amountUIState.convertedAmountLabel,
-        fromLabel = stringResource(
-            viewModel.amountUIState.originAccountDisplay?.sheetLabel ?: R.string.empty
+        fromTitle = stringResource(
+            viewModel.amountUIState.originAccountDisplay?.sheetTitleResource ?: R.string.empty
         ),
-        fromTitle = viewModel.amountUIState.originAccountDisplay?.sheetTitle
-            ?: stringResource(
-                viewModel.amountUIState.originAccountDisplay?.sheetTitleResource ?: R.string.empty
-            ),
-        fromSubtitle = viewModel.amountUIState.originAccountDisplay?.sheetSubtitle
-            ?: stringResource(
-                viewModel.amountUIState.originAccountDisplay?.sheetSubtitleResource
-                    ?: R.string.empty
-            ),
+        fromSubtitle = stringResource(
+            viewModel.amountUIState.originAccountDisplay?.sheetSubtitleResource ?: R.string.empty
+        ),
         fromIcon = viewModel.amountUIState.originAccountDisplay?.icon,
-        toLabel = stringResource(R.string.smart_payment_amount_bottom_sheet_to),
-        toTitle = viewModel.amountUIState.destinyAccountDisplay?.sheetTitle ?: stringResource(
+        toTitle = stringResource(
             viewModel.amountUIState.destinyAccountDisplay?.sheetTitleResource ?: R.string.empty
         ),
-        toSubtitle = viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitle
-            ?: stringResource(
-                viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitleResource
-                    ?: R.string.empty
-            ),
+        toSubtitle = stringResource(
+            viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitleResource
+                ?: R.string.empty
+        ),
         toIcon = viewModel.amountUIState.destinyAccountDisplay?.icon,
         motive = viewModel.amountUIState.motive,
-        buttonText = stringResource(string.button_continue),
+        buttonText = stringResource(R.string.button_continue),
         buttonAction = { viewModel.onAmountUIEvent(OnCallProcessTransfer) }
     )
 }

@@ -11,7 +11,9 @@ import com.multimoney.domain.model.virtualcard.CardBlocking
 import com.multimoney.domain.model.virtualcard.CardUnblocking
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.domain.model.virtualcard.DeleteCard
+import com.multimoney.domain.model.virtualcard.MicroDepositVD
 import com.multimoney.domain.model.virtualcard.PayCreditVisaDirect
+import com.multimoney.domain.model.virtualcard.ResendMicroDepositVD
 import com.multimoney.domain.model.virtualcard.UpdateCard
 import com.multimoney.domain.repository.VirtualCardRepository
 import kotlinx.coroutines.flow.Flow
@@ -19,8 +21,7 @@ import javax.inject.Inject
 
 class VirtualCardRepositoryImpl @Inject constructor(
     private val graphqlApi: GraphqlApi
-) : BaseRepository(),
-    VirtualCardRepository {
+) : BaseRepository(), VirtualCardRepository {
 
     override suspend fun queryListCardVD(
         user: String,
@@ -101,7 +102,7 @@ class VirtualCardRepositoryImpl @Inject constructor(
         identification: String,
         user: String,
         idBrand: Int,
-        idCard: Long,
+        idCard: Long
     ): Flow<MultimoneyResult<DeleteCard?>> = fetchData(
         apolloCall = graphqlApi.mutationDeleteCardVD(
             identification = identification,
@@ -121,19 +122,20 @@ class VirtualCardRepositoryImpl @Inject constructor(
         idLoanClient: Int,
         idCard: Long,
         cardMasked: String
-    ): Flow<MultimoneyResult<AutomaticCardDebit?>> = fetchData(
-        apolloCall = graphqlApi.mutationActivatedCardAutomaticDebit(
-            user = user,
-            idBrand = idBrand,
-            idClient = idClient,
-            idLoanClient = idLoanClient,
-            idCard = idCard,
-            cardMasked = cardMasked
-        ),
-        apolloCallMapper = { data ->
-            Success(data.mapToDomainModel())
-        }
-    )
+    ): Flow<MultimoneyResult<AutomaticCardDebit?>> =
+        fetchData(
+            apolloCall = graphqlApi.mutationActivatedCardAutomaticDebit(
+                user = user,
+                idBrand = idBrand,
+                idClient = idClient,
+                idLoanClient = idLoanClient,
+                idCard = idCard,
+                cardMasked = cardMasked
+            ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
 
     override suspend fun mutationCardBlocking(
         blockType: String,
@@ -147,15 +149,7 @@ class VirtualCardRepositoryImpl @Inject constructor(
         idBrand: Int
     ): Flow<MultimoneyResult<CardBlocking?>> = fetchData(
         apolloCall = graphqlApi.mutationCardBlocking(
-            blockType,
-            observations,
-            clientId,
-            userApp,
-            cardToken,
-            source,
-            idLoan,
-            user,
-            idBrand
+            blockType, observations, clientId, userApp, cardToken, source, idLoan, user, idBrand
         ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
@@ -184,6 +178,50 @@ class VirtualCardRepositoryImpl @Inject constructor(
         ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun mutationMicroDepositVD(
+        identification: String,
+        idCard: String,
+        code: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<MicroDepositVD?>> = fetchData(
+        apolloCall = graphqlApi.mutationMicroDepositVD(
+            identification,
+            idCard,
+            code,
+            user,
+            idBrand
+        ),
+        apolloCallMapper = { data ->
+            if (data.microDepositVD.status == 0) {
+                Success(data.mapToDomainModel())
+            } else {
+                Message(data.mapToDomainModel())
+            }
+        }
+    )
+
+    override suspend fun mutationResendMicroDepositVD(
+        identification: String,
+        idCard: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<ResendMicroDepositVD?>> = fetchData(
+        apolloCall = graphqlApi.mutationResendMicroDepositVD(
+            identification,
+            idCard,
+            user,
+            idBrand
+        ),
+        apolloCallMapper = { data ->
+            if (data.resendMicroDepositVD.status == 0) {
+                Success(data.mapToDomainModel())
+            } else {
+                Message(data.mapToDomainModel())
+            }
         }
     )
 }

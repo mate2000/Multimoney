@@ -54,7 +54,6 @@ class Transfer365AmountViewModel @Inject constructor(
 
             amountUIState = amountUIState.copy(
                 originAccountDisplay = DisplayAccount(
-                    sheetLabel = R.string.transfer_365_pre_confirmation_from_label,
                     sheetTitleResource = originCurrency?.myAccountSmartName,
                     sheetSubtitle = getMaskedAccount(
                         prefix = Brand.ElSalvador.countryCode.uppercase(),
@@ -67,20 +66,20 @@ class Transfer365AmountViewModel @Inject constructor(
                     R.string.smart_dollar_placeholder
                 } else {
                     R.string.empty
-                }
+                },
+                maxAmount = 0.0 // todo
             )
-            totalBalanceLabel =
-                amountUIState.currency + smartAccount?.totalBalance.toString()
+            totalBalanceLabel = amountUIState.currency + smartAccount?.totalBalance.toString()
             val destinationInfo = when (transferType) {
                 SmartTransferTypes.SmartToMobile.id -> {
                     transfer365Account.phone
                 }
                 SmartTransferTypes.SmartToOtherBank.id -> {
                     "${transfer365Account.bankName} | ${
-                        getMaskedAccount(
-                            prefix = Brand.ElSalvador.countryCode.uppercase(),
-                            accountNumber = transfer365Account.accountNumber.orEmpty()
-                        )
+                    getMaskedAccount(
+                        prefix = Brand.ElSalvador.countryCode.uppercase(),
+                        accountNumber = transfer365Account.accountNumber.orEmpty()
+                    )
                     }"
                 }
                 else -> {
@@ -89,7 +88,6 @@ class Transfer365AmountViewModel @Inject constructor(
             }
             amountUIState = amountUIState.copy(
                 destinyAccountDisplay = DisplayAccount(
-                    sheetLabel = R.string.smart_payment_amount_bottom_sheet_to,
                     sheetTitle = "${transfer365Account.name} ${transfer365Account.lastname}",
                     sheetSubtitle = destinationInfo,
                     icon = R.drawable.ic_bank_account_dollar

@@ -3,15 +3,14 @@
 package com.multimoney.multimoney.presentation.ui.crypto.market
 
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUseCase
+import com.multimoney.domain.model.accountsmart.SmartAccountSmall
+import com.multimoney.domain.model.balance.Summary
 import com.multimoney.domain.model.crypto.GetListOfAvailableCryptoCoins
 import com.multimoney.domain.model.crypto.MarketCryptoCoin
 import com.multimoney.domain.model.util.error.HttpError
@@ -20,13 +19,14 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNTS_LIST
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,13 +39,15 @@ class MarketScreenViewModel @Inject constructor(
     var uiState by mutableStateOf(UiState())
         private set
 
+    private var smartAccounts: List<SmartAccountSmall>? = null
+
     private fun onGetUserInfo() {
-        viewModelScope.launch {
-            uiState = uiState.copy(
-                user = savedStateHandle[USER] ?: "",
-                idBrand = savedStateHandle[ID_BRAND] ?: 0,
-            )
-        }
+        uiState = uiState.copy(
+            user = savedStateHandle[USER] ?: "",
+            idBrand = savedStateHandle[ID_BRAND] ?: 0,
+        )
+        smartAccounts =
+            savedStateHandle.get<Array<SmartAccountSmall>>(SMART_ACCOUNTS_LIST)?.toList()
     }
 
     private fun getAvailableListOfCryptoCoins(
@@ -82,14 +84,18 @@ class MarketScreenViewModel @Inject constructor(
         marketCryptoCoin: MarketCryptoCoin
     ) {
         uiState = uiState.copy(
-           selectedCryptoCoin = marketCryptoCoin
+            selectedCryptoCoin = marketCryptoCoin
         )
     }
 
     private fun onNavigateToCurrencyDetails() {
         navigateTo(
             "${Screen.CryptoCurrencyDetailsScreen.baseRoute}/${uiState.user}"
-                    + "/${uiState.idBrand}/${encodeData(uiState.selectedCryptoCoin)}"
+                    + "/${uiState.idBrand}/${encodeData(uiState.selectedCryptoCoin)}/${
+                encodeData(
+                    smartAccounts
+                )
+            }"
         )
     }
 

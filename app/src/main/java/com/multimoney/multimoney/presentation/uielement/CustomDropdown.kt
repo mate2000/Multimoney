@@ -101,21 +101,21 @@ fun CustomDropdown(
             }
         }
     } else {
-        focusedColor = Primary300
-        labelColor = GrayScale500
-        backgroundColor = DefaultWhite
+        focusedColor = GrayScale700
+        labelColor = WhiteTransparency70
+        backgroundColor = WhiteTransparency10
         when {
             isError -> {
-                iconTintColor = Primary400
-                textColor = GrayScale800
+                iconTintColor = GrayScale400
+                textColor = WhiteTransparency90
             }
             enabled -> {
                 iconTintColor = WhiteTransparency70
-                textColor = GrayScale600
+                textColor = WhiteTransparency90
             }
             else -> {
-                backgroundColor = DefaultWhite
-                iconTintColor = Primary500
+                backgroundColor = GrayScale500
+                iconTintColor = WhiteTransparency70
                 textColor = GrayScale400
             }
         }

@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.credit.disbursement.visa.verification
+package com.multimoney.multimoney.presentation.ui.visa.verification
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -33,10 +33,10 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 
 @Composable
-fun VisaVerifiedScreen(
+fun VisaVerifyInformationScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
-    viewModel: VisaVerifiedViewModel = hiltViewModel()
+    viewModel: VisaVerifyInformationViewModel = hiltViewModel()
 ) {
     // Navigation
     viewModel.apply {
@@ -45,14 +45,14 @@ fun VisaVerifiedScreen(
         }
     }
     VisaVerifiedContent(
-        onNextButtonClick = { viewModel.onUIEvent(VisaVerifiedViewModel.UIEvent.OnNavigateTo) },
-        onBackClick = { viewModel.onUIEvent(VisaVerifiedViewModel.UIEvent.OnNavigateBack) },
-        onCloseClick = { viewModel.onUIEvent(VisaVerifiedViewModel.UIEvent.OnCloseClick) },
+        onNextButtonClick = { viewModel.onUIEvent(VisaVerifyInformationViewModel.UIEvent.OnNavigateToNextScreen) },
+        onBackClick = { viewModel.onUIEvent(VisaVerifyInformationViewModel.UIEvent.OnNavigateBack) },
+        onCloseClick = { viewModel.onUIEvent(VisaVerifyInformationViewModel.UIEvent.OnCloseClick) },
         dialogParameter = viewModel.uiState.openDialog
     )
 
     BackHandler {
-        viewModel.onUIEvent(VisaVerifiedViewModel.UIEvent.OnNavigateBack)
+        viewModel.onUIEvent(VisaVerifyInformationViewModel.UIEvent.OnNavigateBack)
     }
 }
 

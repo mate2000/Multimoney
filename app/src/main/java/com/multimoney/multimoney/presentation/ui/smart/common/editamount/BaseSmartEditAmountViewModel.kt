@@ -47,7 +47,7 @@ import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import com.multimoney.multimoney.presentation.util.workers.startTimedNotification
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
-import java.util.*
+import java.util.Calendar
 import javax.inject.Inject
 
 @OptIn(ExperimentalMaterialApi::class)

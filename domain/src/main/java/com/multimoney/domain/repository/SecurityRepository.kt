@@ -8,6 +8,7 @@ import com.multimoney.domain.model.security.ClientInfoCr
 import com.multimoney.domain.model.security.Company
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.CountryList
+import com.multimoney.domain.model.security.CountryPhoneCodes
 import com.multimoney.domain.model.security.MiniCards
 import com.multimoney.domain.model.security.OnfidoCheckProcess
 import com.multimoney.domain.model.security.OnfidoToken
@@ -160,6 +161,10 @@ interface SecurityRepository {
         infoBankAccountStatus: Int,
         infoCriptoStatus: Int
     ): Flow<MultimoneyResult<QuickActions?>>
+
+    suspend fun queryGetCountryPhoneCodes(
+        idBrand: Int,
+    ): Flow<MultimoneyResult<CountryPhoneCodes>>
 
     suspend fun mutationValidateOTP(
         email: String,

@@ -291,7 +291,6 @@ fun CustomInfoButton(
     }
 }
 
-
 @Composable
 fun CustomInfoButtonFavoriteAccount(
     modifier: Modifier = Modifier,
@@ -432,4 +431,3 @@ fun CustomInfoButtonFavoriteAccount(
         }
     }
 }
-

@@ -8,7 +8,7 @@ import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT_LIST
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNTS_ID_LIST
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
@@ -43,7 +43,7 @@ open class BaseSelectSmartAccountViewModel(
         idClient = savedStateHandle[ID_CLIENT] ?: ""
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: ""
         identification = savedStateHandle[IDENTIFICATION] ?: ""
-        smartAccountIDs = savedStateHandle.get<Array<SmartAccountID>>(SMART_ACCOUNT_LIST)?.toList()
+        smartAccountIDs = savedStateHandle.get<Array<SmartAccountID>>(SMART_ACCOUNTS_ID_LIST)?.toList()
     }
 
     protected fun onNavigateBack() {

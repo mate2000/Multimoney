@@ -11,6 +11,7 @@ import com.multimoney.domain.model.security.ClientInfoCr
 import com.multimoney.domain.model.security.Company
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.CountryList
+import com.multimoney.domain.model.security.CountryPhoneCodes
 import com.multimoney.domain.model.security.MiniCards
 import com.multimoney.domain.model.security.OnfidoCheckProcess
 import com.multimoney.domain.model.security.OnfidoToken
@@ -464,6 +465,16 @@ class SecurityRepositoryImpl @Inject constructor(
             }
         )
 
+    override suspend fun queryGetCountryPhoneCodes(idBrand: Int): Flow<MultimoneyResult<CountryPhoneCodes>> =
+        fetchData(
+            apolloCall = graphqlApi.queryGetCountryPhoneCodes(idBrand),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+
+
+
     override suspend fun mutationChangeEmail(
         idClient: Int,
         pkUser: Int,
@@ -489,6 +500,8 @@ class SecurityRepositoryImpl @Inject constructor(
                 Success(data.mapToDomainModel())
             }
         )
+
+
 
     companion object {
         private const val ANOTHER_DEVICE_ALREADY_REGISTERED_CODE = 3102

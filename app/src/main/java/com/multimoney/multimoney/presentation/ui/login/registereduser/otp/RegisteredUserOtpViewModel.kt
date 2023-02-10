@@ -77,11 +77,13 @@ class RegisteredUserOtpViewModel @Inject constructor(
         uiState = when (otpMethod) {
             SendOtpMethod.Email.value -> uiState.copy(
                 titleResource = R.string.registered_user_otp_title_email,
-                titleOtpMethod = userData?.maskedMail.orEmpty()
+                titleOtpMethod = userData?.maskedMail.orEmpty(),
+                isOtherPhoneNumberVisible = false
             )
             else -> uiState.copy(
                 titleResource = R.string.registered_user_otp_title_sms,
-                titleOtpMethod = userData?.maskedPhoneNumber.orEmpty()
+                titleOtpMethod = userData?.maskedPhoneNumber.orEmpty(),
+                isOtherPhoneNumberVisible = true
             )
         }
     }
@@ -311,6 +313,7 @@ class RegisteredUserOtpViewModel @Inject constructor(
         // Interactions
         val titleResource: Int = R.string.empty,
         val titleOtpMethod: String = "",
+        val isOtherPhoneNumberVisible: Boolean = false,
         val phaseCount: Int = PHASE_ONE,
         val remainingTime: Duration = TIMER_DURATION.seconds,
         val isTimerRunning: Boolean = false,

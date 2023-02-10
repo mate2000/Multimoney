@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.crypto.purchase.selectaccount
+package com.multimoney.multimoney.presentation.ui.crypto.sell.selectaccount
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

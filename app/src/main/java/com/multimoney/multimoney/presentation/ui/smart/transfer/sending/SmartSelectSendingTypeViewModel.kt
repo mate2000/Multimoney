@@ -24,9 +24,9 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class SmartSelectSendingTypeViewModel @Inject constructor(
@@ -154,8 +154,9 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     }
 
     private fun onNavigateToMyFavorites() {
-        // TODO navigate to [tbd]
-        emitBaseEvent(BaseEvent.OnShowTbdToastEvent)
+        navigateTo(
+            "${Screen.SmartTransferFavoriteAccountScreen.baseRoute}/$user/$idBrand/$identification"
+        )
     }
 
     private fun onNavigateToOtherBankAccounts() {

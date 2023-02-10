@@ -24,6 +24,8 @@ import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountUpdate
 import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountUpdateUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationUpdateFavoriteSmartUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationUpdateFavoriteSmartUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteListUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteListUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelOneUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelOneUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelThreeUseCase
@@ -867,4 +869,9 @@ class InteractionModule {
     @Singleton
     fun provideQueryGetCountryPhoneCodes(securityRepository: SecurityRepository): QueryGetCountryPhoneCodesUseCase =
         QueryGetCountryPhoneCodesUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryACHTransferFavoriteListUseCase(smartAccountRepository: SmartAccountRepository): QueryACHTransferFavoriteListUseCase =
+        QueryACHTransferFavoriteListUseCaseImpl(smartAccountRepository)
 }

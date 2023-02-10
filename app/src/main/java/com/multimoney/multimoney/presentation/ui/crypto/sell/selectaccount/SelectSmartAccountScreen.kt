@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.crypto.purchase.selectaccount
+package com.multimoney.multimoney.presentation.ui.crypto.sell.selectaccount
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -21,7 +21,7 @@ import com.multimoney.domain.model.accountsmart.AccountSmartForBuyCrypto
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
+import com.multimoney.multimoney.presentation.ui.crypto.sell.SellCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.ui.home.profile.accounts.MyAccountsSkeleton
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -32,7 +32,7 @@ fun SelectSmartAccountScreen(
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-    sharedViewModel: PurchaseCryptoSharedViewModel,
+    sharedViewModel: SellCryptoSharedViewModel,
     viewModel: SelectSmartAccountViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
@@ -49,11 +49,11 @@ fun SelectSmartAccountScreen(
         )
     }
 
-    BackHandler { sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep) }
+    BackHandler { sharedViewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnPreviousStep) }
 
     SelectSmartAccountContent(viewModel, sharedViewModel) { account ->
         sharedViewModel.onUIEvent(
-            PurchaseCryptoSharedViewModel.UIEvent.OnSetSelectedAccount(
+            SellCryptoSharedViewModel.UIEvent.OnSetSelectedAccount(
                 totalBalance = account.totalBalance ?: 0.0,
                 idCurrency = account.idCurrencyAccount ?: CurrencyType.Dollar.id,
                 accountToken = account.accountToken,
@@ -62,7 +62,7 @@ fun SelectSmartAccountScreen(
             )
         )
         if (!sharedViewModel.uiState.shouldDisplayDisclaimer) {
-            sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNextStep)
+            sharedViewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnNextStep)
         }
     }
 }
@@ -70,7 +70,7 @@ fun SelectSmartAccountScreen(
 @Composable
 fun SelectSmartAccountContent(
     viewModel: SelectSmartAccountViewModel,
-    sharedViewModel: PurchaseCryptoSharedViewModel,
+    sharedViewModel: SellCryptoSharedViewModel,
     onNextStep: (AccountSmartForBuyCrypto) -> Unit = { _ -> }
 ) {
     Column(
@@ -82,8 +82,7 @@ fun SelectSmartAccountContent(
         Text(
             modifier = Modifier.padding(top = 8.dp, bottom = 24.dp),
             text = stringResource(
-                id = R.string.crypto_select_smart_account_title_template,
-                viewModel.uiState.currencyDescription
+                id = R.string.sell_crypto_where_to_receive_money
             ),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText,
@@ -110,11 +109,7 @@ fun SelectSmartAccountContent(
                                     account.totalBalance ?: 0.0
                                 )
                             )
-                            if (sharedViewModel.uiState.shouldDisplayDisclaimer) {
-                                sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.BaseEvent.OnShowDisclaimer)
-                            } else {
-                                onNextStep(account)
-                            }
+                            onNextStep(account)
                         }
                     )
                 }

@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.catalog.PurchaseStatus
 import com.multimoney.domain.interaction.accountsmart.QuerySmartExchangeRateUseCase
 import com.multimoney.domain.interaction.crypto.BuyCryptoCurrencyUseCase
 import com.multimoney.domain.interaction.crypto.GetPriceQuoteAndCommissionsUseCase
@@ -21,6 +22,7 @@ import com.multimoney.multimoney.presentation.util.calculateQuote
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.format
+import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlaces
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 import com.multimoney.multimoney.util.PurchaseCryptoTimerHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -123,7 +125,8 @@ class BuyCurrencyScreenViewModel @Inject constructor(
     )
 
     private fun updateDataWithNewExchangeRate(): Unit = executeUseCase {
-        getPriceQuoteAndCommissionsUseCase.invoke(asset = asset,
+        getPriceQuoteAndCommissionsUseCase.invoke(
+            asset = asset,
             crypto_network = cryptoNetWork,
             idBrand = idBrand,
             user = user,
@@ -221,6 +224,8 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             amount = amount,
             fee = uiState.pricesQuoteAndCommissions?.totalFee
         )
+        uiState = uiState.copy(amountInUSD = quoteAmount, amountPlusFee = amountPlusFee)
+
 
         when {
             amount.isEmpty() -> isError(isError = true)
@@ -261,14 +266,19 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 taxAmount = uiState.pricesQuoteAndCommissions?.taxAmount ?: 0.0,
                 exchangeRate = if (idCurrencyAccount == CurrencyType.Dollar.id) 1.0 else uiState.exchangeRate,
                 quoteId = uiState.pricesQuoteAndCommissions?.quote_id ?: "",
-                quoteAmount = uiState.quoteAmount.value.toDouble(),
+                quoteAmount = uiState.quoteAmount.value.ifEmpty {
+                    uiState.baseAmount.value.ifEmpty {
+                        DEFAULT_BASE_AMOUNT_STRING
+                    }.toDouble().times(uiState.pricesQuoteAndCommissions?.price ?: 0.0)
+                }.toString().toDouble().roundToTwoDecimalPlaces().toDouble(),
                 fee = uiState.pricesQuoteAndCommissions?.fee?.toDouble() ?: 0.0,
                 internalFee = uiState.pricesQuoteAndCommissions?.internal_fee ?: 0.0,
                 totalFee = uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
             ).collectLatest { result ->
                 result.onLoading {
                     uiState = uiState.copy(
-                        isLoading = true
+                        isLoading = true,
+                        purchaseStatus = PurchaseStatus.LOADING
                     )
                 }
                 result.onSuccess {
@@ -280,6 +290,11 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                                 errorMessage = R.string.crypto_purchase_flow_error_weekly_amount_exceeded,
                                 isError = true
                             )
+                            uiState = uiState.copy(
+                                isLoading = false,
+                                purchaseStatus = PurchaseStatus.IDLE
+
+                            )
                             return@onSuccess
                         }
                         CryptoProcessErrorCodes.InsufficientFundsBuy.status -> {
@@ -288,6 +303,10 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                             isError(
                                 errorMessage = R.string.crypto_purchase_flow_error_no_funds,
                                 isError = true
+                            )
+                            uiState = uiState.copy(
+                                isLoading = false,
+                                purchaseStatus = PurchaseStatus.IDLE
                             )
                             return@onSuccess
                         }
@@ -298,16 +317,25 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                                 errorMessage = R.string.crypto_purchase_flow_error_price_expired,
                                 isError = true
                             )
+                            uiState = uiState.copy(
+                                isLoading = false,
+                                purchaseStatus = PurchaseStatus.IDLE
+
+                            )
                             return@onSuccess
                         }
                     }
                     uiState = uiState.copy(
-                        isLoading = false, isPurchaseSuccess = true
+                        isLoading = false,
+                        referenceNumber = it.buyHQR.result?.sysdeTransactionNumber,
+                        purchaseStatus = PurchaseStatus.SUCCESS
+
                     )
                 }
                 result.onFailure {
                     uiState = uiState.copy(
-                        isLoading = false, isPurchaseFailed = true
+                        isLoading = false,
+                        purchaseStatus = PurchaseStatus.FAILED
                     )
                 }
             }
@@ -361,13 +389,16 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         // timer *
         val openDialog: DialogParameters = DialogParameters(),
         val failureAction: () -> Unit = {},
-        val isPurchaseFailed: Boolean = false, // to handle error screen after purchase
-        val isPurchaseSuccess: Boolean = false, // to handle success screen after purchase
         //** validations
         val isError: Boolean = false,
         @StringRes val error: Int = R.string.empty,
         val errorMessageArg: Any = Any(),
-        val isTransformationCurrency: MutableState<Boolean> = mutableStateOf(false)
+        val isTransformationCurrency: MutableState<Boolean> = mutableStateOf(false),
+        //voucher information
+        val referenceNumber: String? = null,
+        val amountInUSD: Double? = null,
+        val amountPlusFee: Double? = null,
+        val purchaseStatus: PurchaseStatus = PurchaseStatus.IDLE
     )
 
     fun onUIEvent(event: UIEvent) {

@@ -12,14 +12,13 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.BaseEvent.OnFormValidateCompleted
-import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent.*
 import com.multimoney.multimoney.presentation.util.isPhoneNumberValid
 import com.togitech.ccp.data.CountryData
 import com.togitech.ccp.data.utils.getLibCountries
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
-import java.util.*
 import javax.inject.Inject
+import java.util.Locale
 
 @HiltViewModel
 class SignUpPhoneViewModel @Inject constructor(
@@ -175,31 +174,31 @@ class SignUpPhoneViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is OnValidatePhone -> isPhoneValid(event.countryCode)
-            is OnUserPhoneValueChanged -> onUserPhoneValueChanged(
+            is UIEvent.OnValidatePhone -> isPhoneValid(event.countryCode)
+            is UIEvent.OnUserPhoneValueChanged -> onUserPhoneValueChanged(
                 event.phoneNumber,
                 event.countryCode,
                 event.updateUserInfoPhone
             )
-            is OnCountryCodeValueChanged -> onCountryCodeValueChanged(
+            is UIEvent.OnCountryCodeValueChanged -> onCountryCodeValueChanged(
                 event.phoneCode,
                 event.countryCode,
                 event.updateUserCountryCode
             )
-            is OnNextActionClick -> onNextActionClick(
+            is UIEvent.OnNextActionClick -> onNextActionClick(
                 event.onUserDataValueChange,
                 event.onCallMutationUpdateUserRegisterUseCase
             )
-            is OnClearPhoneError -> clearPhoneError()
-            is OnStart -> onStart(
+            is UIEvent.OnClearPhoneError -> clearPhoneError()
+            is UIEvent.OnStart -> onStart(
                 event.phoneCode,
                 event.phoneNumber,
                 event.signUpStartData,
                 event.onFailure
             )
-            is OnSetUpIdBrand -> onSetUpIdBrand(event.idBrand)
-            is OnQueryError -> onQueryError()
-            is OnSetupDefaultCountry -> onSetupDefaultCountry(event.idBrand)
+            is UIEvent.OnSetUpIdBrand -> onSetUpIdBrand(event.idBrand)
+            is UIEvent.OnQueryError -> onQueryError()
+            is UIEvent.OnSetupDefaultCountry -> onSetupDefaultCountry(event.idBrand)
         }
     }
 

@@ -2,7 +2,9 @@ package com.multimoney.multimoney.presentation.util
 
 import android.util.Patterns
 import com.google.i18n.phonenumbers.PhoneNumberUtil
+import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberType.FIXED_LINE_OR_MOBILE
 import com.google.i18n.phonenumbers.Phonenumber
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.Nationalities
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel
@@ -18,17 +20,17 @@ fun isPhoneNumberValid(
     phone: String,
     fullPhoneNumber: String,
     countryCode: String,
-    phoneNumberType: PhoneNumberUtil.PhoneNumberType
+    phoneNumberType: PhoneNumberUtil.PhoneNumberType,
 ): Boolean {
     val number: Phonenumber.PhoneNumber?
     if (phone.length > 6) {
         return try {
             number = PhoneNumberUtil.getInstance().parse(
                 fullPhoneNumber,
-                Phonenumber.PhoneNumber.CountryCodeSource.UNSPECIFIED.name
+                Phonenumber.PhoneNumber.CountryCodeSource.UNSPECIFIED.name,
             )
             if (phoneNumberType == PhoneNumberUtil.PhoneNumberType.MOBILE && PhoneNumberUtil.getInstance()
-                .getNumberType(number) == PhoneNumberUtil.PhoneNumberType.FIXED_LINE_OR_MOBILE || PhoneNumberUtil.getInstance()
+                    .getNumberType(number) == PhoneNumberUtil.PhoneNumberType.FIXED_LINE_OR_MOBILE || PhoneNumberUtil.getInstance()
                     .getNumberType(number) == phoneNumberType
             ) {
                 PhoneNumberUtil.getInstance()
@@ -63,7 +65,7 @@ fun validDui(personalDocumentValue: String) =
             10 - verificationNumber.mod(SignUpPersonalDataViewModel.DUI_VERIFICATION_MODULE)
         Pair(
             verificationValue != 10 && verificationValue != duiSplit[duiSplit.lastIndex].toInt(),
-            R.string.sign_up_personal_data_id_not_valid
+            R.string.sign_up_personal_data_id_not_valid,
         )
     } else {
         Pair(true, R.string.sign_up_personal_data_id_not_valid)
@@ -154,6 +156,36 @@ fun noMoreThanThreeEqualConsecutiveLetterOrNumber(value: String): Boolean {
 
 fun validateDecimalIncome(value: String): Boolean {
     return ((Pattern.matches(DECIMAL_REGEX, value) || value.isEmpty()) && value != "00")
+}
+
+fun isPhoneNumberValid(phone: String, idBrand: Int): Boolean {
+    return when (idBrand) {
+        Brand.ElSalvador.id -> {
+            isPhoneNumberValid(
+                phone = phone,
+                fullPhoneNumber = "${Brand.ElSalvador.phoneCode}$phone",
+                countryCode = "",
+                phoneNumberType = FIXED_LINE_OR_MOBILE,
+            )
+        }
+        Brand.Guatemala.id -> {
+            isPhoneNumberValid(
+                phone = phone,
+                fullPhoneNumber = "${Brand.Guatemala.phoneCode}$phone",
+                countryCode = "",
+                phoneNumberType = FIXED_LINE_OR_MOBILE,
+            )
+        }
+        Brand.CostaRica.id -> {
+            isPhoneNumberValid(
+                phone = phone,
+                fullPhoneNumber = "${Brand.CostaRica.phoneCode}$phone",
+                countryCode = "",
+                phoneNumberType = FIXED_LINE_OR_MOBILE,
+            )
+        }
+        else -> false
+    }
 }
 
 const val INVALID_CHARACTERS_CHUNKS = 4

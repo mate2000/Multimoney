@@ -1,7 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.credit.payment.cards
 
 import android.widget.Toast
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,11 +14,9 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -29,7 +26,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -42,10 +38,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PaymentCardsListScreen(
     isRestart: Boolean = true,
@@ -53,7 +46,6 @@ fun PaymentCardsListScreen(
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: PaymentCardListViewModel = hiltViewModel()
 ) {
-    val coroutineScope = rememberCoroutineScope()
     // Navigation
     viewModel.apply {
         isOnRestart = isRestart
@@ -65,25 +57,13 @@ fun PaymentCardsListScreen(
             }
         }
     }
-    BackHandler {
-        when {
-            viewModel.uiState.bottomSheetVisibleState.isVisible -> {
-                coroutineScope.launch {
-                    viewModel.onUIEvent(PaymentCardListViewModel.UIEvent.OnHidePaymentBottomSheet)
-                }
-            }
-            else -> viewModel.onUIEvent(PaymentCardListViewModel.UIEvent.OnNavigateBack)
-        }
-    }
     PaymentCardsListContent(viewModel)
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 @Preview
 fun PaymentCardsListContent(
-    viewModel: PaymentCardListViewModel = hiltViewModel(),
-    coroutineScope: CoroutineScope = rememberCoroutineScope()
+    viewModel: PaymentCardListViewModel = hiltViewModel()
 ) {
     Column(
         modifier = Modifier
@@ -117,12 +97,6 @@ fun PaymentCardsListContent(
             )
         }
     }
-    PaymentCardEditBottomSheet(
-        coroutineScope = coroutineScope,
-        modalBottomSheetState = viewModel.uiState.bottomSheetVisibleState,
-        onResumeClick = { viewModel.onUIEvent(PaymentCardListViewModel.UIEvent.OnNavigateBack) },
-        card = viewModel.uiState.cardSelected
-    )
     LoadingIndicator(viewModel.uiState.isLoading)
 }
 
@@ -176,25 +150,31 @@ fun PaymentCardList(
 ) {
     val context = LocalContext.current
 
-    viewModel.uiState.cardVDListVerified?.let { clientBankAccountList ->
-        PaymentCardListDetail(
-            titleResource = R.string.payment_cards_verified_list_title,
-            listItems = clientBankAccountList,
-            onCardClick = { card -> viewModel.onUIEvent(PaymentCardListViewModel.UIEvent.OnCardSelected(card)) }
-        )
-    }
-    viewModel.uiState.cardVDListNotVerified?.let { clientBankAccountList ->
-        PaymentCardListDetail(
-            titleResource = R.string.payment_cards_not_verified_list_title,
-            listItems = clientBankAccountList,
-            onCardClick = { card -> viewModel.onUIEvent(PaymentCardListViewModel.UIEvent.OnCardSelected(card)) },
-            requireIcon = true
-        )
+    viewModel.uiState.cardVDList?.let { clientBankAccountList ->
+        LazyColumn(modifier = Modifier.padding(top = 32.dp, start = 16.dp, end = 16.dp)) {
+            items(clientBankAccountList) { card ->
+                CustomInfoButton(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    imageModifier = Modifier.size(48.dp),
+                    startIcon = R.drawable.ic_visa_card_item,
+                    title = card?.detail ?: "",
+                    subtitle = stringResource(
+                        id = string.visa_card_masked_number,
+                        card?.cardMaskedNumber?.takeLast(4) ?: 0
+                    ),
+                    onClick = {
+                        viewModel.onUIEvent(PaymentCardListViewModel.UIEvent.OnCardSelected(card))
+                    }
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+        }
     }
     CustomButton(
         text = stringResource(id = R.string.payment_cards_list_create),
         modifier = Modifier
-            .padding(top = 28.dp)
+            .padding(top = 18.dp)
             .fillMaxWidth(),
         onClick = {
             Toast.makeText(context, "TBD", Toast.LENGTH_SHORT).show()
@@ -202,41 +182,4 @@ fun PaymentCardList(
         buttonType = CustomButtonType.PrimaryTertiary,
         trailingIcon = R.drawable.ic_plus
     )
-}
-
-@Composable
-@Preview
-fun PaymentCardListDetail(
-    titleResource: Int = string.empty,
-    listItems: List<CardVisaDirect?> = listOf(),
-    onCardClick: (CardVisaDirect?) -> Unit = {},
-    requireIcon: Boolean = false
-) {
-    Text(
-        modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
-        text = stringResource(id = titleResource),
-        style = Typography.subtitle1.copy(fontWeight = FontWeight.SemiBold),
-        color = MultimoneyTheme.colors.subTitleText,
-        textAlign = TextAlign.Left
-    )
-    LazyColumn(modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
-        items(listItems) { card ->
-            CustomInfoButton(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                imageModifier = Modifier.size(48.dp),
-                startIcon = R.drawable.ic_visa_card_item,
-                title = card?.detail ?: "",
-                titleIcon = if (requireIcon) R.drawable.ic_green_warning else null,
-                subtitle = stringResource(
-                    id = string.visa_card_masked_number,
-                    card?.cardMaskedNumber?.takeLast(4) ?: 0
-                ),
-                onClick = {
-                    onCardClick(card)
-                }
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-        }
-    }
 }

@@ -1651,6 +1651,12 @@
     <string name="visa_direct_verify_deposit_dialog_do_not_see_title" translatable="false">¿No ves el movimiento?</string>
     <string name="visa_direct_verify_deposit_dialog_do_not_see_description" translatable="false">La transferencia puede durar unos minutos en reflejarse. Si no puedes ver el movimiento, contacta a tu banco.</string>
     <string name="visa_direct_verify_deposit_micro_deposit_placeholder" translatable="false">0</string>
+    <string name="visa_direct_verify_deposit_alert_success_title" translatable="false">¡Tu tarjeta fue agregada\ny verificada con éxito!</string>
+    <string name="visa_direct_verify_deposit_alert_success_button_from_payment" translatable="false">Continuar con abono</string>
+    <string name="visa_direct_verify_deposit_alert_success_button_from_smart" translatable="false">Continuar con desembolso</string>
+    <string name="visa_direct_verify_deposit_alert_error_title" translatable="false">¡Oh no! Hubo un error</string>
+    <string name="visa_direct_verify_deposit_alert_error_description" translatable="false">Contáctanos para darte\nmás información</string>
+    <string name="visa_direct_verify_deposit_alert_error_button" translatable="false">Ir al inicio</string>
 
     <!-- Crypto sell list coins-->
     <string name="crypt_list_sell_title" translatable="false">¿Cuál moneda querés vender?</string>

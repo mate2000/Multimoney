@@ -37,8 +37,8 @@ fun ProfileCardEditBottomSheet(
                 .padding(vertical = 18.dp, horizontal = 16.dp)
         ) {
             CustomThreePointsTextButton(
-                textResource = string.profile_cards_bottom_sheet_edit,
-                startIconResource = drawable.ic_edit_green_background,
+                textResource = if (card?.verified == true) string.profile_cards_bottom_sheet_edit else string.payment_cards_resume_bottom_sheet,
+                startIconResource = if (card?.verified == true) drawable.ic_edit_green_background else drawable.ic_verified_bottom_sheet_icon,
                 onClick = {
                     coroutineScope.launch {
                         modalBottomSheetState.hide()
@@ -46,17 +46,19 @@ fun ProfileCardEditBottomSheet(
                     onEditClick(card)
                 }
             )
-            CustomThreePointsTextButton(
-                modifier = Modifier.padding(top = 32.dp),
-                textResource = string.profile_cards_bottom_sheet_delete,
-                startIconResource = drawable.ic_delete_background,
-                onClick = {
-                    coroutineScope.launch {
-                        modalBottomSheetState.hide()
+            if (card?.verified == true) {
+                CustomThreePointsTextButton(
+                    modifier = Modifier.padding(top = 32.dp),
+                    textResource = string.profile_cards_bottom_sheet_delete,
+                    startIconResource = drawable.ic_delete_background,
+                    onClick = {
+                        coroutineScope.launch {
+                            modalBottomSheetState.hide()
+                        }
+                        onDeleteClick(card)
                     }
-                    onDeleteClick(card)
-                }
-            )
+                )
+            }
         }
     }
 }

@@ -14,7 +14,7 @@ import com.multimoney.multimoney.presentation.navigation.ORIGIN_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.SECOND_SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
-import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT_LIST
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNTS_ID_LIST
 import com.multimoney.multimoney.presentation.navigation.SMART_TRANSFER_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.TRANSFER_TYPE
@@ -148,7 +148,7 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
         composable(
             route = Screen.SmartSelectAccountScreen.route,
             arguments = listOf(
-                navArgument(SMART_ACCOUNT_LIST) {
+                navArgument(SMART_ACCOUNTS_ID_LIST) {
                     type = SmartAccountIDListNavType()
                 },
                 navArgument(USER) { type = NavType.StringType },

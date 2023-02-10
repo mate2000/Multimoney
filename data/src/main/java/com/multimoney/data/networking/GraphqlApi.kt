@@ -53,6 +53,7 @@ import com.multimoney.data.networking.graphql.apollomodel.GetCompanyNameByIdenti
 import com.multimoney.data.networking.graphql.apollomodel.GetConfigurationVersionQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCoreBankMovementsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCountryContactQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetCountryPhoneCodesQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCountryQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCryptoCurrencyMovementQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCryptoCurrencyNewsQuery
@@ -106,6 +107,7 @@ import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOfferMutatio
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOperationMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveTermsAndConditionsCreditMutation
 import com.multimoney.data.networking.graphql.apollomodel.ScreenConfigQuery
+import com.multimoney.data.networking.graphql.apollomodel.SellCryptoCurrencyMutation
 import com.multimoney.data.networking.graphql.apollomodel.SendCreditContractEventMutation
 import com.multimoney.data.networking.graphql.apollomodel.SendPinProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.SmartAccountTypeQuery
@@ -127,6 +129,7 @@ import com.multimoney.data.networking.graphql.apollomodel.ValidateUserStatusQuer
 import com.multimoney.data.networking.graphql.apollomodel.ValidationSecurityQuery
 import com.multimoney.data.networking.graphql.apollomodel.type.BeneficiaryRequestDtoInput
 import com.multimoney.data.networking.graphql.apollomodel.type.ContactsInput
+import com.multimoney.data.networking.graphql.apollomodel.type.GetCountry
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.RelatedContact
 import com.multimoney.domain.model.credit.CreditInfoQuestion
@@ -1302,6 +1305,13 @@ class GraphqlApi @Inject constructor(
         apolloAuthorizedClient.mutation(ChangePhoneMutation(identification, phone, pkUser.toLong(), idBrand))
             .fetchPolicy(FetchPolicy.NetworkOnly)
 
+    fun queryGetCountryPhoneCodes(
+        idBrand: Int
+    ): ApolloCall<GetCountryPhoneCodesQuery.Data> =
+        apolloAuthorizedClient.query(GetCountryPhoneCodesQuery(idBrand))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
+
+
     fun mutationChangeEmail(
         idClient: Int,
         pkUser: Int,
@@ -1518,12 +1528,14 @@ class GraphqlApi @Inject constructor(
 
     fun queryGetAvailableListOfCryptoCoins(
         user: String,
-        idBrand: Int
+        idBrand: Int,
+        origin: String
     ): ApolloCall<GetAvailableListOfCryptoCoinsQuery.Data> =
         apolloAuthorizedClient.query(
             GetAvailableListOfCryptoCoinsQuery(
                 user,
-                idBrand
+                idBrand,
+                origin
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -1640,6 +1652,41 @@ class GraphqlApi @Inject constructor(
                 user,
                 quoteId,
                 quoteAmount,
+                fee,
+                internalFee,
+                totalFee
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationSellCryptoCurrency(
+        pkUser: Int,
+        identification: String,
+        market: String,
+        commissionPercentage: Double,
+        taxPercentage: Double,
+        accountToken: Long,
+        exchangeRate: Double,
+        idBrand: Int,
+        user: String,
+        quoteId: String,
+        baseAmount: Double,
+        fee: Double,
+        internalFee: Double,
+        totalFee: Double
+    ): ApolloCall<SellCryptoCurrencyMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            SellCryptoCurrencyMutation(
+                pkUser,
+                identification,
+                market,
+                commissionPercentage,
+                taxPercentage,
+                accountToken,
+                exchangeRate,
+                idBrand,
+                user,
+                quoteId,
+                baseAmount,
                 fee,
                 internalFee,
                 totalFee

@@ -148,7 +148,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object OnBoardingScreen : Screen("onboarding_screen")
     object SignInScreen : Screen("sign_in_screen?$FORCE_CHANGE_DEVICE={$FORCE_CHANGE_DEVICE}", "sign_in_screen")
 
-    object SignUpScreen : Screen("sign_up_screen/{$SIGN_UP_STEP}", "sign_up_screen")
+    object SignUpScreen : Screen("sign_up_screen/{$SIGN_UP_STEP}?$ID_BRAND={$ID_BRAND}", "sign_up_screen")
     object RequestForgotPassword : Screen(
         "request_forgot_password_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}",
         "request_forgot_password_screen"
@@ -180,7 +180,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SignUpSplashComeBackScreen : Screen(
-        "sign_up_splash_come_back_screen/{$SIGN_UP_STEP}",
+        "sign_up_splash_come_back_screen/{$SIGN_UP_STEP}/{$ID_BRAND}",
         "sign_up_splash_come_back_screen"
     )
 

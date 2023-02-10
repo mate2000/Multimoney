@@ -47,7 +47,6 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency30
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
-import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.selectaccount.ConfirmationBottomSheet
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnDeleteAutomaticPaymentToastEvent
@@ -600,7 +599,7 @@ fun ProductCtaFooterExpanded(
             ProductType.Crypto.value -> CryptoCtaFooterExpanded(
                 balance = viewModel.balanceCredit,
                 idBrand = viewModel.uiState.idBrand,
-                profileEnable = viewModel.uiState.userStatus?.infoCrypto?.profileEnable,
+                cryptoMovements = viewModel.uiState.cryptoCurrencyMovements,
                 noBalanceAction = {
                     when (viewModel.uiState.idBrand) {
                         Brand.CostaRica.id.toString() -> {

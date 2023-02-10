@@ -14,24 +14,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.paging.PagingData
-import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.LazyPagingItems
 import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoCurrencyMovementItem
 import com.multimoney.multimoney.presentation.util.MAX_CRYPTO_ITEMS
-import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun CryptoMovementsSection(
     onShowAllClick: () -> Unit,
-    cryptoMovements: Flow<PagingData<CryptoCurrencyMovement>>
+    cryptoMovements:  LazyPagingItems<CryptoCurrencyMovement>
 ) {
-    val movements = cryptoMovements.collectAsLazyPagingItems()
 
-    if (movements.itemCount != EMPTY_PAGING_DATA) {
+    if (cryptoMovements.itemCount != EMPTY_PAGING_DATA) {
         Column(
             modifier = Modifier.padding(horizontal = 16.dp)
         ) {
@@ -58,8 +55,9 @@ fun CryptoMovementsSection(
                 }
             }
 
-            repeat(MAX_CRYPTO_ITEMS) {
-                CryptoCurrencyMovementItem(cryptoCurrencyMovement = movements[it])
+            cryptoMovements.itemSnapshotList.items.forEachIndexed { index, cryptoCurrencyMovement ->
+                if (index >= MAX_CRYPTO_ITEMS) return@forEachIndexed
+                CryptoCurrencyMovementItem(cryptoCurrencyMovement = cryptoCurrencyMovement)
             }
         }
     }

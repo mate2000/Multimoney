@@ -48,9 +48,9 @@ fun CustomBiometricIconButton(
         backgroundColor = WhiteTransparency10
         borderColor = Transparent
     } else {
-        tintColor = DefaultWhite
-        backgroundColor = Primary500
-        borderColor = Primary300
+        tintColor = Primary200
+        backgroundColor = WhiteTransparency10
+        borderColor = Transparent
     }
 
     IconButton(

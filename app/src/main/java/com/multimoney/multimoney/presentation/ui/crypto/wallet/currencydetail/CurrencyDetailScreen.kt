@@ -39,7 +39,6 @@ import com.multimoney.multimoney.presentation.ui.crypto.CryptoCurrencyMovementIt
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail.CryptoCurrencyMovementsViewModel.Companion.TODAY_TEXT
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.DateFilterDWMYSection
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.MarketCurrencyDetailsGraphic
-import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.selectaccount.ConfirmationBottomSheet
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoActionsSection
 import com.multimoney.multimoney.presentation.uielement.BalanceTextView
@@ -94,7 +93,6 @@ fun CurrencyMovementsScreen(
             } else {
                 viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToSelectAccount)
             }
-            viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToSelectAccount)
         },
         sellCryptoClick = {
             viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToSellCrypto) },

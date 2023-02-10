@@ -51,8 +51,7 @@ fun SmartPaymentSuccessScreen(
             },
             fromToText = stringResource(R.string.smart_payment_from_label),
             buttonText = stringResource(R.string.smart_payment_make_another_payment),
-            onButtonClick = { viewModel.onAmountUIEvent(OnNavigateBack) },
-            isTransferOperation = false
+            onButtonClick = { viewModel.onAmountUIEvent(OnNavigateBack) }
         ) {
             SmartPaymentInfoItem(
                 verticalAlignment = Alignment.CenterVertically,

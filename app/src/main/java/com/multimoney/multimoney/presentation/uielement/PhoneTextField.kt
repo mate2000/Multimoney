@@ -112,7 +112,8 @@ fun PhoneTextField(
     showCountryCode: Boolean = true,
     showCountryFlag: Boolean = true,
     onValueChange: (newText: String) -> Unit = {},
-    onDebounceValidation: (newText: String) -> Unit = {}
+    onDebounceValidation: (newText: String) -> Unit = {},
+    countriesList: MutableList<CountryData>? = null
 ) {
     var textFieldValueState by remember { mutableStateOf(TextFieldValue(text = value ?: "")) }
     val textFieldValue = textFieldValueState.copy(text = value ?: "")
@@ -170,26 +171,26 @@ fun PhoneTextField(
             }
         }
     } else {
-        labelColor = GrayScale800
-        backgroundColor = DefaultWhite
-        placeholderColor = GrayScale500
-        unfocusedIndicatorColor = GrayScale400
-        errorIndicatorColor = SemanticNegative500
+        labelColor = GrayScale300
+        backgroundColor = WhiteTransparency10
+        placeholderColor = WhiteTransparency60
+        unfocusedIndicatorColor = DefaultBlack
+        errorIndicatorColor = SemanticNegative400
         when {
             isError -> {
-                focusedIndicatorColor = SemanticNegative500
-                textColor = GrayScale800
-                dropdownArrowColor = WhiteTransparency60
+                focusedIndicatorColor = SemanticNegative400
+                textColor = WhiteTransparency90
+                dropdownArrowColor = WhiteTransparency90
             }
             enabled -> {
-                focusedIndicatorColor = Primary500
-                textColor = GrayScale800
+                focusedIndicatorColor = WhiteTransparency60
+                textColor = WhiteTransparency90
                 dropdownArrowColor = WhiteTransparency90
             }
             else -> {
-                focusedIndicatorColor = GrayScale400
-                backgroundColor = GrayScale300
-                textColor = GrayScale500
+                focusedIndicatorColor = DefaultBlack
+                backgroundColor = GrayScale500
+                textColor = WhiteTransparency60
                 dropdownArrowColor = WhiteTransparency60
             }
         }
@@ -257,7 +258,8 @@ fun PhoneTextField(
                     dialogUnFocusedBorderColorSearch = dialogUnFocusedBorderColorSearch,
                     dialogCursorColorSearch = dialogCursorColorSearch,
                     countryCodeTextColor = textColor,
-                    dropdownArrowColor = dropdownArrowColor
+                    dropdownArrowColor = dropdownArrowColor,
+                    countryList = countriesList
                 )
             },
             singleLine = true,

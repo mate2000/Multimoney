@@ -1,64 +1,55 @@
 package com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency
 
 import androidx.activity.compose.BackHandler
-import androidx.annotation.StringRes
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.Text
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.rememberAsyncImagePainter
+import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.BuyCryptoStep
+import com.multimoney.data.util.catalog.PurchaseStatus
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.crypto.PurchaseConfirmationBottomSheet
+import com.multimoney.multimoney.presentation.ui.crypto.AmountInputSection
+import com.multimoney.multimoney.presentation.ui.crypto.CounterSection
+import com.multimoney.multimoney.presentation.ui.crypto.NativeLoaderScreen
+import com.multimoney.multimoney.presentation.ui.crypto.TitleSection
+import com.multimoney.multimoney.presentation.ui.crypto.WhileLoadingSection
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
-import com.multimoney.multimoney.presentation.uielement.CryptoCurrencyInputLayout
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CurrencyExchangeInfo
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
-import com.multimoney.multimoney.presentation.util.calculateAssetEstimated
+import com.multimoney.multimoney.presentation.util.calculateAmountPlusFee
+import com.multimoney.multimoney.presentation.util.calculateConfirmationBaseAmount
+import com.multimoney.multimoney.presentation.util.calculateConfirmationQuoteAmount
 import com.multimoney.multimoney.presentation.util.calculateConvertedCurrencyBalance
-import com.multimoney.multimoney.presentation.util.calculateDollarEstimated
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 import kotlinx.coroutines.launch
 
 const val DEFAULT_CURRENCY_PRICE = 0.0
-const val TIMER_UNIT_INDICATOR = " seg"
 const val WHITE_SPACE = " "
 const val EMPTY_CURRENCY = "0.00"
 
@@ -67,6 +58,7 @@ fun BuyCurrencyScreen(
     sharedViewModel: PurchaseCryptoSharedViewModel = hiltViewModel(),
     viewModel: BuyCurrencyScreenViewModel = hiltViewModel()
 ) {
+
     LaunchedEffect(key1 = true) {
         viewModel.onUIEvent(
             BuyCurrencyScreenViewModel.UIEvent.OnSetUserData(
@@ -78,11 +70,11 @@ fun BuyCurrencyScreen(
                 user = sharedViewModel.user,
                 market = sharedViewModel.uiState.market,
                 identification = sharedViewModel.identification,
-                accountToken = sharedViewModel.uiState.accounts.firstOrNull()?.accountToken?.toLong()
-                    ?: 0L,
+                accountToken = sharedViewModel.uiState.accountToken.toLong() ?: 0L,
                 side = sharedViewModel.side,
                 assetImageUrl = sharedViewModel.uiState.assetImageBaseUrl,
-                smartAccountAvailableBalance = sharedViewModel.uiState.smartAccountAvailableBalance
+                smartAccountAvailableBalance = sharedViewModel.uiState.smartAccountAvailableBalance ?: 0.0,
+                ibanAccountNumber = sharedViewModel.uiState.ibanAccountNumber,
             )
         )
         sharedViewModel.uiState.previousAction = {
@@ -96,15 +88,82 @@ fun BuyCurrencyScreen(
             viewModel.onUIEvent(BuyCurrencyScreenViewModel.UIEvent.OnGetExchangeRate)
         }
         viewModel.onUIEvent(BuyCurrencyScreenViewModel.UIEvent.ValidateAmountInput(""))
-        viewModel.onUIEvent(BuyCurrencyScreenViewModel.UIEvent.OnSetFailureAction(
-            failureAction = {
-                sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep)
-            }
-        ))
+        viewModel.onUIEvent(
+            BuyCurrencyScreenViewModel.UIEvent.OnSetFailureAction(
+                failureAction = {
+                    sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep)
+                }
+            )
+        )
     }
-
-    BuyCurrencyScreenContent(viewModel) {
-        //todo go to next step / set data etc
+    when (viewModel.uiState.purchaseStatus) {
+        PurchaseStatus.IDLE -> {
+            BuyCurrencyScreenContent(viewModel)
+        }
+        PurchaseStatus.LOADING -> {
+            sharedViewModel.onUIEvent(
+                PurchaseCryptoSharedViewModel.UIEvent.OnSetFlowStep(
+                    BuyCryptoStep.LOADING_SCREEN
+                )
+            )
+            NativeLoaderScreen()
+        }
+        PurchaseStatus.SUCCESS -> {
+            sharedViewModel.onUIEvent(
+                PurchaseCryptoSharedViewModel.UIEvent.OnSetupVoucherDetails(
+                    quoteAmount = calculateConfirmationQuoteAmount(
+                        quoteAmount = viewModel.uiState.quoteAmount.value,
+                        baseAmount = viewModel.uiState.baseAmount.value,
+                        currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price
+                    ),
+                    baseAmount = calculateConfirmationBaseAmount(
+                        quoteAmount = viewModel.uiState.quoteAmount.value,
+                        baseAmount = viewModel.uiState.baseAmount.value,
+                        currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price
+                    ),
+                    totalDebitedAmount = calculateAmountPlusFee(
+                        amount = calculateConfirmationQuoteAmount(
+                            quoteAmount = viewModel.uiState.quoteAmount.value,
+                            baseAmount = viewModel.uiState.baseAmount.value,
+                            currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price
+                        ).drop(1),
+                        fee = viewModel.uiState.pricesQuoteAndCommissions?.totalFee
+                    ).toCurrencyFormat(),
+                    exchangeRate = viewModel.uiState.exchangeRate.toCurrencyFormat(
+                        symbol = CurrencyType.Colon.symbol
+                    ),
+                    totalDebitedExchange = calculateConvertedCurrencyBalance(
+                        quoteAmount = viewModel.uiState.quoteAmount.value,
+                        baseAmount = viewModel.uiState.baseAmount.value,
+                        exchangeRate = viewModel.uiState.exchangeRate,
+                        price = viewModel.uiState.pricesQuoteAndCommissions?.price
+                            ?: 0.0
+                    ),
+                    referenceNumber = viewModel.uiState.referenceNumber ?: ""
+                )
+            )
+            sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNextStep)
+        }
+        PurchaseStatus.FAILED -> {
+            sharedViewModel.onUIEvent(
+                PurchaseCryptoSharedViewModel.UIEvent.OnSetFlowStep(
+                    BuyCryptoStep.PURCHASE_FAILED
+                )
+            )
+            AlertResult(
+                titleString = stringResource(id = R.string.crypto_purchase_flow_error_processing_purchase),
+                descriptionString = stringResource(R.string.common_sorry_try_again_later),
+                buttonTextResource = R.string.profile_error_changing_phone_button,
+                isRightButtonVisible = true,
+                isLeftButtonVisible = false,
+                onButtonClick = {
+                    sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNavigateHome)
+                },
+                onRightButtonClick = {
+                    sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNavigateHome)
+                }
+            )
+        }
     }
     BackHandler {
         sharedViewModel.uiState.previousAction()
@@ -128,8 +187,7 @@ fun BuyCurrencyScreen(
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun BuyCurrencyScreenContent(
-    viewModel: BuyCurrencyScreenViewModel,
-    onConfirm: () -> Unit = {}
+    viewModel: BuyCurrencyScreenViewModel
 ) {
     val coroutineScope = rememberCoroutineScope()
     val focusRequester = remember { FocusRequester() }
@@ -146,8 +204,7 @@ fun BuyCurrencyScreenContent(
             PurchaseConfirmationBottomSheet(
                 modalBottomSheetState = modalBottomSheetState,
                 coroutineScope = coroutineScope,
-                viewModel = viewModel,
-                onConfirm = onConfirm
+                viewModel = viewModel
             )
         }
     ) {
@@ -167,10 +224,18 @@ fun BuyCurrencyScreenContent(
                     bottom.linkTo(conversionCurrencyToDollars.top)
                 }) {
                     TitleSection(
+                        title = if (viewModel.idBrand == Brand.CostaRica.id) {
+                            R.string.crypto_purchase_flow_title_cr
+                        } else {
+                            R.string.crypto_purchase_flow_title_sv
+                        },
+                        cryptoAssetExchange = stringResource(
+                            id = R.string.crypto_purchase_flow_exchange_reference,
+                            viewModel.asset,
+                            viewModel.uiState.pricesQuoteAndCommissions?.price
+                                ?: DEFAULT_CURRENCY_PRICE.toCurrencyFormat()
+                        ),
                         imageUrl = viewModel.assetImageUrl,
-                        currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price
-                            ?: DEFAULT_CURRENCY_PRICE,
-                        asset = viewModel.asset,
                         isLoading = viewModel.uiState.isLoading
                     )
                 }
@@ -223,7 +288,8 @@ fun BuyCurrencyScreenContent(
                                         quoteAmount = viewModel.uiState.quoteAmount.value,
                                         baseAmount = viewModel.uiState.baseAmount.value,
                                         exchangeRate = viewModel.uiState.exchangeRate,
-                                        price = viewModel.uiState.pricesQuoteAndCommissions?.price ?: 0.0
+                                        price = viewModel.uiState.pricesQuoteAndCommissions?.price
+                                            ?: 0.0
                                     )
                                 )
                             }
@@ -236,6 +302,7 @@ fun BuyCurrencyScreenContent(
                     bottom.linkTo(button.top)
                 }) {
                     CounterSection(
+                        counterTextResourceId = R.string.crypto_purchase_flow_price_expires_in,
                         smartAccountAvailableBalance = viewModel.smartAccountAvailableBalance,
                         downCounter = viewModel.uiState.remainingTimeText
                     )
@@ -258,217 +325,6 @@ fun BuyCurrencyScreenContent(
                             modalBottomSheetState.show()
                         }
                     }
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun WhileLoadingSection(
-    isLoading: Boolean,
-    contentLoading: @Composable () -> Unit,
-    content: @Composable () -> Unit,
-) {
-    if (isLoading) {
-        contentLoading()
-    } else {
-        content()
-    }
-}
-
-@Composable
-fun CounterSection(
-    modifier: Modifier = Modifier,
-    downCounter: String,
-    smartAccountAvailableBalance: Double,
-) {
-    Column(modifier = modifier) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.Start
-        ) {
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(
-                        style = SpanStyle(
-                            color = MultimoneyTheme.colors.bodyTextColor,
-                        )
-                    ) {
-                        append(stringResource(id = R.string.crypto_purchase_flow_available_smart_amount))
-                    }
-                    append(WHITE_SPACE)
-                    withStyle(
-                        style = SpanStyle(
-                            color = MultimoneyTheme.colors.bodyTextColor,
-                            fontWeight = FontWeight.Bold
-                        )
-                    ) {
-                        append(smartAccountAvailableBalance.toCurrencyFormat())
-                    }
-                },
-                style = Typography.body2
-            )
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
-            horizontalArrangement = Arrangement.Start
-        ) {
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(
-                        style = SpanStyle(
-                            color = MultimoneyTheme.colors.bodyTextColor,
-                        )
-                    ) {
-                        append(stringResource(id = R.string.crypto_purchase_flow_price_expires_in))
-                    }
-                    append(WHITE_SPACE)
-                    withStyle(
-                        style = SpanStyle(
-                            color = MultimoneyTheme.colors.bodyTextColor,
-                            fontWeight = FontWeight.Bold
-                        )
-                    ) {
-                        append(downCounter)
-                        append(TIMER_UNIT_INDICATOR)
-                    }
-                },
-                style = Typography.body2
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalAnimationApi::class, ExperimentalComposeUiApi::class)
-@Composable
-fun AmountInputSection(
-    modifier: Modifier = Modifier,
-    asset: String,
-    currencyPrice: Double,
-    isError: Boolean = false,
-    @StringRes errorText: Int,
-    textArg: Any? = null,
-    quoteAmount: MutableState<String>,
-    baseAmount: MutableState<String>,
-    isTransformationCurrency: MutableState<Boolean>,
-    keyboardController: SoftwareKeyboardController?,
-    focusRequester: FocusRequester,
-    onAmountChanged: (String) -> Unit
-) {
-    val quoteAmountText = remember { quoteAmount }
-    val baseAmountText = remember { baseAmount }
-    val isTransformationCurrencyValue = remember { isTransformationCurrency }
-    val baseOrQuote =
-        if (isTransformationCurrencyValue.value.not()) quoteAmountText else baseAmountText
-
-    LaunchedEffect(key1 = true) {
-        focusRequester.requestFocus()
-        keyboardController?.show()
-    }
-
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        CryptoCurrencyInputLayout(
-            value = baseOrQuote,
-            iconCurrency = asset,
-            focusRequester = focusRequester,
-            isError = isError,
-            errorText = getTextFromStringRes(textRes = errorText, arg = textArg),
-            isTransformationCurrency = isTransformationCurrencyValue,
-            onValueChanged = onAmountChanged,
-            onImeClick = { keyboardController?.hide() }
-        )
-        Text(
-            text = if (isTransformationCurrencyValue.value.not()) {
-                stringResource(
-                    id = R.string.crypto_purchase_flow_exchange_reference_edittext,
-                    calculateAssetEstimated(
-                        quoteAmount = quoteAmountText.value,
-                        currencyPrice = currencyPrice
-                    ),
-                    asset
-                )
-            } else {
-                stringResource(
-                    id = R.string.crypto_purchase_flow_exchange_reference_edittext_dollars,
-                    calculateDollarEstimated(
-                        baseAmount = baseAmountText.value,
-                        currencyPrice = currencyPrice
-                    )
-                )
-            },
-            style = Typography.body2.copy(
-                color = MultimoneyTheme.colors.bodyTextColor
-            )
-        )
-    }
-}
-
-@Composable
-private fun getTextFromStringRes(@StringRes textRes: Int, arg: Any? = null): String {
-    return if (arg != null) {
-        stringResource(id = textRes, arg)
-    } else {
-        stringResource(id = textRes)
-    }
-}
-
-@Composable
-fun TitleSection(
-    modifier: Modifier = Modifier,
-    imageUrl: String,
-    asset: String,
-    currencyPrice: Double,
-    isLoading: Boolean
-) {
-    Column(modifier = modifier) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.Start
-        ) {
-            Text(
-                text = stringResource(id = R.string.crypto_purchase_flow_title),
-                style = Typography.h6.copy(
-                    color = MultimoneyTheme.colors.text,
-                    fontWeight = FontWeight.Bold
-                )
-            )
-        }
-        WhileLoadingSection(
-            isLoading = isLoading,
-            contentLoading = { BuyCurrencyTitleSectionSkeleton() }
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    modifier = Modifier.size(24.dp),
-                    painter = rememberAsyncImagePainter(model = imageUrl),
-                    contentDescription = null
-                )
-                Text(
-                    modifier = Modifier.padding(start = 8.dp),
-                    text = stringResource(
-                        id = R.string.crypto_purchase_flow_exchange_reference,
-                        asset,
-                        currencyPrice.toCurrencyFormat()
-                    ),
-                    style = Typography.subtitle1.copy(
-                        color = MultimoneyTheme.colors.text
-                    )
                 )
             }
         }

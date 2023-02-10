@@ -93,7 +93,6 @@ fun CurrencyMovementsScreen(
             } else {
                 viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToSelectAccount)
             }
-            viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToSelectAccount)
         },
         sellCryptoClick = {
             viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToSellCrypto) },

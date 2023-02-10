@@ -3,7 +3,7 @@ package com.multimoney.domain.repository
 import androidx.paging.PagingData
 import com.multimoney.domain.model.accountsmart.ACHAccount
 import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
-import com.multimoney.domain.model.accountsmart.AccountSmartForBuyCrypto
+import com.multimoney.domain.model.accountsmart.SmartAccountSmall
 import com.multimoney.domain.model.accountsmart.AddressesLevel
 import com.multimoney.domain.model.accountsmart.BankListTransfer365
 import com.multimoney.domain.model.accountsmart.Beneficiary
@@ -29,6 +29,7 @@ import com.multimoney.domain.model.accountsmart.SmartMovement
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.accountsmart.StepByStep
 import com.multimoney.domain.model.accountsmart.VisaSmartPayment
+import com.multimoney.domain.model.balance.Account
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
 import kotlinx.coroutines.flow.Flow
@@ -302,6 +303,7 @@ interface SmartAccountRepository {
         idCurrencyAccount: Int?,
     ): Flow<MultimoneyResult<SmartFavoriteResult?>>
 
+
     suspend fun queryACHTransferFavoriteList(
         user: String,
         idBrand: Int,
@@ -314,7 +316,7 @@ interface SmartAccountRepository {
         identification: String,
         idBrand: Int,
         accountStatus: Int
-    ): Flow<MultimoneyResult<List<AccountSmartForBuyCrypto>?>>
+    ): Flow<MultimoneyResult<List<SmartAccountSmall>?>>
 
     suspend fun mutationUpdateSmartAccountStatus(
         user: String,

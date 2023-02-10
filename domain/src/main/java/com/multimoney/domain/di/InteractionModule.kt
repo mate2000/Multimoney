@@ -54,8 +54,6 @@ import com.multimoney.domain.interaction.accountsmart.QueryRelationshipUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryRelationshipUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QuerySmartAccountTypeUseCase
 import com.multimoney.domain.interaction.accountsmart.QuerySmartAccountTypeUseCaseImpl
-import com.multimoney.domain.interaction.accountsmart.QuerySmartAccountsUseCase
-import com.multimoney.domain.interaction.accountsmart.QuerySmartAccountsUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QuerySmartExchangeRateUseCase
 import com.multimoney.domain.interaction.accountsmart.QuerySmartExchangeRateUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryStepByStepUseCase
@@ -164,6 +162,8 @@ import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCas
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetPriceQuoteAndCommissionUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetPriceQuoteAndCommissionsUseCase
+import com.multimoney.domain.interaction.crypto.SellCryptoCurrencyUseCase
+import com.multimoney.domain.interaction.crypto.SellCryptoCurrencyUseCaseImpl
 import com.multimoney.domain.interaction.crypto.ValidateDepositAddressUseCase
 import com.multimoney.domain.interaction.crypto.ValidateDepositAddressUseCaseImpl
 import com.multimoney.domain.interaction.mmvisa.MutationDeleteTokenDeviceNVUseCase
@@ -204,6 +204,8 @@ import com.multimoney.domain.interaction.security.QueryDataInformationClientUseC
 import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCase
 import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCaseImpl
+import com.multimoney.domain.interaction.security.QueryGetCountryPhoneCodesUseCase
+import com.multimoney.domain.interaction.security.QueryGetCountryPhoneCodesUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryGetCountryUseCase
 import com.multimoney.domain.interaction.security.QueryGetCountryUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryGetQuickActionsImpl
@@ -746,6 +748,11 @@ class InteractionModule {
 
     @Singleton
     @Provides
+    fun provideMutationSellCryptoCurrency(cryptoRepository: CryptoRepository): SellCryptoCurrencyUseCase =
+        SellCryptoCurrencyUseCaseImpl(cryptoRepository)
+
+    @Singleton
+    @Provides
     fun provideQueryGetBalanceCryptoAccountUseCase(cryptoRepository: CryptoRepository): GetBalanceCryptoAccountUseCase =
         GetBalanceCryptoAccountUseCaseImpl(cryptoRepository)
 
@@ -848,10 +855,6 @@ class InteractionModule {
     fun provideMutationUpdateFavoriteSmart(smartAccountRepository: SmartAccountRepository): MutationUpdateFavoriteSmartUseCase =
         MutationUpdateFavoriteSmartUseCaseImpl(smartAccountRepository)
 
-    @Provides
-    @Singleton
-    fun provideQuerySmartAccountsUseCase(smartAccountRepository: SmartAccountRepository): QuerySmartAccountsUseCase =
-        QuerySmartAccountsUseCaseImpl(smartAccountRepository)
 
     @Provides
     @Singleton
@@ -862,6 +865,11 @@ class InteractionModule {
     @Singleton
     fun provideQueryRelatedContactsByPhoneUseCase(smartAccountRepository: SmartAccountRepository): QueryRelatedContactsByPhoneUseCase =
         QueryRelatedContactsByPhoneUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryGetCountryPhoneCodes(securityRepository: SecurityRepository): QueryGetCountryPhoneCodesUseCase =
+        QueryGetCountryPhoneCodesUseCaseImpl(securityRepository)
 
     @Provides
     @Singleton

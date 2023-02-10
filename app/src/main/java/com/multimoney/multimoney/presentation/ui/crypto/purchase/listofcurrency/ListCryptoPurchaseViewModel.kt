@@ -37,8 +37,11 @@ class ListCryptoPurchaseViewModel @Inject constructor(
     ) {
         uiState = uiState.copy(
             user = user ?: "",
-            idBrand = idBrand ?: 0
+            idBrand = idBrand ?: 0,
         )
+        viewModelScope.launch {
+            uiState = uiState.copy(shouldDisplayDisclaimer = dataStorePreferences.isVolatileDialogVisible().first())
+        }
     }
 
     private fun getAvailableListOfCryptoCoins() {

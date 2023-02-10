@@ -53,12 +53,16 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 fun SignUpScreen(
     isRestart: Boolean = true,
     step: String,
+    idBrand: Int? = 0,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: SignUpViewModel = hiltViewModel()
 ) {
     val focusManager = LocalFocusManager.current
     val coroutineScope = rememberCoroutineScope()
+
+    if(step != DEFAULT_STEP)
+        viewModel.onUIEvent(SignUpViewModel.UIEvent.OnSetIdBrand(idBrand = idBrand?: 0))
     val context = LocalContext.current
 
     // Navigation
@@ -70,6 +74,7 @@ fun SignUpScreen(
             }
         }
     }
+
 
     Column(
         modifier = Modifier

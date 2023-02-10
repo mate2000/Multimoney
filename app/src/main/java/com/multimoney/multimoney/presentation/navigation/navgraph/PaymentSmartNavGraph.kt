@@ -12,7 +12,7 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.ORIGIN_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
-import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT_LIST
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNTS_ID_LIST
 import com.multimoney.multimoney.presentation.navigation.SMART_PAYMENT_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.TRANSFER_TYPE
@@ -90,7 +90,7 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
         composable(
             route = Screen.SmartPaymentOptionsScreenCR.route,
             arguments = listOf(
-                navArgument(SMART_ACCOUNT_LIST) {
+                navArgument(SMART_ACCOUNTS_ID_LIST) {
                     type = SmartAccountIDListNavType()
                 },
                 navArgument(USER) { type = NavType.StringType },

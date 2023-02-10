@@ -17,7 +17,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.domain.model.accountsmart.AccountSmartForBuyCrypto
+import com.multimoney.domain.model.accountsmart.SmartAccountSmall
+import com.multimoney.domain.model.balance.Account
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -71,7 +72,7 @@ fun SelectSmartAccountScreen(
 fun SelectSmartAccountContent(
     viewModel: SelectSmartAccountViewModel,
     sharedViewModel: SellCryptoSharedViewModel,
-    onNextStep: (AccountSmartForBuyCrypto) -> Unit = { _ -> }
+    onNextStep: (SmartAccountSmall) -> Unit = { _ -> }
 ) {
     Column(
         modifier = Modifier

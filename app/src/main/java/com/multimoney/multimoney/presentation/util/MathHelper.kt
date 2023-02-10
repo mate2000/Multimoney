@@ -2,7 +2,7 @@ package com.multimoney.multimoney.presentation.util
 
 import com.multimoney.domain.model.crypto.CurrencyHistoricPrice
 import com.multimoney.domain.model.crypto.HistoricalBalanceClient
-import com.multimoney.multimoney.presentation.ui.crypto.DEFAULT_AMOUNT
+import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.DEFAULT_AMOUNT
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.BuyCurrencyScreenViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.EMPTY_CURRENCY
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
@@ -84,6 +84,37 @@ fun calculateConfirmationQuoteAmount(
             DEFAULT_AMOUNT
         }.toDouble().times(currencyPrice ?: 0.0)
     }.toString().toDouble().toCurrencyFormat()
+}
+
+fun calculateConfirmationQuoteAmount(
+    quoteAmount: String,
+    baseAmount: String,
+    currencyPrice: Double?,
+    symbol: String,
+    totalFee: Double
+): String {
+    return quoteAmount.ifEmpty {
+        baseAmount.ifEmpty {
+            DEFAULT_AMOUNT
+        }.toDouble().times(currencyPrice ?: 0.0)
+    }.toString().toDouble().minus(totalFee).toCurrencyFormat(
+        symbol = symbol
+    )
+}
+
+fun calculateConfirmationQuoteAmount(
+    quoteAmount: String,
+    baseAmount: String,
+    currencyPrice: Double?,
+    symbol: String
+): String {
+    return quoteAmount.ifEmpty {
+        baseAmount.ifEmpty {
+            DEFAULT_AMOUNT
+        }.toDouble().times(currencyPrice ?: 0.0)
+    }.toString().toDouble().toCurrencyFormat(
+        symbol = symbol
+    )
 }
 
 fun calculateConfirmationBaseAmount(

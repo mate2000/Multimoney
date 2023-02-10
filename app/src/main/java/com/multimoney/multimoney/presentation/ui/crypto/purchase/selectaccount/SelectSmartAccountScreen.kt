@@ -17,7 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.domain.model.accountsmart.AccountSmartForBuyCrypto
+import com.multimoney.domain.model.accountsmart.SmartAccountSmall
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -51,16 +51,7 @@ fun SelectSmartAccountScreen(
 
     BackHandler { sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep) }
 
-    SelectSmartAccountContent(viewModel, sharedViewModel) { account ->
-        sharedViewModel.onUIEvent(
-            PurchaseCryptoSharedViewModel.UIEvent.OnSetSelectedAccount(
-                totalBalance = account.totalBalance ?: 0.0,
-                idCurrency = account.idCurrencyAccount ?: CurrencyType.Dollar.id,
-                accountToken = account.accountToken,
-                accountNumber = account.accountNumber,
-                ibanAccountNumber = account.ibanAccountNumber,
-            )
-        )
+    SelectSmartAccountContent(viewModel, sharedViewModel) {
         if (!sharedViewModel.uiState.shouldDisplayDisclaimer) {
             sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNextStep)
         }
@@ -71,7 +62,7 @@ fun SelectSmartAccountScreen(
 fun SelectSmartAccountContent(
     viewModel: SelectSmartAccountViewModel,
     sharedViewModel: PurchaseCryptoSharedViewModel,
-    onNextStep: (AccountSmartForBuyCrypto) -> Unit = { _ -> }
+    onNextStep: (SmartAccountSmall) -> Unit = { _ -> }
 ) {
     Column(
         modifier = Modifier
@@ -104,10 +95,13 @@ fun SelectSmartAccountContent(
                             account.currencyCode ?: ""
                         ),
                         onClick = {
-                            viewModel.onUIEvent(
-                                SelectSmartAccountViewModel.UIEvent.OnUpdateValues(
-                                    account.accountToken,
-                                    account.totalBalance ?: 0.0
+                            sharedViewModel.onUIEvent(
+                                PurchaseCryptoSharedViewModel.UIEvent.OnSetSelectedAccount(
+                                    smartAccountAvailableBalance = account.totalBalance ?: 0.0,
+                                    idCurrency = account.idCurrencyAccount ?: CurrencyType.Dollar.id,
+                                    accountToken = account.accountToken,
+                                    accountNumber = account.accountNumber,
+                                    ibanAccountNumber = account.ibanAccountNumber,
                                 )
                             )
                             if (sharedViewModel.uiState.shouldDisplayDisclaimer) {

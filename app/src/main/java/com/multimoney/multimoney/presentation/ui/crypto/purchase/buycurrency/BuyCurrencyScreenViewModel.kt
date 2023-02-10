@@ -281,9 +281,6 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 result.onLoading {
                     uiState = uiState.copy(
                         isLoading = true,
-                        isPurchaseFailed = false,
-                        isPurchaseSuccess = false,
-                        isPurchaseLoading = true,
                         purchaseStatus = PurchaseStatus.LOADING
                     )
                 }
@@ -298,9 +295,6 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                             )
                             uiState = uiState.copy(
                                 isLoading = false,
-                                isPurchaseSuccess = false,
-                                isPurchaseFailed = true,
-                                isPurchaseLoading = false,
                                 purchaseStatus = PurchaseStatus.IDLE
 
                             )
@@ -315,11 +309,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                             )
                             uiState = uiState.copy(
                                 isLoading = false,
-                                isPurchaseSuccess = false,
-                                isPurchaseFailed = true,
-                                isPurchaseLoading = false,
                                 purchaseStatus = PurchaseStatus.IDLE
-
                             )
                             return@onSuccess
                         }
@@ -332,9 +322,6 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                             )
                             uiState = uiState.copy(
                                 isLoading = false,
-                                isPurchaseSuccess = false,
-                                isPurchaseFailed = true,
-                                isPurchaseLoading = false,
                                 purchaseStatus = PurchaseStatus.IDLE
 
                             )
@@ -343,8 +330,6 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                     }
                     uiState = uiState.copy(
                         isLoading = false,
-                        isPurchaseSuccess = true,
-                        isPurchaseFailed = false,
                         referenceNumber = it.buyHQR.result?.sysdeTransactionNumber,
                         purchaseStatus = PurchaseStatus.SUCCESS
 
@@ -353,11 +338,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 result.onFailure {
                     uiState = uiState.copy(
                         isLoading = false,
-                        isPurchaseFailed = true,
-                        isPurchaseSuccess = false,
-                        isPurchaseLoading = false,
                         purchaseStatus = PurchaseStatus.FAILED
-
                     )
                 }
             }
@@ -411,14 +392,11 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         // timer *
         val openDialog: DialogParameters = DialogParameters(),
         val failureAction: () -> Unit = {},
-        val isPurchaseFailed: Boolean = false, // to handle error screen after purchase
-        val isPurchaseSuccess: Boolean = false, // to handle success screen after purchase
         //** validations
         val isError: Boolean = false,
         @StringRes val error: Int = R.string.empty,
         val errorMessageArg: Any = Any(),
         val isTransformationCurrency: MutableState<Boolean> = mutableStateOf(false),
-        val isPurchaseLoading: Boolean = false,
         //voucher information
         val referenceNumber: String? = null,
         val amountInUSD: Double? = null,

@@ -37,7 +37,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -78,7 +77,6 @@ import com.togitech.ccp.utils.searchCountry
  * @param dialogCursorColorSearch: Change select country dialog CursorColorSearch.
  * **/
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 @Preview
 fun PhoneCountryDialog(
@@ -95,7 +93,7 @@ fun PhoneCountryDialog(
     dialogFocusedBorderColorSearch: Color = MultimoneyTheme.colors.primary,
     dialogUnFocusedBorderColorSearch: Color = MultimoneyTheme.colors.secondary,
     dialogCursorColorSearch: Color = MultimoneyTheme.colors.primary,
-    countryList :MutableList<CountryData>? = mutableListOf<CountryData>()
+    countryList: MutableList<CountryData>? = mutableListOf()
 ) {
     var innerCountryList = mutableListOf<CountryData>()
     var isPickCountry by remember { mutableStateOf(defaultSelectedCountry) }
@@ -207,10 +205,8 @@ fun PhoneCountryDialog(
                                 )
                             }
                             LazyColumn {
-                                innerCountryList = if(!countryList.isNullOrEmpty())
-                                    countryList
-                                else
-                                    getLibCountries() as MutableList<CountryData>
+                                innerCountryList = if (!countryList.isNullOrEmpty()) countryList
+                                else getLibCountries as MutableList<CountryData>
                                 items(
                                     if (searchValue.isEmpty()) {
                                         innerCountryList
@@ -245,7 +241,7 @@ fun PhoneCountryDialog(
                                         )
                                         Text(
                                             stringResource(id = getCountryName(item.countryCode.lowercase())),
-                                            Modifier.padding(horizontal = 18.dp),
+                                            Modifier.padding(horizontal = 18.dp)
                                         )
                                     }
                                 }

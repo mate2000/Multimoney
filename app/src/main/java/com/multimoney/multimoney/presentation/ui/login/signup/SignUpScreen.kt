@@ -61,8 +61,9 @@ fun SignUpScreen(
     val focusManager = LocalFocusManager.current
     val coroutineScope = rememberCoroutineScope()
 
-    if(step != DEFAULT_STEP)
-        viewModel.onUIEvent(SignUpViewModel.UIEvent.OnSetIdBrand(idBrand = idBrand?: 0))
+    if (step != DEFAULT_STEP) {
+        viewModel.onUIEvent(SignUpViewModel.UIEvent.OnSetIdBrand(idBrand = idBrand ?: 0))
+    }
     val context = LocalContext.current
 
     // Navigation
@@ -75,7 +76,6 @@ fun SignUpScreen(
         }
     }
 
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -84,7 +84,6 @@ fun SignUpScreen(
         Column {
             TopNavBar(
                 isRightButtonVisible = viewModel.uiState.isCloseVisible,
-                isLeftButtonVisible = viewModel.uiState.isBackVisible,
                 onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
                 onRightButtonClick = {
                     viewModel.onUIEvent(

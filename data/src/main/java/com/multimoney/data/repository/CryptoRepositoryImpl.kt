@@ -48,9 +48,10 @@ class CryptoRepositoryImpl @Inject constructor(
 
     override suspend fun getAvailableListOfCryptoCoins(
         user: String,
-        idBrand: Int
+        idBrand: Int,
+        origin: String
     ): Flow<MultimoneyResult<GetListOfAvailableCryptoCoins?>> = fetchData(
-        apolloCall = graphqlApi.queryGetAvailableListOfCryptoCoins(user, idBrand),
+        apolloCall = graphqlApi.queryGetAvailableListOfCryptoCoins(user, idBrand, origin),
         apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
     )
 

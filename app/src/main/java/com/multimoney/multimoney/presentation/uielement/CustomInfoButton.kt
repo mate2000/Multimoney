@@ -147,13 +147,13 @@ fun CustomInfoButton(
                             Placeholder(
                                 width = 12.sp,
                                 height = 12.sp,
-                                placeholderVerticalAlign = PlaceholderVerticalAlign.AboveBaseline,
+                                placeholderVerticalAlign = PlaceholderVerticalAlign.AboveBaseline
                             )
                         ) {
                             if (titleIcon != null) {
                                 Image(
-                                    painter = painterResource(id = R.drawable.ic_star_filled),
-                                    contentDescription = "",
+                                    painter = painterResource(id = titleIcon),
+                                    contentDescription = ""
                                 )
                             } else {
                                 R.string.empty
@@ -370,9 +370,8 @@ fun CustomInfoButtonFavoriteAccount(
                         start.linkTo(startIconId.end)
                         top.linkTo(startIconId.top)
                         bottom.linkTo(subTitleId.top)
-                    },
+                    }
                 ) {
-
                     Text(
                         text = title,
                         style = Typography.body2.copy(

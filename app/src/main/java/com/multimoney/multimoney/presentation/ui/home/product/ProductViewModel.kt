@@ -96,6 +96,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnVisaCardExpiredDialog
+import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.FilterDate
 import com.multimoney.multimoney.presentation.util.NfcHelper
 import com.multimoney.multimoney.presentation.util.PAGE_SIZE
@@ -130,7 +131,8 @@ class ProductViewModel @Inject constructor(
     private val balanceCardInformationUseCase: QueryBalanceCardInformationUseCase,
     private val queryListSinpeAccountUseCaseImpl: QueryListSinpeAccountUseCase,
     private val queryGetCryptoCurrencyMovementsUseCase: GetCryptoCurrencyMovementsUseCase,
-    private val mutationAccountStatusUseCase: MutationAccountStatusUseCase
+    private val mutationAccountStatusUseCase: MutationAccountStatusUseCase,
+    private val cryptoHelper: CryptoHelper
 ) : BaseViewModel(true) {
 
     // UIState
@@ -180,7 +182,8 @@ class ProductViewModel @Inject constructor(
         this.creditMovements = creditMovements
         viewModelScope.launch {
             uiState = uiState.copy(
-                shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first()
+                shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first(),
+                isCryptoTransferEnabled = cryptoHelper.isCryptoTransferEnabled()
             )
         }
 
@@ -554,25 +557,23 @@ class ProductViewModel @Inject constructor(
         val idLoanClient = userStatus?.infoCredit?.idLoanClient
         val cardStatus = userStatus?.infoVirtualCard?.status
         navigateTo(
-            "${Screen.CryptoWalletScreen.baseRoute}/$email/${uiState.idBrand}/$identification/$globalBalance/$idClient/$idLoanClient/$statusCredit/$statusSmart/$statusCrypto/$cardStatus/${encodeData(balanceCredit?.balanceAccountSmart?.toNavType())}"
+            "${Screen.CryptoWalletScreen.baseRoute}/$email/${uiState.idBrand}/$identification/$globalBalance/$idClient/$idLoanClient/$statusCredit/$statusSmart/$statusCrypto/$cardStatus/${
+                encodeData(
+                    balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType()
+                )
+            }/${encodeData(balanceCredit?.balanceCryptoAccount?.items)}"
         )
     }
 
-    private fun List<Account?>.toNavType(): List<SmartAccountSmall> {
-        return this.map { account ->
-            SmartAccountSmall(
-                totalBalance = account?.totalBalance,
-                currencyCode = account?.currencyCode,
-                idCurrencyAccount = account?.idCurrencyAccount,
-                accountToken = account?.tokenNumber ?: "",
-                accountNumber = account?.accountNumber ?: "",
-                ibanAccountNumber = account?.ibanAccountNumber ?: ""
-            )
-        }
-    }
 
     private fun onNavigateToCryptoMarket() {
-        navigateTo("${Screen.CryptoMarketScreen.baseRoute}/$userName/${uiState.idBrand}/${encodeData(balanceCredit?.balanceAccountSmart?.toNavType())}")
+        navigateTo(
+            "${Screen.CryptoMarketScreen.baseRoute}/$userName/${uiState.idBrand}/${
+                encodeData(
+                    balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType()
+                )
+            }/${encodeData(balanceCredit?.balanceCryptoAccount?.items)}"
+        )
     }
 
     private fun onNavigateToCryptoMovements() {
@@ -796,6 +797,7 @@ class ProductViewModel @Inject constructor(
             QuickActionFlow.SAVE_SMART.flow -> onNavigateToSmartSave()
             QuickActionFlow.SEND_MONEY.flow -> onNavigateToSendMoneyScreenQuickAction()
             QuickActionFlow.BUY_CRYPTO.flow -> onNavigateToPurchaseCryptoFlow()
+            QuickActionFlow.SELL_CRYPTO.flow -> onNavigateToSellCryptoFlow()
             QuickActionFlow.SEND_CRYPTO.flow -> onNavigateToSendCryptoFlow()
         }
     }
@@ -1066,11 +1068,17 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToPurchaseCryptoFlow() {
-        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${encodeData(balanceCredit?.balanceAccountSmart?.toNavType())}")
+        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${encodeData(balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType())}")
     }
 
     private fun onNavigateToSellCryptoFlow() {
-        navigateTo(Screen.CryptoSellFlow.baseRoute)
+        navigateTo(
+            "${Screen.CryptoSellFlow.baseRoute}/${encodeData(balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType())}/${
+                encodeData(
+                    balanceCredit?.balanceCryptoAccount?.items
+                )
+            }"
+        )
     }
 
     private fun onNavigateToSendCryptoFlow() {
@@ -1129,6 +1137,20 @@ class ProductViewModel @Inject constructor(
         emitBaseEvent(BaseEvent.OnShowDisclaimer)
     }
 
+    private fun List<Account?>.toSmartAccountsNavType(): List<SmartAccountSmall> {
+        return this.map { account ->
+            SmartAccountSmall(
+                totalBalance = account?.totalBalance,
+                currencyCode = account?.currencyCode,
+                idCurrencyAccount = account?.idCurrencyAccount,
+                accountToken = account?.tokenNumber ?: "",
+                accountNumber = account?.accountNumber ?: "",
+                ibanAccountNumber = account?.ibanAccountNumber ?: ""
+            )
+        }
+    }
+
+
     data class UIState(
         // Fields
         var idBrand: String = "0",
@@ -1146,7 +1168,8 @@ class ProductViewModel @Inject constructor(
         var isBackPressed: Boolean = false,
         val paymentAvailable: Boolean = false,
         val shouldDisplayDisclaimer: Boolean = true,
-        val dontShowAgainChecked: Boolean = false
+        val dontShowAgainChecked: Boolean = false,
+        val isCryptoTransferEnabled: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

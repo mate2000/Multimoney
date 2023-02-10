@@ -28,12 +28,13 @@ import com.multimoney.multimoney.presentation.navigation.DESCRIPTION_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNTS_LIST
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.USER_CRYPTO_BALANCES
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
-import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel
+import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
@@ -51,7 +52,8 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
     private val queryGetCurrencyHistoricalPricesUseCase: GetCurrencyHistoricalPricesUseCase,
     private val cryptoMovementsUseCase: GetCryptoCurrencyMovementsUseCase,
     private val savedStateHandle: SavedStateHandle,
-    private val dataStorePreferences: DataStorePreferences
+    private val dataStorePreferences: DataStorePreferences,
+    private val cryptoHelper: CryptoHelper
 ) : BaseViewModel(true) {
 
     private var user = ""
@@ -62,6 +64,8 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
         private set
 
     private var smartAccounts: List<SmartAccountSmall>? = null
+    private var userCryptoBalances: List<BalanceCryptoAccountItems>? = null
+
 
 
     private fun onGetUserInfo() {
@@ -72,8 +76,13 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
             idBrand = savedStateHandle[ID_BRAND] ?: 0
         )
         viewModelScope.launch {
-            uiState = uiState.copy(shouldDisplayDisclaimer = dataStorePreferences.isVolatileDialogVisible().first())
+            uiState = uiState.copy(
+                shouldDisplayDisclaimer = dataStorePreferences.isVolatileDialogVisible().first(),
+                isCryptoTransferEnabled = cryptoHelper.isCryptoTransferEnabled()
+            )
         }
+        userCryptoBalances =
+            savedStateHandle.get<Array<BalanceCryptoAccountItems>>(USER_CRYPTO_BALANCES)?.toList()
         smartAccounts =
             savedStateHandle.get<Array<SmartAccountSmall>>(SMART_ACCOUNTS_LIST)?.toList()
     }
@@ -164,7 +173,7 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
     }
 
     private fun onNavigateToSellCrypto(){
-        navigateTo("${Screen.CryptoSellFlow.baseRoute}?$ITEM_CRYPTO_MARKET=${encodeData(MarketCryptoCoin(
+        navigateTo("${Screen.CryptoSellFlow.baseRoute}/${encodeData(smartAccounts)}/${encodeData(userCryptoBalances)}?$ITEM_CRYPTO_MARKET=${encodeData(MarketCryptoCoin(
             description = uiState.cryptoItem?.descriptionCurrency ?: "",
             baseAsset = uiState.cryptoItem?.asset ?: "",
             url_image = uiState.cryptoItem?.url_image ?: "",
@@ -222,7 +231,8 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
         val shouldDisplayDisclaimer: Boolean = true,
         val dontShowAgainChecked: Boolean = false,
         val bottomSheetVisibleState: ModalBottomSheetState = ModalBottomSheetState(
-            ModalBottomSheetValue.Hidden)
+            ModalBottomSheetValue.Hidden),
+        val isCryptoTransferEnabled: Boolean = false,
     )
 
     companion object {

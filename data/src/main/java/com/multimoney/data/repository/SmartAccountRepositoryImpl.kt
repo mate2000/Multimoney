@@ -416,7 +416,8 @@ class SmartAccountRepositoryImpl @Inject constructor(
         country: String,
         idAccount: Long?,
         option: String?,
-        email: String?
+        email: String?,
+        isFavorite: Boolean?
     ): Flow<MultimoneyResult<SaveSinpeAccount?>> = fetchData(
         apolloCall = graphqlApi.mutationManageSinpeAccountSave(
             user,
@@ -427,6 +428,7 @@ class SmartAccountRepositoryImpl @Inject constructor(
             nameAccount,
             country,
             idAccount,
+            isFavorite,
             option
         ),
         apolloCallMapper = { data ->

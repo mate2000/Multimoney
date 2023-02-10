@@ -1376,6 +1376,7 @@ class GraphqlApi @Inject constructor(
         nameAccount: String,
         country: String,
         idAccount: Long?,
+        isFavorite: Boolean?,
         option: String?
     ): ApolloCall<ManageSinpeAccountSaveMutation.Data> =
         apolloAuthorizedClient.mutation(
@@ -1388,6 +1389,7 @@ class GraphqlApi @Inject constructor(
                 nameAccount = Optional.presentIfNotNull(nameAccount),
                 country = Optional.presentIfNotNull(country),
                 id_account = Optional.presentIfNotNull(idAccount),
+                isFavorite = Optional.presentIfNotNull(isFavorite),
                 option = Optional.presentIfNotNull(option)
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)

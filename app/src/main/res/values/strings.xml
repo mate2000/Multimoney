@@ -1569,6 +1569,11 @@
     <string name="crypto_send_address_verify_crypto_address_description" translatable="false"> Asegurate que la dirección es la correcta. En caso de que lo enviés a una dirección incorrecta no podrás recuperar el dinero</string>
     <string name="crypto_send_address_wallet_doesnt_accept" translatable="false">Esta billetera no recibe %s</string>
 
+    <!--Crypto amount to be sent-->
+    <string name="crypto_amount_title" translatable="false">¿Cuánto querés enviar %s?</string>
+    <string name="crypto_amount_info_msg" translatable="false">Te descontaremos la tarifa de envío del monto ingresado.</string>
+    <string name="crypto_available_dollar_amount_to_bitcoin" translatable="false">Disponible $%1s ≈ %2s %3s</string>
+
     <!-- Registeres User Email -->
     <string name="registered_user_email_title" translatable="false">Tenemos tu correo  %s registrado en MultiMoney</string>
     <string name="registered_user_email_subtitle" translatable="false">Ingresá el correo electrónico completo para verificar que sos vos.</string>

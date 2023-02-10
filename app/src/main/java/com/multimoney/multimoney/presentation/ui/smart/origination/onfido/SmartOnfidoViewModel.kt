@@ -241,7 +241,7 @@ class SmartOnfidoViewModel @Inject constructor(
     private fun onNavigateToSignDocumentScreen(signDocumentStep: String) {
         popAndNavigateTo(
             route = "${Screen.SmartSignScreen.baseRoute}/$signDocumentStep/$evicertiaUrl/$idPrint/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/${true}/$globalId/$user",
-            popTo = Screen.HomeScreen.route
+            popTo = Screen.SmartOnfidoScreen.route
         )
     }
 

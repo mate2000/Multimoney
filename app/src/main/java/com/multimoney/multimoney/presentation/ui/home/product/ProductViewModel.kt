@@ -61,7 +61,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ORIGIN
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
-import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.BaseEvent.OnShowCardIssuanceError
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnBalanceSuccess
@@ -92,6 +91,8 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnQuickActionClicked
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnShareIbanAccount
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateCollapsedPage
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateExpandedPage
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsBackPressed
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
@@ -171,7 +172,11 @@ class ProductViewModel @Inject constructor(
         this.email = email
         this.userName = userName
         this.configurationVersion = configurationVersion
-        uiState = uiState.copy(idBrand = idBrand, productPageList = productPageList)
+        uiState = uiState.copy(
+            idBrand = idBrand,
+            productPageList = productPageList,
+            expandedProductPageList = productPageList.filter { it.enabled }
+        )
         this.idClient = validateUserStatus?.infoUser?.idClient ?: 0
         setBalance(balanceCredit)
         setValidateUserStatus(validateUserStatus)
@@ -179,9 +184,8 @@ class ProductViewModel @Inject constructor(
         this.smartMovementsList = smartMovements
         this.creditMovements = creditMovements
         viewModelScope.launch {
-            uiState = uiState.copy(shouldDisplayDisclaimer =  preferences.isVolatileDialogVisible().first())
+            uiState = uiState.copy(shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first())
         }
-
     }
 
     private fun setBalance(balance: Balance?) {
@@ -320,7 +324,12 @@ class ProductViewModel @Inject constructor(
                         )
                         .plus(getNavParam(FIRST_NAME, uiState.userStatus?.infoUser?.firstName))
                         .plus(getNavParam(LAST_NAME, uiState.userStatus?.infoUser?.lastName))
-                        .plus(getNavParam(CROSSELING, uiState.userStatus?.infoCredit?.infoPreApprove?.crosseling ?: false))
+                        .plus(
+                            getNavParam(
+                                CROSSELING,
+                                uiState.userStatus?.infoCredit?.infoPreApprove?.crosseling ?: false
+                            )
+                        )
                 )
             }
             else -> {
@@ -765,7 +774,7 @@ class ProductViewModel @Inject constructor(
                 idBrand = uiState.idBrand.toIntOrNull() ?: 0,
                 country = "",
                 idAccount = 0,
-                accountNumber = "",
+                accountNumber = ""
             ).collectLatest { result ->
                 result.onSuccess { accountList ->
                     onLoadingValueChange(false)
@@ -1056,12 +1065,14 @@ class ProductViewModel @Inject constructor(
     private fun onDisclaimerChecked(checked: Boolean) {
         uiState = uiState.copy(dontShowAgainChecked = checked)
     }
+
     private fun updateShouldShowDisclaimer(value: Boolean) {
         viewModelScope.launch {
             dataStorePreferences.setVolatileDialogVisible(!value)
             uiState = uiState.copy(shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first())
         }
     }
+
     private fun onShowDisclaimer() {
         emitBaseEvent(BaseEvent.OnShowDisclaimer)
     }
@@ -1069,8 +1080,11 @@ class ProductViewModel @Inject constructor(
     data class UIState(
         // Fields
         var idBrand: String = "0",
+        var expandedPage: Int = 0,
+        var collapsedPage: Int = 0,
         var userStatus: ValidateUserStatus? = null,
         var productPageList: List<ProductPage>? = null,
+        var expandedProductPageList: List<ProductPage>? = null,
         val openDialog: DialogParameters = DialogParameters(),
         val isExpanded: Boolean = false,
         val onGoingCreditCardTitle: Int = R.string.home_product_title,
@@ -1088,6 +1102,12 @@ class ProductViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
+            is OnUpdateExpandedPage -> uiState = uiState.copy(
+                expandedPage = uiEvent.expandedPage
+            )
+            is OnUpdateCollapsedPage -> uiState = uiState.copy(
+                collapsedPage = uiEvent.collapsedPage
+            )
             is OnUpdateIsExpanded -> uiState = uiState.copy(
                 isExpanded = uiEvent.isExpanded
             )
@@ -1177,6 +1197,8 @@ class ProductViewModel @Inject constructor(
     }
 
     sealed class UIEvent {
+        data class OnUpdateExpandedPage(val expandedPage: Int) : UIEvent()
+        data class OnUpdateCollapsedPage(val collapsedPage: Int) : UIEvent()
         data class OnUpdateIsBackPressed(val isBackPressed: Boolean) : UIEvent()
         data class OnUpdateIsExpanded(val isExpanded: Boolean) : UIEvent()
         data class OnBalanceSuccess(val balance: Balance) : UIEvent()
@@ -1264,7 +1286,6 @@ class ProductViewModel @Inject constructor(
 
         data class OnDisclaimerChecked(val checked: Boolean) : UIEvent()
         data class OnUpdateShouldShowDisclaimer(val checked: Boolean) : UIEvent()
-
     }
 
     sealed class BaseEvent {
@@ -1277,6 +1298,7 @@ class ProductViewModel @Inject constructor(
         const val EMPTY_STRING = ""
         const val ERROR_CREDIT = "Error"
         const val DEFAULT_PRODUCT_PAGES = 1
+        const val INITIAL_PRODUCT_PAGE = 0
         const val DEFAULT_PROGRESS = 1F
         const val ZERO = 0.0
         const val CREDIT_STEP_PRE_APPROVED = "CREDIT_STEP_PREAPROBADO"

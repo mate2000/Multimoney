@@ -12,14 +12,9 @@ import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.PurchaseCryptoSteps
-import com.multimoney.domain.interaction.accountsmart.QuerySmartAccountsUseCase
-import com.multimoney.domain.model.accountsmart.AccountSmartForBuyCrypto
-import com.multimoney.domain.model.balance.BalanceCryptoAccount
+import com.multimoney.domain.model.accountsmart.SmartAccountSmall
 import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.crypto.MarketCryptoCoin
-import com.multimoney.domain.model.util.error.HttpError
-import com.multimoney.domain.model.util.onFailure
-import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -29,7 +24,6 @@ import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -133,7 +127,7 @@ class SellCryptoSharedViewModel @Inject constructor(
     data class UIState(
         val currentStep: Int = PurchaseCryptoSteps.One.pageNumber,
         val isLoading: Boolean = false,
-        val accounts: List<AccountSmartForBuyCrypto> = listOf(),
+        val accounts: List<SmartAccountSmall> = listOf(),
         val openDialog: DialogParameters = DialogParameters(),
         var bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
         var bottomSheet: (@Composable () -> Unit) = {},

@@ -75,6 +75,7 @@ fun BuyCurrencyScreen(
     sharedViewModel: PurchaseCryptoSharedViewModel = hiltViewModel(),
     viewModel: BuyCurrencyScreenViewModel = hiltViewModel()
 ) {
+
     LaunchedEffect(key1 = true) {
         viewModel.onUIEvent(
             BuyCurrencyScreenViewModel.UIEvent.OnSetUserData(
@@ -86,11 +87,10 @@ fun BuyCurrencyScreen(
                 user = sharedViewModel.user,
                 market = sharedViewModel.uiState.market,
                 identification = sharedViewModel.identification,
-                accountToken = sharedViewModel.uiState.accounts.firstOrNull()?.accountToken?.toLong()
-                    ?: 0L,
+                accountToken = sharedViewModel.uiState.accountToken.toLong() ?: 0L,
                 side = sharedViewModel.side,
                 assetImageUrl = sharedViewModel.uiState.assetImageBaseUrl,
-                smartAccountAvailableBalance = sharedViewModel.uiState.smartAccountAvailableBalance
+                smartAccountAvailableBalance = sharedViewModel.uiState.smartAccountAvailableBalance ?: 0.0
             )
         )
         sharedViewModel.uiState.previousAction = {

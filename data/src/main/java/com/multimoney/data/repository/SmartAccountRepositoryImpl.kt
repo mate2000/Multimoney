@@ -3,7 +3,6 @@ package com.multimoney.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.apollographql.apollo3.api.Optional
 import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.smartaccount.mapToDomain
 import com.multimoney.data.mapper.smartaccount.mapToDomainModel
@@ -11,7 +10,7 @@ import com.multimoney.data.networking.GraphqlApi
 import com.multimoney.data.paging.SmartMovementsPagingSource
 import com.multimoney.domain.model.accountsmart.ACHAccount
 import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
-import com.multimoney.domain.model.accountsmart.AccountSmartForBuyCrypto
+import com.multimoney.domain.model.accountsmart.SmartAccountSmall
 import com.multimoney.domain.model.accountsmart.AddressesLevel
 import com.multimoney.domain.model.accountsmart.BankListTransfer365
 import com.multimoney.domain.model.accountsmart.Beneficiary
@@ -36,6 +35,7 @@ import com.multimoney.domain.model.accountsmart.SmartMovement
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.accountsmart.StepByStep
 import com.multimoney.domain.model.accountsmart.VisaSmartPayment
+import com.multimoney.domain.model.balance.Account
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Message
 import com.multimoney.domain.model.util.MultimoneyResult.Success
@@ -682,23 +682,6 @@ class SmartAccountRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun querySmartAccounts(
-        user: String,
-        identification: String,
-        idBrand: Int,
-        accountStatus: Int
-    ): Flow<MultimoneyResult<List<AccountSmartForBuyCrypto>?>> {
-        return fetchData(graphqlApi.querySmartAccounts(
-            user,
-            identification,
-            idBrand,
-            accountStatus
-        ),
-            apolloCallMapper = { data ->
-                Success(data.mapToDomainModel())
-            }
-        )
-    }
 
     override suspend fun mutationUpdateSmartAccountStatus(
         user: String,

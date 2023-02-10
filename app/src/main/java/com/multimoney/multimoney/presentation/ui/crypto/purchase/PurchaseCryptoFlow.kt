@@ -42,7 +42,6 @@ fun PurchaseCryptoFlow(
 
     LaunchedEffect(true) {
         viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnGetUserInfo)
-        viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnQueryAccounts)
         viewModel.executeNavigation(
             onNavigate = onNavigate,
             onPopAndNavigate = onPopAndNavigate,
@@ -57,7 +56,6 @@ fun PurchaseCryptoFlow(
             }
         }
     }
-
 
     Column(
         modifier = Modifier

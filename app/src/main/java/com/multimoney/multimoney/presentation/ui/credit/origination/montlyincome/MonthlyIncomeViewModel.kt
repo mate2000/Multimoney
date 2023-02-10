@@ -39,6 +39,7 @@ import com.multimoney.multimoney.presentation.util.YEAR_MONTH_DAY_PATTERN
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
+import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
@@ -78,7 +79,7 @@ class MonthlyIncomeViewModel @Inject constructor(
     }
 
     private fun onIncomeValueChange(income: String) {
-        if (income.isDigitsOnly()) {
+        if (validateDecimalIncome(income)) {
             val incomeError = if (income.isNotEmpty() && income == ZERO.toString()) {
                 Pair(
                     true,

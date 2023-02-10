@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.credit.origination
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -147,7 +148,7 @@ fun CreditScreen(
                 Column {
                     TopNavBar(
                         isLeftButtonVisible = viewModel.uiState.currentStep != CreditStep.One.id && viewModel.uiState.currentStep < CreditStep.Eight.id,
-                        isRightButtonVisible = viewModel.uiState.currentStep <= CreditStep.One.id || viewModel.crosseling,
+                        isRightButtonVisible = viewModel.uiState.currentStep > CreditStep.One.id || viewModel.crosseling,
                         onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
                         onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) }
                     )

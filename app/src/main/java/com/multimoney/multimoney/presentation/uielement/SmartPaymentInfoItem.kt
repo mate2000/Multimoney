@@ -56,7 +56,7 @@ fun SmartPaymentInfoItem(
         modifier = modifier
             .height(IntrinsicSize.Min)
             .fillMaxWidth()
-            .padding(start = 24.dp, top = 24.dp, end = 24.dp),
+            .padding(start = 24.dp, end = 24.dp, top = 16.dp, bottom = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Row(
@@ -76,13 +76,13 @@ fun SmartPaymentInfoItem(
                 Text(
                     text = title,
                     style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                    color = MultimoneyTheme.colors.labelText
+                    color = MultimoneyTheme.colors.text
                 )
                 if (subtitle.isNullOrBlank().not()) {
                     Text(
                         text = subtitle.orEmpty(),
                         style = Typography.body2,
-                        color = MultimoneyTheme.colors.labelText
+                        color = MultimoneyTheme.colors.text
                     )
                 }
             }

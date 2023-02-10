@@ -190,13 +190,11 @@ private fun SavingAmountBottomSheet(viewModel: SavingAmountViewModel) {
         } else {
             null
         },
-        fromLabel = stringResource(viewModel.amountUIState.originAccountDisplay?.sheetLabel ?: R.string.empty),
         fromTitle = viewModel.amountUIState.originAccountDisplay?.sheetTitle
             ?: stringResource(viewModel.amountUIState.originAccountDisplay?.sheetTitleResource ?: R.string.empty),
         fromSubtitle = viewModel.amountUIState.originAccountDisplay?.sheetSubtitle
             ?: stringResource(viewModel.amountUIState.originAccountDisplay?.sheetSubtitleResource ?: R.string.empty),
         fromIcon = viewModel.amountUIState.originAccountDisplay?.icon,
-        toLabel = stringResource(R.string.smart_payment_amount_bottom_sheet_to),
         toTitle = viewModel.amountUIState.destinyAccountDisplay?.sheetTitle
             ?: stringResource(viewModel.amountUIState.destinyAccountDisplay?.sheetTitleResource ?: R.string.empty),
         toSubtitle = viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitle
@@ -204,7 +202,6 @@ private fun SavingAmountBottomSheet(viewModel: SavingAmountViewModel) {
                 viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitleResource ?: R.string.empty
             ),
         toIcon = viewModel.amountUIState.destinyAccountDisplay?.icon,
-        buttonText = stringResource(R.string.button_continue),
-        buttonAction = { viewModel.onAmountUIEvent(OnCallProcessTransfer) }
-    )
+        buttonText = stringResource(R.string.button_continue)
+    ) { viewModel.onAmountUIEvent(OnCallProcessTransfer) }
 }

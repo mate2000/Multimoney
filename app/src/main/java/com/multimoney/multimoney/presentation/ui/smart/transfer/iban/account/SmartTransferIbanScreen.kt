@@ -59,7 +59,7 @@ fun SmartTransferIbanScreen(
             isRightButtonVisible = false
         )
         Text(
-            modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
+            modifier = Modifier.padding(top = 16.dp, start = 18.dp, end = 16.dp),
             text = stringResource(string.smart_iban_transfer_accounts_title),
             style = Typography.h5.copy(
                 fontWeight = FontWeight.SemiBold,
@@ -67,9 +67,7 @@ fun SmartTransferIbanScreen(
             )
         )
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 32.dp, start = 16.dp, end = 16.dp),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {

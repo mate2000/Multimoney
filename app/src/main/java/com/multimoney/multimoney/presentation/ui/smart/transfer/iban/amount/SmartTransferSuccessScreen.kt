@@ -48,16 +48,15 @@ fun SmartTransferSuccessScreen(
             } else {
                 null
             },
-            fromToText = stringResource(R.string.smart_payment_to_account),
+            fromToText = stringResource(R.string.smart_payment_amount_bottom_sheet_to),
             showButton = false
         ) {
             SmartPaymentInfoItem(
                 verticalAlignment = Alignment.CenterVertically,
-                icon = R.drawable.ic_bank_account,
-                title = stringResource(R.string.smart_payment_origin_account_label),
+                icon = viewModel.amountUIState.destinyAccountDisplay?.icon,
+                title = stringResource(R.string.smart_payment_destiny_account_label),
                 subtitle = getMaskedAccountIban(
-                    viewModel.smartAccount?.ibanAccountNumber ?: "",
-                    stringResource(R.string.payment_account_masked_text)
+                    viewModel.ibanAccount?.sinpeAccount ?: ""
                 )
             )
 

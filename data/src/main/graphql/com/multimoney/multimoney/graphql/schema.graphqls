@@ -651,7 +651,8 @@ type Mutation {
   """
   Crypto
   """
-  validateDepositAddress(validateDepositAddressInput: ValidateDepositAddressDtoInput!): ValidateDepositAddressResult!
+
+  validateDepositAddress(validateDepositAddressInput: ValidateDepositAddressDtoInput!): ValidateDepositAddress!
 
   """
   Crypto
@@ -2299,6 +2300,8 @@ type CryptoMarketPrice {
   historico: Boolean!
 
   crypto_network: String
+
+  network: String
 }
 
 input CryptoMarketPriceDtoInput {
@@ -2884,6 +2887,8 @@ type UserValidation {
 
   maskedPhoneNumber: String
 
+  otpTime: Int
+
   status: Int
 
   message: String
@@ -3155,6 +3160,8 @@ type GetCountryPhoneCode {
   code: Int!
 
   phoneMask: String
+
+  isoCode: String
 }
 
 input GetCountryPhoneCodeDtoInput {
@@ -4469,27 +4476,17 @@ input TransferOrderDtoInput {
   user: String
 }
 
-type ValidateDepositAddressResult {
-  page: Int!
 
-  totalPages: Int!
+type ValidateDepositAddress {
+  result: ValidateDepositAddressResult
 
-  itemsOnPage: Int!
+  status: Int
 
-  address: String!
+  message: String
 
-  balance: String!
-
-  unconfirmedBalance: String!
-
-  unconfirmedTxs: Int!
-
-  txs: Int!
-
-  nonTokenTxs: Int!
-
-  txids: [String!]!
+  detail: String
 }
+
 
 input ValidateDepositAddressDtoInput {
   identification: String!
@@ -5300,8 +5297,6 @@ input ResendMicroDepositDtoInput {
 
   idCard: String!
 
-  code: String!
-
   idBrand: Int
 
   user: String
@@ -5637,6 +5632,28 @@ type sellHQRResult {
   averagePrice: Decimal!
 
   status: String!
+}
+
+type ValidateDepositAddressResult {
+  page: Int!
+
+  totalPages: Int!
+
+  itemsOnPage: Int!
+
+  address: String
+
+  balance: String
+
+  unconfirmedBalance: String
+
+  unconfirmedTxs: Int!
+
+  txs: Int!
+
+  nonTokenTxs: Int!
+
+  txids: [String!]
 }
 
 type TransferOrderResult {
@@ -6275,6 +6292,8 @@ type CryptoAccountBalanceItem {
   url_image: String
 
   crypto_network: String
+
+  network: String
 }
 
 type RequestResult {
@@ -6837,6 +6856,8 @@ type CreditConfigurationType {
 type AccountsmartConfigurationType {
   activo: Boolean!
 
+  limiteTransacion: [CurrencyConfigurationType]
+
   metodoAbono: [FundingMethodConfigurationType!]!
 
   metodoTransferencia: [TransferMethodConfigurationType!]!
@@ -6846,6 +6867,8 @@ type CurrencyConfigurationType {
   codigo: String!
 
   descripcion: String!
+
+  monto: Decimal
 }
 
 type ProcessCore {

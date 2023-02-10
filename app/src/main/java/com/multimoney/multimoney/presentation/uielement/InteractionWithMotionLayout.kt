@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation.Vertical
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,12 +17,10 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberSwipeableState
-import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.material.ripple.RippleAlpha
 import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.material.swipeable
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -121,11 +120,14 @@ fun MotionLayoutMM(
         }
     }
 
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(key1 = homeState) {
         if (homeState == COLLAPSED) {
             updateHomeState(HomeState.OLD_STATE)
-            animationProgress = ANIMATION_COLLAPSED
+            updateIsExpanded(false)
             updateIsBackPressed(false)
+            updateIsExpandedByClick(false)
+            swipeAbleState.snapTo(COLLAPSED)
+            animationProgress = ANIMATION_COLLAPSED
         }
     }
 
@@ -154,30 +156,30 @@ fun MotionLayoutMM(
                     updateIsBackPressed(true)
                 }
             }
-            CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
-                content(
-                    modifier = Modifier
-                        .layoutId("main_card")
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .swipeable(
-                            enabled = isSwipeEnabled,
-                            reverseDirection = true,
-                            state = swipeAbleState,
-                            anchors = anchors,
-                            thresholds = { _, _ ->
-                                // The closer to 1 you have to scroll more for it to autocomplete the animation
-                                FractionalThreshold(COLLAPSED_FRACTIONAL_THRESHOLD)
-                            },
-                            orientation = Vertical
-                        )
-                        .clickable {
-                            if (isSwipeEnabled) {
-                                updateIsExpandedByClick(true)
-                            }
-                        }
-                )
-            }
+            content(
+                modifier = Modifier
+                    .layoutId("main_card")
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .swipeable(
+                        enabled = isSwipeEnabled,
+                        reverseDirection = true,
+                        state = swipeAbleState,
+                        anchors = anchors,
+                        thresholds = { _, _ ->
+                            // The closer to 1 you have to scroll more for it to autocomplete the animation
+                            FractionalThreshold(COLLAPSED_FRACTIONAL_THRESHOLD)
+                        },
+                        orientation = Vertical
+                    )
+                    .clickable(
+                        enabled = isSwipeEnabled,
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) {
+                        updateIsExpandedByClick(true)
+                    }
+            )
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

@@ -131,7 +131,6 @@ fun RegisteredUserOtpScreen(
     viewModel.apply {
         RegisteredUserOtpContent(
             uiState = uiState,
-            maskedPhoneNumber = userData?.maskedPhoneNumber.orEmpty(),
             onOtpValueChange = { value -> onUIEvent(OnOtpValueChange(value)) },
             onOtherPhoneNumberClick = { onUIEvent(OnOtherPhoneNumberClick) },
             getPhaseResourceString = { getPhaseResourceString() },
@@ -146,7 +145,6 @@ fun RegisteredUserOtpScreen(
 @Preview
 fun RegisteredUserOtpContent(
     uiState: UIState = UIState(),
-    maskedPhoneNumber: String = "",
     onOtpValueChange: (String) -> Unit = {},
     onOtherPhoneNumberClick: () -> Unit = {},
     getPhaseResourceString: () -> Int = { R.string.empty },
@@ -176,8 +174,8 @@ fun RegisteredUserOtpContent(
                         fontWeight = FontWeight.SemiBold
                     ),
                     text = stringResource(
-                        id = R.string.registered_user_otp_title,
-                        maskedPhoneNumber
+                        id = uiState.titleResource,
+                        uiState.titleOtpMethod
                     ),
                     textAlign = TextAlign.Start,
                     modifier = Modifier.padding(top = 24.dp).fillMaxWidth()
@@ -192,15 +190,17 @@ fun RegisteredUserOtpContent(
                         .padding(top = 16.dp)
                 )
 
-                ClickableText(
-                    text = AnnotatedString(stringResource(id = R.string.registered_user_otp_other_phone_number)),
-                    modifier = Modifier.padding(top = 32.dp),
-                    style = Typography.body2.copy(
-                        textDecoration = TextDecoration.Underline,
-                        color = MultimoneyTheme.colors.textLink
-                    ),
-                    onClick = { onOtherPhoneNumberClick() }
-                )
+                if (uiState.isOtherPhoneNumberVisible) {
+                    ClickableText(
+                        text = AnnotatedString(stringResource(id = R.string.registered_user_otp_other_phone_number)),
+                        modifier = Modifier.padding(top = 24.dp),
+                        style = Typography.body2.copy(
+                            textDecoration = TextDecoration.Underline,
+                            color = MultimoneyTheme.colors.textLink
+                        ),
+                        onClick = { onOtherPhoneNumberClick() }
+                    )
+                }
 
                 // Fields
                 OtpTextField(

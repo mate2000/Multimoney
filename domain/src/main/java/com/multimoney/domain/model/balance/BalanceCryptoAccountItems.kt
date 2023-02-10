@@ -13,5 +13,6 @@ data class BalanceCryptoAccountItems(
     val investedBalanceCurrency: String,
     val percentageInvestedCurrency: String,
     val priceOfTheDay: Double,
-    val url_image: String
+    val url_image: String,
+    val cryptoNetwork: String
 ) : Parcelable

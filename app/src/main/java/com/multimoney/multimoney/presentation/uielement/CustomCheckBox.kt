@@ -63,12 +63,12 @@ fun CustomCheckBox(
         disabledColor = WhiteTransparency30
         disabledIndeterminateColor = DefaultWhite
     } else {
-        textColor = GrayScale800
+        textColor = DefaultWhite
         checkedColor = Primary500
-        uncheckedColor = GrayScale500
-        checkmarkColor = DefaultWhite
-        disabledColor = GrayScale400
-        disabledIndeterminateColor = Primary500
+        uncheckedColor = GrayScale400
+        checkmarkColor = DefaultBlack
+        disabledColor = WhiteTransparency30
+        disabledIndeterminateColor = DefaultWhite
     }
 
     Row(modifier = modifier, horizontalArrangement = horizontalArrangement) {

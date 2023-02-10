@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -18,6 +19,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +39,7 @@ import com.multimoney.multimoney.presentation.ui.crypto.CryptoCurrencyMovementIt
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail.CryptoCurrencyMovementsViewModel.Companion.TODAY_TEXT
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.DateFilterDWMYSection
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.MarketCurrencyDetailsGraphic
+import com.multimoney.multimoney.presentation.ui.crypto.purchase.selectaccount.ConfirmationBottomSheet
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoActionsSection
 import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
@@ -45,6 +48,7 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.addTextStyleToTextPortion
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CurrencyMovementsScreen(
     viewModel: CryptoCurrencyMovementsViewModel = hiltViewModel(),
@@ -52,6 +56,8 @@ fun CurrencyMovementsScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
 ) {
+    val coroutineScope = rememberCoroutineScope()
+
     LaunchedEffect(true) {
         viewModel.executeNavigation(
             onPopBackStack = onPopBackStack,
@@ -78,11 +84,40 @@ fun CurrencyMovementsScreen(
         },
         viewAllClick = { viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnViewAllMovements) },
         buyCryptoClick = {
-            viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToSelectAccount)
+            if (viewModel.uiState.idBrand == Brand.ElSalvador.id) {
+                if (viewModel.uiState.shouldDisplayDisclaimer) {
+                    viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnShowDisclaimer)
+                } else {
+                    viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToSelectAccount)
+                }
+            } else {
+                viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToSelectAccount)
+            }
         },
+        sellCryptoClick = {
+            viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToSellCrypto) },
         sendCryptoClick = {
             viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToSendCrypto)
         }
+    )
+
+    ConfirmationBottomSheet(
+        modalBottomSheetState = viewModel.uiState.bottomSheetVisibleState,
+        coroutineScope = coroutineScope,
+        onCheckedChange = {
+            viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnDisclaimerChecked(it))
+        },
+        onContinueClicked = {
+            viewModel.onUIEvent(
+                CryptoCurrencyMovementsViewModel.UIEvent.OnUpdateShouldShowDisclaimer(
+                    viewModel.uiState.dontShowAgainChecked
+                )
+            )
+            viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnHideDisclaimer)
+            viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToSelectAccount)
+
+        },
+        checked = viewModel.uiState.dontShowAgainChecked
     )
 }
 
@@ -94,6 +129,7 @@ fun CurrencyDetailContent(
     viewAllClick: () -> Unit,
     buyCryptoClick: () -> Unit,
     sendCryptoClick: () -> Unit,
+    sellCryptoClick: () -> Unit
 ) {
 
     val movements = uiState.cryptoMovements.collectAsLazyPagingItems()
@@ -113,13 +149,12 @@ fun CurrencyDetailContent(
             )
         },
         bottomBar = {
-            val enableSendAndGive = uiState.idBrand == Brand.CostaRica.id
             CryptoActionsSection(
                 hasSmartBalance = true,
                 enableCryptoActions = true,
-                enableSendAndGive = enableSendAndGive,
+                enableSendAndGive = uiState.isCryptoTransferEnabled,
                 hasBalanceAction = { buyCryptoClick() },
-                sellAction = { /*todo go to sell crypto flow*/ },
+                sellAction = { sellCryptoClick() },
                 sendAction = sendCryptoClick,
                 giveAction = { /*todo go to receive crypto flow*/ }
             )
@@ -190,7 +225,7 @@ fun CurrencyDetailContent(
                 )
                 Row(
                     modifier = Modifier
-                        .padding(horizontal = 4.dp)
+                        .padding(top = 24.dp)
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically

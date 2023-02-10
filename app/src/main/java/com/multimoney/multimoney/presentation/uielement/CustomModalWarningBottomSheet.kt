@@ -64,8 +64,8 @@ fun CustomModalWarningBottomSheet(
         backgroundColor = GrayScale700
         textColor = WhiteTransparency70
     } else {
-        backgroundColor = WhiteTransparency70
-        textColor = GrayScale600
+        backgroundColor = GrayScale700
+        textColor = WhiteTransparency70
     }
 
     ModalBottomSheetLayout(

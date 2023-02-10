@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.home.product.crypto
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -59,12 +58,12 @@ fun CryptoContent(
                     // show offer card with action
                     CustomProductBackground(
                         modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .clickable { openSmartCryptoAction.invoke() },
+                            .padding(horizontal = 16.dp),
                         type = ProductBackGroundType.ComplementaryTwo
                     ) {
                         CryptoCardDiscoverCrypto(
-                            wording = userStatus.infoCrypto?.wording
+                            wording = userStatus.infoCrypto?.wording,
+                            onClick = { openSmartCryptoAction.invoke() }
                         )
                     }
                 }
@@ -78,18 +77,21 @@ fun CryptoContent(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         type = ProductBackGroundType.ComplementaryTwo
                     ) {
-                        CryptoCardSmartInProcess(wording = userStatus.infoCrypto?.wording)
+                        CryptoCardSmartInProcess(
+                            wording = userStatus.infoCrypto?.wording,
+                            onClick = { openSmartCryptoAction.invoke() }
+                        )
                     }
                 } else {
                     // show offer card with action
                     CustomProductBackground(
                         modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .clickable { openSmartCryptoAction.invoke() },
+                            .padding(horizontal = 16.dp),
                         type = ProductBackGroundType.ComplementaryTwo
                     ) {
                         CryptoCardDiscoverCrypto(
-                            wording = userStatus.infoCrypto?.wording
+                            wording = userStatus.infoCrypto?.wording,
+                            onClick = { openSmartCryptoAction.invoke() }
                         )
                     }
                 }

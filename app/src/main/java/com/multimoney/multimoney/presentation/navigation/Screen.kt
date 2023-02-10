@@ -18,6 +18,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.EXCHANGE_RATE_
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.FK_FLOW_CONTROL
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CARD
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_GLOBAL_REQUEST
@@ -29,6 +30,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_PAYMEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_MULTI_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_SMART_EVICERTIA
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_CURRENCY
+import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT_LABEL
@@ -96,10 +98,10 @@ const val VERSION = "version"
 const val TRANSFER_TYPE = "transfer_type"
 const val ORIGIN_ACCOUNT = "origin_account"
 const val DESTINY_ACCOUNT = "destiny_account"
-const val SMART_ACCOUNT_LIST = "smart_id_list"
+const val SMART_ACCOUNTS_LIST = "smart_accounts_list"
+const val SMART_ACCOUNTS_ID_LIST = "smart_id_list"
 const val SMART_ACCOUNT = "smart_account"
 const val SECOND_SMART_ACCOUNT = "second_smart_account"
-const val IBAN_ACCOUNT = "iban_account"
 const val GLOBAL_CRYPTO_BALANCE = "global_crypto_balance"
 const val PASSWORD = "password"
 const val DEVICE_ID = "device_id"
@@ -128,11 +130,13 @@ const val PROFILE_CARD_LIST_ORIGIN = "profile_card_list_origin"
 const val SMART_ACCOUNTS_FOR_BUY_CRYPTO = "smart_accounts_for_buy_crypto"
 const val CURRENCY_NAME = "currency_name"
 const val CROSSELING = "crosseling"
+const val OTP_METHOD = "otp_method"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
 const val HOME_STATE = "home_state"
 const val PREVIOUS_IS_RETURN_TO_HOME = "previous_is_return_to_home"
+const val QR_CODE_RESULT = "qr_code"
 
 /**
  * Use this class to declare all your new screens and their routes
@@ -144,7 +148,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object OnBoardingScreen : Screen("onboarding_screen")
     object SignInScreen : Screen("sign_in_screen?$FORCE_CHANGE_DEVICE={$FORCE_CHANGE_DEVICE}", "sign_in_screen")
 
-    object SignUpScreen : Screen("sign_up_screen/{$SIGN_UP_STEP}", "sign_up_screen")
+    object SignUpScreen : Screen("sign_up_screen/{$SIGN_UP_STEP}?$ID_BRAND={$ID_BRAND}", "sign_up_screen")
     object RequestForgotPassword : Screen(
         "request_forgot_password_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}",
         "request_forgot_password_screen"
@@ -155,8 +159,13 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "registered_user_email_screen"
     )
 
+    object RegisteredUserOtpOptionsScreen : Screen(
+        "registered_user_otp_options_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}?$ID_BRAND={$ID_BRAND}?$USER_DATA={$USER_DATA}",
+        "registered_user_otp_options_screen"
+    )
+
     object RegisteredUserOtpScreen : Screen(
-        "registered_user_otp_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}?$ID_BRAND={$ID_BRAND}?$USER_DATA={$USER_DATA}",
+        "registered_user_otp_screen?$ID_BRAND={$ID_BRAND}?$USER_DATA={$USER_DATA}?$OTP_METHOD={$OTP_METHOD}",
         "registered_user_otp_screen"
     )
 
@@ -171,7 +180,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SignUpSplashComeBackScreen : Screen(
-        "sign_up_splash_come_back_screen/{$SIGN_UP_STEP}",
+        "sign_up_splash_come_back_screen/{$SIGN_UP_STEP}/{$ID_BRAND}",
         "sign_up_splash_come_back_screen"
     )
 
@@ -188,6 +197,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object ProfileScreen : Screen(
         "profile_screen/{$ID_CLIENT}/{$ID_BRAND}/{$FIRST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$IDENTIFICATION}/{$PK_USER}/{$USER_NAME}",
         "profile_screen"
+    )
+
+    object ProfileMyAccountsScreen : Screen(
+        "profile_my_accounts_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER_NAME}",
+        "profile_my_accounts_screen"
     )
 
     object ProfileTermsAndConditionsScreen : Screen(
@@ -300,7 +314,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SignDocumentProcessScreen : Screen(
-        "sign_document_process_screen/{$SIGN_DOCUMENT_STEP_ARG}/{$SIGN_DOCUMENT_ORIGIN}/{$SIGN_DOCUMENT_ID_PRINT}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}",
+        "sign_document_process_screen?$SIGN_DOCUMENT_STEP_ARG={$SIGN_DOCUMENT_STEP_ARG}?$SIGN_DOCUMENT_ORIGIN={$SIGN_DOCUMENT_ORIGIN}?$SIGN_DOCUMENT_ID_PRINT={$SIGN_DOCUMENT_ID_PRINT}?$ID_BRAND={$ID_BRAND}?$PK_USER={$PK_USER}?$IDENTIFICATION={$IDENTIFICATION}?$EMAIL={$EMAIL}?$ID_USER_REQUEST={$ID_USER_REQUEST}?$FIRST_NAME={$FIRST_NAME}?$LAST_NAME={$LAST_NAME}?$CROSSELING={$CROSSELING}",
         "sign_document_process_screen"
     )
 
@@ -318,9 +332,9 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     object SmartContinueValidatingOnfidoScreen : Screen("smart_continue_validating_onfido_screen")
 
-    object ProcessingTransactionScreen : Screen(
-        "processing_transaction_screen/{$ID_BRAND}/{$SIGN_DOCUMENT_ID_PRINT}/{$USER}",
-        "processing_transaction_screen"
+    object OriginationVoucherScreen : Screen(
+        "origination_voucher_screen/{$ID_BRAND}/{$SIGN_DOCUMENT_ID_PRINT}/{$USER}",
+        "origination_voucher_screen"
     )
 
     object ApprovedByOnfidoScreen : Screen(
@@ -352,6 +366,16 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object VisaPreferencesScreen : Screen(
         "visa_preferences_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$USER}/{$PHONE_NUMBER}/{$BALANCE_CARD_INFORMATION}/{$AVAILABLE_BALANCE_LABEL}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
         "visa_preferences_screen"
+    )
+
+    object VisaVerifyDepositScreen : Screen(
+        "visa_verify_deposit_screen?$IDENTIFICATION={$IDENTIFICATION}?$ID_CARD={$ID_CARD}?$USER={$USER}?$ID_BRAND={$ID_BRAND}",
+        "visa_verify_deposit_screen"
+    )
+
+    object VisaVerifiedScreen : Screen(
+        "visa_verified_screen",
+        "visa_verified_screen"
     )
 
     // Bottom Navigation
@@ -460,7 +484,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     // Smart Payment
 
     object SmartPaymentOptionsScreenCR : Screen(
-        "smart_payment_options_screen/{$SMART_ACCOUNT_LIST}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
+        "smart_payment_options_screen/{$SMART_ACCOUNTS_ID_LIST}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
         "smart_payment_options_screen"
     )
 
@@ -516,7 +540,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SmartSelectAccountScreen : Screen(
-        "smart_select_account_screen/{$SMART_ACCOUNT_LIST}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ID_CLIENT}",
+        "smart_select_account_screen/{$SMART_ACCOUNTS_ID_LIST}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ID_CLIENT}",
         "smart_select_account_screen"
     )
 
@@ -557,14 +581,47 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "my_contacts_transfer_screen"
     )
 
+    /**
+     * Params in order
+     * @param ORIGIN_ACCOUNT: Origin smart account
+     * @param DESTINY_ACCOUNT: Destiny contact phone account
+     * @param TRANSFER_TYPE: Int id indicating transfer type (SmartToContact)
+     * @param ID_BRAND: Int of brand id
+     */
+    object MyContactsTransferAmountScreen : Screen(
+        "my_contacts_amount_screen/{$ORIGIN_ACCOUNT}/{$DESTINY_ACCOUNT}/{$TRANSFER_TYPE}/{$ID_BRAND}/{$PREVIOUS_SCREEN}",
+        "my_contacts_amount_screen"
+    )
+
     object SmartAddSACAccountScreen : Screen(
         "smart_add_sac_account_screen/{$ID_BRAND}/{$USER}/{$SMART_ACCOUNT}/{$TRANSFER_TYPE}",
         "smart_add_sac_account_screen"
     )
 
-    object SmartOtherBanksAccountScreen : Screen(
-        "smart_add_other_bank_account_screen/{$ID_BRAND}/{$USER}/{$SMART_ACCOUNT}/{$TRANSFER_TYPE}",
-        "smart_add_other_bank_account_screen"
+    /**
+     * Params in order
+     * @param ORIGIN_ACCOUNT: Origin smart account
+     * @param DESTINY_ACCOUNT: Destiny 365 account
+     * @param TRANSFER_TYPE: Int id indicating transfer type (SmartToOther or SmartToMobile)
+     */
+    object SmartTransfer365EditAmountScreen : Screen(
+        "smart_transfer_365_edit_amount_screen/{$ORIGIN_ACCOUNT}/{$DESTINY_ACCOUNT}/{$TRANSFER_TYPE}/{$PREVIOUS_SCREEN}",
+        "smart_transfer_365_edit_amount_screen"
+    )
+
+    /**
+     * Params in order
+     * @param ORIGIN_ACCOUNT: Origin smart account
+     * @param TRANSFER_TYPE: Int id indicating transfer type (SmartToOther or SmartToMobile)
+     */
+    object SmartAdd365AccountScreen : Screen(
+        "smart_add_365_account_screen/{$ID_BRAND}/{$USER}/{$ORIGIN_ACCOUNT}/{$TRANSFER_TYPE}",
+        "smart_add_365_account_screen"
+    )
+
+    object SmartTransferFavoriteAccountScreen : Screen(
+        "transfer_favorite_account_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
+        "transfer_favorite_account_screen"
     )
 
     // TestNavGraph Screens
@@ -572,24 +629,24 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object ChartScreen : Screen("chart_screen/{$}")
 
     // Crypto
-    //todo add params
-    object PurchaseCryptoFlow: Screen(
-        route = "purchase_crypto_flow?$CRYPTO_ASSET={$CRYPTO_ASSET}&$DESCRIPTION_CURRENCY={$DESCRIPTION_CURRENCY}",
+    // todo add params
+    object PurchaseCryptoFlow : Screen(
+        route = "purchase_crypto_flow/{$SMART_ACCOUNTS_LIST}?$ITEM_CRYPTO_MARKET={$ITEM_CRYPTO_MARKET}",
         baseRoute = "purchase_crypto_flow"
     )
 
     object CryptoWalletScreen : Screen(
-        "crypto_wallet_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$GLOBAL_CRYPTO_BALANCE}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$STATUS_CREDIT}/{$STATUS_SMART}/{$STATUS_CRYPTO}/{$CARD_STATUS}",
+        "crypto_wallet_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$GLOBAL_CRYPTO_BALANCE}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$STATUS_CREDIT}/{$STATUS_SMART}/{$STATUS_CRYPTO}/{$CARD_STATUS}/{$SMART_ACCOUNTS_LIST}",
         "crypto_wallet_screen"
     )
 
     object CryptoCurrencyMovementsScreen : Screen(
-        "crypto_currency_movements_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}/{$ITEM_CRYPTO_CURRENCY}",
+        "crypto_currency_movements_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}/{$ITEM_CRYPTO_CURRENCY}/{$SMART_ACCOUNTS_LIST}",
         "crypto_currency_movements_screen"
     )
 
     object CryptoMarketScreen : Screen(
-        "crypto_market_screen/{$USER}/{$ID_BRAND}",
+        "crypto_market_screen/{$USER}/{$ID_BRAND}/{$SMART_ACCOUNTS_LIST}",
         "crypto_market_screen"
     )
 
@@ -599,12 +656,19 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object CryptoCurrencyDetailsScreen : Screen(
-        "crypto_currency_details_screen/{$USER}/{$ID_BRAND}/{$CRYPTO_ASSET}/{$DESCRIPTION_CURRENCY}/{$CURRENT_CRYPTO_PRICE}/{$URL_IMAGE}",
+        "crypto_currency_details_screen/{$USER}/{$ID_BRAND}/{$ITEM_CRYPTO_MARKET}/{$SMART_ACCOUNTS_LIST}",
         "crypto_currency_details_screen"
     )
 
-    object CryptoSendFlow: Screen(
+    object CryptoSendFlow : Screen(
         route = "crypto_send_flow?$CRYPTO_ASSET={$CRYPTO_ASSET}&$DESCRIPTION_CURRENCY={$DESCRIPTION_CURRENCY}",
         baseRoute = "crypto_send_flow"
     )
+
+    object CryptoSellFlow : Screen(
+        route = "crypto_sell_flow?$ITEM_CRYPTO_MARKET={$ITEM_CRYPTO_MARKET}",
+        baseRoute = "crypto_sell_flow"
+    )
+
+    object QrCodeScannerScreen : Screen(route = "qr_code_scanner_screen")
 }

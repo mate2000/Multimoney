@@ -3,17 +3,14 @@ package com.multimoney.multimoney.presentation.ui.crypto.purchase.selectaccount
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
-import com.multimoney.domain.model.accountsmart.AccountSmartForBuyCrypto
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.CURRENCY_NAME
-import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNTS_FOR_BUY_CRYPTO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class SelectSmartAccountViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+    val dataStorePreferences: DataStorePreferences,
 ) : BaseViewModel(true) {
     var uiState by mutableStateOf(UIState())
         private set
@@ -28,10 +25,17 @@ class SelectSmartAccountViewModel @Inject constructor(
         )
     }
 
+    private fun updateValues(token: String, balance: Double) {
+        uiState = uiState.copy(accountToken = token, accountBalance = balance)
+    }
+
     data class UIState(
         val currency: String = "",
         val currencyDescription: String = "",
-        val isBottomSheetVisible: Boolean = false
+        val isBottomSheetVisible: Boolean = false,
+        val accountToken: String = "",
+        val accountBalance: Double = 0.0,
+
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -40,6 +44,7 @@ class SelectSmartAccountViewModel @Inject constructor(
                 event.currency,
                 event.currencyDescription
             )
+            is UIEvent.OnUpdateValues -> updateValues(event.accountToken,event.accountBalance)
         }
     }
 
@@ -47,6 +52,10 @@ class SelectSmartAccountViewModel @Inject constructor(
         data class OnSetAccounts(
             val currency: String?,
             val currencyDescription: String?
+        ) : UIEvent()
+        data class OnUpdateValues(
+            val accountToken: String,
+            val accountBalance: Double
         ) : UIEvent()
     }
 }

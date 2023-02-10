@@ -49,7 +49,7 @@ class IbanAccountViewModel @Inject constructor(
     ) {
         saveCreditStepsHelper.saveStepOneCR(
             user,
-            uiState.accountNumber
+            "${Brand.CostaRica.iban}${uiState.accountNumber}"
         )
         nextStepAction()
     }

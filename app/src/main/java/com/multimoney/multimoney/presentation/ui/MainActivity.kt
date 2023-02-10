@@ -15,9 +15,9 @@ import com.multimoney.multimoney.presentation.util.SignOutCommunicator
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), SignOutCommunicator {
@@ -43,11 +43,14 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
                 if (dialogParameters.value.isActive.value) {
                     CustomDialog(
                         title = stringResource(id = dialogParameters.value.titleResource),
-                        message = stringResource(id = dialogParameters.value.descriptionResource, dialogParameters.value.additionalText).ifEmpty { dialogParameters.value.description },
+                        message = stringResource(
+                            id = dialogParameters.value.descriptionResource,
+                            dialogParameters.value.additionalText,
+                        ).ifEmpty { dialogParameters.value.description },
                         positiveButtonText = stringResource(id = dialogParameters.value.positiveResource),
                         openDialogCustom = dialogParameters.value.isActive,
                         onPositiveAction = dialogParameters.value.positiveAction,
-                        isCancelable = dialogParameters.value.isCancelable
+                        isCancelable = dialogParameters.value.isCancelable,
                     )
                 }
             }
@@ -80,6 +83,7 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
         })
         lifecycleScope.launch {
             dataStorePreferences.setAuthToken("")
+            dataStorePreferences.setVolatileDialogVisible(true)
         }
         mmCountDownTimer.discardTimer()
     }

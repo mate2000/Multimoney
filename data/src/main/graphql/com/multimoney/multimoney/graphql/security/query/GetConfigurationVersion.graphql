@@ -55,6 +55,7 @@ query GetConfigurationVersion($platform: String!, $appVersion: String!, $idBrand
             }
             virtualCard {
                 activo
+                habilitarAppleWallet
             }
         }
     }

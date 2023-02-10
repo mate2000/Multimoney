@@ -41,7 +41,7 @@ sealed class CurrencyType(
     object Dollar : CurrencyType(
         2,
         "02",
-        "DOLARES",
+        "DÓLARES",
         "DÓLARES",
         "Dólares",
         "USD",

@@ -19,18 +19,23 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PROFILE_CARD_LIST_ORIGIN
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CARD
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnCallQueryGetClientCards
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnCardThreePointsSelected
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnDeleteCard
-import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnEditCard
-import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnEditCardShowToast
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnDeleteCardShowToast
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnEditCard
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnEditCardShowToast
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnHideCardListBottomSheet
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnHideToast
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnNavigateToVerifyCard
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProfileCardListOrigin
+import com.multimoney.multimoney.presentation.util.getNavParam
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -70,7 +75,8 @@ class ProfileCardListViewModel @Inject constructor(
                 result.onSuccess { cardsList ->
                     uiState = uiState.copy(
                         isLoading = false,
-                        cardVDList = cardsList,
+                        cardVDListVerified = cardsList?.filter { it?.verified == true },
+                        cardVDListNotVerified = cardsList?.filter { it?.verified != true },
                         isCardListEmpty = cardsList.isNullOrEmpty()
                     )
                     if (fromDelete) {
@@ -84,7 +90,8 @@ class ProfileCardListViewModel @Inject constructor(
                             description = it.getError() ?: "",
                             isActive = mutableStateOf(true)
                         ),
-                        cardVDList = listOf(),
+                        cardVDListVerified = listOf(),
+                        cardVDListNotVerified = listOf(),
                         isCardListEmpty = true
                     )
                 }.onLoading {
@@ -160,22 +167,22 @@ class ProfileCardListViewModel @Inject constructor(
     private fun onEditCard(card: CardVisaDirect?) {
         navigateTo(
             route = "${Screen.ProfileMyCardsEditCardScreen.baseRoute}/$identification/$user/$idBrand/${
-                encodeData(
-                    card
-                )
+            encodeData(
+                card
+            )
             }"
         )
     }
 
     private fun onEditCardShowToast() {
-        uiState  = uiState.copy(
+        uiState = uiState.copy(
             toastIsVisible = true,
             toastMessage = R.string.profile_my_cards_edit_card_toast_result_success
         )
     }
 
     private fun onDeleteCardShowToast() {
-        uiState  = uiState.copy(
+        uiState = uiState.copy(
             toastIsVisible = true,
             toastMessage = R.string.profile_my_cards_delete_card_toast_result_success
         )
@@ -189,9 +196,33 @@ class ProfileCardListViewModel @Inject constructor(
         }
     }
 
+    private fun onHideCardListBottomSheet() {
+        uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Hidden))
+    }
+
+    private fun onNavigateToVerifyCard() = navigateTo(
+        route = Screen.VisaVerifyInformationScreen.baseRoute
+            .plus(
+                getNavParam(IDENTIFICATION, identification)
+            )
+            .plus(
+                getNavParam(ID_CARD, uiState.cardSelected?.idCard ?: "")
+            )
+            .plus(
+                getNavParam(USER, user)
+            )
+            .plus(
+                getNavParam(ID_BRAND, idBrand)
+            )
+            .plus(
+                getNavParam(PREVIOUS_SCREEN, Screen.ProfileCardListScreen.baseRoute)
+            )
+    )
+
     data class UIState(
         // Interactions
-        val cardVDList: List<CardVisaDirect?>? = null,
+        val cardVDListVerified: List<CardVisaDirect?>? = null,
+        val cardVDListNotVerified: List<CardVisaDirect?>? = null,
         val isCardListEmpty: Boolean = true,
         val isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
@@ -200,7 +231,8 @@ class ProfileCardListViewModel @Inject constructor(
         val cardVDSelected: CardVisaDirect? = null,
         val toastIsVisible: Boolean = false,
         val toastMessage: Int = R.string.empty,
-        val deleteDialogIsVisible: Boolean = false
+        val deleteDialogIsVisible: Boolean = false,
+        val cardSelected: CardVisaDirect? = null
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -215,6 +247,8 @@ class ProfileCardListViewModel @Inject constructor(
             is OnHideToast -> uiState = uiState.copy(
                 toastIsVisible = false
             )
+            is OnHideCardListBottomSheet -> onHideCardListBottomSheet()
+            is OnNavigateToVerifyCard -> onNavigateToVerifyCard()
         }
     }
 
@@ -225,8 +259,10 @@ class ProfileCardListViewModel @Inject constructor(
         object OnNavigateBack : UIEvent()
         object OnEditCardShowToast : UIEvent()
         object OnDeleteCardShowToast : UIEvent()
-        object OnHideToast: UIEvent()
+        object OnHideToast : UIEvent()
         data class OnEditCard(val card: CardVisaDirect?) : UIEvent()
         data class OnDeleteCard(val card: CardVisaDirect?) : UIEvent()
+        object OnNavigateToVerifyCard : UIEvent()
+        object OnHideCardListBottomSheet : UIEvent()
     }
 }

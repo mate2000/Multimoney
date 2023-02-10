@@ -43,12 +43,15 @@
     <string name="not_applicable" translatable="false">NA</string>
     <string name="common_leave" translatable="false">Abandonar</string>
     <string name="common_try_again" translatable="false">Volver a intentar</string>
+    <string name="common_sorry_try_again_later_gt" translatable="false">Lo sentimos, vuelve a intentarlo más tarde</string>
+    <string name="common_sorry_try_again_later" translatable="false">Lo sentimos, volvé a intentarlo más tarde</string>
     <string name="common_return" translatable="false">Volver</string>
     <string name="info" translatable="false">Información</string>
     <string name="common_options" translatable="false">Opciones</string>
     <string name="common_remove" translatable="false">Eliminar</string>
     <string name="not_defined" translatable="false">Not Defined</string>
     <string name="common_go_home" translatable="false">Ir al inicio</string>
+    <string name="sign" translatable="false">Firmar</string>
     <string-array name="options_yes_no">
         <item>Si</item>
         <item>No</item>
@@ -551,7 +554,9 @@
     <string name="crypto_finish_smart_alert_description" translatable="false">Tu cuenta Cripto se ha activado como un beneficio extra de tu cuenta Smart</string>
     <string name="crypto_finish_smart_alert_btn_discover_crypto" translatable="false">Explorar Cripto</string>
     <string name="crypto_finish_smart_alert_btn_saving_smart" translatable="false">Ahorrar Smart</string>
-    <string name="crypto_select_smart_account_title_template" translatable="false">¿Con qué cuenta vas a comprar %s?</string>
+
+    <string name="crypto_select_smart_account_title_template" translatable="false">¿Con qué cuenta vas a comprar %1$s?</string>
+    <string name="sell_crypto_where_to_receive_money" translatable="false">¿En cuál cuenta quieres recibir el dinero?</string>
     <string name="crypto_buy_processing_transaction" translatable="false">Procesando transacción</string>
 
     <!-- Home Crypto Header Expanded-->
@@ -792,9 +797,9 @@
     <string name="sign_credit_max_attempts_contact" translatable="false">Contactar</string>
 
     <!-- Sign Document Reject -->
-    <string name="sign_document_reject_title" translatable="false">Te vamos a extrañar</string>
-    <string name="sign_document_reject_description" translatable="false">Si querés finalizar la solicitud de tu crédito debés firmar el contrato</string>
-    <string name="sign_document_reject_description_gt" translatable="false">Si quieres finalizar la solicitud de tu crédito debés firmar el contrato</string>
+    <string name="sign_document_reject_title" translatable="false">Estás solo a un paso</string>
+    <string name="sign_document_reject_description" translatable="false">Firmá el contrato y recibí tu dinero.</string>
+    <string name="sign_document_reject_description_gt" translatable="false">Firma el contrato y recibe tu dinero.</string>
 
     <!-- Origination Voucher -->
     <string name="origination_voucher_amount" translatable="false">Has recibido</string>
@@ -1237,7 +1242,8 @@
     <string name="market_details_button_read_more" translatable="false">Leer más</string>
 
     <!--Crypto Purchase Flow-->
-    <string name="crypto_purchase_flow_title" translatable="false">¿Cúanto querés comprar?</string>
+    <string name="crypto_purchase_flow_title_cr" translatable="false">¿Cúanto querés comprar?</string>
+    <string name="crypto_purchase_flow_title_sv" translatable="false">¿Cuánto quieres comprar?</string>
     <string name="crypto_purchase_flow_exchange_reference" translatable="false">1 %2s = %3s</string>
     <string name="crypto_purchase_flow_exchange_reference_edittext" translatable="false">≈ %1s %2s</string>
     <string name="crypto_purchase_flow_exchange_reference_edittext_dollars" translatable="false">≈ %1s</string>
@@ -1264,6 +1270,8 @@
     <string name="crypto_purchase_flow_error_weekly_amount_exceeded" translatable="false">El monto supera el limite de compra\nmensual de $10,000</string>
     <string name="crypto_purchase_flow_error_no_funds" translatable="false">Fondos Insuficientes para aplicar la compra</string>
     <string name="crypto_purchase_flow_error_price_expired" translatable="false">Cotización caducada</string>
+    <string name="crypto_purchase_flow_error_processing_purchase" translatable="false">¡Oh no! Hubo un error al completar la compra</string>
+
 
     <!-- Evicertia screen -->
     <string name="smart_evicertia_missing_signature_title_card" translatable="false">¡Solo falta tu firma!</string>
@@ -1308,6 +1316,9 @@
     <string name="payment_cards_list_empty_state_description" translatable="false">Agregá una tarjeta para que podás realizar tus abonos</string>
     <string name="payment_cards_list_create" translatable="false">Agregar tarjeta</string>
     <string name="payment_cards_list_title" translatable="false">Mis Tarjetas</string>
+    <string name="payment_cards_verified_list_title" translatable="false">Tarjetas registradas</string>
+    <string name="payment_cards_not_verified_list_title" translatable="false">Tarjetas con verificación pendiente</string>
+    <string name="payment_cards_resume_bottom_sheet" translatable="false">Tarjetas con verificación pendiente</string>
     <string name="smart_payment_cards_list_card_title" translatable="false">Seleccioná la tarjeta con la que querés ahorrar</string>
 
     <!-- Payment Amount Card -->
@@ -1660,9 +1671,24 @@
     <string name="visa_direct_verify_deposit_dialog_do_not_see_title" translatable="false">¿No ves el movimiento?</string>
     <string name="visa_direct_verify_deposit_dialog_do_not_see_description" translatable="false">La transferencia puede durar unos minutos en reflejarse. Si no puedes ver el movimiento, contacta a tu banco.</string>
     <string name="visa_direct_verify_deposit_micro_deposit_placeholder" translatable="false">0</string>
+    <string name="visa_direct_verify_deposit_alert_success_title" translatable="false">¡Tu tarjeta fue agregada\ny verificada con éxito!</string>
+    <string name="visa_direct_verify_deposit_alert_success_button_from_payment" translatable="false">Continuar con abono</string>
+    <string name="visa_direct_verify_deposit_alert_success_button_from_smart" translatable="false">Continuar con desembolso</string>
+    <string name="visa_direct_verify_deposit_alert_error_title" translatable="false">¡Oh no! Hubo un error</string>
+    <string name="visa_direct_verify_deposit_alert_error_description" translatable="false">Contáctanos para darte\nmás información</string>
+    <string name="visa_direct_verify_deposit_alert_error_button" translatable="false">Ir al inicio</string>
 
-    <!-- Crypto sell list coins-->
+    <!-- Crypto sell flow-->
     <string name="crypt_list_sell_title" translatable="false">¿Cuál moneda querés vender?</string>
+    <string name="crypto_sell_flow_sell_screen_title_cr" translatable="false">¿Cuánto querés vender?</string>
+    <string name="crypto_sell_flow_sell_screen_title_sv" translatable="false">¿Cuánto quieres vender?</string>
+    <string name="crypto_sell_flow_confirmation_sell_title" translatable="false">Monto a vender</string>
+    <string name="crypto_sell_flow_sell_screen_disclaimer" translatable="false">Los tipos de cambio incluyen una conversión de moneda y se actualizan con frecuencia</string>
+    <string name="crypto_sell_flow_sell_screen_available_equal_to" translatable="false">Disponible %1s ≈ %2s %3s</string>
+    <string name="crypto_sell_flow_confirmation_sell_screen_exhange_title" translatable="false">Total a depositar</string>
+    <string name="crypto_sell_flow_confirmation_sell_screen_expires_in" translatable="false">Precio de venta expira en</string>
+    <string name="crypto_sell_flow_confirmation_sell_screen_evaluate_amount" translatable="false">Valor aproximado en %1s</string>
+    <string name="crypto_sell_flow_confirmation_sell_screen_amount_to_receive" translatable="false">Total a recibir</string>
 
     <!-- Visa Verified -->
     <string name="visa_verified_title" translatable="false">Verifiquemos tu tarjeta</string>

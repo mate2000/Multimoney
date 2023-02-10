@@ -162,6 +162,8 @@ import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCas
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetPriceQuoteAndCommissionUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetPriceQuoteAndCommissionsUseCase
+import com.multimoney.domain.interaction.crypto.SendCryptoToAddressUseCase
+import com.multimoney.domain.interaction.crypto.SendCryptoToAddressUseCaseImpl
 import com.multimoney.domain.interaction.mmvisa.MutationDeleteTokenDeviceNVUseCase
 import com.multimoney.domain.interaction.mmvisa.MutationDeleteTokenDeviceNVUseCaseImpl
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
@@ -740,6 +742,11 @@ class InteractionModule {
     @Provides
     fun provideQueryGetBalanceCryptoAccountUseCase(cryptoRepository: CryptoRepository): GetBalanceCryptoAccountUseCase =
         GetBalanceCryptoAccountUseCaseImpl(cryptoRepository)
+
+    @Singleton
+    @Provides
+    fun provideMutationSendCryptoToAddress(cryptoRepository: CryptoRepository): SendCryptoToAddressUseCase =
+        SendCryptoToAddressUseCaseImpl(cryptoRepository)
 
     // Virtual Card
 

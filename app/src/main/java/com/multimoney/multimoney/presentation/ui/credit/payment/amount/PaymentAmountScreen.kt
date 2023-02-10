@@ -33,6 +33,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel
+import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.Companion.MODAL_BOTTOM_SHEET_DELAY
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnAlertResultButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnHidePaymentBottomSheet
@@ -49,6 +50,7 @@ import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.transformation.CurrencyDoubleTransformation
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -181,8 +183,11 @@ fun PaymentAmountContent(
                         .height(48.dp)
                         .fillMaxWidth(),
                     onClick = {
-                        focusManager.clearFocus()
-                        viewModel.onUIEvent(UIEvent.OnPaymentButtonClick)
+                        coroutineScope.launch {
+                            focusManager.clearFocus()
+                            delay(MODAL_BOTTOM_SHEET_DELAY)
+                            viewModel.onUIEvent(UIEvent.OnPaymentButtonClick)
+                        }
                     },
                     text = stringResource(id = R.string.button_continue),
                     buttonType = CustomButtonType.PrimaryPrimary,

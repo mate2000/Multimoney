@@ -36,19 +36,19 @@ fun NoticeSection() {
             verticalArrangement = Arrangement.Center,
         ) {
             Image(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(6.dp),
                 painter = painterResource(id = R.drawable.ic_crypto_empty_state_notice),
                 contentDescription = null
             )
             Text(
                 text = stringResource(R.string.crypto_footer_expanded_notice_title),
-                modifier = Modifier.padding(bottom = 4.dp),
+                modifier = Modifier.padding(bottom = 0.dp),
                 style = Typography.subtitle1.copy(fontWeight = FontWeight.SemiBold),
                 color = MultimoneyTheme.colors.labelText
             )
             Text(
                 text = stringResource(R.string.crypto_footer_expanded_notice_description),
-                modifier = Modifier.padding(bottom = 16.dp),
+                modifier = Modifier.padding(bottom = 0.dp),
                 style = Typography.subtitle2,
                 color = MultimoneyTheme.colors.labelText,
                 textAlign = TextAlign.Center

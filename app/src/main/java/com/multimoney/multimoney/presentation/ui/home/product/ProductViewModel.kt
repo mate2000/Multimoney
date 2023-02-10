@@ -32,6 +32,7 @@ import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCas
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
 import com.multimoney.domain.model.accountsmart.SinpeAccount
 import com.multimoney.domain.model.accountsmart.SmartAccountID
+import com.multimoney.domain.model.accountsmart.SmartAccountSmall
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.balance.Account
 import com.multimoney.domain.model.balance.Balance
@@ -97,6 +98,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnVisaCardExpiredDialog
+import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.FilterDate
 import com.multimoney.multimoney.presentation.util.NfcHelper
 import com.multimoney.multimoney.presentation.util.PAGE_SIZE
@@ -131,7 +133,8 @@ class ProductViewModel @Inject constructor(
     private val balanceCardInformationUseCase: QueryBalanceCardInformationUseCase,
     private val queryListSinpeAccountUseCaseImpl: QueryListSinpeAccountUseCase,
     private val queryGetCryptoCurrencyMovementsUseCase: GetCryptoCurrencyMovementsUseCase,
-    private val mutationAccountStatusUseCase: MutationAccountStatusUseCase
+    private val mutationAccountStatusUseCase: MutationAccountStatusUseCase,
+    private val cryptoHelper: CryptoHelper
 ) : BaseViewModel(true) {
 
     // UIState
@@ -184,7 +187,10 @@ class ProductViewModel @Inject constructor(
         this.smartMovementsList = smartMovements
         this.creditMovements = creditMovements
         viewModelScope.launch {
-            uiState = uiState.copy(shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first())
+            uiState = uiState.copy(
+                shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first(),
+                isCryptoTransferEnabled = cryptoHelper.isCryptoTransferEnabled()
+            )
         }
     }
 
@@ -277,8 +283,18 @@ class ProductViewModel @Inject constructor(
                 } else {
                     navigateTo(
                         Screen.SignDocumentProcessScreen.baseRoute
-                            .plus(getNavParam(SIGN_DOCUMENT_STEP_ARG, SignDocumentStep.GENERATE_DOCUMENT_STEP.value))
-                            .plus(getNavParam(SIGN_DOCUMENT_ORIGIN, SignDocumentOrigin.Product.value))
+                            .plus(
+                                getNavParam(
+                                    SIGN_DOCUMENT_STEP_ARG,
+                                    SignDocumentStep.GENERATE_DOCUMENT_STEP.value
+                                )
+                            )
+                            .plus(
+                                getNavParam(
+                                    SIGN_DOCUMENT_ORIGIN,
+                                    SignDocumentOrigin.Product.value
+                                )
+                            )
                             .plus(
                                 getNavParam(
                                     SIGN_DOCUMENT_ID_PRINT,
@@ -292,7 +308,8 @@ class ProductViewModel @Inject constructor(
                             .plus(
                                 getNavParam(
                                     ID_USER_REQUEST,
-                                    uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0
+                                    uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest
+                                        ?: 0
                                 )
                             )
                             .plus(getNavParam(FIRST_NAME, uiState.userStatus?.infoUser?.firstName))
@@ -304,7 +321,12 @@ class ProductViewModel @Inject constructor(
             CREDIT_FIRM_INCOMPLETE, CREDIT_FIRM_REJECTED -> {
                 navigateTo(
                     Screen.SignDocumentProcessScreen.baseRoute
-                        .plus(getNavParam(SIGN_DOCUMENT_STEP_ARG, SignDocumentStep.GENERATE_DOCUMENT_STEP.value))
+                        .plus(
+                            getNavParam(
+                                SIGN_DOCUMENT_STEP_ARG,
+                                SignDocumentStep.GENERATE_DOCUMENT_STEP.value
+                            )
+                        )
                         .plus(getNavParam(SIGN_DOCUMENT_ORIGIN, SignDocumentOrigin.Product.value))
                         .plus(
                             getNavParam(
@@ -499,11 +521,34 @@ class ProductViewModel @Inject constructor(
     }
 
     // Todo check if the navigation to this screen is suitable for the purchase crypto flow
-    private fun onNavigateToSmartPaymentAccountScreen() =
-        navigateTo(Screen.SmartPaymentOptionsScreenCR.route)
+    private fun onNavigateToSmartPaymentAccountScreen() {
+        val smartIds = encodeData(
+            balanceCredit?.balanceAccountSmart?.map {
+                SmartAccountID(
+                    tokenAccount = it?.tokenNumber,
+                    currencyID = it?.idCurrencyAccount,
+                    accountNumber = it?.accountNumber ?: "",
+                    ibanAccountNumber = it?.ibanAccountNumber
+                )
+            }
+        )
 
-    private fun onNavigateToSmartPaymentMethodScreen() =
-        navigateTo(Screen.SmartPaymentMethodScreenSV.route)
+        navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/$smartIds/$userName/${uiState.idBrand}/$identification/$idClient/${uiState.userStatus?.infoCredit?.idLoanClient}")
+    }
+
+    private fun onNavigateToSmartPaymentMethodScreen() {
+        val account = balanceCredit?.balanceAccountSmart?.firstOrNull()
+
+        smartAccount = SmartAccountID(
+            tokenAccount = account?.tokenNumber,
+            currencyID = account?.idCurrencyAccount,
+            accountNumber = account?.accountNumber,
+            customerId = account?.customerId,
+            ibanAccountNumber = account?.ibanAccountNumber,
+            totalBalance = account?.totalBalance
+        )
+        navigateTo("${Screen.SmartPaymentMethodScreenSV.baseRoute}/${encodeData(smartAccount)}")
+    }
 
     private fun onNavigateToSmartMovements(accountToken: String) =
         navigateTo("${Screen.SmartMovementsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification/$accountToken")
@@ -517,12 +562,29 @@ class ProductViewModel @Inject constructor(
         val idLoanClient = userStatus?.infoCredit?.idLoanClient
         val cardStatus = userStatus?.infoVirtualCard?.status
         navigateTo(
-            "${Screen.CryptoWalletScreen.baseRoute}/$email/${uiState.idBrand}/$identification/$globalBalance/$idClient/$idLoanClient/$statusCredit/$statusSmart/$statusCrypto/$cardStatus"
+            "${Screen.CryptoWalletScreen.baseRoute}/$email/${uiState.idBrand}/$identification/$globalBalance/$idClient/$idLoanClient/$statusCredit/$statusSmart/$statusCrypto/$cardStatus/${
+            encodeData(
+                balanceCredit?.balanceAccountSmart?.toNavType()
+            )
+            }"
         )
     }
 
+    private fun List<Account?>.toNavType(): List<SmartAccountSmall> {
+        return this.map { account ->
+            SmartAccountSmall(
+                totalBalance = account?.totalBalance,
+                currencyCode = account?.currencyCode,
+                idCurrencyAccount = account?.idCurrencyAccount,
+                accountToken = account?.tokenNumber ?: "",
+                accountNumber = account?.accountNumber ?: "",
+                ibanAccountNumber = account?.ibanAccountNumber ?: ""
+            )
+        }
+    }
+
     private fun onNavigateToCryptoMarket() {
-        navigateTo("${Screen.CryptoMarketScreen.baseRoute}/$userName/${uiState.idBrand}")
+        navigateTo("${Screen.CryptoMarketScreen.baseRoute}/$userName/${uiState.idBrand}/${encodeData(balanceCredit?.balanceAccountSmart?.toNavType())}")
     }
 
     private fun onNavigateToCryptoMovements() {
@@ -1016,7 +1078,7 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToPurchaseCryptoFlow() {
-        navigateTo(Screen.PurchaseCryptoFlow.baseRoute)
+        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${encodeData(balanceCredit?.balanceAccountSmart?.toNavType())}")
     }
 
     private fun onNavigateToSellCryptoFlow() {
@@ -1069,7 +1131,9 @@ class ProductViewModel @Inject constructor(
     private fun updateShouldShowDisclaimer(value: Boolean) {
         viewModelScope.launch {
             dataStorePreferences.setVolatileDialogVisible(!value)
-            uiState = uiState.copy(shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first())
+            uiState = uiState.copy(
+                shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first()
+            )
         }
     }
 
@@ -1097,7 +1161,8 @@ class ProductViewModel @Inject constructor(
         var isBackPressed: Boolean = false,
         val paymentAvailable: Boolean = false,
         val shouldDisplayDisclaimer: Boolean = true,
-        val dontShowAgainChecked: Boolean = false
+        val dontShowAgainChecked: Boolean = false,
+        val isCryptoTransferEnabled: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -1189,7 +1254,9 @@ class ProductViewModel @Inject constructor(
                 idBrand = uiEvent.idBrand,
                 balance = uiEvent.balance
             )
-            is OnUpdateIsBackPressed -> uiState = uiState.copy(isBackPressed = uiEvent.isBackPressed)
+            is OnUpdateIsBackPressed ->
+                uiState =
+                    uiState.copy(isBackPressed = uiEvent.isBackPressed)
             is UIEvent.OnDisclaimerChecked -> onDisclaimerChecked(uiEvent.checked)
             is UIEvent.OnUpdateShouldShowDisclaimer -> updateShouldShowDisclaimer(uiEvent.checked)
             BaseEvent.OnShowDisclaimer -> onShowDisclaimer()

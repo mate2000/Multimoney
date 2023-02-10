@@ -662,8 +662,7 @@ fun ProductCtaFooterExpanded(
             }
             ProductType.Crypto.value -> CryptoCtaFooterExpanded(
                 balance = viewModel.balanceCredit,
-                idBrand = viewModel.uiState.idBrand,
-                profileEnable = viewModel.uiState.userStatus?.infoCrypto?.profileEnable,
+                cryptoMovements = viewModel.uiState.cryptoCurrencyMovements,
                 noBalanceAction = {
                     when (viewModel.uiState.idBrand) {
                         Brand.CostaRica.id.toString() -> {
@@ -690,7 +689,8 @@ fun ProductCtaFooterExpanded(
                 },
                 onSellActionClicked = {
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSellCryptoFlow)
-                }
+                },
+                isCryptoTransferEnabled = viewModel.uiState.isCryptoTransferEnabled,
             )
         }
     }

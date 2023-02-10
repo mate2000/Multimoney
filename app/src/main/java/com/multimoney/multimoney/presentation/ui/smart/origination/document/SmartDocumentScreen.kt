@@ -36,9 +36,7 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnBirthDateValueChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnCallQueryAddressLevelTwoUseCase
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnCallQueryCivilStatusUseCase
-import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnCallQueryNationalitiesUseCase
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnCallQueryProfessionUseCase
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnCivilStateChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnGenderChange
@@ -47,7 +45,14 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.document.Smar
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.util.*
+import com.multimoney.multimoney.presentation.util.BIRTH_DATE_MIN_DAY
+import com.multimoney.multimoney.presentation.util.BIRTH_DATE_MIN_MONTH
+import com.multimoney.multimoney.presentation.util.BIRTH_DATE_MIN_YEAR
+import com.multimoney.multimoney.presentation.util.ISO_8601_API_FORMAT_PATTERN
+import com.multimoney.multimoney.presentation.util.YEAR_MONTH_DAY_PATTERN_BAR_FORMAT
+import com.multimoney.multimoney.presentation.util.getFormatDateByString
+import com.multimoney.multimoney.presentation.util.getPickedDateAsString
+import com.multimoney.multimoney.presentation.util.toLocalDate
 import java.util.Calendar
 import java.util.Date
 
@@ -69,6 +74,12 @@ fun SmartDocumentScreen(
             when (event) {
                 is SmartDocumentViewModel.BaseEvent.OnFormValidateCompleted -> sharedViewModel.onUIEvent(
                     OnContinueEnable(event.isFormValid)
+                )
+                is SmartDocumentViewModel.BaseEvent.OnLoadingValueChange -> sharedViewModel.onUIEvent(
+                    SmartViewModel.UIEvent.OnLoadingValueChange(event.isLoading)
+                )
+                is SmartDocumentViewModel.BaseEvent.OnFailureWithDialog -> sharedViewModel.onUIEvent(
+                    SmartViewModel.UIEvent.OnFailureWithDialog(event.isLoading, event.openDialog)
                 )
             }
         }
@@ -117,20 +128,6 @@ fun SmartDocumentScreen(
                 },
                 nextStep = SmartSteps.Two.id,
                 previousStep = SmartSteps.One.id
-            )
-        )
-
-        viewModel.onUIEvent(
-            OnCallQueryNationalitiesUseCase(
-                sharedViewModel.accountSmartData?.user.orEmpty(),
-                sharedViewModel.accountSmartData?.idBrand ?: 0
-            )
-        )
-        viewModel.onUIEvent(
-            OnCallQueryAddressLevelTwoUseCase(
-                sharedViewModel.accountSmartData?.user.orEmpty(),
-                sharedViewModel.accountSmartData?.pkUser.orEmpty(),
-                sharedViewModel.accountSmartData?.idBrand ?: 0
             )
         )
         viewModel.onUIEvent(

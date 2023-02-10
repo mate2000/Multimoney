@@ -402,7 +402,8 @@ class SmartViewModel @Inject constructor(
         if (nextStep <= getTotalStepperCounter()) {
             uiState = uiState.copy(
                 currentStep = nextStep,
-                isCloseVisible = nextStep >= SmartSteps.One.id
+                isCloseVisible = nextStep >= SmartSteps.One.id,
+                isLoading = false
             )
         } else {
             navigateToOnfido()

@@ -18,7 +18,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
@@ -115,7 +114,7 @@ fun SignUpPhoneScreen(
                 color = MultimoneyTheme.colors.text,
                 fontWeight = FontWeight.SemiBold
             ),
-            text = stringResource(id = string.sign_up_phone_title),
+            text = stringResource(id = R.string.sign_up_phone_title),
             textAlign = TextAlign.Start,
             modifier = Modifier.fillMaxWidth()
         )
@@ -123,7 +122,7 @@ fun SignUpPhoneScreen(
         CustomInformativeText(
             modifier = Modifier.padding(top = 12.dp),
             leadingIcon = R.drawable.ic_information,
-            text = stringResource(id = string.sign_up_phone_information),
+            text = stringResource(id = R.string.sign_up_phone_information),
             textStyle = Typography.subtitle2.copy(color = MultimoneyTheme.colors.labelText)
         )
 
@@ -149,10 +148,10 @@ fun SignUpPhoneScreen(
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             }),
-            labelText = stringResource(id = string.sign_up_phone_label_phone),
+            labelText = stringResource(id = R.string.sign_up_phone_label_phone),
             modifier = Modifier.padding(top = 24.dp),
             isRequired = true,
-            isRequiredMessage = stringResource(id = string.sign_up_phone_required),
+            isRequiredMessage = stringResource(id = R.string.sign_up_phone_required),
             isError = viewModel.uiState.phoneNumberError.first,
             errorMessage = stringResource(id = viewModel.uiState.phoneNumberError.second),
             defaultCountry = getLibCountries.find { it.countryCode == viewModel.uiState.currentBrand.countryCode }

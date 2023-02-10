@@ -44,7 +44,7 @@ abstract class BaseDataStorePreferences(
                 emptyPreferences()
             } else throw exception
         }.map {
-            gsonHelper.convertToListData<T>(it[key] ?: "", type)
+            gsonHelper.convertToListDataFlow<T>(it[key] ?: "", type)
         }
 
     protected suspend inline fun <reified T : Any?> putListFlow(
@@ -111,7 +111,7 @@ abstract class BaseDataStorePreferences(
     protected suspend inline fun <reified T : Any> getList(key: Preferences.Key<String>): List<T> {
         var list: List<T> = listOf()
         getData(key, "").collect { listJson ->
-            // list = gsonHelper.convertToListData(listJson)
+            list = gsonHelper.convertToListData(listJson)
         }
         return list
     }

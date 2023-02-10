@@ -49,7 +49,7 @@ class SellCryptoSharedViewModel @Inject constructor(
     var email = ""
     private var marketCryptoCoin: MarketCryptoCoin? = savedStateHandle[ITEM_CRYPTO_MARKET]
     var abvCurrency: String = ""
-    val side = CryptoOperationSide.BUY.value
+    val side = CryptoOperationSide.SELL.value
     val comingFromDetails: Boolean = marketCryptoCoin != null
 
     private fun setUserData() {
@@ -59,11 +59,7 @@ class SellCryptoSharedViewModel @Inject constructor(
             user = dataStorePreferences.getUserName().first()
             identification = dataStorePreferences.getIdentification().first()
             email = dataStorePreferences.getUserEmail().first()
-            abvCurrency = if (idBrand == Brand.CostaRica.id) {
-                CurrencyType.Colon.disbursementValue
-            } else {
-                CurrencyType.Dollar.disbursementValue
-            }
+            abvCurrency = CurrencyType.Dollar.disbursementValue
             uiState = uiState.copy(
                 asset = marketCryptoCoin?.baseAsset,
                 assetDescription = marketCryptoCoin?.description,
@@ -83,6 +79,7 @@ class SellCryptoSharedViewModel @Inject constructor(
             uiState = uiState.copy(
                 currentStep = currentFlowStep
             )
+            uiState.previousAction()
         }
     }
 
@@ -91,6 +88,7 @@ class SellCryptoSharedViewModel @Inject constructor(
         uiState = uiState.copy(
             currentStep = currentFlowStep
         )
+        uiState.nextAction()
     }
 
     private fun navigateBackToHome() =
@@ -143,7 +141,9 @@ class SellCryptoSharedViewModel @Inject constructor(
         val cryptoNetWork: String? = "",
         val assetImageBaseUrl: String? = "",
         val accountToken: String = "",
-        val comingFromDetails: Boolean = false
+        val comingFromDetails: Boolean = false,
+        var previousAction: () -> Unit = {},
+        val nextAction: () -> Unit = {},
     )
 
     fun onUIEvent(event: UIEvent) {

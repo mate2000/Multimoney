@@ -160,6 +160,8 @@ import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCas
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetPriceQuoteAndCommissionUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetPriceQuoteAndCommissionsUseCase
+import com.multimoney.domain.interaction.crypto.SellCryptoCurrencyUseCase
+import com.multimoney.domain.interaction.crypto.SellCryptoCurrencyUseCaseImpl
 import com.multimoney.domain.interaction.crypto.ValidateDepositAddressUseCase
 import com.multimoney.domain.interaction.crypto.ValidateDepositAddressUseCaseImpl
 import com.multimoney.domain.interaction.mmvisa.MutationDeleteTokenDeviceNVUseCase
@@ -739,6 +741,11 @@ class InteractionModule {
     @Provides
     fun provideQueryBuyCryptoCurrency(cryptoRepository: CryptoRepository): BuyCryptoCurrencyUseCase =
         BuyCryptoCurrencyUseCaseImpl(cryptoRepository)
+
+    @Singleton
+    @Provides
+    fun provideMutationSellCryptoCurrency(cryptoRepository: CryptoRepository): SellCryptoCurrencyUseCase =
+        SellCryptoCurrencyUseCaseImpl(cryptoRepository)
 
     @Singleton
     @Provides

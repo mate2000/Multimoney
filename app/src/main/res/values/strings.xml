@@ -1231,7 +1231,8 @@
     <string name="market_details_button_read_more" translatable="false">Leer más</string>
 
     <!--Crypto Purchase Flow-->
-    <string name="crypto_purchase_flow_title" translatable="false">¿Cúanto querés comprar?</string>
+    <string name="crypto_purchase_flow_title_cr" translatable="false">¿Cúanto querés comprar?</string>
+    <string name="crypto_purchase_flow_title_sv" translatable="false">¿Cuánto quieres comprar?</string>
     <string name="crypto_purchase_flow_exchange_reference" translatable="false">1 %2s = %3s</string>
     <string name="crypto_purchase_flow_exchange_reference_edittext" translatable="false">≈ %1s %2s</string>
     <string name="crypto_purchase_flow_exchange_reference_edittext_dollars" translatable="false">≈ %1s</string>
@@ -1654,8 +1655,17 @@
     <string name="visa_direct_verify_deposit_dialog_do_not_see_description" translatable="false">La transferencia puede durar unos minutos en reflejarse. Si no puedes ver el movimiento, contacta a tu banco.</string>
     <string name="visa_direct_verify_deposit_micro_deposit_placeholder" translatable="false">0</string>
 
-    <!-- Crypto sell list coins-->
+    <!-- Crypto sell flow-->
     <string name="crypt_list_sell_title" translatable="false">¿Cuál moneda querés vender?</string>
+    <string name="crypto_sell_flow_sell_screen_title_cr" translatable="false">¿Cuánto querés vender?</string>
+    <string name="crypto_sell_flow_sell_screen_title_sv" translatable="false">¿Cuánto quieres vender?</string>
+    <string name="crypto_sell_flow_confirmation_sell_title" translatable="false">Monto a vender</string>
+    <string name="crypto_sell_flow_sell_screen_disclaimer" translatable="false">Los tipos de cambio incluyen una conversión de moneda y se actualizan con frecuencia</string>
+    <string name="crypto_sell_flow_sell_screen_available_equal_to" translatable="false">Disponible %1s ≈ %2s %3s</string>
+    <string name="crypto_sell_flow_confirmation_sell_screen_exhange_title" translatable="false">Total a depositar</string>
+    <string name="crypto_sell_flow_confirmation_sell_screen_expires_in" translatable="false">Precio de venta expira en</string>
+    <string name="crypto_sell_flow_confirmation_sell_screen_evaluate_amount" translatable="false">Valor aproximado en %1s</string>
+    <string name="crypto_sell_flow_confirmation_sell_screen_amount_to_receive" translatable="false">Total a recibir</string>
 
     <!-- Visa Verified -->
     <string name="visa_verified_title" translatable="false">Verifiquemos tu tarjeta</string>

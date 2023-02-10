@@ -24,7 +24,7 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.format
 import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlaces
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
-import com.multimoney.multimoney.util.PurchaseCryptoTimerHelper
+import com.multimoney.multimoney.util.CryptoTimerHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -54,6 +54,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
     var assetImageUrl = ""
     var idCurrencyAccount = CurrencyType.Colon.id
     var smartAccountAvailableBalance = 0.0
+    var ibanAccountNumber = ""
 
     private fun onSetUserData(
         pkUser: Int,
@@ -67,7 +68,8 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         side: String,
         assetImageUrl: String?,
         smartAccountAvailableBalance: Double,
-        idCurrencyAccount: Int
+        idCurrencyAccount: Int,
+        ibanAccountNumber: String
     ) {
         this.pkUser = pkUser
         this.idCurrencyAccount = idCurrencyAccount
@@ -80,6 +82,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         this.accountToken = accountToken
         this.side = side
         this.assetImageUrl = assetImageUrl ?: ""
+        this.ibanAccountNumber = ibanAccountNumber
         if (idCurrencyAccount == CurrencyType.Colon.id) {
             convertColonesToDollars(smartAccountAvailableBalance)
         } else {
@@ -87,7 +90,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         }
     }
 
-    private val timer = PurchaseCryptoTimerHelper(
+    private val timer = CryptoTimerHelper(
         coroutineScope = viewModelScope,
         time = DEFAULT_TIMER_COUNT,
         onTick = { seconds ->
@@ -105,7 +108,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         }
     )
 
-    private val confirmationTimer = PurchaseCryptoTimerHelper(
+    private val confirmationTimer = CryptoTimerHelper(
         coroutineScope = viewModelScope,
         time = CONFIRMATION_BOTTOM_SHEET_INITIAL_TIMER_COUNT,
         isBottomSheetOpen = true,
@@ -439,7 +442,8 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 side = event.side,
                 assetImageUrl = event.assetImageUrl,
                 smartAccountAvailableBalance = event.smartAccountAvailableBalance,
-                idCurrencyAccount = event.idCurrencyAccount
+                idCurrencyAccount = event.idCurrencyAccount,
+                ibanAccountNumber = event.ibanAccountNumber
             )
             UIEvent.OnGetExchangeRate -> if (uiState.exchangeRate == 1.0) {
                 getExchangeRate()
@@ -479,7 +483,8 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             val side: String,
             val assetImageUrl: String?,
             val smartAccountAvailableBalance: Double,
-            val idCurrencyAccount: Int
+            val idCurrencyAccount: Int,
+            val ibanAccountNumber: String
         ) : UIEvent()
 
         data class ValidateAmountInput(val amount: String) : UIEvent()

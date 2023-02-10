@@ -51,7 +51,7 @@
     <string name="common_remove" translatable="false">Eliminar</string>
     <string name="not_defined" translatable="false">Not Defined</string>
     <string name="common_go_home" translatable="false">Ir al inicio</string>
-    <string name="sign">Firmar</string>
+    <string name="sign" translatable="false">Firmar</string>
     <string-array name="options_yes_no">
         <item>Si</item>
         <item>No</item>
@@ -159,8 +159,9 @@
 
 
     <!-- Sign Up General-->
+    <string name="sign_up_splash_come_back" translatable="false">¡Nos alegra\nverte de nuevo!</string>
     <string name="sign_up_general_close_dialog_title" translatable="false">¿Estás seguro que quieres salir? ¡Ya casi terminamos!</string>
-    <string name="sign_up_splash_come_back" translatable="false">¡Nos alegra\nque regresés!</string>
+
     <string name="sign_up_close_dialog_description" translatable="false">Podrás retomar el registro cuando quieras</string>
     <string name="sign_up_close_dialog_positive_button_text" translatable="false">Salir</string>
     <string name="sign_up_close_dialog_negative_button_text" translatable="false">Cancelar</string>
@@ -1316,6 +1317,9 @@
     <string name="payment_cards_list_empty_state_description" translatable="false">Agregá una tarjeta para que podás realizar tus abonos</string>
     <string name="payment_cards_list_create" translatable="false">Agregar tarjeta</string>
     <string name="payment_cards_list_title" translatable="false">Mis Tarjetas</string>
+    <string name="payment_cards_verified_list_title" translatable="false">Tarjetas registradas</string>
+    <string name="payment_cards_not_verified_list_title" translatable="false">Tarjetas con verificación pendiente</string>
+    <string name="payment_cards_resume_bottom_sheet" translatable="false">Tarjetas con verificación pendiente</string>
     <string name="smart_payment_cards_list_card_title" translatable="false">Seleccioná la tarjeta con la que querés ahorrar</string>
 
     <!-- Payment Amount Card -->
@@ -1668,6 +1672,12 @@
     <string name="visa_direct_verify_deposit_dialog_do_not_see_title" translatable="false">¿No ves el movimiento?</string>
     <string name="visa_direct_verify_deposit_dialog_do_not_see_description" translatable="false">La transferencia puede durar unos minutos en reflejarse. Si no puedes ver el movimiento, contacta a tu banco.</string>
     <string name="visa_direct_verify_deposit_micro_deposit_placeholder" translatable="false">0</string>
+    <string name="visa_direct_verify_deposit_alert_success_title" translatable="false">¡Tu tarjeta fue agregada\ny verificada con éxito!</string>
+    <string name="visa_direct_verify_deposit_alert_success_button_from_payment" translatable="false">Continuar con abono</string>
+    <string name="visa_direct_verify_deposit_alert_success_button_from_smart" translatable="false">Continuar con desembolso</string>
+    <string name="visa_direct_verify_deposit_alert_error_title" translatable="false">¡Oh no! Hubo un error</string>
+    <string name="visa_direct_verify_deposit_alert_error_description" translatable="false">Contáctanos para darte\nmás información</string>
+    <string name="visa_direct_verify_deposit_alert_error_button" translatable="false">Ir al inicio</string>
 
     <!-- Crypto sell flow-->
     <string name="crypt_list_sell_title" translatable="false">¿Cuál moneda querés vender?</string>

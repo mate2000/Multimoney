@@ -14,6 +14,7 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CryptoSendSteps
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.crypto.send.cryptoaddress.CryptoSendAddressScreen
+import com.multimoney.multimoney.presentation.ui.crypto.send.cryptoamount.CryptoSendAmountScreen
 import com.multimoney.multimoney.presentation.ui.crypto.send.listofcurrencies.CryptoSendListOfCurrenciesScreen
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
@@ -120,7 +121,7 @@ fun CRSendCryptoDirectFlow(
             )
         }
         CryptoSendSteps.Two.pageNumber -> {
-            /* TODO: Send Amount Screen */
+            /*TODO*/
         }
         CryptoSendSteps.Three.pageNumber -> {
             /* TODO: Voucher Screen */
@@ -145,7 +146,9 @@ fun CRSendCryptoFlow(
             )
         }
         CryptoSendSteps.Three.pageNumber -> {
-            /* TODO: Send Amount Screen */
+            CryptoSendAmountScreen(
+                sharedViewModel = viewModel
+            )
         }
         CryptoSendSteps.Four.pageNumber -> {
             /* TODO: Voucher Screen */

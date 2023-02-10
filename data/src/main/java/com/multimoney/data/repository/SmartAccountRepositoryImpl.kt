@@ -3,7 +3,6 @@ package com.multimoney.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.apollographql.apollo3.api.Optional
 import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.smartaccount.mapToDomain
 import com.multimoney.data.mapper.smartaccount.mapToDomainModel
@@ -35,7 +34,6 @@ import com.multimoney.domain.model.accountsmart.SmartFavoriteResult
 import com.multimoney.domain.model.accountsmart.SmartMovement
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.accountsmart.StepByStep
-import com.multimoney.domain.model.accountsmart.Transfer365Result
 import com.multimoney.domain.model.accountsmart.VisaSmartPayment
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Message
@@ -443,6 +441,7 @@ class SmartAccountRepositoryImpl @Inject constructor(
             Success(data.mapToDomainModel())
         }
     )
+
     override suspend fun mutationManageSinpeAccountUpdate(
         user: String,
         idBrand: Int,
@@ -476,13 +475,13 @@ class SmartAccountRepositoryImpl @Inject constructor(
         user: String,
         idBrand: Int,
         identification: String,
-        idAccount: Int?,
+        idAccount: Int?
     ): Flow<MultimoneyResult<SaveSinpeAccount?>> = fetchData(
         apolloCall = graphqlApi.mutationManageSinpeAccountDelete(
             user,
             idBrand,
             identification,
-            idAccount,
+            idAccount
         ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
@@ -712,68 +711,6 @@ class SmartAccountRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun mutationProcessTransfer365(
-        identification: String,
-        destinationAccount: String,
-        destinationBankId: String,
-        destinationType: String,
-        typeAccountId: String,
-        destinationName: String,
-        destinationLastName: String,
-        amount: Double,
-        motive: String,
-        user: String,
-        idBrand: Int
-    ): Flow<MultimoneyResult<Transfer365Result?>> {
-        return fetchData(graphqlApi.mutationProcessTransfer365(
-            idBrand = idBrand,
-            user = user,
-            identification = identification,
-            destinationAccount = destinationAccount,
-            destinationBankId = destinationBankId,
-            destinationName = destinationName,
-            destinationLastName = destinationLastName,
-            destinationType = destinationType,
-            typeAccountId = typeAccountId,
-            amount = amount,
-            motive = motive
-        ),
-            apolloCallMapper = { data ->
-                Success(data.mapToDomainModel())
-            }
-        )
-    }
-
-    override suspend fun mutationProcessTransfer365Mobile(
-        identification: String,
-        phoneNumber: String,
-        destinationBankId: String,
-        typeAccountId: String,
-        destinationName: String,
-        destinationLastName: String,
-        amount: Double,
-        motive: String,
-        user: String,
-        idBrand: Int
-    ): Flow<MultimoneyResult<Transfer365Result?>> {
-        return fetchData(graphqlApi.mutationProcessTransfer365Mobile(
-            idBrand = idBrand,
-            user = user,
-            identification = identification,
-            phoneNumber = phoneNumber,
-            destinationBankId = destinationBankId,
-            destinationName = destinationName,
-            destinationLastName = destinationLastName,
-            typeAccountId = typeAccountId,
-            amount = amount,
-            motive = motive
-        ),
-            apolloCallMapper = { data ->
-                Success(data.mapToDomainModel())
-            }
-        )
-    }
-
     override suspend fun mutationUpdateSmartAccountStatus(
         user: String,
         idBrand: Int,
@@ -797,4 +734,3 @@ class SmartAccountRepositoryImpl @Inject constructor(
         )
     }
 }
-

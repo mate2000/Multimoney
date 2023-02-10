@@ -12,10 +12,6 @@ import com.multimoney.domain.interaction.accountsmart.MutationProcessLocalTransf
 import com.multimoney.domain.interaction.accountsmart.MutationProcessLocalTransferUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationProcessSinpeTransferUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationProcessSinpeTransferUseCaseImpl
-import com.multimoney.domain.interaction.accountsmart.MutationProcessTransfer365MobileUseCase
-import com.multimoney.domain.interaction.accountsmart.MutationProcessTransfer365MobileUseCaseImpl
-import com.multimoney.domain.interaction.accountsmart.MutationProcessTransfer365UseCase
-import com.multimoney.domain.interaction.accountsmart.MutationProcessTransfer365UseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationProcessTransferVisaToSmartVDUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationProcessTransferVisaToSmartVDUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCase
@@ -685,9 +681,6 @@ class InteractionModule {
     fun provideMutationUpdateSinpeAccountUseCase(smartAccountRepository: SmartAccountRepository): MutationSinpeAccountUpdateUseCase =
         MutationSinpeAccountUpdateUseCaseImpl(smartAccountRepository)
 
-
-
-
     // Multimoney Visa
     @Provides
     @Singleton
@@ -852,16 +845,6 @@ class InteractionModule {
 
     @Provides
     @Singleton
-    fun provideMutationProcessTransfer365(smartAccountRepository: SmartAccountRepository): MutationProcessTransfer365UseCase =
-        MutationProcessTransfer365UseCaseImpl(smartAccountRepository)
-
-    @Provides
-    @Singleton
-    fun provideMutationProcessTransfer365Mobile(smartAccountRepository: SmartAccountRepository): MutationProcessTransfer365MobileUseCase =
-        MutationProcessTransfer365MobileUseCaseImpl(smartAccountRepository)
-
-    @Provides
-    @Singleton
     fun provideQuerySmartAccountsUseCase(smartAccountRepository: SmartAccountRepository): QuerySmartAccountsUseCase =
         QuerySmartAccountsUseCaseImpl(smartAccountRepository)
 
@@ -874,5 +857,4 @@ class InteractionModule {
     @Singleton
     fun provideQueryRelatedContactsByPhoneUseCase(smartAccountRepository: SmartAccountRepository): QueryRelatedContactsByPhoneUseCase =
         QueryRelatedContactsByPhoneUseCaseImpl(smartAccountRepository)
-
 }

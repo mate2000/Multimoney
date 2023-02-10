@@ -73,6 +73,7 @@ class MyContactsTransferAmountViewModel @Inject constructor(
                 } else {
                     R.string.smart_colon_placeholder
                 },
+                totalBalance = smartAccount?.totalBalance,
                 maxAmount = limits?.find { a -> a?.code == destinyCurrency?.id.toString() }?.amount
             )
 

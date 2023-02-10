@@ -97,6 +97,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnVisaCardExpiredDialog
+import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.FilterDate
 import com.multimoney.multimoney.presentation.util.NfcHelper
 import com.multimoney.multimoney.presentation.util.PAGE_SIZE
@@ -131,7 +132,8 @@ class ProductViewModel @Inject constructor(
     private val balanceCardInformationUseCase: QueryBalanceCardInformationUseCase,
     private val queryListSinpeAccountUseCaseImpl: QueryListSinpeAccountUseCase,
     private val queryGetCryptoCurrencyMovementsUseCase: GetCryptoCurrencyMovementsUseCase,
-    private val mutationAccountStatusUseCase: MutationAccountStatusUseCase
+    private val mutationAccountStatusUseCase: MutationAccountStatusUseCase,
+    private val cryptoHelper: CryptoHelper
 ) : BaseViewModel(true) {
 
     // UIState
@@ -183,7 +185,8 @@ class ProductViewModel @Inject constructor(
         this.creditMovements = creditMovements
         viewModelScope.launch {
             uiState = uiState.copy(
-                shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first()
+                shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first(),
+                isCryptoTransferEnabled = cryptoHelper.isCryptoTransferEnabled()
             )
         }
 
@@ -1152,7 +1155,8 @@ class ProductViewModel @Inject constructor(
         var isBackPressed: Boolean = false,
         val paymentAvailable: Boolean = false,
         val shouldDisplayDisclaimer: Boolean = true,
-        val dontShowAgainChecked: Boolean = false
+        val dontShowAgainChecked: Boolean = false,
+        val isCryptoTransferEnabled: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

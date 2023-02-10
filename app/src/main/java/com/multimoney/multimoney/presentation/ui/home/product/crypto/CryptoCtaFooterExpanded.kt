@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.multimoney.data.util.catalog.Brand.CostaRica
 import com.multimoney.domain.model.balance.Account
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
@@ -18,13 +17,13 @@ import kotlinx.coroutines.flow.Flow
  */
 @Composable
 fun CryptoCtaFooterExpanded(
-    idBrand: String,
     balance: Balance?,
     cryptoMovements: Flow<PagingData<CryptoCurrencyMovement>>,
     noBalanceAction: () -> Unit,
     hasBalanceAction: () -> Unit,
     onSendActionClicked: () -> Unit,
     onSellActionClicked: () -> Unit,
+    isCryptoTransferEnabled: Boolean,
     onGiveActionClicked: () -> Unit,
 ) {
     val hasSmartBalance by remember { mutableStateOf(verifyIfHasSmartBalance(balance?.balanceAccountSmart)) }
@@ -35,7 +34,7 @@ fun CryptoCtaFooterExpanded(
     CryptoActionsSection(
         hasSmartBalance = hasSmartBalance,
         enableCryptoActions = profileEnable,
-        enableSendAndGive = idBrand.toIntOrNull() == CostaRica.id,
+        enableSendAndGive = isCryptoTransferEnabled,
         noBalanceAction = noBalanceAction,
         hasBalanceAction = hasBalanceAction,
         sendAction = onSendActionClicked,

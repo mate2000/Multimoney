@@ -598,7 +598,6 @@ fun ProductCtaFooterExpanded(
             }
             ProductType.Crypto.value -> CryptoCtaFooterExpanded(
                 balance = viewModel.balanceCredit,
-                idBrand = viewModel.uiState.idBrand,
                 cryptoMovements = viewModel.uiState.cryptoCurrencyMovements,
                 noBalanceAction = {
                     when (viewModel.uiState.idBrand) {
@@ -629,7 +628,8 @@ fun ProductCtaFooterExpanded(
                 },
                 onGiveActionClicked = {
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToGiveCryptoFlow)
-                }
+                },
+                isCryptoTransferEnabled = viewModel.uiState.isCryptoTransferEnabled,
             )
         }
     }

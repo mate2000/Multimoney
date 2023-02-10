@@ -31,6 +31,7 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.smartaccoun
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.addaccount.SmartAddAccountScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.amount.OwnTransferAmountScreen
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.SmartTransferFavoriteScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontactamount.MyContactsTransferAmountScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountScreen
@@ -361,6 +362,23 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                     )
                 }
             )
+        }
+        composable(
+            route = Screen.SmartTransferFavoriteAccountScreen.route,
+            arguments = listOf(
+                navArgument(USER) { type = NavType.StringType },
+                navArgument(ID_BRAND) { type = NavType.StringType },
+                navArgument(IDENTIFICATION) { type = NavType.StringType }
+            )
+        ) {
+            SmartTransferFavoriteScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                })
         }
     }
 }

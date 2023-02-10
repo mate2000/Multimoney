@@ -619,6 +619,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "smart_add_365_account_screen"
     )
 
+    object SmartTransferFavoriteAccountScreen : Screen(
+        "transfer_favorite_account_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
+        "transfer_favorite_account_screen"
+    )
+
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")
     object ChartScreen : Screen("chart_screen/{$}")

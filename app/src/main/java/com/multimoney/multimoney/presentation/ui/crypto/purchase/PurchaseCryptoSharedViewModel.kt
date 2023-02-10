@@ -10,6 +10,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.BuyCryptoStep
 import com.multimoney.data.util.catalog.PurchaseCryptoSteps
 import com.multimoney.domain.interaction.accountsmart.QuerySmartAccountsUseCase
 import com.multimoney.domain.model.accountsmart.AccountSmartForBuyCrypto
@@ -25,16 +26,19 @@ import com.multimoney.multimoney.presentation.ui.crypto.CryptoOperationSide
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.getCurrentDate
+import com.multimoney.multimoney.presentation.util.getCurrentTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
 class PurchaseCryptoSharedViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val dataStorePreferences: DataStorePreferences,
     private val getSmartAccountsUseCase: QuerySmartAccountsUseCase
 ) : BaseViewModel(true) {
@@ -163,7 +167,9 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     private fun updateShouldShowDisclaimer(value: Boolean) {
         viewModelScope.launch {
             dataStorePreferences.setVolatileDialogVisible(!value)
-            uiState = uiState.copy(shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first())
+            uiState = uiState.copy(
+                shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first()
+            )
         }
     }
 
@@ -171,9 +177,31 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         uiState = uiState.copy(dontShowAgainChecked = checked)
     }
 
+
+    private fun onSetupVoucherDetails(
+        quoteAmount: String,
+        baseAmount: String,
+        totalDebitedAmount: String,
+        exchangeRate: String,
+        totalDebitedExchange: String,
+        referenceNumber: String
+    ) {
+        uiState = uiState.copy(
+            voucherQuoteAmount = quoteAmount,
+            voucherBaseAmount = baseAmount,
+            voucherReferenceNumber = referenceNumber,
+            voucherTotalDebitedAmount = totalDebitedAmount,
+            voucherExchangeRate = exchangeRate,
+            voucherTotalDebitedExchange = totalDebitedExchange,
+            purchaseCurrentDate = getCurrentDate(Calendar.getInstance().time),
+            purchaseCurrentTime = getCurrentTime(Calendar.getInstance().time)
+        )
+    }
+
     data class UIState(
         // interaction
         val currentStep: Int = PurchaseCryptoSteps.One.pageNumber,
+        val currentStepType: BuyCryptoStep = BuyCryptoStep.LIST_CRYPTO_CURRENCIES,
         val isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         var bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
@@ -194,7 +222,19 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         val market: String? = "",
         val cryptoNetWork: String? = "",
         val assetImageBaseUrl: String? = "",
-        val accountToken: String = ""
+        val accountToken: String = "",
+        // voucher information
+        val voucherQuoteAmount: String? = null,
+        val voucherBaseAmount: String? = null,
+        val voucherReferenceNumber: String? = null,
+        val voucherTotalDebitedAmount: String? = null,
+        val voucherExchangeRate: String? = null,
+        val voucherTotalDebitedExchange: String? = null,
+        val purchaseCurrentDate: String? = null,
+        val purchaseCurrentTime: String? = null,
+        val isRightButtonVisible: Boolean = true,
+        val isLeftButtonVisible: Boolean = true
+
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -225,6 +265,21 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
             is BaseEvent.OnShowDisclaimer -> OnShowDisclaimer()
             is UIEvent.OnDisclaimerChecked -> onDisclaimerChecked(event.checked)
             is UIEvent.OnUpdateShouldShowDisclaimer -> updateShouldShowDisclaimer(event.checked)
+
+            is UIEvent.OnSetupVoucherDetails -> onSetupVoucherDetails(
+                event.quoteAmount,
+                event.baseAmount,
+                event.totalDebitedAmount,
+                event.exchangeRate,
+                event.totalDebitedExchange,
+                event.referenceNumber
+            )
+            is UIEvent.OnSetFlowStep -> uiState = uiState.copy(currentStepType = event.step)
+            is UIEvent.OnNavigateHome -> navigateBack(
+                popTo = Screen.HomeScreen.route,
+                isRestart = true,
+                homeState = HomeState.COLLAPSED
+            )
         }
     }
 
@@ -235,6 +290,16 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     sealed class UIEvent {
         object OnCloseClick : UIEvent()
         object OnNextStep : UIEvent()
+        data class OnSetupVoucherDetails(
+            val quoteAmount: String,
+            val baseAmount: String,
+            val totalDebitedAmount: String,
+            val exchangeRate: String,
+            val totalDebitedExchange: String,
+            val referenceNumber: String
+        ) :
+            UIEvent()
+
         object OnQueryAccounts : UIEvent()
         object OnPreviousStep : UIEvent()
         object OnClickBottomSheet : UIEvent()
@@ -253,7 +318,8 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         object OnGetUserInfo : UIEvent()
         data class OnDisclaimerChecked(val checked: Boolean) : UIEvent()
         data class OnUpdateShouldShowDisclaimer(val checked: Boolean) : UIEvent()
-
+        data class OnSetFlowStep(val step: BuyCryptoStep) : UIEvent()
+        object OnNavigateHome : UIEvent()
     }
 
     companion object {

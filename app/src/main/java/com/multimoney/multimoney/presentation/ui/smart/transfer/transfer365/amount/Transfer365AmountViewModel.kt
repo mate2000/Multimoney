@@ -1,8 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.amount
 
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.accountsmart.MutationProcessTransfer365MobileUseCase
@@ -24,10 +22,10 @@ import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getCurrentTime
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
-import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.Calendar
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -51,6 +49,7 @@ class Transfer365AmountViewModel @Inject constructor(
             originCurrency = smartAccount?.currencyID?.getCurrencyFromId() ?: CurrencyType.Dollar
             if (originCurrency == CurrencyType.All) originCurrency = CurrencyType.Dollar
             shouldDisplayExchange = false
+            limits = preferences.getSmartTransferLimit().firstOrNull()
 
             amountUIState = amountUIState.copy(
                 originAccountDisplay = DisplayAccount(
@@ -67,7 +66,8 @@ class Transfer365AmountViewModel @Inject constructor(
                 } else {
                     R.string.empty
                 },
-                maxAmount = 0.0 // todo
+                totalBalance = smartAccount?.totalBalance,
+                maxAmount = limits?.find { a -> a?.code == destinyCurrency?.id.toString() }?.amount
             )
             totalBalanceLabel = amountUIState.currency + smartAccount?.totalBalance.toString()
             val destinationInfo = when (transferType) {
@@ -76,10 +76,10 @@ class Transfer365AmountViewModel @Inject constructor(
                 }
                 SmartTransferTypes.SmartToOtherBank.id -> {
                     "${transfer365Account.bankName} | ${
-                    getMaskedAccount(
-                        prefix = Brand.ElSalvador.countryCode.uppercase(),
-                        accountNumber = transfer365Account.accountNumber.orEmpty()
-                    )
+                        getMaskedAccount(
+                            prefix = Brand.ElSalvador.countryCode.uppercase(),
+                            accountNumber = transfer365Account.accountNumber.orEmpty()
+                        )
                     }"
                 }
                 else -> {
@@ -96,39 +96,8 @@ class Transfer365AmountViewModel @Inject constructor(
         }
     }
 
-    override fun onContinueClick() {
-        amountUIState = amountUIState.copy(
-            bottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Expanded)
-        )
-    }
-
-    override fun onAmountChanged(newAmount: String) {
-        if (validateDecimalIncome(newAmount)) {
-            amountUIState = amountUIState.copy(
-                currentAmountValueString = newAmount
-            )
-        }
-    }
-
     override fun onAmountCompleted() {
-        val amount = amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
-        amountUIState =
-            amountUIState.copy(isAmountValid = amount <= (smartAccount?.totalBalance ?: 0.0))
-        amountUIState = amountUIState.copy(enableButton = validateForm())
-    }
-
-    override fun validateForm(
-        newAmount: String?,
-        newMotive: String,
-        isAmountValid: Boolean
-    ): Boolean {
-        return when {
-            newAmount?.isEmpty() == true -> false
-            (newAmount?.toDoubleOrNull() ?: 0.0) <= 0.0 -> false
-            newMotive.isEmpty() -> false
-            amountUIState.isAmountValid.not() -> false
-            else -> true
-        }
+        validateAmount()
     }
 
     private fun processTransfer365() {

@@ -112,10 +112,10 @@ fun Transfer365AmountContent(viewModel: Transfer365AmountViewModel = hiltViewMod
                 viewModel.onAmountUIEvent(OnAmountValueChange(it))
             },
             onDebounceValidation = { viewModel.onAmountUIEvent(OnAmountCompleted(it)) },
-            isAmountError = viewModel.amountUIState.isAmountValid.not(),
+            isAmountError = viewModel.amountUIState.amountError.first,
             amountErrorMessage = stringResource(
-                id = R.string.smart_iban_transfer_error_balance_insufficient,
-                viewModel.totalBalanceLabel
+                viewModel.amountUIState.amountError.second,
+                viewModel.amountUIState.amountError.third
             ),
             currency = viewModel.amountUIState.currency,
             shouldDisplayExchange = viewModel.shouldDisplayExchange,

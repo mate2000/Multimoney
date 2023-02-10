@@ -76,7 +76,7 @@ class ProfileCardListViewModel @Inject constructor(
                     uiState = uiState.copy(
                         isLoading = false,
                         cardVDListVerified = cardsList?.filter { it?.verified == true },
-                        cardVDListNotVerified = cardsList?.filter { it?.verified == true },
+                        cardVDListNotVerified = cardsList?.filter { it?.verified != true },
                         isCardListEmpty = cardsList.isNullOrEmpty()
                     )
                     if (fromDelete) {

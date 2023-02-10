@@ -92,7 +92,11 @@ class CryptoSendSharedViewModel @Inject constructor(
     private fun onCryptoSelected(cryptoAccount: BalanceCryptoAccountItems) {
         uiState = uiState.copy(
             asset = cryptoAccount.asset,
-            assetDescription = cryptoAccount.descriptionCurrency
+            assetDescription = cryptoAccount.descriptionCurrency,
+            assetImg = cryptoAccount.url_image,
+            currencyDollarBalance = cryptoAccount.balanceDollars,
+            cryptoCurrencyPrice = cryptoAccount.priceOfTheDay,
+            cryptoNetwork = cryptoAccount.cryptoNetwork
         )
     }
 
@@ -102,7 +106,12 @@ class CryptoSendSharedViewModel @Inject constructor(
         val accounts: List<Any> = listOf(),
         val openDialog: DialogParameters = DialogParameters(),
         var asset: String = "",
-        var assetDescription: String = ""
+        var assetDescription: String = "",
+        var assetImg: String = "",
+        var currencyDollarBalance: Double = 0.0,
+        var cryptoCurrencyPrice: Double = 0.0,
+        var cryptoNetwork: String = "",
+        var destinationAddress: String = ""
     )
 
     fun onUIEvent(event: UIEvent) {

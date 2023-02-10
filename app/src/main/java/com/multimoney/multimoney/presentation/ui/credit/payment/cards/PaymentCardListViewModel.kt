@@ -82,8 +82,8 @@ class PaymentCardListViewModel @Inject constructor(
                 result.onSuccess { cardsList ->
                     uiState = uiState.copy(
                         isLoading = false,
-                        cardVDList = cardsList,
-                        isCardListEmpty = cardsList.isNullOrEmpty()
+                        cardVDList = cardsList?.filter { it?.verified == true },
+                        isCardListEmpty = cardsList?.filter { it?.verified == true }.isNullOrEmpty()
                     )
                 }.onFailure {
                     uiState = uiState.copy(

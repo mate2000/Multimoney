@@ -31,7 +31,7 @@ import kotlin.time.Duration.Companion.seconds
 class SellCurrencyScreenViewModel @Inject constructor(
     private val getPriceQuoteAndCommissionsUseCase: GetPriceQuoteAndCommissionsUseCase,
     private val sellCryptoCurrencyUseCase: SellCryptoCurrencyUseCase
-): BaseViewModel(false) {
+) : BaseViewModel(false) {
 
     var uiState by mutableStateOf(UIState())
         private set
@@ -113,7 +113,8 @@ class SellCurrencyScreenViewModel @Inject constructor(
     )
 
     private fun updateUiWithNewPricesAndCommissions(): Unit = executeUseCase {
-        getPriceQuoteAndCommissionsUseCase.invoke(asset = asset,
+        getPriceQuoteAndCommissionsUseCase.invoke(
+            asset = asset,
             crypto_network = cryptoNetWork,
             idBrand = idBrand,
             user = user,
@@ -272,7 +273,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
                 accountToken = event.accountToken,
                 side = event.side,
                 assetImageUrl = event.assetImageUrl,
-                cryptoAvailableCurrencyBalance = event.smartAccountAvailableBalance,
+                cryptoAvailableCurrencyBalance = event.cryptoAvailableBalance,
                 idCurrencyAccount = event.idCurrencyAccount,
                 ibanAccountNumber = event.ibanAccountNumber
             )
@@ -310,7 +311,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
             val accountToken: Long,
             val side: String,
             val assetImageUrl: String?,
-            val smartAccountAvailableBalance: Double,
+            val cryptoAvailableBalance: Double,
             val idCurrencyAccount: Int,
             val ibanAccountNumber: String
         ) : UIEvent()

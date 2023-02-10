@@ -58,12 +58,11 @@ fun SellCurrencyScreen(
                 user = sharedViewModel.user,
                 market = sharedViewModel.uiState.market,
                 identification = sharedViewModel.identification,
-                accountToken = sharedViewModel.uiState.accounts.firstOrNull()?.accountToken?.toLong()
-                    ?: 0L,
+                accountToken = sharedViewModel.uiState.accountToken.toLong(),
                 side = sharedViewModel.side,
                 assetImageUrl = sharedViewModel.uiState.assetImageBaseUrl,
                 ibanAccountNumber = sharedViewModel.uiState.ibanAccountNumber,
-                smartAccountAvailableBalance = sharedViewModel.uiState.smartAccountAvailableBalance
+                cryptoAvailableBalance = sharedViewModel.uiState.assetAvailable ?: 0.0
             )
         )
         sharedViewModel.uiState.previousAction = {
@@ -149,10 +148,10 @@ fun SellCurrencyScreenContent(
                         },
                         cryptoAssetExchange = stringResource(
                             id = R.string.crypto_sell_flow_sell_screen_available_equal_to,
-                            viewModel.cryptoAvailableCurrencyBalance.toCurrencyFormat(),
                             viewModel.cryptoAvailableCurrencyBalance
                                 .div(viewModel.uiState.pricesQuoteAndCommissions?.price
-                                ?: DEFAULT_CURRENCY_PRICE).roundToEightDecimalPlaces(),
+                                    ?: DEFAULT_CURRENCY_PRICE).toCurrencyFormat(),
+                            viewModel.cryptoAvailableCurrencyBalance.roundToEightDecimalPlaces(),
                             viewModel.asset
                         ),
                         imageUrl = viewModel.assetImageUrl,

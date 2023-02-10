@@ -557,25 +557,23 @@ class ProductViewModel @Inject constructor(
         val idLoanClient = userStatus?.infoCredit?.idLoanClient
         val cardStatus = userStatus?.infoVirtualCard?.status
         navigateTo(
-            "${Screen.CryptoWalletScreen.baseRoute}/$email/${uiState.idBrand}/$identification/$globalBalance/$idClient/$idLoanClient/$statusCredit/$statusSmart/$statusCrypto/$cardStatus/${encodeData(balanceCredit?.balanceAccountSmart?.toNavType())}"
+            "${Screen.CryptoWalletScreen.baseRoute}/$email/${uiState.idBrand}/$identification/$globalBalance/$idClient/$idLoanClient/$statusCredit/$statusSmart/$statusCrypto/$cardStatus/${
+                encodeData(
+                    balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType()
+                )
+            }/${encodeData(balanceCredit?.balanceCryptoAccount?.items)}"
         )
     }
 
-    private fun List<Account?>.toNavType(): List<SmartAccountSmall> {
-        return this.map { account ->
-            SmartAccountSmall(
-                totalBalance = account?.totalBalance,
-                currencyCode = account?.currencyCode,
-                idCurrencyAccount = account?.idCurrencyAccount,
-                accountToken = account?.tokenNumber ?: "",
-                accountNumber = account?.accountNumber ?: "",
-                ibanAccountNumber = account?.ibanAccountNumber ?: ""
-            )
-        }
-    }
 
     private fun onNavigateToCryptoMarket() {
-        navigateTo("${Screen.CryptoMarketScreen.baseRoute}/$userName/${uiState.idBrand}/${encodeData(balanceCredit?.balanceAccountSmart?.toNavType())}")
+        navigateTo(
+            "${Screen.CryptoMarketScreen.baseRoute}/$userName/${uiState.idBrand}/${
+                encodeData(
+                    balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType()
+                )
+            }/${encodeData(balanceCredit?.balanceCryptoAccount?.items)}"
+        )
     }
 
     private fun onNavigateToCryptoMovements() {
@@ -799,6 +797,7 @@ class ProductViewModel @Inject constructor(
             QuickActionFlow.SAVE_SMART.flow -> onNavigateToSmartSave()
             QuickActionFlow.SEND_MONEY.flow -> onNavigateToSendMoneyScreenQuickAction()
             QuickActionFlow.BUY_CRYPTO.flow -> onNavigateToPurchaseCryptoFlow()
+            QuickActionFlow.SELL_CRYPTO.flow -> onNavigateToSellCryptoFlow()
             QuickActionFlow.SEND_CRYPTO.flow -> onNavigateToSendCryptoFlow()
         }
     }
@@ -1069,11 +1068,17 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToPurchaseCryptoFlow() {
-        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${encodeData(balanceCredit?.balanceAccountSmart?.toNavType())}")
+        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${encodeData(balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType())}")
     }
 
     private fun onNavigateToSellCryptoFlow() {
-        navigateTo(Screen.CryptoSellFlow.baseRoute)
+        navigateTo(
+            "${Screen.CryptoSellFlow.baseRoute}/${encodeData(balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType())}/${
+                encodeData(
+                    balanceCredit?.balanceCryptoAccount?.items
+                )
+            }"
+        )
     }
 
     private fun onNavigateToSendCryptoFlow() {
@@ -1131,6 +1136,20 @@ class ProductViewModel @Inject constructor(
     private fun onShowDisclaimer() {
         emitBaseEvent(BaseEvent.OnShowDisclaimer)
     }
+
+    private fun List<Account?>.toSmartAccountsNavType(): List<SmartAccountSmall> {
+        return this.map { account ->
+            SmartAccountSmall(
+                totalBalance = account?.totalBalance,
+                currencyCode = account?.currencyCode,
+                idCurrencyAccount = account?.idCurrencyAccount,
+                accountToken = account?.tokenNumber ?: "",
+                accountNumber = account?.accountNumber ?: "",
+                ibanAccountNumber = account?.ibanAccountNumber ?: ""
+            )
+        }
+    }
+
 
     data class UIState(
         // Fields

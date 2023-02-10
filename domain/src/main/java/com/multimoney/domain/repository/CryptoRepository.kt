@@ -27,7 +27,8 @@ interface CryptoRepository {
 
     suspend fun getAvailableListOfCryptoCoins(
         user: String,
-        idBrand: Int
+        idBrand: Int,
+        origin: String
     ): Flow<MultimoneyResult<GetListOfAvailableCryptoCoins?>>
 
     suspend fun getCryptoCurrencyMovements(

@@ -369,12 +369,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object VisaVerifyDepositScreen : Screen(
-        "visa_verify_deposit_screen?$IDENTIFICATION={$IDENTIFICATION}?$ID_CARD={$ID_CARD}?$USER={$USER}?$ID_BRAND={$ID_BRAND}",
+        "visa_verify_deposit_screen?$IDENTIFICATION={$IDENTIFICATION}?$ID_CARD={$ID_CARD}?$USER={$USER}?$ID_BRAND={$ID_BRAND}?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}",
         "visa_verify_deposit_screen"
     )
 
-    object VisaVerifiedScreen : Screen(
-        "visa_verified_screen",
+    object VisaVerifyInformationScreen : Screen(
+        "visa_verified_screen?$IDENTIFICATION={$IDENTIFICATION}?$ID_CARD={$ID_CARD}?$USER={$USER}?$ID_BRAND={$ID_BRAND}?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}",
         "visa_verified_screen"
     )
 

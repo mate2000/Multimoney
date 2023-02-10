@@ -1,8 +1,6 @@
 package com.multimoney.multimoney.presentation.navigation.navgraph
 
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
-import androidx.navigation.NavType
+import androidx.navigation.*
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
@@ -27,6 +25,7 @@ import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreen
 import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsScreen
 import com.multimoney.multimoney.presentation.ui.crypto.movements.CryptoMovementsAllScreen
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoFlow
+import com.multimoney.multimoney.presentation.ui.crypto.receive.CryptoReceiveFlow
 import com.multimoney.multimoney.presentation.ui.crypto.sell.SellCryptoFlow
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWallet
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail.CurrencyMovementsScreen
@@ -281,5 +280,42 @@ fun NavGraphBuilder.cryptoNavGraph(
                 }
             )
         }
+    }
+
+    composable(
+        route = Screen.CryptoReceiveFlow.route,
+        listOf(
+            navArgument(USER) { type = NavType.StringType },
+            navArgument(ID_BRAND) { type = NavType.IntType },
+            navArgument(ITEM_CRYPTO_MARKET) {
+                nullable = true
+                defaultValue = null
+                type = CryptoCoinNavType()
+            }
+        )
+    ) {
+        CryptoReceiveFlow(
+            onNavigate = { navController.navigate(it.route) },
+            onPopAndNavigate = {
+                navController.navigate(it.route) {
+                    popUpTo(it.popTo) { inclusive = true }
+                }
+            },
+            onPopBackStack = {
+                navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                    PREVIOUS_IS_RESTART,
+                    it.isRestart
+                )
+                navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                    HOME_STATE,
+                    it.homeState
+                )
+                navController.popBackStack(
+                    route = it.popTo,
+                    inclusive = false,
+                    saveState = false
+                )
+            }
+        )
     }
 }

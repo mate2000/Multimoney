@@ -24,7 +24,8 @@ fun CryptoCtaFooterExpanded(
     noBalanceAction: () -> Unit,
     hasBalanceAction: () -> Unit,
     onSendActionClicked: () -> Unit,
-    onSellActionClicked: () -> Unit
+    onSellActionClicked: () -> Unit,
+    onGiveActionClicked: () -> Unit,
 ) {
     val hasSmartBalance by remember { mutableStateOf(verifyIfHasSmartBalance(balance?.balanceAccountSmart)) }
     val cryptoCurrencies = balance?.balanceCryptoAccount?.items
@@ -38,7 +39,8 @@ fun CryptoCtaFooterExpanded(
         noBalanceAction = noBalanceAction,
         hasBalanceAction = hasBalanceAction,
         sendAction = onSendActionClicked,
-        sellAction = onSellActionClicked
+        sellAction = onSellActionClicked,
+        giveAction = onGiveActionClicked
     )
 }
 

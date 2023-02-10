@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.home.product
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -146,6 +147,7 @@ class ProductViewModel @Inject constructor(
     var email: String = ""
     var idClient: Int = 0
     var userName: String = ""
+    var user: String = ""
     var productProgress = 0F
     val firstName: String? = null
     var isExpiredTitle = R.string.home_product_expiration
@@ -170,6 +172,7 @@ class ProductViewModel @Inject constructor(
         this.identification = identification
         this.email = email
         this.userName = userName
+        this.user = userName
         this.configurationVersion = configurationVersion
         uiState = uiState.copy(idBrand = idBrand, productPageList = productPageList)
         this.idClient = validateUserStatus?.infoUser?.idClient ?: 0
@@ -1076,6 +1079,9 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToSendCryptoFlow() {
         navigateTo(Screen.CryptoSendFlow.baseRoute)
     }
+    private fun onNavigateToGiveCryptoFlow() {
+        navigateTo("${Screen.CryptoReceiveFlow.baseRoute}/${user}/${uiState.idBrand}")
+    }
 
     private fun getSmartContent() {
         val statusRequest = uiState.userStatus?.infoBankAccount?.infoRequest?.statusRequest
@@ -1228,6 +1234,7 @@ class ProductViewModel @Inject constructor(
             is UIEvent.OnNavigateToPurchaseCryptoFlow -> onNavigateToPurchaseCryptoFlow()
             is UIEvent.OnNavigateToSellCryptoFlow -> onNavigateToSellCryptoFlow()
             is UIEvent.OnNavigateToSendCryptoFlow -> onNavigateToSendCryptoFlow()
+            is UIEvent.OnNavigateToGiveCryptoFlow -> onNavigateToGiveCryptoFlow()
             is OnVisaCardExpiredDialog -> onVisaCardExpiredDialog(
                 idBrand = uiEvent.idBrand,
                 balance = uiEvent.balance
@@ -1286,6 +1293,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToPurchaseCryptoFlow : UIEvent()
         object OnNavigateToSellCryptoFlow : UIEvent()
         object OnNavigateToSendCryptoFlow : UIEvent()
+        object OnNavigateToGiveCryptoFlow : UIEvent()
         object OnGetSmartContent : UIEvent()
 
         data class OnSetUserData(

@@ -150,6 +150,7 @@ fun MarketCurrencyDetailsScreen(
         onBackPressed = { viewModel.onUIEvent(OnNavigateBack) },
         onNavigateToSendCrypto = { viewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnNavigateToCryptoSendFlow) },
         onNavigateToSellCrypto = { viewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnNavigateToSellCrypto) },
+        onNavigateToReceiveCrypto = { viewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnNavigateToReceiveCrypto) }
     )
     ConfirmationBottomSheet(
         modalBottomSheetState = viewModel.uiState.bottomSheetVisibleState,
@@ -179,7 +180,8 @@ fun MarketCurrencyDetailsScreenContent(
     onNavigateToBuyCrypto: () -> Unit = {},
     onBackPressed: () -> Unit = {},
     onNavigateToSendCrypto: () -> Unit = {},
-    onNavigateToSellCrypto: () -> Unit = {}
+    onNavigateToSellCrypto: () -> Unit = {},
+    onNavigateToReceiveCrypto: () -> Unit = {}
 ) {
     val selected = remember { mutableStateOf(true) }
     var selectedDateRange by remember { mutableStateOf(FilterDateByDays.YESTERDAY.time) }
@@ -196,7 +198,7 @@ fun MarketCurrencyDetailsScreenContent(
                 enableSendAndGive = idBrand == Brand.CostaRica.id,
                 hasBalanceAction = { onNavigateToBuyCrypto() },
                 sellAction = { onNavigateToSellCrypto() },
-                giveAction = { /* todo: go to receive crypto flow */ },
+                giveAction = { onNavigateToReceiveCrypto() },
                 sendAction = { onNavigateToSendCrypto() },
             )
         }

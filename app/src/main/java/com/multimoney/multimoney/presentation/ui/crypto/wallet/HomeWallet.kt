@@ -162,7 +162,7 @@ fun HomeWallet(
                         walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnNavigateToSellCrypto)
                     },
                     sendAction = { walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnNavigateToSendCrypto) },
-                    giveAction = { /*todo go to receive crypto flow*/ }
+                    giveAction = { walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnNavigateToReceiveCrypto) }
                 )
             }
         }

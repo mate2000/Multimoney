@@ -4,6 +4,7 @@ package com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails
 
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
@@ -177,6 +178,10 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
         navigateTo("${Screen.CryptoSendFlow.baseRoute}?$CRYPTO_ASSET=${uiState.selectedCryptoCoin?.baseAsset}&$DESCRIPTION_CURRENCY=${uiState.selectedCryptoCoin?.description}")
     }
 
+    private fun onNavigateToCryptoReceiveFlow() {
+        navigateTo("${Screen.CryptoReceiveFlow.baseRoute}/${uiState.user}/${uiState.idBrand}?$ITEM_CRYPTO_MARKET=${encodeData(uiState.selectedCryptoCoin)}")
+    }
+
     data class UiState(
         val user: String? = null,
         val idBrand: Int? = null,
@@ -211,6 +216,7 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
             )
             is UIEvent.OnNavigateToSelectAccount -> onNavigateToSelectAccount()
             is UIEvent.OnNavigateToSellCrypto -> onNavigateToSellCrypto()
+            is UIEvent.OnNavigateToReceiveCrypto -> onNavigateToCryptoReceiveFlow()
             is UIEvent.OnDisclaimerChecked -> onDisclaimerChecked(event.checked)
             is UIEvent.OnUpdateShouldShowDisclaimer -> updateShouldShowDisclaimer(event.checked)
             is UIEvent.OnShowDisclaimer -> uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded))
@@ -244,6 +250,7 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
         object OnHideDisclaimer : UIEvent()
         object OnNavigateToCryptoSendFlow : UIEvent()
         object OnNavigateToSellCrypto : UIEvent()
+        object OnNavigateToReceiveCrypto : UIEvent()
     }
 }
 

@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.crypto.wallet
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -181,6 +182,10 @@ class HomeWalletViewModel @Inject constructor(
         navigateTo(Screen.CryptoSendFlow.baseRoute)
     }
 
+    private fun onNavigateToReceiveCrypto() {
+        navigateTo("${Screen.CryptoReceiveFlow.baseRoute}/${uiState.user}/${uiState.idBrand}")
+    }
+
     data class UiState(
         val user: String? = null,
         val idBrand: Int? = null,
@@ -211,6 +216,7 @@ class HomeWalletViewModel @Inject constructor(
             is UIEvent.OnNavigateToBuyCrypto -> onNavigateToBuyCrypto()
             is UIEvent.OnNavigateToSendCrypto -> onNavigateToSendCrypto()
             is UIEvent.OnNavigateToSellCrypto -> onNavigateToSellCrypto()
+            is UIEvent.OnNavigateToReceiveCrypto -> onNavigateToReceiveCrypto()
         }
     }
 
@@ -225,6 +231,7 @@ class HomeWalletViewModel @Inject constructor(
         object OnNavigateToBuyCrypto : UIEvent
         object OnNavigateToSendCrypto : UIEvent
         object OnNavigateToSellCrypto : UIEvent
+        object OnNavigateToReceiveCrypto : UIEvent
     }
 
     companion object {

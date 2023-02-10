@@ -63,6 +63,8 @@ fun SellCurrencyScreen(
                 side = sharedViewModel.side,
                 assetImageUrl = sharedViewModel.uiState.assetImageBaseUrl,
                 ibanAccountNumber = sharedViewModel.uiState.ibanAccountNumber,
+                cryptoAvailableBalance = 0.0, // todo: get from viewmodel
+                cryptoAvailableBalanceDollars = 0.0, // todo: get from viewmodel
                 smartAccountAvailableBalance = sharedViewModel.uiState.smartAccountAvailableBalance
             )
         )
@@ -154,7 +156,7 @@ fun SellCurrencyScreenContent(
                                 .div(viewModel.uiState.pricesQuoteAndCommissions?.price
                                 ?: DEFAULT_CURRENCY_PRICE).roundToEightDecimalPlaces(),
                             viewModel.asset
-                        ),
+                        ), // todo check this
                         imageUrl = viewModel.assetImageUrl,
                         isLoading = viewModel.uiState.isLoading,
                         showSellDisclaimer = true
@@ -191,7 +193,7 @@ fun SellCurrencyScreenContent(
                     CounterSection(
                         counterTextResourceId = R.string.crypto_sell_flow_confirmation_sell_screen_expires_in,
                         showAvailableSmartAmount = false,
-                        smartAccountAvailableBalance = viewModel.cryptoAvailableCurrencyBalance,
+                        smartAccountAvailableBalance = viewModel.smartAccountAvailableBalance,
                         downCounter = viewModel.uiState.remainingTimeText
                     )
                 }

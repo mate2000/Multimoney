@@ -112,6 +112,7 @@ fun SellConfirmationBottomSheet(
                 viewModel.ibanAccountNumber,
                 stringResource(id = R.string.payment_account_masked_text)
             ),
+            buttonText = stringResource(id = R.string.crypto_sell_flow_confirmation_sell_screen_btn_text),
             asset = viewModel.asset,
             assetImageUrl = viewModel.assetImageUrl,
             secondsRemaining = viewModel.uiState.remainingTimeText,

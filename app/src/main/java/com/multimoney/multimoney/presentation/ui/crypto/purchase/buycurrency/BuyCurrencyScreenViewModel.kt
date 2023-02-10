@@ -101,7 +101,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             )
         },
         onFinished = {
-            updateDataWithNewExchangeRate()
+            updateUiWithNewPricesAndCommissions()
             if (idCurrencyAccount == CurrencyType.Colon.id) {
                 getExchangeRate()
             }
@@ -120,14 +120,14 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             )
         },
         onFinished = {
-            updateDataWithNewExchangeRate()
+            updateUiWithNewPricesAndCommissions()
             if (idCurrencyAccount == CurrencyType.Colon.id) {
                 getExchangeRate()
             }
         }
     )
 
-    private fun updateDataWithNewExchangeRate(): Unit = executeUseCase {
+    private fun updateUiWithNewPricesAndCommissions(): Unit = executeUseCase {
         getPriceQuoteAndCommissionsUseCase.invoke(
             asset = asset,
             crypto_network = cryptoNetWork,
@@ -187,6 +187,8 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                     this.smartAccountAvailableBalance = exchangeRate?.convertedAmount ?: 0.0
                 }
                 result.onFailure {
+                    timer.stopTimer()
+                    confirmationTimer.stopTimer()
                     this.smartAccountAvailableBalance = 0.0
                     onFailure()
                 }
@@ -356,7 +358,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                     uiState.failureAction()
                 },
                 positiveAction = {
-                    updateDataWithNewExchangeRate()
+                    updateUiWithNewPricesAndCommissions()
                     if (idCurrencyAccount == CurrencyType.Colon.id) {
                         convertColonesToDollars(smartAccountAvailableBalance)
                         getExchangeRate()
@@ -406,7 +408,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is UIEvent.OnGetQuoteAndCommissions -> updateDataWithNewExchangeRate()
+            is UIEvent.OnGetQuoteAndCommissions -> updateUiWithNewPricesAndCommissions()
             UIEvent.OnPurchaseCryptoCurrency -> purchaseCryptoCurrency()
             is UIEvent.OnSetUserData -> onSetUserData(
                 pkUser = event.pkUser,

@@ -35,6 +35,7 @@ import com.multimoney.multimoney.presentation.ui.crypto.AmountInputSection
 import com.multimoney.multimoney.presentation.ui.crypto.CounterSection
 import com.multimoney.multimoney.presentation.ui.crypto.NativeLoaderScreen
 import com.multimoney.multimoney.presentation.ui.crypto.TitleSection
+import com.multimoney.multimoney.presentation.ui.crypto.VoucherCurrencyExchangeInfoSkeleton
 import com.multimoney.multimoney.presentation.ui.crypto.WhileLoadingSection
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.uielement.AlertResult

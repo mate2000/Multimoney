@@ -30,7 +30,6 @@ import coil.compose.rememberAsyncImagePainter
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.BuyCurrencyTitleSectionSkeleton
 import com.multimoney.multimoney.presentation.ui.crypto.sell.sellcurrency.TIMER_UNIT_INDICATOR
 import com.multimoney.multimoney.presentation.ui.crypto.sell.sellcurrency.WHITE_SPACE
 import com.multimoney.multimoney.presentation.uielement.CryptoCurrencyInputLayout
@@ -250,7 +249,7 @@ fun TitleSection(
         }
         WhileLoadingSection(
             isLoading = isLoading,
-            contentLoading = { BuyCurrencyTitleSectionSkeleton() }
+            contentLoading = { CurrencyTitleSectionSkeleton() }
         ) {
             Row(
                 modifier = Modifier

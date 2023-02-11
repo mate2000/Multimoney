@@ -42,7 +42,7 @@ fun SellDisclaimerSection() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = 16.dp, vertical = 16.dp),
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.Start
     ) {
@@ -79,7 +79,7 @@ fun CounterSection(
     @StringRes counterTextResourceId: Int,
     downCounter: String,
     showAvailableSmartAmount: Boolean = true,
-    smartAccountAvailableBalance: Double,
+    accountAvailableBalance: Double? = null,
 ) {
     Column(modifier = modifier) {
         if (showAvailableSmartAmount) {
@@ -89,27 +89,29 @@ fun CounterSection(
                     .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.Start
             ) {
-                Text(
-                    text = buildAnnotatedString {
-                        withStyle(
-                            style = SpanStyle(
-                                color = MultimoneyTheme.colors.bodyTextColor,
-                            )
-                        ) {
-                            append(stringResource(id = R.string.crypto_purchase_flow_available_smart_amount))
-                        }
-                        append(WHITE_SPACE)
-                        withStyle(
-                            style = SpanStyle(
-                                color = MultimoneyTheme.colors.bodyTextColor,
-                                fontWeight = FontWeight.Bold
-                            )
-                        ) {
-                            append(smartAccountAvailableBalance.toCurrencyFormat())
-                        }
-                    },
-                    style = Typography.body2
-                )
+                accountAvailableBalance?.let {
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(
+                                style = SpanStyle(
+                                    color = MultimoneyTheme.colors.bodyTextColor,
+                                )
+                            ) {
+                                append(stringResource(id = R.string.crypto_purchase_flow_available_smart_amount))
+                            }
+                            append(WHITE_SPACE)
+                            withStyle(
+                                style = SpanStyle(
+                                    color = MultimoneyTheme.colors.bodyTextColor,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            ) {
+                                append(accountAvailableBalance.toCurrencyFormat())
+                            }
+                        },
+                        style = Typography.body2
+                    )
+                }
             }
         }
         Row(

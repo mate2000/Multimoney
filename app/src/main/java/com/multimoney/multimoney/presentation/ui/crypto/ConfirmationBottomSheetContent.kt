@@ -109,8 +109,8 @@ fun ConfirmationBottomSheetContent(
                 content = {
                     CurrencyExchangeInfo(
                         leftTitleResource = R.string.crypto_purchase_flow_exchange_type_title,
-                        rightTitleResource = if(sellExchangeRate) {
-                            R.string.crypto_sell_flow_confirmation_sell_screen_exhange_title
+                        rightTitleResource = if(sellExchangeRate.not()) {
+                            R.string.crypto_sell_flow_confirmation_sell_screen_amount_to_receive
                         } else {
                             R.string.crypto_purchase_flow_exchange_total_title
                         },

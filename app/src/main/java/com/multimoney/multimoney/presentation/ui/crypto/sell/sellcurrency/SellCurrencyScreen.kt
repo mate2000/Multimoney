@@ -34,6 +34,7 @@ import com.multimoney.multimoney.presentation.ui.crypto.TitleSection
 import com.multimoney.multimoney.presentation.ui.crypto.sell.SellCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.util.calculateAvailableInDollars
 import com.multimoney.multimoney.presentation.util.roundToEightDecimalPlaces
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 import kotlinx.coroutines.launch
@@ -148,9 +149,11 @@ fun SellCurrencyScreenContent(
                         },
                         cryptoAssetExchange = stringResource(
                             id = R.string.crypto_sell_flow_sell_screen_available_equal_to,
-                            viewModel.cryptoAvailableCurrencyBalance
-                                .div(viewModel.uiState.pricesQuoteAndCommissions?.price
-                                    ?: DEFAULT_CURRENCY_PRICE).toCurrencyFormat(),
+                            calculateAvailableInDollars(
+                                baseAmount = viewModel.cryptoAvailableCurrencyBalance,
+                                currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price
+                                    ?: DEFAULT_CURRENCY_PRICE
+                            ).toCurrencyFormat(),
                             viewModel.cryptoAvailableCurrencyBalance.roundToEightDecimalPlaces(),
                             viewModel.asset
                         ),
@@ -190,7 +193,6 @@ fun SellCurrencyScreenContent(
                     CounterSection(
                         counterTextResourceId = R.string.crypto_sell_flow_confirmation_sell_screen_expires_in,
                         showAvailableSmartAmount = false,
-                        smartAccountAvailableBalance = viewModel.smartAccountAvailableBalance,
                         downCounter = viewModel.uiState.remainingTimeText
                     )
                 }

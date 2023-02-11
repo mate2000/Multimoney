@@ -17,6 +17,8 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
+import com.multimoney.multimoney.presentation.util.calculateAvailableInDollars
+import com.multimoney.multimoney.presentation.util.calculateConfirmationBaseAmount
 import com.multimoney.multimoney.presentation.util.calculateQuote
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -51,9 +53,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
     private var side = ""
     var assetImageUrl = ""
     var idCurrencyAccount = CurrencyType.Colon.id
-    var smartAccountAvailableBalance = 0.0
     var cryptoAvailableCurrencyBalance = 0.0
-    var cryptoAvailableCurrencyBalanceDollars = 0.0
     var ibanAccountNumber = ""
 
     private fun onSetUserData(
@@ -67,9 +67,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
         accountToken: Long,
         side: String,
         assetImageUrl: String?,
-        smartAccountAvailableBalance: Double,
         cryptoAvailableCurrencyBalance: Double,
-        cryptoAvailableCurrencyBalanceDollars: Double,
         idCurrencyAccount: Int,
         ibanAccountNumber: String
     ) {
@@ -86,12 +84,8 @@ class SellCurrencyScreenViewModel @Inject constructor(
         this.assetImageUrl = assetImageUrl ?: ""
         this.ibanAccountNumber = ibanAccountNumber
         this.cryptoAvailableCurrencyBalance = cryptoAvailableCurrencyBalance
-        this.cryptoAvailableCurrencyBalanceDollars = cryptoAvailableCurrencyBalanceDollars
-        this.smartAccountAvailableBalance = smartAccountAvailableBalance
         if (idCurrencyAccount == CurrencyType.Colon.id) {
-            convertColonesToDollars(smartAccountAvailableBalance)
-        } else {
-            this.smartAccountAvailableBalance = smartAccountAvailableBalance
+            getExchangeRate()
         }
     }
 
@@ -170,36 +164,6 @@ class SellCurrencyScreenViewModel @Inject constructor(
         }
     }
 
-    private fun convertColonesToDollars(smartAccountAvailableBalance: Double): Unit =
-        executeUseCase {
-            getExchangeRate.invoke(
-                user = user,
-                identification = identification,
-                idBrand = idBrand,
-                abbreviation = CurrencyType.Dollar.disbursementValue,
-                idOriginCurrency = CurrencyType.Colon.id.toString(),
-                idDestinationCurrency = CurrencyType.Dollar.id.toString(),
-                amount = smartAccountAvailableBalance
-            ).collectLatest { result ->
-                result.onLoading {
-                    this.smartAccountAvailableBalance = 0.0
-                }
-                result.onSuccess { exchangeRate ->
-                    if (smartAccountAvailableBalance == 0.0) {
-                        onFailure()
-                        return@onSuccess
-                    }
-                    this.smartAccountAvailableBalance = exchangeRate?.convertedAmount ?: 0.0
-                }
-                result.onFailure {
-                    timer.stopTimer()
-                    confirmationTimer.stopTimer()
-                    this.smartAccountAvailableBalance = 0.0
-                    onFailure()
-                }
-            }
-        }
-
     private fun getExchangeRate(): Unit = executeUseCase {
         getExchangeRate.invoke(
             user = user,
@@ -236,9 +200,12 @@ class SellCurrencyScreenViewModel @Inject constructor(
             quoteAmount < MINIMUM_AMOUNT_ALLOWED -> isError(
                 errorMessage = R.string.crypto_sell_flow_error_minimum_amount, isError = true
             )
-            quoteAmount >= smartAccountAvailableBalance -> isError(
+            quoteAmount > calculateAvailableInDollars(
+                baseAmount = cryptoAvailableCurrencyBalance,
+                currencyPrice = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER
+            ) -> isError(
                 errorMessage = R.string.crypto_purchase_flow_error_available_amount,
-                arg = cryptoAvailableCurrencyBalance.roundToEightDecimalPlaces(),
+                arg = "${cryptoAvailableCurrencyBalance.roundToEightDecimalPlaces()} $asset",
                 isError = true
             )
             else -> isError()
@@ -265,7 +232,11 @@ class SellCurrencyScreenViewModel @Inject constructor(
             idBrand = idBrand,
             user = user,
             quoteId = uiState.pricesQuoteAndCommissions?.quote_id ?: "",
-            baseAmount = uiState.baseAmount.value.toDouble(),
+            baseAmount = calculateConfirmationBaseAmount(
+                quoteAmount = uiState.quoteAmount.value,
+                baseAmount = uiState.baseAmount.value,
+                currencyPrice = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER
+            ).toDouble(),
             fee = uiState.pricesQuoteAndCommissions?.fee?.toDouble() ?: 0.0,
             internalFee = uiState.pricesQuoteAndCommissions?.internal_fee ?: 0.0,
             totalFee = uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
@@ -335,7 +306,6 @@ class SellCurrencyScreenViewModel @Inject constructor(
                 positiveAction = {
                     updateUiWithNewPricesAndCommissions()
                     if (idCurrencyAccount == CurrencyType.Colon.id) {
-                        convertColonesToDollars(smartAccountAvailableBalance)
                         getExchangeRate()
                     }
                 })
@@ -370,8 +340,6 @@ class SellCurrencyScreenViewModel @Inject constructor(
         // timer *
         val openDialog: DialogParameters = DialogParameters(),
         val failureAction: () -> Unit = {},
-        val isSellFailed: Boolean = false, // to handle error screen after purchase
-        val isSellSuccess: Boolean = false, // to handle success screen after purchase
         //** validations
         val isError: Boolean = false,
         @StringRes val error: Int = R.string.empty,

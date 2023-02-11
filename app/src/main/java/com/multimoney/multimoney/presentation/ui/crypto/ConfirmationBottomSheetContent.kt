@@ -46,6 +46,7 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
  * @param evaluatedAmount - AnnotatedString to display amount exchange respect to the currency
  * @param showAssetImage - boolean to determine if the asset image should be displayed
  * @param showTotalToReceive - boolean to determine if the total to receive section should be displayed
+ * @param showBottomExchangeInfo - boolean to determine if the bottom exchange info section should be displayed
  * @param amountToReceive - number to display in the total to receive section
  * @param ibanAccountNumber - number to display in the account info section
  * @param buttonText - text to display in the button
@@ -68,6 +69,7 @@ fun ConfirmationBottomSheetContent(
     evaluatedAmount: AnnotatedString = AnnotatedString(""),
     showAssetImage: Boolean = true,
     showTotalToReceive: Boolean = false,
+    showBottomExchangeInfo: Boolean = false,
     amountToReceive: String = DEFAULT_AMOUNT,
     ibanAccountNumber: String = "",
     buttonText: String = "",
@@ -92,17 +94,23 @@ fun ConfirmationBottomSheetContent(
             evaluatedAmount = evaluatedAmount,
             assetImageUrl = assetImageUrl,
             showTotalToReceive = showTotalToReceive,
-            amountToReceive = amountToReceive,
+            amountToReceive = if (idCurrency == CurrencyType.Colon.id) {
+                convertedAmount
+            } else {
+                amountToReceive
+            },
+            exchangeRate = exchangeRate,
             isLoading = isLoading,
             asset = asset,
             secondsRemaining = secondsRemaining,
-            showAssetImage = showAssetImage
+            showAssetImage = showAssetImage,
+            idCurrency = idCurrency
         )
         AccountInfoSection(
             idCurrency = idCurrency,
             ibanAccountNumber = ibanAccountNumber
         )
-        if (idCurrency == CurrencyType.Colon.id) {
+        if (showBottomExchangeInfo) {
             WhileLoadingSection(
                 isLoading = isLoading,
                 contentLoading = { VoucherCurrencyExchangeInfoSkeleton() },
@@ -165,7 +173,9 @@ private fun InfoSection(
     secondsRemaining: String,
     showAssetImage: Boolean = true,
     showTotalToReceive: Boolean = false,
-    amountToReceive: String
+    idCurrency: Int = CurrencyType.Dollar.id,
+    amountToReceive: String,
+    exchangeRate: String
 ) {
     Column(
         modifier = Modifier
@@ -213,6 +223,19 @@ private fun InfoSection(
         )
         if (showTotalToReceive) {
             Spacer(modifier = Modifier.height(24.dp))
+            if (idCurrency == CurrencyType.Colon.id) {
+                Text(
+                    modifier = Modifier.padding(vertical = 4.dp),
+                    text = buildAnnotatedString {
+                        append(stringResource(id = R.string.crypto_purchase_flow_exchange_type_title))
+                        append(WHITE_SPACE)
+                        withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append(exchangeRate)
+                        }
+                    },
+                    style = Typography.body2.copy(color = MultimoneyTheme.colors.bodyTextColor),
+                )
+            }
             Text(
                 modifier = Modifier.padding(vertical = 4.dp),
                 text = buildAnnotatedString {

@@ -22,6 +22,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -102,6 +103,7 @@ fun PurchaseConfirmationBottomSheet(
             ),
             buttonText = stringResource(id = R.string.crypto_purchase_flow_confirmation_btn_buy),
             showTotalToReceive = false,
+            showBottomExchangeInfo = viewModel.idBrand == Brand.CostaRica.id,
             asset = viewModel.asset,
             assetImageUrl = viewModel.assetImageUrl,
             secondsRemaining = viewModel.uiState.remainingTimeText,

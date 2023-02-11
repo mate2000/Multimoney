@@ -100,7 +100,8 @@ fun SellConfirmationBottomSheet(
                     ))
                 }
             },
-            showTotalToReceive = viewModel.idCurrencyAccount == CurrencyType.Dollar.id,
+            showTotalToReceive = true,
+            showBottomExchangeInfo = false,
             amountToReceive = calculateConfirmationQuoteAmount(
                 quoteAmount = viewModel.uiState.quoteAmount.value,
                 baseAmount = viewModel.uiState.baseAmount.value,

@@ -39,7 +39,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.sell.SellCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
@@ -63,33 +62,33 @@ fun SellCryptoVoucherScreen(
     viewModel: SellCryptoVoucherViewModel = hiltViewModel()
 ) {
     SellCryptoVoucherContent(
-        quoteAmount = sharedViewModel.uiState.voucherQuoteAmount ?: "",
+        assetAmount = sharedViewModel.uiState.voucherAssetAmount ?: "",
         currencyName = sharedViewModel.uiState.asset ?: "",
-        baseAmount = sharedViewModel.uiState.voucherBaseAmount ?: "",
+        approximateValue = sharedViewModel.uiState.voucherApproximateValue ?: "",
         accountNumber = sharedViewModel.uiState.ibanAccountNumber,
         referenceNumber = sharedViewModel.uiState.voucherReferenceNumber ?: "",
-        currentDate = sharedViewModel.uiState.purchaseCurrentDate ?: "",
-        currentTime = sharedViewModel.uiState.purchaseCurrentTime ?: "",
+        currentDate = sharedViewModel.uiState.voucherSellDate ?: "",
+        currentTime = sharedViewModel.uiState.voucherSellTime ?: "",
         exchangeRate = sharedViewModel.uiState.voucherExchangeRate ?: "",
-        totalDebitedExchange = sharedViewModel.uiState.voucherTotalDebitedExchange ?: "",
-        totalDebitedAmount = sharedViewModel.uiState.voucherTotalDebitedAmount ?: "",
-        idCurrency = sharedViewModel.uiState.idCurrency ?: CurrencyType.Dollar.id,
+        totalCreditedAmountExchange = sharedViewModel.uiState.voucherTotalCreditedAmountExchange,
+        totalCreditedAmount = sharedViewModel.uiState.voucherTotalCreditedAmount ?: "",
+        idCurrency = sharedViewModel.uiState.idCurrency,
         viewModel = viewModel
     )
 }
 
 @Composable
 fun SellCryptoVoucherContent(
-    quoteAmount: String,
+    assetAmount: String,
     currencyName: String,
-    baseAmount: String,
+    approximateValue: String,
     accountNumber: String,
     referenceNumber: String,
     currentDate: String,
     currentTime: String,
     exchangeRate: String,
-    totalDebitedExchange: String,
-    totalDebitedAmount: String,
+    totalCreditedAmountExchange: String,
+    totalCreditedAmount: String,
     idCurrency: Int? = CurrencyType.Dollar.id,
     viewModel: SellCryptoVoucherViewModel
 ) {
@@ -177,14 +176,14 @@ fun SellCryptoVoucherContent(
                             buttonType = CustomButtonType.PrimaryTertiary
                         )
                         Text(
-                            text = stringResource(R.string.buy_crypto_voucher_you_have_paid),
+                            text = stringResource(R.string.sell_crypto_voucher_you_have_sold),
                             modifier = Modifier.padding(top = 12.dp),
                             style = Typography.body1,
                             color = MultimoneyTheme.colors.text
                         )
                         Text(
                             modifier = Modifier.fillMaxWidth(),
-                            text = quoteAmount,
+                            text = assetAmount,
                             style = Typography.h4.copy(fontWeight = FontWeight.W600),
                             color = MultimoneyTheme.colors.text,
                             textAlign = TextAlign.Center
@@ -193,7 +192,7 @@ fun SellCryptoVoucherContent(
                             modifier = Modifier.fillMaxWidth(),
                             text = stringResource(
                                 id = R.string.buy_crypto_voucher_value_in_currency_template,
-                                currencyName
+                                if(idCurrency == CurrencyType.Dollar.id) CurrencyType.Dollar.stringName else CurrencyType.Colon.stringName
                             ),
                             style = Typography.body2.copy(fontWeight = FontWeight.W600),
                             color = MultimoneyTheme.colors.text,
@@ -201,11 +200,7 @@ fun SellCryptoVoucherContent(
                         )
                         Text(
                             modifier = Modifier.fillMaxWidth(),
-                            text = stringResource(
-                                id = R.string.buy_crypto_voucher_final_value_in_currency_template,
-                                baseAmount,
-                                currencyName
-                            ),
+                            text = approximateValue,
                             style = Typography.body2.copy(fontWeight = FontWeight.W100),
                             color = MultimoneyTheme.colors.text,
                             textAlign = TextAlign.Center
@@ -221,7 +216,7 @@ fun SellCryptoVoucherContent(
                             )
                     )
                     Text(
-                        text = stringResource(R.string.buy_crypto_voucher_from_account),
+                        text = stringResource(R.string.sell_crypto_voucher_to_account),
                         modifier = Modifier.padding(top = 16.dp, start = 24.dp),
                         style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
                         color = MultimoneyTheme.colors.labelText
@@ -247,17 +242,17 @@ fun SellCryptoVoucherContent(
                     if (idCurrency == CurrencyType.Colon.id) {
                         Spacer(modifier = Modifier.height(32.dp))
                         VoucherCurrencyExchangeInfo(
-                            leftTitleResource = R.string.buy_crypto_voucher_mount_to_charge,
+                            leftTitleResource = R.string.sell_crypto_voucher_amount_credited,
                             rightTitleResource = R.string.buy_crypto_voucher_exchange_rate,
-                            exchangeRateText = totalDebitedExchange,
+                            exchangeRateText = totalCreditedAmountExchange,
                             convertedAmountText = exchangeRate
                         )
                     } else {
                         VoucherTotalAmountInfo(
                             modifier = Modifier.padding(start = 27.dp, top = 32.dp),
                             icon = R.drawable.ic_money_voucher,
-                            title = stringResource(R.string.buy_crypto_voucher_mount_to_charge),
-                            subTitle = totalDebitedAmount
+                            title = stringResource(R.string.sell_crypto_voucher_amount_credited),
+                            subTitle = totalCreditedAmount
                         )
                     }
                     Row(

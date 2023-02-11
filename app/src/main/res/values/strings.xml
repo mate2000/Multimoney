@@ -1276,6 +1276,8 @@
     <string name="crypto_purchase_flow_error_no_funds" translatable="false">Fondos Insuficientes para aplicar la compra</string>
     <string name="crypto_purchase_flow_error_price_expired" translatable="false">Cotización caducada</string>
     <string name="crypto_purchase_flow_error_processing_purchase" translatable="false">¡Oh no! Hubo un error al completar la compra</string>
+    <string name="crypto_sell_flow_error_processing_sell" translatable="false">¡Oh no! Hubo un error al completar la venta</string>
+
 
 
     <!-- Evicertia screen -->

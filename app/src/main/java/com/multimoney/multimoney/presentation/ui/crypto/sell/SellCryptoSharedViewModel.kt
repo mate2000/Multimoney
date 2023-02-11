@@ -12,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.PurchaseCryptoSteps
+import com.multimoney.data.util.catalog.SellCryptoStep
 import com.multimoney.domain.model.accountsmart.SmartAccountSmall
 import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.crypto.MarketCryptoCoin
@@ -25,9 +26,12 @@ import com.multimoney.multimoney.presentation.ui.crypto.CryptoOperationSide
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.getCurrentDate
+import com.multimoney.multimoney.presentation.util.getCurrentTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -169,12 +173,31 @@ class SellCryptoSharedViewModel @Inject constructor(
             accountToken = accountToken
         )
     }
-
+    private fun onSetupVoucherDetails(
+        assetAmount: String,
+        approximateValue: String,
+        totalCreditedAmount: String,
+        exchangeRate: String,
+        totalCreditedAmountExchange: String,
+        referenceNumber: String
+    ) {
+        uiState = uiState.copy(
+            voucherAssetAmount = assetAmount,
+            voucherApproximateValue = approximateValue,
+            voucherReferenceNumber = referenceNumber,
+            voucherTotalCreditedAmount = totalCreditedAmount,
+            voucherExchangeRate = exchangeRate,
+            voucherTotalCreditedAmountExchange = totalCreditedAmountExchange,
+            voucherSellDate = getCurrentDate(Calendar.getInstance().time),
+            voucherSellTime = getCurrentTime(Calendar.getInstance().time)
+        )
+    }
     data class UIState(
         val currentStep: Int = PurchaseCryptoSteps.One.pageNumber,
         val isLoading: Boolean = false,
         val accounts: List<SmartAccountSmall> = listOf(),
         val userCryptoBalances: List<BalanceCryptoAccountItems> = listOf(),
+        val currentStepType: SellCryptoStep = SellCryptoStep.LIST_CRYPTO_CURRENCIES,
         val openDialog: DialogParameters = DialogParameters(),
         var bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
         var bottomSheet: (@Composable () -> Unit) = {},
@@ -192,6 +215,14 @@ class SellCryptoSharedViewModel @Inject constructor(
         val assetAvailable: Double? = 0.0,
         val assetBalanceDollars: Double? = 0.0,
         val accountToken: String = "",
+        val voucherAssetAmount: String = "",
+        val voucherApproximateValue: String = "",
+        val voucherTotalCreditedAmount: String = "",
+        val voucherTotalCreditedAmountExchange: String = "",
+        val voucherExchangeRate: String = "",
+        val voucherReferenceNumber: String= "",
+        val voucherSellDate: String ="",
+        val voucherSellTime: String = "",
         val comingFromDetails: Boolean = false,
         var previousAction: () -> Unit = {},
         val nextAction: () -> Unit = {},
@@ -222,6 +253,20 @@ class SellCryptoSharedViewModel @Inject constructor(
                 event.ibanAccountNumber,
                 event.accountToken
             )
+            is UIEvent.OnSetFlowStep -> uiState = uiState.copy(currentStepType = event.step)
+            is UIEvent.OnNavigateHome -> navigateBack(
+                popTo = Screen.HomeScreen.route,
+                isRestart = true,
+                homeState = HomeState.COLLAPSED
+            )
+            is UIEvent.OnSetupVoucherDetails -> onSetupVoucherDetails(
+                event.assetAmount,
+                event.approximateValue,
+                event.totalCreditedAmount,
+                event.exchangeRate,
+                event.totalCreditedAmountExchange,
+                event.referenceNumber
+            )
         }
     }
 
@@ -241,8 +286,20 @@ class SellCryptoSharedViewModel @Inject constructor(
             val accountNumber: String,
             val ibanAccountNumber: String
         ) : UIEvent()
+        object OnNavigateHome : UIEvent()
+        data class OnSetupVoucherDetails(
+            val assetAmount: String,
+            val approximateValue: String,
+            val totalCreditedAmount: String,
+            val exchangeRate: String,
+            val totalCreditedAmountExchange: String,
+            val referenceNumber: String
+        ) :
+            UIEvent()
 
         object OnGetUserInfo : UIEvent()
+        data class OnSetFlowStep(val step: SellCryptoStep) : UIEvent()
+
 
     }
 

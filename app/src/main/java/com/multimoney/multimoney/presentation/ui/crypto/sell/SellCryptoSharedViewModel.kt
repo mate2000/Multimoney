@@ -144,8 +144,9 @@ class SellCryptoSharedViewModel @Inject constructor(
     private fun onCloseClick() {
         uiState = uiState.copy(
             openDialog = DialogParameters(
-                titleResource = R.string.smart_close_origination_dialog_title,
-                positiveResource = R.string.common_leave,
+                titleResource = R.string.crypto_purchase_flow_exit_dialog_title,
+                descriptionResource = R.string.crypto_sell_flow_dialog_cancel_message,
+                positiveResource = R.string.crypto_purchase_flow_exit_dialog_cancel_button,
                 negativeResource = R.string.button_continue,
                 positiveAction = { navigateBackToHome() },
                 isActive = mutableStateOf(true)

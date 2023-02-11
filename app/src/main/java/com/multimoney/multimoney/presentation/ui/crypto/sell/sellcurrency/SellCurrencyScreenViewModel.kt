@@ -6,6 +6,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.catalog.SellStatus
+import com.multimoney.domain.interaction.accountsmart.QuerySmartExchangeRateUseCase
 import com.multimoney.domain.interaction.crypto.GetPriceQuoteAndCommissionsUseCase
 import com.multimoney.domain.interaction.crypto.SellCryptoCurrencyUseCase
 import com.multimoney.domain.model.crypto.PricesQuoteAndCommissions
@@ -14,12 +16,14 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.util.calculateAmountPlusFee
+import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
+import com.multimoney.multimoney.presentation.util.calculateAvailableInDollars
+import com.multimoney.multimoney.presentation.util.calculateConfirmationBaseAmount
 import com.multimoney.multimoney.presentation.util.calculateQuote
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.format
-import com.multimoney.multimoney.presentation.util.toCurrencyFormat
+import com.multimoney.multimoney.presentation.util.roundToEightDecimalPlaces
 import com.multimoney.multimoney.util.CryptoTimerHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -30,6 +34,7 @@ import kotlin.time.Duration.Companion.seconds
 @HiltViewModel
 class SellCurrencyScreenViewModel @Inject constructor(
     private val getPriceQuoteAndCommissionsUseCase: GetPriceQuoteAndCommissionsUseCase,
+    private val getExchangeRate: QuerySmartExchangeRateUseCase,
     private val sellCryptoCurrencyUseCase: SellCryptoCurrencyUseCase
 ) : BaseViewModel(false) {
 
@@ -77,8 +82,11 @@ class SellCurrencyScreenViewModel @Inject constructor(
         this.accountToken = accountToken
         this.side = side
         this.assetImageUrl = assetImageUrl ?: ""
-        this.cryptoAvailableCurrencyBalance = cryptoAvailableCurrencyBalance
         this.ibanAccountNumber = ibanAccountNumber
+        this.cryptoAvailableCurrencyBalance = cryptoAvailableCurrencyBalance
+        if (idCurrencyAccount == CurrencyType.Colon.id) {
+            getExchangeRate()
+        }
     }
 
     private val timer = CryptoTimerHelper(
@@ -93,6 +101,9 @@ class SellCurrencyScreenViewModel @Inject constructor(
         },
         onFinished = {
             updateUiWithNewPricesAndCommissions()
+            if (idCurrencyAccount == CurrencyType.Colon.id) {
+                getExchangeRate()
+            }
         }
     )
 
@@ -109,6 +120,9 @@ class SellCurrencyScreenViewModel @Inject constructor(
         },
         onFinished = {
             updateUiWithNewPricesAndCommissions()
+            if (idCurrencyAccount == CurrencyType.Colon.id) {
+                getExchangeRate()
+            }
         }
     )
 
@@ -150,29 +164,48 @@ class SellCurrencyScreenViewModel @Inject constructor(
         }
     }
 
+    private fun getExchangeRate(): Unit = executeUseCase {
+        getExchangeRate.invoke(
+            user = user,
+            identification = identification,
+            idBrand = idBrand,
+            abbreviation = CurrencyType.Colon.disbursementValue,
+            idOriginCurrency = CurrencyType.Dollar.id.toString(),
+            idDestinationCurrency = CurrencyType.Colon.id.toString(),
+            amount = 0.0
+        ).collectLatest { result ->
+            result.onLoading { uiState = uiState.copy(isLoading = true) }
+            result.onSuccess { exchangeRate ->
+                uiState = uiState.copy(
+                    isLoading = false, exchangeRate = exchangeRate?.exchangeRate ?: 1.0
+                )
+            }
+            result.onFailure {
+                timer.stopTimer()
+                confirmationTimer.stopTimer()
+                onFailure()
+            }
+        }
+    }
+
     private fun validateAmountInput(amount: String) {
         val quoteAmount = calculateQuote(
             isTransformationCurrency = uiState.isTransformationCurrency.value,
             amount = amount,
             price = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER
         )
-        val amountPlusFee = calculateAmountPlusFee(
-            amount = amount,
-            fee = uiState.pricesQuoteAndCommissions?.totalFee
-        )
 
         when {
             amount.isEmpty() -> isError(isError = true)
             quoteAmount < MINIMUM_AMOUNT_ALLOWED -> isError(
-                errorMessage = R.string.crypto_purchase_flow_error_minimum_amount, isError = true
+                errorMessage = R.string.crypto_sell_flow_error_minimum_amount, isError = true
             )
-            quoteAmount >= cryptoAvailableCurrencyBalance -> isError(
+            quoteAmount > calculateAvailableInDollars(
+                baseAmount = cryptoAvailableCurrencyBalance,
+                currencyPrice = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER
+            ) -> isError(
                 errorMessage = R.string.crypto_purchase_flow_error_available_amount,
-                arg = cryptoAvailableCurrencyBalance.toCurrencyFormat(),
-                isError = true
-            )
-            amountPlusFee >= cryptoAvailableCurrencyBalance -> isError(
-                errorMessage = R.string.crypto_purchase_flow_error_available_amount_commission,
+                arg = "${cryptoAvailableCurrencyBalance.roundToEightDecimalPlaces()} $asset",
                 isError = true
             )
             else -> isError()
@@ -192,18 +225,72 @@ class SellCurrencyScreenViewModel @Inject constructor(
             pkUser = pkUser,
             identification = identification,
             market = market,
-            commissionPercentage = 0.0,
+            commissionPercentage = uiState.pricesQuoteAndCommissions?.taxAmount ?: 0.0,
             taxPercentage = uiState.pricesQuoteAndCommissions?.taxAmount ?: 0.0,
             accountToken = accountToken,
             exchangeRate = uiState.exchangeRate,
             idBrand = idBrand,
             user = user,
             quoteId = uiState.pricesQuoteAndCommissions?.quote_id ?: "",
-            baseAmount = uiState.baseAmount.value.toDouble(),
+            baseAmount = calculateConfirmationBaseAmount(
+                quoteAmount = uiState.quoteAmount.value,
+                baseAmount = uiState.baseAmount.value,
+                currencyPrice = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER
+            ).toDouble(),
             fee = uiState.pricesQuoteAndCommissions?.fee?.toDouble() ?: 0.0,
             internalFee = uiState.pricesQuoteAndCommissions?.internal_fee ?: 0.0,
             totalFee = uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
-        )
+        ).collectLatest { result ->
+            result.onLoading {
+                uiState = uiState.copy(
+                    isLoading = true,
+                    sellStatus = SellStatus.LOADING
+                )
+            }
+            result.onSuccess {
+                when (it.sellHQRResponse.status) {
+                    CryptoProcessErrorCodes.InsufficientFundsSell.status -> {
+                        confirmationTimer.stopTimer()
+                        timer.stopTimer()
+                        isError(
+                            errorMessage = R.string.crypto_sell_flow_error_not_funds,
+                            isError = true
+                        )
+                        uiState = uiState.copy(
+                            isLoading = false,
+                            sellStatus = SellStatus.IDLE
+                        )
+                        return@onSuccess
+                    }
+                    CryptoProcessErrorCodes.ExpiredPriceSell.status -> {
+                        confirmationTimer.stopTimer()
+                        timer.stopTimer()
+                        isError(
+                            errorMessage = R.string.crypto_purchase_flow_error_price_expired,
+                            isError = true
+                        )
+                        uiState = uiState.copy(
+                            isLoading = false,
+                            sellStatus = SellStatus.IDLE
+
+                        )
+                        return@onSuccess
+                    }
+                }
+                uiState = uiState.copy(
+                    isLoading = false,
+                    referenceNumber = it.sellHQRResponse.result?.sysdeTransactionNumber,
+                    sellStatus = SellStatus.SUCCESS
+
+                )
+            }
+            result.onFailure {
+                uiState = uiState.copy(
+                    isLoading = false,
+                    sellStatus = SellStatus.FAILED
+                )
+            }
+        }
     }
 
     private fun onFailure() {
@@ -218,6 +305,9 @@ class SellCurrencyScreenViewModel @Inject constructor(
                 },
                 positiveAction = {
                     updateUiWithNewPricesAndCommissions()
+                    if (idCurrencyAccount == CurrencyType.Colon.id) {
+                        getExchangeRate()
+                    }
                 })
         )
     }
@@ -240,6 +330,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
         val quoteAmount: MutableState<String> = mutableStateOf(""),
         val baseAmount: MutableState<String> = mutableStateOf(""),
         val pricesQuoteAndCommissions: PricesQuoteAndCommissions? = null,
+        val referenceNumber: String? = null,
         // ** interactions
         val isConfirmationBottomSheetOpen: Boolean = false,
         val isLoading: Boolean = false,
@@ -249,13 +340,12 @@ class SellCurrencyScreenViewModel @Inject constructor(
         // timer *
         val openDialog: DialogParameters = DialogParameters(),
         val failureAction: () -> Unit = {},
-        val isSellFailed: Boolean = false, // to handle error screen after purchase
-        val isSellSuccess: Boolean = false, // to handle success screen after purchase
         //** validations
         val isError: Boolean = false,
         @StringRes val error: Int = R.string.empty,
         val errorMessageArg: Any = Any(),
-        val isTransformationCurrency: MutableState<Boolean> = mutableStateOf(false)
+        val isTransformationCurrency: MutableState<Boolean> = mutableStateOf(false),
+        val sellStatus: SellStatus = SellStatus.IDLE
     )
 
     fun onUIEvent(event: UIEvent) {

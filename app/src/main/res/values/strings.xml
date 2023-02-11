@@ -1688,12 +1688,17 @@
     <string name="crypto_sell_flow_sell_screen_title_cr" translatable="false">¿Cuánto querés vender?</string>
     <string name="crypto_sell_flow_sell_screen_title_sv" translatable="false">¿Cuánto quieres vender?</string>
     <string name="crypto_sell_flow_confirmation_sell_title" translatable="false">Monto a vender</string>
+    <string name="crypto_sell_flow_dialog_cancel_message" translatable="false">Si cancelás el proceso no se realizará la venta de la cripto</string>
     <string name="crypto_sell_flow_sell_screen_disclaimer" translatable="false">Los tipos de cambio incluyen una conversión de moneda y se actualizan con frecuencia</string>
     <string name="crypto_sell_flow_sell_screen_available_equal_to" translatable="false">Disponible %1s ≈ %2s %3s</string>
-    <string name="crypto_sell_flow_confirmation_sell_screen_exhange_title" translatable="false">Total a depositar</string>
     <string name="crypto_sell_flow_confirmation_sell_screen_expires_in" translatable="false">Precio de venta expira en</string>
     <string name="crypto_sell_flow_confirmation_sell_screen_evaluate_amount" translatable="false">Valor aproximado en %1s</string>
     <string name="crypto_sell_flow_confirmation_sell_screen_amount_to_receive" translatable="false">Total a recibir</string>
+    <string name="crypto_sell_flow_confirmation_sell_screen_btn_text" translatable="false">Vender</string>
+
+    <!-- Crypto sell flow Errors-->
+    <string name="crypto_sell_flow_error_not_funds" translatable="false">Fondos Insuficientes para aplicar la venta</string>
+    <string name="crypto_sell_flow_error_minimum_amount" translatable="false">El monto mínimo de venta es de $5</string>
 
     <!-- Visa Verified -->
     <string name="visa_verified_title" translatable="false">Verifiquemos tu tarjeta</string>

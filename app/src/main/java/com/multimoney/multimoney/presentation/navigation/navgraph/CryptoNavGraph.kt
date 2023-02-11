@@ -9,27 +9,29 @@ import androidx.navigation.navigation
 import com.multimoney.multimoney.presentation.navigation.CARD_STATUS
 import com.multimoney.multimoney.presentation.navigation.CRYPTO_ASSET
 import com.multimoney.multimoney.presentation.navigation.CRYPTO_ROUTE
-import com.multimoney.multimoney.presentation.navigation.DESCRIPTION_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.GLOBAL_CRYPTO_BALANCE
 import com.multimoney.multimoney.presentation.navigation.HOME_STATE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNTS_LIST
 import com.multimoney.multimoney.presentation.navigation.STATUS_CREDIT
 import com.multimoney.multimoney.presentation.navigation.STATUS_CRYPTO
 import com.multimoney.multimoney.presentation.navigation.STATUS_SMART
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.USER_CRYPTO_BALANCES
 import com.multimoney.multimoney.presentation.navigation.navtype.crypto.CryptoBalanceNavType
-import com.multimoney.multimoney.presentation.navigation.navtype.crypto.CryptoCoinNavType
-import com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail.CurrencyMovementsScreen
+import com.multimoney.multimoney.presentation.navigation.navtype.crypto.MarketCryptoNavType
+import com.multimoney.multimoney.presentation.navigation.navtype.crypto.UserCryptoBalancesNavType
+import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAccountListNavType
 import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreen
 import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsScreen
 import com.multimoney.multimoney.presentation.ui.crypto.movements.CryptoMovementsAllScreen
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoFlow
 import com.multimoney.multimoney.presentation.ui.crypto.sell.SellCryptoFlow
-import com.multimoney.multimoney.presentation.ui.crypto.send.CryptoSendFlow
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWallet
+import com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail.CurrencyMovementsScreen
 
 const val ITEM_CRYPTO_CURRENCY = "item_crypto_currency"
 const val ITEM_CRYPTO_MARKET = "item_crypto_MARKET"
@@ -44,10 +46,11 @@ fun NavGraphBuilder.cryptoNavGraph(
         composable(
             route = Screen.PurchaseCryptoFlow.route,
             arguments = listOf(
+                navArgument(SMART_ACCOUNTS_LIST) { type = SmartAccountListNavType() },
                 navArgument(ITEM_CRYPTO_MARKET) {
                     nullable = true
                     defaultValue = null
-                    type = CryptoCoinNavType()
+                    type = MarketCryptoNavType()
                 }
             )
         ) {
@@ -88,7 +91,9 @@ fun NavGraphBuilder.cryptoNavGraph(
                 navArgument(STATUS_CREDIT) { type = NavType.IntType },
                 navArgument(STATUS_SMART) { type = NavType.IntType },
                 navArgument(STATUS_CRYPTO) { type = NavType.IntType },
-                navArgument(CARD_STATUS) { type = NavType.IntType }
+                navArgument(CARD_STATUS) { type = NavType.IntType },
+                navArgument(SMART_ACCOUNTS_LIST) { type = SmartAccountListNavType() },
+                navArgument(USER_CRYPTO_BALANCES) { type = UserCryptoBalancesNavType() }
             )
         ) {
             HomeWallet(
@@ -123,6 +128,12 @@ fun NavGraphBuilder.cryptoNavGraph(
                 navArgument(ITEM_CRYPTO_CURRENCY) {
                     type = CryptoBalanceNavType()
                 },
+                navArgument(SMART_ACCOUNTS_LIST) {
+                    type = SmartAccountListNavType()
+                },
+                navArgument(USER_CRYPTO_BALANCES) {
+                    type = UserCryptoBalancesNavType()
+                },
             ),
         ) {
             CurrencyMovementsScreen(
@@ -151,7 +162,11 @@ fun NavGraphBuilder.cryptoNavGraph(
         }
         composable(
             route = Screen.CryptoMarketScreen.route,
-            arguments = listOf(navArgument(ID_BRAND) { type = NavType.IntType })
+            arguments = listOf(
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(SMART_ACCOUNTS_LIST) { type = SmartAccountListNavType() },
+                navArgument(USER_CRYPTO_BALANCES) { type = UserCryptoBalancesNavType() },
+            )
         ) {
             MarketScreen(
                 onPopBackStack = {
@@ -211,8 +226,11 @@ fun NavGraphBuilder.cryptoNavGraph(
                 navArgument(ITEM_CRYPTO_MARKET) {
                     nullable = true
                     defaultValue = null
-                    type = CryptoCoinNavType()
-                }
+                    type = MarketCryptoNavType()
+                },
+                navArgument(SMART_ACCOUNTS_LIST) { type = SmartAccountListNavType() },
+                navArgument(USER_CRYPTO_BALANCES) { type = UserCryptoBalancesNavType() }
+
             )
         ) {
             MarketCurrencyDetailsScreen(
@@ -241,7 +259,13 @@ fun NavGraphBuilder.cryptoNavGraph(
                 navArgument(ITEM_CRYPTO_MARKET) {
                     nullable = true
                     defaultValue = null
-                    type = CryptoCoinNavType()
+                    type = MarketCryptoNavType()
+                },
+                navArgument(SMART_ACCOUNTS_LIST) {
+                    type = SmartAccountListNavType()
+                },
+                navArgument(USER_CRYPTO_BALANCES) {
+                    type = UserCryptoBalancesNavType()
                 }
             )
         ) {

@@ -5,16 +5,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.PurchaseCryptoSteps
+import com.multimoney.data.util.catalog.SellCryptoSteps
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.crypto.sell.listofcurrencies.SellCurrenciesListScreen
+import com.multimoney.multimoney.presentation.ui.crypto.sell.selectaccount.SelectSmartAccountScreen
+import com.multimoney.multimoney.presentation.ui.crypto.sell.sellcurrency.SellCurrencyScreen
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
@@ -107,33 +108,36 @@ fun SellCryptoFlow(
             onPositiveAction = viewModel.uiState.openDialog.positiveAction
         )
     }
-
 }
 
 @Composable
 fun SvSellCryptoDirectFlow(step: Int, viewModel: SellCryptoSharedViewModel) {
     when (step) {
-        // todo add following screens:  amount screen, and voucher
+        SellCryptoSteps.One.pageNumber -> SellCurrencyScreen(sharedViewModel = viewModel)
     }
 }
 
 @Composable
 fun CRSellCryptoDirectFlow(step: Int, viewModel: SellCryptoSharedViewModel) {
     when (step) {
-        // todo add following screens: select account for receive money, amount screen, and voucher
+        SellCryptoSteps.One.pageNumber -> SelectSmartAccountScreen(sharedViewModel = viewModel)
+        SellCryptoSteps.Two.pageNumber -> SellCurrencyScreen(sharedViewModel = viewModel)
     }
 }
 
 @Composable
 fun SvSellCryptoFlow(step: Int, viewModel: SellCryptoSharedViewModel) {
     when (step) {
-        PurchaseCryptoSteps.One.pageNumber -> SellCurrenciesListScreen(sharedViewModel = viewModel)
+        SellCryptoSteps.One.pageNumber -> SellCurrenciesListScreen(sharedViewModel = viewModel)
+        SellCryptoSteps.Two.pageNumber -> SellCurrencyScreen(sharedViewModel = viewModel)
     }
 }
 
 @Composable
 fun CRSellCryptoFlow(step: Int, viewModel: SellCryptoSharedViewModel) {
     when (step) {
-        PurchaseCryptoSteps.One.pageNumber -> SellCurrenciesListScreen(sharedViewModel = viewModel)
+        SellCryptoSteps.One.pageNumber -> SellCurrenciesListScreen(sharedViewModel = viewModel)
+        SellCryptoSteps.Two.pageNumber -> SelectSmartAccountScreen(sharedViewModel = viewModel)
+        SellCryptoSteps.Three.pageNumber -> SellCurrencyScreen(sharedViewModel = viewModel)
     }
 }

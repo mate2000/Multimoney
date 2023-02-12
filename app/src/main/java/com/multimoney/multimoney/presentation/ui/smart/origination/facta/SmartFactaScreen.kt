@@ -140,7 +140,12 @@ fun ContentSV(
                     OnIsUSCitizenChange(it == optionsCitizen.first(), Brand.ElSalvador.id)
                 )
             },
-            optionSelected = if (viewModel.uiState.isUSCitizen == true) optionsCitizen[0] else optionsCitizen[1]
+            optionSelected =
+            when (viewModel.uiState.isUSCitizen) {
+                true -> optionsCitizen[0]
+                false -> optionsCitizen[1]
+                else -> null
+            }
         )
 
         Text(
@@ -156,7 +161,11 @@ fun ContentSV(
                     OnIsPEPChange(it == optionsPep.first(), Brand.ElSalvador.id)
                 )
             },
-            optionSelected = if (viewModel.uiState.isPEP == true) optionsPep[0] else optionsPep[1]
+            optionSelected = when (viewModel.uiState.isPEP) {
+                true -> optionsPep[0]
+                false -> optionsPep[1]
+                else -> null
+            }
         )
     }
 }
@@ -211,7 +220,11 @@ fun ContentOneCR(
                         OnIsActivityOfArt15Change(it == optionsYesNo.first(), Brand.CostaRica.id)
                     )
                 },
-                optionSelected = if (viewModel.uiState.isActivityOfArt15 == true) optionsYesNo[0] else optionsYesNo[1]
+                optionSelected = when (viewModel.uiState.isActivityOfArt15) {
+                    true -> optionsYesNo[0]
+                    false -> optionsYesNo[1]
+                    else -> null
+                }
             )
 
             Text(
@@ -227,7 +240,11 @@ fun ContentOneCR(
                         OnIsPEPChange(it == optionsPep.first(), Brand.CostaRica.id)
                     )
                 },
-                optionSelected = if (viewModel.uiState.isPEP == true) optionsPep[0] else optionsPep[1]
+                optionSelected = when (viewModel.uiState.isPEP) {
+                    true -> optionsPep[0]
+                    false -> optionsPep[1]
+                    else -> null
+                }
             )
         }
         CustomButton(
@@ -269,7 +286,11 @@ fun ContentTwoCR(
                     OnIsUSTaxPayerChange(it == options.first(), Brand.CostaRica.id)
                 )
             },
-            optionSelected = if (viewModel.uiState.isUSTaxPayer == true) options[0] else options[1]
+            optionSelected = when (viewModel.uiState.isUSTaxPayer) {
+                true -> options[0]
+                false -> options[1]
+                else -> null
+            }
         )
 
         Text(
@@ -285,7 +306,12 @@ fun ContentTwoCR(
                     OnIsTaxPayerChange(it == options.first(), Brand.CostaRica.id)
                 )
             },
-            optionSelected = if (viewModel.uiState.isTaxPayer == true) options[0] else options[1]
+            optionSelected =
+            when (viewModel.uiState.isTaxPayer) {
+                true -> options[0]
+                false -> options[1]
+                else -> null
+            }
         )
     }
     sharedViewModel.onUIEvent(

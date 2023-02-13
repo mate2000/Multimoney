@@ -30,7 +30,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.LocalMultimoneyColors
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.AmountInputSection
+import com.multimoney.multimoney.presentation.ui.crypto.AmountInputSection
 import com.multimoney.multimoney.presentation.ui.crypto.send.CryptoSendSharedViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeText

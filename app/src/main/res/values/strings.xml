@@ -277,10 +277,10 @@
 
     <!-- Sign Up Id Validation-->
     <string name="sign_up_id_validation_title" translatable="false">Validemos tu identidad</string>
-    <string name="sign_up_id_validation_subtitle" translatable="false">Para ello te recomendamos:</string>
-    <string name="sign_up_id_validation_one" translatable="false">Busca buena iluminación para tomar las fotografías</string>
-    <string name="sign_up_id_validation_two" translatable="false">Tené a la mano tu identificación al día</string>
-    <string name="sign_up_id_validation_three" translatable="false">Tomarás una fotografía de tu rostro, no utilices lentes u otros accesorios</string>
+    <string name="sign_up_id_validation_subtitle" translatable="false">Recomendamos:</string>
+    <string name="sign_up_id_validation_one" translatable="false">Buscá buena iluminación para tomar las fotos</string>
+    <string name="sign_up_id_validation_two" translatable="false">Tené a mano tu identificación de identificación</string>
+    <string name="sign_up_id_validation_three" translatable="false">Tomate una selfie sin lentes o accesorios</string>
 
     <!-- Sign Up Complete -->
     <string name="sign_up_complete_title" translatable="false">¡Felices finanzas!\nBienvenid@ a MultiMoney</string>

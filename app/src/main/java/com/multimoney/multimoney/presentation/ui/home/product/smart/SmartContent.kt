@@ -5,30 +5,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.CardInactiveSmartProduct
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.CardSmartProduct
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 
 @Composable
-fun SmartContent(viewModel: ProductViewModel, index: Int) {
+fun SmartContent(viewModel: ProductViewModel, index: Int, whatsAppLink: String = "") {
     LaunchedEffect(key1 = true) {
         viewModel.onUIEvent(UIEvent.OnGetSmartContent)
     }
 
     val context = LocalContext.current
-    val whatsAppLink = stringResource(
-        id = R.string.whatsapp_deep_link,
-        SignUpViewModel.PHONE_HARDCODED
-    )
 
     CustomProductBackground(
         modifier = Modifier.padding(horizontal = 16.dp),
@@ -46,7 +39,7 @@ fun SmartContent(viewModel: ProductViewModel, index: Int) {
                             viewModel.onUIEvent(
                                 OnNavigateToSmartOriginationFlow(
                                     smartStep = viewModel.uiState.smartContent.second,
-                                    onIntent = { context.openWhatsAppDeepLink(whatsAppLink) }
+                                    onIntent = { context.openWhatsAppDeepLink(viewModel.uiState.userStatus?.infoBankAccount?.wording?.link ?: "") }
                                 )
                             )
                         }

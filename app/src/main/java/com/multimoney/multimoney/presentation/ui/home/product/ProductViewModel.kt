@@ -17,14 +17,11 @@ import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.PENDING
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.REJECTED
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.data.util.catalog.MyProductStatus
-import com.multimoney.data.util.catalog.SmartAccountStatus.EXIST_IN_CORE
-import com.multimoney.data.util.catalog.SmartAccountStatus.NO_EXIST
-import com.multimoney.data.util.catalog.SmartAccountStatusRequest
-import com.multimoney.data.util.catalog.SmartAccountStatusRequest.CANCELED
-import com.multimoney.data.util.catalog.SmartAccountStatusRequest.CREATED
-import com.multimoney.data.util.catalog.SmartAccountStatusRequest.SENT
 import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.SmartSteps
+import com.multimoney.data.util.catalog.SmartWorkflow
+import com.multimoney.data.util.catalog.SmartWorkflow.SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS
+import com.multimoney.data.util.catalog.SmartWorkflow.SMART_ONFIDO_PROCESS
 import com.multimoney.domain.interaction.accountsmart.MutationAccountStatusUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryListSinpeAccountUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceCardInformationUseCase
@@ -372,17 +369,16 @@ class ProductViewModel @Inject constructor(
     ) {
         // TODO Implement navigation on smart cards
         when (smartStep) {
-            SMART_ONFIDO_REJECTED -> {
+            SMART_ONFIDO_PROCESS.workflow -> {
                 // TODO get the new evicertia url
             }
-            SMART_ONFIDO_MAX_ATTEMPTS -> onIntent()
+            SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS.workflow -> onIntent()
             PENDING.status -> onCallMutationAccountStatusUseCase()
             else -> {
                 navigateTo(
                     "${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
-                        "${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}/" +
-                        "${uiState.userStatus?.infoUser?.statusOnfido}/$comingFromCrypto/" +
-                        "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}"
+                            "${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}/$comingFromCrypto/" +
+                            "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}"
                 )
             }
         }
@@ -1091,36 +1087,12 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun getSmartContent() {
-        val statusRequest = uiState.userStatus?.infoBankAccount?.infoRequest?.statusRequest
-        val statusFirm = uiState.userStatus?.infoBankAccount?.statusFirm
-        val status = uiState.userStatus?.infoBankAccount?.status
+        val workflow = uiState.userStatus?.infoBankAccount?.wording?.workflow
         uiState = uiState.copy(
-            smartContent = when (statusRequest) {
-                SmartAccountStatusRequest.PENDING.status, SENT.status, CANCELED.status, CREATED.status,
-                SMART_INITIAL_CARD, SMART_IDENTITY_INCOMPLETE, SMART_FIRMED_ONFIDO_PENDING, SMART_ONFIDO_REJECTED,
-                SMART_APPROVED_BY_ONFIDO, SMART_ONFIDO_MAX_ATTEMPTS -> {
-                    Pair(
-                        status?.equals(NO_EXIST.status) == true,
-                        statusRequest
-                    )
-                }
-                else -> {
-                    when (statusFirm) {
-                        PENDING.status, APPROVED.status, FIRMED.status, REJECTED.status, OVER_COUNTER.status, FAILED.status -> {
-                            Pair(
-                                status?.equals(NO_EXIST.status) == true,
-                                statusFirm
-                            )
-                        }
-                        else -> {
-                            if (status == NO_EXIST.status || status == EXIST_IN_CORE.status) {
-                                Pair(status == NO_EXIST.status, status.toString())
-                            } else {
-                                Pair(null, "")
-                            }
-                        }
-                    }
-                }
+            smartContent = if (workflow == SmartWorkflow.SMART_INITIAL_CARD.workflow || workflow == SmartWorkflow.SMART_STEP_PENDING.workflow || workflow == SmartWorkflow.SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS.workflow || workflow == SmartWorkflow.SMART_CONTRACT_PROCESS.workflow || workflow == SmartWorkflow.SMART_FIRMED_ONFIDO_PENDING.workflow || workflow == SmartWorkflow.SMART_FIRMED_ONFIDO_REJECTED.workflow || workflow == SmartWorkflow.SMART_APPROVED_BY_ONFIDO.workflow || workflow == SmartWorkflow.SMART_ONFIDO_PROCESS.workflow) {
+                Pair(true, workflow)
+            } else {
+                Pair(false, "")
             }
         )
     }
@@ -1399,13 +1371,13 @@ class ProductViewModel @Inject constructor(
         const val SEPARATOR = " + "
 
         // Smart
-        const val SMART_IDENTITY_INCOMPLETE = "SAMART_IDENTITY_INCOMPLETE"
-        const val SMART_ONFIDO_REJECTED = "SMART_ONFIFO_REJECTED"
-        const val SMART_INITIAL_CARD = "SMART_INITIAL_CARD"
+        const val SMART_IDENTITY_INCOMPLETE = "CONTACT"
+        const val SMART_ONFIDO_REJECTED = "SMART_ONFIDO_PROCESS"
+        const val SMART_INITIAL_CARD = "SMART_ORIGIN"
         const val SMART_APPROVED_BY_ONFIDO = "SMART_APPROVED_BY_ONFIDO"
-        const val SMART_ONFIDO_MAX_ATTEMPTS = "SMART_ONFIDO_MAX_ATTEMPTS"
+        const val SMART_ONFIDO_MAX_ATTEMPTS = "CONTACT"
         const val SMART_FIRMED_ONFIDO_PENDING = "SMART_FIRMED_ONFIDO_PENDING"
-        const val SMART_STEP_PENDING = "SMART_STEP_PENDING"
+        const val SMART_STEP_PENDING = "SMART_PROCESS"
         const val PENDING_TO_CHECK_STATUS = "Pendiente Revision"
         const val DEFAULT_NEW_STATE = "PG"
         const val DEFAULT_TYPE_STATE = "S"

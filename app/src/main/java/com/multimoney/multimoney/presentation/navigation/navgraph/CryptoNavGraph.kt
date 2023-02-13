@@ -306,7 +306,7 @@ fun NavGraphBuilder.cryptoNavGraph(
             navArgument(ITEM_CRYPTO_MARKET) {
                 nullable = true
                 defaultValue = null
-                type = CryptoCoinNavType()
+                type = MarketCryptoNavType()
             }
         )
     ) {

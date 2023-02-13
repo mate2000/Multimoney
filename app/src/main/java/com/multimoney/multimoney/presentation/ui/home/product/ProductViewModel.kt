@@ -148,7 +148,6 @@ class ProductViewModel @Inject constructor(
     var email: String = ""
     var idClient: Int = 0
     var userName: String = ""
-    var user: String = ""
     var productProgress = 0F
     val firstName: String? = null
     var isExpiredTitle = R.string.home_product_expiration
@@ -173,7 +172,6 @@ class ProductViewModel @Inject constructor(
         this.identification = identification
         this.email = email
         this.userName = userName
-        this.user = userName
         this.configurationVersion = configurationVersion
         uiState = uiState.copy(idBrand = idBrand, productPageList = productPageList)
         this.idClient = validateUserStatus?.infoUser?.idClient ?: 0
@@ -1087,7 +1085,7 @@ class ProductViewModel @Inject constructor(
         navigateTo(Screen.CryptoSendFlow.baseRoute)
     }
     private fun onNavigateToGiveCryptoFlow() {
-        navigateTo("${Screen.CryptoReceiveFlow.baseRoute}/${user}/${uiState.idBrand}")
+        navigateTo("${Screen.CryptoReceiveFlow.baseRoute}/${userName}/${uiState.idBrand}")
     }
 
     private fun getSmartContent() {

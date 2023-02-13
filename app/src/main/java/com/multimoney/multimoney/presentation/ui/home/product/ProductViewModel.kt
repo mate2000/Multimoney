@@ -1069,7 +1069,7 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToPurchaseCryptoFlow() {
-        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${encodeData(balanceCredit?.balanceAccountSmart?.toNavType())}")
+        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${encodeData(balanceCredit?.balanceAccountSmart?.toNavType())}/${Screen.HomeScreen.route}")
     }
 
     private fun onNavigateToSellCryptoFlow() {

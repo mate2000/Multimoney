@@ -171,7 +171,7 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
     }
 
     private fun onNavigateToSelectAccount(){
-        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${encodeData(smartAccounts)}?$ITEM_CRYPTO_MARKET=${encodeData(uiState.selectedCryptoCoin)}")
+        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${encodeData(smartAccounts)}/${Screen.CryptoCurrencyDetailsScreen.baseRoute}?$ITEM_CRYPTO_MARKET=${encodeData(uiState.selectedCryptoCoin)}")
     }
 
     private fun onNavigateToSellCrypto(){

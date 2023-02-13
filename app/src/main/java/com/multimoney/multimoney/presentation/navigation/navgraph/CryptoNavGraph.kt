@@ -45,6 +45,7 @@ fun NavGraphBuilder.cryptoNavGraph(
             route = Screen.PurchaseCryptoFlow.route,
             arguments = listOf(
                 navArgument(SMART_ACCOUNTS_LIST) { type = SmartAccountListNavType() },
+                navArgument(PREVIOUS_SCREEN) { type = NavType.StringType },
                 navArgument(ITEM_CRYPTO_MARKET) {
                     nullable = true
                     defaultValue = null

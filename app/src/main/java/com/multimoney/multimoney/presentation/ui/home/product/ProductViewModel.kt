@@ -1127,6 +1127,9 @@ class ProductViewModel @Inject constructor(
         }
     }
 
+    private fun navigateToMaintenanceAlert() {
+        navigateTo(Screen.MaintenanceAlertScreen.route)
+    }
 
     data class UIState(
         // Fields
@@ -1247,6 +1250,7 @@ class ProductViewModel @Inject constructor(
             is UIEvent.OnDisclaimerChecked -> onDisclaimerChecked(uiEvent.checked)
             is UIEvent.OnUpdateShouldShowDisclaimer -> updateShouldShowDisclaimer(uiEvent.checked)
             BaseEvent.OnShowDisclaimer -> onShowDisclaimer()
+            UIEvent.OnNavigateToMaintenanceAlert -> navigateToMaintenanceAlert()
         }
     }
 
@@ -1340,6 +1344,7 @@ class ProductViewModel @Inject constructor(
 
         data class OnDisclaimerChecked(val checked: Boolean) : UIEvent()
         data class OnUpdateShouldShowDisclaimer(val checked: Boolean) : UIEvent()
+        object OnNavigateToMaintenanceAlert : UIEvent()
     }
 
     sealed class BaseEvent {

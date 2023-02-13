@@ -80,6 +80,7 @@ const val PROFILE_ROUTE = "profile_route"
 const val TEST_ROUTE = "test_route"
 const val SMART_PAYMENT_ROUTE = "smart_payment_route"
 const val SMART_TRANSFER_ROUTE = "smart_transfer_route"
+const val MAINTENANCE_ALERT_ROUTE = "maintenance_alert_route"
 const val ID_BRAND = "id_brand"
 const val PHONE_NUMBER = "phone_number"
 const val NEW_PHONE_NUMBER = "new_phone_number"
@@ -630,7 +631,6 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object ChartScreen : Screen("chart_screen/{$}")
 
     // Crypto
-    // todo add params
     object PurchaseCryptoFlow : Screen(
         route = "purchase_crypto_flow/{$SMART_ACCOUNTS_LIST}?$ITEM_CRYPTO_MARKET={$ITEM_CRYPTO_MARKET}",
         baseRoute = "purchase_crypto_flow"
@@ -670,6 +670,8 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         route = "crypto_sell_flow/{$SMART_ACCOUNTS_LIST}/{$USER_CRYPTO_BALANCES}?$ITEM_CRYPTO_MARKET={$ITEM_CRYPTO_MARKET}",
         baseRoute = "crypto_sell_flow"
     )
+
+    object MaintenanceAlertScreen : Screen(route = "maintenance_alert_screen")
 
     object QrCodeScannerScreen : Screen(route = "qr_code_scanner_screen")
 }

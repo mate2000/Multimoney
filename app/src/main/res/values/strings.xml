@@ -584,8 +584,10 @@
     <string name="buy_crypto_warning_bs_content" translatable="false">Las criptomonedas son activos altamente volátiles que pueden generar pérdidas de capital. \nEsta inversión es por voluntad y riesgo propio del inversionista ya que Multimoney no se hace responsable ante eventuales perjuicios. Te recomendamos tomar decisiones de inversión informadas.</string>
     <string name="buy_crypto_warning_dont_show_again" translatable="false">No volver a mostrar</string>
 
-
-
+    <!-- Home Maintenance State-->
+    <string name="home_maintenance_state_title" translatable="false">Servicio en mantenimiento</string>
+    <string name="home_maintenance_state_description" translatable="false">Pronto podrás consultar a detalle la información de tus criptomonedas</string>
+    <string name="home_maintenance_btn_text" translatable="false">Entendido</string>
 
     <!-- Home Smart - Account Details -->
     <string name="smart_account_detail_title" translatable="false">Detalles de cuenta</string>

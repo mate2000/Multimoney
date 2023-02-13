@@ -117,11 +117,7 @@ fun ConfirmationBottomSheetContent(
                 content = {
                     CurrencyExchangeInfo(
                         leftTitleResource = R.string.crypto_purchase_flow_exchange_type_title,
-                        rightTitleResource = if(sellExchangeRate.not()) {
-                            R.string.crypto_sell_flow_confirmation_sell_screen_amount_to_receive
-                        } else {
-                            R.string.crypto_purchase_flow_exchange_total_title
-                        },
+                        rightTitleResource = R.string.crypto_purchase_flow_exchange_total_title,
                         exchangeRateText = exchangeRate,
                         convertedAmountText = convertedAmount,
                         contentColumnAlignment = Alignment.Start,

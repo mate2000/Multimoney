@@ -1596,7 +1596,7 @@
     <string name="crypto_send_address_wallet_doesnt_accept" translatable="false">Esta billetera no recibe %s</string>
 
     <!-- Crypto list currencies for receive -->
-    <string name="crypt_list_receive_title" translatable="false">Recibir</string>
+    <string name="crypt_list_receive_title" translatable="false">¿Cuál moneda querés recibir?</string>
     <string name="crypt_all_chip_label" translatable="false">Todas</string>
 
     <!-- Registeres User Email -->

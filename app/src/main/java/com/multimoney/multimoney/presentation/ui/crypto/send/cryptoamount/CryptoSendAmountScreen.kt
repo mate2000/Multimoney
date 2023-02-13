@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -59,7 +60,8 @@ fun CryptoSendAmountScreen(
                 currentCryptoBalance = calculateAssetEstimated(
                     sharedViewModel.uiState.currencyDollarBalance.toString(),
                     sharedViewModel.uiState.cryptoCurrencyPrice
-                ).toDouble()
+                ).toDouble(),
+                currencyPrice = sharedViewModel.uiState.cryptoCurrencyPrice
             )
         )
     }
@@ -97,6 +99,7 @@ fun CryptoSendAmountScreen(
             modifier = Modifier.padding(top = 5.dp, bottom = 5.dp)
         ) {
             Image(
+                modifier = Modifier.size(24.dp),
                 painter = rememberAsyncImagePainter(model = sharedViewModel.uiState.assetImg),
                 contentDescription = sharedViewModel.uiState.assetDescription
             )
@@ -140,9 +143,9 @@ fun CryptoSendAmountScreen(
                 .padding(top = 12.dp, bottom = 40.dp)
                 .fillMaxWidth()
                 .height(48.dp),
-            onClick = {
-            },
-            enable = false
+            onClick = { },
+            enable = viewModel.uiState.isError.not() and
+                    viewModel.uiState.isLoading.not()
         )
     }
 }

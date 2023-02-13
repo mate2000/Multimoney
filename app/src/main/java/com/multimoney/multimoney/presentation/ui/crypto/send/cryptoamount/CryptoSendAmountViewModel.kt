@@ -16,9 +16,6 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.BuyCurrencyScreenViewModel
 import com.multimoney.multimoney.presentation.util.calculateAmountPlusFee
 import com.multimoney.multimoney.presentation.util.calculateAssetEstimated
-import com.multimoney.multimoney.presentation.util.calculateDollarEstimated
-import com.multimoney.multimoney.presentation.util.catalog.CheckboxDialogParameters
-import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
@@ -38,7 +35,6 @@ class CryptoSendAmountViewModel @Inject constructor(
     private var cryptoNetWork = ""
     private var idBrand = BuyCurrencyScreenViewModel.ID_BRAND_ERROR
     private var user = ""
-    private var market = ""
     private var identification = ""
     private var assetImageUrl = ""
     private var destinationAddress = ""
@@ -65,7 +61,6 @@ class CryptoSendAmountViewModel @Inject constructor(
         this.cryptoNetWork = cryptoNetwork ?: ""
         this.idBrand = idBrand
         this.user = user
-        this.market = market ?: ""
         this.identification = identification
         this.assetImageUrl = assetImageUrl ?: ""
         this.destinationAddress = destinationAddress
@@ -74,61 +69,65 @@ class CryptoSendAmountViewModel @Inject constructor(
         this.currencyPrice = currencyPrice
     }
 
-    private fun onValidateAmountInput(amount: String) = executeUseCase {
-        getTransferCommissionUseCase.invoke(
-            user,
-            idBrand,
-            destinationAddress,
-            asset,
-            cryptoNetWork,
-            amount.ifEmpty {
-                DEFAULT_BASE_AMOUNT_STRING
-            }.toDouble(),
-        ).collectLatest { result ->
-            result.onSuccess {
-                transferCommission = it
-                validateAmount(amount)
+    private fun onValidateAmountInput(amount: String) {
+        uiState = uiState.copy(
+            sendCryptoAmount = if (uiState.isTransformationCurrency.value) {
+                amount.ifEmpty { DEFAULT_BASE_AMOUNT_STRING }.toDouble()
+            } else {
+                calculateAssetEstimated(
+                    amount.ifEmpty { DEFAULT_BASE_AMOUNT_STRING },
+                    currencyPrice
+                ).toDouble()
             }
-            result.onFailure {
-                uiState = uiState.copy(
-                    isError = true
-                )
-            }
-            result.onLoading {
-                uiState = uiState.copy(isLoading = true, showTextInputError = false)
+        )
+
+        executeUseCase {
+            getTransferCommissionUseCase.invoke(
+                user,
+                idBrand,
+                destinationAddress,
+                asset,
+                cryptoNetWork,
+                uiState.sendCryptoAmount,
+            ).collectLatest { result ->
+                result.onSuccess {
+                    transferCommission = it
+                    validateAmountPlusFee()
+                }
+                result.onFailure {
+                    uiState = uiState.copy(
+                        isError = true,
+                        isLoading = false
+                    )
+                }
+                result.onLoading {
+                    uiState = uiState.copy(isLoading = true, showTextInputError = false)
+                }
             }
         }
     }
 
-    private fun validateAmount(amount: String) {
-
-        val isCryptoCurrency = uiState.isTransformationCurrency.value
-
+    private fun validateAmountPlusFee() {
         val amountPlusFee = calculateAmountPlusFee(
-            amount = if (isCryptoCurrency) amount else calculateAssetEstimated(
-                amount,
-                currencyPrice
-            ),
+            amount = uiState.sendCryptoAmount.toString(),
             fee = transferCommission?.transferFee?.totalFee
         )
 
         when {
-            uiState.quoteAmount.value.isEmpty() -> isError(isError = true)
             amountPlusFee >= currentCryptoBalance -> isError(
                 errorMessage = R.string.crypto_purchase_flow_error_available_amount_commission,
                 isError = true
             )
             else -> isError()
         }
-
-
     }
 
-    private fun isError(
-        @StringRes errorMessage: Int = R.string.empty, arg: Any = Any(), isError: Boolean = false
-    ) {
+    private fun isError(@StringRes errorMessage: Int = R.string.empty, arg: Any = Any(), isError: Boolean = false) {
         uiState = uiState.copy(
-            error = errorMessage, errorMessageArg = arg, isError = isError
+            error = errorMessage,
+            errorMessageArg = arg,
+            isError = isError,
+            isLoading = false
         )
     }
 
@@ -159,13 +158,10 @@ class CryptoSendAmountViewModel @Inject constructor(
         val identification: String? = null,
         val asset: String? = null,
         val assetImageUrl: String? = null,
-        val cryptoAddress: MutableState<String> = mutableStateOf(""),
         val quoteAmount: MutableState<String> = mutableStateOf(""),
         val baseAmount: MutableState<String> = mutableStateOf(""),
-        val continueDialog: CheckboxDialogParameters = CheckboxDialogParameters(),
-        val notShowAgainVerifyCryptoAddress: Boolean = false,
+        val sendCryptoAmount: Double = 0.0,
         val isLoading: Boolean = false,
-        val openDialog: DialogParameters = DialogParameters(),
         val showTextInputError: Boolean = false,
         val isError: Boolean = false,
         @StringRes val error: Int = R.string.empty,
@@ -189,12 +185,9 @@ class CryptoSendAmountViewModel @Inject constructor(
         ) : UIEvent()
 
         data class ValidateAmountInput(val amount: String) : UIEvent()
-        data class OnSetFailureAction(val failureAction: () -> Unit) : UIEvent()
-        object OnPurchaseCryptoCurrency : UIEvent()
-        object OnGetExchangeRate : UIEvent()
-        object OnOpenPurchaseConfirmationBottomSheet : UIEvent()
-        object OnClosePurchaseConfirmationBottomSheet : UIEvent()
-        object OnClearInputData : UIEvent()
+        object OnSendCryptoCurrency : UIEvent()
+        object OnOpenSendConfirmationBottomSheet : UIEvent()
+        object OnCloseSendConfirmationBottomSheet : UIEvent()
     }
 
     companion object {

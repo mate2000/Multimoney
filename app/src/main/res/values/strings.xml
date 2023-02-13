@@ -145,7 +145,7 @@
     <string name="sign_in_dialog_sign_in_here_button" translatable="false">Iniciar sesión aquí</string>
     <string name="sign_in_otp_wrong_code" translatable="false">Código de verificación incorrecto</string>
     <string name="sign_in_otp_expired_code" translatable="false">Código de verificación ha expirado</string>
-    <string name="sign_in_we_sent_you_a_code_template" translatable="false">Te enviamos un código al %1$s para que verifiques este dispositivo</string>
+    <string name="sign_in_we_sent_you_a_code_template" translatable="false">Te enviamos un código al %1$s para que verifiqués este dispositivo</string>
     <string name="sign_in_verify_otp_button" translatable="false">Verificar</string>
     <string name="sign_in_verify_otp_error_title" translatable="false">Lo sentimos, no pudimos cambiar tu dispositivo</string>
     <string name="sign_in_verify_otp_error_subtitle" translatable="false">No es posible validar tu teléfono por favor, inténtalo nuevamente.</string>

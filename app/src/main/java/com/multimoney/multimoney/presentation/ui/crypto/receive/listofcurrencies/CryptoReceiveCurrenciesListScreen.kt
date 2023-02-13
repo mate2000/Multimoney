@@ -104,7 +104,6 @@ fun CryptoReceiveContent(
                     searchQuery = searchQuery,
                     selectedFilter = selectedFilter,
                     sheetState = state,
-                    showFilterChip = viewModel.uiState.idBrand == Brand.CostaRica.id,
                     onCurrencyItemClick = { /*TODO: onClick crypto coin*/ }
                 )
             }
@@ -278,6 +277,7 @@ fun ListOfCoinsSection(
     }
 
     LazyColumn(
+        modifier = Modifier.padding(top = 12.dp),
         contentPadding = PaddingValues(vertical = 8.dp),
     ) {
         if (showFilterChip) {
@@ -285,7 +285,7 @@ fun ListOfCoinsSection(
                 FilterSection(selectedFilter = selectedFilter, sheetState = sheetState)
             }
         }
-        items(filteredList) { cryptoCoin ->
+        items(filteredListByQuery) { cryptoCoin ->
             cryptoCoin.amountchange?.let {
                 MarketCurrencyItem(
                     imageUrl = cryptoCoin.url_image,

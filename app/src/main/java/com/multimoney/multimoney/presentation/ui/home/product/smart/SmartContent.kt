@@ -16,7 +16,7 @@ import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 
 @Composable
-fun SmartContent(viewModel: ProductViewModel, currentPage: Int, whatsAppLink: String = "") {
+fun SmartContent(viewModel: ProductViewModel, index: Int, whatsAppLink: String = "") {
     LaunchedEffect(key1 = true) {
         viewModel.onUIEvent(UIEvent.OnGetSmartContent)
     }

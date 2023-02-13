@@ -79,6 +79,7 @@
     <string name="common_go_back" translatable="false">Regresar</string>
     <string name="common_not_show_again" translatable="false">No volver a mostrar</string>
     <string name="common_scan_qr_code" translatable="false">Escanea el código QR</string>
+    <string name="common_percentage_format" translatable="false">$%s\%%</string>
 
     <string name="content_description_more_info" translatable="false">Más información</string>
 
@@ -588,7 +589,6 @@
     <string name="smart_account_detail_gained_interest_label" translatable="false">Interés anual</string>
     <string name="smart_account_detail_total_balance_label" translatable="false">Ganancia total a la fecha</string>
     <string name="smart_account_detail_gained_interest" translatable="false">%s%%</string>
-    <string name="smart_account_detail_gained_interest_mock" translatable="false">3.25%</string>
     <string name="smart_account_detail_total_balance" translatable="false">%s %s</string>
 
     <!-- my products bottom sheet -->

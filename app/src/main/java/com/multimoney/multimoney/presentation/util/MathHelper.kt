@@ -56,6 +56,22 @@ fun calculateConvertedCurrencyBalance(
     )
 }
 
+fun calculateConvertedCurrencyBalance(
+    quoteAmount: String,
+    baseAmount: String,
+    exchangeRate: Double,
+    price: Double?,
+    totalFee: Double
+): String {
+    val convertedAmount = (quoteAmount.ifEmpty {
+        (baseAmount.toDoubleOrNull() ?: 0.0).times(price ?: 0.0).toString()
+    }.toDouble() * exchangeRate)
+    val convertedFee = (totalFee * exchangeRate)
+    return convertedAmount.minus(convertedFee).toCurrencyFormat(
+        symbol = CurrencyType.Colon.symbol
+    )
+}
+
 fun calculateDollarEstimated(
     baseAmount: String,
     currencyPrice: Double
@@ -117,6 +133,22 @@ fun calculateConfirmationQuoteAmount(
     )
 }
 
+fun calculateConfirmationQuoteAmount(
+    quoteAmount: String,
+    baseAmount: String,
+    currencyPrice: Double?,
+    exchangeRate: Double,
+    symbol: String
+): String {
+    return quoteAmount.ifEmpty {
+        baseAmount.ifEmpty {
+            DEFAULT_AMOUNT
+        }.toDouble().times(currencyPrice ?: 0.0)
+    }.toString().toDouble().times(exchangeRate).toCurrencyFormat(
+        symbol = symbol
+    )
+}
+
 fun calculateConfirmationBaseAmount(
     quoteAmount: String,
     baseAmount: String,
@@ -143,6 +175,18 @@ fun calculateQuote(
     }
 }
 
+fun calculateQuote(
+    quoteAmount: String,
+    baseAmount: String,
+    price: Double
+): Double {
+    return quoteAmount.ifEmpty {
+        baseAmount.ifEmpty {
+            BuyCurrencyScreenViewModel.DEFAULT_BASE_AMOUNT_STRING
+        }.toDouble().times(price)
+    }.toString().toDouble().roundToTwoDecimalPlaces().toDouble()
+}
+
 fun calculateAmountPlusFee(
     amount: String,
     fee: Double?
@@ -151,3 +195,8 @@ fun calculateAmountPlusFee(
         BuyCurrencyScreenViewModel.DEFAULT_BASE_AMOUNT_STRING
     }.toDouble().plus(fee ?: 0.0)
 }
+
+fun calculateAvailableInDollars(
+    baseAmount: Double,
+    currencyPrice: Double
+): Double = baseAmount.times(currencyPrice)

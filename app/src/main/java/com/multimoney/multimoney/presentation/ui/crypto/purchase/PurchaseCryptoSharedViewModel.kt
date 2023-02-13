@@ -298,7 +298,6 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         ) :
             UIEvent()
 
-        // object OnQueryAccounts : UIEvent()
         object OnPreviousStep : UIEvent()
         object OnClickBottomSheet : UIEvent()
         data class OnCryptoSelected(

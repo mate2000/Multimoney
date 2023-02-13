@@ -150,7 +150,7 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
     }
 
     private fun onAddFavoriteValueChange(isChecked: Boolean) {
-        uiState = uiState.copy(addFavorite = isChecked)
+        uiState = uiState.copy(addFavorite = isChecked, favoriteName = validateAccount?.name ?: "")
     }
 
     private fun onFavoriteNameValueChange(favoriteName: String) {

@@ -40,9 +40,9 @@ import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import com.multimoney.multimoney.presentation.util.isPhoneNumberValid
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
 import javax.inject.Inject
-import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class MonthlyIncomeViewModel @Inject constructor(
@@ -168,7 +168,7 @@ class MonthlyIncomeViewModel @Inject constructor(
                     R.string.credit_monthly_income_job_phone_error,
                 )
             }
-            isPhoneNumberValid(phone = phone, idBrand) -> {
+            isPhoneNumberValid(phone = phone, idBrand).not() -> {
                 Pair(
                     false,
                     R.string.empty,

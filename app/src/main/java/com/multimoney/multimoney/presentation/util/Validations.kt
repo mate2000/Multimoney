@@ -45,6 +45,33 @@ fun isPhoneNumberValid(
     return false
 }
 
+fun isMobileOrFixedLinePhoneNumberValid(
+    phone: String,
+    fullPhoneNumber: String,
+    countryCode: String,
+): Boolean {
+    val number: Phonenumber.PhoneNumber?
+    if (phone.length > 6) {
+        return try {
+            number = PhoneNumberUtil.getInstance().parse(
+                fullPhoneNumber,
+                Phonenumber.PhoneNumber.CountryCodeSource.UNSPECIFIED.name,
+            )
+            if (PhoneNumberUtil.getInstance().getNumberType(number) == PhoneNumberUtil.PhoneNumberType.MOBILE ||
+                PhoneNumberUtil.getInstance().getNumberType(number) == PhoneNumberUtil.PhoneNumberType.FIXED_LINE
+            ) {
+                PhoneNumberUtil.getInstance()
+                    .isValidNumberForRegion(number, countryCode.uppercase())
+            } else {
+                false
+            }
+        } catch (ex: Exception) {
+            false
+        }
+    }
+    return false
+}
+
 fun validId(sizeRequired: Int, errorMessage: Int, personalDocumentLength: Int) =
     if (personalDocumentLength >= sizeRequired) {
         Pair(false, R.string.error_empty)
@@ -161,27 +188,24 @@ fun validateDecimalIncome(value: String): Boolean {
 fun isPhoneNumberValid(phone: String, idBrand: Int): Boolean {
     return when (idBrand) {
         Brand.ElSalvador.id -> {
-            isPhoneNumberValid(
+            isMobileOrFixedLinePhoneNumberValid(
                 phone = phone,
                 fullPhoneNumber = "${Brand.ElSalvador.phoneCode}$phone",
-                countryCode = "",
-                phoneNumberType = FIXED_LINE_OR_MOBILE,
+                countryCode = Brand.ElSalvador.countryCode,
             )
         }
         Brand.Guatemala.id -> {
-            isPhoneNumberValid(
+            isMobileOrFixedLinePhoneNumberValid(
                 phone = phone,
                 fullPhoneNumber = "${Brand.Guatemala.phoneCode}$phone",
-                countryCode = "",
-                phoneNumberType = FIXED_LINE_OR_MOBILE,
+                countryCode = Brand.Guatemala.countryCode
             )
         }
         Brand.CostaRica.id -> {
-            isPhoneNumberValid(
+            isMobileOrFixedLinePhoneNumberValid(
                 phone = phone,
                 fullPhoneNumber = "${Brand.CostaRica.phoneCode}$phone",
-                countryCode = "",
-                phoneNumberType = FIXED_LINE_OR_MOBILE,
+                countryCode = Brand.CostaRica.countryCode
             )
         }
         else -> false

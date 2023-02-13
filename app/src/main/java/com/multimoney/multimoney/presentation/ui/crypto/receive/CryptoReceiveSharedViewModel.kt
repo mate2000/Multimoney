@@ -13,6 +13,7 @@ import com.multimoney.multimoney.presentation.navigation.CRYPTO_ASSET
 import com.multimoney.multimoney.presentation.navigation.DESCRIPTION_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
+import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -62,22 +63,33 @@ class CryptoReceiveSharedViewModel @Inject constructor(
         }
     }
 
+    private fun nextStep() {
+        currentFlowStep++
+        uiState = uiState.copy(
+            currentStep = currentFlowStep
+        )
+        uiState.nextAction()
+    }
+
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is UIEvent.OnGetUserInfo -> setUserData()
             is UIEvent.OnPreviousStep -> previousStep()
+            is UIEvent.OnNextStep -> nextStep()
         }
     }
 
     data class UiState(
         val currentStep: Int = CryptoReceiveSteps.One.pageNumber,
         var asset: String = "",
-        var assetDescription: String = ""
+        var assetDescription: String = "",
+        val nextAction: () -> Unit = {},
     )
 
     sealed interface UIEvent {
         object OnGetUserInfo : UIEvent
         object OnPreviousStep : UIEvent
+        object OnNextStep : UIEvent
     }
 
     companion object {

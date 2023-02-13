@@ -28,16 +28,38 @@ import coil.compose.rememberAsyncImagePainter
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.BuyCurrencyTitleConfirmationSectionSkeleton
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.DEFAULT_AMOUNT
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.MANY_ASSET_LENGTH
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.SECONDS_SUFFIX
-import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.VoucherCurrencyExchangeInfoSkeleton
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.WHITE_SPACE
 import com.multimoney.multimoney.presentation.uielement.CurrencyExchangeInfo
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
+
+/**
+ * ConfirmationBottomSheetContent
+ *
+ * params:
+ * @param amount - number to display in the title section
+ * @param sellExchangeRate - boolean to determine if the exchange title rate is for sell or buy
+ * @param evaluatedAmount - AnnotatedString to display amount exchange respect to the currency
+ * @param showAssetImage - boolean to determine if the asset image should be displayed
+ * @param showTotalToReceive - boolean to determine if the total to receive section should be displayed
+ * @param showBottomExchangeInfo - boolean to determine if the bottom exchange info section should be displayed
+ * @param amountToReceive - number to display in the total to receive section
+ * @param ibanAccountNumber - number to display in the account info section
+ * @param buttonText - text to display in the button
+ * @param asset - text of the crypto currency asset
+ * @param assetImageUrl - url of the crypto currency asset image
+ * @param secondsRemaining - number of seconds to display in the time remaining section
+ * @param idCurrency - id of the currency to determine if dollars or colones are being used
+ * @param isLoading - boolean to determine if the loading skeleton should be displayed
+ * @param exchangeRate - number to display the exchange rate of the currency
+ * @param convertedAmount - number to display the converted currency amount
+ * @param onConfirm - function to execute when the button is clicked
+ *
+ * **/
 
 @Composable
 @Preview
@@ -47,8 +69,10 @@ fun ConfirmationBottomSheetContent(
     evaluatedAmount: AnnotatedString = AnnotatedString(""),
     showAssetImage: Boolean = true,
     showTotalToReceive: Boolean = false,
+    showBottomExchangeInfo: Boolean = false,
     amountToReceive: String = DEFAULT_AMOUNT,
     ibanAccountNumber: String = "",
+    buttonText: String = "",
     asset: String = "",
     assetImageUrl: String = "",
     secondsRemaining: String = "",
@@ -70,25 +94,31 @@ fun ConfirmationBottomSheetContent(
             evaluatedAmount = evaluatedAmount,
             assetImageUrl = assetImageUrl,
             showTotalToReceive = showTotalToReceive,
-            amountToReceive = amountToReceive,
+            amountToReceive = if (idCurrency == CurrencyType.Colon.id) {
+                convertedAmount
+            } else {
+                amountToReceive
+            },
+            exchangeRate = exchangeRate,
             isLoading = isLoading,
             asset = asset,
             secondsRemaining = secondsRemaining,
-            showAssetImage = showAssetImage
+            showAssetImage = showAssetImage,
+            idCurrency = idCurrency
         )
         AccountInfoSection(
             idCurrency = idCurrency,
             ibanAccountNumber = ibanAccountNumber
         )
-        if (idCurrency == CurrencyType.Colon.id) {
+        if (showBottomExchangeInfo) {
             WhileLoadingSection(
                 isLoading = isLoading,
                 contentLoading = { VoucherCurrencyExchangeInfoSkeleton() },
                 content = {
                     CurrencyExchangeInfo(
                         leftTitleResource = R.string.crypto_purchase_flow_exchange_type_title,
-                        rightTitleResource = if(sellExchangeRate) {
-                            R.string.crypto_sell_flow_confirmation_sell_screen_exhange_title
+                        rightTitleResource = if(sellExchangeRate.not()) {
+                            R.string.crypto_sell_flow_confirmation_sell_screen_amount_to_receive
                         } else {
                             R.string.crypto_purchase_flow_exchange_total_title
                         },
@@ -101,7 +131,7 @@ fun ConfirmationBottomSheetContent(
             )
         }
         CustomButton(
-            text = stringResource(id = R.string.crypto_purchase_flow_confirmation_btn_buy),
+            text = buttonText,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp)
@@ -143,7 +173,9 @@ private fun InfoSection(
     secondsRemaining: String,
     showAssetImage: Boolean = true,
     showTotalToReceive: Boolean = false,
-    amountToReceive: String
+    idCurrency: Int = CurrencyType.Dollar.id,
+    amountToReceive: String,
+    exchangeRate: String
 ) {
     Column(
         modifier = Modifier
@@ -164,7 +196,7 @@ private fun InfoSection(
             }
             WhileLoadingSection(
                 isLoading = isLoading,
-                contentLoading = { BuyCurrencyTitleConfirmationSectionSkeleton() },
+                contentLoading = { CurrencyTitleConfirmationSectionSkeleton() },
                 content = {
                     Text(
                         text = evaluatedAmount,
@@ -191,6 +223,19 @@ private fun InfoSection(
         )
         if (showTotalToReceive) {
             Spacer(modifier = Modifier.height(24.dp))
+            if (idCurrency == CurrencyType.Colon.id) {
+                Text(
+                    modifier = Modifier.padding(vertical = 4.dp),
+                    text = buildAnnotatedString {
+                        append(stringResource(id = R.string.crypto_purchase_flow_exchange_type_title))
+                        append(WHITE_SPACE)
+                        withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append(exchangeRate)
+                        }
+                    },
+                    style = Typography.body2.copy(color = MultimoneyTheme.colors.bodyTextColor),
+                )
+            }
             Text(
                 modifier = Modifier.padding(vertical = 4.dp),
                 text = buildAnnotatedString {

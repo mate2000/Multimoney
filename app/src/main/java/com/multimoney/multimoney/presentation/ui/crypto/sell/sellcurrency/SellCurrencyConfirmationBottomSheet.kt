@@ -75,7 +75,7 @@ fun SellConfirmationBottomSheet(
                 quoteAmount = viewModel.uiState.quoteAmount.value,
                 baseAmount = viewModel.uiState.baseAmount.value,
                 currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price
-            ),
+            ).plus(" ${viewModel.asset}"),
             evaluatedAmount = buildAnnotatedString {
                 append(stringResource(
                     id = R.string.crypto_sell_flow_confirmation_sell_screen_evaluate_amount,
@@ -91,6 +91,7 @@ fun SellConfirmationBottomSheet(
                         quoteAmount = viewModel.uiState.quoteAmount.value,
                         baseAmount = viewModel.uiState.baseAmount.value,
                         currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price,
+                        exchangeRate = viewModel.uiState.exchangeRate,
                         symbol = if (viewModel.idCurrencyAccount == CurrencyType.Dollar.id) {
                             CurrencyType.Dollar.symbol
                         } else {
@@ -99,12 +100,13 @@ fun SellConfirmationBottomSheet(
                     ))
                 }
             },
-            showTotalToReceive = viewModel.idCurrencyAccount == CurrencyType.Dollar.id,
+            showTotalToReceive = true,
+            showBottomExchangeInfo = false,
             amountToReceive = calculateConfirmationQuoteAmount(
                 quoteAmount = viewModel.uiState.quoteAmount.value,
                 baseAmount = viewModel.uiState.baseAmount.value,
                 currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price,
-                symbol = CurrencyType.Colon.symbol,
+                symbol = CurrencyType.Dollar.symbol,
                 totalFee = viewModel.uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
             ),
             showAssetImage = false,
@@ -112,6 +114,7 @@ fun SellConfirmationBottomSheet(
                 viewModel.ibanAccountNumber,
                 stringResource(id = R.string.payment_account_masked_text)
             ),
+            buttonText = stringResource(id = R.string.crypto_sell_flow_confirmation_sell_screen_btn_text),
             asset = viewModel.asset,
             assetImageUrl = viewModel.assetImageUrl,
             secondsRemaining = viewModel.uiState.remainingTimeText,
@@ -124,7 +127,8 @@ fun SellConfirmationBottomSheet(
                 quoteAmount = viewModel.uiState.quoteAmount.value,
                 baseAmount = viewModel.uiState.baseAmount.value,
                 price = viewModel.uiState.pricesQuoteAndCommissions?.price,
-                exchangeRate = viewModel.uiState.exchangeRate
+                exchangeRate = viewModel.uiState.exchangeRate,
+                totalFee = viewModel.uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
             ),
             onConfirm = {
                 coroutineScope.launch {

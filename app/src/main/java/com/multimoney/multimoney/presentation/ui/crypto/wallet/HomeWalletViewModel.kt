@@ -36,12 +36,14 @@ class HomeWalletViewModel @Inject constructor(
     private val queryBalanceUseCase: QueryBalanceUseCase,
     private val savedStateHandle: SavedStateHandle,
     private val cryptoHelper: CryptoHelper
-): BaseViewModel(true) {
+) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UiState())
         private set
 
     private var smartAccounts: List<SmartAccountSmall>? = null
+    private var userCryptoBalances: List<BalanceCryptoAccountItems>? = null
+
 
     private fun onGetUserInfo() {
         uiState = uiState.copy(
@@ -58,6 +60,8 @@ class HomeWalletViewModel @Inject constructor(
         )
         smartAccounts =
             savedStateHandle.get<Array<SmartAccountSmall>>(SMART_ACCOUNTS_LIST)?.toList()
+        userCryptoBalances =
+            savedStateHandle.get<Array<BalanceCryptoAccountItems>>(USER_CRYPTO_BALANCES)?.toList()
         viewModelScope.launch {
             uiState = uiState.copy(isCryptoTransferEnabled = cryptoHelper.isCryptoTransferEnabled())
         }
@@ -172,7 +176,7 @@ class HomeWalletViewModel @Inject constructor(
                 encodeData(
                     cryptoItem
                 )
-            }/${encodeData(smartAccounts)}"
+            }/${encodeData(smartAccounts)}/${encodeData(userCryptoBalances)}"
         )
     }
 
@@ -181,12 +185,20 @@ class HomeWalletViewModel @Inject constructor(
     }
 
     private fun onNavigateToSellCrypto() {
-        navigateTo(Screen.CryptoSellFlow.baseRoute)
+        navigateTo(
+            "${Screen.CryptoSellFlow.baseRoute}/${encodeData(smartAccounts)}/${
+                encodeData(
+                    userCryptoBalances
+                )
+            }"
+        )
     }
 
     private fun onNavigateToSendCrypto() {
         navigateTo(Screen.CryptoSendFlow.baseRoute)
     }
+
+
 
     data class UiState(
         val user: String? = null,

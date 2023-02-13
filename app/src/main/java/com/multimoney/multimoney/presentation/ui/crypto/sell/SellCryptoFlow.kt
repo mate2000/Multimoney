@@ -56,7 +56,6 @@ fun SellCryptoFlow(
                     } else {
                         viewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnCloseClick)
                     }
-
                 },
                 onLeftButtonClick = {
                     viewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnPreviousStep)
@@ -101,7 +100,11 @@ fun SellCryptoFlow(
 
     LoadingIndicator(viewModel.uiState.isLoading)
     BackHandler {
-        viewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnCloseClick)
+        if (viewModel.uiState.currentStepType == SellCryptoStep.SELL_VOUCHER) {
+            viewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnNavigateHome)
+        } else {
+            viewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnCloseClick)
+        }
     }
 
     if (viewModel.uiState.openDialog.isActive.value) {

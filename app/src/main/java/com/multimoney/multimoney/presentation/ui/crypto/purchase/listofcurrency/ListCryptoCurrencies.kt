@@ -65,7 +65,6 @@ fun ListCryptoCurrenciesScreen(
         viewModel.onUIEvent(ListCryptoPurchaseViewModel.UIEvent.OnGetAvailableListOfCryptoCoins)
     }
 
-
     ListCryptoContent(
         viewModel.uiState,
         itemClick = {
@@ -87,21 +86,6 @@ fun ListCryptoCurrenciesScreen(
     BackHandler {
         sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep)
     }
-
-    ConfirmationBottomSheet(
-        modalBottomSheetState = bottomSheetState,
-        coroutineScope = coroutineScope,
-        onCheckedChange = {
-            viewModel.onUIEvent(ListCryptoPurchaseViewModel.UIEvent.OnDisclaimerChecked(it))
-        },
-        onContinueClicked = {
-            viewModel.onUIEvent(ListCryptoPurchaseViewModel.UIEvent.OnUpdateShouldShowDisclaimer(viewModel.uiState.dontShowAgainChecked))
-            coroutineScope.launch {
-                bottomSheetState.hide()
-            }
-        },
-        checked = viewModel.uiState.dontShowAgainChecked
-    )
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -203,7 +187,7 @@ fun ListCryptoBody(
                 descriptionCurrency = it.description,
                 asset = it.baseAsset,
                 priceOfTheDay = it.currentPrice.toString().toDouble().formatWithComma(),
-                percentageInvestedCurrency = it.percentChange
+                percentageInvestedCurrency = it.percentChange ?: ""
             ) {
                 itemClick(it)
             }

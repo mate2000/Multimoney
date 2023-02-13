@@ -61,7 +61,10 @@ fun SignUpPasswordScreen(
             sharedViewModel.uiState.bottomSheetVisibleState.isVisible -> {
                 sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnHidePasswordBottomSheet)
             }
-            else -> sharedViewModel.onUIEvent(OnCloseClick(focusManager))
+            else -> sharedViewModel.onUIEvent(
+                OnCloseClick(focusManager),
+                isO3Country = context.resources.configuration.locale.isO3Country
+            )
         }
     }
 

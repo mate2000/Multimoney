@@ -296,6 +296,7 @@ fun ListOfCoinsSection(
 
     LazyColumn(
         contentPadding = PaddingValues(vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         if (showFilterChip) {
             item {
@@ -307,11 +308,11 @@ fun ListOfCoinsSection(
                 imageUrl = cryptoCoin.url_image,
                 descriptionCurrency = cryptoCoin.description,
                 asset = cryptoCoin.baseAsset,
-                amountChange = cryptoCoin.amountchange,
+                amountChange = cryptoCoin.amountchange ?: "",
                 percentChange = stringResource(
                     id = R.string.currency_item_percent_invested_with_symbol,
-                    if (cryptoCoin.percentChange.contains(NEGATIVE_SYMBOL)) NEGATIVE_SYMBOL else POSITIVE_SYMBOL,
-                    cryptoCoin.percentChange.toDouble().roundToTwoDecimalPlacesWithoutNegatives()
+                    if (cryptoCoin.percentChange?.contains(NEGATIVE_SYMBOL) == true) NEGATIVE_SYMBOL else POSITIVE_SYMBOL,
+                    cryptoCoin.percentChange?.toDouble()?.roundToTwoDecimalPlacesWithoutNegatives() ?: ""
                 ),
                 currentPrice = cryptoCoin.currentPrice.toString().toDouble(),
                 onCurrencyItemClick = { onCurrencyItemClick(cryptoCoin) }

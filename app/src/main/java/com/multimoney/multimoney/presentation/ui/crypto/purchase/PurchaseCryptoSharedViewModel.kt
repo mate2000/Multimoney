@@ -10,25 +10,26 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.BuyCryptoStep
 import com.multimoney.data.util.catalog.PurchaseCryptoSteps
-import com.multimoney.domain.interaction.accountsmart.QuerySmartAccountsUseCase
-import com.multimoney.domain.model.accountsmart.AccountSmartForBuyCrypto
+import com.multimoney.domain.model.accountsmart.SmartAccountSmall
 import com.multimoney.domain.model.crypto.MarketCryptoCoin
-import com.multimoney.domain.model.util.error.HttpError
-import com.multimoney.domain.model.util.onFailure
-import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNTS_LIST
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoOperationSide
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.getCurrentDate
+import com.multimoney.multimoney.presentation.util.getCurrentTime
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -36,7 +37,6 @@ import javax.inject.Inject
 class PurchaseCryptoSharedViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val dataStorePreferences: DataStorePreferences,
-    private val getSmartAccountsUseCase: QuerySmartAccountsUseCase
 ) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())
@@ -56,7 +56,12 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     val side = CryptoOperationSide.BUY.value
     val comingFromDetails: Boolean = marketCryptoCoin != null
 
+
     private fun setUserData() {
+        uiState = uiState.copy(
+            accounts = savedStateHandle.get<Array<SmartAccountSmall>>(SMART_ACCOUNTS_LIST)?.toList()
+                ?: listOf()
+        )
         viewModelScope.launch {
             idBrand = dataStorePreferences.getIdBrand().first().toInt()
             pkUser = dataStorePreferences.getPkUser().first()
@@ -69,40 +74,37 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
                 market = marketCryptoCoin?.baseAsset?.plus(abvCurrency),
                 cryptoNetWork = marketCryptoCoin?.cryptoNetwork,
                 assetImageBaseUrl = marketCryptoCoin?.url_image,
-                shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first()
+                shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first(),
+            )
+        }
+        if (idBrand == Brand.ElSalvador.id) {
+            onSetupAccountDetails(
+                smartAccountAvailableBalance = uiState.accounts.firstOrNull()?.totalBalance ?: 0.0,
+                idCurrency = uiState.accounts.firstOrNull()?.idCurrencyAccount
+                    ?: CurrencyType.Dollar.id,
+                accountNumber = uiState.accounts.firstOrNull()?.accountNumber ?: "",
+                ibanAccountNumber = uiState.accounts.firstOrNull()?.ibanAccountNumber ?: "",
+                accountToken = uiState.accounts.firstOrNull()?.accountToken ?: ""
             )
         }
     }
 
-    private fun querySmartAccounts() {
-        executeUseCase {
-            getSmartAccountsUseCase(
-                user = email,
-                idBrand = idBrand,
-                identification = identification,
-                accountStatus = ACTIVE_ACCOUNT
-            ).collectLatest { result ->
-                result.onSuccess {
-                    it?.let {
-                        uiState = uiState.copy(accounts = it)
-                    }
-                }
-                result.onFailure {
-                    onFailure(it)
-                }
-            }
-        }
-    }
-
-    private fun onFailure(error: HttpError) {
+    private fun onSetupAccountDetails(
+        smartAccountAvailableBalance: Double,
+        idCurrency: Int,
+        accountNumber: String,
+        ibanAccountNumber: String,
+        accountToken: String
+    ) {
         uiState = uiState.copy(
-            isLoading = false,
-            openDialog = DialogParameters(
-                description = error.getError() ?: "",
-                isActive = mutableStateOf(true)
-            )
+            smartAccountAvailableBalance = smartAccountAvailableBalance,
+            idCurrency = idCurrency,
+            accountNumber = accountNumber,
+            ibanAccountNumber = ibanAccountNumber,
+            accountToken = accountToken
         )
     }
+
 
     private fun previousStep() {
         if (currentFlowStep == PurchaseCryptoSteps.One.pageNumber) {
@@ -156,14 +158,16 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         )
     }
 
-    private fun OnShowDisclaimer() {
+    private fun onShowDisclaimer() {
         emitBaseEvent(BaseEvent.OnShowDisclaimer)
     }
 
     private fun updateShouldShowDisclaimer(value: Boolean) {
         viewModelScope.launch {
             dataStorePreferences.setVolatileDialogVisible(!value)
-            uiState = uiState.copy(shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first())
+            uiState = uiState.copy(
+                shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first()
+            )
         }
     }
 
@@ -171,9 +175,31 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         uiState = uiState.copy(dontShowAgainChecked = checked)
     }
 
+
+    private fun onSetupVoucherDetails(
+        quoteAmount: String,
+        baseAmount: String,
+        totalDebitedAmount: String,
+        exchangeRate: String,
+        totalDebitedExchange: String,
+        referenceNumber: String
+    ) {
+        uiState = uiState.copy(
+            voucherQuoteAmount = quoteAmount,
+            voucherBaseAmount = baseAmount,
+            voucherReferenceNumber = referenceNumber,
+            voucherTotalDebitedAmount = totalDebitedAmount,
+            voucherExchangeRate = exchangeRate,
+            voucherTotalDebitedExchange = totalDebitedExchange,
+            purchaseCurrentDate = getCurrentDate(Calendar.getInstance().time),
+            purchaseCurrentTime = getCurrentTime(Calendar.getInstance().time)
+        )
+    }
+
     data class UIState(
         // interaction
         val currentStep: Int = PurchaseCryptoSteps.One.pageNumber,
+        val currentStepType: BuyCryptoStep = BuyCryptoStep.LIST_CRYPTO_CURRENCIES,
         val isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         var bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
@@ -184,7 +210,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         var previousAction: () -> Unit = {},
         val nextAction: () -> Unit = {},
         // mutable data
-        val accounts: List<AccountSmartForBuyCrypto> = listOf(),
+        val accounts: List<SmartAccountSmall> = listOf(),
         val smartAccountAvailableBalance: Double = 0.0,
         val accountNumber: String = "",
         val ibanAccountNumber: String = "",
@@ -194,7 +220,19 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         val market: String? = "",
         val cryptoNetWork: String? = "",
         val assetImageBaseUrl: String? = "",
-        val accountToken: String = ""
+        val accountToken: String = "",
+        // voucher information
+        val voucherQuoteAmount: String? = null,
+        val voucherBaseAmount: String? = null,
+        val voucherReferenceNumber: String? = null,
+        val voucherTotalDebitedAmount: String? = null,
+        val voucherExchangeRate: String? = null,
+        val voucherTotalDebitedExchange: String? = null,
+        val purchaseCurrentDate: String? = null,
+        val purchaseCurrentTime: String? = null,
+        val isRightButtonVisible: Boolean = true,
+        val isLeftButtonVisible: Boolean = true
+
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -204,7 +242,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
             is UIEvent.OnClickBottomSheet -> onShowBottomSheet()
             is UIEvent.OnCloseClick -> onCloseClick()
             is UIEvent.OnGetUserInfo -> setUserData()
-            is UIEvent.OnQueryAccounts -> querySmartAccounts()
+            // is UIEvent.OnQueryAccounts -> querySmartAccounts()
             is UIEvent.OnCryptoSelected -> {
                 uiState = uiState.copy(
                     asset = event.selectedCrypto.baseAsset,
@@ -214,17 +252,32 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
                     market = event.selectedCrypto.baseAsset.plus(CurrencyType.Dollar.disbursementValue)
                 )
             }
-            is UIEvent.OnSetSelectedAccount -> {
-                uiState = uiState.copy(
-                    smartAccountAvailableBalance = event.totalBalance,
-                    idCurrency = event.idCurrency,
-                    accountNumber = event.accountNumber,
-                    ibanAccountNumber = event.ibanAccountNumber,
-                )
-            }
-            is BaseEvent.OnShowDisclaimer -> OnShowDisclaimer()
+            is UIEvent.OnSetSelectedAccount -> onSetupAccountDetails(
+                event.smartAccountAvailableBalance,
+                event.idCurrency,
+                event.accountNumber,
+                event.ibanAccountNumber,
+                event.accountToken
+            )
+
+            is BaseEvent.OnShowDisclaimer -> onShowDisclaimer()
             is UIEvent.OnDisclaimerChecked -> onDisclaimerChecked(event.checked)
             is UIEvent.OnUpdateShouldShowDisclaimer -> updateShouldShowDisclaimer(event.checked)
+
+            is UIEvent.OnSetupVoucherDetails -> onSetupVoucherDetails(
+                event.quoteAmount,
+                event.baseAmount,
+                event.totalDebitedAmount,
+                event.exchangeRate,
+                event.totalDebitedExchange,
+                event.referenceNumber
+            )
+            is UIEvent.OnSetFlowStep -> uiState = uiState.copy(currentStepType = event.step)
+            is UIEvent.OnNavigateHome -> navigateBack(
+                popTo = Screen.HomeScreen.route,
+                isRestart = true,
+                homeState = HomeState.COLLAPSED
+            )
         }
     }
 
@@ -235,7 +288,16 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     sealed class UIEvent {
         object OnCloseClick : UIEvent()
         object OnNextStep : UIEvent()
-        object OnQueryAccounts : UIEvent()
+        data class OnSetupVoucherDetails(
+            val quoteAmount: String,
+            val baseAmount: String,
+            val totalDebitedAmount: String,
+            val exchangeRate: String,
+            val totalDebitedExchange: String,
+            val referenceNumber: String
+        ) :
+            UIEvent()
+
         object OnPreviousStep : UIEvent()
         object OnClickBottomSheet : UIEvent()
         data class OnCryptoSelected(
@@ -243,7 +305,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnSetSelectedAccount(
-            val totalBalance: Double,
+            val smartAccountAvailableBalance: Double,
             val idCurrency: Int,
             val accountToken: String,
             val accountNumber: String,
@@ -253,7 +315,8 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         object OnGetUserInfo : UIEvent()
         data class OnDisclaimerChecked(val checked: Boolean) : UIEvent()
         data class OnUpdateShouldShowDisclaimer(val checked: Boolean) : UIEvent()
-
+        data class OnSetFlowStep(val step: BuyCryptoStep) : UIEvent()
+        object OnNavigateHome : UIEvent()
     }
 
     companion object {

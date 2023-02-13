@@ -146,17 +146,11 @@ private fun MyContactsAmountBottomSheet(viewModel: MyContactsTransferAmountViewM
         saveSendTitleResource = string.smart_payment_sheet_send_title,
         amount = viewModel.getFormattedAmount(),
         exchangedAmount = if (viewModel.shouldDisplayExchange) viewModel.amountUIState.convertedAmountLabel else null,
-        fromLabel = stringResource(
-            viewModel.amountUIState.originAccountDisplay?.sheetLabel ?: string.empty
-        ),
         fromIcon = viewModel.amountUIState.originAccountDisplay?.icon,
         fromTitle = stringResource(
             viewModel.amountUIState.originAccountDisplay?.sheetTitleResource ?: string.empty
         ),
         fromSubtitle = viewModel.amountUIState.originAccountDisplay?.sheetSubtitle,
-        toLabel = stringResource(
-            viewModel.amountUIState.destinyAccountDisplay?.sheetLabel ?: string.empty
-        ),
         toContactInfo = {
             CustomInfoButton(
                 title = viewModel.amountUIState.destinyAccountDisplay?.sheetTitle.orEmpty(),

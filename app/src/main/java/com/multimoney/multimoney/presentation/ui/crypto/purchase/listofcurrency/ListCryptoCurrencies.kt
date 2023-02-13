@@ -38,18 +38,22 @@ import com.multimoney.multimoney.presentation.ui.crypto.market.FilterSection
 import com.multimoney.multimoney.presentation.ui.crypto.market.MarketFilter
 import com.multimoney.multimoney.presentation.ui.crypto.market.MarketSkeleton
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
+import com.multimoney.multimoney.presentation.ui.crypto.purchase.selectaccount.ConfirmationBottomSheet
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.formattedTwoDecimalsNumber
 import com.multimoney.multimoney.presentation.util.transformation.formatWithComma
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ListCryptoCurrenciesScreen(
     viewModel: ListCryptoPurchaseViewModel = hiltViewModel(),
     sharedViewModel: PurchaseCryptoSharedViewModel,
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
 ) {
+    val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+    val coroutineScope = rememberCoroutineScope()
+
     LaunchedEffect(true) {
         viewModel.executeNavigation(
             onPopBackStack = onPopBackStack
@@ -65,7 +69,17 @@ fun ListCryptoCurrenciesScreen(
         viewModel.uiState,
         itemClick = {
             sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnCryptoSelected(it))
-            sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNextStep)
+            if(viewModel.uiState.idBrand == Brand.ElSalvador.id){
+                if(viewModel.uiState.shouldDisplayDisclaimer){
+                    sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.BaseEvent.OnShowDisclaimer)
+                }
+                else{
+                    sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNextStep)
+                }
+            }
+            else{
+                sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNextStep)
+            }
         }
     )
 
@@ -173,7 +187,7 @@ fun ListCryptoBody(
                 descriptionCurrency = it.description,
                 asset = it.baseAsset,
                 priceOfTheDay = it.currentPrice.toString().toDouble().formatWithComma(),
-                percentageInvestedCurrency = it.percentChange
+                percentageInvestedCurrency = it.percentChange ?: ""
             ) {
                 itemClick(it)
             }

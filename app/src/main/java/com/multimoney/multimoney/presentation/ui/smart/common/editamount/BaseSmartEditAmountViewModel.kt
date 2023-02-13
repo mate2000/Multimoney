@@ -46,7 +46,7 @@ import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import com.multimoney.multimoney.presentation.util.workers.startTimedNotification
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
-import java.util.*
+import java.util.Calendar
 import javax.inject.Inject
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -108,13 +108,11 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
 
                 amountUIState = amountUIState.copy(
                     originAccountDisplay = DisplayAccount(
-                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_account,
                         sheetTitleResource = originCurrency?.myAccountSmartSymbol,
                         sheetSubtitleResource = originCurrency?.currencyName,
                         icon = R.drawable.ic_multimoney_smart
                     ),
                     destinyAccountDisplay = DisplayAccount(
-                        sheetLabel = R.string.smart_payment_sheet_to_account,
                         sheetTitle = ibanAccount?.nameAccount.orEmpty(),
                         sheetSubtitle = ibanAccount?.bank.orEmpty(),
                         sheetSubtitle2 = getMaskedAccountIban(ibanAccount?.sinpeAccount.orEmpty()),
@@ -137,13 +135,11 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
 
                 amountUIState = amountUIState.copy(
                     originAccountDisplay = DisplayAccount(
-                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_account,
                         sheetTitleResource = originCurrency?.myAccountSmartSymbol,
                         sheetSubtitleResource = originCurrency?.currencyName,
                         icon = R.drawable.ic_multimoney_smart
                     ),
                     destinyAccountDisplay = DisplayAccount(
-                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_account,
                         sheetTitleResource = destinyCurrency?.myAccountSmartSymbol,
                         sheetSubtitleResource = destinyCurrency?.currencyName,
                         icon = R.drawable.ic_multimoney_smart
@@ -165,13 +161,11 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
 
                 amountUIState = amountUIState.copy(
                     originAccountDisplay = DisplayAccount(
-                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from_account,
                         sheetTitle = ibanAccount?.bank.orEmpty(),
                         sheetSubtitle = getMaskedAccountIban(ibanAccount?.sinpeAccount.orEmpty()),
                         icon = originCurrency?.accountIcon
                     ),
                     destinyAccountDisplay = DisplayAccount(
-                        sheetLabel = R.string.smart_payment_sheet_to_account,
                         sheetTitleResource = destinyCurrency?.myAccountSmartSymbol,
                         sheetSubtitleResource = destinyCurrency?.currencyName,
                         icon = R.drawable.ic_multimoney_smart
@@ -193,13 +187,11 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
 
                 amountUIState = amountUIState.copy(
                     originAccountDisplay = DisplayAccount(
-                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_from,
                         sheetTitle = visaAccount?.detail.orEmpty(),
                         sheetSubtitle = getMaskedVisaAccount(visaAccount?.cardMaskedNumber.orEmpty()),
                         icon = R.drawable.ic_visa_card_item
                     ),
                     destinyAccountDisplay = DisplayAccount(
-                        sheetLabel = R.string.smart_payment_amount_bottom_sheet_to,
                         sheetTitleResource = destinyCurrency?.myAccountSmartSymbol,
                         icon = R.drawable.ic_multimoney_smart
                     ),

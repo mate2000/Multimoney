@@ -69,7 +69,7 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSh
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSignOut
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnStartBiometrics
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnUpdateIsExpandedByClick
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent
+import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.INDEX_ONE
 import com.multimoney.multimoney.presentation.util.LAST_THREE
@@ -110,7 +110,8 @@ class HomeViewModel @Inject constructor(
     private val queryGetCoreBankMovements: QueryGetCoreBankMovementsUseCase,
     private val queryGetPromissoryNoteDetail: QueryGetPromissoryNoteDetail,
     private val biometricHelper: BiometricHelper,
-    private val cognitoHelper: CognitoHelper
+    private val cognitoHelper: CognitoHelper,
+    private val cryptoHelper: CryptoHelper
 ) : BaseViewModel(true) {
 
     // Stateless
@@ -495,6 +496,13 @@ class HomeViewModel @Inject constructor(
                 apiCallCount++
                 if (apiCallCount == API_CALLS_TOTAL) {
                     uiState = uiState.copy(isLoading = false)
+                }
+
+                cryptoHelper.apply {
+                    saveCryptoOrigin(configurationVersion?.configuration?.crypto?.origin ?: "")
+                    saveEnableCryptoTransfer(
+                        configurationVersion?.configuration?.crypto?.isTransferEnabled ?: false
+                    )
                 }
             }
             result.onFailure {

@@ -34,13 +34,13 @@ import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.Vis
 import com.multimoney.multimoney.presentation.util.catalog.PhoneCountryCode
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeType
 import com.novopayment.sdk.vts.module.payment.apdu.PaymentService
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flow
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.Locale
 import kotlin.time.Duration
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
 
 fun Context.openWhatsAppDeepLink(link: String, onFailure: () -> Unit = {}) {
     try {
@@ -132,7 +132,7 @@ fun Context.getPhoneNumbers(): List<String> {
         while (phones.moveToNext()) {
             val index = phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
             if (index >= 0) {
-                numbers.add(phones.getString(index))
+                numbers.add(phones.getString(index).replace(PHONE_WITHOUT_FORMAT_REGEX.toRegex(), NEW_VALUE))
             }
         }
         phones.close()
@@ -212,9 +212,9 @@ fun String.getCurrencySymbolValue(): Int {
 
 fun String?.getCurrencySymbol(): Int {
     return when (this) {
-        Colon.value -> R.string.colon_symbol
-        Dollar.value -> R.string.dollar_symbol
-        Quetzal.value -> R.string.quetzal_symbol
+        Colon.value, Colon.alternativeValue -> R.string.colon_symbol
+        Dollar.value, Dollar.alternativeValue -> R.string.dollar_symbol
+        Quetzal.value, Quetzal.alternativeValue -> R.string.quetzal_symbol
         else -> R.string.empty
     }
 }
@@ -280,6 +280,9 @@ fun Char.isValidAmountCharacter() =
 fun String.filterInvalidAmountInput() = this.filter { it.isValidAmountCharacter() }
 
 fun Double.roundToTwoDecimalPlaces() = String.format(TWO_DECIMALS_FORMAT, this)
+
+fun Double.roundToEightDecimalPlaces() = String.format(EIGHT_DECIMALS_FORMAT, this)
+
 fun Double.roundToTwoDecimalPlacesWithoutNegatives() =
     String.format(TWO_DECIMALS_FORMAT, this).replace("-", "")
 
@@ -413,3 +416,5 @@ private const val DIGITS_REGEX = "\\d"
 private const val ZERO_STRING = "0"
 private const val DEFAULT_AMOUNT_OF_DECIMALS = 2
 private const val QUESTION_MARK = "?"
+private const val NEW_VALUE = ""
+private const val PHONE_WITHOUT_FORMAT_REGEX = "[^0-9]+"

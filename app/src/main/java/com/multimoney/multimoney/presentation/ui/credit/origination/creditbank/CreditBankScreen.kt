@@ -42,7 +42,6 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.C
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 @Preview
@@ -72,17 +71,27 @@ fun CreditBankScreen(
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnValidateForm)
         sharedViewModel.onUIEvent(
-            CreditViewModel.UIEvent.OnSetNavigation(nextAction = {
-                viewModel.onUIEvent(
-                    OnNextActionClick(
-                        user = sharedViewModel.email,
-                        nextStepAction = {
-                            sharedViewModel.onUIEvent(OnCallMutationSaveCreditFlowStep)
-                        },
-                        saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
+            CreditViewModel.UIEvent.OnSetNavigation(
+                nextAction = {
+                    viewModel.onUIEvent(
+                        OnNextActionClick(
+                            user = sharedViewModel.email,
+                            nextStepAction = {
+                                sharedViewModel.onUIEvent(OnCallMutationSaveCreditFlowStep)
+                            },
+                            saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
+                        )
                     )
-                )
-            }, nextStep = CreditStep.Three.id, previousStep = CreditStep.One.id)
+                }, nextStep = if (sharedViewModel.crosseling) {
+                    if (sharedViewModel.idBrand.toInt() == Brand.ElSalvador.id) {
+                        CreditStep.Three.id
+                    } else {
+                        CreditStep.Four.id
+                    }
+                } else {
+                    CreditStep.Three.id
+                }, previousStep = CreditStep.One.id
+            )
         )
         viewModel.onUIEvent(
             OnCallQueryBanksAndRegularExpression(

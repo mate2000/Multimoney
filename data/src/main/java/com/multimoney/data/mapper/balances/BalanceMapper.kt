@@ -10,6 +10,7 @@ import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.balance.BlockType
 import com.multimoney.domain.model.balance.CardInformation
 import com.multimoney.domain.model.balance.Summary
+import java.text.DecimalFormat
 
 private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
     summary = resumen.map {
@@ -57,7 +58,8 @@ private fun BalanceQuery.Account.mapToDomainModel() =
         tokenNumber = tokenNumber,
         idCurrencyAccount = idCurrencyAccount.toString().toIntOrNull(),
         month = month,
-        customerId = customerId.toString().toLongOrNull()
+        customerId = customerId.toString().toLongOrNull(),
+        interest = rate.toString().toDoubleOrNull()
     )
 
 private fun BalanceQuery.BalanceCryptoAccount.mapToDomainModel() =
@@ -77,7 +79,8 @@ private fun BalanceQuery.Item.mapToDomainModel() = BalanceCryptoAccountItems(
     investedBalanceCurrency = investedBalanceCurrency.toString(),
     percentageInvestedCurrency = percentageInvestedCurrency.toString(),
     priceOfTheDay = priceOfTheDay.toString().toDouble(),
-    url_image = url_image.toString()
+    url_image = url_image.toString(),
+    cryptoNetwork = crypto_network.toString()
 )
 
 private fun BalanceQuery.BalanceCardInformation.mapToDomainModel() = BalanceCardInformation(

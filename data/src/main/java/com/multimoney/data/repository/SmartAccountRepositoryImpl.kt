@@ -10,12 +10,12 @@ import com.multimoney.data.networking.GraphqlApi
 import com.multimoney.data.paging.SmartMovementsPagingSource
 import com.multimoney.domain.model.accountsmart.ACHAccount
 import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
-import com.multimoney.domain.model.accountsmart.AccountSmartForBuyCrypto
 import com.multimoney.domain.model.accountsmart.AddressesLevel
 import com.multimoney.domain.model.accountsmart.BankListTransfer365
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.CivilStatusResult
 import com.multimoney.domain.model.accountsmart.ExchangeRateResult
+import com.multimoney.domain.model.accountsmart.FavoriteACHResult
 import com.multimoney.domain.model.accountsmart.GeneralEconomicActivityResult
 import com.multimoney.domain.model.accountsmart.GlobalRequest
 import com.multimoney.domain.model.accountsmart.LocalTransferResult
@@ -28,6 +28,7 @@ import com.multimoney.domain.model.accountsmart.SaveSinpeAccount
 import com.multimoney.domain.model.accountsmart.SaveSmartAccount
 import com.multimoney.domain.model.accountsmart.SinpeAccountResult
 import com.multimoney.domain.model.accountsmart.SinpeTransferResult
+import com.multimoney.domain.model.accountsmart.SmartAccountSmall
 import com.multimoney.domain.model.accountsmart.SmartAccountStatusResult
 import com.multimoney.domain.model.accountsmart.SmartAccountTypeResult
 import com.multimoney.domain.model.accountsmart.SmartFavoriteResult
@@ -359,7 +360,8 @@ class SmartAccountRepositoryImpl @Inject constructor(
         identification: String,
         country: String,
         idAccount: Long,
-        accountNumber: String
+        accountNumber: String,
+        isFavorite: Boolean?
     ): Flow<MultimoneyResult<SinpeAccountResult?>> {
         return fetchData(
             apolloCall = graphqlApi.queryListSinpeAccount(
@@ -368,7 +370,8 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 identification,
                 country,
                 idAccount,
-                accountNumber
+                accountNumber,
+                isFavorite
             ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
@@ -424,6 +427,51 @@ class SmartAccountRepositoryImpl @Inject constructor(
             country,
             idAccount,
             option
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+    override suspend fun mutationManageSinpeAccountUpdate(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        accountNumber: String,
+        idCurrency: Long,
+        nameAccount: String,
+        idAccount: Int?,
+        isFavorite: Boolean,
+        idBank: Long,
+        typeAccount: Long
+    ): Flow<MultimoneyResult<SaveSinpeAccount?>> = fetchData(
+        apolloCall = graphqlApi.mutationManageSinpeAccountUpdate(
+            user,
+            idBrand,
+            identification,
+            accountNumber,
+            idCurrency,
+            nameAccount,
+            idAccount,
+            isFavorite,
+            idBank,
+            typeAccount
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun mutationManageSinpeAccountDelete(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        idAccount: Int?,
+    ): Flow<MultimoneyResult<SaveSinpeAccount?>> = fetchData(
+        apolloCall = graphqlApi.mutationManageSinpeAccountDelete(
+            user,
+            idBrand,
+            identification,
+            idAccount,
         ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
@@ -634,12 +682,31 @@ class SmartAccountRepositoryImpl @Inject constructor(
         )
     }
 
+    override suspend fun queryACHTransferFavoriteList(
+        user: String,
+        idBrand: Int,
+        isFavorite: Boolean,
+        identification: String
+    ): Flow<MultimoneyResult<FavoriteACHResult?>> {
+        return fetchData(
+            apolloCall = graphqlApi.queryACHTransferFavoriteList(
+                user,
+                idBrand,
+                isFavorite,
+                identification,
+            ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+    }
+
     override suspend fun querySmartAccounts(
         user: String,
         identification: String,
         idBrand: Int,
         accountStatus: Int
-    ): Flow<MultimoneyResult<List<AccountSmartForBuyCrypto>?>> {
+    ): Flow<MultimoneyResult<List<SmartAccountSmall>?>> {
         return fetchData(graphqlApi.querySmartAccounts(
             user,
             identification,
@@ -651,6 +718,7 @@ class SmartAccountRepositoryImpl @Inject constructor(
             }
         )
     }
+
 
     override suspend fun mutationUpdateSmartAccountStatus(
         user: String,

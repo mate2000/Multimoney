@@ -273,6 +273,16 @@ dependencies {
     } else {
         implementation webkit.webkit
     }
+
+    // CameraX
+    implementation cameraX.core
+    implementation cameraX.cameraX
+    implementation cameraX.lifecycle
+    implementation cameraX.view
+
+    // MLKit
+    implementation mlKit.barcode
+
 }
 
 dexguard {

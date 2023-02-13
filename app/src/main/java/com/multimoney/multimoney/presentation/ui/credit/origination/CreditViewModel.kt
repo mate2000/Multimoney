@@ -18,8 +18,8 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.CROSSELING
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
@@ -31,6 +31,9 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ORIGIN
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.NavigateToAccountScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnBackVisibilityValueChanged
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnCallMutationSaveCreditFlowStep
@@ -47,16 +50,18 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnNextStep
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnOpenDialogValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnPreviousStep
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnRestartCrosselingNewAccount
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetBankListEmpty
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetCloseDialogTexts
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnShowBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnUpdateScreenConfigData
-import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.NavigateToAccountScreen
-import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnRestartCrosselingNewAccount
-import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetBankListEmpty
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.SignDocumentOrigin
+import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
+import com.multimoney.multimoney.presentation.util.getNavParam
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -251,7 +256,7 @@ class CreditViewModel @Inject constructor(
                 result.onSuccess {
                     uiState = uiState.copy(isLoading = false)
                     if (crosseling) {
-                        if (uiState.currentStep == CreditStep.Four.id) {
+                        if ((idBrand.toInt() == Brand.ElSalvador.id && uiState.currentStep == CreditStep.Three.id) || (idBrand.toInt() == Brand.CostaRica.id && uiState.currentStep == CreditStep.Four.id)) {
                             onCallSaveCreditOperation()
                         } else {
                             nextStep()
@@ -283,7 +288,25 @@ class CreditViewModel @Inject constructor(
                 idBrand.toInt()
             ).collectLatest { result ->
                 result.onSuccess {
-                    nextStep()
+                    if (idBrand.toInt() == Brand.ElSalvador.id || it.idPrint == 0L) {
+                        uiState = uiState.copy(showSVProcessSendSuccessfully = true)
+                    } else {
+                        popAndNavigateTo(
+                            Screen.SignDocumentProcessScreen.baseRoute
+                                .plus(getNavParam(SIGN_DOCUMENT_STEP_ARG, SignDocumentStep.GENERATE_DOCUMENT_STEP.value))
+                                .plus(getNavParam(SIGN_DOCUMENT_ORIGIN, SignDocumentOrigin.Crosseling.value))
+                                .plus(getNavParam(SIGN_DOCUMENT_ID_PRINT, it.idPrint))
+                                .plus(getNavParam(ID_BRAND, idBrand))
+                                .plus(getNavParam(PK_USER, pkUser))
+                                .plus(getNavParam(IDENTIFICATION, identification))
+                                .plus(getNavParam(EMAIL, email))
+                                .plus(getNavParam(ID_USER_REQUEST, idUserRequest))
+                                .plus(getNavParam(FIRST_NAME, firstName))
+                                .plus(getNavParam(LAST_NAME, lastName))
+                                .plus(getNavParam(CROSSELING, crosseling)),
+                            Screen.CreditScreen.route
+                        )
+                    }
                 }.onFailure {
                     uiState = uiState.copy(
                         isLoading = false,
@@ -295,7 +318,6 @@ class CreditViewModel @Inject constructor(
                 }.onLoading {
                     uiState = uiState.copy(isLoading = true)
                 }
-
             }
         }
     }
@@ -367,7 +389,8 @@ class CreditViewModel @Inject constructor(
         var loadContent: Boolean = false,
         val isBottomSheetVisible: Boolean = false,
         val crosselingNewAccount: Boolean = false,
-        val crosselingIsBankAccountListEmpty: Boolean = false
+        val crosselingIsBankAccountListEmpty: Boolean = false,
+        val showSVProcessSendSuccessfully: Boolean = false
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -439,9 +462,7 @@ class CreditViewModel @Inject constructor(
         object OnHideBottomSheet : UIEvent()
         object OnNavigateToHome : UIEvent()
         object NavigateToAccountScreen : UIEvent()
-        object OnRestartCrosselingNewAccount : UIEvent() {
-
-        }
+        object OnRestartCrosselingNewAccount : UIEvent()
     }
 
     sealed class BaseEvent {

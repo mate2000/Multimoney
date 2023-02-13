@@ -3,7 +3,6 @@ package com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
@@ -22,6 +21,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -39,7 +39,6 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
 import com.multimoney.multimoney.presentation.util.transformation.VisualTransformationMasks
@@ -73,17 +72,29 @@ fun IbanAccountScreen(
         )
         viewModel.onUIEvent(OnValidForm)
         sharedViewModel.onUIEvent(
-            CreditViewModel.UIEvent.OnSetNavigation(nextAction = {
-                viewModel.onUIEvent(
-                    OnNextActionClick(
-                        user = sharedViewModel.email,
-                        nextStepAction = {
-                            sharedViewModel.onUIEvent(OnCallMutationSaveCreditFlowStep)
-                        },
-                        saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
+            CreditViewModel.UIEvent.OnSetNavigation(
+                nextAction = {
+                    viewModel.onUIEvent(
+                        OnNextActionClick(
+                            user = sharedViewModel.email,
+                            nextStepAction = {
+                                sharedViewModel.onUIEvent(OnCallMutationSaveCreditFlowStep)
+                            },
+                            saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
+                        )
                     )
-                )
-            }, nextStep = CreditStep.Three.id, previousStep = CreditStep.One.id)
+                },
+                nextStep = if (sharedViewModel.crosseling) {
+                    if (sharedViewModel.idBrand.toInt() == Brand.ElSalvador.id) {
+                        CreditStep.Three.id
+                    } else {
+                        CreditStep.Four.id
+                    }
+                } else {
+                    CreditStep.Three.id
+                },
+                previousStep = CreditStep.One.id
+            )
         )
         viewModel.onUIEvent(
             OnLoadCreditSteps(
@@ -102,7 +113,7 @@ fun IbanAccountScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .background(MultimoneyTheme.colors.background)
             .padding(horizontal = 16.dp)
     ) {

@@ -1,7 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.crypto
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,14 +34,13 @@ fun CurrencyItem(
     balanceDollars: Double,
     priceOfTheDay: Double,
     percentageInvestedCurrency: String,
-    available: Double,
-    onClick: () -> Unit = {}
+    available: Double
 ) {
     Column {
         Column(modifier.paint(
             painterResource(id = R.drawable.bg_cryptocurrency_enabled),
             contentScale = ContentScale.FillBounds
-        ).clickable { onClick() }) {
+        )) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()

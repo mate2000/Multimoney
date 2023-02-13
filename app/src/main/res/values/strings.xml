@@ -1688,7 +1688,8 @@
     <string name="visa_direct_verify_deposit_alert_error_button" translatable="false">Ir al inicio</string>
 
     <!-- Crypto sell flow-->
-    <string name="crypt_list_sell_title" translatable="false">¿Cuál moneda querés vender?</string>
+    <string name="crypt_list_sell_title_cr" translatable="false">¿Cuál moneda querés vender?</string>
+    <string name="crypt_list_sell_title_sv" translatable="false">¿Cuál moneda quieres vender?</string>
     <string name="crypto_sell_flow_sell_screen_title_cr" translatable="false">¿Cuánto querés vender?</string>
     <string name="crypto_sell_flow_sell_screen_title_sv" translatable="false">¿Cuánto quieres vender?</string>
     <string name="crypto_sell_flow_confirmation_sell_title" translatable="false">Monto a vender</string>

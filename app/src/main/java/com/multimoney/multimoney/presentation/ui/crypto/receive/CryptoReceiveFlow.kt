@@ -50,7 +50,9 @@ fun CryptoReceiveFlow(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             when (viewModel.idBrand) {
-                Brand.ElSalvador.id -> { }
+                Brand.ElSalvador.id -> {
+                /* Receive crypto is temporarily disabled to El Salvador. */
+                }
 
                 Brand.CostaRica.id -> {
                     if (viewModel.comingFromDetails) {
@@ -76,7 +78,9 @@ fun CRReceiveCryptoDirectFlow(
     viewModel: CryptoReceiveSharedViewModel
 ) {
     when (step) {
-        CryptoReceiveSteps.One.pageNumber -> { /*TODO: */ }
+        CryptoReceiveSteps.One.pageNumber -> {
+        /*TODO: Crypto Receive Address Screen*/
+        }
     }
 }
 @Composable

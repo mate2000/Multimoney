@@ -140,8 +140,7 @@ fun ContentSV(
                     OnIsUSCitizenChange(it == optionsCitizen.first(), Brand.ElSalvador.id)
                 )
             },
-            optionSelected =
-            when (viewModel.uiState.isUSCitizen) {
+            optionSelected = when (viewModel.uiState.isUSCitizen) {
                 true -> optionsCitizen[0]
                 false -> optionsCitizen[1]
                 else -> null

@@ -42,7 +42,7 @@ sealed class CurrencyType(
         2,
         "02",
         "DÓLARES",
-        "DÓLARES",
+        "DOLARES",
         "Dólares",
         "USD",
         R.string.dollars,

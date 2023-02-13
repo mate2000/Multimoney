@@ -630,8 +630,19 @@ fun ProductFooterExpanded(
                 balance = viewModel.balanceCredit,
                 cryptoMovements = viewModel.uiState.cryptoCurrencyMovements,
                 onShowAllClick = { viewModel.onUIEvent(OnNavigateToCryptoMovements) },
-                actionMarket = { viewModel.onUIEvent(OnNavigateToCryptoMarket) },
-                actionWallet = { viewModel.onUIEvent(OnNavigateToCryptoWallet) }
+                actionMarket = { if (viewModel.balanceCredit?.balanceCryptoAccount?.outOfService == true) {
+                        viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToMaintenanceAlert)
+                    } else {
+                        viewModel.onUIEvent(OnNavigateToCryptoMarket)
+                    }
+                },
+                actionWallet = {
+                    if (viewModel.balanceCredit?.balanceCryptoAccount?.outOfService == true) {
+                        viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToMaintenanceAlert)
+                    } else {
+                        viewModel.onUIEvent(OnNavigateToCryptoWallet)
+                    }
+                }
             )
         }
     }
@@ -690,7 +701,8 @@ fun ProductCtaFooterExpanded(
                 onSellActionClicked = {
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSellCryptoFlow)
                 },
-                isCryptoTransferEnabled = viewModel.uiState.isCryptoTransferEnabled,
+                isCryptoTransferEnabled = viewModel.uiState.isCryptoTransferEnabled
+                        && viewModel.balanceCredit?.balanceCryptoAccount?.outOfService == false,
             )
         }
     }

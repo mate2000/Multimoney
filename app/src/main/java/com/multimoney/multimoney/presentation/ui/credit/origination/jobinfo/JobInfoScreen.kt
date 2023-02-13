@@ -134,6 +134,7 @@ fun JobInfoScreen(
             modifier = Modifier.padding(top = 24.dp),
             placeHolder = stringResource(id = R.string.credit_job_workplace_label),
             value = viewModel.uiState.companyName,
+            labelText = stringResource(id = R.string.credit_job_workplace_label),
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next
             ),

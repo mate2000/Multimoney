@@ -17,6 +17,6 @@ class QueryACHTransferFavoriteListUseCaseImpl(
         user = user,
         idBrand = idBrand,
         isFavorite = isFavorite,
-        identificationNumber = identificationNumber
+        identification = identificationNumber
     )
 }

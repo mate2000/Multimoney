@@ -6,23 +6,27 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.OpenWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.SimulateUserInteraction
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnAlertButtonClick
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnAlertCloseClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.Companion.PHONE_HARDCODED
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallGetLinkCreditContractEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallSubscriptionCreditContractEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnShowDialogInformation
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.documentgeneration.DocumentGenerationScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.processingtransaction.ProcessingTransactionScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.signdocument.SignDocumentScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.validateidentity.ValidateIdentityScreen
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
+import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.PROCESSING_TRANSACTION
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
+import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -33,6 +37,10 @@ fun SignDocumentProcessScreen(
 ) {
     val context = LocalContext.current
     val activity = context.findActivity()
+    val whatsAppLink = stringResource(
+        id = R.string.whatsapp_deep_link,
+        PHONE_HARDCODED
+    )
 
     LaunchedEffect(true) {
         viewModel.apply {
@@ -42,6 +50,7 @@ fun SignDocumentProcessScreen(
             baseEvent.collectLatest { event ->
                 when (event) {
                     is SimulateUserInteraction -> activity?.onUserInteraction()
+                    is OpenWhatsAppLink -> context.openWhatsAppDeepLink(whatsAppLink)
                 }
             }
         }
@@ -53,6 +62,26 @@ fun SignDocumentProcessScreen(
         }
     }
 
+    when (viewModel.uiState.signDocumentProcessStep) {
+        GENERATE_DOCUMENT_STEP.value -> {
+            DocumentGenerationScreen(onNavigateToHome = {
+                viewModel.onUIEvent(OnNavigateToHome)
+            })
+        }
+        SIGN_DOCUMENTS_STEP.value -> {
+            SignDocumentScreen(viewModel = viewModel)
+            LaunchedEffect(key1 = true) {
+                viewModel.onUIEvent(OnShowDialogInformation)
+            }
+        }
+        VALIDATE_IDENTITY.value -> {
+            ValidateIdentityScreen(viewModel = viewModel)
+        }
+        PROCESSING_TRANSACTION.value -> {
+            ProcessingTransactionScreen(viewModel = viewModel)
+        }
+    }
+
     if (viewModel.uiState.isAlertResultVisible) {
         viewModel.uiState.apply {
             AlertResult(
@@ -61,28 +90,11 @@ fun SignDocumentProcessScreen(
                 descriptionResource = alertResultDescriptionResource,
                 buttonTextResource = alertResultButtonResource,
                 isTopNavBarVisible = true,
-                isRightButtonVisible = true,
-                isLeftButtonVisible = false,
-                onRightButtonClick = { viewModel.onUIEvent(OnAlertCloseClick) },
-                onButtonClick = { viewModel.onUIEvent(OnAlertButtonClick) }
+                isRightButtonVisible = alertResultIsRightButtonVisible,
+                isLeftButtonVisible = alertResultIsLeftButtonVisible,
+                onRightButtonClick = alertResultRightButtonClick,
+                onButtonClick = alertResultButtonAction
             )
-        }
-    } else {
-        when (viewModel.uiState.signDocumentProcessStep) {
-            GENERATE_DOCUMENT_STEP.value -> {
-                DocumentGenerationScreen(onNavigateToHome = {
-                    viewModel.onUIEvent(OnNavigateToHome)
-                })
-            }
-            SIGN_DOCUMENTS_STEP.value -> {
-                SignDocumentScreen(viewModel = viewModel)
-                LaunchedEffect(key1 = true) {
-                    viewModel.onUIEvent(OnShowDialogInformation)
-                }
-            }
-            VALIDATE_IDENTITY.value -> {
-                ValidateIdentityScreen(viewModel = viewModel)
-            }
         }
     }
 

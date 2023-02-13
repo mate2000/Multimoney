@@ -41,7 +41,6 @@ class Transfer365AmountViewModel @Inject constructor() : BaseSmartEditAmountView
 
             amountUIState = amountUIState.copy(
                 originAccountDisplay = DisplayAccount(
-                    sheetLabel = R.string.transfer_365_pre_confirmation_from_label,
                     sheetTitleResource = originCurrency?.myAccountSmartName,
                     sheetSubtitle = getMaskedAccount(
                         prefix = Brand.ElSalvador.countryCode.uppercase(),
@@ -76,7 +75,6 @@ class Transfer365AmountViewModel @Inject constructor() : BaseSmartEditAmountView
             }
             amountUIState = amountUIState.copy(
                 destinyAccountDisplay = DisplayAccount(
-                    sheetLabel = R.string.smart_payment_amount_bottom_sheet_to,
                     sheetTitle = "${transfer365Account.name} ${transfer365Account.lastname}",
                     sheetSubtitle = destinationInfo,
                     icon = R.drawable.ic_bank_account_dollar

@@ -94,6 +94,10 @@ fun SmartAmountBody(
             }
             CurrencyAmountInput(
                 modifier = Modifier.padding(top = 24.dp),
+                textStyle = Typography.h4.copy(
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.W700
+                ),
                 value = currentAmount,
                 placeHolder = stringResource(id = amountPlaceHolderId),
                 onValueChange = { onAmountChange(it) },

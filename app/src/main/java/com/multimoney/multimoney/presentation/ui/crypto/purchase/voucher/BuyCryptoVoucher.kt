@@ -16,7 +16,6 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,12 +43,12 @@ import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoS
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomImage
-import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.uielement.VoucherAccountInfo
 import com.multimoney.multimoney.presentation.uielement.VoucherCurrencyExchangeInfo
 import com.multimoney.multimoney.presentation.uielement.VoucherNumberInfo
 import com.multimoney.multimoney.presentation.uielement.VoucherTotalAmountInfo
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import com.multimoney.multimoney.presentation.util.shape.DottedShape
 
@@ -59,56 +58,43 @@ fun BuyCryptoVoucherScreen(
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-    sharedViewModel: PurchaseCryptoSharedViewModel = hiltViewModel()
+    sharedViewModel: PurchaseCryptoSharedViewModel = hiltViewModel(),
+    viewModel: BuyCryptoVoucherViewModel = hiltViewModel()
 ) {
 
-    /*
-    ToDo
-    Add navigation and viewModel operations
-     */
-    LaunchedEffect(true) {
-//        viewModel.executeNavigation(
-//            onPopBackStack = onPopBackStack,
-//            onNavigate = onNavigate,
-//            onPopAndNavigate = onPopAndNavigate
-//        )
-    }
-    //BackHandler { viewModel.onUIEvent(SelectSmartAccountViewModel.UIEvent.OnNavigateBack) }
     BuyCryptoVoucherContent(
-        isMultiCurrency = true,
-        currentAmountValueString = "$1,000",
-        currencyName = "BTC",
-        valueInCurrency = "0.046",
-        accountNumber = "010040130303023",
-        referenceNumber = "0121212012",
-        currentDate = "12-01-2023",
-        currentTime = "08:12 am",
-        exchangeRateLabel = "₡444",
-        exchangeConvertedAmount = "₡52,323.12",
-        totalDebitedAmount = "$1,025"
+        quoteAmount = sharedViewModel.uiState.voucherQuoteAmount ?: "",
+        currencyName = sharedViewModel.uiState.asset ?: "",
+        baseAmount = sharedViewModel.uiState.voucherBaseAmount ?: "",
+        accountNumber = sharedViewModel.uiState.ibanAccountNumber,
+        referenceNumber = sharedViewModel.uiState.voucherReferenceNumber ?: "",
+        currentDate = sharedViewModel.uiState.purchaseCurrentDate ?: "",
+        currentTime = sharedViewModel.uiState.purchaseCurrentTime ?: "",
+        exchangeRate = sharedViewModel.uiState.voucherExchangeRate ?: "",
+        totalDebitedExchange = sharedViewModel.uiState.voucherTotalDebitedExchange ?: "",
+        totalDebitedAmount = sharedViewModel.uiState.voucherTotalDebitedAmount ?: "",
+        idCurrency = sharedViewModel.uiState.idCurrency ?: CurrencyType.Dollar.id,
+        viewModel = viewModel
     )
 }
 
 @Composable
 fun BuyCryptoVoucherContent(
-    isMultiCurrency: Boolean,
-    currentAmountValueString: String,
+    quoteAmount: String,
     currencyName: String,
-    valueInCurrency: String,
+    baseAmount: String,
     accountNumber: String,
     referenceNumber: String,
     currentDate: String,
     currentTime: String,
-    exchangeRateLabel: String,
-    exchangeConvertedAmount: String,
-    totalDebitedAmount: String
+    exchangeRate: String,
+    totalDebitedExchange: String,
+    totalDebitedAmount: String,
+    idCurrency: Int? = CurrencyType.Dollar.id,
+    viewModel: BuyCryptoVoucherViewModel
 ) {
     val view = LocalView.current
     var capturingViewBounds by remember { mutableStateOf<Rect?>(null) }
-
-//    LaunchedEffect(true) {
-//        viewModel.executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
-//    }
 
     Column(
         modifier = Modifier
@@ -121,12 +107,6 @@ fun BuyCryptoVoucherContent(
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
         ) {
-            TopNavBar(
-                isLeftButtonVisible = false,
-                isCenterContentVisible = true,
-                onRightButtonClick = {
-                    //viewModel.onUIEvent(PaymentVoucherViewModel.UIEvent.OnCloseClick)
-                })
             ConstraintLayout(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -172,12 +152,12 @@ fun BuyCryptoVoucherContent(
                         CustomButton(
                             onClick = {
                                 capturingViewBounds?.let { bounds ->
-//                                    viewModel.onUIEvent(
-//                                        PaymentVoucherViewModel.UIEvent.OnSharedVoucherImage(
-//                                            view,
-//                                            bounds
-//                                        )
-//                                    )
+                                    viewModel.onUIEvent(
+                                        BuyCryptoVoucherViewModel.UIEvent.OnSharedVoucherImage(
+                                            view,
+                                            bounds
+                                        )
+                                    )
                                 }
                             },
                             text = stringResource(R.string.payment_voucher_shared_button),
@@ -204,7 +184,7 @@ fun BuyCryptoVoucherContent(
                         )
                         Text(
                             modifier = Modifier.fillMaxWidth(),
-                            text = currentAmountValueString,
+                            text = quoteAmount,
                             style = Typography.h4.copy(fontWeight = FontWeight.W600),
                             color = MultimoneyTheme.colors.text,
                             textAlign = TextAlign.Center
@@ -223,7 +203,7 @@ fun BuyCryptoVoucherContent(
                             modifier = Modifier.fillMaxWidth(),
                             text = stringResource(
                                 id = R.string.buy_crypto_voucher_final_value_in_currency_template,
-                                valueInCurrency,
+                                baseAmount,
                                 currencyName
                             ),
                             style = Typography.body2.copy(fontWeight = FontWeight.W100),
@@ -264,14 +244,13 @@ fun BuyCryptoVoucherContent(
                         subTitle = referenceNumber
                     )
 
-
-                    if (isMultiCurrency) {
+                    if (idCurrency == CurrencyType.Colon.id) {
                         Spacer(modifier = Modifier.height(32.dp))
                         VoucherCurrencyExchangeInfo(
                             leftTitleResource = R.string.buy_crypto_voucher_mount_to_charge,
                             rightTitleResource = R.string.buy_crypto_voucher_exchange_rate,
-                            exchangeRateText = exchangeConvertedAmount,
-                            convertedAmountText = exchangeRateLabel
+                            exchangeRateText = totalDebitedExchange,
+                            convertedAmountText = exchangeRate
                         )
                     } else {
                         VoucherTotalAmountInfo(

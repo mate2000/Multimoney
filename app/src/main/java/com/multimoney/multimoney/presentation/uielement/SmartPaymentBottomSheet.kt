@@ -39,11 +39,9 @@ import kotlinx.coroutines.CoroutineScope
  * @param saveSendTitleResource: Resource of title to be shown indicating save to Smart or send from Smart
  * @param amount: String of amount (Should be formatted)
  * @param exchangedAmount: String of amount exchanged for currency conversion (Should be formatted)
- * @param fromLabel: String indicating label of origin account
  * @param fromTitle: String indicating title of origin account
  * @param fromSubtitle: String indicating subtitle of origin account
  * @param fromIcon: Resource indicating icon of origin account
- * @param toLabel: String indicating label of destination account
  * @param toTitle: String indicating title of destination account
  * @param toSubtitle: String indicating subtitle of destination account
  * @param toSubtitle2: String indicating second line subtitle of destination account
@@ -61,11 +59,9 @@ fun SmartPaymentBottomSheet(
     saveSendTitleResource: Int,
     amount: String,
     exchangedAmount: String? = null,
-    fromLabel: String,
     fromTitle: String? = null,
     fromSubtitle: String? = null,
     fromIcon: Int? = null,
-    toLabel: String,
     titleIcon: Int? = null,
     toTitle: String? = null,
     toSubtitle: String? = null,
@@ -106,7 +102,7 @@ fun SmartPaymentBottomSheet(
                 modifier = Modifier
                     .padding(top = 32.dp)
                     .fillMaxWidth(),
-                text = fromLabel,
+                text = stringResource(R.string.smart_payment_amount_bottom_sheet_from),
                 style = Typography.body2.copy(fontWeight = FontWeight.W600),
                 color = MultimoneyTheme.colors.text,
                 textAlign = TextAlign.Start
@@ -132,7 +128,7 @@ fun SmartPaymentBottomSheet(
             )
 
             Text(
-                text = toLabel,
+                text = stringResource(R.string.smart_payment_amount_bottom_sheet_to),
                 style = Typography.body2.copy(fontWeight = FontWeight.W600),
                 color = MultimoneyTheme.colors.text,
                 textAlign = TextAlign.Start,
@@ -209,11 +205,9 @@ private fun BottomSheetPreview() {
         saveSendTitleResource = R.string.smart_payment_amount_bottom_sheet_save_title,
         amount = "$500",
         exchangedAmount = "₡320,980",
-        fromLabel = "Desde tu cuenta",
         fromTitle = "Banco de Costa Rica",
         fromSubtitle = "CR••••4893",
         fromIcon = R.drawable.ic_visa_card_item,
-        toLabel = "Hacias",
         toTitle = "Mi Cuenta Smart | $",
         toSubtitle = "Dólares",
         toIcon = R.drawable.ic_bank_account_dollar,

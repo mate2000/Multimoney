@@ -3,15 +3,14 @@ package com.multimoney.multimoney.presentation.ui.credit.origination.account
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -27,10 +26,10 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.account.CrosselingAccountViewModel.UIEvent.OnClientBankAccountSelected
 import com.multimoney.multimoney.presentation.ui.credit.origination.account.CrosselingAccountViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.account.CrosselingAccountViewModel.UIEvent.OnStart
-import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomButton
-import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 
@@ -39,7 +38,6 @@ fun CrosselingAccountScreen(
     sharedViewModel: CreditViewModel,
     viewModel: CrosselingAccountViewModel = hiltViewModel()
 ) {
-
     LaunchedEffect(true) {
         sharedViewModel.onUIEvent(
             CreditViewModel.UIEvent.OnSetNavigation(
@@ -53,11 +51,13 @@ fun CrosselingAccountScreen(
                             saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
                         )
                     )
-                }, nextStep = if (sharedViewModel.idBrand.toInt() == Brand.ElSalvador.id) {
+                },
+                nextStep = if (sharedViewModel.idBrand.toInt() == Brand.ElSalvador.id) {
                     CreditStep.Three.id
                 } else {
                     CreditStep.Four.id
-                }, previousStep = CreditStep.One.id
+                },
+                previousStep = CreditStep.One.id
             )
         )
         viewModel.onUIEvent(
@@ -91,7 +91,6 @@ fun CrosselingAccountScreen(
     }
 
     PaymentAccountContent(viewModel, sharedViewModel)
-
 }
 
 @Composable
@@ -133,8 +132,6 @@ fun PaymentAccountList(
     viewModel: CrosselingAccountViewModel = hiltViewModel(),
     sharedViewModel: CreditViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
-
     viewModel.uiState.clientBankAccountList?.let { clientBankAccountList ->
         LazyColumn(modifier = Modifier.padding(top = 20.dp, start = 24.dp, end = 24.dp)) {
             items(clientBankAccountList) { clientBankAccount ->

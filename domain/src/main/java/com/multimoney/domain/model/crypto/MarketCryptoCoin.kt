@@ -7,11 +7,11 @@ import kotlinx.parcelize.Parcelize
 data class MarketCryptoCoin(
     val description: String,
     val baseAsset: String,
-    val amountchange: String,
-    val percentChange: String,
-    val priority: Int,
-    val currentPrice: Double,
+    val amountchange: String? = null,
+    val percentChange: String? = null,
+    val priority: Int? = null,
+    val currentPrice: Double? = null,
     val url_image: String,
-    val historico: Boolean,
+    val historico: Boolean? = null,
     val cryptoNetwork: String
 ) : Parcelable

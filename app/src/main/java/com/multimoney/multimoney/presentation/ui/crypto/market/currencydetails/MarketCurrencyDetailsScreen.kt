@@ -100,7 +100,6 @@ fun MarketCurrencyDetailsScreen(
     MarketCurrencyDetailsScreenContent(
         currencyHistoricalPrices = viewModel.uiState.getHistoricalCurrencyPrices,
         currencyNews = viewModel.uiState.currencyNews,
-        idBrand = viewModel.uiState.idBrand ?: 0,
         description = viewModel.uiState.selectedCryptoCoin?.description ?: "",
         currentPrice = viewModel.uiState.selectedCryptoCoin?.currentPrice ?: 0.0,
         urlImage = viewModel.uiState.selectedCryptoCoin?.url_image ?: "",
@@ -149,6 +148,8 @@ fun MarketCurrencyDetailsScreen(
         },
         onBackPressed = { viewModel.onUIEvent(OnNavigateBack) },
         onNavigateToSendCrypto = { viewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnNavigateToCryptoSendFlow) },
+        onNavigateToSellCrypto = { viewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnNavigateToSellCrypto) },
+        isCryptoTransferEnabled = viewModel.uiState.isCryptoTransferEnabled
     )
     ConfirmationBottomSheet(
         modalBottomSheetState = viewModel.uiState.bottomSheetVisibleState,
@@ -169,7 +170,6 @@ fun MarketCurrencyDetailsScreen(
 fun MarketCurrencyDetailsScreenContent(
     currencyHistoricalPrices: List<CurrencyHistoricPrice>,
     currencyNews: CryptoNewsFeed?,
-    idBrand: Int,
     description: String,
     currentPrice: Double,
     urlImage: String,
@@ -178,6 +178,8 @@ fun MarketCurrencyDetailsScreenContent(
     onNavigateToBuyCrypto: () -> Unit = {},
     onBackPressed: () -> Unit = {},
     onNavigateToSendCrypto: () -> Unit = {},
+    onNavigateToSellCrypto: () -> Unit = {},
+    isCryptoTransferEnabled: Boolean
 ) {
     val selected = remember { mutableStateOf(true) }
     var selectedDateRange by remember { mutableStateOf(FilterDateByDays.YESTERDAY.time) }
@@ -191,9 +193,9 @@ fun MarketCurrencyDetailsScreenContent(
                 modifier = Modifier.background(color = MultimoneyTheme.colors.background),
                 hasSmartBalance = true,
                 enableCryptoActions = true,
-                enableSendAndGive = idBrand == Brand.CostaRica.id,
+                enableSendAndGive = isCryptoTransferEnabled,
                 hasBalanceAction = { onNavigateToBuyCrypto() },
-                sellAction = { /* todo: go to sell crypto flow */ },
+                sellAction = { onNavigateToSellCrypto() },
                 giveAction = { /* todo: go to receive crypto flow */ },
                 sendAction = { onNavigateToSendCrypto() },
             )

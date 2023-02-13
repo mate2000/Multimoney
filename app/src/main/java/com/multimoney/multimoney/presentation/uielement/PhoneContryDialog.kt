@@ -4,40 +4,36 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -52,9 +48,11 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.theme.DefaultWhite
-import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.DefaultBlack
+import com.multimoney.multimoney.presentation.theme.GrayScale300
+import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 import com.togitech.ccp.data.CountryData
 import com.togitech.ccp.data.utils.getCountryName
 import com.togitech.ccp.data.utils.getFlags
@@ -71,14 +69,8 @@ import com.togitech.ccp.utils.searchCountry
  * @param showCountryCode: Show country code.
  * @param showCountryFlag: Show country flag.
  * @param pickedCountry: Function to handle picked country selected.
- * @param dialogAppBarColor: Change select country dialog AppBarColor.
- * @param dialogAppBarTextColor: Change select country dialog AppBarTextColor.
- * @param dialogFocusedBorderColorSearch: Change select country dialog FocusedBorderColorSearch.
- * @param dialogUnFocusedBorderColorSearch: Change select country dialog UnFocusedBorderColorSearch.
- * @param dialogCursorColorSearch: Change select country dialog CursorColorSearch.
  * **/
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 @Preview
 fun PhoneCountryDialog(
@@ -88,14 +80,7 @@ fun PhoneCountryDialog(
     showCountryCode: Boolean = true,
     showCountryFlag: Boolean = true,
     pickedCountry: (CountryData) -> Unit = {},
-    countryCodeTextColor: Color = MultimoneyTheme.colors.text,
-    dropdownArrowColor: Color = Color.White,
-    dialogAppBarColor: Color = MultimoneyTheme.colors.primary,
-    dialogAppBarTextColor: Color = DefaultWhite,
-    dialogFocusedBorderColorSearch: Color = MultimoneyTheme.colors.primary,
-    dialogUnFocusedBorderColorSearch: Color = MultimoneyTheme.colors.secondary,
-    dialogCursorColorSearch: Color = MultimoneyTheme.colors.primary,
-    countryList :MutableList<CountryData>? = mutableListOf<CountryData>()
+    countryList: MutableList<CountryData>? = mutableListOf<CountryData>()
 ) {
     var innerCountryList = mutableListOf<CountryData>()
     var isPickCountry by remember { mutableStateOf(defaultSelectedCountry) }
@@ -105,60 +90,74 @@ fun PhoneCountryDialog(
     val context = LocalContext.current
     val interactionSource = remember { MutableInteractionSource() }
 
-    Column(
+    // Set colors depending on system theme
+    val backgroundColor: Color
+    val textColor: Color
+    val iconTint: Color
+    val dropdownArrowColor: Color
+    val searchBorderColor: Color
+
+    if (isSystemInDarkTheme()) {
+        backgroundColor = DefaultBlack
+        textColor = GrayScale300
+        iconTint = Primary500
+        dropdownArrowColor = WhiteTransparency90
+        searchBorderColor = Color.Transparent
+    } else {
+        backgroundColor = DefaultBlack
+        textColor = GrayScale300
+        iconTint = Primary500
+        dropdownArrowColor = WhiteTransparency90
+        searchBorderColor = Color.Transparent
+    }
+
+    Row(
         modifier = Modifier
             .padding(padding)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null
             ) { isOpenDialog = true },
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Image(
-                modifier = modifier.width(34.dp),
-                painter = painterResource(
-                    id = getFlags(
-                        isPickCountry.countryCode
-                    )
-                ), contentDescription = null
-            )
-            if (showCountryCode) {
-                Text(
-                    text = isPickCountry.countryPhoneCode,
-                    modifier = Modifier.padding(start = 4.dp),
-                    style = Typography.body2.copy(color = countryCodeTextColor)
+        Image(
+            modifier = modifier.width(34.dp),
+            painter = painterResource(
+                id = getFlags(
+                    isPickCountry.countryCode
                 )
-                if (showCountryFlag) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowDropDown,
-                        contentDescription = null,
-                        tint = dropdownArrowColor
-                    )
-                }
+            ),
+            contentDescription = null
+        )
+        if (showCountryCode) {
+            Text(
+                text = isPickCountry.countryPhoneCode,
+                modifier = Modifier.padding(start = 4.dp),
+                style = Typography.body2.copy(color = textColor)
+            )
+            if (showCountryFlag) {
+                Icon(
+                    imageVector = Icons.Default.ArrowDropDown,
+                    contentDescription = null,
+                    tint = dropdownArrowColor
+                )
             }
         }
     }
 
-    //Select Country Dialog
+    // Select Country Dialog
     if (isOpenDialog) {
         Dialog(
             onDismissRequest = { isOpenDialog = false },
             properties = DialogProperties(
                 usePlatformDefaultWidth = false
-            ),
+            )
         ) {
             Scaffold(
                 topBar = {
                     TopAppBar(
                         title = {
-                            Text(
-                                text = stringResource(id = R.string.phone_country_dialog_title),
-                                textAlign = TextAlign.Center,
-                                modifier = modifier.fillMaxWidth()
-                            )
                         },
                         navigationIcon = {
                             IconButton(onClick = {
@@ -166,19 +165,20 @@ fun PhoneCountryDialog(
                                 isSearch = false
                             }) {
                                 Icon(
-                                    imageVector = Icons.Rounded.ArrowBack,
+                                    painter = painterResource(R.drawable.ic_nav_icon_left),
                                     contentDescription = "Back"
                                 )
                             }
                         },
-                        backgroundColor = dialogAppBarColor,
-                        contentColor = dialogAppBarTextColor,
+                        backgroundColor = backgroundColor,
+                        contentColor = iconTint,
                         actions = {
                             IconButton(onClick = {
                                 isSearch = !isSearch
                             }) {
                                 Icon(
-                                    imageVector = Icons.Rounded.Search,
+                                    modifier = Modifier.size(24.dp),
+                                    painter = painterResource(R.drawable.ic_search),
                                     contentDescription = "Search"
                                 )
                             }
@@ -186,63 +186,62 @@ fun PhoneCountryDialog(
                     )
                 }
             ) { paddingValue ->
-                Surface(modifier = modifier
-                    .fillMaxSize()
-                    .padding(paddingValue)) {
-                    Card(
-                        Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight(),
-                        elevation = 4.dp,
+                Column(modifier = Modifier.padding(paddingValue).fillMaxSize().background(backgroundColor)) {
+                    if (isSearch) {
+                        searchValue = dialogSearchView(
+                            focusedBorderColor = searchBorderColor,
+                            unfocusedBorderColor = searchBorderColor,
+                            cursorColor = textColor,
+                            iconTint = iconTint
+                        )
+                    }
+                    LazyColumn(
+                        modifier = Modifier.background(backgroundColor)
                     ) {
-                        Column {
-                            if (isSearch) {
-                                searchValue = dialogSearchView(
-                                    focusedBorderColor = dialogFocusedBorderColorSearch,
-                                    unfocusedBorderColor = dialogUnFocusedBorderColorSearch,
-                                    cursorColor = dialogCursorColorSearch,
-                                )
-                            }
-                            LazyColumn {
-                                innerCountryList = if(!countryList.isNullOrEmpty())
-                                    countryList
-                                else
-                                    getLibCountries() as MutableList<CountryData>
-                                items(
-                                    (if (searchValue.isEmpty()) {
-                                        innerCountryList
-                                    } else {
-                                        innerCountryList.searchCountry(
-                                            searchValue,
-                                            context = context
-                                        )
-                                    })
-                                ) { countryItem ->
-                                    Row(
-                                        Modifier
-                                            .padding(
-                                                horizontal = 18.dp,
-                                                vertical = 18.dp
-                                            )
-                                            .clickable {
-                                                pickedCountry(countryItem)
-                                                isPickCountry = countryItem
-                                                isOpenDialog = false
-                                            }) {
-                                        Image(
-                                            modifier = modifier.width(30.dp),
-                                            painter = painterResource(
-                                                id = getFlags(
-                                                    countryItem.countryCode
-                                                )
-                                            ), contentDescription = null
-                                        )
-                                        Text(
-                                            stringResource(id = getCountryName(countryItem.countryCode.lowercase())),
-                                            Modifier.padding(horizontal = 18.dp),
-                                        )
-                                    }
+                        innerCountryList = if (!countryList.isNullOrEmpty()) {
+                            countryList
+                        } else {
+                            getLibCountries() as MutableList<CountryData>
+                        }
+                        items(
+                            (
+                                if (searchValue.isEmpty()) {
+                                    innerCountryList
+                                } else {
+                                    innerCountryList.searchCountry(
+                                        searchValue,
+                                        context = context
+                                    )
                                 }
+                                )
+                        ) { countryItem ->
+                            Row(
+                                Modifier
+                                    .padding(
+                                        horizontal = 18.dp,
+                                        vertical = 18.dp
+                                    )
+                                    .clickable {
+                                        pickedCountry(countryItem)
+                                        isPickCountry = countryItem
+                                        isOpenDialog = false
+                                    }
+                            ) {
+                                Image(
+                                    modifier = modifier.width(30.dp),
+                                    painter = painterResource(
+                                        id = getFlags(
+                                            countryItem.countryCode
+                                        )
+                                    ),
+                                    contentDescription = null
+                                )
+                                Text(
+                                    text = stringResource(id = getCountryName(countryItem.countryCode.lowercase())),
+                                    style = Typography.body2,
+                                    color = textColor,
+                                    modifier = Modifier.padding(horizontal = 18.dp)
+                                )
                             }
                         }
                     }
@@ -257,6 +256,7 @@ private fun dialogSearchView(
     focusedBorderColor: Color = MaterialTheme.colors.primary,
     unfocusedBorderColor: Color = MaterialTheme.colors.onSecondary,
     cursorColor: Color = MaterialTheme.colors.primary,
+    iconTint: Color = MaterialTheme.colors.primary
 ): String {
     var searchVal by remember { mutableStateOf("") }
     Row {
@@ -270,13 +270,12 @@ private fun dialogSearchView(
             textAlign = TextAlign.Start,
             focusedBorderColor = focusedBorderColor,
             unfocusedBorderColor = unfocusedBorderColor,
-            cursorColor = cursorColor
-
+            cursorColor = cursorColor,
+            iconTint = iconTint
         )
     }
     return searchVal
 }
-
 
 @Composable
 private fun SearchTextField(
@@ -289,6 +288,7 @@ private fun SearchTextField(
     focusedBorderColor: Color = MaterialTheme.colors.primary,
     unfocusedBorderColor: Color = MaterialTheme.colors.onSecondary,
     cursorColor: Color = MaterialTheme.colors.primary,
+    iconTint: Color = MaterialTheme.colors.primary
 ) {
     Box(
         modifier = modifier
@@ -310,15 +310,16 @@ private fun SearchTextField(
                 Icon(
                     Icons.Default.Search,
                     contentDescription = null,
-                    tint = Color.Black.copy(0.2f)
+                    tint = iconTint
                 )
             },
             colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.Transparent,
+                backgroundColor = DefaultBlack,
                 focusedIndicatorColor = focusedBorderColor,
                 disabledIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = unfocusedBorderColor,
                 cursorColor = cursorColor,
+                textColor = cursorColor
             )
         )
         if (value.isEmpty()) {

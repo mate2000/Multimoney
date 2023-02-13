@@ -1556,6 +1556,11 @@
     <!-- Crypto list currencies for purchase -->
     <string name="crypt_list_purchase_title" translatable="false">¿Cuál moneda querés comprar?</string>
 
+    <!-- Crypto send flow -->
+    <string name="crypto_send_abandon_dialog_title" translatable="false">Cancelar envío</string>
+    <string name="crypto_send_abandon_dialog_message" translatable="false">¿Estás seguro que querés cancelar el envío?</string>
+    <string name="crypto_send_amount_error_available_amount_commission" translatable="false">"El monto a enviar más la comisión \nsupera el monto disponible"</string>
+
     <!-- Crypto list currencies for send -->
     <string name="crypt_list_send_title" translatable="false">¿Cuál moneda querés enviar?</string>
     <string name="crypto_send_address_title" translatable="false">¿Dónde querés enviar %s?</string>

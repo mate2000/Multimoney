@@ -6,7 +6,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CryptoSendSteps
 import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.multimoney.R
@@ -56,9 +55,10 @@ class CryptoSendSharedViewModel @Inject constructor(
     private fun onCloseClick() {
         uiState = uiState.copy(
             openDialog = DialogParameters(
-                titleResource = R.string.smart_close_origination_dialog_title,
-                positiveResource = R.string.common_leave,
-                negativeResource = R.string.button_continue,
+                titleResource = R.string.crypto_send_abandon_dialog_title,
+                descriptionResource = R.string.crypto_send_abandon_dialog_message,
+                positiveResource = R.string.button_continue,
+                negativeResource = R.string.custom_dialog_default_negative_label,
                 positiveAction = { navigateBackToHome() },
                 isActive = mutableStateOf(true)
             )

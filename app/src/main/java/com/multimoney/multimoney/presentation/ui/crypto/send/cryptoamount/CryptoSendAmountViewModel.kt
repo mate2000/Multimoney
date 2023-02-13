@@ -115,7 +115,7 @@ class CryptoSendAmountViewModel @Inject constructor(
 
         when {
             amountPlusFee >= currentCryptoBalance -> isError(
-                errorMessage = R.string.crypto_purchase_flow_error_available_amount_commission,
+                errorMessage = R.string.crypto_send_amount_error_available_amount_commission,
                 isError = true
             )
             else -> isError()

@@ -116,7 +116,11 @@ fun PurchaseCryptoFlow(
 
     LoadingIndicator(viewModel.uiState.isLoading)
     BackHandler {
-        viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnCloseClick)
+        if (viewModel.uiState.currentStepType == BuyCryptoStep.PURCHASE_VOUCHER) {
+            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNavigateHome)
+        } else {
+            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnCloseClick)
+        }
     }
 
     if (viewModel.uiState.openDialog.isActive.value) {

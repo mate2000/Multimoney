@@ -108,13 +108,12 @@ fun SellCryptoFlow(
             onPositiveAction = viewModel.uiState.openDialog.positiveAction
         )
     }
-
 }
 
 @Composable
 fun SvSellCryptoDirectFlow(step: Int, viewModel: SellCryptoSharedViewModel) {
     when (step) {
-        SellCryptoSteps.Two.pageNumber -> SellCurrencyScreen(sharedViewModel = viewModel)
+        SellCryptoSteps.One.pageNumber -> SellCurrencyScreen(sharedViewModel = viewModel)
     }
 }
 

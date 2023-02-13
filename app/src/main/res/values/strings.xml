@@ -159,8 +159,9 @@
 
 
     <!-- Sign Up General-->
+    <string name="sign_up_splash_come_back" translatable="false">¡Nos alegra\nverte de nuevo!</string>
     <string name="sign_up_general_close_dialog_title" translatable="false">¿Estás seguro que quieres salir? ¡Ya casi terminamos!</string>
-    <string name="sign_up_splash_come_back" translatable="false">¡Nos alegra\nque regresés!</string>
+
     <string name="sign_up_close_dialog_description" translatable="false">Podrás retomar el registro cuando quieras</string>
     <string name="sign_up_close_dialog_positive_button_text" translatable="false">Salir</string>
     <string name="sign_up_close_dialog_negative_button_text" translatable="false">Cancelar</string>

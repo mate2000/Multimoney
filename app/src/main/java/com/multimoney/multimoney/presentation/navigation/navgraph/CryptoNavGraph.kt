@@ -299,7 +299,7 @@ fun NavGraphBuilder.cryptoNavGraph(
     }
 
     composable(
-        route = Screen.CryptoReceiveFlow.route,
+        route = Screen.CryptoReceiveFlowScreen.route,
         listOf(
             navArgument(USER) { type = NavType.StringType },
             navArgument(ID_BRAND) { type = NavType.IntType },

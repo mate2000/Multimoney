@@ -4,7 +4,6 @@ package com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails
 
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
@@ -189,7 +188,7 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
     }
 
     private fun onNavigateToCryptoReceiveFlow() {
-        navigateTo("${Screen.CryptoReceiveFlow.baseRoute}/${uiState.user}/${uiState.idBrand}?$ITEM_CRYPTO_MARKET=${encodeData(uiState.selectedCryptoCoin)}")
+        navigateTo("${Screen.CryptoReceiveFlowScreen.baseRoute}/${uiState.user}/${uiState.idBrand}?$ITEM_CRYPTO_MARKET=${encodeData(uiState.selectedCryptoCoin)}")
     }
 
     data class UiState(

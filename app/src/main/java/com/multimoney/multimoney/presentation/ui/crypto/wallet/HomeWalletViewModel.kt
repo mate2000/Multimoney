@@ -199,7 +199,7 @@ class HomeWalletViewModel @Inject constructor(
     }
 
     private fun onNavigateToReceiveCrypto() {
-        navigateTo("${Screen.CryptoReceiveFlow.baseRoute}/${uiState.user}/${uiState.idBrand}")
+        navigateTo("${Screen.CryptoReceiveFlowScreen.baseRoute}/${uiState.user}/${uiState.idBrand}")
     }
 
     data class UiState(

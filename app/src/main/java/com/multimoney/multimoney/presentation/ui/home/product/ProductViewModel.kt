@@ -1086,7 +1086,7 @@ class ProductViewModel @Inject constructor(
         navigateTo(Screen.CryptoSendFlow.baseRoute)
     }
     private fun onNavigateToGiveCryptoFlow() {
-        navigateTo("${Screen.CryptoReceiveFlow.baseRoute}/${userName}/${uiState.idBrand}")
+        navigateTo("${Screen.CryptoReceiveFlowScreen.baseRoute}/${userName}/${uiState.idBrand}")
     }
 
     private fun getSmartContent() {

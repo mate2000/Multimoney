@@ -13,7 +13,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.C
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.CardSmartProduct
 import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType
-import com.multimoney.multimoney.presentation.util.catalog.ProductType
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 
 @Composable
@@ -24,9 +23,6 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int, whatsAppLink: St
 
     val context = LocalContext.current
 
-    val decrement =
-        if (viewModel.uiState.productPageList?.any { it.product == ProductType.Credit.value } == true) 1 else 0
-    val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: decrement)
     CustomProductBackground(
         modifier = Modifier.padding(horizontal = 16.dp),
         type = ProductBackGroundType.Secondary

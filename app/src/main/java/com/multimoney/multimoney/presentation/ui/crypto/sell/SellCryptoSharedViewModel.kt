@@ -17,7 +17,9 @@ import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.crypto.MarketCryptoCoin
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNTS_LIST
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.USER_CRYPTO_BALANCES
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoOperationSide
 import com.multimoney.multimoney.presentation.ui.home.HomeState
@@ -53,6 +55,7 @@ class SellCryptoSharedViewModel @Inject constructor(
     val comingFromDetails: Boolean = marketCryptoCoin != null
 
     private fun setUserData() {
+
         viewModelScope.launch {
             idBrand = dataStorePreferences.getIdBrand().first().toInt()
             pkUser = dataStorePreferences.getPkUser().first()
@@ -60,13 +63,41 @@ class SellCryptoSharedViewModel @Inject constructor(
             identification = dataStorePreferences.getIdentification().first()
             email = dataStorePreferences.getUserEmail().first()
             abvCurrency = CurrencyType.Dollar.disbursementValue
+
             uiState = uiState.copy(
                 asset = marketCryptoCoin?.baseAsset,
                 assetDescription = marketCryptoCoin?.description,
                 market = marketCryptoCoin?.baseAsset?.plus(abvCurrency),
                 cryptoNetWork = marketCryptoCoin?.cryptoNetwork,
                 assetImageBaseUrl = marketCryptoCoin?.url_image,
-                shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first()
+                shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first(),
+            )
+        }
+
+        uiState = uiState.copy(
+            accounts = savedStateHandle.get<Array<SmartAccountSmall>>(SMART_ACCOUNTS_LIST)?.toList()
+                ?: listOf(),
+            userCryptoBalances = savedStateHandle.get<Array<BalanceCryptoAccountItems>>(
+                USER_CRYPTO_BALANCES
+            )?.toList()
+                ?: listOf()
+        )
+        if (idBrand == Brand.ElSalvador.id) {
+            onSetupAccountDetails(
+                smartAccountAvailableBalance = uiState.accounts.firstOrNull()?.totalBalance ?: 0.0,
+                idCurrency = uiState.accounts.firstOrNull()?.idCurrencyAccount
+                    ?: CurrencyType.Dollar.id,
+                accountNumber = uiState.accounts.firstOrNull()?.accountNumber ?: "",
+                ibanAccountNumber = uiState.accounts.firstOrNull()?.ibanAccountNumber ?: "",
+                accountToken = uiState.accounts.firstOrNull()?.accountToken ?: ""
+            )
+        }
+        if (comingFromDetails) {
+            val previouslySelectedCrypto =
+                uiState.userCryptoBalances.find { it.asset == marketCryptoCoin?.baseAsset }
+            uiState = uiState.copy(
+                assetBalanceDollars = previouslySelectedCrypto?.balanceDollars,
+                assetAvailable = previouslySelectedCrypto?.available
             )
         }
     }
@@ -122,10 +153,27 @@ class SellCryptoSharedViewModel @Inject constructor(
         )
     }
 
+    private fun onSetupAccountDetails(
+        smartAccountAvailableBalance: Double,
+        idCurrency: Int,
+        accountNumber: String,
+        ibanAccountNumber: String,
+        accountToken: String
+    ) {
+        uiState = uiState.copy(
+            smartAccountAvailableBalance = smartAccountAvailableBalance,
+            idCurrency = idCurrency,
+            accountNumber = accountNumber,
+            ibanAccountNumber = ibanAccountNumber,
+            accountToken = accountToken
+        )
+    }
+
     data class UIState(
         val currentStep: Int = PurchaseCryptoSteps.One.pageNumber,
         val isLoading: Boolean = false,
         val accounts: List<SmartAccountSmall> = listOf(),
+        val userCryptoBalances: List<BalanceCryptoAccountItems> = listOf(),
         val openDialog: DialogParameters = DialogParameters(),
         var bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
         var bottomSheet: (@Composable () -> Unit) = {},
@@ -140,6 +188,8 @@ class SellCryptoSharedViewModel @Inject constructor(
         val market: String? = "",
         val cryptoNetWork: String? = "",
         val assetImageBaseUrl: String? = "",
+        val assetAvailable: Double? = 0.0,
+        val assetBalanceDollars: Double? = 0.0,
         val accountToken: String = "",
         val comingFromDetails: Boolean = false,
         var previousAction: () -> Unit = {},
@@ -158,18 +208,19 @@ class SellCryptoSharedViewModel @Inject constructor(
                     assetDescription = event.selectedCrypto.descriptionCurrency,
                     cryptoNetWork = event.selectedCrypto.cryptoNetwork,
                     assetImageBaseUrl = event.selectedCrypto.url_image,
-                    market = event.selectedCrypto.asset.plus(CurrencyType.Dollar.disbursementValue)
-                )
-            }
-            is UIEvent.OnSetSelectedAccount -> {
-                uiState = uiState.copy(
-                    smartAccountAvailableBalance = event.totalBalance,
-                    idCurrency = event.idCurrency,
-                    accountNumber = event.accountNumber,
-                    ibanAccountNumber = event.ibanAccountNumber,
+                    market = event.selectedCrypto.asset.plus(CurrencyType.Dollar.disbursementValue),
+                    assetAvailable = event.selectedCrypto.available,
+                    assetBalanceDollars = event.selectedCrypto.balanceDollars
                 )
             }
             is UIEvent.OnGetUserInfo -> setUserData()
+            is UIEvent.OnSetSelectedAccount -> onSetupAccountDetails(
+                event.smartAccountAvailableBalance,
+                event.idCurrency,
+                event.accountNumber,
+                event.ibanAccountNumber,
+                event.accountToken
+            )
         }
     }
 
@@ -183,7 +234,7 @@ class SellCryptoSharedViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnSetSelectedAccount(
-            val totalBalance: Double,
+            val smartAccountAvailableBalance: Double,
             val idCurrency: Int,
             val accountToken: String,
             val accountNumber: String,
@@ -191,6 +242,7 @@ class SellCryptoSharedViewModel @Inject constructor(
         ) : UIEvent()
 
         object OnGetUserInfo : UIEvent()
+
     }
 
     companion object {

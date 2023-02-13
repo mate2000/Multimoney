@@ -16,23 +16,20 @@ import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.C
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType
-import com.multimoney.multimoney.presentation.util.catalog.ProductType
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 
 @Composable
-fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
+fun SmartContent(viewModel: ProductViewModel, index: Int) {
     LaunchedEffect(key1 = true) {
         viewModel.onUIEvent(UIEvent.OnGetSmartContent)
     }
 
     val context = LocalContext.current
     val whatsAppLink = stringResource(
-        id = R.string.whatsapp_deep_link, SignUpViewModel.PHONE_HARDCODED
+        id = R.string.whatsapp_deep_link,
+        SignUpViewModel.PHONE_HARDCODED
     )
 
-    val decrement =
-        if (viewModel.uiState.productPageList?.any { it.product == ProductType.Credit.value } == true) 1 else 0
-    val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: decrement)
     CustomProductBackground(
         modifier = Modifier.padding(horizontal = 16.dp),
         type = ProductBackGroundType.Secondary

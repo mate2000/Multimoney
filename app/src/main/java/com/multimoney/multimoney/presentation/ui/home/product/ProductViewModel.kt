@@ -56,7 +56,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUES
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
-import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ORIGIN
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.BaseEvent.OnShowCardIssuanceError
@@ -104,7 +103,6 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.ProfileCardListOrigin
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
-import com.multimoney.multimoney.presentation.util.catalog.SignDocumentOrigin
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
@@ -288,12 +286,6 @@ class ProductViewModel @Inject constructor(
                             )
                             .plus(
                                 getNavParam(
-                                    SIGN_DOCUMENT_ORIGIN,
-                                    SignDocumentOrigin.Product.value
-                                )
-                            )
-                            .plus(
-                                getNavParam(
                                     SIGN_DOCUMENT_ID_PRINT,
                                     uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0
                                 )
@@ -324,7 +316,6 @@ class ProductViewModel @Inject constructor(
                                 SignDocumentStep.GENERATE_DOCUMENT_STEP.value
                             )
                         )
-                        .plus(getNavParam(SIGN_DOCUMENT_ORIGIN, SignDocumentOrigin.Product.value))
                         .plus(
                             getNavParam(
                                 SIGN_DOCUMENT_ID_PRINT,

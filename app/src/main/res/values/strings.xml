@@ -406,7 +406,7 @@
     <string name="buy_crypto_voucher_mount_to_charge" translatable="false">Total debitado</string>
     <string name="sell_crypto_voucher_amount_credited" translatable="false">Total recibido</string>
     <string name="buy_crypto_voucher_value_in_currency_template" translatable="false">Valor en %1$s al momento de la compra</string>
-    <string name="sell_crypto_voucher_value_in_dollars_template" translatable="false">Valor en dolares al momento de la venta</string>
+    <string name="sell_crypto_voucher_value_in_dollars_template" translatable="false">Valor en dólares al momento de la venta</string>
     <string name="buy_crypto_voucher_final_value_in_currency_template" translatable="false">%1$s %2$s</string>
 
 
@@ -1479,7 +1479,7 @@
     <string name="smart_iban_transfer_from_account" translatable="false">Desde mi cuenta %s</string>
     <string name="smart_iban_transfer_motive_label" translatable="false">Motivo</string>
     <string name="smart_iban_transfer_smart_account_colon" translatable="false">Smart Colones %s</string>
-    <string name="smart_iban_transfer_smart_account_dolar" translatable="false">Smart Dolares %s</string>
+    <string name="smart_iban_transfer_smart_account_dolar" translatable="false">Smart Dólares %s</string>
     <string name="smart_iban_transfer_abandon_dialog_title" translatable="false">Cancelar envío</string>
     <string name="smart_iban_transfer_abandon_dialog_message" translatable="false">¿Estás seguro que querés cancelar el envío?</string>
     <string name="smart_iban_transfer_error_balance_insufficient" translatable="false">No tienes fondos suficientes. Tu disponible es %s</string>

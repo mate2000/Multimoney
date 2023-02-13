@@ -154,7 +154,7 @@ private fun OwnTransferAmountBottomSheet(viewModel: OwnTransferAmountViewModel) 
         ),
         toIcon = viewModel.amountUIState.destinyAccountDisplay?.icon,
         motive = viewModel.amountUIState.motive,
-        buttonText = stringResource(R.string.button_continue),
+        buttonText = stringResource(R.string.payment_amount_bottom_sheet_send_button),
         buttonAction = { viewModel.onAmountUIEvent(OnCallProcessTransfer) }
     )
 }

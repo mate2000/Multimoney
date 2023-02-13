@@ -206,7 +206,9 @@ fun JobInfoScreen(
             customTransformation = MaskVisualTransformation(
                 PHONE_TRANSFORMATION_MASK.mask,
                 PHONE_TRANSFORMATION_MASK.maskChar
-            )
+            ),
+            isError = viewModel.uiState.phoneNumberError.first,
+            errorMessage = stringResource(id = viewModel.uiState.phoneNumberError.second)
         )
 
         if (sharedViewModel.crosseling) {

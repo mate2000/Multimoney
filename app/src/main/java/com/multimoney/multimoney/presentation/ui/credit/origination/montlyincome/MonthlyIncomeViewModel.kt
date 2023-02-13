@@ -170,8 +170,8 @@ class MonthlyIncomeViewModel @Inject constructor(
             }
             isPhoneNumberValid(phone = phone, idBrand).not() -> {
                 Pair(
-                    false,
-                    R.string.empty,
+                    true,
+                    R.string.credit_monthly_income_job_phone_error,
                 )
             }
             else -> {

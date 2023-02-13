@@ -81,6 +81,7 @@
     <string name="common_scan_qr_code" translatable="false">Escanea el código QR</string>
     <string name="smart_transfer_abandon_dialog_message_sv" translatable="false">¿Estás seguro que quieres cancelar el envío?</string>
     <string name="smart_transfer_abandon_dialog_message_cr" translatable="false">¿Estás seguro que querés cancelar el envío?</string>
+    <string name="common_percentage_format" translatable="false">$%s\%%</string>
 
     <string name="content_description_more_info" translatable="false">Más información</string>
 
@@ -399,11 +400,15 @@
 
     <!-- Buy Crypto -->
     <string name="buy_crypto_voucher_you_have_paid" translatable="false">Has comprado</string>
+    <string name="sell_crypto_voucher_you_have_sold" translatable="false">Has vendido</string>
     <string name="buy_crypto_multimoney_smart_account_template" translatable="false">Mi cuenta Smart | %1$s</string>
     <string name="buy_crypto_voucher_from_account" translatable="false">Desde la cuenta</string>
+    <string name="sell_crypto_voucher_to_account" translatable="false">Hacia</string>
     <string name="buy_crypto_voucher_exchange_rate" translatable="false">Tipo de cambio</string>
     <string name="buy_crypto_voucher_mount_to_charge" translatable="false">Total debitado</string>
+    <string name="sell_crypto_voucher_amount_credited" translatable="false">Total recibido</string>
     <string name="buy_crypto_voucher_value_in_currency_template" translatable="false">Valor en %1$s al momento de la compra</string>
+    <string name="sell_crypto_voucher_value_in_dollars_template" translatable="false">Valor en dolares al momento de la venta</string>
     <string name="buy_crypto_voucher_final_value_in_currency_template" translatable="false">%1$s %2$s</string>
 
 
@@ -590,7 +595,6 @@
     <string name="smart_account_detail_gained_interest_label" translatable="false">Interés anual</string>
     <string name="smart_account_detail_total_balance_label" translatable="false">Ganancia total a la fecha</string>
     <string name="smart_account_detail_gained_interest" translatable="false">%s%%</string>
-    <string name="smart_account_detail_gained_interest_mock" translatable="false">3.25%</string>
     <string name="smart_account_detail_total_balance" translatable="false">%s %s</string>
 
     <!-- my products bottom sheet -->
@@ -1274,6 +1278,8 @@
     <string name="crypto_purchase_flow_error_no_funds" translatable="false">Fondos Insuficientes para aplicar la compra</string>
     <string name="crypto_purchase_flow_error_price_expired" translatable="false">Cotización caducada</string>
     <string name="crypto_purchase_flow_error_processing_purchase" translatable="false">¡Oh no! Hubo un error al completar la compra</string>
+    <string name="crypto_sell_flow_error_processing_sell" translatable="false">¡Oh no! Hubo un error al completar la venta</string>
+
 
 
     <!-- Evicertia screen -->
@@ -1685,12 +1691,17 @@
     <string name="crypto_sell_flow_sell_screen_title_cr" translatable="false">¿Cuánto querés vender?</string>
     <string name="crypto_sell_flow_sell_screen_title_sv" translatable="false">¿Cuánto quieres vender?</string>
     <string name="crypto_sell_flow_confirmation_sell_title" translatable="false">Monto a vender</string>
+    <string name="crypto_sell_flow_dialog_cancel_message" translatable="false">Si cancelás el proceso no se realizará la venta de la cripto</string>
     <string name="crypto_sell_flow_sell_screen_disclaimer" translatable="false">Los tipos de cambio incluyen una conversión de moneda y se actualizan con frecuencia</string>
     <string name="crypto_sell_flow_sell_screen_available_equal_to" translatable="false">Disponible %1s ≈ %2s %3s</string>
-    <string name="crypto_sell_flow_confirmation_sell_screen_exhange_title" translatable="false">Total a depositar</string>
     <string name="crypto_sell_flow_confirmation_sell_screen_expires_in" translatable="false">Precio de venta expira en</string>
     <string name="crypto_sell_flow_confirmation_sell_screen_evaluate_amount" translatable="false">Valor aproximado en %1s</string>
     <string name="crypto_sell_flow_confirmation_sell_screen_amount_to_receive" translatable="false">Total a recibir</string>
+    <string name="crypto_sell_flow_confirmation_sell_screen_btn_text" translatable="false">Vender</string>
+
+    <!-- Crypto sell flow Errors-->
+    <string name="crypto_sell_flow_error_not_funds" translatable="false">Fondos Insuficientes para aplicar la venta</string>
+    <string name="crypto_sell_flow_error_minimum_amount" translatable="false">El monto mínimo de venta es de $5</string>
 
     <!-- Visa Verified -->
     <string name="visa_verified_title" translatable="false">Verifiquemos tu tarjeta</string>

@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency
+package com.multimoney.multimoney.presentation.ui.crypto
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -14,7 +14,7 @@ import com.multimoney.multimoney.presentation.uielement.ShimmerBoxView
 import com.multimoney.multimoney.presentation.uielement.ShimmerItemView
 
 @Composable
-fun BuyCurrencyTitleSectionSkeleton() {
+fun CurrencyTitleSectionSkeleton() {
     ShimmerBoxView {
         Row(
             modifier = Modifier
@@ -34,7 +34,7 @@ fun BuyCurrencyTitleSectionSkeleton() {
 }
 
 @Composable
-fun BuyCurrencyTitleConfirmationSectionSkeleton() {
+fun CurrencyTitleConfirmationSectionSkeleton() {
     ShimmerBoxView {
         Row(
             modifier = Modifier

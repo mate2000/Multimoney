@@ -19,7 +19,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CryptoSellCurrenciesListViewModel @Inject constructor(
-    private val getBalanceCryptoAccountUseCase: GetBalanceCryptoAccountUseCase,
     private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
@@ -38,29 +37,6 @@ class CryptoSellCurrenciesListViewModel @Inject constructor(
         )
     }
 
-    private fun getBalanceCrypto() {
-        executeUseCase {
-            getBalanceCryptoAccountUseCase.invoke(
-                user = uiState.user ?: "",
-                identification = uiState.identification ?: "",
-                idBrand = uiState.idBrand ?: 0,
-            ).collectLatest { result ->
-                result.onSuccess { balance ->
-                    uiState = uiState.copy(
-                        isLoading = false,
-                        cryptoAccounts = balance.items ?: emptyList()
-                    )
-                }
-                result.onFailure {
-                    onFailure(it)
-                }
-                result.onLoading {
-                    uiState = uiState.copy(isLoading = true)
-                }
-            }
-        }
-    }
-
     private fun onFailure(error: HttpError) {
         uiState = uiState.copy(
             isLoading = false,
@@ -75,7 +51,6 @@ class CryptoSellCurrenciesListViewModel @Inject constructor(
         when (event) {
             is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
             is UIEvent.OnGetUserInfo -> onGetUserInfo(event.user, event.idBrand, event.identification)
-            is UIEvent.OnGetBalanceCrypto -> getBalanceCrypto()
         }
     }
 
@@ -92,6 +67,5 @@ class CryptoSellCurrenciesListViewModel @Inject constructor(
         data class OnGetUserInfo(val user: String?, val idBrand: Int?, val identification: String?) :
             UIEvent
         object OnNavigateBack : UIEvent
-        object OnGetBalanceCrypto : UIEvent
     }
 }

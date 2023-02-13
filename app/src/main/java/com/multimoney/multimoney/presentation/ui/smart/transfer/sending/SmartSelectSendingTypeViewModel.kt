@@ -175,7 +175,7 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
                 encodeData(
                     selectedSmartAccount
                 )
-            }/${SmartTransferTypes.SmartToMobile.id}/${Screen.SmartSelectSendingTypeScreen.baseRoute}"
+            }/$identification/${SmartTransferTypes.SmartToMobile.id}/${Screen.SmartSelectSendingTypeScreen.baseRoute}"
         )
     }
 

@@ -2135,7 +2135,9 @@ class GraphqlApi @Inject constructor(
         destinationBankId: Int,
         description: String,
         identificationNumber: String,
-        identificationTypeAccount: Int
+        identificationTypeAccount: Int,
+        destinationCurrencyId: Int,
+        document: String
     ): ApolloCall<AddACHAccountMutation.Data> = apolloAuthorizedClient.mutation(
         AddACHAccountMutation(
             idBrand = idBrand,
@@ -2147,7 +2149,9 @@ class GraphqlApi @Inject constructor(
             destinationBankId = destinationBankId,
             description = description,
             identificationNumber = identificationNumber,
-            identificationTypeAccount = identificationTypeAccount
+            identificationTypeAccount = identificationTypeAccount,
+            destinationCurrencyId = destinationCurrencyId,
+            document = document
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 

@@ -26,11 +26,13 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.ORIGIN_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.TRANSFER_TYPE
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.util.MAX_SMART_ACCOUNT_DIGITS
 import com.multimoney.multimoney.presentation.util.MIN_SMART_ACCOUNT_DIGITS
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.PhoneCountryCode
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
@@ -53,6 +55,7 @@ class SmartAdd365AccountViewModel @Inject constructor(
     private var user = ""
     private var smartAccount: SmartAccountID? = null
     private var previousScreen: String = ""
+    private var identification: String = ""
     var transferType: Int = 0
 
     // UIState
@@ -65,6 +68,7 @@ class SmartAdd365AccountViewModel @Inject constructor(
         smartAccount = savedStateHandle[ORIGIN_ACCOUNT]
         transferType = savedStateHandle[TRANSFER_TYPE] ?: 0
         previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
+        identification = savedStateHandle[IDENTIFICATION] ?: ""
         if (transferType == SmartTransferTypes.SmartToOtherBank.id) {
             uiState = uiState.copy(
                 screenTitle = R.string.smart_other_bank_transfer_add_title,
@@ -301,18 +305,20 @@ class SmartAdd365AccountViewModel @Inject constructor(
                 typeAccountId = uiState.type?.typeId?.toIntOrNull() ?: 0,
                 destinationBankId = uiState.bank?.bankId?.toInt() ?: 0,
                 description = if (uiState.isFavorite) uiState.nickname.ifEmpty { fullName } else fullName,
-                identificationNumber = uiState.documentNumber,
-                identificationTypeAccount = uiState.document?.idDocument ?: 0
+                identificationNumber = identification,
+                identificationTypeAccount = uiState.document?.idDocument ?: 0,
+                destinationCurrencyId = CurrencyType.Dollar.id,
+                document = uiState.documentNumber
             ).collectLatest { result ->
                 result.onSuccess { account ->
                     val savedAccount = Transfer365Account(
                         accountNumber = account?.accountNumber ?: uiState.accountNumber,
                         name = uiState.names,
                         lastname = uiState.lastNames,
-                        bankId = uiState.bank?.bankId.toString(),
-                        bankName = uiState.bank?.bankName.orEmpty(),
-                        accountTypeId = uiState.type?.typeId.toString(),
-                        isFavorite = uiState.isFavorite
+                        bankId = account?.idBank?.toString() ?: uiState.bank?.bankId.toString(),
+                        bankName = account?.destinationBankDescription?.ifEmpty { uiState.bank?.bankName.orEmpty() }.orEmpty(),
+                        accountTypeId = account?.idTypeAccount?.toString() ?: uiState.type?.typeId.toString(),
+                        isFavorite = account?.isFavorite ?: uiState.isFavorite
                     )
                     navigateTo(
                         "${Screen.SmartTransfer365EditAmountScreen.baseRoute}/${

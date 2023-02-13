@@ -53,7 +53,7 @@ class Transfer365AccountListViewModel @Inject constructor(
             queryACHTransferFavoriteListUseCase.invoke(
                 user = user,
                 idBrand = idBrand,
-                isFavorite = true,
+                isFavorite = false,
                 identificationNumber = identification.orEmpty()
             ).collectLatest { result ->
                 result.onSuccess { favoriteResult ->
@@ -63,7 +63,7 @@ class Transfer365AccountListViewModel @Inject constructor(
                                 encodeData(
                                     smartAccount
                                 )
-                            }/${SmartTransferTypes.SmartToOtherBank.id}/${Screen.SmartSelectSendingTypeScreen.baseRoute}",
+                            }/$identification/${SmartTransferTypes.SmartToOtherBank.id}/${Screen.SmartSelectSendingTypeScreen.baseRoute}",
                             Screen.SmartACHAccountsListScreen.route
                         )
                     } else {
@@ -100,7 +100,7 @@ class Transfer365AccountListViewModel @Inject constructor(
                 encodeData(
                     smartAccount
                 )
-            }/${SmartTransferTypes.SmartToOtherBank.id}/${Screen.SmartACHAccountsListScreen.baseRoute}"
+            }/$identification/${SmartTransferTypes.SmartToOtherBank.id}/${Screen.SmartACHAccountsListScreen.baseRoute}"
         )
     }
 
@@ -108,6 +108,7 @@ class Transfer365AccountListViewModel @Inject constructor(
         val transfer = Transfer365Account(
             accountId = account?.accountForAchTransferId,
             accountNumber = account?.accountNumber,
+            name = account?.description.orEmpty(),
             bankId = account?.idBank.toString(),
             bankName = account?.destinationBankDescription.orEmpty(),
             accountTypeId = account?.idTypeAccount.toString(),

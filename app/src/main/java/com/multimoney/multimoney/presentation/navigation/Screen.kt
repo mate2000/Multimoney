@@ -615,12 +615,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
      * @param TRANSFER_TYPE: Int id indicating transfer type (SmartToOther or SmartToMobile)
      */
     object SmartAdd365AccountScreen : Screen(
-        "smart_add_365_account_screen/{$ID_BRAND}/{$USER}/{$ORIGIN_ACCOUNT}/{$TRANSFER_TYPE}/{$PREVIOUS_SCREEN}",
+        "smart_add_365_account_screen/{$ID_BRAND}/{$USER}/{$ORIGIN_ACCOUNT}/{$IDENTIFICATION}/{$TRANSFER_TYPE}/{$PREVIOUS_SCREEN}",
         "smart_add_365_account_screen"
     )
 
     object SmartACHAccountsListScreen : Screen(
-        "smart_ach_account_list/{$SMART_ACCOUNT}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
+        "smart_ach_account_list/{$SMART_ACCOUNT}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}",
         "smart_ach_account_list"
     )
 

@@ -627,7 +627,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // Crypto
     object PurchaseCryptoFlow : Screen(
-        route = "purchase_crypto_flow/{$SMART_ACCOUNTS_LIST}?$ITEM_CRYPTO_MARKET={$ITEM_CRYPTO_MARKET}",
+        route = "purchase_crypto_flow/{$SMART_ACCOUNTS_LIST}/{$PREVIOUS_SCREEN}?$ITEM_CRYPTO_MARKET={$ITEM_CRYPTO_MARKET}",
         baseRoute = "purchase_crypto_flow"
     )
 

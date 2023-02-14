@@ -38,6 +38,7 @@ import com.multimoney.multimoney.presentation.util.YEAR_MONTH_DAY_PATTERN
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
+import com.multimoney.multimoney.presentation.util.isPhoneNumberValid
 import com.multimoney.multimoney.presentation.util.transformation.FORMAT_MONEY_MAX_LENGTH
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -154,25 +155,32 @@ class MonthlyIncomeViewModel @Inject constructor(
         if (phoneNumber.length <= PHONE_NUMBER_MAX_LENGTH) {
             uiState = uiState.copy(
                 companyPhoneNumber = phoneNumber,
-                companyPhoneNumberError = when (phoneNumber.firstOrNull()?.digitToInt()) {
-                    PHONE_NUMBER_FIRST_DIGIT_7, PHONE_NUMBER_FIRST_DIGIT_6, PHONE_NUMBER_FIRST_DIGIT_2 -> Pair(
-                        false,
-                        R.string.empty
-                    )
-                    else ->
-                        Pair(true, R.string.credit_monthly_income_job_phone_error)
-                }
-
+                companyPhoneNumberError = validatePhone(phoneNumber)
             )
-            if (uiState.companyPhoneNumber.length < PHONE_NUMBER_MAX_LENGTH) {
-                uiState = uiState.copy(
-                    companyPhoneNumberError = Pair(
-                        true,
-                        R.string.credit_monthly_income_job_phone_error
-                    )
+            onValidForm()
+        }
+    }
+
+    private fun validatePhone(phone: String): Pair<Boolean, Int> {
+        return when {
+            uiState.companyPhoneNumber.length < PHONE_NUMBER_MAX_LENGTH -> {
+                Pair(
+                    true,
+                    R.string.credit_monthly_income_job_phone_error
                 )
             }
-            onValidForm()
+            isPhoneNumberValid(phone = phone, idBrand).not() -> {
+                Pair(
+                    true,
+                    R.string.credit_monthly_income_job_phone_error
+                )
+            }
+            else -> {
+                Pair(
+                    false,
+                    R.string.empty
+                )
+            }
         }
     }
 

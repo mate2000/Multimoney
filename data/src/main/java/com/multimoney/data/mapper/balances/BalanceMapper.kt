@@ -10,7 +10,6 @@ import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.balance.BlockType
 import com.multimoney.domain.model.balance.CardInformation
 import com.multimoney.domain.model.balance.Summary
-import java.text.DecimalFormat
 
 private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
     summary = resumen.map {
@@ -64,6 +63,9 @@ private fun BalanceQuery.Account.mapToDomainModel() =
 
 private fun BalanceQuery.BalanceCryptoAccount.mapToDomainModel() =
     BalanceCryptoAccount(
+        status = status.toString().toInt(),
+        message = message,
+        outOfService = outOfService ?: false,
         globalBalance = globalBalance.toString().toDouble(),
         investedBalance = investedBalance.toString(),
         percentageInvested = percentageInvested.toString(),

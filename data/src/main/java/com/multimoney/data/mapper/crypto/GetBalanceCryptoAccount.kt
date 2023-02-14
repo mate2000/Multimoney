@@ -5,6 +5,9 @@ import com.multimoney.domain.model.balance.BalanceCryptoAccount
 import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 
 fun GetBalanceCryptoAccountQuery.Data.mapToDomainModel() = BalanceCryptoAccount(
+    status = balanceCryptoAccount?.status ?: 0,
+    message = balanceCryptoAccount?.message,
+    outOfService = balanceCryptoAccount?.outOfService ?: false,
     globalBalance = balanceCryptoAccount?.globalBalance.toString().toDouble(),
     investedBalance = balanceCryptoAccount?.investedBalance.toString(),
     percentageInvested = balanceCryptoAccount?.percentageInvested.toString(),

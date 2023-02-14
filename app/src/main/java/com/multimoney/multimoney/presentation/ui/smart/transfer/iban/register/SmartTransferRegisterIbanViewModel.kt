@@ -32,8 +32,8 @@ import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class SmartTransferRegisterIbanViewModel @Inject constructor(
@@ -99,7 +99,7 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
         )
         queryValidateBankAccountUseCase(
             account = "${Brand.CostaRica.iban}${uiState.ibanAccountNumber}",
-            identification = "",
+            identification = identification ?: "",
             queryType = null,
             user = user.orEmpty(),
             idBrand = idBrand ?: 0
@@ -150,7 +150,7 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
     }
 
     private fun onAddFavoriteValueChange(isChecked: Boolean) {
-        uiState = uiState.copy(addFavorite = isChecked)
+        uiState = uiState.copy(addFavorite = isChecked, favoriteName = validateAccount?.name ?: "")
     }
 
     private fun onFavoriteNameValueChange(favoriteName: String) {
@@ -191,7 +191,7 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
         mutationSaveSinpeAccountUseCase(
             user = user ?: "",
             idBrand = idBrand ?: Brand.CostaRica.id,
-            identification = uiState.documentNumber,
+            identification = identification ?: "",
             accountNumber = Brand.CostaRica.iban.plus(uiState.ibanAccountNumber),
             idCurrency = validateAccount?.currency?.getCurrencyFromId()?.id?.toLong() ?: 0,
             nameAccount = if (uiState.addFavorite) {
@@ -202,7 +202,8 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
             country = Brand.CostaRica.countryCode,
             idAccount = null,
             option = null,
-            email = uiState.email
+            email = uiState.email,
+            isFavorite = uiState.addFavorite
         ).collectLatest {
             it.onSuccess {
                 uiState = uiState.copy(isLoading = false)

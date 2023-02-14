@@ -18,6 +18,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
 import com.multimoney.multimoney.presentation.util.calculateAmountPlusFee
+import com.multimoney.multimoney.presentation.util.calculateConfirmationQuoteAmount
 import com.multimoney.multimoney.presentation.util.calculateQuote
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -101,7 +102,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             )
         },
         onFinished = {
-            updateDataWithNewExchangeRate()
+            updateUiWithNewPricesAndCommissions()
             if (idCurrencyAccount == CurrencyType.Colon.id) {
                 getExchangeRate()
             }
@@ -120,14 +121,14 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             )
         },
         onFinished = {
-            updateDataWithNewExchangeRate()
+            updateUiWithNewPricesAndCommissions()
             if (idCurrencyAccount == CurrencyType.Colon.id) {
                 getExchangeRate()
             }
         }
     )
 
-    private fun updateDataWithNewExchangeRate(): Unit = executeUseCase {
+    private fun updateUiWithNewPricesAndCommissions(): Unit = executeUseCase {
         getPriceQuoteAndCommissionsUseCase.invoke(
             asset = asset,
             crypto_network = cryptoNetWork,
@@ -187,6 +188,8 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                     this.smartAccountAvailableBalance = exchangeRate?.convertedAmount ?: 0.0
                 }
                 result.onFailure {
+                    timer.stopTimer()
+                    confirmationTimer.stopTimer()
                     this.smartAccountAvailableBalance = 0.0
                     onFailure()
                 }
@@ -269,11 +272,11 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 taxAmount = uiState.pricesQuoteAndCommissions?.taxAmount ?: 0.0,
                 exchangeRate = if (idCurrencyAccount == CurrencyType.Dollar.id) 1.0 else uiState.exchangeRate,
                 quoteId = uiState.pricesQuoteAndCommissions?.quote_id ?: "",
-                quoteAmount = uiState.quoteAmount.value.ifEmpty {
-                    uiState.baseAmount.value.ifEmpty {
-                        DEFAULT_BASE_AMOUNT_STRING
-                    }.toDouble().times(uiState.pricesQuoteAndCommissions?.price ?: 0.0)
-                }.toString().toDouble().roundToTwoDecimalPlaces().toDouble(),
+                quoteAmount = calculateQuote(
+                    quoteAmount = uiState.quoteAmount.value,
+                    baseAmount = uiState.baseAmount.value,
+                    price = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER,
+                ),
                 fee = uiState.pricesQuoteAndCommissions?.fee?.toDouble() ?: 0.0,
                 internalFee = uiState.pricesQuoteAndCommissions?.internal_fee ?: 0.0,
                 totalFee = uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
@@ -356,7 +359,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                     uiState.failureAction()
                 },
                 positiveAction = {
-                    updateDataWithNewExchangeRate()
+                    updateUiWithNewPricesAndCommissions()
                     if (idCurrencyAccount == CurrencyType.Colon.id) {
                         convertColonesToDollars(smartAccountAvailableBalance)
                         getExchangeRate()
@@ -406,7 +409,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is UIEvent.OnGetQuoteAndCommissions -> updateDataWithNewExchangeRate()
+            is UIEvent.OnGetQuoteAndCommissions -> updateUiWithNewPricesAndCommissions()
             UIEvent.OnPurchaseCryptoCurrency -> purchaseCryptoCurrency()
             is UIEvent.OnSetUserData -> onSetUserData(
                 pkUser = event.pkUser,

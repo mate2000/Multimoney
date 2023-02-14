@@ -180,7 +180,7 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
     }
 
     private fun onNavigateToSellCrypto(){
-        navigateTo("${Screen.CryptoSellFlow.baseRoute}/${encodeData(smartAccounts)}/${encodeData(userCryptoBalances)}?$ITEM_CRYPTO_MARKET=${encodeData(uiState.selectedCryptoCoin)}")
+        navigateTo("${Screen.CryptoSellFlow.baseRoute}/${Screen.CryptoCurrencyDetailsScreen.baseRoute}/${encodeData(smartAccounts)}/${encodeData(userCryptoBalances)}?$ITEM_CRYPTO_MARKET=${encodeData(uiState.selectedCryptoCoin)}")
     }
 
     private fun onNavigateToCryptoSendFlow() {

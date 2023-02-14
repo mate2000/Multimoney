@@ -115,8 +115,8 @@ class SellCryptoSharedViewModel @Inject constructor(
                     Screen.CryptoWalletScreen.route,
                     isRestart = false
                 )
-                Screen.CryptoCurrencyMovementsScreen.baseRoute -> navigateBack(
-                    Screen.CryptoCurrencyMovementsScreen.route,
+                Screen.CryptoWalletDetailsScreen.baseRoute -> navigateBack(
+                    Screen.CryptoWalletDetailsScreen.route,
                     isRestart = false
                 )
                 Screen.CryptoCurrencyDetailsScreen.baseRoute -> navigateBack(

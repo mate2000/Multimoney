@@ -173,7 +173,7 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
     }
 
     private fun onNavigateToSellCrypto(){
-        navigateTo("${Screen.CryptoSellFlow.baseRoute}/${encodeData(smartAccounts)}/${encodeData(userCryptoBalances)}?$ITEM_CRYPTO_MARKET=${encodeData(MarketCryptoCoin(
+        navigateTo("${Screen.CryptoSellFlow.baseRoute}/${Screen.CryptoCurrencyMovementsScreen.baseRoute}/${encodeData(smartAccounts)}/${encodeData(userCryptoBalances)}?$ITEM_CRYPTO_MARKET=${encodeData(MarketCryptoCoin(
             description = uiState.cryptoItem?.descriptionCurrency ?: "",
             baseAsset = uiState.cryptoItem?.asset ?: "",
             url_image = uiState.cryptoItem?.url_image ?: "",

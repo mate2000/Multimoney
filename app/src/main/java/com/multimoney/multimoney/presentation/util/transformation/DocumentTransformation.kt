@@ -237,3 +237,5 @@ class MaskVisualTransformation(private val mask: String, val maskChar: Char) :
         }
     }
 }
+
+const val FORMAT_MONEY_MAX_LENGTH = 19

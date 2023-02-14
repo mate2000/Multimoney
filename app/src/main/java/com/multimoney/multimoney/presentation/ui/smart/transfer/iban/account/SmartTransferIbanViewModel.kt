@@ -23,13 +23,14 @@ import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnAddAccountClick
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnCallQueryListSinpeAccountUseCaseImpl
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnCallFavoriteListSinpeAccountUseCaseImpl
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnCallNoFavoriteListSinpeAccountUseCaseImpl
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class SmartTransferIbanViewModel @Inject constructor(
@@ -56,14 +57,15 @@ class SmartTransferIbanViewModel @Inject constructor(
         smartAccount = savedStateHandle[SMART_ACCOUNT]
     }
 
-    private fun callQueryListSinpeAccountUseCaseImpl() = executeUseCase {
+    private fun callFavoriteListSinpeAccountUseCaseImpl() = executeUseCase {
         queryListSinpeAccountUseCaseImpl.invoke(
             user = user,
             identification = identification ?: "",
             idBrand = idBrand.toInt(),
             country = "",
             idAccount = 0,
-            accountNumber = ""
+            accountNumber = "",
+            isFavorite = true
         ).collectLatest { result ->
             result.onSuccess { accountList ->
                 uiState = uiState.copy(isLoading = false)
@@ -71,7 +73,41 @@ class SmartTransferIbanViewModel @Inject constructor(
                     navigateToAddIbanAccount()
                 } else {
                     accountList?.data?.let {
-                        uiState = uiState.copy(sinpeAccountList = it)
+                        uiState = uiState.copy(
+                            sinpeAccountList = uiState.sinpeAccountList + it
+                        )
+                    }
+                }
+            }
+            result.onFailure {
+                uiState = uiState.copy(isLoading = false)
+                onFailure(it)
+            }
+            result.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
+    private fun callNoFavoritesListSinpeAccountUseCaseImpl() = executeUseCase {
+        queryListSinpeAccountUseCaseImpl.invoke(
+            user = user,
+            identification = identification ?: "",
+            idBrand = idBrand.toInt(),
+            country = "",
+            idAccount = 0,
+            accountNumber = "",
+            isFavorite = false
+        ).collectLatest { result ->
+            result.onSuccess { accountList ->
+                uiState = uiState.copy(isLoading = false)
+                if (accountList?.data?.isEmpty() == true) {
+                    navigateToAddIbanAccount()
+                } else {
+                    accountList?.data?.let {
+                        uiState = uiState.copy(
+                            sinpeAccountList = uiState.sinpeAccountList + it
+                        )
                     }
                 }
             }
@@ -136,14 +172,16 @@ class SmartTransferIbanViewModel @Inject constructor(
             OnAddAccountClick -> navigateToAddIbanAccount()
             is OnNavigateBack -> onNavigateBack()
             is OnAccountClick -> onAccountClick(uiEvent.account)
-            OnCallQueryListSinpeAccountUseCaseImpl -> callQueryListSinpeAccountUseCaseImpl()
+            OnCallFavoriteListSinpeAccountUseCaseImpl -> callFavoriteListSinpeAccountUseCaseImpl()
+            OnCallNoFavoriteListSinpeAccountUseCaseImpl -> callNoFavoritesListSinpeAccountUseCaseImpl()
         }
     }
 
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()
         object OnAddAccountClick : UIEvent()
-        object OnCallQueryListSinpeAccountUseCaseImpl : UIEvent()
+        object OnCallFavoriteListSinpeAccountUseCaseImpl : UIEvent()
+        object OnCallNoFavoriteListSinpeAccountUseCaseImpl : UIEvent()
         data class OnAccountClick(val account: SinpeAccount?) : UIEvent()
     }
 }

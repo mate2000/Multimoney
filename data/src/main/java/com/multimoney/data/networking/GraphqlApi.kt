@@ -68,6 +68,7 @@ import com.multimoney.data.networking.graphql.apollomodel.GetPaymentPointsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPricesQuoteAndCommissionQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPromissoryNoteDetailQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetSmartAccountsQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetTransferCommissionQuery
 import com.multimoney.data.networking.graphql.apollomodel.GlobalRequestMutation
 import com.multimoney.data.networking.graphql.apollomodel.HomeCantonQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeDistrictQuery
@@ -1386,6 +1387,7 @@ class GraphqlApi @Inject constructor(
         nameAccount: String,
         country: String,
         idAccount: Long?,
+        isFavorite: Boolean?,
         option: String?
     ): ApolloCall<ManageSinpeAccountSaveMutation.Data> =
         apolloAuthorizedClient.mutation(
@@ -1398,6 +1400,7 @@ class GraphqlApi @Inject constructor(
                 nameAccount = Optional.presentIfNotNull(nameAccount),
                 country = Optional.presentIfNotNull(country),
                 id_account = Optional.presentIfNotNull(idAccount),
+                isFavorite = Optional.presentIfNotNull(isFavorite),
                 option = Optional.presentIfNotNull(option)
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
@@ -2241,6 +2244,24 @@ class GraphqlApi @Inject constructor(
             typeState,
             idAccountSysde,
             idAccountRequest
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun getTransferCommission(
+        user: String,
+        idBrand: Int,
+        destinationAddress: String,
+        asset: String,
+        cryptoNetwork: String,
+        amount: Double
+    ): ApolloCall<GetTransferCommissionQuery.Data> = apolloAuthorizedClient.query(
+        GetTransferCommissionQuery(
+            user,
+            idBrand,
+            destinationAddress,
+            asset,
+            cryptoNetwork,
+            amount
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

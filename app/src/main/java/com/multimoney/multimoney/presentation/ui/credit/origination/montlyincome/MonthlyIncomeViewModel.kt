@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -19,6 +18,9 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.credit.origination.companyaddress.CompanyAddressViewModel
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.BaseEvent.OnFormCompleted
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnCallCatalogs
+import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnCompanyNameValueChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnCompanyPhoneNumberValueChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnCompanyStartDateValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnDivisionDuiEmissionPlaceValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnDivisionOccupationValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnDivisionProfessionValueChange
@@ -28,9 +30,6 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnLoadCreditSteps
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnValidForm
-import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnCompanyNameValueChange
-import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnCompanyPhoneNumberValueChange
-import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnCompanyStartDateValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.BAR
 import com.multimoney.multimoney.presentation.util.DAY_MONTH_YEAR_PATTERN
@@ -39,6 +38,8 @@ import com.multimoney.multimoney.presentation.util.YEAR_MONTH_DAY_PATTERN
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
+import com.multimoney.multimoney.presentation.util.isPhoneNumberValid
+import com.multimoney.multimoney.presentation.util.transformation.FORMAT_MONEY_MAX_LENGTH
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
@@ -78,7 +79,7 @@ class MonthlyIncomeViewModel @Inject constructor(
     }
 
     private fun onIncomeValueChange(income: String) {
-        if (income.isDigitsOnly()) {
+        if (income.isDigitsOnly() && income.length <= FORMAT_MONEY_MAX_LENGTH) {
             val incomeError = if (income.isNotEmpty() && income == ZERO.toString()) {
                 Pair(
                     true,
@@ -154,25 +155,32 @@ class MonthlyIncomeViewModel @Inject constructor(
         if (phoneNumber.length <= PHONE_NUMBER_MAX_LENGTH) {
             uiState = uiState.copy(
                 companyPhoneNumber = phoneNumber,
-                companyPhoneNumberError = when (phoneNumber.firstOrNull()?.digitToInt()) {
-                    PHONE_NUMBER_FIRST_DIGIT_7, PHONE_NUMBER_FIRST_DIGIT_6, PHONE_NUMBER_FIRST_DIGIT_2 -> Pair(
-                        false,
-                        R.string.empty
-                    )
-                    else ->
-                        Pair(true, R.string.credit_monthly_income_job_phone_error)
-                }
-
+                companyPhoneNumberError = validatePhone(phoneNumber)
             )
-            if (uiState.companyPhoneNumber.length < PHONE_NUMBER_MAX_LENGTH) {
-                uiState = uiState.copy(
-                    companyPhoneNumberError = Pair(
-                        true,
-                        R.string.credit_monthly_income_job_phone_error
-                    )
+            onValidForm()
+        }
+    }
+
+    private fun validatePhone(phone: String): Pair<Boolean, Int> {
+        return when {
+            uiState.companyPhoneNumber.length < PHONE_NUMBER_MAX_LENGTH -> {
+                Pair(
+                    true,
+                    R.string.credit_monthly_income_job_phone_error
                 )
             }
-            onValidForm()
+            isPhoneNumberValid(phone = phone, idBrand).not() -> {
+                Pair(
+                    true,
+                    R.string.credit_monthly_income_job_phone_error
+                )
+            }
+            else -> {
+                Pair(
+                    false,
+                    R.string.empty
+                )
+            }
         }
     }
 
@@ -455,7 +463,6 @@ class MonthlyIncomeViewModel @Inject constructor(
     }
 
     private fun loadStepsInfo(list: List<CreditCatalog?>?) {
-
         val salary = list?.find { it?.description == SaveCreditStepsHelper.SALARY }
         salary?.value.let {
             uiState = uiState.copy(income = salary?.value ?: "")
@@ -463,7 +470,6 @@ class MonthlyIncomeViewModel @Inject constructor(
         }
 
         if (idBrand == Brand.ElSalvador.id) {
-
             val duiEmissionDate =
                 list?.find { it?.description == SaveCreditStepsHelper.DUI_EMISSION_DATE }
             duiEmissionDate?.value?.let {
@@ -532,7 +538,7 @@ class MonthlyIncomeViewModel @Inject constructor(
         val companyName: String = "",
         val companyStartDate: String = "",
         val companyPhoneNumber: String = "",
-        val companyPhoneNumberError: Pair<Boolean, Int> = Pair(false, R.string.empty),
+        val companyPhoneNumberError: Pair<Boolean, Int> = Pair(false, R.string.empty)
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

@@ -43,12 +43,15 @@
     <string name="not_applicable" translatable="false">NA</string>
     <string name="common_leave" translatable="false">Abandonar</string>
     <string name="common_try_again" translatable="false">Volver a intentar</string>
+    <string name="common_sorry_try_again_later_gt" translatable="false">Lo sentimos, vuelve a intentarlo más tarde</string>
+    <string name="common_sorry_try_again_later" translatable="false">Lo sentimos, volvé a intentarlo más tarde</string>
     <string name="common_return" translatable="false">Volver</string>
     <string name="info" translatable="false">Información</string>
     <string name="common_options" translatable="false">Opciones</string>
     <string name="common_remove" translatable="false">Eliminar</string>
     <string name="not_defined" translatable="false">Not Defined</string>
     <string name="common_go_home" translatable="false">Ir al inicio</string>
+    <string name="sign" translatable="false">Firmar</string>
     <string-array name="options_yes_no">
         <item>Si</item>
         <item>No</item>
@@ -68,6 +71,15 @@
     <string name="destination_bank" translatable="false">Banco de destino</string>
     <string name="account_number" translatable="false">Número de cuenta</string>
     <string name="phone_number" translatable="false">Número de teléfono</string>
+    <string name="exit" translatable="false">Salir</string>
+    <string name="dot" translatable="false">.</string>
+    <string name="common_allow" translatable="false">Permitir</string>
+    <string name="common_deny" translatable="false">Denegar</string>
+    <string name="common_open_settings" translatable="false">Abrir configuración</string>
+    <string name="common_go_back" translatable="false">Regresar</string>
+    <string name="common_not_show_again" translatable="false">No volver a mostrar</string>
+    <string name="common_scan_qr_code" translatable="false">Escanea el código QR</string>
+    <string name="common_percentage_format" translatable="false">$%s\%%</string>
 
     <string name="content_description_more_info" translatable="false">Más información</string>
 
@@ -84,7 +96,7 @@
     <string name="error_button_try_again" translatable="false">Intentar de nuevo</string>
 
     <!-- OnBoarding Salvador-->
-    <string name="onboarding_salvador_step_one_title" translatable="false">Multiplicá tus ahorros</string>
+    <string name="onboarding_salvador_step_one_title" translatable="false">Multiplica tus ahorros</string>
     <string name="onboarding_salvador_step_one_sub_title" translatable="false">Ganá 3.5\% de interés anual.</string>
     <string name="onboarding_salvador_step_two_title" translatable="false">Tu crédito en 5 minutos</string>
     <string name="onboarding_salvador_step_two_sub_title" translatable="false">Recibe hasta $25,000 con solo tu DUI.</string>
@@ -133,7 +145,7 @@
     <string name="sign_in_dialog_sign_in_here_button" translatable="false">Iniciar sesión aquí</string>
     <string name="sign_in_otp_wrong_code" translatable="false">Código de verificación incorrecto</string>
     <string name="sign_in_otp_expired_code" translatable="false">Código de verificación ha expirado</string>
-    <string name="sign_in_we_sent_you_a_code_template" translatable="false">Te enviamos un código al %1$s para que verifiques este dispositivo</string>
+    <string name="sign_in_we_sent_you_a_code_template" translatable="false">Te enviamos un código al %1$s para que verifiqués este dispositivo</string>
     <string name="sign_in_verify_otp_button" translatable="false">Verificar</string>
     <string name="sign_in_verify_otp_error_title" translatable="false">Lo sentimos, no pudimos cambiar tu dispositivo</string>
     <string name="sign_in_verify_otp_error_subtitle" translatable="false">No es posible validar tu teléfono por favor, inténtalo nuevamente.</string>
@@ -148,13 +160,24 @@
 
 
     <!-- Sign Up General-->
-    <string name="sign_up_splash_come_back" translatable="false">¡Nos alegra\nque regresés!</string>
+    <string name="sign_up_splash_come_back" translatable="false">¡Nos alegra\nverte de nuevo!</string>
+    <string name="sign_up_general_close_dialog_title" translatable="false">¿Estás seguro que quieres salir? ¡Ya casi terminamos!</string>
+
     <string name="sign_up_close_dialog_description" translatable="false">Podrás retomar el registro cuando quieras</string>
     <string name="sign_up_close_dialog_positive_button_text" translatable="false">Salir</string>
     <string name="sign_up_close_dialog_negative_button_text" translatable="false">Cancelar</string>
     <string name="sign_in_error_alert_dialog" translatable="false">Parece que hubo un error</string>
     <string name="sign_in_error_alert_dialog_button" translatable="false">Ir al inicio</string>
 
+    <!-- Sign Up Costa rica-->
+    <string name="sign_up_general_close_dialog_title_costa_rica" translatable="false">¿Estás seguro de que querés salir? ¡Ya casi terminamos!</string>
+    <string name="sign_up_close_dialog_description_costa_rica" translatable="false">Podés retomar el registro cuando querás.</string>
+
+    <!-- Sign Up Guatemala-->
+    <string name="sign_up_close_dialog_description_guatemala" translatable="false">Puedes retomar el registro cuando quieras</string>
+
+    <!-- Sign Up Salvador-->
+    <string name="sign_up_close_dialog_description_salvador" translatable="false">Podrás retomar el registro cuando quieras</string>
 
     <!-- Sign Up Email -->
     <string name="sign_up_email_header" translatable="false">Ingresá tu correo</string>
@@ -373,15 +396,17 @@
     <string name="home_crypto_card_smart_in_process_label" translatable="false">Cripto</string>
     <string name="home_crypto_card_with_balance_zero_label" translatable="false">0.00</string>
 
-
-
     <!-- Buy Crypto -->
     <string name="buy_crypto_voucher_you_have_paid" translatable="false">Has comprado</string>
+    <string name="sell_crypto_voucher_you_have_sold" translatable="false">Has vendido</string>
     <string name="buy_crypto_multimoney_smart_account_template" translatable="false">Mi cuenta Smart | %1$s</string>
     <string name="buy_crypto_voucher_from_account" translatable="false">Desde la cuenta</string>
+    <string name="sell_crypto_voucher_to_account" translatable="false">Hacia</string>
     <string name="buy_crypto_voucher_exchange_rate" translatable="false">Tipo de cambio</string>
     <string name="buy_crypto_voucher_mount_to_charge" translatable="false">Total debitado</string>
+    <string name="sell_crypto_voucher_amount_credited" translatable="false">Total recibido</string>
     <string name="buy_crypto_voucher_value_in_currency_template" translatable="false">Valor en %1$s al momento de la compra</string>
+    <string name="sell_crypto_voucher_value_in_dollars_template" translatable="false">Valor en dolares al momento de la venta</string>
     <string name="buy_crypto_voucher_final_value_in_currency_template" translatable="false">%1$s %2$s</string>
 
 
@@ -535,7 +560,9 @@
     <string name="crypto_finish_smart_alert_description" translatable="false">Tu cuenta Cripto se ha activado como un beneficio extra de tu cuenta Smart</string>
     <string name="crypto_finish_smart_alert_btn_discover_crypto" translatable="false">Explorar Cripto</string>
     <string name="crypto_finish_smart_alert_btn_saving_smart" translatable="false">Ahorrar Smart</string>
-    <string name="crypto_select_smart_account_title_template" translatable="false">¿Con qué cuenta vas a comprar %s?</string>
+
+    <string name="crypto_select_smart_account_title_template" translatable="false">¿Con qué cuenta vas a comprar %1$s?</string>
+    <string name="sell_crypto_where_to_receive_money" translatable="false">¿En cuál cuenta quieres recibir el dinero?</string>
     <string name="crypto_buy_processing_transaction" translatable="false">Procesando transacción</string>
 
     <!-- Home Crypto Header Expanded-->
@@ -557,8 +584,10 @@
     <string name="buy_crypto_warning_bs_content" translatable="false">Las criptomonedas son activos altamente volátiles que pueden generar pérdidas de capital. \nEsta inversión es por voluntad y riesgo propio del inversionista ya que Multimoney no se hace responsable ante eventuales perjuicios. Te recomendamos tomar decisiones de inversión informadas.</string>
     <string name="buy_crypto_warning_dont_show_again" translatable="false">No volver a mostrar</string>
 
-
-
+    <!-- Home Maintenance State-->
+    <string name="home_maintenance_state_title" translatable="false">Servicio en mantenimiento</string>
+    <string name="home_maintenance_state_description" translatable="false">Pronto podrás consultar a detalle la información de tus criptomonedas</string>
+    <string name="home_maintenance_btn_text" translatable="false">Entendido</string>
 
     <!-- Home Smart - Account Details -->
     <string name="smart_account_detail_title" translatable="false">Detalles de cuenta</string>
@@ -566,7 +595,6 @@
     <string name="smart_account_detail_gained_interest_label" translatable="false">Interés anual</string>
     <string name="smart_account_detail_total_balance_label" translatable="false">Ganancia total a la fecha</string>
     <string name="smart_account_detail_gained_interest" translatable="false">%s%%</string>
-    <string name="smart_account_detail_gained_interest_mock" translatable="false">3.25%</string>
     <string name="smart_account_detail_total_balance" translatable="false">%s %s</string>
 
     <!-- my products bottom sheet -->
@@ -744,9 +772,11 @@
 
 
     <!-- Generate Document -->
-    <string name="document_generation_title" translatable="false">Estamos creando tu cuenta</string>
-    <string name="document_generation_subtitle" translatable="false">Firmá el contrato y recibí tu crédito</string>
+    <string name="document_generation_title" translatable="false">Estamos creando tus documentos</string>
+    <string name="document_generation_subtitle" translatable="false">Firma el contrato y recibe tu crédito</string>
     <string name="document_generation_info" translatable="false">Generando documentos…</string>
+    <string name="document_generation_error_description" translatable="false">Contactanos para ayudarte a abrir tu cuenta</string>
+    <string name="origination_processing_transaction" translatable="false">Procesando transacción…</string>
 
     <!-- Onfido errors -->
     <string name="onfido_rejected_first_time_title" translatable="false">Hubo un error al validar tu identidad</string>
@@ -774,9 +804,9 @@
     <string name="sign_credit_max_attempts_contact" translatable="false">Contactar</string>
 
     <!-- Sign Document Reject -->
-    <string name="sign_document_reject_title" translatable="false">Te vamos a extrañar</string>
-    <string name="sign_document_reject_description" translatable="false">Si querés finalizar la solicitud de tu crédito debés firmar el contrato</string>
-    <string name="sign_document_reject_description_gt" translatable="false">Si quieres finalizar la solicitud de tu crédito debés firmar el contrato</string>
+    <string name="sign_document_reject_title" translatable="false">Estás solo a un paso</string>
+    <string name="sign_document_reject_description" translatable="false">Firmá el contrato y recibí tu dinero.</string>
+    <string name="sign_document_reject_description_gt" translatable="false">Firma el contrato y recibe tu dinero.</string>
 
     <!-- Origination Voucher -->
     <string name="origination_voucher_amount" translatable="false">Has recibido</string>
@@ -927,7 +957,7 @@
 
     <!-- Smart payment success -->
     <string name="smart_payment_success" translatable="false">¡Transacción exitosa!</string>
-    <string name="smart_payment_you_saved_on_your_smart_account" translatable="false">Has ahorrado en tu cuenta Smart | %s</string>
+    <string name="smart_payment_you_saved_on_your_smart_account" translatable="false">Monto ahorrado a tu cuenta Smart | %s</string>
     <string name="smart_payment_from_label" translatable="false">Desde</string>
     <string name="smart_payment_origin_account_label" translatable="false">Cuenta de origen</string>
     <string name="smart_payment_destiny_account_label" translatable="false">Cuenta de destino</string>
@@ -939,7 +969,6 @@
     <string name="smart_payment_make_another_payment" translatable="false">Hacer otro ahorro</string>
     <string name="smart_payment_card_bank_label" translatable="false">Tarjeta Banco</string>
     <string name="smart_payment_you_sent" translatable="false">Has enviado</string>
-    <string name="smart_payment_to_account" translatable="false">Hacia la cuenta</string>
 
     <!-- Smart Card -->
     <string name="smart_card_balance" translatable="false">Saldo</string>
@@ -1127,7 +1156,7 @@
     <string name="payment_schedule_account_title" translatable="false">Seleccioná una cuenta para programar tu pago</string>
 
     <!-- Payment Schedule Cards-->
-    <string name="payment_schedule_card_title" translatable="false">Configurá tu pago \nautomático</string>
+    <string name="payment_schedule_card_title" translatable="false">Tarjetas Visa</string>
     <string name="payment_schedule_card_info_dialog_description" translatable="false">Tu pago se determina de acuerdo a la cuota mínima de cada mes.</string>
     <string name="payment_schedule_card_label_date" translatable="false">Día del mes que se hará el pago</string>
     <string name="payment_schedule_card_label_origin" translatable="false">Desde tu tarjeta</string>
@@ -1220,7 +1249,8 @@
     <string name="market_details_button_read_more" translatable="false">Leer más</string>
 
     <!--Crypto Purchase Flow-->
-    <string name="crypto_purchase_flow_title" translatable="false">¿Cúanto querés comprar?</string>
+    <string name="crypto_purchase_flow_title_cr" translatable="false">¿Cúanto querés comprar?</string>
+    <string name="crypto_purchase_flow_title_sv" translatable="false">¿Cuánto quieres comprar?</string>
     <string name="crypto_purchase_flow_exchange_reference" translatable="false">1 %2s = %3s</string>
     <string name="crypto_purchase_flow_exchange_reference_edittext" translatable="false">≈ %1s %2s</string>
     <string name="crypto_purchase_flow_exchange_reference_edittext_dollars" translatable="false">≈ %1s</string>
@@ -1247,6 +1277,10 @@
     <string name="crypto_purchase_flow_error_weekly_amount_exceeded" translatable="false">El monto supera el limite de compra\nmensual de $10,000</string>
     <string name="crypto_purchase_flow_error_no_funds" translatable="false">Fondos Insuficientes para aplicar la compra</string>
     <string name="crypto_purchase_flow_error_price_expired" translatable="false">Cotización caducada</string>
+    <string name="crypto_purchase_flow_error_processing_purchase" translatable="false">¡Oh no! Hubo un error al completar la compra</string>
+    <string name="crypto_sell_flow_error_processing_sell" translatable="false">¡Oh no! Hubo un error al completar la venta</string>
+
+
 
     <!-- Evicertia screen -->
     <string name="smart_evicertia_missing_signature_title_card" translatable="false">¡Solo falta tu firma!</string>
@@ -1291,6 +1325,9 @@
     <string name="payment_cards_list_empty_state_description" translatable="false">Agregá una tarjeta para que podás realizar tus abonos</string>
     <string name="payment_cards_list_create" translatable="false">Agregar tarjeta</string>
     <string name="payment_cards_list_title" translatable="false">Mis Tarjetas</string>
+    <string name="payment_cards_verified_list_title" translatable="false">Tarjetas registradas</string>
+    <string name="payment_cards_not_verified_list_title" translatable="false">Tarjetas con verificación pendiente</string>
+    <string name="payment_cards_resume_bottom_sheet" translatable="false">Tarjetas con verificación pendiente</string>
     <string name="smart_payment_cards_list_card_title" translatable="false">Seleccioná la tarjeta con la que querés ahorrar</string>
 
     <!-- Payment Amount Card -->
@@ -1479,6 +1516,9 @@
     <string name="smart_my_contacts_transfer_accounts_add" translatable="false">Agregar cuenta</string>
     <string name="smart_mycontacts_total_transfer_title" translatable="false">%1s contactos encontrados</string>
     <string name="smart_my_concts_placeholder" translatable="false">Buscar contacto</string>
+
+    <!-- Smart Transfer - Favorite -->
+    <string name="smart_favorite_transfer_accounts_title" translatable="false">Mis favoritos</string>
     <string name="smart_my_contacts_select_favorite_account" translatable="false">Seleccionar como favorito</string>
     <string name="smart_my_contacts_invite_CR" translatable="false">Invitá a tus amigos a usar MultiMoney.\nTus contactos que la tengan\naparecerán aquí.</string>
     <string name="smart_my_contacts_invite_SV" translatable="false">Invita a tus amigos a usar MultiMoney.\nTus contactos que la tengan\naparecerán aquí.</string>
@@ -1550,9 +1590,33 @@
     <!-- Crypto list currencies for purchase -->
     <string name="crypt_list_purchase_title" translatable="false">¿Cuál moneda querés comprar?</string>
 
+    <!-- Crypto send flow -->
+    <string name="crypto_send_abandon_dialog_title" translatable="false">Cancelar envío</string>
+    <string name="crypto_send_abandon_dialog_message" translatable="false">¿Estás seguro que querés cancelar el envío?</string>
+    <string name="crypto_send_amount_error_available_amount_commission" translatable="false">"El monto a enviar más la comisión \nsupera el monto disponible"</string>
+
     <!-- Crypto list currencies for send -->
     <string name="crypt_list_send_title" translatable="false">¿Cuál moneda querés enviar?</string>
-    
+    <string name="crypto_send_address_title" translatable="false">¿Dónde querés enviar %s?</string>
+    <string name="crypto_send_address_information" translatable="false">Pegá la dirección de la billetera a la que deseás enviar o escaneá el código del receptor. Asegurate que envíes a la blockchain %s.</string>
+    <string name="crypto_send_address_receiver" translatable="false">Dirección %s del receptor</string>
+    <string name="crypto_send_address_placeholder" translatable="false">Pegar dirección</string>
+    <string name="crypto_send_address_required" translatable="false">La dirección BTC del receptor es requerida</string>
+    <string name="crypto_send_address_permission_camera_title" translatable="false">“MultiMoney” quiere acceder a tu cámara</string>
+    <string name="crypto_send_address_permission_camera_description" translatable="false">El acceso es necesario para escanear códigos QR</string>
+    <string name="crypto_send_address_verify_crypto_address_title" translatable="false">Verificá la dirección</string>
+    <string name="crypto_send_address_verify_crypto_address_description" translatable="false"> Asegurate que la dirección es la correcta. En caso de que lo enviés a una dirección incorrecta no podrás recuperar el dinero</string>
+    <string name="crypto_send_address_wallet_doesnt_accept" translatable="false">Esta billetera no recibe %s</string>
+
+    <!--Crypto amount to be sent-->
+    <string name="crypto_amount_title" translatable="false">¿Cuánto querés enviar %s?</string>
+    <string name="crypto_amount_info_msg" translatable="false">Te descontaremos la tarifa de envío del monto ingresado.</string>
+    <string name="crypto_available_dollar_amount_to_bitcoin" translatable="false">Disponible $%1s ≈ %2s %3s</string>
+
+    <!-- Crypto list currencies for receive -->
+    <string name="crypt_list_receive_title" translatable="false">¿Cuál moneda querés recibir?</string>
+    <string name="crypt_all_chip_label" translatable="false">Todas</string>
+
     <!-- Crypto send bottom sheet -->
     <string name="crypto_send_amount_bottom_sheet_title" translatable="false">Monto a enviar</string>
     <string name="crypto_send_amount_bottom_sheet_approximate_value_dollars" translatable="false">Valor aproximado en dólares</string>
@@ -1624,7 +1688,51 @@
     <string name="crosseling_account_cr_title" translatable="false">¿En cúal cuenta IBAN querés \nrecibir tu dinero?</string>
     <string name="crosseling_close_dialog_title" translatable="false">Abandonar proceso</string>
     <string name="crosseling_close_dialog_description" translatable="false">¿Estás seguro de abandonar el proceso?</string>
-    <string name="crosseling_close_dialog_positive_button_text" translatable="false">Cancelar</string>
-    <string name="crosseling_close_dialog_negative_button_text" translatable="false">Continuar</string>
+    <string name="crosseling_close_dialog_positive_button_text" translatable="false">Continuar</string>
+    <string name="crosseling_close_dialog_negative_button_text" translatable="false">Cancelar</string>
 
+    <!-- Visa Direct Verify Deposit-->
+    <string name="visa_direct_verify_deposit_title" translatable="false">Ingresa el monto</string>
+    <string name="visa_direct_verify_deposit_subtitle" translatable="false">Lo puedes ver en el movimiento del depósito que te hicimos a tu cuenta</string>
+    <string name="visa_direct_verify_deposit_do_not_see" translatable="false">¿No ves el movimiento?</string>
+    <string name="visa_direct_verify_deposit_timer_begin" translatable="false">Monto expira en </string>
+    <string name="visa_direct_verify_deposit_timer_end" translatable="false"> Segundos</string>
+    <string name="visa_direct_verify_deposit_resend" translatable="false">Reenviar monto</string>
+    <string name="visa_direct_verify_deposit_dialog_do_not_see_title" translatable="false">¿No ves el movimiento?</string>
+    <string name="visa_direct_verify_deposit_dialog_do_not_see_description" translatable="false">La transferencia puede durar unos minutos en reflejarse. Si no puedes ver el movimiento, contacta a tu banco.</string>
+    <string name="visa_direct_verify_deposit_micro_deposit_placeholder" translatable="false">0</string>
+    <string name="visa_direct_verify_deposit_alert_success_title" translatable="false">¡Tu tarjeta fue agregada\ny verificada con éxito!</string>
+    <string name="visa_direct_verify_deposit_alert_success_button_from_payment" translatable="false">Continuar con abono</string>
+    <string name="visa_direct_verify_deposit_alert_success_button_from_smart" translatable="false">Continuar con desembolso</string>
+    <string name="visa_direct_verify_deposit_alert_error_title" translatable="false">¡Oh no! Hubo un error</string>
+    <string name="visa_direct_verify_deposit_alert_error_description" translatable="false">Contáctanos para darte\nmás información</string>
+    <string name="visa_direct_verify_deposit_alert_error_button" translatable="false">Ir al inicio</string>
+
+    <!-- Crypto sell flow-->
+    <string name="crypt_list_sell_title" translatable="false">¿Cuál moneda querés vender?</string>
+    <string name="crypto_sell_flow_sell_screen_title_cr" translatable="false">¿Cuánto querés vender?</string>
+    <string name="crypto_sell_flow_sell_screen_title_sv" translatable="false">¿Cuánto quieres vender?</string>
+    <string name="crypto_sell_flow_confirmation_sell_title" translatable="false">Monto a vender</string>
+    <string name="crypto_sell_flow_dialog_cancel_message" translatable="false">Si cancelás el proceso no se realizará la venta de la cripto</string>
+    <string name="crypto_sell_flow_sell_screen_disclaimer" translatable="false">Los tipos de cambio incluyen una conversión de moneda y se actualizan con frecuencia</string>
+    <string name="crypto_sell_flow_sell_screen_available_equal_to" translatable="false">Disponible %1s ≈ %2s %3s</string>
+    <string name="crypto_sell_flow_confirmation_sell_screen_expires_in" translatable="false">Precio de venta expira en</string>
+    <string name="crypto_sell_flow_confirmation_sell_screen_evaluate_amount" translatable="false">Valor aproximado en %1s</string>
+    <string name="crypto_sell_flow_confirmation_sell_screen_amount_to_receive" translatable="false">Total a recibir</string>
+    <string name="crypto_sell_flow_confirmation_sell_screen_btn_text" translatable="false">Vender</string>
+
+    <!-- Crypto sell flow Errors-->
+    <string name="crypto_sell_flow_error_not_funds" translatable="false">Fondos Insuficientes para aplicar la venta</string>
+    <string name="crypto_sell_flow_error_minimum_amount" translatable="false">El monto mínimo de venta es de $5</string>
+
+    <!-- Visa Verified -->
+    <string name="visa_verified_title" translatable="false">Verifiquemos tu tarjeta</string>
+    <string name="visa_verified_description_1_bold" translatable="false">Revisa los movimientos</string>
+    <string name="visa_verified_description_1" translatable="false">de la\ncuenta asociada a tu tarjeta</string>
+    <string name="visa_verified_description_2_bold" translatable="false">Busca el monto </string>
+    <string name="visa_verified_description_2" translatable="false">del depósito que\nte hicimos</string>
+    <string name="visa_verified_description_3_bold" translatable="false">Escribe el monto</string>
+    <string name="visa_verified_description_3" translatable="false">en el siguiente\npaso</string>
+    <string name="visa_verified_dialog_title" translatable="false">Cancelar proceso</string>
+    <string name="visa_verified_dialog_description" translatable="false">¿Estás segur@ de cancelar el proceso de agregar una tarjeta?</string>
 </resources>

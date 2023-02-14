@@ -37,15 +37,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.DefaultBlack
-import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.GrayScale300
-import com.multimoney.multimoney.presentation.theme.GrayScale400
 import com.multimoney.multimoney.presentation.theme.GrayScale500
-import com.multimoney.multimoney.presentation.theme.GrayScale800
-import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.SemanticNegative400
-import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
@@ -76,11 +70,6 @@ import kotlinx.coroutines.launch
  * @param errorMessage: Error message to be displayed.
  * @param enabled: Enable or Disable field.
  * @param pickedCountry: Function to handle picked country selected.
- * @param dialogAppBarColor: Change select country dialog AppBarColor.
- * @param dialogAppBarTextColor: Change select country dialog AppBarTextColor.
- * @param dialogFocusedBorderColorSearch: Change select country dialog FocusedBorderColorSearch.
- * @param dialogUnFocusedBorderColorSearch: Change select country dialog UnFocusedBorderColorSearch.
- * @param dialogCursorColorSearch: Change select country dialog CursorColorSearch.
  * @param showCountryCode: Show country code.
  * @param showCountryFlag: Show country flag.
  * @param onValueChange: Function to handle input changes.
@@ -88,7 +77,8 @@ import kotlinx.coroutines.launch
  * **/
 
 @OptIn(
-    ExperimentalFoundationApi::class, kotlinx.coroutines.FlowPreview::class,
+    ExperimentalFoundationApi::class,
+    kotlinx.coroutines.FlowPreview::class,
     kotlinx.coroutines.ExperimentalCoroutinesApi::class
 )
 @Composable
@@ -104,15 +94,11 @@ fun PhoneTextField(
     errorMessage: String? = null,
     enabled: Boolean = true,
     pickedCountry: (CountryData) -> Unit,
-    dialogAppBarColor: Color = MultimoneyTheme.colors.primary,
-    dialogAppBarTextColor: Color = Color.White,
-    dialogFocusedBorderColorSearch: Color = Color.Transparent,
-    dialogUnFocusedBorderColorSearch: Color = Color.Transparent,
-    dialogCursorColorSearch: Color = MultimoneyTheme.colors.primary,
     showCountryCode: Boolean = true,
     showCountryFlag: Boolean = true,
     onValueChange: (newText: String) -> Unit = {},
-    onDebounceValidation: (newText: String) -> Unit = {}
+    onDebounceValidation: (newText: String) -> Unit = {},
+    countriesList: MutableList<CountryData>? = null
 ) {
     var textFieldValueState by remember { mutableStateOf(TextFieldValue(text = value ?: "")) }
     val textFieldValue = textFieldValueState.copy(text = value ?: "")
@@ -143,7 +129,6 @@ fun PhoneTextField(
     val focusedIndicatorColor: Color
     val unfocusedIndicatorColor: Color
     val errorIndicatorColor: Color
-    val dropdownArrowColor: Color
 
     if (isSystemInDarkTheme()) {
         labelColor = GrayScale300
@@ -155,48 +140,41 @@ fun PhoneTextField(
             isError -> {
                 focusedIndicatorColor = SemanticNegative400
                 textColor = WhiteTransparency90
-                dropdownArrowColor = WhiteTransparency90
             }
             enabled -> {
                 focusedIndicatorColor = WhiteTransparency60
                 textColor = WhiteTransparency90
-                dropdownArrowColor = WhiteTransparency90
             }
             else -> {
                 focusedIndicatorColor = DefaultBlack
                 backgroundColor = GrayScale500
                 textColor = WhiteTransparency60
-                dropdownArrowColor = WhiteTransparency60
             }
         }
     } else {
-        labelColor = GrayScale800
-        backgroundColor = DefaultWhite
-        placeholderColor = GrayScale500
-        unfocusedIndicatorColor = GrayScale400
-        errorIndicatorColor = SemanticNegative500
+        labelColor = GrayScale300
+        backgroundColor = WhiteTransparency10
+        placeholderColor = WhiteTransparency60
+        unfocusedIndicatorColor = DefaultBlack
+        errorIndicatorColor = SemanticNegative400
         when {
             isError -> {
-                focusedIndicatorColor = SemanticNegative500
-                textColor = GrayScale800
-                dropdownArrowColor = WhiteTransparency60
+                focusedIndicatorColor = SemanticNegative400
+                textColor = WhiteTransparency90
             }
             enabled -> {
-                focusedIndicatorColor = Primary500
-                textColor = GrayScale800
-                dropdownArrowColor = WhiteTransparency90
+                focusedIndicatorColor = WhiteTransparency60
+                textColor = WhiteTransparency90
             }
             else -> {
-                focusedIndicatorColor = GrayScale400
-                backgroundColor = GrayScale300
-                textColor = GrayScale500
-                dropdownArrowColor = WhiteTransparency60
+                focusedIndicatorColor = DefaultBlack
+                backgroundColor = GrayScale500
+                textColor = WhiteTransparency60
             }
         }
     }
 
     Column(modifier = modifier) {
-
         // Display label is it isn't null
         labelText?.let {
             Text(
@@ -225,7 +203,7 @@ fun PhoneTextField(
             shape = RoundedCornerShape(50),
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Phone,
-                autoCorrect = true,
+                autoCorrect = true
             ),
             keyboardActions = keyboardActions,
             onValueChange = {
@@ -249,15 +227,9 @@ fun PhoneTextField(
                     padding = 12.dp,
                     pickedCountry = pickedCountry,
                     defaultSelectedCountry = defaultCountry,
-                    dialogAppBarColor = dialogAppBarColor,
-                    dialogAppBarTextColor = dialogAppBarTextColor,
                     showCountryCode = showCountryCode,
                     showCountryFlag = showCountryFlag,
-                    dialogFocusedBorderColorSearch = dialogFocusedBorderColorSearch,
-                    dialogUnFocusedBorderColorSearch = dialogUnFocusedBorderColorSearch,
-                    dialogCursorColorSearch = dialogCursorColorSearch,
-                    countryCodeTextColor = textColor,
-                    dropdownArrowColor = dropdownArrowColor
+                    countryList = countriesList
                 )
             },
             singleLine = true,

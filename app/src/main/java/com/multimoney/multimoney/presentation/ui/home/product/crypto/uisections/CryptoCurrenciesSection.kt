@@ -24,43 +24,45 @@ import com.multimoney.multimoney.presentation.util.MAX_CRYPTO_ITEMS
 @Composable
 fun CryptoCurrencies(
     items: List<BalanceCryptoAccountItems>?,
-    itemClick: (BalanceCryptoAccountItems) -> Unit,
     viewAllClick: () -> Unit
 ) {
-    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-        Row(
-            modifier = Modifier
-                .padding(horizontal = 4.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                textAlign = TextAlign.Start,
-                text = stringResource(id = R.string.crypto_currencies),
-                style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.labelText
-            )
-            TextButton(onClick = { viewAllClick() }) {
+
+    if (!items.isNullOrEmpty()) {
+        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = 4.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
-                    textAlign = TextAlign.End,
-                    text = stringResource(id = R.string.crypto_currencies_see_all),
-                    style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                    color = MultimoneyTheme.colors.textLink
+                    textAlign = TextAlign.Start,
+                    text = stringResource(id = R.string.crypto_currencies),
+                    style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                    color = MultimoneyTheme.colors.labelText
+                )
+                TextButton(onClick = { viewAllClick() }) {
+                    Text(
+                        textAlign = TextAlign.End,
+                        text = stringResource(id = R.string.crypto_currencies_see_all),
+                        style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
+                        color = MultimoneyTheme.colors.textLink
+                    )
+                }
+            }
+            items.take(MAX_CRYPTO_ITEMS).forEach { item ->
+                CurrencyItem(
+                    imageUrl = item.url_image,
+                    descriptionCurrency = item.descriptionCurrency,
+                    asset = item.asset,
+                    balanceDollars = item.balanceDollars,
+                    priceOfTheDay = item.priceOfTheDay,
+                    percentageInvestedCurrency = item.percentageInvestedCurrency,
+                    available = item.available
                 )
             }
-        }
-        items?.take(MAX_CRYPTO_ITEMS)?.forEach { item ->
-            CurrencyItem(
-                imageUrl = item.url_image ?: "",
-                descriptionCurrency = item.descriptionCurrency ?: "",
-                asset = item.asset ?: "",
-                balanceDollars = item.balanceDollars ?: 0.0,
-                priceOfTheDay = item.priceOfTheDay ?: 0.0,
-                percentageInvestedCurrency = item.percentageInvestedCurrency ?: "",
-                available = item.available ?: 0.0,
-                onClick = { itemClick(item) }
-            )
+
         }
     }
 }

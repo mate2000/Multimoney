@@ -5,17 +5,16 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CryptoSendSteps
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.crypto.send.cryptoaddress.CryptoSendAddressScreen
+import com.multimoney.multimoney.presentation.ui.crypto.send.cryptoamount.CryptoSendAmountScreen
 import com.multimoney.multimoney.presentation.ui.crypto.send.listofcurrencies.CryptoSendListOfCurrenciesScreen
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
@@ -27,7 +26,9 @@ fun CryptoSendFlow(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
-    viewModel: CryptoSendSharedViewModel = hiltViewModel()
+    viewModel: CryptoSendSharedViewModel = hiltViewModel(),
+    onNavigateToQrCodeScanner: () -> Unit = {},
+    qrCodeResult: String
 ) {
 
     LaunchedEffect(true) {
@@ -68,12 +69,16 @@ fun CryptoSendFlow(
                     if (viewModel.comingFromCurrencyDetails) {
                         CRSendCryptoDirectFlow(
                             step = viewModel.uiState.currentStep,
-                            viewModel = viewModel
+                            viewModel = viewModel,
+                            onNavigateToQrCodeScanner = onNavigateToQrCodeScanner,
+                            qrCodeResult = qrCodeResult
                         )
                     } else {
                         CRSendCryptoFlow(
                             step = viewModel.uiState.currentStep,
-                            viewModel = viewModel
+                            viewModel = viewModel,
+                            onNavigateToQrCodeScanner = onNavigateToQrCodeScanner,
+                            qrCodeResult = qrCodeResult
                         )
                     }
                 }
@@ -101,29 +106,52 @@ fun CryptoSendFlow(
 }
 
 @Composable
-fun CRSendCryptoDirectFlow(step: Int, viewModel: CryptoSendSharedViewModel) {
+fun CRSendCryptoDirectFlow(
+    step: Int,
+    viewModel: CryptoSendSharedViewModel,
+    onNavigateToQrCodeScanner: () -> Unit,
+    qrCodeResult: String
+) {
     when (step) {
-        CryptoSendSteps.One.pageNumber -> TemporalScreen(text = "Crypto Address Screen")
-        CryptoSendSteps.Two.pageNumber -> { /* TODO: Send Amount Screen */ }
-        CryptoSendSteps.Three.pageNumber -> { /* TODO: Voucher Screen */ }
+        CryptoSendSteps.One.pageNumber -> {
+            CryptoSendAddressScreen(
+                sharedViewModel = viewModel,
+                onNavigateToQrCodeScanner = onNavigateToQrCodeScanner,
+                qrCodeResult = qrCodeResult
+            )
+        }
+        CryptoSendSteps.Two.pageNumber -> {
+            /*TODO*/
+        }
+        CryptoSendSteps.Three.pageNumber -> {
+            /* TODO: Voucher Screen */
+        }
     }
 }
 
 @Composable
-fun CRSendCryptoFlow(step: Int, viewModel: CryptoSendSharedViewModel) {
+fun CRSendCryptoFlow(
+    step: Int,
+    viewModel: CryptoSendSharedViewModel,
+    onNavigateToQrCodeScanner: () -> Unit,
+    qrCodeResult: String
+) {
     when (step) {
         CryptoSendSteps.One.pageNumber -> CryptoSendListOfCurrenciesScreen(sharedViewModel = viewModel)
-        CryptoSendSteps.Two.pageNumber -> TemporalScreen(text = "Crypto Address Screen")
-        CryptoSendSteps.Three.pageNumber -> { /* TODO: Send Amount Screen */ }
-        CryptoSendSteps.Four.pageNumber -> { /* TODO: Voucher Screen */ }
+        CryptoSendSteps.Two.pageNumber -> {
+            CryptoSendAddressScreen(
+                sharedViewModel = viewModel,
+                onNavigateToQrCodeScanner = onNavigateToQrCodeScanner,
+                qrCodeResult = qrCodeResult
+            )
+        }
+        CryptoSendSteps.Three.pageNumber -> {
+            CryptoSendAmountScreen(
+                sharedViewModel = viewModel
+            )
+        }
+        CryptoSendSteps.Four.pageNumber -> {
+            /* TODO: Voucher Screen */
+        }
     }
-}
-
-@Composable
-fun TemporalScreen(text: String) {
-    Text(
-        text = text,
-        style = Typography.h4.copy(fontWeight = FontWeight.W600),
-        color = MultimoneyTheme.colors.text
-    )
 }

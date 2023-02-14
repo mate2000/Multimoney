@@ -11,6 +11,9 @@ query GetBalanceCryptoAccount(
         identification:$identification,
         status:$status
     }) {
+        status,
+        message,
+        outOfService,
         globalBalance,
         investedBalance,
         percentageInvested,

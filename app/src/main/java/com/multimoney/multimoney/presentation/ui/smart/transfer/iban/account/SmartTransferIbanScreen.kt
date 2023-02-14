@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,8 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,10 +25,10 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnAddAccountClick
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnCallQueryListSinpeAccountUseCaseImpl
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnCallFavoriteListSinpeAccountUseCaseImpl
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnCallNoFavoriteListSinpeAccountUseCaseImpl
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiary
@@ -48,8 +47,13 @@ fun SmartTransferIbanScreen(
     viewModel: SmartTransferIbanViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
-        viewModel.onUIEvent(OnCallQueryListSinpeAccountUseCaseImpl)
+        viewModel.onUIEvent(OnCallFavoriteListSinpeAccountUseCaseImpl)
+        viewModel.onUIEvent(OnCallNoFavoriteListSinpeAccountUseCaseImpl)
         viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
+    }
+
+    BackHandler {
+        viewModel.onUIEvent(OnNavigateBack)
     }
 
     Column(

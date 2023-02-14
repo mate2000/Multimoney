@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Brand
@@ -42,6 +43,7 @@ import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.Disb
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.tickerFlow
+import com.multimoney.multimoney.presentation.util.transformation.FORMAT_MONEY_MAX_LENGTH
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -400,6 +402,12 @@ class DisbursementAmountViewModel @Inject constructor(
         callMutationSaveCreditExtensionDetail()
     }
 
+    private fun onDisbursementValueChange(value: String) {
+        if (value.isDigitsOnly() && value.length <= FORMAT_MONEY_MAX_LENGTH) {
+            uiState = uiState.copy(disbursement = value)
+        }
+    }
+
     data class UIState(
         // Fields
         val titleResource: Int = R.string.empty,
@@ -428,7 +436,7 @@ class DisbursementAmountViewModel @Inject constructor(
             is OnStart -> onStart()
             is OnCloseClick -> onExitConfirmDialog()
             is OnValidateForm -> isFormValid()
-            is OnDisbursementValueChange -> uiState = uiState.copy(disbursement = uiEvent.value)
+            is OnDisbursementValueChange -> onDisbursementValueChange(uiEvent.value)
             is OnDisbursementValueChangeFinished -> onDisbursementValueChangeFinished(uiEvent.value)
             is OnCurrencyIndexChanged -> onCurrencyIndexChange(uiEvent.index)
             is OnSliderValueChange -> onSliderValueChange(uiEvent.value)

@@ -14,7 +14,10 @@ import com.multimoney.domain.model.crypto.CryptoCurrencyNews
 import com.multimoney.domain.model.crypto.GetHistoricalClientBalance
 import com.multimoney.domain.model.crypto.GetHistoricalCurrencyPrices
 import com.multimoney.domain.model.crypto.GetListOfAvailableCryptoCoins
+import com.multimoney.domain.model.crypto.GetTransferFeeData
 import com.multimoney.domain.model.crypto.PricesQuoteAndCommissionData
+import com.multimoney.domain.model.crypto.SellCryptoCurrencyHQRData
+import com.multimoney.domain.model.crypto.ValidateDepositAddressResponse
 import com.multimoney.domain.model.crypto.SendCryptoToAddressData
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Success
@@ -47,9 +50,10 @@ class CryptoRepositoryImpl @Inject constructor(
 
     override suspend fun getAvailableListOfCryptoCoins(
         user: String,
-        idBrand: Int
+        idBrand: Int,
+        origin: String
     ): Flow<MultimoneyResult<GetListOfAvailableCryptoCoins?>> = fetchData(
-        apolloCall = graphqlApi.queryGetAvailableListOfCryptoCoins(user, idBrand),
+        apolloCall = graphqlApi.queryGetAvailableListOfCryptoCoins(user, idBrand, origin),
         apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
     )
 
@@ -171,6 +175,41 @@ class CryptoRepositoryImpl @Inject constructor(
         apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
     )
 
+    override suspend fun sellCryptoCurrency(
+        pkUser: Int,
+        identification: String,
+        market: String,
+        commissionPercentage: Double,
+        taxPercentage: Double,
+        accountToken: Long,
+        exchangeRate: Double,
+        idBrand: Int,
+        user: String,
+        quoteId: String,
+        baseAmount: Double,
+        fee: Double,
+        internalFee: Double,
+        totalFee: Double
+    ): Flow<MultimoneyResult<SellCryptoCurrencyHQRData>> = fetchData(
+        apolloCall = graphqlApi.mutationSellCryptoCurrency(
+            pkUser,
+            identification,
+            market,
+            commissionPercentage,
+            taxPercentage,
+            accountToken,
+            exchangeRate,
+            idBrand,
+            user,
+            quoteId,
+            baseAmount,
+            fee,
+            internalFee,
+            totalFee
+        ),
+        apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
+    )
+
     override suspend fun getBalanceCryptoAccount(
         user: String,
         idBrand: Int,
@@ -180,6 +219,42 @@ class CryptoRepositoryImpl @Inject constructor(
             user,
             idBrand,
             identification,
+        ),
+        apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
+    )
+
+    override suspend fun validateDepositAddress(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        market: String,
+        address: String
+    ): Flow<MultimoneyResult<ValidateDepositAddressResponse>> = fetchData(
+        apolloCall = graphqlApi.mutationValidateDepositAddress(
+            user,
+            idBrand,
+            identification,
+            market,
+            address
+        ),
+        apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
+    )
+
+    override suspend fun getTransferCommission(
+        user: String,
+        idBrand: Int,
+        destinationAddress: String,
+        asset: String,
+        cryptoNetwork: String,
+        amount: Double
+    ): Flow<MultimoneyResult<GetTransferFeeData>> = fetchData(
+        apolloCall = graphqlApi.getTransferCommission(
+            user,
+            idBrand,
+            destinationAddress,
+            asset,
+            cryptoNetwork,
+            amount
         ),
         apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
     )

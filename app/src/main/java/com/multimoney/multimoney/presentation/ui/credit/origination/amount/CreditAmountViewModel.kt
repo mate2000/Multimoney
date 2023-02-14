@@ -4,6 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.interaction.credit.MutationSaveCreditApplicationUseCase
@@ -20,11 +21,12 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.BaseEvent.OnOpenConditionOfCreditDialog
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCallMutationSaveCreditApplicationUseCase
-import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCallQueryCreditOfferUseCase
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCallMutationSaveTermsAndConditionsCreditUseCase
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCallQueryCreditOfferUseCase
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCurrencyIndexChanged
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnDisbursementValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnDisbursementValueChangeFinished
@@ -38,6 +40,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.amount.Credi
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.tickerFlow
+import com.multimoney.multimoney.presentation.util.transformation.FORMAT_MONEY_MAX_LENGTH
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -500,6 +503,12 @@ class CreditAmountViewModel @Inject constructor(
         }
     }
 
+    private fun onDisbursementValueChange(value: String) {
+        if (value.isDigitsOnly() && value.length <= FORMAT_MONEY_MAX_LENGTH) {
+            uiState = uiState.copy(disbursement = value)
+        }
+    }
+
     data class UIState(
         // Fields
         val isMultipleCurrency: Boolean = false,
@@ -558,7 +567,7 @@ class CreditAmountViewModel @Inject constructor(
             is OnOpenConditionCreditDialog -> onOpenConditionCreditDialog()
             is OnOpenTermAndCondition -> onOpenTermAndCondition()
             is OnCurrencyIndexChanged -> setCreditOffer(uiEvent.index)
-            is OnDisbursementValueChange -> uiState = uiState.copy(disbursement = uiEvent.value)
+            is OnDisbursementValueChange -> onDisbursementValueChange(uiEvent.value)
             is OnDisbursementValueChangeFinished -> onDisbursementValueChangeFinished(
                 uiEvent.value,
                 uiEvent.user,

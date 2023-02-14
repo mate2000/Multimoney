@@ -20,10 +20,14 @@ import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSma
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnMotiveChange
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnNavigateHome
+import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnRetryTransfer
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.SmartAmountBody
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.uielement.LoadingMultiMoney
 import com.multimoney.multimoney.presentation.uielement.SmartPaymentBottomSheet
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -41,10 +45,32 @@ fun Transfer365AmountScreen(
         }
     }
 
-    Transfer365AmountContent(viewModel)
-    Transfer365AmountBottomSheet(viewModel)
-    BackHandler {
-        viewModel.onAmountUIEvent(OnNavigateBack)
+    if (viewModel.amountUIState.showLoadingScreen) {
+        LoadingMultiMoney(R.string.smart_processing_transaction)
+    } else if (viewModel.amountUIState.showErrorScreen) {
+        AlertResult(
+            isTopNavBarVisible = true,
+            isLeftButtonVisible = false,
+            onRightButtonClick = { viewModel.onAmountUIEvent(OnNavigateHome) },
+            titleResource = R.string.error_occurred_title,
+            descriptionResource = R.string.error_try_again,
+            buttonTextResource = R.string.error_button_try_again,
+            onButtonClick = { viewModel.onAmountUIEvent(OnRetryTransfer) }
+        )
+        BackHandler {
+            viewModel.onAmountUIEvent(OnNavigateHome)
+        }
+    } else if (viewModel.amountUIState.paymentSuccess) {
+        Transfer365SuccessScreen(viewModel)
+        BackHandler {
+            viewModel.onAmountUIEvent(OnNavigateHome)
+        }
+    } else {
+        Transfer365AmountContent(viewModel)
+        Transfer365AmountBottomSheet(viewModel)
+        BackHandler {
+            viewModel.onAmountUIEvent(OnNavigateBack)
+        }
     }
 
     if (viewModel.amountUIState.openDialog.isActive.value) {
@@ -86,10 +112,10 @@ fun Transfer365AmountContent(viewModel: Transfer365AmountViewModel = hiltViewMod
                 viewModel.onAmountUIEvent(OnAmountValueChange(it))
             },
             onDebounceValidation = { viewModel.onAmountUIEvent(OnAmountCompleted(it)) },
-            isAmountError = viewModel.amountUIState.isAmountValid.not(),
+            isAmountError = viewModel.amountUIState.amountError.first,
             amountErrorMessage = stringResource(
-                id = R.string.smart_iban_transfer_error_balance_insufficient,
-                viewModel.totalBalanceLabel
+                viewModel.amountUIState.amountError.second,
+                viewModel.amountUIState.amountError.third
             ),
             currency = viewModel.amountUIState.currency,
             shouldDisplayExchange = viewModel.shouldDisplayExchange,

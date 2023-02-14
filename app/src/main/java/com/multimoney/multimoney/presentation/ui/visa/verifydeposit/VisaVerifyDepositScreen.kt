@@ -94,6 +94,9 @@ fun VisaVerifyDepositScreen(
             onAlertCloseClick = { onUIEvent(OnAlertCloseClick) },
             onAlertButtonClick = { onUIEvent(OnAlertButtonClick) }
         )
+        BackHandler {
+            onUIEvent(OnBackClick)
+        }
     }
 }
 
@@ -246,8 +249,5 @@ fun VisaVerifyDepositContent(
             onPositiveAction = uiState.dialogParameters.positiveAction,
             onNegativeAction = uiState.dialogParameters.negativeAction
         )
-    }
-    BackHandler {
-        onBackClick()
     }
 }

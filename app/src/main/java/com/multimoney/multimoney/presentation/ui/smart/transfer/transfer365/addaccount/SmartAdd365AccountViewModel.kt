@@ -272,10 +272,12 @@ class SmartAdd365AccountViewModel @Inject constructor(
             val account = Transfer365Account(
                 phone = uiState.phoneNumber,
                 name = uiState.names,
+                identification = uiState.documentNumber,
                 lastname = uiState.lastNames,
                 bankId = uiState.bank?.bankId.toString(),
                 bankName = uiState.bank?.bankName.orEmpty(),
                 accountTypeId = uiState.type?.typeId.toString(),
+                destinationType = uiState.document?.value,
                 isFavorite = false
             )
             navigateTo(
@@ -306,9 +308,11 @@ class SmartAdd365AccountViewModel @Inject constructor(
                         accountNumber = account?.accountNumber ?: uiState.accountNumber,
                         name = uiState.names,
                         lastname = uiState.lastNames,
+                        identification = uiState.documentNumber,
                         bankId = uiState.bank?.bankId.toString(),
                         bankName = uiState.bank?.bankName.orEmpty(),
                         accountTypeId = uiState.type?.typeId.toString(),
+                        destinationType = uiState.document?.value,
                         isFavorite = uiState.isFavorite
                     )
                     navigateTo(

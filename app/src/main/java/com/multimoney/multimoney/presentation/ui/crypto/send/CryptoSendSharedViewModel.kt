@@ -6,7 +6,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CryptoSendSteps
 import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.multimoney.R
@@ -56,9 +55,10 @@ class CryptoSendSharedViewModel @Inject constructor(
     private fun onCloseClick() {
         uiState = uiState.copy(
             openDialog = DialogParameters(
-                titleResource = R.string.smart_close_origination_dialog_title,
-                positiveResource = R.string.common_leave,
-                negativeResource = R.string.button_continue,
+                titleResource = R.string.crypto_send_abandon_dialog_title,
+                descriptionResource = R.string.crypto_send_abandon_dialog_message,
+                positiveResource = R.string.button_continue,
+                negativeResource = R.string.custom_dialog_default_negative_label,
                 positiveAction = { navigateBackToHome() },
                 isActive = mutableStateOf(true)
             )
@@ -92,7 +92,11 @@ class CryptoSendSharedViewModel @Inject constructor(
     private fun onCryptoSelected(cryptoAccount: BalanceCryptoAccountItems) {
         uiState = uiState.copy(
             asset = cryptoAccount.asset,
-            assetDescription = cryptoAccount.descriptionCurrency
+            assetDescription = cryptoAccount.descriptionCurrency,
+            assetImg = cryptoAccount.url_image,
+            currencyDollarBalance = cryptoAccount.balanceDollars,
+            cryptoCurrencyPrice = cryptoAccount.priceOfTheDay,
+            cryptoNetwork = cryptoAccount.cryptoNetwork
         )
     }
 
@@ -102,7 +106,12 @@ class CryptoSendSharedViewModel @Inject constructor(
         val accounts: List<Any> = listOf(),
         val openDialog: DialogParameters = DialogParameters(),
         var asset: String = "",
-        var assetDescription: String = ""
+        var assetDescription: String = "",
+        var assetImg: String = "",
+        var currencyDollarBalance: Double = 0.0,
+        var cryptoCurrencyPrice: Double = 0.0,
+        var cryptoNetwork: String = "",
+        var destinationAddress: String = ""
     )
 
     fun onUIEvent(event: UIEvent) {

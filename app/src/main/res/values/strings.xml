@@ -105,7 +105,7 @@
     <string name="onboarding_account_already_created" translatable="false">Ya tengo cuenta</string>
 
     <!-- OnBoarding Costa Rica-->
-    <string name="onboarding_costa_rica_step_one_title" translatable="false">Multiplica tus ahorros</string>
+    <string name="onboarding_costa_rica_step_one_title" translatable="false">Multiplicá tus ahorros</string>
     <string name="onboarding_costa_rica_step_one_sub_title" translatable="false">Ganá 7\% de interés anual en colones y 3.25\% en dólares.</string>
     <string name="onboarding_costa_rica_step_two_title" translatable="false">Tu crédito en 5 minutos</string>
     <string name="onboarding_costa_rica_step_two_sub_title" translatable="false">Recibí hasta ₡20 millones con solo tu identificación.</string>
@@ -1483,6 +1483,7 @@
     <string name="smart_iban_transfer_abandon_dialog_title" translatable="false">Cancelar envío</string>
     <string name="smart_iban_transfer_abandon_dialog_message" translatable="false">¿Estás seguro que querés cancelar el envío?</string>
     <string name="smart_iban_transfer_error_balance_insufficient" translatable="false">No tienes fondos suficientes. Tu disponible es %s</string>
+    <string name="smart_iban_transfer_error_max_amount" translatable="false">El máximo monto que podés enviar es de %s</string>
     <string name="smart_iban_transfer_select_smart_account_title" translatable="false">Enviar dinero desde</string>
 
     <!-- Smart Payment Sheet-->
@@ -1590,6 +1591,11 @@
     <!-- Crypto list currencies for purchase -->
     <string name="crypt_list_purchase_title" translatable="false">¿Cuál moneda querés comprar?</string>
 
+    <!-- Crypto send flow -->
+    <string name="crypto_send_abandon_dialog_title" translatable="false">Cancelar envío</string>
+    <string name="crypto_send_abandon_dialog_message" translatable="false">¿Estás seguro que querés cancelar el envío?</string>
+    <string name="crypto_send_amount_error_available_amount_commission" translatable="false">"El monto a enviar más la comisión \nsupera el monto disponible"</string>
+
     <!-- Crypto list currencies for send -->
     <string name="crypt_list_send_title" translatable="false">¿Cuál moneda querés enviar?</string>
     <string name="crypto_send_address_title" translatable="false">¿Dónde querés enviar %s?</string>
@@ -1602,6 +1608,15 @@
     <string name="crypto_send_address_verify_crypto_address_title" translatable="false">Verificá la dirección</string>
     <string name="crypto_send_address_verify_crypto_address_description" translatable="false"> Asegurate que la dirección es la correcta. En caso de que lo enviés a una dirección incorrecta no podrás recuperar el dinero</string>
     <string name="crypto_send_address_wallet_doesnt_accept" translatable="false">Esta billetera no recibe %s</string>
+
+    <!--Crypto amount to be sent-->
+    <string name="crypto_amount_title" translatable="false">¿Cuánto querés enviar %s?</string>
+    <string name="crypto_amount_info_msg" translatable="false">Te descontaremos la tarifa de envío del monto ingresado.</string>
+    <string name="crypto_available_dollar_amount_to_bitcoin" translatable="false">Disponible $%1s ≈ %2s %3s</string>
+
+    <!-- Crypto list currencies for receive -->
+    <string name="crypt_list_receive_title" translatable="false">¿Cuál moneda querés recibir?</string>
+    <string name="crypt_all_chip_label" translatable="false">Todas</string>
 
     <!-- Registeres User Email -->
     <string name="registered_user_email_title" translatable="false">Tenemos tu correo  %s registrado en MultiMoney</string>

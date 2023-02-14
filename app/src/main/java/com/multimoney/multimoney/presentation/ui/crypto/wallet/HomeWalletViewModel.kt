@@ -172,7 +172,7 @@ class HomeWalletViewModel @Inject constructor(
 
     private fun onNavigateToCryptoDetail(cryptoItem: BalanceCryptoAccountItems) {
         navigateTo(
-            "${Screen.CryptoCurrencyMovementsScreen.baseRoute}/${uiState.idBrand}/${uiState.identification}/${uiState.user}/${
+            "${Screen.CryptoWalletDetailsScreen.baseRoute}/${uiState.idBrand}/${uiState.identification}/${uiState.user}/${
                 encodeData(
                     cryptoItem
                 )
@@ -198,7 +198,9 @@ class HomeWalletViewModel @Inject constructor(
         navigateTo(Screen.CryptoSendFlow.baseRoute)
     }
 
-
+    private fun onNavigateToReceiveCrypto() {
+        navigateTo("${Screen.CryptoReceiveFlowScreen.baseRoute}/${uiState.user}/${uiState.idBrand}")
+    }
 
     data class UiState(
         val user: String? = null,
@@ -231,6 +233,7 @@ class HomeWalletViewModel @Inject constructor(
             is UIEvent.OnNavigateToBuyCrypto -> onNavigateToBuyCrypto()
             is UIEvent.OnNavigateToSendCrypto -> onNavigateToSendCrypto()
             is UIEvent.OnNavigateToSellCrypto -> onNavigateToSellCrypto()
+            is UIEvent.OnNavigateToReceiveCrypto -> onNavigateToReceiveCrypto()
         }
     }
 
@@ -245,6 +248,7 @@ class HomeWalletViewModel @Inject constructor(
         object OnNavigateToBuyCrypto : UIEvent
         object OnNavigateToSendCrypto : UIEvent
         object OnNavigateToSellCrypto : UIEvent
+        object OnNavigateToReceiveCrypto : UIEvent
     }
 
     companion object {

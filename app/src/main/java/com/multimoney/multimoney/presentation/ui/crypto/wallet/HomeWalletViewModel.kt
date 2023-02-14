@@ -172,7 +172,7 @@ class HomeWalletViewModel @Inject constructor(
 
     private fun onNavigateToCryptoDetail(cryptoItem: BalanceCryptoAccountItems) {
         navigateTo(
-            "${Screen.CryptoCurrencyMovementsScreen.baseRoute}/${uiState.idBrand}/${uiState.identification}/${uiState.user}/${
+            "${Screen.CryptoWalletDetailsScreen.baseRoute}/${uiState.idBrand}/${uiState.identification}/${uiState.user}/${
                 encodeData(
                     cryptoItem
                 )

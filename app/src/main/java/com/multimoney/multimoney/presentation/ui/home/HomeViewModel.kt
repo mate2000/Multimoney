@@ -471,7 +471,7 @@ class HomeViewModel @Inject constructor(
                 }
             }
             Brand.ElSalvador.id.toString() -> {
-                if (creditStatus?.status == CreditStatus.CREDIT_REJECTED.status && creditStatus.wording?.display == false) {
+                if (creditStatus?.status == CreditStatus.NO_EXIST.status || (creditStatus?.status == CreditStatus.CREDIT_REJECTED.status && creditStatus.wording?.display == false)) {
                     productPageList.clear()
                 }
             }

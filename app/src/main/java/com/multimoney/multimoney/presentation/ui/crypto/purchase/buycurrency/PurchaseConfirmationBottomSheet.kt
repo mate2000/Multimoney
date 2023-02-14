@@ -100,7 +100,9 @@ fun PurchaseConfirmationBottomSheet(
                 viewModel.ibanAccountNumber,
                 stringResource(id = R.string.payment_account_masked_text)
             ),
+            buttonText = stringResource(id = R.string.crypto_purchase_flow_confirmation_btn_buy),
             showTotalToReceive = false,
+            showBottomExchangeInfo = viewModel.idCurrencyAccount == CurrencyType.Colon.id,
             asset = viewModel.asset,
             assetImageUrl = viewModel.assetImageUrl,
             secondsRemaining = viewModel.uiState.remainingTimeText,

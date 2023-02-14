@@ -9,8 +9,9 @@ class GetAvailableListOfCryptoCoinsUseCaseImpl(val repository: CryptoRepository)
     : GetAvailableListOfCryptoCoinsUseCase {
     override suspend fun invoke(
         user: String,
-        idBrand: Int
+        idBrand: Int,
+        origin: String
     ): Flow<MultimoneyResult<GetListOfAvailableCryptoCoins?>> {
-        return repository.getAvailableListOfCryptoCoins(user, idBrand)
+        return repository.getAvailableListOfCryptoCoins(user, idBrand, origin)
     }
 }

@@ -17,14 +17,11 @@ import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.PENDING
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.REJECTED
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.data.util.catalog.MyProductStatus
-import com.multimoney.data.util.catalog.SmartAccountStatus.EXIST_IN_CORE
-import com.multimoney.data.util.catalog.SmartAccountStatus.NO_EXIST
-import com.multimoney.data.util.catalog.SmartAccountStatusRequest
-import com.multimoney.data.util.catalog.SmartAccountStatusRequest.CANCELED
-import com.multimoney.data.util.catalog.SmartAccountStatusRequest.CREATED
-import com.multimoney.data.util.catalog.SmartAccountStatusRequest.SENT
 import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.SmartSteps
+import com.multimoney.data.util.catalog.SmartWorkflow
+import com.multimoney.data.util.catalog.SmartWorkflow.SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS
+import com.multimoney.data.util.catalog.SmartWorkflow.SMART_ONFIDO_PROCESS
 import com.multimoney.domain.interaction.accountsmart.MutationAccountStatusUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryListSinpeAccountUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceCardInformationUseCase
@@ -92,10 +89,13 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnQuickActionClicked
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnShareIbanAccount
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateCollapsedPage
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateExpandedPage
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsBackPressed
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnVisaCardExpiredDialog
+import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.FilterDate
 import com.multimoney.multimoney.presentation.util.NfcHelper
 import com.multimoney.multimoney.presentation.util.PAGE_SIZE
@@ -130,7 +130,8 @@ class ProductViewModel @Inject constructor(
     private val balanceCardInformationUseCase: QueryBalanceCardInformationUseCase,
     private val queryListSinpeAccountUseCaseImpl: QueryListSinpeAccountUseCase,
     private val queryGetCryptoCurrencyMovementsUseCase: GetCryptoCurrencyMovementsUseCase,
-    private val mutationAccountStatusUseCase: MutationAccountStatusUseCase
+    private val mutationAccountStatusUseCase: MutationAccountStatusUseCase,
+    private val cryptoHelper: CryptoHelper
 ) : BaseViewModel(true) {
 
     // UIState
@@ -171,7 +172,11 @@ class ProductViewModel @Inject constructor(
         this.email = email
         this.userName = userName
         this.configurationVersion = configurationVersion
-        uiState = uiState.copy(idBrand = idBrand, productPageList = productPageList)
+        uiState = uiState.copy(
+            idBrand = idBrand,
+            productPageList = productPageList,
+            expandedProductPageList = productPageList.filter { it.enabled }
+        )
         this.idClient = validateUserStatus?.infoUser?.idClient ?: 0
         setBalance(balanceCredit)
         setValidateUserStatus(validateUserStatus)
@@ -180,7 +185,8 @@ class ProductViewModel @Inject constructor(
         this.creditMovements = creditMovements
         viewModelScope.launch {
             uiState = uiState.copy(
-                shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first()
+                shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first(),
+                isCryptoTransferEnabled = cryptoHelper.isCryptoTransferEnabled()
             )
         }
     }
@@ -365,16 +371,15 @@ class ProductViewModel @Inject constructor(
     ) {
         // TODO Implement navigation on smart cards
         when (smartStep) {
-            SMART_ONFIDO_REJECTED -> {
+            SMART_ONFIDO_PROCESS.workflow -> {
                 // TODO get the new evicertia url
             }
-            SMART_ONFIDO_MAX_ATTEMPTS -> onIntent()
+            SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS.workflow -> onIntent()
             PENDING.status -> onCallMutationAccountStatusUseCase()
             else -> {
                 navigateTo(
                     "${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
-                        "${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}/" +
-                        "${uiState.userStatus?.infoUser?.statusOnfido}/$comingFromCrypto/" +
+                        "${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}/$comingFromCrypto/" +
                         "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}"
                 )
             }
@@ -545,28 +550,21 @@ class ProductViewModel @Inject constructor(
         navigateTo(
             "${Screen.CryptoWalletScreen.baseRoute}/$email/${uiState.idBrand}/$identification/" +
                 "$globalBalance/$idClient/$idLoanClient/$statusCredit/$statusSmart/$statusCrypto/" +
-                "$cardStatus/${encodeData(balanceCredit?.balanceAccountSmart?.toNavType())}"
+                "$cardStatus/${
+                encodeData(
+                    balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType()
+                )
+            }/${encodeData(balanceCredit?.balanceCryptoAccount?.items)}"
         )
     }
 
-    private fun List<Account?>.toNavType(): List<SmartAccountSmall> {
-        return this.map { account ->
-            SmartAccountSmall(
-                totalBalance = account?.totalBalance,
-                currencyCode = account?.currencyCode,
-                idCurrencyAccount = account?.idCurrencyAccount,
-                accountToken = account?.tokenNumber ?: "",
-                accountNumber = account?.accountNumber ?: "",
-                ibanAccountNumber = account?.ibanAccountNumber ?: ""
-            )
-        }
-    }
 
     private fun onNavigateToCryptoMarket() {
         navigateTo(
             "${Screen.CryptoMarketScreen.baseRoute}/$userName/${uiState.idBrand}/${
-            encodeData(balanceCredit?.balanceAccountSmart?.toNavType())
-            }"
+            encodeData(balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType()
+                )
+            }/${encodeData(balanceCredit?.balanceCryptoAccount?.items)}"
         )
     }
 
@@ -784,6 +782,7 @@ class ProductViewModel @Inject constructor(
             QuickActionFlow.SAVE_SMART.flow -> onNavigateToSmartSave()
             QuickActionFlow.SEND_MONEY.flow -> onNavigateToSendMoneyScreenQuickAction()
             QuickActionFlow.BUY_CRYPTO.flow -> onNavigateToPurchaseCryptoFlow()
+            QuickActionFlow.SELL_CRYPTO.flow -> onNavigateToSellCryptoFlow()
             QuickActionFlow.SEND_CRYPTO.flow -> onNavigateToSendCryptoFlow()
         }
     }
@@ -893,7 +892,7 @@ class ProductViewModel @Inject constructor(
             )
             navigateTo(
                 "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$userName/${uiState.idBrand}/" +
-                    "$identification/${encodeData(smartAccount)}/$idClient/${Screen.HomeScreen.route}"
+                "$identification/${encodeData(smartAccount)}/$idClient/${Screen.HomeScreen.route}"
             )
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             val infoCredit = uiState.userStatus?.infoCredit
@@ -1048,11 +1047,17 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToPurchaseCryptoFlow() {
-        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${encodeData(balanceCredit?.balanceAccountSmart?.toNavType())}")
+        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${encodeData(balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType())}")
     }
 
     private fun onNavigateToSellCryptoFlow() {
-        navigateTo(Screen.CryptoSellFlow.baseRoute)
+        navigateTo(
+            "${Screen.CryptoSellFlow.baseRoute}/${encodeData(balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType())}/${
+                encodeData(
+                    balanceCredit?.balanceCryptoAccount?.items
+                )
+            }"
+        )
     }
 
     private fun onNavigateToSendCryptoFlow() {
@@ -1060,36 +1065,12 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun getSmartContent() {
-        val statusRequest = uiState.userStatus?.infoBankAccount?.infoRequest?.statusRequest
-        val statusFirm = uiState.userStatus?.infoBankAccount?.statusFirm
-        val status = uiState.userStatus?.infoBankAccount?.status
+        val workflow = uiState.userStatus?.infoBankAccount?.wording?.workflow
         uiState = uiState.copy(
-            smartContent = when (statusRequest) {
-                SmartAccountStatusRequest.PENDING.status, SENT.status, CANCELED.status, CREATED.status,
-                SMART_INITIAL_CARD, SMART_IDENTITY_INCOMPLETE, SMART_FIRMED_ONFIDO_PENDING, SMART_ONFIDO_REJECTED,
-                SMART_APPROVED_BY_ONFIDO, SMART_ONFIDO_MAX_ATTEMPTS -> {
-                    Pair(
-                        status?.equals(NO_EXIST.status) == true,
-                        statusRequest
-                    )
-                }
-                else -> {
-                    when (statusFirm) {
-                        PENDING.status, APPROVED.status, FIRMED.status, REJECTED.status, OVER_COUNTER.status, FAILED.status -> {
-                            Pair(
-                                status?.equals(NO_EXIST.status) == true,
-                                statusFirm
-                            )
-                        }
-                        else -> {
-                            if (status == NO_EXIST.status || status == EXIST_IN_CORE.status) {
-                                Pair(status == NO_EXIST.status, status.toString())
-                            } else {
-                                Pair(null, "")
-                            }
-                        }
-                    }
-                }
+            smartContent = if (workflow == SmartWorkflow.SMART_INITIAL_CARD.workflow || workflow == SmartWorkflow.SMART_STEP_PENDING.workflow || workflow == SmartWorkflow.SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS.workflow || workflow == SmartWorkflow.SMART_CONTRACT_PROCESS.workflow || workflow == SmartWorkflow.SMART_FIRMED_ONFIDO_PENDING.workflow || workflow == SmartWorkflow.SMART_FIRMED_ONFIDO_REJECTED.workflow || workflow == SmartWorkflow.SMART_APPROVED_BY_ONFIDO.workflow || workflow == SmartWorkflow.SMART_ONFIDO_PROCESS.workflow) {
+                Pair(true, workflow)
+            } else {
+                Pair(false, "")
             }
         )
     }
@@ -1111,11 +1092,31 @@ class ProductViewModel @Inject constructor(
         emitBaseEvent(BaseEvent.OnShowDisclaimer)
     }
 
+    private fun List<Account?>.toSmartAccountsNavType(): List<SmartAccountSmall> {
+        return this.map { account ->
+            SmartAccountSmall(
+                totalBalance = account?.totalBalance,
+                currencyCode = account?.currencyCode,
+                idCurrencyAccount = account?.idCurrencyAccount,
+                accountToken = account?.tokenNumber ?: "",
+                accountNumber = account?.accountNumber ?: "",
+                ibanAccountNumber = account?.ibanAccountNumber ?: ""
+            )
+        }
+    }
+
+    private fun navigateToMaintenanceAlert() {
+        navigateTo(Screen.MaintenanceAlertScreen.route)
+    }
+
     data class UIState(
         // Fields
         var idBrand: String = "0",
+        var expandedPage: Int = 0,
+        var collapsedPage: Int = 0,
         var userStatus: ValidateUserStatus? = null,
         var productPageList: List<ProductPage>? = null,
+        var expandedProductPageList: List<ProductPage>? = null,
         val openDialog: DialogParameters = DialogParameters(),
         val isExpanded: Boolean = false,
         val onGoingCreditCardTitle: Int = R.string.home_product_title,
@@ -1128,11 +1129,18 @@ class ProductViewModel @Inject constructor(
         var isBackPressed: Boolean = false,
         val paymentAvailable: Boolean = false,
         val shouldDisplayDisclaimer: Boolean = true,
-        val dontShowAgainChecked: Boolean = false
+        val dontShowAgainChecked: Boolean = false,
+        val isCryptoTransferEnabled: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
+            is OnUpdateExpandedPage -> uiState = uiState.copy(
+                expandedPage = uiEvent.expandedPage
+            )
+            is OnUpdateCollapsedPage -> uiState = uiState.copy(
+                collapsedPage = uiEvent.collapsedPage
+            )
             is OnUpdateIsExpanded -> uiState = uiState.copy(
                 isExpanded = uiEvent.isExpanded
             )
@@ -1215,14 +1223,17 @@ class ProductViewModel @Inject constructor(
                 balance = uiEvent.balance
             )
             is OnUpdateIsBackPressed ->
-                uiState = uiState.copy(isBackPressed = uiEvent.isBackPressed)
+                    uiState = uiState.copy(isBackPressed = uiEvent.isBackPressed)
             is UIEvent.OnDisclaimerChecked -> onDisclaimerChecked(uiEvent.checked)
             is UIEvent.OnUpdateShouldShowDisclaimer -> updateShouldShowDisclaimer(uiEvent.checked)
             BaseEvent.OnShowDisclaimer -> onShowDisclaimer()
+            UIEvent.OnNavigateToMaintenanceAlert -> navigateToMaintenanceAlert()
         }
     }
 
     sealed class UIEvent {
+        data class OnUpdateExpandedPage(val expandedPage: Int) : UIEvent()
+        data class OnUpdateCollapsedPage(val collapsedPage: Int) : UIEvent()
         data class OnUpdateIsBackPressed(val isBackPressed: Boolean) : UIEvent()
         data class OnUpdateIsExpanded(val isExpanded: Boolean) : UIEvent()
         data class OnBalanceSuccess(val balance: Balance) : UIEvent()
@@ -1310,6 +1321,7 @@ class ProductViewModel @Inject constructor(
 
         data class OnDisclaimerChecked(val checked: Boolean) : UIEvent()
         data class OnUpdateShouldShowDisclaimer(val checked: Boolean) : UIEvent()
+        object OnNavigateToMaintenanceAlert : UIEvent()
     }
 
     sealed class BaseEvent {
@@ -1322,6 +1334,7 @@ class ProductViewModel @Inject constructor(
         const val EMPTY_STRING = ""
         const val ERROR_CREDIT = "Error"
         const val DEFAULT_PRODUCT_PAGES = 1
+        const val INITIAL_PRODUCT_PAGE = 0
         const val DEFAULT_PROGRESS = 1F
         const val ZERO = 0.0
         const val CREDIT_STEP_PRE_APPROVED = "CREDIT_STEP_PREAPROBADO"
@@ -1340,13 +1353,13 @@ class ProductViewModel @Inject constructor(
         const val SEPARATOR = " + "
 
         // Smart
-        const val SMART_IDENTITY_INCOMPLETE = "SAMART_IDENTITY_INCOMPLETE"
-        const val SMART_ONFIDO_REJECTED = "SMART_ONFIFO_REJECTED"
-        const val SMART_INITIAL_CARD = "SMART_INITIAL_CARD"
+        const val SMART_IDENTITY_INCOMPLETE = "CONTACT"
+        const val SMART_ONFIDO_REJECTED = "SMART_ONFIDO_PROCESS"
+        const val SMART_INITIAL_CARD = "SMART_ORIGIN"
         const val SMART_APPROVED_BY_ONFIDO = "SMART_APPROVED_BY_ONFIDO"
-        const val SMART_ONFIDO_MAX_ATTEMPTS = "SMART_ONFIDO_MAX_ATTEMPTS"
+        const val SMART_ONFIDO_MAX_ATTEMPTS = "CONTACT"
         const val SMART_FIRMED_ONFIDO_PENDING = "SMART_FIRMED_ONFIDO_PENDING"
-        const val SMART_STEP_PENDING = "SMART_STEP_PENDING"
+        const val SMART_STEP_PENDING = "SMART_PROCESS"
         const val PENDING_TO_CHECK_STATUS = "Pendiente Revision"
         const val DEFAULT_NEW_STATE = "PG"
         const val DEFAULT_TYPE_STATE = "S"

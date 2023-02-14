@@ -13,5 +13,6 @@ data class Account(
     val movements: List<SmartMovement> = emptyList(),
     val idCurrencyAccount: Int?,
     val month : String?,
-    val customerId: Long?
+    val customerId: Long?,
+    val interest: Double?
 )

@@ -29,7 +29,7 @@ import com.multimoney.multimoney.presentation.util.getCurrentTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.util.Calendar
+import java.util.*
 import javax.inject.Inject
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -78,7 +78,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
             )
         }
         if (idBrand == Brand.ElSalvador.id) {
-            uiState = uiState.copy(
+            onSetupAccountDetails(
                 smartAccountAvailableBalance = uiState.accounts.firstOrNull()?.totalBalance ?: 0.0,
                 idCurrency = uiState.accounts.firstOrNull()?.idCurrencyAccount
                     ?: CurrencyType.Dollar.id,
@@ -87,14 +87,6 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
                 accountToken = uiState.accounts.firstOrNull()?.accountToken ?: ""
             )
         }
-        onSetupAccountDetails(
-            smartAccountAvailableBalance = uiState.accounts.firstOrNull()?.totalBalance ?: 0.0,
-            idCurrency = uiState.accounts.firstOrNull()?.idCurrencyAccount
-                ?: CurrencyType.Dollar.id,
-            accountNumber = uiState.accounts.firstOrNull()?.accountNumber ?: "",
-            ibanAccountNumber = uiState.accounts.firstOrNull()?.ibanAccountNumber ?: "",
-            accountToken = uiState.accounts.firstOrNull()?.accountToken ?: ""
-        )
     }
 
     private fun onSetupAccountDetails(
@@ -306,7 +298,6 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         ) :
             UIEvent()
 
-        // object OnQueryAccounts : UIEvent()
         object OnPreviousStep : UIEvent()
         object OnClickBottomSheet : UIEvent()
         data class OnCryptoSelected(

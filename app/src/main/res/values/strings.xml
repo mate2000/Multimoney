@@ -965,6 +965,7 @@
     <string name="smart_payment_destiny_account_label" translatable="false">Cuenta de destino</string>
     <string name="smart_payment_motive" translatable="false">Motivo</string>
     <string name="smart_payment_amount_debited" translatable="false">Monto debitado</string>
+    <string name="smart_payment_amount_saved" translatable="false">Monto ahorrado</string>
     <string name="smart_payment_exchange_rate_label" translatable="false">Tipo de cambio</string>
     <string name="smart_payment_reference_number_label" translatable="false">N° de referencia</string>
     <string name="smart_payment_share_button" translatable="false">Compartir</string>
@@ -1478,6 +1479,7 @@
     <string name="smart_iban_register_identification_label" translatable="false">Cédula</string>
 
     <string name="smart_iban_transfer_send_money" translatable="false">Enviar dinero</string>
+    <string name="smart_iban_transfer_send_money_to" translatable="false">Enviar dinero a</string>
     <string name="smart_iban_transfer_from_account" translatable="false">Desde mi cuenta %s</string>
     <string name="smart_iban_transfer_motive_label" translatable="false">Motivo</string>
     <string name="smart_iban_transfer_smart_account_colon" translatable="false">Smart Colones %s</string>

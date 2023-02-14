@@ -186,7 +186,7 @@ class HomeWalletViewModel @Inject constructor(
 
     private fun onNavigateToSellCrypto() {
         navigateTo(
-            "${Screen.CryptoSellFlow.baseRoute}/${encodeData(smartAccounts)}/${
+            "${Screen.CryptoSellFlow.baseRoute}/${Screen.CryptoWalletScreen.baseRoute}/${encodeData(smartAccounts)}/${
                 encodeData(
                     userCryptoBalances
                 )

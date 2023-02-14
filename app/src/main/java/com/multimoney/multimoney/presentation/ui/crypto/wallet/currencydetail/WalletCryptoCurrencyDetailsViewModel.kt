@@ -48,7 +48,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class CryptoCurrencyMovementsViewModel @Inject constructor(
+class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
     private val queryGetCurrencyHistoricalPricesUseCase: GetCurrencyHistoricalPricesUseCase,
     private val cryptoMovementsUseCase: GetCryptoCurrencyMovementsUseCase,
     private val savedStateHandle: SavedStateHandle,
@@ -159,7 +159,7 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
 
     private fun onNavigateToAllMovements() {
         navigateTo(
-            "${Screen.CryptoMovementsAllScreen.baseRoute}/${uiState.idBrand}/$identification/$user?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}"
+            "${Screen.CryptoCurrencyDetailsAllMovementsScreen.baseRoute}/${uiState.idBrand}/$identification/$user?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}"
         )
     }
 

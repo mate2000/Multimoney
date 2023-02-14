@@ -14,9 +14,8 @@ import com.multimoney.multimoney.presentation.navigation.CRYPTO_ASSET
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
-import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail.CryptoCurrencyMovementsViewModel.Companion.USD_CURRENCY
+import com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail.WalletCryptoCurrencyDetailsViewModel
 import com.multimoney.multimoney.presentation.util.FilterDate
 import com.multimoney.multimoney.presentation.util.PAGE_SIZE
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
@@ -27,12 +26,10 @@ import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
 @HiltViewModel
-class CryptoMovementsAllViewModel  @Inject constructor(
+class CryptoCurrencyDetailsAllMovementsScreenViewModel @Inject constructor(
     private val queryGetCryptoCurrencyMovementsUseCase: GetCryptoCurrencyMovementsUseCase,
     private val savedStateHandle: SavedStateHandle
 ): BaseViewModel(true) {
-
-    var previousScreen: String? = null
 
     var uiState by mutableStateOf(UIState())
         private set
@@ -44,13 +41,11 @@ class CryptoMovementsAllViewModel  @Inject constructor(
             idBrand = savedStateHandle[ID_BRAND],
             identification = savedStateHandle[IDENTIFICATION]
         )
-        previousScreen = savedStateHandle[PREVIOUS_SCREEN]
-
     }
 
     private fun getCryptoMovements() = executeUseCase {
         val market: String = if (uiState.cryptoItem?.isNotEmpty() == true)
-            uiState.cryptoItem.plus(USD_CURRENCY) else EMPTY_STRING
+            uiState.cryptoItem.plus(WalletCryptoCurrencyDetailsViewModel.USD_CURRENCY) else EMPTY_STRING
         uiState = uiState.copy(
             cryptoMovements = queryGetCryptoCurrencyMovementsUseCase.invoke(
                 user = uiState.user ?: "",
@@ -75,14 +70,7 @@ class CryptoMovementsAllViewModel  @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is UIEvent.OnNavigateBack -> {
-                when (previousScreen) {
-                    Screen.CryptoCurrencyMovementsScreen.baseRoute -> {
-                        navigateBack(popTo = Screen.CryptoCurrencyMovementsScreen.route, isRestart = false)
-                    }
-                    else -> navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
-                }
-            }
+            is UIEvent.OnNavigateBack -> navigateBack(popTo = Screen.CryptoWalletDetailsScreen.route, isRestart = false)
             is UIEvent.OnGetUserInfo -> setUserData()
             is UIEvent.GetCryptoMovements -> getCryptoMovements()
         }

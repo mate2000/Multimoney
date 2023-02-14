@@ -10,8 +10,8 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
@@ -83,6 +83,13 @@ class SmartTransferAmountViewModel @Inject constructor() : BaseSmartEditAmountVi
     }
 
     override fun onNavigateBack() {
-        navigateBack(popTo = Screen.SmartTransferIbanAccountScreen.route, isRestart = false)
+        when (previousScreen) {
+            Screen.SmartTransferFavoriteAccountScreen.baseRoute -> {
+                navigateBack(popTo = Screen.SmartTransferFavoriteAccountScreen.route, isRestart = false)
+            }
+            else -> {
+                navigateBack(popTo = Screen.SmartTransferIbanAccountScreen.route, isRestart = false)
+            }
+        }
     }
 }

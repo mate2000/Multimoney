@@ -561,9 +561,10 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
      * @param ORIGIN_ACCOUNT: Smart account
      * @param DESTINY_ACCOUNT: Iban account
      * @param TRANSFER_TYPE: Int id indicating transfer type (SmartToIban)
+     * @param PREVIOUS_SCREEN: String indicating the previous screen to navigate back
      */
     object SmartTransferAmountScreen : Screen(
-        "smart_transfer_amount_screen/{$ORIGIN_ACCOUNT}/{$DESTINY_ACCOUNT}/{$TRANSFER_TYPE}",
+        "smart_transfer_amount_screen/{$ORIGIN_ACCOUNT}/{$DESTINY_ACCOUNT}/{$TRANSFER_TYPE}/{$PREVIOUS_SCREEN}",
         "smart_transfer_amount_screen"
     )
 

@@ -4,8 +4,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteListUseCase
 import com.multimoney.domain.model.accountsmart.ACHAccount
+import com.multimoney.domain.model.accountsmart.IbanAccountID
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
@@ -17,6 +19,7 @@ import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.SmartTransferFavoriteViewModel.UIEvent.OnCallQueryACHTransferFavoriteListUseCase
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.SmartTransferFavoriteViewModel.UIEvent.OnFavoriteClick
@@ -24,6 +27,7 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.a
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.SmartTransferFavoriteViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.SmartTransferFavoriteViewModel.UIEvent.OnOptionsClick
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
@@ -96,8 +100,23 @@ class SmartTransferFavoriteViewModel @Inject constructor(
       // TODO REV-3466
     }
 
-    private fun onACHFavoriteClick(selectedACHFavoriteAccount: List<ACHAccount?>) {
-//      TODO REV-3654
+    private fun onACHFavoriteClick(selectedACHFavoriteAccount: ACHAccount?) {
+        if (idBrand == Brand.CostaRica.id.toString()) {
+            val ibanAccount = encodeData(
+                IbanAccountID(
+                    bank = selectedACHFavoriteAccount?.destinationBankDescription,
+                    clientIdentification = selectedACHFavoriteAccount?.accountForAchTransferId.toString(),
+                    sinpeAccount = selectedACHFavoriteAccount?.accountNumber,
+                    currencyId = selectedACHFavoriteAccount?.destinationAccountCurrencyId,
+                    nameAccount = selectedACHFavoriteAccount?.description
+                )
+            )
+            navigateTo(
+                "${Screen.SmartTransferAmountScreen.baseRoute}/" +
+                        "${encodeData(selectedSmartAccount)}/$ibanAccount/" +
+                        "${SmartTransferTypes.SmartToIban.id}/${Screen.SmartTransferFavoriteAccountScreen.baseRoute}"
+            )
+        }
     }
 
     private fun onNavigateToHome() {
@@ -118,7 +137,7 @@ class SmartTransferFavoriteViewModel @Inject constructor(
         when (uiEvent) {
              is OnOptionsClick -> onShowOptionsClick(uiEvent.ACHFavorite)
             is OnNavigateBack -> onNavigateBack()
-            is OnFavoriteClick -> onACHFavoriteClick(uiEvent.ACHFavorites)
+            is OnFavoriteClick -> onACHFavoriteClick(uiEvent.ACHFavorite)
             is OnNavigateToHome -> onNavigateToHome()
             OnCallQueryACHTransferFavoriteListUseCase -> callQueryACHTransferFavoriteListUseCase()
         }
@@ -129,6 +148,6 @@ class SmartTransferFavoriteViewModel @Inject constructor(
         object OnNavigateToHome : UIEvent()
         data class OnOptionsClick(val ACHFavorite: ACHAccount?) : UIEvent()
         object OnCallQueryACHTransferFavoriteListUseCase : UIEvent()
-        data class OnFavoriteClick(val ACHFavorites: List<ACHAccount?>) : UIEvent()
+        data class OnFavoriteClick(val ACHFavorite: ACHAccount?) : UIEvent()
     }
 }

@@ -272,7 +272,7 @@ class CreditViewModel @Inject constructor(
     }
 
     private fun saveCreditOfferNormalFlow() {
-        if (uiState.currentStep == CreditStep.Eight.id) {
+        if (nextStep == CreditStep.Eight.id) {
             onCallSaveCreditOperation()
         } else {
             nextStep()
@@ -288,6 +288,7 @@ class CreditViewModel @Inject constructor(
                 idBrand.toInt(),
             ).collectLatest { result ->
                 result.onSuccess {
+                    idPrint = it.idPrint
                     if (isCrosseling) {
                         if (idBrand.toInt() == Brand.ElSalvador.id || it.idPrint == 0L) {
                             uiState = uiState.copy(showSVProcessSendSuccessfully = true)
@@ -300,7 +301,7 @@ class CreditViewModel @Inject constructor(
                                             SignDocumentStep.GENERATE_DOCUMENT_STEP.value,
                                         ),
                                     )
-                                    .plus(getNavParam(SIGN_DOCUMENT_ID_PRINT, it.idPrint))
+                                    .plus(getNavParam(SIGN_DOCUMENT_ID_PRINT, idPrint))
                                     .plus(getNavParam(ID_BRAND, idBrand))
                                     .plus(getNavParam(PK_USER, pkUser))
                                     .plus(getNavParam(IDENTIFICATION, identification))

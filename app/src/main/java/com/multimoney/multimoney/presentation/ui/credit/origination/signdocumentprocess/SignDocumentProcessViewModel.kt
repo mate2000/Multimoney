@@ -117,7 +117,7 @@ class SignDocumentProcessViewModel @Inject constructor(
             subscriptionCreditContractEventUseCase.invoke(idPrint, idBrand)
                 .collectLatest { result ->
                     result.onSuccess {
-                        Timber.d(LOG_SUBSCRIPTION_TAG, it?.toString())
+                        Timber.d(LOG_SUBSCRIPTION_TAG, it?.currentStep)
                         handleSubscriptionsSteps(creditContractEvent = it)
                     }.onFailure {
                         Timber.d(LOG_SUBSCRIPTION_TAG, it.getError())

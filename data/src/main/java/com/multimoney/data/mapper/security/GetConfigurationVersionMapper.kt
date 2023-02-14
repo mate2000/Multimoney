@@ -8,6 +8,7 @@ import com.multimoney.domain.model.security.Credit
 import com.multimoney.domain.model.security.Crypto
 import com.multimoney.domain.model.security.Currency
 import com.multimoney.domain.model.security.PaymentMethod
+import com.multimoney.domain.model.security.SmartTransferLimit
 import com.multimoney.domain.model.security.TransferAccount
 import com.multimoney.domain.model.security.VirtualCard
 
@@ -27,10 +28,17 @@ private fun GetConfigurationVersionQuery.MetodoTransferencium.mapToDomainModel()
     active = activo
 )
 
+private fun GetConfigurationVersionQuery.LimiteTransacion.mapToDomainModel() = SmartTransferLimit(
+    code = codigo,
+    description = descripcion,
+    amount = monto.toString().toDoubleOrNull()
+)
+
 private fun GetConfigurationVersionQuery.AccountSmart.mapToDomainModel() = AccountSmart(
     active = activo,
     paymentMethod = metodoAbono.map { it.mapToDomainModel() },
-    transferMethod = metodoTransferencia.map { it.mapToDomainModel() }
+    transferMethod = metodoTransferencia.map { it.mapToDomainModel() },
+    transferLimit = limiteTransacion?.map { it?.mapToDomainModel() }
 )
 
 private fun GetConfigurationVersionQuery.MetodoPago.mapToDomainModel() = PaymentMethod(

@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontactamount
+package com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.amount
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -7,22 +7,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.multimoney.data.util.catalog.Brand
-import com.multimoney.multimoney.R.drawable
-import com.multimoney.multimoney.R.string
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnNavigateHome
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnShareVoucherImage
 import com.multimoney.multimoney.presentation.uielement.PaymentSuccessResult
 import com.multimoney.multimoney.presentation.uielement.SmartPaymentInfoItem
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
-import com.multimoney.multimoney.presentation.util.getMaskedAccount
-import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 
 @Composable
-fun MyContactsTransferSuccess(
-    viewModel: MyContactsTransferAmountViewModel
-) {
+fun Transfer365SuccessScreen(viewModel: Transfer365AmountViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -42,61 +36,40 @@ fun MyContactsTransferSuccess(
                 )
             },
             savePayText = stringResource(
-                string.smart_payment_you_sent,
+                R.string.smart_payment_you_sent,
                 viewModel.amountUIState.currency
             ),
             amount = viewModel.getFormattedAmount(),
-            exchangedAmount = if (viewModel.shouldDisplayExchange) {
-                viewModel.amountUIState.convertedAmountLabel
-            } else {
-                null
-            },
-            fromToText = stringResource(string.smart_payment_amount_bottom_sheet_to),
+            fromToText = stringResource(R.string.smart_payment_amount_bottom_sheet_to),
             showButton = false
         ) {
             SmartPaymentInfoItem(
                 verticalAlignment = Alignment.CenterVertically,
-                icon = viewModel.destinyCurrency?.accountIcon,
-                title = stringResource(string.smart_payment_destiny_account_label),
-                subtitle = if (Brand.CostaRica.id == viewModel.idBrand) {
-                    getMaskedAccountIban(
-                        viewModel.phoneAccount?.ibanNumber ?: ""
+                icon = R.drawable.ic_bank,
+                title = viewModel.amountUIState.destinyAccountDisplay?.sheetTitle.orEmpty(),
+                subtitle = viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitle
+                    ?: stringResource(
+                        viewModel.amountUIState.originAccountDisplay?.sheetSubtitleResource
+                            ?: R.string.empty
                     )
-                } else {
-                    getMaskedAccount(
-                        accountNumber = viewModel.phoneAccount?.accountNumber ?: "",
-                        prefix = Brand.ElSalvador.countryCode.uppercase()
-                    )
-                }
             )
 
             SmartPaymentInfoItem(
                 verticalAlignment = Alignment.Top,
-                icon = drawable.ic_receipt,
-                title = stringResource(string.smart_payment_reference_number_label),
+                icon = R.drawable.ic_receipt,
+                title = stringResource(R.string.smart_payment_reference_number_label),
                 subtitle = viewModel.amountUIState.referenceNumber
             )
 
-            if (viewModel.shouldDisplayExchange) {
-                SmartPaymentInfoItem(
-                    icon = drawable.ic_money_gray,
-                    title = stringResource(string.payment_amount_bottom_sheet_exchange_type),
-                    subtitle = viewModel.amountUIState.exchangeRateLabel,
-                    rightTitle = stringResource(string.payment_amount_bottom_sheet_amount_to_debit),
-                    rightSubtitle = viewModel.amountUIState.convertedAmountLabel,
-                    showVerticalDivision = true
-                )
-            }
-
             SmartPaymentInfoItem(
-                title = stringResource(string.smart_payment_motive),
-                icon = drawable.ic_notebook_motive,
+                title = stringResource(R.string.smart_payment_motive),
+                icon = R.drawable.ic_notebook_motive,
                 subtitle = viewModel.amountUIState.motive
             )
 
             SmartPaymentInfoItem(
                 verticalAlignment = Alignment.CenterVertically,
-                icon = drawable.ic_calendar,
+                icon = R.drawable.ic_calendar,
                 title = viewModel.amountUIState.currentDate,
                 rightSubtitle = viewModel.amountUIState.currentTime
             )

@@ -29,7 +29,7 @@ import com.multimoney.multimoney.presentation.ui.crypto.market.MarketScreen
 import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsScreen
 import com.multimoney.multimoney.presentation.ui.crypto.movements.CryptoMovementsAllScreen
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoFlow
-import com.multimoney.multimoney.presentation.ui.crypto.receive.CryptoReceiveFlow
+import com.multimoney.multimoney.presentation.ui.crypto.receive.CryptoReceiveFlowScreen
 import com.multimoney.multimoney.presentation.ui.crypto.sell.SellCryptoFlow
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWallet
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail.CurrencyMovementsScreen
@@ -318,7 +318,7 @@ fun NavGraphBuilder.cryptoNavGraph(
             }
         )
     ) {
-        CryptoReceiveFlow(
+        CryptoReceiveFlowScreen(
             onNavigate = { navController.navigate(it.route) },
             onPopAndNavigate = {
                 navController.navigate(it.route) {

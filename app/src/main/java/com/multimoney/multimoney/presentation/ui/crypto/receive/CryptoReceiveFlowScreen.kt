@@ -16,7 +16,7 @@ import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
-fun CryptoReceiveFlow(
+fun CryptoReceiveFlowScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},

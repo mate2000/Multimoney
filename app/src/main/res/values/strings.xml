@@ -471,7 +471,6 @@
     <string name="profile_my_accounts_account_nickname" translatable="false">Apodo de la cuenta</string>
 
 
-
     <!-- Automatic Logout -->
     <string name="automatic_logout_dialog_description" translatable="false">No detectamos actividad en la aplicación, por motivos de seguridad la app se cerrará en %s segundos.</string>
     <string name="automatic_logout_dialog_keep_button" translatable="false">Seguir en la app</string>
@@ -729,8 +728,8 @@
     <string name="credit_home_address_select_current_location" translatable="false">Seleccionar mi ubicación actual</string>
 
     <!--Credit Home address -->
-    <string name="credit_home_address_title" translatable="false">¿Dónde vivís?</string>
-    <string name="credit_home_address_title_gt" translatable="false">¿Dónde vives?</string>
+    <string name="credit_home_address_title_cr" translatable="false">¿Dónde vivís?</string>
+    <string name="credit_home_address_title" translatable="false">¿Dónde vives?</string>
 
     <!-- Credit Additional Information -->
     <string name="credit_additional_information_title" translatable="false">Información adicional</string>
@@ -1282,7 +1281,6 @@
     <string name="crypto_purchase_flow_error_price_expired" translatable="false">Cotización caducada</string>
     <string name="crypto_purchase_flow_error_processing_purchase" translatable="false">¡Oh no! Hubo un error al completar la compra</string>
     <string name="crypto_sell_flow_error_processing_sell" translatable="false">¡Oh no! Hubo un error al completar la venta</string>
-
 
 
     <!-- Evicertia screen -->

@@ -186,4 +186,8 @@ class CryptoSendAddressViewModel @Inject constructor(
         data class OnValidateCryptoAddress(val cryptoAddress: String) : UIEvent
         object GetNotShowAgainCryptoAddressFromSharedPref : UIEvent
     }
+
+    companion object {
+        const val TEXT_DEBOUNCE_TIME = 1000L
+    }
 }

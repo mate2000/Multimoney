@@ -30,6 +30,7 @@ import com.multimoney.multimoney.presentation.theme.LocalMultimoneyColors
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.send.CryptoSendSharedViewModel
+import com.multimoney.multimoney.presentation.ui.crypto.send.cryptoaddress.CryptoSendAddressViewModel.Companion.TEXT_DEBOUNCE_TIME
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomCheckboxDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -120,7 +121,7 @@ fun CryptoSendAddressContent(
 ) {
     val textDebounce = remember { MutableStateFlow("") }
     val textDebounceFlow: Flow<String> = remember {
-        textDebounce.debounce(1000L)
+        textDebounce.debounce(TEXT_DEBOUNCE_TIME)
             .flatMapLatest {
                 if (it.isNotBlank()) {
                     viewModel.onUIEvent(

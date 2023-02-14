@@ -37,7 +37,7 @@ sealed class CurrencyType(
         R.string.payment_fee_one_option,
         "₡",
         R.string.home_my_products_label_smart_colones,
-        R.string.payment_select_sending_type_smart_account_colones
+        R.string.payment_account_colon
     )
 
     object Dollar : CurrencyType(
@@ -55,7 +55,7 @@ sealed class CurrencyType(
         R.string.payment_fee_one_option,
         "$",
         R.string.home_my_products_label_smart,
-        R.string.payment_select_sending_type_smart_account_dollars
+        R.string.payment_account_dollar
     )
 
     object Quetzal : CurrencyType(

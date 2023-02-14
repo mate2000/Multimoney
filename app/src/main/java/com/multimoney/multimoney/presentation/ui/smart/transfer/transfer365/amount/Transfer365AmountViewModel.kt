@@ -41,7 +41,7 @@ class Transfer365AmountViewModel @Inject constructor() : BaseSmartEditAmountView
 
             amountUIState = amountUIState.copy(
                 originAccountDisplay = DisplayAccount(
-                    sheetTitleResource = originCurrency?.myAccountSmartName,
+                    sheetTitleResource = originCurrency?.myAccountSmartSymbol,
                     sheetSubtitle = getMaskedAccount(
                         prefix = Brand.ElSalvador.countryCode.uppercase(),
                         accountNumber = smartAccount?.accountNumber.orEmpty()

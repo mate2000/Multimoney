@@ -16,7 +16,7 @@ sealed class CurrencyType(
     val accountIcon: Int,
     val accountTitle: Int,
     val feeIcon: Int,
-    val paymentIcon: Int,
+    val currencyIcon: Int,
     val feeInfoButtonTitle: Int,
     val symbol: String,
     val myAccountSmartSymbol: Int,
@@ -32,12 +32,12 @@ sealed class CurrencyType(
         R.string.colons,
         R.drawable.ic_bank_account_colon,
         R.string.payment_account_title_colon,
-        R.drawable.ic_payment_colon_symbol,
         R.drawable.ic_payment_colon,
+        R.drawable.ic_payment_colon_symbol,
         R.string.payment_fee_one_option,
         "₡",
         R.string.home_my_products_label_smart_colones,
-        R.string.payment_select_sending_type_smart_account_colones
+        R.string.payment_account_colon
     )
 
     object Dollar : CurrencyType(
@@ -50,12 +50,12 @@ sealed class CurrencyType(
         R.string.dollars,
         R.drawable.ic_bank_account_dollar,
         R.string.payment_account_title_dollar,
-        R.drawable.ic_payment_dollar_symbol,
         R.drawable.ic_payment_dollar,
+        R.drawable.ic_payment_dollar_symbol,
         R.string.payment_fee_one_option,
         "$",
         R.string.home_my_products_label_smart,
-        R.string.payment_select_sending_type_smart_account_dollars
+        R.string.payment_account_dollar
     )
 
     object Quetzal : CurrencyType(

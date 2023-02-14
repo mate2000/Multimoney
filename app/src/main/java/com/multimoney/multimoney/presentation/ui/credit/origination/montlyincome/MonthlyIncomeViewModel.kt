@@ -39,6 +39,7 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import com.multimoney.multimoney.presentation.util.isPhoneNumberValid
+import com.multimoney.multimoney.presentation.util.transformation.FORMAT_MONEY_MAX_LENGTH
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
@@ -48,7 +49,7 @@ import javax.inject.Inject
 class MonthlyIncomeViewModel @Inject constructor(
     private val queryProfessionsUseCase: QueryProfessionsUseCase,
     private val queryOccupationUseCase: QueryOccupationUseCase,
-    private val queryEmissionPlaceUseCase: QueryEmissionPlaceUseCase,
+    private val queryEmissionPlaceUseCase: QueryEmissionPlaceUseCase
 ) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())
@@ -73,54 +74,54 @@ class MonthlyIncomeViewModel @Inject constructor(
             titleResource = when (idBrand) {
                 Brand.ElSalvador.id -> R.string.credit_monthly_income_title_sv
                 else -> R.string.credit_monthly_income_title
-            },
+            }
         )
     }
 
     private fun onIncomeValueChange(income: String) {
-        if (income.isDigitsOnly()) {
+        if (income.isDigitsOnly() && income.length <= FORMAT_MONEY_MAX_LENGTH) {
             val incomeError = if (income.isNotEmpty() && income == ZERO.toString()) {
                 Pair(
                     true,
-                    R.string.credit_monthly_income_greater_than_zero_error,
+                    R.string.credit_monthly_income_greater_than_zero_error
                 )
             } else {
                 Pair(
                     false,
-                    R.string.credit_monthly_income_greater_than_zero_error,
+                    R.string.credit_monthly_income_greater_than_zero_error
                 )
             }
             uiState = uiState.copy(
                 income = income,
-                incomeError = incomeError,
+                incomeError = incomeError
             )
             onValidForm()
         }
     }
 
     private fun onDivisionProfessionValueChange(
-        divisionProfession: CreditCatalogOption?,
+        divisionProfession: CreditCatalogOption?
     ) {
         uiState = uiState.copy(
-            divisionProfessionSelected = divisionProfession,
+            divisionProfessionSelected = divisionProfession
         )
         onValidForm()
     }
 
     private fun onDivisionOccupationValueChange(
-        divisionOccupation: CreditCatalogOption?,
+        divisionOccupation: CreditCatalogOption?
     ) {
         uiState = uiState.copy(
-            divisionOccupationSelected = divisionOccupation,
+            divisionOccupationSelected = divisionOccupation
         )
         onValidForm()
     }
 
     private fun onDivisionDuiEmissionPlaceValueChange(
-        divisionDuiEmissionPlace: CreditCatalogOption?,
+        divisionDuiEmissionPlace: CreditCatalogOption?
     ) {
         uiState = uiState.copy(
-            divisionDuiEmissionPlaceSelected = divisionDuiEmissionPlace,
+            divisionDuiEmissionPlaceSelected = divisionDuiEmissionPlace
         )
         onValidForm()
     }
@@ -129,8 +130,8 @@ class MonthlyIncomeViewModel @Inject constructor(
         uiState = uiState.copy(
             duiEmissionDate = date.replace(
                 HYPHEN,
-                BAR,
-            ),
+                BAR
+            )
         )
         onValidForm()
     }
@@ -139,8 +140,8 @@ class MonthlyIncomeViewModel @Inject constructor(
         uiState = uiState.copy(
             duiExpirationDate = date.replace(
                 HYPHEN,
-                BAR,
-            ),
+                BAR
+            )
         )
         onValidForm()
     }
@@ -154,7 +155,7 @@ class MonthlyIncomeViewModel @Inject constructor(
         if (phoneNumber.length <= PHONE_NUMBER_MAX_LENGTH) {
             uiState = uiState.copy(
                 companyPhoneNumber = phoneNumber,
-                companyPhoneNumberError = validatePhone(phoneNumber),
+                companyPhoneNumberError = validatePhone(phoneNumber)
             )
             onValidForm()
         }
@@ -165,19 +166,19 @@ class MonthlyIncomeViewModel @Inject constructor(
             uiState.companyPhoneNumber.length < PHONE_NUMBER_MAX_LENGTH -> {
                 Pair(
                     true,
-                    R.string.credit_monthly_income_job_phone_error,
+                    R.string.credit_monthly_income_job_phone_error
                 )
             }
             isPhoneNumberValid(phone = phone, idBrand).not() -> {
                 Pair(
                     true,
-                    R.string.credit_monthly_income_job_phone_error,
+                    R.string.credit_monthly_income_job_phone_error
                 )
             }
             else -> {
                 Pair(
                     false,
-                    R.string.empty,
+                    R.string.empty
                 )
             }
         }
@@ -187,8 +188,8 @@ class MonthlyIncomeViewModel @Inject constructor(
         uiState = uiState.copy(
             companyStartDate = date.replace(
                 HYPHEN,
-                BAR,
-            ),
+                BAR
+            )
         )
         onValidForm()
     }
@@ -205,8 +206,8 @@ class MonthlyIncomeViewModel @Inject constructor(
                             uiState.income.isNotEmpty() && uiState.income.toDouble() > ZERO && uiState.divisionProfessionSelected != null && uiState.divisionDuiEmissionPlaceSelected != null && uiState.duiEmissionDate.isNotEmpty() && uiState.duiExpirationDate.isNotEmpty()
                         }
                     else -> uiState.income.isNotEmpty() && uiState.income.toDouble() > ZERO && uiState.divisionProfessionSelected != null
-                },
-            ),
+                }
+            )
         )
     }
 
@@ -217,7 +218,7 @@ class MonthlyIncomeViewModel @Inject constructor(
         idUserRequest: Int,
         isCrosseling: Boolean,
         onLoadingValueChange: (status: Boolean) -> Unit,
-        onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit,
+        onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
     ) {
         this.pkUser = pkUser
         this.user = user
@@ -232,7 +233,7 @@ class MonthlyIncomeViewModel @Inject constructor(
             idBrand = idBrand,
             idUserRequest = idUserRequest,
             onLoadingValueChange = onLoadingValueChange,
-            onFailureWithDialog = onFailureWithDialog,
+            onFailureWithDialog = onFailureWithDialog
         )
         if (idBrand == Brand.CostaRica.id) {
             onCallQueryOccupation(
@@ -241,7 +242,7 @@ class MonthlyIncomeViewModel @Inject constructor(
                 idBrand = idBrand,
                 idUserRequest = idUserRequest,
                 onLoadingValueChange = onLoadingValueChange,
-                onFailureWithDialog = onFailureWithDialog,
+                onFailureWithDialog = onFailureWithDialog
             )
         }
         if (idBrand == Brand.ElSalvador.id) {
@@ -251,7 +252,7 @@ class MonthlyIncomeViewModel @Inject constructor(
                 idBrand = idBrand,
                 user = user,
                 onLoadingValueChange = onLoadingValueChange,
-                onFailureWithDialog = onFailureWithDialog,
+                onFailureWithDialog = onFailureWithDialog
             )
         }
     }
@@ -262,7 +263,7 @@ class MonthlyIncomeViewModel @Inject constructor(
         idBrand: Int,
         idUserRequest: Int,
         onLoadingValueChange: (status: Boolean) -> Unit,
-        onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit,
+        onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
     ) = executeUseCase {
         queryProfessionsUseCase.invoke(pkUser.toInt(), user, idBrand, idUserRequest)
             .collectLatest { result ->
@@ -277,7 +278,7 @@ class MonthlyIncomeViewModel @Inject constructor(
                     uiState = uiState.copy(
                         divisionProfessionList = profession?.subOptions?.filter { filter ->
                             filter?.description != CompanyAddressViewModel.MIDDLE_DASH
-                        },
+                        }
                     )
                     if (!profession?.pkCatalog.isNullOrEmpty()) {
                         val selectedProfession =
@@ -285,8 +286,8 @@ class MonthlyIncomeViewModel @Inject constructor(
                         uiState = uiState.copy(divisionProfessionSelected = selectedProfession)
                         onUIEvent(
                             OnDivisionProfessionValueChange(
-                                selectedProfession,
-                            ),
+                                selectedProfession
+                            )
                         )
                         profession = profession?.copy(pkCatalog = null)
                     }
@@ -300,8 +301,8 @@ class MonthlyIncomeViewModel @Inject constructor(
                         false,
                         DialogParameters(
                             description = it.getError() ?: "",
-                            isActive = mutableStateOf(true),
-                        ),
+                            isActive = mutableStateOf(true)
+                        )
                     )
                 }
             }
@@ -313,7 +314,7 @@ class MonthlyIncomeViewModel @Inject constructor(
         idBrand: Int,
         idUserRequest: Int,
         onLoadingValueChange: (status: Boolean) -> Unit,
-        onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit,
+        onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
     ) = executeUseCase {
         queryOccupationUseCase.invoke(pkUser.toInt(), user, idBrand, idUserRequest)
             .collectLatest { result ->
@@ -328,7 +329,7 @@ class MonthlyIncomeViewModel @Inject constructor(
                     uiState = uiState.copy(
                         divisionOccupationList = occupation?.subOptions?.filter { filter ->
                             filter?.description != HYPHEN
-                        },
+                        }
                     )
                     if (!occupation?.pkCatalog.isNullOrEmpty()) {
                         val selectedOccupation =
@@ -336,8 +337,8 @@ class MonthlyIncomeViewModel @Inject constructor(
                         uiState = uiState.copy(divisionOccupationSelected = selectedOccupation)
                         onUIEvent(
                             OnDivisionOccupationValueChange(
-                                selectedOccupation,
-                            ),
+                                selectedOccupation
+                            )
                         )
                         occupation = occupation?.copy(pkCatalog = null)
                     }
@@ -351,8 +352,8 @@ class MonthlyIncomeViewModel @Inject constructor(
                         false,
                         DialogParameters(
                             description = it.getError() ?: "",
-                            isActive = mutableStateOf(true),
-                        ),
+                            isActive = mutableStateOf(true)
+                        )
                     )
                 }
             }
@@ -364,13 +365,13 @@ class MonthlyIncomeViewModel @Inject constructor(
         idBrand: Int,
         user: String,
         onLoadingValueChange: (status: Boolean) -> Unit,
-        onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit,
+        onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
     ) = executeUseCase {
         queryEmissionPlaceUseCase.invoke(
             pkUser = pkUser.toInt(),
             idUserRequest = idUserRequest,
             idBrand = idBrand,
-            user = user,
+            user = user
         )
             .collectLatest { result ->
                 result.onSuccess {
@@ -384,7 +385,7 @@ class MonthlyIncomeViewModel @Inject constructor(
                     uiState = uiState.copy(
                         divisionDuiEmissionPlaceList = duiEmissionPlace?.subOptions?.filter { filter ->
                             filter?.description != HYPHEN
-                        },
+                        }
                     )
                     if (!duiEmissionPlace?.pkCatalog.isNullOrEmpty()) {
                         val selectedDuiEmissionPlace =
@@ -393,8 +394,8 @@ class MonthlyIncomeViewModel @Inject constructor(
                             uiState.copy(divisionDuiEmissionPlaceSelected = selectedDuiEmissionPlace)
                         onUIEvent(
                             OnDivisionDuiEmissionPlaceValueChange(
-                                selectedDuiEmissionPlace,
-                            ),
+                                selectedDuiEmissionPlace
+                            )
                         )
                         duiEmissionPlace = duiEmissionPlace?.copy(pkCatalog = null)
                     }
@@ -408,8 +409,8 @@ class MonthlyIncomeViewModel @Inject constructor(
                         false,
                         DialogParameters(
                             description = it.getError() ?: "",
-                            isActive = mutableStateOf(true),
-                        ),
+                            isActive = mutableStateOf(true)
+                        )
                     )
                 }
             }
@@ -418,7 +419,7 @@ class MonthlyIncomeViewModel @Inject constructor(
     private fun onNextActionClick(
         user: String,
         onNextStepAction: () -> Unit,
-        saveCreditStepsHelper: SaveCreditStepsHelper,
+        saveCreditStepsHelper: SaveCreditStepsHelper
     ) {
         saveCreditStepsHelper.saveStepTwo(
             user = user,
@@ -433,30 +434,30 @@ class MonthlyIncomeViewModel @Inject constructor(
             duiEmissionDateValue = getFormatDateByString(
                 uiState.duiEmissionDate.replace(
                     BAR,
-                    HYPHEN,
+                    HYPHEN
                 ),
                 DAY_MONTH_YEAR_PATTERN,
-                YEAR_MONTH_DAY_PATTERN,
+                YEAR_MONTH_DAY_PATTERN
             ),
             duiExpirationDateValue = getFormatDateByString(
                 uiState.duiExpirationDate.replace(
                     BAR,
-                    HYPHEN,
+                    HYPHEN
                 ),
                 DAY_MONTH_YEAR_PATTERN,
-                YEAR_MONTH_DAY_PATTERN,
+                YEAR_MONTH_DAY_PATTERN
             ),
             companyName = uiState.companyName,
             companyStartDate = getFormatDateByString(
                 uiState.companyStartDate.replace(
                     BAR,
-                    HYPHEN,
+                    HYPHEN
                 ),
                 DAY_MONTH_YEAR_PATTERN,
-                YEAR_MONTH_DAY_PATTERN,
+                YEAR_MONTH_DAY_PATTERN
             ),
             companyPhoneNumber = uiState.companyPhoneNumber,
-            isCrosseling = isCrosseling,
+            isCrosseling = isCrosseling
         )
         onNextStepAction()
     }
@@ -475,7 +476,7 @@ class MonthlyIncomeViewModel @Inject constructor(
                 val dateParsed = getFormatDateByString(
                     it,
                     YEAR_MONTH_DAY_PATTERN,
-                    DAY_MONTH_YEAR_PATTERN,
+                    DAY_MONTH_YEAR_PATTERN
                 )
                 onDuiEmissionDateValueChange(dateParsed)
             }
@@ -486,7 +487,7 @@ class MonthlyIncomeViewModel @Inject constructor(
                 val dateParsed = getFormatDateByString(
                     it,
                     YEAR_MONTH_DAY_PATTERN,
-                    DAY_MONTH_YEAR_PATTERN,
+                    DAY_MONTH_YEAR_PATTERN
                 )
                 onDuiExpirationDateValueChange(dateParsed)
             }
@@ -504,7 +505,7 @@ class MonthlyIncomeViewModel @Inject constructor(
                     val dateParsed = getFormatDateByString(
                         it,
                         YEAR_MONTH_DAY_PATTERN,
-                        DAY_MONTH_YEAR_PATTERN,
+                        DAY_MONTH_YEAR_PATTERN
                     )
                     onCompanyStartDateValueChange(dateParsed)
                 }
@@ -526,7 +527,7 @@ class MonthlyIncomeViewModel @Inject constructor(
         val duiExpirationDate: String = "",
         val incomeError: Pair<Boolean, Int> = Pair(
             false,
-            R.string.credit_monthly_income_greater_than_zero_error,
+            R.string.credit_monthly_income_greater_than_zero_error
         ),
         val divisionProfessionList: List<CreditCatalogOption?>? = listOf(),
         val divisionProfessionSelected: CreditCatalogOption? = null,
@@ -537,7 +538,7 @@ class MonthlyIncomeViewModel @Inject constructor(
         val companyName: String = "",
         val companyStartDate: String = "",
         val companyPhoneNumber: String = "",
-        val companyPhoneNumberError: Pair<Boolean, Int> = Pair(false, R.string.empty),
+        val companyPhoneNumberError: Pair<Boolean, Int> = Pair(false, R.string.empty)
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -545,7 +546,7 @@ class MonthlyIncomeViewModel @Inject constructor(
             is OnNextActionClick -> onNextActionClick(
                 uiEvent.user,
                 uiEvent.nextStepAction,
-                uiEvent.saveCreditStepsHelper,
+                uiEvent.saveCreditStepsHelper
             )
             is OnIncomeValueChange -> onIncomeValueChange(uiEvent.income)
             is OnValidForm -> onValidForm()
@@ -557,21 +558,21 @@ class MonthlyIncomeViewModel @Inject constructor(
                 uiEvent.idUserRequest,
                 uiEvent.isCrosseling,
                 uiEvent.onLoadingValueChange,
-                uiEvent.onFailureWithDialog,
+                uiEvent.onFailureWithDialog
             )
             is OnDivisionProfessionValueChange -> {
                 onDivisionProfessionValueChange(
-                    uiEvent.divisionProfession,
+                    uiEvent.divisionProfession
                 )
             }
             is OnDivisionOccupationValueChange -> {
                 onDivisionOccupationValueChange(
-                    uiEvent.divisionOccupation,
+                    uiEvent.divisionOccupation
                 )
             }
             is OnDivisionDuiEmissionPlaceValueChange -> {
                 onDivisionDuiEmissionPlaceValueChange(
-                    uiEvent.divisionDuiEmissionPlace,
+                    uiEvent.divisionDuiEmissionPlace
                 )
             }
             is OnDuiEmissionDateValueChange -> {
@@ -590,7 +591,7 @@ class MonthlyIncomeViewModel @Inject constructor(
         data class OnNextActionClick(
             val user: String,
             val nextStepAction: () -> Unit,
-            val saveCreditStepsHelper: SaveCreditStepsHelper,
+            val saveCreditStepsHelper: SaveCreditStepsHelper
         ) : UIEvent()
 
         data class OnIncomeValueChange(val income: String) : UIEvent()
@@ -603,19 +604,19 @@ class MonthlyIncomeViewModel @Inject constructor(
             val idUserRequest: Int,
             val isCrosseling: Boolean,
             val onLoadingValueChange: (status: Boolean) -> Unit,
-            val onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit,
+            val onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
         ) : UIEvent()
 
         data class OnDivisionProfessionValueChange(
-            val divisionProfession: CreditCatalogOption?,
+            val divisionProfession: CreditCatalogOption?
         ) : UIEvent()
 
         data class OnDivisionOccupationValueChange(
-            val divisionOccupation: CreditCatalogOption?,
+            val divisionOccupation: CreditCatalogOption?
         ) : UIEvent()
 
         data class OnDivisionDuiEmissionPlaceValueChange(
-            val divisionDuiEmissionPlace: CreditCatalogOption?,
+            val divisionDuiEmissionPlace: CreditCatalogOption?
         ) : UIEvent()
 
         data class OnDuiEmissionDateValueChange(val date: String) : UIEvent()

@@ -17,12 +17,12 @@ import com.togitech.ccp.data.CountryData
 import com.togitech.ccp.data.utils.getLibCountries
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
-import javax.inject.Inject
 import java.util.Locale
+import javax.inject.Inject
 
 @HiltViewModel
 class SignUpPhoneViewModel @Inject constructor(
-    private val queryGetCountryPhoneCodesUseCase: QueryGetCountryPhoneCodesUseCase,
+    private val queryGetCountryPhoneCodesUseCase: QueryGetCountryPhoneCodesUseCase
 ) : BaseViewModel(false) {
 
     // UIState
@@ -37,7 +37,7 @@ class SignUpPhoneViewModel @Inject constructor(
             else -> uiState.copy(currentBrand = Brand.CostaRica)
         }
         val defaultCountry =
-            getLibCountries().find { it.countryCode == uiState.currentBrand.countryCode }
+            getLibCountries.find { it.countryCode == uiState.currentBrand.countryCode }
         if (defaultCountry != null) {
             uiState =
                 uiState.copy(countriesList = mutableListOf(defaultCountry))
@@ -54,6 +54,7 @@ class SignUpPhoneViewModel @Inject constructor(
         uiState = uiState.copy(phoneCode = phoneCode, phoneNumber = phoneNumber)
         signUpStartData.invoke()
         callQueryGetCountryPhoneCodes(uiState.idBrand, onFailure)
+        isFormValid(phoneCode)
     }
 
     private fun isFormValid(countryCode: String) = emitBaseEvent(
@@ -136,7 +137,7 @@ class SignUpPhoneViewModel @Inject constructor(
                 result.onSuccess { response ->
                     uiState = uiState.copy(countriesList = mutableListOf())
                     val list = response.countryPhoneCodes.flatMap { fromApi ->
-                        getLibCountries().filter { fromApi.isoCode.lowercase(Locale.getDefault()) == it.countryCode }
+                        getLibCountries.filter { fromApi.isoCode.lowercase(Locale.getDefault()) == it.countryCode }
                     }
                     uiState = uiState.copy(
                         countriesList = list.toMutableList(),
@@ -226,14 +227,13 @@ class SignUpPhoneViewModel @Inject constructor(
             val countryCode: String,
             val phoneNumber: String,
             val signUpStartData: () -> Unit,
-            val onFailure: () -> Unit,
+            val onFailure: () -> Unit
         ) : UIEvent()
 
         object OnClearPhoneError : UIEvent()
         object OnQueryError : UIEvent()
         data class OnSetUpIdBrand(val idBrand: Int) : UIEvent()
         data class OnSetupDefaultCountry(val idBrand: Int) : UIEvent()
-
     }
 
     sealed class BaseEvent {

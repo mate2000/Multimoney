@@ -76,11 +76,11 @@ import com.togitech.ccp.utils.searchCountry
 fun PhoneCountryDialog(
     modifier: Modifier = Modifier,
     padding: Dp = 15.dp,
-    defaultSelectedCountry: CountryData = getLibCountries().first(),
+    defaultSelectedCountry: CountryData = getLibCountries.first(),
     showCountryCode: Boolean = true,
     showCountryFlag: Boolean = true,
     pickedCountry: (CountryData) -> Unit = {},
-    countryList: MutableList<CountryData>? = mutableListOf<CountryData>()
+    countryList: MutableList<CountryData>? = mutableListOf()
 ) {
     var innerCountryList = mutableListOf<CountryData>()
     var isPickCountry by remember { mutableStateOf(defaultSelectedCountry) }
@@ -128,6 +128,7 @@ fun PhoneCountryDialog(
                     isPickCountry.countryCode
                 )
             ),
+
             contentDescription = null
         )
         if (showCountryCode) {
@@ -186,7 +187,10 @@ fun PhoneCountryDialog(
                     )
                 }
             ) { paddingValue ->
-                Column(modifier = Modifier.padding(paddingValue).fillMaxSize().background(backgroundColor)) {
+                Column(
+                    modifier = Modifier.padding(paddingValue).fillMaxSize()
+                        .background(backgroundColor)
+                ) {
                     if (isSearch) {
                         searchValue = dialogSearchView(
                             focusedBorderColor = searchBorderColor,
@@ -201,19 +205,17 @@ fun PhoneCountryDialog(
                         innerCountryList = if (!countryList.isNullOrEmpty()) {
                             countryList
                         } else {
-                            getLibCountries() as MutableList<CountryData>
+                            getLibCountries as MutableList<CountryData>
                         }
                         items(
-                            (
-                                if (searchValue.isEmpty()) {
-                                    innerCountryList
-                                } else {
-                                    innerCountryList.searchCountry(
-                                        searchValue,
-                                        context = context
-                                    )
-                                }
+                            if (searchValue.isEmpty()) {
+                                innerCountryList
+                            } else {
+                                innerCountryList.searchCountry(
+                                    searchValue,
+                                    context = context
                                 )
+                            }
                         ) { countryItem ->
                             Row(
                                 Modifier

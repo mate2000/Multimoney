@@ -77,7 +77,7 @@ fun PaymentFeeSelectionContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 12.dp),
-                        startIcon = summary?.idCurrency?.getCurrencyFromId()?.paymentIcon ?: 0,
+                        startIcon = summary?.idCurrency?.getCurrencyFromId()?.feeIcon ?: 0,
                         title = "${stringResource(id = summary?.idCurrency?.getCurrencyFromId()?.feeInfoButtonTitle ?: 0)} ${
                         stringResource(
                             id = summary?.idCurrency?.getCurrencyFromId()?.currencyName ?: string.empty
@@ -93,7 +93,7 @@ fun PaymentFeeSelectionContent(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 12.dp),
-                            startIcon = CurrencyType.All.paymentIcon,
+                            startIcon = CurrencyType.All.feeIcon,
                             title = stringResource(id = CurrencyType.All.feeInfoButtonTitle),
                             subtitle = viewModel.getAllQuotas(stringResource(id = string.payment_fee_both_plus_symbol)),
                             onClick = {

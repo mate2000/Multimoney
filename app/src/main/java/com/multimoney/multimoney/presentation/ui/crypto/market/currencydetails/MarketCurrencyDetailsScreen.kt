@@ -149,6 +149,7 @@ fun MarketCurrencyDetailsScreen(
         onBackPressed = { viewModel.onUIEvent(OnNavigateBack) },
         onNavigateToSendCrypto = { viewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnNavigateToCryptoSendFlow) },
         onNavigateToSellCrypto = { viewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnNavigateToSellCrypto) },
+        onNavigateToReceiveCrypto = { viewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnNavigateToReceiveCrypto) },
         isCryptoTransferEnabled = viewModel.uiState.isCryptoTransferEnabled
     )
     ConfirmationBottomSheet(
@@ -179,6 +180,7 @@ fun MarketCurrencyDetailsScreenContent(
     onBackPressed: () -> Unit = {},
     onNavigateToSendCrypto: () -> Unit = {},
     onNavigateToSellCrypto: () -> Unit = {},
+    onNavigateToReceiveCrypto: () -> Unit = {},
     isCryptoTransferEnabled: Boolean
 ) {
     val selected = remember { mutableStateOf(true) }
@@ -196,7 +198,7 @@ fun MarketCurrencyDetailsScreenContent(
                 enableSendAndGive = isCryptoTransferEnabled,
                 hasBalanceAction = { onNavigateToBuyCrypto() },
                 sellAction = { onNavigateToSellCrypto() },
-                giveAction = { /* todo: go to receive crypto flow */ },
+                giveAction = { onNavigateToReceiveCrypto() },
                 sendAction = { onNavigateToSendCrypto() },
             )
         }

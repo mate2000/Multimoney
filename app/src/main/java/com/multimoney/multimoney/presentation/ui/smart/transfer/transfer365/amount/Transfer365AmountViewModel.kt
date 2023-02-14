@@ -18,8 +18,8 @@ import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
@@ -126,6 +126,7 @@ class Transfer365AmountViewModel @Inject constructor() : BaseSmartEditAmountView
         // Todo add validation to go back to list transfer 365 accounts screen
         val screen = when (previousScreen) {
             Screen.SmartAdd365AccountScreen.baseRoute -> Screen.SmartAdd365AccountScreen.route
+            Screen.SmartTransferFavoriteAccountScreen.baseRoute -> Screen.SmartTransferFavoriteAccountScreen.route
             else -> Screen.HomeScreen.route
         }
         navigateBack(popTo = screen, isRestart = false)

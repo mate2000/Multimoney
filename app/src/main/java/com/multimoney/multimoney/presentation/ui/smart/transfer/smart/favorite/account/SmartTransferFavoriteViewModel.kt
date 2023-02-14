@@ -9,6 +9,7 @@ import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteLi
 import com.multimoney.domain.model.accountsmart.ACHAccount
 import com.multimoney.domain.model.accountsmart.IbanAccountID
 import com.multimoney.domain.model.accountsmart.SmartAccountID
+import com.multimoney.domain.model.accountsmart.Transfer365Account
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -96,7 +97,7 @@ class SmartTransferFavoriteViewModel @Inject constructor(
         popTo = Screen.SmartSelectSendingTypeScreen.route, isRestart = false
     )
 
-    private fun onShowOptionsClick(selectedACHFavorite:ACHAccount?) {
+    private fun onShowOptionsClick(selectedACHFavorite: ACHAccount?) {
       // TODO REV-3466
     }
 
@@ -115,6 +116,21 @@ class SmartTransferFavoriteViewModel @Inject constructor(
                 "${Screen.SmartTransferAmountScreen.baseRoute}/" +
                         "${encodeData(selectedSmartAccount)}/$ibanAccount/" +
                         "${SmartTransferTypes.SmartToIban.id}/${Screen.SmartTransferFavoriteAccountScreen.baseRoute}"
+            )
+        }
+        else if (idBrand == Brand.ElSalvador.id.toString()) {
+            val savedAccount = Transfer365Account(
+                accountNumber = selectedACHFavoriteAccount?.accountNumber,
+                name = selectedACHFavoriteAccount?.description ?: "",
+                bankId =selectedACHFavoriteAccount?.idBank.toString(),
+                bankName = selectedACHFavoriteAccount?.destinationBankDescription ?: "",
+                accountTypeId = selectedACHFavoriteAccount?.idTypeAccount.toString(),
+                isFavorite = selectedACHFavoriteAccount?.isFavorite ?: true
+            )
+            navigateTo(
+                "${Screen.SmartTransfer365EditAmountScreen.baseRoute}/${
+                    encodeData(selectedSmartAccount)
+                }/${encodeData(savedAccount)}/${SmartTransferTypes.SmartToOtherBank.id}/${Screen.SmartTransferFavoriteAccountScreen.baseRoute}"
             )
         }
     }

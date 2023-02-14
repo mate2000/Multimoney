@@ -42,12 +42,13 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.DefaultBlack
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
@@ -148,6 +149,7 @@ fun VerifyDepositField(
     val labelColor: Color
     var backgroundColor: Color
     val textColor: Color
+    val dotColor: Color
     val placeholderColor: Color
     val focusedIndicatorColor: Color
     val unfocusedIndicatorColor: Color
@@ -159,6 +161,7 @@ fun VerifyDepositField(
         placeholderColor = WhiteTransparency30
         unfocusedIndicatorColor = DefaultBlack
         errorIndicatorColor = SemanticNegative400
+        dotColor = DefaultWhite
         when {
             isError -> {
                 focusedIndicatorColor = SemanticNegative400
@@ -180,6 +183,7 @@ fun VerifyDepositField(
         placeholderColor = GrayScale400
         unfocusedIndicatorColor = GrayScale400
         errorIndicatorColor = SemanticNegative500
+        dotColor = DefaultWhite
         when {
             isError -> {
                 focusedIndicatorColor = SemanticNegative500
@@ -209,15 +213,16 @@ fun VerifyDepositField(
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.Bottom
         ) {
             (0 until digits).map { index ->
                 if (index == dotPosition) {
                     Text(
                         modifier = Modifier.padding(horizontal = 12.dp).wrapContentSize(),
                         text = stringResource(id = R.string.dot),
-                        style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
-                        color = textColor
+                        style = TextStyle(fontSize = 20.sp),
+                        color = dotColor
                     )
                 }
                 OutlinedTextField(

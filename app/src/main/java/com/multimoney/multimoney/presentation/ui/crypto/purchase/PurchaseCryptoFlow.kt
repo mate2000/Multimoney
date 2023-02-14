@@ -64,8 +64,8 @@ fun PurchaseCryptoFlow(
     ) {
         Column {
             TopNavBar(
-                isLeftButtonVisible = viewModel.uiState.currentStepType != BuyCryptoStep.LOADING_SCREEN && viewModel.uiState.currentStepType != BuyCryptoStep.PURCHASE_VOUCHER,
-                isRightButtonVisible = viewModel.uiState.currentStepType != BuyCryptoStep.LOADING_SCREEN && viewModel.uiState.currentStepType != BuyCryptoStep.SELECT_SMART_ACCOUNT,
+                isLeftButtonVisible = viewModel.uiState.currentStepType != BuyCryptoStep.LOADING_SCREEN && viewModel.uiState.currentStepType != BuyCryptoStep.PURCHASE_VOUCHER && viewModel.uiState.currentStepType != BuyCryptoStep.PURCHASE_FAILED,
+                isRightButtonVisible = viewModel.uiState.currentStepType != BuyCryptoStep.LOADING_SCREEN && viewModel.uiState.currentStepType != BuyCryptoStep.SELECT_SMART_ACCOUNT && viewModel.uiState.currentStepType != BuyCryptoStep.PURCHASE_FAILED,
                 onRightButtonClick = {
                     if (viewModel.uiState.currentStepType == BuyCryptoStep.PURCHASE_VOUCHER) {
                         viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNavigateHome)
@@ -116,7 +116,11 @@ fun PurchaseCryptoFlow(
 
     LoadingIndicator(viewModel.uiState.isLoading)
     BackHandler {
-        viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnCloseClick)
+        if (viewModel.uiState.currentStepType == BuyCryptoStep.PURCHASE_VOUCHER) {
+            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNavigateHome)
+        } else {
+            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnCloseClick)
+        }
     }
 
     if (viewModel.uiState.openDialog.isActive.value) {

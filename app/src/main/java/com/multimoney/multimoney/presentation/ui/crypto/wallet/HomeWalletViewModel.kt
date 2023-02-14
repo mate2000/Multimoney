@@ -181,12 +181,12 @@ class HomeWalletViewModel @Inject constructor(
     }
 
     private fun onNavigateToBuyCrypto() {
-        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${encodeData(smartAccounts)}")
+        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${encodeData(smartAccounts)}/${Screen.CryptoWalletScreen.baseRoute}")
     }
 
     private fun onNavigateToSellCrypto() {
         navigateTo(
-            "${Screen.CryptoSellFlow.baseRoute}/${encodeData(smartAccounts)}/${
+            "${Screen.CryptoSellFlow.baseRoute}/${Screen.CryptoWalletScreen.baseRoute}/${encodeData(smartAccounts)}/${
                 encodeData(
                     userCryptoBalances
                 )

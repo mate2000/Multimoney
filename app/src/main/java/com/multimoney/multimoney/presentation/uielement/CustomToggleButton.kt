@@ -57,13 +57,24 @@ fun CustomToggleButton(
                         .wrapContentWidth(),
                     shape = when (index) {
                         0 -> RoundedCornerShape(topStartPercent = 50, bottomStartPercent = 50)
-                        items.lastIndex -> RoundedCornerShape(topEndPercent = 50, bottomEndPercent = 50)
-                        else -> RoundedCornerShape(topStart = 0.dp, bottomStart = 0.dp, topEnd = 0.dp, bottomEnd = 0.dp)
+                        items.lastIndex -> RoundedCornerShape(
+                            topEndPercent = 50,
+                            bottomEndPercent = 50
+                        )
+                        else -> RoundedCornerShape(
+                            topStart = 0.dp,
+                            bottomStart = 0.dp,
+                            topEnd = 0.dp,
+                            bottomEnd = 0.dp
+                        )
                     },
                     onClick = { onIndexChanged(index) },
                     colors = if (selectedIndex == index) {
                         // selected colors
-                        ButtonDefaults.outlinedButtonColors(backgroundColor = Primary400, contentColor = Primary400)
+                        ButtonDefaults.outlinedButtonColors(
+                            backgroundColor = Primary400,
+                            contentColor = Primary400
+                        )
                     } else {
                         // not selected colors
                         ButtonDefaults.outlinedButtonColors(
@@ -79,8 +90,9 @@ fun CustomToggleButton(
                     Icon(
                         painter =
                         painterResource(
-                            id = if (item == CurrencyType.Colon.symbol) CurrencyType.Colon.feeIcon
-                                 else CurrencyType.Dollar.feeIcon),
+                            id = if (item == CurrencyType.Colon.symbol) CurrencyType.Colon.currencyIcon
+                            else CurrencyType.Dollar.currencyIcon
+                        ),
                         contentDescription = "",
                         tint = if (selectedIndex == index) {
                             GrayScale800

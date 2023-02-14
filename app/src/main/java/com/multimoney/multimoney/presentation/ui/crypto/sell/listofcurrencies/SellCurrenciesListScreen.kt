@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.LocalMultimoneyColors
@@ -88,7 +89,12 @@ fun CryptoSellContent(
     ) {
         Text(
             modifier = Modifier.padding(vertical = 8.dp),
-            text = stringResource(id = R.string.crypt_list_sell_title),
+            text = stringResource(
+                id = if (sharedViewModel.idBrand == Brand.CostaRica.id) {
+                    R.string.crypt_list_sell_title_cr
+                } else {
+                    R.string.crypt_list_sell_title_sv
+                }),
             style = Typography.h6.copy(
                 fontWeight = FontWeight.SemiBold,
                 color = LocalMultimoneyColors.current.titleText

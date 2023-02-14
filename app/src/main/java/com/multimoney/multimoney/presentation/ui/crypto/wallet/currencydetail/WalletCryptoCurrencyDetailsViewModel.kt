@@ -120,7 +120,9 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
                     idBrand = uiState.idBrand ?: 0,
                     identification = identification,
                     market = uiState.cryptoItem?.asset.plus(USD_CURRENCY),
-                    order_time_begin = getPreviousDate(uiState.startDate ?: FilterDateByDays.YESTERDAY.time),
+                    order_time_begin = getPreviousDate(
+                        uiState.startDate ?: FilterDateByDays.YESTERDAY.time
+                    ),
                     order_time_end = getCurrentDateYMDPattern(),
                     pagination_limit = SINGLE_PAGE
                 )
@@ -163,17 +165,27 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateToSelectAccount(){
-        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${encodeData(smartAccounts)}?$ITEM_CRYPTO_MARKET=${encodeData(MarketCryptoCoin(
-            description = uiState.cryptoItem?.descriptionCurrency ?: "",
-            baseAsset = uiState.cryptoItem?.asset ?: "",
-            url_image = uiState.cryptoItem?.url_image ?: "",
-            cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: ""
-        ))}")
+    private fun onNavigateToSelectAccount() {
+        navigateTo(
+            "${Screen.PurchaseCryptoFlow.baseRoute}/${
+                encodeData(
+                    smartAccounts
+                )
+            }/${Screen.CryptoCurrencyMovementsScreen.baseRoute}?$ITEM_CRYPTO_MARKET=${
+                encodeData(
+                    MarketCryptoCoin(
+                        description = uiState.cryptoItem?.descriptionCurrency ?: "",
+                        baseAsset = uiState.cryptoItem?.asset ?: "",
+                        url_image = uiState.cryptoItem?.url_image ?: "",
+                        cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: ""
+                    )
+                )
+            }"
+        )
     }
 
     private fun onNavigateToSellCrypto(){
-        navigateTo("${Screen.CryptoSellFlow.baseRoute}/${encodeData(smartAccounts)}/${encodeData(userCryptoBalances)}?$ITEM_CRYPTO_MARKET=${encodeData(MarketCryptoCoin(
+        navigateTo("${Screen.CryptoSellFlow.baseRoute}/${Screen.CryptoWalletDetailsScreen.baseRoute}/${encodeData(smartAccounts)}/${encodeData(userCryptoBalances)}?$ITEM_CRYPTO_MARKET=${encodeData(MarketCryptoCoin(
             description = uiState.cryptoItem?.descriptionCurrency ?: "",
             baseAsset = uiState.cryptoItem?.asset ?: "",
             url_image = uiState.cryptoItem?.url_image ?: "",
@@ -196,8 +208,10 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
             is UIEvent.OnNavigateToSelectAccount -> onNavigateToSelectAccount()
             is UIEvent.OnDisclaimerChecked -> onDisclaimerChecked(event.checked)
             is UIEvent.OnUpdateShouldShowDisclaimer -> updateShouldShowDisclaimer(event.checked)
-            is UIEvent.OnShowDisclaimer -> uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded))
-            is UIEvent.OnHideDisclaimer -> uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Hidden))
+            is UIEvent.OnShowDisclaimer -> uiState =
+                uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded))
+            is UIEvent.OnHideDisclaimer -> uiState =
+                uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Hidden))
             is UIEvent.OnNavigateToSendCrypto -> onNavigateToSendCrypto()
             is UIEvent.OnNavigateToSellCrypto -> onNavigateToSellCrypto()
         }
@@ -231,7 +245,8 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
         val shouldDisplayDisclaimer: Boolean = true,
         val dontShowAgainChecked: Boolean = false,
         val bottomSheetVisibleState: ModalBottomSheetState = ModalBottomSheetState(
-            ModalBottomSheetValue.Hidden),
+            ModalBottomSheetValue.Hidden
+        ),
         val isCryptoTransferEnabled: Boolean = false,
     )
 

@@ -296,7 +296,7 @@ fun ContactBottomSheet(
     onAccountClick: (PhoneSmart) -> Unit
 ) {
     CustomModalBottomSheet(
-        title = string.smart_iban_transfer_send_money,
+        title = string.smart_iban_transfer_send_money_to,
         closeIcon = R.drawable.ic_close_bottom_sheet,
         modalBottomSheetState = sheetState,
         coroutineScope = rememberCoroutineScope()

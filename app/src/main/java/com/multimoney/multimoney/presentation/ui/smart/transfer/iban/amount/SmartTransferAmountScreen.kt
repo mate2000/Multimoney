@@ -49,10 +49,10 @@ fun SmartTransferAmountScreen(
         LoadingMultiMoney(R.string.smart_processing_transaction)
     } else if (viewModel.amountUIState.showErrorScreen) {
         AlertResult(
-            titleResource = R.string.error_occurred_title,
             isLeftButtonVisible = false,
             onRightButtonClick = { viewModel.onAmountUIEvent(OnNavigateHome) },
-            descriptionResource = R.string.error_try_again,
+            titleString = viewModel.amountUIState.errorMessage,
+            descriptionString = viewModel.amountUIState.errorDetail,
             buttonTextResource = R.string.error_button_try_again,
             onButtonClick = { viewModel.onAmountUIEvent(OnRetryTransfer) }
         )
@@ -113,10 +113,10 @@ fun SmartTransferAmountContent(viewModel: SmartTransferAmountViewModel = hiltVie
                 viewModel.onAmountUIEvent(OnAmountValueChange(it))
             },
             onDebounceValidation = { viewModel.onAmountUIEvent(OnAmountCompleted(it)) },
-            isAmountError = viewModel.amountUIState.isAmountValid.not(),
+            isAmountError = viewModel.amountUIState.amountError.first,
             amountErrorMessage = stringResource(
-                id = R.string.smart_iban_transfer_error_balance_insufficient,
-                viewModel.totalBalanceLabel
+                viewModel.amountUIState.amountError.second,
+                viewModel.amountUIState.amountError.third
             ),
             currency = viewModel.amountUIState.currency,
             exchangeRate = viewModel.amountUIState.exchangeRateLabel.orEmpty(),

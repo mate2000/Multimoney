@@ -303,7 +303,7 @@ fun ListOfCoinsSection(
 
     LazyColumn(
         modifier = Modifier.padding(top = 12.dp),
-        contentPadding = PaddingValues(vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         if (showFilterChip) {
             item {

@@ -622,7 +622,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SmartTransferFavoriteAccountScreen : Screen(
-        "transfer_favorite_account_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
+        "transfer_favorite_account_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$SMART_ACCOUNT}",
         "transfer_favorite_account_screen"
     )
 

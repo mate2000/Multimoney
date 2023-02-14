@@ -368,7 +368,8 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(USER) { type = NavType.StringType },
                 navArgument(ID_BRAND) { type = NavType.StringType },
-                navArgument(IDENTIFICATION) { type = NavType.StringType }
+                navArgument(IDENTIFICATION) { type = NavType.StringType },
+                navArgument(SMART_ACCOUNT) { type = SmartAccountIDNavType() },
             )
         ) {
             SmartTransferFavoriteScreen(

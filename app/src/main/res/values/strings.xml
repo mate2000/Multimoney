@@ -277,7 +277,7 @@
 
     <!-- Sign Up Id Validation-->
     <string name="sign_up_id_validation_title" translatable="false">Confirmá tu identidad</string>
-    <string name="sign_up_id_validation_subtitle" translatable="false">Recomendamos:</string>
+    <string name="sign_up_id_validation_subtitle" translatable="false">Recomendaciones:</string>
     <string name="sign_up_id_validation_one" translatable="false">Buscá buena iluminación para tomar las fotos</string>
     <string name="sign_up_id_validation_two" translatable="false">Tené a mano tu documento de identificación</string>
     <string name="sign_up_id_validation_three" translatable="false">Tomate una selfie sin lentes o accesorios</string>

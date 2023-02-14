@@ -32,7 +32,8 @@ fun CryptoCtaFooterExpanded(
 
     CryptoActionsSection(
         hasSmartBalance = hasSmartBalance,
-        enableCryptoActions = profileEnable,
+        enableCryptoActions = profileEnable && balance?.balanceCryptoAccount?.outOfService == false,
+        disableBuyActionIfMaintenance = balance?.balanceCryptoAccount?.outOfService == true,
         enableSendAndGive = isCryptoTransferEnabled,
         noBalanceAction = noBalanceAction,
         hasBalanceAction = hasBalanceAction,

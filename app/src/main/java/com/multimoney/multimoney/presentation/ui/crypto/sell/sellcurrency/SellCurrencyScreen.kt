@@ -26,14 +26,24 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.SellCryptoStep
+import com.multimoney.data.util.catalog.SellStatus
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.crypto.AmountInputSection
 import com.multimoney.multimoney.presentation.ui.crypto.CounterSection
+import com.multimoney.multimoney.presentation.ui.crypto.NativeLoaderScreen
 import com.multimoney.multimoney.presentation.ui.crypto.TitleSection
 import com.multimoney.multimoney.presentation.ui.crypto.sell.SellCryptoSharedViewModel
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.util.calculateAmountPlusFee
+import com.multimoney.multimoney.presentation.util.calculateAvailableInDollars
+import com.multimoney.multimoney.presentation.util.calculateConfirmationBaseAmount
+import com.multimoney.multimoney.presentation.util.calculateConfirmationQuoteAmount
+import com.multimoney.multimoney.presentation.util.calculateConvertedCurrencyBalance
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.roundToEightDecimalPlaces
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 import kotlinx.coroutines.launch
@@ -58,12 +68,11 @@ fun SellCurrencyScreen(
                 user = sharedViewModel.user,
                 market = sharedViewModel.uiState.market,
                 identification = sharedViewModel.identification,
-                accountToken = sharedViewModel.uiState.accounts.firstOrNull()?.accountToken?.toLong()
-                    ?: 0L,
+                accountToken = sharedViewModel.uiState.accountToken.toLong(),
                 side = sharedViewModel.side,
                 assetImageUrl = sharedViewModel.uiState.assetImageBaseUrl,
                 ibanAccountNumber = sharedViewModel.uiState.ibanAccountNumber,
-                smartAccountAvailableBalance = sharedViewModel.uiState.smartAccountAvailableBalance
+                cryptoAvailableBalance = sharedViewModel.uiState.assetAvailable ?: 0.0
             )
         )
         sharedViewModel.uiState.previousAction = {
@@ -79,10 +88,84 @@ fun SellCurrencyScreen(
                 failureAction = {
                     sharedViewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnPreviousStep)
                 }
-            ))
+            )
+        )
     }
 
-    SellCurrencyScreenContent(viewModel)
+    when (viewModel.uiState.sellStatus) {
+        SellStatus.IDLE -> {
+            SellCurrencyScreenContent(viewModel)
+        }
+        SellStatus.LOADING -> {
+            sharedViewModel.onUIEvent(
+                SellCryptoSharedViewModel.UIEvent.OnSetFlowStep(SellCryptoStep.LOADING_SCREEN)
+            )
+            NativeLoaderScreen()
+        }
+        SellStatus.SUCCESS -> {
+            sharedViewModel.onUIEvent(
+                SellCryptoSharedViewModel.UIEvent.OnSetupVoucherDetails(
+                    assetAmount = calculateConfirmationBaseAmount(
+                        quoteAmount = viewModel.uiState.quoteAmount.value,
+                        baseAmount = viewModel.uiState.baseAmount.value,
+                        currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price
+                    ).plus(" ${viewModel.asset}"),
+                    approximateValue = calculateConfirmationQuoteAmount(
+                        quoteAmount = viewModel.uiState.quoteAmount.value,
+                        baseAmount = viewModel.uiState.baseAmount.value,
+                        currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price,
+                        exchangeRate = viewModel.uiState.exchangeRate,
+                        symbol = if (viewModel.idCurrencyAccount == CurrencyType.Dollar.id) {
+                            CurrencyType.Dollar.symbol
+                        } else {
+                            CurrencyType.Colon.symbol
+                        }
+                    ),
+                    totalCreditedAmount = calculateConfirmationQuoteAmount(
+                        quoteAmount = viewModel.uiState.quoteAmount.value,
+                        baseAmount = viewModel.uiState.baseAmount.value,
+                        currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price,
+                        symbol = CurrencyType.Dollar.symbol,
+                        totalFee = viewModel.uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
+                    ),
+                    exchangeRate = viewModel.uiState.exchangeRate.toCurrencyFormat(
+                        symbol = CurrencyType.Colon.symbol
+                    ),
+                    totalCreditedAmountExchange  = calculateConvertedCurrencyBalance(
+                        quoteAmount = viewModel.uiState.quoteAmount.value,
+                        baseAmount = viewModel.uiState.baseAmount.value,
+                        price = viewModel.uiState.pricesQuoteAndCommissions?.price,
+                        exchangeRate = viewModel.uiState.exchangeRate,
+                        totalFee = viewModel.uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
+                    ),
+                    referenceNumber = viewModel.uiState.referenceNumber ?: ""
+                )
+            )
+            sharedViewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnNextStep)
+        }
+        SellStatus.FAILED -> {
+            sharedViewModel.onUIEvent(
+                SellCryptoSharedViewModel.UIEvent.OnSetFlowStep(
+                    SellCryptoStep.PURCHASE_FAILED
+                )
+            )
+            AlertResult(
+                titleString = stringResource(id = R.string.crypto_sell_flow_error_processing_sell),
+                descriptionString = stringResource(R.string.common_sorry_try_again_later),
+                buttonTextResource = R.string.profile_error_changing_phone_button,
+                isRightButtonVisible = true,
+                isLeftButtonVisible = false,
+                onButtonClick = {
+                    sharedViewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnNavigateHome)
+                },
+                onRightButtonClick = {
+                    sharedViewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnNavigateHome)
+                }
+            )
+        }
+    }
+
+
     BackHandler {
         sharedViewModel.uiState.previousAction()
         sharedViewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnPreviousStep)
@@ -149,10 +232,12 @@ fun SellCurrencyScreenContent(
                         },
                         cryptoAssetExchange = stringResource(
                             id = R.string.crypto_sell_flow_sell_screen_available_equal_to,
-                            viewModel.cryptoAvailableCurrencyBalance.toCurrencyFormat(),
-                            viewModel.cryptoAvailableCurrencyBalance
-                                .div(viewModel.uiState.pricesQuoteAndCommissions?.price
-                                ?: DEFAULT_CURRENCY_PRICE).roundToEightDecimalPlaces(),
+                            calculateAvailableInDollars(
+                                baseAmount = viewModel.cryptoAvailableCurrencyBalance,
+                                currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price
+                                    ?: DEFAULT_CURRENCY_PRICE
+                            ).toCurrencyFormat(),
+                            viewModel.cryptoAvailableCurrencyBalance.roundToEightDecimalPlaces(),
                             viewModel.asset
                         ),
                         imageUrl = viewModel.assetImageUrl,
@@ -191,7 +276,6 @@ fun SellCurrencyScreenContent(
                     CounterSection(
                         counterTextResourceId = R.string.crypto_sell_flow_confirmation_sell_screen_expires_in,
                         showAvailableSmartAmount = false,
-                        smartAccountAvailableBalance = viewModel.cryptoAvailableCurrencyBalance,
                         downCounter = viewModel.uiState.remainingTimeText
                     )
                 }

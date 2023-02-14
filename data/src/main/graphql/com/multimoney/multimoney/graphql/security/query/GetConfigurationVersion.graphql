@@ -32,6 +32,11 @@ query GetConfigurationVersion($platform: String!, $appVersion: String!, $idBrand
                     mascara
                     activo
                 }
+                limiteTransacion {
+                    codigo
+                    descripcion
+                    monto
+                }
             }
             credit {
                 activo

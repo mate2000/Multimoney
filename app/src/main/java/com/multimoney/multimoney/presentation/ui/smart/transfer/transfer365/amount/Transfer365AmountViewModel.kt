@@ -1,11 +1,15 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.amount
 
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.interaction.accountsmart.MutationProcessTransfer365MobileUseCase
+import com.multimoney.domain.interaction.accountsmart.MutationProcessTransfer365UseCase
 import com.multimoney.domain.model.accountsmart.Transfer365Account
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onMessage
+import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.DESTINY_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.ORIGIN_ACCOUNT
@@ -15,19 +19,25 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DisplayAccount
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
+import com.multimoney.multimoney.presentation.util.getCurrentDate
+import com.multimoney.multimoney.presentation.util.getCurrentTime
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
-import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.Calendar
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
-class Transfer365AmountViewModel @Inject constructor() : BaseSmartEditAmountViewModel() {
+class Transfer365AmountViewModel @Inject constructor(
+    private val processTransfer365UseCase: MutationProcessTransfer365UseCase,
+    private val processTransfer365MobileUseCase: MutationProcessTransfer365MobileUseCase
+) : BaseSmartEditAmountViewModel() {
 
     // stateless
     var fromSmartLabel: Int = R.string.transfer_365_amount_from_label
-    var totalBalanceLabel: String = ""
     var transfer365Account = Transfer365Account()
 
     override fun onStart() {
@@ -36,8 +46,10 @@ class Transfer365AmountViewModel @Inject constructor() : BaseSmartEditAmountView
             transfer365Account = savedStateHandle[DESTINY_ACCOUNT] ?: Transfer365Account()
             smartAccount = savedStateHandle[ORIGIN_ACCOUNT]
             originCurrency = smartAccount?.currencyID?.getCurrencyFromId() ?: CurrencyType.Dollar
+            destinyCurrency = CurrencyType.Dollar
             if (originCurrency == CurrencyType.All) originCurrency = CurrencyType.Dollar
             shouldDisplayExchange = false
+            limits = preferences.getSmartTransferLimit().firstOrNull()
 
             amountUIState = amountUIState.copy(
                 originAccountDisplay = DisplayAccount(
@@ -53,10 +65,10 @@ class Transfer365AmountViewModel @Inject constructor() : BaseSmartEditAmountView
                     R.string.smart_dollar_placeholder
                 } else {
                     R.string.empty
-                }
+                },
+                totalBalance = smartAccount?.totalBalance,
+                maxAmount = limits?.find { limit -> limit?.code == originCurrency?.id.toString() }?.amount
             )
-            totalBalanceLabel =
-                amountUIState.currency + smartAccount?.totalBalance.toString()
             val destinationInfo = when (transferType) {
                 SmartTransferTypes.SmartToMobile.id -> {
                     transfer365Account.phone
@@ -83,43 +95,135 @@ class Transfer365AmountViewModel @Inject constructor() : BaseSmartEditAmountView
         }
     }
 
-    override fun onContinueClick() {
-        amountUIState = amountUIState.copy(
-            bottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Expanded)
-        )
+    override fun onAmountCompleted() {
+        validateAmount()
     }
 
-    override fun onAmountChanged(newAmount: String) {
-        if (validateDecimalIncome(newAmount)) {
-            amountUIState = amountUIState.copy(
-                currentAmountValueString = newAmount
-            )
+    private fun processTransfer365() {
+        executeUseCase {
+            processTransfer365UseCase.invoke(
+                identification = identification,
+                destinationAccount = transfer365Account.accountNumber.orEmpty(),
+                destinationBankId = transfer365Account.bankId,
+                destinationType = transfer365Account.destinationType.orEmpty(),
+                typeAccountId = transfer365Account.accountTypeId,
+                destinationName = transfer365Account.name,
+                destinationLastName = transfer365Account.lastname,
+                amount = amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0,
+                motive = amountUIState.motive,
+                user = pkUser,
+                idBrand = idBrand
+            ).collectLatest { result ->
+                result.onSuccess { reference ->
+                    if (reference?.bankAuthorization?.referenceNumber.isNullOrBlank()) {
+                        amountUIState = amountUIState.copy(
+                            showLoadingScreen = false,
+                            showErrorScreen = true,
+                            paymentSuccess = false
+                        )
+                    } else {
+                        amountUIState = amountUIState.copy(
+                            showLoadingScreen = false,
+                            showErrorScreen = false,
+                            paymentSuccess = true,
+                            currentDate = getCurrentDate(Calendar.getInstance().time),
+                            currentTime = getCurrentTime(Calendar.getInstance().time).lowercase(),
+                            referenceNumber = reference?.bankAuthorization?.referenceNumber ?: ""
+                        )
+                    }
+                }
+                result.onMessage {
+                    amountUIState = amountUIState.copy(
+                        errorMessage = it?.messageError?.message ?: "",
+                        errorDetail = it?.messageError?.detail ?: "",
+                        showLoadingScreen = false,
+                        showErrorScreen = true,
+                        paymentSuccess = false
+                    )
+                }
+                result.onFailure {
+                    amountUIState = amountUIState.copy(
+                        showLoadingScreen = false,
+                        showErrorScreen = true,
+                        paymentSuccess = false
+                    )
+                }
+                result.onLoading {
+                    amountUIState = amountUIState.copy(
+                        showLoadingScreen = true,
+                        showErrorScreen = false,
+                        paymentSuccess = false
+                    )
+                }
+            }
         }
     }
 
-    override fun onAmountCompleted() {
-        val amount = amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
-        amountUIState =
-            amountUIState.copy(isAmountValid = amount <= (smartAccount?.totalBalance ?: 0.0))
-        amountUIState = amountUIState.copy(enableButton = validateForm())
-    }
-
-    override fun validateForm(
-        newAmount: String?,
-        newMotive: String,
-        isAmountValid: Boolean
-    ): Boolean {
-        return when {
-            newAmount?.isEmpty() == true -> false
-            (newAmount?.toDoubleOrNull() ?: 0.0) <= 0.0 -> false
-            newMotive.isEmpty() -> false
-            amountUIState.isAmountValid.not() -> false
-            else -> true
+    private fun processTransfer365Mobile() {
+        executeUseCase {
+            processTransfer365MobileUseCase.invoke(
+                identification = identification,
+                phoneNumber = transfer365Account.phone.orEmpty(),
+                destinationBankId = transfer365Account.bankId,
+                typeAccountId = transfer365Account.accountTypeId,
+                destinationName = transfer365Account.name,
+                destinationLastName = transfer365Account.lastname,
+                amount = amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0,
+                motive = amountUIState.motive,
+                user = pkUser,
+                idBrand = idBrand
+            ).collectLatest { result ->
+                result.onSuccess { reference ->
+                    if (reference?.bankAuthorization?.referenceNumber.isNullOrBlank()) {
+                        amountUIState = amountUIState.copy(
+                            showLoadingScreen = false,
+                            showErrorScreen = true,
+                            paymentSuccess = false
+                        )
+                    } else {
+                        amountUIState = amountUIState.copy(
+                            showLoadingScreen = false,
+                            showErrorScreen = false,
+                            paymentSuccess = true,
+                            currentDate = getCurrentDate(Calendar.getInstance().time),
+                            currentTime = getCurrentTime(Calendar.getInstance().time).lowercase(),
+                            referenceNumber = reference?.bankAuthorization?.referenceNumber ?: ""
+                        )
+                    }
+                }
+                result.onFailure {
+                    amountUIState = amountUIState.copy(
+                        showLoadingScreen = false,
+                        showErrorScreen = true,
+                        paymentSuccess = false
+                    )
+                }
+                result.onMessage {
+                    amountUIState = amountUIState.copy(
+                        errorMessage = it?.messageError?.message ?: "",
+                        errorDetail = it?.messageError?.detail ?: "",
+                        showLoadingScreen = false,
+                        showErrorScreen = true,
+                        paymentSuccess = false
+                    )
+                }
+                result.onLoading {
+                    amountUIState = amountUIState.copy(
+                        showLoadingScreen = true,
+                        showErrorScreen = false,
+                        paymentSuccess = false
+                    )
+                }
+            }
         }
     }
 
     override fun onProcessTransfer() {
-        // Todo process transfer
+        if (transferType == SmartTransferTypes.SmartToOtherBank.id) {
+            processTransfer365()
+        } else if (transferType == SmartTransferTypes.SmartToMobile.id) {
+            processTransfer365Mobile()
+        }
     }
 
     override fun onNavigateBack() {

@@ -279,10 +279,12 @@ class SmartAdd365AccountViewModel @Inject constructor(
             val account = Transfer365Account(
                 phone = uiState.phoneNumber,
                 name = uiState.names,
+                identification = uiState.documentNumber,
                 lastname = uiState.lastNames,
                 bankId = uiState.bank?.bankId.toString(),
                 bankName = uiState.bank?.bankName.orEmpty(),
                 accountTypeId = uiState.type?.typeId.toString(),
+                destinationType = uiState.document?.value,
                 isFavorite = false
             )
             navigateTo(
@@ -318,7 +320,9 @@ class SmartAdd365AccountViewModel @Inject constructor(
                         bankId = account?.idBank?.toString() ?: uiState.bank?.bankId.toString(),
                         bankName = account?.destinationBankDescription?.ifEmpty { uiState.bank?.bankName.orEmpty() }.orEmpty(),
                         accountTypeId = account?.idTypeAccount?.toString() ?: uiState.type?.typeId.toString(),
-                        isFavorite = account?.isFavorite ?: uiState.isFavorite
+                        isFavorite = account?.isFavorite ?: uiState.isFavorite,
+                        identification = uiState.documentNumber,
+                        destinationType = uiState.document?.value
                     )
                     navigateTo(
                         "${Screen.SmartTransfer365EditAmountScreen.baseRoute}/${

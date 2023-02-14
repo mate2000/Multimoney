@@ -7,6 +7,7 @@ mutation ManageSinpeAccountSave(
     $nameAccount: String,
     $country: String,
     $id_account: Long,
+    $isFavorite: Boolean,
     $option: String
 ){
     manageSinpeAccountSave(
@@ -19,6 +20,7 @@ mutation ManageSinpeAccountSave(
             nameAccount: $nameAccount
             country: $country
             id_account: $id_account
+            isFavorite: $isFavorite
             option: $option
         }
     ) {

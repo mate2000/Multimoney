@@ -100,6 +100,9 @@ query Balance(
             user: $user
         }
     ) {
+        status
+        message
+        outOfService
         globalBalance
         investedBalance
         percentageInvested

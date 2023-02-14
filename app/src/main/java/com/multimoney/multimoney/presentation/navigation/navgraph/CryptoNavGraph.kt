@@ -33,6 +33,7 @@ import com.multimoney.multimoney.presentation.ui.crypto.receive.CryptoReceiveFlo
 import com.multimoney.multimoney.presentation.ui.crypto.sell.SellCryptoFlow
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWallet
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail.CurrencyMovementsScreen
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.MaintenanceAlertScreen
 
 const val ITEM_CRYPTO_CURRENCY = "item_crypto_currency"
 const val ITEM_CRYPTO_MARKET = "item_crypto_MARKET"
@@ -293,6 +294,13 @@ fun NavGraphBuilder.cryptoNavGraph(
                         inclusive = false,
                         saveState = false
                     )
+                }
+            )
+        }
+        composable(route = Screen.MaintenanceAlertScreen.route) {
+            MaintenanceAlertScreen(
+                onBackToHomeAction = {
+                    navController.popBackStack()
                 }
             )
         }

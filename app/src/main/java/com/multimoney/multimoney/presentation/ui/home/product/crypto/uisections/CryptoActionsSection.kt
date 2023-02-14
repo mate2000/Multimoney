@@ -47,6 +47,7 @@ fun CryptoActionsSection(
     modifier: Modifier = Modifier,
     hasSmartBalance: Boolean,
     enableCryptoActions: Boolean = false,
+    disableBuyActionIfMaintenance: Boolean = false,
     enableSendAndGive: Boolean = true,
     noBalanceAction: () -> Unit = {},
     hasBalanceAction: () -> Unit = {},
@@ -68,7 +69,7 @@ fun CryptoActionsSection(
         ) {
             item {
                 CryptoAction(
-                    enable = true,
+                    enable = disableBuyActionIfMaintenance.not(),
                     title = stringResource(id = R.string.crypto_footer_expanded_buy_crypto_label),
                     icon = R.drawable.ic_shopping_cart_add,
                     action = if (hasSmartBalance) hasBalanceAction else noBalanceAction
@@ -85,7 +86,7 @@ fun CryptoActionsSection(
             if (enableSendAndGive) {
                 item {
                     CryptoAction(
-                        enable = true,
+                        enable = disableBuyActionIfMaintenance.not(),
                         title = stringResource(id = R.string.crypto_footer_expanded_get_crypto_label),
                         icon = R.drawable.ic_arrow_get,
                         action = giveAction

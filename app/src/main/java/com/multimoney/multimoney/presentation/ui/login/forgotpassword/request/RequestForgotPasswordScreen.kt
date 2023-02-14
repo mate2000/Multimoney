@@ -110,7 +110,7 @@ fun RequestForgotPasswordContent(
                 ) { append(stringResource(id = string.request_forgot_password_success_title)) }
                 withStyle(
                     style = Typography.h6.toSpanStyle()
-                        .copy(color = MultimoneyTheme.colors.textLink, fontWeight = FontWeight.Bold)
+                        .copy(color = MultimoneyTheme.colors.textLink, fontWeight = FontWeight.Bold, fontSize = 21.sp)
                 ) { append(email) }
                 withStyle(
                     style = Typography.body1.toSpanStyle().copy(color = MultimoneyTheme.colors.labelText)

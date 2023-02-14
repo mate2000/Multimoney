@@ -20,6 +20,7 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNTS_LIST
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoOperationSide
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
@@ -29,7 +30,7 @@ import com.multimoney.multimoney.presentation.util.getCurrentTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.util.Calendar
+import java.util.*
 import javax.inject.Inject
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -55,9 +56,11 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     var abvCurrency: String = CurrencyType.Dollar.disbursementValue
     val side = CryptoOperationSide.BUY.value
     val comingFromDetails: Boolean = marketCryptoCoin != null
+    var previousScreen: String = ""
 
 
     private fun setUserData() {
+        previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
         uiState = uiState.copy(
             accounts = savedStateHandle.get<Array<SmartAccountSmall>>(SMART_ACCOUNTS_LIST)?.toList()
                 ?: listOf()
@@ -78,7 +81,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
             )
         }
         if (idBrand == Brand.ElSalvador.id) {
-            uiState = uiState.copy(
+            onSetupAccountDetails(
                 smartAccountAvailableBalance = uiState.accounts.firstOrNull()?.totalBalance ?: 0.0,
                 idCurrency = uiState.accounts.firstOrNull()?.idCurrencyAccount
                     ?: CurrencyType.Dollar.id,
@@ -87,14 +90,6 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
                 accountToken = uiState.accounts.firstOrNull()?.accountToken ?: ""
             )
         }
-        onSetupAccountDetails(
-            smartAccountAvailableBalance = uiState.accounts.firstOrNull()?.totalBalance ?: 0.0,
-            idCurrency = uiState.accounts.firstOrNull()?.idCurrencyAccount
-                ?: CurrencyType.Dollar.id,
-            accountNumber = uiState.accounts.firstOrNull()?.accountNumber ?: "",
-            ibanAccountNumber = uiState.accounts.firstOrNull()?.ibanAccountNumber ?: "",
-            accountToken = uiState.accounts.firstOrNull()?.accountToken ?: ""
-        )
     }
 
     private fun onSetupAccountDetails(
@@ -116,7 +111,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
 
     private fun previousStep() {
         if (currentFlowStep == PurchaseCryptoSteps.One.pageNumber) {
-            navigateBackToHome()
+            navigateToPreviousScreen()
         } else {
             currentFlowStep--
             uiState = uiState.copy(
@@ -132,6 +127,16 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
             currentStep = currentFlowStep
         )
         uiState.nextAction()
+    }
+
+    private fun navigateToPreviousScreen() {
+        val screen = when(previousScreen) {
+            Screen.CryptoWalletScreen.baseRoute -> Screen.CryptoWalletScreen.route
+            Screen.CryptoCurrencyDetailsScreen.baseRoute -> Screen.CryptoCurrencyDetailsScreen.route
+            Screen.CryptoCurrencyMovementsScreen.baseRoute -> Screen.CryptoCurrencyMovementsScreen.route
+            else -> Screen.HomeScreen.route
+        }
+        navigateBack(popTo = screen, isRestart = false)
     }
 
     private fun navigateBackToHome() =
@@ -306,7 +311,6 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         ) :
             UIEvent()
 
-        // object OnQueryAccounts : UIEvent()
         object OnPreviousStep : UIEvent()
         object OnClickBottomSheet : UIEvent()
         data class OnCryptoSelected(

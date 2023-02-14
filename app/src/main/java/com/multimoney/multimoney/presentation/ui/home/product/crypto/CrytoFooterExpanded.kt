@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -19,6 +17,7 @@ import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.ButtonsSection
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoCurrencies
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoMovementsSection
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.MaintenanceSection
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.NoticeSection
 import kotlinx.coroutines.flow.Flow
 
@@ -61,13 +60,29 @@ fun CryptoFooterExpandedContent(
             .wrapContentHeight(),
         verticalArrangement = Arrangement.Top
     ) {
+        val outOfService = balance?.balanceCryptoAccount?.outOfService ?: false
         ButtonsSection(
             walletEnable = profileEnable,
             actionMarket = actionMarket,
             actionWallet = actionWallet
         )
-
-        if (profileEnable) {
+        when {
+            profileEnable and outOfService.not() -> Column {
+                CryptoCurrencies(
+                    items = cryptoCurrencies,
+                    viewAllClick = { actionWallet() }
+                )
+                CryptoMovementsSection(
+                    cryptoMovements = movements,
+                    onShowAllClick = onShowAllClick
+                )
+            }
+            profileEnable and outOfService -> MaintenanceSection()
+            profileEnable.not() and outOfService.not() -> NoticeSection()
+            profileEnable.not() and outOfService -> MaintenanceSection()
+            else -> NoticeSection()
+        }
+        /*if (profileEnable) {
             Column {
                 CryptoCurrencies(
                     items = cryptoCurrencies,
@@ -81,7 +96,7 @@ fun CryptoFooterExpandedContent(
             }
         } else {
             NoticeSection()
-        }
+        }*/
     }
 }
 

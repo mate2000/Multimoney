@@ -28,6 +28,7 @@ import com.multimoney.multimoney.presentation.navigation.DESCRIPTION_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNTS_LIST
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.USER_CRYPTO_BALANCES
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
@@ -47,7 +48,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class CryptoCurrencyMovementsViewModel @Inject constructor(
+class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
     private val queryGetCurrencyHistoricalPricesUseCase: GetCurrencyHistoricalPricesUseCase,
     private val cryptoMovementsUseCase: GetCryptoCurrencyMovementsUseCase,
     private val savedStateHandle: SavedStateHandle,
@@ -63,6 +64,8 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
         private set
 
     private var smartAccounts: List<SmartAccountSmall>? = null
+    private var userCryptoBalances: List<BalanceCryptoAccountItems>? = null
+
 
 
     private fun onGetUserInfo() {
@@ -78,6 +81,8 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
                 isCryptoTransferEnabled = cryptoHelper.isCryptoTransferEnabled()
             )
         }
+        userCryptoBalances =
+            savedStateHandle.get<Array<BalanceCryptoAccountItems>>(USER_CRYPTO_BALANCES)?.toList()
         smartAccounts =
             savedStateHandle.get<Array<SmartAccountSmall>>(SMART_ACCOUNTS_LIST)?.toList()
     }
@@ -115,7 +120,9 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
                     idBrand = uiState.idBrand ?: 0,
                     identification = identification,
                     market = uiState.cryptoItem?.asset.plus(USD_CURRENCY),
-                    order_time_begin = getPreviousDate(uiState.startDate ?: FilterDateByDays.YESTERDAY.time),
+                    order_time_begin = getPreviousDate(
+                        uiState.startDate ?: FilterDateByDays.YESTERDAY.time
+                    ),
                     order_time_end = getCurrentDateYMDPattern(),
                     pagination_limit = SINGLE_PAGE
                 )
@@ -154,21 +161,31 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
 
     private fun onNavigateToAllMovements() {
         navigateTo(
-            "${Screen.CryptoMovementsAllScreen.baseRoute}/${uiState.idBrand}/$identification/$user?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}"
+            "${Screen.CryptoCurrencyDetailsAllMovementsScreen.baseRoute}/${uiState.idBrand}/$identification/$user?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}"
         )
     }
 
-    private fun onNavigateToSelectAccount(){
-        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${encodeData(smartAccounts)}?$ITEM_CRYPTO_MARKET=${encodeData(MarketCryptoCoin(
-            description = uiState.cryptoItem?.descriptionCurrency ?: "",
-            baseAsset = uiState.cryptoItem?.asset ?: "",
-            url_image = uiState.cryptoItem?.url_image ?: "",
-            cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: ""
-        ))}")
+    private fun onNavigateToSelectAccount() {
+        navigateTo(
+            "${Screen.PurchaseCryptoFlow.baseRoute}/${
+                encodeData(
+                    smartAccounts
+                )
+            }/${Screen.CryptoCurrencyMovementsScreen.baseRoute}?$ITEM_CRYPTO_MARKET=${
+                encodeData(
+                    MarketCryptoCoin(
+                        description = uiState.cryptoItem?.descriptionCurrency ?: "",
+                        baseAsset = uiState.cryptoItem?.asset ?: "",
+                        url_image = uiState.cryptoItem?.url_image ?: "",
+                        cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: ""
+                    )
+                )
+            }"
+        )
     }
 
     private fun onNavigateToSellCrypto(){
-        navigateTo("${Screen.CryptoSellFlow.baseRoute}?$ITEM_CRYPTO_MARKET=${encodeData(MarketCryptoCoin(
+        navigateTo("${Screen.CryptoSellFlow.baseRoute}/${encodeData(smartAccounts)}/${encodeData(userCryptoBalances)}?$ITEM_CRYPTO_MARKET=${encodeData(MarketCryptoCoin(
             description = uiState.cryptoItem?.descriptionCurrency ?: "",
             baseAsset = uiState.cryptoItem?.asset ?: "",
             url_image = uiState.cryptoItem?.url_image ?: "",
@@ -191,8 +208,10 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
             is UIEvent.OnNavigateToSelectAccount -> onNavigateToSelectAccount()
             is UIEvent.OnDisclaimerChecked -> onDisclaimerChecked(event.checked)
             is UIEvent.OnUpdateShouldShowDisclaimer -> updateShouldShowDisclaimer(event.checked)
-            is UIEvent.OnShowDisclaimer -> uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded))
-            is UIEvent.OnHideDisclaimer -> uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Hidden))
+            is UIEvent.OnShowDisclaimer -> uiState =
+                uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded))
+            is UIEvent.OnHideDisclaimer -> uiState =
+                uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Hidden))
             is UIEvent.OnNavigateToSendCrypto -> onNavigateToSendCrypto()
             is UIEvent.OnNavigateToSellCrypto -> onNavigateToSellCrypto()
         }
@@ -226,7 +245,8 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
         val shouldDisplayDisclaimer: Boolean = true,
         val dontShowAgainChecked: Boolean = false,
         val bottomSheetVisibleState: ModalBottomSheetState = ModalBottomSheetState(
-            ModalBottomSheetValue.Hidden),
+            ModalBottomSheetValue.Hidden
+        ),
         val isCryptoTransferEnabled: Boolean = false,
     )
 

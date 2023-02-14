@@ -16,7 +16,7 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.crypto.GetCurrencyHistoricalPricesUseCase
 import com.multimoney.domain.interaction.crypto.GetCurrencyNewsUseCase
 import com.multimoney.domain.model.accountsmart.SmartAccountSmall
-import com.multimoney.domain.model.balance.Account
+import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.crypto.CryptoNewsFeed
 import com.multimoney.domain.model.crypto.CurrencyHistoricPrice
 import com.multimoney.domain.model.crypto.MarketCryptoCoin
@@ -31,6 +31,7 @@ import com.multimoney.multimoney.presentation.navigation.DESCRIPTION_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNTS_LIST
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.USER_CRYPTO_BALANCES
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
@@ -59,6 +60,8 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
         private set
 
     private var smartAccounts :List<SmartAccountSmall>? = null
+    private var userCryptoBalances: List<BalanceCryptoAccountItems>? = null
+
     //stateless
     val defaultDialogParameters = DialogParameters(descriptionResource = R.string.something_went_wrong)
 
@@ -69,6 +72,8 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
             idBrand = savedStateHandle[ID_BRAND]
         )
         smartAccounts =  savedStateHandle.get<Array<SmartAccountSmall>>(SMART_ACCOUNTS_LIST)?.toList()
+        userCryptoBalances =
+            savedStateHandle.get<Array<BalanceCryptoAccountItems>>(USER_CRYPTO_BALANCES)?.toList()
         viewModelScope.launch {
             uiState = uiState.copy(
                 shouldDisplayDisclaimer = dataStorePreferences.isVolatileDialogVisible().first(),
@@ -171,15 +176,19 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
     }
 
     private fun onNavigateToSelectAccount(){
-        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${encodeData(smartAccounts)}?$ITEM_CRYPTO_MARKET=${encodeData(uiState.selectedCryptoCoin)}")
+        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${encodeData(smartAccounts)}/${Screen.CryptoCurrencyDetailsScreen.baseRoute}?$ITEM_CRYPTO_MARKET=${encodeData(uiState.selectedCryptoCoin)}")
     }
 
     private fun onNavigateToSellCrypto(){
-        navigateTo("${Screen.CryptoSellFlow.baseRoute}?$ITEM_CRYPTO_MARKET=${encodeData(uiState.selectedCryptoCoin)}")
+        navigateTo("${Screen.CryptoSellFlow.baseRoute}/${encodeData(smartAccounts)}/${encodeData(userCryptoBalances)}?$ITEM_CRYPTO_MARKET=${encodeData(uiState.selectedCryptoCoin)}")
     }
 
     private fun onNavigateToCryptoSendFlow() {
         navigateTo("${Screen.CryptoSendFlow.baseRoute}?$CRYPTO_ASSET=${uiState.selectedCryptoCoin?.baseAsset}&$DESCRIPTION_CURRENCY=${uiState.selectedCryptoCoin?.description}")
+    }
+
+    private fun onNavigateToCryptoReceiveFlow() {
+        navigateTo("${Screen.CryptoReceiveFlowScreen.baseRoute}/${uiState.user}/${uiState.idBrand}?$ITEM_CRYPTO_MARKET=${encodeData(uiState.selectedCryptoCoin)}")
     }
 
     data class UiState(
@@ -217,6 +226,7 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
             )
             is UIEvent.OnNavigateToSelectAccount -> onNavigateToSelectAccount()
             is UIEvent.OnNavigateToSellCrypto -> onNavigateToSellCrypto()
+            is UIEvent.OnNavigateToReceiveCrypto -> onNavigateToCryptoReceiveFlow()
             is UIEvent.OnDisclaimerChecked -> onDisclaimerChecked(event.checked)
             is UIEvent.OnUpdateShouldShowDisclaimer -> updateShouldShowDisclaimer(event.checked)
             is UIEvent.OnShowDisclaimer -> uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded))
@@ -250,6 +260,7 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
         object OnHideDisclaimer : UIEvent()
         object OnNavigateToCryptoSendFlow : UIEvent()
         object OnNavigateToSellCrypto : UIEvent()
+        object OnNavigateToReceiveCrypto : UIEvent()
     }
 }
 

@@ -99,6 +99,7 @@ const val TRANSFER_TYPE = "transfer_type"
 const val ORIGIN_ACCOUNT = "origin_account"
 const val DESTINY_ACCOUNT = "destiny_account"
 const val SMART_ACCOUNTS_LIST = "smart_accounts_list"
+const val USER_CRYPTO_BALANCES = "user_crypto_balances"
 const val SMART_ACCOUNTS_ID_LIST = "smart_id_list"
 const val SMART_ACCOUNT = "smart_account"
 const val SECOND_SMART_ACCOUNT = "second_smart_account"
@@ -122,13 +123,9 @@ const val STATUS_CRYPTO = "status_crypto"
 const val CARD_STATUS = "card_status"
 const val CRYPTO_ASSET = "asset"
 const val DESCRIPTION_CURRENCY = "description_currency"
-const val CURRENT_CRYPTO_PRICE = "current_crypto_price"
-const val URL_IMAGE = "url_image"
 const val CONTACTS = "contacts"
 const val USER_DATA = "user_data"
 const val PROFILE_CARD_LIST_ORIGIN = "profile_card_list_origin"
-const val SMART_ACCOUNTS_FOR_BUY_CRYPTO = "smart_accounts_for_buy_crypto"
-const val CURRENCY_NAME = "currency_name"
 const val CROSSELING = "crosseling"
 const val OTP_METHOD = "otp_method"
 
@@ -369,12 +366,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object VisaVerifyDepositScreen : Screen(
-        "visa_verify_deposit_screen?$IDENTIFICATION={$IDENTIFICATION}?$ID_CARD={$ID_CARD}?$USER={$USER}?$ID_BRAND={$ID_BRAND}",
+        "visa_verify_deposit_screen?$IDENTIFICATION={$IDENTIFICATION}?$ID_CARD={$ID_CARD}?$USER={$USER}?$ID_BRAND={$ID_BRAND}?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}",
         "visa_verify_deposit_screen"
     )
 
-    object VisaVerifiedScreen : Screen(
-        "visa_verified_screen",
+    object VisaVerifyInformationScreen : Screen(
+        "visa_verified_screen?$IDENTIFICATION={$IDENTIFICATION}?$ID_CARD={$ID_CARD}?$USER={$USER}?$ID_BRAND={$ID_BRAND}?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}",
         "visa_verified_screen"
     )
 
@@ -467,7 +464,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // Smart
     object SmartScreen : Screen(
-        "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$FIRST_NAME}/{$LAST_NAME}/{$ONFIDO_STATUS}/{$COMING_FROM_CRYPTO}/{$ID_GLOBAL_REQUEST}",
+        "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$FIRST_NAME}/{$LAST_NAME}/{$COMING_FROM_CRYPTO}/{$ID_GLOBAL_REQUEST}",
         "smart_screen"
     )
 
@@ -629,34 +626,38 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object ChartScreen : Screen("chart_screen/{$}")
 
     // Crypto
-    // todo add params
     object PurchaseCryptoFlow : Screen(
-        route = "purchase_crypto_flow/{$SMART_ACCOUNTS_LIST}?$ITEM_CRYPTO_MARKET={$ITEM_CRYPTO_MARKET}",
+        route = "purchase_crypto_flow/{$SMART_ACCOUNTS_LIST}/{$PREVIOUS_SCREEN}?$ITEM_CRYPTO_MARKET={$ITEM_CRYPTO_MARKET}",
         baseRoute = "purchase_crypto_flow"
     )
 
     object CryptoWalletScreen : Screen(
-        "crypto_wallet_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$GLOBAL_CRYPTO_BALANCE}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$STATUS_CREDIT}/{$STATUS_SMART}/{$STATUS_CRYPTO}/{$CARD_STATUS}/{$SMART_ACCOUNTS_LIST}",
+        "crypto_wallet_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$GLOBAL_CRYPTO_BALANCE}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$STATUS_CREDIT}/{$STATUS_SMART}/{$STATUS_CRYPTO}/{$CARD_STATUS}/{$SMART_ACCOUNTS_LIST}/{$USER_CRYPTO_BALANCES}",
         "crypto_wallet_screen"
     )
 
-    object CryptoCurrencyMovementsScreen : Screen(
-        "crypto_currency_movements_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}/{$ITEM_CRYPTO_CURRENCY}/{$SMART_ACCOUNTS_LIST}",
+    object CryptoHomeAllMovementsScreen : Screen(
+        "crypto_home_movements_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}",
+        "crypto_home_movements_screen"
+    )
+
+    object CryptoCurrencyDetailsAllMovementsScreen : Screen(
+        "crypto_currency_movements_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}?$CRYPTO_ASSET={$CRYPTO_ASSET}",
         "crypto_currency_movements_screen"
     )
 
     object CryptoMarketScreen : Screen(
-        "crypto_market_screen/{$USER}/{$ID_BRAND}/{$SMART_ACCOUNTS_LIST}",
+        "crypto_market_screen/{$USER}/{$ID_BRAND}/{$SMART_ACCOUNTS_LIST}/{$USER_CRYPTO_BALANCES}",
         "crypto_market_screen"
     )
 
-    object CryptoMovementsAllScreen : Screen(
-        "crypto_movements_all_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}/{$PREVIOUS_SCREEN}?$CRYPTO_ASSET={$CRYPTO_ASSET}",
-        "crypto_movements_all_screen"
+    object CryptoWalletDetailsScreen : Screen(
+        "crypto_wallet_details_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}/{$ITEM_CRYPTO_CURRENCY}/{$SMART_ACCOUNTS_LIST}/{$USER_CRYPTO_BALANCES}",
+        "crypto_wallet_details_screen"
     )
 
     object CryptoCurrencyDetailsScreen : Screen(
-        "crypto_currency_details_screen/{$USER}/{$ID_BRAND}/{$ITEM_CRYPTO_MARKET}/{$SMART_ACCOUNTS_LIST}",
+        "crypto_currency_details_screen/{$USER}/{$ID_BRAND}/{$ITEM_CRYPTO_MARKET}/{$SMART_ACCOUNTS_LIST}/{$USER_CRYPTO_BALANCES}",
         "crypto_currency_details_screen"
     )
 
@@ -666,9 +667,16 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object CryptoSellFlow : Screen(
-        route = "crypto_sell_flow?$ITEM_CRYPTO_MARKET={$ITEM_CRYPTO_MARKET}",
+        route = "crypto_sell_flow/{$SMART_ACCOUNTS_LIST}/{$USER_CRYPTO_BALANCES}?$ITEM_CRYPTO_MARKET={$ITEM_CRYPTO_MARKET}",
         baseRoute = "crypto_sell_flow"
     )
 
+    object MaintenanceAlertScreen : Screen(route = "maintenance_alert_screen")
+
     object QrCodeScannerScreen : Screen(route = "qr_code_scanner_screen")
+
+    object CryptoReceiveFlowScreen : Screen(
+        route = "crypto_receive_flow/{$USER}/{$ID_BRAND}?$ITEM_CRYPTO_MARKET={$ITEM_CRYPTO_MARKET}",
+        baseRoute = "crypto_receive_flow"
+    )
 }

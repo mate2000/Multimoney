@@ -1085,6 +1085,9 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToSendCryptoFlow() {
         navigateTo(Screen.CryptoSendFlow.baseRoute)
     }
+    private fun onNavigateToGiveCryptoFlow() {
+        navigateTo("${Screen.CryptoReceiveFlowScreen.baseRoute}/${userName}/${uiState.idBrand}")
+    }
 
     private fun getSmartContent() {
         val workflow = uiState.userStatus?.infoBankAccount?.wording?.workflow
@@ -1240,6 +1243,7 @@ class ProductViewModel @Inject constructor(
             is UIEvent.OnNavigateToPurchaseCryptoFlow -> onNavigateToPurchaseCryptoFlow()
             is UIEvent.OnNavigateToSellCryptoFlow -> onNavigateToSellCryptoFlow()
             is UIEvent.OnNavigateToSendCryptoFlow -> onNavigateToSendCryptoFlow()
+            is UIEvent.OnNavigateToGiveCryptoFlow -> onNavigateToGiveCryptoFlow()
             is OnVisaCardExpiredDialog -> onVisaCardExpiredDialog(
                 idBrand = uiEvent.idBrand,
                 balance = uiEvent.balance
@@ -1302,6 +1306,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToPurchaseCryptoFlow : UIEvent()
         object OnNavigateToSellCryptoFlow : UIEvent()
         object OnNavigateToSendCryptoFlow : UIEvent()
+        object OnNavigateToGiveCryptoFlow : UIEvent()
         object OnGetSmartContent : UIEvent()
 
         data class OnSetUserData(

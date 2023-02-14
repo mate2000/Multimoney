@@ -1603,6 +1603,10 @@
     <string name="crypto_send_address_verify_crypto_address_description" translatable="false"> Asegurate que la dirección es la correcta. En caso de que lo enviés a una dirección incorrecta no podrás recuperar el dinero</string>
     <string name="crypto_send_address_wallet_doesnt_accept" translatable="false">Esta billetera no recibe %s</string>
 
+    <!-- Crypto list currencies for receive -->
+    <string name="crypt_list_receive_title" translatable="false">¿Cuál moneda querés recibir?</string>
+    <string name="crypt_all_chip_label" translatable="false">Todas</string>
+
     <!-- Registeres User Email -->
     <string name="registered_user_email_title" translatable="false">Tenemos tu correo  %s registrado en MultiMoney</string>
     <string name="registered_user_email_subtitle" translatable="false">Ingresá el correo electrónico completo para verificar que sos vos.</string>

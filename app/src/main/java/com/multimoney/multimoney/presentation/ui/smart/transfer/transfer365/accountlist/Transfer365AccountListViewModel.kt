@@ -112,7 +112,8 @@ class Transfer365AccountListViewModel @Inject constructor(
             bankId = account?.idBank.toString(),
             bankName = account?.destinationBankDescription.orEmpty(),
             accountTypeId = account?.idTypeAccount.toString(),
-            isFavorite = account?.isFavorite == true
+            isFavorite = account?.isFavorite == true,
+            destinationType = account?.identificationTypeAccount.toString()
         )
         navigateTo(
             "${Screen.SmartTransfer365EditAmountScreen.baseRoute}/${

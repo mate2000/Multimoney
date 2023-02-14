@@ -13,7 +13,8 @@ private fun ACHTransferFavoriteListQuery.Result.mapToDomainModel() = ACHAccount(
     destinationAccountCurrency = destinationAccountCurrency,
     idBank = idBank.toString().toIntOrNull(),
     idTypeAccount = idTypeAccount.toString().toIntOrNull(),
-    isFavorite = isFavorite
+    isFavorite = isFavorite,
+    identificationTypeAccount = identificationTypeAccount.toString().toIntOrNull()
 )
 
 private fun ACHTransferFavoriteListQuery.ACHTransferFavoriteList.mapToDomainModel() =

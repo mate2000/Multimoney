@@ -308,7 +308,7 @@ class SmartAdd365AccountViewModel @Inject constructor(
                 destinationBankId = uiState.bank?.bankId?.toInt() ?: 0,
                 description = if (uiState.isFavorite) uiState.nickname.ifEmpty { fullName } else fullName,
                 identificationNumber = identification,
-                identificationTypeAccount = uiState.document?.idDocument ?: 0,
+                identificationTypeAccount = uiState.document?.value?.toIntOrNull() ?: 0,
                 destinationCurrencyId = CurrencyType.Dollar.id,
                 document = uiState.documentNumber
             ).collectLatest { result ->
@@ -322,7 +322,7 @@ class SmartAdd365AccountViewModel @Inject constructor(
                         accountTypeId = account?.idTypeAccount?.toString() ?: uiState.type?.typeId.toString(),
                         isFavorite = account?.isFavorite ?: uiState.isFavorite,
                         identification = uiState.documentNumber,
-                        destinationType = uiState.document?.value
+                        destinationType = account?.identificationTypeAccount?.toString().takeIf { it != "0" } ?: uiState.document?.value
                     )
                     navigateTo(
                         "${Screen.SmartTransfer365EditAmountScreen.baseRoute}/${

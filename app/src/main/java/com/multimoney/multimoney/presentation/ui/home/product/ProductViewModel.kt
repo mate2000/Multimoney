@@ -56,7 +56,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUES
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
-import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ORIGIN
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.BaseEvent.OnShowCardIssuanceError
@@ -104,7 +103,6 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.ProfileCardListOrigin
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
-import com.multimoney.multimoney.presentation.util.catalog.SignDocumentOrigin
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
@@ -289,12 +287,6 @@ class ProductViewModel @Inject constructor(
                             )
                             .plus(
                                 getNavParam(
-                                    SIGN_DOCUMENT_ORIGIN,
-                                    SignDocumentOrigin.Product.value
-                                )
-                            )
-                            .plus(
-                                getNavParam(
                                     SIGN_DOCUMENT_ID_PRINT,
                                     uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0
                                 )
@@ -325,7 +317,6 @@ class ProductViewModel @Inject constructor(
                                 SignDocumentStep.GENERATE_DOCUMENT_STEP.value
                             )
                         )
-                        .plus(getNavParam(SIGN_DOCUMENT_ORIGIN, SignDocumentOrigin.Product.value))
                         .plus(
                             getNavParam(
                                 SIGN_DOCUMENT_ID_PRINT,
@@ -569,7 +560,7 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToCryptoMovements() {
-        navigateTo("${Screen.CryptoMovementsAllScreen.baseRoute}/${uiState.idBrand}/$identification/$email/${Screen.HomeScreen.route}")
+        navigateTo("${Screen.CryptoHomeAllMovementsScreen.baseRoute}/${uiState.idBrand}/$identification/$email")
     }
 
     private fun openWhatsAppLink(context: Context, whatsAppLink: String) {
@@ -1048,12 +1039,12 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToPurchaseCryptoFlow() {
-        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${encodeData(balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType())}")
+        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${encodeData(balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType())}/${Screen.HomeScreen.route}")
     }
 
     private fun onNavigateToSellCryptoFlow() {
         navigateTo(
-            "${Screen.CryptoSellFlow.baseRoute}/${encodeData(balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType())}/${
+            "${Screen.CryptoSellFlow.baseRoute}/${Screen.HomeScreen.route}/${encodeData(balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType())}/${
                 encodeData(
                     balanceCredit?.balanceCryptoAccount?.items
                 )
@@ -1063,6 +1054,9 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToSendCryptoFlow() {
         navigateTo(Screen.CryptoSendFlow.baseRoute)
+    }
+    private fun onNavigateToGiveCryptoFlow() {
+        navigateTo("${Screen.CryptoReceiveFlowScreen.baseRoute}/${userName}/${uiState.idBrand}")
     }
 
     private fun getSmartContent() {
@@ -1219,6 +1213,7 @@ class ProductViewModel @Inject constructor(
             is UIEvent.OnNavigateToPurchaseCryptoFlow -> onNavigateToPurchaseCryptoFlow()
             is UIEvent.OnNavigateToSellCryptoFlow -> onNavigateToSellCryptoFlow()
             is UIEvent.OnNavigateToSendCryptoFlow -> onNavigateToSendCryptoFlow()
+            is UIEvent.OnNavigateToGiveCryptoFlow -> onNavigateToGiveCryptoFlow()
             is OnVisaCardExpiredDialog -> onVisaCardExpiredDialog(
                 idBrand = uiEvent.idBrand,
                 balance = uiEvent.balance
@@ -1280,6 +1275,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToPurchaseCryptoFlow : UIEvent()
         object OnNavigateToSellCryptoFlow : UIEvent()
         object OnNavigateToSendCryptoFlow : UIEvent()
+        object OnNavigateToGiveCryptoFlow : UIEvent()
         object OnGetSmartContent : UIEvent()
 
         data class OnSetUserData(

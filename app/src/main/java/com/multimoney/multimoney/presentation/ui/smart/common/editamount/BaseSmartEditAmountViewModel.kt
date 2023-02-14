@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Rect
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.accountsmart.MutationProcessSinpeTransferUseCase
 import com.multimoney.domain.interaction.accountsmart.QuerySmartExchangeRateUseCase
 import com.multimoney.domain.model.accountsmart.IbanAccountID
@@ -386,7 +387,11 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
         amountUIState = amountUIState.copy(
             openDialog = DialogParameters(
                 titleResource = R.string.smart_iban_transfer_abandon_dialog_title,
-                descriptionResource = R.string.smart_iban_transfer_abandon_dialog_message,
+                descriptionResource = if (idBrand == Brand.CostaRica.id) {
+                    R.string.smart_transfer_abandon_dialog_message_cr
+                } else {
+                    R.string.smart_transfer_abandon_dialog_message_sv
+                },
                 isActive = mutableStateOf(true),
                 positiveResource = R.string.cancel,
                 negativeResource = R.string.button_continue,

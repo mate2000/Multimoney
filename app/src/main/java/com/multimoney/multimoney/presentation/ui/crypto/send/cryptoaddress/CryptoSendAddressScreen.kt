@@ -150,7 +150,9 @@ fun CryptoSendAddressContent(
                 sharedViewModel.uiState.asset
             ),
             value = viewModel.uiState.cryptoAddress.value,
-            onValueChange = { viewModel.uiState.cryptoAddress.value = it },
+            onValueChange = {
+                viewModel.uiState.cryptoAddress.value = it
+                sharedViewModel.uiState.destinationAddress = it },
             trailingIcon = R.drawable.ic_qr_code,
             trailingIconActionEnabled = true,
             trailingIconAction = { onScanCryptoAddressClicked() },
@@ -175,7 +177,11 @@ fun CryptoSendAddressContent(
                 .fillMaxWidth()
                 .height(48.dp),
             onClick = {
-                viewModel.onUIEvent(CryptoSendAddressViewModel.UIEvent.OnContinueButtonClicked)
+                viewModel.onUIEvent(CryptoSendAddressViewModel.UIEvent.OnContinueButtonClicked {
+                    sharedViewModel.onUIEvent(
+                        CryptoSendSharedViewModel.UIEvent.OnNextStep
+                    )
+                })
             },
             enable = viewModel.uiState.cryptoAddress.value.isNotBlank(),
         )

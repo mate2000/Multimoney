@@ -166,6 +166,8 @@ import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCas
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetPriceQuoteAndCommissionUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetPriceQuoteAndCommissionsUseCase
+import com.multimoney.domain.interaction.crypto.GetTransferCommissionUseCase
+import com.multimoney.domain.interaction.crypto.GetTransferCommissionUseCaseImpl
 import com.multimoney.domain.interaction.crypto.SellCryptoCurrencyUseCase
 import com.multimoney.domain.interaction.crypto.SellCryptoCurrencyUseCaseImpl
 import com.multimoney.domain.interaction.crypto.ValidateDepositAddressUseCase
@@ -885,4 +887,9 @@ class InteractionModule {
     @Singleton
     fun provideQueryACHTransferFavoriteListUseCase(smartAccountRepository: SmartAccountRepository): QueryACHTransferFavoriteListUseCase =
         QueryACHTransferFavoriteListUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryTransferCommissionUseCase(cryptoRepository: CryptoRepository): GetTransferCommissionUseCase =
+        GetTransferCommissionUseCaseImpl(cryptoRepository)
 }

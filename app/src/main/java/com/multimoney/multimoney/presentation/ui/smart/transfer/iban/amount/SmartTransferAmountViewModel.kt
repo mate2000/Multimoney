@@ -55,7 +55,7 @@ class SmartTransferAmountViewModel @Inject constructor() : BaseSmartEditAmountVi
                     R.string.smart_colon_placeholder
                 },
                 totalBalance = smartAccount?.totalBalance,
-                maxAmount = limits?.find { a -> a?.code == destinyCurrency?.id.toString() }?.amount
+                maxAmount = limits?.find { limit -> limit?.code == destinyCurrency?.id.toString() }?.amount
             )
             fromSmartLabel = if (originCurrency == CurrencyType.Colon) {
                 R.string.smart_iban_transfer_smart_account_colon

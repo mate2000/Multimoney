@@ -53,7 +53,7 @@ class OwnTransferAmountViewModel @Inject constructor() : BaseSmartEditAmountView
                     R.string.smart_colon_placeholder
                 },
                 totalBalance = smartAccount?.totalBalance,
-                maxAmount = limits?.find { a -> a?.code == destinyCurrency?.id.toString() }?.amount
+                maxAmount = limits?.find { limit -> limit?.code == destinyCurrency?.id.toString() }?.amount
             )
 
             fromSmartLabel = if (originCurrency == CurrencyType.Colon) {

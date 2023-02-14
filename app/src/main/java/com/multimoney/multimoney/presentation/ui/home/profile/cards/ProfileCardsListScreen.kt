@@ -4,15 +4,10 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -32,13 +27,15 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnHideToast
+import com.multimoney.multimoney.presentation.uielement.CardListDetail
+import com.multimoney.multimoney.presentation.uielement.CustomButton
+import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomImage
-import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnHideToast
 
 @Composable
 fun ProfileCardsListScreen(
@@ -119,7 +116,13 @@ fun ProfileCardsListContent(
     ProfileCardEditBottomSheet(
         coroutineScope = coroutineScope,
         modalBottomSheetState = viewModel.uiState.bottomSheetVisibleState,
-        onEditClick = { viewModel.onUIEvent(ProfileCardListViewModel.UIEvent.OnEditCard(it)) },
+        onEditClick = {
+            if (it?.verified == true) {
+                viewModel.onUIEvent(ProfileCardListViewModel.UIEvent.OnEditCard(it))
+            } else {
+                viewModel.onUIEvent(ProfileCardListViewModel.UIEvent.OnNavigateToVerifyCard)
+            }
+        },
         onDeleteClick = { viewModel.onUIEvent(ProfileCardListViewModel.UIEvent.OnDeleteCard(it)) },
         card = viewModel.uiState.cardVDSelected
     )
@@ -162,26 +165,36 @@ fun ProfileCardListEmptyState(
 fun ProfileCardList(
     viewModel: ProfileCardListViewModel = hiltViewModel()
 ) {
-    viewModel.uiState.cardVDList?.let { clientBankAccountList ->
-        LazyColumn(modifier = Modifier.padding(top = 32.dp, start = 16.dp, end = 16.dp)) {
-            items(clientBankAccountList) { card ->
-                CustomInfoButton(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    imageModifier = Modifier.size(48.dp),
-                    startIcon = R.drawable.ic_visa_card_item,
-                    title = card?.detail ?: "",
-                    subtitle = stringResource(
-                        id = string.visa_card_masked_number,
-                        card?.cardMaskedNumber?.takeLast(4) ?: 0
-                    ),
-                    endIcon = R.drawable.ic_option_points,
-                    onEndIconClick = {
-                        viewModel.onUIEvent(ProfileCardListViewModel.UIEvent.OnCardThreePointsSelected(card))
-                    }
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-            }
+    val context = LocalContext.current
+
+    viewModel.uiState.cardVDListVerified?.let { cardList ->
+        if (cardList.isNotEmpty()) {
+            CardListDetail(
+                titleResource = string.payment_cards_verified_list_title,
+                listItems = cardList,
+                onEndIconClick = { card -> viewModel.onUIEvent(ProfileCardListViewModel.UIEvent.OnCardThreePointsSelected(card)) }
+            )
         }
     }
+    viewModel.uiState.cardVDListNotVerified?.let { cardList ->
+        if (cardList.isNotEmpty()) {
+            CardListDetail(
+                titleResource = string.payment_cards_not_verified_list_title,
+                listItems = cardList,
+                onEndIconClick = { card -> viewModel.onUIEvent(ProfileCardListViewModel.UIEvent.OnCardThreePointsSelected(card)) },
+                requireIcon = true
+            )
+        }
+    }
+    CustomButton(
+        text = stringResource(id = string.payment_cards_list_create),
+        modifier = Modifier
+            .padding(top = 28.dp)
+            .fillMaxWidth(),
+        onClick = {
+            Toast.makeText(context, "TBD", Toast.LENGTH_SHORT).show()
+        },
+        buttonType = CustomButtonType.PrimaryTertiary,
+        trailingIcon = R.drawable.ic_plus
+    )
 }

@@ -38,7 +38,6 @@ class Transfer365AmountViewModel @Inject constructor(
 
     // stateless
     var fromSmartLabel: Int = R.string.transfer_365_amount_from_label
-    var totalBalanceLabel: String = ""
     var transfer365Account = Transfer365Account()
 
     override fun onStart() {
@@ -67,9 +66,8 @@ class Transfer365AmountViewModel @Inject constructor(
                     R.string.empty
                 },
                 totalBalance = smartAccount?.totalBalance,
-                maxAmount = limits?.find { a -> a?.code == destinyCurrency?.id.toString() }?.amount
+                maxAmount = limits?.find { limit -> limit?.code == originCurrency?.id.toString() }?.amount
             )
-            totalBalanceLabel = amountUIState.currency + smartAccount?.totalBalance.toString()
             val destinationInfo = when (transferType) {
                 SmartTransferTypes.SmartToMobile.id -> {
                     transfer365Account.phone

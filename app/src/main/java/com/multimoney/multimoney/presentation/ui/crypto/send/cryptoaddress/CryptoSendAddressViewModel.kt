@@ -84,13 +84,14 @@ class CryptoSendAddressViewModel @Inject constructor(
                 idBrand = uiState.idBrand ?: 0,
                 market = market,
                 address = uiState.cryptoAddress.value
-                ).collectLatest { result ->
+            ).collectLatest { result ->
                 result.onSuccess { validateDepositAddress ->
-                    if (validateDepositAddress.status != null && validateDepositAddress.status == 0) {
+                    if (validateDepositAddress.result != null) {
                         onNextStep()
                     } else {
                         uiState = uiState.copy(showTextInputError = true)
                     }
+                    uiState = uiState.copy(isLoading = false)
                 }
                 result.onFailure {
                     onFailure(it)
@@ -122,6 +123,16 @@ class CryptoSendAddressViewModel @Inject constructor(
 
     private fun onGetQrCodeFromSavedState(qrCodeResult: String) {
         uiState = uiState.copy(cryptoAddress = mutableStateOf(qrCodeResult))
+        if (qrCodeResult.isNotBlank()) {
+            validateCryptoAddress {}
+        }
+    }
+
+    private fun onCryptoAddressChanged(cryptoAddress: String) {
+        uiState = uiState.copy(
+            cryptoAddress = mutableStateOf(cryptoAddress),
+            showTextInputError = false
+        )
     }
 
     fun onUIEvent(event: UIEvent) {
@@ -135,6 +146,8 @@ class CryptoSendAddressViewModel @Inject constructor(
                 event.identification,
                 event.market
             )
+            is UIEvent.OnCryptoAddressChanged -> onCryptoAddressChanged(event.cryptoAddress)
+            is UIEvent.OnValidateCryptoAddress -> validateCryptoAddress() {}
         }
     }
 
@@ -169,6 +182,8 @@ class CryptoSendAddressViewModel @Inject constructor(
             val market: String
         ) : UIEvent
 
+        data class OnCryptoAddressChanged(val cryptoAddress: String) : UIEvent
+        data class OnValidateCryptoAddress(val cryptoAddress: String) : UIEvent
         object GetNotShowAgainCryptoAddressFromSharedPref : UIEvent
     }
 }

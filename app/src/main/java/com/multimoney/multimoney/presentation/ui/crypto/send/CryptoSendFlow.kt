@@ -3,6 +3,7 @@ package com.multimoney.multimoney.presentation.ui.crypto.send
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -48,18 +49,14 @@ fun CryptoSendFlow(
         Column {
             TopNavBar(
                 isLeftButtonVisible = true,
-                isRightButtonVisible = true,
-                onRightButtonClick = {
-                    viewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnCloseClick)
-                },
+                isRightButtonVisible = false,
                 onLeftButtonClick = {
                     viewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnPreviousStep)
                 },
             )
         }
-        Column(
+        Box(
             modifier = Modifier.weight(0.1f),
-            verticalArrangement = Arrangement.SpaceBetween
         ) {
             when (viewModel.idBrand) {
                 Brand.ElSalvador.id -> {
@@ -88,20 +85,7 @@ fun CryptoSendFlow(
 
     LoadingIndicator(viewModel.uiState.isLoading)
     BackHandler {
-        viewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnCloseClick)
-    }
-
-    if (viewModel.uiState.openDialog.isActive.value) {
-        CustomDialog(
-            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
-            message = viewModel.uiState.openDialog.description.ifBlank {
-                stringResource(viewModel.uiState.openDialog.descriptionResource)
-            },
-            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
-            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
-            openDialogCustom = viewModel.uiState.openDialog.isActive,
-            onPositiveAction = viewModel.uiState.openDialog.positiveAction
-        )
+        viewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnPreviousStep)
     }
 }
 
@@ -121,7 +105,9 @@ fun CRSendCryptoDirectFlow(
             )
         }
         CryptoSendSteps.Two.pageNumber -> {
-            /*TODO*/
+            CryptoSendAmountScreen(
+                sharedViewModel = viewModel
+            )
         }
         CryptoSendSteps.Three.pageNumber -> {
             /* TODO: Voucher Screen */

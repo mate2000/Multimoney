@@ -12,6 +12,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -33,6 +36,13 @@ import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 
 @Preview
 @Composable
@@ -101,12 +111,29 @@ fun CryptoSendAddressScreen(
     }
 }
 
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @Composable
 fun CryptoSendAddressContent(
     viewModel: CryptoSendAddressViewModel,
     sharedViewModel: CryptoSendSharedViewModel,
     onScanCryptoAddressClicked: () -> Unit,
 ) {
+    val textDebounce = remember { MutableStateFlow("") }
+    val textDebounceFlow: Flow<String> = remember {
+        textDebounce.debounce(1000L)
+            .flatMapLatest {
+                if (it.isNotBlank()) {
+                    viewModel.onUIEvent(
+                        CryptoSendAddressViewModel.UIEvent.OnValidateCryptoAddress(it)
+                    )
+                }
+                flowOf(it)
+            }
+    }
+
+    // This is required to execute the debounce
+    val textDebounceFlowValue by textDebounceFlow.collectAsState("")
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -144,15 +171,19 @@ fun CryptoSendAddressContent(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Done
             ),
-            keyboardActions = KeyboardActions(onDone = { /*TODO*/ }),
+            keyboardActions = KeyboardActions(onDone = {
+                viewModel.onUIEvent(CryptoSendAddressViewModel.UIEvent.OnContinueButtonClicked {})
+            }),
             labelText = stringResource(
                 id = R.string.crypto_send_address_receiver,
                 sharedViewModel.uiState.asset
             ),
             value = viewModel.uiState.cryptoAddress.value,
             onValueChange = {
-                viewModel.uiState.cryptoAddress.value = it
-                sharedViewModel.uiState.destinationAddress = it },
+                viewModel.onUIEvent(CryptoSendAddressViewModel.UIEvent.OnCryptoAddressChanged(it))
+                textDebounce.value = it
+                sharedViewModel.uiState.destinationAddress = it
+            },
             trailingIcon = R.drawable.ic_qr_code,
             trailingIconActionEnabled = true,
             trailingIconAction = { onScanCryptoAddressClicked() },
@@ -162,9 +193,13 @@ fun CryptoSendAddressContent(
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.crypto_send_address_required),
             singleLine = false,
+            maxLines = 2,
             isError = viewModel.uiState.showTextInputError,
             errorMessage = if (viewModel.uiState.showTextInputError) {
-                stringResource(id = R.string.crypto_send_address_wallet_doesnt_accept, sharedViewModel.uiState.asset)
+                stringResource(
+                    id = R.string.crypto_send_address_wallet_doesnt_accept,
+                    sharedViewModel.uiState.asset
+                )
             } else {
                 null
             },

@@ -47,7 +47,7 @@ fun ChangePhoneScreen(
         viewModel.onUIEvent(ChangePhoneViewModel.UIEvent.OnNavigateBack)
     }
     val focusManager = LocalFocusManager.current
-    val selectedCountry = getLibCountries().first {
+    val selectedCountry = getLibCountries.first {
         it.countryCode == viewModel.uiState.countryCode
     }
     viewModel.onUIEvent(ChangePhoneViewModel.UIEvent.OnStart(phoneCode = selectedCountry.countryPhoneCode))
@@ -56,7 +56,9 @@ fun ChangePhoneScreen(
 
 @Composable
 private fun ChangePhoneScreenContent(
-    viewModel: ChangePhoneViewModel, selectedCountry: CountryData, focusManager: FocusManager
+    viewModel: ChangePhoneViewModel,
+    selectedCountry: CountryData,
+    focusManager: FocusManager
 ) {
     ConstraintLayout(
         modifier = Modifier
@@ -100,7 +102,7 @@ private fun ChangePhoneScreenContent(
                     viewModel.onUIEvent(
                         ChangePhoneViewModel.UIEvent.OnUserPhoneValueChanged(
                             phoneNumber = it,
-                            countryCode = viewModel.uiState.countryCode.orEmpty(),
+                            countryCode = viewModel.uiState.countryCode.orEmpty()
                         )
                     )
                 },
@@ -114,18 +116,20 @@ private fun ChangePhoneScreenContent(
                 isRequired = true,
                 isRequiredMessage = stringResource(id = R.string.sign_up_phone_required),
                 isError = viewModel.uiState.phoneNumberError.first,
-                errorMessage = if (viewModel.uiState.phoneNumberError.second == R.string.profile_change_phone_check_format_template)
+                errorMessage = if (viewModel.uiState.phoneNumberError.second == R.string.profile_change_phone_check_format_template) {
                     stringResource(
                         id = R.string.profile_change_phone_check_format_template,
                         viewModel.uiState.phoneNumberTemplateMinimalLength ?: 0
-                    ) else
-                    stringResource(id = viewModel.uiState.phoneNumberError.second),
+                    )
+                } else {
+                    stringResource(id = viewModel.uiState.phoneNumberError.second)
+                },
                 defaultCountry = selectedCountry,
                 pickedCountry = {
                     viewModel.onUIEvent(
                         ChangePhoneViewModel.UIEvent.OnCountryCodeValueChanged(
                             phoneCode = it.countryPhoneCode,
-                            countryCode = it.countryCode,
+                            countryCode = it.countryCode
                         )
                     )
                 }

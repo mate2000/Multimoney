@@ -37,16 +37,16 @@ import javax.inject.Inject
 @HiltViewModel
 class PurchaseCryptoSharedViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val dataStorePreferences: DataStorePreferences,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())
         private set
 
-    //stateless
+    // stateless
     private var currentFlowStep: Int = PurchaseCryptoSteps.One.pageNumber
 
-    //bundle parameters
+    // bundle parameters
     var idBrand = DEFAULT_ID_BRAND_ERROR
     var pkUser = ""
     var user = ""
@@ -57,7 +57,6 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     val side = CryptoOperationSide.BUY.value
     val comingFromDetails: Boolean = marketCryptoCoin != null
     var previousScreen: String = ""
-
 
     private fun setUserData() {
         previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
@@ -77,7 +76,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
                 market = marketCryptoCoin?.baseAsset?.plus(abvCurrency),
                 cryptoNetWork = marketCryptoCoin?.cryptoNetwork,
                 assetImageBaseUrl = marketCryptoCoin?.url_image,
-                shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first(),
+                shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first()
             )
         }
         if (idBrand == Brand.ElSalvador.id) {
@@ -108,7 +107,6 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         )
     }
 
-
     private fun previousStep() {
         if (currentFlowStep == PurchaseCryptoSteps.One.pageNumber) {
             navigateToPreviousScreen()
@@ -130,10 +128,10 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     }
 
     private fun navigateToPreviousScreen() {
-        val screen = when(previousScreen) {
+        val screen = when (previousScreen) {
             Screen.CryptoWalletScreen.baseRoute -> Screen.CryptoWalletScreen.route
             Screen.CryptoCurrencyDetailsScreen.baseRoute -> Screen.CryptoCurrencyDetailsScreen.route
-            Screen.CryptoCurrencyMovementsScreen.baseRoute -> Screen.CryptoCurrencyMovementsScreen.route
+            Screen.CryptoHomeAllMovementsScreen.baseRoute -> Screen.CryptoHomeAllMovementsScreen.route
             else -> Screen.HomeScreen.route
         }
         navigateBack(popTo = screen, isRestart = false)
@@ -187,7 +185,6 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     private fun onDisclaimerChecked(checked: Boolean) {
         uiState = uiState.copy(dontShowAgainChecked = checked)
     }
-
 
     private fun onSetupVoucherDetails(
         quoteAmount: String,

@@ -46,6 +46,7 @@ class Transfer365AmountViewModel @Inject constructor(
             transfer365Account = savedStateHandle[DESTINY_ACCOUNT] ?: Transfer365Account()
             smartAccount = savedStateHandle[ORIGIN_ACCOUNT]
             originCurrency = smartAccount?.currencyID?.getCurrencyFromId() ?: CurrencyType.Dollar
+            destinyCurrency = CurrencyType.Dollar
             if (originCurrency == CurrencyType.All) originCurrency = CurrencyType.Dollar
             shouldDisplayExchange = false
             limits = preferences.getSmartTransferLimit().firstOrNull()
@@ -161,7 +162,7 @@ class Transfer365AmountViewModel @Inject constructor(
     private fun processTransfer365Mobile() {
         executeUseCase {
             processTransfer365MobileUseCase.invoke(
-                identification = transfer365Account.identification,
+                identification = identification,
                 phoneNumber = transfer365Account.phone.orEmpty(),
                 destinationBankId = transfer365Account.bankId,
                 typeAccountId = transfer365Account.accountTypeId,

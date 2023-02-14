@@ -117,7 +117,7 @@ fun PhoneCountryDialog(
             .clickable(
                 interactionSource = interactionSource,
                 indication = null
-            ) { isOpenDialog = true }
+            ) { isOpenDialog = true },
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -129,13 +129,13 @@ fun PhoneCountryDialog(
                 )
             ),
 
-                contentDescription = null
-            )
-            if (showCountryCode) {
-                Text(
-                    text = isPickCountry.countryPhoneCode,
-                    modifier = Modifier.padding(start = 4.dp),
-                    style = Typography.body2.copy(color = textColor)
+            contentDescription = null
+        )
+        if (showCountryCode) {
+            Text(
+                text = isPickCountry.countryPhoneCode,
+                modifier = Modifier.padding(start = 4.dp),
+                style = Typography.body2.copy(color = textColor)
             )
             if (showCountryFlag) {
                 Icon(
@@ -187,7 +187,10 @@ fun PhoneCountryDialog(
                     )
                 }
             ) { paddingValue ->
-                Column(modifier = Modifier.padding(paddingValue).fillMaxSize().background(backgroundColor)) {
+                Column(
+                    modifier = Modifier.padding(paddingValue).fillMaxSize()
+                        .background(backgroundColor)
+                ) {
                     if (isSearch) {
                         searchValue = dialogSearchView(
                             focusedBorderColor = searchBorderColor,
@@ -205,14 +208,14 @@ fun PhoneCountryDialog(
                             getLibCountries as MutableList<CountryData>
                         }
                         items(
-                                if (searchValue.isEmpty()) {
-                                    innerCountryList
-                                } else {
-                                    innerCountryList.searchCountry(
-                                        searchValue,
-                                        context = context
-                                    )
-                                }
+                            if (searchValue.isEmpty()) {
+                                innerCountryList
+                            } else {
+                                innerCountryList.searchCountry(
+                                    searchValue,
+                                    context = context
+                                )
+                            }
                         ) { countryItem ->
                             Row(
                                 Modifier

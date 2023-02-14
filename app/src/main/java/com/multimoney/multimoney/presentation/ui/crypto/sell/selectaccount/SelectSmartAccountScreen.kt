@@ -22,6 +22,7 @@ import com.multimoney.domain.model.balance.Account
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.sell.SellCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.ui.home.profile.accounts.MyAccountsSkeleton
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
@@ -53,15 +54,6 @@ fun SelectSmartAccountScreen(
     BackHandler { sharedViewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnPreviousStep) }
 
     SelectSmartAccountContent(viewModel, sharedViewModel) { account ->
-        sharedViewModel.onUIEvent(
-            SellCryptoSharedViewModel.UIEvent.OnSetSelectedAccount(
-                totalBalance = account.totalBalance ?: 0.0,
-                idCurrency = account.idCurrencyAccount ?: CurrencyType.Dollar.id,
-                accountToken = account.accountToken,
-                accountNumber = account.accountNumber,
-                ibanAccountNumber = account.ibanAccountNumber,
-            )
-        )
         if (!sharedViewModel.uiState.shouldDisplayDisclaimer) {
             sharedViewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnNextStep)
         }
@@ -104,10 +96,13 @@ fun SelectSmartAccountContent(
                             account.currencyCode ?: ""
                         ),
                         onClick = {
-                            viewModel.onUIEvent(
-                                SelectSmartAccountViewModel.UIEvent.OnUpdateValues(
-                                    account.accountToken,
-                                    account.totalBalance ?: 0.0
+                            sharedViewModel.onUIEvent(
+                                SellCryptoSharedViewModel.UIEvent.OnSetSelectedAccount(
+                                    smartAccountAvailableBalance = account.totalBalance ?: 0.0,
+                                    idCurrency = account.idCurrencyAccount ?: CurrencyType.Dollar.id,
+                                    accountToken = account.accountToken,
+                                    accountNumber = account.accountNumber,
+                                    ibanAccountNumber = account.ibanAccountNumber,
                                 )
                             )
                             onNextStep(account)

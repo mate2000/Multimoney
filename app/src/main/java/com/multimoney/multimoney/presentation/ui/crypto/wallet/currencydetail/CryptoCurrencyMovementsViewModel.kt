@@ -28,6 +28,7 @@ import com.multimoney.multimoney.presentation.navigation.DESCRIPTION_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNTS_LIST
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.USER_CRYPTO_BALANCES
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
@@ -63,6 +64,8 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
         private set
 
     private var smartAccounts: List<SmartAccountSmall>? = null
+    private var userCryptoBalances: List<BalanceCryptoAccountItems>? = null
+
 
 
     private fun onGetUserInfo() {
@@ -78,6 +81,8 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
                 isCryptoTransferEnabled = cryptoHelper.isCryptoTransferEnabled()
             )
         }
+        userCryptoBalances =
+            savedStateHandle.get<Array<BalanceCryptoAccountItems>>(USER_CRYPTO_BALANCES)?.toList()
         smartAccounts =
             savedStateHandle.get<Array<SmartAccountSmall>>(SMART_ACCOUNTS_LIST)?.toList()
     }
@@ -179,19 +184,13 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateToSellCrypto() {
-        navigateTo(
-            "${Screen.CryptoSellFlow.baseRoute}?$ITEM_CRYPTO_MARKET=${
-                encodeData(
-                    MarketCryptoCoin(
-                        description = uiState.cryptoItem?.descriptionCurrency ?: "",
-                        baseAsset = uiState.cryptoItem?.asset ?: "",
-                        url_image = uiState.cryptoItem?.url_image ?: "",
-                        cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: "",
-                    )
-                )
-            }"
-        )
+    private fun onNavigateToSellCrypto(){
+        navigateTo("${Screen.CryptoSellFlow.baseRoute}/${encodeData(smartAccounts)}/${encodeData(userCryptoBalances)}?$ITEM_CRYPTO_MARKET=${encodeData(MarketCryptoCoin(
+            description = uiState.cryptoItem?.descriptionCurrency ?: "",
+            baseAsset = uiState.cryptoItem?.asset ?: "",
+            url_image = uiState.cryptoItem?.url_image ?: "",
+            cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: "",
+        ))}")
     }
 
     private fun onNavigateToSendCrypto() {

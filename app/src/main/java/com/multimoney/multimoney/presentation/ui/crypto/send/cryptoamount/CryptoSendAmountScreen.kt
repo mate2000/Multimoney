@@ -18,6 +18,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -42,6 +44,13 @@ import com.multimoney.multimoney.presentation.ui.crypto.send.CryptoSendSharedVie
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.util.calculateAssetEstimated
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
 @Composable
@@ -83,7 +92,9 @@ fun CryptoSendAmountScreen(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class, FlowPreview::class,
+    ExperimentalCoroutinesApi::class
+)
 @Composable
 fun CryptoSendAmountScreenContent(
     sharedViewModel: CryptoSendSharedViewModel,
@@ -96,6 +107,17 @@ fun CryptoSendAmountScreenContent(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = true
     )
+    val textDebounce = remember { MutableStateFlow("") }
+    val textDebounceFlow: Flow<String> = remember {
+        textDebounce.debounce(CryptoSendAmountViewModel.TEXT_DEBOUNCE_TIME).flatMapLatest {
+            if (it.isNotBlank()) {
+                viewModel.onUIEvent(CryptoSendAmountViewModel.UIEvent.OnCalculateAmountTransferCommission)
+            }
+            flowOf(it)
+        }
+    }
+    // This is required to execute the debounce
+    val textDebounceFlowValue by textDebounceFlow.collectAsState("")
 
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
@@ -173,8 +195,9 @@ fun CryptoSendAmountScreenContent(
                 isTransformationCurrency = viewModel.uiState.isTransformationCurrency,
                 keyboardController = keyboardController,
                 focusRequester = focusRequester,
-                onAmountChanged = { amount ->
-                    viewModel.onUIEvent(CryptoSendAmountViewModel.UIEvent.ValidateAmountInput(amount))
+                onAmountChanged = {
+                    viewModel.onUIEvent(CryptoSendAmountViewModel.UIEvent.OnAmountChanged(it))
+                    textDebounce.value = it
                 }
             )
 
@@ -193,6 +216,7 @@ fun CryptoSendAmountScreenContent(
                 },
                 enable = viewModel.uiState.isError.not() and
                         viewModel.uiState.isLoading.not() and
+                        viewModel.uiState.feeCalculated and
                         (viewModel.uiState.sendCryptoAmount > CryptoSendAmountViewModel.MINIMUM_SEND_AMOUNT)
             )
         }

@@ -10,6 +10,7 @@ import com.multimoney.data.util.catalog.TransferStatus
 import com.multimoney.domain.interaction.crypto.GetTransferCommissionUseCase
 import com.multimoney.domain.interaction.crypto.SendCryptoToAddressUseCase
 import com.multimoney.domain.model.crypto.GetTransferFeeData
+import com.multimoney.domain.model.crypto.SendCryptoToAddressData
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -72,11 +73,12 @@ class CryptoSendAmountViewModel @Inject constructor(
         this.currencyPrice = currencyPrice
     }
 
-    private fun onValidateAmountInput(amount: String) {
+    private fun onAmountChange(amount: String) {
         uiState = if (uiState.isTransformationCurrency.value) {
             uiState.copy(
                 sendCryptoAmount = amount.ifEmpty { DEFAULT_BASE_AMOUNT_STRING }.toDouble(),
-                sendDollarAmount = calculateDollarEstimated(amount.ifEmpty { DEFAULT_BASE_AMOUNT_STRING }, currencyPrice)
+                sendDollarAmount = calculateDollarEstimated(amount.ifEmpty { DEFAULT_BASE_AMOUNT_STRING }, currencyPrice),
+                feeCalculated = false
             )
         } else {
             uiState.copy(
@@ -84,32 +86,37 @@ class CryptoSendAmountViewModel @Inject constructor(
                     amount.ifEmpty { DEFAULT_BASE_AMOUNT_STRING },
                     currencyPrice
                 ).toDouble(),
-                sendDollarAmount = "$${amount.ifEmpty { DEFAULT_BASE_AMOUNT_STRING }}"
+                sendDollarAmount = "$${amount.ifEmpty { DEFAULT_BASE_AMOUNT_STRING }}",
+                feeCalculated = false
             )
         }
+    }
 
-        executeUseCase {
-            getTransferCommissionUseCase.invoke(
-                user,
-                idBrand,
-                destinationAddress,
-                asset,
-                cryptoNetWork,
-                uiState.sendCryptoAmount,
-            ).collectLatest { result ->
-                result.onSuccess {
-                    uiState = uiState.copy(transferCommission = it)
-                    validateAmountPlusFee()
-                }
-                result.onFailure {
-                    uiState = uiState.copy(
-                        isError = true,
-                        isLoading = false
-                    )
-                }
-                result.onLoading {
-                    uiState = uiState.copy(isLoading = true, showTextInputError = false)
-                }
+    private fun onCalculateAmountTransferCommission() = executeUseCase {
+        getTransferCommissionUseCase.invoke(
+            user,
+            idBrand,
+            destinationAddress,
+            asset,
+            cryptoNetWork,
+            uiState.sendCryptoAmount,
+        ).collectLatest { result ->
+            result.onSuccess {
+                uiState = uiState.copy(
+                    transferCommission = it,
+                    feeCalculated = true,
+                    isLoading = false
+                )
+                validateAmountPlusFee()
+            }
+            result.onFailure {
+                uiState = uiState.copy(
+                    isError = true,
+                    isLoading = false
+                )
+            }
+            result.onLoading {
+                uiState = uiState.copy(isLoading = true, showTextInputError = false)
             }
         }
     }
@@ -133,8 +140,7 @@ class CryptoSendAmountViewModel @Inject constructor(
         uiState = uiState.copy(
             error = errorMessage,
             errorMessageArg = arg,
-            isError = isError,
-            isLoading = false
+            isError = isError
         )
     }
 
@@ -163,7 +169,8 @@ class CryptoSendAmountViewModel @Inject constructor(
             result.onSuccess {
                 uiState = uiState.copy(
                     isLoading = false,
-                    transferStatus = TransferStatus.SUCCESS
+                    transferStatus = TransferStatus.SUCCESS,
+                    cryptoSendAmountData = it
                 )
             }
             result.onFailure {
@@ -191,7 +198,8 @@ class CryptoSendAmountViewModel @Inject constructor(
                 currentCryptoBalance = uiEvent.currentCryptoBalance,
                 currencyPrice = uiEvent.currencyPrice
             )
-            is UIEvent.ValidateAmountInput -> onValidateAmountInput(uiEvent.amount)
+            is UIEvent.OnAmountChanged -> onAmountChange(uiEvent.amount)
+            is UIEvent.OnCalculateAmountTransferCommission -> onCalculateAmountTransferCommission()
             is UIEvent.OnSendCryptoCurrency -> sendCryptoToAddress()
         }
     }
@@ -213,7 +221,9 @@ class CryptoSendAmountViewModel @Inject constructor(
         val errorMessageArg: Any = Any(),
         val isTransformationCurrency: MutableState<Boolean> = mutableStateOf(true),
         val transferStatus: TransferStatus = TransferStatus.IDLE,
-        val transferCommission: GetTransferFeeData? = null
+        val transferCommission: GetTransferFeeData? = null,
+        val feeCalculated: Boolean = false,
+        val cryptoSendAmountData: SendCryptoToAddressData? = null
     )
 
     sealed class UIEvent {
@@ -230,8 +240,8 @@ class CryptoSendAmountViewModel @Inject constructor(
             val currentCryptoBalance: Double = 0.0,
             val currencyPrice: Double = 0.0
         ) : UIEvent()
-
-        data class ValidateAmountInput(val amount: String) : UIEvent()
+        data class OnAmountChanged(val amount: String) : UIEvent()
+        object OnCalculateAmountTransferCommission : UIEvent()
         object OnSendCryptoCurrency : UIEvent()
     }
 
@@ -241,5 +251,6 @@ class CryptoSendAmountViewModel @Inject constructor(
         const val USD_CURRENCY = "USD"
         const val FEE_DEFAULT_VALUE = 0.0
         const val TAX_DEFAULT_VALUE = 0.0
+        const val TEXT_DEBOUNCE_TIME = 500L
     }
 }

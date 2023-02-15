@@ -233,7 +233,7 @@ fun BuyCurrencyScreenContent(
                         cryptoAssetExchange = stringResource(
                             id = R.string.crypto_purchase_flow_exchange_reference,
                             viewModel.asset,
-                            viewModel.uiState.pricesQuoteAndCommissions?.price
+                            viewModel.uiState.pricesQuoteAndCommissions?.price?.toCurrencyFormat()
                                 ?: DEFAULT_CURRENCY_PRICE.toCurrencyFormat()
                         ),
                         imageUrl = viewModel.assetImageUrl,
@@ -254,7 +254,7 @@ fun BuyCurrencyScreenContent(
                     quoteAmount = viewModel.uiState.quoteAmount,
                     baseAmount = viewModel.uiState.baseAmount,
                     isTransformationCurrency = viewModel.uiState.isTransformationCurrency,
-                    isError = viewModel.uiState.isError,
+                    isError = viewModel.uiState.focusError,
                     errorText = viewModel.uiState.error,
                     textArg = viewModel.uiState.errorMessageArg,
                     onAmountChanged = {

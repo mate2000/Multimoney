@@ -79,6 +79,8 @@
     <string name="common_go_back" translatable="false">Regresar</string>
     <string name="common_not_show_again" translatable="false">No volver a mostrar</string>
     <string name="common_scan_qr_code" translatable="false">Escanea el código QR</string>
+    <string name="smart_transfer_abandon_dialog_message_sv" translatable="false">¿Estás seguro que quieres cancelar el envío?</string>
+    <string name="smart_transfer_abandon_dialog_message_cr" translatable="false">¿Estás seguro que querés cancelar el envío?</string>
     <string name="common_percentage_format" translatable="false">$%s\%%</string>
 
     <string name="content_description_more_info" translatable="false">Más información</string>
@@ -406,7 +408,7 @@
     <string name="buy_crypto_voucher_mount_to_charge" translatable="false">Total debitado</string>
     <string name="sell_crypto_voucher_amount_credited" translatable="false">Total recibido</string>
     <string name="buy_crypto_voucher_value_in_currency_template" translatable="false">Valor en %1$s al momento de la compra</string>
-    <string name="sell_crypto_voucher_value_in_dollars_template" translatable="false">Valor en dolares al momento de la venta</string>
+    <string name="sell_crypto_voucher_value_in_dollars_template" translatable="false">Valor en dólares al momento de la venta</string>
     <string name="buy_crypto_voucher_final_value_in_currency_template" translatable="false">%1$s %2$s</string>
 
 
@@ -467,7 +469,6 @@
     <string name="profile_my_accounts_are_you_sure_to_delete" translatable="false">¿Estás seguro que querés eliminar esta cuenta?</string>
     <string name="profile_my_accounts_will_be_deleted_permanently" translatable="false">Los datos de la cuenta serán borrados de la app de forma permanente.</string>
     <string name="profile_my_accounts_account_nickname" translatable="false">Apodo de la cuenta</string>
-
 
 
     <!-- Automatic Logout -->
@@ -727,8 +728,8 @@
     <string name="credit_home_address_select_current_location" translatable="false">Seleccionar mi ubicación actual</string>
 
     <!--Credit Home address -->
-    <string name="credit_home_address_title" translatable="false">¿Dónde vivís?</string>
-    <string name="credit_home_address_title_gt" translatable="false">¿Dónde vives?</string>
+    <string name="credit_home_address_title_cr" translatable="false">¿Dónde vivís?</string>
+    <string name="credit_home_address_title" translatable="false">¿Dónde vives?</string>
 
     <!-- Credit Additional Information -->
     <string name="credit_additional_information_title" translatable="false">Información adicional</string>
@@ -963,6 +964,7 @@
     <string name="smart_payment_destiny_account_label" translatable="false">Cuenta de destino</string>
     <string name="smart_payment_motive" translatable="false">Motivo</string>
     <string name="smart_payment_amount_debited" translatable="false">Monto debitado</string>
+    <string name="smart_payment_amount_saved" translatable="false">Monto ahorrado</string>
     <string name="smart_payment_exchange_rate_label" translatable="false">Tipo de cambio</string>
     <string name="smart_payment_reference_number_label" translatable="false">N° de referencia</string>
     <string name="smart_payment_share_button" translatable="false">Compartir</string>
@@ -1281,7 +1283,6 @@
     <string name="crypto_sell_flow_error_processing_sell" translatable="false">¡Oh no! Hubo un error al completar la venta</string>
 
 
-
     <!-- Evicertia screen -->
     <string name="smart_evicertia_missing_signature_title_card" translatable="false">¡Solo falta tu firma!</string>
     <string name="smart_evicertia_missing_signature_subtitle_card" translatable="false">Firmá el contrato para que podás empezar a invertir de forma Smart</string>
@@ -1476,12 +1477,12 @@
     <string name="smart_iban_register_identification_label" translatable="false">Cédula</string>
 
     <string name="smart_iban_transfer_send_money" translatable="false">Enviar dinero</string>
+    <string name="smart_iban_transfer_send_money_to" translatable="false">Enviar dinero a</string>
     <string name="smart_iban_transfer_from_account" translatable="false">Desde mi cuenta %s</string>
     <string name="smart_iban_transfer_motive_label" translatable="false">Motivo</string>
     <string name="smart_iban_transfer_smart_account_colon" translatable="false">Smart Colones %s</string>
-    <string name="smart_iban_transfer_smart_account_dolar" translatable="false">Smart Dolares %s</string>
+    <string name="smart_iban_transfer_smart_account_dolar" translatable="false">Smart Dólares %s</string>
     <string name="smart_iban_transfer_abandon_dialog_title" translatable="false">Cancelar envío</string>
-    <string name="smart_iban_transfer_abandon_dialog_message" translatable="false">¿Estás seguro que querés cancelar el envío?</string>
     <string name="smart_iban_transfer_error_balance_insufficient" translatable="false">No tienes fondos suficientes. Tu disponible es %s</string>
     <string name="smart_iban_transfer_error_max_amount" translatable="false">El máximo monto que podés enviar es de %s</string>
     <string name="smart_iban_transfer_select_smart_account_title" translatable="false">Enviar dinero desde</string>
@@ -1703,7 +1704,8 @@
     <string name="visa_direct_verify_deposit_alert_error_button" translatable="false">Ir al inicio</string>
 
     <!-- Crypto sell flow-->
-    <string name="crypt_list_sell_title" translatable="false">¿Cuál moneda querés vender?</string>
+    <string name="crypt_list_sell_title_cr" translatable="false">¿Cuál moneda querés vender?</string>
+    <string name="crypt_list_sell_title_sv" translatable="false">¿Cuál moneda quieres vender?</string>
     <string name="crypto_sell_flow_sell_screen_title_cr" translatable="false">¿Cuánto querés vender?</string>
     <string name="crypto_sell_flow_sell_screen_title_sv" translatable="false">¿Cuánto quieres vender?</string>
     <string name="crypto_sell_flow_confirmation_sell_title" translatable="false">Monto a vender</string>

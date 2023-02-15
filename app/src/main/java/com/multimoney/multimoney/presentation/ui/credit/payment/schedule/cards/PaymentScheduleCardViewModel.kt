@@ -16,15 +16,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_CARD_VISA_DIRECT
-import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_BANK_ACCOUNT
-import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_PAYMENT_SCHEDULE
-import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
-import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
-import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.*
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnAlertButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnAlertCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnCloseClick
@@ -67,6 +59,14 @@ class PaymentScheduleCardViewModel @Inject constructor(
     private var getCardAttempts = 0
     private var getPaymentScheduleAttempts = 0
     private var setPaymentScheduleAttempts = 0
+    private var firstName: String = ""
+    private var secondName: String = ""
+    private var lastName: String = ""
+    private var secondLastName: String = ""
+    private var callerId: String = ""
+    private var accountToken: Int = 0
+    private var userName: String = ""
+    private var visaDirectUser: String? = null
 
     init {
         user = savedStateHandle[USER] ?: ""
@@ -78,6 +78,14 @@ class PaymentScheduleCardViewModel @Inject constructor(
         isEditBankAccount = savedStateHandle[IS_EDIT_BANK_ACCOUNT] ?: false
         isEditPaymentSchedule = savedStateHandle[IS_EDIT_PAYMENT_SCHEDULE] ?: false
         previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
+        firstName = savedStateHandle[FIRST_NAME] ?: ""
+        secondName = savedStateHandle[SECOND_NAME] ?: ""
+        lastName = savedStateHandle[LAST_NAME] ?: ""
+        secondLastName = savedStateHandle[SECOND_LAST_NAME] ?: ""
+        userName = savedStateHandle[USER] ?: ""
+        callerId = savedStateHandle[CALLER_ID] ?: ""
+        accountToken = savedStateHandle[ACCOUNT_TOKEN_CREDIT] ?: 0
+        visaDirectUser = savedStateHandle[VISA_DIRECT_USER]
         uiState = uiState.copy(day = getDayFromString(paymentDate, API_DATE_FORMAT))
     }
 
@@ -224,8 +232,7 @@ class PaymentScheduleCardViewModel @Inject constructor(
     }
 
     private fun onNavigateToAddCard() {
-
-        navigateTo(Screen.AddCardVDScreen.route)
+        navigateTo("${Screen.AddCardVDScreen.baseRoute}/$identification/$firstName/$secondName/$lastName/$secondLastName/$user/$callerId/$userName/$idBrand/$accountToken/$visaDirectUser")
     }
 
     private fun onNavigateBackHome(isRestart: Boolean) =

@@ -1,9 +1,11 @@
 package com.multimoney.multimoney.presentation.navigation
 
 import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN
+import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN_CREDIT
 import com.multimoney.multimoney.presentation.navigation.navgraph.AMOUNT_ORIGINAL_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALANCE_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_INFORMATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.CALLER_ID
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_CARD_VISA_DIRECT
@@ -53,6 +55,8 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_SCHEDULE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.QUOTA_TOTAL
 import com.multimoney.multimoney.presentation.navigation.navgraph.REFERENCE_NUMBER
+import com.multimoney.multimoney.presentation.navigation.navgraph.SECOND_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.SECOND_LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.SELECTED_AMOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_DISPLAY_EXCHANGE_RATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_GLOBAL_ID
@@ -66,6 +70,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SMART_PAYMENT_
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.TRANSFER_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.VISA_DIRECT_USER
 
 // Route
 const val LOGIN_ROUTE = "log_in_route"
@@ -360,7 +365,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object AddCardVDScreen : Screen(
-        route = "add_card_vd_screen",
+        route = "add_card_vd_screen/{$IDENTIFICATION}/{$FIRST_NAME}/{$SECOND_NAME}/{$LAST_NAME}/{$SECOND_LAST_NAME}/{$EMAIL}/{$CALLER_ID}/{$USER}/{$ID_BRAND}/{$ACCOUNT_TOKEN_CREDIT}/{$VISA_DIRECT_USER}",
         baseRoute = "add_card_vd_screen"
     )
 
@@ -427,7 +432,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object PaymentScheduleCardScreen : Screen(
-        "payment_schedule_card_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CLIENT_CARD_VISA_DIRECT}/{$PAYMENT_DATE}/{$IS_EDIT_BANK_ACCOUNT}/{$PREVIOUS_SCREEN}/{$IS_EDIT_PAYMENT_SCHEDULE}/{$IDENTIFICATION}",
+        "payment_schedule_card_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CLIENT_CARD_VISA_DIRECT}/{$PAYMENT_DATE}/{$IS_EDIT_BANK_ACCOUNT}/{$PREVIOUS_SCREEN}/{$IS_EDIT_PAYMENT_SCHEDULE}/{$IDENTIFICATION}/{$FIRST_NAME}/{$SECOND_NAME}/{$LAST_NAME}/{$SECOND_LAST_NAME}/{$USER}/{$CALLER_ID}/{$ACCOUNT_TOKEN_CREDIT}/{$VISA_DIRECT_USER}",
         "payment_schedule_card_screen"
     )
 

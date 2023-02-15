@@ -26,9 +26,11 @@ private fun ValidateUserStatusQuery.InfoUser.mapToDomainModel() = InfoUser(
     userName = userName,
     idClient = idClient.toString().toInt(),
     firstName = firstName,
+    secondName = secondName,
     lastName = lastName,
     secondLastName = secondLastName,
     phone = phone,
+    visaDirectUser = vISADirect_Usuario,
     statusOnfido = statusOnfido
 )
 

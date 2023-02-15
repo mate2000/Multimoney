@@ -26,6 +26,9 @@ import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDe
 const val BALANCE_CARD_INFORMATION = "balance_card_information"
 const val AVAILABLE_BALANCE_LABEL = "available_balance_label"
 const val ID_CARD = "id_card"
+const val CALLER_ID = "caller_id"
+const val ACCOUNT_TOKEN_CREDIT = "account_token_credit"
+const val VISA_DIRECT_USER = "visa_direct_user"
 
 fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
     navigation(
@@ -142,6 +145,10 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
         }
         composable(
             route = Screen.AddCardVDScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(ACCOUNT_TOKEN_CREDIT) { type = NavType.IntType },
+            )
         ) { navBackStackEntry ->
             AddCardVDScreen(
                 onNavigate = {

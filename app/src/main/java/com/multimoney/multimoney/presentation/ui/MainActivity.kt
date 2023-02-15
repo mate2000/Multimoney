@@ -2,6 +2,7 @@ package com.multimoney.multimoney.presentation.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.mutableStateOf
@@ -15,13 +16,17 @@ import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.SignOutCommunicator
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.util.CognitoHelper
+import com.multimoney.multimoney.util.interfaces.AddCardCommunicator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), SignOutCommunicator {
+class MainActivity : AppCompatActivity(), SignOutCommunicator, AddCardCommunicator {
 
     @Inject
     lateinit var mmCountDownTimer: MMCountDownTimer
@@ -33,6 +38,8 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
     lateinit var cognitoHelper: CognitoHelper
 
     var dialogParameters = mutableStateOf(DialogParameters())
+
+    var resultFlow: Flow<String> = flowOf("")
 
     private var isAppInForeground = true
 
@@ -97,5 +104,18 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
 
     override fun isAppInForeground(): Boolean {
         return isAppInForeground
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        val response = "FLOW"
+        super.onActivityResult(requestCode, resultCode, data)
+        Log.v("CITERIO MAIN", requestCode.toString())
+        resultFlow = flow {
+            emit(response)
+        }
+    }
+
+    override fun getFlowAddCardResult(): Flow<String> {
+        return resultFlow
     }
 }

@@ -459,7 +459,7 @@ class ProductViewModel @Inject constructor(
                 encodeData(
                     CardVisaDirect()
                 )
-                }/${balanceCredit?.getFirstSummary()?.paymentDate}/${false}/${Screen.HomeScreen.route}/$isEditSchedule/$identification"
+                }/${balanceCredit?.getFirstSummary()?.paymentDate}/${false}/${Screen.HomeScreen.route}/$isEditSchedule/$identification/${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.secondName}/${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.secondLastName}/${uiState.userStatus?.infoUser?.userName}/${uiState.userStatus?.infoUser?.phone}/0/${uiState.userStatus?.infoUser?.visaDirectUser}"
             )
         }
     }

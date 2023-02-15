@@ -118,7 +118,7 @@ class PaymentScheduleViewModel @Inject constructor(
             getPaymentScheduleAttempts++
             result.onSuccess {
                 uiState = uiState.copy(
-                    clientBankAccount = it?.first(),
+                    clientBankAccount = it?.firstOrNull(),
                     isLoading = false
                 )
             }.onFailure {

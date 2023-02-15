@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -40,15 +41,13 @@ fun ChangeEmailScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: ChangeEmailViewModel = hiltViewModel()
 ) {
-
-
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
     }
     BackHandler {
         viewModel.onUIEvent(ChangeEmailViewModel.UIEvent.OnNavigateBack)
     }
-    ChangePhoneScreenContent(viewModel,)
+    ChangePhoneScreenContent(viewModel)
 }
 
 @Composable
@@ -71,11 +70,15 @@ private fun ChangePhoneScreenContent(viewModel: ChangeEmailViewModel) {
             isRightButtonVisible = false
         )
 
-        Column(modifier = Modifier
-            .constrainAs(headerColumn) {
-                top.linkTo(topNavBar.bottom)
-            }
-            .padding(horizontal = 16.dp)) {
+        Column(
+            modifier = Modifier
+                .constrainAs(headerColumn) {
+                    top.linkTo(topNavBar.bottom)
+                    bottom.linkTo(continueButton.top)
+                    height = Dimension.fillToConstraints
+                }
+                .padding(horizontal = 16.dp)
+        ) {
             Text(
                 modifier = Modifier.padding(top = 8.dp),
                 text = stringResource(id = R.string.profile_change_email_title),
@@ -106,7 +109,7 @@ private fun ChangePhoneScreenContent(viewModel: ChangeEmailViewModel) {
                 modifier = Modifier.padding(top = 24.dp),
                 isRequired = true,
                 isError = viewModel.uiState.userEmailError.first,
-                isRequiredMessage = stringResource(id = R.string.sign_up_email_required),
+                isRequiredMessage = stringResource(id = R.string.sign_up_email_required)
             )
             // Fields
             CustomOutlinedTextField(
@@ -135,9 +138,9 @@ private fun ChangePhoneScreenContent(viewModel: ChangeEmailViewModel) {
                 errorMessage = stringResource(id = viewModel.uiState.userEmailError.second)
             )
             Text(
-                modifier = Modifier.fillMaxWidth().padding(top = 32.dp),
+                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
                 text = stringResource(id = R.string.profile_we_will_send_you_a_code_to_your_email),
-                style = Typography.body2
+                style = Typography.body2.copy(color = MultimoneyTheme.colors.descriptionText)
             )
         }
 

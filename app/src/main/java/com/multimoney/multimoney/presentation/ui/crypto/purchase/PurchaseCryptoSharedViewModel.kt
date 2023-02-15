@@ -131,7 +131,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         val screen = when (previousScreen) {
             Screen.CryptoWalletScreen.baseRoute -> Screen.CryptoWalletScreen.route
             Screen.CryptoCurrencyDetailsScreen.baseRoute -> Screen.CryptoCurrencyDetailsScreen.route
-            Screen.CryptoHomeAllMovementsScreen.baseRoute -> Screen.CryptoHomeAllMovementsScreen.route
+            Screen.CryptoWalletDetailsScreen.baseRoute -> Screen.CryptoWalletDetailsScreen.route
             else -> Screen.HomeScreen.route
         }
         navigateBack(popTo = screen, isRestart = false)

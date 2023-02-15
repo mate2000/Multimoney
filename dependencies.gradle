@@ -220,7 +220,7 @@ ext {
     ]
 
     // Togisoft
-    togisoft_version = "1.1.2"
+    togisoft_version = "1.1.4"
 
     togisoft = [
             country_code_picker: "com.github.togisoft:jetpack_compose_country_code_picker:$togisoft_version"

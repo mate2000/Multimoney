@@ -155,7 +155,7 @@ class SignInViewModel @Inject constructor(
                                             authUserAttribute
                                         )
                                         if (payload.getString(SignUpPasswordViewModel.COGNITO_CHANGE_PASSWORD_REQUIRED)
-                                            .toBoolean()
+                                                .toBoolean()
                                         ) {
                                             Amplify.Auth.signOut({}, {})
                                             uiState = uiState.copy(
@@ -424,7 +424,10 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    private fun biometricPromptForDecryptionSuccess(activity: FragmentActivity, result: BiometricPrompt.AuthenticationResult) {
+    private fun biometricPromptForDecryptionSuccess(
+        activity: FragmentActivity,
+        result: BiometricPrompt.AuthenticationResult
+    ) {
         result.cryptoObject?.cipher?.apply {
             viewModelScope.launch {
                 uiState = uiState.copy(
@@ -466,11 +469,70 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    private fun onFingerprintCheckedChanged(value: Boolean, showDialog: Boolean) {
+    private fun onFingerprintCheckedChanged(value: Boolean, showDialog: Boolean, is03Country: String) {
         uiState = uiState.copy(
             isFingerprintChecked = value,
-            openDialogCustom = mutableStateOf(showDialog)
+            openDialog = getBiometricsDialogParameters(is03Country, showDialog)
         )
+    }
+
+    private fun getBiometricsDialogParameters(is03Country: String, showDialog: Boolean): DialogParameters {
+        return when (is03Country) {
+            ISO3_COSTA_RICA -> {
+                DialogParameters(
+                    titleResource = string.active_biometric_title_cr,
+                    descriptionResource = string.active_biometric_message_cr,
+                    positiveResource = string.active_biometric_positive_button_label,
+                    negativeResource = string.active_biometric_negative_button_label,
+                    positiveAction = {
+                        onUIEvent(
+                            OnFingerprintCheckedChanged(
+                                value = true,
+                                showDialog = false,
+                                is03Country
+                            )
+                        )
+                    },
+                    negativeAction = {
+                        onUIEvent(
+                            OnFingerprintCheckedChanged(
+                                value = false,
+                                showDialog = false,
+                                is03Country
+                            )
+                        )
+                    },
+                    dismissAction = {
+                        onUIEvent(
+                            OnFingerprintCheckedChanged(
+                                value = false,
+                                showDialog = false,
+                                is03Country
+                            )
+                        )
+                    },
+                    isActive = mutableStateOf(showDialog)
+                )
+            }
+            else -> {
+                DialogParameters(
+                    titleResource = string.active_biometric_title,
+                    descriptionResource = string.active_biometric_message,
+                    positiveResource = string.active_biometric_positive_button_label,
+                    negativeResource = string.active_biometric_negative_button_label,
+                    positiveAction = {
+
+                    },
+                    negativeAction = {
+
+                    },
+                    dismissAction = {
+
+                    },
+                    isActive = mutableStateOf(showDialog)
+                )
+            }
+        }
     }
 
     private fun onNavigateToForgotPassword() = navigateTo(
@@ -526,7 +588,6 @@ class SignInViewModel @Inject constructor(
         ),
         val configureBiometric: Boolean = false,
         val isBiometricError: Boolean = false,
-        val openDialogCustom: MutableState<Boolean> = mutableStateOf(false),
         val isBiometricActive: Boolean = false,
         val showBiometricSignIn: Boolean = false,
         val isLoading: Boolean = false,
@@ -549,7 +610,8 @@ class SignInViewModel @Inject constructor(
             is OnShowBiometricSignInChanged -> onShowBiometricSignInChanged(event.value)
             is OnFingerprintCheckedChanged -> onFingerprintCheckedChanged(
                 event.value,
-                event.showDialog
+                event.showDialog,
+                event.is03Country
             )
 
             is OnStart -> onStart(
@@ -589,7 +651,7 @@ class SignInViewModel @Inject constructor(
 
         data class OnShowBiometricSignInChanged(val value: Boolean) : UIEvent()
 
-        data class OnFingerprintCheckedChanged(val value: Boolean, val showDialog: Boolean) : UIEvent()
+        data class OnFingerprintCheckedChanged(val value: Boolean, val showDialog: Boolean, val is03Country: String) : UIEvent()
 
         data class OnStart(
             val deviceId: String,
@@ -616,5 +678,6 @@ class SignInViewModel @Inject constructor(
         const val DEVICE_NAME = "DeviceName"
         const val IP_ADDRESS = "IpAddress"
         const val FORCE = "Force"
+        const val ISO3_COSTA_RICA = "CRI"
     }
 }

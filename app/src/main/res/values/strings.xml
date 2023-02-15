@@ -301,8 +301,10 @@
     <string name="custom_dialog_default_negative_label" translatable="false">Cancelar</string>
 
     <!-- Active Biometric Dialog-->
-    <string name="active_biometric_title" translatable="false">¿Estás seguro que querés activar tus Biométricos?</string>
-    <string name="active_biometric_message" translatable="false">Activando tus biometricos podrás ingresar a la app de forma más rápida y segura.</string>
+    <string name="active_biometric_title_cr" translatable="false">Activá tus biométricos</string>
+    <string name="active_biometric_title" translatable="false">Activa tus biométricos</string>
+    <string name="active_biometric_message_cr" translatable="false">Así podrás ingresar de forma rápida y segura.</string>
+    <string name="active_biometric_message" translatable="false"> Así podrás ingresar de forma rápida y segura.</string>
     <string name="active_biometric_positive_button_label" translatable="false">Activar</string>
     <string name="active_biometric_negative_button_label" translatable="false">Cancelar</string>
 

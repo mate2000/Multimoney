@@ -290,5 +290,5 @@ class CryptoRepositoryImpl @Inject constructor(
             user
         ),
         apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
-        )
+    )
 }

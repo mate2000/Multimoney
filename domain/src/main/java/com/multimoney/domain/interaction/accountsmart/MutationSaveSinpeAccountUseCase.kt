@@ -15,6 +15,7 @@ interface MutationSaveSinpeAccountUseCase {
         country: String,
         idAccount: Long?,
         option: String?,
-        email: String?
+        email: String?,
+        isFavorite: Boolean?
     ): Flow<MultimoneyResult<SaveSinpeAccount?>>
 }

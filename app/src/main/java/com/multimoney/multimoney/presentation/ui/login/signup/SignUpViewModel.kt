@@ -7,7 +7,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
-import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.data.util.catalog.SignUpStep.Search
 import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCase
@@ -17,7 +16,6 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.Screen.SignInScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnBackClick
@@ -51,13 +49,11 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
-import kotlin.math.log
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
 class SignUpViewModel @Inject constructor(
-    private val mutationUpdateUserRegisterUseCase: MutationUpdateUserRegisterUseCase,
-    private val savedStateHandle: SavedStateHandle
+    private val mutationUpdateUserRegisterUseCase: MutationUpdateUserRegisterUseCase
 ) : BaseViewModel(false) {
 
     // UIState
@@ -74,8 +70,6 @@ class SignUpViewModel @Inject constructor(
     var nextAction: () -> Unit = {}
     private var nextStep: Int = SignUpStep.One.id
     private var previousStep: Int = SignUpStep.One.id
-
-
 
     private fun nextStep() {
         if (nextStep <= SIGN_UP_TOTAL_STEPS) {
@@ -100,7 +94,7 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-    private fun onExit(){
+    private fun onExit() {
         popAndNavigateTo(
             route = Screen.SignInScreen.route,
             popTo = Screen.SignUpScreen.route
@@ -214,7 +208,7 @@ class SignUpViewModel @Inject constructor(
                         negativeResource = string.sign_up_close_dialog_negative_button_text,
                         positiveAction = {
                             popAndNavigateTo(
-                                route = SignInScreen.route,
+                                route = Screen.SignInScreen.route,
                                 popTo = Screen.SignUpScreen.route
                             )
                         },
@@ -275,7 +269,7 @@ class SignUpViewModel @Inject constructor(
             uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Hidden))
     }
 
-    private fun onSetIdBrand(idBrand: Int){
+    private fun onSetIdBrand(idBrand: Int) {
         this.idBrand = idBrand
     }
 

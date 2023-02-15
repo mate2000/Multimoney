@@ -87,7 +87,7 @@ class SmartFactaViewModel @Inject constructor() : BaseViewModel(true) {
     private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
         accountSmartData?.let {
             uiState = uiState.copy(
-                idBrand = it.idBrand ?: 0,
+                idBrand = it.idBrand,
                 isPEP = it.isPEP,
                 isUSCitizen = it.isUSCitizen,
                 isActivityOfArt15 = it.isActivityOfArt15,

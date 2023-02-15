@@ -53,9 +53,9 @@ fun MyContactsTransferAmountScreen(
         LoadingMultiMoney(string.smart_processing_transaction)
     } else if (viewModel.amountUIState.showErrorScreen) {
         AlertResult(
-            titleString = viewModel.amountUIState.errorMessage,
             isLeftButtonVisible = false,
             onRightButtonClick = { viewModel.onAmountUIEvent(OnNavigateHome) },
+            titleString = viewModel.amountUIState.errorMessage,
             descriptionString = viewModel.amountUIState.errorDetail,
             buttonTextResource = string.error_button_try_again,
             onButtonClick = { viewModel.onAmountUIEvent(OnRetryTransfer) }
@@ -110,7 +110,7 @@ fun MyContactsTransferAmountContent(viewModel: MyContactsTransferAmountViewModel
                 } else {
                     getMaskedAccount(
                         accountNumber = viewModel.smartAccount?.accountNumber.orEmpty(),
-                        prefix = Brand.ElSalvador.iban
+                        prefix = Brand.ElSalvador.countryCode.uppercase()
                     )
                 }
             ),
@@ -120,10 +120,10 @@ fun MyContactsTransferAmountContent(viewModel: MyContactsTransferAmountViewModel
                 viewModel.onAmountUIEvent(OnAmountValueChange(it))
             },
             onDebounceValidation = { viewModel.onAmountUIEvent(OnAmountCompleted(it)) },
-            isAmountError = viewModel.amountUIState.isAmountValid.not(),
+            isAmountError = viewModel.amountUIState.amountError.first,
             amountErrorMessage = stringResource(
-                id = string.smart_iban_transfer_error_balance_insufficient,
-                viewModel.totalBalanceLabel
+                viewModel.amountUIState.amountError.second,
+                viewModel.amountUIState.amountError.third
             ),
             currency = viewModel.amountUIState.currency,
             exchangeRate = viewModel.amountUIState.exchangeRateLabel.orEmpty(),

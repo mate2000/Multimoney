@@ -39,7 +39,8 @@ fun SmartAccountDetail(
             val clientLabel = stringResource(id = string.credit_detail_client)
             var accountLabel = stringResource(string.credit_detail_iban)
             val currencySymbol = account?.currencyCode?.getCurrencySymbol() ?: string.empty
-            val currencySymbolValue = account?.currencyCode?.getCurrencySymbolValue() ?: string.empty
+            val currencySymbolValue =
+                account?.currencyCode?.getCurrencySymbolValue() ?: string.empty
 
             if (uiState.idBrand == Brand.CostaRica.id.toString()) {
                 CreditDetailItem(
@@ -72,7 +73,10 @@ fun SmartAccountDetail(
                 label = stringResource(id = string.smart_account_detail_gained_interest_label),
                 value = {
                     Text(
-                        text = stringResource(string.smart_account_detail_gained_interest_mock),
+                        text = stringResource(
+                            string.common_percentage_format,
+                            account?.interest.toString()
+                        ),
                         style = Typography.body2.copy(
                             color = MultimoneyTheme.colors.text,
                             fontWeight = FontWeight.SemiBold

@@ -18,11 +18,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.R.drawable
-import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnShowCloseIcon
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.uielement.PhoneTextField
@@ -39,6 +38,7 @@ fun SignUpPhoneScreen(
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(true) {
+        sharedViewModel.onUIEvent(OnShowCloseIcon(true))
         sharedViewModel.apply {
             onUIEvent(
                 SignUpViewModel.UIEvent.OnSetNavigation(
@@ -72,9 +72,7 @@ fun SignUpPhoneScreen(
             viewModel.baseEvent.collect { event ->
                 when (event) {
                     is SignUpPhoneViewModel.BaseEvent.OnFormValidateCompleted -> onUIEvent(
-                        SignUpViewModel.UIEvent.OnContinueEnable(
-                            event.isFormValid
-                        )
+                        SignUpViewModel.UIEvent.OnContinueEnable(event.isFormValid)
                     )
                 }
             }
@@ -123,8 +121,8 @@ fun SignUpPhoneScreen(
 
         CustomInformativeText(
             modifier = Modifier.padding(top = 12.dp),
-            leadingIcon = drawable.ic_information,
-            text = stringResource(id = string.sign_up_phone_information),
+            leadingIcon = R.drawable.ic_information,
+            text = stringResource(id = R.string.sign_up_phone_information),
             textStyle = Typography.subtitle2.copy(color = MultimoneyTheme.colors.labelText)
         )
 
@@ -156,7 +154,8 @@ fun SignUpPhoneScreen(
             isRequiredMessage = stringResource(id = R.string.sign_up_phone_required),
             isError = viewModel.uiState.phoneNumberError.first,
             errorMessage = stringResource(id = viewModel.uiState.phoneNumberError.second),
-            defaultCountry = getLibCountries().find { it -> it.countryCode == viewModel.uiState.currentBrand.countryCode }!!,
+            defaultCountry = getLibCountries.find { it.countryCode == viewModel.uiState.currentBrand.countryCode }
+                ?: getLibCountries.first(),
             pickedCountry = {
                 viewModel.onUIEvent(
                     SignUpPhoneViewModel.UIEvent.OnCountryCodeValueChanged(
@@ -181,10 +180,11 @@ fun SignUpPhoneScreen(
     if (viewModel.uiState.isAlertResultVisible) {
         AlertResult(
             titleString = stringResource(id = R.string.profile_help_error_title),
-            descriptionString = if (viewModel.uiState.idBrand == Brand.Guatemala.id)
+            descriptionString = if (viewModel.uiState.idBrand == Brand.Guatemala.id) {
                 stringResource(id = R.string.process_forgot_password_alert_failure_description_gt)
-            else
-                stringResource(id = R.string.process_forgot_password_alert_failure_description),
+            } else {
+                stringResource(id = R.string.process_forgot_password_alert_failure_description)
+            },
             buttonTextResource = R.string.common_go_home,
             onButtonClick = {
                 sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnExit)

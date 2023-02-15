@@ -17,8 +17,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberSwipeableState
-import androidx.compose.material.ripple.RippleAlpha
-import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.material.swipeable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -29,7 +27,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.constraintlayout.compose.ExperimentalMotionApi
@@ -49,6 +46,7 @@ fun MotionLayoutMM(
     header: @Composable () -> Unit,
     headerExpanded: @Composable (backFunction: () -> Unit) -> Unit,
     content: @Composable (modifier: Modifier) -> Unit,
+    contentExpanded: @Composable (modifier: Modifier) -> Unit,
     footer: @Composable () -> Unit,
     isExpanded: Boolean = false,
     updateIsExpanded: (Boolean) -> Unit = {},
@@ -130,7 +128,60 @@ fun MotionLayoutMM(
             animationProgress = ANIMATION_COLLAPSED
         }
     }
-
+    Scaffold(
+        topBar = {
+            Box(
+                modifier = Modifier
+                    .background(MultimoneyTheme.colors.background)
+                    .fillMaxWidth()
+            ) {
+                headerExpanded {
+                    updateIsBackPressed(true)
+                }
+            }
+        },
+        bottomBar = {
+            Box(
+                modifier = Modifier
+                    .background(MultimoneyTheme.colors.background)
+                    .fillMaxWidth()
+            ) {
+                ctaFooterExpanded()
+            }
+        },
+        content = {
+            LazyColumn(
+                modifier = Modifier
+                    .background(MultimoneyTheme.colors.background)
+                    .padding(it)
+                    .fillMaxSize(),
+                content = {
+                    item {
+                        contentExpanded(
+                            modifier = Modifier
+                                .background(MultimoneyTheme.colors.background)
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                                .pointerInput(Unit) {
+                                    detectDragGestures { change, dragAmount ->
+                                        if (dragAmount.y > ANIMATION_COLLAPSED) {
+                                            updateIsBackPressed(true)
+                                        }
+                                    }
+                                }
+                        )
+                        Box(
+                            modifier = Modifier
+                                .background(MultimoneyTheme.colors.background)
+                                .fillMaxSize()
+                        ) {
+                            footerExpanded()
+                        }
+                    }
+                }
+            )
+        }
+    )
     if (isExpanded.not() || swipeAbleState.offset.value == ANIMATION_COLLAPSED) {
         MotionLayout(
             motionScene = MotionScene(motionSceneContent),
@@ -214,70 +265,6 @@ fun MotionLayoutMM(
             }
         }
     }
-    if (isExpanded) {
-        Scaffold(
-            topBar = {
-                Box(
-                    modifier = Modifier
-                        .background(MultimoneyTheme.colors.background)
-                        .fillMaxWidth()
-                ) {
-                    headerExpanded {
-                        updateIsBackPressed(true)
-                    }
-                }
-            },
-            bottomBar = {
-                Box(
-                    modifier = Modifier
-                        .background(MultimoneyTheme.colors.background)
-                        .fillMaxWidth()
-                ) {
-                    ctaFooterExpanded()
-                }
-            },
-            content = {
-                LazyColumn(
-                    modifier = Modifier
-                        .background(MultimoneyTheme.colors.background)
-                        .padding(it)
-                        .fillMaxSize(),
-                    content = {
-                        item {
-                            content(
-                                modifier = Modifier
-                                    .background(MultimoneyTheme.colors.background)
-                                    .fillMaxWidth()
-                                    .wrapContentHeight()
-                                    .pointerInput(Unit) {
-                                        detectDragGestures { change, dragAmount ->
-                                            if (dragAmount.y > ANIMATION_COLLAPSED) {
-                                                updateIsBackPressed(true)
-                                            }
-                                        }
-                                    }
-                            )
-                            Box(
-                                modifier = Modifier
-                                    .background(MultimoneyTheme.colors.background)
-                                    .fillMaxSize()
-                            ) {
-                                footerExpanded()
-                            }
-                        }
-                    }
-                )
-            }
-        )
-    }
-}
-
-private object NoRippleTheme : RippleTheme {
-    @Composable
-    override fun defaultColor() = Color.Unspecified
-
-    @Composable
-    override fun rippleAlpha(): RippleAlpha = RippleAlpha(0.0f, 0.0f, 0.0f, 0.0f)
 }
 
 const val TIMER_FUTURE = 2000

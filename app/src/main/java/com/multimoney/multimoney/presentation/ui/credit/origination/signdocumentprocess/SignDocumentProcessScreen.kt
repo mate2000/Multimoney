@@ -101,7 +101,7 @@ fun SignDocumentProcessScreen(
     if (viewModel.uiState.dialogParameters.isActive.value) {
         CustomDialog(
             title = stringResource(id = viewModel.uiState.dialogParameters.titleResource),
-            message = viewModel.uiState.dialogParameters.description,
+            message = stringResource(id = viewModel.uiState.dialogParameters.descriptionResource).ifEmpty { viewModel.uiState.dialogParameters.description },
             positiveButtonText = stringResource(id = viewModel.uiState.dialogParameters.positiveResource),
             negativeButtonText = stringResource(id = viewModel.uiState.dialogParameters.negativeResource),
             openDialogCustom = viewModel.uiState.dialogParameters.isActive,

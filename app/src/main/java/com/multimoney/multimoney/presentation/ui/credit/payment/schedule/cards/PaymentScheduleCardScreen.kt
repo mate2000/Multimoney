@@ -116,9 +116,7 @@ fun PaymentScheduleContent(
 @Composable
 private fun PaymentScheduleCard(viewModel: PaymentScheduleCardViewModel) {
     Column(
-        modifier = Modifier
-            .background(MultimoneyTheme.colors.background)
-            .fillMaxSize(),
+        modifier = Modifier.background(MultimoneyTheme.colors.background).fillMaxSize(),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
@@ -128,10 +126,9 @@ private fun PaymentScheduleCard(viewModel: PaymentScheduleCardViewModel) {
             )
 
             CustomInformativeText(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 24.dp, start = 7.dp, end = 16.dp),
+                modifier = Modifier.fillMaxWidth().padding(top = 24.dp, start = 7.dp, end = 16.dp),
                 trailingIcon = drawable.ic_information_chip,
+                iconSize = 44.dp,
                 trailingIconClick = { viewModel.onUIEvent(OnOpenDisclaimerDialog) },
                 text = stringResource(id = string.payment_schedule_card_title),
                 textStyle = Typography.h6.copy(color = MultimoneyTheme.colors.text)
@@ -139,9 +136,7 @@ private fun PaymentScheduleCard(viewModel: PaymentScheduleCardViewModel) {
 
             viewModel.uiState.cardVisaDirect?.apply {
                 Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 24.dp, start = 16.dp, end = 16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(top = 24.dp, start = 16.dp, end = 16.dp),
                     text = stringResource(id = string.payment_schedule_card_label_origin),
                     style = Typography.body1.copy(
                         color = MultimoneyTheme.colors.text,
@@ -151,9 +146,7 @@ private fun PaymentScheduleCard(viewModel: PaymentScheduleCardViewModel) {
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 CustomInfoButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     imageModifier = Modifier.size(48.dp),
                     startIcon = drawable.ic_visa_card_item,
                     title = detail ?: "",
@@ -167,9 +160,7 @@ private fun PaymentScheduleCard(viewModel: PaymentScheduleCardViewModel) {
                     }
                 )
                 Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 32.dp, start = 16.dp, end = 16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(top = 32.dp, start = 16.dp, end = 16.dp),
                     text = stringResource(id = string.payment_schedule_card_label_date),
                     style = Typography.body2.copy(
                         color = MultimoneyTheme.colors.quickActionLabelColor
@@ -177,9 +168,7 @@ private fun PaymentScheduleCard(viewModel: PaymentScheduleCardViewModel) {
                 )
 
                 Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp, start = 16.dp, end = 16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp, start = 16.dp, end = 16.dp),
                     text = stringResource(
                         id = string.payment_schedule_card_label_date_description,
                         viewModel.uiState.day
@@ -195,9 +184,7 @@ private fun PaymentScheduleCard(viewModel: PaymentScheduleCardViewModel) {
             CustomButton(
                 onClick = { viewModel.onUIEvent(OnProgramClick) },
                 text = stringResource(id = string.payment_schedule_card_button),
-                modifier = Modifier
-                    .padding(bottom = 32.dp, top = 16.dp, start = 16.dp, end = 16.dp)
-                    .fillMaxWidth()
+                modifier = Modifier.padding(bottom = 32.dp, top = 16.dp, start = 16.dp, end = 16.dp).fillMaxWidth()
                     .height(48.dp),
                 buttonType = PrimaryPrimary
             )
@@ -211,14 +198,9 @@ fun PaymentScheduleCardEmptyState(
     viewModel: PaymentScheduleCardViewModel = hiltViewModel()
 ) {
     Column(
-        modifier = Modifier
-            .background(MultimoneyTheme.colors.background)
-            .fillMaxSize()
+        modifier = Modifier.background(MultimoneyTheme.colors.background).fillMaxSize()
     ) {
-        TopNavBar(
-            isLeftButtonVisible = false,
-            onRightButtonClick = { viewModel.onUIEvent(OnNavigateBack) }
-        )
+        TopNavBar(isLeftButtonVisible = false, onRightButtonClick = { viewModel.onUIEvent(OnNavigateBack) })
         Text(
             modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp),
             text = stringResource(id = R.string.payment_schedule_card_title),
@@ -227,15 +209,12 @@ fun PaymentScheduleCardEmptyState(
             textAlign = TextAlign.Left
         )
         Column(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Spacer(modifier = Modifier.wrapContentSize())
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
+                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -253,10 +232,7 @@ fun PaymentScheduleCardEmptyState(
             CustomButton(
                 onClick = { viewModel.onUIEvent(OnNavigateToAddCard) },
                 text = stringResource(id = R.string.payment_cards_list_create),
-                modifier = Modifier
-                    .padding(vertical = 40.dp, horizontal = 16.dp)
-                    .fillMaxWidth()
-                    .height(48.dp),
+                modifier = Modifier.padding(vertical = 40.dp, horizontal = 16.dp).fillMaxWidth().height(48.dp),
                 buttonType = PrimaryPrimary
             )
         }

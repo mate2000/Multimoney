@@ -11,4 +11,5 @@ enum class CreditStatus(val status: Int) {
     CREDIT_PRE_APPROVED(7),
     CREDIT_NOT_PRE_APPROVED(8),
     CREDIT_REJECTED(9),
+    CREDIT_ERROR(10)
 }

@@ -20,7 +20,10 @@ private fun SendCryptoToAddressMutation.Result.mapToDomainModel() = SendCryptoTo
 )
 
 private fun SendCryptoToAddressMutation.TransferOrder.mapToDomainModel() = SendCryptoToAddressOrder(
-    result = result.mapToDomainModel()
+    result = result.mapToDomainModel(),
+    status = status,
+    message = message,
+    detail = detail
 )
 
 fun SendCryptoToAddressMutation.Data.mapToDomainModel() = SendCryptoToAddressData(

@@ -376,7 +376,7 @@
     <string name="onfido_selfie_confirmation_button_secondary">Tomar fotografía de nuevo</string>
     <string name="onfido_selfie_confirmation_image_accessibility">Foto de su cara</string>
     <string name="onfido_selfie_intro_button_primary">Tomar selfie</string>
-    <string name="onfido_selfie_intro_list_item_face_forward">Mira hacia el frente y asegúrate que tus ojos son claramente visibles</string>
+    <string name="onfido_selfie_intro_list_item_face_forward">Mirá hacia el frente y asegurate que tus ojos son claramente visibles</string>
     <string name="onfido_selfie_intro_list_item_no_glasses">Quitate los lentes u otros accesorios</string>
     <string name="onfido_selfie_intro_subtitle">La vamos a comparar con tu identificación</string>
     <string name="onfido_selfie_intro_title">Tomate una selfie</string>

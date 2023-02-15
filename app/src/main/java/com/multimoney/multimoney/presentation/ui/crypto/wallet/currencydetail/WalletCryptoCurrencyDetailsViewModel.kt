@@ -169,7 +169,7 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
             encodeData(
                 smartAccounts
             )
-            }/${Screen.CryptoCurrencyDetailsScreen.baseRoute}?$ITEM_CRYPTO_MARKET=${
+            }/${Screen.CryptoWalletDetailsScreen.baseRoute}?$ITEM_CRYPTO_MARKET=${
             encodeData(
                 MarketCryptoCoin(
                     description = uiState.cryptoItem?.descriptionCurrency ?: "",

@@ -9,17 +9,10 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.APPROVED
-import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.FAILED
-import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.FIRMED
-import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.OVER_COUNTER
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.PENDING
-import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.REJECTED
 import com.multimoney.data.util.catalog.CreditStep
-import com.multimoney.data.util.catalog.CreditWorkFlow
+import com.multimoney.data.util.catalog.CreditWorkflow
 import com.multimoney.data.util.catalog.MyProductStatus
-import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
-import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.data.util.catalog.SmartWorkflow
 import com.multimoney.data.util.catalog.SmartWorkflow.SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS
 import com.multimoney.data.util.catalog.SmartWorkflow.SMART_ONFIDO_PROCESS
@@ -265,10 +258,10 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToCreditScreen(
-        workFlow: String
+        workflow: String
     ) {
-        when (workFlow) {
-            CreditWorkFlow.CREDIT_CONTRACT_PROCESS.workFlow -> {
+        when (workflow) {
+            CreditWorkflow.CREDIT_CONTRACT_PROCESS.workflow -> {
                 navigateTo(
                     Screen.SignDocumentProcessScreen.baseRoute
                         .plus(
@@ -505,16 +498,16 @@ class ProductViewModel @Inject constructor(
                 encodeData(
                     balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType()
                 )
-            }/${encodeData(balanceCredit?.balanceCryptoAccount?.items)}"
+                }/${encodeData(balanceCredit?.balanceCryptoAccount?.items)}"
         )
     }
-
 
     private fun onNavigateToCryptoMarket() {
         navigateTo(
             "${Screen.CryptoMarketScreen.baseRoute}/$userName/${uiState.idBrand}/${
-            encodeData(balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType()
-                )
+            encodeData(
+                balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType()
+            )
             }/${encodeData(balanceCredit?.balanceCryptoAccount?.items)}"
         )
     }
@@ -755,7 +748,7 @@ class ProductViewModel @Inject constructor(
             )
             navigateTo(
                 "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$userName/${uiState.idBrand}/" +
-                "$identification/${encodeData(smartAccount)}/$idClient/${Screen.HomeScreen.route}"
+                    "$identification/${encodeData(smartAccount)}/$idClient/${Screen.HomeScreen.route}"
             )
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             val infoCredit = uiState.userStatus?.infoCredit
@@ -916,9 +909,9 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToSellCryptoFlow() {
         navigateTo(
             "${Screen.CryptoSellFlow.baseRoute}/${Screen.HomeScreen.route}/${encodeData(balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType())}/${
-                encodeData(
-                    balanceCredit?.balanceCryptoAccount?.items
-                )
+            encodeData(
+                balanceCredit?.balanceCryptoAccount?.items
+            )
             }"
         )
     }
@@ -927,7 +920,7 @@ class ProductViewModel @Inject constructor(
         navigateTo(Screen.CryptoSendFlow.baseRoute)
     }
     private fun onNavigateToGiveCryptoFlow() {
-        navigateTo("${Screen.CryptoReceiveFlowScreen.baseRoute}/${userName}/${uiState.idBrand}")
+        navigateTo("${Screen.CryptoReceiveFlowScreen.baseRoute}/$userName/${uiState.idBrand}")
     }
 
     private fun getSmartContent() {
@@ -1012,7 +1005,7 @@ class ProductViewModel @Inject constructor(
             )
             is OnBalanceSuccess -> balanceCredit = uiEvent.balance
             is OnValidateUserSuccess -> setValidateUserStatus(uiEvent.userStatus)
-            is OnNavigateToCreditScreen -> onNavigateToCreditScreen(uiEvent.workFlow)
+            is OnNavigateToCreditScreen -> onNavigateToCreditScreen(uiEvent.workflow)
             is OnNavigateToSmartOriginationFlow -> onNavigateToSmartFlow(
                 smartStep = uiEvent.smartStep,
                 comingFromCrypto = uiEvent.comingFromCrypto,
@@ -1090,7 +1083,7 @@ class ProductViewModel @Inject constructor(
                 balance = uiEvent.balance
             )
             is OnUpdateIsBackPressed ->
-                    uiState = uiState.copy(isBackPressed = uiEvent.isBackPressed)
+                uiState = uiState.copy(isBackPressed = uiEvent.isBackPressed)
             is UIEvent.OnDisclaimerChecked -> onDisclaimerChecked(uiEvent.checked)
             is UIEvent.OnUpdateShouldShowDisclaimer -> updateShouldShowDisclaimer(uiEvent.checked)
             BaseEvent.OnShowDisclaimer -> onShowDisclaimer()
@@ -1133,7 +1126,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToGtSvNonPreApproved : UIEvent()
         object OnProgressCalculation : UIEvent()
         object IsPaymentExpired : UIEvent()
-        data class OnNavigateToCreditScreen(val workFlow: String) : UIEvent()
+        data class OnNavigateToCreditScreen(val workflow: String) : UIEvent()
         object OnChipQuotaClick : UIEvent()
         data class OnNavigateToScheduleAutomaticPaymentScreen(val isEditSchedule: Boolean) :
             UIEvent()

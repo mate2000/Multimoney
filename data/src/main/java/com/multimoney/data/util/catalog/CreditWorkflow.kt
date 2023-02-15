@@ -1,6 +1,6 @@
 package com.multimoney.data.util.catalog
 
-enum class CreditWorkFlow(val workFlow: String) {
+enum class CreditWorkflow(val workflow: String) {
     CREDIT_AVAILABLE("CREDIT_AVAILABLE"),
     CREDIT_PROCESS("CREDIT_PROCESS"),
     CONTACT_EVICERTIA_MAX("CONTACT_EVICERTIA_MAX"),

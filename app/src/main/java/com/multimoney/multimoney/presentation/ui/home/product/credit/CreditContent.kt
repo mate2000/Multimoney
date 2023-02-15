@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.multimoney.data.util.catalog.CreditWorkFlow
+import com.multimoney.data.util.catalog.CreditWorkflow
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMaxAttemptsCardClick
@@ -40,25 +40,25 @@ fun CreditContent(viewModel: ProductViewModel) {
                 modifier = Modifier.padding(horizontal = 16.dp),
                 type = Primary
             ) {
-                when (infoCredit?.wording?.workFlow) {
-                    CreditWorkFlow.CREDIT_AVAILABLE.workFlow -> {
+                when (infoCredit?.wording?.workflow) {
+                    CreditWorkflow.CREDIT_AVAILABLE.workflow -> {
                         OngoingCredit(viewModel)
                     }
-                    CreditWorkFlow.CREDIT_PROCESS.workFlow,
-                    CreditWorkFlow.CONTACT_EVICERTIA_MAX.workFlow,
-                    CreditWorkFlow.CREDIT_ONFIDO_PROCESS.workFlow,
-                    CreditWorkFlow.CREDIT_CONTRACT_PROCESS.workFlow,
-                    CreditWorkFlow.CONTACT_ERROR.workFlow -> {
+                    CreditWorkflow.CREDIT_PROCESS.workflow,
+                    CreditWorkflow.CONTACT_EVICERTIA_MAX.workflow,
+                    CreditWorkflow.CREDIT_ONFIDO_PROCESS.workflow,
+                    CreditWorkflow.CREDIT_CONTRACT_PROCESS.workflow,
+                    CreditWorkflow.CONTACT_ERROR.workflow -> {
                         CustomProductBackground(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp),
                             type = Primary
                         ) {
                             CardWithCreditInProcess(
-                                type = getCardWithCreditInProcessType(infoCredit?.wording?.workFlow ?: ""),
+                                type = getCardWithCreditInProcessType(infoCredit?.wording?.workflow ?: ""),
                                 idBrand = viewModel.uiState.idBrand.toInt(),
                                 action = getCardAction(
-                                    workFlow = infoCredit?.wording?.workFlow ?: "",
+                                    workflow = infoCredit?.wording?.workflow ?: "",
                                     whatsAppLink = whatsAppLink,
                                     context = context,
                                     viewModel = viewModel
@@ -67,10 +67,10 @@ fun CreditContent(viewModel: ProductViewModel) {
                             )
                         }
                     }
-                    CreditWorkFlow.CREDIT_PENDING.workFlow -> {
+                    CreditWorkflow.CREDIT_PENDING.workflow -> {
                         CardCreditFirmedAndOnfidoPending()
                     }
-                    CreditWorkFlow.CREDIT_NOT_PREAPROVED.workFlow -> {
+                    CreditWorkflow.CREDIT_NOT_PREAPROVED.workflow -> {
                         CustomProductBackground(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp),
@@ -79,7 +79,7 @@ fun CreditContent(viewModel: ProductViewModel) {
                             CardNonPreApprovedCredit(
                                 idBrand = viewModel.uiState.idBrand.toInt(),
                                 action = getCardAction(
-                                    workFlow = infoCredit?.wording?.workFlow ?: "",
+                                    workflow = infoCredit?.wording?.workflow ?: "",
                                     whatsAppLink = whatsAppLink,
                                     context = context,
                                     viewModel = viewModel
@@ -87,10 +87,10 @@ fun CreditContent(viewModel: ProductViewModel) {
                             )
                         }
                     }
-                    CreditWorkFlow.CREDIT_REJECTED.workFlow -> {
+                    CreditWorkflow.CREDIT_REJECTED.workflow -> {
                         CardGtSvCreditRejected(
                             action = getCardAction(
-                                workFlow = infoCredit?.wording?.workFlow ?: "",
+                                workflow = infoCredit?.wording?.workflow ?: "",
                                 whatsAppLink = viewModel.uiState.userStatus?.infoCredit?.wording?.link
                                     ?: whatsAppLink,
                                 context = context,
@@ -99,7 +99,7 @@ fun CreditContent(viewModel: ProductViewModel) {
                             wording = viewModel.uiState.userStatus?.infoCredit?.wording
                         )
                     }
-                    CreditWorkFlow.CONTACT_CREDIT_ERROR.workFlow -> {
+                    CreditWorkflow.CONTACT_CREDIT_ERROR.workflow -> {
                         CardWithCreditInProcess(
                             type = CreditProcessCreateAccountFailure,
                             idBrand = viewModel.uiState.idBrand.toInt(),
@@ -121,17 +121,17 @@ fun CreditContent(viewModel: ProductViewModel) {
 }
 
 fun getCardAction(
-    workFlow: String,
+    workflow: String,
     whatsAppLink: String,
     context: Context,
     viewModel: ProductViewModel
-): () -> Unit = when (workFlow) {
-    CreditWorkFlow.CREDIT_NOT_PREAPROVED.workFlow -> {
+): () -> Unit = when (workflow) {
+    CreditWorkflow.CREDIT_NOT_PREAPROVED.workflow -> {
         { viewModel.onUIEvent(OnNavigateToGtSvNonPreApproved) }
     }
-    CreditWorkFlow.CONTACT_EVICERTIA_MAX.workFlow,
-    CreditWorkFlow.CONTACT_ERROR.workFlow,
-    CreditWorkFlow.CONTACT_CREDIT_ERROR.workFlow -> {
+    CreditWorkflow.CONTACT_EVICERTIA_MAX.workflow,
+    CreditWorkflow.CONTACT_ERROR.workflow,
+    CreditWorkflow.CONTACT_CREDIT_ERROR.workflow -> {
         {
             viewModel.onUIEvent(
                 OnMaxAttemptsCardClick(
@@ -143,17 +143,17 @@ fun getCardAction(
     }
     else -> {
         {
-            viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToCreditScreen(workFlow))
+            viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToCreditScreen(workflow))
         }
     }
 }
 
-fun getCardWithCreditInProcessType(workFlow: String) = when (workFlow) {
-    CreditWorkFlow.CREDIT_PROCESS.workFlow -> CreditStartProcessIncomplete
-    CreditWorkFlow.CONTACT_EVICERTIA_MAX.workFlow -> CreditProcessFirmMaxAttempts
-    CreditWorkFlow.CREDIT_ONFIDO_PROCESS.workFlow -> CreditProcessOnfidoReject
-    CreditWorkFlow.CREDIT_CONTRACT_PROCESS.workFlow -> CreditProcessFirmReject
-    CreditWorkFlow.CONTACT_ERROR.workFlow -> CreditProcessOnfidoMaxAttempts
-    CreditWorkFlow.CONTACT_CREDIT_ERROR.workFlow -> CreditProcessCreateAccountFailure
+fun getCardWithCreditInProcessType(workflow: String) = when (workflow) {
+    CreditWorkflow.CREDIT_PROCESS.workflow -> CreditStartProcessIncomplete
+    CreditWorkflow.CONTACT_EVICERTIA_MAX.workflow -> CreditProcessFirmMaxAttempts
+    CreditWorkflow.CREDIT_ONFIDO_PROCESS.workflow -> CreditProcessOnfidoReject
+    CreditWorkflow.CREDIT_CONTRACT_PROCESS.workflow -> CreditProcessFirmReject
+    CreditWorkflow.CONTACT_ERROR.workflow -> CreditProcessOnfidoMaxAttempts
+    CreditWorkflow.CONTACT_CREDIT_ERROR.workflow -> CreditProcessCreateAccountFailure
     else -> null
 }

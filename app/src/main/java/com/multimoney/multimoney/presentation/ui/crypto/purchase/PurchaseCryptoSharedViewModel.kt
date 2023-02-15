@@ -20,6 +20,7 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNTS_LIST
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoOperationSide
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
@@ -36,16 +37,16 @@ import javax.inject.Inject
 @HiltViewModel
 class PurchaseCryptoSharedViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val dataStorePreferences: DataStorePreferences,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())
         private set
 
-    //stateless
+    // stateless
     private var currentFlowStep: Int = PurchaseCryptoSteps.One.pageNumber
 
-    //bundle parameters
+    // bundle parameters
     var idBrand = DEFAULT_ID_BRAND_ERROR
     var pkUser = ""
     var user = ""
@@ -55,9 +56,10 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     var abvCurrency: String = CurrencyType.Dollar.disbursementValue
     val side = CryptoOperationSide.BUY.value
     val comingFromDetails: Boolean = marketCryptoCoin != null
-
+    var previousScreen: String = ""
 
     private fun setUserData() {
+        previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
         uiState = uiState.copy(
             accounts = savedStateHandle.get<Array<SmartAccountSmall>>(SMART_ACCOUNTS_LIST)?.toList()
                 ?: listOf()
@@ -74,7 +76,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
                 market = marketCryptoCoin?.baseAsset?.plus(abvCurrency),
                 cryptoNetWork = marketCryptoCoin?.cryptoNetwork,
                 assetImageBaseUrl = marketCryptoCoin?.url_image,
-                shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first(),
+                shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first()
             )
         }
         if (idBrand == Brand.ElSalvador.id) {
@@ -105,10 +107,9 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         )
     }
 
-
     private fun previousStep() {
         if (currentFlowStep == PurchaseCryptoSteps.One.pageNumber) {
-            navigateBackToHome()
+            navigateToPreviousScreen()
         } else {
             currentFlowStep--
             uiState = uiState.copy(
@@ -124,6 +125,16 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
             currentStep = currentFlowStep
         )
         uiState.nextAction()
+    }
+
+    private fun navigateToPreviousScreen() {
+        val screen = when (previousScreen) {
+            Screen.CryptoWalletScreen.baseRoute -> Screen.CryptoWalletScreen.route
+            Screen.CryptoCurrencyDetailsScreen.baseRoute -> Screen.CryptoCurrencyDetailsScreen.route
+            Screen.CryptoWalletDetailsScreen.baseRoute -> Screen.CryptoWalletDetailsScreen.route
+            else -> Screen.HomeScreen.route
+        }
+        navigateBack(popTo = screen, isRestart = false)
     }
 
     private fun navigateBackToHome() =
@@ -174,7 +185,6 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     private fun onDisclaimerChecked(checked: Boolean) {
         uiState = uiState.copy(dontShowAgainChecked = checked)
     }
-
 
     private fun onSetupVoucherDetails(
         quoteAmount: String,

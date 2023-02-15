@@ -22,6 +22,7 @@ import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNTS_LIST
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.USER_CRYPTO_BALANCES
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoOperationSide
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
@@ -29,10 +30,10 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getCurrentTime
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.Calendar
+import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.util.*
-import javax.inject.Inject
 
 @OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
@@ -46,6 +47,7 @@ class SellCryptoSharedViewModel @Inject constructor(
 
     //stateless
     private var currentFlowStep: Int = PurchaseCryptoSteps.One.pageNumber
+    private var previousScreen: String = savedStateHandle[PREVIOUS_SCREEN] ?: ""
 
     //bundle parameters
     var idBrand = DEFAULT_ID_BRAND_ERROR
@@ -73,8 +75,7 @@ class SellCryptoSharedViewModel @Inject constructor(
                 assetDescription = marketCryptoCoin?.description,
                 market = marketCryptoCoin?.baseAsset?.plus(abvCurrency),
                 cryptoNetWork = marketCryptoCoin?.cryptoNetwork,
-                assetImageBaseUrl = marketCryptoCoin?.url_image,
-                shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first(),
+                assetImageBaseUrl = marketCryptoCoin?.url_image
             )
         }
 
@@ -108,7 +109,21 @@ class SellCryptoSharedViewModel @Inject constructor(
 
     private fun previousStep() {
         if (currentFlowStep == PurchaseCryptoSteps.One.pageNumber) {
-            navigateBackToHome()
+            when (previousScreen) {
+                Screen.CryptoWalletScreen.baseRoute -> navigateBack(
+                    Screen.CryptoWalletScreen.route,
+                    isRestart = false
+                )
+                Screen.CryptoWalletDetailsScreen.baseRoute -> navigateBack(
+                    Screen.CryptoWalletDetailsScreen.route,
+                    isRestart = false
+                )
+                Screen.CryptoCurrencyDetailsScreen.baseRoute -> navigateBack(
+                    Screen.CryptoCurrencyDetailsScreen.route,
+                    isRestart = false
+                )
+                else -> navigateBackToHome()
+            }
         } else {
             currentFlowStep--
             uiState = uiState.copy(
@@ -129,8 +144,7 @@ class SellCryptoSharedViewModel @Inject constructor(
     private fun navigateBackToHome() =
         navigateBack(
             popTo = Screen.HomeScreen.route,
-            isRestart = true,
-            homeState = HomeState.COLLAPSED
+            isRestart = false
         )
 
     private fun onShowBottomSheet() {
@@ -204,8 +218,6 @@ class SellCryptoSharedViewModel @Inject constructor(
         val smartAccountAvailableBalance: Double = 0.0,
         val accountNumber: String = "",
         val ibanAccountNumber: String = "",
-        var shouldDisplayDisclaimer: Boolean = true,
-        val dontShowAgainChecked: Boolean = false,
         val idCurrency: Int = CurrencyType.Dollar.id,
         val asset: String? = null,
         val assetDescription: String? = null,

@@ -1,8 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.payment.amount
 
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue.Expanded
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,6 +10,7 @@ import com.multimoney.domain.interaction.accountsmart.MutationProcessTransferVis
 import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel
@@ -126,6 +125,15 @@ class SavingAmountViewModel @Inject constructor(
                         paymentSuccess = false
                     )
                 }
+                result.onMessage {
+                    amountUIState = amountUIState.copy(
+                        errorMessage = it?.messageError?.message ?: "",
+                        errorDetail = it?.messageError?.detail ?: "",
+                        showLoadingScreen = false,
+                        showErrorScreen = true,
+                        paymentSuccess = false
+                    )
+                }
             }
         }
     }
@@ -178,12 +186,6 @@ class SavingAmountViewModel @Inject constructor(
 
     fun verifySuggestionSelected(order: SuggestionOrder) =
         uiState.suggestedAmountSelected?.isSelected(order) == true
-
-    override fun onContinueClick() {
-        amountUIState = amountUIState.copy(
-            bottomSheetState = ModalBottomSheetState(Expanded)
-        )
-    }
 
     override fun onNavigateBack() {
         val screen = when (previousScreen) {

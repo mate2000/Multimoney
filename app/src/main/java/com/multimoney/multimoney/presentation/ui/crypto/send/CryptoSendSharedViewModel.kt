@@ -52,19 +52,6 @@ class CryptoSendSharedViewModel @Inject constructor(
         }
     }
 
-    private fun onCloseClick() {
-        uiState = uiState.copy(
-            openDialog = DialogParameters(
-                titleResource = R.string.crypto_send_abandon_dialog_title,
-                descriptionResource = R.string.crypto_send_abandon_dialog_message,
-                positiveResource = R.string.button_continue,
-                negativeResource = R.string.custom_dialog_default_negative_label,
-                positiveAction = { navigateBackToHome() },
-                isActive = mutableStateOf(true)
-            )
-        )
-    }
-
     private fun navigateBackToHome() =
         navigateBack(
             popTo = Screen.HomeScreen.route,
@@ -104,7 +91,6 @@ class CryptoSendSharedViewModel @Inject constructor(
         val currentStep: Int = CryptoSendSteps.One.pageNumber,
         val isLoading: Boolean = false,
         val accounts: List<Any> = listOf(),
-        val openDialog: DialogParameters = DialogParameters(),
         var asset: String = "",
         var assetDescription: String = "",
         var assetImg: String = "",
@@ -117,7 +103,6 @@ class CryptoSendSharedViewModel @Inject constructor(
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is UIEvent.OnGetUserInfo -> setUserData()
-            is UIEvent.OnCloseClick -> onCloseClick()
             is UIEvent.OnPreviousStep -> previousStep()
             is UIEvent.OnNextStep -> nextStep()
             is UIEvent.OnCryptoSelected -> onCryptoSelected(event.cryptoAccount)
@@ -126,7 +111,6 @@ class CryptoSendSharedViewModel @Inject constructor(
 
     sealed interface UIEvent {
         object OnGetUserInfo : UIEvent
-        object OnCloseClick : UIEvent
         object OnPreviousStep : UIEvent
         object OnNextStep : UIEvent
         data class OnCryptoSelected(val cryptoAccount: BalanceCryptoAccountItems): UIEvent

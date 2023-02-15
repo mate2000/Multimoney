@@ -56,6 +56,7 @@ import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.getPickedDateAsString
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
 import com.multimoney.multimoney.presentation.util.transformation.VisualTransformationMasks.PHONE_TRANSFORMATION_MASK
+import com.multimoney.multimoney.presentation.util.transformation.formatDecimalMoney
 import com.multimoney.multimoney.presentation.util.transformation.formatMoney
 
 @Composable
@@ -310,7 +311,7 @@ fun MonthlyIncomeScreen(
                     }
                 ),
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
+                    keyboardType = KeyboardType.Decimal,
                     imeAction = ImeAction.Next
                 ),
                 keyboardActions = KeyboardActions(onNext = {
@@ -326,7 +327,7 @@ fun MonthlyIncomeScreen(
                 },
                 isError = viewModel.uiState.incomeError.first,
                 errorMessage = stringResource(id = viewModel.uiState.incomeError.second),
-                customTransformation = formatMoney(
+                customTransformation = formatDecimalMoney(
                     sharedViewModel.currencySymbol.ifEmpty {
                         stringResource(id = sharedViewModel.idBrand.toInt().getCurrencySymbol())
                     }

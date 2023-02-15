@@ -792,8 +792,10 @@
     <string name="smart_onfido_rejected_second_time_subtitle" translatable="false">Comunícate con nosotros para activar tu crédito.</string>
     <string name="smart_onfido_rejected_action_second_time" translatable="false">Contactar</string>
     <!-- Sign Credit Web View -->
-    <string name="sign_credit_dialog_title" translatable="false">Necesitamos tu firma en la siguiente pantalla</string>
-    <string name="sign_credit_dialog_description" translatable="false">Por favor, realizala según las indicaciones.</string>
+    <string name="sign_credit_dialog_title_cr" translatable="false">Firmá en la siguiente pantalla</string>
+    <string name="sign_credit_dialog_title" translatable="false">Firma en la siguiente pantalla</string>
+    <string name="sign_credit_dialog_description_cr" translatable="false">Seguí las indicaciones a continuación</string>
+    <string name="sign_credit_dialog_description" translatable="false">Sigue las indicaciones a continuación</string>
     <string name="sign_credit_dialog_continue" translatable="false">Continuar</string>
 
     <string name="continue_validating_identity_title" translatable="false">Estás cerca de recibir tu crédito</string>

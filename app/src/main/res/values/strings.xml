@@ -681,7 +681,7 @@
     <string name="credit_monthly_income_title_sv" translatable="false">Cuéntanos sobre ti</string>
     <string name="credit_monthly_income_income_label" translatable="false">Ingreso mensual</string>
     <string name="credit_monthly_income_required_income" translatable="false">Ingresos requerido</string>
-    <string name="credit_monthly_income_income_hint" translatable="false">%s 000,000</string>
+    <string name="credit_monthly_income_income_hint" translatable="false">%s 0.00</string>
     <string name="credit_monthly_income_greater_than_zero_error" translatable="false">Ingresa una cantidad mayor a cero</string>
     <string name="credit_monthly_income_profession_label" translatable="false">Seleccioná tu profesión</string>
     <string name="credit_monthly_income_profession_hint" translatable="false">Seleccionar</string>

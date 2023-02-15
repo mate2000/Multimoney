@@ -75,8 +75,7 @@ class SellCryptoSharedViewModel @Inject constructor(
                 assetDescription = marketCryptoCoin?.description,
                 market = marketCryptoCoin?.baseAsset?.plus(abvCurrency),
                 cryptoNetWork = marketCryptoCoin?.cryptoNetwork,
-                assetImageBaseUrl = marketCryptoCoin?.url_image,
-                shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first(),
+                assetImageBaseUrl = marketCryptoCoin?.url_image
             )
         }
 
@@ -219,8 +218,6 @@ class SellCryptoSharedViewModel @Inject constructor(
         val smartAccountAvailableBalance: Double = 0.0,
         val accountNumber: String = "",
         val ibanAccountNumber: String = "",
-        var shouldDisplayDisclaimer: Boolean = true,
-        val dontShowAgainChecked: Boolean = false,
         val idCurrency: Int = CurrencyType.Dollar.id,
         val asset: String? = null,
         val assetDescription: String? = null,

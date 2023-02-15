@@ -521,13 +521,31 @@ class SignInViewModel @Inject constructor(
                     positiveResource = string.active_biometric_positive_button_label,
                     negativeResource = string.active_biometric_negative_button_label,
                     positiveAction = {
-
+                        onUIEvent(
+                            OnFingerprintCheckedChanged(
+                                value = true,
+                                showDialog = false,
+                                is03Country
+                            )
+                        )
                     },
                     negativeAction = {
-
+                        onUIEvent(
+                            OnFingerprintCheckedChanged(
+                                value = false,
+                                showDialog = false,
+                                is03Country
+                            )
+                        )
                     },
                     dismissAction = {
-
+                        onUIEvent(
+                            OnFingerprintCheckedChanged(
+                                value = false,
+                                showDialog = false,
+                                is03Country
+                            )
+                        )
                     },
                     isActive = mutableStateOf(showDialog)
                 )

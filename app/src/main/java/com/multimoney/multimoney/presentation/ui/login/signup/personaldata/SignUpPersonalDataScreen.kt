@@ -33,6 +33,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNationalityValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnShowCloseIcon
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnGetCountriesSuccess
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnCallQueryGetCountry
@@ -69,6 +70,7 @@ fun SignUpPersonalDataScreen(
     }
 
     LaunchedEffect(true) {
+        sharedViewModel.onUIEvent(OnShowCloseIcon(true))
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormValidateCompleted -> sharedViewModel.onUIEvent(OnContinueEnable(event.isFormValid))

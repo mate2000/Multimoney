@@ -196,7 +196,7 @@ class AddIbanAccountViewModel @Inject constructor(
     } else if (previousScreen == Screen.DisbursementAccountScreen.baseRoute) {
         navigateBack(Screen.DisbursementAccountScreen.route, false)
     } else {
-        navigateBack(Screen.PaymentAccountScreen.route, false)
+        navigateBack(Screen.SmartPaymentAccountScreenCR.route, false)
     }
 
     private fun onEditAccount() {

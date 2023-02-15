@@ -10,6 +10,7 @@ import com.multimoney.domain.model.balance.BalanceCryptoAccount
 import com.multimoney.domain.model.crypto.HistoricalBalanceClient
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoCardDiscoverCrypto
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoCardMaintenanceState
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoCardSmartInProcess
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoCardWithBalance
 import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
@@ -39,19 +40,28 @@ fun CryptoContent(
                                 isEmptyStateDisable = cryptoEmptyState
                             )
                         }
-                        return
-                    }
-                    // show card with balance and gains/loses
-                    CustomProductBackground(
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp),
-                        type = ProductBackGroundType.ComplementaryTwo
-                    ) {
-                        CryptoCardWithBalance(
-                            cryptoBalance = cryptoBalance.globalBalance ?: 0.0,
-                            clientCryptoBalanceHistory = clientBalanceHistory,
-                            isEmptyStateDisable = cryptoEmptyState
-                        )
+                    } else if (cryptoBalance.outOfService) {
+                        // show maintenance card
+                        CustomProductBackground(
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp),
+                            type = ProductBackGroundType.ComplementaryTwo
+                        ) {
+                            CryptoCardMaintenanceState()
+                        }
+                    } else {
+                        // show card with balance and gains/loses
+                        CustomProductBackground(
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp),
+                            type = ProductBackGroundType.ComplementaryTwo
+                        ) {
+                            CryptoCardWithBalance(
+                                cryptoBalance = cryptoBalance.globalBalance ?: 0.0,
+                                clientCryptoBalanceHistory = clientBalanceHistory,
+                                isEmptyStateDisable = cryptoEmptyState
+                            )
+                        }
                     }
                 }
                 CryptoAccountStatus.INACTIVE.status -> {

@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,7 +16,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -28,11 +25,9 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.LocalMultimoneyColors
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoCurrencySendItem
-import com.multimoney.multimoney.presentation.ui.crypto.market.MarketSkeleton
 import com.multimoney.multimoney.presentation.ui.crypto.sell.SellCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.send.listofcurrencies.CryptoSendCurrenciesListViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
-import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
@@ -56,7 +51,7 @@ fun SellCurrenciesListScreen(
     }
 
     CryptoSellContent(
-        viewModel.uiState,
+        sharedViewModel,
         itemClick = {
             sharedViewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnCryptoSelected(it))
             sharedViewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnNextStep)
@@ -82,7 +77,7 @@ fun SellCurrenciesListScreen(
 
 @Composable
 fun CryptoSellContent(
-    uiState: CryptoSendCurrenciesListViewModel.UiState,
+    sharedViewModel: SellCryptoSharedViewModel,
     itemClick: (BalanceCryptoAccountItems) -> Unit
 ) {
     val searchQuery = remember { mutableStateOf("") }
@@ -94,22 +89,25 @@ fun CryptoSellContent(
     ) {
         Text(
             modifier = Modifier.padding(vertical = 8.dp),
-            text = stringResource(id = R.string.crypt_list_sell_title),
+            text = stringResource(
+                id = if (sharedViewModel.idBrand == Brand.CostaRica.id) {
+                    R.string.crypt_list_sell_title_cr
+                } else {
+                    R.string.crypt_list_sell_title_sv
+                }),
             style = Typography.h6.copy(
                 fontWeight = FontWeight.SemiBold,
                 color = LocalMultimoneyColors.current.titleText
             ),
             textAlign = TextAlign.Left
         )
-        if (uiState.isLoading) {
-            MarketSkeleton()
-        } else {
+
             CryptoSellList(
-                cryptoAccounts = uiState.cryptoAccounts,
+                cryptoAccounts = sharedViewModel.uiState.userCryptoBalances,
                 searchQuery = searchQuery,
                 itemClick = itemClick
             )
-        }
+
     }
 }
 

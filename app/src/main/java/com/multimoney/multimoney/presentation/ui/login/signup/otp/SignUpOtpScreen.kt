@@ -42,6 +42,7 @@ import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.PHONE_HARDCODED
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnShowCloseIcon
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_FIVE
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_FOUR
@@ -96,6 +97,7 @@ fun SignUpOtpScreen(
     )
 
     LaunchedEffect(true) {
+        sharedViewModel.onUIEvent(OnShowCloseIcon(true))
         viewModel.apply {
             executeNavigation(onPopAndNavigate = onPopAndNavigate)
             onUIEvent(SignUpOtpViewModel.UIEvent.OnInitializeTimer(PHASE_ONE, TIMER_DURATION))

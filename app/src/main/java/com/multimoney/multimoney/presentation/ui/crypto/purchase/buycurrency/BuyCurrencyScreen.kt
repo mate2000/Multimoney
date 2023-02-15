@@ -35,6 +35,7 @@ import com.multimoney.multimoney.presentation.ui.crypto.AmountInputSection
 import com.multimoney.multimoney.presentation.ui.crypto.CounterSection
 import com.multimoney.multimoney.presentation.ui.crypto.NativeLoaderScreen
 import com.multimoney.multimoney.presentation.ui.crypto.TitleSection
+import com.multimoney.multimoney.presentation.ui.crypto.VoucherCurrencyExchangeInfoSkeleton
 import com.multimoney.multimoney.presentation.ui.crypto.WhileLoadingSection
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.uielement.AlertResult
@@ -70,10 +71,10 @@ fun BuyCurrencyScreen(
                 user = sharedViewModel.user,
                 market = sharedViewModel.uiState.market,
                 identification = sharedViewModel.identification,
-                accountToken = sharedViewModel.uiState.accountToken.toLong() ?: 0L,
+                accountToken = sharedViewModel.uiState.accountToken.toLong(),
                 side = sharedViewModel.side,
                 assetImageUrl = sharedViewModel.uiState.assetImageBaseUrl,
-                smartAccountAvailableBalance = sharedViewModel.uiState.smartAccountAvailableBalance ?: 0.0,
+                smartAccountAvailableBalance = sharedViewModel.uiState.smartAccountAvailableBalance,
                 ibanAccountNumber = sharedViewModel.uiState.ibanAccountNumber,
             )
         )
@@ -303,7 +304,7 @@ fun BuyCurrencyScreenContent(
                 }) {
                     CounterSection(
                         counterTextResourceId = R.string.crypto_purchase_flow_price_expires_in,
-                        smartAccountAvailableBalance = viewModel.smartAccountAvailableBalance,
+                        accountAvailableBalance = viewModel.smartAccountAvailableBalance,
                         downCounter = viewModel.uiState.remainingTimeText
                     )
                 }

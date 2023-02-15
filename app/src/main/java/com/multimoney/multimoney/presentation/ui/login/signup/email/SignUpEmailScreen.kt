@@ -35,6 +35,7 @@ import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnShowCloseIcon
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnShowAnotherDeviceAlreadyRegisteredDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
@@ -53,6 +54,7 @@ fun SignUpEmailScreen(
     val activity = LocalContext.current.findActivity() as FragmentActivity
 
     LaunchedEffect(true) {
+        sharedViewModel.onUIEvent(OnShowCloseIcon(false))
         sharedViewModel.onUIEvent(
             SignUpViewModel.UIEvent.OnSetNavigation(nextAction = {
                 viewModel.onUIEvent(

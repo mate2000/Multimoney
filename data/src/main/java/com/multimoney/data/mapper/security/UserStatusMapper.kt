@@ -78,7 +78,8 @@ private fun ValidateUserStatusQuery.InfoRequest.mapToDomainModel() = InfoRequest
 private fun ValidateUserStatusQuery.Wording.mapToDomainModel() = Wording(
     textOne = textOne,
     textTwo = textTwo,
-    cTA = cTA
+    cTA = cTA,
+    workflow = workFlow
 )
 
 private fun ValidateUserStatusQuery.Wording1.mapToDomainModel() = Wording(
@@ -87,19 +88,21 @@ private fun ValidateUserStatusQuery.Wording1.mapToDomainModel() = Wording(
     cTA = cTA,
     link = link.orEmpty(),
     display = display ?: false,
-    workFlow = workFlow
+    workflow = workFlow
 )
 
 private fun ValidateUserStatusQuery.Wording2.mapToDomainModel() = Wording(
     textOne = textOne,
     textTwo = textTwo,
-    cTA = cTA
+    cTA = cTA,
+    workflow = workFlow
 )
 
 private fun ValidateUserStatusQuery.Wording3.mapToDomainModel() = Wording(
     textOne = textOne,
     textTwo = textTwo,
-    cTA = cTA
+    cTA = cTA,
+    workflow = workFlow
 )
 
 private fun ValidateUserStatusQuery.InfoVirtualCard.mapToDomainModel() = InfoVirtualCard(status = status)

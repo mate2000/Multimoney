@@ -24,7 +24,6 @@ import com.multimoney.multimoney.presentation.util.MAX_CRYPTO_ITEMS
 @Composable
 fun CryptoCurrencies(
     items: List<BalanceCryptoAccountItems>?,
-    itemClick: (BalanceCryptoAccountItems) -> Unit,
     viewAllClick: () -> Unit
 ) {
 
@@ -60,8 +59,7 @@ fun CryptoCurrencies(
                     balanceDollars = item.balanceDollars,
                     priceOfTheDay = item.priceOfTheDay,
                     percentageInvestedCurrency = item.percentageInvestedCurrency,
-                    available = item.available,
-                    onClick = { itemClick(item) }
+                    available = item.available
                 )
             }
 

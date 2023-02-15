@@ -13,18 +13,12 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.SmartAccountDetail
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.SmartMovementsLatest
-import com.multimoney.multimoney.presentation.util.catalog.ProductType
 
 @Composable
 fun SmartFooterExpanded(
     viewModel: ProductViewModel,
-    currentPage: Int,
-    onLoadingValueChange: (isLoading: Boolean) -> Unit
+    index: Int
 ) {
-    val decrement =
-        if (viewModel.uiState.productPageList?.any { it.product == ProductType.Credit.value } == true) 1 else 0
-    val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: decrement)
-
     Column(
         Modifier.padding(top = 16.dp).fillMaxWidth().wrapContentHeight()
     ) {

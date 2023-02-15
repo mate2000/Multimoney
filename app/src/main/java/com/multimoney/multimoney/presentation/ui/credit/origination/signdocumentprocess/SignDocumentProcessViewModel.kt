@@ -26,7 +26,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUES
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
-import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ORIGIN
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.OpenWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.SimulateUserInteraction
@@ -39,20 +38,20 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.signdocument
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnShowDialogInformation
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
+import com.multimoney.multimoney.presentation.util.catalog.CreditSubscriptionStep
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.EVICERTIA_REJECTED_FIRST_TIME
 import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.EVICERTIA_REJECTED_SECOND_TIME
 import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.ONFIDO_REJECTED_FIRST_TIME
 import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.ONFIDO_REJECTED_SECOND_TIME
-import com.multimoney.multimoney.presentation.util.catalog.SignDocumentOrigin
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.PROCESSING_TRANSACTION
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
+import javax.inject.Inject
 
 @HiltViewModel
 class SignDocumentProcessViewModel @Inject constructor(
@@ -73,7 +72,6 @@ class SignDocumentProcessViewModel @Inject constructor(
     var idUserRequest: Long = 0
     var firstName: String = ""
     var lastName: String = ""
-    var origin: String = ""
     var isCrosseling: Boolean = false
 
     init {
@@ -85,7 +83,6 @@ class SignDocumentProcessViewModel @Inject constructor(
         idUserRequest = savedStateHandle[ID_USER_REQUEST] ?: 0
         firstName = savedStateHandle[FIRST_NAME] ?: ""
         lastName = savedStateHandle[LAST_NAME] ?: ""
-        origin = savedStateHandle[SIGN_DOCUMENT_ORIGIN] ?: SignDocumentOrigin.OnFidoFirstTime.value
         isCrosseling = savedStateHandle[CROSSELING] ?: false
         uiState = uiState.copy(
             signDocumentProcessStep = savedStateHandle[SIGN_DOCUMENT_STEP_ARG] ?: ""
@@ -110,7 +107,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     private fun onShouldCallGetLinkCreditContract() {
-        if (origin == SignDocumentOrigin.Product.value || origin == SignDocumentOrigin.OnFidoSecondTime.value) {
+        if (isCrosseling.not()) {
             callQueryGetLinkCreditContractUseCase()
         }
     }
@@ -120,8 +117,8 @@ class SignDocumentProcessViewModel @Inject constructor(
             subscriptionCreditContractEventUseCase.invoke(idPrint, idBrand)
                 .collectLatest { result ->
                     result.onSuccess {
-                        Timber.d(LOG_SUBSCRIPTION_TAG, it?.toString())
-                        handleEvents(creditContractEvent = it)
+                        Timber.d(LOG_SUBSCRIPTION_TAG, it?.currentStep)
+                        handleSubscriptionsSteps(creditContractEvent = it)
                     }.onFailure {
                         Timber.d(LOG_SUBSCRIPTION_TAG, it.getError())
                         showSubscriptionError()
@@ -159,57 +156,44 @@ class SignDocumentProcessViewModel @Inject constructor(
             }
         }
 
-    private fun handleEvents(creditContractEvent: CreditContractEvent?) {
-        when (uiState.signDocumentProcessStep) {
-            GENERATE_DOCUMENT_STEP.value -> {
-                if (creditContractEvent?.link.isNullOrEmpty().not()) {
-                    emitBaseEvent(SimulateUserInteraction)
+    private fun handleSubscriptionsSteps(creditContractEvent: CreditContractEvent?) {
+        when (creditContractEvent?.currentStep) {
+            CreditSubscriptionStep.LinkGenerated.step -> {
+                emitBaseEvent(SimulateUserInteraction)
+                uiState = uiState.copy(
+                    signDocumentProcessStep = SIGN_DOCUMENTS_STEP.value,
+                    signDocumentUrl = creditContractEvent.link ?: ""
+                )
+            }
+            CreditSubscriptionStep.DocumentsFirmed.step -> {
+                if (isCrosseling) {
                     uiState = uiState.copy(
-                        signDocumentProcessStep = SIGN_DOCUMENTS_STEP.value,
-                        signDocumentUrl = creditContractEvent?.link ?: ""
+                        signDocumentProcessStep = PROCESSING_TRANSACTION.value
                     )
-                }
-            }
-            SIGN_DOCUMENTS_STEP.value -> {
-                when (creditContractEvent?.statusEvicertia?.lowercase()) {
-                    CreditOnFidoOrFirmStatus.FIRMED.status.lowercase() -> {
-                        if (isCrosseling) {
-                            uiState = uiState.copy(
-                                signDocumentProcessStep = PROCESSING_TRANSACTION.value
-                            )
-                        } else {
-                            handleOnfidoStatus(creditContractEvent)
-                        }
-                    }
-                    CreditOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {
-                        emitBaseEvent(SimulateUserInteraction)
-                        onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_FIRST_TIME.value)
-                    }
-                    CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase() -> {
-                        emitBaseEvent(SimulateUserInteraction)
-                        onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_SECOND_TIME.value)
-                    }
-                }
-            }
-            VALIDATE_IDENTITY.value -> {
-                emitBaseEvent(SimulateUserInteraction)
-                if (creditContractEvent?.active == true) {
-                    if (idBrand == Brand.CostaRica.id && idPrint != ID_PRINT_EMPTY) {
-                        navigateToProcessingTransaction()
-                    } else {
-                        setSuccessAlertResult()
-                    }
                 } else {
-                    showSubscriptionError()
+                    handleOnfidoStatus(creditContractEvent)
                 }
             }
-            PROCESSING_TRANSACTION.value -> {
+            CreditSubscriptionStep.DocumentsRejected.step -> {
+                if (creditContractEvent.statusEvicertia == CreditOnFidoOrFirmStatus.OVER_COUNTER.status) {
+                    emitBaseEvent(SimulateUserInteraction)
+                    onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_SECOND_TIME.value)
+                } else {
+                    emitBaseEvent(SimulateUserInteraction)
+                    onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_FIRST_TIME.value)
+                }
+            }
+            CreditSubscriptionStep.AccountActivated.step -> {
                 emitBaseEvent(SimulateUserInteraction)
-                if (creditContractEvent?.active == true) {
+                if (idBrand == Brand.CostaRica.id && idPrint != ID_PRINT_EMPTY) {
                     navigateToProcessingTransaction()
                 } else {
-                    showSubscriptionError()
+                    setSuccessAlertResult()
                 }
+            }
+            CreditSubscriptionStep.ErrorActivatingAccount.step, CreditSubscriptionStep.DocumentsFailed.step -> {
+                emitBaseEvent(SimulateUserInteraction)
+                showSubscriptionError()
             }
         }
     }
@@ -248,12 +232,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     ) {
         emitBaseEvent(SimulateUserInteraction)
         when (creditContractEvent?.statusOnfido?.lowercase()) {
-            CreditOnFidoOrFirmStatus.PENDING.status.lowercase() -> {
-                uiState = uiState.copy(
-                    signDocumentProcessStep = VALIDATE_IDENTITY.value
-                )
-            }
-            CreditOnFidoOrFirmStatus.APPROVED.status.lowercase() -> {
+            CreditOnFidoOrFirmStatus.PENDING.status.lowercase(), CreditOnFidoOrFirmStatus.APPROVED.status.lowercase() -> {
                 uiState = uiState.copy(
                     signDocumentProcessStep = VALIDATE_IDENTITY.value
                 )

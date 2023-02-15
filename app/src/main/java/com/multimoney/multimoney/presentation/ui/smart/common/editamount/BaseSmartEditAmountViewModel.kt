@@ -5,16 +5,19 @@ import android.view.View
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.ModalBottomSheetValue.Expanded
 import androidx.compose.material.ModalBottomSheetValue.Hidden
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Rect
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.accountsmart.MutationProcessSinpeTransferUseCase
 import com.multimoney.domain.interaction.accountsmart.QuerySmartExchangeRateUseCase
 import com.multimoney.domain.model.accountsmart.IbanAccountID
 import com.multimoney.domain.model.accountsmart.SmartAccountID
+import com.multimoney.domain.model.security.SmartTransferLimit
 import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -86,6 +89,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
     var shouldDisplayExchange: Boolean = false
     var originCurrency: CurrencyType? = null
     var destinyCurrency: CurrencyType? = null
+    var limits: List<SmartTransferLimit?>? = null
     var previousScreen: String = ""
 
     abstract fun onStart()
@@ -99,59 +103,6 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
         transferType = savedStateHandle[TRANSFER_TYPE] ?: 0
 
         when (transferType) {
-            SmartTransferTypes.SmartToIban.id -> {
-                smartAccount = savedStateHandle[ORIGIN_ACCOUNT]
-                ibanAccount = savedStateHandle[DESTINY_ACCOUNT]
-                originCurrency = smartAccount?.currencyID?.getCurrencyFromId()
-                destinyCurrency = ibanAccount?.currencyId?.getCurrencyFromId()
-                shouldDisplayExchange = originCurrency != destinyCurrency
-
-                amountUIState = amountUIState.copy(
-                    originAccountDisplay = DisplayAccount(
-                        sheetTitleResource = originCurrency?.myAccountSmartSymbol,
-                        sheetSubtitleResource = originCurrency?.currencyName,
-                        icon = R.drawable.ic_multimoney_smart
-                    ),
-                    destinyAccountDisplay = DisplayAccount(
-                        sheetTitle = ibanAccount?.nameAccount.orEmpty(),
-                        sheetSubtitle = ibanAccount?.bank.orEmpty(),
-                        sheetSubtitle2 = getMaskedAccountIban(ibanAccount?.sinpeAccount.orEmpty()),
-                        icon = destinyCurrency?.accountIcon
-                    ),
-                    currency = destinyCurrency?.symbol ?: Dollar.symbol,
-                    placeholder = if (destinyCurrency == Dollar) {
-                        R.string.smart_dollar_placeholder
-                    } else {
-                        R.string.smart_colon_placeholder
-                    }
-                )
-            }
-            SmartTransferTypes.SmartToSmart.id -> {
-                smartAccount = savedStateHandle[ORIGIN_ACCOUNT]
-                smartDestiny = savedStateHandle[DESTINY_ACCOUNT]
-                originCurrency = smartAccount?.currencyID?.getCurrencyFromId()
-                destinyCurrency = smartDestiny?.currencyID?.getCurrencyFromId()
-                shouldDisplayExchange = true
-
-                amountUIState = amountUIState.copy(
-                    originAccountDisplay = DisplayAccount(
-                        sheetTitleResource = originCurrency?.myAccountSmartSymbol,
-                        sheetSubtitleResource = originCurrency?.currencyName,
-                        icon = R.drawable.ic_multimoney_smart
-                    ),
-                    destinyAccountDisplay = DisplayAccount(
-                        sheetTitleResource = destinyCurrency?.myAccountSmartSymbol,
-                        sheetSubtitleResource = destinyCurrency?.currencyName,
-                        icon = R.drawable.ic_multimoney_smart
-                    ),
-                    currency = destinyCurrency?.symbol ?: Dollar.symbol,
-                    placeholder = if (destinyCurrency == Dollar) {
-                        R.string.smart_dollar_placeholder
-                    } else {
-                        R.string.smart_colon_placeholder
-                    }
-                )
-            }
             SmartTransferTypes.IbanToSmart.id -> {
                 smartAccount = savedStateHandle[DESTINY_ACCOUNT]
                 ibanAccount = savedStateHandle[ORIGIN_ACCOUNT]
@@ -215,39 +166,37 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
         currentAmount: Double = amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
     ) {
         val amount = amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
-        if (shouldDisplayExchange) {
-            if (amount > 0.0 || isStart) {
-                executeUseCase {
-                    querySmartExchangeRateUseCase.invoke(
-                        user = userName,
-                        idBrand = idBrand,
-                        abbreviation = abbreviation ?: "",
-                        identification = identification,
-                        idOriginCurrency = idOriginCurrency,
-                        idDestinationCurrency = idDestinationCurrency,
-                        amount = currentAmount
-                    ).collectLatest { result ->
-                        result.onFailure {
-                            onFailureWithDialog(
-                                false,
-                                DialogParameters(isActive = mutableStateOf(true))
-                            )
-                        }
-                        result.onLoading {
-                            amountUIState = amountUIState.copy(isLoading = true)
-                        }
-                        result.onSuccess { rate ->
-                            amountUIState = amountUIState.copy(
-                                isLoading = false,
-                                exchangeRate = rate?.exchangeRate ?: 0.0,
-                                exchangeConvertedAmount = rate?.convertedAmount ?: 0.0,
-                                exchangeRateLabel = rate?.exchangeRateLabel
-                                    ?: "${idOriginCurrency.getCurrencySymbol()}0.0",
-                                convertedAmountLabel = rate?.convertedAmountLabel
-                                    ?: "${idDestinationCurrency.getCurrencySymbol()}0.0"
-                            )
-                            if (isPayment.not()) validateAmount()
-                        }
+        if (shouldDisplayExchange && (amount > 0.0 || isStart)) {
+            executeUseCase {
+                querySmartExchangeRateUseCase.invoke(
+                    user = userName,
+                    idBrand = idBrand,
+                    abbreviation = abbreviation ?: "",
+                    identification = identification,
+                    idOriginCurrency = idOriginCurrency,
+                    idDestinationCurrency = idDestinationCurrency,
+                    amount = currentAmount
+                ).collectLatest { result ->
+                    result.onFailure {
+                        onFailureWithDialog(
+                            false,
+                            DialogParameters(isActive = mutableStateOf(true))
+                        )
+                    }
+                    result.onLoading {
+                        amountUIState = amountUIState.copy(isLoading = true)
+                    }
+                    result.onSuccess { rate ->
+                        amountUIState = amountUIState.copy(
+                            isLoading = false,
+                            exchangeRate = rate?.exchangeRate ?: 0.0,
+                            exchangeConvertedAmount = rate?.convertedAmount ?: 0.0,
+                            exchangeRateLabel = rate?.exchangeRateLabel
+                                ?: "${idOriginCurrency.getCurrencySymbol()}0.0",
+                            convertedAmountLabel = rate?.convertedAmountLabel
+                                ?: "${idDestinationCurrency.getCurrencySymbol()}0.0"
+                        )
+                        if (isPayment.not()) validateAmount()
                     }
                 }
             }
@@ -261,17 +210,39 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
     }
 
     open fun validateAmount() {
-        val currentAmount = if (shouldDisplayExchange) {
-            amountUIState.exchangeConvertedAmount
-        } else {
-            amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
-        }
+        val currentAmount = if (shouldDisplayExchange) amountUIState.exchangeConvertedAmount
+        else amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
 
-        val isAmountValid = currentAmount <= (smartAccount?.totalBalance ?: 0.0)
         amountUIState = amountUIState.copy(
-            isAmountValid = isAmountValid,
+            amountError = Triple(false, R.string.empty, "")
+        )
+
+        if (currentAmount > (smartAccount?.totalBalance ?: 0.0)) {
+            amountUIState = amountUIState.copy(
+                amountError = Triple(
+                    true,
+                    R.string.smart_iban_transfer_error_balance_insufficient,
+                    originCurrency?.symbol.plus(amountUIState.totalBalance)
+                )
+            )
+        }
+        if (
+            amountUIState.maxAmount != null &&
+            (amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0) >
+            (amountUIState.maxAmount ?: 0.0)
+        ) {
+            amountUIState = amountUIState.copy(
+                amountError = Triple(
+                    true,
+                    R.string.smart_iban_transfer_error_max_amount,
+                    destinyCurrency?.symbol.plus(amountUIState.maxAmount)
+                )
+            )
+        }
+        amountUIState = amountUIState.copy(
+            isAmountValid = amountUIState.amountError.first.not(),
             bottomSheetState = ModalBottomSheetState(Hidden),
-            enableButton = validateForm(isAmountValid = isAmountValid)
+            enableButton = validateForm(isAmountValid = amountUIState.amountError.first.not())
         )
     }
 
@@ -292,7 +263,11 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
         newMotive.isNotEmpty() &&
         isAmountValid
 
-    abstract fun onContinueClick()
+    open fun onContinueClick() {
+        amountUIState = amountUIState.copy(
+            bottomSheetState = ModalBottomSheetState(Expanded)
+        )
+    }
 
     open fun onMotiveChange(newMotive: String) {
         amountUIState = amountUIState.copy(
@@ -413,7 +388,11 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
         amountUIState = amountUIState.copy(
             openDialog = DialogParameters(
                 titleResource = R.string.smart_iban_transfer_abandon_dialog_title,
-                descriptionResource = R.string.smart_iban_transfer_abandon_dialog_message,
+                descriptionResource = if (idBrand == Brand.CostaRica.id) {
+                    R.string.smart_transfer_abandon_dialog_message_cr
+                } else {
+                    R.string.smart_transfer_abandon_dialog_message_sv
+                },
                 isActive = mutableStateOf(true),
                 positiveResource = R.string.cancel,
                 negativeResource = R.string.button_continue,
@@ -470,7 +449,10 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
         val currentDate: String = "",
         val currentTime: String = "",
         val originAccountDisplay: DisplayAccount? = null,
-        val destinyAccountDisplay: DisplayAccount? = null
+        val destinyAccountDisplay: DisplayAccount? = null,
+        val maxAmount: Double? = null,
+        val totalBalance: Double? = null,
+        val amountError: Triple<Boolean, Int, String> = Triple(false, R.string.empty, "")
     )
 
     open fun onAmountUIEvent(uiEvent: AmountUIEvent) {

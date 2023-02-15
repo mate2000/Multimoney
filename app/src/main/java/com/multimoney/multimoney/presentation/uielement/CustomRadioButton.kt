@@ -92,7 +92,7 @@ fun CustomRadioButtonsLayout(
     optionSelected: String? = null,
     onOptionSelected: (String) -> Unit,
 ) {
-    val selectedOption = remember { mutableStateOf(optionSelected ?: "") }
+    val selectedOption = remember { mutableStateOf("") }
 
     if (orientation == Orientation.Vertical) {
         Column(modifier = modifier) {
@@ -101,7 +101,10 @@ fun CustomRadioButtonsLayout(
                     modifier = Modifier,
                     radioModifier = Modifier,
                     text = text,
-                    selected = (text == selectedOption.value),
+                    selected = (
+                            text == if (selectedOption.value.isBlank()) optionSelected
+                            else selectedOption.value
+                            ),
                     onOptionSelected = {
                         selectedOption.value = text
                         onOptionSelected(text)
@@ -116,7 +119,10 @@ fun CustomRadioButtonsLayout(
                     modifier = Modifier,
                     radioModifier = Modifier,
                     text = text,
-                    selected = (text == selectedOption.value),
+                    selected = (
+                            text == if (selectedOption.value.isBlank()) optionSelected
+                            else selectedOption.value
+                            ),
                     onOptionSelected = {
                         selectedOption.value = text
                         onOptionSelected(text)

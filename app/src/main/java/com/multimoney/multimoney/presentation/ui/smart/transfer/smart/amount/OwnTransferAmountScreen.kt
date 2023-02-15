@@ -50,8 +50,8 @@ fun OwnTransferAmountScreen(
     } else if (viewModel.amountUIState.showErrorScreen) {
         AlertResult(
             isTopNavBarVisible = false,
-            titleResource = R.string.error_occurred_title,
-            descriptionResource = R.string.error_try_again,
+            titleString = viewModel.amountUIState.errorMessage,
+            descriptionString = viewModel.amountUIState.errorMessage,
             buttonTextResource = R.string.error_button_try_again,
             onButtonClick = { viewModel.onAmountUIEvent(OnRetryTransfer) }
         )
@@ -112,10 +112,10 @@ fun OwnTransferAmountContent(viewModel: OwnTransferAmountViewModel = hiltViewMod
                 viewModel.onAmountUIEvent(OnAmountValueChange(it))
             },
             onDebounceValidation = { viewModel.onAmountUIEvent(OnAmountCompleted(it)) },
-            isAmountError = viewModel.amountUIState.isAmountValid.not(),
+            isAmountError = viewModel.amountUIState.amountError.first,
             amountErrorMessage = stringResource(
-                id = R.string.smart_iban_transfer_error_balance_insufficient,
-                viewModel.totalBalanceLabel
+                viewModel.amountUIState.amountError.second,
+                viewModel.amountUIState.amountError.third
             ),
             currency = viewModel.amountUIState.currency,
             exchangeRate = viewModel.amountUIState.exchangeRateLabel.orEmpty(),
@@ -154,7 +154,7 @@ private fun OwnTransferAmountBottomSheet(viewModel: OwnTransferAmountViewModel) 
         ),
         toIcon = viewModel.amountUIState.destinyAccountDisplay?.icon,
         motive = viewModel.amountUIState.motive,
-        buttonText = stringResource(R.string.button_continue),
+        buttonText = stringResource(R.string.payment_amount_bottom_sheet_send_button),
         buttonAction = { viewModel.onAmountUIEvent(OnCallProcessTransfer) }
     )
 }

@@ -200,9 +200,11 @@ class SellCurrencyScreenViewModel @Inject constructor(
         )
 
         when {
-            amount.isEmpty() -> isError(isError = true)
+            amount.isEmpty() -> isError(isError = true, focusError = false)
             quoteAmount < MINIMUM_AMOUNT_ALLOWED -> isError(
-                errorMessage = R.string.crypto_sell_flow_error_minimum_amount, isError = true
+                errorMessage = R.string.crypto_sell_flow_error_minimum_amount,
+                isError = true,
+                focusError = true
             )
             quoteAmount > calculateAvailableInDollars(
                 baseAmount = cryptoAvailableCurrencyBalance,
@@ -210,17 +212,24 @@ class SellCurrencyScreenViewModel @Inject constructor(
             ) -> isError(
                 errorMessage = R.string.crypto_purchase_flow_error_available_amount,
                 arg = "${cryptoAvailableCurrencyBalance.roundToEightDecimalPlaces()} $asset",
-                isError = true
+                isError = true,
+                focusError = true
             )
             else -> isError()
         }
     }
 
     private fun isError(
-        @StringRes errorMessage: Int = R.string.empty, arg: Any = Any(), isError: Boolean = false
+        @StringRes errorMessage: Int = R.string.empty,
+        arg: Any = Any(),
+        isError: Boolean = false,
+        focusError: Boolean = false
     ) {
         uiState = uiState.copy(
-            error = errorMessage, errorMessageArg = arg, isError = isError
+            error = errorMessage,
+            errorMessageArg = arg,
+            isError = isError,
+            focusError = focusError
         )
     }
 
@@ -344,6 +353,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
         val failureAction: () -> Unit = {},
         //** validations
         val isError: Boolean = false,
+        val focusError: Boolean = false,
         @StringRes val error: Int = R.string.empty,
         val errorMessageArg: Any = Any(),
         val isTransformationCurrency: MutableState<Boolean> = mutableStateOf(false),

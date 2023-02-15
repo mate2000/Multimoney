@@ -122,7 +122,7 @@ class SmartTransferFavoriteViewModel @Inject constructor(
             val savedAccount = Transfer365Account(
                 accountNumber = selectedACHFavoriteAccount?.accountNumber,
                 name = selectedACHFavoriteAccount?.description ?: "",
-                bankId =selectedACHFavoriteAccount?.idBank.toString(),
+                bankId = selectedACHFavoriteAccount?.idBank.toString(),
                 bankName = selectedACHFavoriteAccount?.destinationBankDescription ?: "",
                 accountTypeId = selectedACHFavoriteAccount?.idTypeAccount.toString(),
                 isFavorite = selectedACHFavoriteAccount?.isFavorite ?: true

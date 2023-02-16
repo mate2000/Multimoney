@@ -47,6 +47,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProgressCalculation
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessCreateAccountFailure
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnFidoIncomplete
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnfidoMaxAttempts
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnfidoReject
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditStartProcessIncomplete
 import com.multimoney.multimoney.presentation.uielement.BalanceTextView
@@ -313,7 +314,7 @@ fun CreditPreApproved(
 @Composable
 @Preview
 fun CardWithCreditInProcess(
-    type: CreditProcessStarted = CreditProcessOnfidoReject,
+    type: CreditProcessStarted? = CreditProcessOnfidoReject,
     idBrand: Int = Brand.ElSalvador.id,
     action: () -> Unit = {},
     wording: Wording? = Wording("", "", "")
@@ -332,7 +333,9 @@ fun CardWithCreditInProcess(
     }
     when (type) {
         CreditStartProcessIncomplete -> {
-            chipText = string.home_product_process_credit_preapproved_label
+            startIcon = drawable.ic_warning
+        }
+        CreditProcessOnfidoMaxAttempts -> {
             startIcon = drawable.ic_warning
         }
         CreditProcessOnFidoIncomplete -> {
@@ -433,7 +436,8 @@ fun CardCreditFirmedAndOnfidoPending() {
             modifier = Modifier.padding(top = 12.dp),
             shape = RoundedCornerShape(12.dp),
             background = backgroundShip,
-            startIcon = drawable.ic_warning
+            startIcon = drawable.ic_time,
+            startIconTint = MultimoneyTheme.colors.iconColor
         )
         Text(
             text = stringResource(id = R.string.home_product_process_accept_contract_title),

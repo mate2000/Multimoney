@@ -11,11 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.BuyCryptoStep
 import com.multimoney.data.util.catalog.SellCryptoStep
 import com.multimoney.data.util.catalog.SellCryptoSteps
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.sell.listofcurrencies.SellCurrenciesListScreen
 import com.multimoney.multimoney.presentation.ui.crypto.sell.selectaccount.SelectSmartAccountScreen
 import com.multimoney.multimoney.presentation.ui.crypto.sell.sellcurrency.SellCurrencyScreen

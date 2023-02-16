@@ -681,7 +681,7 @@
     <string name="credit_monthly_income_title_sv" translatable="false">Cuéntanos sobre ti</string>
     <string name="credit_monthly_income_income_label" translatable="false">Ingreso mensual</string>
     <string name="credit_monthly_income_required_income" translatable="false">Ingresos requerido</string>
-    <string name="credit_monthly_income_income_hint" translatable="false">%s 000,000</string>
+    <string name="credit_monthly_income_income_hint" translatable="false">%s 0.00</string>
     <string name="credit_monthly_income_greater_than_zero_error" translatable="false">Ingresa una cantidad mayor a cero</string>
     <string name="credit_monthly_income_profession_label" translatable="false">Seleccioná tu profesión</string>
     <string name="credit_monthly_income_profession_hint" translatable="false">Seleccionar</string>
@@ -707,7 +707,7 @@
     <string name="credit_job_workplace_required" translatable="false">Nombre de la empresa requerido</string>
     <string name="credit_job_date_placeholder" translatable="false">00 | 00 | 0000</string>
     <string name="credit_job_date_required" translatable="false">Fecha de ingreso requerida</string>
-    <string name="credit_job_joined_date" translatable="false">Fecha en la que ingresaste</string>
+    <string name="credit_job_joined_date" translatable="false">Fecha en que ingresaste</string>
     <string name="credit_job_joined_date_first_job" translatable="false">Fecha en que ingresaste a tu primer trabajo</string>
     <string name="credit_job_phone_number" translatable="false">Teléfono de la empresa</string>
     <string name="credit_job_phone_placeholder_sv" translatable="false">0000 0000</string>

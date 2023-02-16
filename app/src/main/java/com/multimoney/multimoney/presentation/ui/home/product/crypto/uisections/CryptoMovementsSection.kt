@@ -27,7 +27,8 @@ import kotlinx.coroutines.flow.Flow
 @Composable
 fun CryptoMovementsSection(
     onShowAllClick: () -> Unit,
-    cryptoMovements: Flow<PagingData<CryptoCurrencyMovement>>
+    cryptoMovements: Flow<PagingData<CryptoCurrencyMovement>>,
+    onNavigateToReleaseTransaction : () -> Unit
 ) {
     val movements = cryptoMovements.collectAsLazyPagingItems()
 
@@ -59,7 +60,11 @@ fun CryptoMovementsSection(
             }
 
             repeat(MAX_CRYPTO_ITEMS) {
-                CryptoCurrencyMovementItem(cryptoCurrencyMovement = movements[it])
+                CryptoCurrencyMovementItem(
+                    cryptoCurrencyMovement = movements[it],
+                    onReleaseTransactionClick = onNavigateToReleaseTransaction,
+                    isHomeParentView = true
+                )
             }
         }
     }

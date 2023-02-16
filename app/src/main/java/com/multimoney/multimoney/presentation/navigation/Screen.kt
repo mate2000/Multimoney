@@ -665,4 +665,6 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object QrCodeScannerScreen : Screen(route = "qr_code_scanner_screen")
+
+    object ReleaseTransactionScreen : Screen(route = "release_transaction")
 }

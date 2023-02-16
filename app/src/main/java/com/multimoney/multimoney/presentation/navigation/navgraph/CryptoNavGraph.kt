@@ -9,7 +9,6 @@ import androidx.navigation.navigation
 import com.multimoney.multimoney.presentation.navigation.CARD_STATUS
 import com.multimoney.multimoney.presentation.navigation.CRYPTO_ASSET
 import com.multimoney.multimoney.presentation.navigation.CRYPTO_ROUTE
-import com.multimoney.multimoney.presentation.navigation.DESCRIPTION_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.GLOBAL_CRYPTO_BALANCE
 import com.multimoney.multimoney.presentation.navigation.HOME_STATE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
@@ -28,7 +27,7 @@ import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.M
 import com.multimoney.multimoney.presentation.ui.crypto.movements.CryptoMovementsAllScreen
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoFlow
 import com.multimoney.multimoney.presentation.ui.crypto.sell.SellCryptoFlow
-import com.multimoney.multimoney.presentation.ui.crypto.send.CryptoSendFlow
+import com.multimoney.multimoney.presentation.ui.crypto.transferin.AmountExceededFormScreen
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWallet
 
 const val ITEM_CRYPTO_CURRENCY = "item_crypto_currency"
@@ -270,6 +269,11 @@ fun NavGraphBuilder.cryptoNavGraph(
                     )
                 }
             )
+        }
+        composable(
+            route = Screen.ReleaseTransactionScreen.route
+        ) {
+            AmountExceededFormScreen()
         }
     }
 }

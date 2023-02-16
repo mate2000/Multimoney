@@ -1018,6 +1018,10 @@ class ProductViewModel @Inject constructor(
         navigateTo(Screen.CryptoSendFlow.baseRoute)
     }
 
+    private fun onNavigateToReleaseTransaction(){
+        navigateTo(Screen.ReleaseTransactionScreen.route)
+    }
+
     private fun getSmartContent() {
         val statusRequest = uiState.userStatus?.infoBankAccount?.infoRequest?.statusRequest
         val statusFirm = uiState.userStatus?.infoBankAccount?.statusFirm
@@ -1173,6 +1177,7 @@ class ProductViewModel @Inject constructor(
             is UIEvent.OnDisclaimerChecked -> onDisclaimerChecked(uiEvent.checked)
             is UIEvent.OnUpdateShouldShowDisclaimer -> updateShouldShowDisclaimer(uiEvent.checked)
             BaseEvent.OnShowDisclaimer -> onShowDisclaimer()
+            is UIEvent.OnNavigateToReleaseTransaction -> onNavigateToReleaseTransaction()
         }
     }
 
@@ -1223,6 +1228,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToSellCryptoFlow : UIEvent()
         object OnNavigateToSendCryptoFlow : UIEvent()
         object OnGetSmartContent : UIEvent()
+        object OnNavigateToReleaseTransaction : UIEvent()
 
         data class OnSetUserData(
             val idBrand: String,

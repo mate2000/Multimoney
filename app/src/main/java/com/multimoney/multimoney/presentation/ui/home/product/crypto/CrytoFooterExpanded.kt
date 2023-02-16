@@ -26,7 +26,8 @@ fun CryptoFooterExpanded(
     cryptoMovements: Flow<PagingData<CryptoCurrencyMovement>>,
     actionMarket: () -> Unit,
     actionWallet: () -> Unit,
-    onShowAllClick: () -> Unit
+    onShowAllClick: () -> Unit,
+    onNavigateToReleaseTransaction: () -> Unit
 ) {
     if (userStatus?.infoCrypto?.status == CryptoAccountStatus.ACTIVE.status) {
         CryptoFooterExpandedContent(
@@ -35,7 +36,8 @@ fun CryptoFooterExpanded(
             cryptoMovements,
             actionMarket,
             actionWallet,
-            onShowAllClick
+            onShowAllClick,
+            onNavigateToReleaseTransaction
         )
     }
 }
@@ -47,10 +49,14 @@ fun CryptoFooterExpandedContent(
     cryptoMovements: Flow<PagingData<CryptoCurrencyMovement>>,
     actionMarket: () -> Unit,
     actionWallet: () -> Unit,
-    onShowAllClick: () -> Unit
+    onShowAllClick: () -> Unit,
+    onNavigateToReleaseTransaction: () -> Unit
 ) {
     Column(
-        modifier = Modifier.padding(top = 16.dp).fillMaxWidth().wrapContentHeight(),
+        modifier = Modifier
+            .padding(top = 16.dp)
+            .fillMaxWidth()
+            .wrapContentHeight(),
         verticalArrangement = Arrangement.Top
     ) {
         ButtonsSection(
@@ -70,7 +76,8 @@ fun CryptoFooterExpandedContent(
                     )
                     CryptoMovementsSection(
                         cryptoMovements = cryptoMovements,
-                        onShowAllClick = onShowAllClick
+                        onShowAllClick = onShowAllClick,
+                        onNavigateToReleaseTransaction = onNavigateToReleaseTransaction
                     )
                 }
             }

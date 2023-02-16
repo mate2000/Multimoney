@@ -1,11 +1,14 @@
 package com.multimoney.multimoney.presentation.navigation.navgraph
 
+import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.navArgument
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.navigation
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import com.multimoney.domain.model.accountsmart.toSmartAccountSmall
 import com.multimoney.multimoney.presentation.navigation.CARD_STATUS
 import com.multimoney.multimoney.presentation.navigation.CRYPTO_ASSET
 import com.multimoney.multimoney.presentation.navigation.CRYPTO_ROUTE
@@ -34,6 +37,7 @@ import com.multimoney.multimoney.presentation.ui.crypto.receive.CryptoReceiveFlo
 import com.multimoney.multimoney.presentation.ui.crypto.sell.SellCryptoFlow
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWallet
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail.WalletCurrencyDetailsScreen
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.MaintenanceAlertScreen
 
 const val ITEM_CRYPTO_CURRENCY = "item_crypto_currency"
@@ -58,6 +62,11 @@ fun NavGraphBuilder.cryptoNavGraph(
                 }
             )
         ) {
+            val parent = remember(it) {
+                navController.getBackStackEntry(Screen.HomeScreen.route)
+            }
+            val viewModel = hiltViewModel<HomeViewModel>(parent)
+            val accountsSmart = viewModel.uiState.balance?.balanceAccountSmart?.map { it.toSmartAccountSmall() } ?: emptyList()
             PurchaseCryptoFlow(
                 onNavigate = {
                     navController.navigate(it.route)
@@ -81,7 +90,8 @@ fun NavGraphBuilder.cryptoNavGraph(
                         inclusive = false,
                         saveState = false
                     )
-                }
+                },
+                smartAccounts = accountsSmart
             )
         }
         cryptoSendNavGraph(navController)
@@ -301,6 +311,14 @@ fun NavGraphBuilder.cryptoNavGraph(
                 }
             )
         ) {
+            val parent = remember(it) {
+                navController.getBackStackEntry(Screen.HomeScreen.route)
+            }
+            val viewModel = hiltViewModel<HomeViewModel>(parent)
+            val accountsSmart = viewModel.uiState.balance?.balanceAccountSmart?.map {
+                it.toSmartAccountSmall()
+            } ?: emptyList()
+            val balances = viewModel.uiState.balance?.balanceCryptoAccount?.items ?: emptyList()
             SellCryptoFlow(
                 onNavigate = {
                     navController.navigate(it.route)
@@ -324,7 +342,9 @@ fun NavGraphBuilder.cryptoNavGraph(
                         inclusive = false,
                         saveState = false
                     )
-                }
+                },
+                accountsSmart = accountsSmart,
+                cryptoBalances = balances
             )
         }
         composable(route = Screen.MaintenanceAlertScreen.route) {

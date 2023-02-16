@@ -60,10 +60,10 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
 
     private fun setUserData() {
         previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
-        uiState = uiState.copy(
+        /*uiState = uiState.copy(
             accounts = savedStateHandle.get<Array<SmartAccountSmall>>(SMART_ACCOUNTS_LIST)?.toList()
                 ?: listOf()
-        )
+        )*/
         viewModelScope.launch {
             idBrand = dataStorePreferences.getIdBrand().first().toInt()
             pkUser = dataStorePreferences.getPkUser().first()
@@ -288,6 +288,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
                 isRestart = true,
                 homeState = HomeState.COLLAPSED
             )
+            is UIEvent.OnSetSmartAccounts -> uiState = uiState.copy(accounts = event.accounts)
         }
     }
 
@@ -327,6 +328,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         data class OnUpdateShouldShowDisclaimer(val checked: Boolean) : UIEvent()
         data class OnSetFlowStep(val step: BuyCryptoStep) : UIEvent()
         object OnNavigateHome : UIEvent()
+        data class OnSetSmartAccounts(val accounts: List<SmartAccountSmall>) : UIEvent()
     }
 
     companion object {

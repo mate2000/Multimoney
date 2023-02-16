@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.credit.disbursement.voucher
 
+import android.view.View
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -57,24 +58,64 @@ import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import com.multimoney.multimoney.presentation.util.shape.DottedShape
 
 @Composable
-@Preview
 fun DisbursementVoucherScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: DisbursementVoucherViewModel = hiltViewModel()
 ) {
-    val view = LocalView.current
-    var capturingViewBounds by remember { mutableStateOf<Rect?>(null) }
-
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
     }
+
+    DisbursementVoucherContent(
+        onCloseClick = {
+            viewModel.onUIEvent(OnCloseClick)
+        },
+        onShareVoucherImage = { view, capturingBounds ->
+            viewModel.onUIEvent(
+                OnSharedVoucherImage(
+                    view,
+                    capturingBounds,
+                )
+            )
+        },
+        viewModel.disbursementLabel ?: "",
+        viewModel.clientBankAccount?.accountNumber ?: "",
+        viewModel.reference ?: "",
+        viewModel.shouldDisplayExchangeRate ?: false,
+        viewModel.exchangeRateLabel.toString(),
+        viewModel.amountInCurrencyLabel ?: "",
+        viewModel.currentDate,
+        viewModel.currentTime
+    )
+
+    BackHandler {
+        viewModel.onUIEvent(OnCloseClick)
+    }
+}
+
+@Preview
+@Composable
+fun DisbursementVoucherContent(
+    onCloseClick: () -> Unit = {},
+    onShareVoucherImage: (view: View, capturingBounds: Rect) -> Unit = { _, _ -> },
+    disbursementLabel: String = "",
+    accountNumber: String = "",
+    reference: String = "",
+    shouldDisplayExchangeRate: Boolean = false,
+    exchangeRateLabel: String = "",
+    amountInCurrencyLabel: String = "",
+    currentDate: String = "",
+    currentTime: String = ""
+) {
+    val view = LocalView.current
+    var capturingViewBounds by remember { mutableStateOf<Rect?>(null) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MultimoneyTheme.colors.background),
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.SpaceBetween,
     ) {
         Column(
             modifier = Modifier
@@ -82,12 +123,12 @@ fun DisbursementVoucherScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             TopNavBar(isLeftButtonVisible = false, isCenterContentVisible = true, onRightButtonClick = {
-                viewModel.onUIEvent(OnCloseClick)
+                onCloseClick()
             })
             ConstraintLayout(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                    .padding(start = 16.dp, end = 16.dp, top = 16.dp),
             ) {
                 val (backgroundId, contentId, shareButtonId) = createRefs()
                 CustomImage(
@@ -112,7 +153,7 @@ fun DisbursementVoucherScreen(
                         }
                         .onGloballyPositioned {
                             capturingViewBounds = it.boundsInRoot()
-                        }
+                        },
                 ) {
                     Column(
                         modifier = Modifier
@@ -129,12 +170,7 @@ fun DisbursementVoucherScreen(
                         CustomButton(
                             onClick = {
                                 capturingViewBounds?.let { bounds ->
-                                    viewModel.onUIEvent(
-                                        OnSharedVoucherImage(
-                                            view,
-                                            bounds
-                                        )
-                                    )
+                                    onShareVoucherImage(view, bounds)
                                 }
                             },
                             text = stringResource(string.disbursement_voucher_shared_button),
@@ -142,16 +178,16 @@ fun DisbursementVoucherScreen(
                                 .padding(
                                     start = 24.dp,
                                     end = 24.dp,
-                                    top = 12.dp
+                                    top = 12.dp,
                                 )
                                 .fillMaxWidth(),
                             elevation = ButtonDefaults.elevation(
                                 defaultElevation = 0.dp,
                                 pressedElevation = 0.dp,
-                                disabledElevation = 0.dp
+                                disabledElevation = 0.dp,
                             ),
                             trailingIcon = drawable.ic_icon_share,
-                            buttonType = CustomButtonType.PrimaryTertiary
+                            buttonType = CustomButtonType.PrimaryTertiary,
                         )
                         Text(
                             text = stringResource(string.disbursement_voucher_you_have_received),
@@ -162,7 +198,7 @@ fun DisbursementVoucherScreen(
 
                         Text(
                             modifier = Modifier.fillMaxWidth(),
-                            text = viewModel.disbursementLabel ?: "",
+                            text = disbursementLabel,
                             style = Typography.h4.copy(fontWeight = FontWeight.W600),
                             color = MultimoneyTheme.colors.text,
                             textAlign = TextAlign.Center
@@ -186,25 +222,25 @@ fun DisbursementVoucherScreen(
                         icon = drawable.ic_bank,
                         title = stringResource(string.disbursement_voucher_origin_account_label),
                         subTitle = getMaskedAccount(
-                            viewModel.clientBankAccount?.accountNumber ?: "",
+                            accountNumber,
                             stringResource(id = string.disbursement_account_masked_text)
-                        )
+                        ),
                     )
 
                     VoucherNumberInfo(
                         modifier = Modifier.padding(start = 27.dp, top = 32.dp),
                         icon = drawable.ic_receipt,
                         title = stringResource(string.disbursement_voucher_reference_number_label),
-                        subTitle = viewModel.reference ?: ""
+                        subTitle = reference
                     )
 
-                    if (viewModel.shouldDisplayExchangeRate == true) {
+                    if (shouldDisplayExchangeRate) {
                         Spacer(modifier = Modifier.height(32.dp))
                         VoucherCurrencyExchangeInfo(
                             leftTitleResource = string.disbursement_voucher_exchange_type,
                             rightTitleResource = string.disbursement_voucher_amount_to_disburse,
-                            exchangeRateText = viewModel.exchangeRateLabel.toString(),
-                            convertedAmountText = viewModel.amountInCurrencyLabel ?: ""
+                            exchangeRateText = exchangeRateLabel,
+                            convertedAmountText = amountInCurrencyLabel
                         )
                     }
 
@@ -212,7 +248,7 @@ fun DisbursementVoucherScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 27.dp, top = 34.dp, end = 24.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
                         Row {
                             Icon(
@@ -221,14 +257,14 @@ fun DisbursementVoucherScreen(
                                 contentDescription = ""
                             )
                             Text(
-                                text = viewModel.currentDate,
+                                text = currentDate,
                                 modifier = Modifier.padding(start = 15.dp),
                                 style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
                                 color = MultimoneyTheme.colors.labelText
                             )
                         }
                         Text(
-                            text = viewModel.currentTime,
+                            text = currentTime,
                             modifier = Modifier.padding(bottom = 16.dp),
                             style = Typography.body2,
                             color = MultimoneyTheme.colors.labelText
@@ -236,9 +272,6 @@ fun DisbursementVoucherScreen(
                     }
                 }
             }
-        }
-        BackHandler {
-            viewModel.onUIEvent(OnCloseClick)
         }
     }
 }

@@ -1,0 +1,179 @@
+package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account
+
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
+import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteListUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryListSavedSACAccountsUseCase
+import com.multimoney.domain.model.accountsmart.ACHAccount
+import com.multimoney.domain.model.accountsmart.LocalSACAccount
+import com.multimoney.domain.model.accountsmart.SmartAccountID
+import com.multimoney.domain.model.util.error.HttpError
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.ui.home.HomeState
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
+
+@HiltViewModel
+class SmartTransferFavoriteCRViewModel @Inject constructor(
+    private val queryListSavedSACAccountsUseCase: QueryListSavedSACAccountsUseCase,
+    private val queryACHTransferFavoriteListUseCase: QueryACHTransferFavoriteListUseCase,
+    savedStateHandle: SavedStateHandle
+): BaseViewModel(true) {
+
+    // UIState
+    var uiState by mutableStateOf(UIState())
+        private set
+
+    // Stateless
+    private var user: String = ""
+    private var idBrand: Int = 0
+    private var identification: String? = ""
+    private var smartAccount: SmartAccountID? = null
+
+    init {
+        user = savedStateHandle[USER] ?: ""
+        idBrand = savedStateHandle[ID_BRAND] ?: 0
+        identification = savedStateHandle[IDENTIFICATION] ?: ""
+        smartAccount = savedStateHandle[SMART_ACCOUNT]
+    }
+
+    private fun getACHFavoriteAccounts() = executeUseCase {
+        queryACHTransferFavoriteListUseCase.invoke(
+            user = user,
+            identification = identification ?: "",
+            idBrand = idBrand,
+            isFavorite = true
+        ).collectLatest { result ->
+            result.onSuccess { ACHFavoriteAccountList ->
+                ACHFavoriteAccountList?.data?.let { ACHFavoriteAccounts ->
+                    uiState =
+                        uiState.copy(
+                            isLoading = false,
+                            aCHFavoriteAccountList = ACHFavoriteAccounts.sortedBy { ACHFavoriteAccount ->
+                                ACHFavoriteAccount?.description.orEmpty()
+                            }
+                        )
+                }
+            }
+            result.onFailure {
+                uiState = uiState.copy(isLoading = false)
+                onFailure(it)
+            }
+            result.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
+    private fun getLocalSACFavoriteAccounts() = executeUseCase {
+        queryListSavedSACAccountsUseCase.invoke(
+            user = user,
+            idClient = smartAccount?.customerId ?: 0L,
+            idBrand = idBrand,
+            isFavorite = true
+        ).collectLatest { result ->
+            result.onSuccess { accountsWrapper ->
+                accountsWrapper?.accounts?.let { accountList ->
+                    uiState =
+                        uiState.copy(
+                            isLoading = false,
+                             localFavoriteList = accountList.sortedBy { localAccount ->
+                                 localAccount.accountName.orEmpty()
+                            }
+                        )
+                }
+            }
+            result.onFailure {
+                uiState = uiState.copy(isLoading = false)
+                onFailure(it)
+            }
+            result.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
+    private fun getFavoritesListForCR() {
+        getLocalSACFavoriteAccounts()
+        getACHFavoriteAccounts()
+    }
+
+    private fun onFailure(error: HttpError) {
+        uiState = uiState.copy(
+            isLoading = false, openDialog = DialogParameters(
+                description = error.getError() ?: "", isActive = mutableStateOf(true)
+            )
+        )
+    }
+
+    private fun onNavigateBack() {
+        navigateBack(
+            popTo = Screen.SmartSelectSendingTypeScreen.route, isRestart = false
+        )
+    }
+
+    private fun onShowOptionsForACHClick(selectedACHFavorite: ACHAccount?) {
+        // TODO REV-3466
+    }
+
+    private fun onShowOptionsForLocalClick(selectedLocalFavorite: LocalSACAccount?) {
+        // TODO REV-3466
+    }
+
+    private fun onACHFavoriteClick(selectedAccount: ACHAccount?) {
+//      TODO REV-3654
+    }
+
+    private fun onLocalFavoriteClick(selectedAccount: LocalSACAccount?) {
+//      TODO REV-3654
+    }
+
+    private fun onNavigateToHome() {
+        navigateBack(
+            popTo = Screen.HomeScreen.route,
+            isRestart = true,
+            homeState = HomeState.COLLAPSED
+        )
+    }
+
+    data class UIState(
+        val openDialog: DialogParameters = DialogParameters(),
+        var isLoading: Boolean = false,
+        var aCHFavoriteAccountList: List<ACHAccount?> = listOf(),
+        var localFavoriteList: List<LocalSACAccount?> = listOf()
+    )
+
+    fun onUIEvent(uiEvent: UIEvent) {
+        when (uiEvent) {
+            is UIEvent.OnACHOptionsClick -> onShowOptionsForACHClick(uiEvent.aCHFavorite)
+            is UIEvent.OnNavigateBack -> onNavigateBack()
+            is UIEvent.OnACHFavoriteClick -> onACHFavoriteClick(uiEvent.aCHFavorite)
+            is UIEvent.OnNavigateToHome -> onNavigateToHome()
+            is UIEvent.GetFavoritesLists -> getFavoritesListForCR()
+            is UIEvent.OnLocalFavoriteClick -> onLocalFavoriteClick(uiEvent.localAccount)
+            is UIEvent.OnLocalOptionsClick -> onShowOptionsForLocalClick(uiEvent.localFavorite)
+        }
+    }
+
+    sealed class UIEvent {
+        object OnNavigateBack : UIEvent()
+        object OnNavigateToHome : UIEvent()
+        object GetFavoritesLists : UIEvent()
+        data class OnACHOptionsClick(val aCHFavorite: ACHAccount?) : UIEvent()
+        data class OnLocalOptionsClick(val localFavorite: LocalSACAccount?) : UIEvent()
+        data class OnACHFavoriteClick(val aCHFavorite: ACHAccount?) : UIEvent()
+        data class OnLocalFavoriteClick(val localAccount: LocalSACAccount?) : UIEvent()
+    }
+}

@@ -1,0 +1,33 @@
+query ListSavedSACAccounts(
+    $idBrand: Int!
+    $user: String!
+    $isFavorite: Boolean!
+    $idCustomer: Long!
+) {
+    localTransferFavorite(
+        localTransferFavoriteInput: {
+            idBrand: $idBrand
+            user: $user
+            isFavorite: $isFavorite
+            idCustomer: $idCustomer
+        }
+    ) {
+        result {
+            idFavorite
+            idCustomer
+            idAccounType
+            accountNumber
+            accountName
+            email
+            activo
+            phoneNumber
+            idCurrencyAccount
+            currencyAccount
+            ibanNumber
+            isFavorite
+        }
+        status
+        message
+        detail
+    }
+}

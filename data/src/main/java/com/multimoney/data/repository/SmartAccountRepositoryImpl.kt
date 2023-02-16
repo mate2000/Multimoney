@@ -18,6 +18,7 @@ import com.multimoney.domain.model.accountsmart.ExchangeRateResult
 import com.multimoney.domain.model.accountsmart.FavoriteACHResult
 import com.multimoney.domain.model.accountsmart.GeneralEconomicActivityResult
 import com.multimoney.domain.model.accountsmart.GlobalRequest
+import com.multimoney.domain.model.accountsmart.LocalTransferFavorite
 import com.multimoney.domain.model.accountsmart.LocalTransferResult
 import com.multimoney.domain.model.accountsmart.Nationalities
 import com.multimoney.domain.model.accountsmart.PhonesResult
@@ -830,6 +831,25 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 idAccountRequest
             ),
             apolloCallMapper = { data -> Success(data.mapToDomain()) }
+        )
+    }
+
+    override suspend fun querySavedSACAccountsSmart(
+        idBrand: Int,
+        user: String,
+        isFavorite: Boolean,
+        idCustomer: Long
+    ): Flow<MultimoneyResult<LocalTransferFavorite?>> {
+        return fetchData(
+            graphqlApi.querySavedSACAccountsSmart(
+                idBrand,
+                user,
+                isFavorite,
+                idCustomer
+            ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
         )
     }
 }

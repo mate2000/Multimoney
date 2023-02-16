@@ -76,6 +76,7 @@ import com.multimoney.data.networking.graphql.apollomodel.HomeProvinceQuery
 import com.multimoney.data.networking.graphql.apollomodel.InitialRequestSmartAccountMutation
 import com.multimoney.data.networking.graphql.apollomodel.ListCardVDQuery
 import com.multimoney.data.networking.graphql.apollomodel.ListMiniCardsQuery
+import com.multimoney.data.networking.graphql.apollomodel.ListSavedSACAccountsQuery
 import com.multimoney.data.networking.graphql.apollomodel.ListSinpeAccountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountDeleteMutation
 import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountSaveMutation
@@ -2325,6 +2326,20 @@ class GraphqlApi @Inject constructor(
             asset,
             cryptoNetwork,
             amount
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun querySavedSACAccountsSmart(
+        idBrand: Int,
+        user: String,
+        isFavorite: Boolean,
+        idCustomer: Long
+    ) : ApolloCall<ListSavedSACAccountsQuery.Data> = apolloAuthorizedClient.query(
+        ListSavedSACAccountsQuery(
+            idBrand,
+            user,
+            isFavorite,
+            idCustomer
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

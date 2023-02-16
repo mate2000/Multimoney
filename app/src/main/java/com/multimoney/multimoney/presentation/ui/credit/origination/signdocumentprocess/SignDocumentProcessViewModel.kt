@@ -25,6 +25,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_GET_EVICERTIA_LINK
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.OpenWhatsAppLink
@@ -48,9 +49,9 @@ import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.PROC
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
-import javax.inject.Inject
 
 @HiltViewModel
 class SignDocumentProcessViewModel @Inject constructor(
@@ -71,6 +72,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     var firstName: String = ""
     var lastName: String = ""
     var isCrosseling: Boolean = false
+    var shouldGetEvicertiaLink = true
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -82,6 +84,7 @@ class SignDocumentProcessViewModel @Inject constructor(
         firstName = savedStateHandle[FIRST_NAME] ?: ""
         lastName = savedStateHandle[LAST_NAME] ?: ""
         isCrosseling = savedStateHandle[CROSSELING] ?: false
+        shouldGetEvicertiaLink = savedStateHandle[SHOULD_GET_EVICERTIA_LINK] ?: true
         uiState = uiState.copy(
             signDocumentProcessStep = savedStateHandle[SIGN_DOCUMENT_STEP_ARG] ?: ""
         )
@@ -105,7 +108,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     private fun onShouldCallGetLinkCreditContract() {
-        if (isCrosseling.not()) {
+        if (shouldGetEvicertiaLink) {
             callQueryGetLinkCreditContractUseCase()
         }
     }

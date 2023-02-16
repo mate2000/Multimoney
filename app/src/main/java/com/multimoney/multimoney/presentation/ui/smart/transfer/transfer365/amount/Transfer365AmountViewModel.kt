@@ -230,6 +230,7 @@ class Transfer365AmountViewModel @Inject constructor(
         // Todo add validation to go back to list transfer 365 accounts screen
         val screen = when (previousScreen) {
             Screen.SmartAdd365AccountScreen.baseRoute -> Screen.SmartAdd365AccountScreen.route
+            Screen.SmartTransferFavoriteAccountScreen.baseRoute -> Screen.SmartTransferFavoriteAccountScreen.route
             else -> Screen.HomeScreen.route
         }
         navigateBack(popTo = screen, isRestart = false)

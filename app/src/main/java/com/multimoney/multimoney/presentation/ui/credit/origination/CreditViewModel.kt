@@ -29,6 +29,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUES
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_GET_EVICERTIA_LINK
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.NavigateToAccountScreen
@@ -309,7 +310,8 @@ class CreditViewModel @Inject constructor(
                                     .plus(getNavParam(ID_USER_REQUEST, idUserRequest))
                                     .plus(getNavParam(FIRST_NAME, firstName))
                                     .plus(getNavParam(LAST_NAME, lastName))
-                                    .plus(getNavParam(CROSSELING, crosseling)),
+                                    .plus(getNavParam(CROSSELING, crosseling))
+                                    .plus(getNavParam(SHOULD_GET_EVICERTIA_LINK, false)),
                                 Screen.CreditScreen.route,
                             )
                         }

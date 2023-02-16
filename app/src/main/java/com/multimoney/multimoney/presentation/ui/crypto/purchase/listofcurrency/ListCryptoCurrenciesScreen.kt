@@ -2,6 +2,7 @@ package com.multimoney.multimoney.presentation.ui.crypto.purchase.listofcurrency
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -38,7 +39,6 @@ import com.multimoney.multimoney.presentation.ui.crypto.market.FilterSection
 import com.multimoney.multimoney.presentation.ui.crypto.market.MarketFilter
 import com.multimoney.multimoney.presentation.ui.crypto.market.MarketSkeleton
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
-import com.multimoney.multimoney.presentation.ui.crypto.purchase.selectaccount.ConfirmationBottomSheet
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.transformation.formatWithComma
@@ -192,5 +192,5 @@ fun ListCryptoBody(
                 itemClick(it)
             }
         }
-    })
+    }, verticalArrangement = Arrangement.spacedBy(16.dp))
 }

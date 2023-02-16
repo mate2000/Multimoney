@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,6 +44,10 @@ fun SmartTransferFavoriteScreen(
         viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
     }
 
+    BackHandler {
+        viewModel.onUIEvent(OnNavigateBack)
+    }
+
     Column(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)
@@ -68,10 +73,10 @@ fun SmartTransferFavoriteScreen(
                 onEndIconClick = { favorite ->
                     viewModel.onUIEvent(OnOptionsClick(favorite))
                 },
-                onFavoriteClick = { favorites ->
+                onFavoriteClick = { favorite ->
                     viewModel.onUIEvent(
                         SmartTransferFavoriteViewModel.UIEvent.OnFavoriteClick(
-                            favorites
+                            favorite
                         )
                     )
                 }
@@ -96,7 +101,7 @@ fun SmartTransferFavoriteScreen(
 fun ACHFavoriteContentList(
     AHCFavoriteList: Map<String, List<ACHAccount?>>,
     onEndIconClick: (contact: ACHAccount) -> Unit,
-    onFavoriteClick: (contact: List<ACHAccount?>) -> Unit
+    onFavoriteClick: (contact: ACHAccount) -> Unit
 ) {
     LazyColumn(modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp)) {
         AHCFavoriteList.forEach { (_, favorite) ->
@@ -116,7 +121,7 @@ fun ACHFavoriteContentList(
                     titleIcon = R.drawable.ic_star_filled,
                     onEndIconClick = { favorite.firstOrNull()?.let { onEndIconClick(it) } },
                     onClick = {
-                        onFavoriteClick(favorite)
+                       favorite.firstOrNull()?.let { onFavoriteClick(it) }
                     }
                 )
             }

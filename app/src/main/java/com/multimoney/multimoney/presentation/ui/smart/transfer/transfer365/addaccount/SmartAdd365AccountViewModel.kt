@@ -207,7 +207,11 @@ class SmartAdd365AccountViewModel @Inject constructor(
     }
 
     private fun onAddFavoriteValueChange(isChecked: Boolean) {
-        uiState = uiState.copy(isFavorite = isChecked)
+        val fullName = "${uiState.names} ${uiState.lastNames}"
+        uiState = uiState.copy(
+            isFavorite = isChecked,
+            nickname = if (isChecked) fullName else ""
+        )
     }
 
     private fun onPhoneNumberChanged(phone: String) {

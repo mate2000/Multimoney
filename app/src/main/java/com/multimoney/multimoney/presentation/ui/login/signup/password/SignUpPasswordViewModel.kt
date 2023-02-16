@@ -11,6 +11,7 @@ import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.options.AuthSignUpOptions
 import com.amplifyframework.core.Amplify
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.util.MultimoneyResult
@@ -57,7 +58,6 @@ class SignUpPasswordViewModel @Inject constructor(
     private var biometricPromptTitle = ""
     private var biometricPromptDescription = ""
     private var biometricPromptNegative = ""
-    private var biometricDialogDescription = ""
     private var biometricDialogSuccessDescription = ""
     private var biometricDialogFailureDescription = ""
     private var isBiometricAvailable = false
@@ -69,14 +69,12 @@ class SignUpPasswordViewModel @Inject constructor(
         biometricPromptTitle: String,
         biometricPromptDescription: String,
         biometricPromptNegative: String,
-        biometricDialogDescription: String,
         biometricDialogSuccessDescription: String,
         biometricDialogFailureDescription: String
     ) {
         this.biometricPromptTitle = biometricPromptTitle
         this.biometricPromptDescription = biometricPromptDescription
         this.biometricPromptNegative = biometricPromptNegative
-        this.biometricDialogDescription = biometricDialogDescription
         this.biometricDialogSuccessDescription = biometricDialogSuccessDescription
         this.biometricDialogFailureDescription = biometricDialogFailureDescription
     }
@@ -140,23 +138,23 @@ class SignUpPasswordViewModel @Inject constructor(
         }
     }
 
-    private fun onFingerprintCheckedChanged(value: Boolean, showDialog: Boolean) {
+    private fun onFingerprintCheckedChanged(value: Boolean, showDialog: Boolean, idBrand: Int) {
         uiState = uiState.copy(
             isFingerprintChecked = value,
             openDialogCustom = DialogParameters(
-                titleResource = string.active_biometric_title,
-                description = biometricDialogDescription,
+                titleResource = if (idBrand == Brand.CostaRica.id) string.active_biometric_title_cr else string.active_biometric_title,
+                descriptionResource = if (idBrand == Brand.CostaRica.id) string.active_biometric_message_cr else string.active_biometric_message,
                 isActive = mutableStateOf(showDialog),
                 positiveResource = string.active_biometric_positive_button_label,
                 negativeResource = string.active_biometric_negative_button_label,
                 positiveAction = {
-                    onFingerprintCheckedChanged(value = true, showDialog = false)
+                    onFingerprintCheckedChanged(value = true, showDialog = false, idBrand)
                 },
                 negativeAction = {
-                    onFingerprintCheckedChanged(value = false, showDialog = false)
+                    onFingerprintCheckedChanged(value = false, showDialog = false, idBrand)
                 },
                 dismissAction = {
-                    onFingerprintCheckedChanged(value = false, showDialog = false)
+                    onFingerprintCheckedChanged(value = false, showDialog = false, idBrand)
                 }
             )
         )
@@ -340,7 +338,6 @@ class SignUpPasswordViewModel @Inject constructor(
                 uiEvent.biometricPromptTitle,
                 uiEvent.biometricPromptDescription,
                 uiEvent.biometricPromptNegative,
-                uiEvent.biometricDialogDescription,
                 uiEvent.biometricDialogSuccessDescription,
                 uiEvent.biometricDialogFailureDescription
             )
@@ -365,7 +362,7 @@ class SignUpPasswordViewModel @Inject constructor(
             )
             is OnValidForm -> uiEvent.onContinueEnable(isFormValid())
             is OnCallPasswordSave -> callQuerySavePassword(uiEvent.pkUser, uiEvent.user, uiEvent.idBrant)
-            is OnFingerprintCheckedChanged -> onFingerprintCheckedChanged(uiEvent.value, uiEvent.showDialog)
+            is OnFingerprintCheckedChanged -> onFingerprintCheckedChanged(uiEvent.value, uiEvent.showDialog, uiEvent.idBrand)
             is OnShowBiometricPromptForEncryption -> onShowBiometricPromptForEncryption(
                 uiEvent.fragmentActivity,
                 uiEvent.userEmail,
@@ -412,14 +409,14 @@ class SignUpPasswordViewModel @Inject constructor(
 
         data class OnFingerprintCheckedChanged(
             val value: Boolean,
-            val showDialog: Boolean
+            val showDialog: Boolean,
+            val idBrand: Int
         ) : UIEvent()
 
         data class OnInitializeDialogTexts(
             val biometricPromptTitle: String,
             val biometricPromptDescription: String,
             val biometricPromptNegative: String,
-            val biometricDialogDescription: String,
             val biometricDialogSuccessDescription: String,
             val biometricDialogFailureDescription: String
         ) : UIEvent()

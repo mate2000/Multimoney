@@ -155,7 +155,11 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
 
     private fun onNavigateToMyFavorites() {
         navigateTo(
-            "${Screen.SmartTransferFavoriteAccountScreen.baseRoute}/$user/$idBrand/$identification"
+            "${Screen.SmartTransferFavoriteAccountScreen.baseRoute}/$user/$idBrand/$identification/${
+                encodeData(
+                    selectedSmartAccount
+                )
+            }"
         )
     }
 

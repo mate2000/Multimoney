@@ -180,7 +180,7 @@ fun CustomTextField(
                 )
             },
             visualTransformation = if (isTransformationCurrency.value.not()) {
-                CurrencyDoubleTransformation(currency = CurrencyType.Dollar.symbol, separator = ',')
+                CurrencyDoubleTransformation(currency = CurrencyType.Dollar.symbol, separator = SIMPLE_COMMA)
             } else {
                 CryptoAssetMaskTransformation(asset = iconCurrency)
             },
@@ -290,4 +290,5 @@ const val LOT_OF_CHARACTERS = 32
 const val ASSET_EQUIVALENT_SUBTRACTION = 2
 const val ONE_LENGTH = 1
 const val SIMPLE_DOT = "."
+const val SIMPLE_COMMA = ','
 const val CURRENCY_DEFAULT_PLACEHOLDER = "$0"

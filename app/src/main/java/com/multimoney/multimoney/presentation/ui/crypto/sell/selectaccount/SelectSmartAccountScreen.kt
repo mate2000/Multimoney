@@ -17,16 +17,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.domain.model.accountsmart.SmartAccountSmall
-import com.multimoney.domain.model.balance.Account
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.sell.SellCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.ui.home.profile.accounts.MyAccountsSkeleton
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.capitalized
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 
 @Composable
@@ -53,18 +51,15 @@ fun SelectSmartAccountScreen(
 
     BackHandler { sharedViewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnPreviousStep) }
 
-    SelectSmartAccountContent(viewModel, sharedViewModel) { account ->
-        if (!sharedViewModel.uiState.shouldDisplayDisclaimer) {
-            sharedViewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnNextStep)
-        }
+    SelectSmartAccountContent(sharedViewModel) {
+        sharedViewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnNextStep)
     }
 }
 
 @Composable
 fun SelectSmartAccountContent(
-    viewModel: SelectSmartAccountViewModel,
     sharedViewModel: SellCryptoSharedViewModel,
-    onNextStep: (SmartAccountSmall) -> Unit = { _ -> }
+    onNextStep: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -93,7 +88,7 @@ fun SelectSmartAccountContent(
                         startIcon = getCurrencyLogo(account.currencyCode),
                         title = stringResource(
                             id = R.string.buy_crypto_multimoney_smart_account_template,
-                            account.currencyCode ?: ""
+                            account.currencyCode?.capitalized() ?: ""
                         ),
                         onClick = {
                             sharedViewModel.onUIEvent(
@@ -105,7 +100,7 @@ fun SelectSmartAccountContent(
                                     ibanAccountNumber = account.ibanAccountNumber,
                                 )
                             )
-                            onNextStep(account)
+                            onNextStep()
                         }
                     )
                 }

@@ -31,6 +31,7 @@ import com.multimoney.multimoney.presentation.navigation.ORIGIN_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.TRANSFER_TYPE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
+import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.ShareHelper
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Dollar
@@ -46,10 +47,10 @@ import com.multimoney.multimoney.presentation.util.getMaskedVisaAccount
 import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import com.multimoney.multimoney.presentation.util.workers.startTimedNotification
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.first
 import java.util.Calendar
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 
 @OptIn(ExperimentalMaterialApi::class)
 abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
@@ -412,7 +413,8 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
     protected open fun onNavigateToHome() {
         navigateBack(
             popTo = Screen.HomeScreen.route,
-            isRestart = true
+            isRestart = true,
+            homeState = HomeState.COLLAPSED
         )
     }
 

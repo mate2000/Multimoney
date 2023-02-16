@@ -55,6 +55,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.QUOTA_TOTAL
 import com.multimoney.multimoney.presentation.navigation.navgraph.REFERENCE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SELECTED_AMOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_DISPLAY_EXCHANGE_RATE
+import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_GET_EVICERTIA_LINK
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_GLOBAL_ID
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
@@ -310,7 +311,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SignDocumentProcessScreen : Screen(
-        "sign_document_process_screen?$SIGN_DOCUMENT_STEP_ARG={$SIGN_DOCUMENT_STEP_ARG}?$SIGN_DOCUMENT_ID_PRINT={$SIGN_DOCUMENT_ID_PRINT}?$ID_BRAND={$ID_BRAND}?$PK_USER={$PK_USER}?$IDENTIFICATION={$IDENTIFICATION}?$EMAIL={$EMAIL}?$ID_USER_REQUEST={$ID_USER_REQUEST}?$FIRST_NAME={$FIRST_NAME}?$LAST_NAME={$LAST_NAME}?$CROSSELING={$CROSSELING}",
+        "sign_document_process_screen?$SIGN_DOCUMENT_STEP_ARG={$SIGN_DOCUMENT_STEP_ARG}?$SIGN_DOCUMENT_ID_PRINT={$SIGN_DOCUMENT_ID_PRINT}?$ID_BRAND={$ID_BRAND}?$PK_USER={$PK_USER}?$IDENTIFICATION={$IDENTIFICATION}?$EMAIL={$EMAIL}?$ID_USER_REQUEST={$ID_USER_REQUEST}?$FIRST_NAME={$FIRST_NAME}?$LAST_NAME={$LAST_NAME}?$CROSSELING={$CROSSELING}?$SHOULD_GET_EVICERTIA_LINK={$SHOULD_GET_EVICERTIA_LINK}",
         "sign_document_process_screen"
     )
 
@@ -555,9 +556,10 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
      * @param ORIGIN_ACCOUNT: Smart account
      * @param DESTINY_ACCOUNT: Iban account
      * @param TRANSFER_TYPE: Int id indicating transfer type (SmartToIban)
+     * @param PREVIOUS_SCREEN: String indicating the previous screen to navigate back
      */
     object SmartTransferAmountScreen : Screen(
-        "smart_transfer_amount_screen/{$ORIGIN_ACCOUNT}/{$DESTINY_ACCOUNT}/{$TRANSFER_TYPE}",
+        "smart_transfer_amount_screen/{$ORIGIN_ACCOUNT}/{$DESTINY_ACCOUNT}/{$TRANSFER_TYPE}/{$PREVIOUS_SCREEN}",
         "smart_transfer_amount_screen"
     )
 
@@ -621,7 +623,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SmartTransferFavoriteAccountScreen : Screen(
-        "transfer_favorite_account_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
+        "transfer_favorite_account_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$SMART_ACCOUNT}",
         "transfer_favorite_account_screen"
     )
 

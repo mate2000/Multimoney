@@ -31,15 +31,17 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.document.Smar
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnProfessionChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.util.BAR
+import com.multimoney.multimoney.presentation.util.DAY_MONTH_YEAR_PATTERN
+import com.multimoney.multimoney.presentation.util.DAY_MONTH_YEAR_PATTERN_BAR_FORMAT
 import com.multimoney.multimoney.presentation.util.HYPHEN
 import com.multimoney.multimoney.presentation.util.ISO_8601_API_FORMAT_PATTERN
-import com.multimoney.multimoney.presentation.util.YEAR_MONTH_DAY_PATTERN_BAR_FORMAT
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import com.multimoney.multimoney.presentation.util.onBirthDateAgeValidation
 import com.multimoney.multimoney.presentation.util.onExpirationDateValidation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 
@@ -47,7 +49,7 @@ import kotlinx.coroutines.flow.collectLatest
 class SmartDocumentViewModel @Inject constructor(
     private val queryCivilStatusUseCase: QueryCivilStatusUseCase,
     private val queryProfessionUseCase: QueryProfessionUseCase,
-    private val queryNationalitiesUseCase: QueryNationalitiesUseCase
+    private val queryNationalitiesUseCase: QueryNationalitiesUseCase,
 ) : BaseViewModel(true) {
 
     // UIState
@@ -63,18 +65,19 @@ class SmartDocumentViewModel @Inject constructor(
             getFormatDateByString(
                 it,
                 ISO_8601_API_FORMAT_PATTERN,
-                YEAR_MONTH_DAY_PATTERN_BAR_FORMAT
+                DAY_MONTH_YEAR_PATTERN_BAR_FORMAT
             )
         } ?: ""
         val expirationDate = accountSmartData?.expirationDate?.let {
             getFormatDateByString(
                 it,
                 ISO_8601_API_FORMAT_PATTERN,
-                YEAR_MONTH_DAY_PATTERN_BAR_FORMAT
+                DAY_MONTH_YEAR_PATTERN_BAR_FORMAT
             )
         } ?: ""
 
-        if (birthdate.isNotBlank()) onBirthDateValueChange(birthdate, LocalDate.parse(birthdate.replace(BAR, HYPHEN)))
+        val formatter = DateTimeFormatter.ofPattern(DAY_MONTH_YEAR_PATTERN)
+        if (birthdate.isNotBlank()) onBirthDateValueChange(birthdate, LocalDate.parse(birthdate.replace(BAR, HYPHEN), formatter))
         if (expirationDate.isNotBlank()) onExpirationDateValueChange(expirationDate)
         onGenderChange(accountSmartData?.strGenre.orEmpty())
         onCivilStateChange(accountSmartData?.strMaritalStatus.orEmpty())
@@ -168,7 +171,8 @@ class SmartDocumentViewModel @Inject constructor(
         }
 
     private fun onExpirationDateValueChange(expirationDate: String) {
-        if (onExpirationDateValidation(expirationDate.replace(BAR, HYPHEN))) {
+        val formatter = DateTimeFormatter.ofPattern(DAY_MONTH_YEAR_PATTERN)
+        if (onExpirationDateValidation(expirationDate.replace(BAR, HYPHEN), formatter)) {
             uiState = uiState.copy(expirationDate = expirationDate)
             validateForm()
         }

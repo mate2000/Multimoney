@@ -38,7 +38,6 @@ import com.multimoney.multimoney.presentation.ui.crypto.sell.SellCryptoSharedVie
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
-import com.multimoney.multimoney.presentation.util.calculateAmountPlusFee
 import com.multimoney.multimoney.presentation.util.calculateAvailableInDollars
 import com.multimoney.multimoney.presentation.util.calculateConfirmationBaseAmount
 import com.multimoney.multimoney.presentation.util.calculateConfirmationQuoteAmount
@@ -259,7 +258,7 @@ fun SellCurrencyScreenContent(
                     quoteAmount = viewModel.uiState.quoteAmount,
                     baseAmount = viewModel.uiState.baseAmount,
                     isTransformationCurrency = viewModel.uiState.isTransformationCurrency,
-                    isError = viewModel.uiState.isError,
+                    isError = viewModel.uiState.focusError,
                     errorText = viewModel.uiState.error,
                     textArg = viewModel.uiState.errorMessageArg,
                     onAmountChanged = {

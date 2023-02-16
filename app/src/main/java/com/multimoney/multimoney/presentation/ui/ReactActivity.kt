@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.ui
 
 import android.app.Activity
+import android.graphics.Color
 import android.os.Bundle
 import android.view.KeyEvent
 import com.facebook.react.BuildConfig
@@ -24,6 +25,7 @@ class ReactActivity : Activity(), DefaultHardwareBackBtnHandler {
         )
 
         mReactRootView = ReactRootView(this)
+        mReactRootView!!.setBackgroundColor(Color.parseColor("#000000"));
         mReactInstanceManager = ReactInstanceManager.builder()
                 .setApplication(application)
                 .setCurrentActivity(this)

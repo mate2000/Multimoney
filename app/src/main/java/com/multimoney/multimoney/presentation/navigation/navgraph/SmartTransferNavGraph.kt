@@ -31,6 +31,7 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.smartaccoun
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.addaccount.SmartAddAccountScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.amount.OwnTransferAmountScreen
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.SmartTransferFavoriteCRScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.SmartTransferFavoriteScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontactamount.MyContactsTransferAmountScreen
@@ -379,6 +380,29 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
                 })
+        }
+        composable(
+            route = Screen.SmartTransferFavoriteAccountCRScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(SMART_ACCOUNT) { type = SmartAccountIDNavType() }
+            )
+        ) {
+            SmartTransferFavoriteCRScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        HOME_STATE,
+                        it.homeState
+                    )
+                }
+            )
         }
     }
 }

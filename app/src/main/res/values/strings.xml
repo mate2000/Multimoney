@@ -1137,6 +1137,7 @@
     <string name="payment_points_search" translatable="false">Buscar</string>
     <string name="payment_points_title" translatable="false">Puntos de pago</string>
     <string name="payment_points_dialog_title" translatable="false">¿Estás seguro que querés salir?</string>
+    <string name="payment_points_dialog_title_gt" translatable="false">¿Estás seguro que quieres salir?</string>
     <string name="payment_points_dialog_description" translatable="false">No olvides pagar tus cuotas para evitar moras.</string>
     <string name="payment_points_dialog_positive_button" translatable="false">Aceptar</string>
     <string name="payment_points_dialog_negative_button" translatable="false">Cancelar</string>

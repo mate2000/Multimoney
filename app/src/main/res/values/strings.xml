@@ -463,7 +463,7 @@
     <string name="profile_my_accounts_updated" translatable="false">Cuenta actualizada</string>
     <string name="profile_my_accounts_deleted" translatable="false">Cuenta eliminada</string>
     <string name="profile_my_accounts_removed_from_fav" translatable="false">Cuenta eliminada de favoritos</string>
-    <string name="profile_my_accounts_you_can_fav_later" translatable="false">Podras seleccionarla como favorito despues</string>
+    <string name="profile_my_accounts_you_can_fav_later" translatable="false">Podras seleccionarla como favorito después</string>
     <string name="profile_my_accounts_save_changes" translatable="false">Guardar cambios</string>
     <string name="profile_my_accounts_empty_state_title_gt" translatable="false">No tienes cuentas registradas</string>
     <string name="profile_my_accounts_empty_state_title" translatable="false">No tenés cuentas registradas</string>

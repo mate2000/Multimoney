@@ -244,7 +244,7 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
         navigateTo(
             "${Screen.SmartTransferAmountScreen.baseRoute}/" +
                 "${encodeData(smartAccount)}/$ibanAccount/" +
-                "${SmartTransferTypes.SmartToIban.id}"
+                "${SmartTransferTypes.SmartToIban.id}/${Screen.SmartTransferRegisterIbanScreen.baseRoute}"
         )
     }
 

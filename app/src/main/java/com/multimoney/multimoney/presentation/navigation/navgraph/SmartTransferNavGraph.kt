@@ -124,7 +124,8 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(ORIGIN_ACCOUNT) { type = SmartAccountIDNavType() },
                 navArgument(DESTINY_ACCOUNT) { type = SinpeAccountNavType() },
-                navArgument(TRANSFER_TYPE) { type = NavType.IntType }
+                navArgument(TRANSFER_TYPE) { type = NavType.IntType },
+                navArgument(PREVIOUS_SCREEN) { type = NavType.StringType },
             )
         ) {
             SmartTransferAmountScreen(
@@ -368,7 +369,8 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(USER) { type = NavType.StringType },
                 navArgument(ID_BRAND) { type = NavType.StringType },
-                navArgument(IDENTIFICATION) { type = NavType.StringType }
+                navArgument(IDENTIFICATION) { type = NavType.StringType },
+                navArgument(SMART_ACCOUNT) { type = SmartAccountIDNavType() },
             )
         ) {
             SmartTransferFavoriteScreen(
@@ -378,6 +380,11 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                 onPopBackStack = {
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
                 })
         }
     }

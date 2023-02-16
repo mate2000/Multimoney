@@ -55,16 +55,10 @@ import com.ireward.htmlcompose.HtmlText
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.DefaultBlack
-import com.multimoney.multimoney.presentation.theme.DefaultWhite
-import com.multimoney.multimoney.presentation.theme.GrayScale300
-import com.multimoney.multimoney.presentation.theme.GrayScale400
 import com.multimoney.multimoney.presentation.theme.GrayScale500
-import com.multimoney.multimoney.presentation.theme.GrayScale800
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.SemanticNegative300
 import com.multimoney.multimoney.presentation.theme.SemanticNegative400
-import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency30
@@ -149,8 +143,7 @@ fun CustomOutlinedTextField(
     successMessage: String? = null,
     showInfo: Boolean = false,
     infoMessage: String? = null,
-    singleLine: Boolean = true,
-    maxLines: Int = Int.MAX_VALUE
+    singleLine: Boolean = true
 ) {
     val context = LocalContext.current
     val activity = context.findActivity()

@@ -1521,6 +1521,7 @@
     <string name="smart_my_contacts_transfer_accounts_add" translatable="false">Agregar cuenta</string>
     <string name="smart_mycontacts_total_transfer_title" translatable="false">%1s contactos encontrados</string>
     <string name="smart_my_concts_placeholder" translatable="false">Buscar contacto</string>
+    <string name="smart_account_transfer_added_To_Favorite_title" translatable="false">Cuenta agregada a favoritos</string>
 
     <!-- Smart Transfer - Favorite -->
     <string name="smart_favorite_transfer_accounts_title" translatable="false">Mis favoritos</string>

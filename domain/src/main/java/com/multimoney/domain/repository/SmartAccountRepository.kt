@@ -2,8 +2,8 @@ package com.multimoney.domain.repository
 
 import androidx.paging.PagingData
 import com.multimoney.domain.model.accountsmart.ACHAccount
+import com.multimoney.domain.model.accountsmart.ACHAccountFull
 import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
-import com.multimoney.domain.model.accountsmart.SmartAccountSmall
 import com.multimoney.domain.model.accountsmart.AddressesLevel
 import com.multimoney.domain.model.accountsmart.BankListTransfer365
 import com.multimoney.domain.model.accountsmart.Beneficiary
@@ -22,6 +22,7 @@ import com.multimoney.domain.model.accountsmart.SaveSinpeAccount
 import com.multimoney.domain.model.accountsmart.SaveSmartAccount
 import com.multimoney.domain.model.accountsmart.SinpeAccountResult
 import com.multimoney.domain.model.accountsmart.SinpeTransferResult
+import com.multimoney.domain.model.accountsmart.SmartAccountSmall
 import com.multimoney.domain.model.accountsmart.SmartAccountStatusResult
 import com.multimoney.domain.model.accountsmart.SmartAccountTypeResult
 import com.multimoney.domain.model.accountsmart.SmartFavoriteResult
@@ -30,7 +31,6 @@ import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.accountsmart.StepByStep
 import com.multimoney.domain.model.accountsmart.Transfer365Result
 import com.multimoney.domain.model.accountsmart.VisaSmartPayment
-import com.multimoney.domain.model.balance.Account
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
 import kotlinx.coroutines.flow.Flow
@@ -150,6 +150,12 @@ interface SmartAccountRepository {
         user: String,
         idBrand: Int
     ): Flow<MultimoneyResult<VisaSmartPayment?>>
+
+    suspend fun queryACHTransferFavoriteGet(
+        user: String,
+        idBrand: Int,
+        achTransferId: Int
+    ): Flow<MultimoneyResult<ACHAccountFull?>>
 
     suspend fun queryGeneralEconomicActivity(
         user: String,
@@ -304,7 +310,6 @@ interface SmartAccountRepository {
         phoneNumber: String?,
         idCurrencyAccount: Int?
     ): Flow<MultimoneyResult<SmartFavoriteResult?>>
-
 
     suspend fun queryACHTransferFavoriteList(
         user: String,

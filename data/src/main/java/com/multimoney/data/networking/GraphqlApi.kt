@@ -6,6 +6,7 @@ import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.multimoney.data.mapper.credit.mapToApolloModel
+import com.multimoney.data.networking.graphql.apollomodel.ACHTransferFavoriteGetQuery
 import com.multimoney.data.networking.graphql.apollomodel.ACHTransferFavoriteListQuery
 import com.multimoney.data.networking.graphql.apollomodel.AccountSmartContractEventSubscription
 import com.multimoney.data.networking.graphql.apollomodel.AccountStatementQuery
@@ -132,7 +133,6 @@ import com.multimoney.data.networking.graphql.apollomodel.ValidateUserStatusQuer
 import com.multimoney.data.networking.graphql.apollomodel.ValidationSecurityQuery
 import com.multimoney.data.networking.graphql.apollomodel.type.BeneficiaryRequestDtoInput
 import com.multimoney.data.networking.graphql.apollomodel.type.ContactsInput
-import com.multimoney.data.networking.graphql.apollomodel.type.GetCountry
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.RelatedContact
 import com.multimoney.domain.model.credit.CreditInfoQuestion
@@ -1237,6 +1237,19 @@ class GraphqlApi @Inject constructor(
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
+    fun queryACHTransferFavoriteGet(
+        user: String,
+        idBrand: Int,
+        achTransferId: Int
+    ): ApolloCall<ACHTransferFavoriteGetQuery.Data> =
+        apolloAuthorizedClient.query(
+            ACHTransferFavoriteGetQuery(
+                Optional.presentIfNotNull(user),
+                Optional.presentIfNotNull(idBrand),
+                achTransferId
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
     fun queryGeneralEconomicActivity(
         user: String,
         idBrand: Int
@@ -1320,7 +1333,6 @@ class GraphqlApi @Inject constructor(
     ): ApolloCall<GetCountryPhoneCodesQuery.Data> =
         apolloAuthorizedClient.query(GetCountryPhoneCodesQuery(idBrand))
             .fetchPolicy(FetchPolicy.NetworkOnly)
-
 
     fun mutationChangeEmail(
         idClient: Int,
@@ -2264,14 +2276,14 @@ class GraphqlApi @Inject constructor(
         user: String,
         idBrand: Int,
         isFavorite: Boolean,
-        identification: String,
+        identification: String
     ): ApolloCall<ACHTransferFavoriteListQuery.Data> =
         apolloAuthorizedClient.query(
             ACHTransferFavoriteListQuery(
                 Optional.presentIfNotNull(user),
                 Optional.presentIfNotNull(idBrand),
                 isFavorite,
-                Optional.presentIfNotNull(identification),
+                Optional.presentIfNotNull(identification)
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

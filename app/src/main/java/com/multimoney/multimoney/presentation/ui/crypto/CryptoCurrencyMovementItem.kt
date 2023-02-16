@@ -49,11 +49,12 @@ fun CryptoCurrencyMovementItem(
             R.drawable.ic_gains_crypto else R.drawable.ic_crypto_subtract
 
         Column {
-            if(cryptoCurrencyMovement.held && isHomeParentView){
+            if (cryptoCurrencyMovement.held && isHomeParentView) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically
+                        .padding(top = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
                         modifier = Modifier
@@ -120,9 +121,9 @@ fun CryptoCurrencyMovementItem(
                     )
                 }
             }
-            if (cryptoCurrencyMovement.held && isHomeParentView){
+            if (cryptoCurrencyMovement.held && isHomeParentView) {
                 OutlinedButton(
-                    modifier = Modifier.padding(top = 8.dp),
+                    modifier = Modifier.padding(vertical = 8.dp),
                     shape = RoundedCornerShape(50),
                     colors = ButtonDefaults.outlinedButtonColors(
                         backgroundColor = Color.Transparent
@@ -131,7 +132,8 @@ fun CryptoCurrencyMovementItem(
                         width = 1.dp,
                         color = MultimoneyTheme.colors.cryptoActionButtonEnable
                     ),
-                    onClick = {  }) {
+                    onClick = onReleaseTransactionClick
+                ) {
                     Text(
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth(),

@@ -1672,4 +1672,6 @@
     <string name="amount_exceeded_platform" translatable="false">¿Desde qué plataforma se realizó el envío? </string>
     <string name="amount_exceeded_reason" translatable="false">¿Cuál fue el motivo de envío?</string>
     <string name="amount_exceeded_button" translatable="false">Liberar depósito</string>
+    <string name="amount_exceeded_dialog_title" translatable="false">Recibiste cripto</string>
+    <string name="amount_exceeded_dialog_message" translatable="false"> Se te han transferido más de $10,000, te contactaremos para verificar el origen de fondos y que puedas recibir el dinero.</string>
 </resources>

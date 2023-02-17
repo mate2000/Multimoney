@@ -249,7 +249,7 @@ class MyAccountsViewModel @Inject constructor(
     private fun onOpenDeleteAccountDialog() {
         uiState = uiState.copy(
             favoriteDialogParemeters = DialogParameters(
-                titleResource = if(uiState.idBrand == Brand.Guatemala.id) R.string.profile_my_accounts_are_you_sure_to_delete_gt else R.string.profile_my_accounts_are_you_sure_to_delete,
+                titleResource = if(uiState.idBrand == Brand.CostaRica.id) R.string.profile_my_accounts_are_you_sure_to_delete else R.string.profile_my_accounts_are_you_sure_to_delete_gt,
                 descriptionResource = R.string.profile_my_accounts_will_be_deleted_permanently,
                 positiveResource = R.string.button_continue,
                 negativeResource = R.string.cancel,

@@ -79,14 +79,14 @@ class SellCryptoSharedViewModel @Inject constructor(
             )
         }
 
-        uiState = uiState.copy(
-            accounts = savedStateHandle.get<Array<SmartAccountSmall>>(SMART_ACCOUNTS_LIST)?.toList()
-                ?: listOf(),
-            userCryptoBalances = savedStateHandle.get<Array<BalanceCryptoAccountItems>>(
-                USER_CRYPTO_BALANCES
-            )?.toList()
-                ?: listOf()
-        )
+//        uiState = uiState.copy(
+//            accounts = savedStateHandle.get<Array<SmartAccountSmall>>(SMART_ACCOUNTS_LIST)?.toList()
+//                ?: listOf(),
+//            userCryptoBalances = savedStateHandle.get<Array<BalanceCryptoAccountItems>>(
+//                USER_CRYPTO_BALANCES
+//            )?.toList()
+//                ?: listOf()
+//        )
         if (idBrand == Brand.ElSalvador.id) {
             onSetupAccountDetails(
                 smartAccountAvailableBalance = uiState.accounts.firstOrNull()?.totalBalance ?: 0.0,
@@ -279,6 +279,10 @@ class SellCryptoSharedViewModel @Inject constructor(
                 event.totalCreditedAmountExchange,
                 event.referenceNumber
             )
+            is UIEvent.OnSetAccounts -> uiState = uiState.copy(
+                accounts = event.accounts,
+                userCryptoBalances = event.cryptoBalances
+            )
         }
     }
 
@@ -312,7 +316,10 @@ class SellCryptoSharedViewModel @Inject constructor(
         object OnGetUserInfo : UIEvent()
         data class OnSetFlowStep(val step: SellCryptoStep) : UIEvent()
 
-
+        data class OnSetAccounts(
+            val accounts: List<SmartAccountSmall>,
+            val cryptoBalances: List<BalanceCryptoAccountItems>
+            ) : UIEvent()
     }
 
     companion object {

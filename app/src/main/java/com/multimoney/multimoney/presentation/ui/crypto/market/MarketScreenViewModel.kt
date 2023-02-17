@@ -39,20 +39,11 @@ class MarketScreenViewModel @Inject constructor(
     var uiState by mutableStateOf(UiState())
         private set
 
-    private var smartAccounts: List<SmartAccountSmall>? = null
-    private var userCryptoBalances: List<BalanceCryptoAccountItems>? = null
-
-
     private fun onGetUserInfo() {
         uiState = uiState.copy(
             user = savedStateHandle[USER] ?: "",
             idBrand = savedStateHandle[ID_BRAND] ?: 0,
         )
-        smartAccounts =
-            savedStateHandle.get<Array<SmartAccountSmall>>(SMART_ACCOUNTS_LIST)?.toList()
-
-        userCryptoBalances =
-            savedStateHandle.get<Array<BalanceCryptoAccountItems>>(USER_CRYPTO_BALANCES)?.toList()
     }
 
     private fun getAvailableListOfCryptoCoins(
@@ -97,11 +88,7 @@ class MarketScreenViewModel @Inject constructor(
     private fun onNavigateToCurrencyDetails() {
         navigateTo(
             "${Screen.CryptoCurrencyDetailsScreen.baseRoute}/${uiState.user}"
-                    + "/${uiState.idBrand}/${encodeData(uiState.selectedCryptoCoin)}/${
-                encodeData(
-                    smartAccounts
-                )
-            }/${encodeData(userCryptoBalances)}"
+                    + "/${uiState.idBrand}/${encodeData(uiState.selectedCryptoCoin)}"
         )
     }
 

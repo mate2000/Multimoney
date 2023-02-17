@@ -628,12 +628,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // Crypto
     object PurchaseCryptoFlow : Screen(
-        route = "purchase_crypto_flow/{$SMART_ACCOUNTS_LIST}/{$PREVIOUS_SCREEN}?$ITEM_CRYPTO_MARKET={$ITEM_CRYPTO_MARKET}",
+        route = "purchase_crypto_flow/{$PREVIOUS_SCREEN}?$ITEM_CRYPTO_MARKET={$ITEM_CRYPTO_MARKET}",
         baseRoute = "purchase_crypto_flow"
     )
 
     object CryptoWalletScreen : Screen(
-        "crypto_wallet_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$GLOBAL_CRYPTO_BALANCE}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$STATUS_CREDIT}/{$STATUS_SMART}/{$STATUS_CRYPTO}/{$CARD_STATUS}/{$SMART_ACCOUNTS_LIST}/{$USER_CRYPTO_BALANCES}",
+        "crypto_wallet_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$GLOBAL_CRYPTO_BALANCE}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$STATUS_CREDIT}/{$STATUS_SMART}/{$STATUS_CRYPTO}/{$CARD_STATUS}",
         "crypto_wallet_screen"
     )
 
@@ -648,17 +648,17 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object CryptoMarketScreen : Screen(
-        "crypto_market_screen/{$USER}/{$ID_BRAND}/{$SMART_ACCOUNTS_LIST}/{$USER_CRYPTO_BALANCES}",
+        "crypto_market_screen/{$USER}/{$ID_BRAND}",
         "crypto_market_screen"
     )
 
     object CryptoWalletDetailsScreen : Screen(
-        "crypto_wallet_details_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}/{$ITEM_CRYPTO_CURRENCY}/{$SMART_ACCOUNTS_LIST}/{$USER_CRYPTO_BALANCES}",
+        "crypto_wallet_details_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}/{$ITEM_CRYPTO_CURRENCY}",
         "crypto_wallet_details_screen"
     )
 
     object CryptoCurrencyDetailsScreen : Screen(
-        "crypto_currency_details_screen/{$USER}/{$ID_BRAND}/{$ITEM_CRYPTO_MARKET}/{$SMART_ACCOUNTS_LIST}/{$USER_CRYPTO_BALANCES}",
+        "crypto_currency_details_screen/{$USER}/{$ID_BRAND}/{$ITEM_CRYPTO_MARKET}",
         "crypto_currency_details_screen"
     )
 
@@ -668,7 +668,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object CryptoSellFlow : Screen(
-        route = "crypto_sell_flow/{$PREVIOUS_SCREEN}/{$SMART_ACCOUNTS_LIST}/{$USER_CRYPTO_BALANCES}?$ITEM_CRYPTO_MARKET={$ITEM_CRYPTO_MARKET}",
+        route = "crypto_sell_flow/{$PREVIOUS_SCREEN}?$ITEM_CRYPTO_MARKET={$ITEM_CRYPTO_MARKET}",
         baseRoute = "crypto_sell_flow"
     )
 

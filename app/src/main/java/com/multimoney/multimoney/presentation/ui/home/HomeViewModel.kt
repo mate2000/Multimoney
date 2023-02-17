@@ -129,6 +129,7 @@ class HomeViewModel @Inject constructor(
 
     private fun onsetUserData() {
         viewModelScope.launch {
+            apiCallCount = 0
             uiState = uiState.copy(
                 idBrand = dataStorePreferences.getIdBrand().firstOrNull() ?: "",
                 pkUser = dataStorePreferences.getPkUser().firstOrNull() ?: "",

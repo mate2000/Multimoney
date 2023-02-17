@@ -118,7 +118,7 @@ class Transfer365AccountListViewModel @Inject constructor(
         navigateTo(
             "${Screen.SmartTransfer365EditAmountScreen.baseRoute}/${
                 encodeData(smartAccount)
-            }/${encodeData(transfer)}/${SmartTransferTypes.SmartToOtherBank.id}/${Screen.SmartAdd365AccountScreen}"
+            }/${encodeData(transfer)}/${SmartTransferTypes.SmartToOtherBank.id}/${Screen.SmartACHAccountsListScreen.baseRoute}"
         )
     }
 

@@ -9,6 +9,7 @@ import com.multimoney.data.mapper.smartaccount.mapToDomainModel
 import com.multimoney.data.networking.GraphqlApi
 import com.multimoney.data.paging.SmartMovementsPagingSource
 import com.multimoney.domain.model.accountsmart.ACHAccount
+import com.multimoney.domain.model.accountsmart.ACHAccountFull
 import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
 import com.multimoney.domain.model.accountsmart.AddressesLevel
 import com.multimoney.domain.model.accountsmart.BankListTransfer365
@@ -310,6 +311,22 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 }
             }
 
+        )
+
+    override suspend fun queryACHTransferFavoriteGet(
+        user: String,
+        idBrand: Int,
+        achTransferId: Int
+    ): Flow<MultimoneyResult<ACHAccountFull?>> =
+        fetchData(
+            apolloCall = graphqlApi.queryACHTransferFavoriteGet(
+                user,
+                idBrand,
+                achTransferId
+            ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
         )
 
     /**

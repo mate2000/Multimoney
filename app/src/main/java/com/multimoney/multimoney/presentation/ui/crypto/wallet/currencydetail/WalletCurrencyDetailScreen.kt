@@ -98,6 +98,9 @@ fun WalletCurrencyDetailsScreen(
             viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnNavigateToSellCrypto) },
         sendCryptoClick = {
             viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnNavigateToSendCrypto)
+        },
+        giveCryptoClick = {
+            viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnNavigateToReceiveCrypto)
         }
     )
 
@@ -129,7 +132,8 @@ fun CurrencyDetailContent(
     viewAllClick: () -> Unit,
     buyCryptoClick: () -> Unit,
     sendCryptoClick: () -> Unit,
-    sellCryptoClick: () -> Unit
+    sellCryptoClick: () -> Unit,
+    giveCryptoClick: () -> Unit
 ) {
 
     val movements = uiState.cryptoMovements.collectAsLazyPagingItems()
@@ -156,7 +160,7 @@ fun CurrencyDetailContent(
                 hasBalanceAction = { buyCryptoClick() },
                 sellAction = { sellCryptoClick() },
                 sendAction = sendCryptoClick,
-                giveAction = { /*todo go to receive crypto flow*/ }
+                giveAction = { giveCryptoClick() }
             )
         },
         modifier = Modifier.fillMaxSize(),

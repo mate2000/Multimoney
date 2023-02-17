@@ -205,6 +205,15 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
         navigateTo("${Screen.CryptoSendFlow.baseRoute}?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}&$DESCRIPTION_CURRENCY=${uiState.cryptoItem?.descriptionCurrency}")
     }
 
+    private fun onNavigateToReceiveCrypto() {
+        navigateTo("${Screen.CryptoReceiveFlowScreen.baseRoute}/${user}/${uiState.idBrand}?$ITEM_CRYPTO_MARKET=${encodeData(MarketCryptoCoin(
+            description = uiState.cryptoItem?.descriptionCurrency ?: "",
+            baseAsset = uiState.cryptoItem?.asset ?: "",
+            url_image = uiState.cryptoItem?.url_image ?: "",
+            cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: "",
+        ))}")
+    }
+
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is UIEvent.OnNavigateBack -> navigateBack(Screen.CryptoWalletScreen.route, false)
@@ -222,6 +231,7 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
                 uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Hidden))
             is UIEvent.OnNavigateToSendCrypto -> onNavigateToSendCrypto()
             is UIEvent.OnNavigateToSellCrypto -> onNavigateToSellCrypto()
+            is UIEvent.OnNavigateToReceiveCrypto -> onNavigateToReceiveCrypto()
         }
     }
 
@@ -239,6 +249,7 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
         object OnShowDisclaimer : UIEvent()
         object OnHideDisclaimer : UIEvent()
         object OnNavigateToSendCrypto : UIEvent()
+        object OnNavigateToReceiveCrypto : UIEvent()
     }
 
     data class UiState(

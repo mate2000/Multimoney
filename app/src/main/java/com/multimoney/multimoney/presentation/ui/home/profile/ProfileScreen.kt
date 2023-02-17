@@ -143,15 +143,12 @@ fun ProfileOptions(
         modifier = Modifier.padding(start = 16.dp, end = 16.dp)
     ) {
         uiState.idBrand.apply {
-            // As per requirement, this option should be available only CR.
-            if (this == Brand.CostaRica.id) {
                 CustomItemRow(
                     title = stringResource(R.string.profile_my_accounts),
                     startIcon = R.drawable.ic_my_accounts,
                     endIcon = R.drawable.ic_right_chevron,
                     onClick = onMyAccountsClick
                 )
-            }
             // As per requirement, this option should be available only for SV and GT.
             if (this == Brand.ElSalvador.id || this == Brand.Guatemala.id) {
                 CustomItemRow(

@@ -75,6 +75,12 @@ class VisaVerifyDepositViewModel @Inject constructor(
 
     private fun onStart(linkWhatsapp: String) {
         this.linkWhatsapp = linkWhatsapp
+        if (previousScreen == Screen.ProfileCardListScreen.baseRoute) {
+            onResendClick()
+        } else {
+            initializeTimer()
+            onExecuteTimer()
+        }
     }
 
     private fun isTimerTick() = uiState.remainingTime.inWholeSeconds > 0 && uiState.isTimerRunning
@@ -200,10 +206,23 @@ class VisaVerifyDepositViewModel @Inject constructor(
         isRestart = false
     )
 
-    private fun onCloseClick() = navigateBack(
+    private fun onNavigateBackHome() = navigateBack(
         popTo = Screen.HomeScreen.route,
         isRestart = false
     )
+
+    private fun onCloseClick() {
+        uiState = uiState.copy(
+            dialogParameters = DialogParameters(
+                titleResource = R.string.visa_verified_dialog_title,
+                descriptionResource = R.string.visa_verified_dialog_description,
+                positiveResource = R.string.cancel,
+                positiveAction = { onNavigateBackHome() },
+                negativeResource = R.string.button_continue,
+                isActive = mutableStateOf(true)
+            )
+        )
+    }
 
     private fun onContinueClick() = executeUseCase {
         uiState = uiState.copy(isTimerRunning = false)

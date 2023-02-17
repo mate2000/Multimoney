@@ -25,6 +25,7 @@ import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoS
 import com.multimoney.multimoney.presentation.ui.home.profile.accounts.MyAccountsSkeleton
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.capitalized
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 
 @Composable
@@ -92,7 +93,7 @@ fun SelectSmartAccountContent(
                         startIcon = getCurrencyLogo(account.currencyCode),
                         title = stringResource(
                             id = R.string.buy_crypto_multimoney_smart_account_template,
-                            account.currencyCode ?: ""
+                            account.currencyCode?.capitalized() ?: ""
                         ),
                         onClick = {
                             sharedViewModel.onUIEvent(

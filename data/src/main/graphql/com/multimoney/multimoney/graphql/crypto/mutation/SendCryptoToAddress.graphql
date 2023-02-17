@@ -1,0 +1,50 @@
+mutation SendCryptoToAddress(
+    $pkUser: Int!,
+    $identification: String!,
+    $destinationAddress: String!,
+    $feeId: String!,
+    $asset: String!,
+    $market: String!,
+    $cryptoNetwork: String!,
+    $amount: Decimal!,
+    $fee: Decimal!,
+    $internalFee: Decimal!,
+    $taxAmount: Decimal!,
+    $idBrand: Int!,
+    $user: String!
+) {
+    transferOrder(
+        transferOrderInput: {
+            pkUser: $pkUser,
+            identification: $identification,
+            destinationAddress: $destinationAddress,
+            feeId: $feeId,
+            asset: $asset,
+            market: $market,
+            cryptoNetwork: $cryptoNetwork,
+            amount: $amount,
+            fee: $fee,
+            internalFee: $internalFee,
+            taxAmount: $taxAmount,
+            idBrand: $idBrand,
+            user: $user
+        }
+    ) {
+        result {
+            sysdeTransactionNumber
+            paxosIdOrder
+            paxosSendTransferId
+            paxosReceivedTransferId
+            steps
+            orderComplete
+            filledAmount
+            averagePrice
+            status
+            commissionAmount
+            totalAmount
+        }
+        status
+        message
+        detail
+    }
+}

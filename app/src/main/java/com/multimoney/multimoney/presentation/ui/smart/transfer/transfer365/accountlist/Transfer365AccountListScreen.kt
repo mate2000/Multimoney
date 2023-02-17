@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.accountlist
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.model.accountsmart.ACHAccount
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -51,6 +53,10 @@ fun Transfer365AccountListScreen(
             onPopAndNavigate = onPopAndNavigate
         )
         viewModel.onUIEvent(OnGetAccountList)
+    }
+
+    BackHandler {
+        viewModel.onUIEvent(OnNavigateBack)
     }
 
     Column(
@@ -96,7 +102,9 @@ fun Transfer365AccountListScreen(
                 )
             }
 
-            AccountList(viewModel)
+            AccountList(viewModel.uiState.accounts) {
+                viewModel.onUIEvent(OnAccountClick(it))
+            }
         }
     }
 
@@ -114,9 +122,12 @@ fun Transfer365AccountListScreen(
 }
 
 @Composable
-fun AccountList(viewModel: Transfer365AccountListViewModel = hiltViewModel()) {
+fun AccountList(
+    accounts: List<ACHAccount?>,
+    onAccountClick: (selectedAccount: ACHAccount?) -> Unit
+) {
     LazyColumn(modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp)) {
-        items(viewModel.uiState.accounts) { account ->
+        items(accounts) { account ->
             CustomInfoButton(
                 title = account?.description ?: "",
                 subtitle = account?.destinationBankDescription ?: "",
@@ -131,7 +142,7 @@ fun AccountList(viewModel: Transfer365AccountListViewModel = hiltViewModel()) {
                 endIcon = R.drawable.ic_options,
                 startIcon = account?.destinationAccountCurrencyId?.getCurrencyFromId()?.accountIcon,
                 onClick = {
-                    viewModel.onUIEvent(OnAccountClick(account))
+                    onAccountClick(account)
                 }
             )
         }

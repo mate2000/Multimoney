@@ -25,11 +25,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.drawable
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.Companion.CREDIT_INDICATOR_TOTAL_STEPS
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetCloseDialogTexts
 import com.multimoney.multimoney.presentation.ui.credit.origination.account.CrosselingAccountScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.additionalinformation.AdditionalInformationBottomSheet
@@ -41,6 +44,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.homeaddress.
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeScreen
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiaryUnderLined
@@ -143,7 +147,7 @@ fun CreditScreen(
                 Column {
                     TopNavBar(
                         isLeftButtonVisible = viewModel.uiState.currentStep != CreditStep.One.id && viewModel.uiState.currentStep < CreditStep.Eight.id,
-                        isRightButtonVisible = viewModel.uiState.currentStep <= CreditStep.One.id || viewModel.crosseling,
+                        isRightButtonVisible = viewModel.uiState.currentStep > CreditStep.One.id || viewModel.crosseling,
                         onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
                         onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) }
                     )
@@ -179,9 +183,20 @@ fun CreditScreen(
                             .verticalScroll(rememberScrollState())
                     )
                 }
-
             }
         }
+    }
+
+    if (viewModel.uiState.showSVProcessSendSuccessfully) {
+        AlertResult(
+            isLeftButtonVisible = false,
+            iconResource = drawable.ic_success_symbol,
+            titleResource = string.credit_request_sent_successfully,
+            descriptionResource = string.credit_request_info_verification_wait,
+            buttonTextResource = string.understood,
+            onRightButtonClick = { viewModel.onUIEvent(OnNavigateToHome) },
+            onButtonClick = { viewModel.onUIEvent(OnNavigateToHome) }
+        )
     }
 
     LoadingIndicator(viewModel.uiState.isLoading)
@@ -261,7 +276,7 @@ fun GetCreditContent(
 fun GetStepContent(
     step: Int,
     onNavigate: (NavEvent.Navigate) -> Unit,
-    viewModel: CreditViewModel,
+    viewModel: CreditViewModel
 ) {
     when (step) {
         CreditStep.One.id -> CreditAmountScreen(

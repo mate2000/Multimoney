@@ -1,0 +1,25 @@
+query GetTransferCommission(
+    $user: String!
+    $idBrand: Int!
+    $destination_address: String!
+    $asset: String!
+    $crypto_network: String!
+    $amount: Decimal!
+) {
+    transferFee(transferFeeInput: {
+        user: $user,
+        idBrand: $idBrand,
+        destination_address: $destination_address,
+        asset: $asset,
+        crypto_network: $crypto_network,
+        amount: $amount
+    }
+    ) {
+        id,
+        fee,
+        internal_fee,
+        taxAmount,
+        expires_at,
+        totalFee
+    }
+}

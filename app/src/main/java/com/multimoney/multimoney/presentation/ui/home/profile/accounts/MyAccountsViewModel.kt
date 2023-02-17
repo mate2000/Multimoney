@@ -261,21 +261,6 @@ class MyAccountsViewModel @Inject constructor(
         )
     }
 
-    private fun onOpenDeleteDialog() {
-        uiState = uiState.copy(
-            deleteDialogParameters = DialogParameters(
-                titleResource = R.string.profile_my_accounts_remove_from_fav,
-                descriptionResource = R.string.profile_my_accounts_you_can_fav_later,
-                positiveResource = R.string.button_continue,
-                negativeResource = R.string.cancel,
-                positiveAction = {
-                    onDeleteAccount()
-                },
-                isActive = mutableStateOf(true)
-            )
-        )
-    }
-
     private fun refreshAccounts() {
         uiState = uiState.copy(
             registeredAccounts = listOf(),
@@ -291,6 +276,7 @@ class MyAccountsViewModel @Inject constructor(
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is UIEvent.OnNavigateBack -> navigateBack(Screen.ProfileScreen.route, false)
+            is UIEvent.OnNavigateHome -> navigateBack(Screen.HomeScreen.route, true)
             is UIEvent.OnAccountClicked -> onAccountClicked(uiEvent.account)
             is UIEvent.OnShowBottomSheet -> toggleBottomSheet(
                 ModalBottomSheetState(
@@ -319,6 +305,7 @@ class MyAccountsViewModel @Inject constructor(
 
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()
+        object OnNavigateHome : UIEvent()
         data class OnAccountClicked(val account: SinpeAccount) : UIEvent()
         data class OnValueChanged(val value: String) : UIEvent()
         data class OnSetupNickNamePlaceholder(val currentNickname: String) : UIEvent()

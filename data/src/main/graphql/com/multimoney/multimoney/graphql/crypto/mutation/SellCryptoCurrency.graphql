@@ -1,0 +1,50 @@
+mutation SellCryptoCurrency(
+    $pkUser: Int!,
+    $indentification: String!,
+    $market: String!,
+    $commissionPercentage: Decimal!,
+    $taxPercentage: Decimal!,
+    $accountToken: Long!,
+    $exchangeRate: Decimal!,
+    $idBrand: Int!,
+    $user: String!,
+    $quoteId: String!,
+    $baseAmount: Decimal!,
+    $fee: Decimal!,
+    $internalFee: Decimal!,
+    $totalFee: Decimal!
+) {
+    sellHQR(
+        sellHQRInput: {
+            pkUser: $pkUser,
+            identification: $indentification,
+            market: $market,
+            commissionPercentage:  $commissionPercentage,
+            taxPercentage: $taxPercentage,
+            accountToken: $accountToken,
+            exchangeRate: $exchangeRate,
+            idBrand: $idBrand,
+            user: $user,
+            quoteId: $quoteId,
+            baseAmount: $baseAmount,
+            fee: $fee,
+            internalFee: $internalFee,
+            totalFee: $totalFee
+        }
+    ) {
+        status
+        message
+        result {
+            sysdeTransactionNumber
+            paxosSendTransferId
+            paxosReceivedTransferId
+            paxosIdOrder
+            orderComplete
+            filledAmount
+            averagePrice
+            status
+            taxAmount
+            comissionAmount
+        }
+    }
+}

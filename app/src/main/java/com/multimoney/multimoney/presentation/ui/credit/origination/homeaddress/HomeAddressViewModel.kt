@@ -24,12 +24,11 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.homeaddress.
 import com.multimoney.multimoney.presentation.ui.credit.origination.homeaddress.HomeAddressViewModel.UIEvent.OnFormValid
 import com.multimoney.multimoney.presentation.ui.credit.origination.homeaddress.HomeAddressViewModel.UIEvent.OnLoadCreditSteps
 import com.multimoney.multimoney.presentation.ui.credit.origination.homeaddress.HomeAddressViewModel.UIEvent.OnNextActionClick
-import com.multimoney.multimoney.presentation.ui.credit.origination.homeaddress.HomeAddressViewModel.UIEvent.OnPhoneNumberValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class HomeAddressViewModel @Inject constructor(
@@ -113,19 +112,12 @@ class HomeAddressViewModel @Inject constructor(
         onValidateScreen()
     }
 
-    private fun onPhoneValueChange(phone: String) {
-        if (phone.length <= PHONE_NUMBER_MAX_LENGTH) {
-            uiState = uiState.copy(phone = phone)
-            onValidateScreen()
-        }
-    }
-
     private fun onValidateScreen() {
         emitBaseEvent(
             IsFormCompleted(
                 when (idBrand) {
-                    Brand.ElSalvador.id -> uiState.divisionOneSelected != null && uiState.divisionTwoSelected != null && uiState.address.isNotBlank() && uiState.phone.isNotBlank() && uiState.phone.length == PHONE_NUMBER_MAX_LENGTH
-                    Brand.Guatemala.id -> uiState.divisionOneSelected != null && uiState.divisionTwoSelected != null && uiState.divisionThreeSelected != null && uiState.address.isNotBlank() && uiState.phone.isNotBlank() && uiState.phone.length == PHONE_NUMBER_MAX_LENGTH
+                    Brand.ElSalvador.id -> uiState.divisionOneSelected != null && uiState.divisionTwoSelected != null && uiState.address.isNotBlank()
+                    Brand.Guatemala.id -> uiState.divisionOneSelected != null && uiState.divisionTwoSelected != null && uiState.divisionThreeSelected != null && uiState.address.isNotBlank()
                     else -> uiState.divisionOneSelected != null && uiState.divisionTwoSelected != null && uiState.divisionThreeSelected != null && uiState.address.isNotBlank()
                 }
             )
@@ -317,8 +309,7 @@ class HomeAddressViewModel @Inject constructor(
                     uiState.divisionOneSelected,
                     homeCanton,
                     uiState.divisionTwoSelected,
-                    uiState.address,
-                    uiState.phone
+                    uiState.address
                 )
             }
             Brand.Guatemala.id -> {
@@ -330,8 +321,7 @@ class HomeAddressViewModel @Inject constructor(
                     uiState.divisionTwoSelected,
                     homeDistrict,
                     uiState.divisionThreeSelected,
-                    uiState.address,
-                    uiState.phone
+                    uiState.address
                 )
             }
             Brand.CostaRica.id -> {
@@ -353,8 +343,6 @@ class HomeAddressViewModel @Inject constructor(
     private fun loadStepsInfo(list: List<CreditCatalog?>?) {
         val homeAddress = list?.find { it?.description == SaveCreditStepsHelper.HOME_ADDRESS }
         uiState = uiState.copy(address = homeAddress?.value ?: "")
-        val phone = list?.find { it?.description == SaveCreditStepsHelper.HOME_PHONE }
-        uiState = uiState.copy(phone = phone?.value ?: "")
     }
 
     data class UIState(
@@ -365,8 +353,7 @@ class HomeAddressViewModel @Inject constructor(
         val divisionTwoSelected: CreditCatalogOption? = null,
         val divisionThreeSelected: CreditCatalogOption? = null,
         val address: String = "",
-        val addressError: Pair<Boolean, Int> = Pair(false, R.string.credit_company_address_accurate_address_error),
-        val phone: String = ""
+        val addressError: Pair<Boolean, Int> = Pair(false, R.string.credit_company_address_accurate_address_error)
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -394,7 +381,6 @@ class HomeAddressViewModel @Inject constructor(
                 onDivisionThreeValueChange(uiEvent.divisionThree)
             }
             is OnAddressValueChange -> onAddressValueChange(uiEvent.address)
-            is OnPhoneNumberValueChange -> onPhoneValueChange(uiEvent.phone)
             is OnCallCatalogs -> onCallCatalogs(
                 uiEvent.pkUser,
                 uiEvent.user,
@@ -429,7 +415,6 @@ class HomeAddressViewModel @Inject constructor(
 
         data class OnDivisionThreeValueChange(val divisionThree: CreditCatalogOption?) : UIEvent()
         data class OnAddressValueChange(val address: String) : UIEvent()
-        data class OnPhoneNumberValueChange(val phone: String) : UIEvent()
         data class OnCallCatalogs(
             val pkUser: String,
             val user: String,

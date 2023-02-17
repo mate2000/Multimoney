@@ -61,7 +61,10 @@ fun SignUpPasswordScreen(
             sharedViewModel.uiState.bottomSheetVisibleState.isVisible -> {
                 sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnHidePasswordBottomSheet)
             }
-            else -> sharedViewModel.onUIEvent(OnCloseClick(focusManager))
+            else -> sharedViewModel.onUIEvent(
+                OnCloseClick(focusManager),
+                isO3Country = context.resources.configuration.locale.isO3Country
+            )
         }
     }
 
@@ -70,7 +73,6 @@ fun SignUpPasswordScreen(
             biometricPromptTitle = stringResource(id = R.string.biometric_dialog_title),
             biometricPromptDescription = stringResource(id = R.string.biometric_dialog_description),
             biometricPromptNegative = stringResource(id = R.string.cancel),
-            biometricDialogDescription = stringResource(id = R.string.active_biometric_message),
             biometricDialogSuccessDescription = stringResource(id = R.string.dialog_success_biometric_description),
             biometricDialogFailureDescription = stringResource(id = R.string.dialog_failure_biometric_description)
         )
@@ -303,7 +305,8 @@ fun SignUpPasswordScreen(
                     viewModel.onUIEvent(
                         SignUpPasswordViewModel.UIEvent.OnFingerprintCheckedChanged(
                             it,
-                            it
+                            it,
+                            sharedViewModel.idBrand ?: 0
                         )
                     )
                 },
@@ -317,7 +320,7 @@ fun SignUpPasswordScreen(
     if (viewModel.uiState.openDialogCustom.isActive.value) {
         CustomDialog(
             title = stringResource(id = viewModel.uiState.openDialogCustom.titleResource),
-            message = viewModel.uiState.openDialogCustom.description,
+            message = stringResource(id = viewModel.uiState.openDialogCustom.descriptionResource).ifEmpty { viewModel.uiState.openDialogCustom.description },
             positiveButtonText = stringResource(id = viewModel.uiState.openDialogCustom.positiveResource),
             negativeButtonText = stringResource(id = viewModel.uiState.openDialogCustom.negativeResource),
             onPositiveAction = viewModel.uiState.openDialogCustom.positiveAction,

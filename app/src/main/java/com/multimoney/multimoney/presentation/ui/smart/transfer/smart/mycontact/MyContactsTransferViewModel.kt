@@ -152,7 +152,8 @@ class MyContactsTransferViewModel @Inject constructor(
         navigateTo(
             "${MyContactsTransferAmountScreen.baseRoute}/" +
                 "${encodeData(smartAccount)}/${encodeData(account)}/" +
-                "${SmartTransferTypes.SmartToContact.id}/$idBrand"
+                "${SmartTransferTypes.SmartToContact.id}/$idBrand/" +
+                Screen.MyContactsTransferScreen.baseRoute
         )
     }
 

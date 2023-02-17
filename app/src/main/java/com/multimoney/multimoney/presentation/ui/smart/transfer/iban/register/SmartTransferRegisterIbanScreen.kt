@@ -214,7 +214,7 @@ fun SmartTransferRegisterIbanScreen(
                     onValueChange = { favoriteName ->
                         viewModel.onUIEvent(OnFavoriteNameValueChange(favoriteName))
                     },
-                    errorMessage = stringResource(id = R.string.smart_iban_register_account_error),
+                    isRequired = false
                 )
             }
         }

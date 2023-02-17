@@ -34,13 +34,13 @@ import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.Vis
 import com.multimoney.multimoney.presentation.util.catalog.PhoneCountryCode
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeType
 import com.novopayment.sdk.vts.module.payment.apdu.PaymentService
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flow
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.Locale
 import kotlin.time.Duration
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
 
 fun Context.openWhatsAppDeepLink(link: String, onFailure: () -> Unit = {}) {
     try {
@@ -132,7 +132,7 @@ fun Context.getPhoneNumbers(): List<String> {
         while (phones.moveToNext()) {
             val index = phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
             if (index >= 0) {
-                numbers.add(phones.getString(index))
+                numbers.add(phones.getString(index).replace(PHONE_WITHOUT_FORMAT_REGEX.toRegex(), NEW_VALUE))
             }
         }
         phones.close()
@@ -416,3 +416,5 @@ private const val DIGITS_REGEX = "\\d"
 private const val ZERO_STRING = "0"
 private const val DEFAULT_AMOUNT_OF_DECIMALS = 2
 private const val QUESTION_MARK = "?"
+private const val NEW_VALUE = ""
+private const val PHONE_WITHOUT_FORMAT_REGEX = "[^0-9]+"

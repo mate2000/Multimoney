@@ -220,7 +220,7 @@ ext {
     ]
 
     // Togisoft
-    togisoft_version = "1.1.2"
+    togisoft_version = "1.1.4"
 
     togisoft = [
             country_code_picker: "com.github.togisoft:jetpack_compose_country_code_picker:$togisoft_version"
@@ -318,6 +318,21 @@ ext {
             novo_dev    : "com.novopayment.sdk.android:vts-sandbox:$novo_payment_version",
             novo_staging: "com.novopayment.sdk.android:vts-sandbox:$novo_payment_version",
             novo_prod   : "com.novopayment.sdk.android:vts:$novo_payment_version"
+    ]
+
+    // CameraX
+    cameraX_version = "1.2.1"
+    cameraX = [
+            core   : "androidx.camera:camera-core:$cameraX_version",
+            cameraX: "androidx.camera:camera-camera2:$cameraX_version",
+            lifecycle: "androidx.camera:camera-lifecycle:$cameraX_version",
+            view   : "androidx.camera:camera-view:$cameraX_version"
+    ]
+
+    // ML Kit Barcode Scanning
+    mlkit_version = "17.0.3"
+    mlKit = [
+            barcode: "com.google.mlkit:barcode-scanning:$mlkit_version"
     ]
 
     // Common Test

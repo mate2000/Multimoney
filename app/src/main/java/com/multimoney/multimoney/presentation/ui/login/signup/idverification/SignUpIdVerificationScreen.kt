@@ -27,6 +27,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnShowCloseIcon
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.util.catalog.AppFlow
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -74,6 +75,7 @@ fun SignUpIdVerificationScreen(
     )
 
     LaunchedEffect(context) {
+        sharedViewModel.onUIEvent(OnShowCloseIcon(true))
         sharedViewModel.onUIEvent(
             SignUpViewModel.UIEvent.OnSetNavigation(
                 nextStep = SignUpStep.Six.id,

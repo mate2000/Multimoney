@@ -57,11 +57,15 @@ private fun BalanceQuery.Account.mapToDomainModel() =
         tokenNumber = tokenNumber,
         idCurrencyAccount = idCurrencyAccount.toString().toIntOrNull(),
         month = month,
-        customerId = customerId.toString().toLongOrNull()
+        customerId = customerId.toString().toLongOrNull(),
+        interest = rate.toString().toDoubleOrNull()
     )
 
 private fun BalanceQuery.BalanceCryptoAccount.mapToDomainModel() =
     BalanceCryptoAccount(
+        status = status.toString().toInt(),
+        message = message,
+        outOfService = outOfService ?: false,
         globalBalance = globalBalance.toString().toDouble(),
         investedBalance = investedBalance.toString(),
         percentageInvested = percentageInvested.toString(),

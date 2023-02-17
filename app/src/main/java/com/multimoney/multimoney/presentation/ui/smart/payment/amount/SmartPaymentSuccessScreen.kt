@@ -51,8 +51,7 @@ fun SmartPaymentSuccessScreen(
             },
             fromToText = stringResource(R.string.smart_payment_from_label),
             buttonText = stringResource(R.string.smart_payment_make_another_payment),
-            onButtonClick = { viewModel.onAmountUIEvent(OnNavigateBack) },
-            isTransferOperation = false
+            onButtonClick = { viewModel.onAmountUIEvent(OnNavigateBack) }
         ) {
             SmartPaymentInfoItem(
                 verticalAlignment = Alignment.CenterVertically,
@@ -78,7 +77,7 @@ fun SmartPaymentSuccessScreen(
                     icon = R.drawable.ic_money_gray,
                     title = stringResource(R.string.payment_amount_bottom_sheet_exchange_type),
                     subtitle = viewModel.amountUIState.exchangeRateLabel,
-                    rightTitle = stringResource(R.string.payment_amount_bottom_sheet_amount_to_debit),
+                    rightTitle = stringResource(R.string.smart_payment_amount_saved),
                     rightSubtitle = viewModel.amountUIState.convertedAmountLabel,
                     showVerticalDivision = true
                 )

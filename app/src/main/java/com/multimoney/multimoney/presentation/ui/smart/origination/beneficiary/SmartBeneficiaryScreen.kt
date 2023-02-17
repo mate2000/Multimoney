@@ -91,6 +91,9 @@ fun SmartBeneficiaryScreen(
         if (viewModel.uiState.addBeneficiaryOption) {
             BeneficiariesScreen(viewModel, sharedViewModel)
         } else {
+            LaunchedEffect(true) {
+                sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueEnable(false))
+            }
             val radioOptions = stringArrayResource(id = R.array.options_yes_no)
             Text(
                 text = stringResource(id = R.string.smart_beneficiary_header),

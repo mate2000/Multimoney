@@ -174,7 +174,7 @@ fun PaymentCardList(
     CustomButton(
         text = stringResource(id = R.string.payment_cards_list_create),
         modifier = Modifier
-            .padding(top = 28.dp)
+            .padding(top = 18.dp)
             .fillMaxWidth(),
         onClick = {
             Toast.makeText(context, "TBD", Toast.LENGTH_SHORT).show()

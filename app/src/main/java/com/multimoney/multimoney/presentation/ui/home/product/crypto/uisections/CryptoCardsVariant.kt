@@ -129,6 +129,45 @@ fun CryptoCardSmartInProcess(
 }
 
 @Composable
+fun CryptoCardMaintenanceState(
+    onClick: () -> Unit = {}
+) {
+    Column(
+        modifier = Modifier
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) { onClick.invoke() }
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(horizontal = 24.dp)
+    ) {
+        CustomInformativeChip(
+            text = stringResource(id = R.string.home_smart_in_process_crypto_card),
+            textStyle = Typography.body2.copy(
+                fontWeight = FontWeight.SemiBold,
+                color = MultimoneyTheme.colors.text
+            ),
+            modifier = Modifier.padding(top = 24.dp),
+            shape = RoundedCornerShape(12.dp),
+            background = MultimoneyTheme.colors.chipBackground
+        )
+        Text(
+            text = stringResource(id = R.string.home_maintenance_state_title),
+            modifier = Modifier.padding(top = 14.dp),
+            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.text
+        )
+        Text(
+            text = stringResource(id = R.string.home_maintenance_state_description),
+            modifier = Modifier.padding(top = 8.dp, bottom = 96.dp),
+            style = Typography.caption,
+            color = MultimoneyTheme.colors.text
+        )
+    }
+}
+
+@Composable
 fun CryptoCardWithBalance(
     cryptoBalance: Double,
     clientCryptoBalanceHistory: List<HistoricalBalanceClient> = emptyList(),

@@ -8,7 +8,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
-import com.multimoney.domain.interaction.credit.MutationSaveCreditOperationUseCase
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCase
 import com.multimoney.domain.interaction.security.MutationOnfidoCheckProcessUseCase
 import com.multimoney.domain.model.security.OnfidoToken
@@ -18,6 +17,7 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.BuildConfig
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.CROSSELING
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
@@ -27,27 +27,16 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_GET_EVICERTIA_LINK
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
-import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnCallInFidoToken
-import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnCloseClick
-import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnConfigureOnFidoSdk
-import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnContinueClick
-import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnContinueEnable
-import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnFailureWithDialog
-import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnLoadingValueChange
-import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnNavigateToHome
-import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnOpenDialogValueChange
-import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnOpenOnfidoSdk
-import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnSetCloseDialogTexts
-import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnSetWhatsAppLink
-import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.RefreshOnFidoToken
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.AppFlow
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.catalog.SignDocumentOrigin
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
+import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.onfido.OnFidoHelper
 import com.onfido.android.sdk.capture.ExitCode
 import com.onfido.android.sdk.capture.Onfido.OnfidoResultListener
@@ -66,7 +55,6 @@ class CreditOnfidoViewModel @Inject constructor(
     val onFidoHelper: OnFidoHelper,
     private val mutationOnFidoInitialProcessUseCase: MutationOnFidoInitialProcessUseCase,
     private val mutationOnfidoCheckProcessUseCase: MutationOnfidoCheckProcessUseCase,
-    private val mutationSaveCreditOperationUseCase: MutationSaveCreditOperationUseCase,
     val countDownTimer: MMCountDownTimer
 ) : BaseViewModel(true) {
 
@@ -126,7 +114,7 @@ class CreditOnfidoViewModel @Inject constructor(
                 identification,
                 BuildConfig.APPLICATION_ID,
                 idBrand ?: 0,
-                user
+                user,
             ).collectLatest { result ->
                 result.onSuccess {
                     applicantId = it?.applicantId
@@ -152,7 +140,7 @@ class CreditOnfidoViewModel @Inject constructor(
                 identification,
                 BuildConfig.APPLICATION_ID,
                 idBrand ?: 0,
-                user
+                user,
             ).collectLatest { result ->
                 onFidoTokenEvent.emit(result)
             }
@@ -168,13 +156,15 @@ class CreditOnfidoViewModel @Inject constructor(
                 result.data,
                 object : OnfidoResultListener {
                     override fun userCompleted(captures: Captures) {
-                        onCallOnfidoCheckProcess(pkUser, identification, idBrand ?: 0, idUserRequest, email)
-                        if (idPrint == ID_PRINT_EMPTY) {
-                            uiState = uiState.copy(isCreatingAccountVisible = true)
-                            onCallSaveCreditOperation()
-                        } else {
-                            navigateToCorrectScreen(SignDocumentOrigin.OnFidoSecondTime)
-                        }
+                        onCallOnfidoCheckProcess(
+                            pkUser,
+                            identification,
+                            idBrand
+                                ?: 0,
+                            idUserRequest,
+                            email,
+                        )
+                        navigateToCorrectScreen()
                     }
 
                     override fun userExited(exitCode: ExitCode) {
@@ -187,11 +177,11 @@ class CreditOnfidoViewModel @Inject constructor(
                             isContinueEnabled = false,
                             openDialog = DialogParameters(
                                 description = onFidoError,
-                                isActive = mutableStateOf(true)
-                            )
+                                isActive = mutableStateOf(true),
+                            ),
                         )
                     }
-                }
+                },
             )
     }
 
@@ -215,7 +205,7 @@ class CreditOnfidoViewModel @Inject constructor(
                 pkUser,
                 idUserRequest,
                 idBrand,
-                user
+                user,
             ).collectLatest { result ->
                 result.onSuccess {
                     // nothing to do here
@@ -227,28 +217,7 @@ class CreditOnfidoViewModel @Inject constructor(
         }
     }
 
-    private fun onCallSaveCreditOperation() {
-        executeUseCase {
-            mutationSaveCreditOperationUseCase.invoke(
-                idUserRequest,
-                pkUser,
-                email,
-                idBrand ?: 0
-            ).collectLatest { result ->
-                result.onSuccess {
-                    idPrint = it.idPrint
-                    navigateToCorrectScreen(SignDocumentOrigin.OnFidoFirstTime)
-                }
-                result.onFailure {
-                    uiState = uiState.copy(
-                        isAlertResultVisible = true
-                    )
-                }
-            }
-        }
-    }
-
-    private fun navigateToCorrectScreen(signDocumentOrigin: SignDocumentOrigin) {
+    private fun navigateToCorrectScreen() {
         val signDocumentStep = if (idBrand == Brand.ElSalvador.id || idPrint == ID_PRINT_EMPTY) {
             VALIDATE_IDENTITY.value
         } else {
@@ -258,13 +227,24 @@ class CreditOnfidoViewModel @Inject constructor(
                 GENERATE_DOCUMENT_STEP.value
             }
         }
-        onNavigateToSignDocumentScreen(signDocumentStep, signDocumentOrigin)
+        onNavigateToSignDocumentScreen(signDocumentStep)
     }
 
-    private fun onNavigateToSignDocumentScreen(signDocumentStep: String, signDocumentOrigin: SignDocumentOrigin) {
+    private fun onNavigateToSignDocumentScreen(signDocumentStep: String) {
         popAndNavigateTo(
-            "${Screen.SignDocumentProcessScreen.baseRoute}/$signDocumentStep/${signDocumentOrigin.value}/$idPrint/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName",
-            Screen.CreditOnfidoScreen.route
+            Screen.SignDocumentProcessScreen.baseRoute
+                .plus(getNavParam(SIGN_DOCUMENT_STEP_ARG, signDocumentStep))
+                .plus(getNavParam(SIGN_DOCUMENT_ID_PRINT, idPrint))
+                .plus(getNavParam(ID_BRAND, idBrand))
+                .plus(getNavParam(PK_USER, pkUser))
+                .plus(getNavParam(IDENTIFICATION, identification))
+                .plus(getNavParam(EMAIL, email))
+                .plus(getNavParam(ID_USER_REQUEST, idUserRequest))
+                .plus(getNavParam(FIRST_NAME, firstName))
+                .plus(getNavParam(LAST_NAME, lastName))
+                .plus(getNavParam(CROSSELING, false))
+                .plus(getNavParam(SHOULD_GET_EVICERTIA_LINK, true)),
+            Screen.CreditOnfidoScreen.route,
         )
     }
 
@@ -289,32 +269,32 @@ class CreditOnfidoViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is OnSetCloseDialogTexts -> onInitializeTexts(event.title, event.description)
-            is OnSetWhatsAppLink -> whatsAppLink = event.whatsAppLink
-            is OnConfigureOnFidoSdk -> onConfigureOnFidoSDK(event.result)
-            is OnCallInFidoToken -> callMutationOnFidoInitialProcess(
+            is UIEvent.OnSetCloseDialogTexts -> onInitializeTexts(event.title, event.description)
+            is UIEvent.OnSetWhatsAppLink -> whatsAppLink = event.whatsAppLink
+            is UIEvent.OnConfigureOnFidoSdk -> onConfigureOnFidoSDK(event.result)
+            is UIEvent.OnCallInFidoToken -> callMutationOnFidoInitialProcess(
                 event.firstName,
                 event.lastName,
                 event.identification,
                 event.user
             )
 
-            is RefreshOnFidoToken -> onRefreshToken(
+            is UIEvent.RefreshOnFidoToken -> onRefreshToken(
                 event.firstName,
                 event.lastName,
                 event.identification,
-
                 event.user,
                 event.injectNewToken
             )
-            is OnOpenDialogValueChange -> uiState = uiState.copy(openDialog = event.openDialog)
-            is OnCloseClick -> onCloseClick()
-            is OnContinueClick -> continueAction()
-            is OnContinueEnable -> uiState = uiState.copy(isContinueEnabled = event.isEnable)
-            is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
-            is OnNavigateToHome -> onNavigateToHome()
-            is OnFailureWithDialog -> uiState = uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
-            is OnOpenOnfidoSdk -> onOpenOnfidoSdk(event.onOpenOnfidoSdk)
+            is UIEvent.OnOpenDialogValueChange -> uiState = uiState.copy(openDialog = event.openDialog)
+            is UIEvent.OnCloseClick -> onCloseClick()
+            is UIEvent.OnContinueClick -> continueAction()
+            is UIEvent.OnContinueEnable -> uiState = uiState.copy(isContinueEnabled = event.isEnable)
+            is UIEvent.OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
+            is UIEvent.OnNavigateToHome -> onNavigateToHome()
+            is UIEvent.OnFailureWithDialog -> uiState =
+                uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
+            is UIEvent.OnOpenOnfidoSdk -> onOpenOnfidoSdk(event.onOpenOnfidoSdk)
         }
     }
 
@@ -323,8 +303,7 @@ class CreditOnfidoViewModel @Inject constructor(
         val isAlertVisible: Boolean = false,
         val isContinueEnabled: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
-        var isAlertResultVisible: Boolean = false,
-        var isCreatingAccountVisible: Boolean = false
+        var isAlertResultVisible: Boolean = false
     )
 
     sealed class UIEvent {
@@ -338,7 +317,7 @@ class CreditOnfidoViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnConfigureOnFidoSdk(
-            val result: ActivityResult
+            val result: ActivityResult,
         ) : UIEvent()
 
         data class OnOpenDialogValueChange(val openDialog: DialogParameters) : UIEvent()

@@ -8,7 +8,12 @@ import com.multimoney.domain.model.crypto.CryptoCurrencyNews
 import com.multimoney.domain.model.crypto.GetHistoricalClientBalance
 import com.multimoney.domain.model.crypto.GetHistoricalCurrencyPrices
 import com.multimoney.domain.model.crypto.GetListOfAvailableCryptoCoins
+import com.multimoney.domain.model.crypto.GetTransferFeeData
 import com.multimoney.domain.model.crypto.PricesQuoteAndCommissionData
+import com.multimoney.domain.model.crypto.SendCryptoToAddressData
+import com.multimoney.domain.model.crypto.SendCryptoToAddressResult
+import com.multimoney.domain.model.crypto.SellCryptoCurrencyHQRData
+import com.multimoney.domain.model.crypto.ValidateDepositAddressResponse
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
@@ -25,7 +30,8 @@ interface CryptoRepository {
 
     suspend fun getAvailableListOfCryptoCoins(
         user: String,
-        idBrand: Int
+        idBrand: Int,
+        origin: String
     ): Flow<MultimoneyResult<GetListOfAvailableCryptoCoins?>>
 
     suspend fun getCryptoCurrencyMovements(
@@ -84,9 +90,59 @@ interface CryptoRepository {
         totalFee: Double
     ): Flow<MultimoneyResult<BuyCryptoCurrencyData>>
 
+    suspend fun sellCryptoCurrency(
+        pkUser: Int,
+        identification: String,
+        market: String,
+        commissionPercentage: Double,
+        taxPercentage: Double,
+        accountToken: Long,
+        exchangeRate: Double,
+        idBrand: Int,
+        user: String,
+        quoteId: String,
+        baseAmount: Double,
+        fee: Double,
+        internalFee: Double,
+        totalFee: Double
+    ): Flow<MultimoneyResult<SellCryptoCurrencyHQRData>>
+
     suspend fun getBalanceCryptoAccount(
         user: String,
         idBrand: Int,
         identification: String
     ): Flow<MultimoneyResult<BalanceCryptoAccount>>
+
+    suspend fun validateDepositAddress(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        market: String,
+        address: String
+    ): Flow<MultimoneyResult<ValidateDepositAddressResponse>>
+
+    suspend fun getTransferCommission(
+        user: String,
+        idBrand: Int,
+        destinationAddress: String,
+        asset: String,
+        cryptoNetwork: String,
+        amount: Double
+    ): Flow<MultimoneyResult<GetTransferFeeData>>
+
+    suspend fun sendCryptoToAddress(
+        pkUser: Int,
+        identification: String,
+        destinationAddress: String,
+        feeId: String,
+        asset: String,
+        market: String,
+        cryptoNetwork: String,
+        amount: Double,
+        fee: Double,
+        internalFee: Double,
+        taxAmount: Double,
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<SendCryptoToAddressData>>
 }

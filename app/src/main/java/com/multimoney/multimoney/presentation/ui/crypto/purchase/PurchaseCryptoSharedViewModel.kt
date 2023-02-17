@@ -252,7 +252,6 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
             is UIEvent.OnClickBottomSheet -> onShowBottomSheet()
             is UIEvent.OnCloseClick -> onCloseClick()
             is UIEvent.OnGetUserInfo -> setUserData()
-            // is UIEvent.OnQueryAccounts -> querySmartAccounts()
             is UIEvent.OnCryptoSelected -> {
                 uiState = uiState.copy(
                     asset = event.selectedCrypto.baseAsset,

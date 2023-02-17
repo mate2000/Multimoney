@@ -7,16 +7,19 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.CryptoSendSteps
+import com.multimoney.data.util.catalog.SendCryptoStep
 import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.CRYPTO_ASSET
 import com.multimoney.multimoney.presentation.navigation.DESCRIPTION_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.ui.home.HomeState
+import com.multimoney.multimoney.presentation.util.getCurrentDate
+import com.multimoney.multimoney.presentation.util.getCurrentTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -46,8 +49,9 @@ class CryptoSendSharedViewModel @Inject constructor(
             pkUser = dataStorePreferences.getPkUser().first()
             identification = dataStorePreferences.getIdentification().first()
             email = dataStorePreferences.getUserEmail().first()
-            if (comingFromCurrencyDetails){
-                uiState = uiState.copy(asset = asset ?: "", assetDescription = assetDescription ?: "")
+            if (comingFromCurrencyDetails) {
+                uiState =
+                    uiState.copy(asset = asset ?: "", assetDescription = assetDescription ?: "")
             }
         }
     }
@@ -88,6 +92,7 @@ class CryptoSendSharedViewModel @Inject constructor(
     }
 
     data class UIState(
+        val currentStepType: SendCryptoStep = SendCryptoStep.LIST_CRYPTO_CURRENCIES,
         val currentStep: Int = CryptoSendSteps.One.pageNumber,
         val isLoading: Boolean = false,
         val accounts: List<Any> = listOf(),
@@ -97,7 +102,13 @@ class CryptoSendSharedViewModel @Inject constructor(
         var currencyDollarBalance: Double = 0.0,
         var cryptoCurrencyPrice: Double = 0.0,
         var cryptoNetwork: String = "",
-        var destinationAddress: String = ""
+        var destinationAddress: String = "",
+        var sendDollarAmount: String = "",
+        var transferFee: String = "",
+        var referenceNumber: String = "",
+        var sendCryptoAmount: String = "",
+        val sendCurrentDate: String? = null,
+        val sendCurrentTime: String? = null,
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -106,6 +117,20 @@ class CryptoSendSharedViewModel @Inject constructor(
             is UIEvent.OnPreviousStep -> previousStep()
             is UIEvent.OnNextStep -> nextStep()
             is UIEvent.OnCryptoSelected -> onCryptoSelected(event.cryptoAccount)
+            is UIEvent.OnSetupVoucherDetails -> uiState = uiState.copy(
+                sendDollarAmount = event.sendDollarAmount,
+                sendCryptoAmount = event.sendCryptoAmount,
+                transferFee = event.transferFee,
+                referenceNumber = event.referenceNumber,
+                sendCurrentDate = getCurrentDate(Calendar.getInstance().time),
+                sendCurrentTime = getCurrentTime(Calendar.getInstance().time)
+            )
+            is UIEvent.OnSetFlowStep -> uiState = uiState.copy(currentStepType = event.step)
+            is UIEvent.OnNavigateHome -> navigateBack(
+                popTo = Screen.HomeScreen.route,
+                isRestart = true,
+                homeState = HomeState.COLLAPSED
+            )
         }
     }
 
@@ -113,7 +138,18 @@ class CryptoSendSharedViewModel @Inject constructor(
         object OnGetUserInfo : UIEvent
         object OnPreviousStep : UIEvent
         object OnNextStep : UIEvent
-        data class OnCryptoSelected(val cryptoAccount: BalanceCryptoAccountItems): UIEvent
+        data class OnCryptoSelected(val cryptoAccount: BalanceCryptoAccountItems) : UIEvent
+        data class OnSetupVoucherDetails(
+            val sendDollarAmount: String,
+            val sendCryptoAmount: String,
+            val transferFee: String,
+            val referenceNumber: String
+        ) : UIEvent
+
+        data class OnSetFlowStep(val step: SendCryptoStep) : UIEvent
+        object OnNavigateHome : UIEvent
+
+
     }
 
     companion object {

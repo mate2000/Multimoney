@@ -170,7 +170,8 @@ class CryptoSendAmountViewModel @Inject constructor(
                 uiState = uiState.copy(
                     isLoading = false,
                     transferStatus = TransferStatus.SUCCESS,
-                    cryptoSendAmountData = it
+                    cryptoSendAmountData = it,
+                    referenceNumber = it.transferOrder.result?.sysdeTransactionNumber ?: ""
                 )
             }
             result.onFailure {
@@ -223,6 +224,7 @@ class CryptoSendAmountViewModel @Inject constructor(
         val transferStatus: TransferStatus = TransferStatus.IDLE,
         val transferCommission: GetTransferFeeData? = null,
         val feeCalculated: Boolean = false,
+        val referenceNumber: String = "",
         val cryptoSendAmountData: SendCryptoToAddressData? = null
     )
 

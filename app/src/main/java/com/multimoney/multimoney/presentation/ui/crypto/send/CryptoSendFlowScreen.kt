@@ -10,11 +10,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.BuyCryptoStep
 import com.multimoney.data.util.catalog.CryptoSendSteps
+import com.multimoney.data.util.catalog.SendCryptoStep
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.send.cryptoaddress.CryptoSendAddressScreen
 import com.multimoney.multimoney.presentation.ui.crypto.send.cryptoamount.CryptoSendAmountScreen
 import com.multimoney.multimoney.presentation.ui.crypto.send.listofcurrencies.CryptoSendListOfCurrenciesScreen
+import com.multimoney.multimoney.presentation.ui.crypto.send.voucher.SendCryptoVoucher
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -45,8 +49,9 @@ fun CryptoSendFlow(
     ) {
         Column {
             TopNavBar(
-                isLeftButtonVisible = true,
-                isRightButtonVisible = false,
+                isLeftButtonVisible = viewModel.uiState.currentStepType != SendCryptoStep.LOADING && viewModel.uiState.currentStepType != SendCryptoStep.SEND_VOUCHER,
+                isRightButtonVisible = viewModel.uiState.currentStepType != SendCryptoStep.LOADING,
+                isCenterContentVisible = viewModel.uiState.currentStepType == SendCryptoStep.SEND_VOUCHER,
                 onLeftButtonClick = {
                     viewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnPreviousStep)
                 },
@@ -95,6 +100,7 @@ fun CRSendCryptoDirectFlow(
 ) {
     when (step) {
         CryptoSendSteps.One.pageNumber -> {
+            viewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnSetFlowStep(SendCryptoStep.SEND_CRYPTO))
             CryptoSendAddressScreen(
                 sharedViewModel = viewModel,
                 onNavigateToQrCodeScanner = onNavigateToQrCodeScanner,
@@ -102,12 +108,14 @@ fun CRSendCryptoDirectFlow(
             )
         }
         CryptoSendSteps.Two.pageNumber -> {
+            viewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnSetFlowStep(SendCryptoStep.SEND_CRYPTO))
             CryptoSendAmountScreen(
                 sharedViewModel = viewModel
             )
         }
         CryptoSendSteps.Three.pageNumber -> {
-            /* TODO: Voucher Screen */
+            viewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnSetFlowStep(SendCryptoStep.SEND_VOUCHER))
+            SendCryptoVoucher(sharedViewModel = viewModel)
         }
     }
 }
@@ -120,8 +128,12 @@ fun CRSendCryptoFlow(
     qrCodeResult: String
 ) {
     when (step) {
-        CryptoSendSteps.One.pageNumber -> CryptoSendListOfCurrenciesScreen(sharedViewModel = viewModel)
+        CryptoSendSteps.One.pageNumber -> {
+            viewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnSetFlowStep(SendCryptoStep.LIST_CRYPTO_CURRENCIES))
+            CryptoSendListOfCurrenciesScreen(sharedViewModel = viewModel)
+        }
         CryptoSendSteps.Two.pageNumber -> {
+            viewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnSetFlowStep(SendCryptoStep.CRYPTO_ADDRESS))
             CryptoSendAddressScreen(
                 sharedViewModel = viewModel,
                 onNavigateToQrCodeScanner = onNavigateToQrCodeScanner,
@@ -129,12 +141,14 @@ fun CRSendCryptoFlow(
             )
         }
         CryptoSendSteps.Three.pageNumber -> {
+            viewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnSetFlowStep(SendCryptoStep.SEND_CRYPTO))
             CryptoSendAmountScreen(
                 sharedViewModel = viewModel
             )
         }
         CryptoSendSteps.Four.pageNumber -> {
-            /* TODO: Voucher Screen */
+            viewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnSetFlowStep(SendCryptoStep.SEND_VOUCHER))
+            SendCryptoVoucher(sharedViewModel = viewModel)
         }
     }
 }

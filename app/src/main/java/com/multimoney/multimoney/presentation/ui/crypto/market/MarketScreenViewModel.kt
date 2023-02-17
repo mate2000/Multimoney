@@ -1,19 +1,29 @@
+@file:OptIn(ExperimentalMaterialApi::class)
+
 package com.multimoney.multimoney.presentation.ui.crypto.market
 
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUseCase
+import com.multimoney.domain.model.accountsmart.SmartAccountSmall
+import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.crypto.GetListOfAvailableCryptoCoins
+import com.multimoney.domain.model.crypto.MarketCryptoCoin
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNTS_LIST
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.USER_CRYPTO_BALANCES
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -22,24 +32,35 @@ import javax.inject.Inject
 @HiltViewModel
 class MarketScreenViewModel @Inject constructor(
     private val getAvailableListOfCryptoCoinsUseCase: GetAvailableListOfCryptoCoinsUseCase,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val cryptoHelper: CryptoHelper
 ) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UiState())
         private set
 
+    private var smartAccounts: List<SmartAccountSmall>? = null
+    private var userCryptoBalances: List<BalanceCryptoAccountItems>? = null
+
+
     private fun onGetUserInfo() {
         uiState = uiState.copy(
             user = savedStateHandle[USER] ?: "",
-            idBrand = savedStateHandle[ID_BRAND] ?: 0
+            idBrand = savedStateHandle[ID_BRAND] ?: 0,
         )
+        smartAccounts =
+            savedStateHandle.get<Array<SmartAccountSmall>>(SMART_ACCOUNTS_LIST)?.toList()
+
+        userCryptoBalances =
+            savedStateHandle.get<Array<BalanceCryptoAccountItems>>(USER_CRYPTO_BALANCES)?.toList()
     }
 
     private fun getAvailableListOfCryptoCoins(
         user: String,
         idBrand: Int
     ) = executeUseCase {
-        getAvailableListOfCryptoCoinsUseCase.invoke(user, idBrand)
+        val cryptoOrigin = cryptoHelper.getCryptoOrigin()
+        getAvailableListOfCryptoCoinsUseCase.invoke(user, idBrand, cryptoOrigin)
             .collectLatest { result ->
                 result.onSuccess { availableCryptoCoins ->
                     availableCryptoCoins.let {
@@ -66,25 +87,24 @@ class MarketScreenViewModel @Inject constructor(
     }
 
     private fun onSetAssetBeforeNavigate(
-        asset: String,
-        description: String,
-        currentPrice: Float,
-        urlImage: String
+        marketCryptoCoin: MarketCryptoCoin
     ) {
         uiState = uiState.copy(
-            asset = asset,
-            description = description,
-            currentPrice = currentPrice,
-            urlImage = urlImage
+            selectedCryptoCoin = marketCryptoCoin
         )
     }
 
     private fun onNavigateToCurrencyDetails() {
         navigateTo(
             "${Screen.CryptoCurrencyDetailsScreen.baseRoute}/${uiState.user}"
-                    + "/${uiState.idBrand}/${uiState.asset}/${uiState.description}/${uiState.currentPrice}/${uiState.urlImage}"
+                    + "/${uiState.idBrand}/${encodeData(uiState.selectedCryptoCoin)}/${
+                encodeData(
+                    smartAccounts
+                )
+            }/${encodeData(userCryptoBalances)}"
         )
     }
+
 
     private fun onFailure(error: HttpError) {
         uiState = uiState.copy(
@@ -100,10 +120,7 @@ class MarketScreenViewModel @Inject constructor(
         val user: String? = null,
         val idBrand: Int? = null,
         val isLoading: Boolean = false,
-        val asset: String? = null,
-        val description: String? = null,
-        val currentPrice: Float? = null,
-        val urlImage: String? = null,
+        val selectedCryptoCoin: MarketCryptoCoin? = null,
         val openDialog: DialogParameters = DialogParameters(),
         val availableCryptoCoins: GetListOfAvailableCryptoCoins? = null
     )
@@ -115,24 +132,18 @@ class MarketScreenViewModel @Inject constructor(
             is UIEvent.OnGetAvailableListOfCryptoCoins -> onGetAvailableListOfCryptoCoins()
             is UIEvent.OnNavigateToCurrencyDetails -> onNavigateToCurrencyDetails()
             is UIEvent.OnSetAssetBeforeNavigation -> onSetAssetBeforeNavigate(
-                event.asset,
-                event.description,
-                event.currentPrice,
-                event.urlImage
+                event.asset
             )
         }
     }
 
-    sealed interface UIEvent {
-        object OnGetUserInfo : UIEvent
-        object OnNavigateBack : UIEvent
-        object OnGetAvailableListOfCryptoCoins : UIEvent
-        object OnNavigateToCurrencyDetails : UIEvent
+    sealed class UIEvent {
+        object OnGetUserInfo : UIEvent()
+        object OnNavigateBack : UIEvent()
+        object OnGetAvailableListOfCryptoCoins : UIEvent()
+        object OnNavigateToCurrencyDetails : UIEvent()
         data class OnSetAssetBeforeNavigation(
-            val asset: String,
-            val description: String,
-            val currentPrice: Float,
-            val urlImage: String
-        ) : UIEvent
+            val asset: MarketCryptoCoin
+        ) : UIEvent()
     }
 }

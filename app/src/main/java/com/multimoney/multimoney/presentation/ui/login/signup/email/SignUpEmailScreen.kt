@@ -22,20 +22,22 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
-import com.multimoney.data.util.catalog.SignUpStep.Search
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
+import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnOpenDialogValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnShowCloseIcon
+import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnShowAnotherDeviceAlreadyRegisteredDialog
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
@@ -46,24 +48,28 @@ fun SignUpEmailScreen(
     viewModel: SignUpEmailViewModel = hiltViewModel(),
     sharedViewModel: SignUpViewModel = hiltViewModel()
 ) {
-
     // Properties
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
+    val activity = LocalContext.current.findActivity() as FragmentActivity
 
     LaunchedEffect(true) {
-
-        sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnSetNavigation(nextAction = {
-            viewModel.onUIEvent(
-                SignUpEmailViewModel.UIEvent.OnNextActionClick(
-                    nextStepAction = {
-                        sharedViewModel.onUIEvent(
-                            SignUpViewModel.UIEvent.OnNextStep
-                        )
-                    })
-            )
-            viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SignUpOne)
-        }, nextStep = SignUpStep.Two.id, previousStep = SignUpStep.One.id))
+        sharedViewModel.onUIEvent(OnShowCloseIcon(false))
+        sharedViewModel.onUIEvent(
+            SignUpViewModel.UIEvent.OnSetNavigation(nextAction = {
+                viewModel.onUIEvent(
+                    SignUpEmailViewModel.UIEvent.OnNextActionClick(
+                        activity = activity,
+                        nextStepAction = {
+                            sharedViewModel.onUIEvent(
+                                SignUpViewModel.UIEvent.OnNextStep
+                            )
+                        }
+                    )
+                )
+                viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SignUpOne)
+            }, nextStep = SignUpStep.Two.id, previousStep = SignUpStep.One.id)
+        )
 
         viewModel.baseEvent.collect { event ->
             when (event) {
@@ -80,42 +86,20 @@ fun SignUpEmailScreen(
         viewModel.onUIEvent(SignUpEmailViewModel.UIEvent.OnValidateForm)
         viewModel.onValidateUserExistsEvent.collect { event ->
             event.onSuccess { userData ->
-                viewModel.onUIEvent(
-                    SignUpEmailViewModel.UIEvent.OnValidationUserExistsSuccess(
-                        context,
-                        currentStep = sharedViewModel.uiState.currentStep,
-                        userData = userData,
-                        onUseDataValueChange = {
-                            val idBrand = Brand.Search.getIdBrandByNationality(userData?.nationality)
-                            sharedViewModel.onUIEvent(
-                                SignUpViewModel.UIEvent.OnUseDataValueChange(
-                                    userData?.copy(email = viewModel.uiState.userEmail),
-                                    idBrand
-                                )
-                            )
-                        },
-                        nextStepAction = { sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnNextStep) },
-                        openSignUpSplashComeBack = {
-                            sharedViewModel.onUIEvent(
-                                SignUpViewModel.UIEvent.OnOpenSplashComeBack(
-                                    Search.getIdByName(
-                                        userData?.currentStep
-                                    )
-                                )
-                            )
-                        },
-                        onLoadingValueChange = {
-                            sharedViewModel.onUIEvent(
-                                SignUpViewModel.UIEvent.OnLoadingValueChange(
-                                    false
-                                )
-                            )
-                        },
-                        onOpenDialog = {
-                            sharedViewModel.onUIEvent(OnOpenDialogValueChange(it))
-                        }
+                sharedViewModel.onUIEvent(
+                    SignUpViewModel.UIEvent.OnLoadingValueChange(
+                        false
                     )
                 )
+                if (userData?.status == SignUpEmailViewModel.ANOTHER_DEVICE_ALREADY_REGISTERED) {
+                    viewModel.onUIEvent(
+                        OnShowAnotherDeviceAlreadyRegisteredDialog {
+                            viewModel.onSuccessValidation(context, sharedViewModel, userData)
+                        }
+                    )
+                } else {
+                    viewModel.onSuccessValidation(context, sharedViewModel, userData)
+                }
             }.onMessage {
                 viewModel.onUIEvent(
                     SignUpEmailViewModel.UIEvent.OnHandleUserStatus(
@@ -209,6 +193,16 @@ fun SignUpEmailScreen(
             isRequiredMessage = stringResource(id = R.string.sign_up_email_required),
             isError = viewModel.uiState.userEmailError.first,
             errorMessage = stringResource(id = viewModel.uiState.userEmailError.second)
+        )
+    }
+    if (viewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            message = stringResource(id = viewModel.uiState.openDialog.descriptionResource),
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
+            openDialogCustom = viewModel.uiState.openDialog.isActive,
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction
         )
     }
 }

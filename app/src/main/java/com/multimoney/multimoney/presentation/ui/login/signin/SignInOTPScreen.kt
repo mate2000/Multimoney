@@ -86,16 +86,6 @@ fun SignInOTPScreen(
         )
     }
 
-
-    LaunchedEffect(true) {
-        viewModel.onUIEvent(
-            SignInOTPViewModel.UIEvent.OnInitializeTimer(
-                SignInOTPViewModel.PHASE_ONE,
-                SignInOTPViewModel.TIMER_DURATION
-            )
-        )
-    }
-
     BackHandler {
         viewModel.onUIEvent(SignInOTPViewModel.UIEvent.OnNavigateBack)
     }
@@ -196,7 +186,7 @@ fun SignInOTPContent(viewModel: SignInOTPViewModel) {
                 id = viewModel.uiState.weSentYouACodeTextResource,
                 viewModel.uiState.phoneNumber
             ),
-            style = Typography.body2
+            style = Typography.body2.copy(color = MultimoneyTheme.colors.titleText),
         )
 
         OtpTextField(

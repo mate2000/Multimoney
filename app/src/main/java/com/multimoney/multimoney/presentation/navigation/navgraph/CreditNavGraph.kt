@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.multimoney.multimoney.presentation.navigation.CREDIT_ROUTE
+import com.multimoney.multimoney.presentation.navigation.CROSSELING
 import com.multimoney.multimoney.presentation.navigation.HOME_STATE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
@@ -18,7 +19,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.continuevali
 import com.multimoney.multimoney.presentation.ui.credit.origination.evisertiaandonfidoerrors.OnfidoAndEvicertiaErrorsScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoScreen
-import com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess.ProcessingTransactionScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.originationvoucher.OriginationVoucherScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessScreen
 
 const val PK_USER = "pk_user"
@@ -35,10 +36,10 @@ const val SIGN_DOCUMENT_STEP_ARG = "sign_document_step_arg"
 const val SIGN_DOCUMENT_URL = "sign_document_url"
 const val SIGN_DOCUMENT_ID_PRINT = "sign_document_id_print"
 const val SIGN_DOCUMENT_GLOBAL_ID = "sign_document_gobal_id"
-const val SIGN_DOCUMENT_ORIGIN = "sign_document_origin"
 const val ONFIDO_AND_EVICERTIA_ERROR = "onfifo_and_evicertia_error"
 const val IS_SMART_EVICERTIA = "is_smart_evicertia"
 const val ID_CURRENCY = "currency"
+const val SHOULD_GET_EVICERTIA_LINK = "should_get_evicertia_link"
 
 fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
     navigation(
@@ -50,7 +51,8 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(CREDIT_STEP) { type = NavType.IntType },
                 navArgument(ID_USER_REQUEST) { type = NavType.IntType },
-                navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType }
+                navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType },
+                navArgument(CROSSELING) { type = NavType.BoolType }
             )
         ) {
             CreditScreen(
@@ -106,7 +108,9 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
                 navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType },
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(ID_USER_REQUEST) { type = NavType.LongType },
-                navArgument(PK_USER) { type = NavType.LongType }
+                navArgument(PK_USER) { type = NavType.LongType },
+                navArgument(CROSSELING) { type = NavType.BoolType },
+                navArgument(SHOULD_GET_EVICERTIA_LINK) { type = NavType.BoolType }
             )
         ) {
             SignDocumentProcessScreen(
@@ -143,13 +147,13 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
             )
         }
         composable(
-            route = Screen.ProcessingTransactionScreen.route,
+            route = Screen.OriginationVoucherScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType }
             )
         ) {
-            ProcessingTransactionScreen(
+            OriginationVoucherScreen(
                 onPopBackStack = {
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
@@ -245,7 +249,8 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(PK_USER) { type = NavType.IntType },
                 navArgument(ID_USER_REQUEST) { type = NavType.IntType },
-                navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType }
+                navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType },
+                navArgument(CROSSELING) { type = NavType.BoolType }
             )
         ) {
             NonPreApprovedScreen(

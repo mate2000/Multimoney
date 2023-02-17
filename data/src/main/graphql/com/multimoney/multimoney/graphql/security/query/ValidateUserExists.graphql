@@ -1,7 +1,8 @@
-query ValidateUserExists($email:String!){
+query ValidateUserExists($email:String!, $deviceId:String!){
   validateUserExists(
     validateUserExistsInput: {
-      email: $email
+      email: $email,
+      deviceId: $deviceId
     }
   ) {
     status
@@ -23,6 +24,9 @@ query ValidateUserExists($email:String!){
     idIdentification
     countryCode
     currentStep
+    isNewUser
+    maskedMail
+    maskedPhoneNumber
     userStatus
     idBrand
   }

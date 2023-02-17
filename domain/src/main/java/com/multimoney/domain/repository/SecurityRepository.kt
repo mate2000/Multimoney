@@ -8,6 +8,7 @@ import com.multimoney.domain.model.security.ClientInfoCr
 import com.multimoney.domain.model.security.Company
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.CountryList
+import com.multimoney.domain.model.security.CountryPhoneCodes
 import com.multimoney.domain.model.security.MiniCards
 import com.multimoney.domain.model.security.OnfidoCheckProcess
 import com.multimoney.domain.model.security.OnfidoToken
@@ -33,7 +34,8 @@ interface SecurityRepository {
     ): Flow<MultimoneyResult<Company?>>
 
     suspend fun queryValidateUserExists(
-        email: String
+        email: String,
+        deviceId: String
     ): Flow<MultimoneyResult<UserData?>>
 
     suspend fun mutationUserValidation(
@@ -45,7 +47,8 @@ interface SecurityRepository {
         firstName: String,
         secondName: String,
         firstSurname: String,
-        secondSurname: String
+        secondSurname: String,
+        deviceId: String
     ): Flow<MultimoneyResult<UserData?>>
 
     suspend fun mutationUpdateUserRegister(
@@ -129,7 +132,8 @@ interface SecurityRepository {
 
     suspend fun queryCatalog(
         idBrand: Int,
-        user: String
+        user: String,
+        isTransferIdentification: Int?
     ): Flow<MultimoneyResult<CatalogType?>>
 
     suspend fun queryGetCountry(user: String): Flow<MultimoneyResult<CountryList?>>
@@ -157,6 +161,10 @@ interface SecurityRepository {
         infoBankAccountStatus: Int,
         infoCriptoStatus: Int
     ): Flow<MultimoneyResult<QuickActions?>>
+
+    suspend fun queryGetCountryPhoneCodes(
+        idBrand: Int,
+    ): Flow<MultimoneyResult<CountryPhoneCodes>>
 
     suspend fun mutationValidateOTP(
         email: String,

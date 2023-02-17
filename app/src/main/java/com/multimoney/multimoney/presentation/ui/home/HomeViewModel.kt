@@ -1,8 +1,10 @@
 package com.multimoney.multimoney.presentation.ui.home
 
+import android.app.Activity
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -49,7 +51,6 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.On
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnEditAutomaticPaymentEvent
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnHideAutomaticPaymentEditBottomSheet
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnShowAutomaticPaymentEditBottomSheet
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnStartCountDownTimer
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnBottomNavigationItemClick
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCallMutationDeactivateClientAutomaticDebit
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCloseCardIssuanceError
@@ -58,15 +59,23 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnEd
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnGetCreditMovements
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnGetSmartMovements
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnHideAutomaticPaymentEdit
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnHideUnlinkToast
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnInitializeBiometricPrompt
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowAutomaticPaymentEdit
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowCardIssuanceError
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowTimerDialog
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowUnlinkToast
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSignOut
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnStartBiometrics
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnUpdateIsExpandedByClick
+import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.INDEX_ONE
 import com.multimoney.multimoney.presentation.util.LAST_THREE
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.OPTION_BTN_6
+import com.multimoney.multimoney.presentation.util.SignOutCommunicator
 import com.multimoney.multimoney.presentation.util.boolean
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -74,10 +83,12 @@ import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
 import com.multimoney.multimoney.presentation.util.getPreviousDate
+import com.multimoney.multimoney.util.BiometricHelper
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -99,8 +110,18 @@ class HomeViewModel @Inject constructor(
     private val mutationDeactivateCardAutomaticDebitUseCase: MutationDeactivateCardAutomaticDebitUseCase,
     private val queryGetCoreBankMovements: QueryGetCoreBankMovementsUseCase,
     private val queryGetPromissoryNoteDetail: QueryGetPromissoryNoteDetail,
-    private val cognitoHelper: CognitoHelper
+    private val biometricHelper: BiometricHelper,
+    private val cognitoHelper: CognitoHelper,
+    private val cryptoHelper: CryptoHelper
 ) : BaseViewModel(true) {
+
+    // Stateless
+    private var communicator: SignOutCommunicator? = null
+    private var biometricPromptTitle = ""
+    private var biometricPromptDescription = ""
+    private var biometricPromptNegative = ""
+    private var isBiometricActive = false
+    private var apiCallCount = 0
 
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -109,11 +130,11 @@ class HomeViewModel @Inject constructor(
     private fun onsetUserData() {
         viewModelScope.launch {
             uiState = uiState.copy(
-                idBrand = dataStorePreferences.getIdBrand().first(),
-                pkUser = dataStorePreferences.getPkUser().first(),
-                identification = dataStorePreferences.getIdentification().first(),
-                email = dataStorePreferences.getUserEmail().first(),
-                userName = dataStorePreferences.getUserName().first()
+                idBrand = dataStorePreferences.getIdBrand().firstOrNull() ?: "",
+                pkUser = dataStorePreferences.getPkUser().firstOrNull() ?: "",
+                identification = dataStorePreferences.getIdentification().firstOrNull() ?: "",
+                email = dataStorePreferences.getUserEmail().firstOrNull() ?: "",
+                userName = dataStorePreferences.getUserName().firstOrNull() ?: ""
             )
             callQueryValidateUserStatus(
                 uiState.pkUser.toInt(),
@@ -218,12 +239,13 @@ class HomeViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { quickActions ->
                 quickActions?.let {
-                    if (uiState.configurationVersion != null && uiState.balance != null) {
-                        uiState = uiState.copy(isLoading = false)
-                    }
                     uiState = uiState.copy(
                         quickActions = it.quickActions
                     )
+                }
+                apiCallCount++
+                if (apiCallCount == API_CALLS_TOTAL) {
+                    uiState = uiState.copy(isLoading = false)
                 }
             }
             result.onFailure {
@@ -252,16 +274,13 @@ class HomeViewModel @Inject constructor(
             idBrand = idBrand
         ).collectLatest { result ->
             result.onSuccess { miniCards ->
-                if (
-                    uiState.configurationVersion != null &&
-                    uiState.balance != null &&
-                    uiState.quickActions != null
-                ) {
-                    uiState = uiState.copy(isLoading = false)
-                }
                 uiState = uiState.copy(
                     miniCardList = miniCards.miniCardsList.toMutableList().sortedBy { it.priority }
                 )
+                apiCallCount++
+                if (apiCallCount == API_CALLS_TOTAL) {
+                    uiState = uiState.copy(isLoading = false)
+                }
             }
             result.onFailure {
                 onFailure(it)
@@ -296,6 +315,10 @@ class HomeViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { balance ->
                 balance?.let { setBalance(it) }
+                apiCallCount++
+                if (apiCallCount == API_CALLS_TOTAL) {
+                    uiState = uiState.copy(isLoading = false)
+                }
             }
             result.onFailure {
                 onFailure(it)
@@ -322,12 +345,13 @@ class HomeViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { historicBalance ->
                 historicBalance?.let {
-                    if (uiState.configurationVersion != null && uiState.balance != null) {
-                        uiState = uiState.copy(isLoading = false)
-                    }
                     uiState = uiState.copy(
                         cryptoHistoricalBalance = it.historicalBalanceClient
                     )
+                }
+                apiCallCount++
+                if (apiCallCount == API_CALLS_TOTAL) {
+                    uiState = uiState.copy(isLoading = false)
                 }
             }
             result.onFailure {
@@ -347,20 +371,14 @@ class HomeViewModel @Inject constructor(
         productPageList.add(
             ProductPage(
                 product = ProductType.Credit.value,
-                enabled = true,
+                enabled = uiState.validateUserStatus?.infoCredit?.status == CreditStatus.EXIST_IN_CORE.status,
                 index = defaultIndex,
                 resourceIcon = R.drawable.ic_my_credit,
                 resourceText = R.string.home_my_products_label_credit
             )
         )
 
-        val creditStatus = uiState.validateUserStatus?.infoCredit?.status
-
-        if (uiState.idBrand == Brand.CostaRica.id.toString()) {
-            if (creditStatus == CreditStatus.CREDIT_NOT_PRE_APPROVED.status || creditStatus == CreditStatus.CREDIT_REJECTED.status) {
-                productPageList.clear()
-            }
-        }
+        removeBlankCards(productPageList)
 
         // If idBrand is different from Guatemala enable Smart
         if (uiState.idBrand != Brand.Guatemala.id.toString()) {
@@ -371,7 +389,7 @@ class HomeViewModel @Inject constructor(
                         ProductPage(
                             product = ProductType.Smart.value,
                             productSmartIndex = index,
-                            enabled = true,
+                            enabled = uiState.validateUserStatus?.infoBankAccount?.status == SmartAccountStatus.EXIST_IN_CORE.status,
                             index = productPageList.lastIndex + 1,
                             resourceText = run {
                                 when (account?.currencyCode) {
@@ -405,7 +423,7 @@ class HomeViewModel @Inject constructor(
                 productPageList.add(
                     ProductPage(
                         product = ProductType.Crypto.value,
-                        enabled = true,
+                        enabled = uiState.validateUserStatus?.infoCrypto?.status == CryptoAccountStatus.ACTIVE.status,
                         index = productPageList.lastIndex + 1,
                         resourceIcon = R.drawable.ic_union,
                         resourceText = R.string.home_my_products_label_crypto
@@ -416,7 +434,7 @@ class HomeViewModel @Inject constructor(
                 productPageList.add(
                     ProductPage(
                         product = ProductType.Smart.value,
-                        enabled = true,
+                        enabled = uiState.validateUserStatus?.infoBankAccount?.status == SmartAccountStatus.EXIST_IN_CORE.status,
                         index = productPageList.lastIndex + 1,
                         resourceText = R.string.home_my_products_label_smart,
                         resourceIcon = R.drawable.ic_dollars_strong
@@ -425,7 +443,7 @@ class HomeViewModel @Inject constructor(
                 productPageList.add(
                     ProductPage(
                         product = ProductType.Crypto.value,
-                        enabled = true,
+                        enabled = uiState.validateUserStatus?.infoCrypto?.status == CryptoAccountStatus.ACTIVE.status,
                         index = productPageList.lastIndex + 1,
                         resourceIcon = R.drawable.ic_union,
                         resourceText = R.string.home_my_products_label_crypto
@@ -442,11 +460,23 @@ class HomeViewModel @Inject constructor(
                 )
             )
         }
-
-        if (uiState.configurationVersion != null && uiState.quickActions != null) {
-            uiState = uiState.copy(isLoading = false)
-        }
         uiState = uiState.copy(balance = balance, productPageList = productPageList)
+    }
+
+    private fun removeBlankCards(productPageList: MutableList<ProductPage>) {
+        val creditStatus = uiState.validateUserStatus?.infoCredit
+        when (uiState.idBrand) {
+            Brand.CostaRica.id.toString() -> {
+                if (creditStatus?.status == CreditStatus.CREDIT_NOT_PRE_APPROVED.status || (creditStatus?.status == CreditStatus.CREDIT_REJECTED.status && creditStatus.wording?.display == false)) {
+                    productPageList.clear()
+                }
+            }
+            Brand.ElSalvador.id.toString() -> {
+                if (creditStatus?.status == CreditStatus.NO_EXIST.status || (creditStatus?.status == CreditStatus.CREDIT_REJECTED.status && creditStatus.wording?.display == false)) {
+                    productPageList.clear()
+                }
+            }
+        }
     }
 
     private fun callQueryGetConfigurationVersion(
@@ -458,16 +488,27 @@ class HomeViewModel @Inject constructor(
             idBrand = idBrand
         ).collectLatest { result ->
             result.onSuccess { configurationVersion ->
-                if (uiState.balance != null && uiState.quickActions != null && uiState.validateUserStatus != null) {
-                    uiState = uiState.copy(isLoading = false)
-                }
                 configurationVersion?.let {
                     uiState = uiState.copy(configurationVersion = configurationVersion)
                 }
-                emitBaseEvent(
-                    OnStartCountDownTimer(
+                viewModelScope.launch {
+                    countDownTimer.startTimer(
                         configurationVersion?.configuration?.timeSession?.toLong() ?: 0
                     )
+                }
+                apiCallCount++
+                if (apiCallCount == API_CALLS_TOTAL) {
+                    uiState = uiState.copy(isLoading = false)
+                }
+
+                cryptoHelper.apply {
+                    saveCryptoOrigin(configurationVersion?.configuration?.crypto?.origin ?: "")
+                    saveEnableCryptoTransfer(
+                        configurationVersion?.configuration?.crypto?.isTransferEnabled ?: false
+                    )
+                }
+                dataStorePreferences.setSmartTransferLimit(
+                    configurationVersion?.configuration?.accountSmart?.transferLimit ?: listOf()
                 )
             }
             result.onFailure {
@@ -492,6 +533,7 @@ class HomeViewModel @Inject constructor(
             idBrand
         ).collectLatest { result ->
             result.onSuccess { validateUserStatus ->
+                apiCallCount++
                 dataStorePreferences.setUserPhoneNumber(validateUserStatus?.infoUser?.phone.orEmpty())
                 uiState = uiState.copy(validateUserStatus = validateUserStatus)
                 callQueryBalanceUseCase(
@@ -522,16 +564,19 @@ class HomeViewModel @Inject constructor(
                     infoCryptoStatus = validateUserStatus?.infoCrypto?.status ?: 0,
                     infoBankAccountStatus = validateUserStatus?.infoBankAccount?.status ?: 0
                 )
-                if (uiState.idBrand != Brand.Guatemala.id.toString()) {
-                    if (validateUserStatus?.infoBankAccount?.status == SmartAccountStatus.EXIST_IN_CORE.status &&
-                        validateUserStatus.infoCrypto?.status == CryptoAccountStatus.ACTIVE.status
-                    ) {
-                        callQueryGetHistoricalBalanceUseCase(
-                            user = email,
-                            identification = identification,
-                            idBrand = idBrand,
-                            baseAsset = uiState.balance?.balanceCryptoAccount?.items?.firstOrNull()?.asset ?: ""
-                        )
+                if (uiState.idBrand != Brand.Guatemala.id.toString() && validateUserStatus?.infoBankAccount?.status == SmartAccountStatus.EXIST_IN_CORE.status &&
+                    validateUserStatus.infoCrypto?.status == CryptoAccountStatus.ACTIVE.status
+                ) {
+                    callQueryGetHistoricalBalanceUseCase(
+                        user = email,
+                        identification = identification,
+                        idBrand = idBrand,
+                        baseAsset = uiState.balance?.balanceCryptoAccount?.items?.firstOrNull()?.asset ?: ""
+                    )
+                } else {
+                    apiCallCount++
+                    if (apiCallCount == API_CALLS_TOTAL) {
+                        uiState = uiState.copy(isLoading = false)
                     }
                 }
             }
@@ -652,6 +697,10 @@ class HomeViewModel @Inject constructor(
         }
 
     private fun onFailure(error: HttpError) {
+        apiCallCount++
+        if (apiCallCount == API_CALLS_TOTAL) {
+            uiState = uiState.copy(isLoading = false)
+        }
         uiState = uiState.copy(
             isLoading = false,
             openDialog = DialogParameters(
@@ -679,24 +728,101 @@ class HomeViewModel @Inject constructor(
         emitBaseEvent(BaseEvent.OnQuickActionClicked(flow))
     }
 
-    private fun signOut() {
-        cognitoHelper.signOut(signOutError = {
-            Timber.d("SignOut Error")
-        })
-        viewModelScope.launch {
-            dataStorePreferences.setAuthToken("")
+    private fun signOut(activity: Activity?) {
+        hideTimerDialog()
+        activity?.let { safeActivity ->
+            communicator = safeActivity as SignOutCommunicator
+            if (communicator?.isAppInForeground()?.not() == true) {
+                viewModelScope.launch { dataStorePreferences.isSignOutOnBackground(true) }
+            }
+            if (isBiometricActive) {
+                onShowBiometricPromptForDecryption(safeActivity as FragmentActivity)
+            } else {
+                executeLogOut()
+            }
         }
-        countDownTimer.discardTimer()
-        popAndNavigateTo(
-            Screen.SignInScreen.route,
-            Screen.HomeScreen.route
-        )
+    }
+
+    private fun executeLogOut() {
+        cognitoHelper.signOut { Timber.d("SignOut Error") }
+        viewModelScope.launch { dataStorePreferences.setAuthToken("") }
+        popAndNavigateTo(Screen.SignInScreen.route, Screen.HomeScreen.route)
+    }
+
+    private fun onStartBiometrics() {
+        viewModelScope.launch {
+            isBiometricActive = dataStorePreferences.isBiometricsEnabled().first()
+        }
+    }
+
+    private fun initializeBiometricPrompt(
+        biometricPromptTitle: String,
+        biometricPromptDescription: String,
+        biometricPromptNegative: String
+    ) {
+        this.biometricPromptTitle = biometricPromptTitle
+        this.biometricPromptDescription = biometricPromptDescription
+        this.biometricPromptNegative = biometricPromptNegative
+    }
+
+    private fun biometricPromptError(errorCode: Int, errString: CharSequence) {
+        executeLogOut()
+    }
+
+    private fun onShowBiometricPromptForDecryption(fragmentActivity: FragmentActivity) {
+        viewModelScope.launch {
+            biometricHelper.showBiometricPrompt(
+                title = biometricPromptTitle,
+                description = biometricPromptDescription,
+                negative = biometricPromptNegative,
+                activity = fragmentActivity,
+                processSuccess = {
+                    countDownTimer.startTimer(
+                        uiState.configurationVersion?.configuration?.timeSession?.toLong() ?: 0
+                    )
+                },
+                processError = { errorCode, errString ->
+                    biometricPromptError(errorCode, errString)
+                },
+                initializationVector = dataStorePreferences.getUserPasswordVector()
+                    .first()
+            )
+        }
     }
 
     fun getCardIssuanceDescriptionError() = if (uiState.idBrand.toInt() == Brand.Guatemala.id) {
         R.string.card_issuance_error_description_gt
     } else {
         R.string.card_issuance_error_description
+    }
+
+    private fun showTimerDialog(time: Long, activity: Activity?) {
+        activity?.let {
+            communicator = it as SignOutCommunicator
+            communicator?.onMaxTimeUsedDialogChangeState(
+                dialogParameters = DialogParameters(
+                    titleResource = R.string.empty,
+                    descriptionResource = R.string.automatic_logout_dialog_description,
+                    positiveResource = R.string.automatic_logout_dialog_keep_button,
+                    isActive = mutableStateOf(true),
+                    positiveAction = { countDownTimer.restartTimer() },
+                    isCancelable = false,
+                    additionalText = time.toInt().toString()
+                )
+            )
+        }
+    }
+
+    private fun hideTimerDialog() {
+        communicator?.onMaxTimeUsedDialogChangeState(
+            dialogParameters = DialogParameters(
+                isActive = mutableStateOf(false)
+            )
+        )
+    }
+
+    private fun onMyProductClick(expand: Boolean) {
+        uiState = uiState.copy(isExpandedByClick = expand)
     }
 
     data class UIState(
@@ -714,13 +840,14 @@ class HomeViewModel @Inject constructor(
         var identification: String = "",
         var email: String = "",
         var userName: String = "",
-        var forceIsExpanded: Boolean = false,
         var homeState: HomeState = HomeState.OLD_STATE,
         var productScreenPagerState: PagerState? = null,
         var productPageList: List<ProductPage> = emptyList(),
         val smartMovementsList: List<SmartMovementsResult> = emptyList(),
         val creditMovementsList: List<CreditMovementsResult> = emptyList(),
-        val showCardIssuanceError: Boolean = false
+        val showCardIssuanceError: Boolean = false,
+        val toastIsVisible: Boolean = false,
+        var isExpandedByClick: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -729,7 +856,8 @@ class HomeViewModel @Inject constructor(
                 uiEvent.innerNavHostController,
                 uiEvent.route
             )
-            is OnSignOut -> signOut()
+            is OnSignOut -> signOut(uiEvent.activity)
+            is OnShowTimerDialog -> showTimerDialog(uiEvent.time, uiEvent.activity)
             is OnSetUserData -> onsetUserData()
             is UIEvent.OnSetHomeState -> onSetHomeState(uiEvent.homeState)
             is UIEvent.OnOpenQuickActionFlow -> openQuickActionFlow(flow = uiEvent.flow)
@@ -743,20 +871,37 @@ class HomeViewModel @Inject constructor(
                 uiEvent.idBrand,
                 uiEvent.idLoanClient
             )
+            is OnShowUnlinkToast -> {
+                uiState = uiState.copy(toastIsVisible = true)
+            }
+            is OnHideUnlinkToast -> {
+                uiState = uiState.copy(toastIsVisible = false)
+            }
             is OnShowAutomaticPaymentEdit -> emitBaseEvent(OnShowAutomaticPaymentEditBottomSheet)
             is OnHideAutomaticPaymentEdit -> emitBaseEvent(OnHideAutomaticPaymentEditBottomSheet)
             is OnEditAutomaticPayment -> emitBaseEvent(OnEditAutomaticPaymentEvent)
             is OnDeleteAutomaticPayment -> emitBaseEvent(OnDeleteAutomaticPaymentEvent)
             is OnCallMutationDeactivateClientAutomaticDebit -> onCallGetClientAutomaticDebitUseCase()
-            is UIEvent.OnMyProductClick -> uiState = uiState.copy(forceIsExpanded = uiEvent.expand)
-            is UIEvent.OnMyProductPageChange -> uiState = uiState.copy(productScreenPagerState = uiEvent.page)
-            is UIEvent.OnLoadingValueChanged -> uiState = uiState.copy(isLoading = uiEvent.isLoading)
+            is UIEvent.OnMyProductClick -> onMyProductClick(uiEvent.expand)
+            is UIEvent.OnMyProductPageChange ->
+                uiState = uiState.copy(productScreenPagerState = uiEvent.page)
+            is UIEvent.OnLoadingValueChanged ->
+                uiState = uiState.copy(isLoading = uiEvent.isLoading)
             is OnShowCardIssuanceError -> uiState = uiState.copy(showCardIssuanceError = true)
             is OnCloseCardIssuanceError -> uiState = uiState.copy(showCardIssuanceError = false)
+            is OnStartBiometrics -> onStartBiometrics()
+            is OnInitializeBiometricPrompt -> initializeBiometricPrompt(
+                uiEvent.biometricPromptTitle,
+                uiEvent.biometricPromptDescription,
+                uiEvent.biometricPromptNegative
+            )
+            is OnUpdateIsExpandedByClick ->
+                uiState = uiState.copy(isExpandedByClick = uiEvent.isExpandedByClick)
         }
     }
 
     sealed class UIEvent {
+        data class OnUpdateIsExpandedByClick(val isExpandedByClick: Boolean) : UIEvent()
         data class OnOpenQuickActionFlow(val flow: String) : UIEvent()
         data class OnBottomNavigationItemClick(
             val innerNavHostController: NavHostController,
@@ -780,7 +925,10 @@ class HomeViewModel @Inject constructor(
         data class OnMyProductPageChange(val page: PagerState) : UIEvent()
         object OnSetUserData : UIEvent()
         data class OnSetHomeState(val homeState: HomeState) : UIEvent()
-        object OnSignOut : UIEvent()
+        data class OnSignOut(val activity: Activity?) : UIEvent()
+        data class OnShowTimerDialog(val time: Long, val activity: Activity?) : UIEvent()
+        object OnShowUnlinkToast : UIEvent()
+        object OnHideUnlinkToast : UIEvent()
         object OnShowAutomaticPaymentEdit : UIEvent()
         object OnHideAutomaticPaymentEdit : UIEvent()
         object OnEditAutomaticPayment : UIEvent()
@@ -789,12 +937,17 @@ class HomeViewModel @Inject constructor(
         data class OnLoadingValueChanged(val isLoading: Boolean) : UIEvent()
         object OnShowCardIssuanceError : UIEvent()
         object OnCloseCardIssuanceError : UIEvent()
+        object OnStartBiometrics : UIEvent()
+        data class OnInitializeBiometricPrompt(
+            val biometricPromptTitle: String,
+            val biometricPromptDescription: String,
+            val biometricPromptNegative: String
+        ) : UIEvent()
     }
 
     sealed class BaseEvent {
         object OnOpenQuickActionsBottomSheet : BaseEvent()
         object OnOpenMyProductsBottomSheet : BaseEvent()
-        data class OnStartCountDownTimer(val millisInFuture: Long?)
         data class OnQuickActionClicked(val flow: String)
         data class OnMiniCardsClicked(val flow: String)
         object OnShowAutomaticPaymentEditBottomSheet : BaseEvent()
@@ -804,5 +957,9 @@ class HomeViewModel @Inject constructor(
         object OnDeleteAutomaticPaymentToastEvent : BaseEvent()
         object OnPhoneNumberChangedToastEvent : BaseEvent()
         object OnEmailChangedToastEvent : BaseEvent()
+    }
+
+    companion object {
+        const val API_CALLS_TOTAL = 6
     }
 }

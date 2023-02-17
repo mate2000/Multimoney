@@ -465,6 +465,7 @@ class PaymentAmountViewModel @Inject constructor(
     }
 
     companion object {
+        const val MODAL_BOTTOM_SHEET_DELAY = 50L
         const val NO_SELECT = -1
         const val PAYMENT_MUST_HIGHER_THAN_VALUE = 0
         const val PAYMENT_PLUS = " + "

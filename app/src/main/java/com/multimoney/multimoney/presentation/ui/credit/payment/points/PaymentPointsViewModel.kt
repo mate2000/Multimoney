@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.credit.QueryGetPaymentPointsUseCase
 import com.multimoney.domain.model.credit.PaymentPoint
 import com.multimoney.domain.model.util.onFailure
@@ -31,8 +32,6 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getNavParam
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
 @HiltViewModel
@@ -65,28 +64,19 @@ class PaymentPointsViewModel @Inject constructor(
             .plus(
                 getNavParam(
                     POINT_NAME,
-                    URLEncoder.encode(
-                        pointName,
-                        StandardCharsets.UTF_8.name()
-                    )
+                    pointName
                 )
             )
             .plus(
                 getNavParam(
                     POINT_ADDRESS,
-                    URLEncoder.encode(
-                        pointAddress,
-                        StandardCharsets.UTF_8.name()
-                    )
+                    pointAddress
                 )
             )
             .plus(
                 getNavParam(
                     POINT_ADDRESS_DESCRIPTION,
-                    URLEncoder.encode(
-                        pointAddressDescription,
-                        StandardCharsets.UTF_8.name()
-                    )
+                    pointAddressDescription
                 )
             )
             .plus(getNavParam(POINT_SCHEDULE, pointSchedule))
@@ -109,6 +99,14 @@ class PaymentPointsViewModel @Inject constructor(
     private fun onCloseScreen() {
         uiState = uiState.copy(
             dialogParameters = uiState.dialogParameters.copy(
+                titleResource = if (idBrand == Brand.Guatemala.id) {
+                    string.payment_points_dialog_title_gt
+                } else {
+                    string.payment_points_dialog_title
+                },
+                descriptionResource = string.payment_points_dialog_description,
+                positiveResource = string.payment_points_dialog_positive_button,
+                negativeResource = string.payment_points_dialog_negative_button,
                 isActive = mutableStateOf(true),
                 positiveAction = { onUIEvent(OnDialogPositiveButtonClick) }
             )
@@ -144,13 +142,7 @@ class PaymentPointsViewModel @Inject constructor(
         // Interactions
         val queryValue: String = "",
         val pointsItemsList: List<PaymentPoint?> = listOf(),
-        val dialogParameters: DialogParameters = DialogParameters(
-            titleResource = string.payment_points_dialog_title,
-            descriptionResource = string.payment_points_dialog_description,
-            isActive = mutableStateOf(false),
-            positiveResource = string.payment_points_dialog_positive_button,
-            negativeResource = string.payment_points_dialog_negative_button
-        ),
+        val dialogParameters: DialogParameters = DialogParameters(),
         val isLoading: Boolean = false
     )
 

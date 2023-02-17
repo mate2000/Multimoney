@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -45,7 +44,7 @@ fun SmartPaymentInfoItem(
     modifier: Modifier = Modifier,
     verticalAlignment: Alignment.Vertical = Alignment.Top,
     icon: Int? = null,
-    iconTint: Color = Color.Unspecified,
+    iconTint: Color = MultimoneyTheme.colors.iconTintVoucher,
     iconModifier: Modifier = Modifier,
     title: String,
     subtitle: String? = null,
@@ -57,7 +56,7 @@ fun SmartPaymentInfoItem(
         modifier = modifier
             .height(IntrinsicSize.Min)
             .fillMaxWidth()
-            .padding(start = 24.dp, top = 24.dp, end = 24.dp),
+            .padding(start = 24.dp, end = 24.dp, top = 16.dp, bottom = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Row(
@@ -73,17 +72,17 @@ fun SmartPaymentInfoItem(
                         .width(24.dp)
                 )
             }
-            Column(modifier = Modifier.padding(start = 14.dp)) {
+            Column(modifier = Modifier.padding(horizontal = 14.dp)) {
                 Text(
                     text = title,
                     style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                    color = MultimoneyTheme.colors.labelText
+                    color = MultimoneyTheme.colors.text
                 )
                 if (subtitle.isNullOrBlank().not()) {
                     Text(
-                        text = subtitle ?: "",
+                        text = subtitle.orEmpty(),
                         style = Typography.body2,
-                        color = MultimoneyTheme.colors.labelText
+                        color = MultimoneyTheme.colors.text
                     )
                 }
             }
@@ -95,17 +94,17 @@ fun SmartPaymentInfoItem(
                     .background(color = MultimoneyTheme.colors.dividerWhite40)
             )
         }
-        Column(modifier = Modifier.padding(end = 14.dp)) {
+        Column(modifier = Modifier.padding(horizontal = 14.dp)) {
             if (rightTitle.isNullOrBlank().not()) {
                 Text(
-                    text = rightTitle ?: "",
+                    text = rightTitle.orEmpty(),
                     style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
                     color = MultimoneyTheme.colors.labelText
                 )
             }
             if (rightSubtitle.isNullOrBlank().not()) {
                 Text(
-                    text = rightSubtitle ?: "",
+                    text = rightSubtitle.orEmpty(),
                     style = Typography.body2,
                     color = MultimoneyTheme.colors.labelText
                 )

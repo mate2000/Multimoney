@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.home
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.pager.ExperimentalPagerApi
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.extension.findActivity
@@ -37,18 +39,21 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.On
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCloseCardIssuanceError
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnDeleteAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnEditAutomaticPayment
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnHideUnlinkToast
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnInitializeBiometricPrompt
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetHomeState
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetUserData
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnStartBiometrics
 import com.multimoney.multimoney.presentation.ui.home.myproducts.MyProductsBottomSheetScreen
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.AutomaticPaymentEditBottomSheet
 import com.multimoney.multimoney.presentation.ui.home.quickaction.QuickActionBottomSheetScreen
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
-import com.multimoney.multimoney.presentation.util.MMCountDownTimer.OnCountDownTimerFinish
+import com.multimoney.multimoney.presentation.util.MMCountDownTimer.OnCountDownTimerEvents
 import com.multimoney.multimoney.presentation.util.NavEvent
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalPagerApi::class)
 @Composable
 fun HomeScreen(
     isRestart: Boolean = true,
@@ -78,15 +83,23 @@ fun HomeScreen(
         rememberModalBottomSheetState(initialValue = Hidden, skipHalfExpanded = true)
     val myProductsModalBottomSheetState = rememberModalBottomSheetState(Hidden, skipHalfExpanded = true)
     val activity = LocalContext.current.findActivity()
+    val unlinkedToastText = stringResource(id = string.card_preferences_unlinked_card_toast)
 
     LaunchedEffect(true) {
         viewModel.executeNavigation(
             onInnerNavigate = onInnerNavigate,
             onPopAndNavigate = onPopAndNavigate
         )
-        viewModel.countDownTimer.subscribe(object : OnCountDownTimerFinish {
+        viewModel.onUIEvent(OnStartBiometrics)
+        viewModel.countDownTimer.subscribe(object : OnCountDownTimerEvents {
             override fun onFinished() {
-                viewModel.onUIEvent(HomeViewModel.UIEvent.OnSignOut)
+                viewModel.onUIEvent(
+                    HomeViewModel.UIEvent.OnSignOut(activity)
+                )
+            }
+
+            override fun onMaxTimeUsed(millisMainUntilFinished: Long) {
+                viewModel.onUIEvent(HomeViewModel.UIEvent.OnShowTimerDialog(millisMainUntilFinished, activity))
             }
         })
         viewModel.baseEvent.collect { event ->
@@ -101,9 +114,6 @@ fun HomeScreen(
                         myProductsModalBottomSheetState.show()
                     }
                 }
-                is HomeViewModel.BaseEvent.OnStartCountDownTimer -> viewModel.countDownTimer.startTimer(
-                    event.millisInFuture
-                )
                 is OnShowAutomaticPaymentEditBottomSheet -> {
                     coroutineScope.launch {
                         automaticPaymentEditBottomSheetState.show()
@@ -116,6 +126,19 @@ fun HomeScreen(
                 }
             }
         }
+    }
+
+    viewModel.onUIEvent(
+        OnInitializeBiometricPrompt(
+            biometricPromptTitle = stringResource(id = string.automatic_logout_biometric_title),
+            biometricPromptDescription = stringResource(id = string.automatic_logout_biometric_description),
+            biometricPromptNegative = stringResource(id = string.cancel)
+        )
+    )
+
+    if (viewModel.uiState.toastIsVisible) {
+        Toast.makeText(activity, unlinkedToastText, Toast.LENGTH_LONG).show()
+        viewModel.onUIEvent(OnHideUnlinkToast)
     }
 
     Scaffold(bottomBar = {
@@ -178,7 +201,8 @@ fun HomeScreen(
             message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
             positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
             openDialogCustom = viewModel.uiState.openDialog.isActive,
-            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction,
+            isCancelable = viewModel.uiState.openDialog.isCancelable
         )
     }
 }

@@ -4,9 +4,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCase
+import com.multimoney.domain.model.accountsmart.SmartAccountSmall
 import com.multimoney.domain.model.balance.BalanceCryptoAccount
+import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.crypto.HistoricalBalanceClient
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
@@ -17,22 +20,30 @@ import com.multimoney.multimoney.presentation.navigation.*
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
 import com.multimoney.multimoney.presentation.util.getPreviousDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeWalletViewModel @Inject constructor(
     private val queryGetHistoricalClientBalanceUseCase: GetHistoricalClientBalanceUseCase,
     private val queryBalanceUseCase: QueryBalanceUseCase,
-    private val savedStateHandle: SavedStateHandle
-): BaseViewModel(true) {
+    private val savedStateHandle: SavedStateHandle,
+    private val cryptoHelper: CryptoHelper
+) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UiState())
         private set
+
+    private var smartAccounts: List<SmartAccountSmall>? = null
+    private var userCryptoBalances: List<BalanceCryptoAccountItems>? = null
+
 
     private fun onGetUserInfo() {
         uiState = uiState.copy(
@@ -47,6 +58,13 @@ class HomeWalletViewModel @Inject constructor(
             statusCrypto = savedStateHandle[STATUS_CRYPTO] ?: 0,
             cardStatus = savedStateHandle[CARD_STATUS] ?: 0
         )
+        smartAccounts =
+            savedStateHandle.get<Array<SmartAccountSmall>>(SMART_ACCOUNTS_LIST)?.toList()
+        userCryptoBalances =
+            savedStateHandle.get<Array<BalanceCryptoAccountItems>>(USER_CRYPTO_BALANCES)?.toList()
+        viewModelScope.launch {
+            uiState = uiState.copy(isCryptoTransferEnabled = cryptoHelper.isCryptoTransferEnabled())
+        }
     }
 
     private fun callQueryBalanceUseCase(
@@ -152,6 +170,38 @@ class HomeWalletViewModel @Inject constructor(
         )
     }
 
+    private fun onNavigateToCryptoDetail(cryptoItem: BalanceCryptoAccountItems) {
+        navigateTo(
+            "${Screen.CryptoWalletDetailsScreen.baseRoute}/${uiState.idBrand}/${uiState.identification}/${uiState.user}/${
+                encodeData(
+                    cryptoItem
+                )
+            }/${encodeData(smartAccounts)}/${encodeData(userCryptoBalances)}"
+        )
+    }
+
+    private fun onNavigateToBuyCrypto() {
+        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${encodeData(smartAccounts)}/${Screen.CryptoWalletScreen.baseRoute}")
+    }
+
+    private fun onNavigateToSellCrypto() {
+        navigateTo(
+            "${Screen.CryptoSellFlow.baseRoute}/${Screen.CryptoWalletScreen.baseRoute}/${encodeData(smartAccounts)}/${
+                encodeData(
+                    userCryptoBalances
+                )
+            }"
+        )
+    }
+
+    private fun onNavigateToSendCrypto() {
+        navigateTo(Screen.CryptoSendFlow.baseRoute)
+    }
+
+    private fun onNavigateToReceiveCrypto() {
+        navigateTo("${Screen.CryptoReceiveFlowScreen.baseRoute}/${uiState.user}/${uiState.idBrand}")
+    }
+
     data class UiState(
         val user: String? = null,
         val idBrand: Int? = null,
@@ -170,6 +220,7 @@ class HomeWalletViewModel @Inject constructor(
         val clientCryptoBalanceHistory: List<HistoricalBalanceClient> = emptyList(),
         val openDialog: DialogParameters = DialogParameters(),
         val startDate: Long? = null,
+        val isCryptoTransferEnabled: Boolean = false
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -177,7 +228,12 @@ class HomeWalletViewModel @Inject constructor(
             is UIEvent.OnSetDateRange -> onSetDateRange(event.startDate)
             is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
             is UIEvent.OnGetUserInfo -> onGetUserInfo()
-            UIEvent.OnGetBalanceClient -> onGetBalanceClient()
+            is UIEvent.OnNavigateToCryptoDetailScreen -> onNavigateToCryptoDetail(event.cryptoItem)
+            is UIEvent.OnGetBalanceClient -> onGetBalanceClient()
+            is UIEvent.OnNavigateToBuyCrypto -> onNavigateToBuyCrypto()
+            is UIEvent.OnNavigateToSendCrypto -> onNavigateToSendCrypto()
+            is UIEvent.OnNavigateToSellCrypto -> onNavigateToSellCrypto()
+            is UIEvent.OnNavigateToReceiveCrypto -> onNavigateToReceiveCrypto()
         }
     }
 
@@ -185,6 +241,17 @@ class HomeWalletViewModel @Inject constructor(
         object OnGetUserInfo : UIEvent
         object OnNavigateBack : UIEvent
         object OnGetBalanceClient : UIEvent
-        data class OnSetDateRange(val startDate: Long): UIEvent
+        data class OnSetDateRange(val startDate: Long) : UIEvent
+        data class OnNavigateToCryptoDetailScreen(val cryptoItem: BalanceCryptoAccountItems) :
+            UIEvent
+
+        object OnNavigateToBuyCrypto : UIEvent
+        object OnNavigateToSendCrypto : UIEvent
+        object OnNavigateToSellCrypto : UIEvent
+        object OnNavigateToReceiveCrypto : UIEvent
+    }
+
+    companion object {
+        const val SHOW_COIN_SEARCH_THRESHOLD = 3
     }
 }

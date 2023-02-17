@@ -2,6 +2,7 @@ package com.multimoney.multimoney.presentation.ui.home.product.smart.uisections
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,14 +13,13 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -33,11 +33,11 @@ import com.multimoney.multimoney.presentation.theme.BlackTransparency20
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
+import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
-import com.multimoney.multimoney.presentation.util.getCurrencySymbolValue
-
+import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 
 /**
  * Composable function to show the different statuses of an inactive smart account
@@ -45,17 +45,20 @@ import com.multimoney.multimoney.presentation.util.getCurrencySymbolValue
 @Composable
 @Preview
 fun CardInactiveSmartProduct(
-    textOne : String = "",
-    textTwo : String = "",
+    textOne: String = "",
+    textTwo: String = "",
     cTA: String = "",
-    onClick :() -> Unit = {}
+    onClick: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(top = 24.dp, start = 24.dp, end = 24.dp, bottom = 12.dp)
-            .clickable { onClick.invoke() }
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) { onClick.invoke() }
     ) {
         Row(
             modifier = Modifier
@@ -63,7 +66,7 @@ fun CardInactiveSmartProduct(
                 .background(BlackTransparency16),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             CustomImage(
                 modifier = Modifier
                     .padding(start = 12.dp, end = 6.dp),
@@ -71,10 +74,11 @@ fun CardInactiveSmartProduct(
             )
             Text(
                 modifier = Modifier
-                    .padding(end = 12.dp,top = 4.dp),
+                    .padding(end = 12.dp, top = 4.dp),
                 text = stringResource(id = R.string.smart_card_smart_title),
                 style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.text)
+                color = MultimoneyTheme.colors.text
+            )
         }
         Text(
             text = textOne,
@@ -97,7 +101,6 @@ fun CardInactiveSmartProduct(
         Text(
             text = cTA,
             modifier = Modifier
-
                 .align(Alignment.CenterHorizontally),
             style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.text
@@ -112,7 +115,7 @@ fun CardInactiveSmartProduct(
 @Preview
 fun CardSmartProduct(
     currency: String = "",
-    profitTotal: String = "",
+    profitTotal: Double? = 0.0,
     profitMonthly: String = "",
     currentMonth: String = ""
 ) {
@@ -130,15 +133,20 @@ fun CardSmartProduct(
                 color = MultimoneyTheme.colors.text
             )
         )
-        Text(
-            text = stringResource(id = currency.getCurrencySymbolValue(), profitTotal),
+        BalanceTextView(
             modifier = Modifier.padding(bottom = 10.dp),
-            style = Typography.h4.copy(
-                fontWeight = FontWeight.SemiBold,
-                color = MultimoneyTheme.colors.text
+            balanceText = profitTotal?.toCurrencyFormat(
+                stringResource(id = currency.getCurrencySymbol())
+            ) ?: "",
+            currencyStyle = Typography.h4.copy(
+                color = MultimoneyTheme.colors.text,
+                fontWeight = FontWeight.Bold
+            ),
+            currencyDecimalStyle = Typography.body2.copy(
+                color = MultimoneyTheme.colors.text,
+                fontWeight = FontWeight.Bold
             )
         )
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -161,7 +169,7 @@ fun CardSmartProduct(
                 )
                 Row {
                     Icon(
-                        imageVector = Icons.Filled.Add,
+                        painter = painterResource(id = R.drawable.ic_mm_add),
                         contentDescription = null,
                         tint = MultimoneyTheme.colors.smartCardPlus
                     )
@@ -183,7 +191,7 @@ fun CardSmartProduct(
             Icon(
                 modifier = Modifier.padding(end = 12.dp),
                 tint = MultimoneyTheme.colors.smartCardTrending,
-                imageVector = Icons.Filled.TrendingUp,
+                painter = painterResource(id = R.drawable.ic_mm_trending),
                 contentDescription = null
             )
         }
@@ -273,7 +281,10 @@ fun CardWithSmartInProcess(
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
             .fillMaxWidth()
             .wrapContentHeight()
-            .clickable {
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
                 action.invoke()
             }
     ) {

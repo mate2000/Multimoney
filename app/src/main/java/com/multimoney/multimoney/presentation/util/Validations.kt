@@ -2,7 +2,9 @@ package com.multimoney.multimoney.presentation.util
 
 import android.util.Patterns
 import com.google.i18n.phonenumbers.PhoneNumberUtil
+import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberType.FIXED_LINE_OR_MOBILE
 import com.google.i18n.phonenumbers.Phonenumber
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.Nationalities
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel
@@ -18,18 +20,45 @@ fun isPhoneNumberValid(
     phone: String,
     fullPhoneNumber: String,
     countryCode: String,
-    phoneNumberType: PhoneNumberUtil.PhoneNumberType
+    phoneNumberType: PhoneNumberUtil.PhoneNumberType,
 ): Boolean {
     val number: Phonenumber.PhoneNumber?
     if (phone.length > 6) {
         return try {
             number = PhoneNumberUtil.getInstance().parse(
                 fullPhoneNumber,
-                Phonenumber.PhoneNumber.CountryCodeSource.UNSPECIFIED.name
+                Phonenumber.PhoneNumber.CountryCodeSource.UNSPECIFIED.name,
             )
             if (phoneNumberType == PhoneNumberUtil.PhoneNumberType.MOBILE && PhoneNumberUtil.getInstance()
-                .getNumberType(number) == PhoneNumberUtil.PhoneNumberType.FIXED_LINE_OR_MOBILE || PhoneNumberUtil.getInstance()
+                    .getNumberType(number) == PhoneNumberUtil.PhoneNumberType.FIXED_LINE_OR_MOBILE || PhoneNumberUtil.getInstance()
                     .getNumberType(number) == phoneNumberType
+            ) {
+                PhoneNumberUtil.getInstance()
+                    .isValidNumberForRegion(number, countryCode.uppercase())
+            } else {
+                false
+            }
+        } catch (ex: Exception) {
+            false
+        }
+    }
+    return false
+}
+
+fun isMobileOrFixedLinePhoneNumberValid(
+    phone: String,
+    fullPhoneNumber: String,
+    countryCode: String,
+): Boolean {
+    val number: Phonenumber.PhoneNumber?
+    if (phone.length > 6) {
+        return try {
+            number = PhoneNumberUtil.getInstance().parse(
+                fullPhoneNumber,
+                Phonenumber.PhoneNumber.CountryCodeSource.UNSPECIFIED.name,
+            )
+            if (PhoneNumberUtil.getInstance().getNumberType(number) == PhoneNumberUtil.PhoneNumberType.MOBILE ||
+                PhoneNumberUtil.getInstance().getNumberType(number) == PhoneNumberUtil.PhoneNumberType.FIXED_LINE
             ) {
                 PhoneNumberUtil.getInstance()
                     .isValidNumberForRegion(number, countryCode.uppercase())
@@ -63,7 +92,7 @@ fun validDui(personalDocumentValue: String) =
             10 - verificationNumber.mod(SignUpPersonalDataViewModel.DUI_VERIFICATION_MODULE)
         Pair(
             verificationValue != 10 && verificationValue != duiSplit[duiSplit.lastIndex].toInt(),
-            R.string.sign_up_personal_data_id_not_valid
+            R.string.sign_up_personal_data_id_not_valid,
         )
     } else {
         Pair(true, R.string.sign_up_personal_data_id_not_valid)
@@ -156,6 +185,33 @@ fun validateDecimalIncome(value: String): Boolean {
     return ((Pattern.matches(DECIMAL_REGEX, value) || value.isEmpty()) && value != "00")
 }
 
+fun isPhoneNumberValid(phone: String, idBrand: Int): Boolean {
+    return when (idBrand) {
+        Brand.ElSalvador.id -> {
+            isMobileOrFixedLinePhoneNumberValid(
+                phone = phone,
+                fullPhoneNumber = "${Brand.ElSalvador.phoneCode}$phone",
+                countryCode = Brand.ElSalvador.countryCode,
+            )
+        }
+        Brand.Guatemala.id -> {
+            isMobileOrFixedLinePhoneNumberValid(
+                phone = phone,
+                fullPhoneNumber = "${Brand.Guatemala.phoneCode}$phone",
+                countryCode = Brand.Guatemala.countryCode
+            )
+        }
+        Brand.CostaRica.id -> {
+            isMobileOrFixedLinePhoneNumberValid(
+                phone = phone,
+                fullPhoneNumber = "${Brand.CostaRica.phoneCode}$phone",
+                countryCode = Brand.CostaRica.countryCode
+            )
+        }
+        else -> false
+    }
+}
+
 const val INVALID_CHARACTERS_CHUNKS = 4
 const val CHARACTER_NEED_TO_VALIDATE = 3
 const val EIGHT_MINIMUM_CHARACTERS = 8
@@ -163,3 +219,5 @@ const val DESCRIPTION_MAX_LENGTH = 150
 const val ADDRESS_MAX_LENGTH = 150
 const val MIN_INCOME = 0
 const val MAX_CRYPTO_ITEMS = 3
+const val MIN_SMART_ACCOUNT_DIGITS = 9
+const val MAX_SMART_ACCOUNT_DIGITS = 16

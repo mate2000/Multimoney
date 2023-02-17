@@ -97,8 +97,8 @@ fun onBirthDateAgeValidation(pickedDate: LocalDate): Pair<Boolean, Int> {
     }
 }
 
-fun onExpirationDateValidation(pickedDate: String): Boolean {
-    val pickedAsDate = LocalDate.parse(pickedDate)
+fun onExpirationDateValidation(pickedDate: String, formatter: DateTimeFormatter): Boolean {
+    val pickedAsDate = LocalDate.parse(pickedDate, formatter)
     val actualDate = LocalDate.now()
     val periodBetweenDates = Period.between(actualDate, pickedAsDate).days
     return periodBetweenDates >= 0
@@ -137,9 +137,19 @@ fun getCurrentTime(time: Date): String {
     return SHORT_TIME_FORMAT.format(time)
 }
 
+fun getCurrentDate(): LocalDate = LocalDate.now()
+
 fun getCurrentDateMinusYears(years: Long): LocalDate {
-    val today = LocalDate.now()
+    val today = getCurrentDate()
     return today.minusYears(years)
+}
+
+fun getDateTimeFormatterPattern(pattern: String): DateTimeFormatter {
+    return DateTimeFormatter.ofPattern(pattern)
+}
+
+fun getLocalDateFromParse(date: String, formatter: DateTimeFormatter): LocalDate {
+    return LocalDate.parse(date, formatter)
 }
 
 fun parseApiDateToCardDate(date: String?): String {
@@ -201,15 +211,23 @@ enum class FilterDate {
 }
 
 const val YEAR_MONTH_DAY_PATTERN = "yyyy-MM-dd"
+const val DAY_MONTH_YEAR_PATTERN = "dd-MM-yyyy"
+const val YEAR_MONTH_DAY_PATTERN_BAR_FORMAT = "yyyy | MM | dd"
+const val DAY_MONTH_YEAR_PATTERN_BAR_FORMAT = "dd | MM | yyyy"
 const val DAY_PATTERN = "dd"
 const val ISO_8601_API_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
 const val YEAR_MONTH_DAY_AND_TIME_BAR_FORMAT = "dd | MM | yyyy hh:mm a"
 const val YEAR_PATTER = "yyyy"
+const val BAR = " | "
+const val HYPHEN = "-"
 const val BIRTH_DATE_MIN_YEAR = 1902
 const val BIRTH_DATE_MIN_MONTH = 0
 const val BIRTH_DATE_MIN_DAY = 1
 const val EIGHTEEN_YEARS_VALUE = 18
 const val ONE_HUNDRED_TWENTY_YEARS_VALUE = 120
+const val DATE_MIN_YEAR = 0
+const val DATE_MIN_MONTH = 0
+const val DATE_MIN_DAY = 1
 
 val YEAR_FORMAT = SimpleDateFormat(YEAR_PATTER, Locale.getDefault())
 val DAY_FORMAT = SimpleDateFormat(DAY_PATTERN, Locale.getDefault())

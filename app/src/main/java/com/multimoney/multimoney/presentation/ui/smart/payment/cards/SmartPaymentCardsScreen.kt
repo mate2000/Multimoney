@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.payment.cards
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -49,6 +50,10 @@ fun SmartPaymentCardsScreen(
                 isOnRestart = false
             }
         }
+    }
+
+    BackHandler {
+        viewModel.onUIEvent(OnNavigateBack)
     }
 
     Column(
@@ -116,7 +121,7 @@ fun PaymentCardList(
         items(cardList) { card ->
             card?.let {
                 CustomInfoButton(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
                     imageModifier = Modifier.size(48.dp),
                     startIcon = R.drawable.ic_visa_card_item,
                     title = card.detail ?: "",

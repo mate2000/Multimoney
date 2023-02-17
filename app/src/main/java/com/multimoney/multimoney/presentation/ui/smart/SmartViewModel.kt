@@ -395,14 +395,15 @@ class SmartViewModel @Inject constructor(
         navigateBack(
             popTo = Screen.HomeScreen.route,
             isRestart = true,
-            homeState = HomeState.UNEXPANDED
+            homeState = HomeState.COLLAPSED
         )
 
     private fun nextStep() {
         if (nextStep <= getTotalStepperCounter()) {
             uiState = uiState.copy(
                 currentStep = nextStep,
-                isCloseVisible = nextStep >= SmartSteps.One.id
+                isCloseVisible = nextStep >= SmartSteps.One.id,
+                isLoading = false
             )
         } else {
             navigateToOnfido()

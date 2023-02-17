@@ -16,7 +16,7 @@
         ],
       },
       main_card: {
-        height: '38%',
+        height: 'wrap',
         top: [
           'header_cards',
           'bottom'
@@ -34,6 +34,14 @@
         ]
       },
       bottom_end: {
+        height: 'wrap',
+        top: [
+          'parent',
+          'bottom'
+        ]
+      },
+      cta_bottom_end: {
+        height: 'wrap',
         top: [
           'parent',
           'bottom'
@@ -56,7 +64,7 @@
         ]
       },
       main_card: {
-        height: '38%',
+        height: 'wrap',
         top: [
           'header_title',
           'bottom'
@@ -69,11 +77,14 @@
         ]
       },
       bottom_end: {
-        height: 'spread',
+        height: 'wrap',
         top: [
           'main_card',
           'bottom'
-        ],
+        ]
+      },
+      cta_bottom_end: {
+        height: 'wrap',
         bottom: [
           'parent',
           'bottom'

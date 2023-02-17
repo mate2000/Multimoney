@@ -152,7 +152,7 @@ fun SmartAddressFields(
         CustomDropdown(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 32.dp),
+                .padding(top = 16.dp),
             items = sourceIncomeSharedViewModel.uiState.divisionOneList?.map { it?.name.orEmpty() }
                 ?: listOf(),
             value = sourceIncomeSharedViewModel.uiState.divisionOneSelected?.name ?: "",
@@ -173,7 +173,7 @@ fun SmartAddressFields(
     CustomDropdown(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 32.dp),
+            .padding(top = 16.dp),
         items = sourceIncomeSharedViewModel.uiState.divisionTwoList?.map { it?.name.orEmpty() }
             ?: listOf(),
         value = sourceIncomeSharedViewModel.uiState.divisionTwoSelected?.name ?: "",
@@ -193,7 +193,7 @@ fun SmartAddressFields(
     CustomDropdown(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 32.dp),
+            .padding(top = 16.dp),
         items = sourceIncomeSharedViewModel.uiState.divisionThreeList?.map { it?.name.orEmpty() }
             ?: listOf(),
         value = sourceIncomeSharedViewModel.uiState.divisionThreeSelected?.name ?: "",
@@ -212,7 +212,7 @@ fun SmartAddressFields(
 
     CustomOutlinedTextField(
         modifier = Modifier.padding(top = 16.dp),
-        labelText = stringResource(id = R.string.credit_address_accurate_address),
+        labelText = stringResource(id = R.string.smart_salaried_working_address),
         value = sourceIncomeSharedViewModel.uiState.address,
         onValueChange = {
             sourceIncomeSharedViewModel.onUIEvent(
@@ -227,7 +227,7 @@ fun SmartAddressFields(
             focusManager.clearFocus()
         }),
         isRequired = true,
-        isRequiredMessage = stringResource(R.string.credit_company_address_accurate_address_error),
+        isRequiredMessage = stringResource(R.string.smart_salaried_working_address_required),
         isError = sourceIncomeSharedViewModel.uiState.addressError.first,
         errorMessage = stringResource(sourceIncomeSharedViewModel.uiState.addressError.second),
         isTextArea = true

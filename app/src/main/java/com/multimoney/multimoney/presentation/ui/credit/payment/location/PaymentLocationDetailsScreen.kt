@@ -71,7 +71,7 @@ fun PaymentLocationDetailsScreen(
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 36.dp, bottom = 24.dp),
+                    .padding(top = 24.dp, bottom = 24.dp),
                 text = viewModel.pointName,
                 style = Typography.h5.copy(
                     color = MultimoneyTheme.colors.text,

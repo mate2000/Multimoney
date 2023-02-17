@@ -8,21 +8,20 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun MultimoneyTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
-
     val systemUIController = rememberSystemUiController()
 
     val colors = if (darkTheme) {
         systemUIController.setStatusBarColor(GrayScale800, false)
         DarkColorPalette
     } else {
-        systemUIController.setStatusBarColor(DefaultWhite, true)
+        systemUIController.setStatusBarColor(GrayScale800, true)
         LightColorPalette
     }
     CompositionLocalProvider(LocalMultimoneyColors provides colors) {
         MaterialTheme(
             typography = Typography,
             shapes = Shapes,
-            content = content
+            content = content,
         )
     }
 }

@@ -75,7 +75,7 @@ fun PaymentCardsListContent(
             onRightButtonClick = { viewModel.onUIEvent(PaymentCardListViewModel.UIEvent.OnNavigateBackHome) }
         )
         Text(
-            modifier = Modifier.padding(top = 42.dp, start = 16.dp, end = 16.dp, bottom = 20.dp),
+            modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp),
             text = stringResource(id = R.string.payment_cards_list_title),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText,
@@ -167,14 +167,14 @@ fun PaymentCardList(
                         viewModel.onUIEvent(PaymentCardListViewModel.UIEvent.OnCardSelected(card))
                     }
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
             }
         }
     }
     CustomButton(
         text = stringResource(id = R.string.payment_cards_list_create),
         modifier = Modifier
-            .padding(top = 32.dp)
+            .padding(top = 18.dp)
             .fillMaxWidth(),
         onClick = {
             Toast.makeText(context, "TBD", Toast.LENGTH_SHORT).show()

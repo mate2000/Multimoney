@@ -3,8 +3,10 @@ package com.multimoney.multimoney.presentation.ui.credit.payment.schedule.accoun
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -25,6 +27,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.account.PaymentScheduleAccountViewModel.UIEvent.OnCallQueryGetClientBankAccount
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.account.PaymentScheduleAccountViewModel.UIEvent.OnClientBankAccountSelected
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.account.PaymentScheduleAccountViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.account.PaymentScheduleAccountViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -63,10 +66,11 @@ fun PaymentScheduleAccountContent(
     ) {
         TopNavBar(
             onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
+            onRightButtonClick = {viewModel.onUIEvent(OnCloseClick)},
             isRightButtonVisible = true
         )
         Text(
-            modifier = Modifier.padding(top = 50.dp, start = 16.dp, end = 16.dp),
+            modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp),
             text = stringResource(id = R.string.payment_schedule_account_title),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.text,
@@ -75,12 +79,11 @@ fun PaymentScheduleAccountContent(
         val context = LocalContext.current
 
         viewModel.uiState.clientBankAccountList?.let { clientBankAccountList ->
-            LazyColumn(modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp)) {
+            LazyColumn(modifier = Modifier.padding(top = 32.dp, start = 16.dp, end = 16.dp)) {
                 items(clientBankAccountList) { clientBankAccount ->
                     CustomInfoButton(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 12.dp),
+                            .fillMaxWidth(),
                         startIcon = clientBankAccount?.idCurrency?.getCurrencyFromId()?.accountIcon ?: 0,
                         title = clientBankAccount?.bankDescription ?: "",
                         subtitle = getMaskedAccount(
@@ -91,13 +94,14 @@ fun PaymentScheduleAccountContent(
                             viewModel.onUIEvent(OnClientBankAccountSelected(clientBankAccount))
                         }
                     )
+                    Spacer(modifier = Modifier.height(12.dp))
                 }
             }
         }
         CustomButton(
             text = stringResource(id = R.string.payment_account_create),
             modifier = Modifier
-                .padding(top = 32.dp, start = 16.dp, end = 16.dp)
+                .padding(top = 28.dp, start = 16.dp, end = 16.dp)
                 .fillMaxWidth(),
             onClick = {
                 Toast.makeText(context, "TBD", Toast.LENGTH_SHORT).show()

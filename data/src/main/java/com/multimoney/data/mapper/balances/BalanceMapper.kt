@@ -42,7 +42,8 @@ private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
     creditNumber = pagare,
     term = plazo,
     applyAutomaticDebit = aplica_Debito_Aut,
-    automaticDebitEnabled = debito_Aut_Activo
+    automaticDebitEnabled = debito_Aut_Activo,
+    expiredAutomaticDebitCard = expired_Debito_Aut_Card
 )
 
 private fun BalanceQuery.Account.mapToDomainModel() =
@@ -55,11 +56,16 @@ private fun BalanceQuery.Account.mapToDomainModel() =
         totalInterest = totalInterest.toString(),
         tokenNumber = tokenNumber,
         idCurrencyAccount = idCurrencyAccount.toString().toIntOrNull(),
-        month = month
+        month = month,
+        customerId = customerId.toString().toLongOrNull(),
+        interest = rate.toString().toDoubleOrNull()
     )
 
 private fun BalanceQuery.BalanceCryptoAccount.mapToDomainModel() =
     BalanceCryptoAccount(
+        status = status.toString().toInt(),
+        message = message,
+        outOfService = outOfService ?: false,
         globalBalance = globalBalance.toString().toDouble(),
         investedBalance = investedBalance.toString(),
         percentageInvested = percentageInvested.toString(),
@@ -75,7 +81,8 @@ private fun BalanceQuery.Item.mapToDomainModel() = BalanceCryptoAccountItems(
     investedBalanceCurrency = investedBalanceCurrency.toString(),
     percentageInvestedCurrency = percentageInvestedCurrency.toString(),
     priceOfTheDay = priceOfTheDay.toString().toDouble(),
-    url_image = url_image.toString()
+    url_image = url_image.toString(),
+    cryptoNetwork = crypto_network.toString()
 )
 
 private fun BalanceQuery.BalanceCardInformation.mapToDomainModel() = BalanceCardInformation(

@@ -42,6 +42,7 @@ import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.PHONE_HARDCODED
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnShowCloseIcon
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_FIVE
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_FOUR
@@ -56,6 +57,7 @@ import com.multimoney.multimoney.presentation.uielement.OtpTextField
 import com.multimoney.multimoney.presentation.uielement.SystemBroadcastReceiver
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.transformation.PhoneNumberTransformation
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
@@ -64,10 +66,10 @@ import com.multimoney.multimoney.util.firebase.FireBaseEvents
 fun SignUpOtpScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: SignUpOtpViewModel = hiltViewModel(),
-    sharedViewModel: SignUpViewModel = hiltViewModel(),
+    sharedViewModel: SignUpViewModel = hiltViewModel()
 ) {
-
     val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
 
     // Create start activity result for SMS Retrieve
     val launchSmsActivityResult =
@@ -95,6 +97,7 @@ fun SignUpOtpScreen(
     )
 
     LaunchedEffect(true) {
+        sharedViewModel.onUIEvent(OnShowCloseIcon(true))
         viewModel.apply {
             executeNavigation(onPopAndNavigate = onPopAndNavigate)
             onUIEvent(SignUpOtpViewModel.UIEvent.OnInitializeTimer(PHASE_ONE, TIMER_DURATION))
@@ -195,6 +198,10 @@ fun SignUpOtpScreen(
                             description = viewModel.userBlockedForMaxAttend,
                             isActive = mutableStateOf(true),
                             positiveResource = string.contact,
+                            positiveAction = {
+                                context.openWhatsAppDeepLink(viewModel.linkWhatsapp)
+                                viewModel.onUIEvent(OnNavigateToSignIn)
+                            },
                             negativeResource = string.cancel,
                             negativeAction = {
                                 viewModel.onUIEvent(OnNavigateToSignIn)

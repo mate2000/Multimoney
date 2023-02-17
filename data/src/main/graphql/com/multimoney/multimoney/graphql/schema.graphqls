@@ -651,7 +651,8 @@ type Mutation {
   """
   Crypto
   """
-  validateDepositAddress(validateDepositAddressInput: ValidateDepositAddressDtoInput!): ValidateDepositAddressResult!
+
+  validateDepositAddress(validateDepositAddressInput: ValidateDepositAddressDtoInput!): ValidateDepositAddress!
 
   """
   Crypto
@@ -858,6 +859,8 @@ type AddressLevel4 {
 
   message: String
 
+  detail: String
+
   _HaveError: Boolean
 
   _ErrorMessage: String
@@ -882,6 +885,8 @@ type AddressLevel3 {
 
   message: String
 
+  detail: String
+
   _HaveError: Boolean
 
   _ErrorMessage: String
@@ -904,6 +909,8 @@ type AddressLevel2 {
 
   message: String
 
+  detail: String
+
   _HaveError: Boolean
 
   _ErrorMessage: String
@@ -923,6 +930,8 @@ type AddressLevel1 {
   status: Int
 
   message: String
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -944,6 +953,8 @@ type Nationality {
 
   message: String
 
+  detail: String
+
   _HaveError: Boolean
 
   _ErrorMessage: String
@@ -964,6 +975,8 @@ type Country {
 
   message: String
 
+  detail: String
+
   _HaveError: Boolean
 
   _ErrorMessage: String
@@ -983,6 +996,8 @@ type CivilStatus {
   status: Int
 
   message: String
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -1009,6 +1024,8 @@ type GeneralEconomicActivity {
   status: Int
 
   message: String
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -1037,6 +1054,8 @@ type Ocupation {
   status: Int
 
   message: String
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -1084,6 +1103,8 @@ type SmartAccountStatus {
 
   message: String
 
+  detail: String
+
   _HaveError: Boolean
 
   _ErrorMessage: String
@@ -1104,11 +1125,13 @@ input SmartAccountStatusDtoInput {
 }
 
 type ACHTransferFavoriteList {
-  result: [ACHTransferFavoriteDto!]!
+  result: [ACHTransferFavoriteResponse!]!
 
   status: Int
 
   message: String
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -1174,6 +1197,8 @@ type ACHTransferFavorite {
 
   message: String
 
+  detail: String
+
   _HaveError: Boolean
 
   _ErrorMessage: String
@@ -1187,6 +1212,8 @@ type TypeAccount {
   status: Int
 
   message: String
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -1207,6 +1234,8 @@ type LocalTransferFavorite {
   message: String!
 
   result: [LocalTransferFavoriteResult!]
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -1236,6 +1265,8 @@ input LocalTransferFavoritesDtoInput {
 
   idCurrencyAccount: Int
 
+  isFavorite: Boolean
+
   idBrand: Int
 
   user: String
@@ -1247,6 +1278,8 @@ type ListSinpeAccount {
   status: Int
 
   message: String
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -1264,6 +1297,10 @@ input ListSinpeAccountDtoInput {
 
   account_number: String!
 
+  option: String
+
+  isFavorite: Boolean
+
   idBrand: Int
 
   user: String
@@ -1275,6 +1312,8 @@ type GetExchangeRate {
   status: Int
 
   message: String
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -1314,6 +1353,8 @@ type GetCoreBankMovements {
 
   message: String
 
+  detail: String
+
   _HaveError: Boolean
 
   _ErrorMessage: String
@@ -1342,11 +1383,13 @@ input GetCoreBankMovementsDtoInput {
 }
 
 type RelatedContactsByPhone {
-  result: ObjRelatedContacts!
+  result: ObjRelatedContacts
 
   status: Int
 
   message: String
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -1552,6 +1595,8 @@ type VerifiedExternalAccount {
 
   message: String
 
+  detail: String
+
   _HaveError: Boolean
 
   _ErrorMessage: String
@@ -1613,6 +1658,8 @@ type PromissoryNoteMobile {
   debito_Aut_Activo: Boolean
 
   aplica_Debito_Aut: Boolean!
+
+  expired_Debito_Aut_Card: Boolean
 }
 
 input balanceCreditInput {
@@ -1642,6 +1689,8 @@ input checkAccountInput {
 }
 
 type CryptoAccountBalance {
+  outOfService: Boolean
+
   globalBalance: Decimal
 
   investedBalance: String
@@ -1649,6 +1698,12 @@ type CryptoAccountBalance {
   percentageInvested: String
 
   items: [CryptoAccountBalanceItem!]
+
+  status: Int
+
+  message: String
+
+  detail: String
 }
 
 input balanceCryptoInput {
@@ -2243,6 +2298,10 @@ type CryptoMarketPrice {
   url_image: String!
 
   historico: Boolean!
+
+  crypto_network: String
+
+  network: String
 }
 
 input CryptoMarketPriceDtoInput {
@@ -2824,6 +2883,12 @@ type UserValidation {
 
   idBrand: Int
 
+  maskedMail: String
+
+  maskedPhoneNumber: String
+
+  otpTime: Int
+
   status: Int
 
   message: String
@@ -2847,6 +2912,8 @@ input UserValidationDtoInput {
   firtSurname: String
 
   secondSurname: String
+
+  deviceId: String
 
   idBrand: Int
 
@@ -3091,6 +3158,10 @@ type GetCountryPhoneCode {
   country: String!
 
   code: Int!
+
+  phoneMask: String
+
+  isoCode: String
 }
 
 input GetCountryPhoneCodeDtoInput {
@@ -3262,6 +3333,8 @@ type GlobalRequest {
 
   message: String
 
+  detail: String
+
   _HaveError: Boolean
 
   _ErrorMessage: String
@@ -3360,6 +3433,8 @@ type AttachmentsAccount {
 
   status: Int
 
+  detail: String
+
   _HaveError: Boolean
 
   _ErrorMessage: String
@@ -3383,6 +3458,8 @@ type ActivatedExternalAccount {
   status: Int
 
   message: String
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -3428,6 +3505,8 @@ type UpdateSmartAccountStatus {
 
   message: String
 
+  detail: String
+
   _HaveError: Boolean
 
   _ErrorMessage: String
@@ -3458,6 +3537,8 @@ type SaveAutomatedSmartAccount {
 
   message: String
 
+  detail: String
+
   _HaveError: Boolean
 
   _ErrorMessage: String
@@ -3481,6 +3562,8 @@ type ACHTransfer {
   status: Int
 
   message: String
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -3523,6 +3606,8 @@ type ProcessLocalTransfer {
   status: Int
 
   message: String
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -3568,6 +3653,8 @@ type ManageSinpeAccount {
 
   message: String
 
+  detail: String
+
   _HaveError: Boolean
 
   _ErrorMessage: String
@@ -3590,6 +3677,12 @@ input ManageSinpeAccountDtoInput {
 
   nameAccount: String
 
+  id_Bank: Long
+
+  type_Account: Int
+
+  isFavorite: Boolean
+
   idBrand: Int
 
   user: String
@@ -3601,6 +3694,8 @@ type SinpeTransfer {
   status: Int
 
   message: String
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -3649,6 +3744,8 @@ type Transfer365 {
   status: Int
 
   message: String
+
+  detail: String
 
   _HaveError: Boolean
 
@@ -3803,6 +3900,8 @@ type CreditApplication {
   fecha_Pago: String!
 
   currentStep: String!
+
+  isCrosseling: Boolean
 
   status: Int
 
@@ -4303,6 +4402,18 @@ type ReleaseTransaction {
   withheld: Boolean!
 
   userResponse: Boolean!
+
+  status: Int
+
+  message: String
+
+  detail: String
+
+  _HaveError: Boolean
+
+  _ErrorMessage: String
+
+  _FullError: String
 }
 
 input ReleaseTransactionDtoInput {
@@ -4318,7 +4429,7 @@ input ReleaseTransactionDtoInput {
 
   shippingOrigin: String!
 
-  userWallet: String!
+  userWallet: String
 
   amountReceivedDollars: Decimal
 
@@ -4333,6 +4444,12 @@ input ReleaseTransactionDtoInput {
 
 type TransferOrder {
   result: TransferOrderResult!
+
+  status: Int
+
+  message: String
+
+  detail: String
 
   rollbackApplied: Boolean!
 }
@@ -4365,27 +4482,17 @@ input TransferOrderDtoInput {
   user: String
 }
 
-type ValidateDepositAddressResult {
-  page: Int!
 
-  totalPages: Int!
+type ValidateDepositAddress {
+  result: ValidateDepositAddressResult
 
-  itemsOnPage: Int!
+  status: Int
 
-  address: String!
+  message: String
 
-  balance: String!
-
-  unconfirmedBalance: String!
-
-  unconfirmedTxs: Int!
-
-  txs: Int!
-
-  nonTokenTxs: Int!
-
-  txids: [String!]!
+  detail: String
 }
+
 
 input ValidateDepositAddressDtoInput {
   identification: String!
@@ -4652,6 +4759,8 @@ input UpdateUserDtoInput {
 
   activateUser: Boolean
 
+  deviceId: String
+
   idBrand: Int
 
   user: String
@@ -4895,6 +5004,8 @@ input ChangePhoneDtoInput {
   identification: String!
 
   phone: String!
+
+  pkUser: Long!
 
   idBrand: Int
 
@@ -5192,8 +5303,6 @@ input ResendMicroDepositDtoInput {
 
   idCard: String!
 
-  code: String!
-
   idBrand: Int
 
   user: String
@@ -5390,15 +5499,21 @@ input EnrollCardDtoInput {
 }
 
 type deleteTokenDeviceNV {
-  rc: String!
+  rc: String
 
-  msg: String!
+  msg: String
 
-  processedAt: String!
+  processedAt: String
 
-  tokenReferenceId: String!
+  tokenReferenceId: String
 
-  tokenRequestorId: String!
+  tokenRequestorId: String
+
+  status: Int
+
+  message: String
+
+  detail: String
 }
 
 input DeleteTokenDeviceDtoInput {
@@ -5523,6 +5638,28 @@ type sellHQRResult {
   averagePrice: Decimal!
 
   status: String!
+}
+
+type ValidateDepositAddressResult {
+  page: Int!
+
+  totalPages: Int!
+
+  itemsOnPage: Int!
+
+  address: String
+
+  balance: String
+
+  unconfirmedBalance: String
+
+  unconfirmedTxs: Int!
+
+  txs: Int!
+
+  nonTokenTxs: Int!
+
+  txids: [String!]
 }
 
 type TransferOrderResult {
@@ -6159,6 +6296,10 @@ type CryptoAccountBalanceItem {
   priceOfTheDay: Decimal
 
   url_image: String
+
+  crypto_network: String
+
+  network: String
 }
 
 type RequestResult {
@@ -6301,6 +6442,8 @@ type PromissoryNoteResumeMobile {
   id_Moneda: Int!
 
   aplica_Ampli_Comercio: Boolean!
+
+  expired_Debito_Aut_Card: Boolean
 }
 
 type ObjectProfessionItem {
@@ -6334,7 +6477,7 @@ input contactsInput {
 }
 
 type ObjRelatedContacts {
-  phones: [ObjPhone!]!
+  phones: [ObjPhone]
 }
 
 type GetCoreBankMovementsResult {
@@ -6391,6 +6534,18 @@ type ListSinpeAccountResult {
   moneda: String!
 
   nombre_Cuenta: String!
+
+  tipo_Cuenta: Long!
+
+  id_Banco: Int!
+
+  expresion_Regular: String!
+
+  es_Favorita: Boolean!
+
+  id_Banco_CORE: Long!
+
+  tipo_Cuenta_CORE: Long!
 }
 
 type LocalTransferFavoriteResult {
@@ -6415,6 +6570,8 @@ type LocalTransferFavoriteResult {
   currencyAccount: String!
 
   ibanNumber: String!
+
+  isFavorite: Boolean!
 }
 
 type TypeAccountListResponse {
@@ -6469,54 +6626,28 @@ type ACHTransferFavoriteResult {
   destinationAccountCurrency: String!
 }
 
-type ACHTransferFavoriteDto {
-  accountForAchTransferId: Int!
+type ACHTransferFavoriteResponse {
+  accountForAchTransferId: Long!
 
   accountNumber: String!
 
   description: String!
 
-  titularName: String!
-
-  notificationEmail: String!
-
-  identificacionNumber: String!
-
-  isFavorite: Boolean!
-
-  typeAccountId: Int!
-
-  destinationBankId: Int!
-
-  typeAccountDescription: String!
-
   destinationBankDescription: String!
 
-  status: Int!
-
-  destinationIdentificationBank: String!
-
-  transferState: Boolean!
-
-  accountTypeCode: String!
-
-  aCHTypeAccountCode: String!
-
-  aCHPurposeType: String!
-
-  aPIACHAccountCode: String!
-
-  identificationNumberAccount: String!
-
-  identificationTypeAccount: Int!
-
-  destinationAccountCurrencyId: Int!
+  destinationAccountCurrencyId: Long
 
   destinationAccountCurrency: String!
 
-  idBrand: Int
+  idBank: Long
 
-  user: String
+  idTypeAccount: Long
+
+  identificationTypeAccount: Long
+
+  isFavorite: Boolean
+
+  fullNameDestination: String
 }
 
 type SmartAccountStatusResult {
@@ -6609,21 +6740,21 @@ type CatalogAdressLevel4ListResponse {
 }
 
 type ObjPhone {
-  number: String!
+  number: String
 
-  titular: String!
+  titular: String
 
-  bankName: String!
+  bankName: String
 
-  identification: String!
+  identification: String
 
-  accountNumber: String!
+  accountNumber: String
 
-  email: String!
+  email: String
 
-  id_Currency: String!
+  id_Currency: String
 
-  currency: String!
+  currency: String
 
   ibanNumber: String
 }
@@ -6676,6 +6807,8 @@ type CreditPreApproveInfo {
   statusFirm: String
 
   currentStep: String
+
+  crosseling: Boolean
 }
 
 type RequestInfo {
@@ -6686,6 +6819,8 @@ type RequestInfo {
   currentStep: String
 
   statusRequest: String
+
+  crosseling: Boolean
 }
 
 type Wording {
@@ -6698,6 +6833,8 @@ type Wording {
   link: String
 
   display: Boolean
+
+  workFlow: String
 }
 
 type VirtualcardConfigurationType {
@@ -6725,6 +6862,8 @@ type CreditConfigurationType {
 type AccountsmartConfigurationType {
   activo: Boolean!
 
+  limiteTransacion: [CurrencyConfigurationType]
+
   metodoAbono: [FundingMethodConfigurationType!]!
 
   metodoTransferencia: [TransferMethodConfigurationType!]!
@@ -6734,6 +6873,8 @@ type CurrencyConfigurationType {
   codigo: String!
 
   descripcion: String!
+
+  monto: Decimal
 }
 
 type ProcessCore {

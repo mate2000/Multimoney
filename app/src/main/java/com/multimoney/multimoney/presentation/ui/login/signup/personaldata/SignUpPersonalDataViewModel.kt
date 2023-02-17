@@ -3,11 +3,12 @@ package com.multimoney.multimoney.presentation.ui.login.signup.personaldata
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Nationalities.CostaRicaDimex
 import com.multimoney.data.util.catalog.Nationalities.CostaRicaId
-import com.multimoney.data.util.catalog.Nationalities.ElSalvadorDui
 import com.multimoney.data.util.catalog.Nationalities.ElSalvadorCarne
+import com.multimoney.data.util.catalog.Nationalities.ElSalvadorDui
 import com.multimoney.data.util.catalog.Nationalities.Guatemala
 import com.multimoney.domain.interaction.security.MutationUserValidationUseCase
 import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCase
@@ -23,6 +24,12 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.USER_DATA
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnGetCountriesSuccess
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnCallQueryGetCountry
@@ -36,10 +43,11 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnSecondNameChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnUpdateAllNames
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnUserDataValidationSuccess
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnValidateDocument
 import com.multimoney.multimoney.presentation.util.catalog.CrDocuments
 import com.multimoney.multimoney.presentation.util.catalog.SvDocuments
+import com.multimoney.multimoney.presentation.util.getDeviceId
+import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.validCarne
 import com.multimoney.multimoney.presentation.util.validDui
 import com.multimoney.multimoney.presentation.util.validId
@@ -68,6 +76,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
 
     // Stateless
     var documentLength = 0
+    var previousEmail = ""
+    var idBrand = 0
 
     // Event
     val onUserDataValidationEvent = MutableSharedFlow<MultimoneyResult<UserData?>>()
@@ -75,8 +85,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private fun isFormValid() = emitBaseEvent(
         OnFormValidateCompleted(
             when (uiState.nationalityValue) {
-                ElSalvadorDui.country -> uiState.personalDocumentValue.isNotBlank() && (uiState.personalDocumentValue.length == ElSalvadorDui.documentSize || uiState.personalDocumentValue.length == ElSalvadorCarne.documentSize) && !uiState.personalIdError.first && uiState.firstNameValue.isNotBlank() && uiState.firstLastNameValue.isNotBlank()
-                Guatemala.country -> uiState.personalDocumentValue.isNotBlank() && (uiState.personalDocumentValue.length == Guatemala.documentSize) && !uiState.personalIdError.first && uiState.firstNameValue.isNotBlank() && uiState.firstLastNameValue.isNotBlank()
+                ElSalvadorDui.country -> uiState.identificationValueType.isNotBlank() && uiState.personalDocumentValue.isNotBlank() && (uiState.personalDocumentValue.length == ElSalvadorDui.documentSize || uiState.personalDocumentValue.length == ElSalvadorCarne.documentSize) && !uiState.personalIdError.first && uiState.firstNameValue.isNotBlank() && uiState.firstLastNameValue.isNotBlank()
+                Guatemala.country -> uiState.identificationValueType.isNotBlank() && uiState.personalDocumentValue.isNotBlank() && (uiState.personalDocumentValue.length == Guatemala.documentSize) && !uiState.personalIdError.first && uiState.firstNameValue.isNotBlank() && uiState.firstLastNameValue.isNotBlank()
                 CostaRicaId.country -> uiState.personalDocumentValue.isNotBlank() &&
                     (uiState.personalDocumentValue.length == CostaRicaId.documentSize || uiState.personalDocumentValue.length == CostaRicaDimex.documentSize) &&
                     !uiState.personalIdError.first && uiState.identificationValueType.isNotBlank() && ((uiState.firstNameValue.isNotEmpty() && uiState.firstLastNameValue.isNotEmpty()) || uiState.dataInformationClient?.name?.isNotEmpty() == true)
@@ -294,7 +304,12 @@ class SignUpPersonalDataViewModel @Inject constructor(
         )
     }
 
-    private fun onCallMutationUserValidationUseCase(email: String, nextStep: String, idBrand: Int) =
+    private fun onCallMutationUserValidationUseCase(
+        email: String,
+        nextStep: String,
+        idBrand: Int,
+        activity: FragmentActivity
+    ) =
         executeUseCase {
             mutationUserValidationUseCase(
                 email = email,
@@ -305,7 +320,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 firstName = uiState.firstNameValue,
                 secondName = uiState.secondNameValue,
                 firstSurname = uiState.firstLastNameValue,
-                secondSurname = uiState.secondLastNameValue
+                secondSurname = uiState.secondLastNameValue,
+                deviceId = getDeviceId(activity)
             ).collectLatest { result ->
                 onUserDataValidationEvent.emit(result)
             }
@@ -449,9 +465,12 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private fun onNextActionClick(
         email: String,
         nextStep: String,
-        idBrand: Int
+        idBrand: Int,
+        activity: FragmentActivity
     ) {
-        onCallMutationUserValidationUseCase(email, nextStep, idBrand)
+        previousEmail = email
+        this.idBrand = idBrand
+        onCallMutationUserValidationUseCase(email, nextStep, idBrand, activity)
     }
 
     private fun validateDocument(email: String?) {
@@ -474,11 +493,72 @@ class SignUpPersonalDataViewModel @Inject constructor(
     }
 
     private fun onUserDataValidationSuccess(
+        userData: UserData?,
         onUseDataValueChange: () -> Unit,
         onCallMutationUpdateUserRegisterUseCase: () -> Unit
     ) {
-        onUseDataValueChange()
-        onCallMutationUpdateUserRegisterUseCase()
+        if (userData?.isNewUser == true || userData?.status == ANOTHER_DEVICE_ALREADY_REGISTERED) {
+            onUseDataValueChange()
+            onCallMutationUpdateUserRegisterUseCase()
+        } else {
+            navigateToRegisteredUser(userData)
+        }
+    }
+
+    fun onSuccessValidation(
+        sharedViewModel: SignUpViewModel,
+        userData: UserData?
+    ) {
+        onUserDataValidationSuccess(
+            userData = userData,
+            onUseDataValueChange = {
+                sharedViewModel.strIdIdentification = uiState.identificationValueType
+                sharedViewModel.onUIEvent(
+                    SignUpViewModel.UIEvent.OnUseDataValueChange(
+                        sharedViewModel.userData?.copy(
+                            pkUser = userData?.pkUser,
+                            fullName = getFullName(),
+                            firstName = userData?.firstName,
+                            secondName = userData?.secondName,
+                            firstLastName = userData?.firstLastName,
+                            secondLastName = userData?.secondLastName,
+                            identification = userData?.identification,
+                            currentStep = userData?.currentStep
+                        )
+                    )
+                )
+            },
+            onCallMutationUpdateUserRegisterUseCase = {
+                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase)
+            }
+        )
+    }
+
+    private fun navigateToRegisteredUser(userData: UserData?) {
+        if (previousEmail == userData?.email) {
+            navigateTo(
+                route = Screen.RegisteredUserOtpOptionsScreen.baseRoute
+                    .plus(
+                        getNavParam(PREVIOUS_SCREEN, Screen.SignUpScreen.baseRoute)
+                    )
+                    .plus(
+                        getNavParam(ID_BRAND, idBrand)
+                    )
+                    .plus(
+                        getNavParam(USER_DATA, encodeData(userData))
+                    )
+            )
+        } else {
+            navigateTo(
+                route = Screen.RegisteredUserEmailScreen.baseRoute
+                    .plus(
+                        getNavParam(ID_BRAND, idBrand)
+                    )
+                    .plus(
+                        getNavParam(USER_DATA, encodeData(userData))
+                    )
+            )
+        }
     }
 
     data class UIState(
@@ -553,11 +633,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 event.identification,
                 event.identificationShareViewModelChange
             )
-            is OnNextActionClick -> onNextActionClick(event.email, event.nextStep, event.idBrand)
-            is OnUserDataValidationSuccess -> onUserDataValidationSuccess(
-                event.onUseDataValueChange,
-                event.onCallMutationUpdateUserRegisterUseCase
-            )
+            is OnNextActionClick -> onNextActionClick(event.email, event.nextStep, event.idBrand, event.activity)
             is OnValidateDocument -> validateDocument(event.document)
             is OnCallQueryGetCountry -> callQueryGetCountryUseCase(
                 event.user,
@@ -625,7 +701,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
         data class OnNextActionClick(
             val email: String,
             val nextStep: String,
-            val idBrand: Int
+            val idBrand: Int,
+            val activity: FragmentActivity
         ) : UIEvent()
 
         data class OnValidateDocument(
@@ -637,11 +714,6 @@ class SignUpPersonalDataViewModel @Inject constructor(
             val onLoadingValueChange: (isLoading: Boolean) -> Unit
         ) :
             UIEvent()
-
-        data class OnUserDataValidationSuccess(
-            val onUseDataValueChange: () -> Unit,
-            val onCallMutationUpdateUserRegisterUseCase: () -> Unit
-        ) : UIEvent()
 
         object OnValidateForm : UIEvent()
     }
@@ -656,5 +728,6 @@ class SignUpPersonalDataViewModel @Inject constructor(
         const val FORMAT_VALUE = '0'
         const val SINGLE_DOCUMENT = 1
         const val STEP_TO_MOVE = 4
+        const val ANOTHER_DEVICE_ALREADY_REGISTERED = 3102
     }
 }

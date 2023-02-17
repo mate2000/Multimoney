@@ -1,0 +1,32 @@
+mutation ValidateDepositAddress(
+    $identification: String!,
+    $address: String!,
+    $market: String!,
+    $idBrand: Int!,
+    $user: String!
+) {
+    validateDepositAddress(
+        validateDepositAddressInput: {
+            identification:$identification,
+            address:$address,
+            market:$market,
+            idBrand: $idBrand
+            user: $user
+        }
+    ) {
+        result {
+            page
+            totalPages
+            itemsOnPage
+            address
+            balance
+            unconfirmedBalance
+            unconfirmedTxs
+            txs
+            nonTokenTxs
+        }
+        status
+        message
+        detail
+    }
+}

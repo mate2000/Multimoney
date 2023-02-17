@@ -5,5 +5,9 @@ import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
 interface QueryCatalogDocumentTypeUseCase {
-    suspend operator fun invoke(idBrand: Int, user: String): Flow<MultimoneyResult<CatalogType?>>
+    suspend operator fun invoke(
+        idBrand: Int,
+        user: String,
+        isTransferIdentification: Int? = null
+    ): Flow<MultimoneyResult<CatalogType?>>
 }

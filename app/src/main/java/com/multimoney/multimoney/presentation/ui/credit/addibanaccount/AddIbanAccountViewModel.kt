@@ -122,7 +122,10 @@ class AddIbanAccountViewModel @Inject constructor(
                                 uiState.copy(
                                     accountError = Pair(false, R.string.empty),
                                     accountInformation = Pair(false, R.string.empty),
-                                    validationError = Pair(true, response.responseMessage.capitalized())
+                                    validationError = Pair(
+                                        true,
+                                        response.responseMessage.capitalized()
+                                    )
                                 )
                         }
                     }
@@ -161,10 +164,18 @@ class AddIbanAccountViewModel @Inject constructor(
             idBrand = idBrand ?: 0
         ).collectLatest { result ->
             result.onSuccess {
-                if (previousScreen == Screen.DisbursementAccountScreen.baseRoute) {
-                    navigateBack(Screen.DisbursementAccountScreen.route, true)
-                } else {
-                    navigateBack(Screen.PaymentAccountScreen.route, true)
+                when (previousScreen) {
+                    Screen.DisbursementAccountScreen.baseRoute -> navigateBack(
+                        Screen.DisbursementAccountScreen.route,
+                        true
+                    )
+                    Screen.SmartPaymentAccountScreenCR.baseRoute -> navigateBack(
+                        Screen.SmartPaymentAccountScreenCR.route,
+                        true
+                    )
+                    else -> {
+                        navigateBack(Screen.PaymentAccountScreen.route, true)
+                    }
                 }
             }.onFailure {
                 uiState = uiState.copy(
@@ -185,7 +196,7 @@ class AddIbanAccountViewModel @Inject constructor(
     } else if (previousScreen == Screen.DisbursementAccountScreen.baseRoute) {
         navigateBack(Screen.DisbursementAccountScreen.route, false)
     } else {
-        navigateBack(Screen.PaymentAccountScreen.route, false)
+        navigateBack(Screen.SmartPaymentAccountScreenCR.route, false)
     }
 
     private fun onEditAccount() {

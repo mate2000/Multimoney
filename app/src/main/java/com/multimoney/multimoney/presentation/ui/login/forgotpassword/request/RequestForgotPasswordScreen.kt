@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
@@ -24,9 +25,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
+import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.request.RequestForgotPasswordViewModel.UIEvent.OnChangePasswordClick
@@ -53,6 +57,7 @@ fun RequestForgotPasswordScreen(
 ) {
     // Properties
     val focusManager = LocalFocusManager.current
+    val activity = LocalContext.current.findActivity() as FragmentActivity
 
     LaunchedEffect(true) {
         viewModel.apply {
@@ -75,7 +80,7 @@ fun RequestForgotPasswordScreen(
         onNavigateBack = { viewModel.onUIEvent(OnNavigateBack(focusManager)) },
         onCloseClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) },
         onChangePasswordClick = { viewModel.onUIEvent(OnChangePasswordClick) },
-        onContinueClick = { viewModel.onUIEvent(OnContinueClick(focusManager)) }
+        onContinueClick = { viewModel.onUIEvent(OnContinueClick(activity, focusManager)) }
     )
 }
 
@@ -105,7 +110,7 @@ fun RequestForgotPasswordContent(
                 ) { append(stringResource(id = string.request_forgot_password_success_title)) }
                 withStyle(
                     style = Typography.h6.toSpanStyle()
-                        .copy(color = MultimoneyTheme.colors.textLink, fontWeight = FontWeight.Bold)
+                        .copy(color = MultimoneyTheme.colors.textLink, fontWeight = FontWeight.Bold, fontSize = 21.sp)
                 ) { append(email) }
                 withStyle(
                     style = Typography.body1.toSpanStyle().copy(color = MultimoneyTheme.colors.labelText)
@@ -130,8 +135,8 @@ fun RequestForgotPasswordContent(
                 )
                 Text(
                     text = stringResource(id = R.string.request_forgot_password_title),
-                    modifier = Modifier.padding(top = 53.dp, start = 16.dp, end = 16.dp),
-                    style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+                    modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp),
+                    style = Typography.h6.copy(fontWeight = FontWeight.SemiBold, fontSize = 22.sp),
                     color = MultimoneyTheme.colors.text
                 )
                 Text(
@@ -150,7 +155,7 @@ fun RequestForgotPasswordContent(
                     ),
                     keyboardActions = KeyboardActions(onNext = { focusManager.clearFocus() }),
                     labelText = stringResource(id = string.label_email),
-                    modifier = Modifier.padding(top = 51.dp, start = 16.dp, end = 16.dp),
+                    modifier = Modifier.padding(top = 36.dp, start = 16.dp, end = 16.dp),
                     isRequired = true,
                     isRequiredMessage = stringResource(id = string.request_forgot_password_email_required),
                     isError = emailError.first,

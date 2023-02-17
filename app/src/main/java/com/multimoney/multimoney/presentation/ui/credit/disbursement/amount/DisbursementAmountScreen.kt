@@ -25,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -37,7 +36,6 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.Companion.CURRENCY_SEPARATOR
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.Companion.SLIDER_TOTAL
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.UIEvent.OnContinueClick
@@ -60,7 +58,7 @@ import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.Size.Large
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.transformation.CurrencyIntegerTransformation
+import com.multimoney.multimoney.presentation.util.transformation.formatMoney
 
 @Composable
 fun DisbursementAmountScreen(
@@ -101,7 +99,7 @@ fun DisbursementAmountScreen(
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, top = 35.dp, bottom = 32.dp),
+                        .padding(start = 16.dp, end = 16.dp, top = 35.dp, bottom = 24.dp),
                     text = stringResource(id = viewModel.uiState.titleResource),
                     style = Typography.h5.copy(
                         color = MultimoneyTheme.colors.text,
@@ -135,7 +133,11 @@ fun DisbursementAmountScreen(
                     keyboardActions = KeyboardActions(onDone = {
                         focusManager.clearFocus()
                     }),
-                    modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
+                    modifier = if (viewModel.uiState.isMultipleCurrency) {
+                        Modifier.padding(top = 30.dp, start = 16.dp, end = 16.dp)
+                    } else {
+                        Modifier.padding(top = 0.dp, start = 16.dp, end = 16.dp)
+                    },
                     isRequired = true,
                     isRequiredMessage = stringResource(id = R.string.credit_amount_disbursement_minimum_error_message),
                     isError = viewModel.uiState.disbursementError.first,
@@ -144,10 +146,7 @@ fun DisbursementAmountScreen(
                         viewModel.uiState.currencyItems[viewModel.uiState.currencyIndex],
                         viewModel.uiState.progressFactor.toInt()
                     ),
-                    customTransformation = CurrencyIntegerTransformation(
-                        viewModel.uiState.currencyItems[viewModel.uiState.currencyIndex],
-                        CURRENCY_SEPARATOR
-                    ),
+                    customTransformation = formatMoney(viewModel.uiState.currencyItems[viewModel.uiState.currencyIndex]),
                     onDebounceValidation = {
                         viewModel.onUIEvent(OnDisbursementValueChangeFinished(it))
                     }
@@ -239,7 +238,6 @@ fun DisbursementAmountScreen(
     }
 }
 
-@OptIn(ExperimentalTextApi::class)
 @Composable
 fun CreditInfo(iconId: Int, textId: Int, value: String) {
     Row(modifier = Modifier.padding(top = 12.dp), verticalAlignment = CenterVertically) {

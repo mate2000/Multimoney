@@ -6,10 +6,10 @@ import androidx.compose.foundation.layout.Arrangement.Absolute.SpaceBetween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -48,7 +48,7 @@ fun CreditMovementsLatest(viewModel: ProductViewModel) {
     movesResult.take(MAX_HOME_CREDIT_MOVEMENTS_RECORDS)
 
     Column(
-        Modifier.fillMaxWidth().padding(16.dp)
+        Modifier.fillMaxWidth().wrapContentHeight().padding(16.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
@@ -87,7 +87,7 @@ fun CreditMovementsLatest(viewModel: ProductViewModel) {
 fun CreditMovementsEmptyState() {
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth().wrapContentHeight()
             .background(MultimoneyTheme.colors.creditDetailBackground),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally

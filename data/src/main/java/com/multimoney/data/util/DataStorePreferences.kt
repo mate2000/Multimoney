@@ -4,8 +4,10 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.google.gson.reflect.TypeToken
 import com.multimoney.data.base.BaseDataStorePreferences
 import com.multimoney.data.util.cryptography.CryptographyHelper
+import com.multimoney.domain.model.security.SmartTransferLimit
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import java.util.UUID
@@ -61,6 +63,12 @@ class DataStorePreferences @Inject constructor(
 
     fun getUserPhoneNumber(): Flow<String> = getSecuredData(USER_PHONE_NUMBER_KEY, "")
 
+    suspend fun setUserPhoneNumberWithCode(phone: String) =
+        setSecuredData(USER_PHONE_NUMBER_WITH_CODE_KEY, phone)
+
+    fun getUserPhoneNumberWithCode(): Flow<String> =
+        getSecuredData(USER_PHONE_NUMBER_WITH_CODE_KEY, "")
+
     suspend fun setUserPassword(userPassword: String, cipher: Cipher) =
         setSecuredData(USER_PASSWORD_KEY, userPassword, cipher)
 
@@ -75,6 +83,16 @@ class DataStorePreferences @Inject constructor(
 
     fun isBiometricsEnabled(): Flow<Boolean> = getData(BIOMETRICS_ENABLED_KEY, false)
 
+    suspend fun isForceShowBiometricPrompt(isForceShowBiometricPrompt: Boolean) =
+        setData(FORCE_SHOW_BIOMETRICS_PROMPT, isForceShowBiometricPrompt)
+
+    fun isForceShowBiometricPrompt(): Flow<Boolean> = getData(FORCE_SHOW_BIOMETRICS_PROMPT, false)
+
+    suspend fun isSignOutOnBackground(isSignOutOnBackground: Boolean) =
+        setData(SIGN_OUT_ON_BACKGROUND, isSignOutOnBackground)
+
+    fun isSignOutOnBackground(): Flow<Boolean> = getData(SIGN_OUT_ON_BACKGROUND, false)
+
     suspend fun isOnBoardingEnabled(isOnBoardingEnabled: Boolean) =
         setData(ON_BOARDING_ENABLED_KEY, isOnBoardingEnabled)
 
@@ -88,7 +106,7 @@ class DataStorePreferences @Inject constructor(
         if (getSecuredData(UNIQUE_ID, "").first().isEmpty()) {
             setUniqueID(UUID.randomUUID().toString())
         }
-        return  getSecuredData(UNIQUE_ID,"")
+        return getSecuredData(UNIQUE_ID, "")
     }
 
     suspend fun isContactPermissionRequested(isOnBoardingEnabled: Boolean) =
@@ -96,6 +114,44 @@ class DataStorePreferences @Inject constructor(
 
     fun isContactPermissionRequested(): Flow<Boolean> = getData(CONTACT_PERMISSION_STATE_KEY, false)
 
+    suspend fun isVisaCardExpiredDialogEnabled(dialogEnabled: Boolean) {
+        setData(VISA_CARD_EXPIRED_DIALOG_KEY, dialogEnabled)
+    }
+
+    fun isVisaCardExpiredEnabled(): Flow<Boolean> = getData(VISA_CARD_EXPIRED_DIALOG_KEY, true)
+
+    suspend fun setVolatileDialogVisible(isVisible: Boolean) {
+        setData(VOLATILE_DIALOG_KEY, isVisible)
+    }
+
+    fun isVolatileDialogVisible(): Flow<Boolean> = getData(VOLATILE_DIALOG_KEY, true)
+
+    suspend fun setNotShowAgainVerifyCryptoAddress() =
+        setData(NOT_SHOW_AGAIN_VERIFY_CRYPTO_ADDRESS, true)
+
+    fun getNotShowAgainVerifyCryptoAddress(): Flow<Boolean> = getData(NOT_SHOW_AGAIN_VERIFY_CRYPTO_ADDRESS, false)
+
+    suspend fun isCameraPermissionRequested(permissionRequested: Boolean) =
+        setData(CAMERA_PERMISSION_STATE_KEY, permissionRequested)
+
+    fun isCameraPermissionRequested(): Flow<Boolean> = getData(CAMERA_PERMISSION_STATE_KEY, false)
+
+    suspend fun saveCryptoOrigin(cryptoOrigin: String) {
+        setData(CRYPTO_ORIGIN_KEY, cryptoOrigin)
+    }
+
+    fun getCryptoOrigin(): Flow<String> = getData(CRYPTO_ORIGIN_KEY, "")
+
+    suspend fun saveEnableCryptoTransfer(enable: Boolean) {
+        setData(ENABLE_CRYPTO_TRANSFER_KEY, enable)
+    }
+
+    fun isCryptoTransferEnabled(): Flow<Boolean> = getData(ENABLE_CRYPTO_TRANSFER_KEY, false)
+
+    suspend fun setSmartTransferLimit(limits: List<SmartTransferLimit?>) {
+        putListFlow(SMART_LIMITS, list = limits)
+    }
+    fun getSmartTransferLimit() = getListFlow<SmartTransferLimit?>(SMART_LIMITS, object : TypeToken<List<SmartTransferLimit>>() {}.type)
 
     companion object {
         private val UNIQUE_ID = stringPreferencesKey("unique_id")
@@ -106,9 +162,19 @@ class DataStorePreferences @Inject constructor(
         private val USER_EMAIL_KEY = stringPreferencesKey("user_email_key")
         private val USER_NAME_KEY = stringPreferencesKey("user_name_key")
         private val USER_PHONE_NUMBER_KEY = stringPreferencesKey("user_phone_number_key")
+        private val USER_PHONE_NUMBER_WITH_CODE_KEY = stringPreferencesKey("user_phone_number_with_code_key")
         private val USER_PASSWORD_KEY = stringPreferencesKey("user_password_key")
         private val BIOMETRICS_ENABLED_KEY = booleanPreferencesKey("biometrics_enabled_key")
+        private val FORCE_SHOW_BIOMETRICS_PROMPT = booleanPreferencesKey("force_show_biometrics_prompt")
         private val ON_BOARDING_ENABLED_KEY = booleanPreferencesKey("on_boarding_enabled_key")
         private val CONTACT_PERMISSION_STATE_KEY = booleanPreferencesKey("contact_permission_state_key")
+        private val SIGN_OUT_ON_BACKGROUND = booleanPreferencesKey("sign_out_on_background")
+        private val VISA_CARD_EXPIRED_DIALOG_KEY = booleanPreferencesKey("visa_card_expired_dialog_key")
+        private val VOLATILE_DIALOG_KEY = booleanPreferencesKey("volatile_dialog_key")
+        private val NOT_SHOW_AGAIN_VERIFY_CRYPTO_ADDRESS = booleanPreferencesKey("not_show_again_verify_crypto_address")
+        private val CAMERA_PERMISSION_STATE_KEY = booleanPreferencesKey("camera_permission_state_key")
+        private val CRYPTO_ORIGIN_KEY = stringPreferencesKey("crypto_origin_key")
+        private val ENABLE_CRYPTO_TRANSFER_KEY = booleanPreferencesKey("enable_crypto_transfer_key")
+        private val SMART_LIMITS = stringPreferencesKey("smart_limits")
     }
 }

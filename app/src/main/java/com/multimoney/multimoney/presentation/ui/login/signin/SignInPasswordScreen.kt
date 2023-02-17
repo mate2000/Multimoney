@@ -12,13 +12,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.fragment.app.FragmentActivity
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnCallCognitoSignIn
@@ -35,8 +38,10 @@ fun SignInWithPassword(
     focusManager: FocusManager,
     modifier: Modifier = Modifier,
     onForgotPasswordClick: () -> Unit,
-    onSignInWithBiometricLink: () -> Unit,
+    onSignInWithBiometricLink: () -> Unit
 ) {
+    val activity = LocalContext.current.findActivity() as FragmentActivity
+    val context = LocalContext.current
     Column(modifier) {
         CustomOutlinedTextField(
             value = viewModel.uiState.userPassword,
@@ -45,10 +50,11 @@ fun SignInWithPassword(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
             ),
-            keyboardActions = KeyboardActions(onDone =
-            {
-                focusManager.clearFocus()
-            }),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    focusManager.clearFocus()
+                }
+            ),
             labelText = stringResource(id = R.string.sign_in_label_password),
             isPassword = true,
             modifier = Modifier
@@ -89,7 +95,7 @@ fun SignInWithPassword(
             } else {
                 CustomCheckBox(
                     checked = viewModel.uiState.isFingerprintChecked,
-                    onCheckedChange = { viewModel.onUIEvent(OnFingerprintCheckedChanged(it, it)) },
+                    onCheckedChange = { viewModel.onUIEvent(OnFingerprintCheckedChanged(it, it, context.resources.configuration.locale.isO3Country)) },
                     text = stringResource(id = R.string.sign_in_activate_fingerprint),
                     modifier = Modifier
                         .padding(top = 51.dp)
@@ -100,7 +106,7 @@ fun SignInWithPassword(
         CustomButton(
             onClick = {
                 viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.LoginPassword)
-                viewModel.onUIEvent(OnCallCognitoSignIn)
+                viewModel.onUIEvent(OnCallCognitoSignIn(activity))
             },
             text = stringResource(id = R.string.sign_in),
             modifier = Modifier

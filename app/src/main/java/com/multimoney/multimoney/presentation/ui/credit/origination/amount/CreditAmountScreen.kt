@@ -44,14 +44,13 @@ import com.multimoney.multimoney.presentation.theme.PoppinsFontFamily
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.BaseEvent.OnOpenConditionOfCreditDialog
-import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.CURRENCY_SEPARATOR
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.ID_PROMOTION
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.SLIDER_TOTAL
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.TERMS_AND_CONDITIONS_CURRENT_FLOW
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCallMutationSaveTermsAndConditionsCreditUseCase
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCurrencyIndexChanged
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnDisbursementValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnTermAndConditionCheckedChange
-import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCallMutationSaveTermsAndConditionsCreditUseCase
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.skeleton.CreditAmountScreenSkeleton
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.termandcondition.CreditTermsAndCondition
 import com.multimoney.multimoney.presentation.uielement.CurrencyAmountInput
@@ -61,7 +60,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomSlider
 import com.multimoney.multimoney.presentation.uielement.CustomToggleButton
 import com.multimoney.multimoney.presentation.uielement.Size.Large
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.transformation.CurrencyIntegerTransformation
+import com.multimoney.multimoney.presentation.util.transformation.formatMoney
 
 @Composable
 @Preview
@@ -100,6 +99,9 @@ fun CreditAmountScreen(
                             sharedViewModel.onUIEvent(
                                 CreditViewModel.UIEvent.OnNextStep
                             )
+                            if (sharedViewModel.crosseling) {
+                                sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnRestartCrosselingNewAccount)
+                            }
                         },
                         onLoadingValueChange = { isLoading ->
                             sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
@@ -213,10 +215,7 @@ fun CreditAmountScreen(
                     viewModel.uiState.currencyItems[viewModel.uiState.currencyIndex],
                     viewModel.uiState.progressFactor ?: 0.0
                 ),
-                customTransformation = CurrencyIntegerTransformation(
-                    viewModel.uiState.currencyItems[viewModel.uiState.currencyIndex],
-                    CURRENCY_SEPARATOR
-                ),
+                customTransformation = formatMoney(viewModel.uiState.currencyItems[viewModel.uiState.currencyIndex]),
                 onDebounceValidation = {
                     viewModel.onUIEvent(
                         CreditAmountViewModel.UIEvent.OnDisbursementValueChangeFinished(

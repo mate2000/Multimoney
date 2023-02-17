@@ -35,6 +35,8 @@ import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.CustomItemRow
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.capitalizedAllWords
+import com.multimoney.multimoney.presentation.util.formatPhoneNumber
 
 @Composable
 fun ProfileScreen(
@@ -71,9 +73,9 @@ fun ProfileContent(viewModel: ProfileViewModel = hiltViewModel()) {
         Column(Modifier.verticalScroll(rememberScrollState())) {
             viewModel.apply {
                 ProfileHeader(
-                    userName = uiState.userName.orEmpty(),
+                    userName = uiState.userName.orEmpty().capitalizedAllWords(),
                     email = uiState.email.orEmpty(),
-                    phoneNumber = uiState.phoneNumber.toString(),
+                    phoneNumber = formatPhoneNumber(uiState.phoneNumberWithCode, uiState.phoneNumber),
                     onUpdateClick = { onUIEvent(OnUpdateProfileClick) }
                 )
                 ProfileOptions(
@@ -141,15 +143,12 @@ fun ProfileOptions(
         modifier = Modifier.padding(start = 16.dp, end = 16.dp)
     ) {
         uiState.idBrand.apply {
-            // As per requirement, this option should be available only CR.
-            if (this == Brand.CostaRica.id) {
                 CustomItemRow(
                     title = stringResource(R.string.profile_my_accounts),
                     startIcon = R.drawable.ic_my_accounts,
                     endIcon = R.drawable.ic_right_chevron,
                     onClick = onMyAccountsClick
                 )
-            }
             // As per requirement, this option should be available only for SV and GT.
             if (this == Brand.ElSalvador.id || this == Brand.Guatemala.id) {
                 CustomItemRow(

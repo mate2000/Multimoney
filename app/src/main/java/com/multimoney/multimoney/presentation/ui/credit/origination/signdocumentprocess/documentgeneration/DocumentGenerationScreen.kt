@@ -20,15 +20,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextAlign.Companion
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.Companion.TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -40,50 +38,50 @@ import kotlinx.coroutines.flow.onEach
 @OptIn(FlowPreview::class)
 @Composable
 fun DocumentGenerationScreen(
-    viewModel: SignDocumentProcessViewModel,
-    icon: Int? = null,
-    title: Int? = null,
-    subtitle: Int? = null
+    onNavigateToHome: () -> Unit = {}
 ) {
     val openStepDebounce = remember { MutableStateFlow(true) }
     val openStepFlow: Flow<Boolean> = remember {
-        openStepDebounce.debounce(TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND)
-            .onEach { status ->
-                viewModel.onUIEvent(OnNavigateToHome)
-                flowOf(status)
-            }
+        openStepDebounce.debounce(TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND).onEach { status ->
+            onNavigateToHome()
+            flowOf(status)
+        }
     }
 
+    DocumentGenerationContent()
+
+    // this is required to execute the debounce
+    val openStepFlowValue by openStepFlow.collectAsState(false)
+}
+
+@Preview
+@Composable
+fun DocumentGenerationContent() {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MultimoneyTheme.colors.background)
-            .padding(horizontal = 16.dp),
+        modifier = Modifier.fillMaxSize().background(MultimoneyTheme.colors.background).padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxHeight(0.80f),
+            modifier = Modifier.fillMaxHeight(0.80f),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CustomImage(drawableResource = icon ?: drawable.ic_frame)
+            CustomImage(modifier = Modifier.size(48.dp, 48.dp), drawableResource = drawable.ic_logo_multimoney)
             Text(
-                text = stringResource(id = title ?: string.document_generation_title),
+                text = stringResource(id = string.document_generation_title),
                 modifier = Modifier.padding(top = 24.dp),
                 style = Typography.h5.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 28.sp
+                    fontWeight = FontWeight.SemiBold
                 ),
-                color = MultimoneyTheme.colors.text,
+                color = MultimoneyTheme.colors.titleText,
                 textAlign = TextAlign.Center
             )
             Text(
-                text = stringResource(id = subtitle ?: string.document_generation_subtitle),
+                text = stringResource(id = string.document_generation_subtitle),
                 modifier = Modifier.padding(top = 8.dp),
                 style = Typography.body1,
-                color = MultimoneyTheme.colors.text,
+                color = MultimoneyTheme.colors.subTitleText,
                 textAlign = Companion.Center
             )
         }
@@ -93,8 +91,7 @@ fun DocumentGenerationScreen(
         ) {
             CircularProgressIndicator(
                 modifier = Modifier.size(32.dp),
-                color =
-                MultimoneyTheme.colors.primary
+                color = MultimoneyTheme.colors.primary
             )
             Text(
                 text = stringResource(id = string.document_generation_info),
@@ -104,7 +101,4 @@ fun DocumentGenerationScreen(
             )
         }
     }
-
-    // this is required to execute the debounce
-    val openStepFlowValue by openStepFlow.collectAsState(false)
 }

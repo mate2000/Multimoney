@@ -1,0 +1,190 @@
+package com.multimoney.multimoney.presentation.ui.smart.common.editamount
+
+import androidx.annotation.StringRes
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.uielement.CurrencyAmountInput
+import com.multimoney.multimoney.presentation.uielement.CustomButton
+import com.multimoney.multimoney.presentation.uielement.CustomButtonType
+import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
+import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.uielement.VoucherCurrencyExchangeInfo
+import com.multimoney.multimoney.presentation.util.addTextStyleToTextPortion
+import com.multimoney.multimoney.presentation.util.transformation.formatDecimalMoney
+
+@Composable
+fun SmartAmountBody(
+    @StringRes titleId: Int,
+    originAccountSubtitle: String? = null,
+    currentAmount: String?,
+    amountErrorMessage: String? = null,
+    isAmountError: Boolean? = null,
+    @StringRes amountPlaceHolderId: Int,
+    suggestions: @Composable () -> Unit = {},
+    onAmountChange: (String) -> Unit,
+    onDebounceValidation: (String) -> Unit,
+    currency: String,
+    shouldDisplayExchange: Boolean,
+    exchangeRate: String = "",
+    convertedTotal: String = "",
+    onContinueClick: () -> Unit,
+    enableButton: Boolean,
+    motive: String? = null,
+    onMotiveChange: (String) -> Unit = {},
+    @StringRes disclaimerResource: Int? = null
+) {
+    val focusManager = LocalFocusManager.current
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .background(MultimoneyTheme.colors.background)
+            .padding(start = 16.dp, end = 16.dp, bottom = 24.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column {
+            Text(
+                modifier = Modifier.padding(top = 30.dp),
+                text = stringResource(id = titleId),
+                style = Typography.h6.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    color = MultimoneyTheme.colors.text
+                ),
+                textAlign = TextAlign.Left
+            )
+            originAccountSubtitle?.let {
+                Text(
+                    modifier = Modifier.padding(top = 16.dp),
+                    text = stringResource(
+                        id = R.string.smart_iban_transfer_from_account,
+                        originAccountSubtitle
+                    ).addTextStyleToTextPortion(
+                        originAccountSubtitle,
+                        Typography.body2.copy(fontWeight = FontWeight.SemiBold)
+                    ),
+                    style = Typography.body2,
+                    color = MultimoneyTheme.colors.smartCardTrending
+                )
+            }
+            CurrencyAmountInput(
+                modifier = Modifier.padding(top = 24.dp),
+                textStyle = Typography.h4.copy(
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.W700
+                ),
+                value = currentAmount,
+                placeHolder = stringResource(id = amountPlaceHolderId),
+                onValueChange = { onAmountChange(it) },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = if (motive != null) {
+                        ImeAction.Next
+                    } else {
+                        ImeAction.Done
+                    }
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus()
+                    },
+                    onNext = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    }
+                ),
+                isRequired = true,
+                customTransformation = formatDecimalMoney(currency),
+                onDebounceValidation = onDebounceValidation,
+                errorMessage = amountErrorMessage,
+                isError = isAmountError == true
+            )
+            suggestions()
+            if (shouldDisplayExchange) {
+                Spacer(modifier = Modifier.height(24.dp))
+                VoucherCurrencyExchangeInfo(
+                    displayIcon = false,
+                    mainRowAlignment = Arrangement.SpaceAround,
+                    textColumnAlign = Alignment.CenterHorizontally,
+                    leftTitleResource = R.string.payment_amount_bottom_sheet_exchange_type,
+                    rightTitleResource = R.string.smart_saving_total_to_deposit,
+                    exchangeRateText = exchangeRate,
+                    convertedAmountText = convertedTotal
+                )
+            }
+            motive?.let {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    modifier = Modifier.padding(bottom = 4.dp),
+                    text = stringResource(id = R.string.smart_iban_transfer_motive_label),
+                    style = Typography.body2,
+                    color = MultimoneyTheme.colors.text
+                )
+                CustomOutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    value = motive,
+                    onValueChange = {
+                        onMotiveChange(it)
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { focusManager.clearFocus() }
+                    )
+                )
+            }
+            disclaimerResource?.let {
+                CustomInformativeText(
+                    modifier = Modifier
+                        .padding(bottom = 32.dp)
+                        .fillMaxWidth(),
+                    leadingIcon = R.drawable.ic_information,
+                    text = stringResource(id = disclaimerResource),
+                    textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.titleText),
+                    alignmentVertical = Alignment.Top,
+                    iconSize = 20.dp
+                )
+            }
+        }
+        CustomButton(
+            modifier = Modifier
+                .height(48.dp)
+                .fillMaxWidth(),
+            onClick = {
+                focusManager.clearFocus()
+                onContinueClick()
+            },
+            text = stringResource(id = R.string.button_continue),
+            buttonType = CustomButtonType.PrimaryPrimary,
+            enable = enableButton
+        )
+    }
+}

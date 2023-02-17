@@ -30,6 +30,7 @@ query ValidateUserStatus($pkUser: Long!, $identification: String!, $user: String
                 cTA
                 link
                 display
+                workFlow
             }
         }
         infoCredit {
@@ -46,6 +47,7 @@ query ValidateUserStatus($pkUser: Long!, $identification: String!, $user: String
                     symbolCurrency
                 }
                 idPrint
+                crosseling
                 selectedAmount
                 statusFirm
                 currentStep
@@ -56,6 +58,7 @@ query ValidateUserStatus($pkUser: Long!, $identification: String!, $user: String
                 cTA
                 link
                 display
+                workFlow
             }
         }
         infoVirtualCard {
@@ -76,6 +79,7 @@ query ValidateUserStatus($pkUser: Long!, $identification: String!, $user: String
                 cTA
                 link
                 display
+                workFlow
             }
         }
         infoCrypto {
@@ -88,6 +92,7 @@ query ValidateUserStatus($pkUser: Long!, $identification: String!, $user: String
                 cTA
                 link
                 display
+                workFlow
             }
         }
     }

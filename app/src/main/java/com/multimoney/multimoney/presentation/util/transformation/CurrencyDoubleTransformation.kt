@@ -47,7 +47,7 @@ class CurrencyDoubleTransformation(val currency: String, val separator: Char) : 
 
             override fun transformedToOriginal(offset: Int): Int {
                 if (originalText.isValidAmount()) {
-                    return formattedText.length
+                    return text.length
                 }
                 return offset
             }

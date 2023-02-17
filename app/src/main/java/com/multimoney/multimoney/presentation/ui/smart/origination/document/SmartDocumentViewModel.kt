@@ -4,7 +4,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.data.util.catalog.Gender
-import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelTwoUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryCivilStatusUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryProfessionUseCase
@@ -19,7 +18,6 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnBirthDateValueChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnCallQueryAddressLevelTwoUseCase
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnCallQueryCivilStatusUseCase
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnCallQueryNationalitiesUseCase
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnCallQueryProfessionUseCase
@@ -27,27 +25,31 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.document.Smar
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnExpirationDateValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnGenderChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnLoadCurrentStepData
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnProfessionChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnValidateForm
+import com.multimoney.multimoney.presentation.util.BAR
+import com.multimoney.multimoney.presentation.util.DAY_MONTH_YEAR_PATTERN
+import com.multimoney.multimoney.presentation.util.DAY_MONTH_YEAR_PATTERN_BAR_FORMAT
+import com.multimoney.multimoney.presentation.util.HYPHEN
 import com.multimoney.multimoney.presentation.util.ISO_8601_API_FORMAT_PATTERN
-import com.multimoney.multimoney.presentation.util.YEAR_MONTH_DAY_PATTERN
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import com.multimoney.multimoney.presentation.util.onBirthDateAgeValidation
 import com.multimoney.multimoney.presentation.util.onExpirationDateValidation
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class SmartDocumentViewModel @Inject constructor(
     private val queryCivilStatusUseCase: QueryCivilStatusUseCase,
     private val queryProfessionUseCase: QueryProfessionUseCase,
     private val queryNationalitiesUseCase: QueryNationalitiesUseCase,
-    private val queryAddressLevelTwoUseCase: QueryAddressLevelTwoUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -63,24 +65,27 @@ class SmartDocumentViewModel @Inject constructor(
             getFormatDateByString(
                 it,
                 ISO_8601_API_FORMAT_PATTERN,
-                YEAR_MONTH_DAY_PATTERN
+                DAY_MONTH_YEAR_PATTERN_BAR_FORMAT
             )
         } ?: ""
         val expirationDate = accountSmartData?.expirationDate?.let {
             getFormatDateByString(
                 it,
                 ISO_8601_API_FORMAT_PATTERN,
-                YEAR_MONTH_DAY_PATTERN
+                DAY_MONTH_YEAR_PATTERN_BAR_FORMAT
             )
         } ?: ""
 
-        if (birthdate.isNotBlank()) onBirthDateValueChange(birthdate, LocalDate.parse(birthdate))
+        val formatter = DateTimeFormatter.ofPattern(DAY_MONTH_YEAR_PATTERN)
+        if (birthdate.isNotBlank()) onBirthDateValueChange(birthdate, LocalDate.parse(birthdate.replace(BAR, HYPHEN), formatter))
         if (expirationDate.isNotBlank()) onExpirationDateValueChange(expirationDate)
         onGenderChange(accountSmartData?.strGenre.orEmpty())
         onCivilStateChange(accountSmartData?.strMaritalStatus.orEmpty())
         onProfessionChange(accountSmartData?.stringProfessionType.orEmpty())
     }
 
+    // TODO: Currently this use case is not used,
+    //  remember to call this method from the view when you need to implement it.
     private fun callQueryNationalitiesUseCase(user: String, idBrand: Int) =
         executeUseCase {
             queryNationalitiesUseCase.invoke(
@@ -109,37 +114,6 @@ class SmartDocumentViewModel @Inject constructor(
                 }
             }
         }
-
-    private fun callQueryAddressLevelTwoUseCase(
-        user: String,
-        idBrand: Int,
-        idAddressLevelOne: String
-    ) = executeUseCase {
-        queryAddressLevelTwoUseCase.invoke(
-            user = user,
-            idBrand = idBrand,
-            idAddressLevelOne = idAddressLevelOne
-        ).collectLatest { result ->
-            result.onSuccess { addresses ->
-                uiState = uiState.copy(addressLevelTwoList = addresses?.addresses ?: emptyList())
-                onUIEvent(OnLoadingValueChange(false))
-            }
-            result.onFailure {
-                onUIEvent(
-                    OnFailureWithDialog(
-                        isLoading = false,
-                        openDialog = DialogParameters(
-                            description = it.getError() ?: "",
-                            isActive = mutableStateOf(true)
-                        )
-                    )
-                )
-            }
-            result.onLoading {
-                onUIEvent(OnLoadingValueChange(true))
-            }
-        }
-    }
 
     private fun callQueryCivilStatusUseCase(user: String, idBrand: Int) =
         executeUseCase {
@@ -197,7 +171,8 @@ class SmartDocumentViewModel @Inject constructor(
         }
 
     private fun onExpirationDateValueChange(expirationDate: String) {
-        if (onExpirationDateValidation(expirationDate)) {
+        val formatter = DateTimeFormatter.ofPattern(DAY_MONTH_YEAR_PATTERN)
+        if (onExpirationDateValidation(expirationDate.replace(BAR, HYPHEN), formatter)) {
             uiState = uiState.copy(expirationDate = expirationDate)
             validateForm()
         }
@@ -238,16 +213,28 @@ class SmartDocumentViewModel @Inject constructor(
         emitBaseEvent(
             BaseEvent.OnFormValidateCompleted(
                 isFormValid = uiState.gender.isNotBlank() &&
-                    uiState.birthdate.isNotBlank() &&
-                    uiState.civilState.isNotBlank() &&
-                    uiState.profession.isNotBlank() &&
-                    uiState.expirationDate.isNotBlank() && !uiState.birthdateErrorStatus
+                        uiState.birthdate.isNotBlank() &&
+                        uiState.civilState.isNotBlank() &&
+                        uiState.profession.isNotBlank() &&
+                        uiState.expirationDate.isNotBlank() && !uiState.birthdateErrorStatus
             )
         )
     }
 
     private fun onNextActionClick(nextStepAction: () -> Unit) {
         nextStepAction()
+    }
+
+    private fun onFailureWithDialog(isLoading: Boolean, openDialog: DialogParameters) {
+        emitBaseEvent(
+            BaseEvent.OnFailureWithDialog(isLoading, openDialog)
+        )
+    }
+
+    private fun onLoadingValueChange(isLoading: Boolean) {
+        emitBaseEvent(
+            BaseEvent.OnLoadingValueChange(isLoading)
+        )
     }
 
     data class UIState(
@@ -280,11 +267,6 @@ class SmartDocumentViewModel @Inject constructor(
                 event.user,
                 event.idBrand
             )
-            is OnCallQueryAddressLevelTwoUseCase -> callQueryAddressLevelTwoUseCase(
-                event.user,
-                event.idBrand,
-                event.pkUser
-            )
             is OnCallQueryCivilStatusUseCase -> callQueryCivilStatusUseCase(
                 event.user,
                 event.idBrand
@@ -292,7 +274,9 @@ class SmartDocumentViewModel @Inject constructor(
             is OnCallQueryProfessionUseCase -> callQueryProfessionUseCase(event.user, event.idBrand)
             is OnValidateForm -> validateForm()
             is OnNextActionClick -> onNextActionClick(event.nextStepAction)
-            is UIEvent.OnLoadCurrentStepData -> onLoadCurrentStepData(event.accountSmartData)
+            is OnLoadCurrentStepData -> onLoadCurrentStepData(event.accountSmartData)
+            is OnFailureWithDialog -> onFailureWithDialog(event.isLoading, event.openDialog)
+            is OnLoadingValueChange -> onLoadingValueChange(event.isLoading)
         }
     }
 
@@ -309,11 +293,6 @@ class SmartDocumentViewModel @Inject constructor(
 
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
         data class OnCallQueryNationalitiesUseCase(val user: String, val idBrand: Int) : UIEvent()
-        data class OnCallQueryAddressLevelTwoUseCase(
-            val user: String,
-            val pkUser: String,
-            val idBrand: Int
-        ) : UIEvent()
 
         data class OnCallQueryCivilStatusUseCase(val user: String, val idBrand: Int) : UIEvent()
         data class OnCallQueryProfessionUseCase(val user: String, val idBrand: Int) : UIEvent()
@@ -326,5 +305,11 @@ class SmartDocumentViewModel @Inject constructor(
 
     sealed class BaseEvent {
         data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()
+        data class OnFailureWithDialog(
+            val isLoading: Boolean,
+            val openDialog: DialogParameters,
+        ) : BaseEvent()
+
+        data class OnLoadingValueChange(val isLoading: Boolean) : BaseEvent()
     }
 }

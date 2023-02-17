@@ -1,0 +1,33 @@
+query GetBalanceCryptoAccount(
+    $user: String!,
+    $idBrand: Int!,
+    $identification: String!,
+    $status: Int!,
+)
+{
+    balanceCryptoAccount(balanceCryptoInput: {
+        user:$user,
+        idBrand:$idBrand,
+        identification:$identification,
+        status:$status
+    }) {
+        status,
+        message,
+        outOfService,
+        globalBalance,
+        investedBalance,
+        percentageInvested,
+        items {
+            asset,
+            available,
+            trading,
+            descriptionCurrency,
+            balanceDollars,
+            investedBalanceCurrency,
+            percentageInvestedCurrency,
+            priceOfTheDay,
+            url_image,
+            crypto_network
+        }
+    }
+}

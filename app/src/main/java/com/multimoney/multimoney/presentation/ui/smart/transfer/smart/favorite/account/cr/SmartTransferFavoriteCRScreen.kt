@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account
+package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.cr
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -20,13 +20,13 @@ import com.multimoney.domain.model.accountsmart.LocalSACAccount
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.SmartTransferFavoriteCRViewModel.UIEvent.GetFavoritesLists
-import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.SmartTransferFavoriteCRViewModel.UIEvent.OnACHFavoriteClick
-import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.SmartTransferFavoriteCRViewModel.UIEvent.OnACHOptionsClick
-import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.SmartTransferFavoriteCRViewModel.UIEvent.OnLocalFavoriteClick
-import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.SmartTransferFavoriteCRViewModel.UIEvent.OnLocalOptionsClick
-import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.SmartTransferFavoriteCRViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.SmartTransferFavoriteCRViewModel.UIEvent.OnNavigateToHome
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.cr.SmartTransferFavoriteCRViewModel.UIEvent.GetFavoritesLists
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.cr.SmartTransferFavoriteCRViewModel.UIEvent.OnACHFavoriteClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.cr.SmartTransferFavoriteCRViewModel.UIEvent.OnACHOptionsClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.cr.SmartTransferFavoriteCRViewModel.UIEvent.OnLocalFavoriteClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.cr.SmartTransferFavoriteCRViewModel.UIEvent.OnLocalOptionsClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.cr.SmartTransferFavoriteCRViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.cr.SmartTransferFavoriteCRViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
@@ -52,7 +52,6 @@ fun SmartTransferFavoriteCRScreen(
             .fillMaxSize()
     ) {
         TopNavBar(
-            isRightButtonVisible = true,
             onRightButtonClick = { viewModel.onUIEvent(OnNavigateToHome) },
             onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) }
         )

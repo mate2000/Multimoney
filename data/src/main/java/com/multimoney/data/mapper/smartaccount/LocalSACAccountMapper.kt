@@ -11,6 +11,7 @@ private fun ListSavedSACAccountsQuery.Result.mapToDomainModel() = LocalSACAccoun
     accountNumber = accountNumber,
     accountName = accountName,
     email = email,
+    phoneNumber = phoneNumber,
     idCurrency = idCurrencyAccount,
     currency = currencyAccount,
     ibanNumber = ibanNumber,

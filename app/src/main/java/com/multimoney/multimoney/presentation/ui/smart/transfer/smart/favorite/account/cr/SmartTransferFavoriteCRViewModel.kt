@@ -1,12 +1,14 @@
-package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account
+package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.cr
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteGetUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteListUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryListSavedSACAccountsUseCase
 import com.multimoney.domain.model.accountsmart.ACHAccount
+import com.multimoney.domain.model.accountsmart.IbanAccountID
 import com.multimoney.domain.model.accountsmart.LocalSACAccount
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.util.error.HttpError
@@ -19,8 +21,10 @@ import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -29,8 +33,9 @@ import javax.inject.Inject
 class SmartTransferFavoriteCRViewModel @Inject constructor(
     private val queryListSavedSACAccountsUseCase: QueryListSavedSACAccountsUseCase,
     private val queryACHTransferFavoriteListUseCase: QueryACHTransferFavoriteListUseCase,
+    private val queryACHTransferFavoriteGetUseCase: QueryACHTransferFavoriteGetUseCase,
     savedStateHandle: SavedStateHandle
-): BaseViewModel(true) {
+) : BaseViewModel(true) {
 
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -89,8 +94,8 @@ class SmartTransferFavoriteCRViewModel @Inject constructor(
                     uiState =
                         uiState.copy(
                             isLoading = false,
-                             localFavoriteList = accountList.sortedBy { localAccount ->
-                                 localAccount.accountName.orEmpty()
+                            localFavoriteList = accountList.sortedBy { localAccount ->
+                                localAccount.accountName.orEmpty()
                             }
                         )
                 }
@@ -125,19 +130,59 @@ class SmartTransferFavoriteCRViewModel @Inject constructor(
     }
 
     private fun onShowOptionsForACHClick(selectedACHFavorite: ACHAccount?) {
-        // TODO REV-3466
+        // TODO REV-346
     }
 
     private fun onShowOptionsForLocalClick(selectedLocalFavorite: LocalSACAccount?) {
-        // TODO REV-3466
+        // TODO REV-346
     }
 
     private fun onACHFavoriteClick(selectedAccount: ACHAccount?) {
-//      TODO REV-3654
+        executeUseCase {
+            queryACHTransferFavoriteGetUseCase.invoke(
+                user,
+                idBrand,
+                selectedAccount?.accountForAchTransferId ?: 0
+            ).collectLatest { result ->
+                result.onSuccess { achAccountFull ->
+                    val ibanAccount = encodeData(
+                        IbanAccountID(
+                            bank = achAccountFull?.destinationBankDescription,
+                            clientIdentification = achAccountFull?.identificationNumberAccount,
+                            sinpeAccount = achAccountFull?.accountNumber,
+                            currencyId = achAccountFull?.destinationAccountCurrencyId,
+                            nameAccount = achAccountFull?.titularName
+                        )
+                    )
+                    uiState = uiState.copy(isLoading = false)
+                    navigateTo(
+                        "${Screen.SmartTransferAmountScreen.baseRoute}/" +
+                                "${encodeData(smartAccount)}/$ibanAccount/" +
+                                "${SmartTransferTypes.SmartToIban.id}/${Screen.SmartTransferFavoriteAccountCRScreen.baseRoute}"
+                    )
+                }
+                result.onFailure { onFailure(it) }
+                result.onLoading { uiState = uiState.copy(isLoading = true) }
+            }
+        }
     }
 
     private fun onLocalFavoriteClick(selectedAccount: LocalSACAccount?) {
-//      TODO REV-3654
+        val ibanAccount = encodeData(
+            IbanAccountID(
+                bank = null,
+                clientIdentification = identification,
+                sinpeAccount = selectedAccount?.ibanNumber,
+                currencyId = selectedAccount?.idCurrency,
+                nameAccount = selectedAccount?.accountName
+            )
+        )
+        uiState = uiState.copy(isLoading = false)
+        navigateTo(
+            "${Screen.SmartTransferAmountScreen.baseRoute}/" +
+                    "${encodeData(smartAccount)}/$ibanAccount/" +
+                    "${SmartTransferTypes.SmartToIban.id}/${Screen.SmartTransferFavoriteAccountCRScreen.baseRoute}"
+        )
     }
 
     private fun onNavigateToHome() {

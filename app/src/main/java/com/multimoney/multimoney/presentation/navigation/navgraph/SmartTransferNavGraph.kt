@@ -31,7 +31,7 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.smartaccoun
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.addaccount.SmartAddAccountScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.amount.OwnTransferAmountScreen
-import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.SmartTransferFavoriteCRScreen
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.cr.SmartTransferFavoriteCRScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.SmartTransferFavoriteScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontactamount.MyContactsTransferAmountScreen
@@ -407,6 +407,11 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(
                         HOME_STATE,
                         it.homeState
+                    )
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
                     )
                 }
             )

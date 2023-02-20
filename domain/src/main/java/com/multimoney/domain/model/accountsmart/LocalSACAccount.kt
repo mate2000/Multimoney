@@ -6,6 +6,7 @@ data class LocalSACAccount(
     val idAccountType: Int?,
     val accountNumber: String?,
     val accountName: String?,
+    val phoneNumber: String?,
     val email: String?,
     val idCurrency: Int?,
     val currency: String?,

@@ -990,7 +990,7 @@
     <string name="smart_card_monthly_profit_label" translatable="false">%1$s %2$s ganancia %3$s</string>
 
     <!-- Smart Account -->
-    <string name="smart_account_document_title" translatable="false">Contános sobre vos</string>
+    <string name="smart_account_document_title" translatable="false">Cuéntanos sobre ti</string>
     <string name="smart_account_date_placeholder" translatable="false">00 | 00 | 0000</string>
     <string name="smart_account_document_birthdate_title" translatable="false">Fecha de nacimiento</string>
     <string name="smart_account_document_birthdate_age_error" translatable="false">Debes ser mayor de 18 años</string>

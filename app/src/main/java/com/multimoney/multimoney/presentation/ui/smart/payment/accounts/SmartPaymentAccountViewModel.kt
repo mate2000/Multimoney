@@ -4,9 +4,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.domain.interaction.accountsmart.QueryListSinpeAccountUseCase
 import com.multimoney.domain.model.accountsmart.IbanAccountID
 import com.multimoney.domain.model.accountsmart.SinpeAccount
 import com.multimoney.domain.model.accountsmart.SmartAccountID
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
@@ -20,15 +23,18 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountViewModel.UIEvent.OnAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountViewModel.UIEvent.OnAddAccountClick
+import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountViewModel.UIEvent.OnInitializeAccounts
 import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @HiltViewModel
 class SmartPaymentAccountViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
+    private val queryListSinpeAccountUseCaseImpl: QueryListSinpeAccountUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -52,11 +58,40 @@ class SmartPaymentAccountViewModel @Inject constructor(
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: ""
         smartAccount = savedStateHandle[SMART_ACCOUNT]
         previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
-        uiState = uiState.copy(
-            sinpeAccountList = savedStateHandle.get<Array<SinpeAccount>>(SMART_PAYMENT_ACCOUNTS)
-                ?.toList()
-        )
+        savedStateHandle.get<Array<SinpeAccount>>(SMART_PAYMENT_ACCOUNTS)?.let { accounts ->
+            uiState = uiState.copy(
+                sinpeAccountList = accounts.toList()
+            )
+        }
     }
+
+    private fun callQueryBalanceUseCase() =
+        executeUseCase {
+            queryListSinpeAccountUseCaseImpl.invoke(
+                user = user,
+                identification = identification ?: "",
+                idBrand = idBrand,
+                country = "",
+                idAccount = 0,
+                accountNumber = ""
+            ).collectLatest { result ->
+                result.onSuccess { accountList ->
+                    accountList?.data?.let { accounts ->
+                        uiState = uiState.copy(
+                            sinpeAccountList = accounts
+                        )
+                    }
+                }
+                result.onFailure {
+                    uiState = uiState.copy(
+                        openDialog = DialogParameters(
+                            description = it.getError().toString(),
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                }
+            }
+        }
 
     private fun onAddAccountClick() {
         navigateTo(
@@ -76,8 +111,8 @@ class SmartPaymentAccountViewModel @Inject constructor(
         )
         navigateTo(
             "${Screen.SmartPaymentSavingAmountCR.baseRoute}/" +
-                "${Screen.SmartPaymentAccountScreenCR.baseRoute}/" +
-                "$ibanAccount/${encodeData(smartAccount)}/${SmartTransferTypes.IbanToSmart.id}"
+                    "${Screen.SmartPaymentAccountScreenCR.baseRoute}/" +
+                    "$ibanAccount/${encodeData(smartAccount)}/${SmartTransferTypes.IbanToSmart.id}"
         )
     }
 
@@ -90,7 +125,7 @@ class SmartPaymentAccountViewModel @Inject constructor(
     }
 
     data class UIState(
-        val sinpeAccountList: List<SinpeAccount>? = listOf(),
+        val sinpeAccountList: List<SinpeAccount?> = listOf(),
         val openDialog: DialogParameters = DialogParameters(),
         var isLoading: Boolean = false
     )
@@ -100,10 +135,12 @@ class SmartPaymentAccountViewModel @Inject constructor(
             is OnAddAccountClick -> onAddAccountClick()
             is OnNavigateBack -> onNavigateBack()
             is OnAccountClick -> onAccountClick(uiEvent.account)
+            OnInitializeAccounts -> callQueryBalanceUseCase()
         }
     }
 
     sealed class UIEvent {
+        object OnInitializeAccounts : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnAddAccountClick : UIEvent()
         data class OnAccountClick(val account: SinpeAccount?) : UIEvent()

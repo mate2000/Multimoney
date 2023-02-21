@@ -22,7 +22,6 @@ import com.multimoney.multimoney.presentation.util.calculateQuote
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.format
-import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlaces
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 import com.multimoney.multimoney.util.CryptoTimerHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -101,7 +100,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             )
         },
         onFinished = {
-            updateDataWithNewExchangeRate()
+            updateUiWithNewPricesAndCommissions()
             if (idCurrencyAccount == CurrencyType.Colon.id) {
                 getExchangeRate()
             }
@@ -120,14 +119,14 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             )
         },
         onFinished = {
-            updateDataWithNewExchangeRate()
+            updateUiWithNewPricesAndCommissions()
             if (idCurrencyAccount == CurrencyType.Colon.id) {
                 getExchangeRate()
             }
         }
     )
 
-    private fun updateDataWithNewExchangeRate(): Unit = executeUseCase {
+    private fun updateUiWithNewPricesAndCommissions(): Unit = executeUseCase {
         getPriceQuoteAndCommissionsUseCase.invoke(
             asset = asset,
             crypto_network = cryptoNetWork,
@@ -187,6 +186,8 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                     this.smartAccountAvailableBalance = exchangeRate?.convertedAmount ?: 0.0
                 }
                 result.onFailure {
+                    timer.stopTimer()
+                    confirmationTimer.stopTimer()
                     this.smartAccountAvailableBalance = 0.0
                     onFailure()
                 }
@@ -231,28 +232,38 @@ class BuyCurrencyScreenViewModel @Inject constructor(
 
 
         when {
-            amount.isEmpty() -> isError(isError = true)
+            amount.isEmpty() -> isError(isError = true, focusError = false)
             quoteAmount < MINIMUM_AMOUNT_ALLOWED -> isError(
-                errorMessage = R.string.crypto_purchase_flow_error_minimum_amount, isError = true
+                errorMessage = R.string.crypto_purchase_flow_error_minimum_amount,
+                isError = true,
+                focusError = true
             )
             quoteAmount >= smartAccountAvailableBalance -> isError(
                 errorMessage = R.string.crypto_purchase_flow_error_available_amount,
                 arg = smartAccountAvailableBalance.toCurrencyFormat(),
-                isError = true
+                isError = true,
+                focusError = true
             )
             amountPlusFee >= smartAccountAvailableBalance -> isError(
                 errorMessage = R.string.crypto_purchase_flow_error_available_amount_commission,
-                isError = true
+                isError = true,
+                focusError = true
             )
             else -> isError()
         }
     }
 
     private fun isError(
-        @StringRes errorMessage: Int = R.string.empty, arg: Any = Any(), isError: Boolean = false
+        @StringRes errorMessage: Int = R.string.empty,
+        arg: Any = Any(),
+        isError: Boolean = false,
+        focusError: Boolean = false
     ) {
         uiState = uiState.copy(
-            error = errorMessage, errorMessageArg = arg, isError = isError
+            error = errorMessage,
+            errorMessageArg = arg,
+            isError = isError,
+            focusError = focusError
         )
     }
 
@@ -269,11 +280,11 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 taxAmount = uiState.pricesQuoteAndCommissions?.taxAmount ?: 0.0,
                 exchangeRate = if (idCurrencyAccount == CurrencyType.Dollar.id) 1.0 else uiState.exchangeRate,
                 quoteId = uiState.pricesQuoteAndCommissions?.quote_id ?: "",
-                quoteAmount = uiState.quoteAmount.value.ifEmpty {
-                    uiState.baseAmount.value.ifEmpty {
-                        DEFAULT_BASE_AMOUNT_STRING
-                    }.toDouble().times(uiState.pricesQuoteAndCommissions?.price ?: 0.0)
-                }.toString().toDouble().roundToTwoDecimalPlaces().toDouble(),
+                quoteAmount = calculateQuote(
+                    quoteAmount = uiState.quoteAmount.value,
+                    baseAmount = uiState.baseAmount.value,
+                    price = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER,
+                ),
                 fee = uiState.pricesQuoteAndCommissions?.fee?.toDouble() ?: 0.0,
                 internalFee = uiState.pricesQuoteAndCommissions?.internal_fee ?: 0.0,
                 totalFee = uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
@@ -356,7 +367,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                     uiState.failureAction()
                 },
                 positiveAction = {
-                    updateDataWithNewExchangeRate()
+                    updateUiWithNewPricesAndCommissions()
                     if (idCurrencyAccount == CurrencyType.Colon.id) {
                         convertColonesToDollars(smartAccountAvailableBalance)
                         getExchangeRate()
@@ -393,6 +404,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         val openDialog: DialogParameters = DialogParameters(),
         val failureAction: () -> Unit = {},
         //** validations
+        val focusError: Boolean = false,
         val isError: Boolean = false,
         @StringRes val error: Int = R.string.empty,
         val errorMessageArg: Any = Any(),
@@ -406,7 +418,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is UIEvent.OnGetQuoteAndCommissions -> updateDataWithNewExchangeRate()
+            is UIEvent.OnGetQuoteAndCommissions -> updateUiWithNewPricesAndCommissions()
             UIEvent.OnPurchaseCryptoCurrency -> purchaseCryptoCurrency()
             is UIEvent.OnSetUserData -> onSetUserData(
                 pkUser = event.pkUser,

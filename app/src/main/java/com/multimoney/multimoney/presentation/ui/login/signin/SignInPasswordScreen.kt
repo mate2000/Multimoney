@@ -41,6 +41,7 @@ fun SignInWithPassword(
     onSignInWithBiometricLink: () -> Unit
 ) {
     val activity = LocalContext.current.findActivity() as FragmentActivity
+    val context = LocalContext.current
     Column(modifier) {
         CustomOutlinedTextField(
             value = viewModel.uiState.userPassword,
@@ -94,7 +95,7 @@ fun SignInWithPassword(
             } else {
                 CustomCheckBox(
                     checked = viewModel.uiState.isFingerprintChecked,
-                    onCheckedChange = { viewModel.onUIEvent(OnFingerprintCheckedChanged(it, it)) },
+                    onCheckedChange = { viewModel.onUIEvent(OnFingerprintCheckedChanged(it, it, context.resources.configuration.locale.isO3Country)) },
                     text = stringResource(id = R.string.sign_in_activate_fingerprint),
                     modifier = Modifier
                         .padding(top = 51.dp)

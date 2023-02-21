@@ -17,6 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.BuyCryptoStep
 import com.multimoney.data.util.catalog.PurchaseCryptoSteps
+import com.multimoney.domain.model.accountsmart.SmartAccountSmall
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.BuyCurrencyScreen
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.listofcurrency.ListCryptoCurrenciesScreen
@@ -35,12 +36,16 @@ fun PurchaseCryptoFlow(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
+    smartAccounts: List<SmartAccountSmall> = emptyList(),
     viewModel: PurchaseCryptoSharedViewModel = hiltViewModel()
 ) {
     val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(true) {
+        viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnSetSmartAccounts(
+            accounts = smartAccounts
+        ))
         viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnGetUserInfo)
         viewModel.executeNavigation(
             onNavigate = onNavigate,
@@ -64,8 +69,8 @@ fun PurchaseCryptoFlow(
     ) {
         Column {
             TopNavBar(
-                isLeftButtonVisible = viewModel.uiState.currentStepType != BuyCryptoStep.LOADING_SCREEN && viewModel.uiState.currentStepType != BuyCryptoStep.PURCHASE_VOUCHER,
-                isRightButtonVisible = viewModel.uiState.currentStepType != BuyCryptoStep.LOADING_SCREEN && viewModel.uiState.currentStepType != BuyCryptoStep.SELECT_SMART_ACCOUNT,
+                isLeftButtonVisible = viewModel.uiState.currentStepType != BuyCryptoStep.LOADING_SCREEN && viewModel.uiState.currentStepType != BuyCryptoStep.PURCHASE_VOUCHER && viewModel.uiState.currentStepType != BuyCryptoStep.PURCHASE_FAILED,
+                isRightButtonVisible = viewModel.uiState.currentStepType != BuyCryptoStep.LOADING_SCREEN && viewModel.uiState.currentStepType != BuyCryptoStep.SELECT_SMART_ACCOUNT && viewModel.uiState.currentStepType != BuyCryptoStep.PURCHASE_FAILED,
                 onRightButtonClick = {
                     if (viewModel.uiState.currentStepType == BuyCryptoStep.PURCHASE_VOUCHER) {
                         viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNavigateHome)
@@ -116,7 +121,11 @@ fun PurchaseCryptoFlow(
 
     LoadingIndicator(viewModel.uiState.isLoading)
     BackHandler {
-        viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnCloseClick)
+        if (viewModel.uiState.currentStepType == BuyCryptoStep.PURCHASE_VOUCHER) {
+            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNavigateHome)
+        } else {
+            viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnCloseClick)
+        }
     }
 
     if (viewModel.uiState.openDialog.isActive.value) {

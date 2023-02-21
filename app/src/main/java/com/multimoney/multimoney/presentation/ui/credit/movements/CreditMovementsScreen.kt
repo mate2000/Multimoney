@@ -1,6 +1,11 @@
 package com.multimoney.multimoney.presentation.ui.credit.movements
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,12 +19,14 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -51,6 +58,23 @@ fun CreditMovementsScreen(
     viewModel: CreditMovementsViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+
+    var hasNotificationPermission = remember {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            mutableStateOf(
+                ContextCompat.checkSelfPermission(
+                    context, android.Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            )
+        } else mutableStateOf(true)
+    }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            hasNotificationPermission.value = isGranted
+            viewModel.onUIEvent(OnDownloadMovements)
+        })
 
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopBackStack = onPopBackStack)
@@ -139,7 +163,9 @@ fun CreditMovementsScreen(
                     .height(48.dp)
                     .fillMaxWidth(),
                 onClick = {
-                    viewModel.onUIEvent(OnDownloadMovements)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    } else viewModel.onUIEvent(OnDownloadMovements)
                 },
                 text = stringResource(id = R.string.credit_movements_download_button),
                 buttonType = CustomButtonType.PrimaryPrimary,

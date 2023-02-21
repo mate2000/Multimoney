@@ -14,9 +14,11 @@ import com.multimoney.domain.model.crypto.CryptoCurrencyNews
 import com.multimoney.domain.model.crypto.GetHistoricalClientBalance
 import com.multimoney.domain.model.crypto.GetHistoricalCurrencyPrices
 import com.multimoney.domain.model.crypto.GetListOfAvailableCryptoCoins
+import com.multimoney.domain.model.crypto.GetTransferFeeData
 import com.multimoney.domain.model.crypto.PricesQuoteAndCommissionData
 import com.multimoney.domain.model.crypto.SellCryptoCurrencyHQRData
 import com.multimoney.domain.model.crypto.ValidateDepositAddressResponse
+import com.multimoney.domain.model.crypto.SendCryptoToAddressData
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.CryptoRepository
@@ -234,6 +236,58 @@ class CryptoRepositoryImpl @Inject constructor(
             identification,
             market,
             address
+        ),
+        apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
+    )
+
+    override suspend fun getTransferCommission(
+        user: String,
+        idBrand: Int,
+        destinationAddress: String,
+        asset: String,
+        cryptoNetwork: String,
+        amount: Double
+    ): Flow<MultimoneyResult<GetTransferFeeData>> = fetchData(
+        apolloCall = graphqlApi.getTransferCommission(
+            user,
+            idBrand,
+            destinationAddress,
+            asset,
+            cryptoNetwork,
+            amount
+        ),
+        apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
+    )
+
+    override suspend fun sendCryptoToAddress(
+        pkUser: Int,
+        identification: String,
+        destinationAddress: String,
+        feeId: String,
+        asset: String,
+        market: String,
+        cryptoNetwork: String,
+        amount: Double,
+        fee: Double,
+        internalFee: Double,
+        taxAmount: Double,
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<SendCryptoToAddressData>> = fetchData(
+        apolloCall = graphqlApi.mutationSendCryptoToAddress(
+            pkUser,
+            identification,
+            destinationAddress,
+            feeId,
+            asset,
+            market,
+            cryptoNetwork,
+            amount,
+            fee,
+            internalFee,
+            taxAmount,
+            idBrand,
+            user
         ),
         apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
     )

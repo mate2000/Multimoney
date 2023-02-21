@@ -36,7 +36,7 @@ import com.multimoney.multimoney.presentation.theme.LocalMultimoneyColors
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoCurrencyMovementItem
-import com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail.CryptoCurrencyMovementsViewModel.Companion.TODAY_TEXT
+import com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail.WalletCryptoCurrencyDetailsViewModel.Companion.TODAY_TEXT
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.DateFilterDWMYSection
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.MarketCurrencyDetailsGraphic
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.selectaccount.ConfirmationBottomSheet
@@ -50,8 +50,8 @@ import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CurrencyMovementsScreen(
-    viewModel: CryptoCurrencyMovementsViewModel = hiltViewModel(),
+fun WalletCurrencyDetailsScreen(
+    viewModel: WalletCryptoCurrencyDetailsViewModel = hiltViewModel(),
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
@@ -64,40 +64,42 @@ fun CurrencyMovementsScreen(
             onNavigate = onNavigate,
             onPopAndNavigate = onPopAndNavigate
         )
-        viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnGetUserInfo)
-        viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnSetDateRange(FilterDateByDays.YESTERDAY.time))
-        viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnGetAssetHistory)
-        viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnGetMovements)
+        viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnGetUserInfo)
+        viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnSetDateRange(FilterDateByDays.YESTERDAY.time))
+        viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnGetAssetHistory)
+        viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnGetMovements)
     }
 
-    BackHandler { viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateBack) }
+    BackHandler { viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnNavigateBack) }
 
     CurrencyDetailContent(
         uiState = viewModel.uiState,
-        backPressed = { viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateBack) },
+        backPressed = { viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnNavigateBack) },
         onDateChanged = { dateSelected ->
             viewModel.onUIEvent(
-                CryptoCurrencyMovementsViewModel.UIEvent.OnSetDateRange(
+                WalletCryptoCurrencyDetailsViewModel.UIEvent.OnSetDateRange(
                     dateSelected
                 )
             )
         },
-        viewAllClick = { viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnViewAllMovements) },
+        viewAllClick = { viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnViewAllMovements) },
         buyCryptoClick = {
             if (viewModel.uiState.idBrand == Brand.ElSalvador.id) {
                 if (viewModel.uiState.shouldDisplayDisclaimer) {
-                    viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnShowDisclaimer)
+                    viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnShowDisclaimer)
                 } else {
-                    viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToSelectAccount)
+                    viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnNavigateToSelectAccount)
                 }
             } else {
-                viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToSelectAccount)
+                viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnNavigateToSelectAccount)
             }
         },
         sellCryptoClick = {
-            viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToSellCrypto) },
+            viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnNavigateToSellCrypto) },
         sendCryptoClick = {
-            viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToSendCrypto)
+            viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnNavigateToSendCrypto)},
+        giveCryptoClick = {
+            viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnNavigateToReceiveCrypto)
         }
     )
 
@@ -105,16 +107,16 @@ fun CurrencyMovementsScreen(
         modalBottomSheetState = viewModel.uiState.bottomSheetVisibleState,
         coroutineScope = coroutineScope,
         onCheckedChange = {
-            viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnDisclaimerChecked(it))
+            viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnDisclaimerChecked(it))
         },
         onContinueClicked = {
             viewModel.onUIEvent(
-                CryptoCurrencyMovementsViewModel.UIEvent.OnUpdateShouldShowDisclaimer(
+                WalletCryptoCurrencyDetailsViewModel.UIEvent.OnUpdateShouldShowDisclaimer(
                     viewModel.uiState.dontShowAgainChecked
                 )
             )
-            viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnHideDisclaimer)
-            viewModel.onUIEvent(CryptoCurrencyMovementsViewModel.UIEvent.OnNavigateToSelectAccount)
+            viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnHideDisclaimer)
+            viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnNavigateToSelectAccount)
 
         },
         checked = viewModel.uiState.dontShowAgainChecked
@@ -123,13 +125,14 @@ fun CurrencyMovementsScreen(
 
 @Composable
 fun CurrencyDetailContent(
-    uiState: CryptoCurrencyMovementsViewModel.UiState,
+    uiState: WalletCryptoCurrencyDetailsViewModel.UiState,
     backPressed: () -> Unit,
     onDateChanged: (Long) -> Unit,
     viewAllClick: () -> Unit,
     buyCryptoClick: () -> Unit,
     sendCryptoClick: () -> Unit,
-    sellCryptoClick: () -> Unit
+    sellCryptoClick: () -> Unit,
+    giveCryptoClick: () -> Unit
 ) {
 
     val movements = uiState.cryptoMovements.collectAsLazyPagingItems()
@@ -156,7 +159,7 @@ fun CurrencyDetailContent(
                 hasBalanceAction = { buyCryptoClick() },
                 sellAction = { sellCryptoClick() },
                 sendAction = sendCryptoClick,
-                giveAction = { /*todo go to receive crypto flow*/ }
+                giveAction = { giveCryptoClick() }
             )
         },
         modifier = Modifier.fillMaxSize(),

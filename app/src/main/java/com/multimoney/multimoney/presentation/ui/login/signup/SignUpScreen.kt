@@ -61,8 +61,9 @@ fun SignUpScreen(
     val focusManager = LocalFocusManager.current
     val coroutineScope = rememberCoroutineScope()
 
-    if(step != DEFAULT_STEP)
-        viewModel.onUIEvent(SignUpViewModel.UIEvent.OnSetIdBrand(idBrand = idBrand?: 0))
+    if (step != DEFAULT_STEP) {
+        viewModel.onUIEvent(SignUpViewModel.UIEvent.OnSetIdBrand(idBrand = idBrand ?: 0))
+    }
     val context = LocalContext.current
 
     // Navigation
@@ -74,7 +75,6 @@ fun SignUpScreen(
             }
         }
     }
-
 
     Column(
         modifier = Modifier
@@ -161,7 +161,9 @@ fun SignUpScreen(
             positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
             negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
             openDialogCustom = viewModel.uiState.openDialog.isActive,
-            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction,
+            onNegativeAction = viewModel.uiState.openDialog.negativeAction,
+            isCancelable = viewModel.uiState.openDialog.isCancelable
         )
     }
 }

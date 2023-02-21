@@ -124,7 +124,8 @@ class SaveCreditStepsHelper @Inject constructor() {
         }
 
         if (idBrand == Brand.CostaRica.id) {
-            val creditInfoQuestionStartedFirstJobDate = textQuestion(user, dateFirstJob, companyStartedFirstJobDateQuestion)
+            val creditInfoQuestionStartedFirstJobDate =
+                textQuestion(user, dateFirstJob, companyStartedFirstJobDateQuestion)
             saveScreenQuestionData(creditInfoQuestionStartedFirstJobDate)
         }
     }
@@ -170,8 +171,7 @@ class SaveCreditStepsHelper @Inject constructor() {
         homeCantonSelected: CreditCatalogOption?,
         homeDistrict: CreditCatalog?,
         homeDistrictSelected: CreditCatalogOption?,
-        homeAddressValue: String,
-        homePhoneValue: String
+        homeAddressValue: String
     ) {
         saveScreenQuestionData(selectionQuestion(user, homeProvince, homeProvinceSelected))
         saveScreenQuestionData(selectionQuestion(user, homeCanton, homeCantonSelected))
@@ -179,10 +179,6 @@ class SaveCreditStepsHelper @Inject constructor() {
 
         val creditInfoQuestionHomeAddress = getScreenConfigQuestion(HOME_ADDRESS, homeAddressValue)
         saveScreenQuestionData(textQuestion(user, homeAddressValue, creditInfoQuestionHomeAddress))
-
-        // todo uncomment this logic when the backend change the configuration and this question
-//        val creditInfoQuestionHomePhone = inputTextInfoList.find { it.description == HOME_PHONE }
-//        saveScreenQuestionData(textQuestion(user, homeAddressValue, creditInfoQuestionHomePhone))
     }
 
     fun saveStepFiveSV(
@@ -191,18 +187,13 @@ class SaveCreditStepsHelper @Inject constructor() {
         homeProvinceSelected: CreditCatalogOption?,
         homeCanton: CreditCatalog?,
         homeCantonSelected: CreditCatalogOption?,
-        homeAddressValue: String,
-        homePhoneValue: String
+        homeAddressValue: String
     ) {
         saveScreenQuestionData(selectionQuestion(user, homeProvince, homeProvinceSelected))
         saveScreenQuestionData(selectionQuestion(user, homeCanton, homeCantonSelected))
 
         val creditInfoQuestionHomeAddress = getScreenConfigQuestion(HOME_ADDRESS, homeAddressValue)
         saveScreenQuestionData(textQuestion(user, homeAddressValue, creditInfoQuestionHomeAddress))
-
-        // todo uncomment this logic when the backend change the configuration and this question
-//        val creditInfoQuestionHomePhone = inputTextInfoList.find { it.description == HOME_PHONE }
-//        saveScreenQuestionData(textQuestion(user, homeAddressValue, creditInfoQuestionHomePhone))
     }
 
     fun saveStepFiveCR(

@@ -297,7 +297,11 @@ class DisbursementAccountViewModel @Inject constructor(
         uiState = uiState.copy(
             openDialog = DialogParameters(
                 titleResource = R.string.disbursement_account_max_number_title,
-                descriptionResource = R.string.disbursement_account_max_number_description,
+                descriptionResource = if (idBrand == Brand.CostaRica.id) {
+                    R.string.disbursement_account_max_number_description_cr
+                } else {
+                    R.string.disbursement_account_max_number_description
+                },
                 positiveResource = R.string.understood,
                 isActive = mutableStateOf(true)
             )

@@ -44,6 +44,7 @@ import com.multimoney.multimoney.presentation.util.MAX_LINE_ONE
 
 const val INLINE_CONTENT_NAME = "inlineContent"
 const val ICON_DESCRIPTION = "[icon]"
+const val ELLIPSE = "…"
 
 @Composable
 @Preview
@@ -111,7 +112,7 @@ fun CustomInfoButton(
                 .background(background)
                 .fillMaxWidth()
         ) {
-            val (startIconId, titleId, subTitleId, subTitle2Id, endIconId, titleIconId) = createRefs()
+            val (startIconId, titleId, subTitleId, subTitle2Id, endIconId) = createRefs()
             if (startIcon != null) {
                 Image(
                     painter = painterResource(id = startIcon),
@@ -135,7 +136,12 @@ fun CustomInfoButton(
             if (subtitle.isNotEmpty()) {
                 val myId = INLINE_CONTENT_NAME
                 val textWithIcon = buildAnnotatedString {
-                    append(title)
+                    if (title.length >= 28) {
+                        append(title.take(26))
+                        append(ELLIPSE)
+                    } else {
+                        append(title)
+                    }
                     append(" ")
                     appendInlineContent(myId, ICON_DESCRIPTION)
                 }
@@ -145,7 +151,7 @@ fun CustomInfoButton(
                         myId,
                         InlineTextContent(
                             Placeholder(
-                                width = 12.sp,
+                                width = 14.sp,
                                 height = 12.sp,
                                 placeholderVerticalAlign = PlaceholderVerticalAlign.AboveBaseline
                             )
@@ -305,8 +311,8 @@ fun CustomInfoButtonFavoriteAccount(
     enable: Boolean = true
 ) {
     val buttonColor: ButtonColors = ButtonDefaults.buttonColors(
-        backgroundColor = Color.Transparent,
-        disabledBackgroundColor = Color.Transparent
+        backgroundColor = Transparent,
+        disabledBackgroundColor = Transparent
     )
 
     val gradientBorderOneColor: Color
@@ -318,13 +324,13 @@ fun CustomInfoButtonFavoriteAccount(
     if (isSystemInDarkTheme()) {
         gradientBorderOneColor = GradientGrey1
         gradientBorderTwoColor = GradientGrey2
-        background = if (enable) WhiteTransparency5 else Color.Transparent
+        background = if (enable) WhiteTransparency5 else Transparent
         titleColor = WhiteTransparency90
         subtitleColor = WhiteTransparency60
     } else {
         gradientBorderOneColor = GradientGrey1
         gradientBorderTwoColor = GradientGrey2
-        background = if (enable) WhiteTransparency5 else Color.Transparent
+        background = if (enable) WhiteTransparency5 else Transparent
         titleColor = WhiteTransparency90
         subtitleColor = WhiteTransparency60
     }
@@ -350,7 +356,7 @@ fun CustomInfoButtonFavoriteAccount(
                 .background(background)
                 .fillMaxWidth()
         ) {
-            val (startIconId, titleRowId, subTitleId, subTitle2Id, endIconId) = createRefs()
+            val (startIconId, titleRowId, subTitleId, _, endIconId) = createRefs()
             if (startIcon != null) {
                 Image(
                     painter = painterResource(id = startIcon),

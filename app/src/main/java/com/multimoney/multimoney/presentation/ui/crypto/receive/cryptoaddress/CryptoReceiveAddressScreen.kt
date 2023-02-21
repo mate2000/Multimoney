@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.multimoney.data.util.ClipboardUtil
-import com.multimoney.data.util.ShareUtil
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.LocalMultimoneyColors
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -164,10 +163,13 @@ fun CryptoReceiveAddressContent(
                         painter = painterResource(id = R.drawable.ic_share),
                         contentDescription = "share icon",
                         modifier = Modifier.clickable(onClick = {
-                            ShareUtil.createIntent(
-                                context = context,
-                                text = viewModel.uiState.address
-                            )
+                            if (!viewModel.uiState.isLoading) {
+                                viewModel.onUIEvent(
+                                    CryptoReceiveAddressViewModel.UIEvent.OnShareCryptoReceiveAddress(
+                                        viewModel.uiState.address
+                                    )
+                                )
+                            }
                         })
                     )
                     Spacer(modifier = Modifier.padding(12.dp))

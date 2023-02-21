@@ -13,6 +13,7 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.util.ShareHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -20,6 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CryptoReceiveAddressViewModel @Inject constructor(
+    private val helper: ShareHelper,
     savedStateHandle: SavedStateHandle,
     private val dataStorePreferences: DataStorePreferences,
     private val validateDepositAddressUseCase: ValidateDepositAddressUseCase,
@@ -70,6 +72,10 @@ class CryptoReceiveAddressViewModel @Inject constructor(
         }
     }
 
+    private fun shareCryptoReceiveAddress(address: String) {
+        helper.shareTextPlain(text = address)
+    }
+
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is UIEvent.OnGetInfo -> onGetUserInfo(
@@ -80,6 +86,7 @@ class CryptoReceiveAddressViewModel @Inject constructor(
                 event.cryptoNetwork
             )
             is UIEvent.OnGetCryptoReceiveAddress -> getCryptoReceiveAddress()
+            is UIEvent.OnShareCryptoReceiveAddress -> shareCryptoReceiveAddress(event.address)
         }
     }
 
@@ -113,5 +120,8 @@ class CryptoReceiveAddressViewModel @Inject constructor(
             val cryptoNetwork: String,
         ) : UIEvent
         object OnGetCryptoReceiveAddress : UIEvent
+        data class OnShareCryptoReceiveAddress(
+            val address: String
+        ) : UIEvent
     }
 }

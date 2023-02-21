@@ -49,6 +49,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_GET_EVICERTIA_LINK
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
@@ -294,6 +295,7 @@ class ProductViewModel @Inject constructor(
                                 uiState.userStatus?.infoCredit?.infoPreApprove?.crosseling ?: false
                             )
                         )
+                        .plus(getNavParam(SHOULD_GET_EVICERTIA_LINK, true))
                 )
             }
             else -> {
@@ -493,22 +495,13 @@ class ProductViewModel @Inject constructor(
         val cardStatus = userStatus?.infoVirtualCard?.status
         navigateTo(
             "${Screen.CryptoWalletScreen.baseRoute}/$email/${uiState.idBrand}/$identification/" +
-                "$globalBalance/$idClient/$idLoanClient/$statusCredit/$statusSmart/$statusCrypto/" +
-                "$cardStatus/${
-                encodeData(
-                    balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType()
-                )
-                }/${encodeData(balanceCredit?.balanceCryptoAccount?.items)}"
+                "$globalBalance/$idClient/$idLoanClient/$statusCredit/$statusSmart/$statusCrypto/$cardStatus"
         )
     }
 
     private fun onNavigateToCryptoMarket() {
         navigateTo(
-            "${Screen.CryptoMarketScreen.baseRoute}/$userName/${uiState.idBrand}/${
-            encodeData(
-                balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType()
-            )
-            }/${encodeData(balanceCredit?.balanceCryptoAccount?.items)}"
+            "${Screen.CryptoMarketScreen.baseRoute}/$userName/${uiState.idBrand}"
         )
     }
 
@@ -640,6 +633,7 @@ class ProductViewModel @Inject constructor(
             QuickActionFlow.BUY_CRYPTO.flow -> onNavigateToPurchaseCryptoFlow()
             QuickActionFlow.SELL_CRYPTO.flow -> onNavigateToSellCryptoFlow()
             QuickActionFlow.SEND_CRYPTO.flow -> onNavigateToSendCryptoFlow()
+            QuickActionFlow.RECEIVE_CRYPTO.flow -> onNavigateToGiveCryptoFlow()
         }
     }
 
@@ -739,17 +733,7 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToSendMoneyScreenQuickAction() {
         if (uiState.idBrand == Brand.ElSalvador.id.toString()) {
             val account = balanceCredit?.balanceAccountSmart?.firstOrNull()
-            smartAccount = SmartAccountID(
-                tokenAccount = account?.tokenNumber,
-                currencyID = account?.idCurrencyAccount,
-                accountNumber = account?.accountNumber,
-                customerId = account?.customerId,
-                totalBalance = account?.totalBalance
-            )
-            navigateTo(
-                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$userName/${uiState.idBrand}/" +
-                    "$identification/${encodeData(smartAccount)}/$idClient/${Screen.HomeScreen.route}"
-            )
+            onNavigateToSendMoneyScreen(account)
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             val infoCredit = uiState.userStatus?.infoCredit
             val smartIds = encodeData(
@@ -903,16 +887,12 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToPurchaseCryptoFlow() {
-        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${encodeData(balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType())}/${Screen.HomeScreen.route}")
+        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${Screen.HomeScreen.route}")
     }
 
     private fun onNavigateToSellCryptoFlow() {
         navigateTo(
-            "${Screen.CryptoSellFlow.baseRoute}/${Screen.HomeScreen.route}/${encodeData(balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType())}/${
-            encodeData(
-                balanceCredit?.balanceCryptoAccount?.items
-            )
-            }"
+            "${Screen.CryptoSellFlow.baseRoute}/${Screen.HomeScreen.route}"
         )
     }
 

@@ -13,6 +13,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SellCryptoStep
 import com.multimoney.data.util.catalog.SellCryptoSteps
+import com.multimoney.domain.model.accountsmart.SmartAccountSmall
+import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.crypto.sell.listofcurrencies.SellCurrenciesListScreen
 import com.multimoney.multimoney.presentation.ui.crypto.sell.selectaccount.SelectSmartAccountScreen
@@ -28,10 +30,18 @@ fun SellCryptoFlow(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
-    viewModel: SellCryptoSharedViewModel = hiltViewModel()
+    accountsSmart: List<SmartAccountSmall>,
+    cryptoBalances: List<BalanceCryptoAccountItems>,
+    viewModel: SellCryptoSharedViewModel = hiltViewModel(),
 ) {
 
     LaunchedEffect(true) {
+        viewModel.onUIEvent(
+            SellCryptoSharedViewModel.UIEvent.OnSetAccounts(
+                accounts = accountsSmart,
+                cryptoBalances = cryptoBalances
+            )
+        )
         viewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnGetUserInfo)
         viewModel.executeNavigation(
             onNavigate = onNavigate,

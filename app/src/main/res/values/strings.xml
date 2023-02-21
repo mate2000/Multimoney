@@ -402,17 +402,25 @@
 
     <!-- Buy Crypto -->
     <string name="buy_crypto_voucher_you_have_paid" translatable="false">Has comprado</string>
-    <string name="sell_crypto_voucher_you_have_sold" translatable="false">Has vendido</string>
     <string name="buy_crypto_multimoney_smart_account_template" translatable="false">Mi cuenta Smart | %1$s</string>
     <string name="buy_crypto_voucher_from_account" translatable="false">Desde la cuenta</string>
-    <string name="sell_crypto_voucher_to_account" translatable="false">Hacia</string>
     <string name="buy_crypto_voucher_exchange_rate" translatable="false">Tipo de cambio</string>
     <string name="buy_crypto_voucher_mount_to_charge" translatable="false">Total debitado</string>
-    <string name="sell_crypto_voucher_amount_credited" translatable="false">Total recibido</string>
     <string name="buy_crypto_voucher_value_in_currency_template" translatable="false">Valor en %1$s al momento de la compra</string>
-    <string name="sell_crypto_voucher_value_in_dollars_template" translatable="false">Valor en dólares al momento de la venta</string>
     <string name="buy_crypto_voucher_final_value_in_currency_template" translatable="false">%1$s %2$s</string>
 
+    <!-- sell crypto -->
+    <string name="sell_crypto_voucher_value_in_dollars_template" translatable="false">Valor en dólares al momento de la venta</string>
+    <string name="sell_crypto_voucher_amount_credited" translatable="false">Total recibido</string>
+    <string name="sell_crypto_voucher_to_account" translatable="false">Hacia</string>
+    <string name="sell_crypto_voucher_you_have_sold" translatable="false">Has vendido</string>
+
+
+    <!-- send crypto -->
+    <string name="send_crypto_voucher_you_have_send" translatable="false">Has enviado</string>
+    <string name="send_crypto_voucher_aprox_value_in_dollars" translatable="false">Valor aproximado en dólares</string>
+    <string name="send_crypto_voucher_to_address" translatable="false">Hacia la dirección</string>
+    <string name="send_crypto_voucher_approximate_fee" translatable="false">Tarifa aproximada de envío</string>
 
     <string name="home_product_process_smart_label" translatable="false">Smart</string>
 
@@ -463,7 +471,7 @@
     <string name="profile_my_accounts_updated" translatable="false">Cuenta actualizada</string>
     <string name="profile_my_accounts_deleted" translatable="false">Cuenta eliminada</string>
     <string name="profile_my_accounts_removed_from_fav" translatable="false">Cuenta eliminada de favoritos</string>
-    <string name="profile_my_accounts_you_can_fav_later" translatable="false">Podras seleccionarla como favorito despues</string>
+    <string name="profile_my_accounts_you_can_fav_later" translatable="false">Podras seleccionarla como favorito después</string>
     <string name="profile_my_accounts_save_changes" translatable="false">Guardar cambios</string>
     <string name="profile_my_accounts_empty_state_title_gt" translatable="false">No tienes cuentas registradas</string>
     <string name="profile_my_accounts_empty_state_title" translatable="false">No tenés cuentas registradas</string>
@@ -1598,6 +1606,8 @@
     <string name="crypt_list_purchase_title" translatable="false">¿Cuál moneda querés comprar?</string>
 
     <!-- Crypto send flow -->
+    <string name="crypto_send_flow_error_sending_crypto" translatable="false">Lo sentimos, no se puede hacer el envío</string>
+    <string name="crypto_send_flow_error_sending_crypto_try_again" translatable="false">Por favor vuelve a intentar más tarde</string>
     <string name="crypto_send_abandon_dialog_title" translatable="false">Cancelar envío</string>
     <string name="crypto_send_abandon_dialog_message" translatable="false">¿Estás seguro que querés cancelar el envío?</string>
     <string name="crypto_send_amount_error_available_amount_commission" translatable="false">"El monto a enviar más la comisión \nsupera el monto disponible"</string>
@@ -1623,6 +1633,13 @@
     <!-- Crypto list currencies for receive -->
     <string name="crypt_list_receive_title" translatable="false">¿Cuál moneda querés recibir?</string>
     <string name="crypt_all_chip_label" translatable="false">Todas</string>
+
+    <!-- Crypto send bottom sheet -->
+    <string name="crypto_send_amount_bottom_sheet_title" translatable="false">Monto a enviar</string>
+    <string name="crypto_send_amount_bottom_sheet_approximate_value_dollars" translatable="false">Valor aproximado en dólares</string>
+    <string name="crypto_send_amount_bottom_sheet_to_address" translatable="false">Hacia la dirección</string>
+    <string name="crypto_send_amount_bottom_sheet_approximate_transaction_fee" translatable="false">Tarifa aproximada de envío</string>
+    <string name="crypto_send_amount_bottom_sheet_button_send" translatable="false">Realizar envío</string>
 
     <!-- Registeres User Email -->
     <string name="registered_user_email_title" translatable="false">Tenemos tu correo  %s registrado en MultiMoney</string>

@@ -27,6 +27,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_GET_EVICERTIA_LINK
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.ui.home.HomeState
@@ -42,11 +43,11 @@ import com.onfido.android.sdk.capture.Onfido.OnfidoResultListener
 import com.onfido.android.sdk.capture.errors.OnfidoException
 import com.onfido.android.sdk.capture.upload.Captures
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class CreditOnfidoViewModel @Inject constructor(
@@ -54,7 +55,7 @@ class CreditOnfidoViewModel @Inject constructor(
     val onFidoHelper: OnFidoHelper,
     private val mutationOnFidoInitialProcessUseCase: MutationOnFidoInitialProcessUseCase,
     private val mutationOnfidoCheckProcessUseCase: MutationOnfidoCheckProcessUseCase,
-    val countDownTimer: MMCountDownTimer,
+    val countDownTimer: MMCountDownTimer
 ) : BaseViewModel(true) {
 
     // UIState
@@ -241,7 +242,8 @@ class CreditOnfidoViewModel @Inject constructor(
                 .plus(getNavParam(ID_USER_REQUEST, idUserRequest))
                 .plus(getNavParam(FIRST_NAME, firstName))
                 .plus(getNavParam(LAST_NAME, lastName))
-                .plus(getNavParam(CROSSELING, false)),
+                .plus(getNavParam(CROSSELING, false))
+                .plus(getNavParam(SHOULD_GET_EVICERTIA_LINK, true)),
             Screen.CreditOnfidoScreen.route,
         )
     }
@@ -256,7 +258,7 @@ class CreditOnfidoViewModel @Inject constructor(
                 positiveAction = {
                     onNavigateToHome()
                 },
-                isActive = mutableStateOf(true),
+                isActive = mutableStateOf(true)
             )
         )
     }
@@ -290,7 +292,8 @@ class CreditOnfidoViewModel @Inject constructor(
             is UIEvent.OnContinueEnable -> uiState = uiState.copy(isContinueEnabled = event.isEnable)
             is UIEvent.OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
             is UIEvent.OnNavigateToHome -> onNavigateToHome()
-            is UIEvent.OnFailureWithDialog -> uiState = uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
+            is UIEvent.OnFailureWithDialog -> uiState =
+                uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is UIEvent.OnOpenOnfidoSdk -> onOpenOnfidoSdk(event.onOpenOnfidoSdk)
         }
     }

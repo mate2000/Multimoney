@@ -27,8 +27,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnAddAccountClick
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnCallFavoriteListSinpeAccountUseCaseImpl
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnCallNoFavoriteListSinpeAccountUseCaseImpl
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnCallListSinpeAccounts
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiary
@@ -47,8 +46,7 @@ fun SmartTransferIbanScreen(
     viewModel: SmartTransferIbanViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
-        viewModel.onUIEvent(OnCallFavoriteListSinpeAccountUseCaseImpl)
-        viewModel.onUIEvent(OnCallNoFavoriteListSinpeAccountUseCaseImpl)
+        viewModel.onUIEvent(OnCallListSinpeAccounts)
         viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
     }
 

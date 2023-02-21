@@ -94,6 +94,7 @@ import com.multimoney.data.networking.graphql.apollomodel.ProfessionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.QuickActionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.RelatedContactsByPhoneQuery
 import com.multimoney.data.networking.graphql.apollomodel.RelationshipQuery
+import com.multimoney.data.networking.graphql.apollomodel.ReleaseCryptoTransferMutation
 import com.multimoney.data.networking.graphql.apollomodel.RequestChangeDeviceMutation
 import com.multimoney.data.networking.graphql.apollomodel.ResendMicroDepositVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveAutomatedSmartAccountMutation
@@ -1298,7 +1299,14 @@ class GraphqlApi @Inject constructor(
         pkUser: String,
         idBrand: Int
     ): ApolloCall<ChangePhoneMutation.Data> =
-        apolloAuthorizedClient.mutation(ChangePhoneMutation(identification, phone, pkUser.toLong(), idBrand))
+        apolloAuthorizedClient.mutation(
+            ChangePhoneMutation(
+                identification,
+                phone,
+                pkUser.toLong(),
+                idBrand
+            )
+        )
             .fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationChangeEmail(
@@ -2180,4 +2188,24 @@ class GraphqlApi @Inject constructor(
             idAccountRequest
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationReleaseTransfer(
+        identification: String,
+        user: String,
+        market: String,
+        senderFullName: String,
+        reason: String,
+        platform: String,
+        idTransaction: String
+    ): ApolloCall<ReleaseCryptoTransferMutation.Data> = apolloAuthorizedClient.mutation(
+        ReleaseCryptoTransferMutation(
+            identification,
+            user,
+            market,
+            senderFullName,
+            reason,
+            platform,
+            idTransaction
+        )
+    )
 }

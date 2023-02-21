@@ -1,5 +1,5 @@
 mutation ReleaseCryptoTransfer(
-    $indentification: String!,
+    $identification: String!,
     $user: String!,
     $market: String!,
     $senderFullName: String!,
@@ -9,7 +9,7 @@ mutation ReleaseCryptoTransfer(
 ){
     releaseTransaction(
         releaseTransactionInput: {
-            identification: $indentification,
+            identification: $identification,
             userResponse: true
             idMovement: $idTransaction
             sender: $senderFullName

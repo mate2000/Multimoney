@@ -17,6 +17,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail.CryptoCurrencyMovementsViewModel.Companion.USD_CURRENCY
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.util.FilterDate
 import com.multimoney.multimoney.presentation.util.PAGE_SIZE
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
@@ -27,10 +28,10 @@ import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
 @HiltViewModel
-class CryptoMovementsAllViewModel  @Inject constructor(
+class CryptoMovementsAllViewModel @Inject constructor(
     private val queryGetCryptoCurrencyMovementsUseCase: GetCryptoCurrencyMovementsUseCase,
     private val savedStateHandle: SavedStateHandle
-): BaseViewModel(true) {
+) : BaseViewModel(true) {
 
     var previousScreen: String? = null
 
@@ -64,6 +65,10 @@ class CryptoMovementsAllViewModel  @Inject constructor(
         )
     }
 
+    private fun onNavigateToReleaseTransaction(cryptoItem: CryptoCurrencyMovement?) {
+        navigateTo("${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}")
+    }
+
     data class UIState(
         val cryptoItem: String? = null,
         val user: String? = null,
@@ -78,20 +83,26 @@ class CryptoMovementsAllViewModel  @Inject constructor(
             is UIEvent.OnNavigateBack -> {
                 when (previousScreen) {
                     Screen.CryptoCurrencyMovementsScreen.baseRoute -> {
-                        navigateBack(popTo = Screen.CryptoCurrencyMovementsScreen.route, isRestart = false)
+                        navigateBack(
+                            popTo = Screen.CryptoCurrencyMovementsScreen.route,
+                            isRestart = false
+                        )
                     }
                     else -> navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
                 }
             }
             is UIEvent.OnGetUserInfo -> setUserData()
             is UIEvent.GetCryptoMovements -> getCryptoMovements()
+            is UIEvent.OnNavigateToReleaseTransaction -> onNavigateToReleaseTransaction(event.cryptoItem)
         }
     }
 
     sealed interface UIEvent {
         object OnGetUserInfo : UIEvent
         object OnNavigateBack : UIEvent
-        object GetCryptoMovements: UIEvent
+        object GetCryptoMovements : UIEvent
+        data class OnNavigateToReleaseTransaction(val cryptoItem: CryptoCurrencyMovement?) :
+            UIEvent
     }
 
     companion object {

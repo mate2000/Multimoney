@@ -31,6 +31,7 @@ import com.multimoney.multimoney.presentation.ui.crypto.CryptoCurrencyMovementIt
 import com.multimoney.multimoney.presentation.ui.crypto.movements.CryptoMovementsAllViewModel.UIEvent.GetCryptoMovements
 import com.multimoney.multimoney.presentation.ui.crypto.movements.CryptoMovementsAllViewModel.UIEvent.OnGetUserInfo
 import com.multimoney.multimoney.presentation.ui.crypto.movements.CryptoMovementsAllViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.crypto.movements.CryptoMovementsAllViewModel.UIEvent.OnNavigateToReleaseTransaction
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import kotlinx.coroutines.flow.Flow
@@ -59,14 +60,16 @@ fun CryptoMovementsAllScreen(
     }
     CryptoMovementsScreenContent(
         cryptoMovements = cryptoMovementsViewModel.uiState.cryptoMovements,
-        onBackPressed = { cryptoMovementsViewModel.onUIEvent(OnNavigateBack) }
+        onBackPressed = { cryptoMovementsViewModel.onUIEvent(OnNavigateBack) },
+        onNavigateToReleaseTransaction = { cryptoMovementsViewModel.onUIEvent(OnNavigateToReleaseTransaction(it)) }
     )
 }
 
 @Composable
 private fun CryptoMovementsScreenContent(
     cryptoMovements: Flow<PagingData<CryptoCurrencyMovement>>,
-    onBackPressed: () -> Unit
+    onBackPressed: () -> Unit,
+    onNavigateToReleaseTransaction: (CryptoCurrencyMovement?) -> Unit
 ) {
 
     val movements = cryptoMovements.collectAsLazyPagingItems()
@@ -87,10 +90,16 @@ private fun CryptoMovementsScreenContent(
                 MovementsSkeleton()
             }
             is LoadState.NotLoading -> {
-                MovementsListSection(cryptoMovements = movements)
+                MovementsListSection(
+                    cryptoMovements = movements,
+                    onNavigateToReleaseTransaction = onNavigateToReleaseTransaction
+                )
             }
             else -> {
-                MovementsListSection(cryptoMovements = movements)
+                MovementsListSection(
+                    cryptoMovements = movements,
+                    onNavigateToReleaseTransaction = onNavigateToReleaseTransaction
+                )
             }
         }
     }
@@ -108,21 +117,28 @@ private fun HeaderSection() {
         Text(
             modifier = Modifier.padding(vertical = 8.dp),
             text = stringResource(id = R.string.crypto_movements),
-            style = Typography.h5.copy(color = MultimoneyTheme.colors.text, fontWeight = FontWeight.Bold)
+            style = Typography.h5.copy(
+                color = MultimoneyTheme.colors.text,
+                fontWeight = FontWeight.Bold
+            )
         )
     }
 }
 
 @Composable
 private fun MovementsListSection(
-    cryptoMovements: LazyPagingItems<CryptoCurrencyMovement>
+    cryptoMovements: LazyPagingItems<CryptoCurrencyMovement>,
+    onNavigateToReleaseTransaction: (CryptoCurrencyMovement?) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
             .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp)
     ) {
         items(cryptoMovements) { movement ->
-            CryptoCurrencyMovementItem(cryptoCurrencyMovement = movement)
+            CryptoCurrencyMovementItem(
+                cryptoCurrencyMovement = movement,
+                onReleaseTransactionClick = onNavigateToReleaseTransaction
+            )
         }
     }
 }

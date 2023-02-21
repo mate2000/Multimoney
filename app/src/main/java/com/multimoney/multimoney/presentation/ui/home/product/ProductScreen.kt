@@ -571,7 +571,7 @@ fun ProductFooterExpanded(
                 actionWallet = { viewModel.onUIEvent(OnNavigateToCryptoWallet) },
                 onNavigateToReleaseTransaction = {
                     viewModel.onUIEvent(
-                        OnNavigateToReleaseTransaction
+                        OnNavigateToReleaseTransaction(it)
                     )
                 }
             )

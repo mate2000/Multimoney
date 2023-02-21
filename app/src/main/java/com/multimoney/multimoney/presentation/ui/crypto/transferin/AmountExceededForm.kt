@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.crypto.transferin
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +13,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -29,29 +29,35 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
+import com.multimoney.multimoney.presentation.ui.crypto.transferin.AmountExceededViewModel.UIEvent.OnSetUserData
 
 @Composable
 fun AmountExceededFormScreen(
     viewModel: AmountExceededViewModel = hiltViewModel()
 ) {
+
+    LaunchedEffect(true){
+        viewModel.onUIEvent(OnSetUserData)
+    }
+
     val focusManager = LocalFocusManager.current
 
     Scaffold(
         backgroundColor = MultimoneyTheme.colors.background,
-        topBar = {TopNavBar(
-        isLeftButtonVisible = true,
-        isRightButtonVisible = false,
-        onLeftButtonClick = {
-            //viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep)
-        },
-    )}) {
+        topBar = {
+            TopNavBar(
+                isLeftButtonVisible = true,
+                isRightButtonVisible = false,
+                onLeftButtonClick = {
+                    //viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep)
+                },
+            )
+        }) {
         Column(
             modifier = Modifier
                 .padding(it)
@@ -151,6 +157,25 @@ fun AmountExceededFormScreen(
                 buttonType = CustomButtonType.PrimaryPrimary,
                 enable = viewModel.uiState.isFormValid
             )
+        }
+    }
+    if (viewModel.uiState.isAlertResultVisible) {
+        AlertResult(
+            titleString = stringResource(R.string.amount_exceeded_release_error_title),
+            descriptionString = stringResource(R.string.amount_exceeded_release_error_message),
+            buttonTextResource = R.string.amount_exceeded_release_error_button,
+            isLeftButtonVisible = false,
+            onRightButtonClick = {
+                viewModel.onUIEvent(AmountExceededViewModel.UIEvent.OnCloseAlert)
+            },
+            onButtonClick = {
+                viewModel.onUIEvent(AmountExceededViewModel.UIEvent.OnNavigateToHome)
+            }
+        )
+    }
+    if (viewModel.uiState.isAmountExceeded) {
+        LimitExceededDialog {
+            viewModel.onUIEvent(AmountExceededViewModel.UIEvent.OnNavigateToHome)
         }
     }
 }

@@ -32,6 +32,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MA
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel
+import com.multimoney.multimoney.presentation.ui.crypto.movements.CryptoMovementsAllViewModel
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
@@ -169,6 +170,11 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
         navigateTo("${Screen.CryptoSendFlow.baseRoute}?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}&$DESCRIPTION_CURRENCY=${uiState.cryptoItem?.descriptionCurrency}")
     }
 
+
+    private fun onNavigateToReleaseTransaction(cryptoItem: CryptoCurrencyMovement?) {
+        navigateTo("${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}")
+    }
+
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is UIEvent.OnNavigateBack -> navigateBack(Screen.CryptoWalletScreen.route, false)
@@ -184,6 +190,7 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
             is UIEvent.OnHideDisclaimer -> uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Hidden))
             is UIEvent.OnNavigateToSendCrypto -> onNavigateToSendCrypto()
             is UIEvent.OnNavigateToSellCrypto -> onNavigateToSellCrypto()
+            is UIEvent.OnNavigateToReleaseTransaction -> onNavigateToReleaseTransaction(event.cryptoItem)
         }
     }
 
@@ -201,6 +208,8 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
         object OnShowDisclaimer : UIEvent()
         object OnHideDisclaimer : UIEvent()
         object OnNavigateToSendCrypto : UIEvent()
+        data class OnNavigateToReleaseTransaction(val cryptoItem: CryptoCurrencyMovement?) :
+            UIEvent()
     }
 
 

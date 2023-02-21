@@ -27,7 +27,7 @@ fun CryptoFooterExpanded(
     actionMarket: () -> Unit,
     actionWallet: () -> Unit,
     onShowAllClick: () -> Unit,
-    onNavigateToReleaseTransaction: () -> Unit
+    onNavigateToReleaseTransaction: ( CryptoCurrencyMovement?) -> Unit
 ) {
     if (userStatus?.infoCrypto?.status == CryptoAccountStatus.ACTIVE.status) {
         CryptoFooterExpandedContent(
@@ -50,7 +50,7 @@ fun CryptoFooterExpandedContent(
     actionMarket: () -> Unit,
     actionWallet: () -> Unit,
     onShowAllClick: () -> Unit,
-    onNavigateToReleaseTransaction: () -> Unit
+    onNavigateToReleaseTransaction: ( CryptoCurrencyMovement?) -> Unit
 ) {
     Column(
         modifier = Modifier

@@ -14,6 +14,7 @@ import com.multimoney.multimoney.presentation.navigation.HOME_STATE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.ID_TRANSACTION
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.STATUS_CREDIT
 import com.multimoney.multimoney.presentation.navigation.STATUS_CRYPTO
@@ -271,7 +272,19 @@ fun NavGraphBuilder.cryptoNavGraph(
             )
         }
         composable(
-            route = Screen.ReleaseTransactionScreen.route
+            route = Screen.ReleaseTransactionScreen.route,
+            arguments = listOf(
+                navArgument(CRYPTO_ASSET) {
+                    nullable = true
+                    defaultValue = null
+                    type = NavType.StringType
+                },
+                navArgument(ID_TRANSACTION) {
+                    nullable = true
+                    defaultValue = null
+                    type = NavType.StringType
+                }
+            )
         ) {
             AmountExceededFormScreen()
         }

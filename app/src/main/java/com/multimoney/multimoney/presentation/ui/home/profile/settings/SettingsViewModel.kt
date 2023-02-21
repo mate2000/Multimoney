@@ -15,9 +15,9 @@ import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
@@ -44,8 +44,8 @@ class SettingsViewModel @Inject constructor(
     private fun onShowConfirmationDialog() {
         uiState = uiState.copy(
             openDialog = DialogParameters(
-                titleResource = if (uiState.idBrand == Brand.Guatemala.id) R.string.profile_sure_to_deactivate_biometrics_gt else R.string.profile_sure_to_deactivate_biometrics,
-                descriptionResource = if (uiState.idBrand == Brand.Guatemala.id) R.string.profile_you_can_try_later_biometrics_gt else R.string.profile_you_can_try_later_biometrics,
+                titleResource = if (uiState.idBrand == Brand.CostaRica.id) R.string.profile_sure_to_deactivate_biometrics else R.string.profile_sure_to_deactivate_biometrics_sv,
+                descriptionResource = if (uiState.idBrand == Brand.CostaRica.id) R.string.profile_you_can_try_later_biometrics else R.string.profile_you_can_try_later_biometrics_sv,
                 positiveResource = R.string.button_continue,
                 negativeResource = R.string.cancel,
                 positiveAction = { deleteBiometrics() },

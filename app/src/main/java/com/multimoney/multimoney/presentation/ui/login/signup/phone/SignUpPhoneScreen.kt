@@ -180,10 +180,10 @@ fun SignUpPhoneScreen(
     if (viewModel.uiState.isAlertResultVisible) {
         AlertResult(
             titleString = stringResource(id = R.string.profile_help_error_title),
-            descriptionString = if (viewModel.uiState.idBrand == Brand.Guatemala.id) {
-                stringResource(id = R.string.process_forgot_password_alert_failure_description_gt)
-            } else {
+            descriptionString = if (viewModel.uiState.idBrand == Brand.CostaRica.id) {
                 stringResource(id = R.string.process_forgot_password_alert_failure_description)
+            } else {
+                stringResource(id = R.string.process_forgot_password_alert_failure_description_sv)
             },
             buttonTextResource = R.string.common_go_home,
             onButtonClick = {

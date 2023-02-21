@@ -171,7 +171,8 @@ class SmartAddAccountViewModel @Inject constructor(
                 active = true,
                 isFavorite = uiState.isFavorite,
                 phoneNumber = null,
-                idCurrencyAccount = null
+                idCurrencyAccount = null,
+                identification = ""
             ).collectLatest { result ->
                 result.onLoading { uiState = uiState.copy(isLoading = true) }
                 result.onSuccess { account ->
@@ -185,7 +186,7 @@ class SmartAddAccountViewModel @Inject constructor(
                         number = registeredAccount?.phoneNumber,
                         titular = registeredAccount?.accountName ?: "${uiState.names} ${uiState.lastNames}",
                         bankName = "",
-                        identification = "",
+                        identification = registeredAccount?.identification,
                         accountNumber = registeredAccount?.accountNumber ?: uiState.accountNumber,
                         email = registeredAccount?.email ?: uiState.email,
                         idCurrency = currency,

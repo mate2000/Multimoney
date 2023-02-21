@@ -25,6 +25,7 @@ query ListSavedSACAccounts(
             currencyAccount
             ibanNumber
             isFavorite
+            identification
         }
         status
         message

@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.accountsmart.ACHAccount
 import com.multimoney.domain.model.accountsmart.LocalSACAccount
 import com.multimoney.multimoney.R
@@ -112,9 +113,9 @@ fun FavoritesContentList(
             item {
                 CustomInfoButton(
                     title = favorite?.accountName.orEmpty(),
-                    subtitle = stringResource(id = R.string.smart_default_bank_name),
-                    subtitle2 = getMaskedAccount(
-                        favorite?.accountNumber.orEmpty()
+                    subtitle = getMaskedAccount(
+                        accountNumber = favorite?.accountNumber.orEmpty(),
+                        prefix = Brand.CostaRica.iban
                     ),
                     modifier = Modifier
                         .fillMaxWidth()

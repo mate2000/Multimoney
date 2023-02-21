@@ -20,7 +20,8 @@ class MutationUpdateFavoriteSmartUseCaseImpl(
         active: Boolean,
         isFavorite: Boolean,
         phoneNumber: String?,
-        idCurrencyAccount: Int?
+        idCurrencyAccount: Int?,
+        identification: String
     ): Flow<MultimoneyResult<SmartFavoriteResult?>> {
         return repository.mutationUpdateFavoriteContactSmart(
             idBrand = idBrand,
@@ -34,7 +35,8 @@ class MutationUpdateFavoriteSmartUseCaseImpl(
             active = active,
             isFavorite = isFavorite,
             phoneNumber = phoneNumber,
-            idCurrencyAccount = idCurrencyAccount
+            idCurrencyAccount = idCurrencyAccount,
+            identification = identification
         )
     }
 }

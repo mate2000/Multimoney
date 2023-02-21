@@ -15,7 +15,8 @@ private fun ListSavedSACAccountsQuery.Result.mapToDomainModel() = LocalSACAccoun
     idCurrency = idCurrencyAccount,
     currency = currencyAccount,
     ibanNumber = ibanNumber,
-    isFavorite = isFavorite
+    isFavorite = isFavorite,
+    identification = identification
 )
 
 private fun ListSavedSACAccountsQuery.LocalTransferFavorite.mapToDomainModel() = LocalTransferFavorite(

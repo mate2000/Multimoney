@@ -77,7 +77,7 @@ class MyContactsTransferViewModel @Inject constructor(
         queryRelatedContactsByPhoneUseCase.invoke(
             user = user,
             idBrand = idBrand,
-            contacts = relatedContacts
+            contacts = listOf(RelatedContact("84554544"), RelatedContact("84858228"), RelatedContact("62017716"))
         ).collectLatest { result ->
             result.onSuccess { accountList ->
                 uiState = uiState.copy(isLoading = false)
@@ -183,7 +183,8 @@ class MyContactsTransferViewModel @Inject constructor(
                     isFavorite = true,
                     phoneNumber = contactFavorite?.number,
                     idCurrencyAccount = contactFavorite?.currency?.getCurrencyFromValue()?.id
-                        ?: 0
+                        ?: 0,
+                    identification = contactFavorite?.identification.orEmpty()
                 ).collectLatest { result ->
                     result.onLoading { uiState = uiState.copy(isLoading = true) }
                     result.onSuccess {

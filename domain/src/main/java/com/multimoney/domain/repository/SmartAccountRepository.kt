@@ -309,7 +309,8 @@ interface SmartAccountRepository {
         active: Boolean,
         isFavorite: Boolean,
         phoneNumber: String?,
-        idCurrencyAccount: Int?
+        idCurrencyAccount: Int?,
+        identification: String
     ): Flow<MultimoneyResult<SmartFavoriteResult?>>
 
     suspend fun queryACHTransferFavoriteList(

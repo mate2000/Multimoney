@@ -1538,7 +1538,6 @@
     <string name="smart_my_contacts_select_favorite_account" translatable="false">Seleccionar como favorito</string>
     <string name="smart_my_contacts_invite_CR" translatable="false">Invitá a tus amigos a usar MultiMoney.\nTus contactos que la tengan\naparecerán aquí.</string>
     <string name="smart_my_contacts_invite_SV" translatable="false">Invita a tus amigos a usar MultiMoney.\nTus contactos que la tengan\naparecerán aquí.</string>
-    <string name="smart_default_bank_name" translatable="false">Financiera Gente Sociedad Anonima</string>
 
     <!-- Smart SAC Transfer - Add SAC Account -->
     <string name="smart_add_sac_account_title" translatable="false">Datos de la cuenta</string>

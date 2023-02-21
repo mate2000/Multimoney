@@ -10,6 +10,7 @@ import com.multimoney.domain.interaction.accountsmart.QueryListSavedSACAccountsU
 import com.multimoney.domain.model.accountsmart.ACHAccount
 import com.multimoney.domain.model.accountsmart.IbanAccountID
 import com.multimoney.domain.model.accountsmart.LocalSACAccount
+import com.multimoney.domain.model.accountsmart.PhoneSmart
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
@@ -168,20 +169,22 @@ class SmartTransferFavoriteCRViewModel @Inject constructor(
     }
 
     private fun onLocalFavoriteClick(selectedAccount: LocalSACAccount?) {
-        val ibanAccount = encodeData(
-            IbanAccountID(
-                bank = null,
-                clientIdentification = identification,
-                sinpeAccount = selectedAccount?.ibanNumber,
-                currencyId = selectedAccount?.idCurrency,
-                nameAccount = selectedAccount?.accountName
-            )
+        val account = PhoneSmart(
+            number = selectedAccount?.phoneNumber,
+            titular = selectedAccount?.accountName,
+            bankName = null,
+            identification = selectedAccount?.identification,
+            accountNumber = selectedAccount?.accountNumber,
+            email = selectedAccount?.email,
+            idCurrency = selectedAccount?.idCurrency.toString(),
+            currency = selectedAccount?.currency,
+            ibanNumber = selectedAccount?.ibanNumber
         )
-        uiState = uiState.copy(isLoading = false)
         navigateTo(
-            "${Screen.SmartTransferAmountScreen.baseRoute}/" +
-                    "${encodeData(smartAccount)}/$ibanAccount/" +
-                    "${SmartTransferTypes.SmartToIban.id}/${Screen.SmartTransferFavoriteAccountCRScreen.baseRoute}"
+            "${Screen.MyContactsTransferAmountScreen.baseRoute}/" +
+                    "${encodeData(smartAccount)}/${encodeData(account)}/" +
+                    "${SmartTransferTypes.SmartToContact.id}/$idBrand/" +
+                    Screen.SmartTransferFavoriteAccountCRScreen.baseRoute
         )
     }
 

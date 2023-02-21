@@ -11,6 +11,7 @@ mutation UpdateFavoriteContactSmart(
     $idCurrencyAccount: Int
     $idBrand: Int!
     $user: String!
+    $identification: String!
 ) {
     localTransferFavoriteMan(
         localTransferFavoriteManInput: {
@@ -26,6 +27,7 @@ mutation UpdateFavoriteContactSmart(
             idCurrencyAccount: $idCurrencyAccount
             idBrand: $idBrand
             user: $user
+            identification: $identification
         }
     ) {
         message
@@ -40,6 +42,7 @@ mutation UpdateFavoriteContactSmart(
             phoneNumber
             idCurrencyAccount
             currencyAccount
+            identification
         }
     }
 }

@@ -692,7 +692,8 @@ class SmartAccountRepositoryImpl @Inject constructor(
         active: Boolean,
         isFavorite: Boolean,
         phoneNumber: String?,
-        idCurrencyAccount: Int?
+        idCurrencyAccount: Int?,
+        identification: String
     ): Flow<MultimoneyResult<SmartFavoriteResult?>> {
         return fetchData(
             graphqlApi.mutationUpdateSmartFavoriteContact(
@@ -706,7 +707,9 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 phoneNumber = phoneNumber,
                 email = email,
                 active = active,
-                isFavorite = isFavorite, idCurrencyAccount = idCurrencyAccount
+                isFavorite = isFavorite,
+                idCurrencyAccount = idCurrencyAccount,
+                identification = identification
             ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())

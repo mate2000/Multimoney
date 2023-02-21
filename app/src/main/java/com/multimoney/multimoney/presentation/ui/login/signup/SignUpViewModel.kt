@@ -218,7 +218,7 @@ class SignUpViewModel @Inject constructor(
             ISO3_GUATEMALA -> uiState.copy(
                 openDialog = DialogParameters(
                     titleResource = string.sign_up_general_close_dialog_title,
-                    descriptionResource = string.sign_up_close_dialog_description_guatemala,
+                    descriptionResource = string.sign_up_close_dialog_description,
                     positiveResource = string.sign_up_close_dialog_positive_button_text,
                     negativeResource = string.sign_up_close_dialog_negative_button_text,
                     positiveAction = {
@@ -233,7 +233,7 @@ class SignUpViewModel @Inject constructor(
             else -> uiState.copy(
                 openDialog = DialogParameters(
                     titleResource = string.sign_up_general_close_dialog_title,
-                    descriptionResource = string.sign_up_close_dialog_description_salvador,
+                    descriptionResource = string.sign_up_close_dialog_description,
                     positiveResource = string.sign_up_close_dialog_positive_button_text,
                     negativeResource = string.sign_up_close_dialog_negative_button_text,
                     positiveAction = {

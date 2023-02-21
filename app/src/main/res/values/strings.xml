@@ -163,17 +163,17 @@
 
     <!-- Sign Up General-->
     <string name="sign_up_splash_come_back" translatable="false">¡Nos alegra\nverte de nuevo!</string>
-    <string name="sign_up_general_close_dialog_title" translatable="false">¿Estás seguro que quieres salir? ¡Ya casi terminamos!</string>
+    <string name="sign_up_general_close_dialog_title" translatable="false">¿Estás segur@ de que quieres salir? ¡Ya casi terminamos!</string>
 
-    <string name="sign_up_close_dialog_description" translatable="false">Podrás retomar el registro cuando quieras</string>
+    <string name="sign_up_close_dialog_description" translatable="false">Puedes retomar el registro cuando quieras</string>
     <string name="sign_up_close_dialog_positive_button_text" translatable="false">Salir</string>
     <string name="sign_up_close_dialog_negative_button_text" translatable="false">Cancelar</string>
     <string name="sign_in_error_alert_dialog" translatable="false">Parece que hubo un error</string>
     <string name="sign_in_error_alert_dialog_button" translatable="false">Ir al inicio</string>
 
     <!-- Sign Up Costa rica-->
-    <string name="sign_up_general_close_dialog_title_costa_rica" translatable="false">¿Estás seguro de que querés salir? ¡Ya casi terminamos!</string>
-    <string name="sign_up_close_dialog_description_costa_rica" translatable="false">Podés retomar el registro cuando querás.</string>
+    <string name="sign_up_general_close_dialog_title_costa_rica" translatable="false">¿Estás segur@ de que querés salir? ¡Ya casi terminamos!</string>
+    <string name="sign_up_close_dialog_description_costa_rica" translatable="false">Podés retomar el registro cuando querás</string>
 
     <!-- Sign Up Guatemala-->
     <string name="sign_up_close_dialog_description_guatemala" translatable="false">Puedes retomar el registro cuando quieras</string>

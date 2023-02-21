@@ -1,8 +1,6 @@
 package com.multimoney.multimoney.presentation.ui
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.mutableStateOf
@@ -16,7 +14,6 @@ import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.SignOutCommunicator
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.util.CognitoHelper
-import com.multimoney.multimoney.util.interfaces.AddCardCommunicator
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -58,8 +55,6 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
                 }
             }
         }
-        // TODO this is an example, remove and replace into the required location
-        //startActivity(Intent(this, ReactActivity::class.java))
     }
 
     override fun onUserInteraction() {

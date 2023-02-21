@@ -89,9 +89,9 @@ class SmartViewModel @Inject constructor(
     // Stateless
     private var overridePreviousAction: (() -> Unit)? = null
     private var closeDialogDescription: String = ""
+    private var nextStep: Int = SmartSteps.One.id
     private var previousStep: Int = SmartSteps.One.id
     private var idSysRequest: Long = 0
-    var nextStep: Int = SmartSteps.One.id
     var accountSmartData: AccountSmartData? = null
     var isOnFidoVerified = true
     var nextAction: () -> Unit = {}

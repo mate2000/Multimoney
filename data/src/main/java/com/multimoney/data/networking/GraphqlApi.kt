@@ -2150,7 +2150,9 @@ class GraphqlApi @Inject constructor(
         destinationBankId: Int,
         description: String,
         identificationNumber: String,
-        identificationTypeAccount: Int
+        identificationTypeAccount: Int,
+        destinationCurrencyId: Int,
+        document: String
     ): ApolloCall<AddACHAccountMutation.Data> = apolloAuthorizedClient.mutation(
         AddACHAccountMutation(
             idBrand = idBrand,
@@ -2162,7 +2164,23 @@ class GraphqlApi @Inject constructor(
             destinationBankId = destinationBankId,
             description = description,
             identificationNumber = identificationNumber,
-            identificationTypeAccount = identificationTypeAccount
+            identificationTypeAccount = identificationTypeAccount,
+            destinationCurrencyId = destinationCurrencyId,
+            document = document
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryACHTransferFavoriteList(
+        idBrand: Int,
+        user: String,
+        isFavorite: Boolean,
+        identificationNumber: String
+    ): ApolloCall<ACHTransferFavoriteListQuery.Data> = apolloAuthorizedClient.query(
+        ACHTransferFavoriteListQuery(
+            idBrand = idBrand,
+            user = user,
+            isFavorite = isFavorite,
+            identificationNumber = identificationNumber,
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -2259,21 +2277,6 @@ class GraphqlApi @Inject constructor(
                 maxPoints,
                 paginationLimit,
                 paginationOffset
-            )
-        ).fetchPolicy(FetchPolicy.NetworkOnly)
-
-    fun queryACHTransferFavoriteList(
-        user: String,
-        idBrand: Int,
-        isFavorite: Boolean,
-        identification: String,
-    ): ApolloCall<ACHTransferFavoriteListQuery.Data> =
-        apolloAuthorizedClient.query(
-            ACHTransferFavoriteListQuery(
-                Optional.presentIfNotNull(user),
-                Optional.presentIfNotNull(idBrand),
-                isFavorite,
-                Optional.presentIfNotNull(identification),
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

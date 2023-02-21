@@ -93,7 +93,7 @@ fun SellCurrencyScreen(
 
     when (viewModel.uiState.sellStatus) {
         SellStatus.IDLE -> {
-            SellCurrencyScreenContent(viewModel)
+            SellCurrencyScreenContent(viewModel, sharedViewModel = sharedViewModel)
         }
         SellStatus.LOADING -> {
             sharedViewModel.onUIEvent(
@@ -187,7 +187,8 @@ fun SellCurrencyScreen(
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun SellCurrencyScreenContent(
-    viewModel: SellCurrencyScreenViewModel
+    viewModel: SellCurrencyScreenViewModel,
+    sharedViewModel: SellCryptoSharedViewModel
 ) {
     val coroutineScope = rememberCoroutineScope()
     val focusRequester = remember { FocusRequester() }
@@ -204,7 +205,8 @@ fun SellCurrencyScreenContent(
             SellConfirmationBottomSheet(
                 modalBottomSheetState = modalBottomSheetState,
                 coroutineScope = coroutineScope,
-                viewModel = viewModel
+                viewModel = viewModel,
+                sharedViewModel = sharedViewModel
             )
         }
     ) {

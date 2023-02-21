@@ -89,9 +89,9 @@ class SmartViewModel @Inject constructor(
     // Stateless
     private var overridePreviousAction: (() -> Unit)? = null
     private var closeDialogDescription: String = ""
-    private var nextStep: Int = SmartSteps.One.id
     private var previousStep: Int = SmartSteps.One.id
     private var idSysRequest: Long = 0
+    var nextStep: Int = SmartSteps.One.id
     var accountSmartData: AccountSmartData? = null
     var isOnFidoVerified = true
     var nextAction: () -> Unit = {}
@@ -279,7 +279,7 @@ class SmartViewModel @Inject constructor(
                     idSysRequest = it?.idSysRequest?.toLong() ?: 0L
                     idGlobalRequest = it?.idGlobalRequest ?: 0
                     onUIEvent(OnLoadingValueChange(false))
-                    onUIEvent(OnNextStep)
+                    if (isLastStep) navigateToOnfido() else onUIEvent(OnNextStep)
                 }
                 result.onFailure {
                     onUIEvent(OnLoadingValueChange(false))
@@ -308,7 +308,7 @@ class SmartViewModel @Inject constructor(
      */
     private fun onCallMutationSaveSmartAccount(accountData: AccountSmartData?) {
         accountSmartData = accountData
-        callMutationGlobalRequestUseCase(true)
+        callMutationGlobalRequestUseCase()
     }
 
     /**
@@ -406,7 +406,9 @@ class SmartViewModel @Inject constructor(
                 isLoading = false
             )
         } else {
-            navigateToOnfido()
+            accountSmartData =
+                accountSmartData?.copy(currentStep = SmartSteps.Search.getNameById(nextStep))
+            callMutationGlobalRequestUseCase(true)
         }
     }
 

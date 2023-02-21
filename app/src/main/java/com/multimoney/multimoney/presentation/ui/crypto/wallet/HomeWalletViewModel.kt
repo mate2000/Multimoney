@@ -41,10 +41,6 @@ class HomeWalletViewModel @Inject constructor(
     var uiState by mutableStateOf(UiState())
         private set
 
-    private var smartAccounts: List<SmartAccountSmall>? = null
-    private var userCryptoBalances: List<BalanceCryptoAccountItems>? = null
-
-
     private fun onGetUserInfo() {
         uiState = uiState.copy(
             user = savedStateHandle[USER] ?: "",
@@ -58,10 +54,6 @@ class HomeWalletViewModel @Inject constructor(
             statusCrypto = savedStateHandle[STATUS_CRYPTO] ?: 0,
             cardStatus = savedStateHandle[CARD_STATUS] ?: 0
         )
-        smartAccounts =
-            savedStateHandle.get<Array<SmartAccountSmall>>(SMART_ACCOUNTS_LIST)?.toList()
-        userCryptoBalances =
-            savedStateHandle.get<Array<BalanceCryptoAccountItems>>(USER_CRYPTO_BALANCES)?.toList()
         viewModelScope.launch {
             uiState = uiState.copy(isCryptoTransferEnabled = cryptoHelper.isCryptoTransferEnabled())
         }
@@ -176,21 +168,17 @@ class HomeWalletViewModel @Inject constructor(
                 encodeData(
                     cryptoItem
                 )
-            }/${encodeData(smartAccounts)}/${encodeData(userCryptoBalances)}"
+            }"
         )
     }
 
     private fun onNavigateToBuyCrypto() {
-        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${encodeData(smartAccounts)}/${Screen.CryptoWalletScreen.baseRoute}")
+        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${Screen.CryptoWalletScreen.baseRoute}")
     }
 
     private fun onNavigateToSellCrypto() {
         navigateTo(
-            "${Screen.CryptoSellFlow.baseRoute}/${Screen.CryptoWalletScreen.baseRoute}/${encodeData(smartAccounts)}/${
-                encodeData(
-                    userCryptoBalances
-                )
-            }"
+            "${Screen.CryptoSellFlow.baseRoute}/${Screen.CryptoWalletScreen.baseRoute}"
         )
     }
 

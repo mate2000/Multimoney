@@ -53,6 +53,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewM
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TIMER_DURATION
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TOTAL_DIGITS
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnNavigateToSignIn
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.OtpTextField
 import com.multimoney.multimoney.presentation.uielement.SystemBroadcastReceiver
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -205,7 +206,8 @@ fun SignUpOtpScreen(
                             negativeResource = string.cancel,
                             negativeAction = {
                                 viewModel.onUIEvent(OnNavigateToSignIn)
-                            }
+                            },
+                            isCancelable = false
                         )
                     )
                 )
@@ -358,5 +360,23 @@ fun SignUpOtpScreen(
                 modifier = Modifier.padding(top = 32.dp)
             )
         }
+    }
+
+    if (viewModel.uiState.openUserBlockedDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openUserBlockedDialog.titleResource),
+            message = viewModel.uiState.openUserBlockedDialog.description,
+            positiveButtonText = stringResource(id = viewModel.uiState.openUserBlockedDialog.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.uiState.openUserBlockedDialog.negativeResource),
+            openDialogCustom = viewModel.uiState.openUserBlockedDialog.isActive,
+            onPositiveAction = {
+                context.openWhatsAppDeepLink(viewModel.linkWhatsapp)
+                viewModel.onUIEvent(OnNavigateToSignIn)
+            },
+            onNegativeAction = {
+                viewModel.onUIEvent(OnNavigateToSignIn)
+            },
+            isCancelable = false
+        )
     }
 }

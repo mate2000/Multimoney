@@ -1,20 +1,16 @@
 package com.multimoney.multimoney.presentation.ui.crypto.send.cryptoamount
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
@@ -30,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -39,16 +34,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
+import com.multimoney.data.util.catalog.SendCryptoStep
 import com.multimoney.data.util.catalog.TransferStatus
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.LocalMultimoneyColors
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.AmountInputSection
+import com.multimoney.multimoney.presentation.ui.crypto.NativeLoaderScreen
 import com.multimoney.multimoney.presentation.ui.crypto.send.CryptoSendSharedViewModel
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.util.calculateAssetEstimated
+import com.multimoney.multimoney.presentation.util.roundToEightDecimalPlaces
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -92,22 +91,35 @@ fun CryptoSendAmountScreen(
             )
         }
         TransferStatus.LOADING -> {
-            //Temp progress indicator
-            Box(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center)
-                )
-            }
+            sharedViewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnSetFlowStep(SendCryptoStep.LOADING))
+            NativeLoaderScreen()
         }
         TransferStatus.SUCCESS -> {
-            //Temp message
-            Toast.makeText(LocalContext.current, "Envío completado!", Toast.LENGTH_SHORT).show()
+            sharedViewModel.onUIEvent(
+                CryptoSendSharedViewModel.UIEvent.OnSetupVoucherDetails(
+                    sendCryptoAmount = "${viewModel.uiState.sendCryptoAmount.roundToEightDecimalPlaces()} ${viewModel.asset}",
+                    sendDollarAmount = viewModel.uiState.sendDollarAmount,
+                    transferFee = "${viewModel.uiState.transferCommission?.transferFee?.totalFee?.roundToEightDecimalPlaces()} ${viewModel.asset}",
+                    referenceNumber = viewModel.uiState.referenceNumber ?: ""
+                )
+            )
+            sharedViewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnNextStep)
         }
         TransferStatus.FAILED -> {
-            //Temp message
-            Toast.makeText(LocalContext.current, "Ha ocurrido un error :(", Toast.LENGTH_SHORT).show()
+            sharedViewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnSetFlowStep(SendCryptoStep.SEND_FAILED))
+            AlertResult(
+                titleString = stringResource(id = R.string.crypto_send_flow_error_sending_crypto),
+                descriptionString = stringResource(R.string.crypto_send_flow_error_sending_crypto_try_again),
+                buttonTextResource = R.string.profile_error_changing_phone_button,
+                isRightButtonVisible = true,
+                isLeftButtonVisible = false,
+                onButtonClick = {
+                    sharedViewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnNavigateHome)
+                },
+                onRightButtonClick = {
+                    sharedViewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnNavigateHome)
+                }
+            )
         }
     }
 }

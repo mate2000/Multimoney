@@ -324,7 +324,11 @@ class ValidateOTPViewModel @Inject constructor(
             uiState = uiState.copy(isLoading = false)
             viewModelScope.launch {
                 dataStorePreferences.setUserPhoneNumber(uiState.newValue ?: "")
-                dataStorePreferences.setUserPhoneNumberWithCode(uiState.newPhoneNumberCode?.plus(uiState.newValue) ?: "")
+                dataStorePreferences.setUserPhoneNumberWithCode(
+                    uiState.newPhoneNumberCode?.plus(
+                        uiState.newValue
+                    ) ?: ""
+                )
                 navigateBack(Screen.HomeScreen.route, isRestart = true)
                 emitBaseEvent(HomeViewModel.BaseEvent.OnPhoneNumberChangedToastEvent)
             }
@@ -339,7 +343,7 @@ class ValidateOTPViewModel @Inject constructor(
             uiState = uiState.copy(isLoading = false)
             viewModelScope.launch {
                 dataStorePreferences.setUserEmail(uiState.newValue ?: "")
-                navigateBack(Screen.HomeScreen.route, isRestart = true)
+                navigateTo("${Screen.ProfileScreen.baseRoute}/${uiState.idClient}/${uiState.idBrand}/${uiState.firstName}/${uiState.newValue}/${uiState.phoneNumber}/${uiState.identification}/${uiState.pkUser}/${uiState.userName}")
                 emitBaseEvent(HomeViewModel.BaseEvent.OnEmailChangedToastEvent)
             }
         }

@@ -1,7 +1,12 @@
 package com.multimoney.domain.model.security
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class InfoUser(
     val idBrand: Int,
+    val email: String,
     val userName: String,
     val idClient: Int,
     val firstName: String,
@@ -11,4 +16,4 @@ data class InfoUser(
     val phone: String,
     val visaDirectUser: String?,
     val statusOnfido: String?
-)
+) : Parcelable

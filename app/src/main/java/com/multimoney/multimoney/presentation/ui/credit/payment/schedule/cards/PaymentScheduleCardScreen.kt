@@ -1,5 +1,8 @@
 package com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards
 
+import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -28,15 +32,22 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.ReactActivity
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.Companion.RESPONSE_IS_ERROR
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.Companion.RESPONSE_VALUE
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.Companion.RESULT_CODE_PROCESS_FINISHED
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.Companion.RESULT_CODE_PROCESS_INCOMPLETE
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnAlertButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnAlertCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnEditCardVisaDirect
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnGetClientCardVisaDirect
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnNavigateToAddCard
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnOpenDisclaimerDialog
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnProgramClick
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnHandleAddCardResponse
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnRestartTimer
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnStopTimer
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
@@ -57,7 +68,7 @@ fun PaymentScheduleCardScreen(
     // Navigation
     LaunchedEffect(true) {
         viewModel.apply {
-            onUIEvent(OnGetClientCardVisaDirect)
+            onUIEvent(OnStart)
             executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
         }
     }
@@ -210,6 +221,29 @@ private fun PaymentScheduleCard(viewModel: PaymentScheduleCardViewModel) {
 fun PaymentScheduleCardEmptyState(
     viewModel: PaymentScheduleCardViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+    val addCardActivityResult = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) {
+        viewModel.onUIEvent(OnRestartTimer)
+        when (it.resultCode) {
+            RESULT_CODE_PROCESS_FINISHED -> {
+                val response: String? = it.data?.getStringExtra(RESPONSE_VALUE)
+                val isError: Boolean? = it.data?.getBooleanExtra(RESPONSE_IS_ERROR, false)
+                viewModel.onUIEvent(
+                    OnHandleAddCardResponse(
+                        response = response.orEmpty(),
+                        isError = isError ?: false
+                    )
+                )
+            }
+            RESULT_CODE_PROCESS_INCOMPLETE -> {
+                viewModel.onUIEvent(OnNavigateBack)
+            }
+            else -> return@rememberLauncherForActivityResult
+        }
+    }
+
     Column(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)
@@ -251,13 +285,19 @@ fun PaymentScheduleCardEmptyState(
                 )
             }
             CustomButton(
-                onClick = { viewModel.onUIEvent(OnNavigateToAddCard) },
+                onClick = {
+                    viewModel.onUIEvent(OnStopTimer)
+                    val intent = Intent(context, ReactActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
+                    addCardActivityResult.launch(intent)
+                },
                 text = stringResource(id = R.string.payment_cards_list_create),
                 modifier = Modifier
                     .padding(vertical = 40.dp, horizontal = 16.dp)
                     .fillMaxWidth()
                     .height(48.dp),
-                buttonType = PrimaryPrimary
+                buttonType = PrimaryPrimary,
+                enable = viewModel.uiState.isLoading.not()
             )
         }
     }

@@ -63,8 +63,7 @@ interface VirtualCardRepository {
         email: String,
         callerId: String,
         user: String,
-        idBrand: Int,
-        accountToken: Long
+        idBrand: Int
     ): Flow<MultimoneyResult<CreateUser?>>
 
     suspend fun mutationDeleteCardVD(

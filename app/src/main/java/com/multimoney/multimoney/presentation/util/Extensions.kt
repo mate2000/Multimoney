@@ -22,17 +22,14 @@ import androidx.core.content.ContextCompat
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
-import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
+import com.multimoney.multimoney.presentation.util.catalog.*
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.All
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Colon
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Dollar
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Quetzal
-import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType
 import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.CashPaymentPoint
 import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.TransferBank
 import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.VisaDirect
-import com.multimoney.multimoney.presentation.util.catalog.PhoneCountryCode
-import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeType
 import com.novopayment.sdk.vts.module.payment.apdu.PaymentService
 import java.net.URLDecoder
 import java.net.URLEncoder
@@ -392,6 +389,30 @@ fun getCountryCodeByIdBrand(idBrand: Int): String {
 
 fun String.capitalizedAllWords(): String =
     splitByWhiteSpace().joinToString(WHITE_SPACE_SEPARATOR.toString()) { it.capitalized() }
+
+fun String.getAddCardErrorFromValue(): AddVisaCardErrors =
+    when (this) {
+        AddVisaCardErrors.SystemMalfunction.value -> AddVisaCardErrors.SystemMalfunction
+        AddVisaCardErrors.UnableToInclude.value -> AddVisaCardErrors.UnableToInclude
+        AddVisaCardErrors.InvalidCardAccountValidation.value -> AddVisaCardErrors.InvalidCardAccountValidation
+        AddVisaCardErrors.InvalidPaymentAccountValidation.value -> AddVisaCardErrors.InvalidPaymentAccountValidation
+        AddVisaCardErrors.InvalidRequestPaymentAccountValidation.value -> AddVisaCardErrors.InvalidRequestPaymentAccountValidation
+        AddVisaCardErrors.YouHaveReachedTheMaximum.value -> AddVisaCardErrors.YouHaveReachedTheMaximum
+        AddVisaCardErrors.ExpiredCard.value -> AddVisaCardErrors.ExpiredCard
+        AddVisaCardErrors.TooManyCardsPerUserMax.value -> AddVisaCardErrors.TooManyCardsPerUserMax
+        AddVisaCardErrors.InvalidCardVerification.value -> AddVisaCardErrors.InvalidCardVerification
+        AddVisaCardErrors.InvalidVerificationValue.value -> AddVisaCardErrors.InvalidVerificationValue
+        AddVisaCardErrors.InvalidCard.value -> AddVisaCardErrors.InvalidCard
+        AddVisaCardErrors.MaxUsersSameCard.value -> AddVisaCardErrors.MaxUsersSameCard
+        AddVisaCardErrors.AlreadyExist.value -> AddVisaCardErrors.AlreadyExist
+        AddVisaCardErrors.UserBlocked.value -> AddVisaCardErrors.UserBlocked
+        AddVisaCardErrors.InvalidUsernameOrPassword.value -> AddVisaCardErrors.InvalidUsernameOrPassword
+        AddVisaCardErrors.InvalidApplication.value -> AddVisaCardErrors.InvalidApplication
+        AddVisaCardErrors.Null.value -> AddVisaCardErrors.Null
+        AddVisaCardErrors.EditFailed.value -> AddVisaCardErrors.EditFailed
+        else -> AddVisaCardErrors.SystemMalfunction
+    }
+
 
 /**
  * Format a phone number with a  "+Code Number" structure when you have

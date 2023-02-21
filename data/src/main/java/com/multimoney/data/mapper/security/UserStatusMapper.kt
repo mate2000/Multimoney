@@ -23,6 +23,7 @@ private fun ValidateUserStatusQuery.ValidateUserStatus.mapToDomainModel() = Vali
 
 private fun ValidateUserStatusQuery.InfoUser.mapToDomainModel() = InfoUser(
     idBrand = idBrand.toString().toInt(),
+    email = email,
     userName = userName,
     idClient = idClient.toString().toInt(),
     firstName = firstName,

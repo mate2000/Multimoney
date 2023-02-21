@@ -18,15 +18,12 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.util.CognitoHelper
 import com.multimoney.multimoney.util.interfaces.AddCardCommunicator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), SignOutCommunicator, AddCardCommunicator {
+class MainActivity : AppCompatActivity(), SignOutCommunicator {
 
     @Inject
     lateinit var mmCountDownTimer: MMCountDownTimer
@@ -38,8 +35,6 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator, AddCardCommunicat
     lateinit var cognitoHelper: CognitoHelper
 
     var dialogParameters = mutableStateOf(DialogParameters())
-
-    var resultFlow: Flow<String> = flowOf("")
 
     private var isAppInForeground = true
 
@@ -104,18 +99,5 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator, AddCardCommunicat
 
     override fun isAppInForeground(): Boolean {
         return isAppInForeground
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        val response = "FLOW"
-        super.onActivityResult(requestCode, resultCode, data)
-        Log.v("CITERIO MAIN", requestCode.toString())
-        resultFlow = flow {
-            emit(response)
-        }
-    }
-
-    override fun getFlowAddCardResult(): Flow<String> {
-        return resultFlow
     }
 }

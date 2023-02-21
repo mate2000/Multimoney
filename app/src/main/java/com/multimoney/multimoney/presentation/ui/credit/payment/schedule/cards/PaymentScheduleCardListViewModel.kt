@@ -4,7 +4,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.domain.interaction.virtualcard.MutationCreateUserVDUseCase
 import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCase
+import com.multimoney.domain.model.security.InfoUser
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -13,9 +15,13 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.USER_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.ADD_CARD_RESPONSE
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CARD
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.INFO_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
@@ -24,16 +30,26 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.P
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCardSelected
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnHandleAddCardResponse
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnStopTimer
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnRestartTimer
 import com.multimoney.multimoney.presentation.ui.home.HomeState
+import com.multimoney.multimoney.presentation.util.MMCountDownTimer
+import com.multimoney.multimoney.presentation.util.catalog.AddVisaCardErrors
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.getAddCardErrorFromValue
+import com.multimoney.multimoney.presentation.util.getNavParam
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @HiltViewModel
 class PaymentScheduleCardListViewModel @Inject constructor(
+    val countDownTimer: MMCountDownTimer,
     savedStateHandle: SavedStateHandle,
-    private val queryListCardVDUseCase: QueryListCardVDUseCase
+    private val queryListCardVDUseCase: QueryListCardVDUseCase,
+    private val mutationCreateUserVDUseCase: MutationCreateUserVDUseCase
 ) : BaseViewModel(true) {
 
     // uiState
@@ -41,17 +57,15 @@ class PaymentScheduleCardListViewModel @Inject constructor(
         private set
 
     // Stateless
-    private var user: String = ""
-    private var idBrand: Int = 0
     private var idClient: Int = 0
     private var idLoanClient: Int = 0
     private var paymentDate: String = ""
     private var identification: String = ""
     private var previousScreen = ""
+    private var infoUser: InfoUser? = null
 
     init {
-        user = savedStateHandle[USER] ?: ""
-        idBrand = savedStateHandle[ID_BRAND] ?: 0
+        infoUser = savedStateHandle[INFO_USER]
         idClient = savedStateHandle[ID_CLIENT] ?: 0
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: 0
         paymentDate = savedStateHandle[PAYMENT_DATE] ?: ""
@@ -61,8 +75,8 @@ class PaymentScheduleCardListViewModel @Inject constructor(
 
     private fun onCallQueryGetCardsUseCase() = executeUseCase {
         queryListCardVDUseCase.invoke(
-            user = user,
-            idBrand = idBrand,
+            user = infoUser?.email.orEmpty(),
+            idBrand = infoUser?.idBrand ?: 0,
             identification = identification
         ).collectLatest { result ->
             result.onSuccess { cardsList ->
@@ -84,14 +98,101 @@ class PaymentScheduleCardListViewModel @Inject constructor(
         }
     }
 
+    private fun onCallMutationCreateUserVDUseCase() = executeUseCase {
+        mutationCreateUserVDUseCase.invoke(
+            identification =  identification,
+            firstName = infoUser?.firstName.orEmpty(),
+            secondName = infoUser?.secondName.orEmpty(),
+            lastName = infoUser?.lastName.orEmpty(),
+            secondLastName = infoUser?.secondLastName.orEmpty(),
+            email = infoUser?.email.orEmpty(),
+            callerId = infoUser?.phone.orEmpty(),
+            user = infoUser?.userName.orEmpty(),
+            idBrand = infoUser?.idBrand ?: 0
+        ).collectLatest { result ->
+            result.onSuccess {
+                uiState = uiState.copy(isLoading = false)
+                onCallQueryGetCardsUseCase()
+            }.onFailure {
+                uiState = uiState.copy(
+                    isLoading = false,
+                    openDialog = DialogParameters(
+                        description = it.getError() ?: "",
+                        isActive = mutableStateOf(true)
+                    )
+                )
+            }.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
+    private fun onHandleAddCardResponse(response: String, isError: Boolean) {
+        if (isError) {
+            setErrorAlertResultAddCard(response.getAddCardErrorFromValue())
+        } else {
+            onNavigateToVisaVerifyInformation(response)
+        }
+    }
+
+    private fun onStart() {
+        if (infoUser?.visaDirectUser.isNullOrEmpty()) {
+            onCallMutationCreateUserVDUseCase()
+        }
+    }
+
+    private fun onNavigateToVisaVerifyInformation(response: String) = navigateTo(
+        route = Screen.VisaVerifyInformationScreen.baseRoute
+            .plus(
+                getNavParam(IDENTIFICATION, identification)
+            )
+            .plus(
+                getNavParam(ID_CARD, "")
+            )
+            .plus(
+                getNavParam(USER, infoUser?.email.orEmpty())
+            )
+            .plus(
+                getNavParam(ID_BRAND, infoUser?.idBrand ?: 0)
+            )
+            .plus(
+                getNavParam(PREVIOUS_SCREEN, Screen.ProfileCardListScreen.baseRoute)
+            )
+            .plus(
+                getNavParam(ADD_CARD_RESPONSE, response)
+            )
+            .plus(
+                getNavParam(USER_NAME, infoUser?.userName.orEmpty())
+            )
+    )
+
     private fun onCardSelected(card: CardVisaDirect?) = popAndNavigateTo(
-        route = "${Screen.PaymentScheduleCardScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/${
-        encodeData(
-            card
-        )
-        }/$paymentDate/${true}/${Screen.HomeScreen.route}/${false}/$identification",
+        route = "${Screen.PaymentScheduleCardScreen.baseRoute}/$idClient/$idLoanClient/${
+            encodeData(
+                card
+            )
+        }/$paymentDate/${true}/${Screen.HomeScreen.route}/${false}/$identification/${
+            encodeData(
+                infoUser
+            )
+        }",
         popTo = Screen.PaymentScheduleCardListScreen.route
     )
+
+    private fun setErrorAlertResultAddCard(
+        addVisaCardErrors: AddVisaCardErrors
+    ) {
+        uiState = uiState.copy(
+            isAlertResultVisible = true,
+            isAlertResultVisaError = true,
+            isAlertResultSuccess = false,
+            alertResultIconResource = R.drawable.ic_error_symbol,
+            alertResultTitleResource = addVisaCardErrors.title,
+            alertResultDescriptionResource = addVisaCardErrors.description,
+            alertResultButtonResource = R.string.payment_schedule_error_alert_button_two,
+            isLoading = false
+        )
+    }
 
     private fun onNavigateBack() = navigateBack(popTo = Screen.PaymentScheduleCardScreen.route, isRestart = false)
 
@@ -114,11 +215,27 @@ class PaymentScheduleCardListViewModel @Inject constructor(
         )
     }
 
+    private fun onRestartTimer() {
+        countDownTimer.restartTimer()
+    }
+
+    private fun onStopTimer() {
+        countDownTimer.stopTimer()
+    }
+
     data class UIState(
         // Interactions
         val clientCardList: List<CardVisaDirect?>? = null,
         val isLoading: Boolean = false,
-        val openDialog: DialogParameters = DialogParameters()
+        val openDialog: DialogParameters = DialogParameters(),
+        val isAlertResultSuccess: Boolean = true,
+        val isAlertResultVisaError: Boolean = false,
+        val isAlertResultVisible: Boolean = false,
+        val alertResultIconResource: Int = 0,
+        val alertResultTitleResource: Int = R.string.empty,
+        val alertResultDescription: String = "",
+        val alertResultDescriptionResource: Int = R.string.empty,
+        val alertResultButtonResource: Int = R.string.empty
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -127,6 +244,10 @@ class PaymentScheduleCardListViewModel @Inject constructor(
             is OnCloseClick -> onCloseClick()
             is OnCallQueryGetCards -> onCallQueryGetCardsUseCase()
             is OnCardSelected -> onCardSelected(uiEvent.card)
+            is OnStart -> onStart()
+            is OnHandleAddCardResponse -> onHandleAddCardResponse(uiEvent.response, uiEvent.isError)
+            is OnStopTimer -> onStopTimer()
+            is OnRestartTimer -> onRestartTimer()
         }
     }
 
@@ -135,5 +256,16 @@ class PaymentScheduleCardListViewModel @Inject constructor(
         class OnCardSelected(val card: CardVisaDirect?) : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnCloseClick : UIEvent()
+        object OnStart : UIEvent()
+        object OnStopTimer : UIEvent()
+        object OnRestartTimer : UIEvent()
+        data class OnHandleAddCardResponse(val response: String, val isError: Boolean) : UIEvent()
+    }
+
+    companion object {
+        const val RESULT_CODE_PROCESS_FINISHED = 200
+        const val RESULT_CODE_PROCESS_INCOMPLETE = 400
+        const val RESPONSE_VALUE = "response_value_key"
+        const val RESPONSE_IS_ERROR = "response_error_key"
     }
 }

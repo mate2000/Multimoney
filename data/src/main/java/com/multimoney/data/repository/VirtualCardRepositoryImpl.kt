@@ -128,8 +128,7 @@ class VirtualCardRepositoryImpl @Inject constructor(
         email: String,
         callerId: String,
         user: String,
-        idBrand: Int,
-        accountToken: Long
+        idBrand: Int
     ): Flow<MultimoneyResult<CreateUser?>> = fetchData(
         apolloCall = graphqlApi.mutationCreateUserVD(
             identification = identification,
@@ -140,8 +139,7 @@ class VirtualCardRepositoryImpl @Inject constructor(
             email = email,
             callerId = callerId,
             user = user,
-            idBrand = idBrand,
-            accountToken = accountToken
+            idBrand = idBrand
         ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())

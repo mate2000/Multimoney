@@ -14,7 +14,6 @@ interface MutationCreateUserVDUseCase {
         email: String,
         callerId: String,
         user: String,
-        idBrand: Int,
-        accountToken: Long
+        idBrand: Int
     ): Flow<MultimoneyResult<CreateUser?>>
 }

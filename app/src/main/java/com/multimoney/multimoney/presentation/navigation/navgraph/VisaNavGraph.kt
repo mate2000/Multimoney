@@ -14,7 +14,6 @@ import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.VISA_ROUTE
 import com.multimoney.multimoney.presentation.navigation.navtype.home.BalanceCardInformationNavType
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.addcard.AddCardVDScreen
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardScreen
 import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceScreen
@@ -141,19 +140,6 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
                     )
                 },
                 sharedViewModel = viewModel
-            )
-        }
-        composable(
-            route = Screen.AddCardVDScreen.route,
-            arguments = listOf(
-                navArgument(ID_BRAND) { type = NavType.IntType },
-                navArgument(ACCOUNT_TOKEN_CREDIT) { type = NavType.IntType },
-            )
-        ) { navBackStackEntry ->
-            AddCardVDScreen(
-                onNavigate = {
-                    navController.navigate(it.route)
-                }
             )
         }
         composable(

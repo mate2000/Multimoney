@@ -5245,8 +5245,6 @@ type CreateUser {
 input CreateUserDtoInput {
   identification: String!
 
-  accountToken: Long!
-
   firstName: String!
 
   secondName: String!

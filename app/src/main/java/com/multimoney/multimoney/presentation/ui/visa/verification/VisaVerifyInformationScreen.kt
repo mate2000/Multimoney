@@ -42,13 +42,15 @@ fun VisaVerifyInformationScreen(
     viewModel.apply {
         LaunchedEffect(true) {
             executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
+            viewModel.onUIEvent(VisaVerifyInformationViewModel.UIEvent.OnCallMutationCreateCardVDUseCase)
         }
     }
     VisaVerifiedContent(
         onNextButtonClick = { viewModel.onUIEvent(VisaVerifyInformationViewModel.UIEvent.OnNavigateToNextScreen) },
         onBackClick = { viewModel.onUIEvent(VisaVerifyInformationViewModel.UIEvent.OnNavigateBack) },
         onCloseClick = { viewModel.onUIEvent(VisaVerifyInformationViewModel.UIEvent.OnCloseClick) },
-        dialogParameter = viewModel.uiState.openDialog
+        dialogParameter = viewModel.uiState.openDialog,
+        isLoading = viewModel.uiState.isLoading
     )
 
     BackHandler {
@@ -62,7 +64,8 @@ fun VisaVerifiedContent(
     onNextButtonClick: () -> Unit = {},
     onBackClick: () -> Unit = {},
     onCloseClick: () -> Unit = {},
-    dialogParameter: DialogParameters = DialogParameters()
+    dialogParameter: DialogParameters = DialogParameters(),
+    isLoading: Boolean = false
 ) {
     Column(
         modifier = Modifier
@@ -141,6 +144,7 @@ fun VisaVerifiedContent(
             )
         }
         CustomButton(
+            enable = isLoading.not(),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 16.dp, end = 16.dp, bottom = 32.dp)

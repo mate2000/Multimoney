@@ -1789,8 +1789,7 @@ class GraphqlApi @Inject constructor(
         email: String,
         callerId: String,
         user: String,
-        idBrand: Int,
-        accountToken: Long
+        idBrand: Int
     ): ApolloCall<CreateUserVDMutation.Data> = apolloAuthorizedClient.mutation(
         CreateUserVDMutation(
             identification = identification,
@@ -1801,8 +1800,7 @@ class GraphqlApi @Inject constructor(
             email = email,
             callerId = callerId,
             user = user,
-            idBrand = idBrand,
-            accountToken = accountToken
+            idBrand = idBrand
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 

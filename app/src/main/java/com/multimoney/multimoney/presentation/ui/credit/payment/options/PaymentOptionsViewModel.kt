@@ -5,17 +5,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.model.security.InfoUser
 import com.multimoney.domain.model.security.PaymentMethod
 import com.multimoney.domain.model.security.TransferAccount
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.INFO_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.MINIMUM_PAYMENT
@@ -23,7 +24,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.MINIMUM_PAYMEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_METHOD
 import com.multimoney.multimoney.presentation.navigation.navgraph.TRANSFER_ACCOUNT
-import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.payment.options.PaymentOptionsViewModel.UIEvent.OnGetTextResources
 import com.multimoney.multimoney.presentation.ui.credit.payment.options.PaymentOptionsViewModel.UIEvent.OnNavigateBack
@@ -41,9 +41,8 @@ class PaymentOptionsViewModel @Inject constructor(savedStateHandle: SavedStateHa
         private set
 
     // Stateless
-    private var idBrand: Int = 0
+    private var infoUser: InfoUser? = null
     private var identification: String = ""
-    private var user: String = ""
     private var creditNumber: String? = null
     private var transferAccount: TransferAccount? = null
     private var minimumPayment: Float? = null
@@ -56,9 +55,8 @@ class PaymentOptionsViewModel @Inject constructor(savedStateHandle: SavedStateHa
     private var paymentDate: String? = ""
 
     init {
-        idBrand = savedStateHandle[ID_BRAND] ?: 0
+        infoUser = savedStateHandle[INFO_USER]
         identification = savedStateHandle[IDENTIFICATION] ?: ""
-        user = savedStateHandle[USER] ?: ""
         creditNumber = savedStateHandle[CREDIT_NUMBER]
         transferAccount = savedStateHandle[TRANSFER_ACCOUNT]
         minimumPayment = savedStateHandle[MINIMUM_PAYMENT]
@@ -74,7 +72,7 @@ class PaymentOptionsViewModel @Inject constructor(savedStateHandle: SavedStateHa
 
     private fun onGetTextResource() {
         uiState = uiState.copy(
-            titleResource = if (idBrand == Brand.ElSalvador.id) {
+            titleResource = if ((infoUser?.idBrand ?: 0) == Brand.ElSalvador.id) {
                 R.string.payment_options_title_sv
             } else {
                 R.string.payment_options_title_gt
@@ -85,12 +83,20 @@ class PaymentOptionsViewModel @Inject constructor(savedStateHandle: SavedStateHa
     private fun onPaymentMethodClick(paymentMethodType: String) {
         val route = when (paymentMethodType) {
             PaymentMethodType.TransferBank.value ->
-                "${Screen.PaymentOptionsTransferScreen.baseRoute}/$idBrand/$creditNumber/${encodeData(transferAccount)}"
+                "${Screen.PaymentOptionsTransferScreen.baseRoute}/${infoUser?.idBrand ?: 0}/$creditNumber/${
+                    encodeData(
+                        transferAccount
+                    )
+                }"
             PaymentMethodType.VisaDirect.value -> {
-                "${Screen.PaymentCardsListScreen.baseRoute}/$idBrand/$identification/$user/$creditNumber/$idClient/$idLoanClient/$minimumPayment/$minimumPaymentLabel/$maximumPayment/$maximumPaymentLabel/$idCurrency/$paymentDate"
+                "${Screen.PaymentCardsListScreen.baseRoute}/$identification/$creditNumber/$idClient/$idLoanClient/$minimumPayment/$minimumPaymentLabel/$maximumPayment/$maximumPaymentLabel/$idCurrency/$paymentDate/${
+                    encodeData(
+                        infoUser
+                    )
+                }"
             }
             else -> {
-                "${Screen.PaymentPointsScreen.baseRoute}/$idBrand/$creditNumber/$minimumPaymentLabel"
+                "${Screen.PaymentPointsScreen.baseRoute}/${infoUser?.idBrand ?: 0}/$creditNumber/$minimumPaymentLabel"
             }
         }
         navigateTo(route = route)

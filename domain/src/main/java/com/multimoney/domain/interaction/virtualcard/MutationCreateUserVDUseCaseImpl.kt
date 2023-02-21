@@ -18,7 +18,6 @@ class MutationCreateUserVDUseCaseImpl @Inject constructor(private val virtualCar
         callerId: String,
         user: String,
         idBrand: Int,
-        accountToken: Long
     ): Flow<MultimoneyResult<CreateUser?>> =
         virtualCardRepository.mutationCreateUserVD(
             identification = identification,
@@ -29,7 +28,6 @@ class MutationCreateUserVDUseCaseImpl @Inject constructor(private val virtualCar
             email = email,
             callerId = callerId,
             user = user,
-            idBrand = idBrand,
-            accountToken = accountToken
+            idBrand = idBrand
         )
 }

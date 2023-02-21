@@ -1,15 +1,15 @@
-query aCHTransferFavoriteList(
-    $user: String,
-    $idBrand: Int,
-    $isFavorite: Boolean!,
-    $identificationNumber: String
+query ACHTransferFavoriteList(
+    $user: String!
+    $idBrand: Int!
+    $isFavorite: Boolean!
+    $identificationNumber: String!
 ) {
     aCHTransferFavoriteList(
         aCHTransferFavoriteListInput: {
-            user: $user,
-            idBrand: $idBrand,
-            identificacionNumber: $identificationNumber,
+            user: $user
+            idBrand: $idBrand
             isFavorite: $isFavorite
+            identificacionNumber: $identificationNumber
         }
     ) {
         result {
@@ -21,7 +21,11 @@ query aCHTransferFavoriteList(
             destinationAccountCurrency
             idBank
             idTypeAccount
+            identificationTypeAccount
             isFavorite
         }
+        status
+        message
+        detail
     }
 }

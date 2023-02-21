@@ -18,7 +18,9 @@ class MutationAddACHAccountUseCaseImpl(
         destinationBankId: Int,
         description: String,
         identificationNumber: String,
-        identificationTypeAccount: Int
+        identificationTypeAccount: Int,
+        destinationCurrencyId: Int,
+        document: String
     ): Flow<MultimoneyResult<ACHAccount?>> = repository.mutationAddACHAccount(
         idBrand = idBrand,
         user = user,
@@ -29,6 +31,8 @@ class MutationAddACHAccountUseCaseImpl(
         destinationBankId = destinationBankId,
         description = description,
         identificationNumber = identificationNumber,
-        identificationTypeAccount = identificationTypeAccount
+        identificationTypeAccount = identificationTypeAccount,
+        destinationCurrencyId = destinationCurrencyId,
+        document = document
     )
 }

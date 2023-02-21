@@ -9,11 +9,13 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.CryptoSendSteps
 import com.multimoney.data.util.catalog.SendCryptoStep
 import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.CRYPTO_ASSET
 import com.multimoney.multimoney.presentation.navigation.DESCRIPTION_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.home.HomeState
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getCurrentTime
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -56,6 +58,19 @@ class CryptoSendSharedViewModel @Inject constructor(
         }
     }
 
+    private fun onCloseClick() {
+        uiState = uiState.copy(
+            openDialog = DialogParameters(
+                titleResource = R.string.crypto_send_abandon_dialog_title,
+                descriptionResource = R.string.crypto_send_abandon_dialog_message,
+                positiveResource = R.string.button_continue,
+                negativeResource = R.string.custom_dialog_default_negative_label,
+                positiveAction = { navigateBackToHome() },
+                isActive = mutableStateOf(true)
+            )
+        )
+    }
+
     private fun navigateBackToHome() =
         navigateBack(
             popTo = Screen.HomeScreen.route,
@@ -91,6 +106,12 @@ class CryptoSendSharedViewModel @Inject constructor(
         )
     }
 
+    fun shouldShowCloseButton(): Boolean = if (comingFromCurrencyDetails) {
+        uiState.currentStepType != SendCryptoStep.CRYPTO_ADDRESS && uiState.currentStepType != SendCryptoStep.LOADING
+    } else {
+        uiState.currentStepType != SendCryptoStep.LIST_CRYPTO_CURRENCIES && uiState.currentStepType != SendCryptoStep.LOADING
+    }
+
     data class UIState(
         val currentStepType: SendCryptoStep = SendCryptoStep.LIST_CRYPTO_CURRENCIES,
         val currentStep: Int = CryptoSendSteps.One.pageNumber,
@@ -109,6 +130,7 @@ class CryptoSendSharedViewModel @Inject constructor(
         var sendCryptoAmount: String = "",
         val sendCurrentDate: String? = null,
         val sendCurrentTime: String? = null,
+        val openDialog: DialogParameters = DialogParameters()
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -131,6 +153,7 @@ class CryptoSendSharedViewModel @Inject constructor(
                 isRestart = true,
                 homeState = HomeState.COLLAPSED
             )
+            is UIEvent.OnCloseClick -> onCloseClick()
         }
     }
 
@@ -148,8 +171,7 @@ class CryptoSendSharedViewModel @Inject constructor(
 
         data class OnSetFlowStep(val step: SendCryptoStep) : UIEvent
         object OnNavigateHome : UIEvent
-
-
+        object OnCloseClick : UIEvent
     }
 
     companion object {

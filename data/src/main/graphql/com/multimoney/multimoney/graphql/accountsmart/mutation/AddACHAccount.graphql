@@ -9,6 +9,8 @@ mutation AddACHAccount(
     $identificationTypeAccount: Int!
     $idBrand: Int!
     $user: String!
+    $document: String!
+    $destinationCurrencyId: Int!
 ) {
     aCHTransferFavoriteAdd(
         aCHTransferFavoriteAddInput: {
@@ -20,13 +22,23 @@ mutation AddACHAccount(
             description: $description
             identificacionNumber: $identificationNumber
             identificationTypeAccount: $identificationTypeAccount
+            identificationNumberAccount: $document
             idBrand: $idBrand
             user: $user
+            destinationAccountCurrencyId: $destinationCurrencyId
         }
     ) {
         result {
             accountForAchTransferId
             accountNumber
+            description
+            titularName
+            identificacionNumber
+            isFavorite
+            typeAccountId
+            destinationBankId
+            destinationBankDescription
+            identificationTypeAccount
         }
         message
     }

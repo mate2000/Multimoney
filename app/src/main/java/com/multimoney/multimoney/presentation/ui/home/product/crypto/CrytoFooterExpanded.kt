@@ -82,21 +82,6 @@ fun CryptoFooterExpandedContent(
             profileEnable.not() and outOfService -> MaintenanceSection()
             else -> NoticeSection()
         }
-        /*if (profileEnable) {
-            Column {
-                CryptoCurrencies(
-                    items = cryptoCurrencies,
-                    itemClick = {},
-                    viewAllClick = { actionWallet() }
-                )
-                CryptoMovementsSection(
-                    cryptoMovements = movements,
-                    onShowAllClick = onShowAllClick
-                )
-            }
-        } else {
-            NoticeSection()
-        }*/
     }
 }
 

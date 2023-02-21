@@ -17,7 +17,6 @@ import com.multimoney.domain.model.accountsmart.SmartAccountSmall
 import com.multimoney.domain.model.crypto.MarketCryptoCoin
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNTS_LIST
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
@@ -60,10 +59,6 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
 
     private fun setUserData() {
         previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
-        /*uiState = uiState.copy(
-            accounts = savedStateHandle.get<Array<SmartAccountSmall>>(SMART_ACCOUNTS_LIST)?.toList()
-                ?: listOf()
-        )*/
         viewModelScope.launch {
             idBrand = dataStorePreferences.getIdBrand().first().toInt()
             pkUser = dataStorePreferences.getPkUser().first()
@@ -331,7 +326,6 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
     }
 
     companion object {
-        const val ACTIVE_ACCOUNT = 1
         const val DEFAULT_ID_BRAND_ERROR = -1
     }
 }

@@ -161,7 +161,7 @@ fun CryptoReceiveAddressContent(
                     Spacer(modifier = Modifier.padding(12.dp))
                     Image(
                         painter = painterResource(id = R.drawable.ic_share),
-                        contentDescription = "share icon",
+                        contentDescription = "",
                         modifier = Modifier.clickable(onClick = {
                             if (!viewModel.uiState.isLoading) {
                                 viewModel.onUIEvent(
@@ -175,7 +175,7 @@ fun CryptoReceiveAddressContent(
                     Spacer(modifier = Modifier.padding(12.dp))
                     Image(
                         painter = painterResource(id = R.drawable.ic_copy),
-                        contentDescription = "copy icon",
+                        contentDescription = "",
                         modifier = Modifier.clickable(onClick = {
                             ClipboardUtil.copy(context = context, text = viewModel.uiState.address)
                             Toast.makeText(context,  R.string.Crypto_receive_address_toast, Toast.LENGTH_SHORT).show()

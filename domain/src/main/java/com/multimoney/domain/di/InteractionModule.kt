@@ -176,6 +176,8 @@ import com.multimoney.domain.interaction.crypto.SellCryptoCurrencyUseCase
 import com.multimoney.domain.interaction.crypto.SellCryptoCurrencyUseCaseImpl
 import com.multimoney.domain.interaction.crypto.ValidateDepositAddressUseCase
 import com.multimoney.domain.interaction.crypto.ValidateDepositAddressUseCaseImpl
+import com.multimoney.domain.interaction.crypto.SendCryptoToAddressUseCase
+import com.multimoney.domain.interaction.crypto.SendCryptoToAddressUseCaseImpl
 import com.multimoney.domain.interaction.mmvisa.MutationDeleteTokenDeviceNVUseCase
 import com.multimoney.domain.interaction.mmvisa.MutationDeleteTokenDeviceNVUseCaseImpl
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
@@ -767,6 +769,11 @@ class InteractionModule {
     @Provides
     fun provideValidateDepositAddressUseCase(cryptoRepository: CryptoRepository): ValidateDepositAddressUseCase =
         ValidateDepositAddressUseCaseImpl(cryptoRepository)
+
+    @Singleton
+    @Provides
+    fun provideMutationSendCryptoToAddress(cryptoRepository: CryptoRepository): SendCryptoToAddressUseCase =
+        SendCryptoToAddressUseCaseImpl(cryptoRepository)
 
     // Virtual Card
 

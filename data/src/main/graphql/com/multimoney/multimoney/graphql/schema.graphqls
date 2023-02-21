@@ -4444,6 +4444,12 @@ input ReleaseTransactionDtoInput {
 type TransferOrder {
   result: TransferOrderResult
 
+  status: Int
+
+  message: String
+
+  detail: String
+
   rollbackApplied: Boolean!
 
   status: Int

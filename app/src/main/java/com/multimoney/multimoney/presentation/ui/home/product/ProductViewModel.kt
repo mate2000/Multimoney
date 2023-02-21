@@ -495,22 +495,13 @@ class ProductViewModel @Inject constructor(
         val cardStatus = userStatus?.infoVirtualCard?.status
         navigateTo(
             "${Screen.CryptoWalletScreen.baseRoute}/$email/${uiState.idBrand}/$identification/" +
-                "$globalBalance/$idClient/$idLoanClient/$statusCredit/$statusSmart/$statusCrypto/" +
-                "$cardStatus/${
-                encodeData(
-                    balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType()
-                )
-                }/${encodeData(balanceCredit?.balanceCryptoAccount?.items)}"
+                "$globalBalance/$idClient/$idLoanClient/$statusCredit/$statusSmart/$statusCrypto/$cardStatus"
         )
     }
 
     private fun onNavigateToCryptoMarket() {
         navigateTo(
-            "${Screen.CryptoMarketScreen.baseRoute}/$userName/${uiState.idBrand}/${
-            encodeData(
-                balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType()
-            )
-            }/${encodeData(balanceCredit?.balanceCryptoAccount?.items)}"
+            "${Screen.CryptoMarketScreen.baseRoute}/$userName/${uiState.idBrand}"
         )
     }
 
@@ -642,6 +633,7 @@ class ProductViewModel @Inject constructor(
             QuickActionFlow.BUY_CRYPTO.flow -> onNavigateToPurchaseCryptoFlow()
             QuickActionFlow.SELL_CRYPTO.flow -> onNavigateToSellCryptoFlow()
             QuickActionFlow.SEND_CRYPTO.flow -> onNavigateToSendCryptoFlow()
+            QuickActionFlow.RECEIVE_CRYPTO.flow -> onNavigateToGiveCryptoFlow()
         }
     }
 
@@ -895,16 +887,12 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToPurchaseCryptoFlow() {
-        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${encodeData(balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType())}/${Screen.HomeScreen.route}")
+        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${Screen.HomeScreen.route}")
     }
 
     private fun onNavigateToSellCryptoFlow() {
         navigateTo(
-            "${Screen.CryptoSellFlow.baseRoute}/${Screen.HomeScreen.route}/${encodeData(balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType())}/${
-            encodeData(
-                balanceCredit?.balanceCryptoAccount?.items
-            )
-            }"
+            "${Screen.CryptoSellFlow.baseRoute}/${Screen.HomeScreen.route}"
         )
     }
 

@@ -59,9 +59,6 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
     var uiState by mutableStateOf(UiState())
         private set
 
-    private var smartAccounts :List<SmartAccountSmall>? = null
-    private var userCryptoBalances: List<BalanceCryptoAccountItems>? = null
-
     //stateless
     val defaultDialogParameters = DialogParameters(descriptionResource = R.string.something_went_wrong)
 
@@ -71,9 +68,6 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
             selectedCryptoCoin = savedStateHandle[ITEM_CRYPTO_MARKET],
             idBrand = savedStateHandle[ID_BRAND]
         )
-        smartAccounts =  savedStateHandle.get<Array<SmartAccountSmall>>(SMART_ACCOUNTS_LIST)?.toList()
-        userCryptoBalances =
-            savedStateHandle.get<Array<BalanceCryptoAccountItems>>(USER_CRYPTO_BALANCES)?.toList()
         viewModelScope.launch {
             uiState = uiState.copy(
                 shouldDisplayDisclaimer = dataStorePreferences.isVolatileDialogVisible().first(),
@@ -176,11 +170,11 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
     }
 
     private fun onNavigateToSelectAccount(){
-        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${encodeData(smartAccounts)}/${Screen.CryptoCurrencyDetailsScreen.baseRoute}?$ITEM_CRYPTO_MARKET=${encodeData(uiState.selectedCryptoCoin)}")
+        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${Screen.CryptoCurrencyDetailsScreen.baseRoute}?$ITEM_CRYPTO_MARKET=${encodeData(uiState.selectedCryptoCoin)}")
     }
 
     private fun onNavigateToSellCrypto(){
-        navigateTo("${Screen.CryptoSellFlow.baseRoute}/${Screen.CryptoCurrencyDetailsScreen.baseRoute}/${encodeData(smartAccounts)}/${encodeData(userCryptoBalances)}?$ITEM_CRYPTO_MARKET=${encodeData(uiState.selectedCryptoCoin)}")
+        navigateTo("${Screen.CryptoSellFlow.baseRoute}/${Screen.CryptoCurrencyDetailsScreen.baseRoute}?$ITEM_CRYPTO_MARKET=${encodeData(uiState.selectedCryptoCoin)}")
     }
 
     private fun onNavigateToCryptoSendFlow() {

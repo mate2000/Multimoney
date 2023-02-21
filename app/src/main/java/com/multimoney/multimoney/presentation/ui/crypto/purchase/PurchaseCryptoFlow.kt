@@ -17,6 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.BuyCryptoStep
 import com.multimoney.data.util.catalog.PurchaseCryptoSteps
+import com.multimoney.domain.model.accountsmart.SmartAccountSmall
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.BuyCurrencyScreen
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.listofcurrency.ListCryptoCurrenciesScreen
@@ -35,12 +36,16 @@ fun PurchaseCryptoFlow(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
+    smartAccounts: List<SmartAccountSmall> = emptyList(),
     viewModel: PurchaseCryptoSharedViewModel = hiltViewModel()
 ) {
     val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(true) {
+        viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnSetSmartAccounts(
+            accounts = smartAccounts
+        ))
         viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnGetUserInfo)
         viewModel.executeNavigation(
             onNavigate = onNavigate,

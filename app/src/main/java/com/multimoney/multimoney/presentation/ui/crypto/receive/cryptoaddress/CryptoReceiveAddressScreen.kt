@@ -178,7 +178,7 @@ fun CryptoReceiveAddressContent(
                         contentDescription = "copy icon",
                         modifier = Modifier.clickable(onClick = {
                             ClipboardUtil.copy(context = context, text = viewModel.uiState.address)
-                            Toast.makeText(context, "dirección copiada", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context,  R.string.Crypto_receive_address_toast, Toast.LENGTH_SHORT).show()
                         })
                     )
                 }

@@ -27,6 +27,7 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getCurrentTime
+import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -192,9 +193,18 @@ class SellCryptoSharedViewModel @Inject constructor(
             voucherExchangeRate = exchangeRate,
             voucherTotalCreditedAmountExchange = totalCreditedAmountExchange,
             voucherSellDate = getCurrentDate(Calendar.getInstance().time),
-            voucherSellTime = getCurrentTime(Calendar.getInstance().time)
+            voucherSellTime = getCurrentTime(Calendar.getInstance().time).lowercase()
         )
     }
+
+    fun getAccountNumber(maskedText: String): String {
+        return if (idBrand == Brand.ElSalvador.id) {
+            getMaskedAccount(uiState.accountNumber, maskedText, prefix = "")
+        } else {
+            getMaskedAccount(uiState.ibanAccountNumber, maskedText)
+        }
+    }
+
     data class UIState(
         val currentStep: Int = PurchaseCryptoSteps.One.pageNumber,
         val isLoading: Boolean = false,

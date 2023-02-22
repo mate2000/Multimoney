@@ -135,6 +135,7 @@ import com.multimoney.data.networking.graphql.apollomodel.ValidateUserStatusQuer
 import com.multimoney.data.networking.graphql.apollomodel.ValidationSecurityQuery
 import com.multimoney.data.networking.graphql.apollomodel.type.BeneficiaryRequestDtoInput
 import com.multimoney.data.networking.graphql.apollomodel.type.ContactsInput
+import com.multimoney.data.networking.graphql.apollomodel.GetCryptoReceiveAddressQuery
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.RelatedContact
 import com.multimoney.domain.model.credit.CreditInfoQuestion
@@ -2162,7 +2163,9 @@ class GraphqlApi @Inject constructor(
         destinationBankId: Int,
         description: String,
         identificationNumber: String,
-        identificationTypeAccount: Int
+        identificationTypeAccount: Int,
+        destinationCurrencyId: Int,
+        document: String
     ): ApolloCall<AddACHAccountMutation.Data> = apolloAuthorizedClient.mutation(
         AddACHAccountMutation(
             idBrand = idBrand,
@@ -2174,9 +2177,26 @@ class GraphqlApi @Inject constructor(
             destinationBankId = destinationBankId,
             description = description,
             identificationNumber = identificationNumber,
-            identificationTypeAccount = identificationTypeAccount
+            identificationTypeAccount = identificationTypeAccount,
+            destinationCurrencyId = destinationCurrencyId,
+            document = document
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryACHTransferFavoriteList(
+        user: String,
+        idBrand: Int,
+        isFavorite: Boolean,
+        identificationNumber: String
+    ): ApolloCall<ACHTransferFavoriteListQuery.Data> =
+        apolloAuthorizedClient.query(
+            ACHTransferFavoriteListQuery(
+                user,
+                idBrand,
+                isFavorite,
+                identificationNumber
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationProcessTransfer365(
         identification: String,
@@ -2271,21 +2291,6 @@ class GraphqlApi @Inject constructor(
                 maxPoints,
                 paginationLimit,
                 paginationOffset
-            )
-        ).fetchPolicy(FetchPolicy.NetworkOnly)
-
-    fun queryACHTransferFavoriteList(
-        user: String,
-        idBrand: Int,
-        isFavorite: Boolean,
-        identification: String
-    ): ApolloCall<ACHTransferFavoriteListQuery.Data> =
-        apolloAuthorizedClient.query(
-            ACHTransferFavoriteListQuery(
-                Optional.presentIfNotNull(user),
-                Optional.presentIfNotNull(idBrand),
-                isFavorite,
-                Optional.presentIfNotNull(identification)
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -2385,6 +2390,22 @@ class GraphqlApi @Inject constructor(
             taxAmount,
             idBrand,
             user
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryGetCryptoReceiveAddress(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        asset: String,
+        crypto_network: String
+    ): ApolloCall<GetCryptoReceiveAddressQuery.Data> = apolloAuthorizedClient.query(
+        GetCryptoReceiveAddressQuery(
+            user,
+            idBrand,
+            identification,
+            asset,
+            crypto_network
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

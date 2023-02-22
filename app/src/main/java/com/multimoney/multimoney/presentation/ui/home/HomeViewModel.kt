@@ -790,10 +790,10 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getCardIssuanceDescriptionError() = if (uiState.idBrand.toInt() == Brand.Guatemala.id) {
-        R.string.card_issuance_error_description_gt
-    } else {
+    fun getCardIssuanceDescriptionError() = if (uiState.idBrand.toInt() == Brand.CostaRica.id) {
         R.string.card_issuance_error_description
+    } else {
+        R.string.card_issuance_error_description_sv
     }
 
     private fun showTimerDialog(time: Long, activity: Activity?) {

@@ -659,7 +659,9 @@ class SmartAccountRepositoryImpl @Inject constructor(
         destinationBankId: Int,
         description: String,
         identificationNumber: String,
-        identificationTypeAccount: Int
+        identificationTypeAccount: Int,
+        destinationCurrencyId: Int,
+        document: String
     ): Flow<MultimoneyResult<ACHAccount?>> {
         return fetchData(
             graphqlApi.mutationAddACHAccount(
@@ -672,7 +674,9 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 destinationBankId = destinationBankId,
                 description = description,
                 identificationNumber = identificationNumber,
-                identificationTypeAccount = identificationTypeAccount
+                identificationTypeAccount = identificationTypeAccount,
+                destinationCurrencyId = destinationCurrencyId,
+                document = document
             ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
@@ -723,10 +727,10 @@ class SmartAccountRepositoryImpl @Inject constructor(
     ): Flow<MultimoneyResult<FavoriteACHResult?>> {
         return fetchData(
             apolloCall = graphqlApi.queryACHTransferFavoriteList(
-                user,
-                idBrand,
-                isFavorite,
-                identification,
+                user = user,
+                idBrand = idBrand,
+                isFavorite = isFavorite,
+                identificationNumber = identification,
             ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
@@ -838,17 +842,18 @@ class SmartAccountRepositoryImpl @Inject constructor(
         idAccountSysde: Long,
         idAccountRequest: Long
     ): Flow<MultimoneyResult<SmartAccountStatusResult?>> {
-        return fetchData(
-            graphqlApi.mutationUpdateSmartAccountStatus(
-                user,
-                idBrand,
-                identificationNumber,
-                newState,
-                typeState,
-                idAccountSysde,
-                idAccountRequest
-            ),
-            apolloCallMapper = { data -> Success(data.mapToDomain()) }
+        return fetchData(graphqlApi.mutationUpdateSmartAccountStatus(
+            user,
+            idBrand,
+            identificationNumber,
+            newState,
+            typeState,
+            idAccountSysde,
+            idAccountRequest
+        ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomain())
+            }
         )
     }
 

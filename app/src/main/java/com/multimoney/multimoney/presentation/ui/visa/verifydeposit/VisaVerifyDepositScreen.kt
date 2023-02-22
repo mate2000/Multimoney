@@ -179,7 +179,7 @@ fun VisaVerifyDepositContent(
                             .fillMaxWidth()
                             .padding(top = 32.dp),
                         isError = uiState.microDepositError.first,
-                        errorMessage = stringResource(id = uiState.microDepositError.second)
+                        errorMessage = uiState.microDepositError.second
                     )
 
                     if (uiState.isTimerRunning) {

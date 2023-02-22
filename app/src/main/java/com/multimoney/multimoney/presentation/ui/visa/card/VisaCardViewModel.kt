@@ -75,12 +75,12 @@ import com.novopayment.sdk.vts.model.NovoError
 import com.novopayment.sdk.vts.util.error.StatusCode.ERROR_PAYMENT_CANCEL_DIALOG
 import com.novopayment.sdk.vts.util.error.StatusCode.ERROR_PAYMENT_TIMEOUT_SUBMIT_DIALOG
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
@@ -207,9 +207,8 @@ class VisaCardViewModel @Inject constructor(
             dialogParameters = DialogParameters(
                 titleResource = string.empty,
                 descriptionResource = when (idBrand) {
-                    ElSalvador.id -> string.visa_card_sv_dialog_description_available
                     CostaRica.id -> string.visa_card_cr_dialog_description_available
-                    Guatemala.id -> string.visa_card_gt_dialog_description_available
+                    Guatemala.id, ElSalvador.id -> string.visa_card_sv_dialog_description_available
                     else -> string.empty
                 },
                 positiveResource = string.understood,
@@ -231,7 +230,7 @@ class VisaCardViewModel @Inject constructor(
         } else {
             uiState = uiState.copy(
                 dialogParameters = DialogParameters(
-                    titleResource = if (idBrand == Guatemala.id) string.visa_nfc_required_dialog_title_gt else string.visa_nfc_required_dialog_title,
+                    titleResource = if (idBrand == CostaRica.id) string.visa_nfc_required_dialog_title else string.visa_nfc_required_dialog_title_sv,
                     descriptionResource = string.visa_nfc_required_dialog_description,
                     positiveResource = string.activate,
                     negativeResource = string.cancel,
@@ -501,20 +500,20 @@ class VisaCardViewModel @Inject constructor(
             uiState.isCardBlocked.not() -> uiState = uiState.copy(
                 dialogParameters = DialogParameters(
                     titleResource = string.visa_card_block_dialog_title,
-                    descriptionResource = if (idBrand == Guatemala.id) {
-                        string.visa_card_block_dialog_subtitle_gt
-                    } else {
+                    descriptionResource = if (idBrand == CostaRica.id) {
                         string.visa_card_block_dialog_subtitle
+                    } else {
+                        string.visa_card_block_dialog_subtitle_sv
                     },
                     positiveResource = string.locked,
                     negativeResource = string.cancel,
                     positiveAction = { onCallMutationCardBlockingUseCase() },
                     isActive = mutableStateOf(true)
                 ),
-                visaCardBlockDisclaimer = if (idBrand == Guatemala.id) {
-                    string.visa_card_block_disclaimer_gt
-                } else {
+                visaCardBlockDisclaimer = if (idBrand == CostaRica.id) {
                     string.visa_card_block_disclaimer
+                } else {
+                    string.visa_card_block_disclaimer_sv
                 }
             )
             uiState.isCardBlocked && uiState.isNfcAvailable.not() && balanceCardInformation?.allowUnLock == true ->
@@ -586,18 +585,18 @@ class VisaCardViewModel @Inject constructor(
             is OnNavigateBack -> navigateBack(Screen.HomeScreen.route, isNavigateBackRefresh)
             is OnNavigatePreferences -> navigateTo(
                 "${Screen.VisaPreferencesScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
-                encodeData(
-                    balanceCardInformation
-                )
+                    encodeData(
+                        balanceCardInformation
+                    )
                 }/$availableBalanceLabel/$idClient/$idLoanClient"
 
             )
             is OnAvailableAmountClick -> onAvailableAmountClick()
             is OnNavigateToVisaTokenizationScreen -> navigateTo(
                 "${Screen.VisaTokenizationWaitingScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
-                encodeData(
-                    balanceCardInformation
-                )
+                    encodeData(
+                        balanceCardInformation
+                    )
                 }"
             )
             is OnOpenDialogConfirmToStartTokenizationProcess -> uiState = uiState.copy(

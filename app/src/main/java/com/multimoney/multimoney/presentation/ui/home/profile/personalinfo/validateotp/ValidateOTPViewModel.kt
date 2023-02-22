@@ -48,6 +48,12 @@ import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDateTime
+import java.util.regex.Pattern
+import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -57,12 +63,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.time.LocalDateTime
-import java.util.regex.Pattern
-import javax.inject.Inject
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit
 
 @HiltViewModel
 class ValidateOTPViewModel @Inject constructor(
@@ -105,18 +105,19 @@ class ValidateOTPViewModel @Inject constructor(
     private fun getTextResources() {
         uiState = uiState.copy(
             dialogTextResource = when (uiState.idBrand) {
-                Brand.Guatemala.id -> if (uiState.changingField == FieldToChange.PHONE.value) R.string.profile_otp_user_blocked_max_attempt_phone_gt else R.string.profile_otp_user_blocked_max_attempt_email_gt
-                else -> if (uiState.changingField == FieldToChange.PHONE.value) R.string.profile_otp_user_blocked_max_attempt_phone else R.string.profile_otp_user_blocked_max_attempt_email
+                Brand.CostaRica.id -> if (uiState.changingField == FieldToChange.PHONE.value) R.string.profile_otp_user_blocked_max_attempt_phone else R.string.profile_otp_user_blocked_max_attempt_email
+                else -> if (uiState.changingField == FieldToChange.PHONE.value) R.string.profile_otp_user_blocked_max_attempt_phone_sv else R.string.profile_otp_user_blocked_max_attempt_email_sv
             },
             alertTextResource = when (uiState.idBrand) {
-                Brand.Guatemala.id -> R.string.profile_error_changing_phone_gt
-                else -> R.string.profile_error_changing_phone
+                Brand.CostaRica.id -> R.string.profile_error_changing_phone
+                else -> R.string.profile_error_changing_phone_sv
             },
             destination = if (uiState.sendMethod == SignUpOtpViewModel.SEND_METHOD_PHONE) uiState.phoneNumber else uiState.email,
 
             enterTheCodeTextResource = when (uiState.idBrand) {
-                Brand.Guatemala.id -> R.string.profile_enter_the_code_sent_to_template_gt
-                else -> R.string.profile_enter_the_code_sent_to_template
+                Brand.CostaRica.id -> R.string.profile_enter_the_code_sent_to_template
+                else -> R.string.profile_enter_the_code_sent_to_template_sv
+
             },
             statusTextResource = when (uiState.phaseCount) {
                 PHASE_ONE -> R.string.profile_code_expires_in_template

@@ -58,7 +58,7 @@ class SmartTransferFavoriteCRViewModel @Inject constructor(
     private fun getACHFavoriteAccounts() = executeUseCase {
         queryACHTransferFavoriteListUseCase.invoke(
             user = user,
-            identification = identification ?: "",
+            identificationNumber = identification ?: "",
             idBrand = idBrand,
             isFavorite = true
         ).collectLatest { result ->

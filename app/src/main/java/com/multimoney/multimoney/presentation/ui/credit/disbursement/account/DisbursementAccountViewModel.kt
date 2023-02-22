@@ -58,9 +58,9 @@ import com.multimoney.multimoney.presentation.util.getCardDateFormat
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
-import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
@@ -112,9 +112,8 @@ class DisbursementAccountViewModel @Inject constructor(
     private fun getTextResources() {
         uiState = uiState.copy(
             titleResource = when (idBrand) {
-                Brand.ElSalvador.id -> R.string.disbursement_account_sv_title
-                Brand.Guatemala.id -> R.string.disbursement_account_gt_title
-                else -> R.string.disbursement_account_cr_title
+                Brand.CostaRica.id -> R.string.disbursement_account_cr_title
+                else -> R.string.disbursement_account_sv_title
             }
         )
     }
@@ -271,11 +270,11 @@ class DisbursementAccountViewModel @Inject constructor(
 
     private fun onNavigateToVoucher(referenceNumber: String?) = navigateTo(
         route = "${Screen.DisbursementVoucherScreen.baseRoute}/${encodeData(uiState.clientBankAccountSelected)}/${
-        if (shouldDisplayExchangeRate()) {
-            getCurrentAmountExchangedFormatted()
-        } else {
-            getCurrentAmountFormatted()
-        }
+            if (shouldDisplayExchangeRate()) {
+                getCurrentAmountExchangedFormatted()
+            } else {
+                getCurrentAmountFormatted()
+            }
         }/${getExchangeRateFormatted()}/${shouldDisplayExchangeRate()}/${referenceNumber ?: ""}/${getCurrentAmountFormatted()}"
     )
 
@@ -310,24 +309,24 @@ class DisbursementAccountViewModel @Inject constructor(
 
     fun getCurrentAmountFormatted() =
         "${idCurrency?.getCurrencyFromId()?.symbol ?: ""}${
-        selectedAmount?.stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
+            selectedAmount?.stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
         }"
 
     fun getCurrentAmountExchangedFormatted() =
         "${uiState.clientBankAccountSelected?.idCurrency?.getCurrencyFromId()?.symbol ?: ""}${
-        uiState.exchangeConvertedAmount.formattedTwoDecimalsNumber().toString()
-            .stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
+            uiState.exchangeConvertedAmount.formattedTwoDecimalsNumber().toString()
+                .stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
         }"
 
     fun getExchangeRateFormatted() =
         "${idCurrency?.getCurrencyFromId()?.symbol ?: ""}${
-        uiState.exchangeRateLabel.toString()
-            .stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
+            uiState.exchangeRateLabel.toString()
+                .stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
         }"
 
     fun getQuotaTotalFormatted() =
         "${idCurrency?.getCurrencyFromId()?.symbol ?: ""}${
-        quotaTotal?.stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString()) ?: ""
+            quotaTotal?.stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString()) ?: ""
         }"
 
     fun getQuotaNextDateFormatted() =

@@ -7,18 +7,20 @@ import com.multimoney.domain.model.accountsmart.ACHAccountFull
 import com.multimoney.domain.model.accountsmart.FavoriteACHResult
 
 private fun ACHTransferFavoriteListQuery.Result.mapToDomainModel() = ACHAccount(
-    accountForAchTransferId.toString().toInt(),
-    accountNumber,
-    description,
-    destinationBankDescription,
-    destinationAccountCurrencyId.toString().toInt(),
-    destinationAccountCurrency,
-    idBank.toString().toInt(),
-    idTypeAccount.toString().toInt(),
-    isFavorite
+    accountForAchTransferId = accountForAchTransferId.toString().toIntOrNull(),
+    accountNumber = accountNumber,
+    description = description,
+    destinationBankDescription = destinationBankDescription,
+    destinationAccountCurrencyId = destinationAccountCurrencyId.toString().toIntOrNull(),
+    destinationAccountCurrency = destinationAccountCurrency,
+    idBank = idBank.toString().toIntOrNull(),
+    idTypeAccount = idTypeAccount.toString().toIntOrNull(),
+    isFavorite = isFavorite,
+    identificationTypeAccount = identificationTypeAccount.toString().toIntOrNull()
 )
 
-private fun ACHTransferFavoriteListQuery.ACHTransferFavoriteList.mapToDomainModel() = FavoriteACHResult(data = result.map { it.mapToDomainModel() })
+private fun ACHTransferFavoriteListQuery.ACHTransferFavoriteList.mapToDomainModel() =
+    FavoriteACHResult(data = result.map { it.mapToDomainModel() })
 
 fun ACHTransferFavoriteListQuery.Data.mapToDomainModel() = this.aCHTransferFavoriteList?.mapToDomainModel()
 

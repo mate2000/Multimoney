@@ -63,9 +63,9 @@ class CryptoSendSharedViewModel @Inject constructor(
             openDialog = DialogParameters(
                 titleResource = R.string.crypto_send_abandon_dialog_title,
                 descriptionResource = R.string.crypto_send_abandon_dialog_message,
-                positiveResource = R.string.button_continue,
-                negativeResource = R.string.custom_dialog_default_negative_label,
-                positiveAction = { navigateBackToHome() },
+                positiveResource = R.string.custom_dialog_default_negative_label,
+                negativeResource = R.string.button_continue,
+                negativeAction = { navigateBackToHome() },
                 isActive = mutableStateOf(true)
             )
         )
@@ -75,6 +75,7 @@ class CryptoSendSharedViewModel @Inject constructor(
         navigateBack(
             popTo = Screen.HomeScreen.route,
             isRestart = true,
+            homeState = HomeState.COLLAPSED
         )
 
     private fun previousStep() {

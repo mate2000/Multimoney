@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand.CostaRica
 import com.multimoney.data.util.catalog.Brand.ElSalvador
-import com.multimoney.data.util.catalog.Brand.Guatemala
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.ui.credit.origination.evisertiaandonfidoerrors.OnfidoAndEvicertiaErrorsViewModel.UIEvent.OnNavigateToHome
@@ -52,7 +52,7 @@ fun OnfidoAndEvicertiaErrorsContent(
             AlertResult(
                 iconResource = drawable.ic_alert,
                 titleResource = string.sign_document_reject_title,
-                descriptionResource = if (idBrand == Guatemala.id) string.sign_document_reject_description_gt else string.sign_document_reject_description,
+                descriptionResource = if (idBrand == CostaRica.id) string.sign_document_reject_description else string.sign_document_reject_description_sv,
                 buttonTextResource = string.sign,
                 isLeftButtonVisible = false,
                 onRightButtonClick = { onNavigateHome() },
@@ -63,7 +63,7 @@ fun OnfidoAndEvicertiaErrorsContent(
             AlertResult(
                 iconResource = drawable.ic_alert,
                 titleResource = string.sign_credit_max_attempts_title,
-                descriptionResource = if (idBrand == Guatemala.id) string.sign_credit_max_attempts_message_gt else string.sign_credit_max_attempts_message,
+                descriptionResource = if (idBrand == CostaRica.id) string.sign_credit_max_attempts_message else string.sign_credit_max_attempts_message_sv,
                 buttonTextResource = string.understood,
                 isLeftButtonVisible = false,
                 onRightButtonClick = { onNavigateHome() },
@@ -74,7 +74,7 @@ fun OnfidoAndEvicertiaErrorsContent(
             AlertResult(
                 iconResource = drawable.ic_error_symbol,
                 titleResource = string.onfido_rejected_first_time_title,
-                descriptionResource = if (idBrand == Guatemala.id) string.onfido_rejected_first_time_subtitle_gt else string.onfido_rejected_first_time_subtitle,
+                descriptionResource = if (idBrand == CostaRica.id) string.onfido_rejected_first_time_subtitle else string.onfido_rejected_first_time_subtitle_sv,
                 buttonTextResource = string.onfido_rejected_action,
                 isLeftButtonVisible = false,
                 onRightButtonClick = { onNavigateHome() },

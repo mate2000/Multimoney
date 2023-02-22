@@ -94,24 +94,7 @@ fun CreditScreen(
     }
 
     if (viewModel.idBrand.isNotEmpty()) {
-        if (viewModel.idBrand.toInt() == Brand.Guatemala.id) {
-            viewModel.onUIEvent(
-                OnSetCloseDialogTexts(
-                    if (viewModel.crosseling) {
-                        R.string.crosseling_close_dialog_title
-                    } else {
-                        R.string.credit_close_dialog_gt_title
-                    },
-                    stringResource(
-                        id = if (viewModel.crosseling) {
-                            R.string.crosseling_close_dialog_description
-                        } else {
-                            R.string.credit_close_dialog_gt_description
-                        }
-                    )
-                )
-            )
-        } else {
+        if (viewModel.idBrand.toInt() == Brand.CostaRica.id) {
             viewModel.onUIEvent(
                 OnSetCloseDialogTexts(
                     if (viewModel.crosseling) {
@@ -124,6 +107,23 @@ fun CreditScreen(
                             R.string.crosseling_close_dialog_description
                         } else {
                             R.string.credit_close_dialog_description
+                        }
+                    )
+                )
+            )
+        } else {
+            viewModel.onUIEvent(
+                OnSetCloseDialogTexts(
+                    if (viewModel.crosseling) {
+                        R.string.crosseling_close_dialog_title
+                    } else {
+                        R.string.credit_close_dialog_sv_title
+                    },
+                    stringResource(
+                        id = if (viewModel.crosseling) {
+                            R.string.crosseling_close_dialog_description
+                        } else {
+                            R.string.credit_close_dialog_sv_description
                         }
                     )
                 )

@@ -8,17 +8,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.BuyCryptoStep
 import com.multimoney.data.util.catalog.CryptoSendSteps
 import com.multimoney.data.util.catalog.SendCryptoStep
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.send.cryptoaddress.CryptoSendAddressScreen
 import com.multimoney.multimoney.presentation.ui.crypto.send.cryptoamount.CryptoSendAmountScreen
 import com.multimoney.multimoney.presentation.ui.crypto.send.listofcurrencies.CryptoSendListOfCurrenciesScreen
 import com.multimoney.multimoney.presentation.ui.crypto.send.voucher.SendCryptoVoucher
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -55,6 +55,15 @@ fun CryptoSendFlow(
                 onLeftButtonClick = {
                     viewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnPreviousStep)
                 },
+                onRightButtonClick = {
+                    viewModel.onUIEvent(
+                        if (viewModel.uiState.currentStepType == SendCryptoStep.SEND_VOUCHER) {
+                            CryptoSendSharedViewModel.UIEvent.OnNavigateHome
+                        } else {
+                            CryptoSendSharedViewModel.UIEvent.OnCloseClick
+                        }
+                    )
+                }
             )
         }
         Box(
@@ -89,6 +98,19 @@ fun CryptoSendFlow(
     BackHandler {
         viewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnPreviousStep)
     }
+
+    if (viewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            message = viewModel.uiState.openDialog.description.ifBlank {
+                stringResource(viewModel.uiState.openDialog.descriptionResource)
+            },
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
+            openDialogCustom = viewModel.uiState.openDialog.isActive,
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+        )
+    }
 }
 
 @Composable
@@ -100,7 +122,7 @@ fun CRSendCryptoDirectFlow(
 ) {
     when (step) {
         CryptoSendSteps.One.pageNumber -> {
-            viewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnSetFlowStep(SendCryptoStep.SEND_CRYPTO))
+            viewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnSetFlowStep(SendCryptoStep.CRYPTO_ADDRESS))
             CryptoSendAddressScreen(
                 sharedViewModel = viewModel,
                 onNavigateToQrCodeScanner = onNavigateToQrCodeScanner,

@@ -154,6 +154,10 @@ ext {
             tag_manager   : "com.google.android.gms:play-services-tagmanager:${tag_manager_version}"
     ]
 
+    // Google Zxing
+    google_zxing_version = "3.4.0"
+    google_zxing = "com.google.zxing:core:$google_zxing_version"
+
     // Firebase
     firebase_version = "29.1.0"
     firebase_instalations_version = "17.0.0"

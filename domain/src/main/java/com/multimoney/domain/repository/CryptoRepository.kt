@@ -14,6 +14,7 @@ import com.multimoney.domain.model.crypto.SendCryptoToAddressData
 import com.multimoney.domain.model.crypto.SendCryptoToAddressResult
 import com.multimoney.domain.model.crypto.SellCryptoCurrencyHQRData
 import com.multimoney.domain.model.crypto.ValidateDepositAddressResponse
+import com.multimoney.domain.model.crypto.GetCryptoReceiveAddressData
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
@@ -145,4 +146,12 @@ interface CryptoRepository {
         idBrand: Int,
         user: String
     ): Flow<MultimoneyResult<SendCryptoToAddressData>>
+
+    suspend fun getCryptoCurrencyReceiveAddress(
+        user: String,
+        idBrand: Int,
+        asset: String,
+        identification: String,
+        crypto_network: String
+    ): Flow<MultimoneyResult<GetCryptoReceiveAddressData>>
 }

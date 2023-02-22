@@ -18,7 +18,6 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
-import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.BaseEvent
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.ProcessForgotPasswordViewModel.BaseEvent.OnResendOtpToastEvent
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.ProcessForgotPasswordViewModel.UIEvent.OnAlertButtonClick
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.ProcessForgotPasswordViewModel.UIEvent.OnCloseClick
@@ -65,11 +64,11 @@ class ProcessForgotPasswordViewModel @Inject constructor(
 
     private fun onStart() {
         uiState = when (idBrand) {
-            Brand.Guatemala.id -> {
-                uiState.copy(titleResource = R.string.process_forgot_password_title_gt)
+            Brand.CostaRica.id -> {
+                uiState.copy(titleResource = R.string.process_forgot_password_title)
             }
             else -> {
-                uiState.copy(titleResource = R.string.process_forgot_password_title)
+                uiState.copy(titleResource = R.string.process_forgot_password_title_sv)
             }
         }
     }
@@ -213,10 +212,10 @@ class ProcessForgotPasswordViewModel @Inject constructor(
             isAlertResultVisible = true,
             alertResultIconResource = R.drawable.ic_error_symbol,
             alertResultTitleResource = R.string.process_forgot_password_alert_failure_title,
-            alertResultDescriptionResource = if (idBrand == Brand.Guatemala.id) {
-                R.string.process_forgot_password_alert_failure_description_gt
-            } else {
+            alertResultDescriptionResource = if (idBrand == Brand.CostaRica.id) {
                 R.string.process_forgot_password_alert_failure_description
+            } else {
+                R.string.process_forgot_password_alert_failure_description_sv
             },
             alertResultButtonTextResource = if (isOtpFailure) {
                 R.string.process_forgot_password_alert_failure_button_try_again

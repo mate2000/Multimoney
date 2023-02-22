@@ -806,7 +806,8 @@ class SmartAccountRepositoryImpl @Inject constructor(
         amount: Double,
         motive: String,
         user: String,
-        idBrand: Int
+        idBrand: Int,
+        destinationType: String
     ): Flow<MultimoneyResult<Transfer365Result?>> {
         return fetchData(graphqlApi.mutationProcessTransfer365Mobile(
             idBrand = idBrand,
@@ -818,7 +819,8 @@ class SmartAccountRepositoryImpl @Inject constructor(
             destinationLastName = destinationLastName,
             typeAccountId = typeAccountId,
             amount = amount,
-            motive = motive
+            motive = motive,
+            destinationType = destinationType
         ),
             apolloCallMapper = { data ->
                 if (

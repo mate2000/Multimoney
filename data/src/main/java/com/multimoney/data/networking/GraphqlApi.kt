@@ -2231,6 +2231,7 @@ class GraphqlApi @Inject constructor(
         phoneNumber: String,
         destinationBankId: String,
         typeAccountId: String,
+        destinationType: String,
         destinationName: String,
         destinationLastName: String,
         amount: Double,
@@ -2248,7 +2249,8 @@ class GraphqlApi @Inject constructor(
             destinationLastName = destinationLastName,
             typeAccountId = typeAccountId,
             amount = amount,
-            motive = motive
+            motive = motive,
+            destinationType = destinationType
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 

@@ -11,6 +11,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CryptoReceiveSteps
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.ui.crypto.receive.cryptoaddress.CryptoReceiveAddressScreen
 import com.multimoney.multimoney.presentation.ui.crypto.receive.listofcurrencies.CryptoReceiveCurrenciesListScreen
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -79,7 +80,7 @@ fun CRReceiveCryptoDirectFlow(
 ) {
     when (step) {
         CryptoReceiveSteps.One.pageNumber -> {
-        /*TODO: Crypto Receive Address Screen*/
+            CryptoReceiveAddressScreen(sharedViewModel = viewModel)
         }
     }
 }
@@ -89,6 +90,7 @@ fun CRReceiveCryptoFlow(
     viewModel: CryptoReceiveSharedViewModel
 ) {
     when (step) {
-        CryptoReceiveSteps.One.pageNumber -> CryptoReceiveCurrenciesListScreen()
+        CryptoReceiveSteps.One.pageNumber -> CryptoReceiveCurrenciesListScreen(sharedViewModel = viewModel)
+        CryptoReceiveSteps.Two.pageNumber -> CryptoReceiveAddressScreen(sharedViewModel = viewModel)
     }
 }

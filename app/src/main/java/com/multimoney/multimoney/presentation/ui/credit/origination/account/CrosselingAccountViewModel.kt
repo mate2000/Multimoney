@@ -154,9 +154,8 @@ class CrosselingAccountViewModel @Inject constructor(
     private fun getTextResources() {
         uiState = uiState.copy(
             titleResource = when (idBrand) {
-                Brand.ElSalvador.id -> R.string.crosseling_account_sv_title
-                Brand.Guatemala.id -> R.string.crosseling_account_gt_title
-                else -> R.string.crosseling_account_cr_title
+                Brand.CostaRica.id -> R.string.crosseling_account_cr_title
+                else -> R.string.crosseling_account_sv_title
             }
         )
     }

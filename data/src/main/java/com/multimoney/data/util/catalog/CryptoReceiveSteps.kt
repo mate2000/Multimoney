@@ -3,5 +3,6 @@ package com.multimoney.data.util.catalog
 enum class CryptoReceiveSteps(
     val pageNumber: Int
 ) {
-    One(1)
+    One(1),
+    Two(2)
 }

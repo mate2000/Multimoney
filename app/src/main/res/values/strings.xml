@@ -103,7 +103,6 @@
     <string name="onboarding_el_salvador_step_two_sub_title" translatable="false">Recibe hasta $25,000 con solo tu DUI.</string>
     <string name="onboarding_el_salvador_step_three_title" translatable="false">Invierte en cripto</string>
     <string name="onboarding_el_salvador_step_three_sub_title" translatable="false">Compra y vende cripto de forma simple y segura.</string>
-    <string name="onboarding_el_account_already_created" translatable="false">Ya tengo cuenta</string>
     <string name="onboarding_account_already_created" translatable="false">Ya tengo cuenta</string>
 
     <!-- OnBoarding Costa Rica-->
@@ -162,17 +161,17 @@
 
     <!-- Sign Up General-->
     <string name="sign_up_splash_come_back" translatable="false">¡Nos alegra\nverte de nuevo!</string>
-    <string name="sign_up_general_close_dialog_title" translatable="false">¿Estás seguro que quieres salir? ¡Ya casi terminamos!</string>
+    <string name="sign_up_general_close_dialog_title" translatable="false">¿Estás segur@ de que quieres salir? ¡Ya casi terminamos!</string>
 
-    <string name="sign_up_close_dialog_description" translatable="false">Podrás retomar el registro cuando quieras</string>
+    <string name="sign_up_close_dialog_description" translatable="false">Puedes retomar el registro cuando quieras</string>
     <string name="sign_up_close_dialog_positive_button_text" translatable="false">Salir</string>
     <string name="sign_up_close_dialog_negative_button_text" translatable="false">Cancelar</string>
     <string name="sign_in_error_alert_dialog" translatable="false">Parece que hubo un error</string>
     <string name="sign_in_error_alert_dialog_button" translatable="false">Ir al inicio</string>
 
     <!-- Sign Up Costa rica-->
-    <string name="sign_up_general_close_dialog_title_costa_rica" translatable="false">¿Estás seguro de que querés salir? ¡Ya casi terminamos!</string>
-    <string name="sign_up_close_dialog_description_costa_rica" translatable="false">Podés retomar el registro cuando querás.</string>
+    <string name="sign_up_general_close_dialog_title_costa_rica" translatable="false">¿Estás segur@ de que querés salir? ¡Ya casi terminamos!</string>
+    <string name="sign_up_close_dialog_description_costa_rica" translatable="false">Podés retomar el registro cuando querás</string>
 
     <!-- Sign Up El Salvador-->
     <string name="sign_up_close_dialog_description_el_salvador" translatable="false">Puedes retomar el registro cuando quieras</string>
@@ -539,7 +538,7 @@
     <string name="crypto_finish_smart_alert_btn_saving_smart" translatable="false">Ahorrar Smart</string>
 
     <string name="crypto_select_smart_account_title_template" translatable="false">¿Con qué cuenta vas a comprar %1$s?</string>
-    <string name="sell_crypto_where_to_receive_money" translatable="false">¿En cuál cuenta quieres recibir el dinero?</string>
+    <string name="sell_crypto_where_to_receive_money" translatable="false">¿En cuál cuenta querés recibir el dinero?</string>
     <string name="crypto_buy_processing_transaction" translatable="false">Procesando transacción</string>
 
     <!-- Home Crypto Header Expanded-->
@@ -946,7 +945,7 @@
     <string name="smart_card_monthly_profit_label" translatable="false">%1$s %2$s ganancia %3$s</string>
 
     <!-- Smart Account -->
-    <string name="smart_account_document_title" translatable="false">Contános sobre vos</string>
+    <string name="smart_account_document_title" translatable="false">Cuéntanos sobre ti</string>
     <string name="smart_account_date_placeholder" translatable="false">00 | 00 | 0000</string>
     <string name="smart_account_document_birthdate_title" translatable="false">Fecha de nacimiento</string>
     <string name="smart_account_document_birthdate_age_error" translatable="false">Debes ser mayor de 18 años</string>
@@ -1291,7 +1290,7 @@
     <!-- Payment Cards List -->
     <string name="payment_cards_list_empty_state_description" translatable="false">Agregá una tarjeta para que podás realizar tus abonos</string>
     <string name="payment_cards_list_create" translatable="false">Agregar tarjeta</string>
-    <string name="payment_cards_list_title" translatable="false">Mis Tarjetas</string>
+    <string name="payment_cards_list_title" translatable="false">Mis tarjetas</string>
     <string name="payment_cards_verified_list_title" translatable="false">Tarjetas registradas</string>
     <string name="payment_cards_not_verified_list_title" translatable="false">Tarjetas con verificación pendiente</string>
     <string name="payment_cards_resume_bottom_sheet" translatable="false">Tarjetas con verificación pendiente</string>
@@ -1483,6 +1482,7 @@
     <string name="smart_my_contacts_transfer_accounts_add" translatable="false">Agregar cuenta</string>
     <string name="smart_mycontacts_total_transfer_title" translatable="false">%1s contactos encontrados</string>
     <string name="smart_my_concts_placeholder" translatable="false">Buscar contacto</string>
+    <string name="smart_account_transfer_added_To_Favorite_title" translatable="false">Cuenta agregada a favoritos</string>
 
     <!-- Smart Transfer - Favorite -->
     <string name="smart_favorite_transfer_accounts_title" translatable="false">Mis favoritos</string>
@@ -1506,6 +1506,10 @@
     <string name="transfer_365_amount_disclaimer" translatable="false">Si su transacción Transfer365 la realiza dentro del rango de las 10:00 PM hasta las 12:00 a.m., su transacción será enviada al Banco destino a partir de las 12:01 a.m. del siguiente día.</string>
     <string name="transfer_365_pre_confirmation_from_label" translatable="false">Desde</string>
     <string name="transfer_365_pre_confirmation_to_label" translatable="false">Hacia</string>
+
+    <!-- Smart Transfer 365 Accounts list -->
+    <string name="transfer_365_account_list_title" translatable="false">Otros bancos</string>
+    <string name="transfer_365_account_list_subtitle" translatable="false">Cuentas registradas</string>
 
     <!-- Card Preferences -->
     <string name="card_preferences_title" translatable="false">Preferencias de tarjeta</string>

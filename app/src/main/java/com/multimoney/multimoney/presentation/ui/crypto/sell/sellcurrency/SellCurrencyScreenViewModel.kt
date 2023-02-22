@@ -6,9 +6,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
-import com.multimoney.data.util.catalog.BuyCryptoStep
-import com.multimoney.data.util.catalog.SellCryptoStep
-import com.multimoney.data.util.catalog.SellCryptoSteps
 import com.multimoney.data.util.catalog.SellStatus
 import com.multimoney.domain.interaction.accountsmart.QuerySmartExchangeRateUseCase
 import com.multimoney.domain.interaction.crypto.GetPriceQuoteAndCommissionsUseCase
@@ -20,7 +17,6 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
-import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.util.calculateAvailableInDollars
 import com.multimoney.multimoney.presentation.util.calculateConfirmationBaseAmount
 import com.multimoney.multimoney.presentation.util.calculateQuote

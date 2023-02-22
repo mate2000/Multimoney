@@ -47,7 +47,8 @@ class CryptoSendAddressViewModel @Inject constructor(
             user = user ?: "",
             idBrand = idBrand ?: 0,
             identification = identification ?: "",
-            asset = market
+            asset = market,
+            showTextInputError = false
         )
     }
 

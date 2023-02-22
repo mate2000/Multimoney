@@ -97,11 +97,7 @@ class PaymentAmountCardViewModel @Inject constructor(
 
     private fun onInitializeInteractionValues() {
         uiState = uiState.copy(
-            titleResource = if ((infoUser?.idBrand ?: 0) == Brand.ElSalvador.id) {
-                R.string.payment_amount_card_title_sv
-            } else {
-                R.string.payment_amount_card_title_gt
-            },
+            titleResource = R.string.payment_amount_card_title_sv,
             minimumPaymentLabel = minimumPaymentLabel,
             maximumPaymentLabel = maximumPaymentLabel,
             currency = minimumPaymentLabel.first().toString()

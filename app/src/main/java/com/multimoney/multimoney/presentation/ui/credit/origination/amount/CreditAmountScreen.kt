@@ -157,8 +157,8 @@ fun CreditAmountScreen(
     var title = R.string.empty
     if (sharedViewModel.idBrand.isNotEmpty()) {
         title = when (sharedViewModel.idBrand.toInt()) {
-            Brand.Guatemala.id -> R.string.credit_amount_title_gt
-            else -> R.string.credit_amount_title
+            Brand.CostaRica.id -> R.string.credit_amount_title
+            else -> R.string.credit_amount_title_sv
         }
     }
 

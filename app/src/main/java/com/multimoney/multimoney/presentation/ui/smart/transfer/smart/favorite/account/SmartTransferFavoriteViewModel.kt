@@ -59,7 +59,7 @@ class SmartTransferFavoriteViewModel @Inject constructor(
     private fun callQueryACHTransferFavoriteListUseCase() = executeUseCase {
         queryACHTransferFavoriteListUseCase.invoke(
             user = user,
-            identification = identification ?: "",
+            identificationNumber = identification ?: "",
             idBrand = idBrand.toInt(),
             isFavorite = true
         ).collectLatest { result ->

@@ -42,6 +42,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.MarketCurrencyItem
 import com.multimoney.multimoney.presentation.ui.crypto.market.MarketSkeleton
+import com.multimoney.multimoney.presentation.ui.crypto.receive.CryptoReceiveSharedViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.receive.listofcurrencies.CryptoReceiveCurrenciesListViewModel.UIEvent
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.CustomImageChip
@@ -57,18 +58,20 @@ import kotlinx.coroutines.launch
 @Composable
 fun CryptoReceiveCurrenciesListScreen(
 viewModel: CryptoReceiveCurrenciesListViewModel = hiltViewModel(),
+sharedViewModel: CryptoReceiveSharedViewModel
 ) {
     LaunchedEffect(key1 = true) {
         viewModel.onUIEvent(UIEvent.OnGetUserInfo)
         viewModel.onUIEvent(UIEvent.OnGetAvailableListOfCryptoCoins)
     }
-    CryptoReceiveContent(viewModel)
+    CryptoReceiveContent(viewModel, sharedViewModel)
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CryptoReceiveContent(
-    viewModel: CryptoReceiveCurrenciesListViewModel
+    viewModel: CryptoReceiveCurrenciesListViewModel,
+    sharedViewModel: CryptoReceiveSharedViewModel
 ) {
     val state = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -129,7 +132,10 @@ fun CryptoReceiveContent(
                     searchQuery = searchQuery,
                     selectedFilter = selectedFilter,
                     sheetState = state,
-                    onCurrencyItemClick = { /*TODO: onClick crypto coin*/ }
+                    onCurrencyItemClick = {
+                        sharedViewModel.onUIEvent(CryptoReceiveSharedViewModel.UIEvent.OnCryptoSelected(it))
+                        sharedViewModel.onUIEvent(CryptoReceiveSharedViewModel.UIEvent.OnNextStep)
+                   }
                 )
             }
         }

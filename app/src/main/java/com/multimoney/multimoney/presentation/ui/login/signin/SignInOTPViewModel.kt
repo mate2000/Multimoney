@@ -153,7 +153,7 @@ class SignInOTPViewModel @Inject constructor(
             openDialog =
             DialogParameters(
                 titleResource = R.string.sign_in_verify_otp_blocked_title,
-                descriptionResource = R.string.sign_in_verify_otp_blocked_subtitle_gt,
+                descriptionResource = R.string.sign_in_verify_otp_blocked_subtitle_sv,
                 isActive = mutableStateOf(true),
                 positiveResource = R.string.contact,
                 negativeResource = R.string.cancel,

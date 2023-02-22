@@ -174,6 +174,8 @@ import com.multimoney.domain.interaction.crypto.ValidateDepositAddressUseCase
 import com.multimoney.domain.interaction.crypto.ValidateDepositAddressUseCaseImpl
 import com.multimoney.domain.interaction.crypto.SendCryptoToAddressUseCase
 import com.multimoney.domain.interaction.crypto.SendCryptoToAddressUseCaseImpl
+import com.multimoney.domain.interaction.crypto.GetCryptoReceiveAddressUseCase
+import com.multimoney.domain.interaction.crypto.GetCryptoReceiveAddressUseCaseImpl
 import com.multimoney.domain.interaction.mmvisa.MutationDeleteTokenDeviceNVUseCase
 import com.multimoney.domain.interaction.mmvisa.MutationDeleteTokenDeviceNVUseCaseImpl
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
@@ -913,4 +915,9 @@ class InteractionModule {
     @Singleton
     fun provideQueryTransferCommissionUseCase(cryptoRepository: CryptoRepository): GetTransferCommissionUseCase =
         GetTransferCommissionUseCaseImpl(cryptoRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryGetCryptoReceiveAddress(cryptoRepository: CryptoRepository): GetCryptoReceiveAddressUseCase =
+        GetCryptoReceiveAddressUseCaseImpl(cryptoRepository)
 }

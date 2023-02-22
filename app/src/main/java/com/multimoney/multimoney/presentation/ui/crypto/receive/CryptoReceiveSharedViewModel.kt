@@ -43,6 +43,13 @@ class CryptoReceiveSharedViewModel @Inject constructor(
             pkUser = dataStorePreferences.getPkUser().first()
             identification = dataStorePreferences.getIdentification().first()
             email = dataStorePreferences.getUserEmail().first()
+
+            uiState = uiState.copy(
+            asset = marketCryptoCoin?.baseAsset,
+            imageUrl = marketCryptoCoin?.url_image,
+            assetDescription = marketCryptoCoin?.description,
+            cryptoNetWork = marketCryptoCoin?.cryptoNetwork
+            )
         }
     }
 
@@ -76,20 +83,33 @@ class CryptoReceiveSharedViewModel @Inject constructor(
             is UIEvent.OnGetUserInfo -> setUserData()
             is UIEvent.OnPreviousStep -> previousStep()
             is UIEvent.OnNextStep -> nextStep()
+            is UIEvent.OnCryptoSelected -> {
+                uiState = uiState.copy(
+                    asset = event.selectedCrypto.baseAsset,
+                    imageUrl = event.selectedCrypto.url_image,
+                    assetDescription = event.selectedCrypto.description,
+                    cryptoNetWork = event.selectedCrypto.cryptoNetwork
+                )
+            }
         }
     }
 
     data class UiState(
         val currentStep: Int = CryptoReceiveSteps.One.pageNumber,
-        var asset: String = "",
-        var assetDescription: String = "",
+        var asset: String? = "",
+        var assetDescription: String? = "",
         val nextAction: () -> Unit = {},
+        val imageUrl: String? = null,
+        val cryptoNetWork: String? = null,
     )
 
     sealed interface UIEvent {
         object OnGetUserInfo : UIEvent
         object OnPreviousStep : UIEvent
         object OnNextStep : UIEvent
+        data class OnCryptoSelected(
+            val selectedCrypto: MarketCryptoCoin
+        ) : UIEvent
     }
 
     companion object {

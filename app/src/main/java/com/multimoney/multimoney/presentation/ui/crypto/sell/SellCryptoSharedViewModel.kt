@@ -18,9 +18,7 @@ import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.crypto.MarketCryptoCoin
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNTS_LIST
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.USER_CRYPTO_BALANCES
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoOperationSide
@@ -29,16 +27,17 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getCurrentTime
+import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.Calendar
-import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.util.*
+import javax.inject.Inject
 
 @OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
 class SellCryptoSharedViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val dataStorePreferences: DataStorePreferences,
 ) : BaseViewModel(true) {
 
@@ -78,15 +77,6 @@ class SellCryptoSharedViewModel @Inject constructor(
                 assetImageBaseUrl = marketCryptoCoin?.url_image
             )
         }
-
-//        uiState = uiState.copy(
-//            accounts = savedStateHandle.get<Array<SmartAccountSmall>>(SMART_ACCOUNTS_LIST)?.toList()
-//                ?: listOf(),
-//            userCryptoBalances = savedStateHandle.get<Array<BalanceCryptoAccountItems>>(
-//                USER_CRYPTO_BALANCES
-//            )?.toList()
-//                ?: listOf()
-//        )
         if (idBrand == Brand.ElSalvador.id) {
             onSetupAccountDetails(
                 smartAccountAvailableBalance = uiState.accounts.firstOrNull()?.totalBalance ?: 0.0,
@@ -203,9 +193,18 @@ class SellCryptoSharedViewModel @Inject constructor(
             voucherExchangeRate = exchangeRate,
             voucherTotalCreditedAmountExchange = totalCreditedAmountExchange,
             voucherSellDate = getCurrentDate(Calendar.getInstance().time),
-            voucherSellTime = getCurrentTime(Calendar.getInstance().time)
+            voucherSellTime = getCurrentTime(Calendar.getInstance().time).lowercase()
         )
     }
+
+    fun getAccountNumber(maskedText: String): String {
+        return if (idBrand == Brand.ElSalvador.id) {
+            getMaskedAccount(uiState.accountNumber, maskedText, prefix = "")
+        } else {
+            getMaskedAccount(uiState.ibanAccountNumber, maskedText)
+        }
+    }
+
     data class UIState(
         val currentStep: Int = PurchaseCryptoSteps.One.pageNumber,
         val isLoading: Boolean = false,

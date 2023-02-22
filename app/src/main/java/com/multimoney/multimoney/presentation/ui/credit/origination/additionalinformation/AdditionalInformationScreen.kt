@@ -80,10 +80,7 @@ fun AdditionalInformationScreen(
             Brand.CostaRica.id -> {
                 GetCRQuestions(viewModel, sharedViewModel)
             }
-            Brand.Guatemala.id -> {
-                GetGTQuestions(viewModel)
-            }
-            Brand.ElSalvador.id -> {
+            else -> {
                 GetSVQuestions(viewModel)
             }
         }
@@ -140,20 +137,6 @@ fun GetCRQuestions(viewModel: AdditionalInformationViewModel, sharedViewModel: C
 fun GetSVQuestions(viewModel: AdditionalInformationViewModel) {
     RadioButtonQuestion(
         questionTextResource = R.string.credit_additional_information_SV_q1,
-        firstButtonTextResource = R.string.credit_additional_information_button_yes,
-        secondButtonTextResource = R.string.credit_additional_information_button_no,
-        shouldHaveDisclaimer = false,
-        firstButtonIsSelected = viewModel.uiState.questionOneValue,
-        secondButtonIsSelected = viewModel.uiState.questionOneValue.not(),
-        onFirstButtonOnClick = { viewModel.onUIEvent(OnQuestionOneValueChange(true)) },
-        onSecondButtonOnClick = { viewModel.onUIEvent(OnQuestionOneValueChange(false)) }
-    )
-}
-
-@Composable
-fun GetGTQuestions(viewModel: AdditionalInformationViewModel) {
-    RadioButtonQuestion(
-        questionTextResource = R.string.credit_additional_information_GT_q1,
         firstButtonTextResource = R.string.credit_additional_information_button_yes,
         secondButtonTextResource = R.string.credit_additional_information_button_no,
         shouldHaveDisclaimer = false,

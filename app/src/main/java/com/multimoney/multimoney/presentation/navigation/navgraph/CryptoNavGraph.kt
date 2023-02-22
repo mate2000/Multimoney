@@ -326,7 +326,7 @@ fun NavGraphBuilder.cryptoNavGraph(
         composable(route = Screen.MaintenanceAlertScreen.route) {
             MaintenanceAlertScreen(
                 onBackToHomeAction = {
-                    navController.popBackStack()
+                    navController.navigate(Screen.HomeScreen.route)
                 }
             )
         }

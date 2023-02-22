@@ -53,8 +53,9 @@ class VerifyIdentityViewModel @Inject constructor(
     private fun getTextResources() {
         uiState = uiState.copy(
             titleResource = when (uiState.idBrand) {
-                Brand.Guatemala.id -> R.string.profile_where_do_you_want_to_receive_the_code_gt
-                else -> R.string.profile_where_do_you_want_to_receive_the_code
+                Brand.CostaRica.id -> R.string.profile_where_do_you_want_to_receive_the_code
+                else -> R.string.profile_where_do_you_want_to_receive_the_code_sv
+
             }
         )
     }

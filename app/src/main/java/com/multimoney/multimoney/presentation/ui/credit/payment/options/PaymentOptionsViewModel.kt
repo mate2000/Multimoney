@@ -71,13 +71,7 @@ class PaymentOptionsViewModel @Inject constructor(savedStateHandle: SavedStateHa
     }
 
     private fun onGetTextResource() {
-        uiState = uiState.copy(
-            titleResource = if ((infoUser?.idBrand ?: 0) == Brand.ElSalvador.id) {
-                R.string.payment_options_title_sv
-            } else {
-                R.string.payment_options_title_gt
-            }
-        )
+        uiState = uiState.copy(titleResource = R.string.payment_options_title_sv)
     }
 
     private fun onPaymentMethodClick(paymentMethodType: String) {

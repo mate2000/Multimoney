@@ -75,6 +75,7 @@ class CryptoSendSharedViewModel @Inject constructor(
         navigateBack(
             popTo = Screen.HomeScreen.route,
             isRestart = true,
+            homeState = HomeState.COLLAPSED
         )
 
     private fun previousStep() {

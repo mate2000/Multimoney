@@ -273,6 +273,17 @@ class SignInOTPViewModel @Inject constructor(
         context.openWhatsAppDeepLink(whatsAppLink)
     }
 
+    private fun onSetupResources(context: Context) {
+        uiState = when (context.resources.configuration.locale.isO3Country) {
+            ISO3_COSTA_RICA -> {
+                uiState.copy(weSentYouACodeTextResource = R.string.sign_in_we_sent_you_a_code_template)
+            }
+            else -> {
+                uiState.copy(weSentYouACodeTextResource = R.string.sign_in_we_sent_you_a_code_template_gt)
+            }
+        }
+    }
+
     data class UIState(
 
         val isLoading: Boolean = true,
@@ -311,6 +322,7 @@ class SignInOTPViewModel @Inject constructor(
                 uiEvent.whatsAppLink
             )
             is UIEvent.OnShowBlockedDialog -> onShowBlockedDialog()
+            is UIEvent.OnSetupResources -> onSetupResources(uiEvent.context)
         }
     }
 
@@ -324,6 +336,10 @@ class SignInOTPViewModel @Inject constructor(
         object OnResendOTP : UIEvent()
         data class OnOpenWhatsappLink(
             val whatsAppLink: String,
+            val context: Context
+        ) : UIEvent()
+
+        data class OnSetupResources(
             val context: Context
         ) : UIEvent()
     }
@@ -343,5 +359,7 @@ class SignInOTPViewModel @Inject constructor(
         const val PHASE_FIVE = 5
         const val PHASE_SIX = 6
         const val FOUR_DIGITS = 4
+        const val ISO3_COSTA_RICA = "CRI"
+        const val ISO3_GUATEMALA = "GTM"
     }
 }

@@ -101,7 +101,6 @@ class OnBoardingViewModel @Inject constructor(
                     R.drawable.ic_onboarding_step_one
                 )
             }
-
         }
         STEP_TWO -> {
             provideFireBaseEventHelper.logEvent(FireBaseEvents.OnboardingTwo)

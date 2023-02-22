@@ -76,6 +76,9 @@ fun SignInOTPScreen(
             }
         }
     LaunchedEffect(true) {
+        viewModel.onUIEvent(
+            SignInOTPViewModel.UIEvent.OnSetupResources(context)
+        )
         viewModel.executeNavigation(
             onPopBackStack = onPopBackStack,
             onNavigate = onNavigate,
@@ -170,7 +173,7 @@ fun SignInOTPContent(viewModel: SignInOTPViewModel) {
                 .constrainAs(titleText) {
                     top.linkTo(topNavBar.bottom)
                 },
-            text = stringResource(id = R.string.profile_identity_verification),
+            text = stringResource(id = R.string.sign_in_device_verification),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText,
             textAlign = TextAlign.Left

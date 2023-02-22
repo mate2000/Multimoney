@@ -100,6 +100,7 @@ import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.MotionLayoutMM
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
+import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalMaterialApi::class)
@@ -478,6 +479,7 @@ fun ProductContent(
     viewModel: ProductViewModel,
     sharedViewModel: HomeViewModel
 ) {
+    val context = LocalContext.current
     val pagerCount = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES
     Column(modifier = modifier) {
         HorizontalPager(
@@ -497,7 +499,11 @@ fun ProductContent(
                     cryptoEmptyState = viewModel.uiState.userStatus?.infoCrypto?.profileEnable ?: false,
                     clientBalanceHistory = sharedViewModel.uiState.cryptoHistoricalBalance,
                     openSmartCryptoAction = {
-                        viewModel.onUIEvent(OnNavigateToSmartOriginationFlow(comingFromCrypto = true))
+                        viewModel.onUIEvent(OnNavigateToSmartOriginationFlow(
+                            comingFromCrypto = true,
+                            smartStep = viewModel.uiState.smartContent.second,
+                            onIntent = { context.openWhatsAppDeepLink(viewModel.uiState.userStatus?.infoBankAccount?.wording?.link ?: "") }
+                        ))
                     }
                 )
             }
@@ -525,6 +531,7 @@ fun ProductContentExpanded(
     viewModel: ProductViewModel,
     sharedViewModel: HomeViewModel
 ) {
+    val context = LocalContext.current
     val pagerCount = viewModel.uiState.expandedProductPageList?.count() ?: DEFAULT_PRODUCT_PAGES
     Column(modifier = modifier) {
         HorizontalPager(
@@ -544,7 +551,13 @@ fun ProductContentExpanded(
                     cryptoEmptyState = viewModel.uiState.userStatus?.infoCrypto?.profileEnable ?: false,
                     clientBalanceHistory = sharedViewModel.uiState.cryptoHistoricalBalance,
                     openSmartCryptoAction = {
-                        viewModel.onUIEvent(OnNavigateToSmartOriginationFlow(comingFromCrypto = true))
+                        viewModel.onUIEvent(
+                            OnNavigateToSmartOriginationFlow(
+                                comingFromCrypto = true,
+                                smartStep = viewModel.uiState.smartContent.second,
+                                onIntent = { context.openWhatsAppDeepLink(viewModel.uiState.userStatus?.infoBankAccount?.wording?.link ?: "") }
+                            )
+                        )
                     }
                 )
             }

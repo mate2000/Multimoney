@@ -205,8 +205,10 @@ class PaymentScheduleCardViewModel @Inject constructor(
     }
 
     private fun onStart() {
-        if (infoUser?.visaDirectUser.isNullOrEmpty()) {
+        if (infoUser?.visaDirectUser.isNullOrEmpty() && infoUser?.visaDirectId.isNullOrEmpty()) {
             onCallMutationCreateUserVDUseCase()
+        } else {
+            getClientCardVisaDirect()
         }
     }
 

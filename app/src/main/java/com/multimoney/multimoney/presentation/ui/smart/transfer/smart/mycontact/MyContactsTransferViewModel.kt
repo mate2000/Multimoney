@@ -31,16 +31,18 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAddToFavoriteAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnCallQueryRelatedContactsByPhoneUseCase
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnContactClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnHideAccountAddedToFavoriteToast
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnQueryValueChange
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnSelectContactAsFavorite
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnShowAccountAddedToFavoriteToast
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import com.multimoney.multimoney.presentation.util.getCurrencyFromValue
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
@@ -60,7 +62,7 @@ class MyContactsTransferViewModel @Inject constructor(
     var idBrand: Int = 0
     var relatedContacts: List<RelatedContact> = listOf()
     var smartAccount: SmartAccountID? = null
-    var contactAccountSelected: PhoneSmart? = null
+    var contactAccountSelected: List<PhoneSmart?> = listOf()
 
     init {
         selectedSmartAccount = savedStateHandle[SMART_ACCOUNT]
@@ -118,8 +120,8 @@ class MyContactsTransferViewModel @Inject constructor(
         }
     }
 
-    private fun navigateToAddToFavoriteAccount(contactToFavorite: PhoneSmart) {
-        contactAccountSelected = contactToFavorite
+    private fun navigateToAddToFavoriteAccount(contactToFavorite: List<PhoneSmart?>) {
+        contactAccountSelected = contactToFavorite.filterNotNull()
         uiState = if (uiState.selectFavoriteContactBottomSheetState.isVisible) {
             uiState.copy(
                 selectFavoriteContactBottomSheetState = ModalBottomSheetState(Hidden)
@@ -152,8 +154,8 @@ class MyContactsTransferViewModel @Inject constructor(
         navigateTo(
             "${MyContactsTransferAmountScreen.baseRoute}/" +
                 "${encodeData(smartAccount)}/${encodeData(account)}/" +
-                "${SmartTransferTypes.SmartToContact.id}/$idBrand" +
-                    Screen.MyContactsTransferScreen.baseRoute
+                "${SmartTransferTypes.SmartToContact.id}/$idBrand/" +
+                Screen.MyContactsTransferScreen.baseRoute
         )
     }
 
@@ -166,27 +168,32 @@ class MyContactsTransferViewModel @Inject constructor(
     }
 
     private fun onSelectContactAsFavorite() {
-        executeUseCase {
-            mutationUpdateFavoriteSmartUseCase.invoke(
-                idBrand = idBrand,
-                user = user,
-                idFavorite = 0,
-                idAccountType = null,
-                idCustomer = selectedSmartAccount?.customerId ?: 0L,
-                accountNumber = contactAccountSelected?.accountNumber ?: "",
-                accountName = contactAccountSelected?.titular,
-                email = contactAccountSelected?.email ?: "",
-                active = true,
-                isFavorite = true,
-                phoneNumber = contactAccountSelected?.number,
-                idCurrencyAccount = contactAccountSelected?.currency?.getCurrencyFromValue()?.id
-                    ?: 0
-            ).collectLatest { result ->
-                result.onLoading { uiState = uiState.copy(isLoading = true) }
-                result.onSuccess {
-                    uiState = uiState.copy(isLoading = false)
+        contactAccountSelected.forEachIndexed {  index, contactFavorite ->
+            executeUseCase {
+                mutationUpdateFavoriteSmartUseCase.invoke(
+                    idBrand = idBrand,
+                    user = user,
+                    idFavorite = 0,
+                    idAccountType = null,
+                    idCustomer = selectedSmartAccount?.customerId ?: 0L,
+                    accountNumber = contactFavorite?.accountNumber ?: "",
+                    accountName = contactFavorite?.titular,
+                    email = contactFavorite?.email ?: "",
+                    active = true,
+                    isFavorite = true,
+                    phoneNumber = contactFavorite?.number,
+                    idCurrencyAccount = contactFavorite?.currency?.getCurrencyFromValue()?.id
+                        ?: 0
+                ).collectLatest { result ->
+                    result.onLoading { uiState = uiState.copy(isLoading = true) }
+                    result.onSuccess {
+                        uiState = uiState.copy(isLoading = false)
+                        if (index == contactAccountSelected.size - 1) {
+                            uiState = uiState.copy(toastIsVisible = true)
+                        }
+                    }
+                    result.onFailure { onFailure(it) }
                 }
-                result.onFailure { onFailure(it) }
             }
         }
     }
@@ -200,6 +207,7 @@ class MyContactsTransferViewModel @Inject constructor(
 
     data class UIState(
         val queryValue: String = "",
+        val toastIsVisible: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         var isLoading: Boolean = false,
         var relatedContactList: Map<String, List<PhoneSmart?>> = mapOf(),
@@ -212,7 +220,7 @@ class MyContactsTransferViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnAddToFavoriteAccountClick -> navigateToAddToFavoriteAccount(uiEvent.contactToFavorite)
+            is OnAddToFavoriteAccountClick -> navigateToAddToFavoriteAccount(uiEvent.contactsToFavorite)
             is OnNavigateBack -> onNavigateBack()
             is OnSelectContactAsFavorite -> onSelectContactAsFavorite()
             is OnAddSACAccountClick -> onAddSACAccountClick()
@@ -221,6 +229,12 @@ class MyContactsTransferViewModel @Inject constructor(
             is OnCallQueryRelatedContactsByPhoneUseCase -> callQueryRelatedContactsByPhoneUseCaseImp()
             is OnContactClick -> onContactClick(uiEvent.contact)
             is OnAccountClick -> onAccountClick(uiEvent.account)
+            is OnShowAccountAddedToFavoriteToast -> {
+                uiState = uiState.copy(toastIsVisible = true)
+            }
+            is OnHideAccountAddedToFavoriteToast -> {
+                uiState = uiState.copy(toastIsVisible = false)
+            }
         }
     }
 
@@ -229,7 +243,9 @@ class MyContactsTransferViewModel @Inject constructor(
         object OnSelectContactAsFavorite : UIEvent()
         object OnNavigateToHome : UIEvent()
         object OnAddSACAccountClick : UIEvent()
-        data class OnAddToFavoriteAccountClick(val contactToFavorite: PhoneSmart) : UIEvent()
+        object OnShowAccountAddedToFavoriteToast : UIEvent()
+        object OnHideAccountAddedToFavoriteToast : UIEvent()
+        data class OnAddToFavoriteAccountClick(val contactsToFavorite: List<PhoneSmart?>) : UIEvent()
         object OnCallQueryRelatedContactsByPhoneUseCase : UIEvent()
         data class OnQueryValueChange(val value: String) : UIEvent()
         data class OnContactClick(val contact: List<PhoneSmart?>) : UIEvent()

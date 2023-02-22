@@ -153,7 +153,7 @@ class SignInOTPViewModel @Inject constructor(
             openDialog =
             DialogParameters(
                 titleResource = R.string.sign_in_verify_otp_blocked_title,
-                descriptionResource = R.string.sign_in_verify_otp_blocked_subtitle_gt,
+                descriptionResource = R.string.sign_in_verify_otp_blocked_subtitle_sv,
                 isActive = mutableStateOf(true),
                 positiveResource = R.string.contact,
                 negativeResource = R.string.cancel,
@@ -204,6 +204,7 @@ class SignInOTPViewModel @Inject constructor(
     private fun onCallMutationRequestChangeDevice() = executeUseCase {
         mutationRequestChangeDeviceUseCase.invoke(email).collectLatest { result ->
             result.onSuccess {
+                initializeTimer(PHASE_ONE, totalTime = it.otpTime?.toLong() ?: DEFAULT_OTP_DURATION)
                 getPhaseAction()
                 onExecuteTimer()
                 uiState = uiState.copy(
@@ -303,7 +304,6 @@ class SignInOTPViewModel @Inject constructor(
             is UIEvent.OnNavigateBack -> onNavigateBack()
             is UIEvent.OnValidateOTP -> onCallMutationChangeDevice()
             is UIEvent.OnOTPValueChange -> onOtpValueChange(uiEvent.otp)
-            is UIEvent.OnInitializeTimer -> initializeTimer(uiEvent.phaseCount, uiEvent.time)
             is UIEvent.OnResendOTP -> onResendOTP()
             is UIEvent.OnGetOtpFromMessage -> getOtpFromMessage(uiEvent.message)
             is UIEvent.OnOpenWhatsappLink -> openWhatsAppLink(
@@ -320,7 +320,6 @@ class SignInOTPViewModel @Inject constructor(
         object OnValidateOTP : UIEvent()
         object OnShowBlockedDialog : UIEvent()
         data class OnOTPValueChange(val otp: String) : UIEvent()
-        data class OnInitializeTimer(val phaseCount: Int, val time: Long) : UIEvent()
         data class OnGetOtpFromMessage(val message: String) : UIEvent()
         object OnResendOTP : UIEvent()
         data class OnOpenWhatsappLink(
@@ -330,6 +329,8 @@ class SignInOTPViewModel @Inject constructor(
     }
 
     companion object {
+        private const val DEFAULT_OTP_DURATION = 300L
+
         const val SUCCESS_STATUS = 0
         const val WRONG_CODE = 2887
         const val EXPIRED_CODE = 2886

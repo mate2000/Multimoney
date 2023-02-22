@@ -651,6 +651,7 @@ type Mutation {
   """
   Crypto
   """
+
   validateDepositAddress(validateDepositAddressInput: ValidateDepositAddressDtoInput!): ValidateDepositAddress!
 
   """
@@ -4444,6 +4445,12 @@ input ReleaseTransactionDtoInput {
 type TransferOrder {
   result: TransferOrderResult!
 
+  status: Int
+
+  message: String
+
+  detail: String
+
   rollbackApplied: Boolean!
 }
 
@@ -4475,6 +4482,7 @@ input TransferOrderDtoInput {
   user: String
 }
 
+
 type ValidateDepositAddress {
   result: ValidateDepositAddressResult
 
@@ -4484,6 +4492,7 @@ type ValidateDepositAddress {
 
   detail: String
 }
+
 
 input ValidateDepositAddressDtoInput {
   identification: String!

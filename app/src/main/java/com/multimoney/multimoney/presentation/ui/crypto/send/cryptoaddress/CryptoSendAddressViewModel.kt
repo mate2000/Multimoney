@@ -47,11 +47,12 @@ class CryptoSendAddressViewModel @Inject constructor(
             user = user ?: "",
             idBrand = idBrand ?: 0,
             identification = identification ?: "",
-            asset = market
+            asset = market,
+            showTextInputError = false
         )
     }
 
-    private fun onContinueButtonClicked() {
+    private fun onContinueButtonClicked(onNextStep: () -> Unit) {
         if (!notShowAgainVerifyCryptoAddress) {
             uiState = uiState.copy(
                 continueDialog = CheckboxDialogParameters(
@@ -63,18 +64,18 @@ class CryptoSendAddressViewModel @Inject constructor(
                         if (isChecked) {
                             setNotShowAgainVerifyCryptoAddress()
                         }
-                        validateCryptoAddress()
+                        validateCryptoAddress(onNextStep)
                     },
                     isActive = mutableStateOf(true),
                     isCancelable = false
                 )
             )
         } else {
-            validateCryptoAddress()
+            validateCryptoAddress(onNextStep)
         }
     }
 
-    private fun validateCryptoAddress() {
+    private fun validateCryptoAddress(onNextStep: () -> Unit) {
         // to send market we need to concatenate asset and BTC
         val market = "${uiState.asset}$BTC"
         executeUseCase {
@@ -84,13 +85,14 @@ class CryptoSendAddressViewModel @Inject constructor(
                 idBrand = uiState.idBrand ?: 0,
                 market = market,
                 address = uiState.cryptoAddress.value
-                ).collectLatest { result ->
+            ).collectLatest { result ->
                 result.onSuccess { validateDepositAddress ->
-                    if (validateDepositAddress.status != null && validateDepositAddress.status == 0) {
-                        // TODO: Navigate to Send Amount Screen
+                    if (validateDepositAddress.result != null) {
+                        onNextStep()
                     } else {
                         uiState = uiState.copy(showTextInputError = true)
                     }
+                    uiState = uiState.copy(isLoading = false)
                 }
                 result.onFailure {
                     onFailure(it)
@@ -122,11 +124,21 @@ class CryptoSendAddressViewModel @Inject constructor(
 
     private fun onGetQrCodeFromSavedState(qrCodeResult: String) {
         uiState = uiState.copy(cryptoAddress = mutableStateOf(qrCodeResult))
+        if (qrCodeResult.isNotBlank()) {
+            validateCryptoAddress {}
+        }
+    }
+
+    private fun onCryptoAddressChanged(cryptoAddress: String) {
+        uiState = uiState.copy(
+            cryptoAddress = mutableStateOf(cryptoAddress),
+            showTextInputError = false
+        )
     }
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is UIEvent.OnContinueButtonClicked -> onContinueButtonClicked()
+            is UIEvent.OnContinueButtonClicked -> onContinueButtonClicked(event.onNextStep)
             is UIEvent.OnSetQrCodeFromSavedState -> onGetQrCodeFromSavedState(event.qrCodeResult)
             is UIEvent.GetNotShowAgainCryptoAddressFromSharedPref -> getNotShowAgainCryptoAddressFromSharedPref()
             is UIEvent.OnGetInfo -> onGetUserInfo(
@@ -135,6 +147,8 @@ class CryptoSendAddressViewModel @Inject constructor(
                 event.identification,
                 event.market
             )
+            is UIEvent.OnCryptoAddressChanged -> onCryptoAddressChanged(event.cryptoAddress)
+            is UIEvent.OnValidateCryptoAddress -> validateCryptoAddress() {}
         }
     }
 
@@ -155,11 +169,12 @@ class CryptoSendAddressViewModel @Inject constructor(
         val notShowAgainVerifyCryptoAddress: Boolean = false,
         val isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
-        val showTextInputError: Boolean = false
+        val showTextInputError: Boolean = false,
+        val onNextStep: () -> Unit = {}
     )
 
     sealed interface UIEvent {
-        object OnContinueButtonClicked : UIEvent
+        data class OnContinueButtonClicked(val onNextStep: () -> Unit) : UIEvent
         data class OnSetQrCodeFromSavedState(val qrCodeResult: String) : UIEvent
         data class OnGetInfo(
             val user: String,
@@ -168,6 +183,12 @@ class CryptoSendAddressViewModel @Inject constructor(
             val market: String
         ) : UIEvent
 
+        data class OnCryptoAddressChanged(val cryptoAddress: String) : UIEvent
+        data class OnValidateCryptoAddress(val cryptoAddress: String) : UIEvent
         object GetNotShowAgainCryptoAddressFromSharedPref : UIEvent
+    }
+
+    companion object {
+        const val TEXT_DEBOUNCE_TIME = 1000L
     }
 }

@@ -9,18 +9,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Icon
 import androidx.compose.material.OutlinedButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.multimoney.multimoney.presentation.theme.GrayScale800
 import com.multimoney.multimoney.presentation.theme.Primary400
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency12
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency50
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 
 /**
  * CustomRadioButton: Selector that forces the user to only pick one option
@@ -44,8 +45,10 @@ fun CustomToggleButton(
             modifier = Modifier
                 .height(50.dp)
                 .wrapContentWidth()
-                .border(border = BorderStroke(1.dp, WhiteTransparency50),
-                    shape = RoundedCornerShape(percent = 50))
+                .border(
+                    border = BorderStroke(1.dp, WhiteTransparency50),
+                    shape = RoundedCornerShape(percent = 50)
+                )
         ) {
             items.forEachIndexed { index, item ->
                 OutlinedButton(
@@ -54,13 +57,24 @@ fun CustomToggleButton(
                         .wrapContentWidth(),
                     shape = when (index) {
                         0 -> RoundedCornerShape(topStartPercent = 50, bottomStartPercent = 50)
-                        items.lastIndex -> RoundedCornerShape(topEndPercent = 50, bottomEndPercent = 50)
-                        else -> RoundedCornerShape(topStart = 0.dp, bottomStart = 0.dp, topEnd = 0.dp, bottomEnd = 0.dp)
+                        items.lastIndex -> RoundedCornerShape(
+                            topEndPercent = 50,
+                            bottomEndPercent = 50
+                        )
+                        else -> RoundedCornerShape(
+                            topStart = 0.dp,
+                            bottomStart = 0.dp,
+                            topEnd = 0.dp,
+                            bottomEnd = 0.dp
+                        )
                     },
                     onClick = { onIndexChanged(index) },
                     colors = if (selectedIndex == index) {
                         // selected colors
-                        ButtonDefaults.outlinedButtonColors(backgroundColor = Primary400, contentColor = Primary400)
+                        ButtonDefaults.outlinedButtonColors(
+                            backgroundColor = Primary400,
+                            contentColor = Primary400
+                        )
                     } else {
                         // not selected colors
                         ButtonDefaults.outlinedButtonColors(
@@ -69,18 +83,22 @@ fun CustomToggleButton(
                         )
                     },
                     contentPadding = PaddingValues(
-                        horizontal = 8.dp,
-                        vertical = 4.dp
+                        horizontal = 4.dp,
+                        vertical = 12.dp
                     )
                 ) {
-                    AutoSizeText(
-                        text = item,
-                        color = if (selectedIndex == index) {
+                    Icon(
+                        painter =
+                        painterResource(
+                            id = if (item == CurrencyType.Colon.symbol) CurrencyType.Colon.currencyIcon
+                            else CurrencyType.Dollar.currencyIcon
+                        ),
+                        contentDescription = "",
+                        tint = if (selectedIndex == index) {
                             GrayScale800
                         } else {
                             WhiteTransparency60
-                        },
-                        textStyle = TextStyle(fontSize = 25.sp)
+                        }
                     )
                 }
             }

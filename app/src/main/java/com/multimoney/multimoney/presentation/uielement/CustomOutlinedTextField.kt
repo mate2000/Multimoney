@@ -55,22 +55,17 @@ import com.ireward.htmlcompose.HtmlText
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.DefaultBlack
-import com.multimoney.multimoney.presentation.theme.DefaultWhite
-import com.multimoney.multimoney.presentation.theme.GrayScale300
-import com.multimoney.multimoney.presentation.theme.GrayScale400
 import com.multimoney.multimoney.presentation.theme.GrayScale500
-import com.multimoney.multimoney.presentation.theme.GrayScale800
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.SemanticNegative300
 import com.multimoney.multimoney.presentation.theme.SemanticNegative400
-import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency30
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
+import kotlin.Int.Companion
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -149,7 +144,8 @@ fun CustomOutlinedTextField(
     successMessage: String? = null,
     showInfo: Boolean = false,
     infoMessage: String? = null,
-    singleLine: Boolean = true
+    singleLine: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE
 ) {
     val context = LocalContext.current
     val activity = context.findActivity()
@@ -222,35 +218,31 @@ fun CustomOutlinedTextField(
             }
         }
     } else {
-        labelColor = DefaultWhite
+        labelColor = WhiteTransparency70
         backgroundColor = WhiteTransparency10
-        placeholderColor = GrayScale500
-        unfocusedIndicatorColor = GrayScale400
+        placeholderColor = WhiteTransparency60
+        unfocusedIndicatorColor = DefaultBlack
         errorIndicatorColor = if (isError || emptyError) {
-            SemanticNegative500
+            SemanticNegative400
         } else {
-            GrayScale800
+            WhiteTransparency90
         }
-        textFieldStrokeErrorColor = SemanticNegative500
+        textFieldStrokeErrorColor = SemanticNegative300
+        leadingIconComposableColor = WhiteTransparency60
+        iconTintColor = WhiteTransparency60
         when {
             isError -> {
-                focusedIndicatorColor = SemanticNegative500
-                iconTintColor = SemanticNegative500
-                leadingIconComposableColor = Primary500
-                textColor = GrayScale800
+                focusedIndicatorColor = SemanticNegative400
+                textColor = WhiteTransparency90
             }
             enabled -> {
-                focusedIndicatorColor = Primary500
-                iconTintColor = Primary500
-                leadingIconComposableColor = Primary500
-                textColor = GrayScale800
+                focusedIndicatorColor = WhiteTransparency60
+                textColor = WhiteTransparency90
             }
             else -> {
-                focusedIndicatorColor = GrayScale400
-                backgroundColor = GrayScale300
-                iconTintColor = GrayScale500
-                leadingIconComposableColor = GrayScale500
-                textColor = GrayScale500
+                focusedIndicatorColor = DefaultBlack
+                backgroundColor = GrayScale500
+                textColor = WhiteTransparency30
             }
         }
     }
@@ -372,7 +364,7 @@ fun CustomOutlinedTextField(
             textStyle = Typography.body2.copy(
                 color = WhiteTransparency90
             ),
-            maxLines = if (isTextArea) 2 else Int.MAX_VALUE,
+            maxLines = if (isTextArea) 2 else maxLines,
             singleLine = if (isTextArea) false else singleLine,
             focusedBorderThickness = FOCUSED_BORDER_WIDTH,
             unfocusedBorderThickness = UNFOCUSED_BORDER_WIDTH

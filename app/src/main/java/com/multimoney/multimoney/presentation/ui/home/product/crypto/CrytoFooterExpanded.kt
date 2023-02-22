@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.multimoney.data.util.catalog.CryptoAccountStatus
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
@@ -16,6 +17,7 @@ import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.ButtonsSection
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoCurrencies
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoMovementsSection
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.MaintenanceSection
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.NoticeSection
 import kotlinx.coroutines.flow.Flow
 
@@ -32,7 +34,6 @@ fun CryptoFooterExpanded(
     if (userStatus?.infoCrypto?.status == CryptoAccountStatus.ACTIVE.status) {
         CryptoFooterExpandedContent(
             balance,
-            userStatus.infoCrypto?.profileEnable,
             cryptoMovements,
             actionMarket,
             actionWallet,
@@ -45,13 +46,16 @@ fun CryptoFooterExpanded(
 @Composable
 fun CryptoFooterExpandedContent(
     balance: Balance?,
-    profileEnable: Boolean?,
     cryptoMovements: Flow<PagingData<CryptoCurrencyMovement>>,
     actionMarket: () -> Unit,
     actionWallet: () -> Unit,
     onShowAllClick: () -> Unit,
     onNavigateToReleaseTransaction: ( CryptoCurrencyMovement?) -> Unit
 ) {
+    val cryptoCurrencies = balance?.balanceCryptoAccount?.items
+    val movements = cryptoMovements.collectAsLazyPagingItems()
+    val profileEnable = !cryptoCurrencies.isNullOrEmpty() || movements.itemCount > ZERO_MOVEMENTS
+
     Column(
         modifier = Modifier
             .padding(top = 16.dp)
@@ -59,28 +63,30 @@ fun CryptoFooterExpandedContent(
             .wrapContentHeight(),
         verticalArrangement = Arrangement.Top
     ) {
+        val outOfService = balance?.balanceCryptoAccount?.outOfService ?: false
         ButtonsSection(
-            walletEnable = profileEnable ?: false,
+            walletEnable = profileEnable,
             actionMarket = actionMarket,
             actionWallet = actionWallet
         )
-        profileEnable?.let {
-            if (!it) {
-                NoticeSection()
-            } else {
-                Column {
-                    CryptoCurrencies(
-                        items = balance?.balanceCryptoAccount?.items,
-                        itemClick = {},
-                        viewAllClick = { actionWallet() }
-                    )
-                    CryptoMovementsSection(
-                        cryptoMovements = cryptoMovements,
-                        onShowAllClick = onShowAllClick,
-                        onNavigateToReleaseTransaction = onNavigateToReleaseTransaction
-                    )
-                }
+        when {
+            profileEnable and outOfService.not() -> Column {
+                CryptoCurrencies(
+                    items = cryptoCurrencies,
+                    viewAllClick = { actionWallet() }
+                )
+                CryptoMovementsSection(
+                    cryptoMovements = movements,
+                    onShowAllClick = onShowAllClick,
+                    onNavigateToReleaseTransaction = onNavigateToReleaseTransaction
+                )
             }
+            profileEnable and outOfService -> MaintenanceSection()
+            profileEnable.not() and outOfService.not() -> NoticeSection()
+            profileEnable.not() and outOfService -> MaintenanceSection()
+            else -> NoticeSection()
         }
     }
 }
+
+const val ZERO_MOVEMENTS = 0

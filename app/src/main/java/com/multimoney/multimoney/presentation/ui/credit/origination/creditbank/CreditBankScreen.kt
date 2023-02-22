@@ -42,7 +42,6 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.C
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 @Preview
@@ -54,8 +53,9 @@ fun CreditBankScreen(
     var title = R.string.empty
     if (sharedViewModel.idBrand.isNotEmpty()) {
         title = when (sharedViewModel.idBrand.toInt()) {
-            Brand.Guatemala.id -> R.string.credit_bank_title_gt
-            else -> R.string.credit_bank_title
+            Brand.CostaRica.id -> R.string.credit_bank_title
+            else -> R.string.credit_bank_title_sv
+
         }
     }
 

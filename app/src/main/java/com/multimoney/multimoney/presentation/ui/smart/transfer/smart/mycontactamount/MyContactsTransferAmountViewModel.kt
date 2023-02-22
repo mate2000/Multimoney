@@ -2,7 +2,6 @@ package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact
 
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue.Expanded
 import androidx.compose.material.ModalBottomSheetValue.Hidden
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Brand
@@ -29,6 +28,7 @@ import com.multimoney.multimoney.presentation.util.getCurrentTime
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import javax.inject.Inject
@@ -40,7 +40,6 @@ class MyContactsTransferAmountViewModel @Inject constructor(
 ) : BaseSmartEditAmountViewModel() {
     // stateless
     var fromSmartLabel: Int = R.string.smart_iban_transfer_smart_account_colon
-    var totalBalanceLabel: String = ""
     var phoneAccount: PhoneSmart? = null
 
     override fun onStart() {
@@ -53,10 +52,10 @@ class MyContactsTransferAmountViewModel @Inject constructor(
             destinyCurrency = phoneAccount?.idCurrency?.getCurrencyFromId()
             if (destinyCurrency == CurrencyType.All) destinyCurrency = Dollar
             shouldDisplayExchange = originCurrency != destinyCurrency
+            limits = preferences.getSmartTransferLimit().firstOrNull()
 
             amountUIState = amountUIState.copy(
                 originAccountDisplay = DisplayAccount(
-                    sheetLabel = R.string.smart_payment_amount_bottom_sheet_from,
                     sheetTitleResource = originCurrency?.myAccountSmartSymbol,
                     sheetSubtitle = if (idBrand == ElSalvador.id) null else getMaskedAccountIban(
                         smartAccount?.ibanAccountNumber.orEmpty()
@@ -64,7 +63,6 @@ class MyContactsTransferAmountViewModel @Inject constructor(
                     icon = R.drawable.ic_multimoney_smart
                 ),
                 destinyAccountDisplay = DisplayAccount(
-                    sheetLabel = R.string.smart_payment_amount_bottom_sheet_to,
                     sheetTitle = phoneAccount?.titular,
                     sheetSubtitle = phoneAccount?.number?.plus(SEPARATOR)
                         ?.plus(destinyCurrency?.stringName)
@@ -74,7 +72,9 @@ class MyContactsTransferAmountViewModel @Inject constructor(
                     R.string.smart_dollar_placeholder
                 } else {
                     R.string.smart_colon_placeholder
-                }
+                },
+                totalBalance = smartAccount?.totalBalance,
+                maxAmount = limits?.find { limit -> limit?.code == destinyCurrency?.id.toString() }?.amount
             )
 
             fromSmartLabel = if (originCurrency == CurrencyType.Colon) {
@@ -82,7 +82,6 @@ class MyContactsTransferAmountViewModel @Inject constructor(
             } else {
                 R.string.smart_iban_transfer_smart_account_dolar
             }
-            totalBalanceLabel = originCurrency?.symbol + smartAccount?.totalBalance.toString()
             getExchangeOnCompleted(
                 true,
                 abbreviation = originCurrency?.disbursementValue ?: "",
@@ -175,19 +174,13 @@ class MyContactsTransferAmountViewModel @Inject constructor(
         }
     }
 
-    override fun onContinueClick() {
-        amountUIState = amountUIState.copy(
-            bottomSheetState = ModalBottomSheetState(Expanded)
-        )
-    }
-
     override fun onNavigateBack() {
         if (amountUIState.bottomSheetState.isVisible) {
             amountUIState = amountUIState.copy(
                 bottomSheetState = ModalBottomSheetState(Hidden)
             )
         } else {
-            when(previousScreen) {
+            when (previousScreen) {
                 Screen.MyContactsTransferScreen.baseRoute -> {
                     navigateBack(
                         popTo = Screen.MyContactsTransferScreen.route,

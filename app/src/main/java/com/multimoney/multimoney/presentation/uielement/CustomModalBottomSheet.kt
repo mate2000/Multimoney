@@ -50,8 +50,8 @@ fun CustomModalBottomSheet(
         backgroundColor = GrayScale700
         titleColor = DefaultWhite
     } else {
-        backgroundColor = DefaultWhite
-        titleColor = GrayScale600
+        backgroundColor = GrayScale700
+        titleColor = DefaultWhite
     }
 
     ModalBottomSheetLayout(

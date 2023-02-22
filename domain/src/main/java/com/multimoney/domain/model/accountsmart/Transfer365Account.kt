@@ -5,8 +5,10 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Transfer365Account(
+    val accountId: Int? = null,
     val accountNumber: String? = null,
     val phone: String? = null,
+    val identification: String = "",
     val name: String = "",
     val lastname: String = "",
     val bankId: String = "",

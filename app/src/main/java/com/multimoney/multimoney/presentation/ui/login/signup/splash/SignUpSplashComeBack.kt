@@ -39,7 +39,7 @@ import kotlinx.coroutines.flow.onEach
 @Composable
 fun SignUpSplashComeBack(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-    viewModel: SignUpSplashComeBackViewModel = hiltViewModel()
+    viewModel: SignUpSplashComeBackViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
@@ -62,20 +62,20 @@ fun SignUpSplashComeBack(
                 viewModel.onUIEvent(OnOpenStep)
             },
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         CustomImage(
-            drawableResource = R.drawable.ic_logo_multimoney,
+            drawableResource = R.drawable.ic_smile,
             modifier = Modifier
                 .wrapContentSize()
-                .size(64.dp, 64.dp)
+                .size(80.dp, 80.dp),
         )
         Text(
             text = stringResource(id = R.string.sign_up_splash_come_back),
             modifier = Modifier.padding(top = 32.dp),
             style = Typography.h5.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.text,
-            textAlign = TextAlign.Center
+            color = MultimoneyTheme.colors.titleText,
+            textAlign = TextAlign.Center,
         )
     }
 

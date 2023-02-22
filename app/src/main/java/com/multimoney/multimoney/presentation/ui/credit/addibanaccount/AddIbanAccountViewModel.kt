@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.interaction.accountsmart.MutationSaveSinpeAccountUseCase
 import com.multimoney.domain.interaction.credit.MutationSaveClientBankAccountUseCase
 import com.multimoney.domain.interaction.security.QueryValidateBankAccountUseCase
 import com.multimoney.domain.model.security.ValidateAccount
@@ -31,13 +32,14 @@ import com.multimoney.multimoney.presentation.util.catalog.BankAccountType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class AddIbanAccountViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     val queryValidateBankAccountUseCase: QueryValidateBankAccountUseCase,
+    val mutationSaveSinpeAccountUseCase: MutationSaveSinpeAccountUseCase,
     private val mutationSaveClientBankAccountUseCase: MutationSaveClientBankAccountUseCase
 ) : BaseViewModel(true) {
 
@@ -152,7 +154,38 @@ class AddIbanAccountViewModel @Inject constructor(
         )
     }
 
-    private fun onContinueClick() = executeUseCase {
+    private fun saveIbanAccount() = executeUseCase {
+        mutationSaveSinpeAccountUseCase(
+            user = user ?: "",
+            idBrand = idBrand ?: Brand.CostaRica.id,
+            identification = identification ?: "",
+            accountNumber = Brand.CostaRica.iban.plus(uiState.accountNumber),
+            idCurrency = validateAccount?.currency?.getCurrencyFromId()?.id?.toLong() ?: 0,
+            nameAccount = validateAccount?.name ?: "",
+            country = Brand.CostaRica.countryCode,
+            idAccount = null,
+            option = null,
+            email = null,
+            isFavorite = false
+        ).collectLatest {
+            it.onSuccess {
+                uiState = uiState.copy(isLoading = false)
+                navigateToPreviousScreen()
+            }.onFailure { error ->
+                uiState = uiState.copy(
+                    isLoading = false,
+                    dialogParameters = DialogParameters(
+                        description = error.getError() ?: "",
+                        isActive = mutableStateOf(true)
+                    )
+                )
+            }.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
+    private fun saveClientBankAccount() = executeUseCase {
         mutationSaveClientBankAccountUseCase(
             idClient = idClient?.toLong() ?: 0,
             idBank = validateAccount?.bankId ?: 0,
@@ -164,19 +197,7 @@ class AddIbanAccountViewModel @Inject constructor(
             idBrand = idBrand ?: 0
         ).collectLatest { result ->
             result.onSuccess {
-                when (previousScreen) {
-                    Screen.DisbursementAccountScreen.baseRoute -> navigateBack(
-                        Screen.DisbursementAccountScreen.route,
-                        true
-                    )
-                    Screen.SmartPaymentAccountScreenCR.baseRoute -> navigateBack(
-                        Screen.SmartPaymentAccountScreenCR.route,
-                        true
-                    )
-                    else -> {
-                        navigateBack(Screen.PaymentAccountScreen.route, true)
-                    }
-                }
+               navigateToPreviousScreen()
             }.onFailure {
                 uiState = uiState.copy(
                     isLoading = false,
@@ -190,13 +211,49 @@ class AddIbanAccountViewModel @Inject constructor(
             }
         }
     }
+    private fun onContinueClick() = executeUseCase {
+        when (previousScreen) {
+            Screen.DisbursementAccountScreen.baseRoute,
+            Screen.PaymentAccountScreen.baseRoute -> {
+                saveClientBankAccount()
+            }
+            Screen.HomeBNScreen.baseRoute,
+            Screen.SmartPaymentOptionsScreenCR.baseRoute,
+            Screen.SmartPaymentAccountScreenCR.baseRoute-> {
+                saveIbanAccount()
+            }
+        }
+    }
 
     private fun onBackClick() = if (uiState.ibanSuccess) {
         onEditAccount()
-    } else if (previousScreen == Screen.DisbursementAccountScreen.baseRoute) {
-        navigateBack(Screen.DisbursementAccountScreen.route, false)
     } else {
-        navigateBack(Screen.PaymentAccountScreen.route, false)
+        navigateToPreviousScreen()
+    }
+
+    private fun navigateToPreviousScreen() {
+        when (previousScreen) {
+            Screen.DisbursementAccountScreen.baseRoute -> navigateBack(
+                Screen.DisbursementAccountScreen.route,
+                true
+            )
+            Screen.PaymentAccountScreen.baseRoute -> navigateBack(
+                Screen.PaymentAccountScreen.route,
+                true
+            )
+            Screen.SmartPaymentAccountScreenCR.baseRoute -> navigateBack(
+                Screen.SmartPaymentAccountScreenCR.route,
+                true
+            )
+            Screen.HomeBNScreen.baseRoute -> navigateBack(
+                Screen.SmartPaymentAccountScreenCR.route,
+                true
+            )
+            Screen.SmartPaymentOptionsScreenCR.baseRoute -> navigateBack(
+                Screen.SmartPaymentOptionsScreenCR.route,
+                true
+            )
+        }
     }
 
     private fun onEditAccount() {

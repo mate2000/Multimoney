@@ -4,7 +4,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.security.PaymentMethod
 import com.multimoney.domain.model.security.TransferAccount
 import com.multimoney.multimoney.R
@@ -73,13 +72,7 @@ class PaymentOptionsViewModel @Inject constructor(savedStateHandle: SavedStateHa
     }
 
     private fun onGetTextResource() {
-        uiState = uiState.copy(
-            titleResource = if (idBrand == Brand.ElSalvador.id) {
-                R.string.payment_options_title_sv
-            } else {
-                R.string.payment_options_title_gt
-            }
-        )
+        uiState = uiState.copy(titleResource = R.string.payment_options_title_sv)
     }
 
     private fun onPaymentMethodClick(paymentMethodType: String) {

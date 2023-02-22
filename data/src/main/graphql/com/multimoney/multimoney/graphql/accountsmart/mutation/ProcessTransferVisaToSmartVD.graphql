@@ -24,5 +24,8 @@ mutation ProcessTransferVisaToSmartVD(
     ) {
         numeroReferencia
         numeroReferenciaVisa
+        status
+        message
+        detail
     }
 }

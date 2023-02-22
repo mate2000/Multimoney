@@ -36,10 +36,10 @@ const val SIGN_DOCUMENT_STEP_ARG = "sign_document_step_arg"
 const val SIGN_DOCUMENT_URL = "sign_document_url"
 const val SIGN_DOCUMENT_ID_PRINT = "sign_document_id_print"
 const val SIGN_DOCUMENT_GLOBAL_ID = "sign_document_gobal_id"
-const val SIGN_DOCUMENT_ORIGIN = "sign_document_origin"
 const val ONFIDO_AND_EVICERTIA_ERROR = "onfifo_and_evicertia_error"
 const val IS_SMART_EVICERTIA = "is_smart_evicertia"
 const val ID_CURRENCY = "currency"
+const val SHOULD_GET_EVICERTIA_LINK = "should_get_evicertia_link"
 
 fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
     navigation(
@@ -109,7 +109,8 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(ID_USER_REQUEST) { type = NavType.LongType },
                 navArgument(PK_USER) { type = NavType.LongType },
-                navArgument(CROSSELING) { type = NavType.BoolType }
+                navArgument(CROSSELING) { type = NavType.BoolType },
+                navArgument(SHOULD_GET_EVICERTIA_LINK) { type = NavType.BoolType }
             )
         ) {
             SignDocumentProcessScreen(

@@ -44,13 +44,7 @@ class PaymentOptionsTransferViewModel @Inject constructor(savedStateHandle: Save
     }
 
     private fun onGetTextResource() {
-        uiState = uiState.copy(
-            titleResource = if (idBrand == Brand.ElSalvador.id) {
-                R.string.payment_options_transfer_title_sv
-            } else {
-                R.string.payment_options_transfer_title_gt
-            }
-        )
+        uiState = uiState.copy(titleResource = R.string.payment_options_transfer_title_sv)
     }
 
     private fun onCopyTextToClipboard(text: String) {

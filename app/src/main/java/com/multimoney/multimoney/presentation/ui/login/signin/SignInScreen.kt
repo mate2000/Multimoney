@@ -111,6 +111,7 @@ fun SignInScreen(
 @Composable
 fun SignInContent(viewModel: SignInViewModel, fragmentActivity: FragmentActivity) {
     val focusManager = LocalFocusManager.current
+    val context  = LocalContext.current
 
     // View
     Column(
@@ -235,40 +236,6 @@ fun SignInContent(viewModel: SignInViewModel, fragmentActivity: FragmentActivity
     LoadingIndicator(viewModel.uiState.isLoading)
 
     // Dialog
-    if (viewModel.uiState.openDialogCustom.value) {
-        CustomDialog(
-            title = stringResource(id = R.string.active_biometric_title),
-            message = stringResource(id = R.string.active_biometric_message),
-            positiveButtonText = stringResource(id = R.string.active_biometric_positive_button_label),
-            negativeButtonText = stringResource(id = R.string.active_biometric_negative_button_label),
-            onPositiveAction = {
-                viewModel.onUIEvent(
-                    OnFingerprintCheckedChanged(
-                        value = true,
-                        showDialog = false
-                    )
-                )
-            },
-            onNegativeAction = {
-                viewModel.onUIEvent(
-                    OnFingerprintCheckedChanged(
-                        value = false,
-                        showDialog = false
-                    )
-                )
-            },
-            onDismissAction = {
-                viewModel.onUIEvent(
-                    OnFingerprintCheckedChanged(
-                        value = false,
-                        showDialog = false
-                    )
-                )
-            },
-            openDialogCustom = viewModel.uiState.openDialogCustom
-        )
-    }
-
     if (viewModel.uiState.openDialog.isActive.value) {
         CustomDialog(
             title = stringResource(id = viewModel.uiState.openDialog.titleResource),

@@ -145,8 +145,8 @@ fun QuickActionBottomSheetScreen(
 @Composable
 fun getQuickActionsHeaderTitlePerCountry(idBrand: Int): Int {
     return when (idBrand) {
-        Brand.Guatemala.id -> R.string.quick_action_bottom_sheet_title_gt
-        else -> R.string.quick_action_bottom_sheet_title
+        Brand.CostaRica.id -> R.string.quick_action_bottom_sheet_title
+        else -> R.string.quick_action_bottom_sheet_title_sv
     }
 }
 

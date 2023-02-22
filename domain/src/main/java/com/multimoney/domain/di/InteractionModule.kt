@@ -12,6 +12,10 @@ import com.multimoney.domain.interaction.accountsmart.MutationProcessLocalTransf
 import com.multimoney.domain.interaction.accountsmart.MutationProcessLocalTransferUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationProcessSinpeTransferUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationProcessSinpeTransferUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.MutationProcessTransfer365MobileUseCase
+import com.multimoney.domain.interaction.accountsmart.MutationProcessTransfer365MobileUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.MutationProcessTransfer365UseCase
+import com.multimoney.domain.interaction.accountsmart.MutationProcessTransfer365UseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationProcessTransferVisaToSmartVDUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationProcessTransferVisaToSmartVDUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCase
@@ -24,6 +28,8 @@ import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountUpdate
 import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountUpdateUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationUpdateFavoriteSmartUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationUpdateFavoriteSmartUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteListUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteListUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelOneUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelOneUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelThreeUseCase
@@ -52,8 +58,6 @@ import com.multimoney.domain.interaction.accountsmart.QueryRelationshipUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryRelationshipUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QuerySmartAccountTypeUseCase
 import com.multimoney.domain.interaction.accountsmart.QuerySmartAccountTypeUseCaseImpl
-import com.multimoney.domain.interaction.accountsmart.QuerySmartAccountsUseCase
-import com.multimoney.domain.interaction.accountsmart.QuerySmartAccountsUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QuerySmartExchangeRateUseCase
 import com.multimoney.domain.interaction.accountsmart.QuerySmartExchangeRateUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryStepByStepUseCase
@@ -164,8 +168,16 @@ import com.multimoney.domain.interaction.crypto.GetPriceQuoteAndCommissionUseCas
 import com.multimoney.domain.interaction.crypto.GetPriceQuoteAndCommissionsUseCase
 import com.multimoney.domain.interaction.crypto.ReleaseTransferUseCase
 import com.multimoney.domain.interaction.crypto.ReleaseTransferUseCaseImpl
+import com.multimoney.domain.interaction.crypto.GetTransferCommissionUseCase
+import com.multimoney.domain.interaction.crypto.GetTransferCommissionUseCaseImpl
+import com.multimoney.domain.interaction.crypto.SellCryptoCurrencyUseCase
+import com.multimoney.domain.interaction.crypto.SellCryptoCurrencyUseCaseImpl
 import com.multimoney.domain.interaction.crypto.ValidateDepositAddressUseCase
 import com.multimoney.domain.interaction.crypto.ValidateDepositAddressUseCaseImpl
+import com.multimoney.domain.interaction.crypto.SendCryptoToAddressUseCase
+import com.multimoney.domain.interaction.crypto.SendCryptoToAddressUseCaseImpl
+import com.multimoney.domain.interaction.crypto.GetCryptoReceiveAddressUseCase
+import com.multimoney.domain.interaction.crypto.GetCryptoReceiveAddressUseCaseImpl
 import com.multimoney.domain.interaction.mmvisa.MutationDeleteTokenDeviceNVUseCase
 import com.multimoney.domain.interaction.mmvisa.MutationDeleteTokenDeviceNVUseCaseImpl
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
@@ -204,6 +216,8 @@ import com.multimoney.domain.interaction.security.QueryDataInformationClientUseC
 import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCase
 import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCaseImpl
+import com.multimoney.domain.interaction.security.QueryGetCountryPhoneCodesUseCase
+import com.multimoney.domain.interaction.security.QueryGetCountryPhoneCodesUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryGetCountryUseCase
 import com.multimoney.domain.interaction.security.QueryGetCountryUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryGetQuickActionsImpl
@@ -683,9 +697,6 @@ class InteractionModule {
     fun provideMutationUpdateSinpeAccountUseCase(smartAccountRepository: SmartAccountRepository): MutationSinpeAccountUpdateUseCase =
         MutationSinpeAccountUpdateUseCaseImpl(smartAccountRepository)
 
-
-
-
     // Multimoney Visa
     @Provides
     @Singleton
@@ -746,6 +757,11 @@ class InteractionModule {
 
     @Singleton
     @Provides
+    fun provideMutationSellCryptoCurrency(cryptoRepository: CryptoRepository): SellCryptoCurrencyUseCase =
+        SellCryptoCurrencyUseCaseImpl(cryptoRepository)
+
+    @Singleton
+    @Provides
     fun provideQueryGetBalanceCryptoAccountUseCase(cryptoRepository: CryptoRepository): GetBalanceCryptoAccountUseCase =
         GetBalanceCryptoAccountUseCaseImpl(cryptoRepository)
 
@@ -753,6 +769,11 @@ class InteractionModule {
     @Provides
     fun provideValidateDepositAddressUseCase(cryptoRepository: CryptoRepository): ValidateDepositAddressUseCase =
         ValidateDepositAddressUseCaseImpl(cryptoRepository)
+
+    @Singleton
+    @Provides
+    fun provideMutationSendCryptoToAddress(cryptoRepository: CryptoRepository): SendCryptoToAddressUseCase =
+        SendCryptoToAddressUseCaseImpl(cryptoRepository)
 
     // Virtual Card
 
@@ -850,8 +871,13 @@ class InteractionModule {
 
     @Provides
     @Singleton
-    fun provideQuerySmartAccountsUseCase(smartAccountRepository: SmartAccountRepository): QuerySmartAccountsUseCase =
-        QuerySmartAccountsUseCaseImpl(smartAccountRepository)
+    fun provideMutationProcessTransfer365(smartAccountRepository: SmartAccountRepository): MutationProcessTransfer365UseCase =
+        MutationProcessTransfer365UseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationProcessTransfer365Mobile(smartAccountRepository: SmartAccountRepository): MutationProcessTransfer365MobileUseCase =
+        MutationProcessTransfer365MobileUseCaseImpl(smartAccountRepository)
 
     @Provides
     @Singleton
@@ -867,4 +893,25 @@ class InteractionModule {
     @Singleton
     fun provideReleaseTransferUseCase(cryptoRepository: CryptoRepository): ReleaseTransferUseCase =
         ReleaseTransferUseCaseImpl(cryptoRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryGetCountryPhoneCodes(securityRepository: SecurityRepository): QueryGetCountryPhoneCodesUseCase =
+        QueryGetCountryPhoneCodesUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryACHTransferFavoriteListUseCase(smartAccountRepository: SmartAccountRepository): QueryACHTransferFavoriteListUseCase =
+        QueryACHTransferFavoriteListUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryTransferCommissionUseCase(cryptoRepository: CryptoRepository): GetTransferCommissionUseCase =
+        GetTransferCommissionUseCaseImpl(cryptoRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryGetCryptoReceiveAddress(cryptoRepository: CryptoRepository): GetCryptoReceiveAddressUseCase =
+        GetCryptoReceiveAddressUseCaseImpl(cryptoRepository)
+
 }

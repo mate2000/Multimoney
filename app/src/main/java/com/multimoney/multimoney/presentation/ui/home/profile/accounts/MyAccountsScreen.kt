@@ -169,9 +169,18 @@ fun MyAccountsScreen(
                 negativeButtonText = stringResource(id = viewModel.uiState.favoriteDialogParemeters.negativeResource),
                 positiveButtonText = stringResource(id = viewModel.uiState.favoriteDialogParemeters.positiveResource),
                 openDialogCustom = viewModel.uiState.favoriteDialogParemeters.isActive,
-                onPositiveAction = {
-                    viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnDeleteAccount)
-                }
+                onPositiveAction = viewModel.uiState.favoriteDialogParemeters.positiveAction
+            )
+        }
+
+        if (viewModel.uiState.deleteDialogParameters.isActive.value) {
+            CustomDialog(
+                title = stringResource(id = viewModel.uiState.deleteDialogParameters.titleResource),
+                message = stringResource(id = viewModel.uiState.deleteDialogParameters.descriptionResource),
+                negativeButtonText = stringResource(id = viewModel.uiState.deleteDialogParameters.negativeResource),
+                positiveButtonText = stringResource(id = viewModel.uiState.deleteDialogParameters.positiveResource),
+                openDialogCustom = viewModel.uiState.deleteDialogParameters.isActive,
+                onPositiveAction = viewModel.uiState.deleteDialogParameters.positiveAction
             )
         }
 
@@ -183,7 +192,7 @@ fun MyAccountsScreen(
                 isLeftButtonVisible = false,
                 isRightButtonVisible = false,
                 onButtonClick = {
-                    viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnNavigateBack)
+                    viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnNavigateHome)
                 }
             )
         }
@@ -461,9 +470,9 @@ fun MyAccountsEmptyState(idBrand: Int = 1) {
                     start.linkTo(iconId.start)
                 }
                 .padding(top = 24.dp),
-            text = if (idBrand == Brand.Guatemala.id) stringResource(id = R.string.profile_my_accounts_empty_state_title_gt) else stringResource(
+            text = if (idBrand == Brand.CostaRica.id) stringResource(
                 id = R.string.profile_my_accounts_empty_state_title
-            ),
+            )  else  stringResource(id = R.string.profile_my_accounts_empty_state_title_sv),
             style = Typography.body1.copy(
                 fontWeight = FontWeight.SemiBold,
                 color = MultimoneyTheme.colors.labelText

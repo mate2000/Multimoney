@@ -94,8 +94,15 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
+    private fun onExit() {
+        popAndNavigateTo(
+            route = Screen.SignInScreen.route,
+            popTo = Screen.SignUpScreen.route
+        )
+    }
+
     private fun navigateToSplashComeBack(step: Int) {
-        navigateTo("${Screen.SignUpSplashComeBackScreen.baseRoute}/".plus(step))
+        navigateTo("${Screen.SignUpSplashComeBackScreen.baseRoute}/".plus(step).plus("/$idBrand"))
     }
 
     private fun moveToStep(step: Int) {
@@ -189,23 +196,41 @@ class SignUpViewModel @Inject constructor(
         previousStep()
     }
 
-    private fun onCloseClick(focusManager: FocusManager) {
+    private fun onCloseClick(focusManager: FocusManager, isO3Country: String) {
         focusManager.clearFocus()
-        uiState = uiState.copy(
-            openDialog = DialogParameters(
-                titleResource = string.general_close_dialog_title,
-                descriptionResource = string.sign_up_close_dialog_description,
-                positiveResource = string.sign_up_close_dialog_positive_button_text,
-                negativeResource = string.sign_up_close_dialog_negative_button_text,
-                positiveAction = {
-                    popAndNavigateTo(
-                        route = SignInScreen.route,
-                        popTo = Screen.SignUpScreen.route
+        uiState = when (isO3Country) {
+            ISO3_COSTA_RICA ->
+                uiState.copy(
+                    openDialog = DialogParameters(
+                        titleResource = string.sign_up_general_close_dialog_title_costa_rica,
+                        descriptionResource = string.sign_up_close_dialog_description_costa_rica,
+                        positiveResource = string.sign_up_close_dialog_positive_button_text,
+                        negativeResource = string.sign_up_close_dialog_negative_button_text,
+                        positiveAction = {
+                            popAndNavigateTo(
+                                route = Screen.SignInScreen.route,
+                                popTo = Screen.SignUpScreen.route
+                            )
+                        },
+                        isActive = mutableStateOf(true)
                     )
-                },
-                isActive = mutableStateOf(true)
+                )
+            else -> uiState.copy(
+                openDialog = DialogParameters(
+                    titleResource = string.sign_up_general_close_dialog_title,
+                    descriptionResource = string.sign_up_close_dialog_description_el_salvador,
+                    positiveResource = string.sign_up_close_dialog_positive_button_text,
+                    negativeResource = string.sign_up_close_dialog_negative_button_text,
+                    positiveAction = {
+                        popAndNavigateTo(
+                            route = SignInScreen.route,
+                            popTo = Screen.SignUpScreen.route
+                        )
+                    },
+                    isActive = mutableStateOf(true)
+                )
             )
-        )
+        }
     }
 
     private fun onContinueClick(focusManager: FocusManager) {
@@ -220,11 +245,17 @@ class SignUpViewModel @Inject constructor(
     }
 
     private fun onShowPasswordBottomSheet() {
-        uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded))
+        uiState =
+            uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded))
     }
 
     private fun onHidePasswordBottomSheet() {
-        uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Hidden))
+        uiState =
+            uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Hidden))
+    }
+
+    private fun onSetIdBrand(idBrand: Int) {
+        this.idBrand = idBrand
     }
 
     data class UIState(
@@ -234,10 +265,12 @@ class SignUpViewModel @Inject constructor(
         val isContinueEnabled: Boolean = false,
         val isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
-        val bottomSheetVisibleState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden)
+        val bottomSheetVisibleState: ModalBottomSheetState = ModalBottomSheetState(
+            ModalBottomSheetValue.Hidden
+        )
     )
 
-    fun onUIEvent(event: UIEvent) {
+    fun onUIEvent(event: UIEvent, isO3Country: String = "") {
         when (event) {
             is OnSetNavigation -> onSetNavigation(
                 event.nextAction,
@@ -245,7 +278,7 @@ class SignUpViewModel @Inject constructor(
                 event.previousStep
             )
             is OnBackClick -> onBackClick(event.focusManager)
-            is OnCloseClick -> onCloseClick(event.focusManager)
+            is OnCloseClick -> onCloseClick(event.focusManager, isO3Country)
             is OnContinueClick -> onContinueClick(event.focusManager)
             is OnContinueEnable -> uiState = uiState.copy(isContinueEnabled = event.enable)
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
@@ -290,6 +323,8 @@ class SignUpViewModel @Inject constructor(
             is UIEvent.OnShowCloseIcon -> uiState = uiState.copy(isCloseVisible = event.showIcon)
             is OnHidePasswordBottomSheet -> onHidePasswordBottomSheet()
             is OnShowPasswordBottomSheet -> onShowPasswordBottomSheet()
+            is UIEvent.OnSetIdBrand -> onSetIdBrand(event.idBrand)
+            is UIEvent.OnExit -> onExit()
         }
     }
 
@@ -309,7 +344,8 @@ class SignUpViewModel @Inject constructor(
             val previousStep: Int
         ) : UIEvent()
 
-        data class OnUseDataValueChange(val userData: UserData?, val idBrand: Int? = null) : UIEvent()
+        data class OnUseDataValueChange(val userData: UserData?, val idBrand: Int? = null) :
+            UIEvent()
 
         data class OnMoveToStep(val step: Int) : UIEvent()
         data class OnSharedIdentificationValueChange(val identificationValue: String) : UIEvent()
@@ -344,11 +380,15 @@ class SignUpViewModel @Inject constructor(
         data class OnShowCloseIcon(val showIcon: Boolean) : UIEvent()
         object OnHidePasswordBottomSheet : UIEvent()
         object OnShowPasswordBottomSheet : UIEvent()
+        data class OnSetIdBrand(val idBrand: Int) : UIEvent()
+        object OnExit : UIEvent()
     }
 
     companion object {
         const val SIGN_UP_TOTAL_STEPS = 6
         const val SIGN_UP_INDICATOR_TOTAL_STEPS = 5
         const val PHONE_HARDCODED = "50371680915"
+        const val ISO3_COSTA_RICA = "CRI"
+        const val ISO3_GUATEMALA = "GTM"
     }
 }

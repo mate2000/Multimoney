@@ -4,7 +4,7 @@ import com.multimoney.domain.model.accountsmart.SinpeAccountResult
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.repository.SmartAccountRepository
 import kotlinx.coroutines.flow.Flow
-import java.util.*
+
 
 class QueryListSinpeAccountUseCaseImpl(val repository: SmartAccountRepository) :
     QueryListSinpeAccountUseCase {

@@ -18,41 +18,41 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.CROSSELING
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
-import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
+import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_STATUS
-import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
+import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
-import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
-import com.multimoney.multimoney.presentation.navigation.CROSSELING
+import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnBackClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnBirthDateValueChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnCloseClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnEmploymentSituationValueChanged
+import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnFailureWithDialog
+import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnLoadingValueChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnPaymentAmountValueChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnRequestClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnUpdateScreenConfigData
+import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateMinusYears
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
-import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnUpdateScreenConfigData
-import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnEmploymentSituationValueChanged
-import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnBirthDateValueChange
-import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnPaymentAmountValueChange
-import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnLoadingValueChange
-import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnFailureWithDialog
-import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnStart
-import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnValidateForm
-import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnContinueClick
-import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnBackClick
-import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnCloseClick
-import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnRequestClick
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class NonPreApprovedViewModel @Inject constructor(
@@ -113,8 +113,7 @@ class NonPreApprovedViewModel @Inject constructor(
     private fun getTextResources() {
         uiState = uiState.copy(
             titleResource = when (idBrand) {
-                Brand.ElSalvador.id -> R.string.non_pre_approved_additional_questions_title_sv
-                Brand.Guatemala.id -> R.string.non_pre_approved_additional_questions_title_gt
+                Brand.CostaRica.id -> R.string.non_pre_approved_additional_questions_title
                 else -> R.string.non_pre_approved_additional_questions_title_sv
             }
         )

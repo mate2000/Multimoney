@@ -2,7 +2,7 @@ package com.multimoney.multimoney.presentation.ui.smart.origination.evicertia.sc
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.Brand.Guatemala
+import com.multimoney.data.util.catalog.Brand.CostaRica
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.ui.credit.origination.evisertiaandonfidoerrors.OnfidoAndEvicertiaErrorsViewModel
@@ -18,7 +18,7 @@ fun EvicertiaCasesWithButtonScreen(
     AlertResult(
         iconResource = drawable.ic_alert,
         titleResource = string.sign_document_reject_title,
-        descriptionResource = if (viewModel.idBrand == Guatemala.id) string.sign_document_reject_description_gt else string.sign_document_reject_description,
+        descriptionResource = if (viewModel.idBrand == CostaRica.id) string.sign_document_reject_description else string.sign_document_reject_description_sv,
         buttonTextResource = string.understood,
         isLeftButtonVisible = false,
         onRightButtonClick = { viewModel.onUIEvent(OnNavigateToHome) },

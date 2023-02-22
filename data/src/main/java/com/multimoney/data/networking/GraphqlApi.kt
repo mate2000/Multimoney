@@ -2127,8 +2127,7 @@ class GraphqlApi @Inject constructor(
         phoneNumber: String?,
         idCurrencyAccount: Int?,
         idBrand: Int,
-        user: String,
-        identification: String
+        user: String
     ): ApolloCall<UpdateFavoriteContactSmartMutation.Data> = apolloAuthorizedClient.mutation(
         UpdateFavoriteContactSmartMutation(
             idBrand = idBrand,
@@ -2142,8 +2141,7 @@ class GraphqlApi @Inject constructor(
             email = email,
             active = active,
             isFavorite = isFavorite,
-            idCurrencyAccount = Optional.presentIfNotNull(idCurrencyAccount),
-            identification = identification
+            idCurrencyAccount = Optional.presentIfNotNull(idCurrencyAccount)
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 

@@ -10,8 +10,7 @@ data class SmartFavoriteData(
     val active: Boolean?,
     val phoneNumber: String?,
     val idCurrencyAccount: Int?,
-    val currencyAccount: String?,
-    val identification: String?
+    val currencyAccount: String?
 )
 
 data class SmartFavoriteResult(val results: List<SmartFavoriteData?>?)

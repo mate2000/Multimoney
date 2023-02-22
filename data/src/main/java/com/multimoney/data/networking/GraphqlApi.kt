@@ -133,6 +133,8 @@ import com.multimoney.data.networking.graphql.apollomodel.ValidateUserStatusQuer
 import com.multimoney.data.networking.graphql.apollomodel.ValidationSecurityQuery
 import com.multimoney.data.networking.graphql.apollomodel.type.BeneficiaryRequestDtoInput
 import com.multimoney.data.networking.graphql.apollomodel.type.ContactsInput
+import com.multimoney.data.networking.graphql.apollomodel.type.GetCountry
+import com.multimoney.data.networking.graphql.apollomodel.GetCryptoReceiveAddressQuery
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.RelatedContact
 import com.multimoney.domain.model.credit.CreditInfoQuestion
@@ -2360,6 +2362,22 @@ class GraphqlApi @Inject constructor(
             taxAmount,
             idBrand,
             user
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryGetCryptoReceiveAddress(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        asset: String,
+        crypto_network: String
+    ): ApolloCall<GetCryptoReceiveAddressQuery.Data> = apolloAuthorizedClient.query(
+        GetCryptoReceiveAddressQuery(
+            user,
+            idBrand,
+            identification,
+            asset,
+            crypto_network
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

@@ -68,7 +68,9 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
             idBrand = savedStateHandle[ID_BRAND] ?: 0
         )
         viewModelScope.launch {
-            uiState = uiState.copy(shouldDisplayDisclaimer = dataStorePreferences.isVolatileDialogVisible().first())
+            uiState = uiState.copy(
+                shouldDisplayDisclaimer = dataStorePreferences.isVolatileDialogVisible().first()
+            )
         }
     }
 
@@ -105,7 +107,9 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
                     idBrand = uiState.idBrand ?: 0,
                     identification = identification,
                     market = uiState.cryptoItem?.asset.plus(USD_CURRENCY),
-                    order_time_begin = getPreviousDate(uiState.startDate ?: FilterDateByDays.YESTERDAY.time),
+                    order_time_begin = getPreviousDate(
+                        uiState.startDate ?: FilterDateByDays.YESTERDAY.time
+                    ),
                     order_time_end = getCurrentDateYMDPattern(),
                     pagination_limit = SINGLE_PAGE
                 )
@@ -148,22 +152,34 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateToSelectAccount(){
-        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}?$ITEM_CRYPTO_MARKET=${encodeData(MarketCryptoCoin(
-            description = uiState.cryptoItem?.descriptionCurrency ?: "",
-            baseAsset = uiState.cryptoItem?.asset ?: "",
-            url_image = uiState.cryptoItem?.url_image ?: "",
-            cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: ""
-        ))}")
+    private fun onNavigateToSelectAccount() {
+        navigateTo(
+            "${Screen.PurchaseCryptoFlow.baseRoute}?$ITEM_CRYPTO_MARKET=${
+                encodeData(
+                    MarketCryptoCoin(
+                        description = uiState.cryptoItem?.descriptionCurrency ?: "",
+                        baseAsset = uiState.cryptoItem?.asset ?: "",
+                        url_image = uiState.cryptoItem?.url_image ?: "",
+                        cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: ""
+                    )
+                )
+            }"
+        )
     }
 
-    private fun onNavigateToSellCrypto(){
-        navigateTo("${Screen.CryptoSellFlow.baseRoute}?$ITEM_CRYPTO_MARKET=${encodeData(MarketCryptoCoin(
-            description = uiState.cryptoItem?.descriptionCurrency ?: "",
-            baseAsset = uiState.cryptoItem?.asset ?: "",
-            url_image = uiState.cryptoItem?.url_image ?: "",
-            cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: "",
-        ))}")
+    private fun onNavigateToSellCrypto() {
+        navigateTo(
+            "${Screen.CryptoSellFlow.baseRoute}?$ITEM_CRYPTO_MARKET=${
+                encodeData(
+                    MarketCryptoCoin(
+                        description = uiState.cryptoItem?.descriptionCurrency ?: "",
+                        baseAsset = uiState.cryptoItem?.asset ?: "",
+                        url_image = uiState.cryptoItem?.url_image ?: "",
+                        cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: "",
+                    )
+                )
+            }"
+        )
     }
 
     private fun onNavigateToSendCrypto() {
@@ -172,7 +188,7 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
 
 
     private fun onNavigateToReleaseTransaction(cryptoItem: CryptoCurrencyMovement?) {
-        navigateTo("${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}")
+        navigateTo("${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}/${Screen.CryptoCurrencyMovementsScreen.baseRoute}")
     }
 
     fun onUIEvent(event: UIEvent) {
@@ -186,8 +202,10 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
             is UIEvent.OnNavigateToSelectAccount -> onNavigateToSelectAccount()
             is UIEvent.OnDisclaimerChecked -> onDisclaimerChecked(event.checked)
             is UIEvent.OnUpdateShouldShowDisclaimer -> updateShouldShowDisclaimer(event.checked)
-            is UIEvent.OnShowDisclaimer -> uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded))
-            is UIEvent.OnHideDisclaimer -> uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Hidden))
+            is UIEvent.OnShowDisclaimer -> uiState =
+                uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded))
+            is UIEvent.OnHideDisclaimer -> uiState =
+                uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Hidden))
             is UIEvent.OnNavigateToSendCrypto -> onNavigateToSendCrypto()
             is UIEvent.OnNavigateToSellCrypto -> onNavigateToSellCrypto()
             is UIEvent.OnNavigateToReleaseTransaction -> onNavigateToReleaseTransaction(event.cryptoItem)
@@ -224,7 +242,8 @@ class CryptoCurrencyMovementsViewModel @Inject constructor(
         val shouldDisplayDisclaimer: Boolean = true,
         val dontShowAgainChecked: Boolean = false,
         val bottomSheetVisibleState: ModalBottomSheetState = ModalBottomSheetState(
-            ModalBottomSheetValue.Hidden)
+            ModalBottomSheetValue.Hidden
+        )
     )
 
     companion object {

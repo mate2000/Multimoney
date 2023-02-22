@@ -15,6 +15,7 @@ import com.multimoney.multimoney.presentation.navigation.CRYPTO_ASSET
 import com.multimoney.multimoney.presentation.navigation.ID_TRANSACTION
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
@@ -37,7 +38,7 @@ class AmountExceededViewModel @Inject constructor(
     var uiState by mutableStateOf(UIState())
         private set
 
-    private fun onSetUserData(){
+    private fun onSetUserData() {
         viewModelScope.launch {
             identification = dataStorePreferences.getIdentification().first()
             user = dataStorePreferences.getUserEmail().first()
@@ -68,6 +69,7 @@ class AmountExceededViewModel @Inject constructor(
                 uiState = uiState.copy(isAlertResultVisible = false)
             }
             is UIEvent.OnSetUserData -> onSetUserData()
+            is UIEvent.OnNavigateBack -> onNavigateBack()
         }
     }
 
@@ -88,6 +90,8 @@ class AmountExceededViewModel @Inject constructor(
                     }
                     if (it.withHeld) {
                         uiState = uiState.copy(isAmountExceeded = true)
+                    } else {
+                        navigateToHome()
                     }
                 }
                 result.onFailure {
@@ -97,7 +101,7 @@ class AmountExceededViewModel @Inject constructor(
         }
     }
 
-    private fun navigateToHome(){
+    private fun navigateToHome() {
         popAndNavigateTo(Screen.HomeScreen.route, Screen.ReleaseTransactionScreen.route)
     }
 
@@ -116,14 +120,22 @@ class AmountExceededViewModel @Inject constructor(
         isFormValid()
     }
 
+    private fun onNavigateBack() {
+        navigateBack(
+            popTo = savedStateHandle.get<String>(PREVIOUS_SCREEN) ?: Screen.HomeScreen.route,
+            isRestart = false
+        )
+    }
+
     sealed interface UIEvent {
         data class OnNameChange(val name: String) : UIEvent
         data class OnPlatformNameChange(val platformName: String) : UIEvent
         data class OnReasonChange(val reason: String) : UIEvent
         object OnReleaseDeposit : UIEvent
-        object OnNavigateToHome: UIEvent
-        object OnCloseAlert: UIEvent
-        object OnSetUserData: UIEvent
+        object OnNavigateToHome : UIEvent
+        object OnCloseAlert : UIEvent
+        object OnSetUserData : UIEvent
+        object OnNavigateBack : UIEvent
     }
 
     data class UIState(

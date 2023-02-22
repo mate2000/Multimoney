@@ -66,7 +66,7 @@ class CryptoMovementsAllViewModel @Inject constructor(
     }
 
     private fun onNavigateToReleaseTransaction(cryptoItem: CryptoCurrencyMovement?) {
-        navigateTo("${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}")
+        navigateTo("${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}/${Screen.CryptoMovementsAllScreen.baseRoute}")
     }
 
     data class UIState(

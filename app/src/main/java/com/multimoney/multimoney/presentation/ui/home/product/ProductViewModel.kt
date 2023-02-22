@@ -1041,7 +1041,7 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToReleaseTransaction(cryptoItem: CryptoCurrencyMovement?) {
-        navigateTo("${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}")
+        navigateTo("${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}/${Screen.HomeScreen.route}")
     }
 
     private fun getSmartContent() {

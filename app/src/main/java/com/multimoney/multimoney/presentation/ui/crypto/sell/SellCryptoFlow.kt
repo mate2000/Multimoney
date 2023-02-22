@@ -35,7 +35,6 @@ fun SellCryptoFlow(
             onPopAndNavigate = onPopAndNavigate,
             onPopBackStack = onPopBackStack
         )
-
     }
 
     Column(

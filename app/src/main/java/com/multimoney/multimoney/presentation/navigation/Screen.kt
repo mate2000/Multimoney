@@ -668,7 +668,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object QrCodeScannerScreen : Screen(route = "qr_code_scanner_screen")
 
     object ReleaseTransactionScreen : Screen(
-        route = "release_transaction/{$CRYPTO_ASSET}/{$ID_TRANSACTION}",
+        route = "release_transaction/{$CRYPTO_ASSET}/{$ID_TRANSACTION}/{$PREVIOUS_SCREEN}",
         baseRoute = "release_transaction"
     )
 }

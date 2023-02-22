@@ -283,10 +283,36 @@ fun NavGraphBuilder.cryptoNavGraph(
                     nullable = true
                     defaultValue = null
                     type = NavType.StringType
+                },
+                navArgument(PREVIOUS_SCREEN) {
+                    nullable = true
+                    defaultValue = null
+                    type = NavType.StringType
                 }
             )
         ) {
-            AmountExceededFormScreen()
+            AmountExceededFormScreen(
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                },
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        HOME_STATE,
+                        it.homeState
+                    )
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
         }
     }
 }

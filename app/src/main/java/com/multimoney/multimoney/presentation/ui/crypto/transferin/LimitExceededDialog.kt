@@ -27,13 +27,13 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 
 @Composable
-fun LimitExceededDialog(onButtonClick : () -> Unit) {
+fun LimitExceededDialog(onButtonClick: () -> Unit) {
     LimitExceededDialogContent(onButtonClick = onButtonClick)
 }
 
 @Preview
 @Composable
-fun LimitExceededDialogContent(onButtonClick : () -> Unit = {}) {
+fun LimitExceededDialogContent(onButtonClick: () -> Unit = {}) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -47,7 +47,11 @@ fun LimitExceededDialogContent(onButtonClick : () -> Unit = {}) {
                 .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(modifier = Modifier.size(130.dp),painter = painterResource(id = R.drawable.lock_box), contentDescription = null)
+            Image(
+                modifier = Modifier.size(130.dp),
+                painter = painterResource(id = R.drawable.lock_box),
+                contentDescription = null
+            )
             Text(
                 modifier = Modifier.padding(top = 24.dp),
                 text = stringResource(id = R.string.amount_exceeded_dialog_title),
@@ -66,10 +70,13 @@ fun LimitExceededDialogContent(onButtonClick : () -> Unit = {}) {
                 textAlign = TextAlign.Center
             )
         }
-        CustomButton(modifier = Modifier
-            .fillMaxWidth()
-            .align(Alignment.BottomCenter)
-            .padding(horizontal = 16.dp, vertical = 40.dp),
-        onClick = onButtonClick)
+        CustomButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .padding(horizontal = 16.dp, vertical = 40.dp),
+            onClick = onButtonClick,
+            text = stringResource(id = R.string.amount_exceeded_release_error_button)
+        )
     }
 }

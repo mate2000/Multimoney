@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -35,14 +37,24 @@ import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.ui.crypto.transferin.AmountExceededViewModel.UIEvent.OnSetUserData
+import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.ui.crypto.transferin.AmountExceededViewModel.UIEvent.OnNavigateBack
+
 
 @Composable
 fun AmountExceededFormScreen(
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: AmountExceededViewModel = hiltViewModel()
 ) {
 
     LaunchedEffect(true){
         viewModel.onUIEvent(OnSetUserData)
+
+        viewModel.executeNavigation(
+            onPopAndNavigate = onPopAndNavigate,
+            onPopBackStack = onPopBackStack
+        )
     }
 
     val focusManager = LocalFocusManager.current
@@ -54,14 +66,15 @@ fun AmountExceededFormScreen(
                 isLeftButtonVisible = true,
                 isRightButtonVisible = false,
                 onLeftButtonClick = {
-                    //viewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep)
+                    viewModel.onUIEvent(OnNavigateBack)
                 },
             )
         }) {
         Column(
             modifier = Modifier
                 .padding(it)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column(modifier = Modifier.padding(16.dp)) {

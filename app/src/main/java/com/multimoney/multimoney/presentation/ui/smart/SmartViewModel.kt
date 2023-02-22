@@ -78,7 +78,7 @@ class SmartViewModel @Inject constructor(
     val pkUser = savedStateHandle[PK_USER] ?: ""
     val idBrand = savedStateHandle[ID_BRAND] ?: ""
     val user = savedStateHandle[USER] ?: ""
-    val comingFromCrypto = savedStateHandle[COMING_FROM_CRYPTO] ?: ""
+    val comingFromCrypto = savedStateHandle[COMING_FROM_CRYPTO] ?: false
     val idBrandAsInt = idBrand.toIntOrNull() ?: DEFAULT_ID_BRAND_ERROR
     val identification: String = savedStateHandle[IDENTIFICATION] ?: ""
     val email: String = savedStateHandle[EMAIL] ?: ""
@@ -412,7 +412,7 @@ class SmartViewModel @Inject constructor(
 
     private fun navigateToOnfido() {
         popAndNavigateTo(
-            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idSysRequest/$idGlobalRequest/$URL_EMPTY",
+            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idSysRequest/$idGlobalRequest/$URL_EMPTY/$comingFromCrypto",
             Screen.SmartScreen.route
         )
     }
@@ -441,7 +441,7 @@ class SmartViewModel @Inject constructor(
 
     private fun onNavigateToSignDocumentScreen(signDocumentStep: String) {
         navigateTo(
-            route = "${Screen.SmartSignScreen.baseRoute}/$signDocumentStep/$URL_EMPTY/$idSysRequest/$idBrand/$pkUser/$identification/$email/$idSysRequest/$firstName/$lastName/${true}/${idGlobalRequest}/{$user}"
+            route = "${Screen.SmartSignScreen.baseRoute}/$signDocumentStep/$URL_EMPTY/$idSysRequest/$idBrand/$pkUser/$identification/$email/$idSysRequest/$firstName/$lastName/${true}/${idGlobalRequest}/{$user}/{$comingFromCrypto}"
         )
     }
 

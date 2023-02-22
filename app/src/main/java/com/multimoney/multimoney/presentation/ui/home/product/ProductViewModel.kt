@@ -106,12 +106,12 @@ import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.util.NovoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -321,7 +321,7 @@ class ProductViewModel @Inject constructor(
                 // TODO get the new evicertia url
             }
             SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS.workflow -> onIntent()
-            PENDING.status -> onCallMutationAccountStatusUseCase()
+            PENDING.status -> onCallMutationAccountStatusUseCase(comingFromCrypto)
             else -> {
                 navigateTo(
                     "${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
@@ -813,7 +813,7 @@ class ProductViewModel @Inject constructor(
         )
     }
 
-    private fun onCallMutationAccountStatusUseCase() = executeUseCase {
+    private fun onCallMutationAccountStatusUseCase(comingFromCrypto: Boolean) = executeUseCase {
         mutationAccountStatusUseCase.invoke(
             user = userName,
             idBrand = uiState.idBrand.toInt(),
@@ -826,7 +826,7 @@ class ProductViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess {
                 popAndNavigateTo(
-                    "${Screen.SmartSignScreen.baseRoute}/${SIGN_DOCUMENTS_STEP.value}/${it?.urlFirmDocument}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/${uiState.idBrand.toInt()}/$pkUser/$identification/$email/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/$firstName/${uiState.userStatus?.infoUser?.lastName}/${true}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/$userName",
+                    "${Screen.SmartSignScreen.baseRoute}/${SIGN_DOCUMENTS_STEP.value}/${it?.urlFirmDocument}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/${uiState.idBrand.toInt()}/$pkUser/$identification/$email/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/$firstName/${uiState.userStatus?.infoUser?.lastName}/${true}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/$userName/$comingFromCrypto",
                     Screen.HomeScreen.route
                 )
             }.onFailure {

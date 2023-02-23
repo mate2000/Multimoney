@@ -143,17 +143,9 @@ class CreditViewModel @Inject constructor(
             openDialog = DialogParameters(
                 titleResource = closeDialogTitle,
                 description = closeDialogDescription,
-                positiveResource = if (crosseling) {
-                    string.crosseling_close_dialog_positive_button_text
-                } else {
-                    string.credit_close_dialog_positive_button_text
-                },
-                negativeResource = if (crosseling) {
-                    string.crosseling_close_dialog_negative_button_text
-                } else {
-                    string.credit_close_dialog_negative_button_text
-                },
-                positiveAction = {
+                positiveResource = string.crosseling_close_dialog_positive_button_text,
+                negativeResource = string.crosseling_close_dialog_negative_button_text,
+                negativeAction = {
                     onNavigateToHome()
                 },
                 isActive = mutableStateOf(true),

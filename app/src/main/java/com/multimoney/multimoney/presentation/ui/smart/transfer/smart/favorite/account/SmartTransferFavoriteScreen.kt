@@ -26,7 +26,7 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.a
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.SmartTransferFavoriteViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.SmartTransferFavoriteViewModel.UIEvent.OnOptionsClick
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
-import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
+import com.multimoney.multimoney.presentation.uielement.CustomInfoButtonFavoriteAccount
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -106,7 +106,7 @@ fun ACHFavoriteContentList(
     LazyColumn(modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp)) {
         AHCFavoriteList.forEach { (_, favorite) ->
             item {
-                CustomInfoButton(
+                CustomInfoButtonFavoriteAccount(
                     title = favorite.firstOrNull()?.description.orEmpty(),
                     subtitle = favorite.firstOrNull()?.destinationBankDescription.orEmpty(),
                     subtitle2 = getMaskedAccount(
@@ -118,7 +118,6 @@ fun ACHFavoriteContentList(
                         .padding(top = 12.dp),
                     endIcon = R.drawable.ic_options,
                     startIcon = favorite.first()?.destinationAccountCurrencyId?.getCurrencyFromId()?.accountIcon,
-                    titleIcon = R.drawable.ic_star_filled,
                     onEndIconClick = { favorite.firstOrNull()?.let { onEndIconClick(it) } },
                     onClick = {
                        favorite.firstOrNull()?.let { onFavoriteClick(it) }

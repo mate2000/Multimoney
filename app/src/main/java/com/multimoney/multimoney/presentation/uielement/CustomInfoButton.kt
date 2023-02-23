@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.InlineTextContent
-import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.ButtonDefaults
@@ -23,9 +21,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.Placeholder
-import androidx.compose.ui.text.PlaceholderVerticalAlign
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,10 +37,6 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 import com.multimoney.multimoney.presentation.util.MAX_LINE_ONE
 
-const val INLINE_CONTENT_NAME = "inlineContent"
-const val ICON_DESCRIPTION = "[icon]"
-const val ELLIPSE = "…"
-
 @Composable
 @Preview
 fun CustomInfoButton(
@@ -57,7 +48,6 @@ fun CustomInfoButton(
     subtitle: String = "",
     subtitle2: String = "",
     endIcon: Int? = R.drawable.ic_right_chevron,
-    titleIcon: Int? = null,
     shouldCenterEndIcon: Boolean = true,
     onClick: () -> Unit = {},
     onEndIconClick: () -> Unit = {},
@@ -134,41 +124,8 @@ fun CustomInfoButton(
             }
 
             if (subtitle.isNotEmpty()) {
-                val myId = INLINE_CONTENT_NAME
-                val textWithIcon = buildAnnotatedString {
-                    if (title.length >= 28) {
-                        append(title.take(26))
-                        append(ELLIPSE)
-                    } else {
-                        append(title)
-                    }
-                    append(" ")
-                    appendInlineContent(myId, ICON_DESCRIPTION)
-                }
-
-                val inlineContent = mapOf(
-                    Pair(
-                        myId,
-                        InlineTextContent(
-                            Placeholder(
-                                width = 14.sp,
-                                height = 12.sp,
-                                placeholderVerticalAlign = PlaceholderVerticalAlign.AboveBaseline
-                            )
-                        ) {
-                            if (titleIcon != null) {
-                                Image(
-                                    painter = painterResource(id = titleIcon),
-                                    contentDescription = ""
-                                )
-                            } else {
-                                R.string.empty
-                            }
-                        }
-                    )
-                )
                 Text(
-                    text = textWithIcon,
+                    text = title,
                     modifier = Modifier.constrainAs(titleId) {
                         if (startIcon != null || composableIcon != null) {
                             top.linkTo(parent.top, margin = 16.dp)
@@ -192,8 +149,7 @@ fun CustomInfoButton(
                     ),
                     color = titleColor,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    inlineContent = inlineContent
+                    overflow = TextOverflow.Ellipsis
                 )
 
                 if (subtitle2.isNotEmpty()) {
@@ -304,6 +260,7 @@ fun CustomInfoButtonFavoriteAccount(
     startIcon: Int? = R.drawable.ic_payment_fee_icon,
     title: String = "",
     subtitle: String = "",
+    subtitle2: String = "",
     endIcon: Int? = R.drawable.ic_right_chevron,
     shouldCenterEndIcon: Boolean = true,
     onClick: () -> Unit = {},
@@ -314,7 +271,6 @@ fun CustomInfoButtonFavoriteAccount(
         backgroundColor = Transparent,
         disabledBackgroundColor = Transparent
     )
-
     val gradientBorderOneColor: Color
     val gradientBorderTwoColor: Color
     val background: Color
@@ -356,7 +312,7 @@ fun CustomInfoButtonFavoriteAccount(
                 .background(background)
                 .fillMaxWidth()
         ) {
-            val (startIconId, titleRowId, subTitleId, _, endIconId) = createRefs()
+            val (startIconId, titleRowId, subTitleId, subTitle2Id, endIconId) = createRefs()
             if (startIcon != null) {
                 Image(
                     painter = painterResource(id = startIcon),
@@ -373,12 +329,17 @@ fun CustomInfoButtonFavoriteAccount(
             if (subtitle.isNotEmpty()) {
                 Row(
                     modifier = Modifier.constrainAs(titleRowId) {
+                        top.linkTo(parent.top, margin = 16.dp)
                         start.linkTo(startIconId.end)
-                        top.linkTo(startIconId.top)
+                        end.linkTo(endIconId.start)
                         bottom.linkTo(subTitleId.top)
+                        height = Dimension.wrapContent
+                        width = Dimension.fillToConstraints
                     }
                 ) {
                     Text(
+                        modifier = Modifier
+                            .weight(1f, fill = false),
                         text = title,
                         style = Typography.body2.copy(
                             fontWeight = FontWeight.SemiBold,
@@ -391,27 +352,62 @@ fun CustomInfoButtonFavoriteAccount(
                     Image(
                         painter = painterResource(id = R.drawable.ic_star_filled),
                         contentDescription = "",
-                        modifier = Modifier.padding(start = 4.dp)
+                        modifier = Modifier
+                            .padding(start = 4.dp)
                     )
                 }
+                if (subtitle2.isNotEmpty()) {
+                    Text(
+                        text = subtitle,
+                        modifier = Modifier.constrainAs(subTitleId) {
+                            top.linkTo(titleRowId.bottom, margin = 4.dp)
+                            start.linkTo(titleRowId.start)
+                            bottom.linkTo(subTitle2Id.top)
+                            if (endIcon != null) end.linkTo(endIconId.start) else end.linkTo(parent.end)
+                            width = Dimension.fillToConstraints
+                            height = Dimension.wrapContent
+                        },
+                        color = subtitleColor,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = Typography.caption.copy(fontSize = 13.sp)
+                    )
 
-                Text(
-                    text = subtitle,
-                    modifier = Modifier.constrainAs(subTitleId) {
-                        top.linkTo(titleRowId.bottom, margin = 4.dp)
-                        start.linkTo(titleRowId.start)
-                        if (startIcon == null) bottom.linkTo(parent.bottom, margin = 10.dp)
-                        else bottom.linkTo(startIconId.bottom)
-                        if (endIcon == null) end.linkTo(parent.end, margin = 10.dp)
-                        else end.linkTo(endIconId.start)
-                        width = Dimension.fillToConstraints
-                        height = Dimension.wrapContent
-                    },
-                    color = subtitleColor,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = Typography.caption.copy(fontSize = 13.sp)
-                )
+                    Text(
+                        text = subtitle2,
+                        modifier = Modifier.constrainAs(subTitle2Id) {
+                            top.linkTo(subTitleId.bottom, margin = 4.dp)
+                            start.linkTo(subTitleId.start)
+                            bottom.linkTo(parent.bottom, margin = 16.dp)
+                            if (endIcon == null) end.linkTo(parent.end, margin = 16.dp)
+                            else end.linkTo(endIconId.start, margin = 16.dp)
+                            width = Dimension.fillToConstraints
+                            height = Dimension.wrapContent
+                        },
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
+                        style = Typography.caption.copy(fontSize = 13.sp),
+                        color = subtitleColor
+                    )
+                } else {
+                    Text(
+                        text = subtitle,
+                        modifier = Modifier.constrainAs(subTitleId) {
+                            top.linkTo(titleRowId.bottom, margin = 4.dp)
+                            start.linkTo(titleRowId.start)
+                            if (startIcon == null) bottom.linkTo(parent.bottom, margin = 10.dp)
+                            else bottom.linkTo(startIconId.bottom)
+                            if (endIcon == null) end.linkTo(parent.end, margin = 10.dp)
+                            else end.linkTo(endIconId.start)
+                            width = Dimension.fillToConstraints
+                            height = Dimension.wrapContent
+                        },
+                        color = subtitleColor,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = Typography.caption.copy(fontSize = 13.sp)
+                    )
+                }
             }
             if (endIcon != null) {
                 Image(

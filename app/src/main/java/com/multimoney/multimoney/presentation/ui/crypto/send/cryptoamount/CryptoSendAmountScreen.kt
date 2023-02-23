@@ -78,7 +78,12 @@ fun CryptoSendAmountScreen(
                     sharedViewModel.uiState.currencyDollarBalance.toString(),
                     sharedViewModel.uiState.cryptoCurrencyPrice
                 ).toDouble(),
-                currencyPrice = sharedViewModel.uiState.cryptoCurrencyPrice
+                currencyPrice = sharedViewModel.uiState.cryptoCurrencyPrice,
+                openMaintenanceAction = {
+                    sharedViewModel.onUIEvent(
+                        CryptoSendSharedViewModel.BaseEvent.OnShowMaintenance
+                    )
+                }
             )
         )
     }

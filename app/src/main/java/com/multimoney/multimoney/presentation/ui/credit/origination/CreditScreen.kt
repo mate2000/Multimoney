@@ -94,41 +94,14 @@ fun CreditScreen(
     }
 
     if (viewModel.idBrand.isNotEmpty()) {
-        if (viewModel.idBrand.toInt() == Brand.CostaRica.id) {
-            viewModel.onUIEvent(
-                OnSetCloseDialogTexts(
-                    if (viewModel.crosseling) {
-                        R.string.crosseling_close_dialog_title
-                    } else {
-                        R.string.credit_close_dialog_title
-                    },
-                    stringResource(
-                        id = if (viewModel.crosseling) {
-                            R.string.crosseling_close_dialog_description
-                        } else {
-                            R.string.credit_close_dialog_description
-                        }
-                    )
+        viewModel.onUIEvent(
+            OnSetCloseDialogTexts(
+                string.crosseling_close_dialog_title,
+                stringResource(
+                    id = string.crosseling_close_dialog_description
                 )
             )
-        } else {
-            viewModel.onUIEvent(
-                OnSetCloseDialogTexts(
-                    if (viewModel.crosseling) {
-                        R.string.crosseling_close_dialog_title
-                    } else {
-                        R.string.credit_close_dialog_sv_title
-                    },
-                    stringResource(
-                        id = if (viewModel.crosseling) {
-                            R.string.crosseling_close_dialog_description
-                        } else {
-                            R.string.credit_close_dialog_sv_description
-                        }
-                    )
-                )
-            )
-        }
+        )
     }
 
     if (viewModel.uiState.loadContent) {
@@ -213,6 +186,7 @@ fun CreditScreen(
             negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
             openDialogCustom = viewModel.uiState.openDialog.isActive,
             onPositiveAction = viewModel.uiState.openDialog.positiveAction,
+            onNegativeAction = viewModel.uiState.openDialog.negativeAction,
             onDismissAction = viewModel.uiState.openDialog.dismissAction
         )
     }

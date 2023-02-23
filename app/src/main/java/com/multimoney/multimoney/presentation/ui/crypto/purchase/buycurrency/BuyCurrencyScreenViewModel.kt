@@ -54,6 +54,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
     var idCurrencyAccount = CurrencyType.Colon.id
     var smartAccountAvailableBalance = 0.0
     var ibanAccountNumber = ""
+    var openMaintenanceAction = {}
 
     private fun onSetUserData(
         pkUser: Int,
@@ -68,8 +69,10 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         assetImageUrl: String?,
         smartAccountAvailableBalance: Double,
         idCurrencyAccount: Int,
-        ibanAccountNumber: String
+        ibanAccountNumber: String,
+        openMaintenanceAction: () -> Unit
     ) {
+        this.openMaintenanceAction = openMaintenanceAction
         this.pkUser = pkUser
         this.idCurrencyAccount = idCurrencyAccount
         this.asset = asset ?: ""
@@ -159,6 +162,10 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             result.onFailure {
                 timer.stopTimer()
                 confirmationTimer.stopTimer()
+                if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    openMaintenanceAction()
+                    return@onFailure
+                }
                 onFailure()
             }
         }
@@ -189,6 +196,10 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                     timer.stopTimer()
                     confirmationTimer.stopTimer()
                     this.smartAccountAvailableBalance = 0.0
+                    if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                        openMaintenanceAction()
+                        return@onFailure
+                    }
                     onFailure()
                 }
             }
@@ -213,6 +224,10 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             result.onFailure {
                 timer.stopTimer()
                 confirmationTimer.stopTimer()
+                if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    openMaintenanceAction()
+                    return@onFailure
+                }
                 onFailure()
             }
         }
@@ -307,7 +322,6 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                             uiState = uiState.copy(
                                 isLoading = false,
                                 purchaseStatus = PurchaseStatus.IDLE
-
                             )
                             return@onSuccess
                         }
@@ -334,7 +348,6 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                             uiState = uiState.copy(
                                 isLoading = false,
                                 purchaseStatus = PurchaseStatus.IDLE
-
                             )
                             return@onSuccess
                         }
@@ -343,10 +356,13 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                         isLoading = false,
                         referenceNumber = it.buyHQR.result?.sysdeTransactionNumber,
                         purchaseStatus = PurchaseStatus.SUCCESS
-
                     )
                 }
                 result.onFailure {
+                    if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                        openMaintenanceAction()
+                        return@onFailure
+                    }
                     uiState = uiState.copy(
                         isLoading = false,
                         purchaseStatus = PurchaseStatus.FAILED
@@ -433,7 +449,8 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 assetImageUrl = event.assetImageUrl,
                 smartAccountAvailableBalance = event.smartAccountAvailableBalance,
                 idCurrencyAccount = event.idCurrencyAccount,
-                ibanAccountNumber = event.ibanAccountNumber
+                ibanAccountNumber = event.ibanAccountNumber,
+                openMaintenanceAction = event.openMaintenanceAction
             )
             UIEvent.OnGetExchangeRate -> if (uiState.exchangeRate == 1.0) {
                 getExchangeRate()
@@ -474,7 +491,8 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             val assetImageUrl: String?,
             val smartAccountAvailableBalance: Double,
             val idCurrencyAccount: Int,
-            val ibanAccountNumber: String
+            val ibanAccountNumber: String,
+            val openMaintenanceAction: () -> Unit
         ) : UIEvent()
 
         data class ValidateAmountInput(val amount: String) : UIEvent()

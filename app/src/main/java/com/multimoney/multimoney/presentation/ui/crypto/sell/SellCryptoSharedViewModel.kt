@@ -60,7 +60,6 @@ class SellCryptoSharedViewModel @Inject constructor(
     val comingFromDetails: Boolean = marketCryptoCoin != null
 
     private fun setUserData() {
-
         viewModelScope.launch {
             idBrand = dataStorePreferences.getIdBrand().first().toInt()
             pkUser = dataStorePreferences.getPkUser().first()
@@ -177,6 +176,7 @@ class SellCryptoSharedViewModel @Inject constructor(
             accountToken = accountToken
         )
     }
+
     private fun onSetupVoucherDetails(
         assetAmount: String,
         approximateValue: String,
@@ -205,9 +205,14 @@ class SellCryptoSharedViewModel @Inject constructor(
         }
     }
 
+    private fun onShowMaintenanceAlert() {
+        emitBaseEvent(BaseEvent.OnShowMaintenance)
+    }
+
     data class UIState(
         val currentStep: Int = PurchaseCryptoSteps.One.pageNumber,
         val isLoading: Boolean = false,
+        val isPaxosInMaintenance: Boolean = false,
         val accounts: List<SmartAccountSmall> = listOf(),
         val userCryptoBalances: List<BalanceCryptoAccountItems> = listOf(),
         val currentStepType: SellCryptoStep = SellCryptoStep.LIST_CRYPTO_CURRENCIES,
@@ -231,8 +236,8 @@ class SellCryptoSharedViewModel @Inject constructor(
         val voucherTotalCreditedAmount: String = "",
         val voucherTotalCreditedAmountExchange: String = "",
         val voucherExchangeRate: String = "",
-        val voucherReferenceNumber: String= "",
-        val voucherSellDate: String ="",
+        val voucherReferenceNumber: String = "",
+        val voucherSellDate: String = "",
         val voucherSellTime: String = "",
         val comingFromDetails: Boolean = false,
         var previousAction: () -> Unit = {},
@@ -282,7 +287,13 @@ class SellCryptoSharedViewModel @Inject constructor(
                 accounts = event.accounts,
                 userCryptoBalances = event.cryptoBalances
             )
+            BaseEvent.OnShowMaintenance -> onShowMaintenanceAlert()
+            is UIEvent.SetPaxosMaintenanceState -> uiState = uiState.copy(isPaxosInMaintenance = event.isPaxosInMaintenance)
         }
+    }
+
+    sealed class BaseEvent {
+        object OnShowMaintenance : UIEvent()
     }
 
     sealed class UIEvent {
@@ -301,6 +312,7 @@ class SellCryptoSharedViewModel @Inject constructor(
             val accountNumber: String,
             val ibanAccountNumber: String
         ) : UIEvent()
+
         object OnNavigateHome : UIEvent()
         data class OnSetupVoucherDetails(
             val assetAmount: String,
@@ -309,16 +321,15 @@ class SellCryptoSharedViewModel @Inject constructor(
             val exchangeRate: String,
             val totalCreditedAmountExchange: String,
             val referenceNumber: String
-        ) :
-            UIEvent()
+        ) : UIEvent()
 
         object OnGetUserInfo : UIEvent()
         data class OnSetFlowStep(val step: SellCryptoStep) : UIEvent()
-
         data class OnSetAccounts(
             val accounts: List<SmartAccountSmall>,
             val cryptoBalances: List<BalanceCryptoAccountItems>
-            ) : UIEvent()
+        ) : UIEvent()
+        data class SetPaxosMaintenanceState(val isPaxosInMaintenance: Boolean) : UIEvent()
     }
 
     companion object {

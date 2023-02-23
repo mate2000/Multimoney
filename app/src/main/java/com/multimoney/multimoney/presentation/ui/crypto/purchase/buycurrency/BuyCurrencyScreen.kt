@@ -76,6 +76,11 @@ fun BuyCurrencyScreen(
                 assetImageUrl = sharedViewModel.uiState.assetImageBaseUrl,
                 smartAccountAvailableBalance = sharedViewModel.uiState.smartAccountAvailableBalance,
                 ibanAccountNumber = sharedViewModel.uiState.ibanAccountNumber,
+                openMaintenanceAction = {
+                    sharedViewModel.onUIEvent(
+                        PurchaseCryptoSharedViewModel.BaseEvent.OnShowMaintenance
+                    )
+                }
             )
         )
         sharedViewModel.uiState.previousAction = {

@@ -3,14 +3,12 @@ package com.multimoney.data.base
 import com.apollographql.apollo3.ApolloCall
 import com.apollographql.apollo3.api.Operation
 import com.apollographql.apollo3.exception.ApolloException
+import com.apollographql.apollo3.exception.ApolloHttpException
 import com.apollographql.apollo3.exception.ApolloParseException
 import com.multimoney.data.database.util.DbConstants.NoResults
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.error.HttpError
-import com.multimoney.domain.util.MultimoneyException.APOLLO_ERROR
-import com.multimoney.domain.util.MultimoneyException.APOLLO_PARSE_EXCEPTION
-import com.multimoney.domain.util.MultimoneyException.UNKNOWN_ERROR
-import java.io.IOException
+import com.multimoney.domain.util.MultimoneyException.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
@@ -19,6 +17,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.io.IOException
 
 abstract class BaseRepository {
 
@@ -163,6 +162,14 @@ abstract class BaseRepository {
                     MultimoneyResult.Success(apolloResponse.data)
                 }
             }
+        } catch (apolloException: ApolloHttpException) {
+            MultimoneyResult.Failure(
+                HttpError(
+                    Throwable(
+                        APOLLO_ERROR.description
+                    ), errorCode = apolloException.statusCode
+                )
+            )
         } catch (apolloException: ApolloException) {
             MultimoneyResult.Failure(
                 HttpError(

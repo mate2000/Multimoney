@@ -44,15 +44,12 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.transformation.formatWithComma
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ListCryptoCurrenciesScreen(
     viewModel: ListCryptoPurchaseViewModel = hiltViewModel(),
     sharedViewModel: PurchaseCryptoSharedViewModel,
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
 ) {
-    val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
-    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(true) {
         viewModel.executeNavigation(
@@ -61,6 +58,13 @@ fun ListCryptoCurrenciesScreen(
         viewModel.onUIEvent(ListCryptoPurchaseViewModel.UIEvent.OnGetUserInfo(
             user = sharedViewModel.email,
             idBrand = sharedViewModel.idBrand
+        ))
+        viewModel.onUIEvent(ListCryptoPurchaseViewModel.UIEvent.OnSetOpenMaintenanceAction(
+            action = {
+                sharedViewModel.onUIEvent(
+                    PurchaseCryptoSharedViewModel.BaseEvent.OnShowMaintenance
+                )
+            }
         ))
         viewModel.onUIEvent(ListCryptoPurchaseViewModel.UIEvent.OnGetAvailableListOfCryptoCoins)
     }

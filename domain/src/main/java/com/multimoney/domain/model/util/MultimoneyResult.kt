@@ -20,7 +20,7 @@ inline fun <T : Any?> MultimoneyResult<T>.onMessage(action: (T) -> Unit): Multim
 }
 
 inline fun <T : Any?> MultimoneyResult<T>.onFailure(action: (HttpError) -> Unit): MultimoneyResult<T> {
-    if (this is MultimoneyResult.Failure) action(httpError)
+    if (this is MultimoneyResult.Failure) if (httpError.errorCode != 403) action(httpError)
     return this
 }
 

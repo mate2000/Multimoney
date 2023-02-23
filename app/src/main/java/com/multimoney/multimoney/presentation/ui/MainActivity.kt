@@ -49,9 +49,6 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
             MultimoneyTheme {
                 Navigation()
                 LaunchedEffect(key1 = true) {
-
-                }
-                lifecycleScope.launch {
                     isSessionAlreadyOpened.collectLatest {
                         if (it) {
                             signOut()
@@ -97,10 +94,10 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
     }
 
     private fun signOut() {
+        cognitoHelper.signOut(signOutError = {
+            Timber.d("SignOut Error")
+        })
         lifecycleScope.launch {
-            cognitoHelper.signOut(signOutError = {
-                Timber.d("SignOut Error")
-            })
             dataStorePreferences.setAuthToken("")
             dataStorePreferences.setVolatileDialogVisible(true)
             dataStorePreferences.isSessionDuplicated(false)

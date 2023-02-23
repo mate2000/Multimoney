@@ -5,7 +5,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.catalog.TransferStatus
 import com.multimoney.domain.interaction.crypto.GetTransferCommissionUseCase
 import com.multimoney.domain.interaction.crypto.SendCryptoToAddressUseCase
@@ -16,6 +15,7 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.BuyCurrencyScreenViewModel
 import com.multimoney.multimoney.presentation.util.calculateAmountPlusFee
 import com.multimoney.multimoney.presentation.util.calculateAssetEstimated
@@ -26,7 +26,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CryptoSendAmountViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
     private val getTransferCommissionUseCase: GetTransferCommissionUseCase,
     private val sendCryptoToAddressUseCase: SendCryptoToAddressUseCase
 ) : BaseViewModel(shouldObserveToken = true) {
@@ -46,6 +45,7 @@ class CryptoSendAmountViewModel @Inject constructor(
     private var currencyPrice: Double = 0.0
     var asset = ""
     var destinationAddress = ""
+    var openMaintenanceAction = {}
 
     private fun onSetUserData(
         pkUser: Int,
@@ -58,8 +58,10 @@ class CryptoSendAmountViewModel @Inject constructor(
         destinationAddress: String,
         currentBalanceInDollar: Double,
         currentCryptoBalance: Double,
-        currencyPrice: Double
+        currencyPrice: Double,
+        openMaintenanceAction: () -> Unit
     ) {
+        this.openMaintenanceAction = openMaintenanceAction
         this.pkUser = pkUser
         this.asset = asset ?: ""
         this.cryptoNetWork = cryptoNetwork ?: ""
@@ -110,6 +112,10 @@ class CryptoSendAmountViewModel @Inject constructor(
                 validateAmountPlusFee()
             }
             result.onFailure {
+                if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    openMaintenanceAction()
+                    return@onFailure
+                }
                 uiState = uiState.copy(
                     isError = true,
                     isLoading = false
@@ -175,6 +181,10 @@ class CryptoSendAmountViewModel @Inject constructor(
                 )
             }
             result.onFailure {
+                if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    openMaintenanceAction()
+                    return@onFailure
+                }
                 uiState = uiState.copy(
                     isLoading = false,
                     transferStatus = TransferStatus.FAILED
@@ -197,7 +207,8 @@ class CryptoSendAmountViewModel @Inject constructor(
                 destinationAddress = uiEvent.destinationAddress,
                 currentBalanceInDollar = uiEvent.currentBalanceInDollar,
                 currentCryptoBalance = uiEvent.currentCryptoBalance,
-                currencyPrice = uiEvent.currencyPrice
+                currencyPrice = uiEvent.currencyPrice,
+                openMaintenanceAction = uiEvent.openMaintenanceAction
             )
             is UIEvent.OnAmountChanged -> onAmountChange(uiEvent.amount)
             is UIEvent.OnCalculateAmountTransferCommission -> onCalculateAmountTransferCommission()
@@ -240,7 +251,8 @@ class CryptoSendAmountViewModel @Inject constructor(
             val assetImageUrl: String?,
             val currentBalanceInDollar: Double = 0.0,
             val currentCryptoBalance: Double = 0.0,
-            val currencyPrice: Double = 0.0
+            val currencyPrice: Double = 0.0,
+            val openMaintenanceAction: () -> Unit = {}
         ) : UIEvent()
         data class OnAmountChanged(val amount: String) : UIEvent()
         object OnCalculateAmountTransferCommission : UIEvent()

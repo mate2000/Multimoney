@@ -19,6 +19,7 @@ import com.multimoney.domain.model.crypto.PricesQuoteAndCommissionData
 import com.multimoney.domain.model.crypto.SellCryptoCurrencyHQRData
 import com.multimoney.domain.model.crypto.ValidateDepositAddressResponse
 import com.multimoney.domain.model.crypto.SendCryptoToAddressData
+import com.multimoney.domain.model.crypto.GetCryptoReceiveAddressData
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.CryptoRepository
@@ -288,6 +289,23 @@ class CryptoRepositoryImpl @Inject constructor(
             taxAmount,
             idBrand,
             user
+        ),
+        apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
+    )
+
+    override suspend fun getCryptoCurrencyReceiveAddress(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        asset: String,
+    crypto_network: String,
+    ): Flow<MultimoneyResult<GetCryptoReceiveAddressData>> = fetchData(
+        apolloCall = graphqlApi.queryGetCryptoReceiveAddress(
+            user,
+            idBrand,
+            identification,
+            asset,
+            crypto_network
         ),
         apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
     )

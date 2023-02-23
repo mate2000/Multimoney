@@ -100,7 +100,7 @@ class VisaVerifyDepositViewModel @Inject constructor(
             remainingTime = newRemainingTime,
             remainingTimeText = newRemainingTime.format(),
             microDeposit = "",
-            microDepositError = Pair(false, R.string.empty)
+            microDepositError = Pair(false, "")
         )
     }
 
@@ -173,7 +173,7 @@ class VisaVerifyDepositViewModel @Inject constructor(
     private fun onMicroDepositValueChange(value: String) {
         uiState = uiState.copy(
             microDeposit = value,
-            microDepositError = Pair(false, R.string.error_empty)
+            microDepositError = Pair(false, "")
         )
         uiState = uiState.copy(isFormValid = isFormValid())
     }
@@ -236,18 +236,22 @@ class VisaVerifyDepositViewModel @Inject constructor(
             result.onSuccess {
                 setSuccessAlertResult()
             }.onMessage {
-                uiState = uiState.copy(
-                    isLoading = false,
-                    dialogParameters = DialogParameters(
-                        description = it?.messageError?.message.orEmpty(),
-                        isActive = mutableStateOf(true),
-                        positiveResource = string.contact,
-                        positiveAction = {
-                            onContactClick()
-                        },
-                        negativeResource = string.exit
+                if (it?.messageError?.status == MICRO_DEPOSIT_ERROR) {
+                    uiState = uiState.copy(microDepositError = Pair(false, it.messageError.message.orEmpty()))
+                } else {
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        dialogParameters = DialogParameters(
+                            description = it?.messageError?.message.orEmpty(),
+                            isActive = mutableStateOf(true),
+                            positiveResource = string.contact,
+                            positiveAction = {
+                                onContactClick()
+                            },
+                            negativeResource = string.exit
+                        )
                     )
-                )
+                }
             }.onFailure {
                 setErrorAlertResult(it.getError())
             }.onLoading {
@@ -295,7 +299,7 @@ class VisaVerifyDepositViewModel @Inject constructor(
     data class UIState(
         // Fields
         val microDeposit: String = "",
-        val microDepositError: Pair<Boolean, Int> = Pair(false, R.string.empty),
+        val microDepositError: Pair<Boolean, String> = Pair(false, ""),
 
         // Interactions
         val remainingTime: Duration = TIMER_DURATION.seconds,
@@ -351,5 +355,6 @@ class VisaVerifyDepositViewModel @Inject constructor(
 
         const val TIMER_DURATION = 60L
         const val TIMER_DELAY = 1L
+        const val MICRO_DEPOSIT_ERROR = 2997
     }
 }

@@ -80,18 +80,18 @@ fun CreditOnfidoScreen(
     )
 
     if (viewModel.idBrand != null) {
-        if (viewModel.idBrand == Brand.Guatemala.id) {
+        if (viewModel.idBrand == Brand.CostaRica.id) {
             viewModel.onUIEvent(
                 OnSetCloseDialogTexts(
-                    string.credit_close_dialog_gt_title,
-                    stringResource(id = string.credit_close_dialog_gt_description),
+                    string.credit_close_dialog_title,
+                    stringResource(id = string.credit_close_dialog_description),
                 ),
             )
         } else {
             viewModel.onUIEvent(
                 OnSetCloseDialogTexts(
-                    string.credit_close_dialog_title,
-                    stringResource(id = string.credit_close_dialog_description),
+                    string.credit_close_dialog_sv_title,
+                    stringResource(id = string.credit_close_dialog_sv_description),
                 ),
             )
         }

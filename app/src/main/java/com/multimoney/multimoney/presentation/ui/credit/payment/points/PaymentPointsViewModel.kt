@@ -99,10 +99,10 @@ class PaymentPointsViewModel @Inject constructor(
     private fun onCloseScreen() {
         uiState = uiState.copy(
             dialogParameters = uiState.dialogParameters.copy(
-                titleResource = if (idBrand == Brand.Guatemala.id) {
-                    string.payment_points_dialog_title_gt
-                } else {
+                titleResource = if (idBrand == Brand.CostaRica.id) {
                     string.payment_points_dialog_title
+                } else {
+                    string.payment_points_dialog_title_sv
                 },
                 descriptionResource = string.payment_points_dialog_description,
                 positiveResource = string.payment_points_dialog_positive_button,

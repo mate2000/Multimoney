@@ -96,8 +96,8 @@ class OnBoardingViewModel @Inject constructor(
                     R.drawable.ic_onboarding_step_one
                 )
                 else -> listOf(
-                    R.string.onboarding_salvador_step_one_title,
-                    R.string.onboarding_salvador_step_one_sub_title,
+                    R.string.onboarding_el_salvador_step_one_title,
+                    R.string.onboarding_el_salvador_step_one_sub_title,
                     R.drawable.ic_onboarding_step_one
                 )
             }
@@ -117,8 +117,8 @@ class OnBoardingViewModel @Inject constructor(
                     R.drawable.ic_onboarding_step_two
                 )
                 else -> listOf(
-                    R.string.onboarding_salvador_step_two_title,
-                    R.string.onboarding_salvador_step_two_sub_title,
+                    R.string.onboarding_el_salvador_step_two_title,
+                    R.string.onboarding_el_salvador_step_two_sub_title,
                     R.drawable.ic_onboarding_step_two
                 )
             }
@@ -137,8 +137,8 @@ class OnBoardingViewModel @Inject constructor(
                     R.drawable.ic_onboarding_step_three
                 )
                 else -> listOf(
-                    R.string.onboarding_salvador_step_three_title,
-                    R.string.onboarding_salvador_step_three_sub_title,
+                    R.string.onboarding_el_salvador_step_three_title,
+                    R.string.onboarding_el_salvador_step_three_sub_title,
                     R.drawable.ic_onboarding_step_three
                 )
             }
@@ -162,8 +162,8 @@ class OnBoardingViewModel @Inject constructor(
 
     data class UIState(
         // Fields
-        val title: Int = R.string.onboarding_salvador_step_one_title,
-        val subtitle: Int = R.string.onboarding_salvador_step_one_sub_title,
+        val title: Int = R.string.onboarding_el_salvador_step_one_title,
+        val subtitle: Int = R.string.onboarding_el_salvador_step_one_sub_title,
         val icon: Int = R.drawable.ic_onboarding_step_one,
 
         // Interactions

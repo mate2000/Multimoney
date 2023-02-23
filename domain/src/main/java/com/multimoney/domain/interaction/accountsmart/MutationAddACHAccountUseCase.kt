@@ -15,6 +15,8 @@ interface MutationAddACHAccountUseCase {
         destinationBankId: Int,
         description: String,
         identificationNumber: String,
-        identificationTypeAccount: Int
+        identificationTypeAccount: Int,
+        destinationCurrencyId: Int,
+        document: String
     ): Flow<MultimoneyResult<ACHAccount?>>
 }

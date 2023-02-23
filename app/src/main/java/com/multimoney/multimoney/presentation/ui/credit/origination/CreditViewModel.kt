@@ -354,8 +354,8 @@ class CreditViewModel @Inject constructor(
 
     fun getLoadingString(): Int = if (idBrand.isNotEmpty()) {
         when (idBrand.toInt()) {
-            Brand.Guatemala.id -> string.credit_glad_to_see_you_gt
-            else -> string.credit_glad_to_see_you
+            Brand.CostaRica.id -> string.credit_glad_to_see_you
+            else -> string.credit_glad_to_see_you_sv
         }
     } else {
         string.empty

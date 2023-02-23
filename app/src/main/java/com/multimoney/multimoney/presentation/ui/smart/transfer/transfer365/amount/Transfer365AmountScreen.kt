@@ -135,20 +135,15 @@ private fun Transfer365AmountBottomSheet(viewModel: Transfer365AmountViewModel =
         modalBottomSheetState = viewModel.amountUIState.bottomSheetState,
         saveSendTitleResource = R.string.smart_payment_sheet_send_title,
         amount = viewModel.getFormattedAmount(),
-        fromTitle = viewModel.amountUIState.originAccountDisplay?.sheetTitle
-            ?: stringResource(
-                viewModel.amountUIState.originAccountDisplay?.sheetTitleResource ?: R.string.empty
-            ),
-        fromSubtitle = viewModel.amountUIState.originAccountDisplay?.sheetSubtitle
-            ?: stringResource(
-                viewModel.amountUIState.originAccountDisplay?.sheetSubtitleResource
-                    ?: R.string.empty
-            ),
+        fromTitle = stringResource(
+            viewModel.amountUIState.originAccountDisplay?.sheetTitleResource ?: R.string.empty
+        ),
         fromIcon = viewModel.amountUIState.originAccountDisplay?.icon,
         toTitle = viewModel.amountUIState.destinyAccountDisplay?.sheetTitle ?: stringResource(
             viewModel.amountUIState.destinyAccountDisplay?.sheetTitleResource ?: R.string.empty
         ),
         toSubtitle = viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitle,
+        toSubtitle2 = viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitle2,
         toIcon = viewModel.amountUIState.destinyAccountDisplay?.icon,
         titleIcon = if (viewModel.transfer365Account.isFavorite) R.drawable.ic_star_filled else null,
         motive = viewModel.amountUIState.motive,

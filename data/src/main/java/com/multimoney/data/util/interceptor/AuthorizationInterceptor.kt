@@ -6,29 +6,49 @@ import com.apollographql.apollo3.network.http.HttpInterceptorChain
 import com.multimoney.data.util.DataStorePreferences
 import kotlinx.coroutines.flow.first
 
-class AuthorizationInterceptor(private val dataStorePreferences: DataStorePreferences) : HttpInterceptor {
+class AuthorizationInterceptor(private val dataStorePreferences: DataStorePreferences) :
+    HttpInterceptor {
 
-    override suspend fun intercept(request: HttpRequest, chain: HttpInterceptorChain): HttpResponse {
+    override suspend fun intercept(
+        request: HttpRequest,
+        chain: HttpInterceptorChain
+    ): HttpResponse {
         var token = dataStorePreferences.getAuthToken().first()
-        val response = chain.proceed(request.newBuilder().addHeader(AUTHORIZATION_HEADER, "$BEARER $token").build())
-        return when(response.statusCode){
+        val response = chain.proceed(
+            request.newBuilder().addHeader(AUTHORIZATION_HEADER, "$BEARER $token").build()
+        )
+        val x = request.headers
+
+        return when (response.statusCode) {
             UNAUTHORIZED_CODE -> {
                 try {
                     token = AWSMobileClient.getInstance().tokens.idToken.tokenString
                     dataStorePreferences.setAuthToken(token)
-                    chain.proceed(request.newBuilder().addHeader(AUTHORIZATION_HEADER, "$BEARER $token").build())
+                    chain.proceed(
+                        request.newBuilder().addHeader(AUTHORIZATION_HEADER, "$BEARER $token")
+                            .build()
+                    )
                 } catch (exception: Exception) {
                     dataStorePreferences.setAuthToken("")
                     dataStorePreferences.isForceShowBiometricPrompt(true)
                     response
                 }
             }
-            INVALID_SESSION ->{
+            DUPLICATED_SESSION -> {
                 dataStorePreferences.setAuthToken("")
                 dataStorePreferences.isForceShowBiometricPrompt(true)
+                dataStorePreferences.isSessionDuplicated(true)
                 response
             }
-            else -> response
+            else -> {
+//
+//                x.forEach {
+//                    if (it.value.contains("listSinpeAccount")){
+//                        dataStorePreferences.isSessionDuplicated(true)
+//                    }
+//                }
+                response
+            }
         }
     }
 
@@ -36,6 +56,6 @@ class AuthorizationInterceptor(private val dataStorePreferences: DataStorePrefer
         const val AUTHORIZATION_HEADER = "Authorization"
         const val BEARER = "Bearer"
         const val UNAUTHORIZED_CODE = 401
-        const val INVALID_SESSION = 403
+        const val DUPLICATED_SESSION = 403
     }
 }

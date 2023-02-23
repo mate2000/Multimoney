@@ -43,32 +43,9 @@ import com.multimoney.multimoney.BuildConfig
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.Screen.HomeBNScreen
-import com.multimoney.multimoney.presentation.navigation.Screen.ProductsBNScreen
-import com.multimoney.multimoney.presentation.navigation.Screen.QuickActionBNScreen
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnDeleteAutomaticPaymentEvent
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnDeleteAutomaticPaymentToastEvent
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnEditAutomaticPaymentEvent
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnHideAutomaticPaymentEditBottomSheet
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnShowAutomaticPaymentEditBottomSheet
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnBottomNavigationItemClick
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCallMutationDeactivateClientAutomaticDebit
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCloseCardIssuanceError
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnDeleteAutomaticPayment
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnEditAutomaticPayment
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnGetCreditMovements
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnGetSmartMovements
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnHideAutomaticPaymentEdit
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnHideUnlinkToast
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnInitializeBiometricPrompt
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetUserData
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowAutomaticPaymentEdit
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowCardIssuanceError
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowTimerDialog
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowUnlinkToast
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSignOut
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnStartBiometrics
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnUpdateIsExpandedByClick
+import com.multimoney.multimoney.presentation.navigation.Screen.*
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.*
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.*
 import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.INDEX_ONE
@@ -86,9 +63,11 @@ import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.util.BiometricHelper
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -571,7 +550,8 @@ class HomeViewModel @Inject constructor(
                         user = email,
                         identification = identification,
                         idBrand = idBrand,
-                        baseAsset = uiState.balance?.balanceCryptoAccount?.items?.firstOrNull()?.asset ?: ""
+                        baseAsset = uiState.balance?.balanceCryptoAccount?.items?.firstOrNull()?.asset
+                            ?: ""
                     )
                 } else {
                     apiCallCount++
@@ -743,7 +723,15 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun onSessionDuplicated() {
+        hideTimerDialog()
+        executeLogOut()
+    }
+
     private fun executeLogOut() {
+        viewModelScope.launch {
+            dataStorePreferences.isSessionDuplicated(false)
+        }
         cognitoHelper.signOut { Timber.d("SignOut Error") }
         viewModelScope.launch { dataStorePreferences.setAuthToken("") }
         popAndNavigateTo(Screen.SignInScreen.route, Screen.HomeScreen.route)
@@ -825,10 +813,20 @@ class HomeViewModel @Inject constructor(
         uiState = uiState.copy(isExpandedByClick = expand)
     }
 
+    private fun onSetupSessionListener(activity: Activity?) {
+        activity?.let { safeActivity ->
+            communicator = safeActivity as SignOutCommunicator
+            viewModelScope.launch {
+                uiState = uiState.copy(isSessionDuplicated = communicator?.isSessionDuplicated()!!)
+            }
+        }
+    }
+
     data class UIState(
         // Fields
         var isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
+        val isSessionDuplicated: Flow<Boolean> = flowOf(false),
         var quickActions: List<QuickAction>? = null,
         var miniCardList: List<MiniCardsItem>? = null,
         var configurationVersion: ConfigurationVersion? = null,
@@ -897,6 +895,8 @@ class HomeViewModel @Inject constructor(
             )
             is OnUpdateIsExpandedByClick ->
                 uiState = uiState.copy(isExpandedByClick = uiEvent.isExpandedByClick)
+            is UIEvent.OnSetupSessionListener -> onSetupSessionListener(uiEvent.activity)
+            is UIEvent.OnSessionDuplicated -> onSessionDuplicated()
         }
     }
 
@@ -925,7 +925,9 @@ class HomeViewModel @Inject constructor(
         data class OnMyProductPageChange(val page: PagerState) : UIEvent()
         object OnSetUserData : UIEvent()
         data class OnSetHomeState(val homeState: HomeState) : UIEvent()
+        data class OnSetupSessionListener(val activity: Activity?) : UIEvent()
         data class OnSignOut(val activity: Activity?) : UIEvent()
+        object OnSessionDuplicated : UIEvent()
         data class OnShowTimerDialog(val time: Long, val activity: Activity?) : UIEvent()
         object OnShowUnlinkToast : UIEvent()
         object OnHideUnlinkToast : UIEvent()

@@ -68,25 +68,20 @@ class Transfer365AmountViewModel @Inject constructor(
                 totalBalance = smartAccount?.totalBalance,
                 maxAmount = limits?.find { limit -> limit?.code == originCurrency?.id.toString() }?.amount
             )
-            var subtitle1: String? = ""
-            var subtitle2: String? = ""
-            when (transferType) {
+
+            val subtitle1 = when (transferType) {
                 SmartTransferTypes.SmartToMobile.id -> {
-                    subtitle1 = transfer365Account.phone
+                    transfer365Account.phone
                 }
                 SmartTransferTypes.SmartToOtherBank.id -> {
-                    subtitle1 = transfer365Account.bankName
-                    subtitle2 = getMaskedAccount(
-                        prefix = "",
-                        accountNumber = transfer365Account.accountNumber.orEmpty()
-                    )
+                    transfer365Account.bankName
                 }
+                else -> ""
             }
             amountUIState = amountUIState.copy(
                 destinyAccountDisplay = DisplayAccount(
                     sheetTitle = "${transfer365Account.name} ${transfer365Account.lastname}",
                     sheetSubtitle = subtitle1,
-                    sheetSubtitle2 = subtitle2,
                     icon = R.drawable.ic_bank_account_dollar
                 )
             )

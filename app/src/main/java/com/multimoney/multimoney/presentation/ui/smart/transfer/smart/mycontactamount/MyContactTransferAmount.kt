@@ -12,6 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnAbandonFlow
@@ -164,7 +165,8 @@ private fun MyContactsAmountBottomSheet(viewModel: MyContactsTransferAmountViewM
                         color = MultimoneyTheme.colors.coloredInitialChar.random()
                     )
                 },
-                enable = false
+                enable = false,
+                titleIcon = if (viewModel.phoneAccount?.isFavorite == true) R.drawable.ic_star_filled else null
             )
         },
         motive = viewModel.amountUIState.motive,

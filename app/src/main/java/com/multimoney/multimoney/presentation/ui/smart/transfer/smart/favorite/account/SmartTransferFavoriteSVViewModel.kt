@@ -149,7 +149,8 @@ class SmartTransferFavoriteSVViewModel @Inject constructor(
             email = localFavorite?.email,
             idCurrency = localFavorite?.idCurrencyAccount.toString(),
             currency = localFavorite?.currencyAccount,
-            ibanNumber = localFavorite?.ibanNumber
+            ibanNumber = localFavorite?.ibanNumber,
+            isFavorite = localFavorite?.isFavorite ?: false
         )
         navigateTo(
             "${Screen.MyContactsTransferAmountScreen.baseRoute}/${encodeData(selectedSmartAccount)}/" +

@@ -14,6 +14,7 @@ import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSma
 import com.multimoney.multimoney.presentation.uielement.PaymentSuccessResult
 import com.multimoney.multimoney.presentation.uielement.SmartPaymentInfoItem
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
+import com.multimoney.multimoney.presentation.util.getMaskedAccount
 
 @Composable
 fun Transfer365SuccessScreen(viewModel: Transfer365AmountViewModel) {
@@ -45,13 +46,12 @@ fun Transfer365SuccessScreen(viewModel: Transfer365AmountViewModel) {
         ) {
             SmartPaymentInfoItem(
                 verticalAlignment = Alignment.CenterVertically,
-                icon = viewModel.destinyCurrency?.feeIcon,
+                icon = viewModel.destinyCurrency?.accountIcon,
                 title = viewModel.amountUIState.destinyAccountDisplay?.sheetTitle.orEmpty(),
-                subtitle = viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitle
-                    ?: stringResource(
-                        viewModel.amountUIState.originAccountDisplay?.sheetSubtitleResource
-                            ?: R.string.empty
-                    )
+                subtitle = getMaskedAccount(
+                    prefix = "",
+                    accountNumber = viewModel.transfer365Account.accountNumber.orEmpty()
+                )
             )
 
             SmartPaymentInfoItem(

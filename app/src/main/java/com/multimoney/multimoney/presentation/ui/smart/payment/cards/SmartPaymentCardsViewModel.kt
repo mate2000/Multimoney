@@ -18,9 +18,12 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnAddCard
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnCardSelected
+import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnHandleAddCardResponse
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnSetAddCardActivityOnResult
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Colon
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Dollar
@@ -97,14 +100,14 @@ class SmartPaymentCardsViewModel @Inject constructor(
     private fun onCardSelected(cardSelected: CardVisaDirect) {
         navigateTo(
             "${Screen.SmartPaymentSavingAmountSV.baseRoute}/" +
-                "${Screen.SmartPaymentCardsScreenSV.baseRoute}/" +
-                "${encodeData(cardSelected)}/${encodeData(smartAccount)}/${SmartTransferTypes.VisaToSmart.id}"
+                    "${Screen.SmartPaymentCardsScreenSV.baseRoute}/" +
+                    "${encodeData(cardSelected)}/${encodeData(smartAccount)}/${SmartTransferTypes.VisaToSmart.id}"
 
         )
     }
 
     private fun onAddCard() {
-        // TODO change to add card navigation
+        uiState.addCardActivityOnResult()
     }
 
     private fun onNavigateBack() =
@@ -114,7 +117,8 @@ class SmartPaymentCardsViewModel @Inject constructor(
         // Interactions
         val cardVDList: List<CardVisaDirect?> = emptyList(),
         val isLoading: Boolean = false,
-        val openDialog: DialogParameters = DialogParameters()
+        val openDialog: DialogParameters = DialogParameters(),
+        val addCardActivityOnResult: () -> Unit = {}
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -123,11 +127,16 @@ class SmartPaymentCardsViewModel @Inject constructor(
             is OnCardSelected -> onCardSelected(uiEvent.cardSelected)
             is OnAddCard -> onAddCard()
             is OnStart -> onStart()
+            is OnSetAddCardActivityOnResult -> uiState =
+                uiState.copy(addCardActivityOnResult = uiEvent.activityOnResult)
+            is OnHandleAddCardResponse -> TODO()
         }
     }
 
     sealed class UIEvent {
         data class OnCardSelected(val cardSelected: CardVisaDirect) : UIEvent()
+        data class OnSetAddCardActivityOnResult(val activityOnResult: () -> Unit) : UIEvent()
+        data class OnHandleAddCardResponse(val response: String, val isError: Boolean) : UIEvent()
         object OnAddCard : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnStart : UIEvent()

@@ -55,6 +55,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
     var idCurrencyAccount = CurrencyType.Colon.id
     var cryptoAvailableCurrencyBalance = 0.0
     var ibanAccountNumber = ""
+    var openMaintenanceAction = {}
 
     private fun onSetUserData(
         pkUser: Int,
@@ -69,8 +70,10 @@ class SellCurrencyScreenViewModel @Inject constructor(
         assetImageUrl: String?,
         cryptoAvailableCurrencyBalance: Double,
         idCurrencyAccount: Int,
-        ibanAccountNumber: String
+        ibanAccountNumber: String,
+        openMaintenanceAction: () -> Unit
     ) {
+        this.openMaintenanceAction = openMaintenanceAction
         this.pkUser = pkUser
         this.idCurrencyAccount = idCurrencyAccount
         this.asset = asset ?: ""
@@ -159,6 +162,10 @@ class SellCurrencyScreenViewModel @Inject constructor(
             result.onFailure {
                 timer.stopTimer()
                 confirmationTimer.stopTimer()
+                if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    openMaintenanceAction()
+                    return@onFailure
+                }
                 onFailure()
             }
         }
@@ -183,6 +190,10 @@ class SellCurrencyScreenViewModel @Inject constructor(
             result.onFailure {
                 timer.stopTimer()
                 confirmationTimer.stopTimer()
+                if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    openMaintenanceAction()
+                    return@onFailure
+                }
                 onFailure()
             }
         }
@@ -292,6 +303,10 @@ class SellCurrencyScreenViewModel @Inject constructor(
                 )
             }
             result.onFailure {
+                if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    openMaintenanceAction()
+                    return@onFailure
+                }
                 uiState = uiState.copy(
                     isLoading = false,
                     sellStatus = SellStatus.FAILED
@@ -373,7 +388,8 @@ class SellCurrencyScreenViewModel @Inject constructor(
                 assetImageUrl = event.assetImageUrl,
                 cryptoAvailableCurrencyBalance = event.cryptoAvailableBalance,
                 idCurrencyAccount = event.idCurrencyAccount,
-                ibanAccountNumber = event.ibanAccountNumber
+                ibanAccountNumber = event.ibanAccountNumber,
+                openMaintenanceAction = event.openMaintenanceAction
             )
             is UIEvent.ValidateAmountInput -> validateAmountInput(event.amount)
             is UIEvent.OnSetFailureAction -> uiState = uiState.copy(
@@ -412,7 +428,8 @@ class SellCurrencyScreenViewModel @Inject constructor(
             val assetImageUrl: String?,
             val cryptoAvailableBalance: Double,
             val idCurrencyAccount: Int,
-            val ibanAccountNumber: String
+            val ibanAccountNumber: String,
+            val openMaintenanceAction: () -> Unit
         ) : UIEvent()
 
         data class ValidateAmountInput(val amount: String) : UIEvent()

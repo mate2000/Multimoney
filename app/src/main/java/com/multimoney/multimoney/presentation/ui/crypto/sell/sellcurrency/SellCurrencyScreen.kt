@@ -71,7 +71,12 @@ fun SellCurrencyScreen(
                 side = sharedViewModel.side,
                 assetImageUrl = sharedViewModel.uiState.assetImageBaseUrl,
                 ibanAccountNumber = sharedViewModel.uiState.ibanAccountNumber,
-                cryptoAvailableBalance = sharedViewModel.uiState.assetAvailable ?: 0.0
+                cryptoAvailableBalance = sharedViewModel.uiState.assetAvailable ?: 0.0,
+                openMaintenanceAction = {
+                    sharedViewModel.onUIEvent(
+                        SellCryptoSharedViewModel.BaseEvent.OnShowMaintenance
+                    )
+                }
             )
         )
         sharedViewModel.uiState.previousAction = {

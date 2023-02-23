@@ -10,7 +10,6 @@ import com.multimoney.multimoney.presentation.uielement.AlertResult
 fun MaintenanceAlertScreen(
     onBackToHomeAction: () -> Unit = {}
 ) {
-
     AlertResult(
         iconResource = R.drawable.ic_alert,
         titleString = stringResource(id = R.string.home_maintenance_state_title),

@@ -180,21 +180,26 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
     private fun onNavigateToSellCrypto() {
         navigateTo(
             "${Screen.CryptoSellFlow.baseRoute}/${Screen.CryptoWalletDetailsScreen.baseRoute}?$ITEM_CRYPTO_MARKET=${
-            encodeData(
-                MarketCryptoCoin(
-                    description = uiState.cryptoItem?.descriptionCurrency ?: "",
-                    baseAsset = uiState.cryptoItem?.asset ?: "",
-                    url_image = uiState.cryptoItem?.url_image ?: "",
-                    cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: ""
+                encodeData(
+                    MarketCryptoCoin(
+                        description = uiState.cryptoItem?.descriptionCurrency ?: "",
+                        baseAsset = uiState.cryptoItem?.asset ?: "",
+                        url_image = uiState.cryptoItem?.url_image ?: "",
+                        cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: ""
+                    )
                 )
-            )
             }"
         )
+    }
+
+    private fun onNavigateToReleaseTransaction(cryptoItem: CryptoCurrencyMovement?) {
+        navigateTo("${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}/${Screen.CryptoWalletDetailsScreen.baseRoute}")
     }
 
     private fun onNavigateToSendCrypto() {
         navigateTo("${Screen.CryptoSendFlow.baseRoute}?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}&$DESCRIPTION_CURRENCY=${uiState.cryptoItem?.descriptionCurrency}")
     }
+
     private fun onNavigateToReceiveCrypto() {
         navigateTo("${Screen.CryptoReceiveFlowScreen.baseRoute}/${user}/${uiState.idBrand}?$ITEM_CRYPTO_MARKET=${encodeData(MarketCryptoCoin(
             description = uiState.cryptoItem?.descriptionCurrency ?: "",
@@ -222,6 +227,7 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
             is UIEvent.OnNavigateToSendCrypto -> onNavigateToSendCrypto()
             is UIEvent.OnNavigateToSellCrypto -> onNavigateToSellCrypto()
             is UIEvent.OnNavigateToReceiveCrypto -> onNavigateToReceiveCrypto()
+            is UIEvent.OnNavigateToReleaseTransaction -> onNavigateToReleaseTransaction(event.cryptoItem)
         }
     }
 
@@ -239,6 +245,8 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
         object OnShowDisclaimer : UIEvent()
         object OnHideDisclaimer : UIEvent()
         object OnNavigateToSendCrypto : UIEvent()
+        data class OnNavigateToReleaseTransaction(val cryptoItem: CryptoCurrencyMovement?) :
+            UIEvent()
         object OnNavigateToReceiveCrypto : UIEvent()
     }
 

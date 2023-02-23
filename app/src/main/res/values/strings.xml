@@ -363,6 +363,8 @@
     <string name="home_product_gt_with_out_credit_description" translatable="false">Comunicate con nosotros para brindarte más información de tu solicitud de crédito.</string>
     <string name="home_product_gt_with_out_credit_action" translatable="false">Contactar a un asesor</string>
     <string name="home_product_movement_title" translatable="false">Mis movimientos</string>
+    <string name="home_product_movement_pending" translatable="false">Pendiente</string>
+    <string name="home_product_movement_release_button" translatable="false">Liberar transferencia</string>
     <string name="home_product_check_all" translatable="false">Ver Todos</string>
     <string name="home_product_title" translatable="false">Disponible</string>
     <string name="home_product_fee" translatable="false">Cuota</string>
@@ -1714,4 +1716,17 @@
     <string name="visa_verified_description_3" translatable="false">en el siguiente\npaso</string>
     <string name="visa_verified_dialog_title" translatable="false">Cancelar proceso</string>
     <string name="visa_verified_dialog_description" translatable="false">¿Estás segur@ de cancelar el proceso de agregar una tarjeta?</string>
+    
+    <!-- Transfer In Amount Exceeded Form -->
+    <string name="amount_exceeded_title" translatable="false">Transferencia Cripto</string>
+    <string name="amount_exceeded_message" translatable="false">Has recibido una transferencia mayor a $1,000 necesitamos verificar el depósito.</string>
+    <string name="amount_exceeded_name" translatable="false">¿Quién realizó el envío?</string>
+    <string name="amount_exceeded_platform" translatable="false">¿Desde qué plataforma se realizó el envío? </string>
+    <string name="amount_exceeded_reason" translatable="false">¿Cuál fue el motivo de envío?</string>
+    <string name="amount_exceeded_button" translatable="false">Liberar depósito</string>
+    <string name="amount_exceeded_dialog_title" translatable="false">Recibiste cripto</string>
+    <string name="amount_exceeded_dialog_message" translatable="false">Se te han transferido más de $10,000, te contactaremos para verificar el origen de fondos y que puedas recibir el dinero.</string>
+    <string name="amount_exceeded_release_error_title" translatable="false">¡Oh no! Hubo un error al liberar el despósito</string>
+    <string name="amount_exceeded_release_error_message" translatable="false">Lo sentimos, volvé a intentarlo más tarde</string>
+    <string name="amount_exceeded_release_error_button" translatable="false">Ir al inicio</string>
 </resources>

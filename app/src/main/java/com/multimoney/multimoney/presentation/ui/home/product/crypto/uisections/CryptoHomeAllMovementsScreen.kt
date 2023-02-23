@@ -9,6 +9,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoHomeAllMovementsViewModel.UIEvent.OnGetUserInfo
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoHomeAllMovementsViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoHomeAllMovementsViewModel.UIEvent.OnNavigateToReleaseTransaction
 
 @Composable
 fun CryptoHomeAllMovementsScreen(
@@ -34,6 +35,7 @@ fun CryptoHomeAllMovementsScreen(
     }
     CryptoMovementsScreenContent(
         cryptoMovements = cryptoMovementsViewModel.uiState.cryptoMovements,
-        onBackPressed = { cryptoMovementsViewModel.onUIEvent(OnNavigateBack) }
+        onBackPressed = { cryptoMovementsViewModel.onUIEvent(OnNavigateBack) },
+        onNavigateToReleaseTransaction = {cryptoMovementsViewModel.onUIEvent(OnNavigateToReleaseTransaction(it))}
     )
 }

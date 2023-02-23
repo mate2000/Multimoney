@@ -166,6 +166,8 @@ import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCas
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetPriceQuoteAndCommissionUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetPriceQuoteAndCommissionsUseCase
+import com.multimoney.domain.interaction.crypto.ReleaseTransferUseCase
+import com.multimoney.domain.interaction.crypto.ReleaseTransferUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetTransferCommissionUseCase
 import com.multimoney.domain.interaction.crypto.GetTransferCommissionUseCaseImpl
 import com.multimoney.domain.interaction.crypto.SellCryptoCurrencyUseCase
@@ -889,6 +891,11 @@ class InteractionModule {
 
     @Provides
     @Singleton
+    fun provideReleaseTransferUseCase(cryptoRepository: CryptoRepository): ReleaseTransferUseCase =
+        ReleaseTransferUseCaseImpl(cryptoRepository)
+
+    @Provides
+    @Singleton
     fun provideQueryGetCountryPhoneCodes(securityRepository: SecurityRepository): QueryGetCountryPhoneCodesUseCase =
         QueryGetCountryPhoneCodesUseCaseImpl(securityRepository)
 
@@ -906,4 +913,5 @@ class InteractionModule {
     @Singleton
     fun provideQueryGetCryptoReceiveAddress(cryptoRepository: CryptoRepository): GetCryptoReceiveAddressUseCase =
         GetCryptoReceiveAddressUseCaseImpl(cryptoRepository)
+
 }

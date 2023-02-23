@@ -154,7 +154,7 @@ class MyContactsTransferViewModel @Inject constructor(
         navigateTo(
             "${MyContactsTransferAmountScreen.baseRoute}/" +
                 "${encodeData(smartAccount)}/${encodeData(account)}/" +
-                "${SmartTransferTypes.SmartToContact.id}/$idBrand/" +
+                "${SmartTransferTypes.SmartToContact.id}/" +
                 Screen.MyContactsTransferScreen.baseRoute
         )
     }
@@ -168,7 +168,7 @@ class MyContactsTransferViewModel @Inject constructor(
     }
 
     private fun onSelectContactAsFavorite() {
-        contactAccountSelected.forEachIndexed {  index, contactFavorite ->
+        contactAccountSelected.forEachIndexed { index, contactFavorite ->
             executeUseCase {
                 mutationUpdateFavoriteSmartUseCase.invoke(
                     idBrand = idBrand,

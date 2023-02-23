@@ -19,6 +19,7 @@ import com.multimoney.domain.model.accountsmart.ExchangeRateResult
 import com.multimoney.domain.model.accountsmart.FavoriteACHResult
 import com.multimoney.domain.model.accountsmart.GeneralEconomicActivityResult
 import com.multimoney.domain.model.accountsmart.GlobalRequest
+import com.multimoney.domain.model.accountsmart.LocalFavorite
 import com.multimoney.domain.model.accountsmart.LocalTransferResult
 import com.multimoney.domain.model.accountsmart.Nationalities
 import com.multimoney.domain.model.accountsmart.PhonesResult
@@ -322,6 +323,24 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 user,
                 idBrand,
                 achTransferId
+            ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+
+    override suspend fun queryLocalTransferFavorite(
+        idBrand: Int,
+        user: String,
+        isFavorite: Boolean,
+        idCustomer: Long
+    ): Flow<MultimoneyResult<List<LocalFavorite?>?>> =
+        fetchData(
+            apolloCall = graphqlApi.queryLocalTransferFavorite(
+                idBrand,
+                user,
+                isFavorite,
+                idCustomer
             ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
@@ -728,7 +747,7 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 user = user,
                 idBrand = idBrand,
                 isFavorite = isFavorite,
-                identificationNumber = identification,
+                identificationNumber = identification
             ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
@@ -768,19 +787,20 @@ class SmartAccountRepositoryImpl @Inject constructor(
         user: String,
         idBrand: Int
     ): Flow<MultimoneyResult<Transfer365Result?>> {
-        return fetchData(graphqlApi.mutationProcessTransfer365(
-            idBrand = idBrand,
-            user = user,
-            identification = identification,
-            destinationAccount = destinationAccount,
-            destinationBankId = destinationBankId,
-            destinationName = destinationName,
-            destinationLastName = destinationLastName,
-            destinationType = destinationType,
-            typeAccountId = typeAccountId,
-            amount = amount,
-            motive = motive
-        ),
+        return fetchData(
+            graphqlApi.mutationProcessTransfer365(
+                idBrand = idBrand,
+                user = user,
+                identification = identification,
+                destinationAccount = destinationAccount,
+                destinationBankId = destinationBankId,
+                destinationName = destinationName,
+                destinationLastName = destinationLastName,
+                destinationType = destinationType,
+                typeAccountId = typeAccountId,
+                amount = amount,
+                motive = motive
+            ),
             apolloCallMapper = { data ->
                 if (
                     (data.transfer365?.status ?: null) == null ||
@@ -806,18 +826,19 @@ class SmartAccountRepositoryImpl @Inject constructor(
         user: String,
         idBrand: Int
     ): Flow<MultimoneyResult<Transfer365Result?>> {
-        return fetchData(graphqlApi.mutationProcessTransfer365Mobile(
-            idBrand = idBrand,
-            user = user,
-            identification = identification,
-            phoneNumber = phoneNumber,
-            destinationBankId = destinationBankId,
-            destinationName = destinationName,
-            destinationLastName = destinationLastName,
-            typeAccountId = typeAccountId,
-            amount = amount,
-            motive = motive
-        ),
+        return fetchData(
+            graphqlApi.mutationProcessTransfer365Mobile(
+                idBrand = idBrand,
+                user = user,
+                identification = identification,
+                phoneNumber = phoneNumber,
+                destinationBankId = destinationBankId,
+                destinationName = destinationName,
+                destinationLastName = destinationLastName,
+                typeAccountId = typeAccountId,
+                amount = amount,
+                motive = motive
+            ),
             apolloCallMapper = { data ->
                 if (
                     (data.transferMovil365?.status ?: null) == null ||
@@ -840,15 +861,16 @@ class SmartAccountRepositoryImpl @Inject constructor(
         idAccountSysde: Long,
         idAccountRequest: Long
     ): Flow<MultimoneyResult<SmartAccountStatusResult?>> {
-        return fetchData(graphqlApi.mutationUpdateSmartAccountStatus(
-            user,
-            idBrand,
-            identificationNumber,
-            newState,
-            typeState,
-            idAccountSysde,
-            idAccountRequest
-        ),
+        return fetchData(
+            graphqlApi.mutationUpdateSmartAccountStatus(
+                user,
+                idBrand,
+                identificationNumber,
+                newState,
+                typeState,
+                idAccountSysde,
+                idAccountRequest
+            ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomain())
             }

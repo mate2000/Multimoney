@@ -110,7 +110,7 @@ fun MyContactsTransferAmountContent(viewModel: MyContactsTransferAmountViewModel
                 } else {
                     getMaskedAccount(
                         accountNumber = viewModel.smartAccount?.accountNumber.orEmpty(),
-                        prefix = Brand.ElSalvador.countryCode.uppercase()
+                        prefix = ""
                     )
                 }
             ),

@@ -586,9 +586,10 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
      * @param DESTINY_ACCOUNT: Destiny contact phone account
      * @param TRANSFER_TYPE: Int id indicating transfer type (SmartToContact)
      * @param ID_BRAND: Int of brand id
+     * @param PREVIOUS_SCREEN: String Screen Base Route from where it's navigating
      */
     object MyContactsTransferAmountScreen : Screen(
-        "my_contacts_amount_screen/{$ORIGIN_ACCOUNT}/{$DESTINY_ACCOUNT}/{$TRANSFER_TYPE}/{$ID_BRAND}/{$PREVIOUS_SCREEN}",
+        "my_contacts_amount_screen/{$ORIGIN_ACCOUNT}/{$DESTINY_ACCOUNT}/{$TRANSFER_TYPE}/{$PREVIOUS_SCREEN}",
         "my_contacts_amount_screen"
     )
 
@@ -623,9 +624,9 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "smart_ach_account_list"
     )
 
-    object SmartTransferFavoriteAccountScreen : Screen(
-        "transfer_favorite_account_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$SMART_ACCOUNT}",
-        "transfer_favorite_account_screen"
+    object SmartTransferFavoriteAccountSVScreen : Screen(
+        "smart_transfer_favorite_account_sv_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$SMART_ACCOUNT}",
+        "smart_transfer_favorite_account_sv_screen"
     )
 
     // TestNavGraph Screens

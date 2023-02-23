@@ -50,6 +50,8 @@ import com.multimoney.domain.interaction.accountsmart.QueryGetPagedSmartMovement
 import com.multimoney.domain.interaction.accountsmart.QueryGetPagedSmartMovementsUseCaseUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryListSinpeAccountUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryListSinpeAccountUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QueryLocalTransferFavoriteUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryLocalTransferFavoriteUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryProfessionUseCase
@@ -916,9 +918,13 @@ class InteractionModule {
     fun provideQueryGetCryptoReceiveAddress(cryptoRepository: CryptoRepository): GetCryptoReceiveAddressUseCase =
         GetCryptoReceiveAddressUseCaseImpl(cryptoRepository)
 
-
     @Provides
     @Singleton
     fun provideQueryACHTransferFavoriteGetUseCase(smartAccountRepository: SmartAccountRepository): QueryACHTransferFavoriteGetUseCase =
         QueryACHTransferFavoriteGetUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryLocalTransferFavoriteUseCase(smartAccountRepository: SmartAccountRepository): QueryLocalTransferFavoriteUseCase  =
+        QueryLocalTransferFavoriteUseCaseImpl(smartAccountRepository)
 }

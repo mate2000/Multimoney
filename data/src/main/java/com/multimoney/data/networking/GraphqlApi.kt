@@ -60,6 +60,7 @@ import com.multimoney.data.networking.graphql.apollomodel.GetCryptoCurrencyMovem
 import com.multimoney.data.networking.graphql.apollomodel.GetCryptoCurrencyNewsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCryptoMovementsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCryptoPriceHistoryQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetCryptoReceiveAddressQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetExchangeRateCreditQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetHistoricClientBalanceQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetHistoricalCurrencyPricesQuery
@@ -78,6 +79,7 @@ import com.multimoney.data.networking.graphql.apollomodel.InitialRequestSmartAcc
 import com.multimoney.data.networking.graphql.apollomodel.ListCardVDQuery
 import com.multimoney.data.networking.graphql.apollomodel.ListMiniCardsQuery
 import com.multimoney.data.networking.graphql.apollomodel.ListSinpeAccountQuery
+import com.multimoney.data.networking.graphql.apollomodel.LocalTransferFavoriteQuery
 import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountDeleteMutation
 import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountSaveMutation
 import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountUpdateMutation
@@ -135,8 +137,6 @@ import com.multimoney.data.networking.graphql.apollomodel.ValidateUserStatusQuer
 import com.multimoney.data.networking.graphql.apollomodel.ValidationSecurityQuery
 import com.multimoney.data.networking.graphql.apollomodel.type.BeneficiaryRequestDtoInput
 import com.multimoney.data.networking.graphql.apollomodel.type.ContactsInput
-import com.multimoney.data.networking.graphql.apollomodel.type.GetCountry
-import com.multimoney.data.networking.graphql.apollomodel.GetCryptoReceiveAddressQuery
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.RelatedContact
 import com.multimoney.domain.model.credit.CreditInfoQuestion
@@ -1254,6 +1254,21 @@ class GraphqlApi @Inject constructor(
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
+    fun queryLocalTransferFavorite(
+        idBrand: Int,
+        user: String,
+        isFavorite: Boolean,
+        idCustomer: Long
+    ): ApolloCall<LocalTransferFavoriteQuery.Data> =
+        apolloAuthorizedClient.query(
+            LocalTransferFavoriteQuery(
+                Optional.presentIfNotNull(idBrand),
+                Optional.presentIfNotNull(user),
+                Optional.presentIfNotNull(isFavorite),
+                Optional.presentIfNotNull(idCustomer)
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
     fun queryGeneralEconomicActivity(
         user: String,
         idBrand: Int
@@ -2194,7 +2209,7 @@ class GraphqlApi @Inject constructor(
             idBrand = idBrand,
             user = user,
             isFavorite = isFavorite,
-            identificationNumber = identificationNumber,
+            identificationNumber = identificationNumber
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -2302,10 +2317,10 @@ class GraphqlApi @Inject constructor(
     ): ApolloCall<ACHTransferFavoriteListQuery.Data> =
         apolloAuthorizedClient.query(
             ACHTransferFavoriteListQuery(
-                Optional.presentIfNotNull(user),
-                Optional.presentIfNotNull(idBrand),
+                user,
+                idBrand,
                 isFavorite,
-                Optional.presentIfNotNull(identification)
+                identification
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

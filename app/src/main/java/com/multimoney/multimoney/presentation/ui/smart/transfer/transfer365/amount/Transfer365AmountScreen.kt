@@ -10,7 +10,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnAbandonFlow
@@ -103,7 +102,7 @@ fun Transfer365AmountContent(viewModel: Transfer365AmountViewModel = hiltViewMod
                 id = viewModel.fromSmartLabel,
                 getMaskedAccount(
                     accountNumber = viewModel.smartAccount?.accountNumber.orEmpty(),
-                    prefix = Brand.ElSalvador.countryCode.uppercase()
+                    prefix = ""
                 )
             ),
             currentAmount = viewModel.amountUIState.currentAmountValueString,

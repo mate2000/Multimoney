@@ -65,7 +65,7 @@ fun MyContactsTransferSuccess(
                 } else {
                     getMaskedAccount(
                         accountNumber = viewModel.phoneAccount?.accountNumber ?: "",
-                        prefix = Brand.ElSalvador.countryCode.uppercase()
+                        prefix = ""
                     )
                 }
             )

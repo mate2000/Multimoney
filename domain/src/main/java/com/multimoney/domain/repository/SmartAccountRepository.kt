@@ -12,6 +12,7 @@ import com.multimoney.domain.model.accountsmart.ExchangeRateResult
 import com.multimoney.domain.model.accountsmart.FavoriteACHResult
 import com.multimoney.domain.model.accountsmart.GeneralEconomicActivityResult
 import com.multimoney.domain.model.accountsmart.GlobalRequest
+import com.multimoney.domain.model.accountsmart.LocalFavorite
 import com.multimoney.domain.model.accountsmart.LocalTransferResult
 import com.multimoney.domain.model.accountsmart.Nationalities
 import com.multimoney.domain.model.accountsmart.PhonesResult
@@ -156,6 +157,13 @@ interface SmartAccountRepository {
         idBrand: Int,
         achTransferId: Int
     ): Flow<MultimoneyResult<ACHAccountFull?>>
+
+    suspend fun queryLocalTransferFavorite(
+        idBrand: Int,
+        user: String,
+        isFavorite: Boolean,
+        idCustomer: Long
+    ): Flow<MultimoneyResult<List<LocalFavorite?>?>>
 
     suspend fun queryGeneralEconomicActivity(
         user: String,

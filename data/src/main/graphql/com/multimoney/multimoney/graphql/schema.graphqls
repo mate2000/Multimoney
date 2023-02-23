@@ -624,6 +624,11 @@ type Mutation {
   saveCreditContract(creditContractInput: CreditContractDtoInput!): CreditContract
 
   """
+  Credit
+  """
+  saveCreditOfferEvent(creditOfferEventInput: creditOfferSubsDtoInput!): CreditOfferEvent
+
+  """
   Crypto
   """
   buyOrder(buyOrderInput: BuyOrderDtoInput!): BuyOrder!
@@ -847,6 +852,8 @@ type Mutation {
 
 type Subscription {
   creditContractEvent(input: CreditContractEventDtoInput!): CreditContractEvent!
+
+  creditOfferEvent(input: CreditOfferEventDtoInput!): CreditOfferEvent!
 
   accountSmartContractEvent(input: AccountSmartContractEventDtoInput!): AccountSmartContractEvent!
 }
@@ -4289,6 +4296,20 @@ input CreditContractDtoInput {
   user: String
 }
 
+type CreditOfferEvent {
+  creditOfferResponse: CreditOffer!
+
+  response: String!
+}
+
+input creditOfferSubsDtoInput {
+  pkUser: Long!
+
+  idBrand: Int!
+
+  creditOfferResponse: CreditOfferInput!
+}
+
 type BuyOrder {
   result: BuyOrderResult!
 
@@ -4443,12 +4464,6 @@ input ReleaseTransactionDtoInput {
 
 type TransferOrder {
   result: TransferOrderResult
-
-  status: Int
-
-  message: String
-
-  detail: String
 
   rollbackApplied: Boolean!
 
@@ -4828,7 +4843,9 @@ input OnfidoInitialProcessDtoInput {
 
   identification: String!
 
-  applicationId: String!
+  applicationId: String
+
+  referrer: String
 
   idBrand: Int
 
@@ -5246,9 +5263,15 @@ input ProcessTransferVisaToSmartDtoInput {
 }
 
 type CreateUser {
-  password: String!
+  password: String
 
-  userName: String!
+  userName: String
+
+  status: Int
+
+  message: String
+
+  detail: String
 }
 
 input CreateUserDtoInput {
@@ -5555,6 +5578,12 @@ input CreditContractEventDtoInput {
   idBrand: Int
 }
 
+input CreditOfferEventDtoInput {
+  pkUser: Long!
+
+  idBrand: Int!
+}
+
 type AccountSmartContractEvent {
   idRequestSysde: Long
 
@@ -5733,6 +5762,16 @@ type BuyOrderResult {
   taxAmount: Decimal!
 
   commissionAmount: Decimal!
+}
+
+input CreditOfferInput {
+  idUserRequest: Long
+
+  products: [PRODUCTOInput!]
+
+  rejectedBlaze: Boolean!
+
+  isCrosseling: Boolean
 }
 
 input PaymentAccountsInput {
@@ -6000,6 +6039,8 @@ type AppUser {
   statusOnfido: String!
 
   wording: Wording
+
+  countryCode: String
 }
 
 type Activities {
@@ -6575,6 +6616,8 @@ type LocalTransferFavoriteResult {
   ibanNumber: String!
 
   isFavorite: Boolean!
+
+  identification: String
 }
 
 type TypeAccountListResponse {
@@ -6904,6 +6947,64 @@ type Authorization {
   message: String
 
   outHours: Boolean
+}
+
+input PRODUCTOInput {
+  iD_PRODUCTO: String
+
+  lIMITE_CREDITO: String
+
+  tRACTO: String
+
+  mINIMO_DESEMBOLSO: String
+
+  mAXIMO_DESEMBOLSO: String
+
+  dESCRIPCION_PROMOCION: String
+
+  pK_PSE_CAT_PROMOCION_PLAZO: String
+
+  pLAZO: String
+
+  mONEDA: String
+
+  eS_PROMOCIONAL: String
+
+  cICLO: String
+
+  tASA_INTERES_NORMAL: String
+
+  sTR_TASA_INTERES_NORMAL: String
+
+  cUOTA: String
+
+  cUOTA_AUTORIZA: String
+
+  cOMISION_DESEMBOLSO: String
+
+  sTR_COMISION_DESEMBOLSO: String
+
+  fECHA_PAGO: String
+
+  nOMBRE_MONEDA: String
+
+  sTR_MINIMO_DESEMBOLSO: String
+
+  sTR_MAXIMO_DESEMBOLSO: String
+
+  cUOTA_ORIGINAL: String
+
+  mensaje_Plazo: String
+
+  mensaje_Condiciones: String
+
+  nombre_Usuario: String
+
+  cuota_Real: Decimal
+
+  pLAZO_NUMERICO: Int
+
+  bIT_REQUIERE_FORMALIZACION: String
 }
 
 type expirationDate {

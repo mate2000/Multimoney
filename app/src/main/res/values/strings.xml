@@ -1577,7 +1577,7 @@
     <string name="crypto_send_address_information" translatable="false">Pegá la dirección de la billetera a la que deseás enviar o escaneá el código del receptor. Asegurate que envíes a la blockchain %s.</string>
     <string name="crypto_send_address_receiver" translatable="false">Dirección %s del receptor</string>
     <string name="crypto_send_address_placeholder" translatable="false">Pegar dirección</string>
-    <string name="crypto_send_address_required" translatable="false">La dirección BTC del receptor es requerida</string>
+    <string name="crypto_send_address_required" translatable="false">La dirección %s del receptor es requerida</string>
     <string name="crypto_send_address_permission_camera_title" translatable="false">“MultiMoney” quiere acceder a tu cámara</string>
     <string name="crypto_send_address_permission_camera_description" translatable="false">El acceso es necesario para escanear códigos QR</string>
     <string name="crypto_send_address_verify_crypto_address_title" translatable="false">Verificá la dirección</string>

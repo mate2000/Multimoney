@@ -28,14 +28,16 @@ class SaveCreditStepsHelper @Inject constructor() {
         bank: CreditCatalog?,
         bankAccountSelected: CreditCatalogOption?,
         accountType: String,
-        accountNumber: String
+        accountNumber: String,
+        idIdentificatorCatalogue: String
     ) {
         val accountNumberQuestion = getScreenConfigQuestion(ACCOUNT_NUMBER, accountNumber)
         val accountTypeQuestion = getScreenConfigQuestion(ACCOUNT_TYPE, accountType)
 
         saveScreenQuestionData(selectionQuestion(user, bank, bankAccountSelected))
 
-        val creditInfoQuestionAccountType = textByDropdownQuestion(user, accountType, accountTypeQuestion)
+        val creditInfoQuestionAccountType =
+            textByDropdownQuestion(user, accountType, accountTypeQuestion, idIdentificatorCatalogue)
         saveScreenQuestionData(creditInfoQuestionAccountType)
 
         val creditInfoQuestionAccountNumber = textQuestion(user, accountNumber, accountNumberQuestion)
@@ -311,7 +313,8 @@ class SaveCreditStepsHelper @Inject constructor() {
     private fun textByDropdownQuestion(
         user: String?,
         value: String,
-        textQuestionData: CreditCatalog?
+        textQuestionData: CreditCatalog?,
+        idIdentificatorCatalogue: String
     ): CreditInfoQuestion {
         return CreditInfoQuestion(
             idQuestionRequestCredit = textQuestionData?.fkQuestion,
@@ -327,7 +330,7 @@ class SaveCreditStepsHelper @Inject constructor() {
             maximumAmount = textQuestionData?.maximumAmount ?: "",
             description = value,
             valueCatalogue = "",
-            idIdentificatorCatalogue = ""
+            idIdentificatorCatalogue = idIdentificatorCatalogue
         )
     }
 

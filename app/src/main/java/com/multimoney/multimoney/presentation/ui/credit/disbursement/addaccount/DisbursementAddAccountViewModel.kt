@@ -17,12 +17,12 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
+import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getRegex
 import com.multimoney.multimoney.presentation.util.matchRegex
@@ -69,7 +69,6 @@ class DisbursementAddAccountViewModel @Inject constructor(
     }
 
     private fun onStart() {
-
         onCallQueryBanksAndRegularExpressions(
             pkUser = pkUser.toInt(),
             user = email,
@@ -137,7 +136,7 @@ class DisbursementAddAccountViewModel @Inject constructor(
 
     private fun onAccountTypeValueChange(regulaExpression: RegularExpression?) {
         uiState = uiState.copy(
-            accountTypeSelectedString = regulaExpression?.description ?: "",
+            accountTypeSelectedString = regulaExpression?.key ?: "",
             accountTypeSelected = regulaExpression,
             accountNumber = "",
             accountNumberError = Pair(false, R.string.empty)
@@ -257,5 +256,4 @@ class DisbursementAddAccountViewModel @Inject constructor(
     companion object {
         const val MIDDLE_DASH = "-"
     }
-
 }

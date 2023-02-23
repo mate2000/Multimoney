@@ -65,7 +65,7 @@ class SmartPaymentAccountViewModel @Inject constructor(
         }
     }
 
-    private fun callQueryBalanceUseCase() =
+    private fun callQueryListSinpeAccount() =
         executeUseCase {
             queryListSinpeAccountUseCaseImpl.invoke(
                 user = user,
@@ -135,7 +135,7 @@ class SmartPaymentAccountViewModel @Inject constructor(
             is OnAddAccountClick -> onAddAccountClick()
             is OnNavigateBack -> onNavigateBack()
             is OnAccountClick -> onAccountClick(uiEvent.account)
-            OnInitializeAccounts -> callQueryBalanceUseCase()
+            OnInitializeAccounts -> callQueryListSinpeAccount()
         }
     }
 

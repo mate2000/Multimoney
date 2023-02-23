@@ -83,7 +83,11 @@ class SellCryptoSharedViewModel @Inject constructor(
                 idCurrency = uiState.accounts.firstOrNull()?.idCurrencyAccount
                     ?: CurrencyType.Dollar.id,
                 accountNumber = uiState.accounts.firstOrNull()?.accountNumber ?: "",
-                ibanAccountNumber = uiState.accounts.firstOrNull()?.ibanAccountNumber ?: "",
+                ibanAccountNumber = if (uiState.accounts.firstOrNull()?.ibanAccountNumber.isNullOrBlank()) {
+                    uiState.accounts.firstOrNull()?.accountNumber ?: ""
+                } else {
+                    uiState.accounts.firstOrNull()?.ibanAccountNumber ?: ""
+                },
                 accountToken = uiState.accounts.firstOrNull()?.accountToken ?: ""
             )
         }

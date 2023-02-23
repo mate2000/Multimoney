@@ -107,12 +107,6 @@ class CryptoSendSharedViewModel @Inject constructor(
         )
     }
 
-    fun shouldShowCloseButton(): Boolean = if (comingFromCurrencyDetails) {
-        uiState.currentStepType != SendCryptoStep.CRYPTO_ADDRESS && uiState.currentStepType != SendCryptoStep.LOADING
-    } else {
-        uiState.currentStepType != SendCryptoStep.LIST_CRYPTO_CURRENCIES && uiState.currentStepType != SendCryptoStep.LOADING
-    }
-
     private fun onShowMaintenanceAlert() {
         emitBaseEvent(BaseEvent.OnShowMaintenance)
     }

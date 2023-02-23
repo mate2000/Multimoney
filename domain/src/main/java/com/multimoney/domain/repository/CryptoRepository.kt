@@ -10,8 +10,11 @@ import com.multimoney.domain.model.crypto.GetHistoricalCurrencyPrices
 import com.multimoney.domain.model.crypto.GetListOfAvailableCryptoCoins
 import com.multimoney.domain.model.crypto.GetTransferFeeData
 import com.multimoney.domain.model.crypto.PricesQuoteAndCommissionData
+import com.multimoney.domain.model.crypto.ReleaseTransactionResponse
+import com.multimoney.domain.model.crypto.SendCryptoToAddressData
 import com.multimoney.domain.model.crypto.SellCryptoCurrencyHQRData
 import com.multimoney.domain.model.crypto.ValidateDepositAddressResponse
+import com.multimoney.domain.model.crypto.GetCryptoReceiveAddressData
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
@@ -119,6 +122,16 @@ interface CryptoRepository {
         address: String
     ): Flow<MultimoneyResult<ValidateDepositAddressResponse>>
 
+    suspend fun releaseCryptoTransfer(
+        identification: String,
+        user: String,
+        market: String,
+        senderFullName: String,
+        reason: String,
+        platform: String,
+        idTransaction: String
+    ): Flow<MultimoneyResult<ReleaseTransactionResponse>>
+
     suspend fun getTransferCommission(
         user: String,
         idBrand: Int,
@@ -127,4 +140,29 @@ interface CryptoRepository {
         cryptoNetwork: String,
         amount: Double
     ): Flow<MultimoneyResult<GetTransferFeeData>>
+
+    suspend fun sendCryptoToAddress(
+        pkUser: Int,
+        identification: String,
+        destinationAddress: String,
+        feeId: String,
+        asset: String,
+        market: String,
+        cryptoNetwork: String,
+        amount: Double,
+        fee: Double,
+        internalFee: Double,
+        taxAmount: Double,
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<SendCryptoToAddressData>>
+
+    suspend fun getCryptoCurrencyReceiveAddress(
+        user: String,
+        idBrand: Int,
+        asset: String,
+        identification: String,
+        crypto_network: String
+    ): Flow<MultimoneyResult<GetCryptoReceiveAddressData>>
+
 }

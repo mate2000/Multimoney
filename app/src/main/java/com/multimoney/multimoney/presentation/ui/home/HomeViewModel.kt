@@ -86,12 +86,12 @@ import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.util.BiometricHelper
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalPagerApi::class)
@@ -128,7 +128,9 @@ class HomeViewModel @Inject constructor(
         private set
 
     private fun onsetUserData() {
+        apiCallCount = 0
         viewModelScope.launch {
+            apiCallCount = 0
             uiState = uiState.copy(
                 idBrand = dataStorePreferences.getIdBrand().firstOrNull() ?: "",
                 pkUser = dataStorePreferences.getPkUser().firstOrNull() ?: "",
@@ -790,10 +792,10 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getCardIssuanceDescriptionError() = if (uiState.idBrand.toInt() == Brand.Guatemala.id) {
-        R.string.card_issuance_error_description_gt
-    } else {
+    fun getCardIssuanceDescriptionError() = if (uiState.idBrand.toInt() == Brand.CostaRica.id) {
         R.string.card_issuance_error_description
+    } else {
+        R.string.card_issuance_error_description_sv
     }
 
     private fun showTimerDialog(time: Long, activity: Activity?) {

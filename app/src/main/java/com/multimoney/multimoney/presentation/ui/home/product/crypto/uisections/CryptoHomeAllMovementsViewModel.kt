@@ -14,6 +14,7 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.ui.crypto.movements.CryptoCurrencyDetailsAllMovementsScreenViewModel
 import com.multimoney.multimoney.presentation.util.FilterDate
 import com.multimoney.multimoney.presentation.util.PAGE_SIZE
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
@@ -54,6 +55,10 @@ class CryptoHomeAllMovementsViewModel  @Inject constructor(
         )
     }
 
+    private fun onNavigateToReleaseTransaction(cryptoItem: CryptoCurrencyMovement?) {
+        navigateTo("${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}/${Screen.CryptoHomeAllMovementsScreen.baseRoute}")
+    }
+
     data class UIState(
         val cryptoItem: String? = null,
         val user: String? = null,
@@ -68,6 +73,7 @@ class CryptoHomeAllMovementsViewModel  @Inject constructor(
             is UIEvent.OnNavigateBack -> navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
             is UIEvent.OnGetUserInfo -> setUserData()
             is UIEvent.GetCryptoMovements -> getCryptoMovements()
+            is UIEvent.OnNavigateToReleaseTransaction -> onNavigateToReleaseTransaction(event.cryptoItem)
         }
     }
 
@@ -75,6 +81,8 @@ class CryptoHomeAllMovementsViewModel  @Inject constructor(
         object OnGetUserInfo : UIEvent
         object OnNavigateBack : UIEvent
         object GetCryptoMovements: UIEvent
+        data class OnNavigateToReleaseTransaction(val cryptoItem: CryptoCurrencyMovement?) :
+            UIEvent
     }
 
     companion object {

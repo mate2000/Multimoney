@@ -35,7 +35,6 @@ class SelectSmartAccountViewModel @Inject constructor(
         val isBottomSheetVisible: Boolean = false,
         val accountToken: String = "",
         val accountBalance: Double = 0.0,
-
     )
 
     fun onUIEvent(event: UIEvent) {

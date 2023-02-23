@@ -470,9 +470,9 @@ fun MyAccountsEmptyState(idBrand: Int = 1) {
                     start.linkTo(iconId.start)
                 }
                 .padding(top = 24.dp),
-            text = if (idBrand == Brand.Guatemala.id) stringResource(id = R.string.profile_my_accounts_empty_state_title_gt) else stringResource(
+            text = if (idBrand == Brand.CostaRica.id) stringResource(
                 id = R.string.profile_my_accounts_empty_state_title
-            ),
+            )  else  stringResource(id = R.string.profile_my_accounts_empty_state_title_sv),
             style = Typography.body1.copy(
                 fontWeight = FontWeight.SemiBold,
                 color = MultimoneyTheme.colors.labelText

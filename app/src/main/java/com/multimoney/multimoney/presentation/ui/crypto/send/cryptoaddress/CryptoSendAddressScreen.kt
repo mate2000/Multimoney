@@ -74,6 +74,15 @@ fun CryptoSendAddressScreen(
                 qrCodeResult
             )
         )
+        viewModel.onUIEvent(
+            CryptoSendAddressViewModel.UIEvent.OnSetOpenMaintenanceAction(
+                action = {
+                    sharedViewModel.onUIEvent(
+                        CryptoSendSharedViewModel.BaseEvent.OnShowMaintenance
+                    )
+                }
+            )
+        )
     }
 
     CryptoSendAddressContent(

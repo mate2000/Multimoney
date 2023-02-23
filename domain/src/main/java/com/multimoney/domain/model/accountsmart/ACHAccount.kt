@@ -5,11 +5,12 @@ data class ACHAccount(
     val accountNumber: String?,
     val description: String = "",
     val destinationBankDescription: String = "",
-    val destinationAccountCurrencyId: Int = 0,
+    val destinationAccountCurrencyId: Int? = null,
     val destinationAccountCurrency: String = "",
-    val idBank: Int = 0,
-    val idTypeAccount: Int = 0,
-    val isFavorite: Boolean? = null
+    val idBank: Int? = null,
+    val idTypeAccount: Int? = null,
+    val isFavorite: Boolean? = null,
+    val identificationTypeAccount: Int? = null
 )
 
 data class ACHAccountFull(

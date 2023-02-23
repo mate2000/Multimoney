@@ -247,8 +247,8 @@ class ProductViewModel @Inject constructor(
     fun getProductScreenTitle(): Int =
         when {
             uiState.userStatus?.infoCredit?.status == MyProductStatus.ACTIVE.status ||
-                uiState.userStatus?.infoCrypto?.status == MyProductStatus.ACTIVE.status ||
-                uiState.userStatus?.infoBankAccount?.status == MyProductStatus.ACTIVE.status -> R.string.home_product_header_title
+                    uiState.userStatus?.infoCrypto?.status == MyProductStatus.ACTIVE.status ||
+                    uiState.userStatus?.infoBankAccount?.status == MyProductStatus.ACTIVE.status -> R.string.home_product_header_title
             else -> R.string.home_product_available_products_title
         }
 
@@ -377,12 +377,12 @@ class ProductViewModel @Inject constructor(
             }/$identification/$userName/${balanceCredit?.getFirstSummary()?.paymentDate}/${Screen.HomeScreen.route}"
         } else {
             "${Screen.PaymentOptionsScreen.baseRoute}/${uiState.idBrand}/${balanceCredit?.getFirstCredit()?.creditNumber}/${
-            encodeData(configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true })
+                encodeData(configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true })
             }/${encodeData(configurationVersion?.configuration?.credit?.transferAccount)}/" +
-                "${balanceCredit?.getFirstSummary()?.minPayment}/${balanceCredit?.getFirstSummary()?.minPaymentLabel}/" +
-                "${balanceCredit?.getFirstSummary()?.currentBalance}/${balanceCredit?.getFirstSummary()?.currentBalanceLabel}/" +
-                "$identification/$email/$idClient/${infoCredit?.idLoanClient}/${balanceCredit?.getFirstSummary()?.idCurrency}/" +
-                "${balanceCredit?.getFirstSummary()?.paymentDate}"
+                    "${balanceCredit?.getFirstSummary()?.minPayment}/${balanceCredit?.getFirstSummary()?.minPaymentLabel}/" +
+                    "${balanceCredit?.getFirstSummary()?.currentBalance}/${balanceCredit?.getFirstSummary()?.currentBalanceLabel}/" +
+                    "$identification/$email/$idClient/${infoCredit?.idLoanClient}/${balanceCredit?.getFirstSummary()?.idCurrency}/" +
+                    "${balanceCredit?.getFirstSummary()?.paymentDate}"
         }
         navigateTo(route)
     }
@@ -495,22 +495,13 @@ class ProductViewModel @Inject constructor(
         val cardStatus = userStatus?.infoVirtualCard?.status
         navigateTo(
             "${Screen.CryptoWalletScreen.baseRoute}/$email/${uiState.idBrand}/$identification/" +
-                "$globalBalance/$idClient/$idLoanClient/$statusCredit/$statusSmart/$statusCrypto/" +
-                "$cardStatus/${
-                encodeData(
-                    balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType()
-                )
-                }/${encodeData(balanceCredit?.balanceCryptoAccount?.items)}"
+                "$globalBalance/$idClient/$idLoanClient/$statusCredit/$statusSmart/$statusCrypto/$cardStatus"
         )
     }
 
     private fun onNavigateToCryptoMarket() {
         navigateTo(
-            "${Screen.CryptoMarketScreen.baseRoute}/$userName/${uiState.idBrand}/${
-            encodeData(
-                balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType()
-            )
-            }/${encodeData(balanceCredit?.balanceCryptoAccount?.items)}"
+            "${Screen.CryptoMarketScreen.baseRoute}/$userName/${uiState.idBrand}"
         )
     }
 
@@ -552,18 +543,18 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToDisbursement() =
         navigateTo(
             route = "${Screen.DisbursementAmountScreen.baseRoute}/${uiState.idBrand}/$email/${uiState.userStatus?.infoCredit?.idClient}/${
-            encodeData(
-                balanceCredit?.getFirstCredit()?.summary
-            )
+                encodeData(
+                    balanceCredit?.getFirstCredit()?.summary
+                )
             }/$pkUser/${balanceCredit?.getFirstCredit()?.creditNumber}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/$identification"
         )
 
     private fun onNavigateToGtSvNonPreApproved() =
         navigateTo(
             "${Screen.NonPreApprovedScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
-                "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/${uiState.userStatus?.infoUser?.firstName}/" +
-                "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
-                "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0}/${uiState.userStatus?.infoCredit?.infoPreApprove?.crosseling ?: false}"
+                    "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/${uiState.userStatus?.infoUser?.firstName}/" +
+                    "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
+                    "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0}/${uiState.userStatus?.infoCredit?.infoPreApprove?.crosseling ?: false}"
         )
 
     fun getCreditBalanceLabel(balanceCredit: List<BalanceCredit?>?): String {
@@ -642,6 +633,7 @@ class ProductViewModel @Inject constructor(
             QuickActionFlow.BUY_CRYPTO.flow -> onNavigateToPurchaseCryptoFlow()
             QuickActionFlow.SELL_CRYPTO.flow -> onNavigateToSellCryptoFlow()
             QuickActionFlow.SEND_CRYPTO.flow -> onNavigateToSendCryptoFlow()
+            QuickActionFlow.RECEIVE_CRYPTO.flow -> onNavigateToGiveCryptoFlow()
         }
     }
 
@@ -781,7 +773,7 @@ class ProductViewModel @Inject constructor(
         )
         navigateTo(
             "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$userName/${uiState.idBrand}/$identification" +
-                "/${encodeData(smartAccount)}/$secondAccountSend/$idClient/${Screen.HomeScreen.route}"
+                    "/${encodeData(smartAccount)}/$secondAccountSend/$idClient/${Screen.HomeScreen.route}"
         )
     }
 
@@ -895,16 +887,12 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToPurchaseCryptoFlow() {
-        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${encodeData(balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType())}/${Screen.HomeScreen.route}")
+        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${Screen.HomeScreen.route}")
     }
 
     private fun onNavigateToSellCryptoFlow() {
         navigateTo(
-            "${Screen.CryptoSellFlow.baseRoute}/${Screen.HomeScreen.route}/${encodeData(balanceCredit?.balanceAccountSmart?.toSmartAccountsNavType())}/${
-            encodeData(
-                balanceCredit?.balanceCryptoAccount?.items
-            )
-            }"
+            "${Screen.CryptoSellFlow.baseRoute}/${Screen.HomeScreen.route}"
         )
     }
 
@@ -958,6 +946,10 @@ class ProductViewModel @Inject constructor(
 
     private fun navigateToMaintenanceAlert() {
         navigateTo(Screen.MaintenanceAlertScreen.route)
+    }
+
+    private fun onNavigateToReleaseTransaction(cryptoItem: CryptoCurrencyMovement?) {
+        navigateTo("${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}/${Screen.HomeScreen.route}")
     }
 
     data class UIState(
@@ -1080,6 +1072,7 @@ class ProductViewModel @Inject constructor(
             is UIEvent.OnUpdateShouldShowDisclaimer -> updateShouldShowDisclaimer(uiEvent.checked)
             BaseEvent.OnShowDisclaimer -> onShowDisclaimer()
             UIEvent.OnNavigateToMaintenanceAlert -> navigateToMaintenanceAlert()
+            is UIEvent.OnNavigateToReleaseTransaction -> onNavigateToReleaseTransaction(uiEvent.cryptoItem)
         }
     }
 
@@ -1175,6 +1168,8 @@ class ProductViewModel @Inject constructor(
         data class OnDisclaimerChecked(val checked: Boolean) : UIEvent()
         data class OnUpdateShouldShowDisclaimer(val checked: Boolean) : UIEvent()
         object OnNavigateToMaintenanceAlert : UIEvent()
+        data class OnNavigateToReleaseTransaction(val cryptoItem: CryptoCurrencyMovement?) :
+            UIEvent()
     }
 
     sealed class BaseEvent {

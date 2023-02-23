@@ -279,7 +279,7 @@ class SmartViewModel @Inject constructor(
                     idSysRequest = it?.idSysRequest?.toLong() ?: 0L
                     idGlobalRequest = it?.idGlobalRequest ?: 0
                     onUIEvent(OnLoadingValueChange(false))
-                    onUIEvent(OnNextStep)
+                    if (isLastStep) navigateToOnfido() else onUIEvent(OnNextStep)
                 }
                 result.onFailure {
                     onUIEvent(OnLoadingValueChange(false))
@@ -308,7 +308,7 @@ class SmartViewModel @Inject constructor(
      */
     private fun onCallMutationSaveSmartAccount(accountData: AccountSmartData?) {
         accountSmartData = accountData
-        callMutationGlobalRequestUseCase(true)
+        callMutationGlobalRequestUseCase()
     }
 
     /**
@@ -406,7 +406,9 @@ class SmartViewModel @Inject constructor(
                 isLoading = false
             )
         } else {
-            navigateToOnfido()
+            accountSmartData =
+                accountSmartData?.copy(currentStep = SmartSteps.Search.getNameById(nextStep))
+            callMutationGlobalRequestUseCase(true)
         }
     }
 

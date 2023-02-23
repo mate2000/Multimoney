@@ -121,10 +121,34 @@ class AmountExceededViewModel @Inject constructor(
     }
 
     private fun onNavigateBack() {
-        navigateBack(
-            popTo = savedStateHandle.get<String>(PREVIOUS_SCREEN) ?: Screen.HomeScreen.route,
-            isRestart = false
-        )
+        val previousScreen = savedStateHandle.get<String>(PREVIOUS_SCREEN)
+        when (previousScreen) {
+            Screen.CryptoHomeAllMovementsScreen.baseRoute -> {
+                navigateBack(
+                    popTo = Screen.CryptoHomeAllMovementsScreen.route,
+                    isRestart = false
+                )
+            }
+            Screen.CryptoCurrencyDetailsAllMovementsScreen.baseRoute -> {
+                navigateBack(
+                    popTo = Screen.CryptoCurrencyDetailsAllMovementsScreen.route,
+                    isRestart = false
+                )
+            }
+            Screen.CryptoWalletDetailsScreen.baseRoute -> {
+                navigateBack(
+                    popTo = Screen.CryptoWalletDetailsScreen.route,
+                    isRestart = false
+                )
+            }
+            else -> {
+                navigateBack(
+                    popTo = Screen.HomeScreen.route,
+                    isRestart = false
+                )
+            }
+        }
+
     }
 
     sealed interface UIEvent {

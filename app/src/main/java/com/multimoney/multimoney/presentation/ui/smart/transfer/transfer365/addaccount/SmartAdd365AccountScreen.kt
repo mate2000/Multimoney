@@ -1,5 +1,8 @@
+@file:OptIn(ExperimentalFoundationApi::class)
+
 package com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,12 +16,20 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,11 +52,11 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.adda
 import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel.UIEvent.OnNamesChanged
 import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel.UIEvent.OnNavigateHome
+import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel.UIEvent.OnNicknameChanged
+import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel.UIEvent.OnPhoneChanged
 import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel.UIEvent.OnValidateAccountNumber
 import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel.UIEvent.OnValidateDocument
 import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel.UIEvent.OnValidatePhoneNumber
-import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel.UIEvent.OnPhoneChanged
-import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel.UIEvent.OnNicknameChanged
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
@@ -55,10 +66,14 @@ import com.multimoney.multimoney.presentation.uielement.CustomDropdownTextField
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
+import com.multimoney.multimoney.presentation.util.HALF_SECOND_DELAY
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import com.multimoney.multimoney.presentation.util.formatDocumentPlaceholder
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
+import kotlin.math.roundToInt
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun SmartAdd365AccountScreen(
@@ -93,6 +108,11 @@ fun SmartAdd365AccountScreen(
 @Composable
 fun SmartAdd365AccountContent(viewModel: SmartAdd365AccountViewModel = hiltViewModel()) {
     val focusManager = LocalFocusManager.current
+    val scrollState = rememberScrollState()
+    //val bringIntoViewRequester = remember { BringIntoViewRequester() }
+    val coroutineScope = rememberCoroutineScope()
+    var scrollToPosition by remember { mutableStateOf(0F) }
+
     Column(
         modifier = Modifier.background(MultimoneyTheme.colors.background)
     ) {
@@ -110,7 +130,7 @@ fun SmartAdd365AccountContent(viewModel: SmartAdd365AccountViewModel = hiltViewM
             Column(
                 modifier = Modifier
                     .weight(0.9f)
-                    .verticalScroll(rememberScrollState())
+                    .verticalScroll(scrollState)
             ) {
                 Text(
                     text = stringResource(id = viewModel.uiState.screenTitle),
@@ -155,7 +175,7 @@ fun SmartAdd365AccountContent(viewModel: SmartAdd365AccountViewModel = hiltViewM
                     ),
                     keyboardActions = KeyboardActions(
                         onNext = {
-                            focusManager.moveFocus(FocusDirection.Down)
+                        focusManager.moveFocus(FocusDirection.Down)
                         }
                     ),
                     onValueChange = { lastNames ->
@@ -269,7 +289,8 @@ fun SmartAdd365AccountContent(viewModel: SmartAdd365AccountViewModel = hiltViewM
                     }
                 } else if (viewModel.transferType == SmartTransferTypes.SmartToMobile.id) {
                     CustomOutlinedTextField(
-                        modifier = Modifier.padding(top = 8.dp),
+                        modifier = Modifier
+                            .padding(top = 8.dp),
                         value = viewModel.uiState.phoneNumber,
                         onValueChange = { viewModel.onUIEvent(OnPhoneChanged(it)) },
                         labelText = stringResource(id = R.string.phone_number),
@@ -285,9 +306,23 @@ fun SmartAdd365AccountContent(viewModel: SmartAdd365AccountViewModel = hiltViewM
                         ),
                         isError = viewModel.uiState.isPhoneNumberError,
                         errorMessage = stringResource(id = R.string.smart_other_bank_transfer_add_phone_number_error),
-                        onDebounceValidation = { viewModel.onUIEvent(OnValidatePhoneNumber) }
+                        onDebounceValidation = { viewModel.onUIEvent(OnValidatePhoneNumber) },
+                        onFocusedTextField = { isFocused ->
+                            if (isFocused) {
+                                coroutineScope.launch {
+                                    delay(HALF_SECOND_DELAY)
+                                    scrollState.animateScrollTo(scrollToPosition.roundToInt())
+                                }
+                            }
+                        }
                     )
                 }
+                Divider(
+                modifier = Modifier
+                    .onGloballyPositioned { coordinates ->
+                        scrollToPosition = coordinates.positionInParent().y
+                    }
+                    .height(24.dp))
             }
             CustomButton(
                 modifier = Modifier
@@ -302,3 +337,4 @@ fun SmartAdd365AccountContent(viewModel: SmartAdd365AccountViewModel = hiltViewM
         }
     }
 }
+

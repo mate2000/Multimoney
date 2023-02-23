@@ -109,7 +109,6 @@ fun SmartAdd365AccountScreen(
 fun SmartAdd365AccountContent(viewModel: SmartAdd365AccountViewModel = hiltViewModel()) {
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
-    //val bringIntoViewRequester = remember { BringIntoViewRequester() }
     val coroutineScope = rememberCoroutineScope()
     var scrollToPosition by remember { mutableStateOf(0F) }
 
@@ -175,7 +174,7 @@ fun SmartAdd365AccountContent(viewModel: SmartAdd365AccountViewModel = hiltViewM
                     ),
                     keyboardActions = KeyboardActions(
                         onNext = {
-                        focusManager.moveFocus(FocusDirection.Down)
+                            focusManager.moveFocus(FocusDirection.Down)
                         }
                     ),
                     onValueChange = { lastNames ->

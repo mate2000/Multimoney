@@ -168,6 +168,10 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         emitBaseEvent(BaseEvent.OnShowDisclaimer)
     }
 
+    private fun onShowMaintenanceAlert() {
+        emitBaseEvent(BaseEvent.OnShowMaintenance)
+    }
+
     private fun updateShouldShowDisclaimer(value: Boolean) {
         viewModelScope.launch {
             dataStorePreferences.setVolatileDialogVisible(!value)
@@ -206,6 +210,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         val currentStep: Int = PurchaseCryptoSteps.One.pageNumber,
         val currentStepType: BuyCryptoStep = BuyCryptoStep.LIST_CRYPTO_CURRENCIES,
         val isLoading: Boolean = false,
+        val isPaxosInMaintenance: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         var bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
         var bottomSheet: (@Composable () -> Unit) = {},
@@ -265,6 +270,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
             )
 
             is BaseEvent.OnShowDisclaimer -> onShowDisclaimer()
+            is BaseEvent.OnShowMaintenance -> onShowMaintenanceAlert()
             is UIEvent.OnDisclaimerChecked -> onDisclaimerChecked(event.checked)
             is UIEvent.OnUpdateShouldShowDisclaimer -> updateShouldShowDisclaimer(event.checked)
 
@@ -283,11 +289,13 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
                 homeState = HomeState.COLLAPSED
             )
             is UIEvent.OnSetSmartAccounts -> uiState = uiState.copy(accounts = event.accounts)
+            is UIEvent.SetPaxosMaintenanceState -> uiState = uiState.copy(isPaxosInMaintenance = event.isPaxosInMaintenance)
         }
     }
 
     sealed class BaseEvent {
         object OnShowDisclaimer : UIEvent()
+        object OnShowMaintenance : UIEvent()
     }
 
     sealed class UIEvent {
@@ -300,8 +308,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
             val exchangeRate: String,
             val totalDebitedExchange: String,
             val referenceNumber: String
-        ) :
-            UIEvent()
+        ) : UIEvent()
 
         object OnPreviousStep : UIEvent()
         object OnClickBottomSheet : UIEvent()
@@ -323,6 +330,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
         data class OnSetFlowStep(val step: BuyCryptoStep) : UIEvent()
         object OnNavigateHome : UIEvent()
         data class OnSetSmartAccounts(val accounts: List<SmartAccountSmall>) : UIEvent()
+        data class SetPaxosMaintenanceState(val isPaxosInMaintenance: Boolean) : UIEvent()
     }
 
     companion object {

@@ -5,7 +5,15 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,6 +58,14 @@ fun CryptoReceiveAddressScreen(
                 cryptoNetwork = sharedViewModel.uiState.cryptoNetWork ?: ""
             )
         )
+        viewModel.onUIEvent(
+            CryptoReceiveAddressViewModel.UIEvent.OnSetOpenMaintenanceAction(
+            action = {
+                sharedViewModel.onUIEvent(
+                    CryptoReceiveSharedViewModel.BaseEvent.OnShowMaintenance
+                )
+            }
+        ))
         viewModel.onUIEvent(CryptoReceiveAddressViewModel.UIEvent.OnGetCryptoReceiveAddress)
     }
 

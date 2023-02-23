@@ -15,8 +15,6 @@ import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.crypto.GetCurrencyHistoricalPricesUseCase
 import com.multimoney.domain.interaction.crypto.GetCurrencyNewsUseCase
-import com.multimoney.domain.model.accountsmart.SmartAccountSmall
-import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.crypto.CryptoNewsFeed
 import com.multimoney.domain.model.crypto.CurrencyHistoricPrice
 import com.multimoney.domain.model.crypto.MarketCryptoCoin
@@ -29,12 +27,11 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.CRYPTO_ASSET
 import com.multimoney.multimoney.presentation.navigation.DESCRIPTION_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNTS_LIST
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.USER_CRYPTO_BALANCES
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
 import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
@@ -97,6 +94,10 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
                 )
             }
             result.onFailure {
+                if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    navigateToMaintenance()
+                    return@onFailure
+                }
                 onFailure(it)
             }
             result.onLoading {
@@ -120,6 +121,10 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
                 }
             }
             result.onFailure {
+                if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    navigateToMaintenance()
+                    return@onFailure
+                }
                 onFailure(it)
             }
             result.onLoading {
@@ -167,6 +172,10 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
                 shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first()
             )
         }
+    }
+
+    private fun navigateToMaintenance() {
+        navigateTo(Screen.MaintenanceAlertScreen.route)
     }
 
     private fun onNavigateToSelectAccount(){

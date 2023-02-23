@@ -9,11 +9,8 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.CryptoReceiveSteps
 import com.multimoney.domain.model.crypto.MarketCryptoCoin
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.CRYPTO_ASSET
-import com.multimoney.multimoney.presentation.navigation.DESCRIPTION_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
-import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -78,6 +75,10 @@ class CryptoReceiveSharedViewModel @Inject constructor(
         uiState.nextAction()
     }
 
+    private fun onShowMaintenanceAlert() {
+        emitBaseEvent(BaseEvent.OnShowMaintenance)
+    }
+
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is UIEvent.OnGetUserInfo -> setUserData()
@@ -91,7 +92,13 @@ class CryptoReceiveSharedViewModel @Inject constructor(
                     cryptoNetWork = event.selectedCrypto.cryptoNetwork
                 )
             }
+            is BaseEvent.OnShowMaintenance -> onShowMaintenanceAlert()
+            is UIEvent.SetPaxosMaintenanceState -> uiState = uiState.copy(isPaxosInMaintenance = event.isPaxosInMaintenance)
         }
+    }
+
+    sealed class BaseEvent {
+        object OnShowMaintenance : UIEvent
     }
 
     data class UiState(
@@ -101,6 +108,7 @@ class CryptoReceiveSharedViewModel @Inject constructor(
         val nextAction: () -> Unit = {},
         val imageUrl: String? = null,
         val cryptoNetWork: String? = null,
+        val isPaxosInMaintenance: Boolean = false,
     )
 
     sealed interface UIEvent {
@@ -110,6 +118,7 @@ class CryptoReceiveSharedViewModel @Inject constructor(
         data class OnCryptoSelected(
             val selectedCrypto: MarketCryptoCoin
         ) : UIEvent
+        data class SetPaxosMaintenanceState(val isPaxosInMaintenance: Boolean) : UIEvent
     }
 
     companion object {

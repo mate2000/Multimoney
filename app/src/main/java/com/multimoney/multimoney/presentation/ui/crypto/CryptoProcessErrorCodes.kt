@@ -12,4 +12,6 @@ enum class CryptoProcessErrorCodes(val status: Int) {
     MonthlyLimitExceededLocal(2853),
     MonthlyLimitExceededExternal(2878),
     InsufficientFundsToApplyTransfer(2858),
+    // maintenance error
+    Maintenance(503)
 }

@@ -704,8 +704,7 @@ fun ProductCtaFooterExpanded(
                 onGiveActionClicked = {
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToGiveCryptoFlow)
                 },
-                isCryptoTransferEnabled = viewModel.uiState.isCryptoTransferEnabled
-                        && viewModel.balanceCredit?.balanceCryptoAccount?.outOfService == false,
+                isCryptoTransferEnabled = viewModel.uiState.isCryptoTransferEnabled,
             )
         }
     }

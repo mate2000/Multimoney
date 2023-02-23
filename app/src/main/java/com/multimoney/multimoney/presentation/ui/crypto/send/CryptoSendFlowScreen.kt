@@ -13,11 +13,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CryptoSendSteps
 import com.multimoney.data.util.catalog.SendCryptoStep
+import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.crypto.send.cryptoaddress.CryptoSendAddressScreen
 import com.multimoney.multimoney.presentation.ui.crypto.send.cryptoamount.CryptoSendAmountScreen
 import com.multimoney.multimoney.presentation.ui.crypto.send.listofcurrencies.CryptoSendListOfCurrenciesScreen
 import com.multimoney.multimoney.presentation.ui.crypto.send.voucher.SendCryptoVoucher
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.MaintenanceAlertScreen
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
@@ -40,54 +42,71 @@ fun CryptoSendFlow(
             onPopAndNavigate = onPopAndNavigate,
             onPopBackStack = onPopBackStack
         )
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MultimoneyTheme.colors.background)
-    ) {
-        Column {
-            TopNavBar(
-                isLeftButtonVisible = viewModel.uiState.currentStepType != SendCryptoStep.LOADING && viewModel.uiState.currentStepType != SendCryptoStep.SEND_VOUCHER && viewModel.uiState.currentStepType != SendCryptoStep.SEND_FAILED,
-                isRightButtonVisible = viewModel.uiState.currentStepType != SendCryptoStep.LOADING && viewModel.uiState.currentStepType != SendCryptoStep.SEND_FAILED,
-                isCenterContentVisible = viewModel.uiState.currentStepType == SendCryptoStep.SEND_VOUCHER,
-                onLeftButtonClick = {
-                    viewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnPreviousStep)
-                },
-                onRightButtonClick = {
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                is CryptoSendSharedViewModel.BaseEvent.OnShowMaintenance -> {
                     viewModel.onUIEvent(
-                        if (viewModel.uiState.currentStepType == SendCryptoStep.SEND_VOUCHER) {
-                            CryptoSendSharedViewModel.UIEvent.OnNavigateHome
-                        } else {
-                            CryptoSendSharedViewModel.UIEvent.OnCloseClick
-                        }
+                        CryptoSendSharedViewModel.UIEvent.SetPaxosMaintenanceState(true)
                     )
                 }
-            )
+            }
         }
-        Box(
-            modifier = Modifier.weight(0.1f),
+    }
+
+    if (viewModel.uiState.isPaxosInMaintenance) {
+        MaintenanceAlertScreen(
+            onBackToHomeAction = {
+                viewModel.navigateTo(Screen.HomeScreen.route)
+            }
+        )
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MultimoneyTheme.colors.background)
         ) {
-            when (viewModel.idBrand) {
-                Brand.ElSalvador.id -> {
-                    /* Sending crypto is temporarily disabled to El Salvador. */
-                }
-                Brand.CostaRica.id -> {
-                    if (viewModel.comingFromCurrencyDetails) {
-                        CRSendCryptoDirectFlow(
-                            step = viewModel.uiState.currentStep,
-                            viewModel = viewModel,
-                            onNavigateToQrCodeScanner = onNavigateToQrCodeScanner,
-                            qrCodeResult = qrCodeResult
+            Column {
+                TopNavBar(
+                    isLeftButtonVisible = viewModel.uiState.currentStepType != SendCryptoStep.LOADING && viewModel.uiState.currentStepType != SendCryptoStep.SEND_VOUCHER && viewModel.uiState.currentStepType != SendCryptoStep.SEND_FAILED,
+                    isRightButtonVisible = viewModel.uiState.currentStepType != SendCryptoStep.LOADING && viewModel.uiState.currentStepType != SendCryptoStep.SEND_FAILED,
+                    isCenterContentVisible = viewModel.uiState.currentStepType == SendCryptoStep.SEND_VOUCHER,
+                    onLeftButtonClick = {
+                        viewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnPreviousStep)
+                    },
+                    onRightButtonClick = {
+                        viewModel.onUIEvent(
+                            if (viewModel.uiState.currentStepType == SendCryptoStep.SEND_VOUCHER) {
+                                CryptoSendSharedViewModel.UIEvent.OnNavigateHome
+                            } else {
+                                CryptoSendSharedViewModel.UIEvent.OnCloseClick
+                            }
                         )
-                    } else {
-                        CRSendCryptoFlow(
-                            step = viewModel.uiState.currentStep,
-                            viewModel = viewModel,
-                            onNavigateToQrCodeScanner = onNavigateToQrCodeScanner,
-                            qrCodeResult = qrCodeResult
-                        )
+                    }
+                )
+            }
+            Box(
+                modifier = Modifier.weight(0.1f),
+            ) {
+                when (viewModel.idBrand) {
+                    Brand.ElSalvador.id -> {
+                        /* Sending crypto is temporarily disabled to El Salvador. */
+                    }
+                    Brand.CostaRica.id -> {
+                        if (viewModel.comingFromCurrencyDetails) {
+                            CRSendCryptoDirectFlow(
+                                step = viewModel.uiState.currentStep,
+                                viewModel = viewModel,
+                                onNavigateToQrCodeScanner = onNavigateToQrCodeScanner,
+                                qrCodeResult = qrCodeResult
+                            )
+                        } else {
+                            CRSendCryptoFlow(
+                                step = viewModel.uiState.currentStep,
+                                viewModel = viewModel,
+                                onNavigateToQrCodeScanner = onNavigateToQrCodeScanner,
+                                qrCodeResult = qrCodeResult
+                            )
+                        }
                     }
                 }
             }
@@ -108,7 +127,7 @@ fun CryptoSendFlow(
             positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
             negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
             openDialogCustom = viewModel.uiState.openDialog.isActive,
-            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+            onNegativeAction = viewModel.uiState.openDialog.negativeAction
         )
     }
 }

@@ -75,6 +75,7 @@ class AmountExceededViewModel @Inject constructor(
 
     private fun onReleaseDeposit() {
         executeUseCase {
+            uiState = uiState.copy(isLoading = true)
             releaseTransferUseCase(
                 identification,
                 user,
@@ -84,6 +85,7 @@ class AmountExceededViewModel @Inject constructor(
                 uiState.platformName,
                 idTransaction
             ).collectLatest { result ->
+                uiState = uiState.copy(isLoading = false)
                 result.onSuccess {
                     it.hasError?.let {
                         uiState = uiState.copy(isAlertResultVisible = true)
@@ -168,6 +170,7 @@ class AmountExceededViewModel @Inject constructor(
         val reason: String = "",
         val isFormValid: Boolean = false,
         val isAlertResultVisible: Boolean = false,
-        val isAmountExceeded: Boolean = false
+        val isAmountExceeded: Boolean = false,
+        val isLoading: Boolean = false
     )
 }

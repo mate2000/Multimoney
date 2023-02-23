@@ -39,6 +39,7 @@ import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.ui.crypto.transferin.AmountExceededViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.ui.crypto.transferin.AmountExceededViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 
 
 @Composable
@@ -171,6 +172,7 @@ fun AmountExceededFormScreen(
                 enable = viewModel.uiState.isFormValid
             )
         }
+        LoadingIndicator(viewModel.uiState.isLoading)
     }
     if (viewModel.uiState.isAlertResultVisible) {
         AlertResult(

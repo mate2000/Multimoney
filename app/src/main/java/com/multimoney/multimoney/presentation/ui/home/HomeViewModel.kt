@@ -43,9 +43,6 @@ import com.multimoney.multimoney.BuildConfig
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.Screen.*
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.*
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.*
 import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.INDEX_ONE
@@ -391,7 +388,7 @@ class HomeViewModel @Inject constructor(
                     )
 
                     onUIEvent(
-                        OnGetSmartMovements(
+                        UIEvent.OnGetSmartMovements(
                             uiState.userName,
                             uiState.idBrand.toIntOrNull() ?: 0,
                             uiState.identification,
@@ -434,7 +431,7 @@ class HomeViewModel @Inject constructor(
 
         if (uiState.validateUserStatus?.infoCredit?.status == CreditStatus.EXIST_IN_CORE.status) {
             onUIEvent(
-                OnGetCreditMovements(
+                UIEvent.OnGetCreditMovements(
                     uiState.idBrand.toIntOrNull() ?: 0,
                     uiState.validateUserStatus?.infoCredit?.idLoanClient ?: 0
                 )
@@ -633,7 +630,7 @@ class HomeViewModel @Inject constructor(
                         cryptoStatus = uiState.validateUserStatus?.infoCrypto?.status ?: 0,
                         cardStatus = uiState.validateUserStatus?.infoVirtualCard?.status ?: 0
                     )
-                    emitBaseEvent(OnDeleteAutomaticPaymentToastEvent)
+                    emitBaseEvent(BaseEvent.OnDeleteAutomaticPaymentToastEvent)
                 }
                 result.onFailure {
                     onFailure(it)
@@ -666,7 +663,7 @@ class HomeViewModel @Inject constructor(
                         cryptoStatus = uiState.validateUserStatus?.infoCrypto?.status ?: 0,
                         cardStatus = uiState.validateUserStatus?.infoVirtualCard?.status ?: 0
                     )
-                    emitBaseEvent(OnDeleteAutomaticPaymentToastEvent)
+                    emitBaseEvent(BaseEvent.OnDeleteAutomaticPaymentToastEvent)
                 }
                 result.onFailure {
                     onFailure(it)
@@ -693,13 +690,13 @@ class HomeViewModel @Inject constructor(
 
     fun navigation(innerNavHostController: NavHostController, route: String) {
         when (route) {
-            HomeBNScreen.route -> {
+            Screen.HomeBNScreen.route -> {
                 innerNavigateTo(innerNavHostController, route)
             }
-            QuickActionBNScreen.route -> {
+            Screen.QuickActionBNScreen.route -> {
                 emitBaseEvent(BaseEvent.OnOpenQuickActionsBottomSheet)
             }
-            ProductsBNScreen.route -> {
+            Screen.ProductsBNScreen.route -> {
                 emitBaseEvent(BaseEvent.OnOpenMyProductsBottomSheet)
             }
         }
@@ -851,50 +848,50 @@ class HomeViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnBottomNavigationItemClick -> navigation(
+            is UIEvent.OnBottomNavigationItemClick -> navigation(
                 uiEvent.innerNavHostController,
                 uiEvent.route
             )
-            is OnSignOut -> signOut(uiEvent.activity)
-            is OnShowTimerDialog -> showTimerDialog(uiEvent.time, uiEvent.activity)
-            is OnSetUserData -> onsetUserData()
+            is UIEvent.OnSignOut -> signOut(uiEvent.activity)
+            is UIEvent.OnShowTimerDialog -> showTimerDialog(uiEvent.time, uiEvent.activity)
+            is UIEvent.OnSetUserData -> onsetUserData()
             is UIEvent.OnSetHomeState -> onSetHomeState(uiEvent.homeState)
             is UIEvent.OnOpenQuickActionFlow -> openQuickActionFlow(flow = uiEvent.flow)
-            is OnGetSmartMovements -> onGetSmartMovements(
+            is UIEvent.OnGetSmartMovements -> onGetSmartMovements(
                 uiEvent.user,
                 uiEvent.idBrand,
                 uiEvent.identificationNumber,
                 uiEvent.tokenNumber
             )
-            is OnGetCreditMovements -> onGetCreditMovements(
+            is UIEvent.OnGetCreditMovements -> onGetCreditMovements(
                 uiEvent.idBrand,
                 uiEvent.idLoanClient
             )
-            is OnShowUnlinkToast -> {
+            is UIEvent.OnShowUnlinkToast -> {
                 uiState = uiState.copy(toastIsVisible = true)
             }
-            is OnHideUnlinkToast -> {
+            is UIEvent.OnHideUnlinkToast -> {
                 uiState = uiState.copy(toastIsVisible = false)
             }
-            is OnShowAutomaticPaymentEdit -> emitBaseEvent(OnShowAutomaticPaymentEditBottomSheet)
-            is OnHideAutomaticPaymentEdit -> emitBaseEvent(OnHideAutomaticPaymentEditBottomSheet)
-            is OnEditAutomaticPayment -> emitBaseEvent(OnEditAutomaticPaymentEvent)
-            is OnDeleteAutomaticPayment -> emitBaseEvent(OnDeleteAutomaticPaymentEvent)
-            is OnCallMutationDeactivateClientAutomaticDebit -> onCallGetClientAutomaticDebitUseCase()
+            is UIEvent.OnShowAutomaticPaymentEdit -> emitBaseEvent(BaseEvent.OnShowAutomaticPaymentEditBottomSheet)
+            is UIEvent.OnHideAutomaticPaymentEdit -> emitBaseEvent(BaseEvent.OnHideAutomaticPaymentEditBottomSheet)
+            is UIEvent.OnEditAutomaticPayment -> emitBaseEvent(BaseEvent.OnEditAutomaticPaymentEvent)
+            is UIEvent.OnDeleteAutomaticPayment -> emitBaseEvent(BaseEvent.OnDeleteAutomaticPaymentEvent)
+            is UIEvent.OnCallMutationDeactivateClientAutomaticDebit -> onCallGetClientAutomaticDebitUseCase()
             is UIEvent.OnMyProductClick -> onMyProductClick(uiEvent.expand)
             is UIEvent.OnMyProductPageChange ->
                 uiState = uiState.copy(productScreenPagerState = uiEvent.page)
             is UIEvent.OnLoadingValueChanged ->
                 uiState = uiState.copy(isLoading = uiEvent.isLoading)
-            is OnShowCardIssuanceError -> uiState = uiState.copy(showCardIssuanceError = true)
-            is OnCloseCardIssuanceError -> uiState = uiState.copy(showCardIssuanceError = false)
-            is OnStartBiometrics -> onStartBiometrics()
-            is OnInitializeBiometricPrompt -> initializeBiometricPrompt(
+            is UIEvent.OnShowCardIssuanceError -> uiState = uiState.copy(showCardIssuanceError = true)
+            is UIEvent.OnCloseCardIssuanceError -> uiState = uiState.copy(showCardIssuanceError = false)
+            is UIEvent.OnStartBiometrics -> onStartBiometrics()
+            is UIEvent.OnInitializeBiometricPrompt -> initializeBiometricPrompt(
                 uiEvent.biometricPromptTitle,
                 uiEvent.biometricPromptDescription,
                 uiEvent.biometricPromptNegative
             )
-            is OnUpdateIsExpandedByClick ->
+            is UIEvent.OnUpdateIsExpandedByClick ->
                 uiState = uiState.copy(isExpandedByClick = uiEvent.isExpandedByClick)
             is UIEvent.OnSetupSessionListener -> onSetupSessionListener(uiEvent.activity)
             is UIEvent.OnSessionDuplicated -> onSessionDuplicated()

@@ -37,7 +37,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.HomeInsideNavG
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnHideAutomaticPaymentEditBottomSheet
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnShowAutomaticPaymentEditBottomSheet
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.*
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.myproducts.MyProductsBottomSheetScreen
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.AutomaticPaymentEditBottomSheet
 import com.multimoney.multimoney.presentation.ui.home.quickaction.QuickActionBottomSheetScreen
@@ -77,7 +77,7 @@ fun HomeScreen(
             }
         }
         LaunchedEffect(key1 = homeState) {
-            onUIEvent(OnSetHomeState(homeState))
+            onUIEvent(HomeViewModel.UIEvent.OnSetHomeState(homeState))
         }
         LaunchedEffect(true) {
             onUIEvent(HomeViewModel.UIEvent.OnSetupSessionListener(activity))
@@ -86,7 +86,7 @@ fun HomeScreen(
             viewModelScope.launch {
                 uiState.isSessionDuplicated.collectLatest {
                     if (it) {
-                        viewModel.onUIEvent(OnSessionDuplicated)
+                        viewModel.onUIEvent(HomeViewModel.UIEvent.OnSessionDuplicated)
                     }
                 }
             }
@@ -98,7 +98,7 @@ fun HomeScreen(
             onInnerNavigate = onInnerNavigate,
             onPopAndNavigate = onPopAndNavigate
         )
-        viewModel.onUIEvent(OnStartBiometrics)
+        viewModel.onUIEvent(HomeViewModel.UIEvent.OnStartBiometrics)
 
         viewModel.countDownTimer.subscribe(object : OnCountDownTimerEvents {
             override fun onFinished() {
@@ -145,7 +145,7 @@ fun HomeScreen(
     }
 
     viewModel.onUIEvent(
-        OnInitializeBiometricPrompt(
+        HomeViewModel.UIEvent.OnInitializeBiometricPrompt(
             biometricPromptTitle = stringResource(id = string.automatic_logout_biometric_title),
             biometricPromptDescription = stringResource(id = string.automatic_logout_biometric_description),
             biometricPromptNegative = stringResource(id = string.cancel)
@@ -154,7 +154,7 @@ fun HomeScreen(
 
     if (viewModel.uiState.toastIsVisible) {
         Toast.makeText(activity, unlinkedToastText, Toast.LENGTH_LONG).show()
-        viewModel.onUIEvent(OnHideUnlinkToast)
+        viewModel.onUIEvent(HomeViewModel.UIEvent.OnHideUnlinkToast)
     }
 
     Scaffold(bottomBar = {
@@ -177,8 +177,8 @@ fun HomeScreen(
     AutomaticPaymentEditBottomSheet(
         coroutineScope = coroutineScope,
         modalBottomSheetState = automaticPaymentEditBottomSheetState,
-        onEditClick = { viewModel.onUIEvent(OnEditAutomaticPayment) },
-        onDeleteClick = { viewModel.onUIEvent(OnDeleteAutomaticPayment) }
+        onEditClick = { viewModel.onUIEvent(HomeViewModel.UIEvent.OnEditAutomaticPayment) },
+        onDeleteClick = { viewModel.onUIEvent(HomeViewModel.UIEvent.OnDeleteAutomaticPayment) }
     )
 
     BackHandler {
@@ -206,8 +206,8 @@ fun HomeScreen(
             descriptionResource = viewModel.getCardIssuanceDescriptionError(),
             buttonTextResource = string.understood,
             isLeftButtonVisible = false,
-            onRightButtonClick = { viewModel.onUIEvent(OnCloseCardIssuanceError) },
-            onButtonClick = { viewModel.onUIEvent(OnCloseCardIssuanceError) }
+            onRightButtonClick = { viewModel.onUIEvent(HomeViewModel.UIEvent.OnCloseCardIssuanceError) },
+            onButtonClick = { viewModel.onUIEvent(HomeViewModel.UIEvent.OnCloseCardIssuanceError) }
         )
     }
 

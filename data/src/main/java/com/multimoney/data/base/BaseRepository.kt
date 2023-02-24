@@ -8,7 +8,9 @@ import com.apollographql.apollo3.exception.ApolloParseException
 import com.multimoney.data.database.util.DbConstants.NoResults
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.error.HttpError
-import com.multimoney.domain.util.MultimoneyException.*
+import com.multimoney.domain.util.MultimoneyException.APOLLO_ERROR
+import com.multimoney.domain.util.MultimoneyException.APOLLO_PARSE_EXCEPTION
+import com.multimoney.domain.util.MultimoneyException.UNKNOWN_ERROR
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow

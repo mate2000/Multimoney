@@ -10,7 +10,7 @@ import com.multimoney.data.util.cryptography.CryptographyHelper
 import com.multimoney.domain.model.security.SmartTransferLimit
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import java.util.*
+import java.util.UUID
 import javax.crypto.Cipher
 import javax.inject.Inject
 

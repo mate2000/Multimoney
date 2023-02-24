@@ -1042,7 +1042,8 @@
     <string name="payment_options_title_cr" translatable="false">¿En cuál cuenta querés ahorrar?</string>
 
     <!-- Smart Living Address -->
-    <string name="smart_liv_address_title" translatable="false">¿Dónde vivís?</string>
+    <string name="smart_liv_address_title" translatable="false">¿Dónde vives?</string>
+    <string name="smart_liv_address_title_cr" translatable="false">¿Dónde vivís?</string>
     <string name="smart_liv_address_province" translatable="false">Provincia</string>
     <string name="smart_liv_address_town" translatable="false">Cantón</string>
     <string name="smart_liv_address_district" translatable="false">Distrito</string>

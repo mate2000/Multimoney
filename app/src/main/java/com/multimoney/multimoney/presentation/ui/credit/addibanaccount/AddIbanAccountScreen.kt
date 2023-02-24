@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.credit.addibanaccount
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -62,6 +63,10 @@ fun AddIbanAccountScreen(
             )
             onUIEvent(OnStart)
         }
+    }
+
+    BackHandler {
+        viewModel.onUIEvent(OnBackClick)
     }
 
     Column(

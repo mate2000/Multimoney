@@ -6,13 +6,14 @@ import android.content.Context
 import android.os.Bundle
 import com.adjust.sdk.Adjust
 import com.adjust.sdk.AdjustConfig
+import com.adjust.sdk.AdjustEvent
 import com.adjust.sdk.LogLevel
 import com.multimoney.multimoney.BuildConfig
 import com.multimoney.multimoney.BuildConfig.ADJUST_APP_TOKEN
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import dagger.hilt.android.qualifiers.ApplicationContext
 import timber.log.Timber
 import javax.inject.Inject
-
 
 class AdjustHelper @Inject constructor(@ApplicationContext private val context: Context) {
 
@@ -26,6 +27,14 @@ class AdjustHelper @Inject constructor(@ApplicationContext private val context: 
         val adjustConfig = AdjustConfig(context, ADJUST_APP_TOKEN, environment)
         adjustConfig.setLogLevel(LogLevel.VERBOSE)
         return adjustConfig
+    }
+
+    fun registerEvent(adjustEventType: AdjustEventType, listParameters: List<Pair<String, String>>) {
+        val adjustEvent = AdjustEvent(adjustEventType.token)
+        listParameters.forEach {
+            adjustEvent.addCallbackParameter(it.first, it.second)
+        }
+        Adjust.trackEvent(adjustEvent)
     }
 
     fun initAdjust() = Adjust.onCreate(getAdjustConfig())

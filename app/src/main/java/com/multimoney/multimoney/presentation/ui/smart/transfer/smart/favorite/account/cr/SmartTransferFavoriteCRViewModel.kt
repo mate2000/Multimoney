@@ -74,7 +74,6 @@ class SmartTransferFavoriteCRViewModel @Inject constructor(
                 }
             }
             result.onFailure {
-                uiState = uiState.copy(isLoading = false)
                 onFailure(it)
             }
             result.onLoading {
@@ -102,7 +101,6 @@ class SmartTransferFavoriteCRViewModel @Inject constructor(
                 }
             }
             result.onFailure {
-                uiState = uiState.copy(isLoading = false)
                 onFailure(it)
             }
             result.onLoading {
@@ -136,6 +134,22 @@ class SmartTransferFavoriteCRViewModel @Inject constructor(
 
     private fun onShowOptionsForLocalClick(selectedLocalFavorite: LocalSACAccount?) {
         // TODO REV-346
+    }
+
+    private fun onAccountSelected(account: Any?) {
+        when (account) {
+            is ACHAccount -> onACHFavoriteClick(account)
+            is LocalSACAccount -> onLocalFavoriteClick(account)
+            else -> Unit
+        }
+    }
+
+    private fun onOptionsClick(account: Any?) {
+        when (account) {
+            is ACHAccount -> onShowOptionsForACHClick(account)
+            is LocalSACAccount -> onShowOptionsForLocalClick(account)
+            else -> Unit
+        }
     }
 
     private fun onACHFavoriteClick(selectedAccount: ACHAccount?) {
@@ -205,13 +219,11 @@ class SmartTransferFavoriteCRViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is UIEvent.OnACHOptionsClick -> onShowOptionsForACHClick(uiEvent.aCHFavorite)
+            is UIEvent.OnOptionsClick -> onOptionsClick(uiEvent.account)
             is UIEvent.OnNavigateBack -> onNavigateBack()
-            is UIEvent.OnACHFavoriteClick -> onACHFavoriteClick(uiEvent.aCHFavorite)
+            is UIEvent.OnAccountSelected -> onAccountSelected(uiEvent.account)
             is UIEvent.OnNavigateToHome -> onNavigateToHome()
             is UIEvent.GetFavoritesLists -> getFavoritesListForCR()
-            is UIEvent.OnLocalFavoriteClick -> onLocalFavoriteClick(uiEvent.localAccount)
-            is UIEvent.OnLocalOptionsClick -> onShowOptionsForLocalClick(uiEvent.localFavorite)
         }
     }
 
@@ -219,9 +231,7 @@ class SmartTransferFavoriteCRViewModel @Inject constructor(
         object OnNavigateBack : UIEvent()
         object OnNavigateToHome : UIEvent()
         object GetFavoritesLists : UIEvent()
-        data class OnACHOptionsClick(val aCHFavorite: ACHAccount?) : UIEvent()
-        data class OnLocalOptionsClick(val localFavorite: LocalSACAccount?) : UIEvent()
-        data class OnACHFavoriteClick(val aCHFavorite: ACHAccount?) : UIEvent()
-        data class OnLocalFavoriteClick(val localAccount: LocalSACAccount?) : UIEvent()
+        data class OnOptionsClick(val account: Any?) : UIEvent()
+        data class OnAccountSelected(val account: Any?) : UIEvent()
     }
 }

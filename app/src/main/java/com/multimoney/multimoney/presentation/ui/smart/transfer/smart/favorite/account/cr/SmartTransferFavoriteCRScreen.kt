@@ -22,12 +22,10 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.cr.SmartTransferFavoriteCRViewModel.UIEvent.GetFavoritesLists
-import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.cr.SmartTransferFavoriteCRViewModel.UIEvent.OnACHFavoriteClick
-import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.cr.SmartTransferFavoriteCRViewModel.UIEvent.OnACHOptionsClick
-import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.cr.SmartTransferFavoriteCRViewModel.UIEvent.OnLocalFavoriteClick
-import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.cr.SmartTransferFavoriteCRViewModel.UIEvent.OnLocalOptionsClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.cr.SmartTransferFavoriteCRViewModel.UIEvent.OnAccountSelected
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.cr.SmartTransferFavoriteCRViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.cr.SmartTransferFavoriteCRViewModel.UIEvent.OnNavigateToHome
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.cr.SmartTransferFavoriteCRViewModel.UIEvent.OnOptionsClick
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
@@ -70,18 +68,10 @@ fun SmartTransferFavoriteCRScreen(
                 localFavoritesList = viewModel.uiState.localFavoriteList,
                 aCHFavoriteList = viewModel.uiState.aCHFavoriteAccountList,
                 onEndIconClick = { favorite ->
-                    when (favorite) {
-                        is ACHAccount -> viewModel.onUIEvent(OnACHOptionsClick(favorite))
-                        is LocalSACAccount -> viewModel.onUIEvent(OnLocalOptionsClick(favorite))
-                        else -> Unit
-                    }
+                    viewModel.onUIEvent(OnOptionsClick(favorite))
                 },
                 onFavoriteClick = { favorite ->
-                    when (favorite) {
-                        is ACHAccount -> viewModel.onUIEvent(OnACHFavoriteClick(favorite))
-                        is LocalSACAccount -> viewModel.onUIEvent(OnLocalFavoriteClick(favorite))
-                        else -> Unit
-                    }
+                    viewModel.onUIEvent(OnAccountSelected(favorite))
                 }
             )
         }

@@ -132,6 +132,7 @@ fun AccountList(
                 title = account?.description ?: "",
                 subtitle = account?.destinationBankDescription ?: "",
                 subtitle2 = getMaskedAccount(
+                    prefix = "",
                     accountNumber = account?.accountNumber ?: ""
                 ),
                 modifier = Modifier

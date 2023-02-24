@@ -2,16 +2,23 @@ package com.multimoney.multimoney.presentation.ui
 
 import android.content.Intent
 import com.facebook.react.bridge.*
+import com.google.gson.JsonParser
 
 class PackageTrackerModule (reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
 
     @ReactMethod
-    fun callback(error: Boolean, response: String) {
-        val intent = Intent()
-        intent.putExtra(RESPONSE_VALUE, response)
-        intent.putExtra(RESPONSE_IS_ERROR, error)
-        currentActivity?.setResult(RESULT_CODE_PROCESS_FINISHED, intent)
-        currentActivity?.finish()
+    fun callback(error: String, response: String) {
+        if (error === "undefined") {
+            System.out.println("Show response card: " + JsonParser.parseString(response))
+            val intent = Intent()
+            intent.putExtra(RESPONSE_VALUE, response)
+            intent.putExtra(RESPONSE_IS_ERROR, error)
+            currentActivity?.setResult(RESULT_CODE_PROCESS_FINISHED, intent)
+            currentActivity?.finish()
+        } else {
+            System.out.println("Error: " + JsonParser.parseString(error))
+        }
+
     }
 
     @ReactMethod

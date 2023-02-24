@@ -57,7 +57,7 @@ fun MyContactsTransferSuccess(
             SmartPaymentInfoItem(
                 verticalAlignment = Alignment.CenterVertically,
                 icon = viewModel.destinyCurrency?.accountIcon,
-                title = stringResource(string.smart_payment_destiny_account_label),
+                title = viewModel.amountUIState.destinyAccountDisplay?.sheetTitle ?: "",
                 subtitle = if (Brand.CostaRica.id == viewModel.idBrand) {
                     getMaskedAccountIban(
                         viewModel.phoneAccount?.ibanNumber ?: ""
@@ -65,7 +65,7 @@ fun MyContactsTransferSuccess(
                 } else {
                     getMaskedAccount(
                         accountNumber = viewModel.phoneAccount?.accountNumber ?: "",
-                        prefix = Brand.ElSalvador.countryCode.uppercase()
+                        prefix = ""
                     )
                 }
             )

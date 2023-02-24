@@ -117,7 +117,6 @@ fun HomeScreen(
             }
         })
 
-
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is HomeViewModel.BaseEvent.OnOpenQuickActionsBottomSheet -> {

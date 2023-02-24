@@ -815,7 +815,9 @@ class HomeViewModel @Inject constructor(
         activity?.let { safeActivity ->
             communicator = safeActivity as SignOutCommunicator
             viewModelScope.launch {
-                uiState = uiState.copy(isSessionDuplicated = communicator?.isSessionDuplicated()!!)
+                communicator?.isSessionDuplicated()?.let {
+                    uiState = uiState.copy(isSessionDuplicated = it)
+                }
             }
         }
     }

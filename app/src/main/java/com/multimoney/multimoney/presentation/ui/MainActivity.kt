@@ -39,7 +39,6 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
 
     var isSessionAlreadyOpened: Flow<Boolean> = flowOf(false)
 
-
     private var isAppInForeground = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -113,6 +112,5 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
         return isAppInForeground
     }
 
-    override fun isSessionDuplicated() =
-        isSessionAlreadyOpened
+    override fun isSessionDuplicated() = isSessionAlreadyOpened
 }

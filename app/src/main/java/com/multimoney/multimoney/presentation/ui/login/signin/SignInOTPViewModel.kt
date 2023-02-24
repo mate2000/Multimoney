@@ -29,6 +29,7 @@ import com.multimoney.multimoney.presentation.navigation.UNIQUE_ID
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel
+import com.multimoney.multimoney.presentation.util.ISO3_COSTA_RICA
 import com.multimoney.multimoney.presentation.util.OTP_MESSAGE_REGEX
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OTPMessageStatus
@@ -359,7 +360,5 @@ class SignInOTPViewModel @Inject constructor(
         const val PHASE_FIVE = 5
         const val PHASE_SIX = 6
         const val FOUR_DIGITS = 4
-        const val ISO3_COSTA_RICA = "CRI"
-        const val ISO3_GUATEMALA = "GTM"
     }
 }

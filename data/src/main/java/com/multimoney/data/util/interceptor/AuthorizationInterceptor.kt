@@ -17,7 +17,6 @@ class AuthorizationInterceptor(private val dataStorePreferences: DataStorePrefer
         val response = chain.proceed(
             request.newBuilder().addHeader(AUTHORIZATION_HEADER, "$BEARER $token").build()
         )
-        val x = request.headers
 
         return when (response.statusCode) {
             UNAUTHORIZED_CODE -> {
@@ -40,15 +39,7 @@ class AuthorizationInterceptor(private val dataStorePreferences: DataStorePrefer
                 dataStorePreferences.isSessionDuplicated(true)
                 response
             }
-            else -> {
-//
-//                x.forEach {
-//                    if (it.value.contains("listSinpeAccount")){
-//                        dataStorePreferences.isSessionDuplicated(true)
-//                    }
-//                }
-                response
-            }
+            else -> response
         }
     }
 

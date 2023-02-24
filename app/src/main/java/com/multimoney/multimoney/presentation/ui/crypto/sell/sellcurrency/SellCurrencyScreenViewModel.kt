@@ -270,26 +270,18 @@ class SellCurrencyScreenViewModel @Inject constructor(
             result.onSuccess {
                 when (it.sellHQRResponse.status) {
                     CryptoProcessErrorCodes.InsufficientFundsSell.status -> {
-                        confirmationTimer.stopTimer()
-                        timer.stopTimer()
-                        isError(
-                            errorMessage = R.string.crypto_sell_flow_error_not_funds,
-                            isError = true
-                        )
                         uiState = uiState.copy(
+                            error = R.string.crypto_sell_flow_error_not_funds,
+                            focusError = true,
                             isLoading = false,
                             sellStatus = SellStatus.IDLE
                         )
                         return@onSuccess
                     }
                     CryptoProcessErrorCodes.ExpiredPriceSell.status -> {
-                        confirmationTimer.stopTimer()
-                        timer.stopTimer()
-                        isError(
-                            errorMessage = R.string.crypto_purchase_flow_error_price_expired,
-                            isError = true
-                        )
                         uiState = uiState.copy(
+                            error = R.string.crypto_purchase_flow_error_price_expired,
+                            focusError = true,
                             isLoading = false,
                             sellStatus = SellStatus.IDLE
                         )

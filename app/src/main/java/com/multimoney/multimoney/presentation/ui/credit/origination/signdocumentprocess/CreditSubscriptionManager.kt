@@ -16,14 +16,15 @@ import timber.log.Timber
 
 class CreditSubscriptionManager(var subscriptionCreditContractEventUseCase: SubscriptionCreditContractEventUseCase) {
 
-    private val scope = CoroutineScope(Dispatchers.IO + Job())
+    private var scope: CoroutineScope? = null
     private var numAttemptsToStartSubscription: Int = 1
     private var listener: SubscriptionEventListener? = null
     private var evicertiaLink: String? = ""
     var isSubcriptionRunning: Boolean = true
 
     fun startCreditSubscription(idBrand: Int, idPrint: Long) {
-        scope.launch {
+        scope = CoroutineScope(Dispatchers.IO + Job())
+        scope?.launch {
             subscriptionCreditContractEventUseCase.invoke(idPrint, idBrand)
                 .collectLatest { result ->
                     result.onSuccess {
@@ -54,7 +55,22 @@ class CreditSubscriptionManager(var subscriptionCreditContractEventUseCase: Subs
     fun getEvisertioLink() = evicertiaLink
 
     fun cancelSubscription() {
-        scope.cancel()
+        try {
+            scope?.cancel()
+        } catch (e: java.lang.IllegalStateException) {
+            Timber.d(e.message)
+        }
+        evicertiaLink = ""
+        isSubcriptionRunning = true
+        numAttemptsToStartSubscription = 0
+    }
+
+    fun destroySubscription() {
+        try {
+            scope?.cancel()
+        } catch (e: java.lang.IllegalStateException) {
+            Timber.d(e.message)
+        }
         evicertiaLink = ""
         isSubcriptionRunning = true
         numAttemptsToStartSubscription = 0

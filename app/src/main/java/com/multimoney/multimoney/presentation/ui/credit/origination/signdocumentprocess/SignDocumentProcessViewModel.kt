@@ -110,20 +110,22 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     private fun onListenCreditContractEventSubscription() {
-        creditSubscriptionManager.subscriptionSubscribe(object : CreditSubscriptionManager.SubscriptionEventListener {
-            override fun onCapturedEvent(creditContractEvent: CreditContractEvent?) {
-                handleSubscriptionsSteps(creditContractEvent = creditContractEvent)
-            }
-
-            override fun onSubscriptionFailToConnect(httpError: HttpError) {
-                showSubscriptionError()
-            }
-        })
+        creditSubscriptionManager.subscriptionSubscribe(getCreditSubscriptionListener())
         if (creditSubscriptionManager.hasEvisertiaLink()) {
             uiState = uiState.copy(
                 signDocumentProcessStep = SIGN_DOCUMENTS_STEP.value,
                 signDocumentUrl = creditSubscriptionManager.getEvisertioLink() ?: ""
             )
+        }
+    }
+
+    private fun getCreditSubscriptionListener() = object : CreditSubscriptionManager.SubscriptionEventListener {
+        override fun onCapturedEvent(creditContractEvent: CreditContractEvent?) {
+            handleSubscriptionsSteps(creditContractEvent = creditContractEvent)
+        }
+
+        override fun onSubscriptionFailToConnect(httpError: HttpError) {
+            showSubscriptionError()
         }
     }
 
@@ -251,7 +253,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     private fun navigateToProcessingTransaction() {
-        creditSubscriptionManager.cancelSubscription()
+        creditSubscriptionManager.destroySubscription()
         popAndNavigateTo(
             route = "${Screen.OriginationVoucherScreen.baseRoute}/$idBrand/$idPrint/$email",
             popTo = Screen.SignDocumentProcessScreen.route
@@ -259,7 +261,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     private fun onNavigateToContinueValidatingIdentity() {
-        creditSubscriptionManager.cancelSubscription()
+        creditSubscriptionManager.destroySubscription()
         popAndNavigateTo(
             route = ContinueValidatingOnfidoScreen.route,
             popTo = Screen.SignDocumentProcessScreen.route
@@ -267,7 +269,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     private fun onNavigateToOnfidoAndEvicertiaError(error: String) {
-        creditSubscriptionManager.cancelSubscription()
+        creditSubscriptionManager.destroySubscription()
         popAndNavigateTo(
             route = "${Screen.OnfidoAndEvicertiaErrorsScreen.baseRoute}/$error/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName",
             popTo = Screen.SignDocumentProcessScreen.route
@@ -275,7 +277,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     private fun onNavigateToHome() {
-        creditSubscriptionManager.cancelSubscription()
+        creditSubscriptionManager.destroySubscription()
         emitBaseEvent(SimulateUserInteraction)
         navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
     }
@@ -325,7 +327,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     companion object {
-        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 30000L
+        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 35000L
         const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 40000L
         const val ID_PRINT_EMPTY = 0L
         const val PHONE_HARDCODED = "50371680915"

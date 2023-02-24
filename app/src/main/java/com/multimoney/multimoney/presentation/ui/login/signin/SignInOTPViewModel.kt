@@ -205,12 +205,11 @@ class SignInOTPViewModel @Inject constructor(
     private fun onCallMutationRequestChangeDevice() = executeUseCase {
         mutationRequestChangeDeviceUseCase.invoke(email).collectLatest { result ->
             result.onSuccess {
-                initializeTimer(PHASE_ONE, totalTime = it.otpTime?.toLong() ?: DEFAULT_OTP_DURATION)
+                initializeTimer(if(uiState.phaseCount == PHASE_ONE) PHASE_ONE else uiState.phaseCount.plus(1), totalTime = it.otpTime?.toLong() ?: DEFAULT_OTP_DURATION)
                 getPhaseAction()
                 onExecuteTimer()
                 uiState = uiState.copy(
                     isLoading = false,
-                    weSentYouACodeTextResource = R.string.sign_in_we_sent_you_a_code_template,
                     phoneNumber = it.phoneNumber ?: ""
                 )
             }.onFailure {
@@ -305,7 +304,7 @@ class SignInOTPViewModel @Inject constructor(
         val openDialog: DialogParameters = DialogParameters(),
         val dialogTextResource: Int = R.string.empty,
         val alertTextResource: Int = R.string.empty,
-        val weSentYouACodeTextResource: Int = R.string.empty,
+        val weSentYouACodeTextResource: Int? = null,
         val statusTextResource: Int = R.string.empty,
         val phoneNumber: String = ""
     )

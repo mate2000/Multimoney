@@ -186,8 +186,9 @@ fun SignInOTPContent(viewModel: SignInOTPViewModel) {
                     top.linkTo(titleText.bottom)
                 },
             text = stringResource(
-                id = viewModel.uiState.weSentYouACodeTextResource,
+                id = (if (viewModel.uiState.weSentYouACodeTextResource != null) viewModel.uiState.weSentYouACodeTextResource else R.string.empty)!!,
                 viewModel.uiState.phoneNumber
+
             ),
             style = Typography.body2.copy(color = MultimoneyTheme.colors.titleText),
         )

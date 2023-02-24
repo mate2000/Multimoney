@@ -318,8 +318,7 @@ fun MyAccountsContent(
                                     )
                                 )
                             }
-                        },
-                        titleIcon = R.drawable.ic_star_filled
+                        }
                     )
                 }
             }

@@ -113,6 +113,12 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
                 },
                 onNavigate = {
                     navController.navigate(it.route)
+                },
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        launchSingleTop = true
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
                 }
             )
         }

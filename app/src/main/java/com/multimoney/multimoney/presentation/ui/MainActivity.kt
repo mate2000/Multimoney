@@ -3,6 +3,7 @@ package com.multimoney.multimoney.presentation.ui
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.lifecycleScope
@@ -15,9 +16,12 @@ import com.multimoney.multimoney.presentation.util.SignOutCommunicator
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), SignOutCommunicator {
@@ -33,13 +37,24 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
 
     var dialogParameters = mutableStateOf(DialogParameters())
 
+    var isSessionAlreadyOpened: Flow<Boolean> = flowOf(false)
+
     private var isAppInForeground = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        isSessionAlreadyOpened = dataStorePreferences.isSessionDuplicated()
         setContent {
             MultimoneyTheme {
                 Navigation()
+                LaunchedEffect(key1 = true) {
+                    isSessionAlreadyOpened.collectLatest {
+                        if (it) {
+                            signOut()
+                        }
+                    }
+                }
+
                 if (dialogParameters.value.isActive.value) {
                     CustomDialog(
                         title = stringResource(id = dialogParameters.value.titleResource),
@@ -84,8 +99,9 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
         lifecycleScope.launch {
             dataStorePreferences.setAuthToken("")
             dataStorePreferences.setVolatileDialogVisible(true)
+            dataStorePreferences.isSessionDuplicated(false)
+            mmCountDownTimer.discardTimer()
         }
-        mmCountDownTimer.discardTimer()
     }
 
     override fun onMaxTimeUsedDialogChangeState(dialogParameters: DialogParameters) {
@@ -95,4 +111,6 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
     override fun isAppInForeground(): Boolean {
         return isAppInForeground
     }
+
+    override fun isSessionDuplicated() = isSessionAlreadyOpened
 }

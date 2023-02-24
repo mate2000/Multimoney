@@ -45,7 +45,7 @@ fun CustomInfoButton(
     startIcon: Int? = R.drawable.ic_payment_fee_icon,
     composableIcon: @Composable ((modifier: Modifier) -> Unit)? = null,
     title: String = "",
-    titleIcon: Int? = R.drawable.ic_star_filled,
+    titleIcon: Int? = null,
     subtitle: String = "",
     subtitle2: String = "",
     endIcon: Int? = R.drawable.ic_right_chevron,

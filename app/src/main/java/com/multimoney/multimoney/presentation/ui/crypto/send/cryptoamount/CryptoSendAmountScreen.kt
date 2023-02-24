@@ -87,6 +87,9 @@ fun CryptoSendAmountScreen(
             )
         )
     }
+    LaunchedEffect(key1 = viewModel.uiState.isTransformationCurrency.value) {
+        viewModel.onUIEvent(CryptoSendAmountViewModel.UIEvent.OnAmountChanged(""))
+    }
 
     when(viewModel.uiState.transferStatus) {
         TransferStatus.IDLE -> {

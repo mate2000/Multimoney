@@ -92,6 +92,7 @@ class CryptoSendAmountViewModel @Inject constructor(
                 feeCalculated = false
             )
         }
+        isError()
     }
 
     private fun onCalculateAmountTransferCommission() = executeUseCase {

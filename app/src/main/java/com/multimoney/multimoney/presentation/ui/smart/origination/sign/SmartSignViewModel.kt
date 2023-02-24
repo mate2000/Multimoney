@@ -36,8 +36,8 @@ import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENE
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class SmartSignViewModel @Inject constructor(
@@ -113,7 +113,7 @@ class SmartSignViewModel @Inject constructor(
                             )
                         )
                     }.onFailure {
-                        while (numAttemptsToStartSubscription < MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION) {
+                        if (numAttemptsToStartSubscription < MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION) {
                             onListenSmartContractEventSubscription(idBrand, idRequestSys)
                             numAttemptsToStartSubscription++
                         }

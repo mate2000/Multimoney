@@ -7,8 +7,8 @@ import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.domain.interaction.credit.QueryGetLinkCreditContractUseCase
-import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventUseCase
 import com.multimoney.domain.model.credit.CreditContractEvent
+import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -31,11 +31,12 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.OpenWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.SimulateUserInteraction
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallGetLinkCreditContractEvent
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallSubscriptionCreditContractEvent
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallGetLinkCreditContractSecondTime
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnChangeScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToContinueValidatingIdentity
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnShowDialogInformation
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnStartListenerSubscriptionCreditContractEvent
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.CreditSubscriptionStep
@@ -51,12 +52,11 @@ import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
-import timber.log.Timber
 
 @HiltViewModel
 class SignDocumentProcessViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val subscriptionCreditContractEventUseCase: SubscriptionCreditContractEventUseCase,
+    private val creditSubscriptionManager: CreditSubscriptionManager,
     private val queryGetLinkCreditContractUseCase: QueryGetLinkCreditContractUseCase,
     val mmCountDownTimer: MMCountDownTimer
 ) : BaseViewModel(true) {
@@ -101,34 +101,33 @@ class SignDocumentProcessViewModel @Inject constructor(
         )
     }
 
-    private fun onShouldCallSubscription(idPrint: Long, idBrand: Int) {
-        if (idBrand != Brand.ElSalvador.id && uiState.signDocumentProcessStep != VALIDATE_IDENTITY.value && idPrint != ID_PRINT_EMPTY) {
-            onListenCreditContractEventSubscription(idPrint, idBrand)
-        }
-    }
-
     private fun onShouldCallGetLinkCreditContract() {
-        if (shouldGetEvicertiaLink) {
+        if (shouldGetEvicertiaLink || creditSubscriptionManager.isSubcriptionRunning.not()) {
+            creditSubscriptionManager.cancelSubscription()
+            creditSubscriptionManager.startCreditSubscription(idBrand, idPrint)
             callQueryGetLinkCreditContractUseCase()
         }
     }
 
-    private fun onListenCreditContractEventSubscription(idPrint: Long, idBrand: Int) {
-        executeUseCase {
-            subscriptionCreditContractEventUseCase.invoke(idPrint, idBrand)
-                .collectLatest { result ->
-                    result.onSuccess {
-                        Timber.d(LOG_SUBSCRIPTION_TAG, it?.currentStep)
-                        handleSubscriptionsSteps(creditContractEvent = it)
-                    }.onFailure {
-                        Timber.d(LOG_SUBSCRIPTION_TAG, it.getError())
-                        showSubscriptionError()
-                    }
-                }
+    private fun onListenCreditContractEventSubscription() {
+        creditSubscriptionManager.subscriptionSubscribe(object : CreditSubscriptionManager.SubscriptionEventListener {
+            override fun onCapturedEvent(creditContractEvent: CreditContractEvent?) {
+                handleSubscriptionsSteps(creditContractEvent = creditContractEvent)
+            }
+
+            override fun onSubscriptionFailToConnect(httpError: HttpError) {
+                showSubscriptionError()
+            }
+        })
+        if (creditSubscriptionManager.hasEvisertiaLink()) {
+            uiState = uiState.copy(
+                signDocumentProcessStep = SIGN_DOCUMENTS_STEP.value,
+                signDocumentUrl = creditSubscriptionManager.getEvisertioLink() ?: ""
+            )
         }
     }
 
-    private fun callQueryGetLinkCreditContractUseCase() =
+    private fun callQueryGetLinkCreditContractUseCase(isSecondTime: Boolean = false) =
         executeUseCase {
             queryGetLinkCreditContractUseCase.invoke(
                 idPrint = idPrint,
@@ -142,6 +141,10 @@ class SignDocumentProcessViewModel @Inject constructor(
                             signDocumentProcessStep = SIGN_DOCUMENTS_STEP.value,
                             signDocumentUrl = linkCreditContract.link ?: ""
                         )
+                    } else {
+                        if (isSecondTime) {
+                            onUIEvent(OnNavigateToHome)
+                        }
                     }
                 }
                 result.onFailure {
@@ -247,13 +250,16 @@ class SignDocumentProcessViewModel @Inject constructor(
         }
     }
 
-    private fun navigateToProcessingTransaction() =
+    private fun navigateToProcessingTransaction() {
+        creditSubscriptionManager.cancelSubscription()
         popAndNavigateTo(
             route = "${Screen.OriginationVoucherScreen.baseRoute}/$idBrand/$idPrint/$email",
             popTo = Screen.SignDocumentProcessScreen.route
         )
+    }
 
     private fun onNavigateToContinueValidatingIdentity() {
+        creditSubscriptionManager.cancelSubscription()
         popAndNavigateTo(
             route = ContinueValidatingOnfidoScreen.route,
             popTo = Screen.SignDocumentProcessScreen.route
@@ -261,6 +267,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     private fun onNavigateToOnfidoAndEvicertiaError(error: String) {
+        creditSubscriptionManager.cancelSubscription()
         popAndNavigateTo(
             route = "${Screen.OnfidoAndEvicertiaErrorsScreen.baseRoute}/$error/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName",
             popTo = Screen.SignDocumentProcessScreen.route
@@ -268,6 +275,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     private fun onNavigateToHome() {
+        creditSubscriptionManager.cancelSubscription()
         emitBaseEvent(SimulateUserInteraction)
         navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
     }
@@ -291,8 +299,9 @@ class SignDocumentProcessViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnCallSubscriptionCreditContractEvent -> onShouldCallSubscription(idPrint, idBrand)
             is OnCallGetLinkCreditContractEvent -> onShouldCallGetLinkCreditContract()
+            is OnCallGetLinkCreditContractSecondTime -> callQueryGetLinkCreditContractUseCase(true)
+            is OnStartListenerSubscriptionCreditContractEvent -> onListenCreditContractEventSubscription()
             is OnChangeScreen -> uiState = uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
             is OnShowDialogInformation -> createDialog()
             is OnNavigateToHome -> onNavigateToHome()
@@ -301,8 +310,9 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     sealed class UIEvent {
-        object OnCallSubscriptionCreditContractEvent : UIEvent()
         object OnCallGetLinkCreditContractEvent : UIEvent()
+        object OnCallGetLinkCreditContractSecondTime : UIEvent()
+        object OnStartListenerSubscriptionCreditContractEvent : UIEvent()
         object OnShowDialogInformation : UIEvent()
         data class OnChangeScreen(val signDocumentStep: String) : UIEvent()
         object OnNavigateToHome : UIEvent()
@@ -315,7 +325,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     companion object {
-        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 60000L
+        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 30000L
         const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 40000L
         const val ID_PRINT_EMPTY = 0L
         const val PHONE_HARDCODED = "50371680915"

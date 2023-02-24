@@ -80,7 +80,6 @@ class SmartTransferFavoriteSVViewModel @Inject constructor(
                 }
             }
             result.onFailure {
-                uiState = uiState.copy(isLoading = false)
                 onFailure(it)
             }
             result.onLoading {
@@ -108,9 +107,6 @@ class SmartTransferFavoriteSVViewModel @Inject constructor(
                 )
             }
             result.onFailure {
-                uiState = uiState.copy(
-                    isLoading = false
-                )
                 onFailure(it)
             }
         }
@@ -150,7 +146,7 @@ class SmartTransferFavoriteSVViewModel @Inject constructor(
             idCurrency = localFavorite?.idCurrencyAccount.toString(),
             currency = localFavorite?.currencyAccount,
             ibanNumber = localFavorite?.ibanNumber,
-            isFavorite = localFavorite?.isFavorite ?: false
+            isFavorite = localFavorite?.isFavorite ?: true
         )
         navigateTo(
             "${Screen.MyContactsTransferAmountScreen.baseRoute}/${encodeData(selectedSmartAccount)}/" +
@@ -162,9 +158,10 @@ class SmartTransferFavoriteSVViewModel @Inject constructor(
     private fun onACHFavoriteClick(selectedACHFavoriteAccount: ACHAccount?) {
         val achAccount = Transfer365Account(
             accountNumber = selectedACHFavoriteAccount?.accountNumber,
-            name = selectedACHFavoriteAccount?.description ?: "",
+            name = selectedACHFavoriteAccount?.description.orEmpty(),
             bankId = selectedACHFavoriteAccount?.idBank.toString(),
-            bankName = selectedACHFavoriteAccount?.destinationBankDescription ?: "",
+            bankName = selectedACHFavoriteAccount?.destinationBankDescription.orEmpty(),
+            destinationType = selectedACHFavoriteAccount?.identificationTypeAccount?.toString(),
             accountTypeId = selectedACHFavoriteAccount?.idTypeAccount.toString(),
             isFavorite = selectedACHFavoriteAccount?.isFavorite ?: true
         )

@@ -304,7 +304,7 @@ class SignInOTPViewModel @Inject constructor(
         val openDialog: DialogParameters = DialogParameters(),
         val dialogTextResource: Int = R.string.empty,
         val alertTextResource: Int = R.string.empty,
-        val weSentYouACodeTextResource: Int? = null,
+        val weSentYouACodeTextResource: Int = R.string.empty,
         val statusTextResource: Int = R.string.empty,
         val phoneNumber: String = ""
     )

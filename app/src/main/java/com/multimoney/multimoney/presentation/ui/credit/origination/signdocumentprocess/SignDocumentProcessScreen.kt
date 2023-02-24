@@ -9,7 +9,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.OpenWhatsAppLink
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.SimulateUserInteraction
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.Companion.PHONE_HARDCODED
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallGetLinkCreditContractEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallGetLinkCreditContractSecondTime
@@ -45,11 +44,10 @@ fun SignDocumentProcessScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)
-            onUIEvent(OnCallGetLinkCreditContractEvent)
             onUIEvent(OnStartListenerSubscriptionCreditContractEvent)
+            onUIEvent(OnCallGetLinkCreditContractEvent)
             baseEvent.collectLatest { event ->
                 when (event) {
-                    is SimulateUserInteraction -> activity?.onUserInteraction()
                     is OpenWhatsAppLink -> context.openWhatsAppDeepLink(whatsAppLink)
                 }
             }

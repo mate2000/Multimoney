@@ -29,7 +29,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_GET_EVI
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.OpenWhatsAppLink
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.SimulateUserInteraction
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallGetLinkCreditContractEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallGetLinkCreditContractSecondTime
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnChangeScreen
@@ -52,6 +51,7 @@ import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import timber.log.Timber
 
 @HiltViewModel
 class SignDocumentProcessViewModel @Inject constructor(
@@ -101,11 +101,21 @@ class SignDocumentProcessViewModel @Inject constructor(
         )
     }
 
+    private fun onEvaluateWitchRequestCall() {
+        onShouldStartSubscription()
+        onShouldCallGetLinkCreditContract()
+    }
+
     private fun onShouldCallGetLinkCreditContract() {
-        if (shouldGetEvicertiaLink || creditSubscriptionManager.isSubcriptionRunning.not()) {
+        if (shouldGetEvicertiaLink || (creditSubscriptionManager.hasEvisertiaLink().not() && isCrosseling.not())) {
+            callQueryGetLinkCreditContractUseCase()
+        }
+    }
+
+    private fun onShouldStartSubscription() {
+        if (creditSubscriptionManager.isSubcriptionRunning.not() || shouldGetEvicertiaLink) {
             creditSubscriptionManager.cancelSubscription()
             creditSubscriptionManager.startCreditSubscription(idBrand, idPrint)
-            callQueryGetLinkCreditContractUseCase()
         }
     }
 
@@ -122,6 +132,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     private fun getCreditSubscriptionListener() = object : CreditSubscriptionManager.SubscriptionEventListener {
         override fun onCapturedEvent(creditContractEvent: CreditContractEvent?) {
             handleSubscriptionsSteps(creditContractEvent = creditContractEvent)
+            Timber.wtf("${LOG_SUBSCRIPTION_TAG}: ${creditContractEvent?.currentStep}")
         }
 
         override fun onSubscriptionFailToConnect(httpError: HttpError) {
@@ -138,14 +149,20 @@ class SignDocumentProcessViewModel @Inject constructor(
                 user = email
             ).collectLatest { result ->
                 result.onSuccess { linkCreditContract ->
-                    if (linkCreditContract?.linkAvailable == true) {
-                        uiState = uiState.copy(
-                            signDocumentProcessStep = SIGN_DOCUMENTS_STEP.value,
-                            signDocumentUrl = linkCreditContract.link ?: ""
-                        )
-                    } else {
-                        if (isSecondTime) {
-                            onUIEvent(OnNavigateToHome)
+                    when {
+                        linkCreditContract?.linkAvailable == true -> {
+                            uiState = uiState.copy(
+                                signDocumentProcessStep = SIGN_DOCUMENTS_STEP.value,
+                                signDocumentUrl = linkCreditContract.link ?: ""
+                            )
+                        }
+                        isEvisertiaOverCounted(linkCreditContract?.statusEvicertia) -> {
+                            onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_SECOND_TIME.value)
+                        }
+                        else -> {
+                            if (isSecondTime) {
+                                onUIEvent(OnNavigateToHome)
+                            }
                         }
                     }
                 }
@@ -165,7 +182,6 @@ class SignDocumentProcessViewModel @Inject constructor(
     private fun handleSubscriptionsSteps(creditContractEvent: CreditContractEvent?) {
         when (creditContractEvent?.currentStep) {
             CreditSubscriptionStep.LinkGenerated.step -> {
-                emitBaseEvent(SimulateUserInteraction)
                 uiState = uiState.copy(
                     signDocumentProcessStep = SIGN_DOCUMENTS_STEP.value,
                     signDocumentUrl = creditContractEvent.link ?: ""
@@ -181,16 +197,13 @@ class SignDocumentProcessViewModel @Inject constructor(
                 }
             }
             CreditSubscriptionStep.DocumentsRejected.step -> {
-                if (creditContractEvent.statusEvicertia == CreditOnFidoOrFirmStatus.OVER_COUNTER.status) {
-                    emitBaseEvent(SimulateUserInteraction)
+                if (isEvisertiaOverCounted(creditContractEvent.statusEvicertia)) {
                     onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_SECOND_TIME.value)
                 } else {
-                    emitBaseEvent(SimulateUserInteraction)
                     onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_FIRST_TIME.value)
                 }
             }
             CreditSubscriptionStep.AccountActivated.step -> {
-                emitBaseEvent(SimulateUserInteraction)
                 if (idBrand == Brand.CostaRica.id && idPrint != ID_PRINT_EMPTY) {
                     navigateToProcessingTransaction()
                 } else {
@@ -198,13 +211,15 @@ class SignDocumentProcessViewModel @Inject constructor(
                 }
             }
             CreditSubscriptionStep.ErrorActivatingAccount.step, CreditSubscriptionStep.DocumentsFailed.step -> {
-                emitBaseEvent(SimulateUserInteraction)
                 showSubscriptionError()
             }
         }
     }
 
-    private fun showSubscriptionError() {
+    private fun isEvisertiaOverCounted(evisertiaStatus: String?) =
+        evisertiaStatus?.lowercase() == CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase()
+
+    fun showSubscriptionError() {
         uiState = uiState.copy(
             isAlertResultVisible = true,
             alertResultIsRightButtonVisible = true,
@@ -236,7 +251,6 @@ class SignDocumentProcessViewModel @Inject constructor(
     private fun handleOnfidoStatus(
         creditContractEvent: CreditContractEvent?
     ) {
-        emitBaseEvent(SimulateUserInteraction)
         when (creditContractEvent?.statusOnfido?.lowercase()) {
             CreditOnFidoOrFirmStatus.PENDING.status.lowercase(), CreditOnFidoOrFirmStatus.APPROVED.status.lowercase() -> {
                 uiState = uiState.copy(
@@ -278,7 +292,6 @@ class SignDocumentProcessViewModel @Inject constructor(
 
     private fun onNavigateToHome() {
         creditSubscriptionManager.destroySubscription()
-        emitBaseEvent(SimulateUserInteraction)
         navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
     }
 
@@ -301,7 +314,7 @@ class SignDocumentProcessViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnCallGetLinkCreditContractEvent -> onShouldCallGetLinkCreditContract()
+            is OnCallGetLinkCreditContractEvent -> onEvaluateWitchRequestCall()
             is OnCallGetLinkCreditContractSecondTime -> callQueryGetLinkCreditContractUseCase(true)
             is OnStartListenerSubscriptionCreditContractEvent -> onListenCreditContractEventSubscription()
             is OnChangeScreen -> uiState = uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
@@ -322,7 +335,6 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     sealed class BaseEvent {
-        object SimulateUserInteraction : BaseEvent()
         object OpenWhatsAppLink : BaseEvent()
     }
 
@@ -331,6 +343,6 @@ class SignDocumentProcessViewModel @Inject constructor(
         const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 40000L
         const val ID_PRINT_EMPTY = 0L
         const val PHONE_HARDCODED = "50371680915"
-        const val LOG_SUBSCRIPTION_TAG = "SUBSCRIPTION_MM"
+        const val LOG_SUBSCRIPTION_TAG = "MM_SUBSCRIPTION_L"
     }
 }

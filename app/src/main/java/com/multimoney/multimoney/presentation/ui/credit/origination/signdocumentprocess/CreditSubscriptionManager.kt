@@ -27,12 +27,12 @@ class CreditSubscriptionManager(var subscriptionCreditContractEventUseCase: Subs
         scope?.launch {
             subscriptionCreditContractEventUseCase.invoke(idPrint, idBrand)
                 .collectLatest { result ->
-                    result.onSuccess {
-                        Timber.d(SignDocumentProcessViewModel.LOG_SUBSCRIPTION_TAG, it?.currentStep)
-                        if (it?.currentStep == CreditSubscriptionStep.LinkGenerated.step) {
-                            evicertiaLink = it.link
+                    result.onSuccess { creditContract ->
+                        listener?.onCapturedEvent(creditContract)
+                        if (creditContract?.currentStep == CreditSubscriptionStep.LinkGenerated.step) {
+                            evicertiaLink = creditContract.link
                         }
-                        listener?.onCapturedEvent(it)
+                        Timber.wtf("${LOG_SUBSCRIPTION_TAG}: ${creditContract?.currentStep}")
                     }.onFailure {
                         if (numAttemptsToStartSubscription < MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION) {
                             startCreditSubscription(idBrand, idPrint)
@@ -84,5 +84,6 @@ class CreditSubscriptionManager(var subscriptionCreditContractEventUseCase: Subs
 
     companion object {
         const val MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION = 3
+        const val LOG_SUBSCRIPTION_TAG = "MM_SUBSCRIPTION_M"
     }
 }

@@ -67,8 +67,8 @@ fun CryptoSendFlow(
         ) {
             Column {
                 TopNavBar(
-                    isLeftButtonVisible = viewModel.uiState.currentStepType != SendCryptoStep.LOADING && viewModel.uiState.currentStepType != SendCryptoStep.SEND_VOUCHER,
-                    isRightButtonVisible = viewModel.shouldShowCloseButton(),
+                    isLeftButtonVisible = viewModel.uiState.currentStepType != SendCryptoStep.LOADING && viewModel.uiState.currentStepType != SendCryptoStep.SEND_VOUCHER && viewModel.uiState.currentStepType != SendCryptoStep.SEND_FAILED && viewModel.uiState.currentStepType != SendCryptoStep.SEND_ERROR,
+                    isRightButtonVisible = viewModel.uiState.currentStepType != SendCryptoStep.LOADING && viewModel.uiState.currentStepType != SendCryptoStep.SEND_FAILED && viewModel.uiState.currentStepType != SendCryptoStep.SEND_ERROR,
                     isCenterContentVisible = viewModel.uiState.currentStepType == SendCryptoStep.SEND_VOUCHER,
                     onLeftButtonClick = {
                         viewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnPreviousStep)

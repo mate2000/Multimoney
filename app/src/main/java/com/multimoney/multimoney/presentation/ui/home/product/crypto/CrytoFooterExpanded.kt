@@ -28,7 +28,8 @@ fun CryptoFooterExpanded(
     cryptoMovements: Flow<PagingData<CryptoCurrencyMovement>>,
     actionMarket: () -> Unit,
     actionWallet: () -> Unit,
-    onShowAllClick: () -> Unit
+    onShowAllClick: () -> Unit,
+    onNavigateToReleaseTransaction: ( CryptoCurrencyMovement?) -> Unit
 ) {
     if (userStatus?.infoCrypto?.status == CryptoAccountStatus.ACTIVE.status) {
         CryptoFooterExpandedContent(
@@ -36,7 +37,8 @@ fun CryptoFooterExpanded(
             cryptoMovements,
             actionMarket,
             actionWallet,
-            onShowAllClick
+            onShowAllClick,
+            onNavigateToReleaseTransaction
         )
     }
 }
@@ -47,7 +49,8 @@ fun CryptoFooterExpandedContent(
     cryptoMovements: Flow<PagingData<CryptoCurrencyMovement>>,
     actionMarket: () -> Unit,
     actionWallet: () -> Unit,
-    onShowAllClick: () -> Unit
+    onShowAllClick: () -> Unit,
+    onNavigateToReleaseTransaction: ( CryptoCurrencyMovement?) -> Unit
 ) {
     val cryptoCurrencies = balance?.balanceCryptoAccount?.items
     val movements = cryptoMovements.collectAsLazyPagingItems()
@@ -74,7 +77,8 @@ fun CryptoFooterExpandedContent(
                 )
                 CryptoMovementsSection(
                     cryptoMovements = movements,
-                    onShowAllClick = onShowAllClick
+                    onShowAllClick = onShowAllClick,
+                    onNavigateToReleaseTransaction = onNavigateToReleaseTransaction
                 )
             }
             profileEnable and outOfService -> MaintenanceSection()

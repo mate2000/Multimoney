@@ -87,6 +87,9 @@ fun CryptoSendAmountScreen(
             )
         )
     }
+    LaunchedEffect(key1 = viewModel.uiState.isTransformationCurrency.value) {
+        viewModel.onUIEvent(CryptoSendAmountViewModel.UIEvent.OnAmountChanged(""))
+    }
 
     when(viewModel.uiState.transferStatus) {
         TransferStatus.IDLE -> {
@@ -110,16 +113,33 @@ fun CryptoSendAmountScreen(
             )
             sharedViewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnNextStep)
         }
-        TransferStatus.FAILED -> {
-            sharedViewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnSetFlowStep(SendCryptoStep.SEND_FAILED))
+        TransferStatus.ERROR -> {
+            sharedViewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnSetFlowStep(SendCryptoStep.SEND_ERROR))
             AlertResult(
                 titleString = stringResource(id = R.string.crypto_send_flow_error_sending_crypto),
                 descriptionString = stringResource(R.string.crypto_send_flow_error_sending_crypto_try_again),
-                buttonTextResource = R.string.profile_error_changing_phone_button,
+                buttonTextResource = R.string.understood,
                 isRightButtonVisible = true,
                 isLeftButtonVisible = false,
                 onButtonClick = {
                     sharedViewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnNavigateHome)
+                },
+                onRightButtonClick = {
+                    sharedViewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnNavigateHome)
+                }
+            )
+        }
+        TransferStatus.FAILED -> {
+            sharedViewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnSetFlowStep(SendCryptoStep.SEND_FAILED))
+            AlertResult(
+                titleString = stringResource(id = R.string.crypto_send_flow_error_oh_no),
+                descriptionString = stringResource(R.string.crypto_send_flow_error_not_sent),
+                buttonTextResource = R.string.error_button_try_again,
+                isRightButtonVisible = true,
+                isLeftButtonVisible = false,
+                onButtonClick = {
+                    sharedViewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnSetFlowStep(SendCryptoStep.LOADING))
+                    viewModel.onUIEvent(CryptoSendAmountViewModel.UIEvent.OnSendCryptoCurrency)
                 },
                 onRightButtonClick = {
                     sharedViewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnNavigateHome)

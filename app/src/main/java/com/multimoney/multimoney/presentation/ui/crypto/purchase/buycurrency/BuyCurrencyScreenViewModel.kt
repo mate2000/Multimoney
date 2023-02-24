@@ -313,39 +313,27 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 result.onSuccess {
                     when (it.buyHQR.status) {
                         CryptoProcessErrorCodes.WeeklyLimitExceeded.status -> {
-                            confirmationTimer.stopTimer()
-                            timer.stopTimer()
-                            isError(
-                                errorMessage = R.string.crypto_purchase_flow_error_weekly_amount_exceeded,
-                                isError = true
-                            )
                             uiState = uiState.copy(
+                                error = R.string.crypto_purchase_flow_error_weekly_amount_exceeded,
+                                focusError = true,
                                 isLoading = false,
                                 purchaseStatus = PurchaseStatus.IDLE
                             )
                             return@onSuccess
                         }
                         CryptoProcessErrorCodes.InsufficientFundsBuy.status -> {
-                            confirmationTimer.stopTimer()
-                            timer.stopTimer()
-                            isError(
-                                errorMessage = R.string.crypto_purchase_flow_error_no_funds,
-                                isError = true
-                            )
                             uiState = uiState.copy(
+                                error = R.string.crypto_purchase_flow_error_no_funds,
+                                focusError = true,
                                 isLoading = false,
                                 purchaseStatus = PurchaseStatus.IDLE
                             )
                             return@onSuccess
                         }
                         CryptoProcessErrorCodes.ExpiredPriceBuy.status -> {
-                            confirmationTimer.stopTimer()
-                            timer.stopTimer()
-                            isError(
-                                errorMessage = R.string.crypto_purchase_flow_error_price_expired,
-                                isError = true
-                            )
                             uiState = uiState.copy(
+                                error = R.string.crypto_purchase_flow_error_price_expired,
+                                focusError = true,
                                 isLoading = false,
                                 purchaseStatus = PurchaseStatus.IDLE
                             )

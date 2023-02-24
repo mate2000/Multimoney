@@ -207,6 +207,10 @@ class ValidateOTPViewModel @Inject constructor(
             remainingTimeText = newRemainingTime.format()
         )
         updateMessageStatus()
+
+        if (uiState.phaseCount == PHASE_THREE) {
+            openMaxAttemptsReachedDialog()
+        }
     }
 
     private fun updateMessageStatus() {
@@ -325,7 +329,11 @@ class ValidateOTPViewModel @Inject constructor(
             uiState = uiState.copy(isLoading = false)
             viewModelScope.launch {
                 dataStorePreferences.setUserPhoneNumber(uiState.newValue ?: "")
-                dataStorePreferences.setUserPhoneNumberWithCode(uiState.newPhoneNumberCode?.plus(uiState.newValue) ?: "")
+                dataStorePreferences.setUserPhoneNumberWithCode(
+                    uiState.newPhoneNumberCode?.plus(
+                        uiState.newValue
+                    ) ?: ""
+                )
                 navigateBack(Screen.HomeScreen.route, isRestart = true)
                 emitBaseEvent(HomeViewModel.BaseEvent.OnPhoneNumberChangedToastEvent)
             }
@@ -340,7 +348,7 @@ class ValidateOTPViewModel @Inject constructor(
             uiState = uiState.copy(isLoading = false)
             viewModelScope.launch {
                 dataStorePreferences.setUserEmail(uiState.newValue ?: "")
-                navigateBack(Screen.HomeScreen.route, isRestart = true)
+                navigateTo("${Screen.ProfileScreen.baseRoute}/${uiState.idClient}/${uiState.idBrand}/${uiState.firstName}/${uiState.newValue}/${uiState.phoneNumber}/${uiState.identification}/${uiState.pkUser}/${uiState.userName}")
                 emitBaseEvent(HomeViewModel.BaseEvent.OnEmailChangedToastEvent)
             }
         }
@@ -374,15 +382,30 @@ class ValidateOTPViewModel @Inject constructor(
                 }
             }
         }.onMessage {
-            uiState = uiState.copy(
-                isLoading = false,
-                otpError = Pair(true, R.string.profile_error_phone_code_not_valid)
-            )
+            if (it?.messageError?.status == VALIDATE_OTP_FAILED_CODE) {
+                openMaxAttemptsReachedDialog()
+            } else {
+                uiState = uiState.copy(
+                    isLoading = false,
+                    otpError = Pair(true, R.string.profile_error_phone_code_not_valid)
+                )
+            }
         }
             .onFailure {
                 uiState = uiState.copy(isLoading = false, isAlertResultVisible = true)
             }
             .onLoading { uiState = uiState.copy(isLoading = true) }
+    }
+
+    private fun openMaxAttemptsReachedDialog() {
+        uiState = uiState.copy(openmaxAttemptsReachedDialog = DialogParameters(
+            titleResource = R.string.sign_up_email_blocked_dialog_title,
+            description = userBlockedForMaxAttend,
+            isActive = mutableStateOf(true),
+            positiveResource = R.string.contact,
+            negativeResource = R.string.cancel,
+            negativeAction = { onLogout() }
+        ))
     }
 
     data class UIState(
@@ -416,7 +439,8 @@ class ValidateOTPViewModel @Inject constructor(
         val alertTextResource: Int = R.string.empty,
         val enterTheCodeTextResource: Int = R.string.empty,
         val statusTextResource: Int = R.string.empty,
-        val destination: String? = null
+        val destination: String? = null,
+        val openmaxAttemptsReachedDialog: DialogParameters = DialogParameters(),
 
     )
 
@@ -455,6 +479,7 @@ class ValidateOTPViewModel @Inject constructor(
                         messageStatus = OTPMessageStatus.COULD_NOT_VERIFY_ID
                     )
             is UIEvent.OnContinueButtonClicked -> onValidateOTP(uiState.email, uiState.otp)
+            is UIEvent.OpenMaxAttemptsReachedDialog -> openMaxAttemptsReachedDialog()
         }
     }
 
@@ -490,6 +515,7 @@ class ValidateOTPViewModel @Inject constructor(
         object OnValidateForm : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnContinueButtonClicked : UIEvent()
+        object OpenMaxAttemptsReachedDialog: UIEvent()
     }
 
     companion object {
@@ -500,5 +526,7 @@ class ValidateOTPViewModel @Inject constructor(
         const val TIMER_DURATION = 0L
         const val TIMER_DELAY = 1L
         const val APP_SOURCE = 2
+
+        private const val VALIDATE_OTP_FAILED_CODE = 2104
     }
 }

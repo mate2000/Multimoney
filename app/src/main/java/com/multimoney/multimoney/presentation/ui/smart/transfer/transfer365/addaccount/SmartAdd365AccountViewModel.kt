@@ -319,8 +319,12 @@ class SmartAdd365AccountViewModel @Inject constructor(
                 result.onSuccess { account ->
                     val savedAccount = Transfer365Account(
                         accountNumber = account?.accountNumber ?: uiState.accountNumber,
-                        name = uiState.names,
-                        lastname = uiState.lastNames,
+                        name = if (uiState.isFavorite) {
+                            account?.description?.ifEmpty { uiState.nickname } ?: uiState.nickname
+                        } else {
+                            uiState.names
+                        },
+                        lastname = if (uiState.isFavorite) "" else uiState.lastNames,
                         bankId = account?.idBank?.toString() ?: uiState.bank?.bankId.toString(),
                         bankName = account?.destinationBankDescription?.ifEmpty { uiState.bank?.bankName.orEmpty() }.orEmpty(),
                         accountTypeId = account?.idTypeAccount?.toString() ?: uiState.type?.typeId.toString(),

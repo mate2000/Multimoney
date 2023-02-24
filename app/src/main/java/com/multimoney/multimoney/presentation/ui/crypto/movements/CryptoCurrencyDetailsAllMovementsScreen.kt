@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.multimoney.presentation.ui.crypto.movements.CryptoCurrencyDetailsAllMovementsScreenViewModel.UIEvent.OnNavigateToReleaseTransaction
 import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
@@ -30,6 +31,10 @@ fun CryptoCurrencyDetailsAllMovementsScreen(
     }
     CryptoMovementsScreenContent(
         cryptoMovements = cryptoMovementsViewModel.uiState.cryptoMovements,
-        onBackPressed = { cryptoMovementsViewModel.onUIEvent(CryptoCurrencyDetailsAllMovementsScreenViewModel.UIEvent.OnNavigateBack) }
+        onBackPressed = { cryptoMovementsViewModel.onUIEvent(CryptoCurrencyDetailsAllMovementsScreenViewModel.UIEvent.OnNavigateBack) },
+        onNavigateToReleaseTransaction = {
+            cryptoMovementsViewModel.onUIEvent(
+                OnNavigateToReleaseTransaction(it)
+        )}
     )
 }

@@ -488,7 +488,7 @@ fun ProductContent(
             count = pagerCount,
             state = state
         ) { page ->
-            // verify if the user has crypto or movements to show the empty state
+            // verify if the user has crypto or crypto movements to show the card empty state
             val cryptoCurrencies = viewModel.balanceCredit?.balanceCryptoAccount?.items
             val movements = viewModel.uiState.cryptoCurrencyMovements.collectAsLazyPagingItems()
             val profileEnable = !cryptoCurrencies.isNullOrEmpty() || movements.itemCount > ZERO_MOVEMENTS
@@ -540,6 +540,11 @@ fun ProductContentExpanded(
             count = pagerCount,
             state = state
         ) { page ->
+            // verify if the user has crypto or crypto movements to show the card empty state
+            val cryptoCurrencies = viewModel.balanceCredit?.balanceCryptoAccount?.items
+            val movements = viewModel.uiState.cryptoCurrencyMovements.collectAsLazyPagingItems()
+            val profileEnable = !cryptoCurrencies.isNullOrEmpty() || movements.itemCount > ZERO_MOVEMENTS
+
             when (viewModel.uiState.expandedProductPageList?.get(page)?.product) {
                 ProductType.Credit.value -> CreditContent(viewModel = viewModel)
                 ProductType.Smart.value -> SmartContent(
@@ -549,7 +554,7 @@ fun ProductContentExpanded(
                 ProductType.Crypto.value -> CryptoContent(
                     userStatus = viewModel.uiState.userStatus,
                     cryptoBalance = viewModel.balanceCredit?.balanceCryptoAccount,
-                    cryptoEmptyState = viewModel.uiState.userStatus?.infoCrypto?.profileEnable ?: false,
+                    cryptoEmptyState = profileEnable,
                     clientBalanceHistory = sharedViewModel.uiState.cryptoHistoricalBalance,
                     openSmartCryptoAction = {
                         viewModel.onUIEvent(OnNavigateToSmartOriginationFlow(comingFromCrypto = true))

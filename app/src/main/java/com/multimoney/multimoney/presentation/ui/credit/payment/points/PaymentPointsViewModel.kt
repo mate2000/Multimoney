@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.credit.QueryGetPaymentPointsUseCase
 import com.multimoney.domain.model.credit.PaymentPoint
 import com.multimoney.domain.model.util.onFailure
@@ -98,6 +99,14 @@ class PaymentPointsViewModel @Inject constructor(
     private fun onCloseScreen() {
         uiState = uiState.copy(
             dialogParameters = uiState.dialogParameters.copy(
+                titleResource = if (idBrand == Brand.CostaRica.id) {
+                    string.payment_points_dialog_title
+                } else {
+                    string.payment_points_dialog_title_sv
+                },
+                descriptionResource = string.payment_points_dialog_description,
+                positiveResource = string.payment_points_dialog_positive_button,
+                negativeResource = string.payment_points_dialog_negative_button,
                 isActive = mutableStateOf(true),
                 positiveAction = { onUIEvent(OnDialogPositiveButtonClick) }
             )
@@ -133,13 +142,7 @@ class PaymentPointsViewModel @Inject constructor(
         // Interactions
         val queryValue: String = "",
         val pointsItemsList: List<PaymentPoint?> = listOf(),
-        val dialogParameters: DialogParameters = DialogParameters(
-            titleResource = string.payment_points_dialog_title,
-            descriptionResource = string.payment_points_dialog_description,
-            isActive = mutableStateOf(false),
-            positiveResource = string.payment_points_dialog_positive_button,
-            negativeResource = string.payment_points_dialog_negative_button
-        ),
+        val dialogParameters: DialogParameters = DialogParameters(),
         val isLoading: Boolean = false
     )
 

@@ -29,7 +29,7 @@ import javax.inject.Inject
 class CryptoCurrencyDetailsAllMovementsScreenViewModel @Inject constructor(
     private val queryGetCryptoCurrencyMovementsUseCase: GetCryptoCurrencyMovementsUseCase,
     private val savedStateHandle: SavedStateHandle
-): BaseViewModel(true) {
+) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())
         private set
@@ -59,6 +59,10 @@ class CryptoCurrencyDetailsAllMovementsScreenViewModel @Inject constructor(
         )
     }
 
+    private fun onNavigateToReleaseTransaction(cryptoItem: CryptoCurrencyMovement?) {
+        navigateTo("${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}/${Screen.CryptoCurrencyDetailsAllMovementsScreen.baseRoute}")
+    }
+
     data class UIState(
         val cryptoItem: String? = null,
         val user: String? = null,
@@ -73,13 +77,16 @@ class CryptoCurrencyDetailsAllMovementsScreenViewModel @Inject constructor(
             is UIEvent.OnNavigateBack -> navigateBack(popTo = Screen.CryptoWalletDetailsScreen.route, isRestart = false)
             is UIEvent.OnGetUserInfo -> setUserData()
             is UIEvent.GetCryptoMovements -> getCryptoMovements()
+            is UIEvent.OnNavigateToReleaseTransaction -> onNavigateToReleaseTransaction(event.cryptoItem)
         }
     }
 
     sealed interface UIEvent {
         object OnGetUserInfo : UIEvent
         object OnNavigateBack : UIEvent
-        object GetCryptoMovements: UIEvent
+        object GetCryptoMovements : UIEvent
+        data class OnNavigateToReleaseTransaction(val cryptoItem: CryptoCurrencyMovement?) :
+            UIEvent
     }
 
     companion object {

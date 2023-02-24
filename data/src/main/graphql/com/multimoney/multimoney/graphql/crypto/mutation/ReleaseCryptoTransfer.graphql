@@ -1,0 +1,32 @@
+mutation ReleaseCryptoTransfer(
+    $identification: String!,
+    $user: String!,
+    $market: String!,
+    $senderFullName: String!,
+    $reason: String!,
+    $platform: String!,
+    $idTransaction: String!
+){
+    releaseTransaction(
+        releaseTransactionInput: {
+            identification: $identification,
+            userResponse: true
+            idMovement: $idTransaction
+            sender: $senderFullName
+            shippingReason: $reason
+            shippingOrigin: $platform
+            market: $market
+            idBrand: 5
+            user: $user
+        }
+    ) {
+        withheld
+        userResponse
+        status
+        message
+        detail
+        haveError: _HaveError
+        errorMessage: _ErrorMessage
+        fullError: _FullError
+    }
+}

@@ -283,7 +283,7 @@ fun SmartAdd365AccountContent(viewModel: SmartAdd365AccountViewModel = hiltViewM
                             onValueChange = { nickname ->
                                 viewModel.onUIEvent(OnNicknameChanged(nickname))
                             },
-                            isRequired = true
+                            isRequired = false
                         )
                     }
                 } else if (viewModel.transferType == SmartTransferTypes.SmartToMobile.id) {

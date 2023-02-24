@@ -26,6 +26,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.ConfirmationBottomSheetContent
+import com.multimoney.multimoney.presentation.ui.crypto.sell.SellCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.util.calculateConfirmationBaseAmount
 import com.multimoney.multimoney.presentation.util.calculateConfirmationQuoteAmount
 import com.multimoney.multimoney.presentation.util.calculateConvertedCurrencyBalance
@@ -40,7 +41,8 @@ import kotlinx.coroutines.launch
 fun SellConfirmationBottomSheet(
     modalBottomSheetState: ModalBottomSheetState,
     coroutineScope: CoroutineScope,
-    viewModel: SellCurrencyScreenViewModel
+    viewModel: SellCurrencyScreenViewModel,
+    sharedViewModel: SellCryptoSharedViewModel
 ) {
     Column(modifier = Modifier
         .wrapContentSize()
@@ -115,10 +117,7 @@ fun SellConfirmationBottomSheet(
                 totalFee = viewModel.uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
             ),
             showAssetImage = false,
-            ibanAccountNumber = getMaskedAccount(
-                viewModel.ibanAccountNumber,
-                stringResource(id = R.string.payment_account_masked_text)
-            ),
+            ibanAccountNumber = sharedViewModel.getAccountNumber(stringResource(id = R.string.payment_account_masked_text)),
             buttonText = stringResource(id = R.string.crypto_sell_flow_confirmation_sell_screen_btn_text),
             asset = viewModel.asset,
             assetImageUrl = viewModel.assetImageUrl,

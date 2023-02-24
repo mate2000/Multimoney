@@ -58,20 +58,15 @@ fun VisaVerifyDepositScreen(
     viewModel: VisaVerifyDepositViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-
-    viewModel.onUIEvent(
-        OnStart(
-            stringResource(
-                id = string.whatsapp_deep_link,
-                PHONE_HARDCODED
-            )
-        )
+    val whatsAppLink = stringResource(
+        id = string.whatsapp_deep_link,
+        PHONE_HARDCODED
     )
 
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
-            onUIEvent(OnResendClick)
+            OnStart(whatsAppLink)
             baseEvent.collect { event ->
                 when (event) {
                     is OnOpenWhatsApp -> {
@@ -184,7 +179,7 @@ fun VisaVerifyDepositContent(
                             .fillMaxWidth()
                             .padding(top = 32.dp),
                         isError = uiState.microDepositError.first,
-                        errorMessage = stringResource(id = uiState.microDepositError.second)
+                        errorMessage = uiState.microDepositError.second
                     )
 
                     if (uiState.isTimerRunning) {

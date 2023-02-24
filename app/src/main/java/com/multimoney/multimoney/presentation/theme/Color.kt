@@ -75,6 +75,7 @@ val SemanticPositive800 = Color(0XFF0C290A)
 
 // Complementary 3
 val Complementary3500 = Color(0xFFFFBE11)
+val Notice = Color(0xFFFFD155)
 
 // GrayScale
 val DefaultWhite = Color(0xFFFFFFFF)
@@ -167,6 +168,7 @@ data class MultimoneyColors(
     val tipActionColor: Color,
     val creditNotApprovedText: Color,
     val labelText: Color,
+    val descriptionText: Color,
     val chipBackground: Color,
     val productChipBackground: Color,
     val shimmerItemColor: Color,
@@ -229,6 +231,7 @@ val DarkColorPalette = MultimoneyColors(
     tipActionColor = Primary300,
     creditNotApprovedText = WhiteTransparency80,
     labelText = WhiteTransparency80,
+    descriptionText = WhiteTransparency50,
     chipBackground = BlackTransparency20,
     shimmerItemColor = WhiteTransparency50,
     bottomNavigationDividerColor = GrayScale400,
@@ -290,6 +293,7 @@ val LightColorPalette = MultimoneyColors(
     tipActionColor = Primary300,
     creditNotApprovedText = WhiteTransparency80,
     labelText = WhiteTransparency80,
+    descriptionText = WhiteTransparency50,
     chipBackground = BlackTransparency20,
     shimmerItemColor = WhiteTransparency50,
     bottomNavigationDividerColor = GrayScale400,

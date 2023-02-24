@@ -18,9 +18,7 @@ import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.crypto.MarketCryptoCoin
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNTS_LIST
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.USER_CRYPTO_BALANCES
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoOperationSide
@@ -29,16 +27,17 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getCurrentTime
+import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.Calendar
-import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.util.*
+import javax.inject.Inject
 
 @OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
 class SellCryptoSharedViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val dataStorePreferences: DataStorePreferences,
 ) : BaseViewModel(true) {
 
@@ -61,7 +60,6 @@ class SellCryptoSharedViewModel @Inject constructor(
     val comingFromDetails: Boolean = marketCryptoCoin != null
 
     private fun setUserData() {
-
         viewModelScope.launch {
             idBrand = dataStorePreferences.getIdBrand().first().toInt()
             pkUser = dataStorePreferences.getPkUser().first()
@@ -75,26 +73,20 @@ class SellCryptoSharedViewModel @Inject constructor(
                 assetDescription = marketCryptoCoin?.description,
                 market = marketCryptoCoin?.baseAsset?.plus(abvCurrency),
                 cryptoNetWork = marketCryptoCoin?.cryptoNetwork,
-                assetImageBaseUrl = marketCryptoCoin?.url_image,
-                shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first(),
+                assetImageBaseUrl = marketCryptoCoin?.url_image
             )
         }
-
-        uiState = uiState.copy(
-            accounts = savedStateHandle.get<Array<SmartAccountSmall>>(SMART_ACCOUNTS_LIST)?.toList()
-                ?: listOf(),
-            userCryptoBalances = savedStateHandle.get<Array<BalanceCryptoAccountItems>>(
-                USER_CRYPTO_BALANCES
-            )?.toList()
-                ?: listOf()
-        )
         if (idBrand == Brand.ElSalvador.id) {
             onSetupAccountDetails(
                 smartAccountAvailableBalance = uiState.accounts.firstOrNull()?.totalBalance ?: 0.0,
                 idCurrency = uiState.accounts.firstOrNull()?.idCurrencyAccount
                     ?: CurrencyType.Dollar.id,
                 accountNumber = uiState.accounts.firstOrNull()?.accountNumber ?: "",
-                ibanAccountNumber = uiState.accounts.firstOrNull()?.ibanAccountNumber ?: "",
+                ibanAccountNumber = if (uiState.accounts.firstOrNull()?.ibanAccountNumber.isNullOrBlank()) {
+                    uiState.accounts.firstOrNull()?.accountNumber ?: ""
+                } else {
+                    uiState.accounts.firstOrNull()?.ibanAccountNumber ?: ""
+                },
                 accountToken = uiState.accounts.firstOrNull()?.accountToken ?: ""
             )
         }
@@ -188,6 +180,7 @@ class SellCryptoSharedViewModel @Inject constructor(
             accountToken = accountToken
         )
     }
+
     private fun onSetupVoucherDetails(
         assetAmount: String,
         approximateValue: String,
@@ -204,12 +197,26 @@ class SellCryptoSharedViewModel @Inject constructor(
             voucherExchangeRate = exchangeRate,
             voucherTotalCreditedAmountExchange = totalCreditedAmountExchange,
             voucherSellDate = getCurrentDate(Calendar.getInstance().time),
-            voucherSellTime = getCurrentTime(Calendar.getInstance().time)
+            voucherSellTime = getCurrentTime(Calendar.getInstance().time).lowercase()
         )
     }
+
+    fun getAccountNumber(maskedText: String): String {
+        return if (idBrand == Brand.ElSalvador.id) {
+            getMaskedAccount(uiState.accountNumber, maskedText, prefix = "")
+        } else {
+            getMaskedAccount(uiState.ibanAccountNumber, maskedText)
+        }
+    }
+
+    private fun onShowMaintenanceAlert() {
+        emitBaseEvent(BaseEvent.OnShowMaintenance)
+    }
+
     data class UIState(
         val currentStep: Int = PurchaseCryptoSteps.One.pageNumber,
         val isLoading: Boolean = false,
+        val isPaxosInMaintenance: Boolean = false,
         val accounts: List<SmartAccountSmall> = listOf(),
         val userCryptoBalances: List<BalanceCryptoAccountItems> = listOf(),
         val currentStepType: SellCryptoStep = SellCryptoStep.LIST_CRYPTO_CURRENCIES,
@@ -219,8 +226,6 @@ class SellCryptoSharedViewModel @Inject constructor(
         val smartAccountAvailableBalance: Double = 0.0,
         val accountNumber: String = "",
         val ibanAccountNumber: String = "",
-        var shouldDisplayDisclaimer: Boolean = true,
-        val dontShowAgainChecked: Boolean = false,
         val idCurrency: Int = CurrencyType.Dollar.id,
         val asset: String? = null,
         val assetDescription: String? = null,
@@ -235,8 +240,8 @@ class SellCryptoSharedViewModel @Inject constructor(
         val voucherTotalCreditedAmount: String = "",
         val voucherTotalCreditedAmountExchange: String = "",
         val voucherExchangeRate: String = "",
-        val voucherReferenceNumber: String= "",
-        val voucherSellDate: String ="",
+        val voucherReferenceNumber: String = "",
+        val voucherSellDate: String = "",
         val voucherSellTime: String = "",
         val comingFromDetails: Boolean = false,
         var previousAction: () -> Unit = {},
@@ -282,7 +287,17 @@ class SellCryptoSharedViewModel @Inject constructor(
                 event.totalCreditedAmountExchange,
                 event.referenceNumber
             )
+            is UIEvent.OnSetAccounts -> uiState = uiState.copy(
+                accounts = event.accounts,
+                userCryptoBalances = event.cryptoBalances
+            )
+            BaseEvent.OnShowMaintenance -> onShowMaintenanceAlert()
+            is UIEvent.SetPaxosMaintenanceState -> uiState = uiState.copy(isPaxosInMaintenance = event.isPaxosInMaintenance)
         }
+    }
+
+    sealed class BaseEvent {
+        object OnShowMaintenance : UIEvent()
     }
 
     sealed class UIEvent {
@@ -301,6 +316,7 @@ class SellCryptoSharedViewModel @Inject constructor(
             val accountNumber: String,
             val ibanAccountNumber: String
         ) : UIEvent()
+
         object OnNavigateHome : UIEvent()
         data class OnSetupVoucherDetails(
             val assetAmount: String,
@@ -309,13 +325,15 @@ class SellCryptoSharedViewModel @Inject constructor(
             val exchangeRate: String,
             val totalCreditedAmountExchange: String,
             val referenceNumber: String
-        ) :
-            UIEvent()
+        ) : UIEvent()
 
         object OnGetUserInfo : UIEvent()
         data class OnSetFlowStep(val step: SellCryptoStep) : UIEvent()
-
-
+        data class OnSetAccounts(
+            val accounts: List<SmartAccountSmall>,
+            val cryptoBalances: List<BalanceCryptoAccountItems>
+        ) : UIEvent()
+        data class SetPaxosMaintenanceState(val isPaxosInMaintenance: Boolean) : UIEvent()
     }
 
     companion object {

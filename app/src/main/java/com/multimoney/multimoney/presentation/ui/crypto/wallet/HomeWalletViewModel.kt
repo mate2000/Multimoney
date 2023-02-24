@@ -7,7 +7,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCase
-import com.multimoney.domain.model.accountsmart.SmartAccountSmall
 import com.multimoney.domain.model.balance.BalanceCryptoAccount
 import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.crypto.HistoricalBalanceClient
@@ -16,11 +15,19 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.*
+import com.multimoney.multimoney.presentation.navigation.CARD_STATUS
+import com.multimoney.multimoney.presentation.navigation.GLOBAL_CRYPTO_BALANCE
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.STATUS_CREDIT
+import com.multimoney.multimoney.presentation.navigation.STATUS_CRYPTO
+import com.multimoney.multimoney.presentation.navigation.STATUS_SMART
+import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
 import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
@@ -41,10 +48,6 @@ class HomeWalletViewModel @Inject constructor(
     var uiState by mutableStateOf(UiState())
         private set
 
-    private var smartAccounts: List<SmartAccountSmall>? = null
-    private var userCryptoBalances: List<BalanceCryptoAccountItems>? = null
-
-
     private fun onGetUserInfo() {
         uiState = uiState.copy(
             user = savedStateHandle[USER] ?: "",
@@ -58,10 +61,6 @@ class HomeWalletViewModel @Inject constructor(
             statusCrypto = savedStateHandle[STATUS_CRYPTO] ?: 0,
             cardStatus = savedStateHandle[CARD_STATUS] ?: 0
         )
-        smartAccounts =
-            savedStateHandle.get<Array<SmartAccountSmall>>(SMART_ACCOUNTS_LIST)?.toList()
-        userCryptoBalances =
-            savedStateHandle.get<Array<BalanceCryptoAccountItems>>(USER_CRYPTO_BALANCES)?.toList()
         viewModelScope.launch {
             uiState = uiState.copy(isCryptoTransferEnabled = cryptoHelper.isCryptoTransferEnabled())
         }
@@ -98,6 +97,10 @@ class HomeWalletViewModel @Inject constructor(
                 }
             }
             result.onFailure {
+                if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    navigateToMaintenance()
+                    return@onFailure
+                }
                 onFailure(it)
             }
             result.onLoading {
@@ -129,6 +132,10 @@ class HomeWalletViewModel @Inject constructor(
                 }
             }
             result.onFailure {
+                if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    navigateToMaintenance()
+                    return@onFailure
+                }
                 onFailure(it)
             }
             result.onLoading {
@@ -160,6 +167,10 @@ class HomeWalletViewModel @Inject constructor(
         )
     }
 
+    private fun navigateToMaintenance() {
+        navigateTo(Screen.MaintenanceAlertScreen.route)
+    }
+
     private fun onFailure(error: HttpError) {
         uiState = uiState.copy(
             isLoading = false,
@@ -176,21 +187,17 @@ class HomeWalletViewModel @Inject constructor(
                 encodeData(
                     cryptoItem
                 )
-            }/${encodeData(smartAccounts)}/${encodeData(userCryptoBalances)}"
+            }"
         )
     }
 
     private fun onNavigateToBuyCrypto() {
-        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${encodeData(smartAccounts)}/${Screen.CryptoWalletScreen.baseRoute}")
+        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${Screen.CryptoWalletScreen.baseRoute}")
     }
 
     private fun onNavigateToSellCrypto() {
         navigateTo(
-            "${Screen.CryptoSellFlow.baseRoute}/${Screen.CryptoWalletScreen.baseRoute}/${encodeData(smartAccounts)}/${
-                encodeData(
-                    userCryptoBalances
-                )
-            }"
+            "${Screen.CryptoSellFlow.baseRoute}/${Screen.CryptoWalletScreen.baseRoute}"
         )
     }
 

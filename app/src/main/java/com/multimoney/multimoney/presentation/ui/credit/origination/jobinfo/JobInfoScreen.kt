@@ -198,9 +198,7 @@ fun JobInfoScreen(
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             }),
-            labelText = if (sharedViewModel.crosseling) stringResource(id = R.string.credit_job_phone_number_crosseling) else stringResource(
-                id = R.string.credit_job_phone_number
-            ),
+            labelText = stringResource(id = R.string.credit_job_phone_number),
             modifier = Modifier.padding(top = 16.dp),
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.credit_job_phone_required),

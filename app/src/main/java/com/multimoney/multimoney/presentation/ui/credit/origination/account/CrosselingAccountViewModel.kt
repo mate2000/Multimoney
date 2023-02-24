@@ -20,8 +20,8 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.account.Cros
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class CrosselingAccountViewModel @Inject constructor(
@@ -154,9 +154,8 @@ class CrosselingAccountViewModel @Inject constructor(
     private fun getTextResources() {
         uiState = uiState.copy(
             titleResource = when (idBrand) {
-                Brand.ElSalvador.id -> R.string.crosseling_account_sv_title
-                Brand.Guatemala.id -> R.string.crosseling_account_gt_title
-                else -> R.string.crosseling_account_cr_title
+                Brand.CostaRica.id -> R.string.crosseling_account_cr_title
+                else -> R.string.crosseling_account_sv_title
             }
         )
     }
@@ -166,6 +165,7 @@ class CrosselingAccountViewModel @Inject constructor(
             bankSelected = bankList?.first { filter ->
                 filter?.description != clientBankAccount?.bank.orEmpty()
             },
+            clientBankAccountSelected = clientBankAccount,
             accountTypeSelectedString = clientBankAccount?.accountType.toString(),
             accountNumber = clientBankAccount?.sinpeAccount ?: ""
         )
@@ -187,7 +187,8 @@ class CrosselingAccountViewModel @Inject constructor(
                 bank,
                 uiState.bankSelected,
                 uiState.accountTypeSelectedString,
-                uiState.accountNumber
+                uiState.accountNumber,
+                uiState.clientBankAccountSelected?.typeAccount?.toString().orEmpty()
             )
         }
         nextStepAction()

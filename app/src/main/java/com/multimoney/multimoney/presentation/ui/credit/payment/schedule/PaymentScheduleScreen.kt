@@ -96,8 +96,9 @@ fun PaymentScheduleContent(
                     onRightButtonClick = { viewModel.onUIEvent(OnAlertCloseClick) }
                 )
                 CustomInformativeText(
-                    modifier = Modifier.fillMaxWidth().padding(top = 24.dp, start = 7.dp, end = 16.dp),
+                    modifier = Modifier.padding(top = 24.dp, start = 7.dp, end = 16.dp).fillMaxWidth(),
                     trailingIcon = drawable.ic_information_chip,
+                    iconSize = 44.dp,
                     trailingIconClick = { viewModel.onUIEvent(OnOpenDisclaimerDialog) },
                     text = stringResource(id = string.payment_schedule_title),
                     textStyle = Typography.h6.copy(color = MultimoneyTheme.colors.text)

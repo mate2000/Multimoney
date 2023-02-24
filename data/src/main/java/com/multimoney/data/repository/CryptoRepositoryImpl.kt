@@ -16,8 +16,11 @@ import com.multimoney.domain.model.crypto.GetHistoricalCurrencyPrices
 import com.multimoney.domain.model.crypto.GetListOfAvailableCryptoCoins
 import com.multimoney.domain.model.crypto.GetTransferFeeData
 import com.multimoney.domain.model.crypto.PricesQuoteAndCommissionData
+import com.multimoney.domain.model.crypto.ReleaseTransactionResponse
 import com.multimoney.domain.model.crypto.SellCryptoCurrencyHQRData
 import com.multimoney.domain.model.crypto.ValidateDepositAddressResponse
+import com.multimoney.domain.model.crypto.SendCryptoToAddressData
+import com.multimoney.domain.model.crypto.GetCryptoReceiveAddressData
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.CryptoRepository
@@ -257,4 +260,74 @@ class CryptoRepositoryImpl @Inject constructor(
         ),
         apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
     )
+
+    override suspend fun sendCryptoToAddress(
+        pkUser: Int,
+        identification: String,
+        destinationAddress: String,
+        feeId: String,
+        asset: String,
+        market: String,
+        cryptoNetwork: String,
+        amount: Double,
+        fee: Double,
+        internalFee: Double,
+        taxAmount: Double,
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<SendCryptoToAddressData>> = fetchData(
+        apolloCall = graphqlApi.mutationSendCryptoToAddress(
+            pkUser,
+            identification,
+            destinationAddress,
+            feeId,
+            asset,
+            market,
+            cryptoNetwork,
+            amount,
+            fee,
+            internalFee,
+            taxAmount,
+            idBrand,
+            user
+        ),
+        apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
+    )
+
+    override suspend fun getCryptoCurrencyReceiveAddress(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        asset: String,
+    crypto_network: String,
+    ): Flow<MultimoneyResult<GetCryptoReceiveAddressData>> = fetchData(
+        apolloCall = graphqlApi.queryGetCryptoReceiveAddress(
+            user,
+            idBrand,
+            identification,
+            asset,
+            crypto_network
+        ),
+        apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
+    )
+
+    override suspend fun releaseCryptoTransfer(
+        identification: String,
+        user: String,
+        market: String,
+        senderFullName: String,
+        reason: String,
+        platform: String,
+        idTransaction: String
+    ): Flow<MultimoneyResult<ReleaseTransactionResponse>> = fetchData(
+        apolloCall = graphqlApi.mutationReleaseTransfer(
+            identification,
+            user,
+            market,
+            senderFullName,
+            reason,
+            platform,
+            idTransaction
+        ),
+        apolloCallMapper = { data -> Success(data.mapToDomainModel())})
 }

@@ -78,7 +78,6 @@ fun RegisteredUserPasswordScreen(
             biometricPromptTitle = stringResource(id = string.biometric_dialog_title),
             biometricPromptDescription = stringResource(id = string.biometric_dialog_description),
             biometricPromptNegative = stringResource(id = string.cancel),
-            biometricDialogDescription = stringResource(id = string.active_biometric_message),
             biometricDialogSuccessDescription = stringResource(id = string.dialog_success_biometric_description),
             biometricDialogFailureDescription = stringResource(id = string.dialog_failure_biometric_description)
         )

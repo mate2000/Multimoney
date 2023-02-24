@@ -94,41 +94,14 @@ fun CreditScreen(
     }
 
     if (viewModel.idBrand.isNotEmpty()) {
-        if (viewModel.idBrand.toInt() == Brand.Guatemala.id) {
-            viewModel.onUIEvent(
-                OnSetCloseDialogTexts(
-                    if (viewModel.crosseling) {
-                        R.string.crosseling_close_dialog_title
-                    } else {
-                        R.string.credit_close_dialog_gt_title
-                    },
-                    stringResource(
-                        id = if (viewModel.crosseling) {
-                            R.string.crosseling_close_dialog_description
-                        } else {
-                            R.string.credit_close_dialog_gt_description
-                        }
-                    )
+        viewModel.onUIEvent(
+            OnSetCloseDialogTexts(
+                string.crosseling_close_dialog_title,
+                stringResource(
+                    id = string.crosseling_close_dialog_description
                 )
             )
-        } else {
-            viewModel.onUIEvent(
-                OnSetCloseDialogTexts(
-                    if (viewModel.crosseling) {
-                        R.string.crosseling_close_dialog_title
-                    } else {
-                        R.string.credit_close_dialog_title
-                    },
-                    stringResource(
-                        id = if (viewModel.crosseling) {
-                            R.string.crosseling_close_dialog_description
-                        } else {
-                            R.string.credit_close_dialog_description
-                        }
-                    )
-                )
-            )
-        }
+        )
     }
 
     if (viewModel.uiState.loadContent) {
@@ -147,7 +120,7 @@ fun CreditScreen(
                 Column {
                     TopNavBar(
                         isLeftButtonVisible = viewModel.uiState.currentStep != CreditStep.One.id && viewModel.uiState.currentStep < CreditStep.Eight.id,
-                        isRightButtonVisible = viewModel.uiState.currentStep <= CreditStep.One.id || viewModel.crosseling,
+                        isRightButtonVisible = viewModel.uiState.currentStep > CreditStep.One.id || viewModel.crosseling,
                         onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
                         onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) }
                     )
@@ -213,6 +186,7 @@ fun CreditScreen(
             negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
             openDialogCustom = viewModel.uiState.openDialog.isActive,
             onPositiveAction = viewModel.uiState.openDialog.positiveAction,
+            onNegativeAction = viewModel.uiState.openDialog.negativeAction,
             onDismissAction = viewModel.uiState.openDialog.dismissAction
         )
     }

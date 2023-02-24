@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
 import androidx.lifecycle.SavedStateHandle
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.credit.MutationSaveClientBankAccountUseCase
 import com.multimoney.domain.interaction.credit.QueryBanksAndRegularExpressionUseCase
 import com.multimoney.domain.model.credit.CreditCatalog
@@ -18,12 +17,12 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
+import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getRegex
 import com.multimoney.multimoney.presentation.util.matchRegex
@@ -66,16 +65,10 @@ class DisbursementAddAccountViewModel @Inject constructor(
     }
 
     private fun getTextResources() {
-        uiState = uiState.copy(
-            titleResource = when (idBrand) {
-                Brand.ElSalvador.id -> R.string.disbursement_account_sv_title
-                else -> R.string.disbursement_account_gt_title
-            }
-        )
+        uiState = uiState.copy(titleResource = R.string.disbursement_account_sv_title)
     }
 
     private fun onStart() {
-
         onCallQueryBanksAndRegularExpressions(
             pkUser = pkUser.toInt(),
             user = email,
@@ -143,7 +136,7 @@ class DisbursementAddAccountViewModel @Inject constructor(
 
     private fun onAccountTypeValueChange(regulaExpression: RegularExpression?) {
         uiState = uiState.copy(
-            accountTypeSelectedString = regulaExpression?.description ?: "",
+            accountTypeSelectedString = regulaExpression?.key ?: "",
             accountTypeSelected = regulaExpression,
             accountNumber = "",
             accountNumberError = Pair(false, R.string.empty)
@@ -263,5 +256,4 @@ class DisbursementAddAccountViewModel @Inject constructor(
     companion object {
         const val MIDDLE_DASH = "-"
     }
-
 }

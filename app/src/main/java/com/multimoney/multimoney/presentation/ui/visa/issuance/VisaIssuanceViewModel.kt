@@ -62,18 +62,6 @@ class VisaIssuanceViewModel @Inject constructor(
 
     private fun getTextResources() {
         when {
-            idBrand == Brand.ElSalvador.id && nfcHelper.isNfcSupported() -> {
-                uiState = uiState.copy(
-                    titleResource = R.string.visa_issuance_sv_nfc_title,
-                    subtitleResource = R.string.visa_issuance_sv_nfc_subtitle
-                )
-            }
-            idBrand == Brand.ElSalvador.id && nfcHelper.isNfcSupported().not() -> {
-                uiState = uiState.copy(
-                    titleResource = R.string.visa_issuance_sv_no_nfc_title,
-                    subtitleResource = R.string.visa_issuance_sv_no_nfc_subtitle
-                )
-            }
             idBrand == Brand.CostaRica.id && nfcHelper.isNfcSupported() -> {
                 uiState = uiState.copy(
                     titleResource = R.string.visa_issuance_cr_nfc_title,
@@ -86,16 +74,16 @@ class VisaIssuanceViewModel @Inject constructor(
                     subtitleResource = R.string.visa_issuance_cr_no_nfc_subtitle
                 )
             }
-            idBrand == Brand.Guatemala.id && nfcHelper.isNfcSupported() -> {
+            (idBrand == Brand.Guatemala.id || idBrand == Brand.ElSalvador.id) && nfcHelper.isNfcSupported() -> {
                 uiState = uiState.copy(
-                    titleResource = R.string.visa_issuance_gt_nfc_title,
-                    subtitleResource = R.string.visa_issuance_gt_nfc_subtitle
+                    titleResource = R.string.visa_issuance_sv_nfc_title,
+                    subtitleResource = R.string.visa_issuance_sv_nfc_subtitle
                 )
             }
-            idBrand == Brand.Guatemala.id && nfcHelper.isNfcSupported().not() -> {
+            (idBrand == Brand.Guatemala.id || idBrand == Brand.ElSalvador.id) && nfcHelper.isNfcSupported().not() -> {
                 uiState = uiState.copy(
-                    titleResource = R.string.visa_issuance_gt_no_nfc_title,
-                    subtitleResource = R.string.visa_issuance_gt_no_nfc_subtitle
+                    titleResource = R.string.visa_issuance_sv_no_nfc_title,
+                    subtitleResource = R.string.visa_issuance_sv_no_nfc_subtitle
                 )
             }
         }

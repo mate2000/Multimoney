@@ -109,8 +109,8 @@ class DisbursementAmountViewModel @Inject constructor(
     private fun onStart() {
         uiState = uiState.copy(
             titleResource = when (idBrand) {
-                Brand.Guatemala.id -> R.string.disbursement_amount_gt_title
-                else -> R.string.disbursement_amount_title
+                Brand.CostaRica.id -> R.string.disbursement_amount_title
+                else -> R.string.disbursement_amount_sv_title
             },
             isMultipleCurrency = (currencyItems?.lastIndex ?: INITIAL_CURRENCY_INDEX) > INITIAL_CURRENCY_INDEX,
             currencyItems = currencyItems?.map { it.getCurrencyFromId().symbol } ?: listOf(),

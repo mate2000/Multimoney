@@ -87,10 +87,7 @@ fun CardNonPreApprovedCredit(
             )
             Text(
                 text = stringResource(
-                    id = when (idBrand) {
-                        Brand.ElSalvador.id -> string.home_product_sv_non_pre_approved_credit_description
-                        else -> string.home_product_gt_non_pre_approved_credit_description
-                    }
+                    id = string.home_product_sv_non_pre_approved_credit_description
                 ),
                 modifier = Modifier.padding(top = 8.dp),
                 style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),

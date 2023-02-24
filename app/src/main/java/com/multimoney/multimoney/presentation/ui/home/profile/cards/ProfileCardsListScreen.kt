@@ -170,9 +170,14 @@ fun ProfileCardList(
     viewModel.uiState.cardVDListVerified?.let { cardList ->
         if (cardList.isNotEmpty()) {
             CardListDetail(
-                titleResource = string.payment_cards_verified_list_title,
                 listItems = cardList,
-                onEndIconClick = { card -> viewModel.onUIEvent(ProfileCardListViewModel.UIEvent.OnCardThreePointsSelected(card)) }
+                onEndIconClick = { card ->
+                    viewModel.onUIEvent(
+                        ProfileCardListViewModel.UIEvent.OnCardThreePointsSelected(
+                            card
+                        )
+                    )
+                }
             )
         }
     }
@@ -181,7 +186,13 @@ fun ProfileCardList(
             CardListDetail(
                 titleResource = string.payment_cards_not_verified_list_title,
                 listItems = cardList,
-                onEndIconClick = { card -> viewModel.onUIEvent(ProfileCardListViewModel.UIEvent.OnCardThreePointsSelected(card)) },
+                onEndIconClick = { card ->
+                    viewModel.onUIEvent(
+                        ProfileCardListViewModel.UIEvent.OnCardThreePointsSelected(
+                            card
+                        )
+                    )
+                },
                 requireIcon = true
             )
         }

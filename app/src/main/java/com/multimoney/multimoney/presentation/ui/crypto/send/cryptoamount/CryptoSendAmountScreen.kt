@@ -78,9 +78,17 @@ fun CryptoSendAmountScreen(
                     sharedViewModel.uiState.currencyDollarBalance.toString(),
                     sharedViewModel.uiState.cryptoCurrencyPrice
                 ).toDouble(),
-                currencyPrice = sharedViewModel.uiState.cryptoCurrencyPrice
+                currencyPrice = sharedViewModel.uiState.cryptoCurrencyPrice,
+                openMaintenanceAction = {
+                    sharedViewModel.onUIEvent(
+                        CryptoSendSharedViewModel.BaseEvent.OnShowMaintenance
+                    )
+                }
             )
         )
+    }
+    LaunchedEffect(key1 = viewModel.uiState.isTransformationCurrency.value) {
+        viewModel.onUIEvent(CryptoSendAmountViewModel.UIEvent.OnAmountChanged(""))
     }
 
     when(viewModel.uiState.transferStatus) {

@@ -28,8 +28,12 @@ fun NavGraphBuilder.homeNavGraph(
         composable(route = Screen.HomeScreen.route) { backStackEntry ->
             val viewModel = hiltViewModel<HomeViewModel>()
             HomeScreen(
-                isRestart = navController.currentBackStackEntry?.savedStateHandle?.getLiveData<Boolean>(PREVIOUS_IS_RESTART)?.observeAsState()?.value ?: true,
-                homeState = navController.currentBackStackEntry?.savedStateHandle?.getLiveData<HomeState>(HOME_STATE)?.observeAsState()?.value ?: HomeState.OLD_STATE,
+                isRestart = navController.currentBackStackEntry?.savedStateHandle?.getLiveData<Boolean>(
+                    PREVIOUS_IS_RESTART
+                )?.observeAsState()?.value ?: true,
+                homeState = navController.currentBackStackEntry?.savedStateHandle?.getLiveData<HomeState>(
+                    HOME_STATE
+                )?.observeAsState()?.value ?: HomeState.OLD_STATE,
                 navController = navController,
                 onInnerNavigate = { innerNavController, navEvent ->
                     innerNavController.navigate(navEvent.route) {
@@ -44,6 +48,7 @@ fun NavGraphBuilder.homeNavGraph(
                 },
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
+                        launchSingleTop = true
                         popUpTo(it.popTo) { inclusive = true }
                     }
                 },
@@ -70,8 +75,14 @@ fun NavGraphBuilder.homeNavGraph(
                     navController.navigate(it.route)
                 },
                 onPopBackStack = {
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        HOME_STATE,
+                        it.homeState
+                    )
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,

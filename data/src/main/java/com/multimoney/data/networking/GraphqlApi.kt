@@ -99,6 +99,7 @@ import com.multimoney.data.networking.graphql.apollomodel.ProfessionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.QuickActionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.RelatedContactsByPhoneQuery
 import com.multimoney.data.networking.graphql.apollomodel.RelationshipQuery
+import com.multimoney.data.networking.graphql.apollomodel.ReleaseCryptoTransferMutation
 import com.multimoney.data.networking.graphql.apollomodel.RequestChangeDeviceMutation
 import com.multimoney.data.networking.graphql.apollomodel.ResendMicroDepositVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveAutomatedSmartAccountMutation
@@ -134,6 +135,7 @@ import com.multimoney.data.networking.graphql.apollomodel.ValidationSecurityQuer
 import com.multimoney.data.networking.graphql.apollomodel.type.BeneficiaryRequestDtoInput
 import com.multimoney.data.networking.graphql.apollomodel.type.ContactsInput
 import com.multimoney.data.networking.graphql.apollomodel.type.GetCountry
+import com.multimoney.data.networking.graphql.apollomodel.GetCryptoReceiveAddressQuery
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.RelatedContact
 import com.multimoney.domain.model.credit.CreditInfoQuestion
@@ -2149,7 +2151,9 @@ class GraphqlApi @Inject constructor(
         destinationBankId: Int,
         description: String,
         identificationNumber: String,
-        identificationTypeAccount: Int
+        identificationTypeAccount: Int,
+        destinationCurrencyId: Int,
+        document: String
     ): ApolloCall<AddACHAccountMutation.Data> = apolloAuthorizedClient.mutation(
         AddACHAccountMutation(
             idBrand = idBrand,
@@ -2161,7 +2165,23 @@ class GraphqlApi @Inject constructor(
             destinationBankId = destinationBankId,
             description = description,
             identificationNumber = identificationNumber,
-            identificationTypeAccount = identificationTypeAccount
+            identificationTypeAccount = identificationTypeAccount,
+            destinationCurrencyId = destinationCurrencyId,
+            document = document
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryACHTransferFavoriteList(
+        idBrand: Int,
+        user: String,
+        isFavorite: Boolean,
+        identificationNumber: String
+    ): ApolloCall<ACHTransferFavoriteListQuery.Data> = apolloAuthorizedClient.query(
+        ACHTransferFavoriteListQuery(
+            idBrand = idBrand,
+            user = user,
+            isFavorite = isFavorite,
+            identificationNumber = identificationNumber,
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -2261,21 +2281,6 @@ class GraphqlApi @Inject constructor(
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
-    fun queryACHTransferFavoriteList(
-        user: String,
-        idBrand: Int,
-        isFavorite: Boolean,
-        identification: String,
-    ): ApolloCall<ACHTransferFavoriteListQuery.Data> =
-        apolloAuthorizedClient.query(
-            ACHTransferFavoriteListQuery(
-                Optional.presentIfNotNull(user),
-                Optional.presentIfNotNull(idBrand),
-                isFavorite,
-                Optional.presentIfNotNull(identification),
-            )
-        ).fetchPolicy(FetchPolicy.NetworkOnly)
-
     fun querySmartAccounts(
         user: String,
         identification: String,
@@ -2310,6 +2315,26 @@ class GraphqlApi @Inject constructor(
             idAccountRequest
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationReleaseTransfer(
+        identification: String,
+        user: String,
+        market: String,
+        senderFullName: String,
+        reason: String,
+        platform: String,
+        idTransaction: String
+    ): ApolloCall<ReleaseCryptoTransferMutation.Data> = apolloAuthorizedClient.mutation(
+        ReleaseCryptoTransferMutation(
+            identification,
+            user,
+            market,
+            senderFullName,
+            reason,
+            platform,
+            idTransaction
+        )
+    )
 
     fun getTransferCommission(
         user: String,
@@ -2358,6 +2383,22 @@ class GraphqlApi @Inject constructor(
             taxAmount,
             idBrand,
             user
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryGetCryptoReceiveAddress(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        asset: String,
+        crypto_network: String
+    ): ApolloCall<GetCryptoReceiveAddressQuery.Data> = apolloAuthorizedClient.query(
+        GetCryptoReceiveAddressQuery(
+            user,
+            idBrand,
+            identification,
+            asset,
+            crypto_network
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

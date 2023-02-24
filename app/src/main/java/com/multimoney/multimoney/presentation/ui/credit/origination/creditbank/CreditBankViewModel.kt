@@ -91,7 +91,7 @@ class CreditBankViewModel @Inject constructor(
 
     private fun onAccountTypeValueChange(regulaExpression: RegularExpression?) {
         uiState = uiState.copy(
-            accountTypeSelectedString = regulaExpression?.description ?: "",
+            accountTypeSelectedString = regulaExpression?.key ?: "",
             accountTypeSelected = regulaExpression,
             accountNumber = "",
             accountNumberError = Pair(false, R.string.empty)
@@ -130,7 +130,8 @@ class CreditBankViewModel @Inject constructor(
             bank,
             uiState.bankSelected,
             uiState.accountTypeSelectedString,
-            uiState.accountNumber
+            uiState.accountNumber,
+            uiState.accountTypeSelected?.pkRegularExpression.toString()
         )
         nextStepAction()
     }

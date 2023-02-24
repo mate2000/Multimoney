@@ -29,13 +29,13 @@ fun CardListDetail(
     requireIcon: Boolean = false
 ) {
     Text(
-        modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
+        modifier = Modifier.padding(start = 16.dp, end = 16.dp),
         text = stringResource(id = titleResource),
         style = Typography.subtitle1.copy(fontWeight = FontWeight.SemiBold),
         color = MultimoneyTheme.colors.subTitleText,
         textAlign = TextAlign.Left
     )
-    LazyColumn(modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
+    LazyColumn(modifier = Modifier.padding(start = 16.dp, end = 16.dp)) {
         items(listItems) { card ->
             CustomInfoButton(
                 modifier = Modifier

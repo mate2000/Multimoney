@@ -43,10 +43,10 @@ import com.multimoney.multimoney.presentation.util.getDeviceManufacture
 import com.multimoney.multimoney.util.NovoHelper
 import com.novopayment.sdk.vts.NovoVTS
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
 import java.util.Date
 import javax.inject.Inject
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class VisaTokenizationWaitingViewModel @Inject constructor(
@@ -261,21 +261,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
             )
         }
         else -> {
-            if (idBrand == Brand.Guatemala.id) {
-                Pair(
-                    R.drawable.ic_novo_waiting_creditcard_outline,
-                    buildAnnotatedString {
-                        withStyle(
-                            style = Typography.body1.toSpanStyle().copy(fontWeight = FontWeight.SemiBold, color = color)
-                        ) {
-                            append("${context.getString(R.string.visa_tokenization_waiting_description_three_bold_gt)} ")
-                        }
-                        withStyle(style = Typography.body1.toSpanStyle().copy(color = color)) {
-                            append(context.getString(R.string.visa_tokenization_waiting_description_three_gt))
-                        }
-                    }
-                )
-            } else {
+            if (idBrand == Brand.CostaRica.id) {
                 Pair(
                     R.drawable.ic_novo_waiting_creditcard_outline,
                     buildAnnotatedString {
@@ -286,6 +272,20 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
                         }
                         withStyle(style = Typography.body1.toSpanStyle().copy(color = color)) {
                             append(context.getString(R.string.visa_tokenization_waiting_description_three))
+                        }
+                    }
+                )
+            } else {
+                Pair(
+                    R.drawable.ic_novo_waiting_creditcard_outline,
+                    buildAnnotatedString {
+                        withStyle(
+                            style = Typography.body1.toSpanStyle().copy(fontWeight = FontWeight.SemiBold, color = color)
+                        ) {
+                            append("${context.getString(R.string.visa_tokenization_waiting_description_three_bold_sv)} ")
+                        }
+                        withStyle(style = Typography.body1.toSpanStyle().copy(color = color)) {
+                            append(context.getString(R.string.visa_tokenization_waiting_description_three_sv))
                         }
                     }
                 )
@@ -313,18 +313,19 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
             alertResultIconResource = R.drawable.ic_error_symbol,
             alertResultTitleResource = R.string.card_tokenization_error_title,
             alertResultDescriptionResource = when (idBrand) {
-                Brand.Guatemala.id -> R.string.card_tokenization_error_description_gt
-                else -> R.string.card_tokenization_error_description_sv_cr
+                Brand.CostaRica.id -> R.string.card_tokenization_error_description_cr
+                else -> R.string.card_tokenization_error_description_sv
+
             },
             alertResultButtonResource = R.string.link
         )
     }
 
     fun getDescriptionTokenizationSuccess() =
-        if (idBrand == Brand.Guatemala.id) {
-            R.string.visa_tokenization_success_description_gt
-        } else {
+        if (idBrand == Brand.CostaRica.id) {
             R.string.visa_tokenization_success_description
+        } else {
+            R.string.visa_tokenization_success_description_sv
         }
 
     data class UIState(

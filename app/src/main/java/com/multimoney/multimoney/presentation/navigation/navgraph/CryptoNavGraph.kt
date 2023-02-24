@@ -17,6 +17,7 @@ import com.multimoney.multimoney.presentation.navigation.HOME_STATE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.ID_TRANSACTION
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.STATUS_CREDIT
 import com.multimoney.multimoney.presentation.navigation.STATUS_CRYPTO
@@ -30,6 +31,7 @@ import com.multimoney.multimoney.presentation.ui.crypto.movements.CryptoCurrency
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoFlow
 import com.multimoney.multimoney.presentation.ui.crypto.receive.CryptoReceiveFlowScreen
 import com.multimoney.multimoney.presentation.ui.crypto.sell.SellCryptoFlow
+import com.multimoney.multimoney.presentation.ui.crypto.transferin.AmountExceededFormScreen
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWallet
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail.WalletCurrencyDetailsScreen
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
@@ -326,7 +328,50 @@ fun NavGraphBuilder.cryptoNavGraph(
         composable(route = Screen.MaintenanceAlertScreen.route) {
             MaintenanceAlertScreen(
                 onBackToHomeAction = {
-                    navController.popBackStack()
+                    navController.navigate(Screen.HomeScreen.route)
+                }
+            )
+        }
+        composable(
+            route = Screen.ReleaseTransactionScreen.route,
+            arguments = listOf(
+                navArgument(CRYPTO_ASSET) {
+                    nullable = true
+                    defaultValue = null
+                    type = NavType.StringType
+                },
+                navArgument(ID_TRANSACTION) {
+                    nullable = true
+                    defaultValue = null
+                    type = NavType.StringType
+                },
+                navArgument(PREVIOUS_SCREEN) {
+                    nullable = true
+                    defaultValue = null
+                    type = NavType.StringType
+                }
+            )
+        ) {
+            AmountExceededFormScreen(
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                },
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        HOME_STATE,
+                        it.homeState
+                    )
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
                 }
             )
         }

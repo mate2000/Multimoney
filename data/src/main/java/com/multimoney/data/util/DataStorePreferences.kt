@@ -83,6 +83,11 @@ class DataStorePreferences @Inject constructor(
 
     fun isBiometricsEnabled(): Flow<Boolean> = getData(BIOMETRICS_ENABLED_KEY, false)
 
+    suspend fun isSessionDuplicated(isSessionEnabled: Boolean) =
+        setData(SESSION_DUPLICATED_KEY, isSessionEnabled)
+
+    fun isSessionDuplicated(): Flow<Boolean> = getData(SESSION_DUPLICATED_KEY, false)
+
     suspend fun isForceShowBiometricPrompt(isForceShowBiometricPrompt: Boolean) =
         setData(FORCE_SHOW_BIOMETRICS_PROMPT, isForceShowBiometricPrompt)
 
@@ -165,6 +170,7 @@ class DataStorePreferences @Inject constructor(
         private val USER_PHONE_NUMBER_WITH_CODE_KEY = stringPreferencesKey("user_phone_number_with_code_key")
         private val USER_PASSWORD_KEY = stringPreferencesKey("user_password_key")
         private val BIOMETRICS_ENABLED_KEY = booleanPreferencesKey("biometrics_enabled_key")
+        private val SESSION_DUPLICATED_KEY = booleanPreferencesKey("session_duplicated_key")
         private val FORCE_SHOW_BIOMETRICS_PROMPT = booleanPreferencesKey("force_show_biometrics_prompt")
         private val ON_BOARDING_ENABLED_KEY = booleanPreferencesKey("on_boarding_enabled_key")
         private val CONTACT_PERMISSION_STATE_KEY = booleanPreferencesKey("contact_permission_state_key")

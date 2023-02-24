@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +28,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -40,6 +42,7 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.accountsmart.PhoneSmart
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
+import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme.colors
 import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -49,6 +52,7 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnAddToFavoriteAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnCallQueryRelatedContactsByPhoneUseCase
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnContactClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnHideAccountAddedToFavoriteToast
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.mycontact.MyContactsTransferViewModel.UIEvent.OnQueryValueChange
@@ -76,6 +80,8 @@ fun MyContactsTransferScreen(
     viewModel: MyContactsTransferViewModel = hiltViewModel()
 ) {
     val focusManager = LocalFocusManager.current
+    val activity = LocalContext.current.findActivity()
+    val accountAddedToFavoriteToastText = stringResource(id = string.smart_account_transfer_added_To_Favorite_title)
 
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnCallQueryRelatedContactsByPhoneUseCase)
@@ -181,9 +187,9 @@ fun MyContactsTransferScreen(
                 ContactList(
                     contactList = viewModel.uiState.relatedContactList,
                     searchedString = viewModel.uiState.queryValue,
-                    onEndIconClick = { contact ->
+                    onEndIconClick = { contacts ->
                         viewModel.onUIEvent(
-                            OnAddToFavoriteAccountClick(contact)
+                            OnAddToFavoriteAccountClick(contacts)
                         )
                     },
                     onContactClick = { accounts ->
@@ -209,6 +215,12 @@ fun MyContactsTransferScreen(
     )
     LoadingIndicator(viewModel.uiState.isLoading)
     BackHandler { viewModel.onUIEvent(OnNavigateBack) }
+
+    if (viewModel.uiState.toastIsVisible) {
+        Toast.makeText(activity, accountAddedToFavoriteToastText, Toast.LENGTH_LONG).show()
+        viewModel.onUIEvent(OnHideAccountAddedToFavoriteToast)
+    }
+
 }
 
 @Composable
@@ -244,7 +256,7 @@ fun EmptyContactsText(idBrand: Int) {
 fun ContactList(
     contactList: Map<String, List<PhoneSmart?>>,
     searchedString: String,
-    onEndIconClick: (contact: PhoneSmart) -> Unit,
+    onEndIconClick: (contact: List<PhoneSmart?>) -> Unit,
     onContactClick: (contact: List<PhoneSmart?>) -> Unit
 ) {
     LazyColumn(modifier = Modifier.padding(top = 20.dp, start = 16.dp, end = 16.dp)) {
@@ -273,7 +285,7 @@ fun ContactList(
                         },
                         endIcon = R.drawable.ic_options,
                         onEndIconClick = {
-                            onEndIconClick(firstAccount)
+                            onEndIconClick(contact)
                         },
                         onClick = {
                             onContactClick(contact)

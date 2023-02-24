@@ -149,11 +149,8 @@ private fun Transfer365AmountBottomSheet(viewModel: Transfer365AmountViewModel =
         toTitle = viewModel.amountUIState.destinyAccountDisplay?.sheetTitle ?: stringResource(
             viewModel.amountUIState.destinyAccountDisplay?.sheetTitleResource ?: R.string.empty
         ),
-        toSubtitle = viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitle
-            ?: stringResource(
-                viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitleResource
-                    ?: R.string.empty
-            ),
+        toSubtitle = viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitle,
+        toSubtitle2 = viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitle2,
         toIcon = viewModel.amountUIState.destinyAccountDisplay?.icon,
         titleIcon = if (viewModel.transfer365Account.isFavorite) R.drawable.ic_star_filled else null,
         motive = viewModel.amountUIState.motive,

@@ -122,6 +122,7 @@ const val STATUS_SMART = "status_smart"
 const val STATUS_CRYPTO = "status_crypto"
 const val CARD_STATUS = "card_status"
 const val CRYPTO_ASSET = "asset"
+const val ID_TRANSACTION = "id_transaction"
 const val DESCRIPTION_CURRENCY = "description_currency"
 const val CONTACTS = "contacts"
 const val USER_DATA = "user_data"
@@ -613,8 +614,13 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
      * @param TRANSFER_TYPE: Int id indicating transfer type (SmartToOther or SmartToMobile)
      */
     object SmartAdd365AccountScreen : Screen(
-        "smart_add_365_account_screen/{$ID_BRAND}/{$USER}/{$ORIGIN_ACCOUNT}/{$TRANSFER_TYPE}",
+        "smart_add_365_account_screen/{$ID_BRAND}/{$USER}/{$ORIGIN_ACCOUNT}/{$IDENTIFICATION}/{$TRANSFER_TYPE}/{$PREVIOUS_SCREEN}",
         "smart_add_365_account_screen"
+    )
+
+    object SmartACHAccountsListScreen : Screen(
+        "smart_ach_account_list/{$SMART_ACCOUNT}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}",
+        "smart_ach_account_list"
     )
 
     object SmartTransferFavoriteAccountScreen : Screen(
@@ -675,6 +681,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object MaintenanceAlertScreen : Screen(route = "maintenance_alert_screen")
 
     object QrCodeScannerScreen : Screen(route = "qr_code_scanner_screen")
+
+    object ReleaseTransactionScreen : Screen(
+        route = "release_transaction/{$CRYPTO_ASSET}/{$ID_TRANSACTION}/{$PREVIOUS_SCREEN}",
+        baseRoute = "release_transaction"
+
+    )
 
     object CryptoReceiveFlowScreen : Screen(
         route = "crypto_receive_flow/{$USER}/{$ID_BRAND}?$ITEM_CRYPTO_MARKET={$ITEM_CRYPTO_MARKET}",

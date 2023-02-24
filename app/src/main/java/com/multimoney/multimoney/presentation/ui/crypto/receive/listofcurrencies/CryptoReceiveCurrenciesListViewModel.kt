@@ -17,7 +17,7 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
 import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,6 +34,9 @@ class CryptoReceiveCurrenciesListViewModel @Inject constructor(
 
     var uiState by mutableStateOf(UiState())
         private set
+
+    //maintenance event
+    var openMaintenanceAction = {}
 
     private fun onGetUserInfo() {
         viewModelScope.launch {
@@ -68,6 +71,10 @@ class CryptoReceiveCurrenciesListViewModel @Inject constructor(
                     }
                 }
                 result.onFailure {
+                    if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                        openMaintenanceAction()
+                        return@onFailure
+                    }
                     onFailure(it)
                 }
                 result.onLoading {
@@ -88,6 +95,7 @@ class CryptoReceiveCurrenciesListViewModel @Inject constructor(
             is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
             is UIEvent.OnGetUserInfo -> onGetUserInfo()
             is UIEvent.OnGetAvailableListOfCryptoCoins -> onGetAvailableListOfCryptoCoins()
+            is UIEvent.OnSetOpenMaintenanceAction -> openMaintenanceAction = event.action
         }
     }
 
@@ -116,5 +124,6 @@ class CryptoReceiveCurrenciesListViewModel @Inject constructor(
         object OnGetUserInfo : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnGetAvailableListOfCryptoCoins : UIEvent()
+        data class OnSetOpenMaintenanceAction(val action: () -> Unit) : UIEvent()
     }
 }

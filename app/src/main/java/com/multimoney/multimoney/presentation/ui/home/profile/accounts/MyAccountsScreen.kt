@@ -65,16 +65,20 @@ import kotlinx.coroutines.CoroutineScope
 fun MyAccountsScreen(
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: MyAccountsViewModel = hiltViewModel()
 ) {
     val coroutineScope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
     val focusManager = LocalFocusManager.current
 
-    viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnStart)
-
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
+        viewModel.executeNavigation(
+            onPopBackStack = onPopBackStack,
+            onNavigate = onNavigate,
+            onPopAndNavigate = onPopAndNavigate
+        )
+        viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnStart)
     }
 
     BackHandler {
@@ -146,7 +150,7 @@ fun MyAccountsScreen(
             modalBottomSheetState = viewModel.uiState.bottomSheetVisibleState,
             coroutineScope = coroutineScope,
             firstActionTitle = stringResource(id = viewModel.uiState.favoriteTextResource),
-            firstActionIcon = if( viewModel.uiState.selectedAccount?.isFavorite == true) R.drawable.ic_error_green else R.drawable.ic_star_outline,
+            firstActionIcon = if (viewModel.uiState.selectedAccount?.isFavorite == true) R.drawable.ic_error_green else R.drawable.ic_star_outline,
             firstActionClick = {
                 viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnChangeFavorite)
             },
@@ -470,9 +474,9 @@ fun MyAccountsEmptyState(idBrand: Int = 1) {
                     start.linkTo(iconId.start)
                 }
                 .padding(top = 24.dp),
-            text = if (idBrand == Brand.Guatemala.id) stringResource(id = R.string.profile_my_accounts_empty_state_title_gt) else stringResource(
+            text = if (idBrand == Brand.CostaRica.id) stringResource(
                 id = R.string.profile_my_accounts_empty_state_title
-            ),
+            ) else stringResource(id = R.string.profile_my_accounts_empty_state_title_sv),
             style = Typography.body1.copy(
                 fontWeight = FontWeight.SemiBold,
                 color = MultimoneyTheme.colors.labelText

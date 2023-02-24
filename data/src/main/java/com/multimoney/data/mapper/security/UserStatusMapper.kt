@@ -31,6 +31,7 @@ private fun ValidateUserStatusQuery.InfoUser.mapToDomainModel() = InfoUser(
     lastName = lastName,
     secondLastName = secondLastName,
     phone = phone,
+    countryCode = countryCode,
     visaDirectId = vISADirect_ID,
     visaDirectUser = vISADirect_Usuario,
     statusOnfido = statusOnfido

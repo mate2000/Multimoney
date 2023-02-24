@@ -126,7 +126,7 @@ class PaymentCardListViewModel @Inject constructor(
             lastName = infoUser?.lastName.orEmpty(),
             secondLastName = infoUser?.secondLastName.orEmpty(),
             email = infoUser?.email.orEmpty(),
-            callerId = infoUser?.phone.orEmpty(),
+            callerId = infoUser?.countryCode.plus(infoUser?.phone.orEmpty()),
             user = infoUser?.userName.orEmpty(),
             idBrand = infoUser?.idBrand ?: 0
         ).collectLatest { result ->

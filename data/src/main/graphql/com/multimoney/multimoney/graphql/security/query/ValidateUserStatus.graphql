@@ -18,6 +18,7 @@ query ValidateUserStatus($pkUser: Long!, $identification: String!, $user: String
             userName
             email
             phone
+            countryCode
             birthDate
             idClient
             vISADirect_ID

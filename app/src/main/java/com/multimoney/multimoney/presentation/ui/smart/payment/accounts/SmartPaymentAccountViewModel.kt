@@ -9,6 +9,7 @@ import com.multimoney.domain.model.accountsmart.IbanAccountID
 import com.multimoney.domain.model.accountsmart.SinpeAccount
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
@@ -76,6 +77,7 @@ class SmartPaymentAccountViewModel @Inject constructor(
                 accountNumber = ""
             ).collectLatest { result ->
                 result.onSuccess { accountList ->
+                    uiState = uiState.copy(isLoading = false)
                     accountList?.data?.let { accounts ->
                         uiState = uiState.copy(
                             sinpeAccountList = accounts
@@ -83,12 +85,16 @@ class SmartPaymentAccountViewModel @Inject constructor(
                     }
                 }
                 result.onFailure {
+                    uiState = uiState.copy(isLoading = false)
                     uiState = uiState.copy(
                         openDialog = DialogParameters(
                             description = it.getError().toString(),
                             isActive = mutableStateOf(true)
                         )
                     )
+                }
+                result.onLoading {
+                    uiState = uiState.copy(isLoading = true)
                 }
             }
         }

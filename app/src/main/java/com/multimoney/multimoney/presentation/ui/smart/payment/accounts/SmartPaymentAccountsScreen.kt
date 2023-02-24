@@ -25,6 +25,7 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPay
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiary
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
@@ -68,6 +69,7 @@ fun SmartPaymentAccountsScreen(
             )
         )
         PaymentOptions(viewModel)
+        LoadingIndicator(viewModel.uiState.isLoading)
     }
 }
 
@@ -80,10 +82,7 @@ fun PaymentOptions(
             account?.let {
                 CustomInfoButton(
                     title = account.bank,
-                    subtitle = getMaskedAccountIban(
-                        account.sinpeAccount,
-                        stringResource(id = string.payment_account_masked_text)
-                    ),
+                    subtitle = getMaskedAccountIban(account.sinpeAccount),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 12.dp),
@@ -93,23 +92,18 @@ fun PaymentOptions(
                         viewModel.onUIEvent(UIEvent.OnAccountClick(account))
                     }
                 )
-                if ((viewModel.uiState.sinpeAccountList.size.minus(1)) == viewModel.uiState.sinpeAccountList.indexOf(
-                        account
-                    )
-                ) {
-                    CustomButton(
-                        text = stringResource(id = string.payment_account_create),
-                        modifier = Modifier
-                            .padding(top = 12.dp, start = 16.dp, end = 16.dp, bottom = 12.dp)
-                            .fillMaxWidth(),
-                        onClick = {
-                            viewModel.onUIEvent(UIEvent.OnAddAccountClick)
-                        },
-                        buttonType = PrimaryTertiary,
-                        trailingIcon = drawable.ic_plus
-                    )
-                }
             }
         }
     }
+    CustomButton(
+        text = stringResource(id = string.payment_account_create),
+        modifier = Modifier
+            .padding(top = 12.dp, start = 16.dp, end = 16.dp, bottom = 12.dp)
+            .fillMaxWidth(),
+        onClick = {
+            viewModel.onUIEvent(UIEvent.OnAddAccountClick)
+        },
+        buttonType = PrimaryTertiary,
+        trailingIcon = drawable.ic_plus
+    )
 }

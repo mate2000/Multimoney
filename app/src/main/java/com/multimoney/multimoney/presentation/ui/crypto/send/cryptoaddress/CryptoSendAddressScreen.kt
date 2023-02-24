@@ -201,7 +201,7 @@ fun CryptoSendAddressContent(
             trailingIconEndPadding = 16.dp,
             placeHolder = stringResource(id = R.string.crypto_send_address_placeholder),
             isRequired = true,
-            isRequiredMessage = stringResource(id = R.string.crypto_send_address_required),
+            isRequiredMessage = stringResource(id = R.string.crypto_send_address_required, viewModel.uiState.asset),
             singleLine = false,
             maxLines = 2,
             isError = viewModel.uiState.showTextInputError,

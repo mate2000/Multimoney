@@ -138,7 +138,7 @@ class SignInViewModel @Inject constructor(
         val options = AWSCognitoAuthSignInOptions.builder().metadata(attrs).build()
 
         Amplify.Auth.signOut({
-            Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword, { authSignInResult ->
+            Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword,options, { authSignInResult ->
                 if (authSignInResult.isSignInComplete) {
                     Amplify.Auth.fetchAuthSession({ authSessionSuccess ->
                         val session = authSessionSuccess as AWSCognitoAuthSession

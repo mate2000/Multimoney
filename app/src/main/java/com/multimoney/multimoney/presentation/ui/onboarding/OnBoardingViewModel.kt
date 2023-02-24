@@ -14,6 +14,8 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnGoToNextScreen
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnNavigateToNextScreen
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnPress
+import com.multimoney.multimoney.presentation.util.ISO3_COSTA_RICA
+import com.multimoney.multimoney.presentation.util.ISO3_GUATEMALA
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -101,7 +103,6 @@ class OnBoardingViewModel @Inject constructor(
                     R.drawable.ic_onboarding_step_one
                 )
             }
-
         }
         STEP_TWO -> {
             provideFireBaseEventHelper.logEvent(FireBaseEvents.OnboardingTwo)
@@ -193,7 +194,5 @@ class OnBoardingViewModel @Inject constructor(
         const val STEP_ICON = 2
         const val TOTAL_PRESS_TIME = 300
         const val QUARTER = 4
-        const val ISO3_COSTA_RICA = "CRI"
-        const val ISO3_GUATEMALA = "GTM"
     }
 }

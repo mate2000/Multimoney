@@ -145,8 +145,10 @@
     <string name="sign_in_dialog_exit_button" translatable="false">Salir</string>
     <string name="sign_in_dialog_sign_in_here_button" translatable="false">Iniciar sesión aquí</string>
     <string name="sign_in_otp_wrong_code" translatable="false">Código de verificación incorrecto</string>
+    <string name="sign_in_device_verification" translatable="false">Verificación de dispositivo</string>
     <string name="sign_in_otp_expired_code" translatable="false">Código de verificación ha expirado</string>
     <string name="sign_in_we_sent_you_a_code_template" translatable="false">Te enviamos un código al %1$s para que verifiqués este dispositivo</string>
+    <string name="sign_in_we_sent_you_a_code_template_gt" translatable="false">Te enviamos un código al %1$s para que verifiques este dispositivo</string>
     <string name="sign_in_verify_otp_button" translatable="false">Verificar</string>
     <string name="sign_in_verify_otp_error_title" translatable="false">Lo sentimos, no pudimos cambiar tu dispositivo</string>
     <string name="sign_in_verify_otp_error_subtitle" translatable="false">No es posible validar tu teléfono por favor, inténtalo nuevamente.</string>
@@ -1218,7 +1220,7 @@
     <string name="market_details_button_read_more" translatable="false">Leer más</string>
 
     <!--Crypto Purchase Flow-->
-    <string name="crypto_purchase_flow_title_cr" translatable="false">¿Cúanto querés comprar?</string>
+    <string name="crypto_purchase_flow_title_cr" translatable="false">¿Cuánto querés comprar?</string>
     <string name="crypto_purchase_flow_title_sv" translatable="false">¿Cuánto quieres comprar?</string>
     <string name="crypto_purchase_flow_exchange_reference" translatable="false">1 %2s = %3s</string>
     <string name="crypto_purchase_flow_exchange_reference_edittext" translatable="false">≈ %1s %2s</string>
@@ -1567,6 +1569,8 @@
     <!-- Crypto send flow -->
     <string name="crypto_send_flow_error_sending_crypto" translatable="false">Lo sentimos, no se puede hacer el envío</string>
     <string name="crypto_send_flow_error_sending_crypto_try_again" translatable="false">Por favor vuelve a intentar más tarde</string>
+    <string name="crypto_send_flow_error_oh_no" translatable="false">¡Oh no! Hubo un error</string>
+    <string name="crypto_send_flow_error_not_sent" translatable="false">El envio no fue realizado</string>
     <string name="crypto_send_abandon_dialog_title" translatable="false">Cancelar envío</string>
     <string name="crypto_send_abandon_dialog_message" translatable="false">¿Estás seguro que querés cancelar el envío?</string>
     <string name="crypto_send_amount_error_available_amount_commission" translatable="false">"El monto a enviar más la comisión \nsupera el monto disponible"</string>
@@ -1577,7 +1581,7 @@
     <string name="crypto_send_address_information" translatable="false">Pegá la dirección de la billetera a la que deseás enviar o escaneá el código del receptor. Asegurate que envíes a la blockchain %s.</string>
     <string name="crypto_send_address_receiver" translatable="false">Dirección %s del receptor</string>
     <string name="crypto_send_address_placeholder" translatable="false">Pegar dirección</string>
-    <string name="crypto_send_address_required" translatable="false">La dirección BTC del receptor es requerida</string>
+    <string name="crypto_send_address_required" translatable="false">La dirección %s del receptor es requerida</string>
     <string name="crypto_send_address_permission_camera_title" translatable="false">“MultiMoney” quiere acceder a tu cámara</string>
     <string name="crypto_send_address_permission_camera_description" translatable="false">El acceso es necesario para escanear códigos QR</string>
     <string name="crypto_send_address_verify_crypto_address_title" translatable="false">Verificá la dirección</string>

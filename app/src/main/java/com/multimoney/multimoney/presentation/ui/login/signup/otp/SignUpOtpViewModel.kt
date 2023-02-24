@@ -60,6 +60,7 @@ class SignUpOtpViewModel @Inject constructor(
     // Stateless
     var linkWhatsapp = ""
     var userBlockedForMaxAttend = ""
+    private var numberOfPinForwards = 0
 
     // Events
     val onCallMutationSendPinProcessEvent = MutableSharedFlow<MultimoneyResult<SendPinProcess?>>()
@@ -112,6 +113,16 @@ class SignUpOtpViewModel @Inject constructor(
             remainingTimeText = newRemainingTime.format(),
             phaseCount = uiState.phaseCount.plus(1)
         )
+
+        if (this.numberOfPinForwards == PHASE_THREE) {
+            uiState = uiState.copy(openUserBlockedDialog = DialogParameters(
+                titleResource = R.string.sign_up_email_blocked_dialog_title,
+                description = userBlockedForMaxAttend,
+                isActive = mutableStateOf(true),
+                positiveResource = R.string.contact,
+                negativeResource = R.string.cancel,
+            ))
+        }
     }
 
     fun getPhaseResourceString() = when (uiState.phaseCount) {
@@ -246,6 +257,7 @@ class SignUpOtpViewModel @Inject constructor(
         getPhaseAction()
         onExecuteTimer()
         onLoadingValueChange.invoke()
+        this.numberOfPinForwards = pinProcess?.numberOfPinForwards?.toInt() ?: 1
     }
 
     private fun onOtpValueChange(value: String) {

@@ -111,6 +111,26 @@ fun ValidateOTPScreen(
         )
     }
 
+    if (viewModel.uiState.openmaxAttemptsReachedDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openmaxAttemptsReachedDialog.titleResource),
+            message = viewModel.uiState.openmaxAttemptsReachedDialog.description,
+            positiveButtonText = stringResource(id = viewModel.uiState.openmaxAttemptsReachedDialog.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.uiState.openmaxAttemptsReachedDialog.negativeResource),
+            openDialogCustom = viewModel.uiState.openmaxAttemptsReachedDialog.isActive,
+            onPositiveAction = {
+                viewModel.onUIEvent(
+                    ValidateOTPViewModel.UIEvent.OnOpenWhatsappLink(
+                        context,
+                        whatsAppLink
+                    )
+                )
+            },
+            onNegativeAction = viewModel.uiState.openmaxAttemptsReachedDialog.negativeAction,
+            isCancelable = false
+        )
+    }
+
     viewModel.onUIEvent(
         ValidateOTPViewModel.UIEvent.OnStart(
             stringResource(

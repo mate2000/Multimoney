@@ -1571,7 +1571,7 @@
     <string name="crypto_send_flow_error_sending_crypto" translatable="false">Lo sentimos, no se puede hacer el envío</string>
     <string name="crypto_send_flow_error_sending_crypto_try_again" translatable="false">Por favor vuelve a intentar más tarde</string>
     <string name="crypto_send_flow_error_oh_no" translatable="false">¡Oh no! Hubo un error</string>
-    <string name="crypto_send_flow_error_not_sent" translatable="false">El envio no fue realizado</string>
+    <string name="crypto_send_flow_error_not_sent" translatable="false">El envío no fue realizado</string>
     <string name="crypto_send_abandon_dialog_title" translatable="false">Cancelar envío</string>
     <string name="crypto_send_abandon_dialog_message" translatable="false">¿Estás seguro que querés cancelar el envío?</string>
     <string name="crypto_send_amount_error_available_amount_commission" translatable="false">"El monto a enviar más la comisión \nsupera el monto disponible"</string>

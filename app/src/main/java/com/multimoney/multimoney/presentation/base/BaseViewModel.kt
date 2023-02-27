@@ -140,6 +140,6 @@ open class BaseViewModel @Inject constructor(
     }
 
     fun registerEvent(adjustEventType: AdjustEventType, listParameters: List<Pair<String, String>>) {
-        adjustHelper.registerEvent(adjustEventType,listParameters)
+        adjustHelper.registerEvent(adjustEventType, listParameters)
     }
 }

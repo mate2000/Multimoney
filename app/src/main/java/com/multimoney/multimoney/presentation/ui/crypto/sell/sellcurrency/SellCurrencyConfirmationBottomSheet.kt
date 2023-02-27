@@ -82,9 +82,9 @@ fun SellConfirmationBottomSheet(
                 append(stringResource(
                     id = R.string.crypto_sell_flow_confirmation_sell_screen_evaluate_amount,
                     if (viewModel.idCurrencyAccount == CurrencyType.Dollar.id) {
-                        CurrencyType.Dollar.stringName
+                        CurrencyType.Dollar.stringName.lowercase()
                     } else {
-                        CurrencyType.Colon.stringName
+                        CurrencyType.Colon.stringName.lowercase()
                     }
                 ))
                 append(WHITE_SPACE)

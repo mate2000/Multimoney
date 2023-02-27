@@ -102,6 +102,18 @@ fun calculateConfirmationQuoteAmount(
     }.toString().toDouble().toCurrencyFormat()
 }
 
+fun calculateConfirmationQuoteAmountForVoucher(
+    quoteAmount: String,
+    baseAmount: String,
+    currencyPrice: Double?
+): String {
+    return quoteAmount.ifEmpty {
+        baseAmount.ifEmpty {
+            DEFAULT_AMOUNT
+        }.toDouble().times(currencyPrice ?: 0.0)
+    }.toString()
+}
+
 fun calculateConfirmationQuoteAmount(
     quoteAmount: String,
     baseAmount: String,

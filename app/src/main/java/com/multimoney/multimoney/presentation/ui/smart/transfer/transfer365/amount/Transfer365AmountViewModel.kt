@@ -69,26 +69,25 @@ class Transfer365AmountViewModel @Inject constructor(
                 totalBalance = smartAccount?.totalBalance,
                 maxAmount = limits?.find { limit -> limit?.code == originCurrency?.id.toString() }?.amount
             )
-            val destinationInfo = when (transferType) {
+            var subtitle1: String? = ""
+            var subtitle2: String? = ""
+            when (transferType) {
                 SmartTransferTypes.SmartToMobile.id -> {
-                    transfer365Account.phone
+                    subtitle1 = transfer365Account.phone
                 }
                 SmartTransferTypes.SmartToOtherBank.id -> {
-                    "${transfer365Account.bankName} | ${
-                        getMaskedAccount(
-                            prefix = Brand.ElSalvador.countryCode.uppercase(),
-                            accountNumber = transfer365Account.accountNumber.orEmpty()
-                        )
-                    }"
-                }
-                else -> {
-                    ""
+                    subtitle1 = transfer365Account.bankName
+                    subtitle2 = getMaskedAccount(
+                        prefix = Brand.ElSalvador.countryCode.uppercase(),
+                        accountNumber = transfer365Account.accountNumber.orEmpty()
+                    )
                 }
             }
             amountUIState = amountUIState.copy(
                 destinyAccountDisplay = DisplayAccount(
                     sheetTitle = "${transfer365Account.name} ${transfer365Account.lastname}",
-                    sheetSubtitle = destinationInfo,
+                    sheetSubtitle = subtitle1,
+                    sheetSubtitle2 = subtitle2,
                     icon = R.drawable.ic_bank_account_dollar
                 )
             )
@@ -227,9 +226,10 @@ class Transfer365AmountViewModel @Inject constructor(
     }
 
     override fun onNavigateBack() {
-        // Todo add validation to go back to list transfer 365 accounts screen
         val screen = when (previousScreen) {
             Screen.SmartAdd365AccountScreen.baseRoute -> Screen.SmartAdd365AccountScreen.route
+            Screen.SmartACHAccountsListScreen.baseRoute -> Screen.SmartACHAccountsListScreen.route
+            Screen.SmartTransferFavoriteAccountScreen.baseRoute -> Screen.SmartTransferFavoriteAccountScreen.route
             else -> Screen.HomeScreen.route
         }
         navigateBack(popTo = screen, isRestart = false)

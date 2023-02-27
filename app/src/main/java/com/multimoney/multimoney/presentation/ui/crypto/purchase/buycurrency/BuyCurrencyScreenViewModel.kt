@@ -18,12 +18,10 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
 import com.multimoney.multimoney.presentation.util.calculateAmountPlusFee
-import com.multimoney.multimoney.presentation.util.calculateConfirmationQuoteAmount
 import com.multimoney.multimoney.presentation.util.calculateQuote
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.format
-import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlaces
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 import com.multimoney.multimoney.util.CryptoTimerHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -56,6 +54,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
     var idCurrencyAccount = CurrencyType.Colon.id
     var smartAccountAvailableBalance = 0.0
     var ibanAccountNumber = ""
+    var openMaintenanceAction = {}
 
     private fun onSetUserData(
         pkUser: Int,
@@ -70,8 +69,10 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         assetImageUrl: String?,
         smartAccountAvailableBalance: Double,
         idCurrencyAccount: Int,
-        ibanAccountNumber: String
+        ibanAccountNumber: String,
+        openMaintenanceAction: () -> Unit
     ) {
+        this.openMaintenanceAction = openMaintenanceAction
         this.pkUser = pkUser
         this.idCurrencyAccount = idCurrencyAccount
         this.asset = asset ?: ""
@@ -161,6 +162,10 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             result.onFailure {
                 timer.stopTimer()
                 confirmationTimer.stopTimer()
+                if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    openMaintenanceAction()
+                    return@onFailure
+                }
                 onFailure()
             }
         }
@@ -191,6 +196,10 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                     timer.stopTimer()
                     confirmationTimer.stopTimer()
                     this.smartAccountAvailableBalance = 0.0
+                    if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                        openMaintenanceAction()
+                        return@onFailure
+                    }
                     onFailure()
                 }
             }
@@ -215,6 +224,10 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             result.onFailure {
                 timer.stopTimer()
                 confirmationTimer.stopTimer()
+                if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    openMaintenanceAction()
+                    return@onFailure
+                }
                 onFailure()
             }
         }
@@ -234,28 +247,38 @@ class BuyCurrencyScreenViewModel @Inject constructor(
 
 
         when {
-            amount.isEmpty() -> isError(isError = true)
+            amount.isEmpty() -> isError(isError = true, focusError = false)
             quoteAmount < MINIMUM_AMOUNT_ALLOWED -> isError(
-                errorMessage = R.string.crypto_purchase_flow_error_minimum_amount, isError = true
+                errorMessage = R.string.crypto_purchase_flow_error_minimum_amount,
+                isError = true,
+                focusError = true
             )
             quoteAmount >= smartAccountAvailableBalance -> isError(
                 errorMessage = R.string.crypto_purchase_flow_error_available_amount,
                 arg = smartAccountAvailableBalance.toCurrencyFormat(),
-                isError = true
+                isError = true,
+                focusError = true
             )
             amountPlusFee >= smartAccountAvailableBalance -> isError(
                 errorMessage = R.string.crypto_purchase_flow_error_available_amount_commission,
-                isError = true
+                isError = true,
+                focusError = true
             )
             else -> isError()
         }
     }
 
     private fun isError(
-        @StringRes errorMessage: Int = R.string.empty, arg: Any = Any(), isError: Boolean = false
+        @StringRes errorMessage: Int = R.string.empty,
+        arg: Any = Any(),
+        isError: Boolean = false,
+        focusError: Boolean = false
     ) {
         uiState = uiState.copy(
-            error = errorMessage, errorMessageArg = arg, isError = isError
+            error = errorMessage,
+            errorMessageArg = arg,
+            isError = isError,
+            focusError = focusError
         )
     }
 
@@ -290,43 +313,29 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 result.onSuccess {
                     when (it.buyHQR.status) {
                         CryptoProcessErrorCodes.WeeklyLimitExceeded.status -> {
-                            confirmationTimer.stopTimer()
-                            timer.stopTimer()
-                            isError(
-                                errorMessage = R.string.crypto_purchase_flow_error_weekly_amount_exceeded,
-                                isError = true
-                            )
                             uiState = uiState.copy(
+                                error = R.string.crypto_purchase_flow_error_weekly_amount_exceeded,
+                                focusError = true,
                                 isLoading = false,
                                 purchaseStatus = PurchaseStatus.IDLE
-
                             )
                             return@onSuccess
                         }
                         CryptoProcessErrorCodes.InsufficientFundsBuy.status -> {
-                            confirmationTimer.stopTimer()
-                            timer.stopTimer()
-                            isError(
-                                errorMessage = R.string.crypto_purchase_flow_error_no_funds,
-                                isError = true
-                            )
                             uiState = uiState.copy(
+                                error = R.string.crypto_purchase_flow_error_no_funds,
+                                focusError = true,
                                 isLoading = false,
                                 purchaseStatus = PurchaseStatus.IDLE
                             )
                             return@onSuccess
                         }
                         CryptoProcessErrorCodes.ExpiredPriceBuy.status -> {
-                            confirmationTimer.stopTimer()
-                            timer.stopTimer()
-                            isError(
-                                errorMessage = R.string.crypto_purchase_flow_error_price_expired,
-                                isError = true
-                            )
                             uiState = uiState.copy(
+                                error = R.string.crypto_purchase_flow_error_price_expired,
+                                focusError = true,
                                 isLoading = false,
                                 purchaseStatus = PurchaseStatus.IDLE
-
                             )
                             return@onSuccess
                         }
@@ -335,10 +344,13 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                         isLoading = false,
                         referenceNumber = it.buyHQR.result?.sysdeTransactionNumber,
                         purchaseStatus = PurchaseStatus.SUCCESS
-
                     )
                 }
                 result.onFailure {
+                    if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                        openMaintenanceAction()
+                        return@onFailure
+                    }
                     uiState = uiState.copy(
                         isLoading = false,
                         purchaseStatus = PurchaseStatus.FAILED
@@ -396,6 +408,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         val openDialog: DialogParameters = DialogParameters(),
         val failureAction: () -> Unit = {},
         //** validations
+        val focusError: Boolean = false,
         val isError: Boolean = false,
         @StringRes val error: Int = R.string.empty,
         val errorMessageArg: Any = Any(),
@@ -424,7 +437,8 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 assetImageUrl = event.assetImageUrl,
                 smartAccountAvailableBalance = event.smartAccountAvailableBalance,
                 idCurrencyAccount = event.idCurrencyAccount,
-                ibanAccountNumber = event.ibanAccountNumber
+                ibanAccountNumber = event.ibanAccountNumber,
+                openMaintenanceAction = event.openMaintenanceAction
             )
             UIEvent.OnGetExchangeRate -> if (uiState.exchangeRate == 1.0) {
                 getExchangeRate()
@@ -465,7 +479,8 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             val assetImageUrl: String?,
             val smartAccountAvailableBalance: Double,
             val idCurrencyAccount: Int,
-            val ibanAccountNumber: String
+            val ibanAccountNumber: String,
+            val openMaintenanceAction: () -> Unit
         ) : UIEvent()
 
         data class ValidateAmountInput(val amount: String) : UIEvent()

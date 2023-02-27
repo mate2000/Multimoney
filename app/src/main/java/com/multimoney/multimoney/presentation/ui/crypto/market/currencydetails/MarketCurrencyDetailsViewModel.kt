@@ -15,8 +15,6 @@ import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.crypto.GetCurrencyHistoricalPricesUseCase
 import com.multimoney.domain.interaction.crypto.GetCurrencyNewsUseCase
-import com.multimoney.domain.model.accountsmart.SmartAccountSmall
-import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.crypto.CryptoNewsFeed
 import com.multimoney.domain.model.crypto.CurrencyHistoricPrice
 import com.multimoney.domain.model.crypto.MarketCryptoCoin
@@ -29,12 +27,11 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.CRYPTO_ASSET
 import com.multimoney.multimoney.presentation.navigation.DESCRIPTION_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNTS_LIST
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.USER_CRYPTO_BALANCES
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
 import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
@@ -59,9 +56,6 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
     var uiState by mutableStateOf(UiState())
         private set
 
-    private var smartAccounts :List<SmartAccountSmall>? = null
-    private var userCryptoBalances: List<BalanceCryptoAccountItems>? = null
-
     //stateless
     val defaultDialogParameters = DialogParameters(descriptionResource = R.string.something_went_wrong)
 
@@ -71,9 +65,6 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
             selectedCryptoCoin = savedStateHandle[ITEM_CRYPTO_MARKET],
             idBrand = savedStateHandle[ID_BRAND]
         )
-        smartAccounts =  savedStateHandle.get<Array<SmartAccountSmall>>(SMART_ACCOUNTS_LIST)?.toList()
-        userCryptoBalances =
-            savedStateHandle.get<Array<BalanceCryptoAccountItems>>(USER_CRYPTO_BALANCES)?.toList()
         viewModelScope.launch {
             uiState = uiState.copy(
                 shouldDisplayDisclaimer = dataStorePreferences.isVolatileDialogVisible().first(),
@@ -103,6 +94,10 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
                 )
             }
             result.onFailure {
+                if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    navigateToMaintenance()
+                    return@onFailure
+                }
                 onFailure(it)
             }
             result.onLoading {
@@ -126,6 +121,10 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
                 }
             }
             result.onFailure {
+                if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    navigateToMaintenance()
+                    return@onFailure
+                }
                 onFailure(it)
             }
             result.onLoading {
@@ -175,12 +174,16 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
         }
     }
 
+    private fun navigateToMaintenance() {
+        navigateTo(Screen.MaintenanceAlertScreen.route)
+    }
+
     private fun onNavigateToSelectAccount(){
-        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${encodeData(smartAccounts)}/${Screen.CryptoCurrencyDetailsScreen.baseRoute}?$ITEM_CRYPTO_MARKET=${encodeData(uiState.selectedCryptoCoin)}")
+        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${Screen.CryptoCurrencyDetailsScreen.baseRoute}?$ITEM_CRYPTO_MARKET=${encodeData(uiState.selectedCryptoCoin)}")
     }
 
     private fun onNavigateToSellCrypto(){
-        navigateTo("${Screen.CryptoSellFlow.baseRoute}/${Screen.CryptoCurrencyDetailsScreen.baseRoute}/${encodeData(smartAccounts)}/${encodeData(userCryptoBalances)}?$ITEM_CRYPTO_MARKET=${encodeData(uiState.selectedCryptoCoin)}")
+        navigateTo("${Screen.CryptoSellFlow.baseRoute}/${Screen.CryptoCurrencyDetailsScreen.baseRoute}?$ITEM_CRYPTO_MARKET=${encodeData(uiState.selectedCryptoCoin)}")
     }
 
     private fun onNavigateToCryptoSendFlow() {

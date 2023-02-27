@@ -11,15 +11,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.BuyCryptoStep
 import com.multimoney.data.util.catalog.SellCryptoStep
 import com.multimoney.data.util.catalog.SellCryptoSteps
+import com.multimoney.domain.model.accountsmart.SmartAccountSmall
+import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
+import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.sell.listofcurrencies.SellCurrenciesListScreen
 import com.multimoney.multimoney.presentation.ui.crypto.sell.selectaccount.SelectSmartAccountScreen
 import com.multimoney.multimoney.presentation.ui.crypto.sell.sellcurrency.SellCurrencyScreen
 import com.multimoney.multimoney.presentation.ui.crypto.sell.voucher.SellCryptoVoucherScreen
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.MaintenanceAlertScreen
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
@@ -30,68 +32,93 @@ fun SellCryptoFlow(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
-    viewModel: SellCryptoSharedViewModel = hiltViewModel()
+    accountsSmart: List<SmartAccountSmall>,
+    cryptoBalances: List<BalanceCryptoAccountItems>,
+    viewModel: SellCryptoSharedViewModel = hiltViewModel(),
 ) {
 
     LaunchedEffect(true) {
+        viewModel.onUIEvent(
+            SellCryptoSharedViewModel.UIEvent.OnSetAccounts(
+                accounts = accountsSmart,
+                cryptoBalances = cryptoBalances
+            )
+        )
         viewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnGetUserInfo)
         viewModel.executeNavigation(
             onNavigate = onNavigate,
             onPopAndNavigate = onPopAndNavigate,
             onPopBackStack = onPopBackStack
         )
-    }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MultimoneyTheme.colors.background)
-    ) {
-        Column {
-            TopNavBar(
-                isLeftButtonVisible = viewModel.uiState.currentStepType != SellCryptoStep.LOADING_SCREEN && viewModel.uiState.currentStepType != SellCryptoStep.SELL_VOUCHER && viewModel.uiState.currentStepType != SellCryptoStep.PURCHASE_FAILED,
-                isRightButtonVisible = viewModel.uiState.currentStepType != SellCryptoStep.LOADING_SCREEN && viewModel.uiState.currentStepType != SellCryptoStep.SELECT_SMART_ACCOUNT && viewModel.uiState.currentStepType != SellCryptoStep.PURCHASE_FAILED,
-                onRightButtonClick = {
-                    if (viewModel.uiState.currentStepType == SellCryptoStep.SELL_VOUCHER) {
-                        viewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnNavigateHome)
-                    } else {
-                        viewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnCloseClick)
-                    }
-                },
-                onLeftButtonClick = {
-                    viewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnPreviousStep)
-                },
-                isCenterContentVisible = viewModel.uiState.currentStepType == SellCryptoStep.SELL_VOUCHER
-            )
-        }
-        Column(
-            modifier = Modifier.weight(0.1f),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            when (viewModel.idBrand) {
-                Brand.ElSalvador.id -> {
-                    if (viewModel.comingFromDetails) {
-                        SvSellCryptoDirectFlow(
-                            step = viewModel.uiState.currentStep,
-                            viewModel = viewModel
-                        )
-                    } else {
-                        SvSellCryptoFlow(
-                            step = viewModel.uiState.currentStep,
-                            viewModel = viewModel
-                        )
-                    }
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                is SellCryptoSharedViewModel.BaseEvent.OnShowMaintenance -> {
+                    viewModel.onUIEvent(
+                        SellCryptoSharedViewModel.UIEvent.SetPaxosMaintenanceState(true)
+                    )
                 }
-                Brand.CostaRica.id -> {
-                    if (viewModel.comingFromDetails) {
-                        CRSellCryptoDirectFlow(
-                            step = viewModel.uiState.currentStep,
-                            viewModel = viewModel
-                        )
-                    } else {
-                        CRSellCryptoFlow(
-                            step = viewModel.uiState.currentStep,
-                            viewModel = viewModel
-                        )
+            }
+        }
+    }
+    if (viewModel.uiState.isPaxosInMaintenance) {
+        MaintenanceAlertScreen(
+            onBackToHomeAction = {
+                viewModel.navigateTo(Screen.HomeScreen.route)
+            }
+        )
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MultimoneyTheme.colors.background)
+        ) {
+            Column {
+                TopNavBar(
+                    isLeftButtonVisible = viewModel.uiState.currentStepType != SellCryptoStep.LOADING_SCREEN && viewModel.uiState.currentStepType != SellCryptoStep.SELL_VOUCHER && viewModel.uiState.currentStepType != SellCryptoStep.PURCHASE_FAILED,
+                    isRightButtonVisible = viewModel.uiState.currentStepType != SellCryptoStep.LOADING_SCREEN && viewModel.uiState.currentStepType != SellCryptoStep.SELECT_SMART_ACCOUNT && viewModel.uiState.currentStepType != SellCryptoStep.PURCHASE_FAILED,
+                    onRightButtonClick = {
+                        if (viewModel.uiState.currentStepType == SellCryptoStep.SELL_VOUCHER) {
+                            viewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnNavigateHome)
+                        } else {
+                            viewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnCloseClick)
+                        }
+                    },
+                    onLeftButtonClick = {
+                        viewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnPreviousStep)
+                    },
+                    isCenterContentVisible = viewModel.uiState.currentStepType == SellCryptoStep.SELL_VOUCHER
+                )
+            }
+            Column(
+                modifier = Modifier.weight(0.1f),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                when (viewModel.idBrand) {
+                    Brand.ElSalvador.id -> {
+                        if (viewModel.comingFromDetails) {
+                            SvSellCryptoDirectFlow(
+                                step = viewModel.uiState.currentStep,
+                                viewModel = viewModel
+                            )
+                        } else {
+                            SvSellCryptoFlow(
+                                step = viewModel.uiState.currentStep,
+                                viewModel = viewModel
+                            )
+                        }
+                    }
+                    Brand.CostaRica.id -> {
+                        if (viewModel.comingFromDetails) {
+                            CRSellCryptoDirectFlow(
+                                step = viewModel.uiState.currentStep,
+                                viewModel = viewModel
+                            )
+                        } else {
+                            CRSellCryptoFlow(
+                                step = viewModel.uiState.currentStep,
+                                viewModel = viewModel
+                            )
+                        }
                     }
                 }
             }

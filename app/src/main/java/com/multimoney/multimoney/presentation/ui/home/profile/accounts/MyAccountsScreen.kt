@@ -65,16 +65,20 @@ import kotlinx.coroutines.CoroutineScope
 fun MyAccountsScreen(
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: MyAccountsViewModel = hiltViewModel()
 ) {
     val coroutineScope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
     val focusManager = LocalFocusManager.current
 
-    viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnStart)
-
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
+        viewModel.executeNavigation(
+            onPopBackStack = onPopBackStack,
+            onNavigate = onNavigate,
+            onPopAndNavigate = onPopAndNavigate
+        )
+        viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnStart)
     }
 
     BackHandler {
@@ -146,7 +150,7 @@ fun MyAccountsScreen(
             modalBottomSheetState = viewModel.uiState.bottomSheetVisibleState,
             coroutineScope = coroutineScope,
             firstActionTitle = stringResource(id = viewModel.uiState.favoriteTextResource),
-            firstActionIcon = if( viewModel.uiState.selectedAccount?.isFavorite == true) R.drawable.ic_error_green else R.drawable.ic_star_outline,
+            firstActionIcon = if (viewModel.uiState.selectedAccount?.isFavorite == true) R.drawable.ic_error_green else R.drawable.ic_star_outline,
             firstActionClick = {
                 viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnChangeFavorite)
             },
@@ -169,9 +173,18 @@ fun MyAccountsScreen(
                 negativeButtonText = stringResource(id = viewModel.uiState.favoriteDialogParemeters.negativeResource),
                 positiveButtonText = stringResource(id = viewModel.uiState.favoriteDialogParemeters.positiveResource),
                 openDialogCustom = viewModel.uiState.favoriteDialogParemeters.isActive,
-                onPositiveAction = {
-                    viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnDeleteAccount)
-                }
+                onPositiveAction = viewModel.uiState.favoriteDialogParemeters.positiveAction
+            )
+        }
+
+        if (viewModel.uiState.deleteDialogParameters.isActive.value) {
+            CustomDialog(
+                title = stringResource(id = viewModel.uiState.deleteDialogParameters.titleResource),
+                message = stringResource(id = viewModel.uiState.deleteDialogParameters.descriptionResource),
+                negativeButtonText = stringResource(id = viewModel.uiState.deleteDialogParameters.negativeResource),
+                positiveButtonText = stringResource(id = viewModel.uiState.deleteDialogParameters.positiveResource),
+                openDialogCustom = viewModel.uiState.deleteDialogParameters.isActive,
+                onPositiveAction = viewModel.uiState.deleteDialogParameters.positiveAction
             )
         }
 
@@ -183,7 +196,7 @@ fun MyAccountsScreen(
                 isLeftButtonVisible = false,
                 isRightButtonVisible = false,
                 onButtonClick = {
-                    viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnNavigateBack)
+                    viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnNavigateHome)
                 }
             )
         }
@@ -461,9 +474,9 @@ fun MyAccountsEmptyState(idBrand: Int = 1) {
                     start.linkTo(iconId.start)
                 }
                 .padding(top = 24.dp),
-            text = if (idBrand == Brand.Guatemala.id) stringResource(id = R.string.profile_my_accounts_empty_state_title_gt) else stringResource(
+            text = if (idBrand == Brand.CostaRica.id) stringResource(
                 id = R.string.profile_my_accounts_empty_state_title
-            ),
+            ) else stringResource(id = R.string.profile_my_accounts_empty_state_title_sv),
             style = Typography.body1.copy(
                 fontWeight = FontWeight.SemiBold,
                 color = MultimoneyTheme.colors.labelText

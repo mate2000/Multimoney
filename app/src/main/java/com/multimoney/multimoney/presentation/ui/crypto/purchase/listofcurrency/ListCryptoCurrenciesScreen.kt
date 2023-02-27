@@ -2,6 +2,7 @@ package com.multimoney.multimoney.presentation.ui.crypto.purchase.listofcurrency
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -38,21 +39,17 @@ import com.multimoney.multimoney.presentation.ui.crypto.market.FilterSection
 import com.multimoney.multimoney.presentation.ui.crypto.market.MarketFilter
 import com.multimoney.multimoney.presentation.ui.crypto.market.MarketSkeleton
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
-import com.multimoney.multimoney.presentation.ui.crypto.purchase.selectaccount.ConfirmationBottomSheet
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.transformation.formatWithComma
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ListCryptoCurrenciesScreen(
     viewModel: ListCryptoPurchaseViewModel = hiltViewModel(),
     sharedViewModel: PurchaseCryptoSharedViewModel,
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
 ) {
-    val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
-    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(true) {
         viewModel.executeNavigation(
@@ -61,6 +58,13 @@ fun ListCryptoCurrenciesScreen(
         viewModel.onUIEvent(ListCryptoPurchaseViewModel.UIEvent.OnGetUserInfo(
             user = sharedViewModel.email,
             idBrand = sharedViewModel.idBrand
+        ))
+        viewModel.onUIEvent(ListCryptoPurchaseViewModel.UIEvent.OnSetOpenMaintenanceAction(
+            action = {
+                sharedViewModel.onUIEvent(
+                    PurchaseCryptoSharedViewModel.BaseEvent.OnShowMaintenance
+                )
+            }
         ))
         viewModel.onUIEvent(ListCryptoPurchaseViewModel.UIEvent.OnGetAvailableListOfCryptoCoins)
     }
@@ -192,5 +196,5 @@ fun ListCryptoBody(
                 itemClick(it)
             }
         }
-    })
+    }, verticalArrangement = Arrangement.spacedBy(16.dp))
 }

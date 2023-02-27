@@ -249,23 +249,8 @@ class MyAccountsViewModel @Inject constructor(
     private fun onOpenDeleteAccountDialog() {
         uiState = uiState.copy(
             favoriteDialogParemeters = DialogParameters(
-                titleResource = if(uiState.idBrand == Brand.Guatemala.id) R.string.profile_my_accounts_are_you_sure_to_delete_gt else R.string.profile_my_accounts_are_you_sure_to_delete,
+                titleResource = if (uiState.idBrand == Brand.CostaRica.id) R.string.profile_my_accounts_are_you_sure_to_delete else R.string.profile_my_accounts_are_you_sure_to_delete_sv,
                 descriptionResource = R.string.profile_my_accounts_will_be_deleted_permanently,
-                positiveResource = R.string.button_continue,
-                negativeResource = R.string.cancel,
-                positiveAction = {
-                    onDeleteAccount()
-                },
-                isActive = mutableStateOf(true)
-            )
-        )
-    }
-
-    private fun onOpenDeleteDialog() {
-        uiState = uiState.copy(
-            deleteDialogParameters = DialogParameters(
-                titleResource = R.string.profile_my_accounts_remove_from_fav,
-                descriptionResource = R.string.profile_my_accounts_you_can_fav_later,
                 positiveResource = R.string.button_continue,
                 negativeResource = R.string.cancel,
                 positiveAction = {
@@ -291,6 +276,7 @@ class MyAccountsViewModel @Inject constructor(
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is UIEvent.OnNavigateBack -> navigateBack(Screen.ProfileScreen.route, false)
+            is UIEvent.OnNavigateHome -> navigateBack(Screen.HomeScreen.route, true)
             is UIEvent.OnAccountClicked -> onAccountClicked(uiEvent.account)
             is UIEvent.OnShowBottomSheet -> toggleBottomSheet(
                 ModalBottomSheetState(
@@ -319,6 +305,7 @@ class MyAccountsViewModel @Inject constructor(
 
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()
+        object OnNavigateHome : UIEvent()
         data class OnAccountClicked(val account: SinpeAccount) : UIEvent()
         data class OnValueChanged(val value: String) : UIEvent()
         data class OnSetupNickNamePlaceholder(val currentNickname: String) : UIEvent()
@@ -357,6 +344,5 @@ class MyAccountsViewModel @Inject constructor(
         val deleteDialogParameters: DialogParameters = DialogParameters(),
         val isButtonEnabled: Boolean = false,
         val showErrorDialog: Boolean = false
-
     )
 }

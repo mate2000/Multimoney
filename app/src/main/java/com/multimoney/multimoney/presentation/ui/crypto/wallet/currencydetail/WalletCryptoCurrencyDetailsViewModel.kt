@@ -14,7 +14,6 @@ import androidx.paging.PagingData
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCase
 import com.multimoney.domain.interaction.crypto.GetCurrencyHistoricalPricesUseCase
-import com.multimoney.domain.model.accountsmart.SmartAccountSmall
 import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
 import com.multimoney.domain.model.crypto.CurrencyHistoricPrice
@@ -26,14 +25,13 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.CRYPTO_ASSET
 import com.multimoney.multimoney.presentation.navigation.DESCRIPTION_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNTS_LIST
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.USER_CRYPTO_BALANCES
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
 import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -63,9 +61,6 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
     var uiState by mutableStateOf(UiState())
         private set
 
-    private var smartAccounts: List<SmartAccountSmall>? = null
-    private var userCryptoBalances: List<BalanceCryptoAccountItems>? = null
-
     private fun onGetUserInfo() {
         user = savedStateHandle[USER] ?: ""
         identification = savedStateHandle[IDENTIFICATION] ?: ""
@@ -79,10 +74,6 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
                 isCryptoTransferEnabled = cryptoHelper.isCryptoTransferEnabled()
             )
         }
-        userCryptoBalances =
-            savedStateHandle.get<Array<BalanceCryptoAccountItems>>(USER_CRYPTO_BALANCES)?.toList()
-        smartAccounts =
-            savedStateHandle.get<Array<SmartAccountSmall>>(SMART_ACCOUNTS_LIST)?.toList()
     }
 
     private fun callQueryAssetHistory() {
@@ -104,6 +95,10 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
                     )
                 }
                 result.onFailure {
+                    if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                        navigateToMaintenance()
+                        return@onFailure
+                    }
                     onFailure(it)
                 }
             }
@@ -132,6 +127,10 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
         uiState = uiState.copy(startDate = startDate)
         callQueryMovements()
         callQueryAssetHistory()
+    }
+
+    private fun navigateToMaintenance() {
+        navigateTo(Screen.MaintenanceAlertScreen.route)
     }
 
     private fun onFailure(error: HttpError) {
@@ -165,11 +164,7 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
 
     private fun onNavigateToSelectAccount() {
         navigateTo(
-            "${Screen.PurchaseCryptoFlow.baseRoute}/${
-            encodeData(
-                smartAccounts
-            )
-            }/${Screen.CryptoWalletDetailsScreen.baseRoute}?$ITEM_CRYPTO_MARKET=${
+            "${Screen.PurchaseCryptoFlow.baseRoute}/${Screen.CryptoWalletDetailsScreen.baseRoute}?$ITEM_CRYPTO_MARKET=${
             encodeData(
                 MarketCryptoCoin(
                     description = uiState.cryptoItem?.descriptionCurrency ?: "",
@@ -184,25 +179,34 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
 
     private fun onNavigateToSellCrypto() {
         navigateTo(
-            "${Screen.CryptoSellFlow.baseRoute}/${Screen.CryptoWalletDetailsScreen.baseRoute}/${
-            encodeData(
-                smartAccounts
-            )
-            }/${encodeData(userCryptoBalances)}?$ITEM_CRYPTO_MARKET=${
-            encodeData(
-                MarketCryptoCoin(
-                    description = uiState.cryptoItem?.descriptionCurrency ?: "",
-                    baseAsset = uiState.cryptoItem?.asset ?: "",
-                    url_image = uiState.cryptoItem?.url_image ?: "",
-                    cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: ""
+            "${Screen.CryptoSellFlow.baseRoute}/${Screen.CryptoWalletDetailsScreen.baseRoute}?$ITEM_CRYPTO_MARKET=${
+                encodeData(
+                    MarketCryptoCoin(
+                        description = uiState.cryptoItem?.descriptionCurrency ?: "",
+                        baseAsset = uiState.cryptoItem?.asset ?: "",
+                        url_image = uiState.cryptoItem?.url_image ?: "",
+                        cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: ""
+                    )
                 )
-            )
             }"
         )
     }
 
+    private fun onNavigateToReleaseTransaction(cryptoItem: CryptoCurrencyMovement?) {
+        navigateTo("${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}/${Screen.CryptoWalletDetailsScreen.baseRoute}")
+    }
+
     private fun onNavigateToSendCrypto() {
         navigateTo("${Screen.CryptoSendFlow.baseRoute}?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}&$DESCRIPTION_CURRENCY=${uiState.cryptoItem?.descriptionCurrency}")
+    }
+
+    private fun onNavigateToReceiveCrypto() {
+        navigateTo("${Screen.CryptoReceiveFlowScreen.baseRoute}/${user}/${uiState.idBrand}?$ITEM_CRYPTO_MARKET=${encodeData(MarketCryptoCoin(
+            description = uiState.cryptoItem?.descriptionCurrency ?: "",
+            baseAsset = uiState.cryptoItem?.asset ?: "",
+            url_image = uiState.cryptoItem?.url_image ?: "",
+            cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: "",
+        ))}")
     }
 
     fun onUIEvent(event: UIEvent) {
@@ -222,6 +226,8 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
                 uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Hidden))
             is UIEvent.OnNavigateToSendCrypto -> onNavigateToSendCrypto()
             is UIEvent.OnNavigateToSellCrypto -> onNavigateToSellCrypto()
+            is UIEvent.OnNavigateToReceiveCrypto -> onNavigateToReceiveCrypto()
+            is UIEvent.OnNavigateToReleaseTransaction -> onNavigateToReleaseTransaction(event.cryptoItem)
         }
     }
 
@@ -239,6 +245,9 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
         object OnShowDisclaimer : UIEvent()
         object OnHideDisclaimer : UIEvent()
         object OnNavigateToSendCrypto : UIEvent()
+        data class OnNavigateToReleaseTransaction(val cryptoItem: CryptoCurrencyMovement?) :
+            UIEvent()
+        object OnNavigateToReceiveCrypto : UIEvent()
     }
 
     data class UiState(

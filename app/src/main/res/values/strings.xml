@@ -1707,6 +1707,7 @@
     <string name="crypto_sell_flow_confirmation_sell_screen_evaluate_amount" translatable="false">Valor aproximado en %1s</string>
     <string name="crypto_sell_flow_confirmation_sell_screen_amount_to_receive" translatable="false">Total a recibir</string>
     <string name="crypto_sell_flow_confirmation_sell_screen_btn_text" translatable="false">Vender</string>
+    <string name="crypto_sell_flow_confirmation_sell_screen_acc_info_text" translatable="false">Recibir en</string>
 
     <!-- Crypto sell flow Errors-->
     <string name="crypto_sell_flow_error_not_funds" translatable="false">Fondos Insuficientes para aplicar la venta</string>

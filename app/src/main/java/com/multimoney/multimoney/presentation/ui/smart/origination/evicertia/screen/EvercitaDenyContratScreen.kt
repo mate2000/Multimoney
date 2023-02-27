@@ -1,12 +1,10 @@
-package com.multimoney.multimoney.presentation.ui.smart.origination.sign
+package com.multimoney.multimoney.presentation.ui.smart.origination.evicertia.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -14,38 +12,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.multimoney.multimoney.R.drawable
-import com.multimoney.multimoney.R.string
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.Companion.TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND
-import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnNavigateToHome
+import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel
+import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent
+import com.multimoney.multimoney.presentation.uielement.CustomButton
+import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.onEach
 
-@OptIn(FlowPreview::class)
 @Composable
-fun SmartDocumentGenerationScreen(
-    viewModel: SmartSignViewModel,
+fun EvercitaDenyContratScreen(
     icon: Int? = null,
     title: Int? = null,
-    subtitle: Int? = null
+    subtitle: Int? = null,
+    viewModel: SmartSignViewModel = hiltViewModel()
 ) {
-    val openStepDebounce = remember { MutableStateFlow(true) }
-    val openStepFlow: Flow<Boolean> = remember {
-        openStepDebounce.debounce(TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND)
-            .onEach { status ->
-                viewModel.onUIEvent(OnNavigateToHome)
-                flowOf(status)
-            }
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -60,9 +44,9 @@ fun SmartDocumentGenerationScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CustomImage(drawableResource = icon ?: drawable.ic_logo_multimoney3)
+            CustomImage(drawableResource = icon ?: R.drawable.ic_alert)
             Text(
-                text = stringResource(id = title ?: string.document_generation_title),
+                text = stringResource(id = title ?: R.string.smart_evercita_title),
                 modifier = Modifier.padding(top = 24.dp),
                 style = Typography.h5.copy(
                     fontWeight = FontWeight.SemiBold,
@@ -73,7 +57,7 @@ fun SmartDocumentGenerationScreen(
             )
             Text(
                 text = stringResource(
-                    id = subtitle ?: string.smart_other_generating_document_subtitle
+                    id = subtitle ?: R.string.smart_evercita_subtitle
                 ),
                 modifier = Modifier.padding(top = 10.dp),
                 style = Typography.body1,
@@ -86,18 +70,16 @@ fun SmartDocumentGenerationScreen(
                 .padding(top = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            LoadingIndicator(viewModel.uiState.isLoading)
-            Text(
-                text = stringResource(id = string.smart_loading_label),
-                modifier = Modifier.padding(start = 20.dp),
-                style = Typography.body1,
-                color = MultimoneyTheme.colors.text,
-                textAlign = TextAlign.End
+            CustomButton(
+                onClick = { viewModel.onUIEvent(UIEvent.OnNavigateToHome) },
+                text = stringResource(id = R.string.understood),
+                modifier = Modifier
+                    .padding(vertical = 40.dp, horizontal = 16.dp)
+                    .fillMaxWidth()
+                    .height(48.dp),
+                buttonType = CustomButtonType.PrimaryPrimary
             )
         }
     }
-
-
-    // this is required to execute the debounce
-    val openStepFlowValue by openStepFlow.collectAsState(false)
 }
+

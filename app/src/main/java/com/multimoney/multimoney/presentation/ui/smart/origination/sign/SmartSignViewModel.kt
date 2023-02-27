@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.origination.sign
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,6 +10,7 @@ import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmart
 import com.multimoney.domain.interaction.accountsmart.SubscriptionAccountSmartContractUseCase
 import com.multimoney.domain.model.credit.CreditContractEvent
 import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
@@ -26,6 +28,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.home.HomeState
+import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.BaseEvent.SimulateUserInteraction
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.EVICERTIA_REJECTED_FIRST_TIME
@@ -101,6 +104,7 @@ class SmartSignViewModel @Inject constructor(
             subscriptionAccountSmartContractUseCase.invoke(idBrand, idRequestSys)
                 .collectLatest { result ->
                     result.onSuccess {
+                        uiState = uiState.copy(isLoading = false)
                         handleEvents(
                             creditContractEvent = CreditContractEvent(
                                 idPrint = it?.idRequestSysde ?: idRequestSys,
@@ -117,6 +121,8 @@ class SmartSignViewModel @Inject constructor(
                             onListenSmartContractEventSubscription(idBrand, idRequestSys)
                             numAttemptsToStartSubscription++
                         }
+                    }.onLoading {
+                        uiState = uiState.copy(isLoading = true)
                     }
                 }
         }
@@ -228,10 +234,11 @@ class SmartSignViewModel @Inject constructor(
 
     data class UIState(
         // Interactions
+        val isLoading: Boolean = false,
         val signDocumentProcessStep: String = GENERATE_DOCUMENT_STEP.value,
         val dialogParameters: DialogParameters = DialogParameters(),
         val signDocumentUrl: String = "",
-        val loadingIcon: Int = drawable.ic_frame,
+        val loadingIcon: Int = drawable.ic_logo_multimoney3,
         val loadingTitle: Int = string.document_generation_title,
         val loadingSubtitle: Int = string.smart_other_generating_document_subtitle
     )
@@ -246,6 +253,7 @@ class SmartSignViewModel @Inject constructor(
             is UIEvent.OnShowDialogInformation -> createDialog()
             is UIEvent.OnNavigateToHome -> onNavigateToHome()
             is UIEvent.OnNavigateToContinueValidatingIdentity -> onNavigateToContinueValidatingIdentity()
+            is UIEvent.OnLoadingValueChange -> uiState = uiState.copy(isLoading = uiEvent.isLoading)
         }
     }
 
@@ -257,6 +265,7 @@ class SmartSignViewModel @Inject constructor(
         data class OnChangeScreen(val signDocumentStep: String) : UIEvent()
         object OnNavigateToHome : UIEvent()
         object OnNavigateToContinueValidatingIdentity : UIEvent()
+        data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
     }
 
     sealed class BaseEvent {

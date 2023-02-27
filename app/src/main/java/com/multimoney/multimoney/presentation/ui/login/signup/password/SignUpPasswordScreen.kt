@@ -27,12 +27,14 @@ import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.flowlayout.FlowRow
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
@@ -70,11 +72,12 @@ fun SignUpPasswordScreen(
 
     viewModel.onUIEvent(
         SignUpPasswordViewModel.UIEvent.OnInitializeDialogTexts(
-            biometricPromptTitle = stringResource(id = R.string.biometric_dialog_title),
-            biometricPromptDescription = stringResource(id = R.string.biometric_dialog_description),
+            biometricPromptTitle = stringResource(id = if (sharedViewModel.idBrand == Brand.CostaRica.id) string.active_biometric_title_cr else string.active_biometric_title),
+            biometricPromptDescription = stringResource(id = if (sharedViewModel.idBrand == Brand.CostaRica.id) string.active_biometric_message_cr else string.active_biometric_message),
             biometricPromptNegative = stringResource(id = R.string.cancel),
             biometricDialogSuccessDescription = stringResource(id = R.string.dialog_success_biometric_description),
-            biometricDialogFailureDescription = stringResource(id = R.string.dialog_failure_biometric_description)
+            biometricDialogFailureDescription = stringResource(id = R.string.dialog_failure_biometric_description),
+            idBrand = sharedViewModel.idBrand
         )
     )
 
@@ -194,7 +197,7 @@ fun SignUpPasswordScreen(
                             fontWeight = FontWeight.SemiBold
                         )
                 ) {
-                    append(stringResource(id = R.string.sign_up_password_title))
+                    append(stringResource(id = viewModel.uiState.titleResource))
                 }
             },
             textAlign = TextAlign.Start,

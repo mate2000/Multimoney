@@ -15,6 +15,7 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.util.MultimoneyResult
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnCallCognitoSignUp
@@ -70,13 +71,21 @@ class SignUpPasswordViewModel @Inject constructor(
         biometricPromptDescription: String,
         biometricPromptNegative: String,
         biometricDialogSuccessDescription: String,
-        biometricDialogFailureDescription: String
+        biometricDialogFailureDescription: String,
+        idBrand: Int?
     ) {
         this.biometricPromptTitle = biometricPromptTitle
         this.biometricPromptDescription = biometricPromptDescription
         this.biometricPromptNegative = biometricPromptNegative
         this.biometricDialogSuccessDescription = biometricDialogSuccessDescription
         this.biometricDialogFailureDescription = biometricDialogFailureDescription
+        uiState = uiState.copy(
+            titleResource = if (idBrand == Brand.CostaRica.id) {
+                R.string.sign_up_password_title_cr
+            } else {
+                R.string.sign_up_password_title
+            }
+        )
     }
 
     private fun isFormValid(): Boolean {
@@ -319,6 +328,7 @@ class SignUpPasswordViewModel @Inject constructor(
 
     data class UIState(
         // Fields
+        val titleResource: Int = R.string.empty,
         var password: String = "",
         var passwordError: Pair<Boolean, Int> = Pair(false, string.error_empty),
         var confirmPassword: String = "",
@@ -339,7 +349,8 @@ class SignUpPasswordViewModel @Inject constructor(
                 uiEvent.biometricPromptDescription,
                 uiEvent.biometricPromptNegative,
                 uiEvent.biometricDialogSuccessDescription,
-                uiEvent.biometricDialogFailureDescription
+                uiEvent.biometricDialogFailureDescription,
+                uiEvent.idBrand
             )
             is OnNextActionClick -> uiEvent.nextStepAction.invoke()
             is OnPasswordValueChange -> onPasswordValueChange(uiEvent.password, uiEvent.onContinueEnable)
@@ -362,7 +373,11 @@ class SignUpPasswordViewModel @Inject constructor(
             )
             is OnValidForm -> uiEvent.onContinueEnable(isFormValid())
             is OnCallPasswordSave -> callQuerySavePassword(uiEvent.pkUser, uiEvent.user, uiEvent.idBrant)
-            is OnFingerprintCheckedChanged -> onFingerprintCheckedChanged(uiEvent.value, uiEvent.showDialog, uiEvent.idBrand)
+            is OnFingerprintCheckedChanged -> onFingerprintCheckedChanged(
+                uiEvent.value,
+                uiEvent.showDialog,
+                uiEvent.idBrand
+            )
             is OnShowBiometricPromptForEncryption -> onShowBiometricPromptForEncryption(
                 uiEvent.fragmentActivity,
                 uiEvent.userEmail,
@@ -418,7 +433,8 @@ class SignUpPasswordViewModel @Inject constructor(
             val biometricPromptDescription: String,
             val biometricPromptNegative: String,
             val biometricDialogSuccessDescription: String,
-            val biometricDialogFailureDescription: String
+            val biometricDialogFailureDescription: String,
+            val idBrand: Int?
         ) : UIEvent()
 
         data class OnShowBiometricPromptForEncryption(

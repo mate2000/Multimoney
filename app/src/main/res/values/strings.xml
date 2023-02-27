@@ -208,7 +208,8 @@
 
     <!-- Sign Up Otp -->
     <string name="sign_up_otp_title" translatable="false">Te enviamos un SMS \nal %s</string>
-    <string name="sign_up_otp_subtitle" translatable="false">Ingresá el código para conectar tu teléfono a tu cuenta</string>
+    <string name="sign_up_otp_subtitle" translatable="false">Ingresa el código para conectar tu teléfono a tu cuenta</string>
+    <string name="sign_up_otp_subtitle_cr" translatable="false">Ingresá el código para conectar tu teléfono a tu cuenta</string>
     <string name="sign_up_otp_change_phone" translatable="false">Corregir celular</string>
     <string name="sign_up_otp_resend" translatable="false">Reenviar código</string>
     <string name="sign_up_otp_call" translatable="false">Recibir código por llamada</string>
@@ -252,7 +253,8 @@
     <string name="sing_up_personal_data_cr_complete_name" translatable="false">Nombre Completo</string>
 
     <!-- Sign Up Password -->
-    <string name="sign_up_password_title" translatable="false">Creá tu contraseña</string>
+    <string name="sign_up_password_title" translatable="false">Crea tu contraseña</string>
+    <string name="sign_up_password_title_cr" translatable="false">Creá tu contraseña</string>
     <string name="sign_up_label_password" translatable="false">Contraseña</string>
     <string name="sign_up_label_confirm_password" translatable="false">Confirmar contraseña</string>
     <string name="sign_up_password_required" translatable="false">Contraseña es requerida</string>
@@ -285,7 +287,7 @@
     <string name="sign_up_id_validation_three" translatable="false">Tomate una selfie sin lentes o accesorios</string>
 
     <!-- Sign Up Complete -->
-    <string name="sign_up_complete_title" translatable="false">¡Felices finanzas!\nBienvenid@ a MultiMoney</string>
+    <string name="sign_up_complete_title" translatable="false">¡Felices finanzas!\nBienvenido a MultiMoney</string>
 
     <!-- Biometric Dialog -->
     <string name="biometric_dialog_title" translatable="false">¿Inicia sesión con tu biométrica?</string>
@@ -315,8 +317,8 @@
 
     <!-- Biometric Dialog Failure -->
     <string name="dialog_failure_biometric_title" translatable="false">¡Oh no!</string>
-    <string name="dialog_failure_biometric_description" translatable="false">Por el momento no hemos podido configurar tu Face ID.</string>
-    <string name="dialog_failure_biometric_positive_text" translatable="false">Activar más tarde</string>
+    <string name="dialog_failure_biometric_description" translatable="false">Hubo un error al configurar tus biométricos</string>
+    <string name="dialog_failure_biometric_positive_text" translatable="false">Intentalo más tarde</string>
 
     <!-- Home -->
     <string name="home_active_credit_card_cr_label" translatable="false">Activá tu tarjeta digital</string>
@@ -1724,7 +1726,7 @@
     <string name="visa_verified_description_3" translatable="false">en el siguiente\npaso</string>
     <string name="visa_verified_dialog_title" translatable="false">Cancelar proceso</string>
     <string name="visa_verified_dialog_description" translatable="false">¿Estás segur@ de cancelar el proceso de agregar una tarjeta?</string>
-    
+
     <!-- Transfer In Amount Exceeded Form -->
     <string name="amount_exceeded_title" translatable="false">Transferencia Cripto</string>
     <string name="amount_exceeded_message" translatable="false">Has recibido una transferencia mayor a $1,000 necesitamos verificar el depósito.</string>

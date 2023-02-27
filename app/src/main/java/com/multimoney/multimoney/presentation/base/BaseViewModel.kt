@@ -6,8 +6,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.adjust.sdk.Adjust
-import com.adjust.sdk.AdjustEvent
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.connectivity.Connectivity
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -25,8 +23,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 open class BaseViewModel @Inject constructor(
-    val shouldObserveToken: Boolean,
-    val adjustHelper: AdjustHelper
+    val shouldObserveToken: Boolean
+
 ) : ViewModel() {
 
     var isOnRestart by mutableStateOf(true)
@@ -43,6 +41,9 @@ open class BaseViewModel @Inject constructor(
 
     @Inject
     lateinit var provideFireBaseEventHelper: FireBaseEventHelper
+
+    @Inject
+    lateinit var adjustHelper: AdjustHelper
 
     /**
      * Use this val to store one time events defined in NavigationEvent Class
@@ -139,7 +140,7 @@ open class BaseViewModel @Inject constructor(
         }
     }
 
-    fun registerEvent(adjustEventType: AdjustEventType, listParameters: List<Pair<String, String>>) {
+    fun registerEvent(adjustEventType: AdjustEventType, listParameters: List<Pair<String, String>> = listOf()) {
         adjustHelper.registerEvent(adjustEventType, listParameters)
     }
 }

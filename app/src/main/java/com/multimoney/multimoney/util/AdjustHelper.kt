@@ -29,7 +29,7 @@ class AdjustHelper @Inject constructor(@ApplicationContext private val context: 
         return adjustConfig
     }
 
-    fun registerEvent(adjustEventType: AdjustEventType, listParameters: List<Pair<String, String>>) {
+    fun registerEvent(adjustEventType: AdjustEventType, listParameters: List<Pair<String, String>> = listOf()) {
         val adjustEvent = AdjustEvent(adjustEventType.token)
         listParameters.forEach {
             adjustEvent.addCallbackParameter(it.first, it.second)

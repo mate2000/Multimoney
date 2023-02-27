@@ -6,12 +6,16 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.adjust.sdk.Adjust
+import com.adjust.sdk.AdjustEvent
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.connectivity.Connectivity
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.util.AdjustHelper
 import com.multimoney.multimoney.util.firebase.FireBaseEventHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,7 +25,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 open class BaseViewModel @Inject constructor(
-    val shouldObserveToken: Boolean
+    val shouldObserveToken: Boolean,
+    val adjustHelper: AdjustHelper
 ) : ViewModel() {
 
     var isOnRestart by mutableStateOf(true)
@@ -132,5 +137,9 @@ open class BaseViewModel @Inject constructor(
         viewModelScope.launch {
             baseEvent.emit(data)
         }
+    }
+
+    fun registerEvent(adjustEventType: AdjustEventType, listParameters: List<Pair<String, String>>) {
+        adjustHelper.registerEvent(adjustEventType, listParameters)
     }
 }

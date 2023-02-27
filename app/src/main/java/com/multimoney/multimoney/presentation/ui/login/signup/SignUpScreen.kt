@@ -32,6 +32,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnMoveToStep
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUpdateIso3Country
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpScreen
@@ -70,6 +71,7 @@ fun SignUpScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
+            onUIEvent(OnUpdateIso3Country(context.resources.configuration.locale.isO3Country))
             if (step != DEFAULT_STEP) {
                 onUIEvent(OnMoveToStep(step.toInt()))
             }
@@ -86,10 +88,7 @@ fun SignUpScreen(
                 isRightButtonVisible = viewModel.uiState.isCloseVisible,
                 onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
                 onRightButtonClick = {
-                    viewModel.onUIEvent(
-                        OnCloseClick(focusManager = focusManager),
-                        isO3Country = context.resources.configuration.locale.isO3Country
-                    )
+                    viewModel.onUIEvent(OnCloseClick(focusManager = focusManager))
                 }
             )
             if (viewModel.uiState.currentStep != SignUpStep.Five.id) {

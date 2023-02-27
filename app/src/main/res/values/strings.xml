@@ -182,7 +182,8 @@
 
     <!-- Sign Up Email -->
     <string name="sign_up_email_header" translatable="false">Ingresá tu correo</string>
-    <string name="sign_up_email_title" translatable="false">¡Nos emociona \nque estés acá!</string>
+    <string name="sign_up_email_header_sv" translatable="false">Ingresa tu correo</string>
+    <string name="sign_up_email_title" translatable="false">¡Nos emociona\nque estés acá!</string>
     <string name="sign_up_email_required" translatable="false">Correo electrónico requerido</string>
     <string name="sign_up_email_placeholder" translatable="false">nombre@email.com</string>
     <string name="sign_up_email_not_valid" translatable="false">Correo electrónico inválido</string>
@@ -195,9 +196,9 @@
     <string name="sign_up_email_another_device_registered_dialog_description" translatable="false">Al ingresar aquí, cerrarás la sesion que se encuentra abierta en otro dispositivo y deberás empezar el registro desde el principio</string>
 
     <!-- Sign Up Phone -->
-    <string name="sign_up_phone_title" translatable="false">¿Cuál es tu número de teléfono \ncelular?</string>
+    <string name="sign_up_phone_title" translatable="false">¿Cuál es tu número de teléfono\ncelular?</string>
     <string name="sign_up_phone_information" translatable="false">Lo registramos por motivos de seguridad</string>
-    <string name="sign_up_phone_label_phone" translatable="false">Teléfono</string>
+    <string name="sign_up_phone_label_phone" translatable="false">Celular</string>
     <string name="sign_up_phone_required" translatable="false">Número de celular requerido</string>
     <string name="sign_up_phone_not_valid" translatable="false">Número de celular incorrecto</string>
     <string name="sign_up_phone_contact_by" translatable="false">Contactar por:</string>
@@ -232,6 +233,7 @@
     <string name="sign_up_personal_data_document_label_cr" translatable="false">¿Qué tipo de documento de identidad tenés?</string>
     <string name="sign_up_personal_data_document_hint" translatable="false">Selecciona tu documento </string>
     <string name="sign_up_personal_data_document_number_label" translatable="false">Número de identificación</string>
+    <string name="sign_up_personal_data_document_number_label_gt" translatable="false">Número de DPI</string>
     <string name="sign_up_personal_data_names" translatable="false">Nombre(s)</string>
     <string name="sign_up_personal_data_name_error" translatable="false">Primer nombre requerido</string>
     <string name="sign_up_personal_data_lastname_error" translatable="false">Primer apellido requerido</string>

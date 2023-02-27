@@ -118,11 +118,11 @@ fun ACHFavoriteContentList(
                         .padding(top = 12.dp),
                     endIcon = R.drawable.ic_options,
                     startIcon = favorite.first()?.destinationAccountCurrencyId?.getCurrencyFromId()?.accountIcon,
-                    titleIcon = R.drawable.ic_star_filled,
                     onEndIconClick = { favorite.firstOrNull()?.let { onEndIconClick(it) } },
                     onClick = {
-                       favorite.firstOrNull()?.let { onFavoriteClick(it) }
-                    }
+                        favorite.firstOrNull()?.let { onFavoriteClick(it) }
+                    },
+                    titleIcon = R.drawable.ic_star_filled
                 )
             }
         }

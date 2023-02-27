@@ -630,6 +630,8 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")
+
+    object ListenerScreen: Screen("listener_screen")
     object ChartScreen : Screen("chart_screen/{$}")
 
     // Crypto

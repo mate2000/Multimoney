@@ -76,7 +76,7 @@ fun SignUpPersonalDataGtScreen(
             keyboardActions = KeyboardActions(onNext = {
                 focusManager.moveFocus(FocusDirection.Down)
             }),
-            labelText = stringResource(id = R.string.sign_up_personal_data_document_number_label),
+            labelText = stringResource(id = R.string.sign_up_personal_data_document_number_label_gt),
             modifier = Modifier
                 .padding(top = 16.dp),
             isRequired = true,

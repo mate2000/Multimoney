@@ -29,12 +29,12 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.ISO3_COSTA_RICA
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnShowCloseIcon
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnShowAnotherDeviceAlreadyRegisteredDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -141,12 +141,12 @@ fun SignUpEmailScreen(
 
     viewModel.onUIEvent(
         SignUpEmailViewModel.UIEvent.OnStart(
-            userCompletedDialogDescription = stringResource(id = R.string.sign_up_email_user_completed_dialog_description),
+            userCompletedDialogDescription = stringResource(id = string.sign_up_email_user_completed_dialog_description),
             linkWhatsapp = stringResource(
-                id = R.string.whatsapp_deep_link,
+                id = string.whatsapp_deep_link,
                 SignUpViewModel.PHONE_HARDCODED
             ),
-            blockedMessage = stringResource(id = R.string.sign_up_email_blocked_dialog_description)
+            blockedMessage = stringResource(id = string.sign_up_email_blocked_dialog_description)
         )
     )
 
@@ -160,7 +160,7 @@ fun SignUpEmailScreen(
                             fontWeight = FontWeight.SemiBold
                         )
                 ) {
-                    append(stringResource(id = R.string.sign_up_email_title))
+                    append(stringResource(id = string.sign_up_email_title))
                 }
             },
             textAlign = TextAlign.Start,
@@ -186,11 +186,11 @@ fun SignUpEmailScreen(
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             }),
-            labelText = stringResource(id = R.string.sign_up_email_header),
-            placeHolder = stringResource(id = R.string.sign_up_email_placeholder),
+            labelText = stringResource(id = if (sharedViewModel.uiState.isO3Country == ISO3_COSTA_RICA) string.sign_up_email_header else string.sign_up_email_header_sv),
+            placeHolder = stringResource(id = string.sign_up_email_placeholder),
             modifier = Modifier.padding(top = 24.dp),
             isRequired = true,
-            isRequiredMessage = stringResource(id = R.string.sign_up_email_required),
+            isRequiredMessage = stringResource(id = string.sign_up_email_required),
             isError = viewModel.uiState.userEmailError.first,
             errorMessage = stringResource(id = viewModel.uiState.userEmailError.second)
         )

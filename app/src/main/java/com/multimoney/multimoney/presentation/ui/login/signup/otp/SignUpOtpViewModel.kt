@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
 import com.multimoney.domain.interaction.security.QueryValidatePinUseCase
@@ -64,9 +65,16 @@ class SignUpOtpViewModel @Inject constructor(
     // Events
     val onCallMutationSendPinProcessEvent = MutableSharedFlow<MultimoneyResult<SendPinProcess?>>()
 
-    private fun onStart(linkWhatsapp: String, userBlockedForMaxAttend: String) {
+    private fun onStart(linkWhatsapp: String, userBlockedForMaxAttend: String, idBrand: Int?) {
         this.linkWhatsapp = linkWhatsapp
         this.userBlockedForMaxAttend = userBlockedForMaxAttend
+        uiState = uiState.copy(
+            subtitleResource = if (idBrand == Brand.CostaRica.id) {
+                R.string.sign_up_otp_subtitle_cr
+            } else {
+                R.string.sign_up_otp_subtitle
+            }
+        )
     }
 
     private fun getOtpFromMessage(message: String) {
@@ -301,6 +309,7 @@ class SignUpOtpViewModel @Inject constructor(
         val otpResend: String? = "",
         val otpError: Pair<Boolean, Int> = Pair(false, R.string.sign_up_otp_code_not_valid),
         val openUserBlockedDialog: DialogParameters = DialogParameters(),
+        val subtitleResource: Int = R.string.empty,
 
         // Interactions
         val phaseCount: Int = PHASE_ONE,
@@ -312,7 +321,7 @@ class SignUpOtpViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is OnStart -> onStart(event.linkWhatsapp, event.userBlockedForMaxAttends)
+            is OnStart -> onStart(event.linkWhatsapp, event.userBlockedForMaxAttends, event.idBrand)
             is OnNextActionClick -> onNextActionClick(
                 event.pkUser,
                 event.idBrand,
@@ -349,7 +358,8 @@ class SignUpOtpViewModel @Inject constructor(
     sealed class UIEvent {
         data class OnStart(
             val linkWhatsapp: String,
-            val userBlockedForMaxAttends: String
+            val userBlockedForMaxAttends: String,
+            val idBrand: Int?
         ) : UIEvent()
 
         data class OnNextActionClick(

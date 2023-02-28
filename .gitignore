@@ -20,6 +20,7 @@ local.properties
 .idea/gradle.xml
 .idea/misc.xml
 .idea/vcs.xml
+.idea/ktlint.xml
 
 install.cmd
 amplify/cli.json

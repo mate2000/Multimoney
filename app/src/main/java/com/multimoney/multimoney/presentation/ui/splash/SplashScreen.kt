@@ -2,11 +2,11 @@ package com.multimoney.multimoney.presentation.ui.splash
 
 import android.content.pm.ActivityInfo
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -24,7 +24,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun SplashScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit,
-    viewModel: SplashScreenViewModel = hiltViewModel(),
+    viewModel: SplashScreenViewModel = hiltViewModel()
 ) {
     LockScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
     LaunchedEffect(key1 = true) {
@@ -36,7 +36,7 @@ fun SplashScreen(
 }
 
 @Composable
-fun SplashScreen(duration: Long,navigateToNextScreen: () -> Unit) {
+fun SplashScreen(duration: Long, navigateToNextScreen: () -> Unit) {
     Column(
         Modifier
             .fillMaxSize()
@@ -44,7 +44,7 @@ fun SplashScreen(duration: Long,navigateToNextScreen: () -> Unit) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        LaunchedEffect(key1 = true){
+        LaunchedEffect(key1 = true) {
             delay(duration)
             navigateToNextScreen()
         }

@@ -64,8 +64,10 @@ class MyContactsTransferAmountViewModel @Inject constructor(
                 ),
                 destinyAccountDisplay = DisplayAccount(
                     sheetTitle = phoneAccount?.titular,
-                    sheetSubtitle = phoneAccount?.number?.plus(SEPARATOR)
-                        ?.plus(destinyCurrency?.stringName)
+                    sheetSubtitle = phoneAccount?.number?.plus(
+                        if (idBrand == ElSalvador.id) ""
+                        else SEPARATOR.plus(destinyCurrency?.stringName)
+                    )
                 ),
                 currency = destinyCurrency?.symbol ?: Dollar.symbol,
                 placeholder = if (destinyCurrency == Dollar) {

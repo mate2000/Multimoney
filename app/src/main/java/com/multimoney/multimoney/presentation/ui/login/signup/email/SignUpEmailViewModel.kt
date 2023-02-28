@@ -165,7 +165,6 @@ class SignUpEmailViewModel @Inject constructor(
             currentStep = sharedViewModel.uiState.currentStep,
             userData = userData,
             onUseDataValueChange = {
-
                 sharedViewModel.onUIEvent(
                     SignUpViewModel.UIEvent.OnUseDataValueChange(
                         userData?.copy(email = uiState.userEmail),

@@ -46,7 +46,6 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
 
     private var activity: AppCompatActivity? = null
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity = this

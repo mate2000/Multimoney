@@ -37,7 +37,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.*
+
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiaryUnderLined
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -70,7 +70,7 @@ fun SignInScreen(
         viewModel.apply {
             executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
             onUIEvent(
-                OnStart(
+                SignInViewModel.UIEvent.OnStart(
                     getIpAddress(fragmentActivity) ?: "",
                     getDeviceName(fragmentActivity) ?: "",
                     getDeviceType(fragmentActivity).value ?: "",
@@ -81,7 +81,7 @@ fun SignInScreen(
     }
 
     viewModel.onUIEvent(
-        OnInitializeBiometricPrompt(
+        SignInViewModel.UIEvent.OnInitializeBiometricPrompt(
             biometricPromptTitle = stringResource(id = R.string.biometric_dialog_title),
             biometricPromptDescription = stringResource(id = R.string.biometric_dialog_description),
             biometricPromptNegative = stringResource(id = R.string.cancel),
@@ -100,7 +100,7 @@ fun SignInScreen(
 @Composable
 fun SignInContent(viewModel: SignInViewModel, fragmentActivity: FragmentActivity) {
     val focusManager = LocalFocusManager.current
-    val context  = LocalContext.current
+    val context = LocalContext.current
 
     // View
     Column(
@@ -164,9 +164,9 @@ fun SignInContent(viewModel: SignInViewModel, fragmentActivity: FragmentActivity
         CustomOutlinedTextField(
             value = viewModel.uiState.userEmail,
             onValueChange = {
-                viewModel.onUIEvent(OnUserEmailValueChange(it))
+                viewModel.onUIEvent(SignInViewModel.UIEvent.OnUserEmailValueChange(it))
             },
-            onDebounceValidation = { viewModel.onUIEvent(OnValidateUserEmail) },
+            onDebounceValidation = { viewModel.onUIEvent(SignInViewModel.UIEvent.OnValidateUserEmail) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
@@ -193,21 +193,33 @@ fun SignInContent(viewModel: SignInViewModel, fragmentActivity: FragmentActivity
                 onSignInWithBiometricAction = {
                     viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.LoginBiometrics)
                     viewModel.onUIEvent(
-                        OnShowBiometricPromptForDecryption(
+                        SignInViewModel.UIEvent.OnShowBiometricPromptForDecryption(
                             fragmentActivity
                         )
                     )
                 },
-                onLinkEnterWithPassword = { viewModel.onUIEvent(OnShowBiometricSignInChanged(false)) }
+                onLinkEnterWithPassword = {
+                    viewModel.onUIEvent(
+                        SignInViewModel.UIEvent.OnShowBiometricSignInChanged(
+                            false
+                        )
+                    )
+                }
             )
         } else {
             SignInWithPassword(
                 viewModel = viewModel,
                 focusManager = focusManager,
                 onForgotPasswordClick = {
-                    viewModel.onUIEvent(OnNavigateToForgotPassword)
+                    viewModel.onUIEvent(SignInViewModel.UIEvent.OnNavigateToForgotPassword)
                 },
-                onSignInWithBiometricLink = { viewModel.onUIEvent(OnShowBiometricSignInChanged(true)) }
+                onSignInWithBiometricLink = {
+                    viewModel.onUIEvent(
+                        SignInViewModel.UIEvent.OnShowBiometricSignInChanged(
+                            true
+                        )
+                    )
+                }
             )
         }
         CustomButton(
@@ -217,7 +229,7 @@ fun SignInContent(viewModel: SignInViewModel, fragmentActivity: FragmentActivity
                 .fillMaxWidth()
                 .height(48.dp),
             onClick = {
-                viewModel.onUIEvent(OnNavigateToSignUp)
+                viewModel.onUIEvent(SignInViewModel.UIEvent.OnNavigateToSignUp)
             },
             buttonType = PrimaryTertiaryUnderLined
         )
@@ -239,15 +251,31 @@ fun SignInContent(viewModel: SignInViewModel, fragmentActivity: FragmentActivity
     }
 
     if (viewModel.uiState.configureBiometric) {
-        viewModel.onUIEvent(OnShowBiometricPromptForEncryption(fragmentActivity))
+        viewModel.onUIEvent(
+            SignInViewModel.UIEvent.OnShowBiometricPromptForEncryption(
+                fragmentActivity
+            )
+        )
     }
 
     if (viewModel.uiState.biometricErrorDialog.first.value) {
         CustomDialog(
             title = stringResource(id = R.string.error),
             message = viewModel.uiState.biometricErrorDialog.second,
-            onPositiveAction = { viewModel.onUIEvent(OnShowBiometricSignInChanged(false)) },
-            onDismissAction = { viewModel.onUIEvent(OnShowBiometricSignInChanged(false)) },
+            onPositiveAction = {
+                viewModel.onUIEvent(
+                    SignInViewModel.UIEvent.OnShowBiometricSignInChanged(
+                        false
+                    )
+                )
+            },
+            onDismissAction = {
+                viewModel.onUIEvent(
+                    SignInViewModel.UIEvent.OnShowBiometricSignInChanged(
+                        false
+                    )
+                )
+            },
             openDialogCustom = viewModel.uiState.biometricErrorDialog.first
         )
     }

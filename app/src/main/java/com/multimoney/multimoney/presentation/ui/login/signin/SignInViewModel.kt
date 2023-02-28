@@ -25,7 +25,6 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.*
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
 import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -79,7 +78,6 @@ class SignInViewModel @Inject constructor(
         deviceType: String,
         forceDeviceChange: Boolean
     ) {
-
         this.ipAddress = ipAddress
         this.deviceName = deviceName
         this.deviceType = deviceType
@@ -201,9 +199,9 @@ class SignInViewModel @Inject constructor(
                         descriptionResource = string.sign_in_session_open_here_close_another,
                         positiveResource = string.sign_in_dialog_sign_in_here_button,
                         negativeResource = string.sign_in_dialog_exit_button,
-                        positiveAction = { onUIEvent(OnNavigateToOTPScreen) },
-                        negativeAction = { onUIEvent(OnCloseDialog) },
-                        dismissAction = { onUIEvent(OnCloseDialog) },
+                        positiveAction = { onUIEvent(UIEvent.OnNavigateToOTPScreen) },
+                        negativeAction = { onUIEvent(UIEvent.OnCloseDialog) },
+                        dismissAction = { onUIEvent(UIEvent.OnCloseDialog) },
                         isActive = mutableStateOf(true)
                     ),
                     isLoading = false
@@ -235,8 +233,8 @@ class SignInViewModel @Inject constructor(
                             positiveResource = string.button_continue,
                             negativeResource = string.common_return,
                             positiveAction = { onNavigateToSignUp() },
-                            negativeAction = { onUIEvent(OnCloseDialog) },
-                            dismissAction = { onUIEvent(OnCloseDialog) },
+                            negativeAction = { onUIEvent(UIEvent.OnCloseDialog) },
+                            dismissAction = { onUIEvent(UIEvent.OnCloseDialog) },
                             isActive = mutableStateOf(true)
                         ),
                         isLoading = false
@@ -473,7 +471,7 @@ class SignInViewModel @Inject constructor(
                     negativeResource = string.active_biometric_negative_button_label,
                     positiveAction = {
                         onUIEvent(
-                            OnFingerprintCheckedChanged(
+                            UIEvent.OnFingerprintCheckedChanged(
                                 value = true,
                                 showDialog = false,
                                 is03Country
@@ -482,7 +480,7 @@ class SignInViewModel @Inject constructor(
                     },
                     negativeAction = {
                         onUIEvent(
-                            OnFingerprintCheckedChanged(
+                            UIEvent.OnFingerprintCheckedChanged(
                                 value = false,
                                 showDialog = false,
                                 is03Country
@@ -491,7 +489,7 @@ class SignInViewModel @Inject constructor(
                     },
                     dismissAction = {
                         onUIEvent(
-                            OnFingerprintCheckedChanged(
+                            UIEvent.OnFingerprintCheckedChanged(
                                 value = false,
                                 showDialog = false,
                                 is03Country
@@ -509,7 +507,7 @@ class SignInViewModel @Inject constructor(
                     negativeResource = string.active_biometric_negative_button_label,
                     positiveAction = {
                         onUIEvent(
-                            OnFingerprintCheckedChanged(
+                            UIEvent.OnFingerprintCheckedChanged(
                                 value = true,
                                 showDialog = false,
                                 is03Country
@@ -518,7 +516,7 @@ class SignInViewModel @Inject constructor(
                     },
                     negativeAction = {
                         onUIEvent(
-                            OnFingerprintCheckedChanged(
+                            UIEvent.OnFingerprintCheckedChanged(
                                 value = false,
                                 showDialog = false,
                                 is03Country
@@ -527,7 +525,7 @@ class SignInViewModel @Inject constructor(
                     },
                     dismissAction = {
                         onUIEvent(
-                            OnFingerprintCheckedChanged(
+                            UIEvent.OnFingerprintCheckedChanged(
                                 value = false,
                                 showDialog = false,
                                 is03Country
@@ -602,36 +600,36 @@ class SignInViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is OnUserPasswordValueChange -> onUserPasswordValueChange(event.value)
-            is OnUserEmailValueChange -> onUserEmailValueChange(event.value)
-            is OnInitializeBiometricPrompt -> initializeBiometricPrompt(
+            is UIEvent.OnUserPasswordValueChange -> onUserPasswordValueChange(event.value)
+            is UIEvent.OnUserEmailValueChange -> onUserEmailValueChange(event.value)
+            is UIEvent.OnInitializeBiometricPrompt -> initializeBiometricPrompt(
                 event.biometricPromptTitle,
                 event.biometricPromptDescription,
                 event.biometricPromptNegative,
                 event.fragmentActivity
             )
-            is OnShowBiometricPromptForEncryption -> onShowBiometricPromptForEncryption(event.fragmentActivity)
-            is OnShowBiometricPromptForDecryption -> onShowBiometricPromptForDecryption(event.fragmentActivity)
-            is OnShowBiometricSignInChanged -> onShowBiometricSignInChanged(event.value)
-            is OnFingerprintCheckedChanged -> onFingerprintCheckedChanged(
+            is UIEvent.OnShowBiometricPromptForEncryption -> onShowBiometricPromptForEncryption(event.fragmentActivity)
+            is UIEvent.OnShowBiometricPromptForDecryption -> onShowBiometricPromptForDecryption(event.fragmentActivity)
+            is UIEvent.OnShowBiometricSignInChanged -> onShowBiometricSignInChanged(event.value)
+            is UIEvent.OnFingerprintCheckedChanged -> onFingerprintCheckedChanged(
                 event.value,
                 event.showDialog,
                 event.is03Country
             )
 
-            is OnStart -> onStart(
+            is UIEvent.OnStart -> onStart(
                 event.ipAddress,
                 event.deviceName,
                 event.deviceType,
                 event.forceDeviceChange
             )
-            is OnValidateUserEmail -> isUserEmailValid()
-            is OnCallCognitoSignIn -> callCognitoSignIn(event.activity)
-            is OnNavigateToForgotPassword -> onNavigateToForgotPassword()
-            is OnCloseDialog -> onCloseDialog()
-            is OnNavigateToOTPScreen -> onNavigateToOTPScreen()
-            is OnNavigateToSignUp -> onNavigateToSignUp()
-            is OnUpdateToastVisibility -> onUpdateToastVisibility(event.value)
+            is UIEvent.OnValidateUserEmail -> isUserEmailValid()
+            is UIEvent.OnCallCognitoSignIn -> callCognitoSignIn(event.activity)
+            is UIEvent.OnNavigateToForgotPassword -> onNavigateToForgotPassword()
+            is UIEvent.OnCloseDialog -> onCloseDialog()
+            is UIEvent.OnNavigateToOTPScreen -> onNavigateToOTPScreen()
+            is UIEvent.OnNavigateToSignUp -> onNavigateToSignUp()
+            is UIEvent.OnUpdateToastVisibility -> onUpdateToastVisibility(event.value)
         }
     }
 

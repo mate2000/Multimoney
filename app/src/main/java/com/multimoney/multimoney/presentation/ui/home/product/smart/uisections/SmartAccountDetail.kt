@@ -55,7 +55,8 @@ fun SmartAccountDetail(
                             accountLabel,
                             onShareIbanAccount
                         )
-                    })
+                    }
+                )
             } else if (uiState.idBrand == Brand.ElSalvador.id.toString()) {
                 accountLabel = stringResource(id = string.payment_options_transfer_account)
                 CreditDetailItem(
@@ -67,22 +68,21 @@ fun SmartAccountDetail(
                             accountLabel,
                             onShareIbanAccount
                         )
-                    })
+                    }
+                )
             }
             CreditDetailItem(
                 label = stringResource(id = string.smart_account_detail_gained_interest_label),
                 value = {
                     Text(
-                        text = stringResource(
-                            string.common_percentage_format,
-                            account?.interest.toString()
-                        ),
+                        text = account?.interest.toString(),
                         style = Typography.body2.copy(
                             color = MultimoneyTheme.colors.text,
                             fontWeight = FontWeight.SemiBold
                         )
                     )
-                })
+                }
+            )
             CreditDetailItem(
                 label = stringResource(id = string.smart_account_detail_total_balance_label),
                 value = {
@@ -96,7 +96,8 @@ fun SmartAccountDetail(
                             fontWeight = FontWeight.SemiBold
                         )
                     )
-                })
+                }
+            )
         }
     }
 }

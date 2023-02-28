@@ -88,7 +88,9 @@ class AmountExceededViewModel @Inject constructor(
                 uiState = uiState.copy(isLoading = false)
                 result.onSuccess {
                     it.hasError?.let {
-                        uiState = uiState.copy(isAlertResultVisible = true)
+                        if (it) {
+                            uiState = uiState.copy(isAlertResultVisible = true)
+                        }
                     }
                     if (it.withHeld) {
                         uiState = uiState.copy(isAmountExceeded = true)

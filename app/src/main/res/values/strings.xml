@@ -153,7 +153,8 @@
     <string name="sign_in_verify_otp_error_title" translatable="false">Lo sentimos, no pudimos cambiar tu dispositivo</string>
     <string name="sign_in_verify_otp_error_subtitle" translatable="false">No es posible validar tu teléfono por favor, inténtalo nuevamente.</string>
     <string name="sign_in_verify_otp_blocked_title" translatable="false">Usuario bloqueado</string>
-    <string name="sign_in_verify_otp_blocked_subtitle_sv" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte</string>
+    <string name="sign_in_verify_otp_blocked_subtitle" translatable="false">No hemos podido verificar tu dispositivo. Por tu seguridad no puedes realizar el cambio ahora. Inténtalo más tarde o contacta a soporte</string>
+    <string name="sign_in_verify_otp_blocked_subtitle_cr" translatable="false">No hemos podido verificar tu dispositivo. Por tu seguridad no podés realizar el cambio ahora. Inténtalo más tarde o contacta a soporte</string>
     <string name="sign_in_dialog_user_exists_title" translatable="false">¿Eres usuario MultiMoney?</string>
     <string name="sign_in_dialog_user_exists_description" translatable="false">Si eres cliente MultiMoney o no tienes una cuenta registrada, presioná continuar y seguí unos cuantos pasos para poder ingresar a tu nueva App MultiMoney</string>
     <string name="sign_in_expired_password_dialog_title" translatable="false">Tu contraseña ha expirado</string>
@@ -181,7 +182,8 @@
 
     <!-- Sign Up Email -->
     <string name="sign_up_email_header" translatable="false">Ingresá tu correo</string>
-    <string name="sign_up_email_title" translatable="false">¡Nos emociona \nque estés acá!</string>
+    <string name="sign_up_email_header_sv" translatable="false">Ingresa tu correo</string>
+    <string name="sign_up_email_title" translatable="false">¡Nos emociona\nque estés acá!</string>
     <string name="sign_up_email_required" translatable="false">Correo electrónico requerido</string>
     <string name="sign_up_email_placeholder" translatable="false">nombre@email.com</string>
     <string name="sign_up_email_not_valid" translatable="false">Correo electrónico inválido</string>
@@ -194,9 +196,9 @@
     <string name="sign_up_email_another_device_registered_dialog_description" translatable="false">Al ingresar aquí, cerrarás la sesion que se encuentra abierta en otro dispositivo y deberás empezar el registro desde el principio</string>
 
     <!-- Sign Up Phone -->
-    <string name="sign_up_phone_title" translatable="false">¿Cuál es tu número de teléfono \ncelular?</string>
+    <string name="sign_up_phone_title" translatable="false">¿Cuál es tu número de teléfono\ncelular?</string>
     <string name="sign_up_phone_information" translatable="false">Lo registramos por motivos de seguridad</string>
-    <string name="sign_up_phone_label_phone" translatable="false">Teléfono</string>
+    <string name="sign_up_phone_label_phone" translatable="false">Celular</string>
     <string name="sign_up_phone_required" translatable="false">Número de celular requerido</string>
     <string name="sign_up_phone_not_valid" translatable="false">Número de celular incorrecto</string>
     <string name="sign_up_phone_contact_by" translatable="false">Contactar por:</string>
@@ -206,7 +208,8 @@
 
     <!-- Sign Up Otp -->
     <string name="sign_up_otp_title" translatable="false">Te enviamos un SMS \nal %s</string>
-    <string name="sign_up_otp_subtitle" translatable="false">Ingresá el código para conectar tu teléfono a tu cuenta</string>
+    <string name="sign_up_otp_subtitle" translatable="false">Ingresa el código para conectar tu teléfono a tu cuenta</string>
+    <string name="sign_up_otp_subtitle_cr" translatable="false">Ingresá el código para conectar tu teléfono a tu cuenta</string>
     <string name="sign_up_otp_change_phone" translatable="false">Corregir celular</string>
     <string name="sign_up_otp_resend" translatable="false">Reenviar código</string>
     <string name="sign_up_otp_call" translatable="false">Recibir código por llamada</string>
@@ -231,6 +234,7 @@
     <string name="sign_up_personal_data_document_label_cr" translatable="false">¿Qué tipo de documento de identidad tenés?</string>
     <string name="sign_up_personal_data_document_hint" translatable="false">Selecciona tu documento </string>
     <string name="sign_up_personal_data_document_number_label" translatable="false">Número de identificación</string>
+    <string name="sign_up_personal_data_document_number_label_gt" translatable="false">Número de DPI</string>
     <string name="sign_up_personal_data_names" translatable="false">Nombre(s)</string>
     <string name="sign_up_personal_data_name_error" translatable="false">Primer nombre requerido</string>
     <string name="sign_up_personal_data_lastname_error" translatable="false">Primer apellido requerido</string>
@@ -249,7 +253,8 @@
     <string name="sing_up_personal_data_cr_complete_name" translatable="false">Nombre Completo</string>
 
     <!-- Sign Up Password -->
-    <string name="sign_up_password_title" translatable="false">Creá tu contraseña</string>
+    <string name="sign_up_password_title" translatable="false">Crea tu contraseña</string>
+    <string name="sign_up_password_title_cr" translatable="false">Creá tu contraseña</string>
     <string name="sign_up_label_password" translatable="false">Contraseña</string>
     <string name="sign_up_label_confirm_password" translatable="false">Confirmar contraseña</string>
     <string name="sign_up_password_required" translatable="false">Contraseña es requerida</string>
@@ -282,7 +287,7 @@
     <string name="sign_up_id_validation_three" translatable="false">Tomate una selfie sin lentes o accesorios</string>
 
     <!-- Sign Up Complete -->
-    <string name="sign_up_complete_title" translatable="false">¡Felices finanzas!\nBienvenid@ a MultiMoney</string>
+    <string name="sign_up_complete_title" translatable="false">¡Felices finanzas!\nBienvenido a MultiMoney</string>
 
     <!-- Biometric Dialog -->
     <string name="biometric_dialog_title" translatable="false">¿Inicia sesión con tu biométrica?</string>
@@ -312,8 +317,8 @@
 
     <!-- Biometric Dialog Failure -->
     <string name="dialog_failure_biometric_title" translatable="false">¡Oh no!</string>
-    <string name="dialog_failure_biometric_description" translatable="false">Por el momento no hemos podido configurar tu Face ID.</string>
-    <string name="dialog_failure_biometric_positive_text" translatable="false">Activar más tarde</string>
+    <string name="dialog_failure_biometric_description" translatable="false">Hubo un error al configurar tus biométricos</string>
+    <string name="dialog_failure_biometric_positive_text" translatable="false">Intentalo más tarde</string>
 
     <!-- Home -->
     <string name="home_active_credit_card_cr_label" translatable="false">Activá tu tarjeta digital</string>
@@ -1042,7 +1047,8 @@
     <string name="payment_options_title_cr" translatable="false">¿En cuál cuenta querés ahorrar?</string>
 
     <!-- Smart Living Address -->
-    <string name="smart_liv_address_title" translatable="false">¿Dónde vivís?</string>
+    <string name="smart_liv_address_title" translatable="false">¿Dónde vives?</string>
+    <string name="smart_liv_address_title_cr" translatable="false">¿Dónde vivís?</string>
     <string name="smart_liv_address_province" translatable="false">Provincia</string>
     <string name="smart_liv_address_town" translatable="false">Cantón</string>
     <string name="smart_liv_address_district" translatable="false">Distrito</string>
@@ -1220,7 +1226,7 @@
     <string name="market_details_button_read_more" translatable="false">Leer más</string>
 
     <!--Crypto Purchase Flow-->
-    <string name="crypto_purchase_flow_title_cr" translatable="false">¿Cúanto querés comprar?</string>
+    <string name="crypto_purchase_flow_title_cr" translatable="false">¿Cuánto querés comprar?</string>
     <string name="crypto_purchase_flow_title_sv" translatable="false">¿Cuánto quieres comprar?</string>
     <string name="crypto_purchase_flow_exchange_reference" translatable="false">1 %2s = %3s</string>
     <string name="crypto_purchase_flow_exchange_reference_edittext" translatable="false">≈ %1s %2s</string>
@@ -1569,6 +1575,8 @@
     <!-- Crypto send flow -->
     <string name="crypto_send_flow_error_sending_crypto" translatable="false">Lo sentimos, no se puede hacer el envío</string>
     <string name="crypto_send_flow_error_sending_crypto_try_again" translatable="false">Por favor vuelve a intentar más tarde</string>
+    <string name="crypto_send_flow_error_oh_no" translatable="false">¡Oh no! Hubo un error</string>
+    <string name="crypto_send_flow_error_not_sent" translatable="false">El envío no fue realizado</string>
     <string name="crypto_send_abandon_dialog_title" translatable="false">Cancelar envío</string>
     <string name="crypto_send_abandon_dialog_message" translatable="false">¿Estás seguro que querés cancelar el envío?</string>
     <string name="crypto_send_amount_error_available_amount_commission" translatable="false">"El monto a enviar más la comisión \nsupera el monto disponible"</string>
@@ -1718,7 +1726,7 @@
     <string name="visa_verified_description_3" translatable="false">en el siguiente\npaso</string>
     <string name="visa_verified_dialog_title" translatable="false">Cancelar proceso</string>
     <string name="visa_verified_dialog_description" translatable="false">¿Estás segur@ de cancelar el proceso de agregar una tarjeta?</string>
-    
+
     <!-- Transfer In Amount Exceeded Form -->
     <string name="amount_exceeded_title" translatable="false">Transferencia Cripto</string>
     <string name="amount_exceeded_message" translatable="false">Has recibido una transferencia mayor a $1,000 necesitamos verificar el depósito.</string>

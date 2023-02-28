@@ -119,7 +119,10 @@ fun SmartLivingAddressScreen(
             .verticalScroll(scrollState)
     ) {
         Text(
-            text = stringResource(id = R.string.smart_liv_address_title),
+            text = stringResource(id =
+                if (sharedViewModel.idBrandAsInt == Brand.CostaRica.id) R.string.smart_liv_address_title_cr
+                else R.string.smart_liv_address_title
+            ),
             modifier = Modifier.padding(top = 16.dp),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText

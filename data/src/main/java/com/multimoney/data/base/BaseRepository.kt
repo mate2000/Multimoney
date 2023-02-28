@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import java.io.IOException
 
 abstract class BaseRepository {
@@ -114,7 +113,6 @@ abstract class BaseRepository {
                             )
                         )
                     } else {
-                        Timber.wtf("SUBSCRITION_MM", apolloResponse.data.toString())
                         send(MultimoneyResult.Success(apolloResponse.data))
                     }
                 }

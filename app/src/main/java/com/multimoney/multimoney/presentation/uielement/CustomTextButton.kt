@@ -52,10 +52,12 @@ fun CustomTextButton(
             color = textColor
         )
         Spacer(modifier = Modifier.width(7.dp))
-        Image(
-            modifier = Modifier.size(20.dp),
-            painter = painterResource(id = endIconResource),
-            contentDescription = ""
-        )
+        if (endIconResource != 0) {
+            Image(
+                modifier = Modifier.size(20.dp),
+                painter = painterResource(id = endIconResource),
+                contentDescription = ""
+            )
+        }
     }
 }

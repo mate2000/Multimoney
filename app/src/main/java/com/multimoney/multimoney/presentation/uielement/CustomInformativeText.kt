@@ -4,9 +4,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,6 +18,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Typography
 
 /**
  * CustomInformativeText: Informative text to match design style across the whole app, in order to use it.
@@ -33,7 +36,6 @@ import androidx.compose.ui.unit.dp
  */
 
 @Composable
-@Preview
 fun CustomInformativeText(
     modifier: Modifier = Modifier,
     leadingIcon: Int? = null,
@@ -61,7 +63,7 @@ fun CustomInformativeText(
             text = text,
             style = textStyle,
             modifier = Modifier
-                .wrapContentSize()
+                .fillMaxWidth(0.8f)
                 .padding(start = 9.dp)
                 .align(alignmentVertical)
         )
@@ -77,4 +79,16 @@ fun CustomInformativeText(
             )
         }
     }
+}
+
+@Preview
+@Composable
+fun CustomInformativeTextPreview() {
+    CustomInformativeText(
+        modifier = Modifier.padding(top = 24.dp, start = 7.dp, end = 16.dp).fillMaxWidth(),
+        text = "This is a two line test text to see fitment",
+        trailingIcon = R.drawable.ic_information_chip,
+        iconSize = 44.dp,
+        textStyle = Typography.h6.copy(color = MultimoneyTheme.colors.text)
+    )
 }

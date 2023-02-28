@@ -16,7 +16,6 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnCallMutationSendPinProcess
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnCallMutationSendPinProcessSuccess
@@ -115,13 +114,15 @@ class SignUpOtpViewModel @Inject constructor(
         )
 
         if (this.numberOfPinForwards == PHASE_THREE) {
-            uiState = uiState.copy(openUserBlockedDialog = DialogParameters(
-                titleResource = R.string.sign_up_email_blocked_dialog_title,
-                description = userBlockedForMaxAttend,
-                isActive = mutableStateOf(true),
-                positiveResource = R.string.contact,
-                negativeResource = R.string.cancel,
-            ))
+            uiState = uiState.copy(
+                openUserBlockedDialog = DialogParameters(
+                    titleResource = R.string.sign_up_email_blocked_dialog_title,
+                    description = userBlockedForMaxAttend,
+                    isActive = mutableStateOf(true),
+                    positiveResource = R.string.contact,
+                    negativeResource = R.string.cancel
+                )
+            )
         }
     }
 
@@ -221,13 +222,15 @@ class SignUpOtpViewModel @Inject constructor(
                     }
                     .onMessage {
                         if (it?.messageError?.status == SIGN_UP_FAILED_CODE) {
-                            uiState = uiState.copy(openUserBlockedDialog = DialogParameters(
-                                titleResource = R.string.sign_up_email_blocked_dialog_title,
-                                description = userBlockedForMaxAttend,
-                                isActive = mutableStateOf(true),
-                                positiveResource = R.string.contact,
-                                negativeResource = R.string.cancel,
-                            ))
+                            uiState = uiState.copy(
+                                openUserBlockedDialog = DialogParameters(
+                                    titleResource = R.string.sign_up_email_blocked_dialog_title,
+                                    description = userBlockedForMaxAttend,
+                                    isActive = mutableStateOf(true),
+                                    positiveResource = R.string.contact,
+                                    negativeResource = R.string.cancel
+                                )
+                            )
                         } else {
                             uiState = uiState.copy(
                                 otpError = Pair(true, R.string.sign_up_otp_code_not_valid)

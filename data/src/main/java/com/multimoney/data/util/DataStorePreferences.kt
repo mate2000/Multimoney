@@ -158,6 +158,11 @@ class DataStorePreferences @Inject constructor(
     }
     fun getSmartTransferLimit() = getListFlow<SmartTransferLimit?>(SMART_LIMITS, object : TypeToken<List<SmartTransferLimit>>() {}.type)
 
+    suspend fun isAdjustSplashEventRegistered(isOnBoardingEnabled: Boolean) =
+        setData(SPLASH_ADJUST_KEY, isOnBoardingEnabled)
+
+    fun isAdjustSplashEventRegistered(): Flow<Boolean> = getData(SPLASH_ADJUST_KEY, true)
+
     companion object {
         private val UNIQUE_ID = stringPreferencesKey("unique_id")
         private val TOKEN_KEY = stringPreferencesKey("auth_token")
@@ -182,5 +187,6 @@ class DataStorePreferences @Inject constructor(
         private val CRYPTO_ORIGIN_KEY = stringPreferencesKey("crypto_origin_key")
         private val ENABLE_CRYPTO_TRANSFER_KEY = booleanPreferencesKey("enable_crypto_transfer_key")
         private val SMART_LIMITS = stringPreferencesKey("smart_limits")
+        private val SPLASH_ADJUST_KEY = booleanPreferencesKey("splash_adjust_key")
     }
 }

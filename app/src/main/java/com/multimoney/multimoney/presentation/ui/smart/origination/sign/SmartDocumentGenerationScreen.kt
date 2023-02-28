@@ -3,10 +3,7 @@ package com.multimoney.multimoney.presentation.ui.smart.origination.sign
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -14,6 +11,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -22,6 +20,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSig
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.uielement.loadingProgressIndicator
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -81,20 +80,13 @@ fun SmartDocumentGenerationScreen(
                 textAlign = TextAlign.Center
             )
         }
-        Row(
-            modifier = Modifier
-                .padding(top = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            LoadingIndicator(viewModel.uiState.isLoading)
-            Text(
-                text = stringResource(id = string.smart_loading_label),
-                modifier = Modifier.padding(start = 20.dp),
-                style = Typography.body1,
-                color = MultimoneyTheme.colors.text,
-                textAlign = TextAlign.End
-            )
-        }
+
+        //LoadingIndicator(viewModel.uiState.isLoading)
+        loadingProgressIndicator(
+            viewModel.uiState.isLoading,
+            stringResource(id = R.string.smart_loading_label)
+        )
+
     }
 
 

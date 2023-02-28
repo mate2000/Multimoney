@@ -8,6 +8,7 @@ import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.COMING_FROM_CRYPTO
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
@@ -36,6 +37,7 @@ class OnfidoAndEvicertiaErrorsViewModel @Inject constructor(
     var idUserRequest: Long = 0
     var firstName: String = ""
     var lastName: String = ""
+    var comingFromCrypto: Boolean = false
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -46,6 +48,7 @@ class OnfidoAndEvicertiaErrorsViewModel @Inject constructor(
         firstName = savedStateHandle[FIRST_NAME] ?: ""
         lastName = savedStateHandle[LAST_NAME] ?: ""
         uiState = uiState.copy(error = savedStateHandle[ONFIDO_AND_EVICERTIA_ERROR] ?: "")
+        comingFromCrypto = savedStateHandle[COMING_FROM_CRYPTO] ?: false
     }
 
     private fun onNavigateToHome() =
@@ -53,7 +56,7 @@ class OnfidoAndEvicertiaErrorsViewModel @Inject constructor(
 
     private fun onNavigateToOnfidoProcess() {
         popAndNavigateTo(
-            route = "${Screen.SmartOnfidoScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$PRINT_EMPTY/$URL_EMPTY/${SmartOnFidoOrFirmStatus.FIRMED.status}",
+            route = "${Screen.SmartOnfidoScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$PRINT_EMPTY/$URL_EMPTY/$comingFromCrypto",
             popTo = Screen.SmartOnfidoAndEvicertiaErrorsScreen.route
         )
     }

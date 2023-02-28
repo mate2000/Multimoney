@@ -20,6 +20,7 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.Screen.ContinueValidatingOnfidoScreen
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
+import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
@@ -73,6 +74,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     var lastName: String = ""
     var isCrosseling: Boolean = false
     var shouldGetEvicertiaLink = true
+    var evisertiaStatus: String = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -85,6 +87,7 @@ class SignDocumentProcessViewModel @Inject constructor(
         lastName = savedStateHandle[LAST_NAME] ?: ""
         isCrosseling = savedStateHandle[CROSSELING] ?: false
         shouldGetEvicertiaLink = savedStateHandle[SHOULD_GET_EVICERTIA_LINK] ?: true
+        evisertiaStatus = savedStateHandle[EVICERTIA_STATUS] ?: ""
         uiState = uiState.copy(
             signDocumentProcessStep = savedStateHandle[SIGN_DOCUMENT_STEP_ARG] ?: ""
         )
@@ -107,8 +110,12 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     private fun onShouldCallGetLinkCreditContract() {
-        if (shouldGetEvicertiaLink || (creditSubscriptionManager.hasEvisertiaLink().not() && isCrosseling.not())) {
-            callQueryGetLinkCreditContractUseCase()
+        if (evisertiaStatus.lowercase() != CreditOnFidoOrFirmStatus.FIRMED.status.lowercase()
+            && evisertiaStatus.lowercase() != CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase()
+        ) {
+            if (shouldGetEvicertiaLink || (creditSubscriptionManager.hasEvisertiaLink().not() && isCrosseling.not())) {
+                callQueryGetLinkCreditContractUseCase()
+            }
         }
     }
 
@@ -285,7 +292,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     private fun onNavigateToOnfidoAndEvicertiaError(error: String) {
         creditSubscriptionManager.destroySubscription()
         popAndNavigateTo(
-            route = "${Screen.OnfidoAndEvicertiaErrorsScreen.baseRoute}/$error/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName",
+            route = "${Screen.OnfidoAndEvicertiaErrorsScreen.baseRoute}/$error/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$evisertiaStatus",
             popTo = Screen.SignDocumentProcessScreen.route
         )
     }

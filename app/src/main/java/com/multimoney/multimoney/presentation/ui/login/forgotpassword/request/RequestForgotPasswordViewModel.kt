@@ -7,6 +7,7 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.SavedStateHandle
 import com.amplifyframework.core.Amplify
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.QueryValidateUserExistsUseCase
 import com.multimoney.domain.model.util.onFailure
@@ -20,24 +21,20 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
-import com.multimoney.multimoney.presentation.ui.login.forgotpassword.request.RequestForgotPasswordViewModel.UIEvent.OnChangePasswordClick
-import com.multimoney.multimoney.presentation.ui.login.forgotpassword.request.RequestForgotPasswordViewModel.UIEvent.OnCloseClick
-import com.multimoney.multimoney.presentation.ui.login.forgotpassword.request.RequestForgotPasswordViewModel.UIEvent.OnContinueClick
-import com.multimoney.multimoney.presentation.ui.login.forgotpassword.request.RequestForgotPasswordViewModel.UIEvent.OnEmailValueChange
-import com.multimoney.multimoney.presentation.ui.login.forgotpassword.request.RequestForgotPasswordViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.login.forgotpassword.request.RequestForgotPasswordViewModel.UIEvent.OnValidateEmail
+import com.multimoney.multimoney.presentation.ui.login.forgotpassword.request.RequestForgotPasswordViewModel.UIEvent.*
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.getDeviceId
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 @HiltViewModel
 class RequestForgotPasswordViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val queryValidateUserExistsUseCase: QueryValidateUserExistsUseCase
+    private val queryValidateUserExistsUseCase: QueryValidateUserExistsUseCase,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(false) {
 
     var uiState by mutableStateOf(UIState())
@@ -95,7 +92,7 @@ class RequestForgotPasswordViewModel @Inject constructor(
         executeUseCase {
             queryValidateUserExistsUseCase(
                 email = uiState.email,
-                deviceId = getDeviceId(activity)
+                deviceId = dataStorePreferences.getDeviceId().first()
             ).collectLatest { result ->
                 result.onSuccess {
                     idBrand = Brand.Default.id

@@ -9,6 +9,7 @@ mutation ProcessTransfer365Mobile(
     $motive: String!
     $user: String!
     $idBrand: Int!
+    $destinationType: String!
 ) {
     transferMovil365(
         transferMovil365Input: {
@@ -18,6 +19,7 @@ mutation ProcessTransfer365Mobile(
             destinationName: $destinationName
             destinationLastName: $destinationLastName
             typeAccount: $typeAccountId
+            destinationType: $destinationType
             amountToTransfer: $amount
             reasonForTransfer: $motive
             user: $user

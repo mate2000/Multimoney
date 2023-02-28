@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.accountsmart.RelatedContact
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.multimoney.R
@@ -154,13 +155,20 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     }
 
     private fun onNavigateToMyFavorites() {
-        navigateTo(
-            "${Screen.SmartTransferFavoriteAccountScreen.baseRoute}/$user/$idBrand/$identification/${
-                encodeData(
-                    selectedSmartAccount
-                )
-            }"
-        )
+        if (idBrand == Brand.ElSalvador.id) {
+            navigateTo(
+                "${Screen.SmartTransferFavoriteAccountScreen.baseRoute}/$user/$idBrand/$identification/${
+                    encodeData(
+                        selectedSmartAccount
+                    )
+                }"
+            )
+        } else if (idBrand == Brand.CostaRica.id) {
+            navigateTo(
+                "${Screen.SmartTransferFavoriteAccountCRScreen.baseRoute}/$user/$idBrand/$identification" +
+                        "/${encodeData(selectedSmartAccount)}"
+            )
+        }
     }
 
     private fun onNavigateToOtherBankAccounts() {

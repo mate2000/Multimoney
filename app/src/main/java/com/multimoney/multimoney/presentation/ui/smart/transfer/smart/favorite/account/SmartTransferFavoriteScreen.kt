@@ -131,11 +131,12 @@ fun ACHFavoriteContentList(
                     .padding(top = 12.dp),
                 endIcon = R.drawable.ic_options,
                 startIcon = achFavorite?.destinationAccountCurrencyId?.getCurrencyFromId()?.accountIcon,
-                titleIcon = R.drawable.ic_star_filled,
+
                 onEndIconClick = { achFavorite?.let { onACHEndIconClick(it) } },
                 onClick = {
                     achFavorite?.let { onACHFavoriteClick(it) }
-                }
+                },
+                    titleIcon = R.drawable.ic_star_filled
             )
         }
         items(localFavoriteList) { localFavorite ->

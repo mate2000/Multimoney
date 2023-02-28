@@ -20,7 +20,6 @@ data class ACHAccountFull(
     val titularName: String,
     val notificationEmail: String,
     val identificacionNumber: String,
-    val isFavorite: Boolean,
     val typeAccountId: Int?,
     val destinationBankId: Int?,
     val typeAccountDescription: String,
@@ -33,7 +32,10 @@ data class ACHAccountFull(
     val aCHPurposeType: String,
     val aPIACHAccountCode: String,
     val identificationNumberAccount: String,
-    val identificationTypeAccount: Int,
     val destinationAccountCurrencyId: Int?,
-    val destinationAccountCurrency: String
+    val destinationAccountCurrency: String,
+    val idBank: Int? = null,
+    val idTypeAccount: Int? = null,
+    val isFavorite: Boolean? = null,
+    val identificationTypeAccount: Int? = null
 )

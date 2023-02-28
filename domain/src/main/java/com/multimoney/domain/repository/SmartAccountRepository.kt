@@ -13,6 +13,7 @@ import com.multimoney.domain.model.accountsmart.FavoriteACHResult
 import com.multimoney.domain.model.accountsmart.GeneralEconomicActivityResult
 import com.multimoney.domain.model.accountsmart.GlobalRequest
 import com.multimoney.domain.model.accountsmart.LocalFavorite
+import com.multimoney.domain.model.accountsmart.LocalTransferFavorite
 import com.multimoney.domain.model.accountsmart.LocalTransferResult
 import com.multimoney.domain.model.accountsmart.Nationalities
 import com.multimoney.domain.model.accountsmart.PhonesResult
@@ -369,6 +370,14 @@ interface SmartAccountRepository {
         amount: Double,
         motive: String,
         user: String,
-        idBrand: Int
+        idBrand: Int,
+        destinationType: String
     ): Flow<MultimoneyResult<Transfer365Result?>>
+
+    suspend fun querySavedSACAccountsSmart(
+        idBrand: Int,
+        user: String,
+        isFavorite: Boolean,
+        idCustomer: Long
+    ): Flow<MultimoneyResult<LocalTransferFavorite?>>
 }

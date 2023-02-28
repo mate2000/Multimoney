@@ -7,4 +7,5 @@ enum class SendCryptoStep(val step: Int) {
     LOADING(3),
     SEND_VOUCHER(4),
     SEND_FAILED(5),
+    SEND_ERROR(6)
 }

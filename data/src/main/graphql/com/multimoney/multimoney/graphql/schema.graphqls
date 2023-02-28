@@ -1273,6 +1273,8 @@ input LocalTransferFavoritesDtoInput {
 
   isFavorite: Boolean
 
+  identification: String
+
   idBrand: Int
 
   user: String

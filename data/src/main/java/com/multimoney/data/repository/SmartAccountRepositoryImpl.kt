@@ -19,6 +19,7 @@ import com.multimoney.domain.model.accountsmart.ExchangeRateResult
 import com.multimoney.domain.model.accountsmart.FavoriteACHResult
 import com.multimoney.domain.model.accountsmart.GeneralEconomicActivityResult
 import com.multimoney.domain.model.accountsmart.GlobalRequest
+import com.multimoney.domain.model.accountsmart.LocalTransferFavorite
 import com.multimoney.domain.model.accountsmart.LocalFavorite
 import com.multimoney.domain.model.accountsmart.LocalTransferResult
 import com.multimoney.domain.model.accountsmart.Nationalities
@@ -728,7 +729,8 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 phoneNumber = phoneNumber,
                 email = email,
                 active = active,
-                isFavorite = isFavorite, idCurrencyAccount = idCurrencyAccount
+                isFavorite = isFavorite,
+                idCurrencyAccount = idCurrencyAccount
             ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
@@ -824,7 +826,8 @@ class SmartAccountRepositoryImpl @Inject constructor(
         amount: Double,
         motive: String,
         user: String,
-        idBrand: Int
+        idBrand: Int,
+        destinationType: String
     ): Flow<MultimoneyResult<Transfer365Result?>> {
         return fetchData(
             graphqlApi.mutationProcessTransfer365Mobile(
@@ -837,8 +840,9 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 destinationLastName = destinationLastName,
                 typeAccountId = typeAccountId,
                 amount = amount,
-                motive = motive
-            ),
+                motive = motive,
+            destinationType = destinationType
+        ),
             apolloCallMapper = { data ->
                 if (
                     (data.transferMovil365?.status ?: null) == null ||
@@ -873,6 +877,25 @@ class SmartAccountRepositoryImpl @Inject constructor(
             ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomain())
+            }
+        )
+    }
+
+    override suspend fun querySavedSACAccountsSmart(
+        idBrand: Int,
+        user: String,
+        isFavorite: Boolean,
+        idCustomer: Long
+    ): Flow<MultimoneyResult<LocalTransferFavorite?>> {
+        return fetchData(
+            graphqlApi.querySavedSACAccountsSmart(
+                idBrand,
+                user,
+                isFavorite,
+                idCustomer
+            ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
             }
         )
     }

@@ -20,10 +20,12 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountViewModel.UIEvent
+import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountViewModel.UIEvent.OnInitializeAccounts
 import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiary
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
@@ -31,10 +33,20 @@ import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 
 @Composable
 fun SmartPaymentAccountsScreen(
+    isRestart: Boolean = true,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: SmartPaymentAccountViewModel = hiltViewModel()
 ) {
+    viewModel.apply {
+        isOnRestart = isRestart
+        LaunchedEffect(isOnRestart) {
+            if (isOnRestart) {
+                onUIEvent(OnInitializeAccounts)
+                isOnRestart = false
+            }
+        }
+    }
     LaunchedEffect(true) {
         viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
     }
@@ -57,6 +69,7 @@ fun SmartPaymentAccountsScreen(
             )
         )
         PaymentOptions(viewModel)
+        LoadingIndicator(viewModel.uiState.isLoading)
     }
 }
 
@@ -65,38 +78,32 @@ fun PaymentOptions(
     viewModel: SmartPaymentAccountViewModel = hiltViewModel()
 ) {
     LazyColumn(modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp)) {
-        items(viewModel.uiState.sinpeAccountList ?: listOf()) { account ->
-            CustomInfoButton(
-                title = account.bank,
-                subtitle = getMaskedAccountIban(
-                    account.sinpeAccount,
-                    stringResource(id = string.payment_account_masked_text)
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 12.dp),
-                endIcon = drawable.ic_right_chevron,
-                startIcon = account.currencyId.getCurrencyFromId().accountIcon,
-                onClick = {
-                    viewModel.onUIEvent(UIEvent.OnAccountClick(account))
-                }
-            )
-            if ((viewModel.uiState.sinpeAccountList?.size?.minus(1)) == viewModel.uiState.sinpeAccountList?.indexOf(
-                    account
-                )
-            ) {
-                CustomButton(
-                    text = stringResource(id = string.payment_account_create),
+        items(viewModel.uiState.sinpeAccountList) { account ->
+            account?.let {
+                CustomInfoButton(
+                    title = account.bank,
+                    subtitle = getMaskedAccountIban(account.sinpeAccount),
                     modifier = Modifier
-                        .padding(top = 12.dp, start = 16.dp, end = 16.dp, bottom = 12.dp)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .padding(top = 12.dp),
+                    endIcon = drawable.ic_right_chevron,
+                    startIcon = account.currencyId.getCurrencyFromId().accountIcon,
                     onClick = {
-                        viewModel.onUIEvent(UIEvent.OnAddAccountClick)
-                    },
-                    buttonType = PrimaryTertiary,
-                    trailingIcon = drawable.ic_plus
+                        viewModel.onUIEvent(UIEvent.OnAccountClick(account))
+                    }
                 )
             }
         }
     }
+    CustomButton(
+        text = stringResource(id = string.payment_account_create),
+        modifier = Modifier
+            .padding(top = 12.dp, start = 16.dp, end = 16.dp, bottom = 12.dp)
+            .fillMaxWidth(),
+        onClick = {
+            viewModel.onUIEvent(UIEvent.OnAddAccountClick)
+        },
+        buttonType = PrimaryTertiary,
+        trailingIcon = drawable.ic_plus
+    )
 }

@@ -201,6 +201,12 @@ class MyContactsTransferAmountViewModel @Inject constructor(
                         isRestart = false
                     )
                 }
+                Screen.SmartTransferFavoriteAccountCRScreen.baseRoute -> {
+                    navigateBack(
+                        popTo = Screen.SmartTransferFavoriteAccountCRScreen.route,
+                        isRestart = false
+                    )
+                }
                 else -> {
                     navigateBack(
                         popTo = Screen.SmartSelectSendingTypeScreen.route,

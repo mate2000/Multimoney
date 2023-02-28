@@ -31,7 +31,8 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
         composable(
             Screen.SmartScreen.route,
             arguments = listOf(
-                navArgument(ID_GLOBAL_REQUEST) { type = NavType.LongType }
+                navArgument(ID_GLOBAL_REQUEST) { type = NavType.LongType },
+                navArgument(COMING_FROM_CRYPTO) { type = NavType.BoolType }
             )
         ) {
             SmartScreen(
@@ -61,7 +62,8 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(PK_USER) { type = NavType.LongType },
                 navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType },
-                navArgument(SIGN_DOCUMENT_GLOBAL_ID) { type = NavType.LongType }
+                navArgument(SIGN_DOCUMENT_GLOBAL_ID) { type = NavType.LongType },
+                navArgument(COMING_FROM_CRYPTO) { type = NavType.BoolType }
             )
         ) {
             SmartOnfidoScreen(
@@ -110,7 +112,8 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
                 navArgument(ID_USER_REQUEST) { type = NavType.LongType },
                 navArgument(PK_USER) { type = NavType.LongType },
                 navArgument(IS_SMART_EVICERTIA) { type = NavType.BoolType },
-                navArgument(SIGN_DOCUMENT_GLOBAL_ID) { type = NavType.LongType }
+                navArgument(SIGN_DOCUMENT_GLOBAL_ID) { type = NavType.LongType },
+                navArgument(COMING_FROM_CRYPTO) { type = NavType.BoolType }
             )
         ) {
             SmartSignScreen(
@@ -136,7 +139,8 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(PK_USER) { type = NavType.LongType },
-                navArgument(ID_USER_REQUEST) { type = NavType.LongType }
+                navArgument(ID_USER_REQUEST) { type = NavType.LongType },
+                navArgument(COMING_FROM_CRYPTO) { type = NavType.BoolType }
             )
         ) {
             OnfidoAndEvicertiaErrorsScreen(
@@ -160,7 +164,8 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
         composable(
             route = Screen.ApprovedByOnfidoScreen.route,
             arguments = listOf(
-                navArgument(ID_BRAND) { type = NavType.IntType }
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(COMING_FROM_CRYPTO) { type = NavType.BoolType }
             )
         ) {
             ApprovedByOnfidoScreen(

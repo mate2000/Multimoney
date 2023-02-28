@@ -105,6 +105,7 @@ import kotlinx.coroutines.launch
  * @param successMessage: Success message to be displayed
  * @param showInfo: Display information message
  * @param infoMessage: Information message to be displayed
+ * @param debounceTimeMillis: Time in millis to trigger debounce validation
  * **/
 
 @OptIn(
@@ -145,7 +146,9 @@ fun CustomOutlinedTextField(
     showInfo: Boolean = false,
     infoMessage: String? = null,
     singleLine: Boolean = true,
-    maxLines: Int = Int.MAX_VALUE
+    maxLines: Int = Int.MAX_VALUE,
+    onFocusedTextField: (Boolean) -> Unit = {},
+    debounceTimeMillis: Long = 500
 ) {
     val context = LocalContext.current
     val activity = context.findActivity()
@@ -155,7 +158,7 @@ fun CustomOutlinedTextField(
     val coroutineScope = rememberCoroutineScope()
     val textDebounce = remember { MutableStateFlow("") }
     val textDebounceFlow: Flow<String> = remember {
-        textDebounce.debounce(500)
+        textDebounce.debounce(debounceTimeMillis)
             .distinctUntilChanged()
             .flatMapLatest {
                 if (it.isNotEmpty()) {
@@ -273,6 +276,7 @@ fun CustomOutlinedTextField(
             modifier = innerModifier
                 .bringIntoViewRequester(bringIntoViewRequester)
                 .onFocusChanged {
+                    onFocusedTextField(it.isFocused)
                     if (it.isFocused) {
                         coroutineScope.launch {
                             // This sends a request to all parents that asks them to scroll so

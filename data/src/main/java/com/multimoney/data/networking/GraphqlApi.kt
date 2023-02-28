@@ -78,6 +78,7 @@ import com.multimoney.data.networking.graphql.apollomodel.HomeProvinceQuery
 import com.multimoney.data.networking.graphql.apollomodel.InitialRequestSmartAccountMutation
 import com.multimoney.data.networking.graphql.apollomodel.ListCardVDQuery
 import com.multimoney.data.networking.graphql.apollomodel.ListMiniCardsQuery
+import com.multimoney.data.networking.graphql.apollomodel.ListSavedSACAccountsQuery
 import com.multimoney.data.networking.graphql.apollomodel.ListSinpeAccountQuery
 import com.multimoney.data.networking.graphql.apollomodel.LocalTransferFavoriteQuery
 import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountDeleteMutation
@@ -137,6 +138,7 @@ import com.multimoney.data.networking.graphql.apollomodel.ValidateUserStatusQuer
 import com.multimoney.data.networking.graphql.apollomodel.ValidationSecurityQuery
 import com.multimoney.data.networking.graphql.apollomodel.type.BeneficiaryRequestDtoInput
 import com.multimoney.data.networking.graphql.apollomodel.type.ContactsInput
+import com.multimoney.data.networking.graphql.apollomodel.GetCryptoReceiveAddressQuery
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.RelatedContact
 import com.multimoney.domain.model.credit.CreditInfoQuestion
@@ -2200,18 +2202,19 @@ class GraphqlApi @Inject constructor(
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryACHTransferFavoriteList(
-        idBrand: Int,
         user: String,
+        idBrand: Int,
         isFavorite: Boolean,
         identificationNumber: String
-    ): ApolloCall<ACHTransferFavoriteListQuery.Data> = apolloAuthorizedClient.query(
-        ACHTransferFavoriteListQuery(
-            idBrand = idBrand,
-            user = user,
-            isFavorite = isFavorite,
-            identificationNumber = identificationNumber
-        )
-    ).fetchPolicy(FetchPolicy.NetworkOnly)
+    ): ApolloCall<ACHTransferFavoriteListQuery.Data> =
+        apolloAuthorizedClient.query(
+            ACHTransferFavoriteListQuery(
+                user,
+                idBrand,
+                isFavorite,
+                identificationNumber
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationProcessTransfer365(
         identification: String,
@@ -2246,6 +2249,7 @@ class GraphqlApi @Inject constructor(
         phoneNumber: String,
         destinationBankId: String,
         typeAccountId: String,
+        destinationType: String,
         destinationName: String,
         destinationLastName: String,
         amount: Double,
@@ -2263,7 +2267,8 @@ class GraphqlApi @Inject constructor(
             destinationLastName = destinationLastName,
             typeAccountId = typeAccountId,
             amount = amount,
-            motive = motive
+            motive = motive,
+            destinationType = destinationType
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -2394,6 +2399,20 @@ class GraphqlApi @Inject constructor(
             asset,
             cryptoNetwork,
             amount
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun querySavedSACAccountsSmart(
+        idBrand: Int,
+        user: String,
+        isFavorite: Boolean,
+        idCustomer: Long
+    ): ApolloCall<ListSavedSACAccountsQuery.Data> = apolloAuthorizedClient.query(
+        ListSavedSACAccountsQuery(
+            idBrand,
+            user,
+            isFavorite,
+            idCustomer
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 

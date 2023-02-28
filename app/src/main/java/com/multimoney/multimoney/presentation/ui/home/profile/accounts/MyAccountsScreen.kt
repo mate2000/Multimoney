@@ -48,7 +48,6 @@ import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
-import com.multimoney.multimoney.presentation.uielement.CustomInfoButtonFavoriteAccount
 import com.multimoney.multimoney.presentation.uielement.CustomModalBottomSheet
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
@@ -65,23 +64,28 @@ import kotlinx.coroutines.CoroutineScope
 fun MyAccountsScreen(
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: MyAccountsViewModel = hiltViewModel()
 ) {
     val coroutineScope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
     val focusManager = LocalFocusManager.current
 
-    viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnStart)
-
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
+        viewModel.executeNavigation(
+            onPopBackStack = onPopBackStack,
+            onNavigate = onNavigate,
+            onPopAndNavigate = onPopAndNavigate
+        )
+        viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnStart)
     }
 
     BackHandler {
-        if (viewModel.uiState.isEditing)
+        if (viewModel.uiState.isEditing) {
             viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnGoBackToMyAccounts)
-        else
+        } else {
             viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnNavigateBack)
+        }
     }
 
     Scaffold(scaffoldState = scaffoldState) {
@@ -105,10 +109,11 @@ fun MyAccountsScreen(
         ) {
             TopNavBar(
                 onLeftButtonClick = {
-                    if (viewModel.uiState.isEditing)
+                    if (viewModel.uiState.isEditing) {
                         viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnGoBackToMyAccounts)
-                    else
+                    } else {
                         viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnNavigateBack)
+                    }
                 },
                 isRightButtonVisible = false
             )
@@ -146,7 +151,7 @@ fun MyAccountsScreen(
             modalBottomSheetState = viewModel.uiState.bottomSheetVisibleState,
             coroutineScope = coroutineScope,
             firstActionTitle = stringResource(id = viewModel.uiState.favoriteTextResource),
-            firstActionIcon = if( viewModel.uiState.selectedAccount?.isFavorite == true) R.drawable.ic_error_green else R.drawable.ic_star_outline,
+            firstActionIcon = if (viewModel.uiState.selectedAccount?.isFavorite == true) R.drawable.ic_error_green else R.drawable.ic_star_outline,
             firstActionClick = {
                 viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnChangeFavorite)
             },
@@ -212,7 +217,7 @@ fun BottomSheetDialog(
     secondActionIcon: Int,
     thirdActionTitle: String,
     thirdActionClick: () -> Unit,
-    thirdActionIcon: Int,
+    thirdActionIcon: Int
 ) {
     CustomModalBottomSheet(
         title = R.string.profile_my_acounts_bottom_sheet_title,
@@ -259,7 +264,7 @@ fun MyAccountsContent(
                     )
                 }
                 items(favoriteAccounts) { account ->
-                    CustomInfoButtonFavoriteAccount(
+                    CustomInfoButton(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 12.dp),
@@ -271,13 +276,15 @@ fun MyAccountsContent(
                             stringResource(id = R.string.payment_account_masked_text)
                         ),
                         onEndIconClick = {
-                            if (account != null)
+                            if (account != null) {
                                 viewModel.onUIEvent(
                                     MyAccountsViewModel.UIEvent.OnAccountClicked(
                                         account
                                     )
                                 )
-                        }
+                            }
+                        },
+                        titleIcon = R.drawable.ic_star_filled
                     )
                 }
             }
@@ -304,12 +311,13 @@ fun MyAccountsContent(
                             stringResource(id = R.string.payment_account_masked_text)
                         ),
                         onEndIconClick = {
-                            if (account != null)
+                            if (account != null) {
                                 viewModel.onUIEvent(
                                     MyAccountsViewModel.UIEvent.OnAccountClicked(
                                         account
                                     )
                                 )
+                            }
                         }
                     )
                 }
@@ -340,7 +348,7 @@ fun EditAccountScreen(
             color = MultimoneyTheme.colors.labelText,
             textAlign = TextAlign.Left
         )
-        CustomInfoButtonFavoriteAccount(
+        CustomInfoButton(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 12.dp, top = 16.dp)
@@ -353,9 +361,9 @@ fun EditAccountScreen(
             endIcon = null,
             title = viewModel.uiState.selectedAccount?.nameAccount ?: "",
             subtitle = getMaskedAccount(
-                viewModel.uiState.selectedAccount?.sinpeAccount ?: "",
-                stringResource(id = R.string.payment_account_masked_text)
+                viewModel.uiState.selectedAccount?.sinpeAccount ?: ""
             ),
+            titleIcon = R.drawable.ic_star_filled
         )
         CustomOutlinedTextField(
             modifier = Modifier
@@ -413,7 +421,7 @@ fun MyAccountsSkeleton() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(60.dp),
-                    radius = 12.dp,
+                    radius = 12.dp
                 )
             }
             Row(
@@ -425,7 +433,7 @@ fun MyAccountsSkeleton() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(60.dp),
-                    radius = 12.dp,
+                    radius = 12.dp
                 )
             }
             Row(
@@ -437,7 +445,7 @@ fun MyAccountsSkeleton() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(60.dp),
-                    radius = 12.dp,
+                    radius = 12.dp
                 )
             }
         }
@@ -472,11 +480,11 @@ fun MyAccountsEmptyState(idBrand: Int = 1) {
                 .padding(top = 24.dp),
             text = if (idBrand == Brand.CostaRica.id) stringResource(
                 id = R.string.profile_my_accounts_empty_state_title
-            )  else  stringResource(id = R.string.profile_my_accounts_empty_state_title_sv),
+            ) else stringResource(id = R.string.profile_my_accounts_empty_state_title_sv),
             style = Typography.body1.copy(
                 fontWeight = FontWeight.SemiBold,
                 color = MultimoneyTheme.colors.labelText
-            ),
+            )
         )
     }
 }

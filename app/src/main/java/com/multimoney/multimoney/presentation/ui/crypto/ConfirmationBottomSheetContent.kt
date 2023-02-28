@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.crypto
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -80,6 +81,7 @@ fun ConfirmationBottomSheetContent(
     isLoading: Boolean = false,
     exchangeRate: String = DEFAULT_AMOUNT,
     convertedAmount: String = DEFAULT_AMOUNT,
+    @StringRes accountInfoLabel: Int = R.string.crypto_purchase_flow_confirmation_from_account_title,
     onConfirm: () -> Unit = {}
 ) {
     Column(
@@ -108,7 +110,8 @@ fun ConfirmationBottomSheetContent(
         )
         AccountInfoSection(
             idCurrency = idCurrency,
-            ibanAccountNumber = ibanAccountNumber
+            ibanAccountNumber = ibanAccountNumber,
+            labelText = accountInfoLabel
         )
         if (showBottomExchangeInfo) {
             WhileLoadingSection(
@@ -250,7 +253,8 @@ private fun InfoSection(
 @Composable
 private fun AccountInfoSection(
     idCurrency: Int,
-    ibanAccountNumber: String
+    ibanAccountNumber: String,
+    @StringRes labelText: Int,
 ) {
     Column(
         modifier = Modifier
@@ -258,7 +262,7 @@ private fun AccountInfoSection(
             .padding(horizontal = 24.dp, vertical = 16.dp)
     ) {
         Text(
-            text = stringResource(id = R.string.crypto_purchase_flow_confirmation_from_account_title),
+            text = stringResource(id = labelText),
             style = Typography.body2.copy(
                 color = MultimoneyTheme.colors.text,
                 fontWeight = FontWeight.Bold

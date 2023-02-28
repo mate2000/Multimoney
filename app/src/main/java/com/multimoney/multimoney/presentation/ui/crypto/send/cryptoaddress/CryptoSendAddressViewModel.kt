@@ -168,7 +168,7 @@ class CryptoSendAddressViewModel @Inject constructor(
         val user: String? = null,
         val idBrand: Int? = null,
         val identification: String? = null,
-        val asset: String? = null,
+        val asset: String = "",
         val cryptoAddress: MutableState<String> = mutableStateOf(""),
         val continueDialog: CheckboxDialogParameters = CheckboxDialogParameters(),
         val notShowAgainVerifyCryptoAddress: Boolean = false,

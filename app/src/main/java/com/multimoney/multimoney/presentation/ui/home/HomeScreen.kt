@@ -24,6 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -36,14 +37,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.HomeInsideNavG
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnHideAutomaticPaymentEditBottomSheet
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnShowAutomaticPaymentEditBottomSheet
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCloseCardIssuanceError
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnDeleteAutomaticPayment
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnEditAutomaticPayment
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnHideUnlinkToast
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnInitializeBiometricPrompt
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetHomeState
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetUserData
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnStartBiometrics
 import com.multimoney.multimoney.presentation.ui.home.myproducts.MyProductsBottomSheetScreen
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.AutomaticPaymentEditBottomSheet
 import com.multimoney.multimoney.presentation.ui.home.quickaction.QuickActionBottomSheetScreen
@@ -51,6 +45,7 @@ import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer.OnCountDownTimerEvents
 import com.multimoney.multimoney.presentation.util.NavEvent
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalPagerApi::class)
@@ -63,6 +58,16 @@ fun HomeScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
+    val activity = LocalContext.current.findActivity()
+    val innerNavController = rememberNavController()
+    val coroutineScope = rememberCoroutineScope()
+    val automaticPaymentEditBottomSheetState = rememberModalBottomSheetState(Hidden)
+    val quickActionsModalBottomSheetState =
+        rememberModalBottomSheetState(initialValue = Hidden, skipHalfExpanded = true)
+    val myProductsModalBottomSheetState =
+        rememberModalBottomSheetState(Hidden, skipHalfExpanded = true)
+    val unlinkedToastText = stringResource(id = string.card_preferences_unlinked_card_toast)
+
     viewModel.apply {
         isOnRestart = isRestart
         LaunchedEffect(isOnRestart) {
@@ -72,25 +77,29 @@ fun HomeScreen(
             }
         }
         LaunchedEffect(key1 = homeState) {
-            onUIEvent(OnSetHomeState(homeState))
+            onUIEvent(HomeViewModel.UIEvent.OnSetHomeState(homeState))
+        }
+        LaunchedEffect(true) {
+            onUIEvent(HomeViewModel.UIEvent.OnSetupSessionListener(activity))
+        }
+        LaunchedEffect(key1 = true) {
+            viewModelScope.launch {
+                uiState.isSessionDuplicated.collectLatest {
+                    if (it) {
+                        viewModel.onUIEvent(HomeViewModel.UIEvent.OnSessionDuplicated)
+                    }
+                }
+            }
         }
     }
-
-    val innerNavController = rememberNavController()
-    val coroutineScope = rememberCoroutineScope()
-    val automaticPaymentEditBottomSheetState = rememberModalBottomSheetState(Hidden)
-    val quickActionsModalBottomSheetState =
-        rememberModalBottomSheetState(initialValue = Hidden, skipHalfExpanded = true)
-    val myProductsModalBottomSheetState = rememberModalBottomSheetState(Hidden, skipHalfExpanded = true)
-    val activity = LocalContext.current.findActivity()
-    val unlinkedToastText = stringResource(id = string.card_preferences_unlinked_card_toast)
 
     LaunchedEffect(true) {
         viewModel.executeNavigation(
             onInnerNavigate = onInnerNavigate,
             onPopAndNavigate = onPopAndNavigate
         )
-        viewModel.onUIEvent(OnStartBiometrics)
+        viewModel.onUIEvent(HomeViewModel.UIEvent.OnStartBiometrics)
+
         viewModel.countDownTimer.subscribe(object : OnCountDownTimerEvents {
             override fun onFinished() {
                 viewModel.onUIEvent(
@@ -99,9 +108,15 @@ fun HomeScreen(
             }
 
             override fun onMaxTimeUsed(millisMainUntilFinished: Long) {
-                viewModel.onUIEvent(HomeViewModel.UIEvent.OnShowTimerDialog(millisMainUntilFinished, activity))
+                viewModel.onUIEvent(
+                    HomeViewModel.UIEvent.OnShowTimerDialog(
+                        millisMainUntilFinished,
+                        activity
+                    )
+                )
             }
         })
+
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is HomeViewModel.BaseEvent.OnOpenQuickActionsBottomSheet -> {
@@ -129,7 +144,7 @@ fun HomeScreen(
     }
 
     viewModel.onUIEvent(
-        OnInitializeBiometricPrompt(
+        HomeViewModel.UIEvent.OnInitializeBiometricPrompt(
             biometricPromptTitle = stringResource(id = string.automatic_logout_biometric_title),
             biometricPromptDescription = stringResource(id = string.automatic_logout_biometric_description),
             biometricPromptNegative = stringResource(id = string.cancel)
@@ -138,7 +153,7 @@ fun HomeScreen(
 
     if (viewModel.uiState.toastIsVisible) {
         Toast.makeText(activity, unlinkedToastText, Toast.LENGTH_LONG).show()
-        viewModel.onUIEvent(OnHideUnlinkToast)
+        viewModel.onUIEvent(HomeViewModel.UIEvent.OnHideUnlinkToast)
     }
 
     Scaffold(bottomBar = {
@@ -161,8 +176,8 @@ fun HomeScreen(
     AutomaticPaymentEditBottomSheet(
         coroutineScope = coroutineScope,
         modalBottomSheetState = automaticPaymentEditBottomSheetState,
-        onEditClick = { viewModel.onUIEvent(OnEditAutomaticPayment) },
-        onDeleteClick = { viewModel.onUIEvent(OnDeleteAutomaticPayment) }
+        onEditClick = { viewModel.onUIEvent(HomeViewModel.UIEvent.OnEditAutomaticPayment) },
+        onDeleteClick = { viewModel.onUIEvent(HomeViewModel.UIEvent.OnDeleteAutomaticPayment) }
     )
 
     BackHandler {
@@ -190,8 +205,8 @@ fun HomeScreen(
             descriptionResource = viewModel.getCardIssuanceDescriptionError(),
             buttonTextResource = string.understood,
             isLeftButtonVisible = false,
-            onRightButtonClick = { viewModel.onUIEvent(OnCloseCardIssuanceError) },
-            onButtonClick = { viewModel.onUIEvent(OnCloseCardIssuanceError) }
+            onRightButtonClick = { viewModel.onUIEvent(HomeViewModel.UIEvent.OnCloseCardIssuanceError) },
+            onButtonClick = { viewModel.onUIEvent(HomeViewModel.UIEvent.OnCloseCardIssuanceError) }
         )
     }
 

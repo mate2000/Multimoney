@@ -25,28 +25,12 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnCallCognitoSignIn
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnCloseDialog
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnFingerprintCheckedChanged
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnInitializeBiometricPrompt
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnNavigateToForgotPassword
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnNavigateToOTPScreen
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnNavigateToSignUp
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricPromptForDecryption
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricPromptForEncryption
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricSignInChanged
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnStart
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnUpdateToastVisibility
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnUserEmailValueChange
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnUserPasswordValueChange
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnValidateUserEmail
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
 import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.checkIfEmulator
 import com.multimoney.multimoney.presentation.util.getAppVersion
 import com.multimoney.multimoney.presentation.util.getDeviceBrand
-import com.multimoney.multimoney.presentation.util.getDeviceId
 import com.multimoney.multimoney.presentation.util.getDeviceModel
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.isCognitoErrorCode
@@ -89,19 +73,18 @@ class SignInViewModel @Inject constructor(
     private var forceShowBiometricsPrompt = false
 
     private fun onStart(
-        deviceId: String,
         ipAddress: String,
         deviceName: String,
         deviceType: String,
         forceDeviceChange: Boolean
     ) {
-        this.deviceId = deviceId
         this.ipAddress = ipAddress
         this.deviceName = deviceName
         this.deviceType = deviceType
         this.forceDeviceChange = forceDeviceChange
         onUserPasswordValueChange("")
         viewModelScope.launch {
+            deviceId = dataStorePreferences.getDeviceId().first()
             uniqueId = dataStorePreferences.getUniqueId().first()
             val isBiometricActive = dataStorePreferences.isBiometricsEnabled().first()
             biometricUserEmail = dataStorePreferences.getUserEmail().first()
@@ -138,7 +121,7 @@ class SignInViewModel @Inject constructor(
         val options = AWSCognitoAuthSignInOptions.builder().metadata(attrs).build()
 
         Amplify.Auth.signOut({
-            Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword, { authSignInResult ->
+            Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword,options, { authSignInResult ->
                 if (authSignInResult.isSignInComplete) {
                     Amplify.Auth.fetchAuthSession({ authSessionSuccess ->
                         val session = authSessionSuccess as AWSCognitoAuthSession
@@ -216,20 +199,22 @@ class SignInViewModel @Inject constructor(
                         descriptionResource = string.sign_in_session_open_here_close_another,
                         positiveResource = string.sign_in_dialog_sign_in_here_button,
                         negativeResource = string.sign_in_dialog_exit_button,
-                        positiveAction = { onUIEvent(OnNavigateToOTPScreen) },
-                        negativeAction = { onUIEvent(OnCloseDialog) },
-                        dismissAction = { onUIEvent(OnCloseDialog) },
+                        positiveAction = { onUIEvent(UIEvent.OnNavigateToOTPScreen) },
+                        negativeAction = { onUIEvent(UIEvent.OnCloseDialog) },
+                        dismissAction = { onUIEvent(UIEvent.OnCloseDialog) },
                         isActive = mutableStateOf(true)
-                    )
+                    ),
+                    isLoading = false
                 )
         authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.SessionBlocked.code) == true ->
             uiState =
                 uiState.copy(
                     openDialog = DialogParameters(
                         titleResource = string.sign_in_session_blocked_title,
-                        descriptionResource = string.sign_in_session_blocked_description,
-                        isActive = mutableStateOf(true)
-                    )
+                        descriptionResource = string.sign_in_session_blocked_message,
+                        isActive = mutableStateOf(true),
+                    ),
+                    isLoading = false
                 )
         else -> callQueryValidationUserExistsUseCase(activity)
     }
@@ -237,7 +222,7 @@ class SignInViewModel @Inject constructor(
     private fun callQueryValidationUserExistsUseCase(activity: FragmentActivity) = executeUseCase {
         queryValidateUserExistsUseCase(
             email = uiState.userEmail,
-            deviceId = getDeviceId(activity)
+            deviceId = dataStorePreferences.getDeviceId().first()
         ).collectLatest { result ->
             result.onSuccess { userData ->
                 if (userData?.isNewUser == false) {
@@ -248,8 +233,8 @@ class SignInViewModel @Inject constructor(
                             positiveResource = string.button_continue,
                             negativeResource = string.common_return,
                             positiveAction = { onNavigateToSignUp() },
-                            negativeAction = { onUIEvent(OnCloseDialog) },
-                            dismissAction = { onUIEvent(OnCloseDialog) },
+                            negativeAction = { onUIEvent(UIEvent.OnCloseDialog) },
+                            dismissAction = { onUIEvent(UIEvent.OnCloseDialog) },
                             isActive = mutableStateOf(true)
                         ),
                         isLoading = false
@@ -486,7 +471,7 @@ class SignInViewModel @Inject constructor(
                     negativeResource = string.active_biometric_negative_button_label,
                     positiveAction = {
                         onUIEvent(
-                            OnFingerprintCheckedChanged(
+                            UIEvent.OnFingerprintCheckedChanged(
                                 value = true,
                                 showDialog = false,
                                 is03Country
@@ -495,7 +480,7 @@ class SignInViewModel @Inject constructor(
                     },
                     negativeAction = {
                         onUIEvent(
-                            OnFingerprintCheckedChanged(
+                            UIEvent.OnFingerprintCheckedChanged(
                                 value = false,
                                 showDialog = false,
                                 is03Country
@@ -504,7 +489,7 @@ class SignInViewModel @Inject constructor(
                     },
                     dismissAction = {
                         onUIEvent(
-                            OnFingerprintCheckedChanged(
+                            UIEvent.OnFingerprintCheckedChanged(
                                 value = false,
                                 showDialog = false,
                                 is03Country
@@ -522,7 +507,7 @@ class SignInViewModel @Inject constructor(
                     negativeResource = string.active_biometric_negative_button_label,
                     positiveAction = {
                         onUIEvent(
-                            OnFingerprintCheckedChanged(
+                            UIEvent.OnFingerprintCheckedChanged(
                                 value = true,
                                 showDialog = false,
                                 is03Country
@@ -531,7 +516,7 @@ class SignInViewModel @Inject constructor(
                     },
                     negativeAction = {
                         onUIEvent(
-                            OnFingerprintCheckedChanged(
+                            UIEvent.OnFingerprintCheckedChanged(
                                 value = false,
                                 showDialog = false,
                                 is03Country
@@ -540,7 +525,7 @@ class SignInViewModel @Inject constructor(
                     },
                     dismissAction = {
                         onUIEvent(
-                            OnFingerprintCheckedChanged(
+                            UIEvent.OnFingerprintCheckedChanged(
                                 value = false,
                                 showDialog = false,
                                 is03Country
@@ -615,37 +600,36 @@ class SignInViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is OnUserPasswordValueChange -> onUserPasswordValueChange(event.value)
-            is OnUserEmailValueChange -> onUserEmailValueChange(event.value)
-            is OnInitializeBiometricPrompt -> initializeBiometricPrompt(
+            is UIEvent.OnUserPasswordValueChange -> onUserPasswordValueChange(event.value)
+            is UIEvent.OnUserEmailValueChange -> onUserEmailValueChange(event.value)
+            is UIEvent.OnInitializeBiometricPrompt -> initializeBiometricPrompt(
                 event.biometricPromptTitle,
                 event.biometricPromptDescription,
                 event.biometricPromptNegative,
                 event.fragmentActivity
             )
-            is OnShowBiometricPromptForEncryption -> onShowBiometricPromptForEncryption(event.fragmentActivity)
-            is OnShowBiometricPromptForDecryption -> onShowBiometricPromptForDecryption(event.fragmentActivity)
-            is OnShowBiometricSignInChanged -> onShowBiometricSignInChanged(event.value)
-            is OnFingerprintCheckedChanged -> onFingerprintCheckedChanged(
+            is UIEvent.OnShowBiometricPromptForEncryption -> onShowBiometricPromptForEncryption(event.fragmentActivity)
+            is UIEvent.OnShowBiometricPromptForDecryption -> onShowBiometricPromptForDecryption(event.fragmentActivity)
+            is UIEvent.OnShowBiometricSignInChanged -> onShowBiometricSignInChanged(event.value)
+            is UIEvent.OnFingerprintCheckedChanged -> onFingerprintCheckedChanged(
                 event.value,
                 event.showDialog,
                 event.is03Country
             )
 
-            is OnStart -> onStart(
-                event.deviceId,
+            is UIEvent.OnStart -> onStart(
                 event.ipAddress,
                 event.deviceName,
                 event.deviceType,
                 event.forceDeviceChange
             )
-            is OnValidateUserEmail -> isUserEmailValid()
-            is OnCallCognitoSignIn -> callCognitoSignIn(event.activity)
-            is OnNavigateToForgotPassword -> onNavigateToForgotPassword()
-            is OnCloseDialog -> onCloseDialog()
-            is OnNavigateToOTPScreen -> onNavigateToOTPScreen()
-            is OnNavigateToSignUp -> onNavigateToSignUp()
-            is OnUpdateToastVisibility -> onUpdateToastVisibility(event.value)
+            is UIEvent.OnValidateUserEmail -> isUserEmailValid()
+            is UIEvent.OnCallCognitoSignIn -> callCognitoSignIn(event.activity)
+            is UIEvent.OnNavigateToForgotPassword -> onNavigateToForgotPassword()
+            is UIEvent.OnCloseDialog -> onCloseDialog()
+            is UIEvent.OnNavigateToOTPScreen -> onNavigateToOTPScreen()
+            is UIEvent.OnNavigateToSignUp -> onNavigateToSignUp()
+            is UIEvent.OnUpdateToastVisibility -> onUpdateToastVisibility(event.value)
         }
     }
 
@@ -672,7 +656,6 @@ class SignInViewModel @Inject constructor(
         data class OnFingerprintCheckedChanged(val value: Boolean, val showDialog: Boolean, val is03Country: String) : UIEvent()
 
         data class OnStart(
-            val deviceId: String,
             val ipAddress: String,
             val deviceName: String,
             val deviceType: String,

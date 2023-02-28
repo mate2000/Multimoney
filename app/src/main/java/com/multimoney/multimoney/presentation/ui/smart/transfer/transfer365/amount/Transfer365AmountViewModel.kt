@@ -165,7 +165,8 @@ class Transfer365AmountViewModel @Inject constructor(
                 amount = amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0,
                 motive = amountUIState.motive,
                 user = pkUser,
-                idBrand = idBrand
+                idBrand = idBrand,
+                destinationType = transfer365Account.destinationType.orEmpty()
             ).collectLatest { result ->
                 result.onSuccess { reference ->
                     if (reference?.bankAuthorization?.referenceNumber.isNullOrBlank()) {

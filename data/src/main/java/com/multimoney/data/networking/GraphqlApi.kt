@@ -59,6 +59,7 @@ import com.multimoney.data.networking.graphql.apollomodel.GetCryptoCurrencyMovem
 import com.multimoney.data.networking.graphql.apollomodel.GetCryptoCurrencyNewsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCryptoMovementsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCryptoPriceHistoryQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetCryptoReceiveAddressQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetExchangeRateCreditQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetHistoricClientBalanceQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetHistoricalCurrencyPricesQuery
@@ -109,6 +110,7 @@ import com.multimoney.data.networking.graphql.apollomodel.SaveCreditExtensionDet
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditFlowInputMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOfferMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOperationMutation
+import com.multimoney.data.networking.graphql.apollomodel.SaveLogTrackingMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveTermsAndConditionsCreditMutation
 import com.multimoney.data.networking.graphql.apollomodel.ScreenConfigQuery
 import com.multimoney.data.networking.graphql.apollomodel.SellCryptoCurrencyMutation
@@ -134,8 +136,6 @@ import com.multimoney.data.networking.graphql.apollomodel.ValidateUserStatusQuer
 import com.multimoney.data.networking.graphql.apollomodel.ValidationSecurityQuery
 import com.multimoney.data.networking.graphql.apollomodel.type.BeneficiaryRequestDtoInput
 import com.multimoney.data.networking.graphql.apollomodel.type.ContactsInput
-import com.multimoney.data.networking.graphql.apollomodel.type.GetCountry
-import com.multimoney.data.networking.graphql.apollomodel.GetCryptoReceiveAddressQuery
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.RelatedContact
 import com.multimoney.domain.model.credit.CreditInfoQuestion
@@ -1324,7 +1324,6 @@ class GraphqlApi @Inject constructor(
         apolloAuthorizedClient.query(GetCountryPhoneCodesQuery(idBrand))
             .fetchPolicy(FetchPolicy.NetworkOnly)
 
-
     fun mutationChangeEmail(
         idClient: Int,
         pkUser: Int,
@@ -1969,6 +1968,23 @@ class GraphqlApi @Inject constructor(
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
+    fun mutationSaveLogTracking(
+        identification: String,
+        pkUser: Int,
+        keySearch: String,
+        data: String,
+        idBrand: Int
+    ): ApolloCall<SaveLogTrackingMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            SaveLogTrackingMutation(
+                identification = identification,
+                pkUser = pkUser,
+                keySearch = keySearch,
+                data = data,
+                idBrand = idBrand
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
     fun querySmartExchangeRate(
         user: String,
         identification: String,
@@ -2181,7 +2197,7 @@ class GraphqlApi @Inject constructor(
             idBrand = idBrand,
             user = user,
             isFavorite = isFavorite,
-            identificationNumber = identificationNumber,
+            identificationNumber = identificationNumber
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 

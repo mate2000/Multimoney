@@ -743,7 +743,8 @@ class ProductViewModel @Inject constructor(
                         currencyID = it?.idCurrencyAccount,
                         accountNumber = it?.accountNumber ?: "",
                         ibanAccountNumber = it?.ibanAccountNumber,
-                        totalBalance = it?.totalBalance
+                        totalBalance = it?.totalBalance,
+                        customerId = it?.customerId
                     )
                 }
             )
@@ -768,7 +769,8 @@ class ProductViewModel @Inject constructor(
                 currencyID = secondAccount?.idCurrencyAccount,
                 accountNumber = secondAccount?.accountNumber,
                 totalBalance = secondAccount?.totalBalance,
-                ibanAccountNumber = secondAccount?.ibanAccountNumber
+                ibanAccountNumber = secondAccount?.ibanAccountNumber,
+                customerId = account?.customerId
             )
         )
         navigateTo(

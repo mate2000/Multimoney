@@ -255,7 +255,11 @@ fun CustomInfoButton(
                             start.linkTo(parent.start, margin = 16.dp)
                             bottom.linkTo(parent.bottom)
                         }
-                        height = Dimension.preferredWrapContent
+                        if (endIcon != null) {
+                            end.linkTo(endIconId.start, margin = 16.dp)
+                        } else {
+                            end.linkTo(parent.end, margin = 16.dp)
+                        }
                         width = Dimension.fillToConstraints
                     },
                     style = Typography.body2.copy(

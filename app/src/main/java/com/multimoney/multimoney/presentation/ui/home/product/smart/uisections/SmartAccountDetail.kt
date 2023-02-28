@@ -75,7 +75,10 @@ fun SmartAccountDetail(
                 label = stringResource(id = string.smart_account_detail_gained_interest_label),
                 value = {
                     Text(
-                        text = account?.interest.toString(),
+                        text = stringResource(
+                            string.common_percentage_format,
+                            account?.interest.toString()
+                        ),
                         style = Typography.body2.copy(
                             color = MultimoneyTheme.colors.text,
                             fontWeight = FontWeight.SemiBold

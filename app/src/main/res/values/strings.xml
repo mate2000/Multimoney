@@ -80,7 +80,7 @@
     <string name="common_scan_qr_code" translatable="false">Escanea el código QR</string>
     <string name="smart_transfer_abandon_dialog_message_sv" translatable="false">¿Estás seguro que quieres cancelar el envío?</string>
     <string name="smart_transfer_abandon_dialog_message_cr" translatable="false">¿Estás seguro que querés cancelar el envío?</string>
-    <string name="common_percentage_format" translatable="false">$%s\%%</string>
+    <string name="common_percentage_format" translatable="false">%s\%%</string>
 
     <string name="content_description_more_info" translatable="false">Más información</string>
 

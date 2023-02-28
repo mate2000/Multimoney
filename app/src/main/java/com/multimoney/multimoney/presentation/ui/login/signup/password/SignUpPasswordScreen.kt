@@ -42,6 +42,9 @@ import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.CustomPasswordRequirementLabel
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.getDeviceName
+import com.multimoney.multimoney.presentation.util.getDeviceType
+import com.multimoney.multimoney.presentation.util.getIpAddress
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -66,6 +69,16 @@ fun SignUpPasswordScreen(
                 isO3Country = context.resources.configuration.locale.isO3Country
             )
         }
+    }
+
+    LaunchedEffect(key1 = true) {
+        viewModel.onUIEvent(
+            SignUpPasswordViewModel.UIEvent.OnSetupDeviceInfo(
+                getIpAddress(fragmentActivity) ?: "",
+                getDeviceName(fragmentActivity) ?: "",
+                getDeviceType(fragmentActivity).value ?: "",
+            )
+        )
     }
 
     viewModel.onUIEvent(

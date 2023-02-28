@@ -5,11 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewModelScope
-import com.multimoney.data.util.catalog.Nationalities.CostaRicaDimex
-import com.multimoney.data.util.catalog.Nationalities.CostaRicaId
-import com.multimoney.data.util.catalog.Nationalities.ElSalvadorCarne
-import com.multimoney.data.util.catalog.Nationalities.ElSalvadorDui
-import com.multimoney.data.util.catalog.Nationalities.Guatemala
+import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Nationalities.*
 import com.multimoney.domain.interaction.security.MutationUserValidationUseCase
 import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCase
 import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCase
@@ -32,21 +29,9 @@ import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnGetCountriesSuccess
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnCallQueryGetCountry
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstLastNameChange
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstNameChange
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnIdentificationTypeValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnIdentificationValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNationalityChange
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNextActionClick
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnSecondLastNameChange
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnSecondNameChange
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnStart
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnUpdateAllNames
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnValidateDocument
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.*
 import com.multimoney.multimoney.presentation.util.catalog.CrDocuments
 import com.multimoney.multimoney.presentation.util.catalog.SvDocuments
-import com.multimoney.multimoney.presentation.util.getDeviceId
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.validCarne
 import com.multimoney.multimoney.presentation.util.validDui
@@ -54,6 +39,7 @@ import com.multimoney.multimoney.presentation.util.validId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -62,7 +48,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private val queryDataInformationClientUseCase: QueryDataInformationClientUseCase,
     private val queryCatalogDocumentTypeUseCase: QueryCatalogDocumentTypeUseCase,
     private val queryGetCountryUseCase: QueryGetCountryUseCase,
-    private val mutationUserValidationUseCase: MutationUserValidationUseCase
+    private val mutationUserValidationUseCase: MutationUserValidationUseCase,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(false) {
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -78,6 +65,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
     var documentLength = 0
     var previousEmail = ""
     var idBrand = 0
+    var deviceId = ""
 
     // Event
     val onUserDataValidationEvent = MutableSharedFlow<MultimoneyResult<UserData?>>()
@@ -321,7 +309,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 secondName = uiState.secondNameValue,
                 firstSurname = uiState.firstLastNameValue,
                 secondSurname = uiState.secondLastNameValue,
-                deviceId = getDeviceId(activity)
+                deviceId = deviceId
             ).collectLatest { result ->
                 onUserDataValidationEvent.emit(result)
             }
@@ -339,6 +327,9 @@ class SignUpPersonalDataViewModel @Inject constructor(
         updateNationality: (nationality: String, idBrand: Int) -> Unit,
         onLoadingValueChange: (isLoading: Boolean) -> Unit
     ) {
+        viewModelScope.launch {
+            deviceId = dataStorePreferences.getDeviceId().first()
+        }
         val countryValue = getCountry(nationality, updateNationality, onLoadingValueChange) ?: ""
         uiState = uiState.copy(
             nationalityValue = countryValue,

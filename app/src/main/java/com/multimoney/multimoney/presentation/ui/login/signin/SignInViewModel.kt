@@ -25,28 +25,13 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnCallCognitoSignIn
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnCloseDialog
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnFingerprintCheckedChanged
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnInitializeBiometricPrompt
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnNavigateToForgotPassword
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnNavigateToOTPScreen
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnNavigateToSignUp
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricPromptForDecryption
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricPromptForEncryption
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricSignInChanged
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnStart
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnUpdateToastVisibility
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnUserEmailValueChange
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnUserPasswordValueChange
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnValidateUserEmail
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.*
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
 import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.checkIfEmulator
 import com.multimoney.multimoney.presentation.util.getAppVersion
 import com.multimoney.multimoney.presentation.util.getDeviceBrand
-import com.multimoney.multimoney.presentation.util.getDeviceId
 import com.multimoney.multimoney.presentation.util.getDeviceModel
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.isCognitoErrorCode
@@ -89,19 +74,19 @@ class SignInViewModel @Inject constructor(
     private var forceShowBiometricsPrompt = false
 
     private fun onStart(
-        deviceId: String,
         ipAddress: String,
         deviceName: String,
         deviceType: String,
         forceDeviceChange: Boolean
     ) {
-        this.deviceId = deviceId
+
         this.ipAddress = ipAddress
         this.deviceName = deviceName
         this.deviceType = deviceType
         this.forceDeviceChange = forceDeviceChange
         onUserPasswordValueChange("")
         viewModelScope.launch {
+            deviceId = dataStorePreferences.getDeviceId().first()
             uniqueId = dataStorePreferences.getUniqueId().first()
             val isBiometricActive = dataStorePreferences.isBiometricsEnabled().first()
             biometricUserEmail = dataStorePreferences.getUserEmail().first()
@@ -220,16 +205,18 @@ class SignInViewModel @Inject constructor(
                         negativeAction = { onUIEvent(OnCloseDialog) },
                         dismissAction = { onUIEvent(OnCloseDialog) },
                         isActive = mutableStateOf(true)
-                    )
+                    ),
+                    isLoading = false
                 )
         authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.SessionBlocked.code) == true ->
             uiState =
                 uiState.copy(
                     openDialog = DialogParameters(
                         titleResource = string.sign_in_session_blocked_title,
-                        descriptionResource = string.sign_in_session_blocked_description,
-                        isActive = mutableStateOf(true)
-                    )
+                        descriptionResource = string.sign_in_session_blocked_message,
+                        isActive = mutableStateOf(true),
+                    ),
+                    isLoading = false
                 )
         else -> callQueryValidationUserExistsUseCase(activity)
     }
@@ -237,7 +224,7 @@ class SignInViewModel @Inject constructor(
     private fun callQueryValidationUserExistsUseCase(activity: FragmentActivity) = executeUseCase {
         queryValidateUserExistsUseCase(
             email = uiState.userEmail,
-            deviceId = getDeviceId(activity)
+            deviceId = dataStorePreferences.getDeviceId().first()
         ).collectLatest { result ->
             result.onSuccess { userData ->
                 if (userData?.isNewUser == false) {
@@ -633,7 +620,6 @@ class SignInViewModel @Inject constructor(
             )
 
             is OnStart -> onStart(
-                event.deviceId,
                 event.ipAddress,
                 event.deviceName,
                 event.deviceType,
@@ -672,7 +658,6 @@ class SignInViewModel @Inject constructor(
         data class OnFingerprintCheckedChanged(val value: Boolean, val showDialog: Boolean, val is03Country: String) : UIEvent()
 
         data class OnStart(
-            val deviceId: String,
             val ipAddress: String,
             val deviceName: String,
             val deviceType: String,

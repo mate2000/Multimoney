@@ -136,7 +136,7 @@ class DisbursementAddAccountViewModel @Inject constructor(
 
     private fun onAccountTypeValueChange(regulaExpression: RegularExpression?) {
         uiState = uiState.copy(
-            accountTypeSelectedString = regulaExpression?.key ?: "",
+            accountTypeSelectedString = regulaExpression?.description ?: "",
             accountTypeSelected = regulaExpression,
             accountNumber = "",
             accountNumberError = Pair(false, R.string.empty)

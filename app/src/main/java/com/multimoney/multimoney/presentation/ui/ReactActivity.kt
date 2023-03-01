@@ -6,6 +6,7 @@ import android.view.KeyEvent
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.OnBackPressedDispatcher
 import androidx.appcompat.app.AppCompatActivity
+import com.facebook.hermes.reactexecutor.HermesExecutorFactory
 import com.facebook.react.BuildConfig
 import com.facebook.react.ReactInstanceManager
 import com.facebook.react.ReactPackage
@@ -36,6 +37,7 @@ class ReactActivity : AppCompatActivity(), DefaultHardwareBackBtnHandler {
                 .addPackages(packages)
                 .setUseDeveloperSupport(BuildConfig.DEBUG)
                 .setInitialLifecycleState(LifecycleState.RESUMED)
+                .setJavaScriptExecutorFactory(HermesExecutorFactory())
                 .build()
 
         val props = Bundle()

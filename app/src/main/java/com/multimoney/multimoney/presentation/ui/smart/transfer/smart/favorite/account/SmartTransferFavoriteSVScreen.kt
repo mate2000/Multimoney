@@ -17,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.accountsmart.ACHAccount
 import com.multimoney.domain.model.accountsmart.LocalFavorite
 import com.multimoney.multimoney.R
@@ -36,11 +37,12 @@ import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.SEPARATOR
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 
 @Composable
-fun SmartTransferFavoriteScreen(
+fun SmartTransferFavoriteSVScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: SmartTransferFavoriteSVViewModel = hiltViewModel()
@@ -136,13 +138,18 @@ fun ACHFavoriteContentList(
                 onClick = {
                     achFavorite?.let { onACHFavoriteClick(it) }
                 },
-                    titleIcon = R.drawable.ic_star_filled
+                titleIcon = R.drawable.ic_star_filled
             )
         }
         items(localFavoriteList) { localFavorite ->
             CustomInfoButton(
                 title = localFavorite?.accountName.orEmpty(),
-                subtitle = localFavorite?.phoneNumber.orEmpty(),
+                subtitle = localFavorite?.phoneNumber.orEmpty().plus(SEPARATOR)
+                    .plus(localFavorite?.currencyAccount),
+                subtitle2 = getMaskedAccount(
+                    accountNumber = localFavorite?.accountNumber.orEmpty(),
+                    prefix = ""
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()

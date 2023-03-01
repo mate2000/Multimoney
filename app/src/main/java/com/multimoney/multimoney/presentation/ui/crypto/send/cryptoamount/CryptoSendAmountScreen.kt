@@ -111,7 +111,7 @@ fun CryptoSendAmountScreen(
                     sendCryptoAmount = "${viewModel.uiState.sendCryptoAmount.roundToEightDecimalPlaces()} ${viewModel.asset}",
                     sendDollarAmount = viewModel.uiState.sendDollarAmount,
                     transferFee = "${viewModel.uiState.transferCommission?.transferFee?.totalFee?.roundToEightDecimalPlaces()} ${viewModel.asset}",
-                    referenceNumber = viewModel.uiState.referenceNumber ?: ""
+                    referenceNumber = viewModel.uiState.referenceNumber
                 )
             )
             sharedViewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnNextStep)

@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards
 
 import android.content.Intent
+import android.os.Bundle
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -36,6 +37,10 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.P
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnHandleAddCardResponse
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnStopTimer
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnRestartTimer
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.Companion.APPLICATION_NAME
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.Companion.USER_NAME
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.Companion.USER_PASS
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.Companion.ENDPOINT
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.Companion.RESPONSE_IS_ERROR
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.Companion.RESPONSE_VALUE
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.Companion.RESULT_CODE_PROCESS_FINISHED
@@ -161,7 +166,12 @@ fun PaymentScheduleAccountContent(
                 onClick = {
                     viewModel.onUIEvent(OnStopTimer)
                     val intent = Intent(context, ReactActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
+                    val bundle = Bundle()
+                    bundle.putString(APPLICATION_NAME, viewModel.reactApplicationName)
+                    bundle.putString(USER_NAME, viewModel.reactUserName)
+                    bundle.putString(USER_PASS, viewModel.reactUserPass)
+                    bundle.putString(ENDPOINT, viewModel.reactEndPoint)
+                    intent.putExtras(bundle)
                     addCardActivityResult.launch(intent)
                 },
                 buttonType = CustomButtonType.PrimaryTertiary,

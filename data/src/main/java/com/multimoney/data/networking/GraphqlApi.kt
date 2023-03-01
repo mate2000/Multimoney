@@ -64,6 +64,7 @@ import com.multimoney.data.networking.graphql.apollomodel.GetHistoricClientBalan
 import com.multimoney.data.networking.graphql.apollomodel.GetHistoricalCurrencyPricesQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetInfoDepositQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetLinkCreditContractQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetParametersMobileByCategoryQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPaymentPointsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPricesQuoteAndCommissionQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPromissoryNoteDetailQuery
@@ -1815,6 +1816,16 @@ class GraphqlApi @Inject constructor(
             callerId = callerId,
             user = user,
             idBrand = idBrand
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryGetParametersMobileByCategory(
+        idBrand: Int,
+        category: String
+    ): ApolloCall<GetParametersMobileByCategoryQuery.Data> = apolloAuthorizedClient.query(
+        GetParametersMobileByCategoryQuery(
+            idBrand = idBrand,
+            category = category
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 

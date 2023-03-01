@@ -1,9 +1,11 @@
 package com.multimoney.multimoney.presentation.ui
 
-import android.app.Activity
 import android.graphics.Color
 import android.os.Bundle
 import android.view.KeyEvent
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
+import androidx.appcompat.app.AppCompatActivity
 import com.facebook.react.BuildConfig
 import com.facebook.react.ReactInstanceManager
 import com.facebook.react.ReactPackage
@@ -12,10 +14,10 @@ import com.facebook.react.common.LifecycleState
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler
 import com.facebook.react.shell.MainReactPackage
 
-class ReactActivity : Activity(), DefaultHardwareBackBtnHandler {
+class ReactActivity : AppCompatActivity(), DefaultHardwareBackBtnHandler {
 
-    private var mReactRootView: ReactRootView? = null
-    private var mReactInstanceManager: ReactInstanceManager? = null
+    private var reactRootView: ReactRootView? = null
+    private var reactInstanceManager: ReactInstanceManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,13 +26,13 @@ class ReactActivity : Activity(), DefaultHardwareBackBtnHandler {
                 MainReactPackage(), PackageTrackerReact()
         )
 
-        mReactRootView = ReactRootView(this)
-        mReactRootView!!.setBackgroundColor(Color.parseColor("#000000"));
-        mReactInstanceManager = ReactInstanceManager.builder()
+        reactRootView = ReactRootView(this)
+        reactRootView?.setBackgroundColor(Color.BLACK)
+        reactInstanceManager = ReactInstanceManager.builder()
                 .setApplication(application)
                 .setCurrentActivity(this)
-                .setBundleAssetName("index.android.bundle")
-                .setJSMainModulePath("index")
+                .setBundleAssetName(BUNDLE_ASSET_NAME)
+                .setJSMainModulePath(JS_MAIN_MODULE_PATH)
                 .addPackages(packages)
                 .setUseDeveloperSupport(BuildConfig.DEBUG)
                 .setInitialLifecycleState(LifecycleState.RESUMED)
@@ -38,58 +40,82 @@ class ReactActivity : Activity(), DefaultHardwareBackBtnHandler {
 
         val props = Bundle()
         //FTT APPLICATION NAME
-        props.putString("applicationName", "KUIKI_TEST")
+        props.putString(APPLICATION_NAME, intent.extras?.getString(APPLICATION_NAME) ?: "")
         //FTT USERNAME
-        props.putString("userName", "155818148010")
+        props.putString(USER_NAME, intent.extras?.getString(USER_NAME) ?: "")
         //FTT USER PASSWORD
-        props.putString("userPassword", "155818148010-2421991-C44243B1-0C86-4111-BB9C-33FB6")
+        props.putString(USER_PASS, intent.extras?.getString(USER_PASS) ?: "")
         //FTT ENDPOINT
-        props.putString("endpoint", "https://www.fttserver.com:7048/api/UserIncludeCard?applicationName=string&userName=string&userPassword=string&cardDescription=string&primaryAccountNumber=string&expirationMonth=string&expirationYear=string&verificationValue=string")
-        mReactRootView!!.startReactApplication(mReactInstanceManager, "card", props)
-        setContentView(mReactRootView)
+        props.putString(ENDPOINT, intent.extras?.getString(ENDPOINT))
+        reactRootView?.startReactApplication(reactInstanceManager, CARD, props)
+        setContentView(reactRootView)
+
+        onHandleBackPressed()
     }
 
     override fun invokeDefaultOnBackPressed() {
-        super.onBackPressed()
+        onHandleBackPressed()
+    }
+
+    fun onHandleBackPressed() {
+        OnBackPressedDispatcher().addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (reactInstanceManager != null) {
+                    reactInstanceManager?.onBackPressed()
+                } else {
+                    onBackPressed()
+                }
+            }
+        })
     }
 
     override fun onPause() {
         super.onPause()
-        if (mReactInstanceManager != null) {
-            mReactInstanceManager!!.onHostPause(this)
+        if (reactInstanceManager != null) {
+            reactInstanceManager?.onHostPause(this)
         }
     }
 
     override fun onResume() {
         super.onResume()
-        if (mReactInstanceManager != null) {
-            mReactInstanceManager!!.onHostResume(this, this)
+        if (reactInstanceManager != null) {
+            reactInstanceManager?.onHostResume(this, this)
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        if (mReactInstanceManager != null) {
-            mReactInstanceManager!!.onHostDestroy(this)
+        if (reactInstanceManager != null) {
+            reactInstanceManager?.onHostDestroy(this)
         }
-        if (mReactRootView != null) {
-            mReactRootView!!.unmountReactApplication()
+        if (reactRootView != null) {
+            reactRootView?.unmountReactApplication()
         }
     }
 
     override fun onBackPressed() {
-        if (mReactInstanceManager != null) {
-            mReactInstanceManager!!.onBackPressed()
+        if (reactInstanceManager != null) {
+            reactInstanceManager?.onBackPressed()
         } else {
             super.onBackPressed()
         }
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_MENU && mReactInstanceManager != null) {
-            mReactInstanceManager!!.showDevOptionsDialog()
+        if (keyCode == KeyEvent.KEYCODE_MENU && reactInstanceManager != null) {
+            reactInstanceManager?.showDevOptionsDialog()
             return true
         }
         return super.onKeyUp(keyCode, event)
+    }
+
+    companion object {
+        const val BUNDLE_ASSET_NAME = "index.android.bundle"
+        const val JS_MAIN_MODULE_PATH = "index"
+        const val APPLICATION_NAME = "applicationName"
+        const val USER_NAME = "userName"
+        const val USER_PASS = "userPassword"
+        const val ENDPOINT = "endpoint"
+        const val CARD = "card"
     }
 }

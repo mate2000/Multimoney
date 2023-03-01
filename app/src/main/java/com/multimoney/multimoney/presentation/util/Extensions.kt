@@ -414,7 +414,7 @@ fun String.getAddCardErrorFromValue(): AddVisaCardErrors =
         AddVisaCardErrors.InvalidApplication.value -> AddVisaCardErrors.InvalidApplication
         AddVisaCardErrors.Null.value -> AddVisaCardErrors.Null
         AddVisaCardErrors.EditFailed.value -> AddVisaCardErrors.EditFailed
-        else -> AddVisaCardErrors.SystemMalfunction
+        else -> AddVisaCardErrors.Default
     }
 
 

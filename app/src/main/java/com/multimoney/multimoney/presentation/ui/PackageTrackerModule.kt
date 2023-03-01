@@ -1,24 +1,21 @@
 package com.multimoney.multimoney.presentation.ui
 
 import android.content.Intent
-import com.facebook.react.bridge.*
-import com.google.gson.JsonParser
+import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.ReactContextBaseJavaModule
+import com.facebook.react.bridge.ReactMethod
 
-class PackageTrackerModule (reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
+class PackageTrackerModule(reactContext: ReactApplicationContext) :
+    ReactContextBaseJavaModule(reactContext) {
 
     @ReactMethod
     fun callback(error: String, response: String) {
-        if (error === "undefined") {
-            System.out.println("Show response card: " + JsonParser.parseString(response))
-            val intent = Intent()
-            intent.putExtra(RESPONSE_VALUE, response)
-            intent.putExtra(RESPONSE_IS_ERROR, error)
-            currentActivity?.setResult(RESULT_CODE_PROCESS_FINISHED, intent)
-            currentActivity?.finish()
-        } else {
-            System.out.println("Error: " + JsonParser.parseString(error))
-        }
-
+        val intent = Intent()
+        intent.putExtra(RESPONSE_VALUE, response)
+        intent.putExtra(RESPONSE_IS_ERROR, response.isEmpty())
+        intent.putExtra(ERROR_VALUE, error)
+        currentActivity?.setResult(RESULT_CODE_PROCESS_FINISHED, intent)
+        currentActivity?.finish()
     }
 
     @ReactMethod
@@ -28,7 +25,7 @@ class PackageTrackerModule (reactContext: ReactApplicationContext) : ReactContex
     }
 
     override fun getName(): String {
-        return "PackageTrackerModule"
+        return PACKAGE_TRACKER_MODULE
     }
 
     companion object {
@@ -36,6 +33,7 @@ class PackageTrackerModule (reactContext: ReactApplicationContext) : ReactContex
         const val RESULT_CODE_PROCESS_INCOMPLETE = 400
         const val RESPONSE_VALUE = "response_value_key"
         const val RESPONSE_IS_ERROR = "response_error_key"
+        const val ERROR_VALUE = "error_value_key"
+        const val PACKAGE_TRACKER_MODULE = "PackageTrackerModule"
     }
-
 }

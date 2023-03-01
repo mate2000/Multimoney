@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.multimoney.domain.interaction.credit.QueryGetCardAutomaticDebitUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationActivatedCardAutomaticDebitUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationCreateUserVDUseCase
+import com.multimoney.domain.interaction.virtualcard.QueryGetParametersMobileByCategoryUseCase
 import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCase
 import com.multimoney.domain.model.security.InfoUser
 import com.multimoney.domain.model.util.onFailure
@@ -18,7 +19,6 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.ADD_CARD_RESPONSE
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_CARD_VISA_DIRECT
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
@@ -35,6 +35,7 @@ import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnAlertButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnAlertCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnCloseClick
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnCloseAddCardClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnEditCardVisaDirect
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnGetClientCardVisaDirect
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnNavigateBack
@@ -63,7 +64,8 @@ class PaymentScheduleCardViewModel @Inject constructor(
     private val queryListCardVDUseCase: QueryListCardVDUseCase,
     private val mutationActivatedCardAutomaticDebitUseCase: MutationActivatedCardAutomaticDebitUseCase,
     private val getCardAutomaticDebitUseCase: QueryGetCardAutomaticDebitUseCase,
-    private val mutationCreateUserVDUseCase: MutationCreateUserVDUseCase
+    private val mutationCreateUserVDUseCase: MutationCreateUserVDUseCase,
+    private val queryGetParametersMobileByCategoryUseCase: QueryGetParametersMobileByCategoryUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -82,6 +84,10 @@ class PaymentScheduleCardViewModel @Inject constructor(
     private var getPaymentScheduleAttempts = 0
     private var setPaymentScheduleAttempts = 0
     private var infoUser: InfoUser? = null
+    var reactApplicationName: String = ""
+    var reactUserName: String = ""
+    var reactUserPass: String = ""
+    var reactEndPoint: String = ""
 
     init {
         infoUser = savedStateHandle[INFO_USER]
@@ -183,12 +189,50 @@ class PaymentScheduleCardViewModel @Inject constructor(
             lastName = infoUser?.lastName.orEmpty(),
             secondLastName = infoUser?.secondLastName.orEmpty(),
             email = infoUser?.email.orEmpty(),
-            callerId = infoUser?.countryCode.plus(infoUser?.phone.orEmpty()),
+            callerId = infoUser?.countryCode?.replace("+", "").plus(infoUser?.phone.orEmpty()),
             user = infoUser?.userName.orEmpty(),
             idBrand = infoUser?.idBrand ?: 0
         ).collectLatest { result ->
             result.onSuccess {
                 uiState = uiState.copy(isLoading = false)
+                reactUserName = it?.userName ?: ""
+                reactUserPass = it?.password ?: ""
+                getClientCardVisaDirect()
+            }.onFailure {
+                uiState = uiState.copy(
+                    isLoading = false,
+                    openDialog = DialogParameters(
+                        description = it.getError() ?: "",
+                        isActive = mutableStateOf(true)
+                    )
+                )
+            }.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
+    private fun onCallGetParametersMobileByCategoryUseCase() = executeUseCase {
+        queryGetParametersMobileByCategoryUseCase.invoke(
+            idBrand = infoUser?.idBrand ?: 0,
+            category = VISA_DIRECT_CATEGORY
+        ).collectLatest { result ->
+            result.onSuccess { parameters ->
+                uiState = uiState.copy(
+                    isLoading = false,
+                )
+                if (parameters?.isNotEmpty() == true) {
+                    val applicationName = parameters.find {
+                        it?.searchKey.equals(
+                        SEARCH_KEY_APPLICATION_NAME) }
+                    reactApplicationName = applicationName?.value ?: ""
+
+                    val endpoint = parameters.find {
+                        it?.searchKey.equals(
+                            SEARCH_KEY_ENDPOINT) }
+                    reactEndPoint = endpoint?.value ?: ""
+
+                }
                 getClientCardVisaDirect()
             }.onFailure {
                 uiState = uiState.copy(
@@ -206,9 +250,12 @@ class PaymentScheduleCardViewModel @Inject constructor(
 
     private fun onStart() {
         if (infoUser?.visaDirectUser.isNullOrEmpty() && infoUser?.visaDirectId.isNullOrEmpty()) {
-            onCallMutationCreateUserVDUseCase()
+            //onCallMutationCreateUserVDUseCase()
+            onCallGetParametersMobileByCategoryUseCase()
         } else {
-            getClientCardVisaDirect()
+            reactUserName =  infoUser?.visaDirectUser ?: ""
+            reactUserPass =  infoUser?.visaDirectId ?: ""
+            onCallGetParametersMobileByCategoryUseCase()
         }
     }
 
@@ -362,6 +409,24 @@ class PaymentScheduleCardViewModel @Inject constructor(
         )
     }
 
+    private fun onCloseAddCardClick() {
+        uiState = uiState.copy(
+            openDialog = DialogParameters(
+                titleResource = R.string.visa_add_card_dialog_title,
+                descriptionResource = R.string.visa_add_card_dialog_description,
+                positiveResource = R.string.button_continue,
+                negativeResource = R.string.cancel,
+                positiveAction = {
+                    navigateBack(
+                        popTo = Screen.HomeScreen.route,
+                        isRestart = false
+                    )
+                },
+                isActive = mutableStateOf(true)
+            )
+        )
+    }
+
     private fun onRestartTimer() {
         countDownTimer.restartTimer()
     }
@@ -393,6 +458,7 @@ class PaymentScheduleCardViewModel @Inject constructor(
             is OnAlertButtonClick -> onAlertButtonClick()
             is OnAlertCloseClick -> onAlertCloseClick()
             is OnCloseClick -> onCloseClick()
+            is OnCloseAddCardClick -> onCloseAddCardClick()
             is OnProgramClick -> onCallMutationActivatedCardAutomaticDebitUseCase()
             is OnEditCardVisaDirect -> onEditCardVisaDirect()
             is OnOpenDisclaimerDialog -> onOpenDisclaimerDialog()
@@ -409,6 +475,7 @@ class PaymentScheduleCardViewModel @Inject constructor(
         object OnAlertButtonClick : UIEvent()
         object OnAlertCloseClick : UIEvent()
         object OnCloseClick : UIEvent()
+        object OnCloseAddCardClick : UIEvent()
         object OnProgramClick : UIEvent()
         object OnEditCardVisaDirect : UIEvent()
         object OnOpenDisclaimerDialog : UIEvent()
@@ -425,5 +492,12 @@ class PaymentScheduleCardViewModel @Inject constructor(
         const val RESULT_CODE_PROCESS_INCOMPLETE = 400
         const val RESPONSE_VALUE = "response_value_key"
         const val RESPONSE_IS_ERROR = "response_error_key"
+        const val VISA_DIRECT_CATEGORY = "VISA_DIRECT"
+        const val APPLICATION_NAME = "applicationName"
+        const val USER_NAME = "userName"
+        const val USER_PASS = "userPassword"
+        const val ENDPOINT = "endpoint"
+        const val SEARCH_KEY_ENDPOINT = "FTT_SERVER_VISADIRECT"
+        const val SEARCH_KEY_APPLICATION_NAME = "APPLICATIONNAME_VISADIRECT"
     }
 }

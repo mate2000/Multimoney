@@ -252,6 +252,8 @@ import com.multimoney.domain.interaction.virtualcard.MutationResendMicroDepositV
 import com.multimoney.domain.interaction.virtualcard.MutationResendMicroDepositVDUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.MutationUpdateCardVDUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationUpdateCardVDUseCaseImpl
+import com.multimoney.domain.interaction.virtualcard.QueryGetParametersMobileByCategoryUseCase
+import com.multimoney.domain.interaction.virtualcard.QueryGetParametersMobileByCategoryUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCase
 import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCaseImpl
 import com.multimoney.domain.repository.BalanceRepository
@@ -803,6 +805,11 @@ class InteractionModule {
     @Singleton
     fun provideMutationCreateUserVDUseCase(virtualCardRepository: VirtualCardRepository): MutationCreateUserVDUseCase =
         MutationCreateUserVDUseCaseImpl(virtualCardRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryGetParametersMobileByCategoryUseCase(virtualCardRepository: VirtualCardRepository): QueryGetParametersMobileByCategoryUseCase =
+        QueryGetParametersMobileByCategoryUseCaseImpl(virtualCardRepository)
 
     @Provides
     @Singleton

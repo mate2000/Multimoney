@@ -3,6 +3,12 @@ package com.multimoney.multimoney.presentation.util.catalog
 import com.multimoney.multimoney.R
 
 sealed class AddVisaCardErrors(val value: String, val title: Int, val description: Int) {
+    object Default : AddVisaCardErrors(
+        value = "Default",
+        title = R.string.visa_add_card_error_default_title,
+        description = R.string.visa_add_card_error_default_description
+    )
+
     object SystemMalfunction : AddVisaCardErrors(
         value = "System Malfunction",
         title = R.string.visa_add_card_error_system_malfunction_title,

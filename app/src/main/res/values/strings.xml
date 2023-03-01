@@ -1715,7 +1715,13 @@
     <string name="visa_verified_dialog_title" translatable="false">Cancelar proceso</string>
     <string name="visa_verified_dialog_description" translatable="false">¿Estás segur@ de cancelar el proceso de agregar una tarjeta?</string>
 
+    <!-- Add Visa Card Dialog -->
+    <string name="visa_add_card_dialog_title" translatable="false">Cancelar proceso</string>
+    <string name="visa_add_card_dialog_description" translatable="false">¿Estás segur@ de cancelar el proceso de agregar una tarjeta?</string>
+
     <!-- Add Visa Card Errors   -->
+    <string name="visa_add_card_error_default_title" translatable="false">¡Oh no!  Error de conexión</string>
+    <string name="visa_add_card_error_default_description" translatable="false">No pudimos agregar tu tarjeta. Intentalo de nuevo.</string>
     <string name="visa_add_card_error_system_malfunction_title" translatable="false">¡Oh no!  Error de conexión</string>
     <string name="visa_add_card_error_system_malfunction_description" translatable="false">Hay un error de conexión con el sistema. Intentálo de nuevo más tarde.</string>
     <string name="visa_add_card_error_unable_to_include_title" translatable="false">Oh no! Tarjeta inválida</string>

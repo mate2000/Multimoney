@@ -24,8 +24,8 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getRegex
 import com.multimoney.multimoney.presentation.util.matchRegex
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class CreditBankViewModel @Inject constructor(
@@ -91,7 +91,7 @@ class CreditBankViewModel @Inject constructor(
 
     private fun onAccountTypeValueChange(regulaExpression: RegularExpression?) {
         uiState = uiState.copy(
-            accountTypeSelectedString = regulaExpression?.key ?: "",
+            accountTypeSelectedString = regulaExpression?.description ?: "",
             accountTypeSelected = regulaExpression,
             accountNumber = "",
             accountNumberError = Pair(false, R.string.empty)
@@ -129,9 +129,8 @@ class CreditBankViewModel @Inject constructor(
             user,
             bank,
             uiState.bankSelected,
-            uiState.accountTypeSelectedString,
-            uiState.accountNumber,
-            uiState.accountTypeSelected?.pkRegularExpression.toString()
+            uiState.accountTypeSelected,
+            uiState.accountNumber
         )
         nextStepAction()
     }
@@ -143,6 +142,7 @@ class CreditBankViewModel @Inject constructor(
         val bankSelected: CreditCatalogOption? = null,
         val accountTypeListFiltered: List<RegularExpression?>? = listOf(),
         val accountTypeSelectedString: String = "",
+        val accountTypeSelectedKey: String = "",
         val accountTypeSelected: RegularExpression? = null
     )
 

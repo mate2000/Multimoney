@@ -58,7 +58,7 @@ class SaveCreditStepsHelper @Inject constructor() {
         saveScreenQuestionData(selectionQuestion(user, bank, bankSelected))
 
         val creditInfoQuestionAccountType =
-            textByDropdownQuestion(user, accountTypeValue,  accountTypeValue, accountTypeQuestion, accountTypeKey)
+            textByDropdownQuestion(user, accountTypeValue, accountTypeValue, accountTypeQuestion, accountTypeKey)
         saveScreenQuestionData(creditInfoQuestionAccountType)
 
         val creditInfoQuestionAccountNumber = textQuestion(user, accountNumber, accountNumberQuestion)
@@ -367,9 +367,9 @@ class SaveCreditStepsHelper @Inject constructor() {
             createUser = user,
             updateUser = user,
             identificator = textQuestionData?.pkCatalog ?: "",
-            value = value ?: "",
+            value = value,
             controlType = textQuestionData?.controlType,
-            isCoreCatalogue = textQuestionData?.isCoreCatalog,
+            isCoreCatalogue = true,
             isBranchOfficeCatalogue = textQuestionData?.isCatalogBrandOffice,
             useValue = textQuestionData?.useValue,
             maximumAmount = textQuestionData?.maximumAmount ?: "",

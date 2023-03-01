@@ -48,7 +48,6 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.capitalized
 import com.multimoney.multimoney.presentation.util.getDeviceName
 import com.multimoney.multimoney.presentation.util.getDeviceType
-import com.multimoney.multimoney.presentation.util.getIpAddress
 import com.multimoney.multimoney.presentation.util.splitByWhiteSpace
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
@@ -71,7 +70,6 @@ fun SignInScreen(
             executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
             onUIEvent(
                 SignInViewModel.UIEvent.OnStart(
-                    getIpAddress(fragmentActivity) ?: "",
                     getDeviceName(fragmentActivity) ?: "",
                     getDeviceType(fragmentActivity).value ?: "",
                     forceChangeDevice

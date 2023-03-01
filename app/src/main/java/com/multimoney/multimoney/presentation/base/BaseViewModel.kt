@@ -163,9 +163,7 @@ open class BaseViewModel @Inject constructor(
                 mutableList.add(Pair(EMAIL_ADJUST_KEY, email))
                 mutableList.add(Pair(PK_USER_ADJUST_KEY, pkUser))
                 mutableList.add(Pair(IDENTIFICATION_ADJUST_KEY, identification))
-                if (data.isNotEmpty()) {
-                    callSaveLogTracking(identification, pkUser, data, idBrand)
-                }
+                callSaveLogTracking(identification, pkUser, data, idBrand)
             }
             if (applyAdjust) {
                 mutableList.addAll(listParameters)

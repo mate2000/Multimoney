@@ -20,8 +20,8 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.account.Cros
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class CrosselingAccountViewModel @Inject constructor(
@@ -182,7 +182,7 @@ class CrosselingAccountViewModel @Inject constructor(
                 uiState.accountNumber
             )
         } else {
-            saveCreditStepsHelper.saveStepOne(
+            saveCreditStepsHelper.saveStepOneCrossseling(
                 user,
                 bank,
                 uiState.bankSelected,

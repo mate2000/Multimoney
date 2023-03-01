@@ -28,6 +28,8 @@ import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountUpdate
 import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountUpdateUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationUpdateFavoriteSmartUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationUpdateFavoriteSmartUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteGetUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteGetUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteListUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteListUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelOneUseCase
@@ -46,8 +48,12 @@ import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsU
 import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryGetPagedSmartMovementsUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryGetPagedSmartMovementsUseCaseUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QueryListSavedSACAccountsUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryListSavedSACAccountsUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryListSinpeAccountUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryListSinpeAccountUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QueryLocalTransferFavoriteUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryLocalTransferFavoriteUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryProfessionUseCase
@@ -911,7 +917,21 @@ class InteractionModule {
 
     @Provides
     @Singleton
+    fun provideQueryListSavedSACAccountsUseCase(smartAccountRepository: SmartAccountRepository): QueryListSavedSACAccountsUseCase =
+        QueryListSavedSACAccountsUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryACHTransferFavoriteGetUseCase(smartAccountRepository: SmartAccountRepository): QueryACHTransferFavoriteGetUseCase =
+        QueryACHTransferFavoriteGetUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
     fun provideQueryGetCryptoReceiveAddress(cryptoRepository: CryptoRepository): GetCryptoReceiveAddressUseCase =
         GetCryptoReceiveAddressUseCaseImpl(cryptoRepository)
 
+    @Provides
+    @Singleton
+    fun provideQueryLocalTransferFavoriteUseCase(smartAccountRepository: SmartAccountRepository): QueryLocalTransferFavoriteUseCase  =
+        QueryLocalTransferFavoriteUseCaseImpl(smartAccountRepository)
 }

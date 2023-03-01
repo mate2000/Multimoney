@@ -18,7 +18,8 @@ class MutationProcessTransfer365MobileUseCaseImpl(
         amount: Double,
         motive: String,
         user: String,
-        idBrand: Int
+        idBrand: Int,
+        destinationType: String
     ): Flow<MultimoneyResult<Transfer365Result?>> {
         return repository.mutationProcessTransfer365Mobile(
             idBrand = idBrand,
@@ -30,7 +31,8 @@ class MutationProcessTransfer365MobileUseCaseImpl(
             destinationLastName = destinationLastName,
             typeAccountId = typeAccountId,
             amount = amount,
-            motive = motive
+            motive = motive,
+            destinationType = destinationType
         )
     }
 }

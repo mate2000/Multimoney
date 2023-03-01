@@ -157,16 +157,16 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     private fun onNavigateToMyFavorites() {
         if (idBrand == Brand.ElSalvador.id) {
             navigateTo(
-                "${Screen.SmartTransferFavoriteAccountScreen.baseRoute}/$user/$idBrand/$identification/${
-                    encodeData(
-                        selectedSmartAccount
-                    )
+                "${Screen.SmartTransferFavoriteAccountSVScreen.baseRoute}/$user/$idBrand/$identification/${
+                encodeData(
+                    selectedSmartAccount
+                )
                 }"
             )
         } else if (idBrand == Brand.CostaRica.id) {
             navigateTo(
                 "${Screen.SmartTransferFavoriteAccountCRScreen.baseRoute}/$user/$idBrand/$identification" +
-                        "/${encodeData(selectedSmartAccount)}"
+                    "/${encodeData(selectedSmartAccount)}"
             )
         }
     }

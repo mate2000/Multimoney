@@ -138,7 +138,6 @@ import com.multimoney.data.networking.graphql.apollomodel.ValidateUserStatusQuer
 import com.multimoney.data.networking.graphql.apollomodel.ValidationSecurityQuery
 import com.multimoney.data.networking.graphql.apollomodel.type.BeneficiaryRequestDtoInput
 import com.multimoney.data.networking.graphql.apollomodel.type.ContactsInput
-import com.multimoney.data.networking.graphql.apollomodel.GetCryptoReceiveAddressQuery
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.RelatedContact
 import com.multimoney.domain.model.credit.CreditInfoQuestion
@@ -2311,21 +2310,6 @@ class GraphqlApi @Inject constructor(
                 maxPoints,
                 paginationLimit,
                 paginationOffset
-            )
-        ).fetchPolicy(FetchPolicy.NetworkOnly)
-
-    fun queryACHTransferFavoriteList(
-        user: String,
-        idBrand: Int,
-        isFavorite: Boolean,
-        identification: String
-    ): ApolloCall<ACHTransferFavoriteListQuery.Data> =
-        apolloAuthorizedClient.query(
-            ACHTransferFavoriteListQuery(
-                user,
-                idBrand,
-                isFavorite,
-                identification
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

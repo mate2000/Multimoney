@@ -307,7 +307,8 @@ class CreditViewModel @Inject constructor(
                                     .plus(getNavParam(FIRST_NAME, firstName))
                                     .plus(getNavParam(LAST_NAME, lastName))
                                     .plus(getNavParam(CROSSELING, crosseling))
-                                    .plus(getNavParam(SHOULD_GET_EVICERTIA_LINK, false)),
+                                    .plus(getNavParam(SHOULD_GET_EVICERTIA_LINK, false))
+                                    .plus(getNavParam(EVICERTIA_STATUS, statusEvicertia)),
                                 Screen.CreditScreen.route,
                             )
                         }

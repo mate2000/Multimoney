@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.accountsmart.RelatedContact
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.multimoney.R
@@ -24,9 +25,9 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class SmartSelectSendingTypeViewModel @Inject constructor(
@@ -90,8 +91,8 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     private fun onNavigateToSmartAccount() {
         navigateTo(
             "${Screen.OwnTransferAmountScreen.baseRoute}/" +
-                    "${encodeData(selectedSmartAccount)}/${encodeData(secondSmartAccount)}/" +
-                    "${SmartTransferTypes.SmartToSmart.id}"
+                "${encodeData(selectedSmartAccount)}/${encodeData(secondSmartAccount)}/" +
+                "${SmartTransferTypes.SmartToSmart.id}"
         )
     }
 
@@ -154,21 +155,26 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     }
 
     private fun onNavigateToMyFavorites() {
-        navigateTo(
-            "${Screen.SmartTransferFavoriteAccountScreen.baseRoute}/$user/$idBrand/$identification/${
+        if (idBrand == Brand.ElSalvador.id) {
+            navigateTo(
+                "${Screen.SmartTransferFavoriteAccountSVScreen.baseRoute}/$user/$idBrand/$identification/${
                 encodeData(
                     selectedSmartAccount
                 )
-            }"
-        )
+                }"
+            )
+        } else if (idBrand == Brand.CostaRica.id) {
+            navigateTo(
+                "${Screen.SmartTransferFavoriteAccountCRScreen.baseRoute}/$user/$idBrand/$identification" +
+                    "/${encodeData(selectedSmartAccount)}"
+            )
+        }
     }
 
     private fun onNavigateToOtherBankAccounts() {
         navigateTo(
             "${Screen.SmartACHAccountsListScreen.baseRoute}/${
-                encodeData(
-                    selectedSmartAccount
-                )
+            encodeData(selectedSmartAccount)
             }/$user/$idBrand/$identification/${Screen.SmartSelectSendingTypeScreen.baseRoute}"
         )
     }
@@ -176,9 +182,7 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     private fun onNavigateToTransfer365Mobile() {
         navigateTo(
             "${Screen.SmartAdd365AccountScreen.baseRoute}/$idBrand/$user/${
-                encodeData(
-                    selectedSmartAccount
-                )
+            encodeData(selectedSmartAccount)
             }/$identification/${SmartTransferTypes.SmartToMobile.id}/${Screen.SmartSelectSendingTypeScreen.baseRoute}"
         )
     }

@@ -86,6 +86,9 @@ fun CryptoSendAmountScreen(
                 }
             )
         )
+        sharedViewModel.uiState.previousAction = {
+            viewModel.onUIEvent(CryptoSendAmountViewModel.UIEvent.OnClearInputData)
+        }
     }
     LaunchedEffect(key1 = viewModel.uiState.isTransformationCurrency.value) {
         viewModel.onUIEvent(CryptoSendAmountViewModel.UIEvent.OnAmountChanged(""))

@@ -104,11 +104,6 @@ class SignInViewModel @Inject constructor(
     }
 
     private fun callCognitoSignIn(activity: FragmentActivity) {
-        if (ipAddress.isEmpty()) {
-            viewModelScope.launch {
-                ipAddress = getIPAddress() ?: ""
-            }
-        }
         uiState = uiState.copy(isLoading = true)
         clearUserEmailError()
 

@@ -86,7 +86,7 @@ class OnBoardingViewModel @Inject constructor(
     private fun getStepContent(step: Int, context: Context): List<Int> = when (step) {
         STEP_ONE -> {
             provideFireBaseEventHelper.logEvent(FireBaseEvents.OnboardingOne)
-            registerAdjustEvent(AdjustEventType.ON_BOARDING_1, isLoggedIn = false)
+            registerAdjustEvent(AdjustEventType.ON_BOARDING_1_1002, isLoggedIn = false)
             when (context.resources.configuration.locale.isO3Country) {
                 ISO3_COSTA_RICA -> listOf(
                     R.string.onboarding_costa_rica_step_one_title,
@@ -107,7 +107,7 @@ class OnBoardingViewModel @Inject constructor(
         }
         STEP_TWO -> {
             provideFireBaseEventHelper.logEvent(FireBaseEvents.OnboardingTwo)
-            registerAdjustEvent(AdjustEventType.ON_BOARDING_2, isLoggedIn = false)
+            registerAdjustEvent(AdjustEventType.ON_BOARDING_2_1003, isLoggedIn = false)
             when (context.resources.configuration.locale.isO3Country) {
                 ISO3_COSTA_RICA -> listOf(
                     R.string.onboarding_costa_rica_step_two_title,
@@ -128,7 +128,7 @@ class OnBoardingViewModel @Inject constructor(
         }
         else -> {
             provideFireBaseEventHelper.logEvent(FireBaseEvents.OnboardingThree)
-            registerAdjustEvent(AdjustEventType.ON_BOARDING_3, isLoggedIn = false)
+            registerAdjustEvent(AdjustEventType.ON_BOARDING_3_1004, isLoggedIn = false)
             when (context.resources.configuration.locale.isO3Country) {
                 ISO3_COSTA_RICA -> listOf(
                     R.string.onboarding_costa_rica_step_three_title,

@@ -4,6 +4,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -16,13 +18,20 @@ import com.multimoney.multimoney.presentation.ui.login.registereduser.email.Regi
 import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailViewModel.UIEvent.OnEmailValueChange
 import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailViewModel.UIEvent.OnValidateEmail
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RegisteredUserEmailViewModel @Inject constructor(savedStateHandle: SavedStateHandle) : BaseViewModel(false) {
+class RegisteredUserEmailViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    private val dataStorePreferences: DataStorePreferences
+
+) : BaseViewModel(false) {
 
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -67,6 +76,12 @@ class RegisteredUserEmailViewModel @Inject constructor(savedStateHandle: SavedSt
     private fun onContinueClick() = if (uiState.email != (userData?.email ?: "")) {
         uiState = uiState.copy(emailError = Pair(true, R.string.registered_user_email_different))
     } else {
+        viewModelScope.launch {
+            if (dataStorePreferences.isAdjustSingUpAlreadyCustomerEmailEventRegister().first()) {
+                registerAdjustEvent(AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_EMAIL_2009, isLoggedIn = false)
+                dataStorePreferences.isAdjustSingUpAlreadyCustomerEmailEventRegister(false)
+            }
+        }
         navigateTo(
             route = Screen.RegisteredUserOtpOptionsScreen.baseRoute
                 .plus(

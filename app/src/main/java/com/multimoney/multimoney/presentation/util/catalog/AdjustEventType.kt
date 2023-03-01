@@ -1,30 +1,30 @@
 package com.multimoney.multimoney.presentation.util.catalog
 
 enum class AdjustEventType(val stgToken: String, val prodToken: String) {
-    SPLASH("", ""),
+    SPLASH_1001("6t3wnx", "162spm"),
 
     // ON BOARDING
-    ON_BOARDING_1("", ""),
-    ON_BOARDING_2("", ""),
-    ON_BOARDING_3("", ""),
+    ON_BOARDING_1_1002("dn9tlm", "q4pfbo"),
+    ON_BOARDING_2_1003("buvcxq", "6aato7"),
+    ON_BOARDING_3_1004("mt8aki", "y43ho8"),
 
     // SIGNUP
-    SIGNUP_FIRST_BUTTON_CLICKED("", ""),
-    SIGNUP_1("", ""),
-    SIGNUP_2("", ""),
-    SIGNUP_3("", ""),
-    SIGNUP_4("", ""),
-    SIGNUP_5("", ""),
-    SIGNUP_RESEND_OTP("", ""),
-    SIGNUP_OTP_API_CALL("", ""),
-    SIGNUP_SUCCESS("", ""),
-    SIGNUP_ALREADY_BEEN_CUSTOMERS_EMAIL("", ""),
-    SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_EMAIL("", ""),
-    SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_SMS("", ""),
-    SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_SUCCESS_CONFIRMATION("", ""),
-    SIGNUP_ALREADY_BEEN_CUSTOMERS_RESEND_OTP("", ""),
-    SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_API_CALL("", ""),
-    SIGNUP_ALREADY_BEEN_CUSTOMERS_CREATE_PASSWORD("", ""),
+    SIGNUP_FIRST_BUTTON_CLICKED_2000("1ppswb", "677x4e"),
+    SIGNUP_1_2001("e70xxi", "mwgqqq"),
+    SIGNUP_2_2002("juh5da", "841kw5"),
+    SIGNUP_3_2003("80haw1", "3rdgkn"),
+    SIGNUP_4_2004("c03f37", "acdu94"),
+    SIGNUP_5_2007("lo8d23", "gg2i4j"),
+    SIGNUP_RESEND_OTP_2005("", ""),
+    SIGNUP_OTP_API_CALL_2006("", ""),
+    SIGNUP_SUCCESS_2008("", ""),
+    SIGNUP_ALREADY_BEEN_CUSTOMERS_EMAIL_2009("f5no3g", "3a448q"),
+    SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_EMAIL_2010("", ""),
+    SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_SMS_2011("", ""),
+    SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_SUCCESS_CONFIRMATION_2012("tc8kf4", "czalev"),
+    SIGNUP_ALREADY_BEEN_CUSTOMERS_RESEND_OTP_2013("", ""),
+    SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_API_CALL_2014("", ""),
+    SIGNUP_ALREADY_BEEN_CUSTOMERS_CREATE_PASSWORD_2015("8q7lm7", "auq95w"),
 
     // LOGIN
     FIRST_LOGIN("", ""),

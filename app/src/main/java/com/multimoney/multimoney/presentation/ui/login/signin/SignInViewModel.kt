@@ -41,6 +41,7 @@ import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnUserPasswordValueChange
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnValidateUserEmail
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.checkIfEmulator
@@ -58,7 +59,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import javax.inject.Inject
-
 @HiltViewModel
 class SignInViewModel @Inject constructor(
     private val biometricHelper: BiometricHelper,
@@ -138,7 +138,7 @@ class SignInViewModel @Inject constructor(
         val options = AWSCognitoAuthSignInOptions.builder().metadata(attrs).build()
 
         Amplify.Auth.signOut({
-            Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword,options, { authSignInResult ->
+            Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword, options, { authSignInResult ->
                 if (authSignInResult.isSignInComplete) {
                     Amplify.Auth.fetchAuthSession({ authSessionSuccess ->
                         val session = authSessionSuccess as AWSCognitoAuthSession
@@ -155,7 +155,7 @@ class SignInViewModel @Inject constructor(
                                             authUserAttribute
                                         )
                                         if (payload.getString(SignUpPasswordViewModel.COGNITO_CHANGE_PASSWORD_REQUIRED)
-                                                .toBoolean()
+                                            .toBoolean()
                                         ) {
                                             Amplify.Auth.signOut({}, {})
                                             uiState = uiState.copy(
@@ -443,7 +443,15 @@ class SignInViewModel @Inject constructor(
         popTo = Screen.SignInScreen.route
     )
 
-    private fun onNavigateToSignUp() = navigateTo(route = "${Screen.SignUpScreen.baseRoute}/".plus(0))
+    private fun onNavigateToSignUp() {
+        viewModelScope.launch {
+            if (dataStorePreferences.isAdjustSingUpButtonClickedEventRegister().first()) {
+                registerAdjustEvent(adjustEventType = AdjustEventType.SIGNUP_FIRST_BUTTON_CLICKED_2000, isLoggedIn = false)
+                dataStorePreferences.isAdjustSingUpButtonClickedEventRegister(false)
+            }
+        }
+        navigateTo(route = "${Screen.SignUpScreen.baseRoute}/".plus(0))
+    }
 
     private fun initializeBiometricPrompt(
         biometricPromptTitle: String,

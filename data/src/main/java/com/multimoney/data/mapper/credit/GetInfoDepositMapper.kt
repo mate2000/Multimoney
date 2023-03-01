@@ -10,6 +10,7 @@ fun GetInfoDepositQuery.GetInfoDeposit.mapToDomainModel() = GetInfoDeposit(
     referenceNumber = numeroReferencia,
     creditNumber = pagare,
     date = fecha.toString(),
+    bankName = bankName,
     message = message,
     status = status,
     detail = detail

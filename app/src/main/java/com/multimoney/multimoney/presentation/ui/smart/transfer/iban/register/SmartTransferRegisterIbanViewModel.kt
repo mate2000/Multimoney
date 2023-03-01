@@ -97,9 +97,10 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
             accountInformation = Pair(true, R.string.iban_account_loading),
             validationFinish = false
         )
+        // To validate non personal accounts we have to pass the identification as empty
         queryValidateBankAccountUseCase(
             account = "${Brand.CostaRica.iban}${uiState.ibanAccountNumber}",
-            identification = identification ?: "",
+            identification = "",
             queryType = null,
             user = user.orEmpty(),
             idBrand = idBrand ?: 0

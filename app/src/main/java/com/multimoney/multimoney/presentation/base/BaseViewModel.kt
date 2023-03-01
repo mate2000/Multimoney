@@ -149,7 +149,8 @@ open class BaseViewModel @Inject constructor(
         adjustEventType: AdjustEventType,
         listParameters: List<Pair<String, String>> = listOf(),
         isLoggedIn: Boolean = true,
-        data: String = ""
+        data: String = "",
+        applyAdjust: Boolean = true
     ) {
         viewModelScope.launch {
             val mutableList = mutableListOf<Pair<String, String>>()
@@ -162,12 +163,12 @@ open class BaseViewModel @Inject constructor(
                 mutableList.add(Pair(EMAIL_ADJUST_KEY, email))
                 mutableList.add(Pair(PK_USER_ADJUST_KEY, pkUser))
                 mutableList.add(Pair(IDENTIFICATION_ADJUST_KEY, identification))
-                if (data.isNotEmpty()) {
-                    callSaveLogTracking(identification, pkUser, data, idBrand)
-                }
+                callSaveLogTracking(identification, pkUser, data, idBrand)
             }
-            mutableList.addAll(listParameters)
-            adjustHelper.registerEvent(adjustEventType, mutableList)
+            if (applyAdjust) {
+                mutableList.addAll(listParameters)
+                adjustHelper.registerEvent(adjustEventType, mutableList)
+            }
         }
     }
 

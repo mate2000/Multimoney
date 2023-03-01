@@ -1273,8 +1273,6 @@ input LocalTransferFavoritesDtoInput {
 
   isFavorite: Boolean
 
-  identification: String
-
   idBrand: Int
 
   user: String
@@ -2200,6 +2198,8 @@ type InfoDeposit {
   pagare: String!
 
   fecha: DateTime!
+
+  bankName: String
 
   status: Int
 
@@ -6611,6 +6611,8 @@ type LocalTransferFavoriteResult {
 
   phoneNumber: String!
 
+  areaCode: String!
+
   idCurrencyAccount: Int
 
   currencyAccount: String!
@@ -6789,6 +6791,8 @@ type CatalogAdressLevel4ListResponse {
 
 type ObjPhone {
   number: String
+
+  areaCode: String
 
   titular: String
 

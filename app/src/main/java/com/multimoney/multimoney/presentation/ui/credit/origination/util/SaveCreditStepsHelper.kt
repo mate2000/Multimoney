@@ -32,7 +32,7 @@ class SaveCreditStepsHelper @Inject constructor() {
         accountNumber: String,
     ) {
         val accountNumberQuestion = getScreenConfigQuestion(ACCOUNT_NUMBER, accountNumber)
-        val accountTypeQuestion = getScreenConfigQuestion(ACCOUNT_TYPE, accountType?.description ?: "")
+        val accountTypeQuestion = getScreenConfigQuestion(ACCOUNT_TYPE, accountType?.key ?: "")
 
         saveScreenQuestionData(selectionQuestion(user, bank, bankAccountSelected))
 
@@ -341,10 +341,10 @@ class SaveCreditStepsHelper @Inject constructor() {
             idOptionQuestionRequestCredit = textQuestionData?.pkQuestionOption,
             createUser = user,
             updateUser = user,
-            identificator = textQuestionData?.pkCatalog ?: "",
-            value = expression?.description ?: "",
+            identificator = textQuestionData?.pkQuestionOption?.toString().orEmpty(),
+            value = "",
             controlType = textQuestionData?.controlType,
-            isCoreCatalogue = textQuestionData?.isCoreCatalog,
+            isCoreCatalogue = true,
             isBranchOfficeCatalogue = textQuestionData?.isCatalogBrandOffice,
             useValue = textQuestionData?.useValue,
             maximumAmount = textQuestionData?.maximumAmount ?: "",

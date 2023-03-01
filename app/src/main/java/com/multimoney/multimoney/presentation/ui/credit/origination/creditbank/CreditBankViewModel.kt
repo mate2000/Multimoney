@@ -171,11 +171,13 @@ class CreditBankViewModel @Inject constructor(
         val accountTypeListFiltered =
             accountTypeList?.filter { it?.fkRegularExpression == bankSelected?.pkCatalog?.toInt() }
         val accountNumber = list?.find { it?.description == SaveCreditStepsHelper.ACCOUNT_NUMBER }
+        val accountTypeSelected = accountTypeListFiltered?.findLast { it?.key == accountType?.value }
         uiState = uiState.copy(
             bankSelected = bankSelected,
             accountTypeListFiltered = accountTypeListFiltered,
-            accountTypeSelectedString = accountType?.value ?: "",
-            accountTypeSelected = accountTypeListFiltered?.findLast { it?.description == accountType?.value },
+            accountTypeSelectedString = accountTypeSelected?.description
+                ?: "",
+            accountTypeSelected = accountTypeSelected,
             accountNumber = accountNumber?.value ?: ""
         )
         validateForm()

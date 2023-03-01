@@ -147,7 +147,7 @@ class CreditViewModel @Inject constructor(
                 description = closeDialogDescription,
                 positiveResource = string.crosseling_close_dialog_positive_button_text,
                 negativeResource = string.crosseling_close_dialog_negative_button_text,
-                negativeAction = {
+                positiveAction = {
                     onNavigateToHome()
                 },
                 isActive = mutableStateOf(true),

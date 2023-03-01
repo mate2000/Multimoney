@@ -1131,7 +1131,8 @@ class ProductViewModel @Inject constructor(
             UIEvent.OnRegisterAdjustPressSellFirstTime -> registerAdjustFirstPressSellEvent()
             UIEvent.OnRegisterAdjustPressSendFirstTime -> registerAdjustFirstPressSendEvent()
             UIEvent.OnRegisterAdjustPaxosInMaintenance -> registerAdjustEvent(
-                AdjustEventType.HOME_CRYPTO_PAXOS_IN_MAINTENANCE
+                applyAdjust = false,
+                adjustEventType = AdjustEventType.HOME_CRYPTO_PAXOS_IN_MAINTENANCE
             )
         }
     }

@@ -93,9 +93,11 @@ class CryptoReceiveAddressViewModel @Inject constructor(
             is UIEvent.OnShareCryptoReceiveAddress -> shareCryptoReceiveAddress(event.address)
             is UIEvent.OnSetOpenMaintenanceAction -> openMaintenanceAction = event.action
             UIEvent.OnRegisterAdjustEnterReceiveQRScreen -> registerAdjustEvent(
+                applyAdjust = false,
                 adjustEventType = AdjustEventType.RECEIVE_CRYPTO_ENTER_QR_SCREEN
             )
             UIEvent.OnRegisterAdjustPressShareAddressButton -> registerAdjustEvent(
+                applyAdjust = false,
                 adjustEventType = AdjustEventType.RECEIVE_CRYPTO_PRESS_SHARE_BUTTON
             )
         }

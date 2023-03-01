@@ -94,6 +94,7 @@ import com.multimoney.multimoney.presentation.util.FilterDate
 import com.multimoney.multimoney.presentation.util.NfcHelper
 import com.multimoney.multimoney.presentation.util.PAGE_SIZE
 import com.multimoney.multimoney.presentation.util.ShareHelper
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.ProfileCardListOrigin
@@ -110,6 +111,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
@@ -952,6 +954,51 @@ class ProductViewModel @Inject constructor(
         navigateTo("${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}/${Screen.HomeScreen.route}")
     }
 
+    private fun registerAdjustCryptoHomeFirstTimeEvent() = viewModelScope.launch {
+        if (dataStorePreferences.isAdjustCryptoHomeFirstTime().firstOrNull() == false) {
+            dataStorePreferences.setAdjustCryptoHomeFirstTime(true)
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.HOME_CRYPTO_FIST_TIME_ENTER_TO_HOME
+            )
+        }
+    }
+
+    private fun registerAdjustFirstPressPurchaseEvent() = viewModelScope.launch {
+        if (dataStorePreferences.isAdjustCryptoPressPurchaseFirstTime().firstOrNull() == false) {
+            dataStorePreferences.setAdjustCryptoPressPurchaseFirstTime(true)
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.PURCHASE_CRYPTO_FIRST_TIME_PRESS_BUY_BUTTON
+            )
+        }
+    }
+
+    private fun registerAdjustFirstPressSellEvent() = viewModelScope.launch {
+        if (dataStorePreferences.isAdjustCryptoPressSellFirstTime().firstOrNull() == false) {
+            dataStorePreferences.setAdjustCryptoPressSellFirstTime(true)
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.SELL_CRYPTO_FIRST_TIME_PRESS_SELL_BUTTON
+            )
+        }
+    }
+
+    private fun registerAdjustFirstPressSendEvent() = viewModelScope.launch {
+        if (dataStorePreferences.isAdjustCryptoPressSendFirstTime().firstOrNull() == false) {
+            dataStorePreferences.setAdjustCryptoPressSendFirstTime(true)
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.SEND_CRYPTO_FIRST_TIME_PRESS_SEND_BUTTON
+            )
+        }
+    }
+
+    private fun registerAdjustFirstPressReceiveEvent() = viewModelScope.launch {
+        if (dataStorePreferences.isAdjustCryptoPressReceiveFirstTime().firstOrNull() == false) {
+            dataStorePreferences.setAdjustCryptoPressReceiveFirstTime(true)
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.RECEIVE_CRYPTO_FIRST_TIME_PRESS_RECEIVE_BUTTON
+            )
+        }
+    }
+
     data class UIState(
         // Fields
         var idBrand: String = "0",
@@ -1073,6 +1120,14 @@ class ProductViewModel @Inject constructor(
             BaseEvent.OnShowDisclaimer -> onShowDisclaimer()
             UIEvent.OnNavigateToMaintenanceAlert -> navigateToMaintenanceAlert()
             is UIEvent.OnNavigateToReleaseTransaction -> onNavigateToReleaseTransaction(uiEvent.cryptoItem)
+            UIEvent.OnRegisterAdjustCryptoHomeFistTime -> registerAdjustCryptoHomeFirstTimeEvent()
+            UIEvent.OnRegisterAdjustPressPurchaseFirstTime -> registerAdjustFirstPressPurchaseEvent()
+            UIEvent.OnRegisterAdjustPressReceiveFirstTime -> registerAdjustFirstPressReceiveEvent()
+            UIEvent.OnRegisterAdjustPressSellFirstTime -> registerAdjustFirstPressSellEvent()
+            UIEvent.OnRegisterAdjustPressSendFirstTime -> registerAdjustFirstPressSendEvent()
+            UIEvent.OnRegisterAdjustPaxosInMaintenance -> registerAdjustEvent(
+                AdjustEventType.HOME_CRYPTO_PAXOS_IN_MAINTENANCE
+            )
         }
     }
 
@@ -1170,6 +1225,12 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToMaintenanceAlert : UIEvent()
         data class OnNavigateToReleaseTransaction(val cryptoItem: CryptoCurrencyMovement?) :
             UIEvent()
+        object OnRegisterAdjustCryptoHomeFistTime : UIEvent()
+        object OnRegisterAdjustPressPurchaseFirstTime : UIEvent()
+        object OnRegisterAdjustPressSellFirstTime : UIEvent()
+        object OnRegisterAdjustPressSendFirstTime : UIEvent()
+        object OnRegisterAdjustPressReceiveFirstTime : UIEvent()
+        object OnRegisterAdjustPaxosInMaintenance : UIEvent()
     }
 
     sealed class BaseEvent {

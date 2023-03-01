@@ -80,7 +80,7 @@
     <string name="common_scan_qr_code" translatable="false">Escanea el código QR</string>
     <string name="smart_transfer_abandon_dialog_message_sv" translatable="false">¿Estás seguro que quieres cancelar el envío?</string>
     <string name="smart_transfer_abandon_dialog_message_cr" translatable="false">¿Estás seguro que querés cancelar el envío?</string>
-    <string name="common_percentage_format" translatable="false">$%s\%%</string>
+    <string name="common_percentage_format" translatable="false">%s\%%</string>
 
     <string name="content_description_more_info" translatable="false">Más información</string>
 
@@ -139,8 +139,8 @@
     <string name="sign_in_biometric_enter_with_password" translatable="false">O podés ingresar tu contraseña</string>
     <string name="sign_in_biometric_email_hint" translatable="false">Ingresá tu correo electrónico</string>
     <string name="sign_in_session_active_on_another_device_title" translatable="false">Sesión activa en otro dispositivo</string>
-    <string name="sign_in_session_blocked_title" translatable="false">Sesión activa en otro dispositivo</string>
-    <string name="sign_in_session_blocked_description" translatable="false">Sesión activa en otro dispositivo</string>
+    <string name="sign_in_session_blocked_title" translatable="false">Cambio de dispositivo bloqueado</string>
+    <string name="sign_in_session_blocked_message" translatable="false">No podemos hacer el cambio de dispositivo por seguridad.</string>
     <string name="sign_in_session_open_here_close_another" translatable="false">Al ingresar aquí, cerrarás la sesión que se encuentra abierta en otro dispositivo</string>
     <string name="sign_in_dialog_exit_button" translatable="false">Salir</string>
     <string name="sign_in_dialog_sign_in_here_button" translatable="false">Iniciar sesión aquí</string>
@@ -1446,6 +1446,7 @@
     <string name="smart_iban_register_favorite_checkbox" translatable="false">Agregar a favoritos</string>
     <string name="smart_iban_register_account_placeholder" translatable="false">CR 00000 00000 00000 00000</string>
     <string name="smart_iban_register_account_error" translatable="false">Número inválido</string>
+    <string name="smart_iban_register_account_length_error" translatable="false"><![CDATA[<b>Revisa el formato.</b> Es un número de 20 dígitos]]></string>
     <string name="smart_iban_register_email_error" translatable="false">Formato incorrecto. Debe contener “@” y “.”</string>
     <string name="smart_iban_register_favorite_label" translatable="false">Apodo</string>
     <string name="smart_iban_register_full_name_label" translatable="false">Nombre completo</string>

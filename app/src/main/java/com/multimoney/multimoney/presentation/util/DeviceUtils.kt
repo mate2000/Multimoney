@@ -8,6 +8,7 @@ import android.os.Build
 import android.provider.Settings
 import android.util.DisplayMetrics
 import android.view.WindowManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import com.multimoney.data.util.catalog.DeviceType
 import com.multimoney.multimoney.BuildConfig
@@ -16,7 +17,7 @@ import java.net.InetAddress
 import java.net.NetworkInterface
 import java.util.Enumeration
 
-fun getDeviceId(activity: FragmentActivity): String {
+fun getDeviceId(activity: AppCompatActivity): String {
     return Settings.Secure.getString(activity.contentResolver, Settings.Secure.ANDROID_ID)
 }
 

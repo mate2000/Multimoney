@@ -99,7 +99,7 @@ class SmartTransferAmountViewModel @Inject constructor() : BaseSmartEditAmountVi
 
     override fun onNavigateBack() {
         val screen = when (previousScreen) {
-            Screen.SmartTransferFavoriteAccountScreen.baseRoute -> Screen.SmartTransferFavoriteAccountScreen.route
+            Screen.SmartTransferFavoriteAccountSVScreen.baseRoute -> Screen.SmartTransferFavoriteAccountSVScreen.route
             Screen.SmartTransferIbanAccountScreen.baseRoute -> Screen.SmartTransferIbanAccountScreen.route
             Screen.SmartTransferFavoriteAccountCRScreen.baseRoute -> Screen.SmartTransferFavoriteAccountCRScreen.route
             else -> Screen.HomeScreen.route

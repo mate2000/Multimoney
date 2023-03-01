@@ -5265,9 +5265,15 @@ input ProcessTransferVisaToSmartDtoInput {
 }
 
 type CreateUser {
-  password: String!
+  password: String
 
-  userName: String!
+  userName: String
+
+  status: Int
+
+  message: String
+
+  detail: String
 }
 
 input CreateUserDtoInput {
@@ -6035,6 +6041,8 @@ type AppUser {
   statusOnfido: String!
 
   wording: Wording
+
+  countryCode: String
 }
 
 type Activities {

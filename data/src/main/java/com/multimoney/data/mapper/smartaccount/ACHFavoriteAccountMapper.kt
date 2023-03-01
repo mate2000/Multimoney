@@ -22,7 +22,8 @@ private fun ACHTransferFavoriteListQuery.Result.mapToDomainModel() = ACHAccount(
 private fun ACHTransferFavoriteListQuery.ACHTransferFavoriteList.mapToDomainModel() =
     FavoriteACHResult(data = result.map { it.mapToDomainModel() })
 
-fun ACHTransferFavoriteListQuery.Data.mapToDomainModel() = this.aCHTransferFavoriteList?.mapToDomainModel()
+fun ACHTransferFavoriteListQuery.Data.mapToDomainModel() =
+    this.aCHTransferFavoriteList?.mapToDomainModel()
 
 private fun ACHTransferFavoriteGetQuery.Result.mapToDomainModel() = ACHAccountFull(
     accountForAchTransferId = accountForAchTransferId.toString().toIntOrNull(),

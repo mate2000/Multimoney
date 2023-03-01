@@ -163,6 +163,47 @@ class DataStorePreferences @Inject constructor(
 
     fun isAdjustSplashEventRegistered(): Flow<Boolean> = getData(SPLASH_ADJUST_KEY, true)
 
+    // Adjust Crypto events
+    suspend fun setAdjustCryptoHomeFirstTime(firstTimeHomeCrypto: Boolean) =
+        setData(ADJUST_CRYPTO_HOME_FIRST_TIME, firstTimeHomeCrypto)
+
+    fun isAdjustCryptoHomeFirstTime(): Flow<Boolean> = getData(ADJUST_CRYPTO_HOME_FIRST_TIME, true)
+
+    suspend fun setAdjustCryptoPressPurchaseFirstTime(firstTimePurchaseCrypto: Boolean) =
+        setData(ADJUST_CRYPTO_PURCHASE_FIRST_TIME, firstTimePurchaseCrypto)
+
+    fun isAdjustCryptoPressPurchaseFirstTime(): Flow<Boolean> = getData(ADJUST_CRYPTO_SUCCESS_PURCHASE_FIRST_TIME, true)
+
+    suspend fun setAdjustCryptoSuccessPurchaseFirstTime(firstTimePurchaseCrypto: Boolean) =
+        setData(ADJUST_CRYPTO_PURCHASE_FIRST_TIME, firstTimePurchaseCrypto)
+
+    fun isAdjustCryptoSuccessPurchaseFirstTime(): Flow<Boolean> = getData(ADJUST_CRYPTO_SUCCESS_PURCHASE_FIRST_TIME, true)
+
+    suspend fun setAdjustCryptoPressSellFirstTime(firstTimePurchaseCrypto: Boolean) =
+        setData(ADJUST_CRYPTO_SELL_FIRST_TIME, firstTimePurchaseCrypto)
+
+    fun isAdjustCryptoPressSellFirstTime(): Flow<Boolean> = getData(ADJUST_CRYPTO_SELL_FIRST_TIME, true)
+
+    suspend fun setAdjustCryptoSuccessSellFirstTime(firstTimeSellCrypto: Boolean) =
+        setData(ADJUST_CRYPTO_SUCCESS_SELL_FIRST_TIME, firstTimeSellCrypto)
+
+    fun isAdjustCryptoSuccessSellFirstTime(): Flow<Boolean> = getData(ADJUST_CRYPTO_SUCCESS_SELL_FIRST_TIME, true)
+
+    suspend fun setAdjustCryptoPressSendFirstTime(firstTimeSendCrypto: Boolean) =
+        setData(ADJUST_CRYPTO_SEND_FIRST_TIME, firstTimeSendCrypto)
+
+    fun isAdjustCryptoPressSendFirstTime(): Flow<Boolean> = getData(ADJUST_CRYPTO_SEND_FIRST_TIME, true)
+
+    suspend fun setAdjustCryptoSuccessSendFirstTime(firstTimeSendCrypto: Boolean) =
+        setData(ADJUST_CRYPTO_SUCCESS_SEND_FIRST_TIME, firstTimeSendCrypto)
+
+    fun isAdjustCryptoSuccessSendFirstTime(): Flow<Boolean> = getData(ADJUST_CRYPTO_SUCCESS_SEND_FIRST_TIME, true)
+
+    suspend fun setAdjustCryptoPressReceiveFirstTime(firstTimeReceiveCrypto: Boolean) =
+        setData(ADJUST_CRYPTO_RECEIVE_FIRST_TIME, firstTimeReceiveCrypto)
+
+    fun isAdjustCryptoPressReceiveFirstTime(): Flow<Boolean> = getData(ADJUST_CRYPTO_RECEIVE_FIRST_TIME, true)
+
     companion object {
         private val UNIQUE_ID = stringPreferencesKey("unique_id")
         private val TOKEN_KEY = stringPreferencesKey("auth_token")
@@ -188,5 +229,13 @@ class DataStorePreferences @Inject constructor(
         private val ENABLE_CRYPTO_TRANSFER_KEY = booleanPreferencesKey("enable_crypto_transfer_key")
         private val SMART_LIMITS = stringPreferencesKey("smart_limits")
         private val SPLASH_ADJUST_KEY = booleanPreferencesKey("splash_adjust_key")
+        private val ADJUST_CRYPTO_HOME_FIRST_TIME = booleanPreferencesKey("adjust_crypto_home_first_time")
+        private val ADJUST_CRYPTO_PURCHASE_FIRST_TIME = booleanPreferencesKey("adjust_crypto_purchase_first_time")
+        private val ADJUST_CRYPTO_SUCCESS_PURCHASE_FIRST_TIME = booleanPreferencesKey("adjust_crypto_success_purchase_first_time")
+        private val ADJUST_CRYPTO_SELL_FIRST_TIME = booleanPreferencesKey("adjust_crypto_sell_first_time")
+        private val ADJUST_CRYPTO_SUCCESS_SELL_FIRST_TIME = booleanPreferencesKey("adjust_crypto_success_sell_first_time")
+        private val ADJUST_CRYPTO_SEND_FIRST_TIME = booleanPreferencesKey("adjust_crypto_send_first_time")
+        private val ADJUST_CRYPTO_SUCCESS_SEND_FIRST_TIME = booleanPreferencesKey("adjust_crypto_success_send_first_time")
+        private val ADJUST_CRYPTO_RECEIVE_FIRST_TIME = booleanPreferencesKey("adjust_crypto_receive_first_time")
     }
 }

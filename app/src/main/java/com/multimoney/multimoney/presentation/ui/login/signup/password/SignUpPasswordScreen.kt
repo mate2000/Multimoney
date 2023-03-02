@@ -46,7 +46,6 @@ import com.multimoney.multimoney.presentation.uielement.CustomPasswordRequiremen
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getDeviceName
 import com.multimoney.multimoney.presentation.util.getDeviceType
-import com.multimoney.multimoney.presentation.util.getIpAddress
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -73,7 +72,6 @@ fun SignUpPasswordScreen(
     LaunchedEffect(key1 = true) {
         viewModel.onUIEvent(
             SignUpPasswordViewModel.UIEvent.OnSetupDeviceInfo(
-                getIpAddress(fragmentActivity) ?: "",
                 getDeviceName(fragmentActivity) ?: "",
                 getDeviceType(fragmentActivity).value ?: "",
             )

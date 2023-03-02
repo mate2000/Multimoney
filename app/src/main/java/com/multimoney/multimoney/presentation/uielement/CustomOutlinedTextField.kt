@@ -38,7 +38,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
@@ -275,7 +275,7 @@ fun CustomOutlinedTextField(
         OutlinedTextField(
             modifier = innerModifier
                 .bringIntoViewRequester(bringIntoViewRequester)
-                .onFocusChanged {
+                .onFocusEvent {
                     onFocusedTextField(it.isFocused)
                     if (it.isFocused) {
                         coroutineScope.launch {

@@ -9,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.amplifyframework.auth.AuthUserAttribute
 import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.cognito.options.AWSCognitoAuthSignUpOptions
-import com.amplifyframework.auth.options.AuthSignUpOptions
 import com.amplifyframework.core.Amplify
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
@@ -19,12 +18,10 @@ import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnCallCognitoSignUp
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnCallPasswordSave
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnConfirmPasswordValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnFingerprintCheckedChanged
-import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnInitializeDialogTexts
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnIsBiometricAvailable
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnPasswordValueChange
@@ -35,6 +32,7 @@ import com.multimoney.multimoney.presentation.util.checkIfEmulator
 import com.multimoney.multimoney.presentation.util.getAppVersion
 import com.multimoney.multimoney.presentation.util.getDeviceBrand
 import com.multimoney.multimoney.presentation.util.getDeviceModel
+import com.multimoney.multimoney.presentation.util.getIPAddress
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeConsecutiveLetterOrNumber
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeEqualConsecutiveLetterOrNumber
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeLettersOrNumbers
@@ -45,6 +43,7 @@ import com.multimoney.multimoney.presentation.util.passwordHasMinimumCharacters
 import com.multimoney.multimoney.presentation.util.passwordHasSpecialCharacterValidation
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
@@ -111,7 +110,6 @@ class SignUpPasswordViewModel @Inject constructor(
     }
 
     private fun onSetupDeviceInfo(
-        ipAddress: String,
         deviceName: String,
         deviceType: String,
     ) {
@@ -119,7 +117,9 @@ class SignUpPasswordViewModel @Inject constructor(
             deviceId = dataStorePreferences.getDeviceId().first()
             uniqueId = dataStorePreferences.getUniqueId().first()
         }
-        this.ipAddress = ipAddress
+        viewModelScope.launch(Dispatchers.IO) {
+            ipAddress = getIPAddress() ?: ""
+        }
         this.deviceName = deviceName
         this.deviceType = deviceType
     }
@@ -432,7 +432,11 @@ class SignUpPasswordViewModel @Inject constructor(
                 uiEvent.showDialog,
                 uiEvent.idBrand
             )
-            is OnCallPasswordSave -> callQuerySavePassword(uiEvent.pkUser, uiEvent.user, uiEvent.idBrant)
+            is OnCallPasswordSave -> callQuerySavePassword(
+                uiEvent.pkUser,
+                uiEvent.user,
+                uiEvent.idBrant
+            )
             is OnFingerprintCheckedChanged -> onFingerprintCheckedChanged(
                 uiEvent.value,
                 uiEvent.showDialog,
@@ -446,7 +450,6 @@ class SignUpPasswordViewModel @Inject constructor(
             )
             is OnIsBiometricAvailable -> isBiometricAvailable = uiEvent.value
             is UIEvent.OnSetupDeviceInfo -> onSetupDeviceInfo(
-                uiEvent.ipAddress,
                 uiEvent.deviceName,
                 uiEvent.deviceType
             )
@@ -486,7 +489,6 @@ class SignUpPasswordViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnSetupDeviceInfo(
-            val ipAddress: String,
             val deviceName: String,
             val deviceType: String
         ) : UIEvent()

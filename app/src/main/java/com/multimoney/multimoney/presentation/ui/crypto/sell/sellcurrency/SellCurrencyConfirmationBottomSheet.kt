@@ -135,6 +135,7 @@ fun SellConfirmationBottomSheet(
                 totalFee = viewModel.uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
             ),
             accountInfoLabel = R.string.crypto_sell_flow_confirmation_sell_screen_acc_info_text,
+            isPurchase = false,
             onConfirm = {
                 coroutineScope.launch {
                     modalBottomSheetState.hide()

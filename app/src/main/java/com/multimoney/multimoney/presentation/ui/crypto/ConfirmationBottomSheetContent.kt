@@ -82,6 +82,7 @@ fun ConfirmationBottomSheetContent(
     exchangeRate: String = DEFAULT_AMOUNT,
     convertedAmount: String = DEFAULT_AMOUNT,
     @StringRes accountInfoLabel: Int = R.string.crypto_purchase_flow_confirmation_from_account_title,
+    isPurchase: Boolean = true,
     onConfirm: () -> Unit = {}
 ) {
     Column(
@@ -106,7 +107,8 @@ fun ConfirmationBottomSheetContent(
             asset = asset,
             secondsRemaining = secondsRemaining,
             showAssetImage = showAssetImage,
-            idCurrency = idCurrency
+            idCurrency = idCurrency,
+            isPurchase = isPurchase
         )
         AccountInfoSection(
             idCurrency = idCurrency,
@@ -174,7 +176,8 @@ private fun InfoSection(
     showTotalToReceive: Boolean = false,
     idCurrency: Int = CurrencyType.Dollar.id,
     amountToReceive: String,
-    exchangeRate: String
+    exchangeRate: String,
+    isPurchase: Boolean
 ) {
     Column(
         modifier = Modifier
@@ -210,7 +213,10 @@ private fun InfoSection(
         Text(
             modifier = Modifier.padding(vertical = 4.dp),
             text = buildAnnotatedString {
-                append(stringResource(id = R.string.crypto_purchase_flow_price_expires_in))
+                append(stringResource(id =
+                    if (isPurchase) R.string.crypto_purchase_flow_price_expires_in
+                    else R.string.crypto_sell_flow_confirmation_sell_screen_expires_in
+                ))
                 append(WHITE_SPACE)
                 withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
                     append(secondsRemaining)

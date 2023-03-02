@@ -18,6 +18,7 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.COMING_FROM_CRYPTO
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
@@ -90,6 +91,7 @@ class SmartOnfidoViewModel @Inject constructor(
     var applicantId: String? = ""
     var user: String = ""
     var globalId: Long? = 0
+    var comingFromCrypto: Boolean = false
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -104,6 +106,7 @@ class SmartOnfidoViewModel @Inject constructor(
         evicertiaUrl = savedStateHandle[SIGN_DOCUMENT_URL] ?: ""
         evicertiaStatus = savedStateHandle[EVICERTIA_STATUS] ?: ""
         globalId = savedStateHandle[SIGN_DOCUMENT_GLOBAL_ID] ?: 0
+        comingFromCrypto = savedStateHandle[COMING_FROM_CRYPTO] ?: false
     }
 
     // Events
@@ -240,7 +243,7 @@ class SmartOnfidoViewModel @Inject constructor(
 
     private fun onNavigateToSignDocumentScreen(signDocumentStep: String) {
         popAndNavigateTo(
-            route = "${Screen.SmartSignScreen.baseRoute}/$signDocumentStep/$evicertiaUrl/$idPrint/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/${true}/$globalId/$user",
+            route = "${Screen.SmartSignScreen.baseRoute}/$signDocumentStep/$evicertiaUrl/$idPrint/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/${true}/$globalId/$user/$comingFromCrypto",
             popTo = Screen.SmartOnfidoScreen.route
         )
     }

@@ -114,6 +114,14 @@ class DataStorePreferences @Inject constructor(
         return getSecuredData(UNIQUE_ID, "")
     }
 
+    suspend fun setDeviceID(deviceId: String) {
+        setData(DEVICE_ID, deviceId)
+    }
+
+    fun getDeviceId(): Flow<String> {
+        return getData(DEVICE_ID, "")
+    }
+
     suspend fun isContactPermissionRequested(isOnBoardingEnabled: Boolean) =
         setData(CONTACT_PERMISSION_STATE_KEY, isOnBoardingEnabled)
 
@@ -211,6 +219,7 @@ class DataStorePreferences @Inject constructor(
 
     companion object {
         private val UNIQUE_ID = stringPreferencesKey("unique_id")
+        private val DEVICE_ID = stringPreferencesKey("device_id")
         private val TOKEN_KEY = stringPreferencesKey("auth_token")
         private val ID_BRAND = stringPreferencesKey("id_brand")
         private val PK_USER = stringPreferencesKey("pk_user")

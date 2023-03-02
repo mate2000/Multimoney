@@ -64,8 +64,10 @@ class MyContactsTransferAmountViewModel @Inject constructor(
                 ),
                 destinyAccountDisplay = DisplayAccount(
                     sheetTitle = phoneAccount?.titular,
-                    sheetSubtitle = phoneAccount?.number?.plus(SEPARATOR)
-                        ?.plus(destinyCurrency?.stringName)
+                    sheetSubtitle = phoneAccount?.number?.plus(
+                        if (idBrand == ElSalvador.id) ""
+                        else SEPARATOR.plus(destinyCurrency?.stringName)
+                    )
                 ),
                 currency = destinyCurrency?.symbol ?: Dollar.symbol,
                 placeholder = if (destinyCurrency == Dollar) {
@@ -190,6 +192,18 @@ class MyContactsTransferAmountViewModel @Inject constructor(
                 Screen.SmartAddSACAccountScreen.baseRoute -> {
                     navigateBack(
                         popTo = Screen.SmartAddSACAccountScreen.route,
+                        isRestart = false
+                    )
+                }
+                Screen.SmartTransferFavoriteAccountSVScreen.baseRoute -> {
+                    navigateBack(
+                        popTo = Screen.SmartTransferFavoriteAccountSVScreen.route,
+                        isRestart = false
+                    )
+                }
+                Screen.SmartTransferFavoriteAccountCRScreen.baseRoute -> {
+                    navigateBack(
+                        popTo = Screen.SmartTransferFavoriteAccountCRScreen.route,
                         isRestart = false
                     )
                 }

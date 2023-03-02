@@ -15,6 +15,7 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.COMING_FROM_CRYPTO
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
@@ -36,8 +37,8 @@ import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENE
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class SmartSignViewModel @Inject constructor(
@@ -61,6 +62,7 @@ class SmartSignViewModel @Inject constructor(
     var lastName: String = ""
     var user: String = ""
     var globalId: Long? = 0
+    var comingFromCrypto: Boolean = false
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -76,6 +78,7 @@ class SmartSignViewModel @Inject constructor(
             signDocumentUrl = savedStateHandle[SIGN_DOCUMENT_URL] ?: ""
         )
         globalId = savedStateHandle[SIGN_DOCUMENT_GLOBAL_ID] ?: 0
+        comingFromCrypto = savedStateHandle[COMING_FROM_CRYPTO] ?: false
     }
 
     private fun createDialog() {
@@ -113,7 +116,7 @@ class SmartSignViewModel @Inject constructor(
                             )
                         )
                     }.onFailure {
-                        while (numAttemptsToStartSubscription < MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION) {
+                        if (numAttemptsToStartSubscription < MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION) {
                             onListenSmartContractEventSubscription(idBrand, idRequestSys)
                             numAttemptsToStartSubscription++
                         }
@@ -160,7 +163,7 @@ class SmartSignViewModel @Inject constructor(
 
     private fun navigateToApprovedByOnfido() {
         popAndNavigateTo(
-            route = "${Screen.ApprovedByOnfidoScreen.baseRoute}/$pkUser/$identification/$email/$idBrand",
+            route = "${Screen.ApprovedByOnfidoScreen.baseRoute}/$pkUser/$identification/$email/$idBrand/$comingFromCrypto",
             popTo = Screen.SmartSignScreen.route
         )
     }
@@ -196,7 +199,7 @@ class SmartSignViewModel @Inject constructor(
 
     private fun onNavigateToOnfidoAndEvicertiaError(error: String) {
         popAndNavigateTo(
-            route = "${Screen.SmartOnfidoAndEvicertiaErrorsScreen.baseRoute}/$error/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName",
+            route = "${Screen.SmartOnfidoAndEvicertiaErrorsScreen.baseRoute}/$error/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$comingFromCrypto",
             popTo = Screen.SmartSignScreen.route
         )
     }

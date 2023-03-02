@@ -6,7 +6,6 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.cache.normalized.normalizedCache
 import com.apollographql.apollo3.cache.normalized.sql.SqlNormalizedCacheFactory
 import com.apollographql.apollo3.network.okHttpClient
-import com.apollographql.apollo3.network.ws.GraphQLWsProtocol
 import com.multimoney.data.BuildConfig
 import com.multimoney.data.R
 import com.multimoney.data.networking.GraphqlApi

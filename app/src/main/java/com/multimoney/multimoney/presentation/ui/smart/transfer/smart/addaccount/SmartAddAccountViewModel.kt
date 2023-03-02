@@ -22,7 +22,6 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.TRANSFER_TYPE
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
-import com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.addaccount.SmartAdd365AccountViewModel
 import com.multimoney.multimoney.presentation.util.MAX_SMART_ACCOUNT_DIGITS
 import com.multimoney.multimoney.presentation.util.MIN_SMART_ACCOUNT_DIGITS
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
@@ -183,7 +182,8 @@ class SmartAddAccountViewModel @Inject constructor(
                     }
                     val contactAccount = PhoneSmart(
                         number = registeredAccount?.phoneNumber,
-                        titular = registeredAccount?.accountName ?: "${uiState.names} ${uiState.lastNames}",
+                        titular = registeredAccount?.accountName
+                            ?: "${uiState.names} ${uiState.lastNames}",
                         bankName = "",
                         identification = "",
                         accountNumber = registeredAccount?.accountNumber ?: uiState.accountNumber,
@@ -195,9 +195,9 @@ class SmartAddAccountViewModel @Inject constructor(
                     uiState = uiState.copy(isLoading = false)
                     navigateTo(
                         "${Screen.MyContactsTransferAmountScreen.baseRoute}/" +
-                                "${encodeData(smartAccount)}/${encodeData(contactAccount)}/" +
-                                "${SmartTransferTypes.SmartToContact.id}/$idBrand/" +
-                                Screen.SmartAddSACAccountScreen.baseRoute
+                            "${encodeData(smartAccount)}/${encodeData(contactAccount)}/" +
+                            "${SmartTransferTypes.SmartToContact.id}/" +
+                            Screen.SmartAddSACAccountScreen.baseRoute
                     )
                 }
                 result.onFailure { onFailure(it) }

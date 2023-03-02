@@ -19,7 +19,6 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.Screen.SignInScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCloseClick
@@ -55,6 +54,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
@@ -203,41 +203,23 @@ class SignUpViewModel @Inject constructor(
         previousStep()
     }
 
-    private fun onCloseClick(focusManager: FocusManager, isO3Country: String) {
+    private fun onCloseClick(focusManager: FocusManager) {
         focusManager.clearFocus()
-        uiState = when (isO3Country) {
-            ISO3_COSTA_RICA ->
-                uiState.copy(
-                    openDialog = DialogParameters(
-                        titleResource = string.sign_up_general_close_dialog_title_costa_rica,
-                        descriptionResource = string.sign_up_close_dialog_description_costa_rica,
-                        positiveResource = string.sign_up_close_dialog_positive_button_text,
-                        negativeResource = string.sign_up_close_dialog_negative_button_text,
-                        positiveAction = {
-                            popAndNavigateTo(
-                                route = Screen.SignInScreen.route,
-                                popTo = Screen.SignUpScreen.route
-                            )
-                        },
-                        isActive = mutableStateOf(true)
+        uiState = uiState.copy(
+            openDialog = DialogParameters(
+                titleResource = if (uiState.isO3Country == ISO3_COSTA_RICA) string.sign_up_general_close_dialog_title_costa_rica else string.sign_up_general_close_dialog_title,
+                descriptionResource = if (uiState.isO3Country == ISO3_COSTA_RICA) string.sign_up_close_dialog_description_costa_rica else string.sign_up_close_dialog_description_el_salvador,
+                positiveResource = string.sign_up_close_dialog_positive_button_text,
+                negativeResource = string.sign_up_close_dialog_negative_button_text,
+                positiveAction = {
+                    popAndNavigateTo(
+                        route = Screen.SignInScreen.route,
+                        popTo = Screen.SignUpScreen.route
                     )
-                )
-            else -> uiState.copy(
-                openDialog = DialogParameters(
-                    titleResource = string.sign_up_general_close_dialog_title,
-                    descriptionResource = string.sign_up_close_dialog_description_el_salvador,
-                    positiveResource = string.sign_up_close_dialog_positive_button_text,
-                    negativeResource = string.sign_up_close_dialog_negative_button_text,
-                    positiveAction = {
-                        popAndNavigateTo(
-                            route = SignInScreen.route,
-                            popTo = Screen.SignUpScreen.route
-                        )
-                    },
-                    isActive = mutableStateOf(true)
-                )
+                },
+                isActive = mutableStateOf(true)
             )
-        }
+        )
     }
 
     private fun onContinueClick(focusManager: FocusManager) {
@@ -341,10 +323,11 @@ class SignUpViewModel @Inject constructor(
         val openDialog: DialogParameters = DialogParameters(),
         val bottomSheetVisibleState: ModalBottomSheetState = ModalBottomSheetState(
             ModalBottomSheetValue.Hidden
-        )
+        ),
+        val isO3Country: String = ""
     )
 
-    fun onUIEvent(event: UIEvent, isO3Country: String = "") {
+    fun onUIEvent(event: UIEvent) {
         when (event) {
             is OnSetNavigation -> onSetNavigation(
                 event.nextAction,
@@ -352,7 +335,7 @@ class SignUpViewModel @Inject constructor(
                 event.previousStep
             )
             is OnBackClick -> onBackClick(event.focusManager)
-            is OnCloseClick -> onCloseClick(event.focusManager, isO3Country)
+            is OnCloseClick -> onCloseClick(event.focusManager)
             is OnContinueClick -> onContinueClick(event.focusManager)
             is OnContinueEnable -> uiState = uiState.copy(isContinueEnabled = event.enable)
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
@@ -399,6 +382,7 @@ class SignUpViewModel @Inject constructor(
             is OnShowPasswordBottomSheet -> onShowPasswordBottomSheet()
             is UIEvent.OnSetIdBrand -> onSetIdBrand(event.idBrand)
             is UIEvent.OnExit -> onExit()
+            is UIEvent.OnUpdateIso3Country -> uiState = uiState.copy(isO3Country = event.iso3Country)
         }
     }
 
@@ -456,6 +440,7 @@ class SignUpViewModel @Inject constructor(
         object OnShowPasswordBottomSheet : UIEvent()
         data class OnSetIdBrand(val idBrand: Int) : UIEvent()
         object OnExit : UIEvent()
+        data class OnUpdateIso3Country(val iso3Country: String) : UIEvent()
     }
 
     companion object {
@@ -463,6 +448,5 @@ class SignUpViewModel @Inject constructor(
         const val SIGN_UP_INDICATOR_TOTAL_STEPS = 5
         const val PHONE_HARDCODED = "50371680915"
         const val ISO3_COSTA_RICA = "CRI"
-        const val ISO3_GUATEMALA = "GTM"
     }
 }

@@ -25,6 +25,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.Brand.CostaRica
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -43,6 +44,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.Credi
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnOpenOnfidoSdk
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnSetCloseDialogTexts
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnSetWhatsAppLink
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnStartSubscription
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.RefreshOnFidoToken
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.uielement.AlertResult
@@ -67,6 +69,7 @@ fun CreditOnfidoScreen(
     val context = LocalContext.current
 
     LaunchedEffect(true) {
+        viewModel.onUIEvent(OnStartSubscription)
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)
     }
 
@@ -76,31 +79,29 @@ fun CreditOnfidoScreen(
                 id = string.whatsapp_deep_link,
                 SignUpViewModel.PHONE_HARDCODED,
             ),
-        ),
+        )
     )
 
     if (viewModel.idBrand != null) {
-        if (viewModel.idBrand == Brand.CostaRica.id) {
+        if (viewModel.idBrand == CostaRica.id) {
             viewModel.onUIEvent(
                 OnSetCloseDialogTexts(
                     string.credit_close_dialog_title,
                     stringResource(id = string.credit_close_dialog_description),
-                ),
+                )
             )
         } else {
             viewModel.onUIEvent(
                 OnSetCloseDialogTexts(
                     string.credit_close_dialog_sv_title,
                     stringResource(id = string.credit_close_dialog_sv_description),
-                ),
+                )
             )
         }
     }
 
     val launchOnFidoActivityResult = rememberLauncherForActivityResult(StartActivityForResult()) { result ->
-        viewModel.onUIEvent(
-            OnConfigureOnFidoSdk(result),
-        )
+        viewModel.onUIEvent(OnConfigureOnFidoSdk(result))
     }
 
     LaunchedEffect(context) {
@@ -123,13 +124,13 @@ fun CreditOnfidoScreen(
                                                 lastName = viewModel.lastName,
                                                 identification = viewModel.identification,
                                                 user = viewModel.email,
-                                                injectNewToken = refreshToken,
-                                            ),
+                                                injectNewToken = refreshToken
+                                            )
                                         )
-                                    },
-                                ),
+                                    }
+                                )
                             )
-                        }),
+                        })
                     )
                 }
             }.onLoading {
@@ -142,9 +143,9 @@ fun CreditOnfidoScreen(
                         isLoading = false,
                         openDialog = DialogParameters(
                             description = it.getError() ?: "",
-                            isActive = mutableStateOf(true),
-                        ),
-                    ),
+                            isActive = mutableStateOf(true)
+                        )
+                    )
                 )
             }
         }
@@ -156,13 +157,15 @@ fun CreditOnfidoScreen(
                 firstName = viewModel.firstName,
                 lastName = viewModel.lastName,
                 identification = viewModel.identification,
-                user = viewModel.email,
-            ),
+                user = viewModel.email
+            )
         )
     }
 
     ConstraintLayout(
-        modifier = Modifier.fillMaxSize().background(MultimoneyTheme.colors.background),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MultimoneyTheme.colors.background)
     ) {
         val (topBar, content, button) = createRefs()
 
@@ -173,86 +176,104 @@ fun CreditOnfidoScreen(
                 end.linkTo(parent.end)
             },
             isLeftButtonVisible = false,
-            onRightButtonClick = { viewModel.onUIEvent(OnCloseClick) },
+            onRightButtonClick = { viewModel.onUIEvent(OnCloseClick) }
         )
         Column(
-            Modifier.padding(end = 16.dp, start = 16.dp, top = 24.dp).constrainAs(content) {
-                top.linkTo(topBar.bottom)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                bottom.linkTo(button.top)
-                height = Dimension.fillToConstraints
-            },
+            Modifier
+                .padding(end = 16.dp, start = 16.dp, top = 24.dp)
+                .constrainAs(content) {
+                    top.linkTo(topBar.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    bottom.linkTo(button.top)
+                    height = Dimension.fillToConstraints
+                }
         ) {
             Text(
-                text = stringResource(id = string.sign_up_id_validation_title),
+                text = stringResource(id = if (viewModel.idBrand == CostaRica.id) string.credit_origination_id_validation_title else string.credit_origination_id_validation_title_sv),
                 style = Typography.h5.copy(
                     color = MultimoneyTheme.colors.text,
-                    fontWeight = FontWeight.SemiBold,
-                ),
+                    fontWeight = FontWeight.SemiBold
+                )
             )
             Text(
                 modifier = Modifier.padding(top = 16.dp),
-                text = stringResource(id = string.sign_up_id_validation_subtitle),
+                text = stringResource(id = string.credit_origination_id_validation_subtitle),
                 style = Typography.body2.copy(
                     color = MultimoneyTheme.colors.text,
-                    fontWeight = FontWeight.SemiBold,
-                ),
+                    fontWeight = FontWeight.SemiBold
+                )
             )
 
             Row(
-                Modifier.padding(top = 32.dp).fillMaxWidth(),
+                Modifier
+                    .padding(top = 32.dp)
+                    .fillMaxWidth()
             ) {
                 CustomImage(
                     drawableResource = drawable.ic_validation,
-                    modifier = Modifier.align(Alignment.CenterVertically),
+                    modifier = Modifier.align(Alignment.CenterVertically)
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = stringResource(id = string.sign_up_id_validation_one),
+                    text = stringResource(id = if (viewModel.idBrand == CostaRica.id) string.credit_origination_id_validation_one else string.credit_origination_id_validation_one_sv),
                     style = Typography.body2.copy(
                         color = MultimoneyTheme.colors.text,
-                        fontWeight = FontWeight.SemiBold,
-                    ),
+                        fontWeight = FontWeight.SemiBold
+                    )
                 )
             }
             Row(
-                Modifier.padding(top = 32.dp).fillMaxWidth(),
+                Modifier
+                    .padding(top = 32.dp)
+                    .fillMaxWidth()
             ) {
                 CustomImage(
                     drawableResource = drawable.ic_validation,
-                    modifier = Modifier.align(Alignment.CenterVertically),
+                    modifier = Modifier.align(Alignment.CenterVertically)
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = stringResource(id = string.sign_up_id_validation_two),
+                    text = stringResource(
+                        id = when (viewModel.idBrand) {
+                            CostaRica.id -> string.credit_origination_id_validation_two
+                            Brand.ElSalvador.id -> string.credit_origination_id_validation_two_sv
+                            Brand.Guatemala.id -> string.credit_origination_id_validation_two_gt
+                            else -> string.credit_origination_id_validation_two
+                        }
+                    ),
                     style = Typography.body2.copy(
                         color = MultimoneyTheme.colors.text,
-                        fontWeight = FontWeight.SemiBold,
-                    ),
+                        fontWeight = FontWeight.SemiBold
+                    )
                 )
             }
             Row(
-                Modifier.padding(top = 32.dp).fillMaxWidth(),
+                Modifier
+                    .padding(top = 32.dp)
+                    .fillMaxWidth(),
             ) {
                 CustomImage(
                     drawableResource = drawable.ic_validation,
-                    modifier = Modifier.align(Alignment.CenterVertically),
+                    modifier = Modifier.align(Alignment.CenterVertically)
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = stringResource(id = string.sign_up_id_validation_three),
+                    text = stringResource(id = if (viewModel.idBrand == CostaRica.id) string.credit_origination_id_validation_three else string.credit_origination_id_validation_three_sv),
                     style = Typography.body2.copy(
                         color = MultimoneyTheme.colors.text,
-                        fontWeight = FontWeight.SemiBold,
-                    ),
+                        fontWeight = FontWeight.SemiBold
+                    )
                 )
             }
         }
+
         CustomButton(
             onClick = { viewModel.onUIEvent(OnContinueClick) },
             text = stringResource(id = string.button_continue),
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp).fillMaxWidth()
+            modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
+                .fillMaxWidth()
                 .height(48.dp)
                 .constrainAs(button) {
                     bottom.linkTo(parent.bottom)
@@ -260,7 +281,7 @@ fun CreditOnfidoScreen(
                     end.linkTo(parent.end)
                 },
             buttonType = PrimaryPrimary,
-            enable = viewModel.uiState.isContinueEnabled,
+            enable = viewModel.uiState.isContinueEnabled
         )
     }
 
@@ -276,7 +297,7 @@ fun CreditOnfidoScreen(
             onButtonClick = {
                 context.openWhatsAppDeepLink(viewModel.whatsAppLink)
                 viewModel.onUIEvent(OnNavigateToHome)
-            },
+            }
         )
     }
 

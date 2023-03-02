@@ -10,6 +10,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.amplifyframework.auth.AuthUserAttribute
 import com.amplifyframework.auth.AuthUserAttributeKey
+import com.amplifyframework.auth.cognito.options.AWSCognitoAuthSignUpOptions
 import com.amplifyframework.auth.options.AuthSignUpOptions
 import com.amplifyframework.core.Amplify
 import com.multimoney.data.util.DataStorePreferences
@@ -37,9 +38,15 @@ import com.multimoney.multimoney.presentation.ui.login.registereduser.password.R
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnPasswordValueChange
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnShowBiometricPromptForEncryption
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnValidForm
+import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.checkIfEmulator
+import com.multimoney.multimoney.presentation.util.getAppVersion
 import com.multimoney.multimoney.presentation.util.getCountryCodeByIdBrand
+import com.multimoney.multimoney.presentation.util.getDeviceBrand
+import com.multimoney.multimoney.presentation.util.getDeviceModel
+import com.multimoney.multimoney.presentation.util.getIPAddress
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeConsecutiveLetterOrNumber
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeEqualConsecutiveLetterOrNumber
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeLettersOrNumbers
@@ -50,6 +57,7 @@ import com.multimoney.multimoney.presentation.util.passwordHasMinimumCharacters
 import com.multimoney.multimoney.presentation.util.passwordHasSpecialCharacterValidation
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -76,12 +84,35 @@ class RegisteredUserPasswordViewModel @Inject constructor(
     private var isBiometricAvailable = false
     private var idBrand: Int = 0
     var userData: UserData? = null
+    private var deviceId = ""
+    private var uniqueId = ""
+    private var ipAddress = ""
+    private var deviceType = ""
+    private var deviceName = ""
+    private var appVersion = getAppVersion()
+    private var deviceBrand = getDeviceBrand()
+    private var deviceModel = getDeviceModel()
+    private var isEmulator = checkIfEmulator()
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
         userData = savedStateHandle[USER_DATA]
     }
 
+    private fun onSetupDeviceInfo(
+        deviceName: String,
+        deviceType: String,
+    ) {
+        viewModelScope.launch {
+            deviceId = dataStorePreferences.getDeviceId().first()
+            uniqueId = dataStorePreferences.getUniqueId().first()
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            ipAddress = getIPAddress() ?: ""
+        }
+        this.deviceName = deviceName
+        this.deviceType = deviceType
+    }
     private fun onInitializeDialogTexts(
         biometricPromptTitle: String,
         biometricPromptDescription: String,
@@ -252,8 +283,19 @@ class RegisteredUserPasswordViewModel @Inject constructor(
             AuthUserAttributeKey.custom(COGNITO_CUSTOM_STATUS) to status,
             AuthUserAttributeKey.custom(COGNITO_CUSTOM_ID_BRAND) to idBrand.toString()
         )
+
+        val metaData = mapOf(
+            COGNITO_DEVICE_ID to deviceId,
+            COGNITO_BRAND to deviceBrand,
+            COGNITO_UNIQUE_ID to uniqueId,
+            COGNITO_MODEL to deviceModel,
+            COGNITO_DEVICE_NAME to deviceName,
+            COGNITO_APP_VERSION to appVersion,
+            COGNITO_IS_EMULATOR to isEmulator.toString(),
+            COGNITO_IP_ADDRESS to ipAddress,
+        )
         val options =
-            AuthSignUpOptions.builder().userAttributes(attrs.map { AuthUserAttribute(it.key, it.value) }).build()
+            AWSCognitoAuthSignUpOptions.builder().validationData(metaData).userAttributes(attrs.map { AuthUserAttribute(it.key, it.value) }).build()
         Amplify.Auth.signUp(email, uiState.password, options, {
             uiState = uiState.copy(isLoading = false)
             emitBaseEvent(BaseEvent.OnOpenBiometricDialog)
@@ -435,6 +477,10 @@ class RegisteredUserPasswordViewModel @Inject constructor(
             )
             is OnIsBiometricAvailable -> isBiometricAvailable = uiEvent.value
             is OnCloseClick -> onCloseClick(focusManager = uiEvent.focusManager)
+            is UIEvent.OnSetupDeviceInfo -> onSetupDeviceInfo(
+                uiEvent.deviceName,
+                uiEvent.deviceType
+            )
         }
     }
 
@@ -457,6 +503,11 @@ class RegisteredUserPasswordViewModel @Inject constructor(
             val status: String,
             val idBrand: Int,
             val onFailureWithDialog: (DialogParameters) -> Unit
+        ) : UIEvent()
+
+        data class OnSetupDeviceInfo(
+            val deviceName: String,
+            val deviceType: String
         ) : UIEvent()
 
         object OnCallPasswordSave : UIEvent()
@@ -495,5 +546,13 @@ class RegisteredUserPasswordViewModel @Inject constructor(
         const val COGNITO_CUSTOM_PK_USER = "custom:PkUser"
         const val COGNITO_CUSTOM_STATUS = "custom:Status"
         const val COGNITO_CUSTOM_ID_BRAND = "custom:IdBrand"
+        const val COGNITO_DEVICE_ID = "DeviceId"
+        const val COGNITO_UNIQUE_ID = "UniqueId"
+        const val COGNITO_BRAND = "Brand"
+        const val COGNITO_MODEL = "Model"
+        const val COGNITO_APP_VERSION = "AppVersion"
+        const val COGNITO_IS_EMULATOR = "IsEmulator"
+        const val COGNITO_DEVICE_NAME = "DeviceName"
+        const val COGNITO_IP_ADDRESS = "IpAddress"
     }
 }

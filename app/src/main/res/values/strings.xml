@@ -750,6 +750,19 @@
     <string name="non_pre_approved_additional_questions_request_button_label" translatable="false">Solicitar</string>
 
 
+    <!-- credit onfido -->
+    <string name="credit_origination_id_validation_title" translatable="false">Confirmá tu identidad</string>
+    <string name="credit_origination_id_validation_title_sv" translatable="false">Confirma tu identidad</string>
+    <string name="credit_origination_id_validation_subtitle" translatable="false">Recomendaciones:</string>
+    <string name="credit_origination_id_validation_one" translatable="false">Buscá buena iluminación para tomar las fotos</string>
+    <string name="credit_origination_id_validation_one_sv" translatable="false">Busca buena iluminación para tomar las fotos</string>
+    <string name="credit_origination_id_validation_two" translatable="false">Tené a mano tu documento de identificación</string>
+    <string name="credit_origination_id_validation_two_sv" translatable="false">Ten a mano tu documento de identificación</string>
+    <string name="credit_origination_id_validation_two_gt" translatable="false">Ten a mano tu documento de identificación (DPI)</string>
+    <string name="credit_origination_id_validation_three" translatable="false">Tomate una selfie sin lentes o accesorios</string>
+    <string name="credit_origination_id_validation_three_sv" translatable="false">Tomaté una selfie sin lentes o accesorios</string>
+
+
     <!-- Generate Document -->
     <string name="document_generation_title" translatable="false">Estamos creando tus documentos</string>
     <string name="document_generation_subtitle" translatable="false">Firma el contrato y recibe tu crédito</string>

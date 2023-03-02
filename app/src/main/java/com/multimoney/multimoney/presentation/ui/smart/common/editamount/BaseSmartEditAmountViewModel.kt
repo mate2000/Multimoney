@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Rect
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.accountsmart.MutationProcessSinpeTransferUseCase
 import com.multimoney.domain.interaction.accountsmart.QuerySmartExchangeRateUseCase
@@ -47,10 +48,12 @@ import com.multimoney.multimoney.presentation.util.getMaskedVisaAccount
 import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import com.multimoney.multimoney.presentation.util.workers.startTimedNotification
-import java.util.Calendar
-import javax.inject.Inject
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import java.util.Calendar
+import javax.inject.Inject
 
 @OptIn(ExperimentalMaterialApi::class)
 abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
@@ -264,9 +267,12 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
         isAmountValid
 
     open fun onContinueClick() {
-        amountUIState = amountUIState.copy(
-            bottomSheetState = ModalBottomSheetState(Expanded)
-        )
+        viewModelScope.launch {
+            delay(BOTTOM_SHEET_DELAY)
+            amountUIState = amountUIState.copy(
+                bottomSheetState = ModalBottomSheetState(Expanded)
+            )
+        }
     }
 
     open fun onMotiveChange(newMotive: String) {
@@ -515,6 +521,6 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
 
     companion object {
         const val DEFAULT_DESCRIPTION = "Depósito cuenta Smart"
-        const val CURRENCY_SEPARATOR = ','
+        const val BOTTOM_SHEET_DELAY = 100L
     }
 }

@@ -14,7 +14,7 @@ enum class AdjustEventType(val stgToken: String, val prodToken: String, val even
     SIGNUP_2_2002("juh5da", "841kw5", "signup_2"),
     SIGNUP_3_2003("80haw1", "3rdgkn", "signup_3"),
     SIGNUP_4_2004("c03f37", "acdu94", "signup_4"),
-    SIGNUP_5_2007("lo8d23", "gg2i4j", "signup_5 "),
+    SIGNUP_5_2007("lo8d23", "gg2i4j", "signup_5"),
     SIGNUP_RESEND_OTP_2005("", "", "signup_reenviar_otp"),
     SIGNUP_OTP_API_CALL_2006("", "", "signup_llamada"),
     SIGNUP_SUCCESS_2008("", "", "signup_exito"),

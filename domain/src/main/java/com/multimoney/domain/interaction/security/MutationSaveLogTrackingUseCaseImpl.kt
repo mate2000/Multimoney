@@ -10,10 +10,10 @@ class MutationSaveLogTrackingUseCaseImpl(
 ) : MutationSaveLogTrackingUseCase {
     override suspend fun invoke(
         identification: String,
-        pkUser: Int,
+        pkUser: Int?,
         keySearch: String,
         data: String,
-        idBrand: Int
+        idBrand: Int?
     ): Flow<MultimoneyResult<SaveLogTracking>> = securityRepository.mutationSaveLogTracking(
         identification,
         pkUser,

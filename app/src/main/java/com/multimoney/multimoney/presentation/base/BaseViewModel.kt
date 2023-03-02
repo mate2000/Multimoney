@@ -154,14 +154,14 @@ open class BaseViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             val mutableList = mutableListOf<Pair<String, String>>()
-            val idBrand = if (isLoggedIn) preferences.getIdBrand().firstOrNull() ?: "" else ""
+            val idBrand = if (isLoggedIn) preferences.getIdBrand().firstOrNull() else null
             val email = if (isLoggedIn) preferences.getUserEmail().firstOrNull() ?: "" else ""
-            val pkUser = if (isLoggedIn) preferences.getPkUser().firstOrNull() ?: "" else ""
+            val pkUser = if (isLoggedIn) preferences.getPkUser().firstOrNull() else null
             val identification = if (isLoggedIn) preferences.getIdentification().firstOrNull() ?: "" else ""
             if (isLoggedIn) {
-                mutableList.add(Pair(ID_BRAND_ADJUST_KEY, idBrand))
+                mutableList.add(Pair(ID_BRAND_ADJUST_KEY, idBrand.toString()))
                 mutableList.add(Pair(EMAIL_ADJUST_KEY, email))
-                mutableList.add(Pair(PK_USER_ADJUST_KEY, pkUser))
+                mutableList.add(Pair(PK_USER_ADJUST_KEY, pkUser.toString()))
                 mutableList.add(Pair(IDENTIFICATION_ADJUST_KEY, identification))
             }
             callSaveLogTracking(identification, pkUser, data, idBrand, adjustEventType)
@@ -174,17 +174,17 @@ open class BaseViewModel @Inject constructor(
 
     private fun callSaveLogTracking(
         identification: String,
-        pkUser: String,
+        pkUser: String?,
         data: String,
-        idBrand: String,
+        idBrand: String?,
         adjustEventType: AdjustEventType
     ) = executeUseCase {
         mutationSaveLogTrackingUseCase.invoke(
             identification = identification,
-            pkUser = pkUser.toInt(),
+            pkUser = pkUser?.toInt(),
             keySearch = adjustEventType.eventId,
             data = data,
-            idBrand = idBrand.toInt()
+            idBrand = idBrand?.toInt()
         ).collectLatest { result ->
             result.onSuccess {
             }

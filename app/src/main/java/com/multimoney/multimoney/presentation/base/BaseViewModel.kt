@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.connectivity.Connectivity
 import com.multimoney.domain.interaction.security.MutationSaveLogTrackingUseCase
 import com.multimoney.domain.model.util.onSuccess
@@ -184,7 +185,7 @@ open class BaseViewModel @Inject constructor(
             pkUser = pkUser?.toInt(),
             keySearch = adjustEventType.eventId,
             data = data,
-            idBrand = idBrand?.toInt()
+            idBrand = idBrand?.toInt() ?: Brand.CostaRica.id // Default is CR following BE instructions
         ).collectLatest { result ->
             result.onSuccess {
             }

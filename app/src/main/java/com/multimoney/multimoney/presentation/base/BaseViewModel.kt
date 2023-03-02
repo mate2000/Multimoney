@@ -154,17 +154,17 @@ open class BaseViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             val mutableList = mutableListOf<Pair<String, String>>()
+            val idBrand = if (isLoggedIn) preferences.getIdBrand().firstOrNull() ?: "" else ""
+            val email = if (isLoggedIn) preferences.getUserEmail().firstOrNull() ?: "" else ""
+            val pkUser = if (isLoggedIn) preferences.getPkUser().firstOrNull() ?: "" else ""
+            val identification = if (isLoggedIn) preferences.getIdentification().firstOrNull() ?: "" else ""
             if (isLoggedIn) {
-                val idBrand = preferences.getIdBrand().firstOrNull() ?: ""
-                val email = preferences.getUserEmail().firstOrNull() ?: ""
-                val pkUser = preferences.getPkUser().firstOrNull() ?: ""
-                val identification = preferences.getIdentification().firstOrNull() ?: ""
                 mutableList.add(Pair(ID_BRAND_ADJUST_KEY, idBrand))
                 mutableList.add(Pair(EMAIL_ADJUST_KEY, email))
                 mutableList.add(Pair(PK_USER_ADJUST_KEY, pkUser))
                 mutableList.add(Pair(IDENTIFICATION_ADJUST_KEY, identification))
-                callSaveLogTracking(identification, pkUser, data, idBrand)
             }
+            callSaveLogTracking(identification, pkUser, data, idBrand, adjustEventType)
             if (applyAdjust) {
                 mutableList.addAll(listParameters)
                 adjustHelper.registerEvent(adjustEventType, mutableList)
@@ -176,12 +176,13 @@ open class BaseViewModel @Inject constructor(
         identification: String,
         pkUser: String,
         data: String,
-        idBrand: String
+        idBrand: String,
+        adjustEventType: AdjustEventType
     ) = executeUseCase {
         mutationSaveLogTrackingUseCase.invoke(
             identification = identification,
             pkUser = pkUser.toInt(),
-            keySearch = DEFAULT_ADJUST_KEY,
+            keySearch = adjustEventType.eventId,
             data = data,
             idBrand = idBrand.toInt()
         ).collectLatest { result ->
@@ -195,6 +196,5 @@ open class BaseViewModel @Inject constructor(
         private const val EMAIL_ADJUST_KEY = "email"
         private const val PK_USER_ADJUST_KEY = "pkUser"
         private const val IDENTIFICATION_ADJUST_KEY = "identification"
-        private const val DEFAULT_ADJUST_KEY = "default"
     }
 }

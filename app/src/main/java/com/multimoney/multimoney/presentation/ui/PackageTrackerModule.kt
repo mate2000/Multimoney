@@ -1,9 +1,13 @@
 package com.multimoney.multimoney.presentation.ui
 
+import android.app.AlertDialog
 import android.content.Intent
+import android.view.LayoutInflater
+import android.widget.Button
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
+import com.multimoney.multimoney.R
 
 class PackageTrackerModule(reactContext: ReactApplicationContext) :
     ReactContextBaseJavaModule(reactContext) {
@@ -20,8 +24,22 @@ class PackageTrackerModule(reactContext: ReactApplicationContext) :
 
     @ReactMethod
     fun onClose() {
-        currentActivity?.setResult(RESULT_CODE_PROCESS_INCOMPLETE)
-        currentActivity?.finish()
+        onCloseDialog()
+    }
+
+    private fun onCloseDialog() {
+        val dialogView = LayoutInflater.from(currentActivity)
+            .inflate(R.layout.alert_dialog_on_close_add_visa_card, null)
+        val alert = AlertDialog.Builder(currentActivity)
+        alert.setView(dialogView)
+        val dialog = alert.create()
+        dialogView.findViewById<Button>(R.id.cancelBtn).setOnClickListener { dialog.dismiss() }
+        dialogView.findViewById<Button>(R.id.continueBtn).setOnClickListener {
+            dialog.dismiss()
+            currentActivity?.setResult(RESULT_CODE_PROCESS_INCOMPLETE)
+            currentActivity?.finish()
+        }
+        dialog.show()
     }
 
     override fun getName(): String {

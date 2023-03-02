@@ -45,7 +45,6 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.P
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnAlertButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnAlertCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnCloseClick
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnCloseAddCardClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnEditCardVisaDirect
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnOpenDisclaimerDialog
@@ -231,7 +230,7 @@ fun PaymentScheduleCardEmptyState(
                 )
             }
             RESULT_CODE_PROCESS_INCOMPLETE -> {
-                viewModel.onUIEvent(OnCloseAddCardClick)
+                viewModel.onUIEvent(OnNavigateBack)
             }
             else -> return@rememberLauncherForActivityResult
         }

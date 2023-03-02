@@ -35,7 +35,6 @@ import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnAlertButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnAlertCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnCloseClick
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnCloseAddCardClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnEditCardVisaDirect
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnGetClientCardVisaDirect
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnNavigateBack
@@ -250,8 +249,7 @@ class PaymentScheduleCardViewModel @Inject constructor(
 
     private fun onStart() {
         if (infoUser?.visaDirectUser.isNullOrEmpty() && infoUser?.visaDirectId.isNullOrEmpty()) {
-            //onCallMutationCreateUserVDUseCase()
-            onCallGetParametersMobileByCategoryUseCase()
+            onCallMutationCreateUserVDUseCase()
         } else {
             reactUserName =  infoUser?.visaDirectUser ?: ""
             reactUserPass =  infoUser?.visaDirectId ?: ""
@@ -409,24 +407,6 @@ class PaymentScheduleCardViewModel @Inject constructor(
         )
     }
 
-    private fun onCloseAddCardClick() {
-        uiState = uiState.copy(
-            openDialog = DialogParameters(
-                titleResource = R.string.visa_add_card_dialog_title,
-                descriptionResource = R.string.visa_add_card_dialog_description,
-                positiveResource = R.string.button_continue,
-                negativeResource = R.string.cancel,
-                positiveAction = {
-                    navigateBack(
-                        popTo = Screen.HomeScreen.route,
-                        isRestart = false
-                    )
-                },
-                isActive = mutableStateOf(true)
-            )
-        )
-    }
-
     private fun onRestartTimer() {
         countDownTimer.restartTimer()
     }
@@ -458,7 +438,6 @@ class PaymentScheduleCardViewModel @Inject constructor(
             is OnAlertButtonClick -> onAlertButtonClick()
             is OnAlertCloseClick -> onAlertCloseClick()
             is OnCloseClick -> onCloseClick()
-            is OnCloseAddCardClick -> onCloseAddCardClick()
             is OnProgramClick -> onCallMutationActivatedCardAutomaticDebitUseCase()
             is OnEditCardVisaDirect -> onEditCardVisaDirect()
             is OnOpenDisclaimerDialog -> onOpenDisclaimerDialog()
@@ -475,7 +454,6 @@ class PaymentScheduleCardViewModel @Inject constructor(
         object OnAlertButtonClick : UIEvent()
         object OnAlertCloseClick : UIEvent()
         object OnCloseClick : UIEvent()
-        object OnCloseAddCardClick : UIEvent()
         object OnProgramClick : UIEvent()
         object OnEditCardVisaDirect : UIEvent()
         object OnOpenDisclaimerDialog : UIEvent()

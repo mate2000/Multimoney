@@ -208,6 +208,16 @@ class CryptoSendAmountViewModel @Inject constructor(
         }
     }
 
+    private fun clearInputData() {
+        uiState = uiState.copy(
+            sendCryptoAmount = 0.0,
+            sendDollarAmount = "",
+            baseAmount = mutableStateOf(""),
+            quoteAmount = mutableStateOf(""),
+            isError = false
+        )
+    }
+
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is UIEvent.OnSetUserData -> onSetUserData(
@@ -227,6 +237,7 @@ class CryptoSendAmountViewModel @Inject constructor(
             is UIEvent.OnAmountChanged -> onAmountChange(uiEvent.amount)
             is UIEvent.OnCalculateAmountTransferCommission -> onCalculateAmountTransferCommission()
             is UIEvent.OnSendCryptoCurrency -> sendCryptoToAddress()
+            is UIEvent.OnClearInputData -> clearInputData()
         }
     }
 
@@ -274,6 +285,7 @@ class CryptoSendAmountViewModel @Inject constructor(
         data class OnAmountChanged(val amount: String) : UIEvent()
         object OnCalculateAmountTransferCommission : UIEvent()
         object OnSendCryptoCurrency : UIEvent()
+        object OnClearInputData : UIEvent()
     }
 
     companion object {

@@ -57,6 +57,8 @@ import com.multimoney.multimoney.presentation.uielement.CustomPasswordRequiremen
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.getDeviceName
+import com.multimoney.multimoney.presentation.util.getDeviceType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -73,6 +75,7 @@ fun RegisteredUserPasswordScreen(
     val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Expanded)
     val coroutineScope: CoroutineScope = rememberCoroutineScope()
 
+
     viewModel.onUIEvent(
         RegisteredUserPasswordViewModel.UIEvent.OnInitializeDialogTexts(
             biometricPromptTitle = stringResource(id = string.biometric_dialog_title),
@@ -84,6 +87,12 @@ fun RegisteredUserPasswordScreen(
     )
 
     LaunchedEffect(true) {
+        viewModel.onUIEvent(
+            RegisteredUserPasswordViewModel.UIEvent.OnSetupDeviceInfo(
+                getDeviceName(fragmentActivity) ?: "",
+                getDeviceType(fragmentActivity).value ?: "",
+            )
+        )
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
         viewModel.apply {
             onUIEvent(
@@ -185,7 +194,9 @@ fun RegisteredUserPasswordContent(
     val focusManager = LocalFocusManager.current
 
     Column(
-        modifier = Modifier.fillMaxSize().background(MultimoneyTheme.colors.background),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MultimoneyTheme.colors.background),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
@@ -299,7 +310,9 @@ fun RegisteredUserPasswordContent(
         CustomButton(
             onClick = onContinueClick,
             text = stringResource(id = string.button_continue),
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp).fillMaxWidth()
+            modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
+                .fillMaxWidth()
                 .height(48.dp),
             buttonType = PrimaryPrimary,
             enable = isContinueEnabled

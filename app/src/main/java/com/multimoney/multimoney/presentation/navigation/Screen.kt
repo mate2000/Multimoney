@@ -312,7 +312,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SignDocumentProcessScreen : Screen(
-        "sign_document_process_screen?$SIGN_DOCUMENT_STEP_ARG={$SIGN_DOCUMENT_STEP_ARG}?$SIGN_DOCUMENT_ID_PRINT={$SIGN_DOCUMENT_ID_PRINT}?$ID_BRAND={$ID_BRAND}?$PK_USER={$PK_USER}?$IDENTIFICATION={$IDENTIFICATION}?$EMAIL={$EMAIL}?$ID_USER_REQUEST={$ID_USER_REQUEST}?$FIRST_NAME={$FIRST_NAME}?$LAST_NAME={$LAST_NAME}?$CROSSELING={$CROSSELING}?$SHOULD_GET_EVICERTIA_LINK={$SHOULD_GET_EVICERTIA_LINK}",
+        "sign_document_process_screen?$SIGN_DOCUMENT_STEP_ARG={$SIGN_DOCUMENT_STEP_ARG}?$SIGN_DOCUMENT_ID_PRINT={$SIGN_DOCUMENT_ID_PRINT}?$ID_BRAND={$ID_BRAND}?$PK_USER={$PK_USER}?$IDENTIFICATION={$IDENTIFICATION}?$EMAIL={$EMAIL}?$ID_USER_REQUEST={$ID_USER_REQUEST}?$FIRST_NAME={$FIRST_NAME}?$LAST_NAME={$LAST_NAME}?$CROSSELING={$CROSSELING}?$SHOULD_GET_EVICERTIA_LINK={$SHOULD_GET_EVICERTIA_LINK}?$EVICERTIA_STATUS={$EVICERTIA_STATUS}",
         "sign_document_process_screen"
     )
 
@@ -322,7 +322,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SmartOnfidoAndEvicertiaErrorsScreen : Screen(
-        "smart_onfido_and_evicertia_errors_screen/{$ONFIDO_AND_EVICERTIA_ERROR}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/${COMING_FROM_CRYPTO}",
+        "smart_onfido_and_evicertia_errors_screen/{$ONFIDO_AND_EVICERTIA_ERROR}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$COMING_FROM_CRYPTO}",
         "smart_onfido_and_evicertia_errors_screen"
     )
 
@@ -341,7 +341,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object OnfidoAndEvicertiaErrorsScreen : Screen(
-        "onfido_and_evicertia_errors_screen/{$ONFIDO_AND_EVICERTIA_ERROR}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}",
+        "onfido_and_evicertia_errors_screen/{$ONFIDO_AND_EVICERTIA_ERROR}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$EVICERTIA_STATUS}",
         "onfido_and_evicertia_errors_screen"
     )
 
@@ -585,10 +585,10 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
      * @param ORIGIN_ACCOUNT: Origin smart account
      * @param DESTINY_ACCOUNT: Destiny contact phone account
      * @param TRANSFER_TYPE: Int id indicating transfer type (SmartToContact)
-     * @param ID_BRAND: Int of brand id
+     * @param PREVIOUS_SCREEN: String Screen Base Route from where it's navigating
      */
     object MyContactsTransferAmountScreen : Screen(
-        "my_contacts_amount_screen/{$ORIGIN_ACCOUNT}/{$DESTINY_ACCOUNT}/{$TRANSFER_TYPE}/{$ID_BRAND}/{$PREVIOUS_SCREEN}",
+        "my_contacts_amount_screen/{$ORIGIN_ACCOUNT}/{$DESTINY_ACCOUNT}/{$TRANSFER_TYPE}/{$PREVIOUS_SCREEN}",
         "my_contacts_amount_screen"
     )
 
@@ -623,9 +623,9 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "smart_ach_account_list"
     )
 
-    object SmartTransferFavoriteAccountScreen : Screen(
-        "transfer_favorite_account_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$SMART_ACCOUNT}",
-        "transfer_favorite_account_screen"
+    object SmartTransferFavoriteAccountSVScreen : Screen(
+        "smart_transfer_favorite_account_sv_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$SMART_ACCOUNT}",
+        "smart_transfer_favorite_account_sv_screen"
     )
 
     object SmartTransferFavoriteAccountCRScreen : Screen(
@@ -636,7 +636,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")
 
-    object ListenerScreen: Screen("listener_screen")
+    object ListenerScreen : Screen("listener_screen")
     object ChartScreen : Screen("chart_screen/{$}")
 
     // Crypto

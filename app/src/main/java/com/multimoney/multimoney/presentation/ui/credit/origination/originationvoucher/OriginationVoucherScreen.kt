@@ -181,7 +181,7 @@ fun OriginationVoucherScreen(
                     VoucherAccountInfo(
                         modifier = Modifier.padding(start = 27.dp, top = 24.dp),
                         icon = drawable.ic_bank,
-                        title = stringResource(string.origination_voucher_destiny_account),
+                        title = viewModel.uiState.infoDeposit?.bankName ?: "",
                         subTitle = getMaskedAccount(
                             viewModel.uiState.infoDeposit?.accountNumber ?: "",
                             stringResource(id = string.payment_account_masked_text)

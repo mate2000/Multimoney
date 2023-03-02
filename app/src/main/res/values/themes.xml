@@ -9,6 +9,10 @@
         <item name="fontFamily">@font/poppins_regular</item>
     </style>
 
+    <style name="ReactActivityTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/black</item>
+    </style>
+
     <style name="OnfidoToolbarTitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="fontFamily">@font/poppins_regular</item>
     </style>

@@ -73,6 +73,7 @@ android {
             buildConfigField "String", "NOVO_API_KEY", System.env.PRODUCTION_NOVO_API_KEY ? "\"${System.env.PRODUCTION_NOVO_API_KEY}\"" : novoApiKey
             buildConfigField "String", "NOVO_VCEH_URL", System.env.PRODUCTION_NOVO_VCEH_URL ? "\"${System.env.PRODUCTION_NOVO_VCEH_URL}\"" : novoVcehUrl
             signingConfig signingConfigs.production
+            matchingFallbacks = ['release']
         }
         staging {
             applicationIdSuffix ".dev"
@@ -87,6 +88,7 @@ android {
             buildConfigField "String", "NOVO_API_KEY", System.env.STAGING_NOVO_API_KEY ? "\"${System.env.STAGING_NOVO_API_KEY}\"" : novoApiKey
             buildConfigField "String", "NOVO_VCEH_URL", System.env.STAGING_NOVO_VCEH_URL ? "\"${System.env.STAGING_NOVO_VCEH_URL}\"" : novoVcehUrl
             signingConfig signingConfigs.production
+            matchingFallbacks = ['debug']
         }
         debug {
             applicationIdSuffix ".dev"

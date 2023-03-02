@@ -62,3 +62,4 @@ amplify/backend/auth/multimoneyc622a5cd/parameters.json
 app/src/staging/google-services.json
 /release.keystore
 /.idea/codeInsightSettings.xml
+react_native_dependencies/yarn.lock

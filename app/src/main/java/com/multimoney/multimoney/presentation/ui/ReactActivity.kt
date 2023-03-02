@@ -24,21 +24,21 @@ class ReactActivity : AppCompatActivity(), DefaultHardwareBackBtnHandler {
         super.onCreate(savedInstanceState)
 
         val packages: List<ReactPackage> = arrayListOf(
-                MainReactPackage(), PackageTrackerReact()
+            MainReactPackage(), PackageTrackerReact()
         )
 
         reactRootView = ReactRootView(this)
         reactRootView?.setBackgroundColor(Color.BLACK)
         reactInstanceManager = ReactInstanceManager.builder()
-                .setApplication(application)
-                .setCurrentActivity(this)
-                .setBundleAssetName(BUNDLE_ASSET_NAME)
-                .setJSMainModulePath(JS_MAIN_MODULE_PATH)
-                .addPackages(packages)
-                .setUseDeveloperSupport(BuildConfig.DEBUG)
-                .setInitialLifecycleState(LifecycleState.RESUMED)
-                .setJavaScriptExecutorFactory(HermesExecutorFactory())
-                .build()
+            .setApplication(application)
+            .setCurrentActivity(this)
+            .setBundleAssetName(BUNDLE_ASSET_NAME)
+            .setJSMainModulePath(JS_MAIN_MODULE_PATH)
+            .addPackages(packages)
+            .setUseDeveloperSupport(BuildConfig.DEBUG)
+            .setInitialLifecycleState(LifecycleState.RESUMED)
+            .setJavaScriptExecutorFactory(HermesExecutorFactory())
+            .build()
 
         val props = Bundle()
         //FTT APPLICATION NAME
@@ -60,7 +60,7 @@ class ReactActivity : AppCompatActivity(), DefaultHardwareBackBtnHandler {
     }
 
     fun onHandleBackPressed() {
-        OnBackPressedDispatcher().addCallback(this, object: OnBackPressedCallback(true) {
+        OnBackPressedDispatcher().addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (reactInstanceManager != null) {
                     reactInstanceManager?.onBackPressed()

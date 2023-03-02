@@ -81,6 +81,15 @@ fun calculateDollarEstimated(
     }.toDouble()).toCurrencyFormat()
 }
 
+fun calculateDollarEstimatedWithoutFormat(
+    baseAmount: String,
+    currencyPrice: Double
+): String {
+    return (currencyPrice * baseAmount.ifEmpty {
+        EMPTY_CURRENCY
+    }.toDouble()).toString()
+}
+
 fun calculateAssetEstimated(
     quoteAmount: String,
     currencyPrice: Double

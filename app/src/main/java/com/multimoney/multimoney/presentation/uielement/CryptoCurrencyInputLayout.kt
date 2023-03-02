@@ -72,6 +72,7 @@ fun CryptoCurrencyInputLayout(
     isError: Boolean = false,
     errorText: String? = null,
     onValueChanged: (String) -> Unit,
+    onSwitchClick: () -> Unit,
     onImeClick: () -> Unit
 ) {
     Row(
@@ -91,6 +92,7 @@ fun CryptoCurrencyInputLayout(
                 isTransformationCurrency = isTransformationCurrency,
                 focusRequester = focusRequester,
                 onSearchClick = onImeClick,
+                onSwitchClick = onSwitchClick,
                 isError = isError,
                 onValueChanged = onValueChanged
             )
@@ -131,6 +133,7 @@ fun CustomTextField(
     focusRequester: FocusRequester = FocusRequester(),
     isError: Boolean = false,
     onValueChanged: (String) -> Unit = {},
+    onSwitchClick: () -> Unit = {},
     onSearchClick: () -> Unit = {}
 ) {
     Box(
@@ -210,7 +213,6 @@ fun CustomTextField(
                 modifier = Modifier.wrapContentSize(),
                 onClick = {
                     isTransformationCurrency.value = !isTransformationCurrency.value
-                    value.value = ""
                 }
             ) {
                 Column(

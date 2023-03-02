@@ -145,6 +145,7 @@ fun SellCurrencyScreen(
                     referenceNumber = viewModel.uiState.referenceNumber ?: ""
                 )
             )
+            viewModel.onUIEvent(SellCurrencyScreenViewModel.UIEvent.OnRegisterAdjustSellCryptoCurrency)
             sharedViewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnNextStep)
         }
         SellStatus.FAILED -> {

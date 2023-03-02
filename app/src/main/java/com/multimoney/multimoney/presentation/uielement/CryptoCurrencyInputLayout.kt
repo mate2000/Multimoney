@@ -39,10 +39,11 @@ import androidx.compose.ui.unit.sp
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.util.DECIMAL_AND_NUMBER_REGEX
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.transformation.CryptoAssetMaskTransformation
-import com.multimoney.multimoney.presentation.util.transformation.CurrencyDoubleTransformation
+import com.multimoney.multimoney.presentation.util.transformation.formatDecimalMoney
+import com.multimoney.multimoney.presentation.util.validateDecimalIncome
+import com.multimoney.multimoney.presentation.util.validateEightDecimalIncome
 
 /**
  * CryptoCurrencyInputLayout: Custom layout to display a currency input with button to change
@@ -157,9 +158,12 @@ fun CustomTextField(
                 )
             ),
             onValueChange = { newValue ->
-                if (newValue.length <= LOT_OF_CHARACTERS && newValue
-                        .matches(Regex(DECIMAL_AND_NUMBER_REGEX))
-                ) {
+                val validateDecimalInput = if (isTransformationCurrency.value.not()) {
+                    validateDecimalIncome(newValue)
+                } else {
+                    validateEightDecimalIncome(newValue)
+                }
+                if (newValue.length <= LOT_OF_CHARACTERS && validateDecimalInput) {
                     value.value = validateTextFormat(
                         newValue = newValue,
                         onValueChanged = onValueChanged,
@@ -183,7 +187,7 @@ fun CustomTextField(
                 )
             },
             visualTransformation = if (isTransformationCurrency.value.not()) {
-                CurrencyDoubleTransformation(currency = CurrencyType.Dollar.symbol, separator = SIMPLE_COMMA)
+                formatDecimalMoney(CurrencyType.Dollar.symbol)
             } else {
                 CryptoAssetMaskTransformation(asset = iconCurrency)
             },
@@ -254,6 +258,14 @@ fun validateTextFormat(
             onValueChanged(newValue.dropLast(ONE_LENGTH))
             newValue.dropLast(ONE_LENGTH)
         }
+        newValue.count {
+            it.toString() == SIMPLE_DOT
+        } < ONE_LENGTH && newValue.count {
+            it.toString() == ZERO_STRING
+        } > ONE_LENGTH -> {
+            onValueChanged(newValue.dropLast(ONE_LENGTH))
+            newValue.dropLast(ONE_LENGTH)
+        }
         else -> {
             onValueChanged(newValue)
             newValue
@@ -290,5 +302,5 @@ const val LOT_OF_CHARACTERS = 32
 const val ASSET_EQUIVALENT_SUBTRACTION = 2
 const val ONE_LENGTH = 1
 const val SIMPLE_DOT = "."
-const val SIMPLE_COMMA = ','
 const val CURRENCY_DEFAULT_PLACEHOLDER = "$0"
+const val ZERO_STRING = "0"

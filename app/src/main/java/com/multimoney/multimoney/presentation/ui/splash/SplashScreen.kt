@@ -24,7 +24,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun SplashScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit,
-    viewModel: SplashScreenViewModel = hiltViewModel(),
+    viewModel: SplashScreenViewModel = hiltViewModel()
 ) {
     LockScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
     LaunchedEffect(key1 = true) {
@@ -36,7 +36,7 @@ fun SplashScreen(
 }
 
 @Composable
-fun SplashScreen(duration: Long,navigateToNextScreen: () -> Unit) {
+fun SplashScreen(duration: Long, navigateToNextScreen: () -> Unit) {
     Column(
         Modifier
             .fillMaxSize()
@@ -44,7 +44,7 @@ fun SplashScreen(duration: Long,navigateToNextScreen: () -> Unit) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        LaunchedEffect(key1 = true){
+        LaunchedEffect(key1 = true) {
             delay(duration)
             navigateToNextScreen()
         }

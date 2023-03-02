@@ -103,7 +103,7 @@
     <string name="onboarding_el_salvador_step_two_sub_title" translatable="false">Recibe hasta $25,000 con solo tu DUI.</string>
     <string name="onboarding_el_salvador_step_three_title" translatable="false">Invierte en cripto</string>
     <string name="onboarding_el_salvador_step_three_sub_title" translatable="false">Compra y vende cripto de forma simple y segura.</string>
-    <string name="onboarding_account_already_created" translatable="false">Ya tengo cuenta</string>
+    <string name="onboarding_account_already_created" translatable="false">Ya tengo cuenta,</string>
 
     <!-- OnBoarding Costa Rica-->
     <string name="onboarding_costa_rica_step_one_title" translatable="false">Multiplicá tus ahorros</string>
@@ -750,6 +750,19 @@
     <string name="non_pre_approved_additional_questions_request_button_label" translatable="false">Solicitar</string>
 
 
+    <!-- credit onfido -->
+    <string name="credit_origination_id_validation_title" translatable="false">Confirmá tu identidad</string>
+    <string name="credit_origination_id_validation_title_sv" translatable="false">Confirma tu identidad</string>
+    <string name="credit_origination_id_validation_subtitle" translatable="false">Recomendaciones:</string>
+    <string name="credit_origination_id_validation_one" translatable="false">Buscá buena iluminación para tomar las fotos</string>
+    <string name="credit_origination_id_validation_one_sv" translatable="false">Busca buena iluminación para tomar las fotos</string>
+    <string name="credit_origination_id_validation_two" translatable="false">Tené a mano tu documento de identificación</string>
+    <string name="credit_origination_id_validation_two_sv" translatable="false">Ten a mano tu documento de identificación</string>
+    <string name="credit_origination_id_validation_two_gt" translatable="false">Ten a mano tu documento de identificación (DPI)</string>
+    <string name="credit_origination_id_validation_three" translatable="false">Tomate una selfie sin lentes o accesorios</string>
+    <string name="credit_origination_id_validation_three_sv" translatable="false">Tomaté una selfie sin lentes o accesorios</string>
+
+
     <!-- Generate Document -->
     <string name="document_generation_title" translatable="false">Estamos creando tus documentos</string>
     <string name="document_generation_subtitle" translatable="false">Firma el contrato y recibe tu crédito</string>
@@ -1133,7 +1146,7 @@
     <string name="payment_schedule_account_title" translatable="false">Seleccioná una cuenta para programar tu pago</string>
 
     <!-- Payment Schedule Cards-->
-    <string name="payment_schedule_card_title" translatable="false">Tarjetas Visa</string>
+    <string name="payment_schedule_card_title" translatable="false">Configura tu pago automático</string>
     <string name="payment_schedule_card_info_dialog_description" translatable="false">Tu pago se determina de acuerdo a la cuota mínima de cada mes.</string>
     <string name="payment_schedule_card_label_date" translatable="false">Día del mes que se hará el pago</string>
     <string name="payment_schedule_card_label_origin" translatable="false">Desde tu tarjeta</string>
@@ -1580,7 +1593,7 @@
     <string name="crypto_send_flow_error_not_sent" translatable="false">El envío no fue realizado</string>
     <string name="crypto_send_abandon_dialog_title" translatable="false">Cancelar envío</string>
     <string name="crypto_send_abandon_dialog_message" translatable="false">¿Estás seguro que querés cancelar el envío?</string>
-    <string name="crypto_send_amount_error_available_amount_commission" translatable="false">"El monto a enviar más la comisión \nsupera el monto disponible"</string>
+    <string name="crypto_send_amount_error_available_amount_commission" translatable="false">"Monto mayor al disponible"</string>
 
     <!-- Crypto list currencies for send -->
     <string name="crypt_list_send_title" translatable="false">¿Cuál moneda querés enviar?</string>

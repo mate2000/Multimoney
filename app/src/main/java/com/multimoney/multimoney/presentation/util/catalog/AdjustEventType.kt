@@ -84,35 +84,35 @@ enum class AdjustEventType(val stgToken: String, val prodToken: String, val even
     MM_VISA_CTA_FIRST_MM_VISA_ACTIVATED("", "", ""),
 
     // SETTINGS
-    SETTINGS_CHANGE_EMAIL_SUCCESS("", ""),
-    SETTINGS_CHANGE_PHONE_SUCCESS("", ""),
-    SETTINGS_CHANGE_PASSWORD_SUCCESS("", ""),
-    SETTINGS_FIRST_ADD_ACCOUNT("", ""),
-    SETTINGS_USER_WITHOUT_ACCOUNT("", ""),
-    SETTINGS_FIRST_ADD_CARD("", ""),
-    SETTINGS_USER_WITHOUT_CARD("", ""),
-    SETTINGS_CTA_FIRST_START_FLOW_CARD("", ""),
-    SETTINGS_CTA_FIRST_FINISH_FLOW_CARD("", ""),
-    SETTINGS_CTA_FIRST_VALIDATED_FLOW_CARD("", ""),
+    SETTINGS_CHANGE_EMAIL_SUCCESS("", "",""),
+    SETTINGS_CHANGE_PHONE_SUCCESS("", "",""),
+    SETTINGS_CHANGE_PASSWORD_SUCCESS("", "",""),
+    SETTINGS_FIRST_ADD_ACCOUNT("", "",""),
+    SETTINGS_USER_WITHOUT_ACCOUNT("", "",""),
+    SETTINGS_FIRST_ADD_CARD("", "",""),
+    SETTINGS_USER_WITHOUT_CARD("", "",""),
+    SETTINGS_CTA_FIRST_START_FLOW_CARD("", "",""),
+    SETTINGS_CTA_FIRST_FINISH_FLOW_CARD("", "",""),
+    SETTINGS_CTA_FIRST_VALIDATED_FLOW_CARD("", "",""),
 
     // HOME CRYPTO
-    HOME_CRYPTO_FIST_TIME_ENTER_TO_HOME("nkqtow", "elb9ue"),
-    HOME_CRYPTO_PAXOS_IN_MAINTENANCE("", ""),
+    HOME_CRYPTO_FIST_TIME_ENTER_TO_HOME("nkqtow", "elb9ue","cri_primer_vista"),
+    HOME_CRYPTO_PAXOS_IN_MAINTENANCE("", "","cri_pantalla_mantenimiento"),
 
     // PURCHASE CRYPTO
-    PURCHASE_CRYPTO_FIRST_TIME_PRESS_BUY_BUTTON("b1ww5c", "4ne0lu"),
-    PURCHASE_CRYPTO_FIRST_TIME_SUCCESS_PURCHASE("a5ohj7", "b79ays"),
+    PURCHASE_CRYPTO_FIRST_TIME_PRESS_BUY_BUTTON("b1ww5c", "4ne0lu","cri_cta_primera_compra"),
+    PURCHASE_CRYPTO_FIRST_TIME_SUCCESS_PURCHASE("a5ohj7", "b79ays","cri_primera_compra_exitosa"),
 
     // SELL CRYPTO
-    SELL_CRYPTO_FIRST_TIME_PRESS_SELL_BUTTON("b863zi", "b79ays"),
-    SELL_CRYPTO_FIRST_TIME_SUCCESS_SELL("wwz72o", "vvm693"),
+    SELL_CRYPTO_FIRST_TIME_PRESS_SELL_BUTTON("b863zi", "aem40p","cri_cta_primera_venta"),
+    SELL_CRYPTO_FIRST_TIME_SUCCESS_SELL("wwz72o", "vvm693","cri_primera_venta_exitosa"),
 
     // SEND CRYPTO
-    SEND_CRYPTO_FIRST_TIME_PRESS_SEND_BUTTON("477ggy", "rqvkuq"),
-    SEND_CRYPTO_FIRST_TIME_SUCCESS_SEND("us6gm5", "kukvye"),
+    SEND_CRYPTO_FIRST_TIME_PRESS_SEND_BUTTON("477ggy", "rqvkuq","cri_cta_primer_envio"),
+    SEND_CRYPTO_FIRST_TIME_SUCCESS_SEND("us6gm5", "kukvye","cri_primer_envio_exitoso"),
 
     // RECEIVE CRYPTO
-    RECEIVE_CRYPTO_FIRST_TIME_PRESS_RECEIVE_BUTTON("vmqdy2", "vvj95q"),
-    RECEIVE_CRYPTO_PRESS_SHARE_BUTTON("", ""),
-    RECEIVE_CRYPTO_ENTER_QR_SCREEN("", "")
+    RECEIVE_CRYPTO_FIRST_TIME_PRESS_RECEIVE_BUTTON("vmqdy2", "vvj95q","cri_cta_primera_recepcion"),
+    RECEIVE_CRYPTO_PRESS_SHARE_BUTTON("", "","cri_cta_compartir"),
+    RECEIVE_CRYPTO_ENTER_QR_SCREEN("", "","cri_pantalla_qr"),
 }

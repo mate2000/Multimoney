@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -17,11 +18,12 @@ import com.multimoney.multimoney.presentation.theme.Typography
 
 
 @Composable
+@Preview
 fun loadingProgressIndicator(isLoading: Boolean = true, text: String = "") {
     if (isLoading) {
         Row(
             modifier = Modifier
-                .padding(bottom = 22.dp),
+                .padding(bottom = 42.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Surface(color = Color.Transparent) {
@@ -29,15 +31,14 @@ fun loadingProgressIndicator(isLoading: Boolean = true, text: String = "") {
                     modifier = Modifier.wrapContentSize(Alignment.CenterStart),
                     color = MultimoneyTheme.colors.circularProgressIndicator
                 )
-                Spacer(Modifier.weight(10f))
-                Text(
-                    text = text,
-                    modifier = Modifier.padding(start = 30.dp),
-                    style = Typography.body1,
-                    color = MultimoneyTheme.colors.text,
-                    textAlign = TextAlign.End
-                )
             }
+            Text(
+                text = text,
+                modifier = Modifier.padding(start = 15.dp, top = 5.dp),
+                style = Typography.body1,
+                color = MultimoneyTheme.colors.text,
+                textAlign = TextAlign.End
+            )
         }
 
     }

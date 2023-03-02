@@ -25,6 +25,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.Brand.CostaRica
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -82,7 +83,7 @@ fun CreditOnfidoScreen(
     )
 
     if (viewModel.idBrand != null) {
-        if (viewModel.idBrand == Brand.CostaRica.id) {
+        if (viewModel.idBrand == CostaRica.id) {
             viewModel.onUIEvent(
                 OnSetCloseDialogTexts(
                     string.credit_close_dialog_title,
@@ -189,7 +190,7 @@ fun CreditOnfidoScreen(
                 }
         ) {
             Text(
-                text = stringResource(id = string.sign_up_id_validation_title),
+                text = stringResource(id = if (viewModel.idBrand == CostaRica.id) string.credit_origination_id_validation_title else string.credit_origination_id_validation_title_sv),
                 style = Typography.h5.copy(
                     color = MultimoneyTheme.colors.text,
                     fontWeight = FontWeight.SemiBold
@@ -197,7 +198,7 @@ fun CreditOnfidoScreen(
             )
             Text(
                 modifier = Modifier.padding(top = 16.dp),
-                text = stringResource(id = string.sign_up_id_validation_subtitle),
+                text = stringResource(id = string.credit_origination_id_validation_subtitle),
                 style = Typography.body2.copy(
                     color = MultimoneyTheme.colors.text,
                     fontWeight = FontWeight.SemiBold
@@ -215,7 +216,7 @@ fun CreditOnfidoScreen(
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = stringResource(id = string.sign_up_id_validation_one),
+                    text = stringResource(id = if (viewModel.idBrand == CostaRica.id) string.credit_origination_id_validation_one else string.credit_origination_id_validation_one_sv),
                     style = Typography.body2.copy(
                         color = MultimoneyTheme.colors.text,
                         fontWeight = FontWeight.SemiBold
@@ -233,7 +234,14 @@ fun CreditOnfidoScreen(
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = stringResource(id = string.sign_up_id_validation_two),
+                    text = stringResource(
+                        id = when (viewModel.idBrand) {
+                            CostaRica.id -> string.credit_origination_id_validation_two
+                            Brand.ElSalvador.id -> string.credit_origination_id_validation_two_sv
+                            Brand.Guatemala.id -> string.credit_origination_id_validation_two_gt
+                            else -> string.credit_origination_id_validation_two
+                        }
+                    ),
                     style = Typography.body2.copy(
                         color = MultimoneyTheme.colors.text,
                         fontWeight = FontWeight.SemiBold
@@ -251,7 +259,7 @@ fun CreditOnfidoScreen(
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = stringResource(id = string.sign_up_id_validation_three),
+                    text = stringResource(id = if (viewModel.idBrand == CostaRica.id) string.credit_origination_id_validation_three else string.credit_origination_id_validation_three_sv),
                     style = Typography.body2.copy(
                         color = MultimoneyTheme.colors.text,
                         fontWeight = FontWeight.SemiBold
@@ -259,6 +267,7 @@ fun CreditOnfidoScreen(
                 )
             }
         }
+
         CustomButton(
             onClick = { viewModel.onUIEvent(OnContinueClick) },
             text = stringResource(id = string.button_continue),

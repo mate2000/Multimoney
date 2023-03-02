@@ -32,7 +32,10 @@ class OnFidoHelper @Inject constructor(
         createFlowStepOptions(
             DocumentCaptureStepBuilder.forNationalIdentity().withCountry(getCountryCode(idBrand)).build()
         )
-    ).withLocale(if (idBrand == 7) Locale.forLanguageTag("es-CR") else Locale.US).build()
+    ).withLocale(
+        if (idBrand == 5) Locale.forLanguageTag(CR_LANGUAGE_TAG)
+        else Locale.US
+    ).build()
 
     private fun getOnFidoConfigForSeveralDocuments(
         idBrand: Int?,
@@ -96,5 +99,8 @@ class OnFidoHelper @Inject constructor(
             FlowStep.CAPTURE_FACE,
             FlowStep.FINAL
         )
+    }
+    companion object {
+        val CR_LANGUAGE_TAG = "es-CR"
     }
 }

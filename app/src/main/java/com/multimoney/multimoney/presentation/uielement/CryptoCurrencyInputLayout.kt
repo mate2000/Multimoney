@@ -211,9 +211,7 @@ fun CustomTextField(
         ) {
             IconButton(
                 modifier = Modifier.wrapContentSize(),
-                onClick = {
-                    isTransformationCurrency.value = !isTransformationCurrency.value
-                }
+                onClick = onSwitchClick
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,

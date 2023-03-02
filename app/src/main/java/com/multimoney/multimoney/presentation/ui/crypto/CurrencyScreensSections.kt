@@ -190,18 +190,15 @@ fun AmountInputSection(
             onSwitchClick = {
                 isTransformationCurrency.value = !isTransformationCurrency.value
                 if (isTransformationCurrency.value.not()) {
-                    baseAmountText.value = calculateAssetEstimated(
-                        quoteAmount = quoteAmountText.value,
-                        currencyPrice = currencyPrice
-                    )
-                    quoteAmountText.value = ""
-                    baseAmountText.value = ""
-                } else {
                     quoteAmountText.value = calculateDollarEstimatedWithoutFormat(
                         baseAmount = baseAmountText.value,
                         currencyPrice = currencyPrice
                     )
-                    baseAmountText.value = ""
+                } else {
+                    baseAmountText.value = calculateAssetEstimated(
+                        quoteAmount = quoteAmountText.value,
+                        currencyPrice = currencyPrice
+                    )
                 }
             }
         )

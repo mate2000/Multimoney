@@ -14,6 +14,7 @@ import com.onfido.android.sdk.capture.ui.options.FlowStep
 import com.onfido.android.sdk.capture.ui.options.stepbuilder.DocumentCaptureStepBuilder
 import com.onfido.android.sdk.capture.utils.CountryCode
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.util.Locale
 import javax.inject.Inject
 
 class OnFidoHelper @Inject constructor(
@@ -31,7 +32,7 @@ class OnFidoHelper @Inject constructor(
         createFlowStepOptions(
             DocumentCaptureStepBuilder.forNationalIdentity().withCountry(getCountryCode(idBrand)).build()
         )
-    ).build()
+    ).withLocale(if (idBrand == 7) Locale.forLanguageTag("es-CR") else Locale.US).build()
 
     private fun getOnFidoConfigForSeveralDocuments(
         idBrand: Int?,

@@ -25,6 +25,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.uielement.PhoneTextField
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 import com.togitech.ccp.data.utils.getLibCountries
 
@@ -60,7 +61,7 @@ fun SignUpPhoneScreen(
                                 { onUIEvent(SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase) }
                             )
                         )
-                        viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SignUpThree)
+                        sharedViewModel.logEvents(FireBaseEvents.SignUpThree, AdjustEventType.SIGNUP_3_2003)
                     },
                     nextStep = viewModel.getNextStep(
                         sharedViewModel.isPhoneVerified,

@@ -2671,6 +2671,8 @@ input ValidateSecurityDtoInput {
 
   password: String!
 
+  onlyValidate: Boolean
+
   idBrand: Int
 
   user: String
@@ -4883,13 +4885,13 @@ type LogTracking {
 }
 
 input LogTrackingDtoInput {
-  identification: String!
+  identification: String
 
-  pkUser: Int!
+  pkUser: Int
 
-  keySearch: String!
+  keySearch: String
 
-  data: String!
+  data: String
 
   idBrand: Int
 

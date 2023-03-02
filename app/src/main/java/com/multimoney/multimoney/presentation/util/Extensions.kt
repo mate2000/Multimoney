@@ -35,13 +35,13 @@ import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.Vis
 import com.multimoney.multimoney.presentation.util.catalog.PhoneCountryCode
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeType
 import com.novopayment.sdk.vts.module.payment.apdu.PaymentService
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.Locale
 import kotlin.time.Duration
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flow
 
 fun Context.openWhatsAppDeepLink(link: String, onFailure: () -> Unit = {}) {
     try {
@@ -261,12 +261,12 @@ val Int.boolean
 fun getNavParam(param: String, value: Any?) = "?$param=$value"
 
 fun getDeviceManufacture(): String = (
-        if (Build.MODEL.startsWith(Build.MANUFACTURER, ignoreCase = true)) {
-            Build.MODEL
-        } else {
-            "${Build.MANUFACTURER} ${Build.MODEL}"
-        }
-        ).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+    if (Build.MODEL.startsWith(Build.MANUFACTURER, ignoreCase = true)) {
+        Build.MODEL
+    } else {
+        "${Build.MANUFACTURER} ${Build.MODEL}"
+    }
+    ).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
 
 fun Context.getAndroidId(): String {
     return Secure.getString(
@@ -306,9 +306,9 @@ fun Double.toCurrencyFormatWithoutNegatives(
     formatter.maximumFractionDigits = amountOfDecimals
     // remove the default dollar symbol from the custom symbol property
     return "$symbol${
-        formatter.format(this)
-            .replace(Dollar.symbol, "")
-            .replace("-", "")
+    formatter.format(this)
+        .replace(Dollar.symbol, "")
+        .replace("-", "")
     }"
 }
 
@@ -405,9 +405,10 @@ fun String.capitalizedAllWords(): String =
 fun formatPhoneNumber(phoneWithCode: String?, phoneWithoutCode: String?) =
     phoneWithCode?.replace(phoneWithoutCode ?: "", " ").plus(phoneWithoutCode)
 
-fun Any.toJson(): String {
-    return Gson().toJson(this)
-}
+/**
+ * Convert any data class in json String using Gson library
+ */
+fun Any.toJson(): String = Gson().toJson(this)
 
 private const val HEX_FORMAT = "#%02x%02x%02x"
 private const val NUMBER_FORMAT_REGEX = "[^0-9,.\\s]"

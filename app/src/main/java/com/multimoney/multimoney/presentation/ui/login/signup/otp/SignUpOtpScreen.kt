@@ -57,6 +57,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.OtpTextField
 import com.multimoney.multimoney.presentation.uielement.SystemBroadcastReceiver
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.transformation.PhoneNumberTransformation
@@ -172,7 +173,7 @@ fun SignUpOtpScreen(
                                 }
                             )
                         )
-                        viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SignUpFour)
+                        sharedViewModel.logEvents(FireBaseEvents.SignUpFour, AdjustEventType.SIGNUP_4_2004)
                     },
                     nextStep = viewModel.getNextStep(isOnFidoVerified).id,
                     previousStep = SignUpStep.Three.id

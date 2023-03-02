@@ -26,6 +26,7 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.checkIfEmulator
@@ -44,7 +45,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import javax.inject.Inject
-
 @HiltViewModel
 class SignInViewModel @Inject constructor(
     private val biometricHelper: BiometricHelper,
@@ -443,8 +443,15 @@ class SignInViewModel @Inject constructor(
         popTo = Screen.SignInScreen.route
     )
 
-    private fun onNavigateToSignUp() =
+    private fun onNavigateToSignUp() {
+        viewModelScope.launch {
+            if (dataStorePreferences.isAdjustSingUpButtonClickedEventRegister().first()) {
+                registerAdjustEvent(adjustEventType = AdjustEventType.SIGNUP_FIRST_BUTTON_CLICKED_2000, isLoggedIn = false)
+                dataStorePreferences.isAdjustSingUpButtonClickedEventRegister(false)
+            }
+        }
         navigateTo(route = "${Screen.SignUpScreen.baseRoute}/".plus(0))
+    }
 
     private fun initializeBiometricPrompt(
         biometricPromptTitle: String,

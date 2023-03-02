@@ -166,10 +166,56 @@ class DataStorePreferences @Inject constructor(
     }
     fun getSmartTransferLimit() = getListFlow<SmartTransferLimit?>(SMART_LIMITS, object : TypeToken<List<SmartTransferLimit>>() {}.type)
 
-    suspend fun isAdjustSplashEventRegistered(isOnBoardingEnabled: Boolean) =
-        setData(SPLASH_ADJUST_KEY, isOnBoardingEnabled)
+    // Adjust
+    suspend fun isAdjustSplashEventRegister(register: Boolean) =
+        setData(SPLASH_ADJUST_KEY, register)
 
-    fun isAdjustSplashEventRegistered(): Flow<Boolean> = getData(SPLASH_ADJUST_KEY, true)
+    fun isAdjustSplashEventRegister(): Flow<Boolean> = getData(SPLASH_ADJUST_KEY, true)
+
+    suspend fun isAdjustSingUpButtonClickedEventRegister(register: Boolean) =
+        setData(SIGN_UP_BUTTON_CLICKED_ADJUST_KEY, register)
+
+    fun isAdjustSingUpButtonClickedEventRegister(): Flow<Boolean> = getData(SIGN_UP_BUTTON_CLICKED_ADJUST_KEY, true)
+
+    suspend fun isAdjustSingUp1EventRegister(register: Boolean) =
+        setData(SIGN_UP_1_ADJUST_KEY, register)
+
+    fun isAdjustSingUp1EventRegister(): Flow<Boolean> = getData(SIGN_UP_1_ADJUST_KEY, true)
+
+    suspend fun isAdjustSingUp2EventRegister(register: Boolean) =
+        setData(SIGN_UP_2_ADJUST_KEY, register)
+
+    fun isAdjustSingUp2EventRegister(): Flow<Boolean> = getData(SIGN_UP_2_ADJUST_KEY, true)
+
+    suspend fun isAdjustSingUp3EventRegister(register: Boolean) =
+        setData(SIGN_UP_3_ADJUST_KEY, register)
+
+    fun isAdjustSingUp3EventRegister(): Flow<Boolean> = getData(SIGN_UP_3_ADJUST_KEY, true)
+
+    suspend fun isAdjustSingUp4EventRegister(register: Boolean) =
+        setData(SIGN_UP_4_ADJUST_KEY, register)
+
+    fun isAdjustSingUp4EventRegister(): Flow<Boolean> = getData(SIGN_UP_4_ADJUST_KEY, true)
+
+    suspend fun isAdjustSingUp5EventRegister(register: Boolean) =
+        setData(SIGN_UP_5_ADJUST_KEY, register)
+
+    fun isAdjustSingUp5EventRegister(): Flow<Boolean> = getData(SIGN_UP_5_ADJUST_KEY, true)
+
+    suspend fun isAdjustSingUpAlreadyCustomerEmailEventRegister(register: Boolean) =
+        setData(SIGN_UP_ALREADY_CUSTOMER_REGISTERED_EMAIL_ADJUST_KEY, register)
+
+    fun isAdjustSingUpAlreadyCustomerEmailEventRegister(): Flow<Boolean> = getData(SIGN_UP_ALREADY_CUSTOMER_REGISTERED_EMAIL_ADJUST_KEY, true)
+
+    suspend fun isAdjustSingUpAlreadyCustomerOTPEventRegister(register: Boolean) =
+        setData(SIGN_UP_ALREADY_CUSTOMER_REGISTERED_OTP_ADJUST_KEY, register)
+
+    fun isAdjustSingUpAlreadyCustomerOTPEventRegister(): Flow<Boolean> = getData(SIGN_UP_ALREADY_CUSTOMER_REGISTERED_OTP_ADJUST_KEY, true)
+
+    suspend fun isAdjustSingUpAlreadyCustomerPasswordEventRegister(register: Boolean) =
+        setData(SIGN_UP_ALREADY_CUSTOMER_REGISTERED_PASSWORD_ADJUST_KEY, register)
+
+    fun isAdjustSingUpAlreadyCustomerPasswordEventRegister(): Flow<Boolean> = getData(SIGN_UP_ALREADY_CUSTOMER_REGISTERED_PASSWORD_ADJUST_KEY, true)
 
     // Adjust Crypto events
     suspend fun setAdjustCryptoHomeFirstTime(firstTimeHomeCrypto: Boolean) =
@@ -238,6 +284,15 @@ class DataStorePreferences @Inject constructor(
         private val ENABLE_CRYPTO_TRANSFER_KEY = booleanPreferencesKey("enable_crypto_transfer_key")
         private val SMART_LIMITS = stringPreferencesKey("smart_limits")
         private val SPLASH_ADJUST_KEY = booleanPreferencesKey("splash_adjust_key")
+        private val SIGN_UP_BUTTON_CLICKED_ADJUST_KEY = booleanPreferencesKey("sign_up_button_adjust_key")
+        private val SIGN_UP_1_ADJUST_KEY = booleanPreferencesKey("sign_up_1_adjust_key")
+        private val SIGN_UP_2_ADJUST_KEY = booleanPreferencesKey("sign_up_2_adjust_key")
+        private val SIGN_UP_3_ADJUST_KEY = booleanPreferencesKey("sign_up_3_adjust_key")
+        private val SIGN_UP_4_ADJUST_KEY = booleanPreferencesKey("sign_up_4_adjust_key")
+        private val SIGN_UP_5_ADJUST_KEY = booleanPreferencesKey("sign_up_5_adjust_key")
+        private val SIGN_UP_ALREADY_CUSTOMER_REGISTERED_EMAIL_ADJUST_KEY = booleanPreferencesKey("sign_up_registered_user_email_adjust_key")
+        private val SIGN_UP_ALREADY_CUSTOMER_REGISTERED_OTP_ADJUST_KEY = booleanPreferencesKey("sign_up_registered_user_otp_adjust_key")
+        private val SIGN_UP_ALREADY_CUSTOMER_REGISTERED_PASSWORD_ADJUST_KEY = booleanPreferencesKey("sign_up_registered_user_password_adjust_key")
         private val ADJUST_CRYPTO_HOME_FIRST_TIME = booleanPreferencesKey("adjust_crypto_home_first_time")
         private val ADJUST_CRYPTO_PURCHASE_FIRST_TIME = booleanPreferencesKey("adjust_crypto_purchase_first_time")
         private val ADJUST_CRYPTO_SUCCESS_PURCHASE_FIRST_TIME = booleanPreferencesKey("adjust_crypto_success_purchase_first_time")

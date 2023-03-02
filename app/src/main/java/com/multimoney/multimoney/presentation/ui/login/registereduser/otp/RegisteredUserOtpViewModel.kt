@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
 import com.multimoney.domain.interaction.security.QueryValidatePinUseCase
 import com.multimoney.domain.model.security.UserData
@@ -30,6 +31,7 @@ import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.Regist
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.util.OTP_MESSAGE_REGEX
 import com.multimoney.multimoney.presentation.util.ResendOtp
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SendOtpMethod
 import com.multimoney.multimoney.presentation.util.format
@@ -38,10 +40,12 @@ import com.multimoney.multimoney.presentation.util.tickerFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -53,7 +57,8 @@ import kotlin.time.DurationUnit.SECONDS
 class RegisteredUserOtpViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val mutationSendPinProcessUseCase: MutationSendPinProcessUseCase,
-    private val queryValidatePinUseCase: QueryValidatePinUseCase
+    private val queryValidatePinUseCase: QueryValidatePinUseCase,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(false) {
 
     // UIState
@@ -263,6 +268,12 @@ class RegisteredUserOtpViewModel @Inject constructor(
                 userCreate = userData?.firstName ?: ""
             ).collectLatest { result ->
                 result.onSuccess {
+                    viewModelScope.launch {
+                        if (dataStorePreferences.isAdjustSingUpAlreadyCustomerOTPEventRegister().first()) {
+                            registerAdjustEvent(AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_SUCCESS_CONFIRMATION_2012, isLoggedIn = false)
+                            dataStorePreferences.isAdjustSingUpAlreadyCustomerOTPEventRegister(false)
+                        }
+                    }
                     popAndNavigateTo(
                         route = Screen.RegisteredUserPassword.baseRoute.plus(
                             getNavParam(USER_DATA, encodeData(userData)).plus(

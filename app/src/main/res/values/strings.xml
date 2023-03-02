@@ -103,7 +103,7 @@
     <string name="onboarding_el_salvador_step_two_sub_title" translatable="false">Recibe hasta $25,000 con solo tu DUI.</string>
     <string name="onboarding_el_salvador_step_three_title" translatable="false">Invierte en cripto</string>
     <string name="onboarding_el_salvador_step_three_sub_title" translatable="false">Compra y vende cripto de forma simple y segura.</string>
-    <string name="onboarding_account_already_created" translatable="false">Ya tengo cuenta</string>
+    <string name="onboarding_account_already_created" translatable="false">Ya tengo cuenta,</string>
 
     <!-- OnBoarding Costa Rica-->
     <string name="onboarding_costa_rica_step_one_title" translatable="false">Multiplicá tus ahorros</string>

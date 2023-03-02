@@ -190,12 +190,16 @@ fun AmountInputSection(
             onSwitchClick = {
                 isTransformationCurrency.value = !isTransformationCurrency.value
                 if (isTransformationCurrency.value.not()) {
-                    quoteAmountText.value = calculateDollarEstimatedWithoutFormat(
+                    // if empty or 0, set empty string to show hint
+                    quoteAmountText.value = if (
+                        baseAmountText.value.isEmpty() || baseAmountText.value == "0"
+                    ) "" else calculateDollarEstimatedWithoutFormat(
                         baseAmount = baseAmountText.value,
                         currencyPrice = currencyPrice
                     )
                 } else {
-                    baseAmountText.value = calculateAssetEstimated(
+                    // if empty, set empty string to show hint
+                    baseAmountText.value = if (quoteAmountText.value.isEmpty()) "" else calculateAssetEstimated(
                         quoteAmount = quoteAmountText.value,
                         currencyPrice = currencyPrice
                     )

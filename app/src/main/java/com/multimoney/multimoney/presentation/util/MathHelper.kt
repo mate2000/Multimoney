@@ -87,7 +87,7 @@ fun calculateDollarEstimatedWithoutFormat(
 ): String {
     return (currencyPrice * baseAmount.ifEmpty {
         EMPTY_CURRENCY
-    }.toDouble()).toString()
+    }.toDouble()).roundToTwoDecimalPlaces()
 }
 
 fun calculateAssetEstimated(

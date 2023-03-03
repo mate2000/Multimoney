@@ -242,6 +242,16 @@ class DataStorePreferences @Inject constructor(
 
     fun isAdjustFirstActivateMMVisaEventRegister(): Flow<Boolean> = getData(HOME_ACTIVATE_MM_VISA_FIRST_TIME_ADJUST_KEY, true)
 
+    suspend fun isAdjustFirstLinkMMVisaEventRegister(register: Boolean) =
+        setData(HOME_LINK_MM_VISA_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstLinkMMVisaEventRegister(): Flow<Boolean> = getData(HOME_LINK_MM_VISA_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstActivatedMMVisaEventRegister(register: Boolean) =
+        setData(HOME_ACTIVATED_MM_VISA_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstActivatedMMVisaEventRegister(): Flow<Boolean> = getData(HOME_ACTIVATED_MM_VISA_FIRST_TIME_ADJUST_KEY, true)
+
     companion object {
         private val UNIQUE_ID = stringPreferencesKey("unique_id")
         private val DEVICE_ID = stringPreferencesKey("device_id")
@@ -282,5 +292,7 @@ class DataStorePreferences @Inject constructor(
         private val HOME_PAYMENT_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("home_credit_first_payment")
         private val HOME_ACCOUNT_STATUS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("home_credit_first_account_status")
         private val HOME_ACTIVATE_MM_VISA_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("home_first_activate_mm_visa")
+        private val HOME_LINK_MM_VISA_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("home_first_link_mm_visa")
+        private val HOME_ACTIVATED_MM_VISA_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("home_first_activated_mm_visa")
     }
 }

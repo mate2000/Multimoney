@@ -5,4 +5,5 @@ enum class TransferStatus(val status: Int) {
     LOADING(1),
     SUCCESS(2),
     FAILED(3),
+    ERROR(4),
 }

@@ -1,11 +1,8 @@
 package com.multimoney.multimoney.presentation.ui.crypto.receive.cryptoaddress
 
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
-import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.crypto.GetCryptoReceiveAddressUseCase
 import com.multimoney.domain.interaction.crypto.ValidateDepositAddressUseCase
 import com.multimoney.domain.model.util.error.HttpError
@@ -13,7 +10,9 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
 import com.multimoney.multimoney.presentation.util.ShareHelper
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -22,14 +21,15 @@ import javax.inject.Inject
 @HiltViewModel
 class CryptoReceiveAddressViewModel @Inject constructor(
     private val helper: ShareHelper,
-    savedStateHandle: SavedStateHandle,
-    private val dataStorePreferences: DataStorePreferences,
     private val validateDepositAddressUseCase: ValidateDepositAddressUseCase,
     private val getCryptoReceiveAddressUseCase: GetCryptoReceiveAddressUseCase
 ) : BaseViewModel(shouldObserveToken = true) {
 
-    var uiState by mutableStateOf(CryptoReceiveAddressViewModel.UIState())
+    var uiState by mutableStateOf(UIState())
         private set
+
+    //maintenance event
+    var openMaintenanceAction = {}
 
     private fun onGetUserInfo(
         user: String,
@@ -63,6 +63,10 @@ class CryptoReceiveAddressViewModel @Inject constructor(
                     )
                 }
                 result.onFailure {
+                    if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                        openMaintenanceAction()
+                        return@onFailure
+                    }
                     onFailure(it)
                 }
                 result.onLoading {
@@ -87,6 +91,15 @@ class CryptoReceiveAddressViewModel @Inject constructor(
             )
             is UIEvent.OnGetCryptoReceiveAddress -> getCryptoReceiveAddress()
             is UIEvent.OnShareCryptoReceiveAddress -> shareCryptoReceiveAddress(event.address)
+            is UIEvent.OnSetOpenMaintenanceAction -> openMaintenanceAction = event.action
+            UIEvent.OnRegisterAdjustEnterReceiveQRScreen -> registerAdjustEvent(
+                applyAdjust = false,
+                adjustEventType = AdjustEventType.RECEIVE_CRYPTO_ENTER_QR_SCREEN
+            )
+            UIEvent.OnRegisterAdjustPressShareAddressButton -> registerAdjustEvent(
+                applyAdjust = false,
+                adjustEventType = AdjustEventType.RECEIVE_CRYPTO_PRESS_SHARE_BUTTON
+            )
         }
     }
 
@@ -123,5 +136,8 @@ class CryptoReceiveAddressViewModel @Inject constructor(
         data class OnShareCryptoReceiveAddress(
             val address: String
         ) : UIEvent
+        data class OnSetOpenMaintenanceAction(val action: () -> Unit) : UIEvent
+        object OnRegisterAdjustEnterReceiveQRScreen : UIEvent
+        object OnRegisterAdjustPressShareAddressButton : UIEvent
     }
 }

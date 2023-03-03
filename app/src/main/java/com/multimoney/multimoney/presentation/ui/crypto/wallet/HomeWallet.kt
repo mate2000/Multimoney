@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.consumedWindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
@@ -42,7 +42,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.balance.BalanceCryptoAccount
 import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.multimoney.R
@@ -155,19 +154,27 @@ fun HomeWallet(
                     enableSendAndGive = walletViewModel.uiState.isCryptoTransferEnabled,
                     hasBalanceAction = {
                         walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnNavigateToBuyCrypto)
+                        walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnRegisterAdjustPressPurchaseFirstTime)
                     },
                     sellAction = {
                         walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnNavigateToSellCrypto)
+                        walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnRegisterAdjustPressSellFirstTime)
                     },
-                    sendAction = { walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnNavigateToSendCrypto) },
-                    giveAction = { walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnNavigateToReceiveCrypto) }
+                    sendAction = {
+                        walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnNavigateToSendCrypto)
+                        walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnRegisterAdjustPressSendFirstTime)
+                                 },
+                    giveAction = {
+                        walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnNavigateToReceiveCrypto)
+                        walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnRegisterAdjustPressReceiveFirstTime)
+                    }
                 )
             }
         }
     ) { paddingValues ->
         HomeWalletContent(
             modifier = Modifier
-                .consumedWindowInsets(paddingValues)
+                .consumeWindowInsets(paddingValues)
                 .padding(paddingValues)
                 .imePadding(),
             isFocused = isFocused,

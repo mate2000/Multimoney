@@ -35,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -67,6 +68,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToHomeMultimoneyVisa
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToProfileScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToReleaseTransaction
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToScheduleAutomaticPaymentScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartPaymentAccountScreen
@@ -88,6 +90,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoCtaFo
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoFooter
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoFooterExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoHeaderExpanded
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.ZERO_MOVEMENTS
 import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartContent
 import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartCtaFooterExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartFooter
@@ -100,6 +103,7 @@ import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.MotionLayoutMM
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
+import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalMaterialApi::class)
@@ -197,6 +201,13 @@ fun ProductScreen(
                 }
             }
         }
+    }
+
+    // execute adjust maintenance event if paxos is in maintenance
+    LaunchedEffect(sharedViewModel.uiState.balance?.balanceCryptoAccount?.outOfService ?: false) {
+        viewModel.onUIEvent(
+            ProductViewModel.UIEvent.OnRegisterAdjustPaxosInMaintenance
+        )
     }
 
     // Pager
@@ -478,6 +489,7 @@ fun ProductContent(
     viewModel: ProductViewModel,
     sharedViewModel: HomeViewModel
 ) {
+    val context = LocalContext.current
     val pagerCount = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES
     Column(modifier = modifier) {
         HorizontalPager(
@@ -485,6 +497,11 @@ fun ProductContent(
             count = pagerCount,
             state = state
         ) { page ->
+            // verify if the user has crypto or crypto movements to show the card empty state
+            val cryptoCurrencies = viewModel.balanceCredit?.balanceCryptoAccount?.items
+            val movements = viewModel.uiState.cryptoCurrencyMovements.collectAsLazyPagingItems()
+            val profileEnable = !cryptoCurrencies.isNullOrEmpty() || movements.itemCount > ZERO_MOVEMENTS
+
             when (viewModel.uiState.productPageList?.get(page)?.product) {
                 ProductType.Credit.value -> CreditContent(viewModel = viewModel)
                 ProductType.Smart.value -> SmartContent(
@@ -494,10 +511,14 @@ fun ProductContent(
                 ProductType.Crypto.value -> CryptoContent(
                     userStatus = viewModel.uiState.userStatus,
                     cryptoBalance = viewModel.balanceCredit?.balanceCryptoAccount,
-                    cryptoEmptyState = viewModel.uiState.userStatus?.infoCrypto?.profileEnable ?: false,
+                    cryptoEmptyState = profileEnable,
                     clientBalanceHistory = sharedViewModel.uiState.cryptoHistoricalBalance,
                     openSmartCryptoAction = {
-                        viewModel.onUIEvent(OnNavigateToSmartOriginationFlow(comingFromCrypto = true))
+                        viewModel.onUIEvent(OnNavigateToSmartOriginationFlow(
+                            comingFromCrypto = true,
+                            smartStep = viewModel.uiState.smartContent.second,
+                            onIntent = { context.openWhatsAppDeepLink(viewModel.uiState.userStatus?.infoBankAccount?.wording?.link ?: "") }
+                        ))
                     }
                 )
             }
@@ -525,6 +546,7 @@ fun ProductContentExpanded(
     viewModel: ProductViewModel,
     sharedViewModel: HomeViewModel
 ) {
+    val context = LocalContext.current
     val pagerCount = viewModel.uiState.expandedProductPageList?.count() ?: DEFAULT_PRODUCT_PAGES
     Column(modifier = modifier) {
         HorizontalPager(
@@ -532,6 +554,11 @@ fun ProductContentExpanded(
             count = pagerCount,
             state = state
         ) { page ->
+            // verify if the user has crypto or crypto movements to show the card empty state
+            val cryptoCurrencies = viewModel.balanceCredit?.balanceCryptoAccount?.items
+            val movements = viewModel.uiState.cryptoCurrencyMovements.collectAsLazyPagingItems()
+            val profileEnable = !cryptoCurrencies.isNullOrEmpty() || movements.itemCount > ZERO_MOVEMENTS
+
             when (viewModel.uiState.expandedProductPageList?.get(page)?.product) {
                 ProductType.Credit.value -> CreditContent(viewModel = viewModel)
                 ProductType.Smart.value -> SmartContent(
@@ -541,10 +568,16 @@ fun ProductContentExpanded(
                 ProductType.Crypto.value -> CryptoContent(
                     userStatus = viewModel.uiState.userStatus,
                     cryptoBalance = viewModel.balanceCredit?.balanceCryptoAccount,
-                    cryptoEmptyState = viewModel.uiState.userStatus?.infoCrypto?.profileEnable ?: false,
+                    cryptoEmptyState = profileEnable,
                     clientBalanceHistory = sharedViewModel.uiState.cryptoHistoricalBalance,
                     openSmartCryptoAction = {
-                        viewModel.onUIEvent(OnNavigateToSmartOriginationFlow(comingFromCrypto = true))
+                        viewModel.onUIEvent(
+                            OnNavigateToSmartOriginationFlow(
+                                comingFromCrypto = true,
+                                smartStep = viewModel.uiState.smartContent.second,
+                                onIntent = { context.openWhatsAppDeepLink(viewModel.uiState.userStatus?.infoBankAccount?.wording?.link ?: "") }
+                            )
+                        )
                     }
                 )
             }
@@ -642,6 +675,14 @@ fun ProductFooterExpanded(
                     } else {
                         viewModel.onUIEvent(OnNavigateToCryptoWallet)
                     }
+                },
+                onNavigateToReleaseTransaction = {
+                    viewModel.onUIEvent(
+                        OnNavigateToReleaseTransaction(it)
+                    )
+                },
+                registerAdjustEvent = {
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustCryptoHomeFistTime)
                 }
             )
         }
@@ -691,21 +732,25 @@ fun ProductCtaFooterExpanded(
                             )
                         }
                     }
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustPressPurchaseFirstTime)
                 },
                 hasBalanceAction = {
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToPurchaseCryptoFlow)
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustPressPurchaseFirstTime)
                 },
                 onSendActionClicked = {
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSendCryptoFlow)
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustPressSendFirstTime)
                 },
                 onSellActionClicked = {
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSellCryptoFlow)
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustPressSellFirstTime)
                 },
                 onGiveActionClicked = {
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToGiveCryptoFlow)
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustPressReceiveFirstTime)
                 },
-                isCryptoTransferEnabled = viewModel.uiState.isCryptoTransferEnabled
-                        && viewModel.balanceCredit?.balanceCryptoAccount?.outOfService == false,
+                isCryptoTransferEnabled = viewModel.uiState.isCryptoTransferEnabled,
             )
         }
     }

@@ -6,10 +6,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.PurchaseStatus
 import com.multimoney.domain.interaction.accountsmart.QuerySmartExchangeRateUseCase
 import com.multimoney.domain.interaction.crypto.BuyCryptoCurrencyUseCase
 import com.multimoney.domain.interaction.crypto.GetPriceQuoteAndCommissionsUseCase
+import com.multimoney.domain.model.crypto.BuyCryptoRequest
 import com.multimoney.domain.model.crypto.PricesQuoteAndCommissions
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -19,13 +21,17 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
 import com.multimoney.multimoney.presentation.util.calculateAmountPlusFee
 import com.multimoney.multimoney.presentation.util.calculateQuote
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.format
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
+import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.CryptoTimerHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -35,6 +41,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
     private val getExchangeRate: QuerySmartExchangeRateUseCase,
     private val getPriceQuoteAndCommissionsUseCase: GetPriceQuoteAndCommissionsUseCase,
     private val buyCryptoCurrencyUseCase: BuyCryptoCurrencyUseCase,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(false) {
 
     var uiState by mutableStateOf(UIState())
@@ -54,6 +61,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
     var idCurrencyAccount = CurrencyType.Colon.id
     var smartAccountAvailableBalance = 0.0
     var ibanAccountNumber = ""
+    var openMaintenanceAction = {}
 
     private fun onSetUserData(
         pkUser: Int,
@@ -68,8 +76,10 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         assetImageUrl: String?,
         smartAccountAvailableBalance: Double,
         idCurrencyAccount: Int,
-        ibanAccountNumber: String
+        ibanAccountNumber: String,
+        openMaintenanceAction: () -> Unit
     ) {
+        this.openMaintenanceAction = openMaintenanceAction
         this.pkUser = pkUser
         this.idCurrencyAccount = idCurrencyAccount
         this.asset = asset ?: ""
@@ -159,6 +169,10 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             result.onFailure {
                 timer.stopTimer()
                 confirmationTimer.stopTimer()
+                if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    openMaintenanceAction()
+                    return@onFailure
+                }
                 onFailure()
             }
         }
@@ -189,6 +203,10 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                     timer.stopTimer()
                     confirmationTimer.stopTimer()
                     this.smartAccountAvailableBalance = 0.0
+                    if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                        openMaintenanceAction()
+                        return@onFailure
+                    }
                     onFailure()
                 }
             }
@@ -213,6 +231,10 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             result.onFailure {
                 timer.stopTimer()
                 confirmationTimer.stopTimer()
+                if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    openMaintenanceAction()
+                    return@onFailure
+                }
                 onFailure()
             }
         }
@@ -267,6 +289,65 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         )
     }
 
+    private fun setBuyCryptoRequest() {
+        uiState = uiState.copy(
+            buyCryptoRequest = BuyCryptoRequest(
+                pkUser = pkUser,
+                idBrand = idBrand,
+                user = user,
+                identification = identification,
+                market = market,
+                accountToken = accountToken,
+                commissionAmount = uiState.pricesQuoteAndCommissions?.internal_fee ?: 0.0,
+                taxAmount = uiState.pricesQuoteAndCommissions?.taxAmount ?: 0.0,
+                exchangeRate = if (idCurrencyAccount == CurrencyType.Dollar.id) 1.0 else uiState.exchangeRate,
+                quoteId = uiState.pricesQuoteAndCommissions?.quote_id ?: "",
+                quoteAmount = calculateQuote(
+                    quoteAmount = uiState.quoteAmount.value,
+                    baseAmount = uiState.baseAmount.value,
+                    price = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER,
+                ),
+                fee = uiState.pricesQuoteAndCommissions?.fee?.toDouble() ?: 0.0,
+                internalFee = uiState.pricesQuoteAndCommissions?.internal_fee ?: 0.0,
+                totalFee = uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
+            )
+        )
+    }
+
+    private fun registerAdjustPurchaseCrypto() = viewModelScope.launch {
+        if (dataStorePreferences.isAdjustCryptoSuccessPurchaseFirstTime().firstOrNull() == false) {
+            dataStorePreferences.setAdjustCryptoSuccessPurchaseFirstTime(true)
+            setBuyCryptoRequest()
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.PURCHASE_CRYPTO_FIRST_TIME_SUCCESS_PURCHASE,
+                listParameters = listOf(
+                    Pair("market", market),
+                    Pair("user", user),
+                    Pair("accountToken", accountToken.toString()),
+                    Pair("commissionAmount",
+                        uiState.pricesQuoteAndCommissions?.internal_fee.toString()
+                    ),
+                    Pair("taxAmount",
+                        uiState.pricesQuoteAndCommissions?.taxAmount.toString()
+                    ),
+                    Pair("exchangeRate", if (idCurrencyAccount == CurrencyType.Dollar.id)
+                        1.0.toString() else uiState.exchangeRate.toString()
+                    ),
+                    Pair("quoteId", uiState.pricesQuoteAndCommissions?.quote_id ?: ""),
+                    Pair("quoteAmount", calculateQuote(
+                        quoteAmount = uiState.quoteAmount.value,
+                        baseAmount = uiState.baseAmount.value,
+                        price = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER,
+                    ).toString()),
+                    Pair("fee", uiState.pricesQuoteAndCommissions?.fee ?: "0.0"),
+                    Pair("internalFee", uiState.pricesQuoteAndCommissions?.internal_fee.toString()),
+                    Pair("totalFee", uiState.pricesQuoteAndCommissions?.totalFee.toString())
+                ),
+                data = uiState.buyCryptoRequest?.toJson() ?: ""
+            )
+        }
+    }
+
     private fun purchaseCryptoCurrency() {
         executeUseCase {
             buyCryptoCurrencyUseCase.invoke(
@@ -298,43 +379,29 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 result.onSuccess {
                     when (it.buyHQR.status) {
                         CryptoProcessErrorCodes.WeeklyLimitExceeded.status -> {
-                            confirmationTimer.stopTimer()
-                            timer.stopTimer()
-                            isError(
-                                errorMessage = R.string.crypto_purchase_flow_error_weekly_amount_exceeded,
-                                isError = true
-                            )
                             uiState = uiState.copy(
+                                error = R.string.crypto_purchase_flow_error_weekly_amount_exceeded,
+                                focusError = true,
                                 isLoading = false,
                                 purchaseStatus = PurchaseStatus.IDLE
-
                             )
                             return@onSuccess
                         }
                         CryptoProcessErrorCodes.InsufficientFundsBuy.status -> {
-                            confirmationTimer.stopTimer()
-                            timer.stopTimer()
-                            isError(
-                                errorMessage = R.string.crypto_purchase_flow_error_no_funds,
-                                isError = true
-                            )
                             uiState = uiState.copy(
+                                error = R.string.crypto_purchase_flow_error_no_funds,
+                                focusError = true,
                                 isLoading = false,
                                 purchaseStatus = PurchaseStatus.IDLE
                             )
                             return@onSuccess
                         }
                         CryptoProcessErrorCodes.ExpiredPriceBuy.status -> {
-                            confirmationTimer.stopTimer()
-                            timer.stopTimer()
-                            isError(
-                                errorMessage = R.string.crypto_purchase_flow_error_price_expired,
-                                isError = true
-                            )
                             uiState = uiState.copy(
+                                error = R.string.crypto_purchase_flow_error_price_expired,
+                                focusError = true,
                                 isLoading = false,
                                 purchaseStatus = PurchaseStatus.IDLE
-
                             )
                             return@onSuccess
                         }
@@ -343,10 +410,13 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                         isLoading = false,
                         referenceNumber = it.buyHQR.result?.sysdeTransactionNumber,
                         purchaseStatus = PurchaseStatus.SUCCESS
-
                     )
                 }
                 result.onFailure {
+                    if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                        openMaintenanceAction()
+                        return@onFailure
+                    }
                     uiState = uiState.copy(
                         isLoading = false,
                         purchaseStatus = PurchaseStatus.FAILED
@@ -394,6 +464,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         val quoteAmount: MutableState<String> = mutableStateOf(""),
         val baseAmount: MutableState<String> = mutableStateOf(""),
         val pricesQuoteAndCommissions: PricesQuoteAndCommissions? = null,
+        val buyCryptoRequest: BuyCryptoRequest? = null,
         // ** interactions
         val isConfirmationBottomSheetOpen: Boolean = false,
         val isLoading: Boolean = false,
@@ -433,7 +504,8 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 assetImageUrl = event.assetImageUrl,
                 smartAccountAvailableBalance = event.smartAccountAvailableBalance,
                 idCurrencyAccount = event.idCurrencyAccount,
-                ibanAccountNumber = event.ibanAccountNumber
+                ibanAccountNumber = event.ibanAccountNumber,
+                openMaintenanceAction = event.openMaintenanceAction
             )
             UIEvent.OnGetExchangeRate -> if (uiState.exchangeRate == 1.0) {
                 getExchangeRate()
@@ -457,6 +529,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 timer.startTimer()
             }
             UIEvent.OnClearInputData -> clearInputData()
+            UIEvent.OnRegisterAdjustPurchase -> registerAdjustPurchaseCrypto()
         }
     }
 
@@ -474,7 +547,8 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             val assetImageUrl: String?,
             val smartAccountAvailableBalance: Double,
             val idCurrencyAccount: Int,
-            val ibanAccountNumber: String
+            val ibanAccountNumber: String,
+            val openMaintenanceAction: () -> Unit
         ) : UIEvent()
 
         data class ValidateAmountInput(val amount: String) : UIEvent()
@@ -485,6 +559,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         object OnOpenPurchaseConfirmationBottomSheet : UIEvent()
         object OnClosePurchaseConfirmationBottomSheet : UIEvent()
         object OnClearInputData : UIEvent()
+        object OnRegisterAdjustPurchase : UIEvent()
     }
 
     companion object {

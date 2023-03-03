@@ -3,6 +3,8 @@ package com.multimoney.multimoney.di
 import android.content.Context
 import com.multimoney.data.util.connectivity.Connectivity
 import com.multimoney.data.util.connectivity.ConnectivityImpl
+import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventUseCase
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.CreditSubscriptionManager
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.util.firebase.FireBaseEventHelper
 import dagger.Module
@@ -10,8 +12,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Singleton
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -30,5 +32,10 @@ class AppModule {
     @Singleton
     @Provides
     fun provideCountDownTimer() = MMCountDownTimer()
+
+    @Singleton
+    @Provides
+    fun provideCreditSubscriptionManager(subscriptionCreditContractEventUseCase: SubscriptionCreditContractEventUseCase) =
+        CreditSubscriptionManager(subscriptionCreditContractEventUseCase)
 
 }

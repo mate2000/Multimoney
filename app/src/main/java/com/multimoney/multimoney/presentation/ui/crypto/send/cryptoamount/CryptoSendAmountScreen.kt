@@ -78,9 +78,20 @@ fun CryptoSendAmountScreen(
                     sharedViewModel.uiState.currencyDollarBalance.toString(),
                     sharedViewModel.uiState.cryptoCurrencyPrice
                 ).toDouble(),
-                currencyPrice = sharedViewModel.uiState.cryptoCurrencyPrice
+                currencyPrice = sharedViewModel.uiState.cryptoCurrencyPrice,
+                openMaintenanceAction = {
+                    sharedViewModel.onUIEvent(
+                        CryptoSendSharedViewModel.BaseEvent.OnShowMaintenance
+                    )
+                }
             )
         )
+        sharedViewModel.uiState.previousAction = {
+            viewModel.onUIEvent(CryptoSendAmountViewModel.UIEvent.OnClearInputData)
+        }
+    }
+    LaunchedEffect(key1 = viewModel.uiState.isTransformationCurrency.value) {
+        viewModel.onUIEvent(CryptoSendAmountViewModel.UIEvent.OnAmountChanged(""))
     }
 
     when(viewModel.uiState.transferStatus) {
@@ -100,21 +111,39 @@ fun CryptoSendAmountScreen(
                     sendCryptoAmount = "${viewModel.uiState.sendCryptoAmount.roundToEightDecimalPlaces()} ${viewModel.asset}",
                     sendDollarAmount = viewModel.uiState.sendDollarAmount,
                     transferFee = "${viewModel.uiState.transferCommission?.transferFee?.totalFee?.roundToEightDecimalPlaces()} ${viewModel.asset}",
-                    referenceNumber = viewModel.uiState.referenceNumber ?: ""
+                    referenceNumber = viewModel.uiState.referenceNumber
                 )
             )
+            viewModel.onUIEvent(CryptoSendAmountViewModel.UIEvent.OnRegisterAdjustSendCrypto)
             sharedViewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnNextStep)
         }
-        TransferStatus.FAILED -> {
-            sharedViewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnSetFlowStep(SendCryptoStep.SEND_FAILED))
+        TransferStatus.ERROR -> {
+            sharedViewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnSetFlowStep(SendCryptoStep.SEND_ERROR))
             AlertResult(
                 titleString = stringResource(id = R.string.crypto_send_flow_error_sending_crypto),
                 descriptionString = stringResource(R.string.crypto_send_flow_error_sending_crypto_try_again),
-                buttonTextResource = R.string.profile_error_changing_phone_button,
+                buttonTextResource = R.string.understood,
                 isRightButtonVisible = true,
                 isLeftButtonVisible = false,
                 onButtonClick = {
                     sharedViewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnNavigateHome)
+                },
+                onRightButtonClick = {
+                    sharedViewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnNavigateHome)
+                }
+            )
+        }
+        TransferStatus.FAILED -> {
+            sharedViewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnSetFlowStep(SendCryptoStep.SEND_FAILED))
+            AlertResult(
+                titleString = stringResource(id = R.string.crypto_send_flow_error_oh_no),
+                descriptionString = stringResource(R.string.crypto_send_flow_error_not_sent),
+                buttonTextResource = R.string.error_button_try_again,
+                isRightButtonVisible = true,
+                isLeftButtonVisible = false,
+                onButtonClick = {
+                    sharedViewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnSetFlowStep(SendCryptoStep.LOADING))
+                    viewModel.onUIEvent(CryptoSendAmountViewModel.UIEvent.OnSendCryptoCurrency)
                 },
                 onRightButtonClick = {
                     sharedViewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnNavigateHome)

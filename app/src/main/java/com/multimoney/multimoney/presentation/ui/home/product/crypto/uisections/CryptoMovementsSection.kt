@@ -25,7 +25,8 @@ import com.multimoney.multimoney.presentation.util.MAX_CRYPTO_ITEMS
 @Composable
 fun CryptoMovementsSection(
     onShowAllClick: () -> Unit,
-    cryptoMovements:  LazyPagingItems<CryptoCurrencyMovement>
+    onNavigateToReleaseTransaction: (CryptoCurrencyMovement?) -> Unit,
+    cryptoMovements: LazyPagingItems<CryptoCurrencyMovement>
 ) {
 
     if (cryptoMovements.itemCount != EMPTY_PAGING_DATA) {
@@ -54,10 +55,12 @@ fun CryptoMovementsSection(
                     )
                 }
             }
-
             cryptoMovements.itemSnapshotList.items.forEachIndexed { index, cryptoCurrencyMovement ->
                 if (index >= MAX_CRYPTO_ITEMS) return@forEachIndexed
-                CryptoCurrencyMovementItem(cryptoCurrencyMovement = cryptoCurrencyMovement)
+                CryptoCurrencyMovementItem(
+                    cryptoCurrencyMovement = cryptoCurrencyMovement,
+                    onReleaseTransactionClick = onNavigateToReleaseTransaction,
+                )
             }
         }
     }

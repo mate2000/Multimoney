@@ -4,7 +4,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.crypto.ValidateDepositAddressUseCase
@@ -14,6 +13,7 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
 import com.multimoney.multimoney.presentation.util.CryptoConstants.BTC
 import com.multimoney.multimoney.presentation.util.catalog.CheckboxDialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -25,7 +25,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CryptoSendAddressViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
     private val dataStorePreferences: DataStorePreferences,
     private val validateDepositAddressUseCase: ValidateDepositAddressUseCase,
 ) : BaseViewModel(shouldObserveToken = true) {
@@ -36,6 +35,7 @@ class CryptoSendAddressViewModel @Inject constructor(
 
     // stateless
     private var notShowAgainVerifyCryptoAddress: Boolean = false
+    var openMaintenanceAction = {}
 
     private fun onGetUserInfo(
         user: String?,
@@ -95,6 +95,10 @@ class CryptoSendAddressViewModel @Inject constructor(
                     uiState = uiState.copy(isLoading = false)
                 }
                 result.onFailure {
+                    if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                        openMaintenanceAction()
+                        return@onFailure
+                    }
                     onFailure(it)
                 }
                 result.onLoading {
@@ -149,6 +153,7 @@ class CryptoSendAddressViewModel @Inject constructor(
             )
             is UIEvent.OnCryptoAddressChanged -> onCryptoAddressChanged(event.cryptoAddress)
             is UIEvent.OnValidateCryptoAddress -> validateCryptoAddress() {}
+            is UIEvent.OnSetOpenMaintenanceAction -> openMaintenanceAction = event.action
         }
     }
 
@@ -163,7 +168,7 @@ class CryptoSendAddressViewModel @Inject constructor(
         val user: String? = null,
         val idBrand: Int? = null,
         val identification: String? = null,
-        val asset: String? = null,
+        val asset: String = "",
         val cryptoAddress: MutableState<String> = mutableStateOf(""),
         val continueDialog: CheckboxDialogParameters = CheckboxDialogParameters(),
         val notShowAgainVerifyCryptoAddress: Boolean = false,
@@ -186,6 +191,7 @@ class CryptoSendAddressViewModel @Inject constructor(
         data class OnCryptoAddressChanged(val cryptoAddress: String) : UIEvent
         data class OnValidateCryptoAddress(val cryptoAddress: String) : UIEvent
         object GetNotShowAgainCryptoAddressFromSharedPref : UIEvent
+        data class OnSetOpenMaintenanceAction(val action: () -> Unit) : UIEvent
     }
 
     companion object {

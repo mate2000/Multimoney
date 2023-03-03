@@ -192,8 +192,10 @@ fun SellCryptoVoucherContent(
                             modifier = Modifier.fillMaxWidth(),
                             text = stringResource(
                                 id = R.string.buy_crypto_voucher_value_in_currency_template,
-                                if(idCurrency == CurrencyType.Dollar.id) CurrencyType.Dollar.stringName else CurrencyType.Colon.stringName
-                            ).lowercase(),
+                                (if (idCurrency == CurrencyType.Dollar.id)
+                                    CurrencyType.Dollar.stringName
+                                else CurrencyType.Colon.stringName).lowercase()
+                            ),
                             style = Typography.body2.copy(fontWeight = FontWeight.W600),
                             color = MultimoneyTheme.colors.text,
                             textAlign = TextAlign.Center

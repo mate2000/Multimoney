@@ -13,6 +13,7 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
 import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,6 +32,9 @@ class ListCryptoPurchaseViewModel @Inject constructor(
     var uiState by mutableStateOf(UiState())
         private set
 
+    //maintenance event
+    var openMaintenanceAction = {}
+
     private fun onGetUserInfo(
         user: String?,
         idBrand: Int?
@@ -40,7 +44,9 @@ class ListCryptoPurchaseViewModel @Inject constructor(
             idBrand = idBrand ?: 0,
         )
         viewModelScope.launch {
-            uiState = uiState.copy(shouldDisplayDisclaimer = dataStorePreferences.isVolatileDialogVisible().first())
+            uiState = uiState.copy(
+                shouldDisplayDisclaimer = dataStorePreferences.isVolatileDialogVisible().first()
+            )
         }
     }
 
@@ -51,23 +57,26 @@ class ListCryptoPurchaseViewModel @Inject constructor(
                 uiState.user ?: "",
                 uiState.idBrand ?: 0,
                 cryptoOrigin
-            )
-                .collectLatest { result ->
-                    result.onSuccess { availableCryptoCoins ->
-                        availableCryptoCoins.let {
-                            uiState = uiState.copy(
-                                isLoading = false,
-                                availableCryptoCoins = it
-                            )
-                        }
-                    }
-                    result.onFailure {
-                        onFailure(it)
-                    }
-                    result.onLoading {
-                        uiState = uiState.copy(isLoading = true)
+            ).collectLatest { result ->
+                result.onSuccess { availableCryptoCoins ->
+                    availableCryptoCoins.let {
+                        uiState = uiState.copy(
+                            isLoading = false,
+                            availableCryptoCoins = it
+                        )
                     }
                 }
+                result.onFailure {
+                    if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                        openMaintenanceAction()
+                        return@onFailure
+                    }
+                    onFailure(it)
+                }
+                result.onLoading {
+                    uiState = uiState.copy(isLoading = true)
+                }
+            }
         }
     }
 
@@ -84,10 +93,13 @@ class ListCryptoPurchaseViewModel @Inject constructor(
     private fun onDisclaimerChecked(checked: Boolean) {
         uiState = uiState.copy(dontShowAgainChecked = checked)
     }
+
     private fun updateShouldShowDisclaimer(value: Boolean) {
         viewModelScope.launch {
             dataStorePreferences.setVolatileDialogVisible(!value)
-            uiState = uiState.copy(shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first())
+            uiState = uiState.copy(
+                shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first()
+            )
         }
     }
 
@@ -108,6 +120,7 @@ class ListCryptoPurchaseViewModel @Inject constructor(
             is UIEvent.OnGetAvailableListOfCryptoCoins -> getAvailableListOfCryptoCoins()
             is UIEvent.OnDisclaimerChecked -> onDisclaimerChecked(event.checked)
             is UIEvent.OnUpdateShouldShowDisclaimer -> updateShouldShowDisclaimer(event.checked)
+            is UIEvent.OnSetOpenMaintenanceAction -> openMaintenanceAction = event.action
         }
     }
 
@@ -117,6 +130,6 @@ class ListCryptoPurchaseViewModel @Inject constructor(
         object OnGetAvailableListOfCryptoCoins : UIEvent()
         data class OnDisclaimerChecked(val checked: Boolean) : UIEvent()
         data class OnUpdateShouldShowDisclaimer(val checked: Boolean) : UIEvent()
+        data class OnSetOpenMaintenanceAction(val action: () -> Unit) : UIEvent()
     }
-
 }

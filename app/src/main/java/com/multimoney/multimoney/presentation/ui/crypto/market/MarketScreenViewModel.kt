@@ -1,15 +1,10 @@
-@file:OptIn(ExperimentalMaterialApi::class)
-
 package com.multimoney.multimoney.presentation.ui.crypto.market
 
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.domain.interaction.crypto.GetAvailableListOfCryptoCoinsUseCase
-import com.multimoney.domain.model.accountsmart.SmartAccountSmall
-import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.crypto.GetListOfAvailableCryptoCoins
 import com.multimoney.domain.model.crypto.MarketCryptoCoin
 import com.multimoney.domain.model.util.error.HttpError
@@ -18,11 +13,10 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNTS_LIST
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.USER_CRYPTO_BALANCES
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
 import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -62,12 +56,20 @@ class MarketScreenViewModel @Inject constructor(
                     }
                 }
                 result.onFailure {
+                    if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                        navigateToMaintenance()
+                        return@onFailure
+                    }
                     onFailure(it)
                 }
                 result.onLoading {
                     uiState = uiState.copy(isLoading = true)
                 }
             }
+    }
+
+    private fun navigateToMaintenance() {
+        navigateTo(Screen.MaintenanceAlertScreen.route)
     }
 
     private fun onGetAvailableListOfCryptoCoins() {

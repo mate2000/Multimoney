@@ -43,32 +43,6 @@ import com.multimoney.multimoney.BuildConfig
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.Screen.HomeBNScreen
-import com.multimoney.multimoney.presentation.navigation.Screen.ProductsBNScreen
-import com.multimoney.multimoney.presentation.navigation.Screen.QuickActionBNScreen
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnDeleteAutomaticPaymentEvent
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnDeleteAutomaticPaymentToastEvent
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnEditAutomaticPaymentEvent
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnHideAutomaticPaymentEditBottomSheet
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnShowAutomaticPaymentEditBottomSheet
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnBottomNavigationItemClick
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCallMutationDeactivateClientAutomaticDebit
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCloseCardIssuanceError
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnDeleteAutomaticPayment
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnEditAutomaticPayment
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnGetCreditMovements
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnGetSmartMovements
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnHideAutomaticPaymentEdit
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnHideUnlinkToast
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnInitializeBiometricPrompt
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetUserData
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowAutomaticPaymentEdit
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowCardIssuanceError
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowTimerDialog
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowUnlinkToast
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSignOut
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnStartBiometrics
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnUpdateIsExpandedByClick
 import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.INDEX_ONE
@@ -77,6 +51,7 @@ import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.OPTION_BTN_6
 import com.multimoney.multimoney.presentation.util.SignOutCommunicator
 import com.multimoney.multimoney.presentation.util.boolean
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
@@ -86,9 +61,11 @@ import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.util.BiometricHelper
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -128,7 +105,9 @@ class HomeViewModel @Inject constructor(
         private set
 
     private fun onsetUserData() {
+        apiCallCount = 0
         viewModelScope.launch {
+            apiCallCount = 0
             uiState = uiState.copy(
                 idBrand = dataStorePreferences.getIdBrand().firstOrNull() ?: "",
                 pkUser = dataStorePreferences.getPkUser().firstOrNull() ?: "",
@@ -411,7 +390,7 @@ class HomeViewModel @Inject constructor(
                     )
 
                     onUIEvent(
-                        OnGetSmartMovements(
+                        UIEvent.OnGetSmartMovements(
                             uiState.userName,
                             uiState.idBrand.toIntOrNull() ?: 0,
                             uiState.identification,
@@ -454,7 +433,7 @@ class HomeViewModel @Inject constructor(
 
         if (uiState.validateUserStatus?.infoCredit?.status == CreditStatus.EXIST_IN_CORE.status) {
             onUIEvent(
-                OnGetCreditMovements(
+                UIEvent.OnGetCreditMovements(
                     uiState.idBrand.toIntOrNull() ?: 0,
                     uiState.validateUserStatus?.infoCredit?.idLoanClient ?: 0
                 )
@@ -571,7 +550,8 @@ class HomeViewModel @Inject constructor(
                         user = email,
                         identification = identification,
                         idBrand = idBrand,
-                        baseAsset = uiState.balance?.balanceCryptoAccount?.items?.firstOrNull()?.asset ?: ""
+                        baseAsset = uiState.balance?.balanceCryptoAccount?.items?.firstOrNull()?.asset
+                            ?: ""
                     )
                 } else {
                     apiCallCount++
@@ -652,7 +632,7 @@ class HomeViewModel @Inject constructor(
                         cryptoStatus = uiState.validateUserStatus?.infoCrypto?.status ?: 0,
                         cardStatus = uiState.validateUserStatus?.infoVirtualCard?.status ?: 0
                     )
-                    emitBaseEvent(OnDeleteAutomaticPaymentToastEvent)
+                    emitBaseEvent(BaseEvent.OnDeleteAutomaticPaymentToastEvent)
                 }
                 result.onFailure {
                     onFailure(it)
@@ -685,7 +665,7 @@ class HomeViewModel @Inject constructor(
                         cryptoStatus = uiState.validateUserStatus?.infoCrypto?.status ?: 0,
                         cardStatus = uiState.validateUserStatus?.infoVirtualCard?.status ?: 0
                     )
-                    emitBaseEvent(OnDeleteAutomaticPaymentToastEvent)
+                    emitBaseEvent(BaseEvent.OnDeleteAutomaticPaymentToastEvent)
                 }
                 result.onFailure {
                     onFailure(it)
@@ -712,13 +692,13 @@ class HomeViewModel @Inject constructor(
 
     fun navigation(innerNavHostController: NavHostController, route: String) {
         when (route) {
-            HomeBNScreen.route -> {
+            Screen.HomeBNScreen.route -> {
                 innerNavigateTo(innerNavHostController, route)
             }
-            QuickActionBNScreen.route -> {
+            Screen.QuickActionBNScreen.route -> {
                 emitBaseEvent(BaseEvent.OnOpenQuickActionsBottomSheet)
             }
-            ProductsBNScreen.route -> {
+            Screen.ProductsBNScreen.route -> {
                 emitBaseEvent(BaseEvent.OnOpenMyProductsBottomSheet)
             }
         }
@@ -743,7 +723,15 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun onSessionDuplicated() {
+        hideTimerDialog()
+        executeLogOut()
+    }
+
     private fun executeLogOut() {
+        viewModelScope.launch {
+            dataStorePreferences.isSessionDuplicated(false)
+        }
         cognitoHelper.signOut { Timber.d("SignOut Error") }
         viewModelScope.launch { dataStorePreferences.setAuthToken("") }
         popAndNavigateTo(Screen.SignInScreen.route, Screen.HomeScreen.route)
@@ -825,10 +813,58 @@ class HomeViewModel @Inject constructor(
         uiState = uiState.copy(isExpandedByClick = expand)
     }
 
+    private fun onSetupSessionListener(activity: Activity?) {
+        activity?.let { safeActivity ->
+            communicator = safeActivity as SignOutCommunicator
+            viewModelScope.launch {
+                communicator?.isSessionDuplicated()?.let {
+                    uiState = uiState.copy(isSessionDuplicated = it)
+                }
+            }
+        }
+    }
+
+    private fun registerAdjustFirstPressPurchaseEvent() = viewModelScope.launch {
+        if (dataStorePreferences.isAdjustCryptoPressPurchaseFirstTime().firstOrNull() == false) {
+            dataStorePreferences.setAdjustCryptoPressPurchaseFirstTime(true)
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.PURCHASE_CRYPTO_FIRST_TIME_PRESS_BUY_BUTTON
+            )
+        }
+    }
+
+    private fun registerAdjustFirstPressSellEvent() = viewModelScope.launch {
+        if (dataStorePreferences.isAdjustCryptoPressSellFirstTime().firstOrNull() == false) {
+            dataStorePreferences.setAdjustCryptoPressSellFirstTime(true)
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.SELL_CRYPTO_FIRST_TIME_PRESS_SELL_BUTTON
+            )
+        }
+    }
+
+    private fun registerAdjustFirstPressSendEvent() = viewModelScope.launch {
+        if (dataStorePreferences.isAdjustCryptoPressSendFirstTime().firstOrNull() == false) {
+            dataStorePreferences.setAdjustCryptoPressSendFirstTime(true)
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.SEND_CRYPTO_FIRST_TIME_PRESS_SEND_BUTTON
+            )
+        }
+    }
+
+    private fun registerAdjustFirstPressReceiveEvent() = viewModelScope.launch {
+        if (dataStorePreferences.isAdjustCryptoPressReceiveFirstTime().firstOrNull() == false) {
+            dataStorePreferences.setAdjustCryptoPressReceiveFirstTime(true)
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.RECEIVE_CRYPTO_FIRST_TIME_PRESS_RECEIVE_BUTTON
+            )
+        }
+    }
+
     data class UIState(
         // Fields
         var isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
+        val isSessionDuplicated: Flow<Boolean> = flowOf(false),
         var quickActions: List<QuickAction>? = null,
         var miniCardList: List<MiniCardsItem>? = null,
         var configurationVersion: ConfigurationVersion? = null,
@@ -852,51 +888,57 @@ class HomeViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnBottomNavigationItemClick -> navigation(
+            is UIEvent.OnBottomNavigationItemClick -> navigation(
                 uiEvent.innerNavHostController,
                 uiEvent.route
             )
-            is OnSignOut -> signOut(uiEvent.activity)
-            is OnShowTimerDialog -> showTimerDialog(uiEvent.time, uiEvent.activity)
-            is OnSetUserData -> onsetUserData()
+            is UIEvent.OnSignOut -> signOut(uiEvent.activity)
+            is UIEvent.OnShowTimerDialog -> showTimerDialog(uiEvent.time, uiEvent.activity)
+            is UIEvent.OnSetUserData -> onsetUserData()
             is UIEvent.OnSetHomeState -> onSetHomeState(uiEvent.homeState)
             is UIEvent.OnOpenQuickActionFlow -> openQuickActionFlow(flow = uiEvent.flow)
-            is OnGetSmartMovements -> onGetSmartMovements(
+            is UIEvent.OnGetSmartMovements -> onGetSmartMovements(
                 uiEvent.user,
                 uiEvent.idBrand,
                 uiEvent.identificationNumber,
                 uiEvent.tokenNumber
             )
-            is OnGetCreditMovements -> onGetCreditMovements(
+            is UIEvent.OnGetCreditMovements -> onGetCreditMovements(
                 uiEvent.idBrand,
                 uiEvent.idLoanClient
             )
-            is OnShowUnlinkToast -> {
+            is UIEvent.OnShowUnlinkToast -> {
                 uiState = uiState.copy(toastIsVisible = true)
             }
-            is OnHideUnlinkToast -> {
+            is UIEvent.OnHideUnlinkToast -> {
                 uiState = uiState.copy(toastIsVisible = false)
             }
-            is OnShowAutomaticPaymentEdit -> emitBaseEvent(OnShowAutomaticPaymentEditBottomSheet)
-            is OnHideAutomaticPaymentEdit -> emitBaseEvent(OnHideAutomaticPaymentEditBottomSheet)
-            is OnEditAutomaticPayment -> emitBaseEvent(OnEditAutomaticPaymentEvent)
-            is OnDeleteAutomaticPayment -> emitBaseEvent(OnDeleteAutomaticPaymentEvent)
-            is OnCallMutationDeactivateClientAutomaticDebit -> onCallGetClientAutomaticDebitUseCase()
+            is UIEvent.OnShowAutomaticPaymentEdit -> emitBaseEvent(BaseEvent.OnShowAutomaticPaymentEditBottomSheet)
+            is UIEvent.OnHideAutomaticPaymentEdit -> emitBaseEvent(BaseEvent.OnHideAutomaticPaymentEditBottomSheet)
+            is UIEvent.OnEditAutomaticPayment -> emitBaseEvent(BaseEvent.OnEditAutomaticPaymentEvent)
+            is UIEvent.OnDeleteAutomaticPayment -> emitBaseEvent(BaseEvent.OnDeleteAutomaticPaymentEvent)
+            is UIEvent.OnCallMutationDeactivateClientAutomaticDebit -> onCallGetClientAutomaticDebitUseCase()
             is UIEvent.OnMyProductClick -> onMyProductClick(uiEvent.expand)
             is UIEvent.OnMyProductPageChange ->
                 uiState = uiState.copy(productScreenPagerState = uiEvent.page)
             is UIEvent.OnLoadingValueChanged ->
                 uiState = uiState.copy(isLoading = uiEvent.isLoading)
-            is OnShowCardIssuanceError -> uiState = uiState.copy(showCardIssuanceError = true)
-            is OnCloseCardIssuanceError -> uiState = uiState.copy(showCardIssuanceError = false)
-            is OnStartBiometrics -> onStartBiometrics()
-            is OnInitializeBiometricPrompt -> initializeBiometricPrompt(
+            is UIEvent.OnShowCardIssuanceError -> uiState = uiState.copy(showCardIssuanceError = true)
+            is UIEvent.OnCloseCardIssuanceError -> uiState = uiState.copy(showCardIssuanceError = false)
+            is UIEvent.OnStartBiometrics -> onStartBiometrics()
+            is UIEvent.OnInitializeBiometricPrompt -> initializeBiometricPrompt(
                 uiEvent.biometricPromptTitle,
                 uiEvent.biometricPromptDescription,
                 uiEvent.biometricPromptNegative
             )
-            is OnUpdateIsExpandedByClick ->
+            is UIEvent.OnUpdateIsExpandedByClick ->
                 uiState = uiState.copy(isExpandedByClick = uiEvent.isExpandedByClick)
+            is UIEvent.OnSetupSessionListener -> onSetupSessionListener(uiEvent.activity)
+            is UIEvent.OnSessionDuplicated -> onSessionDuplicated()
+            UIEvent.OnRegisterAdjustPressPurchaseFirstTime -> registerAdjustFirstPressPurchaseEvent()
+            UIEvent.OnRegisterAdjustPressReceiveFirstTime -> registerAdjustFirstPressReceiveEvent()
+            UIEvent.OnRegisterAdjustPressSellFirstTime -> registerAdjustFirstPressSellEvent()
+            UIEvent.OnRegisterAdjustPressSendFirstTime -> registerAdjustFirstPressSendEvent()
         }
     }
 
@@ -925,7 +967,9 @@ class HomeViewModel @Inject constructor(
         data class OnMyProductPageChange(val page: PagerState) : UIEvent()
         object OnSetUserData : UIEvent()
         data class OnSetHomeState(val homeState: HomeState) : UIEvent()
+        data class OnSetupSessionListener(val activity: Activity?) : UIEvent()
         data class OnSignOut(val activity: Activity?) : UIEvent()
+        object OnSessionDuplicated : UIEvent()
         data class OnShowTimerDialog(val time: Long, val activity: Activity?) : UIEvent()
         object OnShowUnlinkToast : UIEvent()
         object OnHideUnlinkToast : UIEvent()
@@ -943,6 +987,10 @@ class HomeViewModel @Inject constructor(
             val biometricPromptDescription: String,
             val biometricPromptNegative: String
         ) : UIEvent()
+        object OnRegisterAdjustPressPurchaseFirstTime : UIEvent()
+        object OnRegisterAdjustPressSellFirstTime : UIEvent()
+        object OnRegisterAdjustPressSendFirstTime : UIEvent()
+        object OnRegisterAdjustPressReceiveFirstTime : UIEvent()
     }
 
     sealed class BaseEvent {

@@ -3,45 +3,36 @@ package com.multimoney.multimoney.presentation.util
 import android.app.UiModeManager
 import android.content.Context
 import android.content.res.Configuration
-import android.net.wifi.WifiManager
 import android.os.Build
 import android.provider.Settings
 import android.util.DisplayMetrics
+import android.util.Patterns
 import android.view.WindowManager
-import androidx.fragment.app.FragmentActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.multimoney.data.util.catalog.DeviceType
 import com.multimoney.multimoney.BuildConfig
-import java.net.Inet4Address
-import java.net.InetAddress
-import java.net.NetworkInterface
-import java.util.Enumeration
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import java.net.URL
 
-fun getDeviceId(activity: FragmentActivity): String {
+fun getDeviceId(activity: AppCompatActivity): String {
     return Settings.Secure.getString(activity.contentResolver, Settings.Secure.ANDROID_ID)
 }
 
-fun getIpAddress(activity: FragmentActivity): String? {
-    //check for wifi address first
-    val wifiMgr = activity.getSystemService(Context.WIFI_SERVICE) as WifiManager
-    if (wifiMgr.isWifiEnabled) {
-        val wifiInfo = wifiMgr.connectionInfo
-        val ip = wifiInfo.ipAddress
-        return android.text.format.Formatter.formatIpAddress(ip)
+fun getIPAddress(): String? {
+    val client = OkHttpClient();
+    var result: String? = null
+    try {
+        val url = URL(GET_IP_ADDRESS_URL)
+        val request = Request.Builder().url(url).header("Connection", "close").build()
+        val response = client.newCall(request).execute()
+        result = response.body?.string()
+    } catch (err: Error) {
+        print("Error when executing get request: " + err.localizedMessage)
+    } catch (err: Exception) {
+        print("Error when executing get request: " + err.localizedMessage)
     }
-
-    //then checks for mobile data address
-    val en: Enumeration<NetworkInterface> = NetworkInterface.getNetworkInterfaces()
-    while (en.hasMoreElements()) {
-        val networkInterface: NetworkInterface = en.nextElement()
-        val enumIpAddress: Enumeration<InetAddress> = networkInterface.inetAddresses
-        while (enumIpAddress.hasMoreElements()) {
-            val inetAddress: InetAddress = enumIpAddress.nextElement()
-            if (!inetAddress.isLoopbackAddress && inetAddress is Inet4Address) {
-                return inetAddress.getHostAddress()
-            }
-        }
-    }
-    return ""
+    return result
 }
 
 fun getDeviceModel(): String {
@@ -148,3 +139,5 @@ private fun getDeviceTypeFromPhysicalSize(context: Context): DeviceType {
         return DeviceType.UNKNOWN;
     }
 }
+
+const val GET_IP_ADDRESS_URL = "https://api.ipify.org"

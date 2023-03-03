@@ -14,7 +14,6 @@ import androidx.paging.PagingData
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCase
 import com.multimoney.domain.interaction.crypto.GetCurrencyHistoricalPricesUseCase
-import com.multimoney.domain.model.accountsmart.SmartAccountSmall
 import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
 import com.multimoney.domain.model.crypto.CurrencyHistoricPrice
@@ -26,16 +25,16 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.CRYPTO_ASSET
 import com.multimoney.multimoney.presentation.navigation.DESCRIPTION_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNTS_LIST
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.USER_CRYPTO_BALANCES
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
 import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
 import com.multimoney.multimoney.presentation.util.getPreviousDate
@@ -43,6 +42,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -97,6 +97,10 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
                     )
                 }
                 result.onFailure {
+                    if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                        navigateToMaintenance()
+                        return@onFailure
+                    }
                     onFailure(it)
                 }
             }
@@ -125,6 +129,10 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
         uiState = uiState.copy(startDate = startDate)
         callQueryMovements()
         callQueryAssetHistory()
+    }
+
+    private fun navigateToMaintenance() {
+        navigateTo(Screen.MaintenanceAlertScreen.route)
     }
 
     private fun onFailure(error: HttpError) {
@@ -174,21 +182,62 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
     private fun onNavigateToSellCrypto() {
         navigateTo(
             "${Screen.CryptoSellFlow.baseRoute}/${Screen.CryptoWalletDetailsScreen.baseRoute}?$ITEM_CRYPTO_MARKET=${
-            encodeData(
-                MarketCryptoCoin(
-                    description = uiState.cryptoItem?.descriptionCurrency ?: "",
-                    baseAsset = uiState.cryptoItem?.asset ?: "",
-                    url_image = uiState.cryptoItem?.url_image ?: "",
-                    cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: ""
+                encodeData(
+                    MarketCryptoCoin(
+                        description = uiState.cryptoItem?.descriptionCurrency ?: "",
+                        baseAsset = uiState.cryptoItem?.asset ?: "",
+                        url_image = uiState.cryptoItem?.url_image ?: "",
+                        cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: ""
+                    )
                 )
-            )
             }"
         )
+    }
+
+    private fun registerAdjustFirstPressPurchaseEvent() = viewModelScope.launch {
+        if (dataStorePreferences.isAdjustCryptoPressPurchaseFirstTime().firstOrNull() == false) {
+            dataStorePreferences.setAdjustCryptoPressPurchaseFirstTime(true)
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.PURCHASE_CRYPTO_FIRST_TIME_PRESS_BUY_BUTTON
+            )
+        }
+    }
+
+    private fun registerAdjustFirstPressSellEvent() = viewModelScope.launch {
+        if (dataStorePreferences.isAdjustCryptoPressSellFirstTime().firstOrNull() == false) {
+            dataStorePreferences.setAdjustCryptoPressSellFirstTime(true)
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.SELL_CRYPTO_FIRST_TIME_PRESS_SELL_BUTTON
+            )
+        }
+    }
+
+    private fun registerAdjustFirstPressSendEvent() = viewModelScope.launch {
+        if (dataStorePreferences.isAdjustCryptoPressSendFirstTime().firstOrNull() == false) {
+            dataStorePreferences.setAdjustCryptoPressSendFirstTime(true)
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.SEND_CRYPTO_FIRST_TIME_PRESS_SEND_BUTTON
+            )
+        }
+    }
+
+    private fun registerAdjustFirstPressReceiveEvent() = viewModelScope.launch {
+        if (dataStorePreferences.isAdjustCryptoPressReceiveFirstTime().firstOrNull() == false) {
+            dataStorePreferences.setAdjustCryptoPressReceiveFirstTime(true)
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.RECEIVE_CRYPTO_FIRST_TIME_PRESS_RECEIVE_BUTTON
+            )
+        }
+    }
+
+    private fun onNavigateToReleaseTransaction(cryptoItem: CryptoCurrencyMovement?) {
+        navigateTo("${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}/${Screen.CryptoWalletDetailsScreen.baseRoute}")
     }
 
     private fun onNavigateToSendCrypto() {
         navigateTo("${Screen.CryptoSendFlow.baseRoute}?$CRYPTO_ASSET=${uiState.cryptoItem?.asset}&$DESCRIPTION_CURRENCY=${uiState.cryptoItem?.descriptionCurrency}")
     }
+
     private fun onNavigateToReceiveCrypto() {
         navigateTo("${Screen.CryptoReceiveFlowScreen.baseRoute}/${user}/${uiState.idBrand}?$ITEM_CRYPTO_MARKET=${encodeData(MarketCryptoCoin(
             description = uiState.cryptoItem?.descriptionCurrency ?: "",
@@ -216,6 +265,11 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
             is UIEvent.OnNavigateToSendCrypto -> onNavigateToSendCrypto()
             is UIEvent.OnNavigateToSellCrypto -> onNavigateToSellCrypto()
             is UIEvent.OnNavigateToReceiveCrypto -> onNavigateToReceiveCrypto()
+            is UIEvent.OnNavigateToReleaseTransaction -> onNavigateToReleaseTransaction(event.cryptoItem)
+            UIEvent.OnRegisterAdjustPressPurchaseFirstTime -> registerAdjustFirstPressPurchaseEvent()
+            UIEvent.OnRegisterAdjustPressReceiveFirstTime -> registerAdjustFirstPressReceiveEvent()
+            UIEvent.OnRegisterAdjustPressSellFirstTime -> registerAdjustFirstPressSellEvent()
+            UIEvent.OnRegisterAdjustPressSendFirstTime -> registerAdjustFirstPressSendEvent()
         }
     }
 
@@ -233,7 +287,13 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
         object OnShowDisclaimer : UIEvent()
         object OnHideDisclaimer : UIEvent()
         object OnNavigateToSendCrypto : UIEvent()
+        data class OnNavigateToReleaseTransaction(val cryptoItem: CryptoCurrencyMovement?) :
+            UIEvent()
         object OnNavigateToReceiveCrypto : UIEvent()
+        object OnRegisterAdjustPressPurchaseFirstTime : UIEvent()
+        object OnRegisterAdjustPressSellFirstTime : UIEvent()
+        object OnRegisterAdjustPressSendFirstTime : UIEvent()
+        object OnRegisterAdjustPressReceiveFirstTime : UIEvent()
     }
 
     data class UiState(

@@ -156,6 +156,9 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
             )
         ) {
             SmartPaymentAccountsScreen(
+                isRestart = navController.currentBackStackEntry?.savedStateHandle?.get(
+                    PREVIOUS_IS_RESTART
+                ) ?: true,
                 onNavigate = {
                     navController.navigate(it.route)
                 },

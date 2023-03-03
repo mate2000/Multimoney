@@ -10,8 +10,8 @@ import com.multimoney.domain.model.crypto.GetHistoricalCurrencyPrices
 import com.multimoney.domain.model.crypto.GetListOfAvailableCryptoCoins
 import com.multimoney.domain.model.crypto.GetTransferFeeData
 import com.multimoney.domain.model.crypto.PricesQuoteAndCommissionData
+import com.multimoney.domain.model.crypto.ReleaseTransactionResponse
 import com.multimoney.domain.model.crypto.SendCryptoToAddressData
-import com.multimoney.domain.model.crypto.SendCryptoToAddressResult
 import com.multimoney.domain.model.crypto.SellCryptoCurrencyHQRData
 import com.multimoney.domain.model.crypto.ValidateDepositAddressResponse
 import com.multimoney.domain.model.crypto.GetCryptoReceiveAddressData
@@ -122,6 +122,16 @@ interface CryptoRepository {
         address: String
     ): Flow<MultimoneyResult<ValidateDepositAddressResponse>>
 
+    suspend fun releaseCryptoTransfer(
+        identification: String,
+        user: String,
+        market: String,
+        senderFullName: String,
+        reason: String,
+        platform: String,
+        idTransaction: String
+    ): Flow<MultimoneyResult<ReleaseTransactionResponse>>
+
     suspend fun getTransferCommission(
         user: String,
         idBrand: Int,
@@ -154,4 +164,5 @@ interface CryptoRepository {
         identification: String,
         crypto_network: String
     ): Flow<MultimoneyResult<GetCryptoReceiveAddressData>>
+
 }

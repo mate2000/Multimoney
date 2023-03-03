@@ -45,13 +45,9 @@ fun Transfer365SuccessScreen(viewModel: Transfer365AmountViewModel) {
         ) {
             SmartPaymentInfoItem(
                 verticalAlignment = Alignment.CenterVertically,
-                icon = R.drawable.ic_bank,
+                icon = viewModel.destinyCurrency?.accountIcon,
                 title = viewModel.amountUIState.destinyAccountDisplay?.sheetTitle.orEmpty(),
-                subtitle = viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitle
-                    ?: stringResource(
-                        viewModel.amountUIState.originAccountDisplay?.sheetSubtitleResource
-                            ?: R.string.empty
-                    )
+                subtitle = viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitle2
             )
 
             SmartPaymentInfoItem(

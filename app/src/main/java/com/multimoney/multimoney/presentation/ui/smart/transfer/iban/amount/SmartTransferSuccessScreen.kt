@@ -54,7 +54,7 @@ fun SmartTransferSuccessScreen(
             SmartPaymentInfoItem(
                 verticalAlignment = Alignment.CenterVertically,
                 icon = viewModel.amountUIState.destinyAccountDisplay?.icon,
-                title = stringResource(R.string.smart_payment_destiny_account_label),
+                title = viewModel.amountUIState.destinyAccountDisplay?.sheetTitle ?: "",
                 subtitle = getMaskedAccountIban(
                     viewModel.ibanAccount?.sinpeAccount ?: ""
                 )

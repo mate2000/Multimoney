@@ -10,6 +10,8 @@ query relatedContactsByPhone(
             contacts: $contacts
         }
     ) {
+        status
+        message
         result {
         phones{
         number

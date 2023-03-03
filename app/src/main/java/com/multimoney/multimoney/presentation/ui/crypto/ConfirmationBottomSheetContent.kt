@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -83,6 +84,7 @@ fun ConfirmationBottomSheetContent(
     convertedAmount: String = DEFAULT_AMOUNT,
     @StringRes accountInfoLabel: Int = R.string.crypto_purchase_flow_confirmation_from_account_title,
     isPurchase: Boolean = true,
+    idBrand: Int = Brand.Default.id,
     onConfirm: () -> Unit = {}
 ) {
     Column(
@@ -113,6 +115,7 @@ fun ConfirmationBottomSheetContent(
         AccountInfoSection(
             idCurrency = idCurrency,
             ibanAccountNumber = ibanAccountNumber,
+            idBrand = idBrand,
             labelText = accountInfoLabel
         )
         if (showBottomExchangeInfo) {
@@ -260,6 +263,7 @@ private fun InfoSection(
 private fun AccountInfoSection(
     idCurrency: Int,
     ibanAccountNumber: String,
+    idBrand: Int,
     @StringRes labelText: Int,
 ) {
     Column(
@@ -288,7 +292,7 @@ private fun AccountInfoSection(
                     CurrencyType.Dollar.symbol
                 }
             ),
-            subtitle = ibanAccountNumber,
+            subtitle = if (idBrand == Brand.CostaRica.id) ibanAccountNumber else "",
             enable = false
         )
     }

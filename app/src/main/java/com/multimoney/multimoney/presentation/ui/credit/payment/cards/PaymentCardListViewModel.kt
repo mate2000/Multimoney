@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.domain.interaction.virtualcard.MutationCreateUserVDUseCase
+import com.multimoney.domain.interaction.virtualcard.QueryGetParametersMobileByCategoryUseCase
 import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCase
 import com.multimoney.domain.model.security.InfoUser
 import com.multimoney.domain.model.util.onFailure
@@ -40,6 +41,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCar
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnHandleAddCardResponse
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnStopTimer
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnRestartTimer
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.AddVisaCardErrors
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -54,7 +56,8 @@ class PaymentCardListViewModel @Inject constructor(
     val countDownTimer: MMCountDownTimer,
     savedStateHandle: SavedStateHandle,
     private val queryListCardVDUseCase: QueryListCardVDUseCase,
-    private val mutationCreateUserVDUseCase: MutationCreateUserVDUseCase
+    private val mutationCreateUserVDUseCase: MutationCreateUserVDUseCase,
+    private val queryGetParametersMobileByCategoryUseCase: QueryGetParametersMobileByCategoryUseCase
 ) : BaseViewModel(true) {
 
     // uiState
@@ -73,6 +76,10 @@ class PaymentCardListViewModel @Inject constructor(
     private var maximumPaymentLabel: String = ""
     private var paymentDate: String? = ""
     private var infoUser: InfoUser? = null
+    var reactApplicationName: String = ""
+    var reactUserName: String = ""
+    var reactUserPass: String = ""
+    var reactEndPoint: String = ""
 
     init {
         infoUser = savedStateHandle[INFO_USER]
@@ -126,12 +133,52 @@ class PaymentCardListViewModel @Inject constructor(
             lastName = infoUser?.lastName.orEmpty(),
             secondLastName = infoUser?.secondLastName.orEmpty(),
             email = infoUser?.email.orEmpty(),
-            callerId = infoUser?.phone.orEmpty(),
+            callerId = infoUser?.countryCode.plus(infoUser?.phone.orEmpty()),
             user = infoUser?.userName.orEmpty(),
             idBrand = infoUser?.idBrand ?: 0
         ).collectLatest { result ->
             result.onSuccess {
                 uiState = uiState.copy(isLoading = false)
+                reactUserName = it?.userName ?: ""
+                reactUserPass = it?.password ?: ""
+                onCallQueryGetClientCardsUseCase()
+            }.onFailure {
+                uiState = uiState.copy(
+                    isLoading = false,
+                    openDialog = DialogParameters(
+                        description = it.getError() ?: "",
+                        isActive = mutableStateOf(true)
+                    )
+                )
+            }.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
+    private fun onCallGetParametersMobileByCategoryUseCase() = executeUseCase {
+        queryGetParametersMobileByCategoryUseCase.invoke(
+            idBrand = infoUser?.idBrand ?: 0,
+            category = VISA_DIRECT_CATEGORY
+        ).collectLatest { result ->
+            result.onSuccess { parameters ->
+                uiState = uiState.copy(
+                    isLoading = false,
+                )
+                if (parameters?.isNotEmpty() == true) {
+                    val applicationName = parameters.find {
+                        it?.searchKey.equals(
+                            SEARCH_KEY_APPLICATION_NAME
+                        ) }
+                    reactApplicationName = applicationName?.value ?: ""
+
+                    val endpoint = parameters.find {
+                        it?.searchKey.equals(
+                            SEARCH_KEY_ENDPOINT
+                        ) }
+                    reactEndPoint = endpoint?.value ?: ""
+
+                }
                 onCallQueryGetClientCardsUseCase()
             }.onFailure {
                 uiState = uiState.copy(
@@ -148,8 +195,12 @@ class PaymentCardListViewModel @Inject constructor(
     }
 
     private fun onStart() {
-        if (infoUser?.visaDirectUser.isNullOrEmpty()) {
+        if (infoUser?.visaDirectUser.isNullOrEmpty() && infoUser?.visaDirectId.isNullOrEmpty()) {
             onCallMutationCreateUserVDUseCase()
+        } else {
+            reactUserName =  infoUser?.visaDirectUser ?: ""
+            reactUserPass =  infoUser?.visaDirectId ?: ""
+            onCallQueryGetClientCardsUseCase()
         }
     }
 
@@ -272,5 +323,12 @@ class PaymentCardListViewModel @Inject constructor(
         const val RESULT_CODE_PROCESS_INCOMPLETE = 400
         const val RESPONSE_VALUE = "response_value_key"
         const val RESPONSE_IS_ERROR = "response_error_key"
+        const val VISA_DIRECT_CATEGORY = "VISA_DIRECT"
+        const val APPLICATION_NAME = "applicationName"
+        const val USER_NAME = "userName"
+        const val USER_PASS = "userPassword"
+        const val ENDPOINT = "endpoint"
+        const val SEARCH_KEY_ENDPOINT = "FTT_SERVER_VISADIRECT"
+        const val SEARCH_KEY_APPLICATION_NAME = "APPLICATIONNAME_VISADIRECT"
     }
 }

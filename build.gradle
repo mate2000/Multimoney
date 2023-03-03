@@ -37,3 +37,11 @@ plugins {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+task setupReactIntegration(type: Exec) {
+    def command = 'sh'
+    if (org.gradle.internal.os.OperatingSystem.current() == org.gradle.internal.os.OperatingSystem.WINDOWS) {
+        command = "C:/Program Files/Git/bin/bash.exe"
+    }
+    commandLine command, "$rootDir/checkReactModules.sh"
+}

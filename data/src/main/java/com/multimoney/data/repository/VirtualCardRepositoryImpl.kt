@@ -10,6 +10,7 @@ import com.multimoney.domain.model.virtualcard.AutomaticCardDebit
 import com.multimoney.domain.model.virtualcard.CardBlocking
 import com.multimoney.domain.model.virtualcard.CardUnblocking
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
+import com.multimoney.domain.model.virtualcard.GetParametersMobileByCategory
 import com.multimoney.domain.model.virtualcard.DeleteCard
 import com.multimoney.domain.model.virtualcard.MicroDepositVD
 import com.multimoney.domain.model.virtualcard.PayCreditVisaDirect
@@ -140,6 +141,19 @@ class VirtualCardRepositoryImpl @Inject constructor(
             callerId = callerId,
             user = user,
             idBrand = idBrand
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun queryGetParametersMobileByCategory(
+        idBrand: Int,
+        category: String
+    ): Flow<MultimoneyResult<List<GetParametersMobileByCategory>?>> = fetchData(
+        apolloCall = graphqlApi.queryGetParametersMobileByCategory(
+            idBrand = idBrand,
+            category = category
         ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())

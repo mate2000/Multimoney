@@ -14,6 +14,8 @@ data class InfoUser(
     val lastName: String,
     val secondLastName: String,
     val phone: String,
+    val countryCode: String,
+    val visaDirectId: String?,
     val visaDirectUser: String?,
     val statusOnfido: String?
 ) : Parcelable

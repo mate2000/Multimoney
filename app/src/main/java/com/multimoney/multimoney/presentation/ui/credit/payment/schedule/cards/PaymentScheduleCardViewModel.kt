@@ -196,7 +196,7 @@ class PaymentScheduleCardViewModel @Inject constructor(
                 uiState = uiState.copy(isLoading = false)
                 reactUserName = it?.userName ?: ""
                 reactUserPass = it?.password ?: ""
-                getClientCardVisaDirect()
+                onCallGetParametersMobileByCategoryUseCase()
             }.onFailure {
                 uiState = uiState.copy(
                     isLoading = false,

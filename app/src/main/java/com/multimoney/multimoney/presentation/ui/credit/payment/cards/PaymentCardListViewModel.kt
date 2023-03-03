@@ -141,7 +141,7 @@ class PaymentCardListViewModel @Inject constructor(
                 uiState = uiState.copy(isLoading = false)
                 reactUserName = it?.userName ?: ""
                 reactUserPass = it?.password ?: ""
-                onCallQueryGetClientCardsUseCase()
+                onCallGetParametersMobileByCategoryUseCase()
             }.onFailure {
                 uiState = uiState.copy(
                     isLoading = false,
@@ -200,7 +200,7 @@ class PaymentCardListViewModel @Inject constructor(
         } else {
             reactUserName =  infoUser?.visaDirectUser ?: ""
             reactUserPass =  infoUser?.visaDirectId ?: ""
-            onCallQueryGetClientCardsUseCase()
+            onCallGetParametersMobileByCategoryUseCase()
         }
     }
 

@@ -119,7 +119,7 @@ class PaymentScheduleCardListViewModel @Inject constructor(
                 uiState = uiState.copy(isLoading = false)
                 reactUserName = it?.userName ?: ""
                 reactUserPass = it?.password ?: ""
-                onCallQueryGetCardsUseCase()
+                onCallGetParametersMobileByCategoryUseCase()
             }.onFailure {
                 uiState = uiState.copy(
                     isLoading = false,

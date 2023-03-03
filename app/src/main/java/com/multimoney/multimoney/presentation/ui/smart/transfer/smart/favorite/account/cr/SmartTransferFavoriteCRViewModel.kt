@@ -116,15 +116,18 @@ class SmartTransferFavoriteCRViewModel @Inject constructor(
 
     private fun onFailure(error: HttpError) {
         uiState = uiState.copy(
-            isLoading = false, openDialog = DialogParameters(
-                description = error.getError() ?: "", isActive = mutableStateOf(true)
+            isLoading = false,
+            openDialog = DialogParameters(
+                description = error.getError() ?: "",
+                isActive = mutableStateOf(true)
             )
         )
     }
 
     private fun onNavigateBack() {
         navigateBack(
-            popTo = Screen.SmartSelectSendingTypeScreen.route, isRestart = false
+            popTo = Screen.SmartSelectSendingTypeScreen.route,
+            isRestart = false
         )
     }
 
@@ -172,8 +175,8 @@ class SmartTransferFavoriteCRViewModel @Inject constructor(
                     uiState = uiState.copy(isLoading = false)
                     navigateTo(
                         "${Screen.SmartTransferAmountScreen.baseRoute}/" +
-                                "${encodeData(smartAccount)}/$ibanAccount/" +
-                                "${SmartTransferTypes.SmartToIban.id}/${Screen.SmartTransferFavoriteAccountCRScreen.baseRoute}"
+                            "${encodeData(smartAccount)}/$ibanAccount/" +
+                            "${SmartTransferTypes.SmartToIban.id}/${Screen.SmartTransferFavoriteAccountCRScreen.baseRoute}"
                     )
                 }
                 result.onFailure { onFailure(it) }
@@ -196,9 +199,9 @@ class SmartTransferFavoriteCRViewModel @Inject constructor(
         )
         navigateTo(
             "${Screen.MyContactsTransferAmountScreen.baseRoute}/" +
-                    "${encodeData(smartAccount)}/${encodeData(account)}/" +
-                    "${SmartTransferTypes.SmartToContact.id}/$idBrand/" +
-                    Screen.SmartTransferFavoriteAccountCRScreen.baseRoute
+                "${encodeData(smartAccount)}/${encodeData(account)}/" +
+                "${SmartTransferTypes.SmartToContact.id}/" +
+                Screen.SmartTransferFavoriteAccountCRScreen.baseRoute
         )
     }
 

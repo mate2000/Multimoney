@@ -1273,8 +1273,6 @@ input LocalTransferFavoritesDtoInput {
 
   isFavorite: Boolean
 
-  identification: String
-
   idBrand: Int
 
   user: String
@@ -2200,6 +2198,8 @@ type InfoDeposit {
   pagare: String!
 
   fecha: DateTime!
+
+  bankName: String
 
   status: Int
 
@@ -5265,9 +5265,15 @@ input ProcessTransferVisaToSmartDtoInput {
 }
 
 type CreateUser {
-  password: String!
+  password: String
 
-  userName: String!
+  userName: String
+
+  status: Int
+
+  message: String
+
+  detail: String
 }
 
 input CreateUserDtoInput {
@@ -6035,6 +6041,8 @@ type AppUser {
   statusOnfido: String!
 
   wording: Wording
+
+  countryCode: String
 }
 
 type Activities {
@@ -6603,6 +6611,8 @@ type LocalTransferFavoriteResult {
 
   phoneNumber: String!
 
+  areaCode: String!
+
   idCurrencyAccount: Int
 
   currencyAccount: String!
@@ -6781,6 +6791,8 @@ type CatalogAdressLevel4ListResponse {
 
 type ObjPhone {
   number: String
+
+  areaCode: String
 
   titular: String
 

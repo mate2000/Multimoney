@@ -44,6 +44,7 @@ import com.multimoney.multimoney.presentation.navigation.CROSSELING
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
+import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
@@ -296,6 +297,7 @@ class ProductViewModel @Inject constructor(
                             )
                         )
                         .plus(getNavParam(SHOULD_GET_EVICERTIA_LINK, true))
+                        .plus(getNavParam(EVICERTIA_STATUS, uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm))
                 )
             }
             else -> {

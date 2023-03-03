@@ -38,7 +38,6 @@
             android:textSize="14sp"
             android:textStyle="normal" />
 
-
     </LinearLayout>
 
     <LinearLayout
@@ -64,6 +63,5 @@
             android:text="@string/cancel" />
 
     </LinearLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

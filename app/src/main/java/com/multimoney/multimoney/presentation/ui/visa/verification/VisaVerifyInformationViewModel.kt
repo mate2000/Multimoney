@@ -85,7 +85,6 @@ class VisaVerifyInformationViewModel @Inject constructor(
     }
 
     fun parseResponse(value: String): AddCardResponse? {
-        //TODO Waiting for the React team to send a success response to see what the JSON string contains
         return Gson().fromJson(value, AddCardResponse::class.java)
     }
 

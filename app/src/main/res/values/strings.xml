@@ -1720,9 +1720,9 @@
     <string name="visa_add_card_dialog_description" translatable="false">¿Estás segur@ de cancelar el proceso de agregar una tarjeta?</string>
 
     <!-- Add Visa Card Errors   -->
-    <string name="visa_add_card_error_default_title" translatable="false">¡Oh no!  Error de conexión</string>
+    <string name="visa_add_card_error_default_title" translatable="false">¡Oh no! Error de conexión</string>
     <string name="visa_add_card_error_default_description" translatable="false">No pudimos agregar tu tarjeta. Intentalo de nuevo.</string>
-    <string name="visa_add_card_error_system_malfunction_title" translatable="false">¡Oh no!  Error de conexión</string>
+    <string name="visa_add_card_error_system_malfunction_title" translatable="false">¡Oh no! Error de conexión</string>
     <string name="visa_add_card_error_system_malfunction_description" translatable="false">Hay un error de conexión con el sistema. Intentálo de nuevo más tarde.</string>
     <string name="visa_add_card_error_unable_to_include_title" translatable="false">Oh no! Tarjeta inválida</string>
     <string name="visa_add_card_error_unable_to_include_description" translatable="false">No hemos podido agregar tu tarjeta. Revisá la información agregada o intentá con otra.</string>
@@ -1752,7 +1752,7 @@
     <string name="visa_add_card_error_user_blocked_description" translatable="false">Contactá nuestro servicio al cliente para desbloquearla.</string>
     <string name="visa_add_card_error_invalid_username_or_password_title" translatable="false">¡Oh no! Información inválida</string>
     <string name="visa_add_card_error_invalid_username_or_password_description" translatable="false">Tu usuario y contraseña no coinciden. Intentalo de nuevo.</string>
-    <string name="visa_add_card_error_invalid_application_title" translatable="false">¡Oh no!  Error de conexión</string>
+    <string name="visa_add_card_error_invalid_application_title" translatable="false">¡Oh no! Error de conexión</string>
     <string name="visa_add_card_error_invalid_application_description" translatable="false">Hay un error de conexión con el sistema. Intentalo de nuevo más tarde</string>
     <string name="visa_add_card_error_null_title" translatable="false">¡Oh no!</string>
     <string name="visa_add_card_error_null_description" translatable="false">No pudimos agregar tu tarjeta</string>

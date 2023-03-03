@@ -886,8 +886,10 @@ class HomeViewModel @Inject constructor(
                 uiState = uiState.copy(productScreenPagerState = uiEvent.page)
             is UIEvent.OnLoadingValueChanged ->
                 uiState = uiState.copy(isLoading = uiEvent.isLoading)
-            is UIEvent.OnShowCardIssuanceError -> uiState = uiState.copy(showCardIssuanceError = true)
-            is UIEvent.OnCloseCardIssuanceError -> uiState = uiState.copy(showCardIssuanceError = false)
+            is UIEvent.OnShowCardIssuanceError -> uiState =
+                uiState.copy(showCardIssuanceError = true)
+            is UIEvent.OnCloseCardIssuanceError -> uiState =
+                uiState.copy(showCardIssuanceError = false)
             is UIEvent.OnStartBiometrics -> onStartBiometrics()
             is UIEvent.OnInitializeBiometricPrompt -> initializeBiometricPrompt(
                 uiEvent.biometricPromptTitle,

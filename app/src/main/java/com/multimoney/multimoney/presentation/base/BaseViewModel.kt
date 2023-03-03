@@ -69,7 +69,7 @@ open class BaseViewModel @Inject constructor(
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             if (shouldObserveToken && preferences.getAuthToken().first().isEmpty()) {
-                popAndNavigateTo(Screen.SignInScreen.route, Screen.SignInScreen.route)
+                popAndNavigateTo(Screen.SignInScreen.route, Screen.SignInScreen.route, false)
             } else if (checkConnection) {
                 if (connectivity.hasNetworkAccess()) {
                     action()
@@ -103,8 +103,8 @@ open class BaseViewModel @Inject constructor(
     /**
      * Use this function to pop to specific screen and navigate to specified screen
      **/
-    fun popAndNavigateTo(route: String, popTo: String) =
-        sendNavigationEvent(NavEvent.PopAndNavigate(route = route, popTo = popTo))
+    fun popAndNavigateTo(route: String, popTo: String, shouldShowReleaseToast: Boolean = false) =
+        sendNavigationEvent(NavEvent.PopAndNavigate(route = route, popTo = popTo, shouldShowToast = shouldShowReleaseToast))
 
     fun navigateBack(popTo: String, isRestart: Boolean, homeState: HomeState = HomeState.OLD_STATE) =
         sendNavigationEvent(NavEvent.PopBackStack(popTo = popTo, isRestart = isRestart, homeState = homeState))

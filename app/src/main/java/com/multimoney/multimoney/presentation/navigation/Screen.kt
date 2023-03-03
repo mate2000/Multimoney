@@ -136,6 +136,8 @@ const val HOME_STATE = "home_state"
 const val PREVIOUS_IS_RETURN_TO_HOME = "previous_is_return_to_home"
 const val QR_CODE_RESULT = "qr_code"
 
+const val RELEASE_TOAST = "transaction_released_toast"
+
 /**
  * Use this class to declare all your new screens and their routes
  * **/

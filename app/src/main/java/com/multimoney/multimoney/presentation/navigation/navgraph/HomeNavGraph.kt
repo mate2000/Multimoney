@@ -12,6 +12,7 @@ import com.multimoney.multimoney.presentation.navigation.HOME_ROUTE
 import com.multimoney.multimoney.presentation.navigation.HOME_STATE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
+import com.multimoney.multimoney.presentation.navigation.RELEASE_TOAST
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAccountScreen
 import com.multimoney.multimoney.presentation.ui.home.HomeScreen
@@ -52,7 +53,10 @@ fun NavGraphBuilder.homeNavGraph(
                         popUpTo(it.popTo) { inclusive = true }
                     }
                 },
-                viewModel = viewModel
+                viewModel = viewModel,
+                shouldShowReleaseToast = navController.currentBackStackEntry?.savedStateHandle?.getLiveData<Boolean>(
+                    RELEASE_TOAST
+                )?.observeAsState()?.value ?: false,
             )
         }
 

@@ -117,6 +117,7 @@ fun PurchaseConfirmationBottomSheet(
                 price = viewModel.uiState.pricesQuoteAndCommissions?.price,
                 exchangeRate = viewModel.uiState.exchangeRate
             ),
+            idBrand = viewModel.idBrand,
             onConfirm = {
                 coroutineScope.launch {
                     modalBottomSheetState.hide()

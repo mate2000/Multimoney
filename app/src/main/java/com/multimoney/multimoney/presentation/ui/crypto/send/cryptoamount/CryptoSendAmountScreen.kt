@@ -86,6 +86,9 @@ fun CryptoSendAmountScreen(
                 }
             )
         )
+        sharedViewModel.uiState.previousAction = {
+            viewModel.onUIEvent(CryptoSendAmountViewModel.UIEvent.OnClearInputData)
+        }
     }
     LaunchedEffect(key1 = viewModel.uiState.isTransformationCurrency.value) {
         viewModel.onUIEvent(CryptoSendAmountViewModel.UIEvent.OnAmountChanged(""))
@@ -108,7 +111,7 @@ fun CryptoSendAmountScreen(
                     sendCryptoAmount = "${viewModel.uiState.sendCryptoAmount.roundToEightDecimalPlaces()} ${viewModel.asset}",
                     sendDollarAmount = viewModel.uiState.sendDollarAmount,
                     transferFee = "${viewModel.uiState.transferCommission?.transferFee?.totalFee?.roundToEightDecimalPlaces()} ${viewModel.asset}",
-                    referenceNumber = viewModel.uiState.referenceNumber ?: ""
+                    referenceNumber = viewModel.uiState.referenceNumber
                 )
             )
             sharedViewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnNextStep)

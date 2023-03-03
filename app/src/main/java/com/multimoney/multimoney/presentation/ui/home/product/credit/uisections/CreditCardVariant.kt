@@ -55,8 +55,6 @@ import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.uielement.CustomRoundedLinearProgress
 import com.multimoney.multimoney.presentation.util.getCardDateFormat
-import com.multimoney.multimoney.presentation.util.getCurrencySymbol
-import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 
 /**
  * Composable to handle the status non-preapproved for GT and SV
@@ -474,9 +472,7 @@ fun OngoingCredit(
             viewModel.balanceCredit?.getFirstSummary()?.let {
                 BalanceTextView(
                     modifier = Modifier.padding(bottom = 10.dp),
-                    balanceText = it.availableBalance?.toCurrencyFormat(
-                        stringResource(id = it.currency.getCurrencySymbol())
-                    ) ?: "",
+                    balanceText = it.availableBalanceLabel ?: "",
                     currencyStyle = Typography.h4.copy(
                         color = MultimoneyTheme.colors.text,
                         fontWeight = FontWeight.Bold

@@ -2,8 +2,8 @@ package com.multimoney.domain.repository
 
 import androidx.paging.PagingData
 import com.multimoney.domain.model.accountsmart.ACHAccount
+import com.multimoney.domain.model.accountsmart.ACHAccountFull
 import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
-import com.multimoney.domain.model.accountsmart.SmartAccountSmall
 import com.multimoney.domain.model.accountsmart.AddressesLevel
 import com.multimoney.domain.model.accountsmart.BankListTransfer365
 import com.multimoney.domain.model.accountsmart.Beneficiary
@@ -12,6 +12,8 @@ import com.multimoney.domain.model.accountsmart.ExchangeRateResult
 import com.multimoney.domain.model.accountsmart.FavoriteACHResult
 import com.multimoney.domain.model.accountsmart.GeneralEconomicActivityResult
 import com.multimoney.domain.model.accountsmart.GlobalRequest
+import com.multimoney.domain.model.accountsmart.LocalFavorite
+import com.multimoney.domain.model.accountsmart.LocalTransferFavorite
 import com.multimoney.domain.model.accountsmart.LocalTransferResult
 import com.multimoney.domain.model.accountsmart.Nationalities
 import com.multimoney.domain.model.accountsmart.PhonesResult
@@ -22,6 +24,7 @@ import com.multimoney.domain.model.accountsmart.SaveSinpeAccount
 import com.multimoney.domain.model.accountsmart.SaveSmartAccount
 import com.multimoney.domain.model.accountsmart.SinpeAccountResult
 import com.multimoney.domain.model.accountsmart.SinpeTransferResult
+import com.multimoney.domain.model.accountsmart.SmartAccountSmall
 import com.multimoney.domain.model.accountsmart.SmartAccountStatusResult
 import com.multimoney.domain.model.accountsmart.SmartAccountTypeResult
 import com.multimoney.domain.model.accountsmart.SmartFavoriteResult
@@ -30,7 +33,6 @@ import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.accountsmart.StepByStep
 import com.multimoney.domain.model.accountsmart.Transfer365Result
 import com.multimoney.domain.model.accountsmart.VisaSmartPayment
-import com.multimoney.domain.model.balance.Account
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
 import kotlinx.coroutines.flow.Flow
@@ -150,6 +152,19 @@ interface SmartAccountRepository {
         user: String,
         idBrand: Int
     ): Flow<MultimoneyResult<VisaSmartPayment?>>
+
+    suspend fun queryACHTransferFavoriteGet(
+        user: String,
+        idBrand: Int,
+        achTransferId: Int
+    ): Flow<MultimoneyResult<ACHAccountFull?>>
+
+    suspend fun queryLocalTransferFavorite(
+        idBrand: Int,
+        user: String,
+        isFavorite: Boolean,
+        idCustomer: Long
+    ): Flow<MultimoneyResult<List<LocalFavorite?>?>>
 
     suspend fun queryGeneralEconomicActivity(
         user: String,
@@ -307,7 +322,6 @@ interface SmartAccountRepository {
         idCurrencyAccount: Int?
     ): Flow<MultimoneyResult<SmartFavoriteResult?>>
 
-
     suspend fun queryACHTransferFavoriteList(
         user: String,
         idBrand: Int,
@@ -356,6 +370,14 @@ interface SmartAccountRepository {
         amount: Double,
         motive: String,
         user: String,
-        idBrand: Int
+        idBrand: Int,
+        destinationType: String
     ): Flow<MultimoneyResult<Transfer365Result?>>
+
+    suspend fun querySavedSACAccountsSmart(
+        idBrand: Int,
+        user: String,
+        isFavorite: Boolean,
+        idCustomer: Long
+    ): Flow<MultimoneyResult<LocalTransferFavorite?>>
 }

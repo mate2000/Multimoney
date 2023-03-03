@@ -37,6 +37,7 @@ import com.multimoney.multimoney.presentation.util.catalog.SendOtpMethod
 import com.multimoney.multimoney.presentation.util.format
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.tickerFlow
+import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -153,6 +154,11 @@ class RegisteredUserOtpViewModel @Inject constructor(
     }
 
     private fun resend() {
+        if (uiState.otpResend == ResendOtp.SMS.option) {
+            registerAdjustEvent(adjustEventType = AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_RESEND_OTP_2013, isLoggedIn = false, data = userData?.toJson() ?: "", applyAdjust = false)
+        } else {
+            registerAdjustEvent(adjustEventType = AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_BY_CALL_2014, isLoggedIn = false, data = userData?.toJson() ?: "", applyAdjust = false)
+        }
         uiState = uiState.copy(
             isTimerRunning = true,
             phaseCount = uiState.phaseCount.plus(1)
@@ -270,7 +276,7 @@ class RegisteredUserOtpViewModel @Inject constructor(
                 result.onSuccess {
                     viewModelScope.launch {
                         if (dataStorePreferences.isAdjustSingUpAlreadyCustomerOTPEventRegister().first()) {
-                            registerAdjustEvent(AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_SUCCESS_CONFIRMATION_2012, isLoggedIn = false)
+                            registerAdjustEvent(AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_SUCCESS_CONFIRMATION_2012, isLoggedIn = false, data = userData?.toJson() ?: "")
                             dataStorePreferences.isAdjustSingUpAlreadyCustomerOTPEventRegister(false)
                         }
                     }

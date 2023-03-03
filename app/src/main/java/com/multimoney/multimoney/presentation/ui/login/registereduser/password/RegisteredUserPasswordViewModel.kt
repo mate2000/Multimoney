@@ -11,7 +11,6 @@ import androidx.lifecycle.viewModelScope
 import com.amplifyframework.auth.AuthUserAttribute
 import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.cognito.options.AWSCognitoAuthSignUpOptions
-import com.amplifyframework.auth.options.AuthSignUpOptions
 import com.amplifyframework.core.Amplify
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
@@ -38,7 +37,6 @@ import com.multimoney.multimoney.presentation.ui.login.registereduser.password.R
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnPasswordValueChange
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnShowBiometricPromptForEncryption
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnValidForm
-import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.checkIfEmulator
@@ -55,6 +53,7 @@ import com.multimoney.multimoney.presentation.util.passwordHasANumberValidation
 import com.multimoney.multimoney.presentation.util.passwordHasAUppercaseLetterValidation
 import com.multimoney.multimoney.presentation.util.passwordHasMinimumCharacters
 import com.multimoney.multimoney.presentation.util.passwordHasSpecialCharacterValidation
+import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -101,7 +100,7 @@ class RegisteredUserPasswordViewModel @Inject constructor(
 
     private fun onSetupDeviceInfo(
         deviceName: String,
-        deviceType: String,
+        deviceType: String
     ) {
         viewModelScope.launch {
             deviceId = dataStorePreferences.getDeviceId().first()
@@ -292,7 +291,7 @@ class RegisteredUserPasswordViewModel @Inject constructor(
             COGNITO_DEVICE_NAME to deviceName,
             COGNITO_APP_VERSION to appVersion,
             COGNITO_IS_EMULATOR to isEmulator.toString(),
-            COGNITO_IP_ADDRESS to ipAddress,
+            COGNITO_IP_ADDRESS to ipAddress
         )
         val options =
             AWSCognitoAuthSignUpOptions.builder().validationData(metaData).userAttributes(attrs.map { AuthUserAttribute(it.key, it.value) }).build()
@@ -402,10 +401,13 @@ class RegisteredUserPasswordViewModel @Inject constructor(
         }
     }
 
-    private fun completedProcessAction() = popAndNavigateTo(
-        route = Screen.SignUpCompleted.route,
-        popTo = Screen.RegisteredUserPassword.route
-    )
+    private fun completedProcessAction() {
+        registerAdjustEvent(adjustEventType = AdjustEventType.SIGNUP_SUCCESS_2008, isLoggedIn = false, data = userData?.toJson() ?: "", applyAdjust = false)
+        popAndNavigateTo(
+            route = Screen.SignUpCompleted.route,
+            popTo = Screen.RegisteredUserPassword.route
+        )
+    }
 
     private fun onCloseClick(focusManager: FocusManager) {
         focusManager.clearFocus()

@@ -16,14 +16,14 @@ enum class AdjustEventType(val stgToken: String, val prodToken: String, val even
     SIGNUP_4_2004("c03f37", "acdu94", "signup_4"),
     SIGNUP_5_2007("lo8d23", "gg2i4j", "signup_5"),
     SIGNUP_RESEND_OTP_2005("", "", "signup_reenviar_otp"),
-    SIGNUP_OTP_API_CALL_2006("", "", "signup_llamada"),
+    SIGNUP_OTP_BY_CALL_2006("", "", "signup_llamada"),
     SIGNUP_SUCCESS_2008("", "", "signup_exito"),
     SIGNUP_ALREADY_BEEN_CUSTOMERS_EMAIL_2009("f5no3g", "3a448q", "signup_ce_ingresa_email"),
     SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_EMAIL_2010("", "", "signup_ce_otp_email"),
     SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_SMS_2011("", "", "signup_ce_otp_sms"),
     SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_SUCCESS_CONFIRMATION_2012("tc8kf4", "czalev", "signup_ce_verfica_otp"),
     SIGNUP_ALREADY_BEEN_CUSTOMERS_RESEND_OTP_2013("", "", "signup_ce_reenvia_otp"),
-    SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_API_CALL_2014("", "", "signup_ce_llamada"),
+    SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_BY_CALL_2014("", "", "signup_ce_llamada"),
     SIGNUP_ALREADY_BEEN_CUSTOMERS_CREATE_PASSWORD_2015("8q7lm7", "auq95w", "signup_ce_contraseña"),
 
     // LOGIN

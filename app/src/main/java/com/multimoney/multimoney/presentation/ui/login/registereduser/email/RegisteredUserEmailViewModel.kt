@@ -21,6 +21,7 @@ import com.multimoney.multimoney.presentation.ui.login.registereduser.email.Regi
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.isEmailValid
+import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -78,7 +79,7 @@ class RegisteredUserEmailViewModel @Inject constructor(
     } else {
         viewModelScope.launch {
             if (dataStorePreferences.isAdjustSingUpAlreadyCustomerEmailEventRegister().first()) {
-                registerAdjustEvent(AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_EMAIL_2009, isLoggedIn = false)
+                registerAdjustEvent(AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_EMAIL_2009, isLoggedIn = false, data = userData?.toJson() ?: "")
                 dataStorePreferences.isAdjustSingUpAlreadyCustomerEmailEventRegister(false)
             }
         }

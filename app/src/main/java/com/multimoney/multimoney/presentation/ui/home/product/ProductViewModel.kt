@@ -654,7 +654,7 @@ class ProductViewModel @Inject constructor(
         )
     }
 
-    private fun callQueryBalanceUseCase(
+    private fun callSinpeAccountsListUseCase(
         account: Account?,
         onLoadingValueChange: (isLoading: Boolean) -> Unit
     ) =
@@ -707,7 +707,7 @@ class ProductViewModel @Inject constructor(
             )
             navigateTo("${Screen.SmartPaymentMethodScreenSV.baseRoute}/$smartIds")
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
-            callQueryBalanceUseCase(account, onLoadingValueChange)
+            callSinpeAccountsListUseCase(account, onLoadingValueChange)
         }
     }
 
@@ -809,7 +809,7 @@ class ProductViewModel @Inject constructor(
         uiState = uiState.copy(
             cryptoCurrencyMovements = queryGetCryptoCurrencyMovementsUseCase.invoke(
                 user = userName,
-                idBrand = uiState.idBrand.toInt(),
+                idBrand = uiState.idBrand.toIntOrNull() ?: 0,
                 identification = identification,
                 market = EMPTY_STRING, // get all markets movements with empty string
                 order_time_begin = getPreviousDate(FilterDate.LAST_365_DAYS),

@@ -283,6 +283,9 @@ dependencies {
     // MLKit
     implementation mlKit.barcode
 
+    // Google Zxing
+    implementation google_zxing
+
 }
 
 dexguard {

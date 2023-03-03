@@ -22,7 +22,7 @@ fun SmartCtaFooterExpanded(
     onLoadingValueChange: (isLoading: Boolean) -> Unit
 ) {
     val decrement =
-        if (viewModel.uiState.productPageList?.any { it.product == ProductType.Credit.value } == true) 1 else 0
+        if (viewModel.uiState.expandedProductPageList?.any { it.product == ProductType.Credit.value } == true) 1 else 0
     val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: decrement)
     SmartCtaButtons(
         modifier = Modifier.padding(16.dp).fillMaxWidth().wrapContentHeight(),

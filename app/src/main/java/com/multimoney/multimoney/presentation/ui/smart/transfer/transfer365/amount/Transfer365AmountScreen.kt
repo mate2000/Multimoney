@@ -10,7 +10,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnAbandonFlow
@@ -103,7 +102,7 @@ fun Transfer365AmountContent(viewModel: Transfer365AmountViewModel = hiltViewMod
                 id = viewModel.fromSmartLabel,
                 getMaskedAccount(
                     accountNumber = viewModel.smartAccount?.accountNumber.orEmpty(),
-                    prefix = Brand.ElSalvador.countryCode.uppercase()
+                    prefix = ""
                 )
             ),
             currentAmount = viewModel.amountUIState.currentAmountValueString,
@@ -136,24 +135,15 @@ private fun Transfer365AmountBottomSheet(viewModel: Transfer365AmountViewModel =
         modalBottomSheetState = viewModel.amountUIState.bottomSheetState,
         saveSendTitleResource = R.string.smart_payment_sheet_send_title,
         amount = viewModel.getFormattedAmount(),
-        fromTitle = viewModel.amountUIState.originAccountDisplay?.sheetTitle
-            ?: stringResource(
-                viewModel.amountUIState.originAccountDisplay?.sheetTitleResource ?: R.string.empty
-            ),
-        fromSubtitle = viewModel.amountUIState.originAccountDisplay?.sheetSubtitle
-            ?: stringResource(
-                viewModel.amountUIState.originAccountDisplay?.sheetSubtitleResource
-                    ?: R.string.empty
-            ),
+        fromTitle = stringResource(
+            viewModel.amountUIState.originAccountDisplay?.sheetTitleResource ?: R.string.empty
+        ),
         fromIcon = viewModel.amountUIState.originAccountDisplay?.icon,
         toTitle = viewModel.amountUIState.destinyAccountDisplay?.sheetTitle ?: stringResource(
             viewModel.amountUIState.destinyAccountDisplay?.sheetTitleResource ?: R.string.empty
         ),
-        toSubtitle = viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitle
-            ?: stringResource(
-                viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitleResource
-                    ?: R.string.empty
-            ),
+        toSubtitle = viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitle,
+        toSubtitle2 = viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitle2,
         toIcon = viewModel.amountUIState.destinyAccountDisplay?.icon,
         titleIcon = if (viewModel.transfer365Account.isFavorite) R.drawable.ic_star_filled else null,
         motive = viewModel.amountUIState.motive,

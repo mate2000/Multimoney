@@ -55,8 +55,6 @@ import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.uielement.CustomRoundedLinearProgress
 import com.multimoney.multimoney.presentation.util.getCardDateFormat
-import com.multimoney.multimoney.presentation.util.getCurrencySymbol
-import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 
 /**
  * Composable to handle the status non-preapproved for GT and SV
@@ -87,10 +85,7 @@ fun CardNonPreApprovedCredit(
             )
             Text(
                 text = stringResource(
-                    id = when (idBrand) {
-                        Brand.ElSalvador.id -> string.home_product_sv_non_pre_approved_credit_description
-                        else -> string.home_product_gt_non_pre_approved_credit_description
-                    }
+                    id = string.home_product_sv_non_pre_approved_credit_description
                 ),
                 modifier = Modifier.padding(top = 8.dp),
                 style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
@@ -477,9 +472,7 @@ fun OngoingCredit(
             viewModel.balanceCredit?.getFirstSummary()?.let {
                 BalanceTextView(
                     modifier = Modifier.padding(bottom = 10.dp),
-                    balanceText = it.availableBalance?.toCurrencyFormat(
-                        stringResource(id = it.currency.getCurrencySymbol())
-                    ) ?: "",
+                    balanceText = it.availableBalanceLabel ?: "",
                     currencyStyle = Typography.h4.copy(
                         color = MultimoneyTheme.colors.text,
                         fontWeight = FontWeight.Bold

@@ -93,7 +93,8 @@ fun SignUpOtpScreen(
                 id = R.string.whatsapp_deep_link,
                 PHONE_HARDCODED
             ),
-            stringResource(id = R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts)
+            stringResource(id = R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts),
+            sharedViewModel.idBrand
         )
     )
 
@@ -262,7 +263,7 @@ fun SignUpOtpScreen(
 
         Text(
             style = Typography.body2.copy(color = MultimoneyTheme.colors.subTitleText),
-            text = stringResource(id = R.string.sign_up_otp_subtitle),
+            text = stringResource(id = viewModel.uiState.subtitleResource),
             textAlign = TextAlign.Start,
             modifier = Modifier
                 .fillMaxWidth()

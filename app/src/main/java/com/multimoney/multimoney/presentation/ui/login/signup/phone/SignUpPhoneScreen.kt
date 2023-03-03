@@ -78,13 +78,14 @@ fun SignUpPhoneScreen(
             }
         }
     }
-    viewModel.onUIEvent(
-        SignUpPhoneViewModel.UIEvent.OnSetupDefaultCountry(
-            sharedViewModel.idBrand ?: 0
-        )
-    )
+
 
     LaunchedEffect(key1 = true) {
+        viewModel.onUIEvent(
+            SignUpPhoneViewModel.UIEvent.OnSetupDefaultCountry(
+                sharedViewModel.idBrand ?: 0
+            )
+        )
         viewModel.uiState.selectedCountry?.let { countryData ->
             viewModel.onUIEvent(
                 SignUpPhoneViewModel.UIEvent.OnStart(
@@ -174,21 +175,6 @@ fun SignUpPhoneScreen(
                 )
             },
             countriesList = viewModel.uiState.countriesList
-        )
-    }
-
-    if (viewModel.uiState.isAlertResultVisible) {
-        AlertResult(
-            titleString = stringResource(id = R.string.profile_help_error_title),
-            descriptionString = if (viewModel.uiState.idBrand == Brand.Guatemala.id) {
-                stringResource(id = R.string.process_forgot_password_alert_failure_description_gt)
-            } else {
-                stringResource(id = R.string.process_forgot_password_alert_failure_description)
-            },
-            buttonTextResource = R.string.common_go_home,
-            onButtonClick = {
-                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnExit)
-            }
         )
     }
 }

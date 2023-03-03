@@ -83,6 +83,11 @@ class DataStorePreferences @Inject constructor(
 
     fun isBiometricsEnabled(): Flow<Boolean> = getData(BIOMETRICS_ENABLED_KEY, false)
 
+    suspend fun isSessionDuplicated(isSessionEnabled: Boolean) =
+        setData(SESSION_DUPLICATED_KEY, isSessionEnabled)
+
+    fun isSessionDuplicated(): Flow<Boolean> = getData(SESSION_DUPLICATED_KEY, false)
+
     suspend fun isForceShowBiometricPrompt(isForceShowBiometricPrompt: Boolean) =
         setData(FORCE_SHOW_BIOMETRICS_PROMPT, isForceShowBiometricPrompt)
 
@@ -107,6 +112,14 @@ class DataStorePreferences @Inject constructor(
             setUniqueID(UUID.randomUUID().toString())
         }
         return getSecuredData(UNIQUE_ID, "")
+    }
+
+    suspend fun setDeviceID(deviceId: String) {
+        setData(DEVICE_ID, deviceId)
+    }
+
+    fun getDeviceId(): Flow<String> {
+        return getData(DEVICE_ID, "")
     }
 
     suspend fun isContactPermissionRequested(isOnBoardingEnabled: Boolean) =
@@ -155,6 +168,7 @@ class DataStorePreferences @Inject constructor(
 
     companion object {
         private val UNIQUE_ID = stringPreferencesKey("unique_id")
+        private val DEVICE_ID = stringPreferencesKey("device_id")
         private val TOKEN_KEY = stringPreferencesKey("auth_token")
         private val ID_BRAND = stringPreferencesKey("id_brand")
         private val PK_USER = stringPreferencesKey("pk_user")
@@ -165,6 +179,7 @@ class DataStorePreferences @Inject constructor(
         private val USER_PHONE_NUMBER_WITH_CODE_KEY = stringPreferencesKey("user_phone_number_with_code_key")
         private val USER_PASSWORD_KEY = stringPreferencesKey("user_password_key")
         private val BIOMETRICS_ENABLED_KEY = booleanPreferencesKey("biometrics_enabled_key")
+        private val SESSION_DUPLICATED_KEY = booleanPreferencesKey("session_duplicated_key")
         private val FORCE_SHOW_BIOMETRICS_PROMPT = booleanPreferencesKey("force_show_biometrics_prompt")
         private val ON_BOARDING_ENABLED_KEY = booleanPreferencesKey("on_boarding_enabled_key")
         private val CONTACT_PERMISSION_STATE_KEY = booleanPreferencesKey("contact_permission_state_key")

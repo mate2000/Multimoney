@@ -215,8 +215,9 @@ fun RequestCreditCardContent(
         Text(
             text = stringResource(
                 id = when (idBrand) {
-                    Brand.Guatemala.id -> R.string.home_active_credit_card_gt_label
-                    else -> R.string.home_active_credit_card_sv_cr_label
+                    Brand.CostaRica.id -> R.string.home_active_credit_card_cr_label
+                    else -> R.string.home_active_credit_card_sv_label
+
                 }
             ),
             modifier = Modifier.padding(vertical = 18.dp),

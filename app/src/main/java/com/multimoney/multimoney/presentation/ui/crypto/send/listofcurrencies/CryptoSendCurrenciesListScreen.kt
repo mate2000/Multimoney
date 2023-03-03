@@ -23,7 +23,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.CryptoSendSteps
 import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.LocalMultimoneyColors
@@ -52,6 +51,14 @@ fun CryptoSendListOfCurrenciesScreen(
                 identification = sharedViewModel.identification
             )
         )
+        viewModel.onUIEvent(
+            CryptoSendCurrenciesListViewModel.UIEvent.OnSetOpenMaintenanceAction(
+            action = {
+                sharedViewModel.onUIEvent(
+                    CryptoSendSharedViewModel.BaseEvent.OnShowMaintenance
+                )
+            }
+        ))
         viewModel.onUIEvent(CryptoSendCurrenciesListViewModel.UIEvent.OnGetBalanceCrypto)
     }
 

@@ -7,7 +7,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCase
-import com.multimoney.domain.model.accountsmart.SmartAccountSmall
 import com.multimoney.domain.model.balance.BalanceCryptoAccount
 import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.crypto.HistoricalBalanceClient
@@ -16,11 +15,19 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.*
+import com.multimoney.multimoney.presentation.navigation.CARD_STATUS
+import com.multimoney.multimoney.presentation.navigation.GLOBAL_CRYPTO_BALANCE
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.STATUS_CREDIT
+import com.multimoney.multimoney.presentation.navigation.STATUS_CRYPTO
+import com.multimoney.multimoney.presentation.navigation.STATUS_SMART
+import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
 import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
@@ -90,6 +97,10 @@ class HomeWalletViewModel @Inject constructor(
                 }
             }
             result.onFailure {
+                if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    navigateToMaintenance()
+                    return@onFailure
+                }
                 onFailure(it)
             }
             result.onLoading {
@@ -121,6 +132,10 @@ class HomeWalletViewModel @Inject constructor(
                 }
             }
             result.onFailure {
+                if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    navigateToMaintenance()
+                    return@onFailure
+                }
                 onFailure(it)
             }
             result.onLoading {
@@ -150,6 +165,10 @@ class HomeWalletViewModel @Inject constructor(
             uiState.idBrand ?: 0,
             uiState.identification ?: ""
         )
+    }
+
+    private fun navigateToMaintenance() {
+        navigateTo(Screen.MaintenanceAlertScreen.route)
     }
 
     private fun onFailure(error: HttpError) {

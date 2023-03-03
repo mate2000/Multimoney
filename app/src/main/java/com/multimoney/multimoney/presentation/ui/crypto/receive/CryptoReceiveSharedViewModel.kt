@@ -9,11 +9,8 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.CryptoReceiveSteps
 import com.multimoney.domain.model.crypto.MarketCryptoCoin
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.CRYPTO_ASSET
-import com.multimoney.multimoney.presentation.navigation.DESCRIPTION_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
-import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -43,6 +40,13 @@ class CryptoReceiveSharedViewModel @Inject constructor(
             pkUser = dataStorePreferences.getPkUser().first()
             identification = dataStorePreferences.getIdentification().first()
             email = dataStorePreferences.getUserEmail().first()
+
+            uiState = uiState.copy(
+            asset = marketCryptoCoin?.baseAsset,
+            imageUrl = marketCryptoCoin?.url_image,
+            assetDescription = marketCryptoCoin?.description,
+            cryptoNetWork = marketCryptoCoin?.cryptoNetwork
+            )
         }
     }
 
@@ -71,25 +75,50 @@ class CryptoReceiveSharedViewModel @Inject constructor(
         uiState.nextAction()
     }
 
+    private fun onShowMaintenanceAlert() {
+        emitBaseEvent(BaseEvent.OnShowMaintenance)
+    }
+
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is UIEvent.OnGetUserInfo -> setUserData()
             is UIEvent.OnPreviousStep -> previousStep()
             is UIEvent.OnNextStep -> nextStep()
+            is UIEvent.OnCryptoSelected -> {
+                uiState = uiState.copy(
+                    asset = event.selectedCrypto.baseAsset,
+                    imageUrl = event.selectedCrypto.url_image,
+                    assetDescription = event.selectedCrypto.description,
+                    cryptoNetWork = event.selectedCrypto.cryptoNetwork
+                )
+            }
+            is BaseEvent.OnShowMaintenance -> onShowMaintenanceAlert()
+            is UIEvent.SetPaxosMaintenanceState -> uiState = uiState.copy(isPaxosInMaintenance = event.isPaxosInMaintenance)
         }
+    }
+
+    sealed class BaseEvent {
+        object OnShowMaintenance : UIEvent
     }
 
     data class UiState(
         val currentStep: Int = CryptoReceiveSteps.One.pageNumber,
-        var asset: String = "",
-        var assetDescription: String = "",
+        var asset: String? = "",
+        var assetDescription: String? = "",
         val nextAction: () -> Unit = {},
+        val imageUrl: String? = null,
+        val cryptoNetWork: String? = null,
+        val isPaxosInMaintenance: Boolean = false,
     )
 
     sealed interface UIEvent {
         object OnGetUserInfo : UIEvent
         object OnPreviousStep : UIEvent
         object OnNextStep : UIEvent
+        data class OnCryptoSelected(
+            val selectedCrypto: MarketCryptoCoin
+        ) : UIEvent
+        data class SetPaxosMaintenanceState(val isPaxosInMaintenance: Boolean) : UIEvent
     }
 
     companion object {

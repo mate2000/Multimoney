@@ -2,7 +2,6 @@ package com.multimoney.multimoney.presentation.ui.smart.transfer.transfer365.amo
 
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.lifecycle.viewModelScope
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.accountsmart.MutationProcessTransfer365MobileUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationProcessTransfer365UseCase
 import com.multimoney.domain.model.accountsmart.Transfer365Account
@@ -23,10 +22,10 @@ import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getCurrentTime
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.Calendar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
@@ -54,10 +53,6 @@ class Transfer365AmountViewModel @Inject constructor(
             amountUIState = amountUIState.copy(
                 originAccountDisplay = DisplayAccount(
                     sheetTitleResource = originCurrency?.myAccountSmartSymbol,
-                    sheetSubtitle = getMaskedAccount(
-                        prefix = Brand.ElSalvador.countryCode.uppercase(),
-                        accountNumber = smartAccount?.accountNumber.orEmpty()
-                    ),
                     icon = R.drawable.ic_multimoney_smart
                 ),
                 currency = originCurrency?.symbol ?: CurrencyType.Dollar.symbol,
@@ -69,26 +64,25 @@ class Transfer365AmountViewModel @Inject constructor(
                 totalBalance = smartAccount?.totalBalance,
                 maxAmount = limits?.find { limit -> limit?.code == originCurrency?.id.toString() }?.amount
             )
-            val destinationInfo = when (transferType) {
+            var subtitle1: String? = ""
+            var subtitle2: String? = ""
+            when (transferType) {
                 SmartTransferTypes.SmartToMobile.id -> {
-                    transfer365Account.phone
+                    subtitle1 = transfer365Account.phone
                 }
                 SmartTransferTypes.SmartToOtherBank.id -> {
-                    "${transfer365Account.bankName} | ${
-                        getMaskedAccount(
-                            prefix = Brand.ElSalvador.countryCode.uppercase(),
-                            accountNumber = transfer365Account.accountNumber.orEmpty()
-                        )
-                    }"
-                }
-                else -> {
-                    ""
+                    subtitle1 = transfer365Account.bankName
+                    subtitle2 = getMaskedAccount(
+                        prefix = "",
+                        accountNumber = transfer365Account.accountNumber.orEmpty()
+                    )
                 }
             }
             amountUIState = amountUIState.copy(
                 destinyAccountDisplay = DisplayAccount(
                     sheetTitle = "${transfer365Account.name} ${transfer365Account.lastname}",
-                    sheetSubtitle = destinationInfo,
+                    sheetSubtitle = subtitle1,
+                    sheetSubtitle2 = subtitle2,
                     icon = R.drawable.ic_bank_account_dollar
                 )
             )
@@ -171,7 +165,8 @@ class Transfer365AmountViewModel @Inject constructor(
                 amount = amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0,
                 motive = amountUIState.motive,
                 user = pkUser,
-                idBrand = idBrand
+                idBrand = idBrand,
+                destinationType = transfer365Account.destinationType.orEmpty()
             ).collectLatest { result ->
                 result.onSuccess { reference ->
                     if (reference?.bankAuthorization?.referenceNumber.isNullOrBlank()) {
@@ -227,10 +222,10 @@ class Transfer365AmountViewModel @Inject constructor(
     }
 
     override fun onNavigateBack() {
-        // Todo add validation to go back to list transfer 365 accounts screen
         val screen = when (previousScreen) {
             Screen.SmartAdd365AccountScreen.baseRoute -> Screen.SmartAdd365AccountScreen.route
-            Screen.SmartTransferFavoriteAccountScreen.baseRoute -> Screen.SmartTransferFavoriteAccountScreen.route
+            Screen.SmartACHAccountsListScreen.baseRoute -> Screen.SmartACHAccountsListScreen.route
+            Screen.SmartTransferFavoriteAccountSVScreen.baseRoute -> Screen.SmartTransferFavoriteAccountSVScreen.route
             else -> Screen.HomeScreen.route
         }
         navigateBack(popTo = screen, isRestart = false)

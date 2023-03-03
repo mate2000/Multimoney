@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
-import com.multimoney.data.util.catalog.Brand.Guatemala
+import com.multimoney.data.util.catalog.Brand.CostaRica
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.EMAIL
@@ -81,7 +81,7 @@ class ProfileViewModel @Inject constructor(
     private fun signOutDialogConfirmation() {
         uiState = uiState.copy(
             openDialog = DialogParameters(
-                titleResource = if (uiState.idBrand == Guatemala.id) R.string.sign_out_dialog_title_gt else R.string.sign_out_dialog_title,
+                titleResource = if (uiState.idBrand == CostaRica.id) R.string.sign_out_dialog_title else R.string.sign_out_dialog_title_sv,
                 descriptionResource = R.string.sign_out_dialog_description,
                 positiveResource = R.string.button_continue,
                 negativeResource = R.string.cancel,

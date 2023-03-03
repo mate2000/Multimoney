@@ -65,7 +65,7 @@ fun SellCryptoVoucherScreen(
         assetAmount = sharedViewModel.uiState.voucherAssetAmount ?: "",
         currencyName = sharedViewModel.uiState.asset ?: "",
         approximateValue = sharedViewModel.uiState.voucherApproximateValue ?: "",
-        accountNumber = sharedViewModel.uiState.ibanAccountNumber,
+        accountNumber = sharedViewModel.getAccountNumber(stringResource(id = R.string.payment_account_masked_text)),
         referenceNumber = sharedViewModel.uiState.voucherReferenceNumber ?: "",
         currentDate = sharedViewModel.uiState.voucherSellDate ?: "",
         currentTime = sharedViewModel.uiState.voucherSellTime ?: "",
@@ -192,7 +192,9 @@ fun SellCryptoVoucherContent(
                             modifier = Modifier.fillMaxWidth(),
                             text = stringResource(
                                 id = R.string.buy_crypto_voucher_value_in_currency_template,
-                                if(idCurrency == CurrencyType.Dollar.id) CurrencyType.Dollar.stringName else CurrencyType.Colon.stringName
+                                (if (idCurrency == CurrencyType.Dollar.id)
+                                    CurrencyType.Dollar.stringName
+                                else CurrencyType.Colon.stringName).lowercase()
                             ),
                             style = Typography.body2.copy(fontWeight = FontWeight.W600),
                             color = MultimoneyTheme.colors.text,
@@ -226,10 +228,7 @@ fun SellCryptoVoucherContent(
                         modifier = Modifier.padding(start = 27.dp, top = 24.dp),
                         icon = R.drawable.ic_multimoney_voucher_gray,
                         title = stringResource(R.string.payment_voucher_origin_account_label),
-                        subTitle = getMaskedAccount(
-                            accountNumber,
-                            stringResource(id = R.string.payment_account_masked_text)
-                        )
+                        subTitle = accountNumber
                     )
 
                     VoucherNumberInfo(

@@ -9,6 +9,6 @@ interface QueryACHTransferFavoriteListUseCase {
         user: String,
         idBrand: Int,
         isFavorite: Boolean,
-        identification: String,
+        identificationNumber: String
     ): Flow<MultimoneyResult<FavoriteACHResult?>>
 }

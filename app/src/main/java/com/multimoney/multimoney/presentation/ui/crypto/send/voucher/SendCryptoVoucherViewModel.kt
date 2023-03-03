@@ -7,7 +7,6 @@ import com.multimoney.multimoney.presentation.util.ShareHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-
 @HiltViewModel
 class SendCryptoVoucherViewModel @Inject constructor(
     private val shareHelper: ShareHelper

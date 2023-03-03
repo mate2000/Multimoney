@@ -185,6 +185,10 @@ fun validateDecimalIncome(value: String): Boolean {
     return ((Pattern.matches(DECIMAL_REGEX, value) || value.isEmpty()) && value != "00")
 }
 
+fun validateEightDecimalIncome(value: String): Boolean {
+    return ((Pattern.matches(EIGHT_DECIMAL_REGEX, value) || value.isEmpty()))
+}
+
 fun isPhoneNumberValid(phone: String, idBrand: Int): Boolean {
     return when (idBrand) {
         Brand.ElSalvador.id -> {

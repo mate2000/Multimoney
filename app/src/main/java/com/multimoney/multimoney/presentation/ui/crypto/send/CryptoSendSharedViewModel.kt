@@ -63,9 +63,9 @@ class CryptoSendSharedViewModel @Inject constructor(
             openDialog = DialogParameters(
                 titleResource = R.string.crypto_send_abandon_dialog_title,
                 descriptionResource = R.string.crypto_send_abandon_dialog_message,
-                positiveResource = R.string.button_continue,
-                negativeResource = R.string.custom_dialog_default_negative_label,
-                positiveAction = { navigateBackToHome() },
+                positiveResource = R.string.custom_dialog_default_negative_label,
+                negativeResource = R.string.button_continue,
+                negativeAction = { navigateBackToHome() },
                 isActive = mutableStateOf(true)
             )
         )
@@ -75,12 +75,14 @@ class CryptoSendSharedViewModel @Inject constructor(
         navigateBack(
             popTo = Screen.HomeScreen.route,
             isRestart = true,
+            homeState = HomeState.COLLAPSED
         )
 
     private fun previousStep() {
         if (currentFlowStep == CryptoSendSteps.One.pageNumber) {
             navigateBackToHome()
         } else {
+            uiState.previousAction()
             currentFlowStep--
             uiState = uiState.copy(
                 currentStep = currentFlowStep
@@ -106,16 +108,15 @@ class CryptoSendSharedViewModel @Inject constructor(
         )
     }
 
-    fun shouldShowCloseButton(): Boolean = if (comingFromCurrencyDetails) {
-        uiState.currentStepType != SendCryptoStep.CRYPTO_ADDRESS && uiState.currentStepType != SendCryptoStep.LOADING
-    } else {
-        uiState.currentStepType != SendCryptoStep.LIST_CRYPTO_CURRENCIES && uiState.currentStepType != SendCryptoStep.LOADING
+    private fun onShowMaintenanceAlert() {
+        emitBaseEvent(BaseEvent.OnShowMaintenance)
     }
 
     data class UIState(
         val currentStepType: SendCryptoStep = SendCryptoStep.LIST_CRYPTO_CURRENCIES,
         val currentStep: Int = CryptoSendSteps.One.pageNumber,
         val isLoading: Boolean = false,
+        val isPaxosInMaintenance: Boolean = false,
         val accounts: List<Any> = listOf(),
         var asset: String = "",
         var assetDescription: String = "",
@@ -130,7 +131,8 @@ class CryptoSendSharedViewModel @Inject constructor(
         var sendCryptoAmount: String = "",
         val sendCurrentDate: String? = null,
         val sendCurrentTime: String? = null,
-        val openDialog: DialogParameters = DialogParameters()
+        val openDialog: DialogParameters = DialogParameters(),
+        var previousAction: () -> Unit = {}
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -154,7 +156,13 @@ class CryptoSendSharedViewModel @Inject constructor(
                 homeState = HomeState.COLLAPSED
             )
             is UIEvent.OnCloseClick -> onCloseClick()
+            is BaseEvent.OnShowMaintenance -> onShowMaintenanceAlert()
+            is UIEvent.SetPaxosMaintenanceState -> uiState = uiState.copy(isPaxosInMaintenance = event.isPaxosInMaintenance)
         }
+    }
+
+    sealed interface BaseEvent {
+        object OnShowMaintenance : UIEvent
     }
 
     sealed interface UIEvent {
@@ -172,11 +180,10 @@ class CryptoSendSharedViewModel @Inject constructor(
         data class OnSetFlowStep(val step: SendCryptoStep) : UIEvent
         object OnNavigateHome : UIEvent
         object OnCloseClick : UIEvent
+        data class SetPaxosMaintenanceState(val isPaxosInMaintenance: Boolean) : UIEvent
     }
 
     companion object {
         private const val DEFAULT_ID_BRAND = -1
-        private const val SEND_CRYPTO_TOTAL_STEPS_CR = 4
-        private const val SEND_CRYPTO_TOTAL_STEPS_CR_DETAILS = 3
     }
 }

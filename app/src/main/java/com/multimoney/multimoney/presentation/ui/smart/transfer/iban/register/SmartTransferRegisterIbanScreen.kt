@@ -32,6 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.Companion.DEBOUNCE_VALIDATION_TIME
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.UIEvent.OnAccountValueChange
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.UIEvent.OnAddFavoriteValueChange
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanViewModel.UIEvent.OnContinueButtonClick
@@ -129,6 +130,7 @@ fun SmartTransferRegisterIbanScreen(
                 onValueChange = { viewModel.onUIEvent(OnAccountValueChange(it)) },
                 canShowNonErrorMessage = true,
                 onDebounceValidation = { viewModel.onUIEvent(OnAccountValueCompleted) },
+                debounceTimeMillis = DEBOUNCE_VALIDATION_TIME,
                 showInfo = viewModel.uiState.accountInformation.first,
                 infoMessage = stringResource(id = viewModel.uiState.accountInformation.second),
                 isError = viewModel.uiState.accountError.first || viewModel.uiState.accountValidationError?.first == true,

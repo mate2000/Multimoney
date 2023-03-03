@@ -29,6 +29,7 @@ import com.multimoney.multimoney.presentation.navigation.UNIQUE_ID
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel
+import com.multimoney.multimoney.presentation.util.ISO3_COSTA_RICA
 import com.multimoney.multimoney.presentation.util.OTP_MESSAGE_REGEX
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OTPMessageStatus
@@ -153,7 +154,7 @@ class SignInOTPViewModel @Inject constructor(
             openDialog =
             DialogParameters(
                 titleResource = R.string.sign_in_verify_otp_blocked_title,
-                descriptionResource = R.string.sign_in_verify_otp_blocked_subtitle_gt,
+                descriptionResource = uiState.dialogTextResource,
                 isActive = mutableStateOf(true),
                 positiveResource = R.string.contact,
                 negativeResource = R.string.cancel,
@@ -204,12 +205,11 @@ class SignInOTPViewModel @Inject constructor(
     private fun onCallMutationRequestChangeDevice() = executeUseCase {
         mutationRequestChangeDeviceUseCase.invoke(email).collectLatest { result ->
             result.onSuccess {
-                initializeTimer(PHASE_ONE, totalTime = it.otpTime?.toLong() ?: DEFAULT_OTP_DURATION)
+                initializeTimer(if(uiState.phaseCount == PHASE_ONE) PHASE_ONE else uiState.phaseCount.plus(1), totalTime = it.otpTime?.toLong() ?: DEFAULT_OTP_DURATION)
                 getPhaseAction()
                 onExecuteTimer()
                 uiState = uiState.copy(
                     isLoading = false,
-                    weSentYouACodeTextResource = R.string.sign_in_we_sent_you_a_code_template,
                     phoneNumber = it.phoneNumber ?: ""
                 )
             }.onFailure {
@@ -273,6 +273,17 @@ class SignInOTPViewModel @Inject constructor(
         context.openWhatsAppDeepLink(whatsAppLink)
     }
 
+    private fun onSetupResources(context: Context) {
+        uiState = when (context.resources.configuration.locale.isO3Country) {
+            ISO3_COSTA_RICA -> {
+                uiState.copy(weSentYouACodeTextResource = R.string.sign_in_we_sent_you_a_code_template, dialogTextResource = R.string.sign_in_verify_otp_blocked_subtitle_cr)
+            }
+            else -> {
+                uiState.copy(weSentYouACodeTextResource = R.string.sign_in_we_sent_you_a_code_template_gt, dialogTextResource = R.string.sign_in_verify_otp_blocked_subtitle)
+            }
+        }
+    }
+
     data class UIState(
 
         val isLoading: Boolean = true,
@@ -311,6 +322,7 @@ class SignInOTPViewModel @Inject constructor(
                 uiEvent.whatsAppLink
             )
             is UIEvent.OnShowBlockedDialog -> onShowBlockedDialog()
+            is UIEvent.OnSetupResources -> onSetupResources(uiEvent.context)
         }
     }
 
@@ -324,6 +336,10 @@ class SignInOTPViewModel @Inject constructor(
         object OnResendOTP : UIEvent()
         data class OnOpenWhatsappLink(
             val whatsAppLink: String,
+            val context: Context
+        ) : UIEvent()
+
+        data class OnSetupResources(
             val context: Context
         ) : UIEvent()
     }

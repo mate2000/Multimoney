@@ -259,7 +259,7 @@ fun CreditOnfidoScreen(
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = stringResource(id = if (viewModel.idBrand == CostaRica.id) string.credit_origination_id_validation_three else string.credit_origination_id_validation_three_sv),
+                    text = stringResource(id = string.credit_origination_id_validation_three),
                     style = Typography.body2.copy(
                         color = MultimoneyTheme.colors.text,
                         fontWeight = FontWeight.SemiBold

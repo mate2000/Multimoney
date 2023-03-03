@@ -242,9 +242,6 @@ class PaymentCardListViewModel @Inject constructor(
                 getNavParam(IDENTIFICATION, identification)
             )
             .plus(
-                getNavParam(ID_CARD, "")
-            )
-            .plus(
                 getNavParam(USER, infoUser?.email.orEmpty())
             )
             .plus(

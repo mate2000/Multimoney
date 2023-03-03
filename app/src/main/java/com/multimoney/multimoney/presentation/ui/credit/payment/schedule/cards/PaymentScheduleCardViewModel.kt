@@ -258,7 +258,7 @@ class PaymentScheduleCardViewModel @Inject constructor(
     }
 
     private fun onHandleAddCardResponse(response: String, isError: Boolean) {
-        if (isError) {
+        if (false) {
             setErrorAlertResultAddCard(response.getAddCardErrorFromValue())
         } else {
             onNavigateToVisaVerifyInformation(response)
@@ -350,9 +350,6 @@ class PaymentScheduleCardViewModel @Inject constructor(
         route = Screen.VisaVerifyInformationScreen.baseRoute
             .plus(
                 getNavParam(IDENTIFICATION, identification)
-            )
-            .plus(
-                getNavParam(ID_CARD, "")
             )
             .plus(
                 getNavParam(USER, infoUser?.email.orEmpty())

@@ -67,7 +67,11 @@ fun WalletCurrencyDetailsScreen(
             onPopAndNavigate = onPopAndNavigate
         )
         viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnGetUserInfo)
-        viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnSetDateRange(FilterDateByDays.YESTERDAY.time))
+        viewModel.onUIEvent(
+            WalletCryptoCurrencyDetailsViewModel.UIEvent.OnSetDateRange(
+                FilterDateByDays.YESTERDAY.time
+            )
+        )
         viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnGetAssetHistory)
         viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnGetMovements)
     }
@@ -86,6 +90,9 @@ fun WalletCurrencyDetailsScreen(
         },
         viewAllClick = { viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnViewAllMovements) },
         buyCryptoClick = {
+            viewModel.onUIEvent(
+                WalletCryptoCurrencyDetailsViewModel.UIEvent.OnRegisterAdjustPressPurchaseFirstTime
+            )
             if (viewModel.uiState.idBrand == Brand.ElSalvador.id) {
                 if (viewModel.uiState.shouldDisplayDisclaimer) {
                     viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnShowDisclaimer)
@@ -97,16 +104,29 @@ fun WalletCurrencyDetailsScreen(
             }
         },
         sellCryptoClick = {
-            viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnNavigateToSellCrypto) },
+            viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnNavigateToSellCrypto)
+            viewModel.onUIEvent(
+                WalletCryptoCurrencyDetailsViewModel.UIEvent.OnRegisterAdjustPressSellFirstTime
+            )
+        },
         sendCryptoClick = {
-            viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnNavigateToSendCrypto)},
+            viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnNavigateToSendCrypto)
+            viewModel.onUIEvent(
+                WalletCryptoCurrencyDetailsViewModel.UIEvent.OnRegisterAdjustPressSendFirstTime
+            )
+        },
         giveCryptoClick = {
             viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnNavigateToReceiveCrypto)
+            viewModel.onUIEvent(
+                WalletCryptoCurrencyDetailsViewModel.UIEvent.OnRegisterAdjustPressReceiveFirstTime
+            )
         },
-        onReleaseTransactionClick = {viewModel.onUIEvent(
-            OnNavigateToReleaseTransaction(
-                it
-            ))
+        onReleaseTransactionClick = {
+            viewModel.onUIEvent(
+                OnNavigateToReleaseTransaction(
+                    it
+                )
+            )
         }
     )
 

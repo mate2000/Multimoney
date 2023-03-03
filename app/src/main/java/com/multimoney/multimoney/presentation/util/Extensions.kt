@@ -19,6 +19,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.gson.Gson
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
@@ -403,6 +404,10 @@ fun String.capitalizedAllWords(): String =
  */
 fun formatPhoneNumber(phoneWithCode: String?, phoneWithoutCode: String?) =
     phoneWithCode?.replace(phoneWithoutCode ?: "", " ").plus(phoneWithoutCode)
+
+fun Any.toJson(): String {
+    return Gson().toJson(this)
+}
 
 private const val HEX_FORMAT = "#%02x%02x%02x"
 private const val NUMBER_FORMAT_REGEX = "[^0-9,.\\s]"

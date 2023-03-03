@@ -64,21 +64,24 @@ import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 fun CreditOnfidoScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
-    viewModel: CreditOnfidoViewModel = hiltViewModel(),
+    viewModel: CreditOnfidoViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
 
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnStartSubscription)
-        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)
+        viewModel.executeNavigation(
+            onPopAndNavigate = onPopAndNavigate,
+            onPopBackStack = onPopBackStack
+        )
     }
 
     viewModel.onUIEvent(
         OnSetWhatsAppLink(
             stringResource(
                 id = string.whatsapp_deep_link,
-                SignUpViewModel.PHONE_HARDCODED,
-            ),
+                SignUpViewModel.PHONE_HARDCODED
+            )
         )
     )
 
@@ -87,22 +90,23 @@ fun CreditOnfidoScreen(
             viewModel.onUIEvent(
                 OnSetCloseDialogTexts(
                     string.credit_close_dialog_title,
-                    stringResource(id = string.credit_close_dialog_description),
+                    stringResource(id = string.credit_close_dialog_description)
                 )
             )
         } else {
             viewModel.onUIEvent(
                 OnSetCloseDialogTexts(
                     string.credit_close_dialog_sv_title,
-                    stringResource(id = string.credit_close_dialog_sv_description),
+                    stringResource(id = string.credit_close_dialog_sv_description)
                 )
             )
         }
     }
 
-    val launchOnFidoActivityResult = rememberLauncherForActivityResult(StartActivityForResult()) { result ->
-        viewModel.onUIEvent(OnConfigureOnFidoSdk(result))
-    }
+    val launchOnFidoActivityResult =
+        rememberLauncherForActivityResult(StartActivityForResult()) { result ->
+            viewModel.onUIEvent(OnConfigureOnFidoSdk(result))
+        }
 
     LaunchedEffect(context) {
         viewModel.onFidoTokenEvent.collect { event ->
@@ -190,7 +194,10 @@ fun CreditOnfidoScreen(
                 }
         ) {
             Text(
-                text = stringResource(id = if (viewModel.idBrand == CostaRica.id) string.credit_origination_id_validation_title else string.credit_origination_id_validation_title_sv),
+                text = stringResource(
+                    if (viewModel.idBrand == CostaRica.id) string.credit_origination_id_validation_title
+                    else string.credit_origination_id_validation_title_sv
+                ),
                 style = Typography.h5.copy(
                     color = MultimoneyTheme.colors.text,
                     fontWeight = FontWeight.SemiBold
@@ -216,7 +223,10 @@ fun CreditOnfidoScreen(
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = stringResource(id = if (viewModel.idBrand == CostaRica.id) string.credit_origination_id_validation_one else string.credit_origination_id_validation_one_sv),
+                    text = stringResource(
+                        if (viewModel.idBrand == CostaRica.id) string.credit_origination_id_validation_one
+                        else string.credit_origination_id_validation_one_sv
+                    ),
                     style = Typography.body2.copy(
                         color = MultimoneyTheme.colors.text,
                         fontWeight = FontWeight.SemiBold
@@ -251,7 +261,7 @@ fun CreditOnfidoScreen(
             Row(
                 Modifier
                     .padding(top = 32.dp)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
             ) {
                 CustomImage(
                     drawableResource = drawable.ic_validation,

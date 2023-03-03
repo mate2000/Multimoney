@@ -149,6 +149,7 @@ fun BuyCurrencyScreen(
                     referenceNumber = viewModel.uiState.referenceNumber ?: ""
                 )
             )
+            viewModel.onUIEvent(BuyCurrencyScreenViewModel.UIEvent.OnRegisterAdjustPurchase)
             sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNextStep)
         }
         PurchaseStatus.FAILED -> {

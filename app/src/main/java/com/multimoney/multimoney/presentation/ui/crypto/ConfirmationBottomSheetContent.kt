@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -82,6 +83,8 @@ fun ConfirmationBottomSheetContent(
     exchangeRate: String = DEFAULT_AMOUNT,
     convertedAmount: String = DEFAULT_AMOUNT,
     @StringRes accountInfoLabel: Int = R.string.crypto_purchase_flow_confirmation_from_account_title,
+    isPurchase: Boolean = true,
+    idBrand: Int = Brand.Default.id,
     onConfirm: () -> Unit = {}
 ) {
     Column(
@@ -106,11 +109,13 @@ fun ConfirmationBottomSheetContent(
             asset = asset,
             secondsRemaining = secondsRemaining,
             showAssetImage = showAssetImage,
-            idCurrency = idCurrency
+            idCurrency = idCurrency,
+            isPurchase = isPurchase
         )
         AccountInfoSection(
             idCurrency = idCurrency,
             ibanAccountNumber = ibanAccountNumber,
+            idBrand = idBrand,
             labelText = accountInfoLabel
         )
         if (showBottomExchangeInfo) {
@@ -174,7 +179,8 @@ private fun InfoSection(
     showTotalToReceive: Boolean = false,
     idCurrency: Int = CurrencyType.Dollar.id,
     amountToReceive: String,
-    exchangeRate: String
+    exchangeRate: String,
+    isPurchase: Boolean
 ) {
     Column(
         modifier = Modifier
@@ -210,7 +216,10 @@ private fun InfoSection(
         Text(
             modifier = Modifier.padding(vertical = 4.dp),
             text = buildAnnotatedString {
-                append(stringResource(id = R.string.crypto_purchase_flow_price_expires_in))
+                append(stringResource(id =
+                    if (isPurchase) R.string.crypto_purchase_flow_price_expires_in
+                    else R.string.crypto_sell_flow_confirmation_sell_screen_expires_in
+                ))
                 append(WHITE_SPACE)
                 withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
                     append(secondsRemaining)
@@ -254,6 +263,7 @@ private fun InfoSection(
 private fun AccountInfoSection(
     idCurrency: Int,
     ibanAccountNumber: String,
+    idBrand: Int,
     @StringRes labelText: Int,
 ) {
     Column(
@@ -282,7 +292,7 @@ private fun AccountInfoSection(
                     CurrencyType.Dollar.symbol
                 }
             ),
-            subtitle = ibanAccountNumber,
+            subtitle = if (idBrand == Brand.CostaRica.id) ibanAccountNumber else "",
             enable = false
         )
     }

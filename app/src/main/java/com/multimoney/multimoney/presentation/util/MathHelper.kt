@@ -81,6 +81,22 @@ fun calculateDollarEstimated(
     }.toDouble()).toCurrencyFormat()
 }
 
+fun calculateDollarEstimatedWithoutFormat(
+    baseAmount: String,
+    currencyPrice: Double
+): String {
+    val estimated = (currencyPrice * baseAmount.ifEmpty {
+        EMPTY_CURRENCY
+    }.toDouble()).roundToTwoDecimalPlaces()
+    val decimalCount = estimated.takeLast(3)
+    val takeAfterDot = estimated.substringAfterLast('.').length
+    return when {
+        decimalCount == ".00" -> estimated.dropLast(3)
+        takeAfterDot >= 2 -> estimated.dropLast(3)
+        else -> estimated
+    }
+}
+
 fun calculateAssetEstimated(
     quoteAmount: String,
     currencyPrice: Double

@@ -103,7 +103,7 @@
     <string name="onboarding_el_salvador_step_two_sub_title" translatable="false">Recibe hasta $25,000 con solo tu DUI.</string>
     <string name="onboarding_el_salvador_step_three_title" translatable="false">Invierte en cripto</string>
     <string name="onboarding_el_salvador_step_three_sub_title" translatable="false">Compra y vende cripto de forma simple y segura.</string>
-    <string name="onboarding_account_already_created" translatable="false">Ya tengo cuenta</string>
+    <string name="onboarding_account_already_created" translatable="false">Ya tengo cuenta,</string>
 
     <!-- OnBoarding Costa Rica-->
     <string name="onboarding_costa_rica_step_one_title" translatable="false">Multiplicá tus ahorros</string>
@@ -803,6 +803,7 @@
     <!-- Origination Voucher -->
     <string name="origination_voucher_amount" translatable="false">Has recibido</string>
     <string name="origination_voucher_destiny_account" translatable="false">Cuenta de destino</string>
+    <string name="origination_voucher_reference" translatable="false">Nº de pagaré</string>
 
     <!-- Visa -->
     <string name="visa_date_label" translatable="false">EXP. \nDATE</string>
@@ -1144,7 +1145,7 @@
     <string name="payment_schedule_account_title" translatable="false">Seleccioná una cuenta para programar tu pago</string>
 
     <!-- Payment Schedule Cards-->
-    <string name="payment_schedule_card_title" translatable="false">Tarjetas Visa</string>
+    <string name="payment_schedule_card_title" translatable="false">Configura tu pago automático</string>
     <string name="payment_schedule_card_info_dialog_description" translatable="false">Tu pago se determina de acuerdo a la cuota mínima de cada mes.</string>
     <string name="payment_schedule_card_label_date" translatable="false">Día del mes que se hará el pago</string>
     <string name="payment_schedule_card_label_origin" translatable="false">Desde tu tarjeta</string>
@@ -1457,7 +1458,7 @@
     <string name="smart_iban_register_favorite_checkbox" translatable="false">Agregar a favoritos</string>
     <string name="smart_iban_register_account_placeholder" translatable="false">CR 00000 00000 00000 00000</string>
     <string name="smart_iban_register_account_error" translatable="false">Número inválido</string>
-    <string name="smart_iban_register_account_length_error" translatable="false"><![CDATA[<b>Revisa el formato.</b> Es un número de 20 dígitos]]></string>
+    <string name="smart_iban_register_account_length_error" translatable="false"><![CDATA[<b>Revisá el formato.</b> Es un número de 20 dígitos]]></string>
     <string name="smart_iban_register_email_error" translatable="false">Formato incorrecto. Debe contener “@” y “.”</string>
     <string name="smart_iban_register_favorite_label" translatable="false">Apodo</string>
     <string name="smart_iban_register_full_name_label" translatable="false">Nombre completo</string>

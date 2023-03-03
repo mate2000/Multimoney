@@ -34,7 +34,7 @@ class OnFidoHelper @Inject constructor(
         )
     ).withLocale(
         if (idBrand == 5) Locale.forLanguageTag(CR_LANGUAGE_TAG)
-        else Locale.US
+        else Locale.getDefault()
     ).build()
 
     private fun getOnFidoConfigForSeveralDocuments(

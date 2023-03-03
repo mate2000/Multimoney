@@ -1459,7 +1459,7 @@
     <string name="smart_iban_register_favorite_checkbox" translatable="false">Agregar a favoritos</string>
     <string name="smart_iban_register_account_placeholder" translatable="false">CR 00000 00000 00000 00000</string>
     <string name="smart_iban_register_account_error" translatable="false">Número inválido</string>
-    <string name="smart_iban_register_account_length_error" translatable="false"><![CDATA[<b>Revisa el formato.</b> Es un número de 20 dígitos]]></string>
+    <string name="smart_iban_register_account_length_error" translatable="false"><![CDATA[<b>Revisá el formato.</b> Es un número de 20 dígitos]]></string>
     <string name="smart_iban_register_email_error" translatable="false">Formato incorrecto. Debe contener “@” y “.”</string>
     <string name="smart_iban_register_favorite_label" translatable="false">Apodo</string>
     <string name="smart_iban_register_full_name_label" translatable="false">Nombre completo</string>

@@ -68,6 +68,9 @@ fun CryptoReceiveAddressScreen(
         ))
         viewModel.onUIEvent(CryptoReceiveAddressViewModel.UIEvent.OnGetCryptoReceiveAddress)
     }
+    LaunchedEffect(key1 = true) {
+        viewModel.onUIEvent(CryptoReceiveAddressViewModel.UIEvent.OnRegisterAdjustEnterReceiveQRScreen)
+    }
 
     CryptoReceiveAddressContent(viewModel = viewModel, sharedViewModel = sharedViewModel, context)
 }
@@ -184,6 +187,9 @@ fun CryptoReceiveAddressContent(
                                     CryptoReceiveAddressViewModel.UIEvent.OnShareCryptoReceiveAddress(
                                         viewModel.uiState.address
                                     )
+                                )
+                                viewModel.onUIEvent(
+                                    CryptoReceiveAddressViewModel.UIEvent.OnRegisterAdjustPressShareAddressButton
                                 )
                             }
                         })

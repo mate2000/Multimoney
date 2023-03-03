@@ -8,15 +8,20 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.connectivity.Connectivity
+import com.multimoney.domain.interaction.security.MutationSaveLogTrackingUseCase
+import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.util.AdjustHelper
 import com.multimoney.multimoney.util.firebase.FireBaseEventHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,6 +43,12 @@ open class BaseViewModel @Inject constructor(
 
     @Inject
     lateinit var provideFireBaseEventHelper: FireBaseEventHelper
+
+    @Inject
+    lateinit var adjustHelper: AdjustHelper
+
+    @Inject
+    lateinit var mutationSaveLogTrackingUseCase: MutationSaveLogTrackingUseCase
 
     /**
      * Use this val to store one time events defined in NavigationEvent Class
@@ -132,5 +143,58 @@ open class BaseViewModel @Inject constructor(
         viewModelScope.launch {
             baseEvent.emit(data)
         }
+    }
+
+    fun registerAdjustEvent(
+        adjustEventType: AdjustEventType,
+        listParameters: List<Pair<String, String>> = listOf(),
+        isLoggedIn: Boolean = true,
+        data: String = "",
+        applyAdjust: Boolean = true
+    ) {
+        viewModelScope.launch {
+            val mutableList = mutableListOf<Pair<String, String>>()
+            if (isLoggedIn) {
+                val idBrand = preferences.getIdBrand().firstOrNull() ?: ""
+                val email = preferences.getUserEmail().firstOrNull() ?: ""
+                val pkUser = preferences.getPkUser().firstOrNull() ?: ""
+                val identification = preferences.getIdentification().firstOrNull() ?: ""
+                mutableList.add(Pair(ID_BRAND_ADJUST_KEY, idBrand))
+                mutableList.add(Pair(EMAIL_ADJUST_KEY, email))
+                mutableList.add(Pair(PK_USER_ADJUST_KEY, pkUser))
+                mutableList.add(Pair(IDENTIFICATION_ADJUST_KEY, identification))
+                callSaveLogTracking(identification, pkUser, data, idBrand)
+            }
+            if (applyAdjust) {
+                mutableList.addAll(listParameters)
+                adjustHelper.registerEvent(adjustEventType, mutableList)
+            }
+        }
+    }
+
+    private fun callSaveLogTracking(
+        identification: String,
+        pkUser: String,
+        data: String,
+        idBrand: String
+    ) = executeUseCase {
+        mutationSaveLogTrackingUseCase.invoke(
+            identification = identification,
+            pkUser = pkUser.toInt(),
+            keySearch = DEFAULT_ADJUST_KEY,
+            data = data,
+            idBrand = idBrand.toInt()
+        ).collectLatest { result ->
+            result.onSuccess {
+            }
+        }
+    }
+
+    companion object {
+        private const val ID_BRAND_ADJUST_KEY = "idbrand"
+        private const val EMAIL_ADJUST_KEY = "email"
+        private const val PK_USER_ADJUST_KEY = "pkUser"
+        private const val IDENTIFICATION_ADJUST_KEY = "identification"
+        private const val DEFAULT_ADJUST_KEY = "default"
     }
 }

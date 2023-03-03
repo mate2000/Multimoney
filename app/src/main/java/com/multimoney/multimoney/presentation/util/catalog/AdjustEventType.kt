@@ -31,10 +31,11 @@ enum class AdjustEventType(val stgToken: String, val prodToken: String, val even
     LOGIN("", "", ""),
 
     // FORGOT
-    FORGOT_CONFIRM_EMAIL("", "", ""),
-    FORGOT_CONFIRM_CORRECT_PASSWORD("", "", ""),
-    FORGOT_API_CALL("", "", ""),
-    FORGOT_SUCCESS("", "", ""),
+    FORGOT_CONFIRM_EMAIL_4000("", "", "olvide_contraseña"),
+    FORGOT_CONFIRM_CORRECT_PASSWORD_4001("", "", "cambiar_contraseña"),
+    FORGOT_RESEND_OTP_4002("", "", "cambiar_contraseña_reenviar_otp"),
+    FORGOT_OTP_BY_CALL_4003("", "", "cambiar_contraseña_llamada"),
+    FORGOT_SUCCESS_4004("", "", "cambiar_contraseña_exito"),
 
     // ORIGINATION
     ORIGINATION_OFFER_FIRST_TIME("", "", ""),

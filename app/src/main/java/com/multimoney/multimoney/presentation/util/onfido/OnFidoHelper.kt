@@ -33,8 +33,11 @@ class OnFidoHelper @Inject constructor(
             DocumentCaptureStepBuilder.forNationalIdentity().withCountry(getCountryCode(idBrand)).build()
         )
     ).withLocale(
-        if (idBrand == 5) Locale.forLanguageTag(CR_LANGUAGE_TAG)
-        else Locale.getDefault()
+        when (idBrand) {
+            Brand.CostaRica.id -> Locale.forLanguageTag(CR_LANGUAGE_TAG)
+            Brand.ElSalvador.id -> Locale.forLanguageTag(SV_LANGUAGE_TAG)
+            else -> Locale.getDefault()
+        }
     ).build()
 
     private fun getOnFidoConfigForSeveralDocuments(
@@ -102,5 +105,6 @@ class OnFidoHelper @Inject constructor(
     }
     companion object {
         val CR_LANGUAGE_TAG = "es-CR"
+        val SV_LANGUAGE_TAG = "es-SV"
     }
 }

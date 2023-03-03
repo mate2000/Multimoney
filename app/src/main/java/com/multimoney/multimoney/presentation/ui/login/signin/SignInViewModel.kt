@@ -17,6 +17,7 @@ import com.amplifyframework.auth.result.AuthSessionResult
 import com.amplifyframework.core.Amplify
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.security.QueryValidateUserExistsUseCase
+import com.multimoney.domain.model.metrics.EmailDto
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
@@ -26,6 +27,7 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.checkIfEmulator
@@ -36,6 +38,7 @@ import com.multimoney.multimoney.presentation.util.getIPAddress
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.isCognitoErrorCode
 import com.multimoney.multimoney.presentation.util.isEmailValid
+import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -437,10 +440,20 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    private fun navigateToHome() = popAndNavigateTo(
-        route = Screen.HomeScreen.route,
-        popTo = Screen.SignInScreen.route
-    )
+    private fun navigateToHome() {
+        viewModelScope.launch {
+            if (dataStorePreferences.isAdjustFirstSingInEventRegister().first()) {
+                registerAdjustEvent(AdjustEventType.FIRST_LOGIN_3000, isLoggedIn = false, data = EmailDto(uiState.userEmail).toJson())
+                dataStorePreferences.isAdjustFirstSingInEventRegister(false)
+            } else {
+                registerAdjustEvent(AdjustEventType.LOGIN_3001, isLoggedIn = false, applyAdjust = false, data = EmailDto(uiState.userEmail).toJson())
+            }
+        }
+        popAndNavigateTo(
+            route = Screen.HomeScreen.route,
+            popTo = Screen.SignInScreen.route
+        )
+    }
 
     private fun onNavigateToSignUp() = navigateTo(route = "${Screen.SignUpScreen.baseRoute}/".plus(0))
 

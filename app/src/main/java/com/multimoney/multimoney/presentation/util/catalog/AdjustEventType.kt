@@ -27,8 +27,8 @@ enum class AdjustEventType(val stgToken: String, val prodToken: String, val even
     SIGNUP_ALREADY_BEEN_CUSTOMERS_CREATE_PASSWORD_2015("8q7lm7", "auq95w", "signup_ce_contraseña"),
 
     // LOGIN
-    FIRST_LOGIN("", "", ""),
-    LOGIN("", "", ""),
+    FIRST_LOGIN_3000("44ivkd", "4sty20", "login_first_time"),
+    LOGIN_3001("", "", "login"),
 
     // FORGOT
     FORGOT_CONFIRM_EMAIL_4000("", "", "olvide_contraseña"),

@@ -217,6 +217,11 @@ class DataStorePreferences @Inject constructor(
 
     fun isAdjustSingUpAlreadyCustomerPasswordEventRegister(): Flow<Boolean> = getData(SIGN_UP_ALREADY_CUSTOMER_REGISTERED_PASSWORD_ADJUST_KEY, true)
 
+    suspend fun isAdjustFirstSingInEventRegister(register: Boolean) =
+        setData(SIGN_IN_FIRST_LOGIN_ADJUST_KEY, register)
+
+    fun isAdjustFirstSingInEventRegister(): Flow<Boolean> = getData(SIGN_IN_FIRST_LOGIN_ADJUST_KEY, true)
+
     companion object {
         private val UNIQUE_ID = stringPreferencesKey("unique_id")
         private val DEVICE_ID = stringPreferencesKey("device_id")
@@ -252,5 +257,6 @@ class DataStorePreferences @Inject constructor(
         private val SIGN_UP_ALREADY_CUSTOMER_REGISTERED_EMAIL_ADJUST_KEY = booleanPreferencesKey("sign_up_registered_user_email_adjust_key")
         private val SIGN_UP_ALREADY_CUSTOMER_REGISTERED_OTP_ADJUST_KEY = booleanPreferencesKey("sign_up_registered_user_otp_adjust_key")
         private val SIGN_UP_ALREADY_CUSTOMER_REGISTERED_PASSWORD_ADJUST_KEY = booleanPreferencesKey("sign_up_registered_user_password_adjust_key")
+        private val SIGN_IN_FIRST_LOGIN_ADJUST_KEY = booleanPreferencesKey("sign_in_first_login")
     }
 }

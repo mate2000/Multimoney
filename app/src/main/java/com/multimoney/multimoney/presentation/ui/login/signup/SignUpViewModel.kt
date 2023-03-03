@@ -48,13 +48,13 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
@@ -120,10 +120,13 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-    private fun completedProcessAction() = popAndNavigateTo(
-        route = Screen.SignUpCompleted.route,
-        popTo = Screen.SignUpScreen.route
-    )
+    private fun completedProcessAction() {
+        registerAdjustEvent(adjustEventType = AdjustEventType.SIGNUP_SUCCESS_2008, isLoggedIn = false, data = userData?.toJson() ?: "", applyAdjust = false)
+        popAndNavigateTo(
+            route = Screen.SignUpCompleted.route,
+            popTo = Screen.SignUpScreen.route
+        )
+    }
 
     private fun onPhoneNumberChange(phoneNumber: String) {
         userData?.phoneNumber = phoneNumber
@@ -260,7 +263,8 @@ class SignUpViewModel @Inject constructor(
                 if (dataStorePreferences.isAdjustSingUp1EventRegister().first()) {
                     registerAdjustEvent(
                         adjustEventType = AdjustEventType.SIGNUP_1_2001,
-                        isLoggedIn = false
+                        isLoggedIn = false,
+                        data = userData?.toJson() ?: ""
                     )
                     dataStorePreferences.isAdjustSingUp1EventRegister(false)
                 }
@@ -271,7 +275,8 @@ class SignUpViewModel @Inject constructor(
                 if (dataStorePreferences.isAdjustSingUp2EventRegister().first()) {
                     registerAdjustEvent(
                         adjustEventType = AdjustEventType.SIGNUP_2_2002,
-                        isLoggedIn = false
+                        isLoggedIn = false,
+                        data = userData?.toJson() ?: ""
                     )
                     dataStorePreferences.isAdjustSingUp2EventRegister(false)
                 }
@@ -282,7 +287,8 @@ class SignUpViewModel @Inject constructor(
                 if (dataStorePreferences.isAdjustSingUp3EventRegister().first()) {
                     registerAdjustEvent(
                         adjustEventType = AdjustEventType.SIGNUP_3_2003,
-                        isLoggedIn = false
+                        isLoggedIn = false,
+                        data = userData?.toJson() ?: ""
                     )
                     dataStorePreferences.isAdjustSingUp3EventRegister(false)
                 }
@@ -293,7 +299,8 @@ class SignUpViewModel @Inject constructor(
                 if (dataStorePreferences.isAdjustSingUp4EventRegister().first()) {
                     registerAdjustEvent(
                         adjustEventType = AdjustEventType.SIGNUP_4_2004,
-                        isLoggedIn = false
+                        isLoggedIn = false,
+                        data = userData?.toJson() ?: ""
                     )
                     dataStorePreferences.isAdjustSingUp4EventRegister(false)
                 }
@@ -304,7 +311,8 @@ class SignUpViewModel @Inject constructor(
                 if (dataStorePreferences.isAdjustSingUp5EventRegister().first()) {
                     registerAdjustEvent(
                         adjustEventType = AdjustEventType.SIGNUP_5_2007,
-                        isLoggedIn = false
+                        isLoggedIn = false,
+                        data = userData?.toJson() ?: ""
                     )
                     dataStorePreferences.isAdjustSingUp5EventRegister(false)
                 }

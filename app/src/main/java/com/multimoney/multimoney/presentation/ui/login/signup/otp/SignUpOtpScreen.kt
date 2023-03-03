@@ -190,7 +190,7 @@ fun SignUpOtpScreen(
                         sharedViewModel.onUIEvent(
                             SignUpViewModel.UIEvent.OnLoadingValueChange(false)
                         )
-                    }, it)
+                    }, it, sharedViewModel.userData)
                 )
             }.onMessage {
                 sharedViewModel.onUIEvent(

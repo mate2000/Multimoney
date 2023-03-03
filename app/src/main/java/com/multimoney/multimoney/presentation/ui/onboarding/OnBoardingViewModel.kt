@@ -19,6 +19,7 @@ import com.multimoney.multimoney.presentation.util.ISO3_GUATEMALA
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -152,6 +153,11 @@ class OnBoardingViewModel @Inject constructor(
     private fun navigateToNextScreen(screen: String) {
         viewModelScope.launch {
             dataStorePreferences.isOnBoardingEnabled(false)
+            if (dataStorePreferences.isAdjustSingUpButtonClickedEventRegister().first()) {
+                registerAdjustEvent(adjustEventType = AdjustEventType.SIGNUP_FIRST_BUTTON_CLICKED_2000, isLoggedIn = false)
+                dataStorePreferences.isAdjustSingUpButtonClickedEventRegister(false)
+            }
+
             popAndNavigateTo(
                 route = if (screen == Screen.SignUpScreen.baseRoute) {
                     "$screen/".plus(0)

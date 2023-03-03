@@ -147,7 +147,7 @@ class SignInViewModel @Inject constructor(
                                             if (payload.getString(SignUpPasswordViewModel.COGNITO_CHANGE_PASSWORD_REQUIRED)
                                                     .toBoolean()
                                             ) {
-                                                Amplify.Auth.signOut({}, {})
+                                                //Amplify.Auth.signOut({}, {})
                                                 uiState = uiState.copy(
                                                     openDialog = DialogParameters(
                                                         titleResource = string.sign_in_expired_password_dialog_title,

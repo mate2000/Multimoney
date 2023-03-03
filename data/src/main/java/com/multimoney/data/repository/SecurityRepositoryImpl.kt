@@ -456,10 +456,11 @@ class SecurityRepositoryImpl @Inject constructor(
         identification: String,
         phone: String,
         pkUser: String,
-        idBrand: Int
+        idBrand: Int,
+        user: String
     ): Flow<MultimoneyResult<ChangePhone>> =
         fetchData(
-            apolloCall = graphqlApi.mutationChangePhone(identification, phone, pkUser, idBrand),
+            apolloCall = graphqlApi.mutationChangePhone(identification, phone, pkUser, idBrand,user),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
             }

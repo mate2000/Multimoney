@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.crypto.receive.cryptoaddress
 
+import android.graphics.Bitmap
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -75,8 +76,8 @@ class CryptoReceiveAddressViewModel @Inject constructor(
         }
     }
 
-    private fun shareCryptoReceiveAddress(address: String) {
-        helper.shareTextPlain(text = address)
+    private fun shareCryptoReceiveAddress(address: String, bitmap: Bitmap) {
+        helper.shareTextWithImage(text = address, bitmap = bitmap)
     }
 
     fun onUIEvent(event: UIEvent) {
@@ -89,7 +90,7 @@ class CryptoReceiveAddressViewModel @Inject constructor(
                 event.cryptoNetwork
             )
             is UIEvent.OnGetCryptoReceiveAddress -> getCryptoReceiveAddress()
-            is UIEvent.OnShareCryptoReceiveAddress -> shareCryptoReceiveAddress(event.address)
+            is UIEvent.OnShareCryptoReceiveAddress -> shareCryptoReceiveAddress(event.address, event.bitmap)
             is UIEvent.OnSetOpenMaintenanceAction -> openMaintenanceAction = event.action
         }
     }
@@ -125,7 +126,8 @@ class CryptoReceiveAddressViewModel @Inject constructor(
         ) : UIEvent
         object OnGetCryptoReceiveAddress : UIEvent
         data class OnShareCryptoReceiveAddress(
-            val address: String
+            val address: String,
+            val bitmap: Bitmap
         ) : UIEvent
         data class OnSetOpenMaintenanceAction(val action: () -> Unit) : UIEvent
     }

@@ -3,9 +3,12 @@ package com.multimoney.multimoney.presentation.ui.smart.origination.sign
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -63,7 +66,7 @@ fun SmartDocumentGenerationScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CustomImage(drawableResource = icon ?: drawable.ic_frame)
+            CustomImage(drawableResource = icon ?: drawable.ic_logo_multimoney)
             Text(
                 text = stringResource(id = title ?: string.document_generation_title),
                 modifier = Modifier.padding(top = 24.dp),
@@ -80,6 +83,21 @@ fun SmartDocumentGenerationScreen(
                 style = Typography.body1,
                 color = MultimoneyTheme.colors.text,
                 textAlign = TextAlign.Center
+            )
+        }
+        Row(
+            modifier = Modifier.padding(bottom = 30.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(32.dp),
+                color = MultimoneyTheme.colors.primary
+            )
+            Text(
+                text = stringResource(id = string.document_generation_info),
+                modifier = Modifier.padding(start = 12.dp),
+                style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                color = MultimoneyTheme.colors.text
             )
         }
     }

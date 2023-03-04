@@ -9,6 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.domain.interaction.virtualcard.MutationDeleteCardVDUseCase
 import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCase
+import com.multimoney.domain.model.metrics.BaseEventDataDto
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -33,9 +34,11 @@ import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardL
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnHideToast
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnNavigateToVerifyCard
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProfileCardListOrigin
 import com.multimoney.multimoney.presentation.util.getNavParam
+import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -81,6 +84,9 @@ class ProfileCardListViewModel @Inject constructor(
                     )
                     if (fromDelete) {
                         onDeleteCardShowToast()
+                        if (cardsList.isNullOrEmpty()) {
+                            registerAdjustEvent(AdjustEventType.SETTINGS_USER_WITHOUT_CARD_8006, applyAdjust = false, data = BaseEventDataDto(user = user, idBrand = idBrand, identification = identification).toJson())
+                        }
                     }
                 }.onFailure {
                     uiState = uiState.copy(

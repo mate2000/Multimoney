@@ -19,6 +19,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.ADD_CARD_RESPONSE
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_CARD_VISA_DIRECT
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
@@ -258,7 +259,7 @@ class PaymentScheduleCardViewModel @Inject constructor(
     }
 
     private fun onHandleAddCardResponse(response: String, isError: Boolean) {
-        if (false) {
+        if (isError) {
             setErrorAlertResultAddCard(response.getAddCardErrorFromValue())
         } else {
             onNavigateToVisaVerifyInformation(response)
@@ -351,6 +352,9 @@ class PaymentScheduleCardViewModel @Inject constructor(
         route = Screen.VisaVerifyInformationScreen.baseRoute
             .plus(
                 getNavParam(IDENTIFICATION, identification)
+            )
+            .plus(
+                getNavParam(ID_CARD, "")
             )
             .plus(
                 getNavParam(USER, infoUser?.email.orEmpty())
@@ -470,8 +474,8 @@ class PaymentScheduleCardViewModel @Inject constructor(
         const val RESPONSE_IS_ERROR = "response_error_key"
         const val VISA_DIRECT_CATEGORY = "VISA_DIRECT"
         const val APPLICATION_NAME = "applicationName"
-        const val USER_NAME = "userName"
-        const val USER_PASS = "userPassword"
+        const val VISA_USER_NAME = "userName"
+        const val VISA_USER_PASS = "userPassword"
         const val ENDPOINT = "endpoint"
         const val SEARCH_KEY_ENDPOINT = "FTT_SERVER_VISADIRECT"
         const val SEARCH_KEY_APPLICATION_NAME = "APPLICATIONNAME_VISADIRECT"

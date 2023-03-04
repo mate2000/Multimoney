@@ -15,8 +15,8 @@ import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.USER_NAME
+import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.ADD_CARD_RESPONSE
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CARD
 import com.multimoney.multimoney.presentation.navigation.navgraph.INFO_USER
@@ -41,7 +41,6 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCar
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnHandleAddCardResponse
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnStopTimer
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnRestartTimer
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.AddVisaCardErrors
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -242,6 +241,9 @@ class PaymentCardListViewModel @Inject constructor(
                 getNavParam(IDENTIFICATION, identification)
             )
             .plus(
+                getNavParam(ID_CARD, "")
+            )
+            .plus(
                 getNavParam(USER, infoUser?.email.orEmpty())
             )
             .plus(
@@ -322,8 +324,8 @@ class PaymentCardListViewModel @Inject constructor(
         const val RESPONSE_IS_ERROR = "response_error_key"
         const val VISA_DIRECT_CATEGORY = "VISA_DIRECT"
         const val APPLICATION_NAME = "applicationName"
-        const val USER_NAME = "userName"
-        const val USER_PASS = "userPassword"
+        const val VISA_USER_NAME = "userName"
+        const val VISA_USER_PASS = "userPassword"
         const val ENDPOINT = "endpoint"
         const val SEARCH_KEY_ENDPOINT = "FTT_SERVER_VISADIRECT"
         const val SEARCH_KEY_APPLICATION_NAME = "APPLICATIONNAME_VISADIRECT"

@@ -40,8 +40,8 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.P
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.Companion.RESPONSE_VALUE
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.Companion.RESULT_CODE_PROCESS_FINISHED
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.Companion.RESULT_CODE_PROCESS_INCOMPLETE
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.Companion.USER_NAME
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.Companion.USER_PASS
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.Companion.VISA_USER_NAME
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.Companion.VISA_USER_PASS
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnAlertButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnAlertCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnCloseClick
@@ -274,8 +274,8 @@ fun PaymentScheduleCardEmptyState(
                     val intent = Intent(context, ReactActivity::class.java)
                     val bundle = Bundle()
                     bundle.putString(APPLICATION_NAME, viewModel.reactApplicationName)
-                    bundle.putString(USER_NAME, viewModel.reactUserName)
-                    bundle.putString(USER_PASS, viewModel.reactUserPass)
+                    bundle.putString(VISA_USER_NAME, viewModel.reactUserName)
+                    bundle.putString(VISA_USER_PASS, viewModel.reactUserPass)
                     bundle.putString(ENDPOINT, viewModel.reactEndPoint)
                     intent.putExtras(bundle)
                     addCardActivityResult.launch(intent)

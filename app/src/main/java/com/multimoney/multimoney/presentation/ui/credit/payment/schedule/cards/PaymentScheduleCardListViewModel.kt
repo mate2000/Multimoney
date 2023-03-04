@@ -15,6 +15,7 @@ import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.ADD_CARD_RESPONSE
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
@@ -318,8 +319,8 @@ class PaymentScheduleCardListViewModel @Inject constructor(
         const val RESPONSE_IS_ERROR = "response_error_key"
         const val VISA_DIRECT_CATEGORY = "VISA_DIRECT"
         const val APPLICATION_NAME = "applicationName"
-        const val USER_NAME = "userName"
-        const val USER_PASS = "userPassword"
+        const val VISA_USER_NAME = "userName"
+        const val VISA_USER_PASS = "userPassword"
         const val ENDPOINT = "endpoint"
         const val SEARCH_KEY_ENDPOINT = "FTT_SERVER_VISADIRECT"
         const val SEARCH_KEY_APPLICATION_NAME = "APPLICATIONNAME_VISADIRECT"

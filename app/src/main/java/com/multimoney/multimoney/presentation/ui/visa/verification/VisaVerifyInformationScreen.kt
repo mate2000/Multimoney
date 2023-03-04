@@ -42,7 +42,9 @@ fun VisaVerifyInformationScreen(
     viewModel.apply {
         LaunchedEffect(true) {
             executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
-            viewModel.onUIEvent(VisaVerifyInformationViewModel.UIEvent.OnCallMutationCreateCardVDUseCase)
+            if (viewModel.idCard.isEmpty()) {
+                viewModel.onUIEvent(VisaVerifyInformationViewModel.UIEvent.OnCallMutationCreateCardVDUseCase)
+            }
         }
     }
     VisaVerifiedContent(

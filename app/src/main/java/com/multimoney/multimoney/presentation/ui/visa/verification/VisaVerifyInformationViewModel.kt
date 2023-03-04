@@ -37,8 +37,8 @@ class VisaVerifyInformationViewModel @Inject constructor(
         private set
 
     // Stateless
+    var idCard: String = ""
     private var identification: String = ""
-    private var idCard: String = ""
     private var user: String = ""
     private var userName: String = ""
     private var idBrand: Int = 0

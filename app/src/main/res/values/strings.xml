@@ -2545,6 +2545,10 @@
     name="origination_voucher_destiny_account"
     translatable="false"
   >Cuenta de destino</string>
+    <string
+    name="origination_voucher_reference"
+    translatable="false"
+  >Nº de pagaré</string>
 
     <!-- Visa -->
     <string name="visa_date_label" translatable="false">EXP. \nDATE</string>
@@ -5706,4 +5710,51 @@
     name="visa_add_card_error_edit_failed_description"
     translatable="false"
   >No pudimos actualizar los datos de tu tarjeta. Contactanos para ayudarte</string>
+=========
+    <!-- Transfer In Amount Exceeded Form -->
+    <string
+    name="amount_exceeded_title"
+    translatable="false"
+  >Transferencia Cripto</string>
+    <string
+    name="amount_exceeded_message"
+    translatable="false"
+  >Has recibido una transferencia mayor a $1,000 necesitamos verificar el depósito.</string>
+    <string
+    name="amount_exceeded_name"
+    translatable="false"
+  >¿Quién realizó el envío?</string>
+    <string
+    name="amount_exceeded_platform"
+    translatable="false"
+  >¿Desde qué plataforma se realizó el envío? </string>
+    <string
+    name="amount_exceeded_reason"
+    translatable="false"
+  >¿Cuál fue el motivo de envío?</string>
+    <string
+    name="amount_exceeded_button"
+    translatable="false"
+  >Liberar depósito</string>
+    <string
+    name="amount_exceeded_dialog_title"
+    translatable="false"
+  >Recibiste cripto</string>
+    <string
+    name="amount_exceeded_dialog_message"
+    translatable="false"
+  >Se te han transferido más de $10,000, te contactaremos para verificar el origen de fondos y que puedas recibir el dinero.</string>
+    <string
+    name="amount_exceeded_release_error_title"
+    translatable="false"
+  >¡Oh no! Hubo un error al liberar el despósito</string>
+    <string
+    name="amount_exceeded_release_error_message"
+    translatable="false"
+  >Lo sentimos, volvé a intentarlo más tarde</string>
+    <string
+    name="amount_exceeded_release_error_button"
+    translatable="false"
+  >Ir al inicio</string>
+>>>>>>>>> Temporary merge branch 2
 </resources>

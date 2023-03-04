@@ -39,10 +39,9 @@ import androidx.compose.ui.unit.sp
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.util.DECIMAL_AND_NUMBER_REGEX
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.transformation.CryptoAssetMaskTransformation
-import com.multimoney.multimoney.presentation.util.transformation.CurrencyDoubleTransformation
+import com.multimoney.multimoney.presentation.util.transformation.formatDecimalMoney
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import com.multimoney.multimoney.presentation.util.validateEightDecimalIncome
 
@@ -74,6 +73,7 @@ fun CryptoCurrencyInputLayout(
     isError: Boolean = false,
     errorText: String? = null,
     onValueChanged: (String) -> Unit,
+    onSwitchClick: () -> Unit,
     onImeClick: () -> Unit
 ) {
     Row(
@@ -93,6 +93,7 @@ fun CryptoCurrencyInputLayout(
                 isTransformationCurrency = isTransformationCurrency,
                 focusRequester = focusRequester,
                 onSearchClick = onImeClick,
+                onSwitchClick = onSwitchClick,
                 isError = isError,
                 onValueChanged = onValueChanged
             )
@@ -133,6 +134,7 @@ fun CustomTextField(
     focusRequester: FocusRequester = FocusRequester(),
     isError: Boolean = false,
     onValueChanged: (String) -> Unit = {},
+    onSwitchClick: () -> Unit = {},
     onSearchClick: () -> Unit = {}
 ) {
     Box(
@@ -185,7 +187,7 @@ fun CustomTextField(
                 )
             },
             visualTransformation = if (isTransformationCurrency.value.not()) {
-                CurrencyDoubleTransformation(currency = CurrencyType.Dollar.symbol, separator = SIMPLE_COMMA)
+                formatDecimalMoney(CurrencyType.Dollar.symbol)
             } else {
                 CryptoAssetMaskTransformation(asset = iconCurrency)
             },
@@ -213,10 +215,7 @@ fun CustomTextField(
         ) {
             IconButton(
                 modifier = Modifier.wrapContentSize(),
-                onClick = {
-                    isTransformationCurrency.value = !isTransformationCurrency.value
-                    value.value = ""
-                }
+                onClick = onSwitchClick
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -303,6 +302,5 @@ const val LOT_OF_CHARACTERS = 32
 const val ASSET_EQUIVALENT_SUBTRACTION = 2
 const val ONE_LENGTH = 1
 const val SIMPLE_DOT = "."
-const val SIMPLE_COMMA = ','
 const val CURRENCY_DEFAULT_PLACEHOLDER = "$0"
 const val ZERO_STRING = "0"

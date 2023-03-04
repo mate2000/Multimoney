@@ -37,8 +37,8 @@ class VisaVerifyInformationViewModel @Inject constructor(
         private set
 
     // Stateless
+    var idCard: String = ""
     private var identification: String = ""
-    private var idCard: String = ""
     private var user: String = ""
     private var userName: String = ""
     private var idBrand: Int = 0
@@ -85,7 +85,6 @@ class VisaVerifyInformationViewModel @Inject constructor(
     }
 
     fun parseResponse(value: String): AddCardResponse? {
-        //TODO Waiting for the React team to send a success response to see what the JSON string contains
         return Gson().fromJson(value, AddCardResponse::class.java)
     }
 

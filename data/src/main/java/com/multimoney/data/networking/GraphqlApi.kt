@@ -114,6 +114,7 @@ import com.multimoney.data.networking.graphql.apollomodel.SaveCreditExtensionDet
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditFlowInputMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOfferMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOperationMutation
+import com.multimoney.data.networking.graphql.apollomodel.SaveLogTrackingMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveTermsAndConditionsCreditMutation
 import com.multimoney.data.networking.graphql.apollomodel.ScreenConfigQuery
 import com.multimoney.data.networking.graphql.apollomodel.SellCryptoCurrencyMutation
@@ -2048,6 +2049,23 @@ class GraphqlApi @Inject constructor(
             ChangeDeviceMutation(
                 email = email,
                 otp = otp
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationSaveLogTracking(
+        identification: String,
+        pkUser: Int,
+        keySearch: String,
+        data: String,
+        idBrand: Int
+    ): ApolloCall<SaveLogTrackingMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            SaveLogTrackingMutation(
+                identification = identification,
+                pkUser = pkUser,
+                keySearch = keySearch,
+                data = data,
+                idBrand = idBrand
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

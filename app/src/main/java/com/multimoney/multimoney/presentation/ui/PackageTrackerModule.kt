@@ -15,9 +15,8 @@ class PackageTrackerModule(reactContext: ReactApplicationContext) :
     @ReactMethod
     fun callback(error: String, response: String) {
         val intent = Intent()
-        intent.putExtra(RESPONSE_VALUE, response)
+        intent.putExtra(RESPONSE_VALUE, response.ifEmpty { error })
         intent.putExtra(RESPONSE_IS_ERROR, response.isEmpty())
-        intent.putExtra(ERROR_VALUE, error)
         currentActivity?.setResult(RESULT_CODE_PROCESS_FINISHED, intent)
         currentActivity?.finish()
     }
@@ -51,7 +50,6 @@ class PackageTrackerModule(reactContext: ReactApplicationContext) :
         const val RESULT_CODE_PROCESS_INCOMPLETE = 400
         const val RESPONSE_VALUE = "response_value_key"
         const val RESPONSE_IS_ERROR = "response_error_key"
-        const val ERROR_VALUE = "error_value_key"
         const val PACKAGE_TRACKER_MODULE = "PackageTrackerModule"
     }
 }

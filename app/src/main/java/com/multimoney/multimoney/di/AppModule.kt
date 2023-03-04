@@ -37,4 +37,5 @@ class AppModule {
     @Provides
     fun provideCreditSubscriptionManager(subscriptionCreditContractEventUseCase: SubscriptionCreditContractEventUseCase) =
         CreditSubscriptionManager(subscriptionCreditContractEventUseCase)
+
 }

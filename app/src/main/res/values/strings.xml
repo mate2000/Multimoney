@@ -763,6 +763,7 @@
 
     <!-- Generate Document -->
     <string name="document_generation_title" translatable="false">Estamos creando tus documentos</string>
+    <string name="document_generation_subtitle_cr" translatable="false">Firmá el contrato y recibe tu crédito</string>
     <string name="document_generation_subtitle" translatable="false">Firma el contrato y recibe tu crédito</string>
     <string name="document_generation_info" translatable="false">Generando documentos…</string>
     <string name="document_generation_error_description" translatable="false">Contactanos para ayudarte a abrir tu cuenta</string>
@@ -803,6 +804,7 @@
     <!-- Origination Voucher -->
     <string name="origination_voucher_amount" translatable="false">Has recibido</string>
     <string name="origination_voucher_destiny_account" translatable="false">Cuenta de destino</string>
+    <string name="origination_voucher_to_account" translatable="false">Hacia</string>
     <string name="origination_voucher_reference" translatable="false">Nº de pagaré</string>
 
     <!-- Visa -->

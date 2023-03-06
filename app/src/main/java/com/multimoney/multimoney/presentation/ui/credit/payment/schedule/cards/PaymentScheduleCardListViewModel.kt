@@ -31,6 +31,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.P
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCardSelected
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnNavigateBackHome
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnHandleAddCardResponse
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnStopTimer
@@ -191,7 +192,7 @@ class PaymentScheduleCardListViewModel @Inject constructor(
         }
     }
 
-    private fun onNavigateToVisaVerifyInformation(response: String) = navigateTo(
+    private fun onNavigateToVisaVerifyInformation(response: String) = popAndNavigateTo(
         route = Screen.VisaVerifyInformationScreen.baseRoute
             .plus(
                 getNavParam(IDENTIFICATION, identification)
@@ -213,7 +214,8 @@ class PaymentScheduleCardListViewModel @Inject constructor(
             )
             .plus(
                 getNavParam(USER_NAME, infoUser?.userName.orEmpty())
-            )
+            ),
+        popTo = Screen.PaymentScheduleCardListScreen.route
     )
 
     private fun onCardSelected(card: CardVisaDirect?) = popAndNavigateTo(
@@ -245,6 +247,9 @@ class PaymentScheduleCardListViewModel @Inject constructor(
     }
 
     private fun onNavigateBack() = navigateBack(popTo = Screen.PaymentScheduleCardScreen.route, isRestart = false)
+
+    private fun onNavigateBackHome(isRestart: Boolean) =
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = isRestart)
 
     private fun onCloseClick() {
         uiState = uiState.copy(
@@ -291,6 +296,7 @@ class PaymentScheduleCardListViewModel @Inject constructor(
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnNavigateBack -> onNavigateBack()
+            is OnNavigateBackHome -> onNavigateBackHome(false)
             is OnCloseClick -> onCloseClick()
             is OnCallQueryGetCards -> onCallQueryGetCardsUseCase()
             is OnCardSelected -> onCardSelected(uiEvent.card)
@@ -305,6 +311,7 @@ class PaymentScheduleCardListViewModel @Inject constructor(
         object OnCallQueryGetCards : UIEvent()
         class OnCardSelected(val card: CardVisaDirect?) : UIEvent()
         object OnNavigateBack : UIEvent()
+        object OnNavigateBackHome : UIEvent()
         object OnCloseClick : UIEvent()
         object OnStart : UIEvent()
         object OnStopTimer : UIEvent()

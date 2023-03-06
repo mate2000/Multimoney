@@ -34,7 +34,9 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.P
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCardSelected
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnNavigateBackHome
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnHandleAddCardResponse
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnStopTimer
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnRestartTimer
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.Companion.APPLICATION_NAME
@@ -64,7 +66,7 @@ fun PaymentScheduleCardListScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)
-            onUIEvent(OnCallQueryGetCards)
+            onUIEvent(OnStart)
         }
     }
     PaymentScheduleAccountContent(viewModel)
@@ -110,7 +112,7 @@ fun PaymentScheduleAccountContent(
                     )
                 }
                 RESULT_CODE_PROCESS_INCOMPLETE -> {
-                    viewModel.onUIEvent(OnNavigateBack)
+                    viewModel.onUIEvent(OnNavigateBackHome)
                 }
                 else -> return@rememberLauncherForActivityResult
             }

@@ -32,8 +32,8 @@ class PackageTrackerModule(reactContext: ReactApplicationContext) :
         val alert = AlertDialog.Builder(currentActivity)
         alert.setView(dialogView)
         val dialog = alert.create()
-        dialogView.findViewById<Button>(R.id.cancelBtn).setOnClickListener { dialog.dismiss() }
-        dialogView.findViewById<Button>(R.id.continueBtn).setOnClickListener {
+        dialogView.findViewById<Button>(R.id.continueBtn).setOnClickListener { dialog.dismiss() }
+        dialogView.findViewById<Button>(R.id.cancelBtn).setOnClickListener {
             dialog.dismiss()
             currentActivity?.setResult(RESULT_CODE_PROCESS_INCOMPLETE)
             currentActivity?.finish()

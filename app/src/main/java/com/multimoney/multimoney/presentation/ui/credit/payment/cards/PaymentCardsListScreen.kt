@@ -47,6 +47,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCar
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.Companion.RESPONSE_VALUE
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnHandleAddCardResponse
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnNavigateBackHome
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnStopTimer
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnRestartTimer
@@ -121,7 +122,7 @@ fun PaymentCardsListContent(
                     )
                 }
                 RESULT_CODE_PROCESS_INCOMPLETE -> {
-                    viewModel.onUIEvent(OnNavigateBack)
+                    viewModel.onUIEvent(OnNavigateBackHome)
                 }
                 else -> return@rememberLauncherForActivityResult
             }

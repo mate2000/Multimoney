@@ -42,12 +42,15 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnUpdateAllNames
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnValidateDocument
+import com.multimoney.multimoney.presentation.util.IpInfo
 import com.multimoney.multimoney.presentation.util.catalog.SvDocuments
+import com.multimoney.multimoney.presentation.util.getIPInfo
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.validCarne
 import com.multimoney.multimoney.presentation.util.validDui
 import com.multimoney.multimoney.presentation.util.validId
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
@@ -71,6 +74,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
     // Interactions
     private var onSuccessCatalogDocumentType: CatalogType? = null
     private var onSuccessCountry: CountryList? = null
+    private var ipInfo: IpInfo? = null
 
     // Stateless
     var documentLength = 0
@@ -94,34 +98,26 @@ class SignUpPersonalDataViewModel @Inject constructor(
         )
     )
 
-    private fun getCountry(
-        nationality: String,
-        updateNationality: (nationality: String, idBrand: Int) -> Unit,
-        onLoadingValueChange: (isLoading: Boolean) -> Unit
-    ): String? {
-        onSuccessCountry?.countryList?.forEach {
-            if (it.countryDescription?.lowercase() == nationality.lowercase()) {
-                setDefaultCountry(nationality, updateNationality, onLoadingValueChange)
-                return it.countryDescription
-            }
-        }
-        return ""
-    }
-
     private fun setDefaultCountry(
-        nationality: String,
         updateNationality: (nationality: String, idBrand: Int) -> Unit,
         onLoadingValueChange: (isLoading: Boolean) -> Unit
     ) {
-        callQueryCatalogDocumentType(
-            onSuccessCountry?.countryList?.find { it.countryDescription == nationality }?.idBrand ?: 0,
-            onLoadingValueChange
-        )
-        updateNationality.invoke(
-            onSuccessCountry?.countryList?.find { it.countryDescription == nationality }?.countryDescription
-                ?: "",
-            onSuccessCountry?.countryList?.find { it.countryDescription == nationality }?.idBrand ?: 0
-        )
+        viewModelScope.launch(Dispatchers.IO) {
+            ipInfo = getIPInfo()
+            onSuccessCountry?.countryList?.find {
+                it.countryDescription?.lowercase() == ipInfo?.country?.lowercase()
+            }?.let {
+                callQueryCatalogDocumentType(
+                    it.idBrand ?: 0,
+                    onLoadingValueChange
+                )
+                updateNationality.invoke(
+                    it.countryDescription ?: "",
+                    it.idBrand ?: 0
+                )
+                uiState = uiState.copy(nationalityValue = it.countryDescription ?: "")
+            }
+        }
     }
 
     private fun getDocumentLength(documentType: String, isFromBackend: Boolean = false) {
@@ -341,9 +337,9 @@ class SignUpPersonalDataViewModel @Inject constructor(
         viewModelScope.launch {
             deviceId = dataStorePreferences.getDeviceId().first()
         }
-        val countryValue = getCountry(nationality, updateNationality, onLoadingValueChange) ?: ""
+        if (nationality.isEmpty()) setDefaultCountry(updateNationality, onLoadingValueChange)
+
         uiState = uiState.copy(
-            nationalityValue = countryValue,
             identificationValueType = identificationType,
             personalDocumentValue = identificationValue,
             firstNameValue = firstName,

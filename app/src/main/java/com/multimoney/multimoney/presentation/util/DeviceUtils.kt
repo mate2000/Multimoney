@@ -6,9 +6,9 @@ import android.content.res.Configuration
 import android.os.Build
 import android.provider.Settings
 import android.util.DisplayMetrics
-import android.util.Patterns
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import com.google.gson.Gson
 import com.multimoney.data.util.catalog.DeviceType
 import com.multimoney.multimoney.BuildConfig
 import okhttp3.OkHttpClient
@@ -33,6 +33,25 @@ fun getIPAddress(): String? {
         print("Error when executing get request: " + err.localizedMessage)
     }
     return result
+}
+
+fun getIPInfo(): IpInfo? {
+    try {
+        val request = Request.Builder()
+            .url(URL(GET_IP_INFO_URL))
+            .build()
+        val response = OkHttpClient().newCall(request).execute()
+
+        if (response.isSuccessful) {
+            return Gson().fromJson(response.body?.string(), IpInfo::class.java)
+        }
+
+    } catch (err: Error) {
+        print("Error when executing get request: " + err.localizedMessage)
+    } catch (err: Exception) {
+        print("Error when executing get request: " + err.localizedMessage)
+    }
+    return null
 }
 
 fun getDeviceModel(): String {
@@ -141,3 +160,4 @@ private fun getDeviceTypeFromPhysicalSize(context: Context): DeviceType {
 }
 
 const val GET_IP_ADDRESS_URL = "https://api.ipify.org"
+const val GET_IP_INFO_URL = "http://ip-api.com/json"

@@ -21,6 +21,7 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.*
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel
@@ -173,7 +174,7 @@ class SmartPaymentCardsViewModel @Inject constructor(
             )
             .plus(
                 getNavParam(
-                    PaymentScheduleCardListViewModel.USER_NAME,
+                    USER_NAME,
                     infoUser?.userName.orEmpty()
                 )
             )
@@ -308,7 +309,7 @@ class SmartPaymentCardsViewModel @Inject constructor(
             onNavigateToVisaVerifyInformation(response)
         }
     }
-    
+
 
     private fun onCardSelected(cardSelected: CardVisaDirect) {
         navigateTo(

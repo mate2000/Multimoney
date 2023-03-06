@@ -363,7 +363,7 @@ class ValidateOTPViewModel @Inject constructor(
                 FieldToChange.PHONE.value -> {
                     onChangePhone(
                         uiState.identification.toString(),
-                        uiState.newValue.toString(),
+                        uiState.newPhoneNumberCode.plus(uiState.newValue.toString()),
                         uiState.pkUser ?: "",
                         uiState.idBrand ?: 0,
                         uiState.userName ?: ""

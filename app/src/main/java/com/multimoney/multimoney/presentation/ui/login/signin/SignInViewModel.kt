@@ -147,7 +147,6 @@ class SignInViewModel @Inject constructor(
                                             if (payload.getString(SignUpPasswordViewModel.COGNITO_CHANGE_PASSWORD_REQUIRED)
                                                     .toBoolean()
                                             ) {
-                                                //Amplify.Auth.signOut({}, {})
                                                 uiState = uiState.copy(
                                                     openDialog = DialogParameters(
                                                         titleResource = string.sign_in_expired_password_dialog_title,
@@ -286,7 +285,7 @@ class SignInViewModel @Inject constructor(
         dataStorePreferences.setPkUser(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_PK_USER))
         dataStorePreferences.setIdentification(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_IDENTIFICATION))
         dataStorePreferences.setUserEmail(uiState.userEmail)
-        dataStorePreferences.setUserPhoneNumberWithCode(authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.phoneNumber() }?.value.orEmpty())
+          //dataStorePreferences.setUserPhoneNumberWithCode(authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.phoneNumber() }?.value.orEmpty())
     }
 
     private fun isFormValid() {

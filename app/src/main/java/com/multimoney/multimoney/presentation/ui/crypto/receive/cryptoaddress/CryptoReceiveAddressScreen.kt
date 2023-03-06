@@ -183,14 +183,18 @@ fun CryptoReceiveAddressContent(
                         contentDescription = "",
                         modifier = Modifier.clickable(onClick = {
                             if (!viewModel.uiState.isLoading) {
-                                viewModel.onUIEvent(
-                                    CryptoReceiveAddressViewModel.UIEvent.OnShareCryptoReceiveAddress(
-                                        viewModel.uiState.address
+                                val qrcodeBitmap = QRCodeGenerator.generateQrCode(
+                                    text = viewModel.uiState.address,
+                                    size = 720
+                                )
+                                if (qrcodeBitmap != null) {
+                                    viewModel.onUIEvent(
+                                        CryptoReceiveAddressViewModel.UIEvent.OnShareCryptoReceiveAddress(
+                                            viewModel.uiState.address,
+                                            qrcodeBitmap
+                                        )
                                     )
-                                )
-                                viewModel.onUIEvent(
-                                    CryptoReceiveAddressViewModel.UIEvent.OnRegisterAdjustPressShareAddressButton
-                                )
+                                }
                             }
                         })
                     )

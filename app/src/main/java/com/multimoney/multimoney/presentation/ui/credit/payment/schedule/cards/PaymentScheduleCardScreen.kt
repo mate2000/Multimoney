@@ -50,7 +50,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.P
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnOpenDisclaimerDialog
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnProgramClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnHandleAddCardResponse
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnRestartTimer
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnResumeTimer
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnStopTimer
 import com.multimoney.multimoney.presentation.uielement.AlertResult
@@ -217,7 +217,7 @@ fun PaymentScheduleCardEmptyState(
     val addCardActivityResult = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) {
-        viewModel.onUIEvent(OnRestartTimer)
+        viewModel.onUIEvent(OnResumeTimer)
         when (it.resultCode) {
             RESULT_CODE_PROCESS_FINISHED -> {
                 val response: String? = it.data?.getStringExtra(RESPONSE_VALUE)

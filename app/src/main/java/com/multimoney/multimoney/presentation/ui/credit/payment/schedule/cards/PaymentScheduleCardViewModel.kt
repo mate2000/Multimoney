@@ -44,7 +44,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.P
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnHandleAddCardResponse
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnStopTimer
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnRestartTimer
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnResumeTimer
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.API_DATE_FORMAT
 import com.multimoney.multimoney.presentation.util.catalog.AddVisaCardErrors
@@ -409,8 +409,8 @@ class PaymentScheduleCardViewModel @Inject constructor(
         )
     }
 
-    private fun onRestartTimer() {
-        countDownTimer.restartTimer()
+    private fun onResumeTimer() {
+        countDownTimer.resumeTimer()
     }
 
     private fun onStopTimer() {
@@ -447,7 +447,7 @@ class PaymentScheduleCardViewModel @Inject constructor(
             is OnStart-> onStart()
             is OnHandleAddCardResponse -> onHandleAddCardResponse(uiEvent.response, uiEvent.isError)
             is OnStopTimer -> onStopTimer()
-            is OnRestartTimer -> onRestartTimer()
+            is OnResumeTimer -> onResumeTimer()
         }
     }
 
@@ -462,7 +462,7 @@ class PaymentScheduleCardViewModel @Inject constructor(
         object OnNavigateBack : UIEvent()
         object OnStart : UIEvent()
         object OnStopTimer : UIEvent()
-        object OnRestartTimer : UIEvent()
+        object OnResumeTimer : UIEvent()
         data class OnHandleAddCardResponse(val response: String, val isError: Boolean) : UIEvent()
     }
 

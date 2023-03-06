@@ -94,16 +94,18 @@ fun PaymentOptions(
                 )
             }
         }
+        item {
+            CustomButton(
+                text = stringResource(id = string.payment_account_create),
+                modifier = Modifier
+                    .padding(top = 12.dp, start = 16.dp, end = 16.dp, bottom = 12.dp)
+                    .fillMaxWidth(),
+                onClick = {
+                    viewModel.onUIEvent(UIEvent.OnAddAccountClick)
+                },
+                buttonType = PrimaryTertiary,
+                trailingIcon = drawable.ic_plus
+            )
+        }
     }
-    CustomButton(
-        text = stringResource(id = string.payment_account_create),
-        modifier = Modifier
-            .padding(top = 12.dp, start = 16.dp, end = 16.dp, bottom = 12.dp)
-            .fillMaxWidth(),
-        onClick = {
-            viewModel.onUIEvent(UIEvent.OnAddAccountClick)
-        },
-        buttonType = PrimaryTertiary,
-        trailingIcon = drawable.ic_plus
-    )
 }

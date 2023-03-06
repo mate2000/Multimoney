@@ -53,12 +53,12 @@ class SaveCreditStepsHelper @Inject constructor() {
         accountTypeKey: String?
     ) {
         val accountNumberQuestion = getScreenConfigQuestion(ACCOUNT_NUMBER, accountNumber)
-        val accountTypeQuestion = getScreenConfigQuestion(ACCOUNT_TYPE, accountTypeValue)
+        val accountTypeQuestion = getScreenConfigQuestion(ACCOUNT_TYPE, accountTypeKey ?: "")
 
         saveScreenQuestionData(selectionQuestion(user, bank, bankSelected))
 
         val creditInfoQuestionAccountType =
-            textByDropdownQuestion(user, accountTypeValue, accountTypeValue, accountTypeQuestion, accountTypeKey)
+            textByDropdownQuestion(user, accountTypeValue, accountTypeQuestion, accountTypeKey)
         saveScreenQuestionData(creditInfoQuestionAccountType)
 
         val creditInfoQuestionAccountNumber = textQuestion(user, accountNumber, accountNumberQuestion)
@@ -356,7 +356,6 @@ class SaveCreditStepsHelper @Inject constructor() {
 
     private fun textByDropdownQuestion(
         user: String?,
-        value: String,
         accountType: String?,
         textQuestionData: CreditCatalog?,
         idIdentificatorCatalogue: String?
@@ -366,8 +365,8 @@ class SaveCreditStepsHelper @Inject constructor() {
             idOptionQuestionRequestCredit = textQuestionData?.pkQuestionOption,
             createUser = user,
             updateUser = user,
-            identificator = textQuestionData?.pkCatalog ?: "",
-            value = value,
+            identificator = textQuestionData?.pkQuestionOption?.toString().orEmpty(),
+            value = "",
             controlType = textQuestionData?.controlType,
             isCoreCatalogue = true,
             isBranchOfficeCatalogue = textQuestionData?.isCatalogBrandOffice,

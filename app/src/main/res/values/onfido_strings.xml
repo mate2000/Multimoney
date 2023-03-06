@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!--This default resources are for SV-->
+
 <resources>
     <string name="onfido_accessibility_liveness_confirmation_view">Su video</string>
     <string name="onfido_allow">Permitir</string>

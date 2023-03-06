@@ -20,5 +20,6 @@ data class Product(
     val paymentDate: String?,
     val currencyName: String?,
     val messageConditions: String?,
-    val isFormalizationRequired: String?
+    val isFormalizationRequired: String?,
+    val idPromotion: String?
 )

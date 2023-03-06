@@ -175,23 +175,39 @@ class SmartAddAccountViewModel @Inject constructor(
                 result.onLoading { uiState = uiState.copy(isLoading = true) }
                 result.onSuccess { account ->
                     val registeredAccount = account?.results?.firstOrNull()
-                    val currency = if (registeredAccount?.currencyAccount != null) {
-                        registeredAccount.currencyAccount.toString()
+                    val contactAccount = if (registeredAccount?.currencyAccount != null) {
+                        PhoneSmart(
+                            number = registeredAccount.phoneNumber,
+                            titular = if (uiState.isFavorite) {
+                                registeredAccount.accountName?.ifEmpty { uiState.nickname }
+                                    ?: uiState.nickname
+                            } else {
+                                registeredAccount.accountName?.ifEmpty { fullName }
+                                    ?: fullName
+                            },
+                            bankName = "",
+                            identification = "",
+                            accountNumber = registeredAccount.accountNumber?.ifEmpty { uiState.accountNumber },
+                            email = registeredAccount.email?.ifEmpty { uiState.email },
+                            idCurrency = registeredAccount.idCurrencyAccount?.toString()
+                                ?: CurrencyType.Dollar.id.toString(),
+                            currency = registeredAccount.idCurrencyAccount?.getCurrencyFromId()?.currency
+                                ?: CurrencyType.Dollar.currency,
+                            ibanNumber = ""
+                        )
                     } else {
-                        CurrencyType.Dollar.id.toString()
+                        PhoneSmart(
+                            number = "",
+                            titular = if (uiState.isFavorite) uiState.nickname else fullName,
+                            bankName = "",
+                            identification = "",
+                            accountNumber = uiState.accountNumber,
+                            email = uiState.email,
+                            idCurrency = CurrencyType.Dollar.id.toString(),
+                            currency = CurrencyType.Dollar.currency,
+                            ibanNumber = ""
+                        )
                     }
-                    val contactAccount = PhoneSmart(
-                        number = registeredAccount?.phoneNumber,
-                        titular = registeredAccount?.accountName
-                            ?: "${uiState.names} ${uiState.lastNames}",
-                        bankName = "",
-                        identification = "",
-                        accountNumber = registeredAccount?.accountNumber ?: uiState.accountNumber,
-                        email = registeredAccount?.email ?: uiState.email,
-                        idCurrency = currency,
-                        currency = currency.getCurrencyFromId().currency,
-                        ibanNumber = ""
-                    )
                     uiState = uiState.copy(isLoading = false)
                     navigateTo(
                         "${Screen.MyContactsTransferAmountScreen.baseRoute}/" +

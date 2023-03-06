@@ -6,11 +6,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.SellStatus
 import com.multimoney.domain.interaction.accountsmart.QuerySmartExchangeRateUseCase
 import com.multimoney.domain.interaction.crypto.GetPriceQuoteAndCommissionsUseCase
 import com.multimoney.domain.interaction.crypto.SellCryptoCurrencyUseCase
 import com.multimoney.domain.model.crypto.PricesQuoteAndCommissions
+import com.multimoney.domain.model.crypto.SellCryptoRequest
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -20,13 +22,17 @@ import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
 import com.multimoney.multimoney.presentation.util.calculateAvailableInDollars
 import com.multimoney.multimoney.presentation.util.calculateConfirmationBaseAmount
 import com.multimoney.multimoney.presentation.util.calculateQuote
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.format
 import com.multimoney.multimoney.presentation.util.roundToEightDecimalPlaces
+import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.CryptoTimerHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -35,7 +41,8 @@ import kotlin.time.Duration.Companion.seconds
 class SellCurrencyScreenViewModel @Inject constructor(
     private val getPriceQuoteAndCommissionsUseCase: GetPriceQuoteAndCommissionsUseCase,
     private val getExchangeRate: QuerySmartExchangeRateUseCase,
-    private val sellCryptoCurrencyUseCase: SellCryptoCurrencyUseCase
+    private val sellCryptoCurrencyUseCase: SellCryptoCurrencyUseCase,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(false) {
 
     var uiState by mutableStateOf(UIState())
@@ -240,6 +247,73 @@ class SellCurrencyScreenViewModel @Inject constructor(
         )
     }
 
+    private fun setSellCryptoRequest() {
+        uiState = uiState.copy(
+            sellCryptoRequest = SellCryptoRequest(
+                pkUser = pkUser,
+                identification = identification,
+                market = market,
+                commissionPercentage = uiState.pricesQuoteAndCommissions?.taxAmount ?: 0.0,
+                taxPercentage = uiState.pricesQuoteAndCommissions?.taxAmount ?: 0.0,
+                accountToken = accountToken,
+                exchangeRate = uiState.exchangeRate,
+                idBrand = idBrand,
+                user = user,
+                quoteId = uiState.pricesQuoteAndCommissions?.quote_id ?: "",
+                baseAmount = calculateConfirmationBaseAmount(
+                    quoteAmount = uiState.quoteAmount.value,
+                    baseAmount = uiState.baseAmount.value,
+                    currencyPrice = uiState.pricesQuoteAndCommissions?.price
+                        ?: DEFAULT_AMOUNT_NUMBER
+                ).toDouble(),
+                fee = uiState.pricesQuoteAndCommissions?.fee?.toDouble() ?: 0.0,
+                internalFee = uiState.pricesQuoteAndCommissions?.internal_fee ?: 0.0,
+                totalFee = uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
+            )
+        )
+    }
+
+    private fun registerAdjustSellCrypto() = viewModelScope.launch {
+        if (dataStorePreferences.isAdjustCryptoSuccessSellFirstTime().firstOrNull() == false) {
+            dataStorePreferences.setAdjustCryptoSuccessSellFirstTime(true)
+            setSellCryptoRequest()
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.SELL_CRYPTO_FIRST_TIME_SUCCESS_SELL,
+                listParameters = listOf(
+                    Pair("market", market),
+                    Pair("user", user),
+                    Pair("accountToken", accountToken.toString()),
+                    Pair(
+                        "commissionPercentage",
+                        uiState.pricesQuoteAndCommissions?.taxAmount.toString()
+                    ),
+                    Pair(
+                        "taxPercentage",
+                        uiState.pricesQuoteAndCommissions?.taxAmount.toString()
+                    ),
+                    Pair("exchangeRate", uiState.exchangeRate.toString()),
+                    Pair("quoteId", uiState.pricesQuoteAndCommissions?.quote_id ?: ""),
+                    Pair(
+                        "baseAmount",
+                        calculateConfirmationBaseAmount(
+                            quoteAmount = uiState.quoteAmount.value,
+                            baseAmount = uiState.baseAmount.value,
+                            currencyPrice = uiState.pricesQuoteAndCommissions?.price
+                                ?: DEFAULT_AMOUNT_NUMBER
+                        )
+                    ),
+                    Pair("fee", uiState.pricesQuoteAndCommissions?.fee ?: "0.0"),
+                    Pair(
+                        "internalFee",
+                        uiState.pricesQuoteAndCommissions?.internal_fee.toString()
+                    ),
+                    Pair("totalFee", uiState.pricesQuoteAndCommissions?.totalFee.toString())
+                ),
+                data = uiState.sellCryptoRequest?.toJson() ?: ""
+            )
+        }
+    }
+
     private fun sellCryptoCurrency() = executeUseCase {
         sellCryptoCurrencyUseCase.invoke(
             pkUser = pkUser,
@@ -345,6 +419,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
         val baseAmount: MutableState<String> = mutableStateOf(""),
         val pricesQuoteAndCommissions: PricesQuoteAndCommissions? = null,
         val referenceNumber: String? = null,
+        val sellCryptoRequest: SellCryptoRequest? = null,
         // ** interactions
         val isConfirmationBottomSheetOpen: Boolean = false,
         val isLoading: Boolean = false,
@@ -402,7 +477,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
                 timer.startTimer()
             }
             UIEvent.OnClearInputData -> clearInputData()
-
+            UIEvent.OnRegisterAdjustSellCryptoCurrency -> registerAdjustSellCrypto()
         }
     }
 
@@ -431,6 +506,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
         object OnOpenSellConfirmationBottomSheet : UIEvent()
         object OnCloseSellConfirmationBottomSheet : UIEvent()
         object OnClearInputData : UIEvent()
+        object OnRegisterAdjustSellCryptoCurrency : UIEvent()
     }
 
     companion object {

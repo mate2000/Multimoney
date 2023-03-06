@@ -759,9 +759,7 @@
     <string name="credit_origination_id_validation_two" translatable="false">Tené a mano tu documento de identificación</string>
     <string name="credit_origination_id_validation_two_sv" translatable="false">Ten a mano tu documento de identificación</string>
     <string name="credit_origination_id_validation_two_gt" translatable="false">Ten a mano tu documento de identificación (DPI)</string>
-    <string name="credit_origination_id_validation_three" translatable="false">Tomate una selfie sin lentes o accesorios</string>
-    <string name="credit_origination_id_validation_three_sv" translatable="false">Tomaté una selfie sin lentes o accesorios</string>
-
+    <string name="credit_origination_id_validation_three" translatable="false">Tómate una selfie sin lentes o accesorios</string>
 
     <!-- Generate Document -->
     <string name="document_generation_title" translatable="false">Estamos creando tus documentos</string>
@@ -805,6 +803,7 @@
     <!-- Origination Voucher -->
     <string name="origination_voucher_amount" translatable="false">Has recibido</string>
     <string name="origination_voucher_destiny_account" translatable="false">Cuenta de destino</string>
+    <string name="origination_voucher_reference" translatable="false">Nº de pagaré</string>
 
     <!-- Visa -->
     <string name="visa_date_label" translatable="false">EXP. \nDATE</string>

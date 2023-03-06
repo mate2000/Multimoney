@@ -46,6 +46,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency16
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomModalBottomSheet
+import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionsProductType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -181,6 +182,29 @@ fun QuickActionsRow(
                     backgroundColor = quickActionsBackgroundColor,
                     itemWidth = quickActionItemWidth
                 ) {
+                    when(quickActions[index].flow) {
+                        QuickActionFlow.BUY_CRYPTO.flow -> {
+                            shareViewModel.onUIEvent(
+                                HomeViewModel.UIEvent.OnRegisterAdjustPressPurchaseFirstTime
+                            )
+                        }
+                        QuickActionFlow.SELL_CRYPTO.flow -> {
+                            shareViewModel.onUIEvent(
+                                HomeViewModel.UIEvent.OnRegisterAdjustPressSellFirstTime
+                            )
+                        }
+                        QuickActionFlow.SEND_CRYPTO.flow -> {
+                            shareViewModel.onUIEvent(
+                                HomeViewModel.UIEvent.OnRegisterAdjustPressSendFirstTime
+                            )
+                        }
+                        QuickActionFlow.RECEIVE_CRYPTO.flow -> {
+                            shareViewModel.onUIEvent(
+                                HomeViewModel.UIEvent.OnRegisterAdjustPressReceiveFirstTime
+                            )
+                        }
+                        else -> Unit
+                    }
                     closeActionRow()
                     shareViewModel.onUIEvent(
                         HomeViewModel.UIEvent.OnOpenQuickActionFlow(

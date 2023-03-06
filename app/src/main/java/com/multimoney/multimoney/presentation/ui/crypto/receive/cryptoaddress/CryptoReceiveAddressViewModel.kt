@@ -13,6 +13,7 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
 import com.multimoney.multimoney.presentation.util.ShareHelper
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -92,6 +93,14 @@ class CryptoReceiveAddressViewModel @Inject constructor(
             is UIEvent.OnGetCryptoReceiveAddress -> getCryptoReceiveAddress()
             is UIEvent.OnShareCryptoReceiveAddress -> shareCryptoReceiveAddress(event.address, event.bitmap)
             is UIEvent.OnSetOpenMaintenanceAction -> openMaintenanceAction = event.action
+            UIEvent.OnRegisterAdjustEnterReceiveQRScreen -> registerAdjustEvent(
+                applyAdjust = false,
+                adjustEventType = AdjustEventType.RECEIVE_CRYPTO_ENTER_QR_SCREEN
+            )
+            UIEvent.OnRegisterAdjustPressShareAddressButton -> registerAdjustEvent(
+                applyAdjust = false,
+                adjustEventType = AdjustEventType.RECEIVE_CRYPTO_PRESS_SHARE_BUTTON
+            )
         }
     }
 
@@ -130,5 +139,7 @@ class CryptoReceiveAddressViewModel @Inject constructor(
             val bitmap: Bitmap
         ) : UIEvent
         data class OnSetOpenMaintenanceAction(val action: () -> Unit) : UIEvent
+        object OnRegisterAdjustEnterReceiveQRScreen : UIEvent
+        object OnRegisterAdjustPressShareAddressButton : UIEvent
     }
 }

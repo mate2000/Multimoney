@@ -13,6 +13,7 @@ import com.multimoney.domain.interaction.security.MutationChangeEmailUseCase
 import com.multimoney.domain.interaction.security.MutationChangePhoneUseCase
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
 import com.multimoney.domain.interaction.security.QueryValidatePinUseCase
+import com.multimoney.domain.model.metrics.BaseEventDataDto
 import com.multimoney.domain.model.security.ChangeEmail
 import com.multimoney.domain.model.security.ChangePhone
 import com.multimoney.domain.model.security.SendPinProcess
@@ -41,19 +42,15 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.OTP_MESSAGE_REGEX
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OTPMessageStatus
 import com.multimoney.multimoney.presentation.util.format
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.tickerFlow
+import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.LocalDateTime
-import java.util.regex.Pattern
-import javax.inject.Inject
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -63,6 +60,12 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.LocalDateTime
+import java.util.regex.Pattern
+import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit
 
 @HiltViewModel
 class ValidateOTPViewModel @Inject constructor(
@@ -117,7 +120,6 @@ class ValidateOTPViewModel @Inject constructor(
             enterTheCodeTextResource = when (uiState.idBrand) {
                 Brand.CostaRica.id -> R.string.profile_enter_the_code_sent_to_template
                 else -> R.string.profile_enter_the_code_sent_to_template_sv
-
             },
             statusTextResource = when (uiState.phaseCount) {
                 PHASE_ONE -> R.string.profile_code_expires_in_template
@@ -334,6 +336,7 @@ class ValidateOTPViewModel @Inject constructor(
                         uiState.newValue
                     ) ?: ""
                 )
+                registerAdjustEvent(AdjustEventType.SETTINGS_CHANGE_PHONE_SUCCESS_8001, applyAdjust = false, data = BaseEventDataDto(user = uiState.email, idBrand = uiState.idBrand, idClient = uiState.idClient, identification = uiState.identification).toJson())
                 navigateBack(Screen.HomeScreen.route, isRestart = true)
                 emitBaseEvent(HomeViewModel.BaseEvent.OnPhoneNumberChangedToastEvent)
             }
@@ -348,6 +351,7 @@ class ValidateOTPViewModel @Inject constructor(
             uiState = uiState.copy(isLoading = false)
             viewModelScope.launch {
                 dataStorePreferences.setUserEmail(uiState.newValue ?: "")
+                registerAdjustEvent(AdjustEventType.SETTINGS_CHANGE_EMAIL_SUCCESS_8000, applyAdjust = false, data = BaseEventDataDto(user = uiState.email, idBrand = uiState.idBrand, idClient = uiState.idClient, identification = uiState.identification).toJson())
                 navigateTo("${Screen.ProfileScreen.baseRoute}/${uiState.idClient}/${uiState.idBrand}/${uiState.firstName}/${uiState.newValue}/${uiState.phoneNumber}/${uiState.identification}/${uiState.pkUser}/${uiState.userName}")
                 emitBaseEvent(HomeViewModel.BaseEvent.OnEmailChangedToastEvent)
             }
@@ -398,14 +402,16 @@ class ValidateOTPViewModel @Inject constructor(
     }
 
     private fun openMaxAttemptsReachedDialog() {
-        uiState = uiState.copy(openmaxAttemptsReachedDialog = DialogParameters(
-            titleResource = R.string.sign_up_email_blocked_dialog_title,
-            description = userBlockedForMaxAttend,
-            isActive = mutableStateOf(true),
-            positiveResource = R.string.contact,
-            negativeResource = R.string.cancel,
-            negativeAction = { onLogout() }
-        ))
+        uiState = uiState.copy(
+            openmaxAttemptsReachedDialog = DialogParameters(
+                titleResource = R.string.sign_up_email_blocked_dialog_title,
+                description = userBlockedForMaxAttend,
+                isActive = mutableStateOf(true),
+                positiveResource = R.string.contact,
+                negativeResource = R.string.cancel,
+                negativeAction = { onLogout() }
+            )
+        )
     }
 
     data class UIState(
@@ -440,7 +446,7 @@ class ValidateOTPViewModel @Inject constructor(
         val enterTheCodeTextResource: Int = R.string.empty,
         val statusTextResource: Int = R.string.empty,
         val destination: String? = null,
-        val openmaxAttemptsReachedDialog: DialogParameters = DialogParameters(),
+        val openmaxAttemptsReachedDialog: DialogParameters = DialogParameters()
 
     )
 
@@ -515,7 +521,7 @@ class ValidateOTPViewModel @Inject constructor(
         object OnValidateForm : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnContinueButtonClicked : UIEvent()
-        object OpenMaxAttemptsReachedDialog: UIEvent()
+        object OpenMaxAttemptsReachedDialog : UIEvent()
     }
 
     companion object {

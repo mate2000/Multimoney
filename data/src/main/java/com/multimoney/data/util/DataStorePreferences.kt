@@ -222,6 +222,36 @@ class DataStorePreferences @Inject constructor(
 
     fun isAdjustFirstSingInEventRegister(): Flow<Boolean> = getData(SIGN_IN_FIRST_LOGIN_ADJUST_KEY, true)
 
+    suspend fun isAdjustFirstSchedulePaymentEventRegister(register: Boolean) =
+        setData(HOME_SCHEDULE_PAYMENT_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstSchedulePaymentEventRegister(): Flow<Boolean> = getData(HOME_SCHEDULE_PAYMENT_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstPaymentEventRegister(register: Boolean) =
+        setData(HOME_PAYMENT_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstPaymentEventRegister(): Flow<Boolean> = getData(HOME_PAYMENT_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstAccountStatusEventRegister(register: Boolean) =
+        setData(HOME_ACCOUNT_STATUS_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstAccountStatusEventRegister(): Flow<Boolean> = getData(HOME_ACCOUNT_STATUS_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstActivateMMVisaEventRegister(register: Boolean) =
+        setData(HOME_ACTIVATE_MM_VISA_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstActivateMMVisaEventRegister(): Flow<Boolean> = getData(HOME_ACTIVATE_MM_VISA_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstLinkMMVisaEventRegister(register: Boolean) =
+        setData(HOME_LINK_MM_VISA_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstLinkMMVisaEventRegister(): Flow<Boolean> = getData(HOME_LINK_MM_VISA_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstActivatedMMVisaEventRegister(register: Boolean) =
+        setData(HOME_ACTIVATED_MM_VISA_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstActivatedMMVisaEventRegister(): Flow<Boolean> = getData(HOME_ACTIVATED_MM_VISA_FIRST_TIME_ADJUST_KEY, true)
+
     // Adjust Crypto events
     suspend fun setAdjustCryptoHomeFirstTime(firstTimeHomeCrypto: Boolean) =
         setData(ADJUST_CRYPTO_HOME_FIRST_TIME, firstTimeHomeCrypto)
@@ -299,6 +329,12 @@ class DataStorePreferences @Inject constructor(
         private val SIGN_UP_ALREADY_CUSTOMER_REGISTERED_OTP_ADJUST_KEY = booleanPreferencesKey("sign_up_registered_user_otp_adjust_key")
         private val SIGN_UP_ALREADY_CUSTOMER_REGISTERED_PASSWORD_ADJUST_KEY = booleanPreferencesKey("sign_up_registered_user_password_adjust_key")
         private val SIGN_IN_FIRST_LOGIN_ADJUST_KEY = booleanPreferencesKey("sign_in_first_login")
+        private val HOME_SCHEDULE_PAYMENT_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("home_credit_first_schedule")
+        private val HOME_PAYMENT_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("home_credit_first_payment")
+        private val HOME_ACCOUNT_STATUS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("home_credit_first_account_status")
+        private val HOME_ACTIVATE_MM_VISA_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("home_first_activate_mm_visa")
+        private val HOME_LINK_MM_VISA_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("home_first_link_mm_visa")
+        private val HOME_ACTIVATED_MM_VISA_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("home_first_activated_mm_visa")
         private val ADJUST_CRYPTO_HOME_FIRST_TIME = booleanPreferencesKey("adjust_crypto_home_first_time")
         private val ADJUST_CRYPTO_PURCHASE_FIRST_TIME = booleanPreferencesKey("adjust_crypto_purchase_first_time")
         private val ADJUST_CRYPTO_SUCCESS_PURCHASE_FIRST_TIME = booleanPreferencesKey("adjust_crypto_success_purchase_first_time")

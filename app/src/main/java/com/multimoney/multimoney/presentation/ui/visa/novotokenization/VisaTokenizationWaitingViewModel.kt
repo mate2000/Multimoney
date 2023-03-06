@@ -11,9 +11,12 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.MutationUserPhoneMobileSaveUseCase
 import com.multimoney.domain.model.balance.BalanceCardInformation
+import com.multimoney.domain.model.metrics.BaseEventDataDto
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
@@ -37,23 +40,28 @@ import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaToken
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnStartNovoTokenization
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.YEAR_FORMAT
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getDateFormat
 import com.multimoney.multimoney.presentation.util.getDeviceManufacture
+import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.NovoHelper
 import com.novopayment.sdk.vts.NovoVTS
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.Date
-import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import java.util.Date
+import javax.inject.Inject
 
 @HiltViewModel
 class VisaTokenizationWaitingViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val mmCountDownTimer: MMCountDownTimer,
     private val novoHelper: NovoHelper,
-    private val mutationUserPhoneMobileSaveUseCase: MutationUserPhoneMobileSaveUseCase
+    private val mutationUserPhoneMobileSaveUseCase: MutationUserPhoneMobileSaveUseCase,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(false) {
 
     // UIState
@@ -189,6 +197,12 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
                     if (NovoVTS.isDefaultPaymentService().not()) {
                         emitBaseEvent(OnOpenTapAndPayConfig)
                     } else {
+                        viewModelScope.launch {
+                            if (dataStorePreferences.isAdjustFirstActivatedMMVisaEventRegister().first()) {
+                                registerAdjustEvent(AdjustEventType.MM_VISA_CTA_FIRST_MM_VISA_ACTIVATED_5040, data = BaseEventDataDto(user = email, idBrand = idBrand, identification = identification).toJson())
+                                dataStorePreferences.isAdjustFirstActivatedMMVisaEventRegister(false)
+                            }
+                        }
                         uiState = uiState.copy(showSuccessTokenizationScreen = true)
                     }
                 }.onFailure {
@@ -315,7 +329,6 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
             alertResultDescriptionResource = when (idBrand) {
                 Brand.CostaRica.id -> R.string.card_tokenization_error_description_cr
                 else -> R.string.card_tokenization_error_description_sv
-
             },
             alertResultButtonResource = R.string.link
         )

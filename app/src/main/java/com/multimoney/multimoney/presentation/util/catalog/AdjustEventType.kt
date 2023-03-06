@@ -73,28 +73,28 @@ enum class AdjustEventType(val stgToken: String, val prodToken: String, val even
     CROSSELLING_FIRST_CUSTOMER_COMPLETE_REQUEST("", "", ""),
 
     // HOME CREDIT
-    HOME_CTA_ENABLED_FIRST_AUTOMATIC_PAYMENT("", "", ""),
-    HOME_CTA_FIRST_START_PAYMENT("", "", ""),
-    HOME_CTA_FIRST_REQUEST_ACCOUNT_STATUS("", "", ""),
+    HOME_CTA_ENABLED_FIRST_AUTOMATIC_PAYMENT_5032("", "", "cre_cta_primer_pago_automatico"),
+    HOME_CTA_FIRST_START_PAYMENT_5034("", "", "cre_cta_inicia_pago"),
+    HOME_CTA_FIRST_REQUEST_ACCOUNT_STATUS_5035("", "", "cre_cta_descarga_ec"),
 
     // HOME
-    HOME_CTA_FIRST_ACTIVATE_MM_VISA("", "", ""),
+    HOME_CTA_FIRST_ACTIVATE_MM_VISA_5036("", "", "cre_cta_primer_act_mmvisa"),
 
     // MM VISA
-    MM_VISA_CTA_FIRST_LINK_MM_VISA("", "", ""),
-    MM_VISA_CTA_FIRST_MM_VISA_ACTIVATED("", "", ""),
+    MM_VISA_CTA_FIRST_LINK_MM_VISA_5038("", "", "cre_cta_primer_vinc_mmvisa"),
+    MM_VISA_CTA_FIRST_MM_VISA_ACTIVATED_5040("f5mpk6", "4hw55d", "cre_primer_mmvisa_activa"),
 
     // SETTINGS
-    SETTINGS_CHANGE_EMAIL_SUCCESS("", "",""),
-    SETTINGS_CHANGE_PHONE_SUCCESS("", "",""),
-    SETTINGS_CHANGE_PASSWORD_SUCCESS("", "",""),
-    SETTINGS_FIRST_ADD_ACCOUNT("", "",""),
-    SETTINGS_USER_WITHOUT_ACCOUNT("", "",""),
-    SETTINGS_FIRST_ADD_CARD("", "",""),
-    SETTINGS_USER_WITHOUT_CARD("", "",""),
-    SETTINGS_CTA_FIRST_START_FLOW_CARD("", "",""),
-    SETTINGS_CTA_FIRST_FINISH_FLOW_CARD("", "",""),
-    SETTINGS_CTA_FIRST_VALIDATED_FLOW_CARD("", "",""),
+    SETTINGS_CHANGE_EMAIL_SUCCESS_8000("", "", "settings_cambio_correo"),
+    SETTINGS_CHANGE_PHONE_SUCCESS_8001("", "", "settings_cambio_telefono "),
+    SETTINGS_CHANGE_PASSWORD_SUCCESS_8002("", "", "settings_cambio_contraseña"),
+    SETTINGS_FIRST_ADD_ACCOUNT_8003("ul47f4", "7bfe5o", "settings_primera_cuenta"),
+    SETTINGS_USER_WITHOUT_ACCOUNT_8004("", "", "settings_sin_cuenta"),
+    SETTINGS_FIRST_ADD_CARD_8005("jhf2os", "ta230i", "settings_primera_tarjeta"),
+    SETTINGS_USER_WITHOUT_CARD_8006("", "", "settings_sin_tarjeta"),
+    SETTINGS_CTA_FIRST_START_FLOW_CARD_8007("", "", "settings_cta_inicia_tarjeta"),
+    SETTINGS_CTA_FIRST_FINISH_FLOW_CARD_8008("", "", "settings_cta_fin_tarjeta"),
+    SETTINGS_CTA_FIRST_VALIDATED_FLOW_CARD_8009("", "", "settings_cta_verifica_tarjeta"),
 
     // HOME CRYPTO
     HOME_CRYPTO_FIST_TIME_ENTER_TO_HOME("nkqtow", "elb9ue","cri_primer_vista"),

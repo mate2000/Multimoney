@@ -185,7 +185,7 @@ class SmartAddAccountViewModel @Inject constructor(
                         titular = registeredAccount?.accountName
                             ?: "${uiState.names} ${uiState.lastNames}",
                         bankName = "",
-                        identification = "",
+                        identification = registeredAccount?.identification,
                         accountNumber = registeredAccount?.accountNumber ?: uiState.accountNumber,
                         email = registeredAccount?.email ?: uiState.email,
                         idCurrency = currency,

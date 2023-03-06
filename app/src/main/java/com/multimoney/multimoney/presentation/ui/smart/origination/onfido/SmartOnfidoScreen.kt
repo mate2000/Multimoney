@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand.CostaRica
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -59,14 +60,18 @@ fun SmartOnfidoScreen(
     val context = LocalContext.current
 
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)
-    }
-
-    val launchOnFidoActivityResult = rememberLauncherForActivityResult(StartActivityForResult()) { result ->
-        viewModel.onUIEvent(
-            OnConfigureOnFidoSdk(result)
+        viewModel.executeNavigation(
+            onPopAndNavigate = onPopAndNavigate,
+            onPopBackStack = onPopBackStack
         )
     }
+
+    val launchOnFidoActivityResult =
+        rememberLauncherForActivityResult(StartActivityForResult()) { result ->
+            viewModel.onUIEvent(
+                OnConfigureOnFidoSdk(result)
+            )
+        }
 
     LaunchedEffect(context) {
         viewModel.onFidoTokenEvent.collect { event ->
@@ -150,7 +155,10 @@ fun SmartOnfidoScreen(
             }
         ) {
             Text(
-                text = stringResource(id = string.sign_up_id_validation_title),
+                text = stringResource(
+                    if (viewModel.idBrand == CostaRica.id) string.credit_origination_id_validation_title
+                    else string.credit_origination_id_validation_title_sv
+                ),
                 style = Typography.h5.copy(
                     color = MultimoneyTheme.colors.text,
                     fontWeight = FontWeight.SemiBold
@@ -174,7 +182,10 @@ fun SmartOnfidoScreen(
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = stringResource(id = string.sign_up_id_validation_one),
+                    text = stringResource(
+                        if (viewModel.idBrand == CostaRica.id) string.credit_origination_id_validation_one
+                        else string.credit_origination_id_validation_one_sv
+                    ),
                     style = Typography.body2.copy(
                         color = MultimoneyTheme.colors.text,
                         fontWeight = FontWeight.SemiBold
@@ -190,7 +201,10 @@ fun SmartOnfidoScreen(
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = stringResource(id = string.sign_up_id_validation_two),
+                    text = stringResource(
+                        if (viewModel.idBrand == CostaRica.id) string.credit_origination_id_validation_two
+                        else string.credit_origination_id_validation_two_sv
+                    ),
                     style = Typography.body2.copy(
                         color = MultimoneyTheme.colors.text,
                         fontWeight = FontWeight.SemiBold
@@ -206,7 +220,10 @@ fun SmartOnfidoScreen(
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = stringResource(id = string.sign_up_id_validation_three),
+                    text = stringResource(
+                        if (viewModel.idBrand == CostaRica.id) string.sign_up_id_validation_three
+                        else string.sign_up_id_validation_three_sv
+                    ),
                     style = Typography.body2.copy(
                         color = MultimoneyTheme.colors.text,
                         fontWeight = FontWeight.SemiBold
@@ -217,7 +234,8 @@ fun SmartOnfidoScreen(
         CustomButton(
             onClick = { viewModel.onUIEvent(OnContinueClick) },
             text = stringResource(id = string.button_continue),
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp).fillMaxWidth()
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
+                .fillMaxWidth()
                 .height(48.dp).constrainAs(button) {
                     bottom.linkTo(parent.bottom)
                     start.linkTo(parent.start)

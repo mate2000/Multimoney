@@ -17,7 +17,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.accountsmart.ACHAccount
 import com.multimoney.domain.model.accountsmart.LocalFavorite
 import com.multimoney.multimoney.R
@@ -144,7 +143,9 @@ fun ACHFavoriteContentList(
         items(localFavoriteList) { localFavorite ->
             CustomInfoButton(
                 title = localFavorite?.accountName.orEmpty(),
-                subtitle = localFavorite?.phoneNumber.orEmpty().plus(SEPARATOR)
+                subtitle = if (localFavorite?.phoneNumber.isNullOrEmpty().not()) {
+                    localFavorite?.phoneNumber.orEmpty()
+                } else { stringResource(string.sac_account) }.plus(SEPARATOR)
                     .plus(localFavorite?.currencyAccount),
                 subtitle2 = getMaskedAccount(
                     accountNumber = localFavorite?.accountNumber.orEmpty(),

@@ -728,7 +728,7 @@ class ProductViewModel @Inject constructor(
     private fun navigateToAddIbanAccount() {
         val infoCredit = uiState.userStatus?.infoCredit
         navigateTo(
-            route = "${Screen.AddIbanAccountScreen.baseRoute}/$email/${uiState.idBrand.toIntOrNull()}/$identification/${Screen.HomeScreen.route}/$idClient/${infoCredit?.idLoanClient}"
+            route = "${Screen.AddIbanAccountScreen.baseRoute}/$email/${uiState.idBrand.toIntOrNull() ?: 0}/$identification/${Screen.HomeScreen.route}/$idClient/${infoCredit?.idLoanClient}"
         )
     }
 

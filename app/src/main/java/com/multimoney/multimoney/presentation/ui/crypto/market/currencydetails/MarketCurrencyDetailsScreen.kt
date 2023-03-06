@@ -135,14 +135,13 @@ fun MarketCurrencyDetailsScreen(
         },
 
         onNavigateToBuyCrypto = {
-            if(viewModel.uiState.idBrand == Brand.ElSalvador.id){
+            if (viewModel.uiState.idBrand == Brand.ElSalvador.id) {
                 if (viewModel.uiState.shouldDisplayDisclaimer) {
                     viewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnShowDisclaimer)
                 } else {
                     viewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnNavigateToSelectAccount)
                 }
-            }
-            else{
+            } else {
                 viewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnNavigateToSelectAccount)
             }
         },
@@ -150,7 +149,27 @@ fun MarketCurrencyDetailsScreen(
         onNavigateToSendCrypto = { viewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnNavigateToCryptoSendFlow) },
         onNavigateToSellCrypto = { viewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnNavigateToSellCrypto) },
         onNavigateToReceiveCrypto = { viewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnNavigateToReceiveCrypto) },
-        isCryptoTransferEnabled = viewModel.uiState.isCryptoTransferEnabled
+        isCryptoTransferEnabled = viewModel.uiState.isCryptoTransferEnabled,
+        onRegisterAdjustEventPurchase = {
+            viewModel.onUIEvent(
+                MarketCurrencyDetailsViewModel.UIEvent.OnRegisterAdjustPressPurchaseFirstTime
+            )
+        },
+        onRegisterAdjustEventSell = {
+            viewModel.onUIEvent(
+                MarketCurrencyDetailsViewModel.UIEvent.OnRegisterAdjustPressSellFirstTime
+            )
+        },
+        onRegisterAdjustEventSend = {
+            viewModel.onUIEvent(
+                MarketCurrencyDetailsViewModel.UIEvent.OnRegisterAdjustPressSendFirstTime
+            )
+        },
+        onRegisterAdjustEventReceive = {
+            viewModel.onUIEvent(
+                MarketCurrencyDetailsViewModel.UIEvent.OnRegisterAdjustPressReceiveFirstTime
+            )
+        }
     )
     ConfirmationBottomSheet(
         modalBottomSheetState = viewModel.uiState.bottomSheetVisibleState,
@@ -159,7 +178,11 @@ fun MarketCurrencyDetailsScreen(
             viewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnDisclaimerChecked(it))
         },
         onContinueClicked = {
-            viewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnUpdateShouldShowDisclaimer(viewModel.uiState.dontShowAgainChecked))
+            viewModel.onUIEvent(
+                MarketCurrencyDetailsViewModel.UIEvent.OnUpdateShouldShowDisclaimer(
+                    viewModel.uiState.dontShowAgainChecked
+                )
+            )
             viewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnHideDisclaimer)
             viewModel.onUIEvent(MarketCurrencyDetailsViewModel.UIEvent.OnNavigateToSelectAccount)
         },
@@ -177,10 +200,14 @@ fun MarketCurrencyDetailsScreenContent(
     onDateFilterSelected: (Long) -> Unit = {},
     onOpenCryptoNew: (String) -> Unit = {},
     onNavigateToBuyCrypto: () -> Unit = {},
+    onRegisterAdjustEventSell: () -> Unit,
+    onRegisterAdjustEventSend: () -> Unit,
+    onRegisterAdjustEventReceive: () -> Unit,
     onBackPressed: () -> Unit = {},
     onNavigateToSendCrypto: () -> Unit = {},
     onNavigateToSellCrypto: () -> Unit = {},
     onNavigateToReceiveCrypto: () -> Unit = {},
+    onRegisterAdjustEventPurchase: () -> Unit = {},
     isCryptoTransferEnabled: Boolean
 ) {
     val selected = remember { mutableStateOf(true) }
@@ -196,10 +223,22 @@ fun MarketCurrencyDetailsScreenContent(
                 hasSmartBalance = true,
                 enableCryptoActions = true,
                 enableSendAndGive = isCryptoTransferEnabled,
-                hasBalanceAction = { onNavigateToBuyCrypto() },
-                sellAction = { onNavigateToSellCrypto() },
-                giveAction = { onNavigateToReceiveCrypto() },
-                sendAction = { onNavigateToSendCrypto() },
+                hasBalanceAction = {
+                    onNavigateToBuyCrypto()
+                    onRegisterAdjustEventPurchase()
+                },
+                sellAction = {
+                    onNavigateToSellCrypto()
+                    onRegisterAdjustEventSell()
+                },
+                giveAction = {
+                    onNavigateToReceiveCrypto()
+                    onRegisterAdjustEventReceive()
+                },
+                sendAction = {
+                    onNavigateToSendCrypto()
+                    onRegisterAdjustEventSend()
+                }
             )
         }
     ) { paddingValues ->

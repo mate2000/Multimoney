@@ -136,6 +136,7 @@ fun SellConfirmationBottomSheet(
             ),
             accountInfoLabel = R.string.crypto_sell_flow_confirmation_sell_screen_acc_info_text,
             isPurchase = false,
+            idBrand = viewModel.idBrand,
             onConfirm = {
                 coroutineScope.launch {
                     modalBottomSheetState.hide()

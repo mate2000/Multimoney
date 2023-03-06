@@ -94,5 +94,26 @@ enum class AdjustEventType(val stgToken: String, val prodToken: String, val even
     SETTINGS_USER_WITHOUT_CARD_8006("", "", "settings_sin_tarjeta"),
     SETTINGS_CTA_FIRST_START_FLOW_CARD_8007("", "", "settings_cta_inicia_tarjeta"),
     SETTINGS_CTA_FIRST_FINISH_FLOW_CARD_8008("", "", "settings_cta_fin_tarjeta"),
-    SETTINGS_CTA_FIRST_VALIDATED_FLOW_CARD_8009("", "", "settings_cta_verifica_tarjeta")
+    SETTINGS_CTA_FIRST_VALIDATED_FLOW_CARD_8009("", "", "settings_cta_verifica_tarjeta"),
+
+    // HOME CRYPTO
+    HOME_CRYPTO_FIST_TIME_ENTER_TO_HOME("nkqtow", "elb9ue","cri_primer_vista"),
+    HOME_CRYPTO_PAXOS_IN_MAINTENANCE("", "","cri_pantalla_mantenimiento"),
+
+    // PURCHASE CRYPTO
+    PURCHASE_CRYPTO_FIRST_TIME_PRESS_BUY_BUTTON("b1ww5c", "4ne0lu","cri_cta_primera_compra"),
+    PURCHASE_CRYPTO_FIRST_TIME_SUCCESS_PURCHASE("a5ohj7", "b79ays","cri_primera_compra_exitosa"),
+
+    // SELL CRYPTO
+    SELL_CRYPTO_FIRST_TIME_PRESS_SELL_BUTTON("b863zi", "aem40p","cri_cta_primera_venta"),
+    SELL_CRYPTO_FIRST_TIME_SUCCESS_SELL("wwz72o", "vvm693","cri_primera_venta_exitosa"),
+
+    // SEND CRYPTO
+    SEND_CRYPTO_FIRST_TIME_PRESS_SEND_BUTTON("477ggy", "rqvkuq","cri_cta_primer_envio"),
+    SEND_CRYPTO_FIRST_TIME_SUCCESS_SEND("us6gm5", "kukvye","cri_primer_envio_exitoso"),
+
+    // RECEIVE CRYPTO
+    RECEIVE_CRYPTO_FIRST_TIME_PRESS_RECEIVE_BUTTON("vmqdy2", "vvj95q","cri_cta_primera_recepcion"),
+    RECEIVE_CRYPTO_PRESS_SHARE_BUTTON("", "","cri_cta_compartir"),
+    RECEIVE_CRYPTO_ENTER_QR_SCREEN("", "","cri_pantalla_qr"),
 }

@@ -45,17 +45,17 @@ import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import com.multimoney.multimoney.presentation.util.transformation.FORMAT_MONEY_MAX_LENGTH
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDateTime
+import javax.inject.Inject
+import kotlin.math.roundToInt
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
-import java.time.LocalDateTime
-import javax.inject.Inject
-import kotlin.math.roundToInt
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class DisbursementAmountViewModel @Inject constructor(
@@ -208,22 +208,22 @@ class DisbursementAmountViewModel @Inject constructor(
                     progressFactor = it?.amountTract?.toDouble() ?: 0.0,
                     disbursement = maximumDisbursement.toInt().toString()
                 )
-                callCreditExtensionMessage()
+                callCreditExtensionMessage(true)
             }.onFailure {
                 uiState = uiState.copy(
-                    isLoading = false,
+                    isSkeletonLoading = false,
                     openDialog = DialogParameters(
                         description = it.getError() ?: "",
                         isActive = mutableStateOf(true)
                     )
                 )
             }.onLoading {
-                uiState = uiState.copy(isLoading = true)
+                uiState = uiState.copy(isSkeletonLoading = true)
             }
         }
     }
 
-    private fun callCreditExtensionMessage() = executeUseCase {
+    private fun callCreditExtensionMessage(showSkeleton: Boolean = false) = executeUseCase {
         queryCreditExtensionMessageUseCase.invoke(
             idClient = idClient?.toLong() ?: 0,
             currency = currencyItems?.get(uiState.currencyIndex)?.getCurrencyFromId()?.disbursementValue.orEmpty(),
@@ -240,7 +240,8 @@ class DisbursementAmountViewModel @Inject constructor(
                 val product = it?.product?.first()
                 fee = product?.quotaTotal ?: 0.0
                 uiState = uiState.copy(
-                    isLoading = false,
+                    isSkeletonLoading = false,
+                    isContinue = false,
                     feeLabel = product?.strQuotaTotal.orEmpty(),
                     regularInterestRateLabel = product?.strRateInterestNormal.orEmpty(),
                     termLabel = product?.month.toString(),
@@ -253,14 +254,17 @@ class DisbursementAmountViewModel @Inject constructor(
                 }
             }.onFailure {
                 uiState = uiState.copy(
-                    isLoading = false,
+                    isSkeletonLoading = false,
+                    isContinue = false,
                     openDialog = DialogParameters(
                         description = it.getError() ?: "",
                         isActive = mutableStateOf(true)
                     )
                 )
             }.onLoading {
-                uiState = uiState.copy(isLoading = true)
+                if (showSkeleton.not()) {
+                    uiState = uiState.copy(isContinue = true)
+                }
             }
         }
     }
@@ -288,20 +292,18 @@ class DisbursementAmountViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess {
                 uiState = uiState.copy(
-                    isLoading = false,
                     isContinue = false
                 )
                 creditExtensionDetail = it
                 navigateTo(
                     route = "${Screen.DisbursementAccountScreen.baseRoute}/$idBrand/$user/$idClient/${it?.nextPayment}/${it?.quotaTotal}/${it?.selectedAmount}/${pkUser?.toString() ?: ""}/${idUserRequest ?: 0}/$identification/$creditNumber/${it?.fkFlowControl ?: 0}/${
-                    currencyItems?.get(
-                        uiState.currencyIndex
-                    )
+                        currencyItems?.get(
+                            uiState.currencyIndex
+                        )
                     }/${creditExtensionAmount?.idLoanClient ?: 0}"
                 )
             }.onFailure {
                 uiState = uiState.copy(
-                    isLoading = false,
                     isContinue = false,
                     openDialog = DialogParameters(
                         description = it.getError() ?: "",
@@ -309,7 +311,7 @@ class DisbursementAmountViewModel @Inject constructor(
                     )
                 )
             }.onLoading {
-                uiState = uiState.copy(isLoading = true, isContinue = true)
+                uiState = uiState.copy(isContinue = true)
             }
         }
     }
@@ -426,7 +428,7 @@ class DisbursementAmountViewModel @Inject constructor(
         val termLabel: String = "",
         val regularInterestRateLabel: String = "",
         val commissionDisbursementLabel: String = "",
-        val isLoading: Boolean = true,
+        val isSkeletonLoading: Boolean = true,
         val isContinue: Boolean = false,
         val openDialog: DialogParameters = DialogParameters()
     )

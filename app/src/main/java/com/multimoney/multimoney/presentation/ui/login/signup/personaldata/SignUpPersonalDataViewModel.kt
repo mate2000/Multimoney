@@ -3,7 +3,6 @@ package com.multimoney.multimoney.presentation.ui.login.signup.personaldata
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
@@ -307,25 +306,23 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private fun onCallMutationUserValidationUseCase(
         email: String,
         nextStep: String,
-        idBrand: Int,
-        activity: FragmentActivity
-    ) =
-        executeUseCase {
-            mutationUserValidationUseCase(
-                email = email,
-                currentStep = nextStep,
-                idBrand = idBrand,
-                idDocument = uiState.identificationIdSelected,
-                identification = uiState.personalDocumentValue,
-                firstName = uiState.firstNameValue,
-                secondName = uiState.secondNameValue,
-                firstSurname = uiState.firstLastNameValue,
-                secondSurname = uiState.secondLastNameValue,
-                deviceId = deviceId
-            ).collectLatest { result ->
-                onUserDataValidationEvent.emit(result)
-            }
+        idBrand: Int
+    ) = executeUseCase {
+        mutationUserValidationUseCase(
+            email = email,
+            currentStep = nextStep,
+            idBrand = idBrand,
+            idDocument = uiState.identificationIdSelected,
+            identification = uiState.personalDocumentValue,
+            firstName = uiState.firstNameValue,
+            secondName = uiState.secondNameValue,
+            firstSurname = uiState.firstLastNameValue,
+            secondSurname = uiState.secondLastNameValue,
+            deviceId = deviceId
+        ).collectLatest { result ->
+            onUserDataValidationEvent.emit(result)
         }
+    }
 
     private fun onStart(
         nationality: String,
@@ -469,12 +466,11 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private fun onNextActionClick(
         email: String,
         nextStep: String,
-        idBrand: Int,
-        activity: FragmentActivity
+        idBrand: Int
     ) {
         previousEmail = email
         this.idBrand = idBrand
-        onCallMutationUserValidationUseCase(email, nextStep, idBrand, activity)
+        onCallMutationUserValidationUseCase(email, nextStep, idBrand)
     }
 
     private fun validateDocument(email: String?) {
@@ -638,7 +634,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 event.identification,
                 event.identificationShareViewModelChange
             )
-            is OnNextActionClick -> onNextActionClick(event.email, event.nextStep, event.idBrand, event.activity)
+            is OnNextActionClick -> onNextActionClick(event.email, event.nextStep, event.idBrand)
             is OnValidateDocument -> validateDocument(event.document)
             is OnCallQueryGetCountry -> callQueryGetCountryUseCase(
                 event.user,
@@ -707,8 +703,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
         data class OnNextActionClick(
             val email: String,
             val nextStep: String,
-            val idBrand: Int,
-            val activity: FragmentActivity
+            val idBrand: Int
         ) : UIEvent()
 
         data class OnValidateDocument(
@@ -733,7 +728,6 @@ class SignUpPersonalDataViewModel @Inject constructor(
         const val DUI_VERIFICATION_MODULE = 10
         const val FORMAT_VALUE = '0'
         const val SINGLE_DOCUMENT = 1
-        const val STEP_TO_MOVE = 4
         const val ANOTHER_DEVICE_ALREADY_REGISTERED = 3102
     }
 }

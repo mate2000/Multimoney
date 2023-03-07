@@ -112,8 +112,7 @@ fun SignUpPersonalDataScreen(
                             OnNextActionClick(
                                 email = userData?.email ?: "",
                                 nextStep = Three.name,
-                                idBrand = idBrand ?: 0,
-                                activity = fragmentActivity
+                                idBrand = idBrand ?: 0
                             )
                         )
                         viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SingUpTwo)

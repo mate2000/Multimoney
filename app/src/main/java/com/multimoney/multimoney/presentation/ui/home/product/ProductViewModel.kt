@@ -919,9 +919,15 @@ class ProductViewModel @Inject constructor(
             smartContent = when (workflow) {
                 SmartWorkflow.SMART_INITIAL_CARD.workflow, SmartWorkflow.SMART_STEP_PENDING.workflow, SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS.workflow,
                 SmartWorkflow.SMART_CONTRACT_PROCESS.workflow, SmartWorkflow.SMART_FIRMED_ONFIDO_PENDING.workflow, SmartWorkflow.SMART_FIRMED_ONFIDO_REJECTED.workflow,
-                SmartWorkflow.SMART_APPROVED_BY_ONFIDO.workflow, SMART_ONFIDO_PROCESS.workflow -> Pair(true, workflow)
-                "" -> Pair(true, SMART_CARD_NO_ACTION)
-                else -> Pair(false, "")
+                SmartWorkflow.SMART_APPROVED_BY_ONFIDO.workflow, SMART_ONFIDO_PROCESS.workflow -> {
+                    Pair(true, workflow)
+                }
+                "" -> {
+                    Pair(true, SMART_CARD_NO_ACTION)
+                }
+                else -> {
+                    Pair(false, "")
+                }
             }
         )
     }

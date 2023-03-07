@@ -40,18 +40,22 @@ fun SmartContent(viewModel: ProductViewModel, index: Int, whatsAppLink: String =
                             step != SMART_CARD_NO_ACTION
                         ) {
                             when (step) {
-                                SMART_CARD_NO_ACTION -> Unit
-                                else -> viewModel.onUIEvent(
-                                    OnNavigateToSmartOriginationFlow(
-                                        smartStep = step,
-                                        onIntent = {
-                                            context.openWhatsAppDeepLink(
-                                                viewModel.uiState.userStatus?.infoBankAccount?.wording?.link
-                                                    ?: ""
-                                            )
-                                        }
+                                SMART_CARD_NO_ACTION -> {
+                                    // No action to perform
+                                }
+                                else -> {
+                                    viewModel.onUIEvent(
+                                        OnNavigateToSmartOriginationFlow(
+                                            smartStep = step,
+                                            onIntent = {
+                                                context.openWhatsAppDeepLink(
+                                                    viewModel.uiState.userStatus?.infoBankAccount?.wording?.link
+                                                        ?: ""
+                                                )
+                                            }
+                                        )
                                     )
-                                )
+                                }
                             }
                         }
                     }

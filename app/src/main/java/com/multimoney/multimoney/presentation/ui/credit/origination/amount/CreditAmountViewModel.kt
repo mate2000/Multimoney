@@ -24,6 +24,7 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.BaseEvent.OnOpenConditionOfCreditDialog
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.BaseEvent.OnUpdateIsCrosseling
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCallMutationSaveCreditApplicationUseCase
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCallMutationSaveTermsAndConditionsCreditUseCase
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCallQueryCreditOfferUseCase
@@ -42,17 +43,17 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import com.multimoney.multimoney.presentation.util.transformation.FORMAT_MONEY_MAX_LENGTH
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDateTime
+import javax.inject.Inject
+import kotlin.math.roundToInt
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
-import java.time.LocalDateTime
-import javax.inject.Inject
-import kotlin.math.roundToInt
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class CreditAmountViewModel @Inject constructor(
@@ -141,6 +142,7 @@ class CreditAmountViewModel @Inject constructor(
                 currencyItems = products?.map { it?.currency ?: "" }
                 onExecuteTimer()
                 setCreditOffer(INITIAL_CURRENCY_INDEX)
+                emitBaseEvent(OnUpdateIsCrosseling(creditOffer?.isCrosseling ?: false))
                 uiState = uiState.copy(isLoading = false)
             }.onFailure {
                 onFailureWithDialog(
@@ -198,7 +200,6 @@ class CreditAmountViewModel @Inject constructor(
         currentFlow: String,
         identification: String,
         descPromotion: String,
-        idPromotion: Int,
         onSuccess: (screenConfig: List<CreditCatalog?>?) -> Unit,
         onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit,
@@ -216,7 +217,7 @@ class CreditAmountViewModel @Inject constructor(
                     callMutationSaveCreditApplicationUseCase(
                         pkUser = pkUser.toString(),
                         descPromotion = descPromotion,
-                        idPromotion = idPromotion,
+                        idPromotion = products?.get(uiState.currencyIndex)?.idPromotion?.toInt() ?: ID_PROMOTION,
                         user = user,
                         idBrand = idBrand,
                         onSuccess = onSuccess,
@@ -557,7 +558,6 @@ class CreditAmountViewModel @Inject constructor(
                 currentFlow = uiEvent.currentFlow,
                 identification = uiEvent.identification,
                 descPromotion = uiEvent.descPromotion,
-                idPromotion = uiEvent.idPromotion,
                 onSuccess = uiEvent.onSuccess,
                 onLoadingValueChange = uiEvent.onLoadingValueChange,
                 onFailureWithDialog = uiEvent.onFailureWithDialog,
@@ -617,7 +617,6 @@ class CreditAmountViewModel @Inject constructor(
             val currentFlow: String,
             val identification: String,
             val descPromotion: String,
-            val idPromotion: Int,
             val onSuccess: (screenConfig: List<CreditCatalog?>?) -> Unit,
             val onLoadingValueChange: (status: Boolean) -> Unit,
             val onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit,
@@ -657,6 +656,7 @@ class CreditAmountViewModel @Inject constructor(
     sealed class BaseEvent {
         data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()
         data class OnOpenConditionOfCreditDialog(val dialogParameters: DialogParameters) : BaseEvent()
+        data class OnUpdateIsCrosseling(val isCrosseling: Boolean) : BaseEvent()
     }
 
     companion object {

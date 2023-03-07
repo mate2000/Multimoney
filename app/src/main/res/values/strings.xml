@@ -80,7 +80,7 @@
     <string name="common_scan_qr_code" translatable="false">Escanea el código QR</string>
     <string name="smart_transfer_abandon_dialog_message_sv" translatable="false">¿Estás seguro que quieres cancelar el envío?</string>
     <string name="smart_transfer_abandon_dialog_message_cr" translatable="false">¿Estás seguro que querés cancelar el envío?</string>
-    <string name="common_percentage_format" translatable="false">$%s\%%</string>
+    <string name="common_percentage_format" translatable="false">%s\%%</string>
 
     <string name="content_description_more_info" translatable="false">Más información</string>
 
@@ -103,7 +103,7 @@
     <string name="onboarding_el_salvador_step_two_sub_title" translatable="false">Recibe hasta $25,000 con solo tu DUI.</string>
     <string name="onboarding_el_salvador_step_three_title" translatable="false">Invierte en cripto</string>
     <string name="onboarding_el_salvador_step_three_sub_title" translatable="false">Compra y vende cripto de forma simple y segura.</string>
-    <string name="onboarding_account_already_created" translatable="false">Ya tengo cuenta</string>
+    <string name="onboarding_account_already_created" translatable="false">Ya tengo cuenta,</string>
 
     <!-- OnBoarding Costa Rica-->
     <string name="onboarding_costa_rica_step_one_title" translatable="false">Multiplicá tus ahorros</string>
@@ -139,8 +139,8 @@
     <string name="sign_in_biometric_enter_with_password" translatable="false">O podés ingresar tu contraseña</string>
     <string name="sign_in_biometric_email_hint" translatable="false">Ingresá tu correo electrónico</string>
     <string name="sign_in_session_active_on_another_device_title" translatable="false">Sesión activa en otro dispositivo</string>
-    <string name="sign_in_session_blocked_title" translatable="false">Sesión activa en otro dispositivo</string>
-    <string name="sign_in_session_blocked_description" translatable="false">Sesión activa en otro dispositivo</string>
+    <string name="sign_in_session_blocked_title" translatable="false">Cambio de dispositivo bloqueado</string>
+    <string name="sign_in_session_blocked_message" translatable="false">No podemos hacer el cambio de dispositivo por seguridad.</string>
     <string name="sign_in_session_open_here_close_another" translatable="false">Al ingresar aquí, cerrarás la sesión que se encuentra abierta en otro dispositivo</string>
     <string name="sign_in_dialog_exit_button" translatable="false">Salir</string>
     <string name="sign_in_dialog_sign_in_here_button" translatable="false">Iniciar sesión aquí</string>
@@ -182,7 +182,8 @@
 
     <!-- Sign Up Email -->
     <string name="sign_up_email_header" translatable="false">Ingresá tu correo</string>
-    <string name="sign_up_email_title" translatable="false">¡Nos emociona \nque estés acá!</string>
+    <string name="sign_up_email_header_sv" translatable="false">Ingresa tu correo</string>
+    <string name="sign_up_email_title" translatable="false">¡Nos emociona\nque estés acá!</string>
     <string name="sign_up_email_required" translatable="false">Correo electrónico requerido</string>
     <string name="sign_up_email_placeholder" translatable="false">nombre@email.com</string>
     <string name="sign_up_email_not_valid" translatable="false">Correo electrónico inválido</string>
@@ -195,9 +196,9 @@
     <string name="sign_up_email_another_device_registered_dialog_description" translatable="false">Al ingresar aquí, cerrarás la sesion que se encuentra abierta en otro dispositivo y deberás empezar el registro desde el principio</string>
 
     <!-- Sign Up Phone -->
-    <string name="sign_up_phone_title" translatable="false">¿Cuál es tu número de teléfono \ncelular?</string>
+    <string name="sign_up_phone_title" translatable="false">¿Cuál es tu número de teléfono\ncelular?</string>
     <string name="sign_up_phone_information" translatable="false">Lo registramos por motivos de seguridad</string>
-    <string name="sign_up_phone_label_phone" translatable="false">Teléfono</string>
+    <string name="sign_up_phone_label_phone" translatable="false">Celular</string>
     <string name="sign_up_phone_required" translatable="false">Número de celular requerido</string>
     <string name="sign_up_phone_not_valid" translatable="false">Número de celular incorrecto</string>
     <string name="sign_up_phone_contact_by" translatable="false">Contactar por:</string>
@@ -207,7 +208,8 @@
 
     <!-- Sign Up Otp -->
     <string name="sign_up_otp_title" translatable="false">Te enviamos un SMS \nal %s</string>
-    <string name="sign_up_otp_subtitle" translatable="false">Ingresá el código para conectar tu teléfono a tu cuenta</string>
+    <string name="sign_up_otp_subtitle" translatable="false">Ingresa el código para conectar tu teléfono a tu cuenta</string>
+    <string name="sign_up_otp_subtitle_cr" translatable="false">Ingresá el código para conectar tu teléfono a tu cuenta</string>
     <string name="sign_up_otp_change_phone" translatable="false">Corregir celular</string>
     <string name="sign_up_otp_resend" translatable="false">Reenviar código</string>
     <string name="sign_up_otp_call" translatable="false">Recibir código por llamada</string>
@@ -232,6 +234,7 @@
     <string name="sign_up_personal_data_document_label_cr" translatable="false">¿Qué tipo de documento de identidad tenés?</string>
     <string name="sign_up_personal_data_document_hint" translatable="false">Selecciona tu documento </string>
     <string name="sign_up_personal_data_document_number_label" translatable="false">Número de identificación</string>
+    <string name="sign_up_personal_data_document_number_label_gt" translatable="false">Número de DPI</string>
     <string name="sign_up_personal_data_names" translatable="false">Nombre(s)</string>
     <string name="sign_up_personal_data_name_error" translatable="false">Primer nombre requerido</string>
     <string name="sign_up_personal_data_lastname_error" translatable="false">Primer apellido requerido</string>
@@ -250,7 +253,8 @@
     <string name="sing_up_personal_data_cr_complete_name" translatable="false">Nombre Completo</string>
 
     <!-- Sign Up Password -->
-    <string name="sign_up_password_title" translatable="false">Creá tu contraseña</string>
+    <string name="sign_up_password_title" translatable="false">Crea tu contraseña</string>
+    <string name="sign_up_password_title_cr" translatable="false">Creá tu contraseña</string>
     <string name="sign_up_label_password" translatable="false">Contraseña</string>
     <string name="sign_up_label_confirm_password" translatable="false">Confirmar contraseña</string>
     <string name="sign_up_password_required" translatable="false">Contraseña es requerida</string>
@@ -283,7 +287,7 @@
     <string name="sign_up_id_validation_three" translatable="false">Tomate una selfie sin lentes o accesorios</string>
 
     <!-- Sign Up Complete -->
-    <string name="sign_up_complete_title" translatable="false">¡Felices finanzas!\nBienvenid@ a MultiMoney</string>
+    <string name="sign_up_complete_title" translatable="false">¡Felices finanzas!\nBienvenido a MultiMoney</string>
 
     <!-- Biometric Dialog -->
     <string name="biometric_dialog_title" translatable="false">¿Inicia sesión con tu biométrica?</string>
@@ -313,8 +317,8 @@
 
     <!-- Biometric Dialog Failure -->
     <string name="dialog_failure_biometric_title" translatable="false">¡Oh no!</string>
-    <string name="dialog_failure_biometric_description" translatable="false">Por el momento no hemos podido configurar tu Face ID.</string>
-    <string name="dialog_failure_biometric_positive_text" translatable="false">Activar más tarde</string>
+    <string name="dialog_failure_biometric_description" translatable="false">Hubo un error al configurar tus biométricos</string>
+    <string name="dialog_failure_biometric_positive_text" translatable="false">Intentalo más tarde</string>
 
     <!-- Home -->
     <string name="home_active_credit_card_cr_label" translatable="false">Activá tu tarjeta digital</string>
@@ -746,8 +750,20 @@
     <string name="non_pre_approved_additional_questions_request_button_label" translatable="false">Solicitar</string>
 
 
+    <!-- credit onfido -->
+    <string name="credit_origination_id_validation_title" translatable="false">Confirmá tu identidad</string>
+    <string name="credit_origination_id_validation_title_sv" translatable="false">Confirma tu identidad</string>
+    <string name="credit_origination_id_validation_subtitle" translatable="false">Recomendaciones:</string>
+    <string name="credit_origination_id_validation_one" translatable="false">Buscá buena iluminación para tomar las fotos</string>
+    <string name="credit_origination_id_validation_one_sv" translatable="false">Busca buena iluminación para tomar las fotos</string>
+    <string name="credit_origination_id_validation_two" translatable="false">Tené a mano tu documento de identificación</string>
+    <string name="credit_origination_id_validation_two_sv" translatable="false">Ten a mano tu documento de identificación</string>
+    <string name="credit_origination_id_validation_two_gt" translatable="false">Ten a mano tu documento de identificación (DPI)</string>
+    <string name="credit_origination_id_validation_three" translatable="false">Tómate una selfie sin lentes o accesorios</string>
+
     <!-- Generate Document -->
     <string name="document_generation_title" translatable="false">Estamos creando tus documentos</string>
+    <string name="document_generation_subtitle_cr" translatable="false">Firmá el contrato y recibe tu crédito</string>
     <string name="document_generation_subtitle" translatable="false">Firma el contrato y recibe tu crédito</string>
     <string name="document_generation_info" translatable="false">Generando documentos…</string>
     <string name="document_generation_error_description" translatable="false">Contactanos para ayudarte a abrir tu cuenta</string>
@@ -788,6 +804,8 @@
     <!-- Origination Voucher -->
     <string name="origination_voucher_amount" translatable="false">Has recibido</string>
     <string name="origination_voucher_destiny_account" translatable="false">Cuenta de destino</string>
+    <string name="origination_voucher_to_account" translatable="false">Hacia</string>
+    <string name="origination_voucher_reference" translatable="false">Nº de pagaré</string>
 
     <!-- Visa -->
     <string name="visa_date_label" translatable="false">EXP. \nDATE</string>
@@ -949,6 +967,11 @@
     <string name="smart_card_monthly_profit" translatable="false">Ganancia mensual</string>
     <string name="smart_card_monthly_profit_label" translatable="false">%1$s %2$s ganancia %3$s</string>
 
+
+    <!-- Smart Evercita Escenario-->
+    <string name="smart_evercita_title" translatable="false">¡Estás a una firma de abrir tu cuenta!</string>
+    <string name="smart_evercita_subtitle" translatable="false">Este es el último paso para abrir tu cuenta.</string>
+
     <!-- Smart Account -->
     <string name="smart_account_document_title" translatable="false">Cuéntanos sobre ti</string>
     <string name="smart_account_date_placeholder" translatable="false">00 | 00 | 0000</string>
@@ -1008,7 +1031,8 @@
     <string name="smart_other_source_of_income_label" translatable="false">Especificá tu fuente de ingresos</string>
     <string name="smart_other_source_of_income_required" translatable="false">Fuente de ingresos requerido</string>
     <string name="smart_other_generating_document_title" translatable="false">Estamos generando tus documentos</string>
-    <string name="smart_other_generating_document_subtitle" translatable="false">Al firmar tu contrato podrás utilizar tu MultiMoney Smart</string>
+    <string name="smart_other_generating_document_subtitle" translatable="false">Después de firmar tu contrato podés empezar a utilizar tu cuenta.</string>
+    <string name="smart_loading_label" translatable="false">Generando documentos...</string>
     <string name="smart_other_income_cr_placeholder" translatable="false">₡000,000</string>
     <string name="smart_other_income_sv_placeholder" translatable="false">$000</string>
 
@@ -1129,7 +1153,7 @@
     <string name="payment_schedule_account_title" translatable="false">Seleccioná una cuenta para programar tu pago</string>
 
     <!-- Payment Schedule Cards-->
-    <string name="payment_schedule_card_title" translatable="false">Tarjetas Visa</string>
+    <string name="payment_schedule_card_title" translatable="false">Configura tu pago automático</string>
     <string name="payment_schedule_card_info_dialog_description" translatable="false">Tu pago se determina de acuerdo a la cuota mínima de cada mes.</string>
     <string name="payment_schedule_card_label_date" translatable="false">Día del mes que se hará el pago</string>
     <string name="payment_schedule_card_label_origin" translatable="false">Desde tu tarjeta</string>
@@ -1442,6 +1466,7 @@
     <string name="smart_iban_register_favorite_checkbox" translatable="false">Agregar a favoritos</string>
     <string name="smart_iban_register_account_placeholder" translatable="false">CR 00000 00000 00000 00000</string>
     <string name="smart_iban_register_account_error" translatable="false">Número inválido</string>
+    <string name="smart_iban_register_account_length_error" translatable="false"><![CDATA[<b>Revisá el formato.</b> Es un número de 20 dígitos]]></string>
     <string name="smart_iban_register_email_error" translatable="false">Formato incorrecto. Debe contener “@” y “.”</string>
     <string name="smart_iban_register_favorite_label" translatable="false">Apodo</string>
     <string name="smart_iban_register_full_name_label" translatable="false">Nombre completo</string>
@@ -1466,6 +1491,7 @@
     <string name="smart_payment_sheet_equivalent" translatable="false">Equivalente a %1$s</string>
 
     <!-- Smart SAC Transfer -->
+    <string name="sac_account" translatable="false">"Cuenta SAC</string>
     <string name="smart_sac_transfer_contact_rationale_title" translatable="false">Lo sentimos</string>
     <string name="smart_sac_transfer_contact_rationale_message" translatable="false">Necesitamos acceso a tus contactos para que podás realizar envíos</string>
     <string name="smart_sac_transfer_contact_rationale_button" translatable="false">Permitir acceso a contactos</string>
@@ -1575,7 +1601,7 @@
     <string name="crypto_send_flow_error_not_sent" translatable="false">El envío no fue realizado</string>
     <string name="crypto_send_abandon_dialog_title" translatable="false">Cancelar envío</string>
     <string name="crypto_send_abandon_dialog_message" translatable="false">¿Estás seguro que querés cancelar el envío?</string>
-    <string name="crypto_send_amount_error_available_amount_commission" translatable="false">"El monto a enviar más la comisión \nsupera el monto disponible"</string>
+    <string name="crypto_send_amount_error_available_amount_commission" translatable="false">"Monto mayor al disponible"</string>
 
     <!-- Crypto list currencies for send -->
     <string name="crypt_list_send_title" translatable="false">¿Cuál moneda querés enviar?</string>
@@ -1707,6 +1733,7 @@
     <string name="crypto_sell_flow_confirmation_sell_screen_evaluate_amount" translatable="false">Valor aproximado en %1s</string>
     <string name="crypto_sell_flow_confirmation_sell_screen_amount_to_receive" translatable="false">Total a recibir</string>
     <string name="crypto_sell_flow_confirmation_sell_screen_btn_text" translatable="false">Vender</string>
+    <string name="crypto_sell_flow_confirmation_sell_screen_acc_info_text" translatable="false">Recibir en</string>
 
     <!-- Crypto sell flow Errors-->
     <string name="crypto_sell_flow_error_not_funds" translatable="false">Fondos Insuficientes para aplicar la venta</string>
@@ -1722,7 +1749,51 @@
     <string name="visa_verified_description_3" translatable="false">en el siguiente\npaso</string>
     <string name="visa_verified_dialog_title" translatable="false">Cancelar proceso</string>
     <string name="visa_verified_dialog_description" translatable="false">¿Estás segur@ de cancelar el proceso de agregar una tarjeta?</string>
-    
+
+    <!-- Add Visa Card Dialog -->
+    <string name="visa_add_card_dialog_title" translatable="false">Cancelar proceso</string>
+    <string name="visa_add_card_dialog_description" translatable="false">¿Estás segur@ de cancelar el proceso de agregar una tarjeta?</string>
+
+    <!-- Add Visa Card Errors   -->
+    <string name="visa_add_card_error_default_title" translatable="false">¡Oh no! Error de conexión</string>
+    <string name="visa_add_card_error_default_description" translatable="false">No pudimos agregar tu tarjeta. Intentalo de nuevo.</string>
+    <string name="visa_add_card_error_system_malfunction_title" translatable="false">¡Oh no! Error de conexión</string>
+    <string name="visa_add_card_error_system_malfunction_description" translatable="false">Hay un error de conexión con el sistema. Intentálo de nuevo más tarde.</string>
+    <string name="visa_add_card_error_unable_to_include_title" translatable="false">Oh no! Tarjeta inválida</string>
+    <string name="visa_add_card_error_unable_to_include_description" translatable="false">No hemos podido agregar tu tarjeta. Revisá la información agregada o intentá con otra.</string>
+    <string name="visa_add_card_error_invalid_card_account_validation_title" translatable="false">¡Oh no! Tarjeta inválida</string>
+    <string name="visa_add_card_error_invalid_card_account_validation_description" translatable="false">La tarjeta que ingresaste no se ha podido validar correctamente. Intentá con otra.</string>
+    <string name="visa_add_card_error_invalid_payment_account_validation_title" translatable="false">¡Oh no! Información incorrecta</string>
+    <string name="visa_add_card_error_invalid_payment_account_validation_description" translatable="false">La información que ingresaste no es la correcta. Intentalo de nuevo.</string>
+    <string name="visa_add_card_error_invalid_request_payment_account_validation_title" translatable="false">¡Ups! Información incorrecta</string>
+    <string name="visa_add_card_error_invalid_request_payment_account_validation_description" translatable="false">La información que ingresaste no es la correcta. Inténtalo de nuevo.</string>
+    <string name="visa_add_card_error_you_have_reached_the_maximum_title" translatable="false">¡Oh oh! No puedes agregar más tarjetas</string>
+    <string name="visa_add_card_error_you_have_reached_the_maximum_description" translatable="false">Llegaste al máximo de tarjetas VISA que podés agregar a MultiMoney</string>
+    <string name="visa_add_card_error_expired_card_title" translatable="false">¡Oh no! Tu tarjeta se encuentra vencida</string>
+    <string name="visa_add_card_error_expired_card_description" translatable="false">No podés ingresar una tarjeta que se encuentra vencida</string>
+    <string name="visa_add_card_error_too_many_cards_per_user_max_title" translatable="false">¡Oh oh! No podés agregar más tarjetas</string>
+    <string name="visa_add_card_error_too_many_cards_per_user_max_description" translatable="false">Llegaste al máximo de tarjetas VISA que podés agregar a MultiMoney</string>
+    <string name="visa_add_card_error_invalid_card_verification_title" translatable="false">¡Oh oh! No se pudo agregar tu tarjeta</string>
+    <string name="visa_add_card_error_invalid_card_verification_description" translatable="false">Revisá que la información de tu tarjeta sea correcta e intentá de nuevo</string>
+    <string name="visa_add_card_error_invalid_verification_value_title" translatable="false">¡Oh oh! No se pudo agregar tu tarjeta</string>
+    <string name="visa_add_card_error_invalid_verification_value_description" translatable="false">Revisá que la información de tu tarjeta sea correcta e intentá de nuevo</string>
+    <string name="visa_add_card_error_invalid_card_title" translatable="false">¡Oh oh! La tarjeta presenta un error</string>
+    <string name="visa_add_card_error_invalid_card_description" translatable="false">Esta tarjeta es inválida, intentalo de nuevo con otra</string>
+    <string name="visa_add_card_error_max_users_same_card_title" translatable="false">¡Ups! Esta tarjeta ya ha sido agregada</string>
+    <string name="visa_add_card_error_max_users_same_card_description" translatable="false">Si no fuiste vos quien ha agregado esta tarjeta, contactanos</string>
+    <string name="visa_add_card_error_already_exist_title" translatable="false">Ya tenés esta tarjeta agregada</string>
+    <string name="visa_add_card_error_already_exist_description" translatable="false">Puedes verla en tu perfil en "Tus tarjetas débito Visa"</string>
+    <string name="visa_add_card_error_user_blocked_title" translatable="false">¡Oh no! Algo salió mal con tu cuenta</string>
+    <string name="visa_add_card_error_user_blocked_description" translatable="false">Contactá nuestro servicio al cliente para desbloquearla.</string>
+    <string name="visa_add_card_error_invalid_username_or_password_title" translatable="false">¡Oh no! Información inválida</string>
+    <string name="visa_add_card_error_invalid_username_or_password_description" translatable="false">Tu usuario y contraseña no coinciden. Intentalo de nuevo.</string>
+    <string name="visa_add_card_error_invalid_application_title" translatable="false">¡Oh no! Error de conexión</string>
+    <string name="visa_add_card_error_invalid_application_description" translatable="false">Hay un error de conexión con el sistema. Intentalo de nuevo más tarde</string>
+    <string name="visa_add_card_error_null_title" translatable="false">¡Oh no!</string>
+    <string name="visa_add_card_error_null_description" translatable="false">No pudimos agregar tu tarjeta</string>
+    <string name="visa_add_card_error_edit_failed_title" translatable="false">¡Oh no!</string>
+    <string name="visa_add_card_error_edit_failed_description" translatable="false">No pudimos actualizar los datos de tu tarjeta. Contactanos para ayudarte</string>
+
     <!-- Transfer In Amount Exceeded Form -->
     <string name="amount_exceeded_title" translatable="false">Transferencia Cripto</string>
     <string name="amount_exceeded_message" translatable="false">Has recibido una transferencia mayor a $1,000 necesitamos verificar el depósito.</string>
@@ -1735,4 +1806,5 @@
     <string name="amount_exceeded_release_error_title" translatable="false">¡Oh no! Hubo un error al liberar el despósito</string>
     <string name="amount_exceeded_release_error_message" translatable="false">Lo sentimos, volvé a intentarlo más tarde</string>
     <string name="amount_exceeded_release_error_button" translatable="false">Ir al inicio</string>
+    <string name="amount_exceeded_transaction_released" translatable="false">Transacción liberada exitosamente</string>
 </resources>

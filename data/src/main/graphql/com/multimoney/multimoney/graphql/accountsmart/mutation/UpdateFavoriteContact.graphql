@@ -40,6 +40,7 @@ mutation UpdateFavoriteContactSmart(
             phoneNumber
             idCurrencyAccount
             currencyAccount
+            identification
         }
     }
 }

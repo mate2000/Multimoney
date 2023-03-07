@@ -7,8 +7,10 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.SavedStateHandle
 import com.amplifyframework.core.Amplify
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.QueryValidateUserExistsUseCase
+import com.multimoney.domain.model.metrics.EmailDto
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
@@ -26,18 +28,21 @@ import com.multimoney.multimoney.presentation.ui.login.forgotpassword.request.Re
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.request.RequestForgotPasswordViewModel.UIEvent.OnEmailValueChange
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.request.RequestForgotPasswordViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.request.RequestForgotPasswordViewModel.UIEvent.OnValidateEmail
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.getDeviceId
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.isEmailValid
+import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 @HiltViewModel
 class RequestForgotPasswordViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val queryValidateUserExistsUseCase: QueryValidateUserExistsUseCase
+    private val queryValidateUserExistsUseCase: QueryValidateUserExistsUseCase,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(false) {
 
     var uiState by mutableStateOf(UIState())
@@ -95,7 +100,7 @@ class RequestForgotPasswordViewModel @Inject constructor(
         executeUseCase {
             queryValidateUserExistsUseCase(
                 email = uiState.email,
-                deviceId = getDeviceId(activity)
+                deviceId = dataStorePreferences.getDeviceId().first()
             ).collectLatest { result ->
                 result.onSuccess {
                     idBrand = Brand.Default.id
@@ -125,6 +130,7 @@ class RequestForgotPasswordViewModel @Inject constructor(
 
     private fun onContinueClick(activity: FragmentActivity, focusManager: FocusManager) {
         focusManager.clearFocus()
+        registerAdjustEvent(AdjustEventType.FORGOT_CONFIRM_EMAIL_4000, isLoggedIn = false, applyAdjust = false, data = EmailDto(uiState.email).toJson())
         callQueryValidationUserExistsUseCase(activity)
     }
 

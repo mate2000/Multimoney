@@ -6,15 +6,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.OpenWhatsAppLink
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.SimulateUserInteraction
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.Companion.PHONE_HARDCODED
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallGetLinkCreditContractEvent
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallSubscriptionCreditContractEvent
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallGetLinkCreditContractSecondTime
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnShowDialogInformation
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnStartListenerSubscriptionCreditContractEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.documentgeneration.DocumentGenerationScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.processingtransaction.ProcessingTransactionScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.signdocument.SignDocumentScreen
@@ -22,6 +22,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.signdocument
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.PROCESSING_TRANSACTION
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
@@ -45,11 +46,10 @@ fun SignDocumentProcessScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)
-            onUIEvent(OnCallSubscriptionCreditContractEvent)
+            onUIEvent(OnStartListenerSubscriptionCreditContractEvent)
             onUIEvent(OnCallGetLinkCreditContractEvent)
             baseEvent.collectLatest { event ->
                 when (event) {
-                    is SimulateUserInteraction -> activity?.onUserInteraction()
                     is OpenWhatsAppLink -> context.openWhatsAppDeepLink(whatsAppLink)
                 }
             }
@@ -64,9 +64,16 @@ fun SignDocumentProcessScreen(
 
     when (viewModel.uiState.signDocumentProcessStep) {
         GENERATE_DOCUMENT_STEP.value -> {
-            DocumentGenerationScreen(onNavigateToHome = {
-                viewModel.onUIEvent(OnNavigateToHome)
-            })
+            if (viewModel.evisertiaStatus == CreditOnFidoOrFirmStatus.PENDING.status) {
+                viewModel.logEvents(AdjustEventType.ORIGINATION_WAIT_SCREEN_EVICERTIA_5015)
+            } else if (viewModel.evisertiaStatus == CreditOnFidoOrFirmStatus.REJECTED.status) {
+                viewModel.logEvents(AdjustEventType.ORIGINATION_RETRY_SCREEN_EVICERTIA_5016)
+            }
+            DocumentGenerationScreen(
+                idBran = viewModel.idBrand,
+                onGetLinkAgain = {
+                    viewModel.onUIEvent(OnCallGetLinkCreditContractSecondTime)
+                })
         }
         SIGN_DOCUMENTS_STEP.value -> {
             SignDocumentScreen(viewModel = viewModel)

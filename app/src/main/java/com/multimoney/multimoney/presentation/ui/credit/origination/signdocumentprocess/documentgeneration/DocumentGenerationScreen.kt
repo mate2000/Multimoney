@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextAlign.Companion
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -38,17 +39,18 @@ import kotlinx.coroutines.flow.onEach
 @OptIn(FlowPreview::class)
 @Composable
 fun DocumentGenerationScreen(
-    onNavigateToHome: () -> Unit = {}
+    idBran: Int,
+    onGetLinkAgain: () -> Unit = {}
 ) {
     val openStepDebounce = remember { MutableStateFlow(true) }
     val openStepFlow: Flow<Boolean> = remember {
         openStepDebounce.debounce(TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND).onEach { status ->
-            onNavigateToHome()
+            onGetLinkAgain()
             flowOf(status)
         }
     }
 
-    DocumentGenerationContent()
+    DocumentGenerationContent(subtitleResource = if (idBran == Brand.CostaRica.id) string.document_generation_subtitle_cr else string.document_generation_subtitle)
 
     // this is required to execute the debounce
     val openStepFlowValue by openStepFlow.collectAsState(false)
@@ -56,9 +58,12 @@ fun DocumentGenerationScreen(
 
 @Preview
 @Composable
-fun DocumentGenerationContent() {
+fun DocumentGenerationContent(subtitleResource: Int = string.empty) {
     Column(
-        modifier = Modifier.fillMaxSize().background(MultimoneyTheme.colors.background).padding(horizontal = 16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MultimoneyTheme.colors.background)
+            .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -78,7 +83,7 @@ fun DocumentGenerationContent() {
                 textAlign = TextAlign.Center
             )
             Text(
-                text = stringResource(id = string.document_generation_subtitle),
+                text = stringResource(id = subtitleResource),
                 modifier = Modifier.padding(top = 8.dp),
                 style = Typography.body1,
                 color = MultimoneyTheme.colors.subTitleText,

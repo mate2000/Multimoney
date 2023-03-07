@@ -6,6 +6,7 @@ import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.multimoney.data.mapper.credit.mapToApolloModel
+import com.multimoney.data.networking.graphql.apollomodel.ACHTransferFavoriteGetQuery
 import com.multimoney.data.networking.graphql.apollomodel.ACHTransferFavoriteListQuery
 import com.multimoney.data.networking.graphql.apollomodel.AccountSmartContractEventSubscription
 import com.multimoney.data.networking.graphql.apollomodel.AccountStatementQuery
@@ -65,6 +66,7 @@ import com.multimoney.data.networking.graphql.apollomodel.GetHistoricClientBalan
 import com.multimoney.data.networking.graphql.apollomodel.GetHistoricalCurrencyPricesQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetInfoDepositQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetLinkCreditContractQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetParametersMobileByCategoryQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPaymentPointsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPricesQuoteAndCommissionQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPromissoryNoteDetailQuery
@@ -77,7 +79,9 @@ import com.multimoney.data.networking.graphql.apollomodel.HomeProvinceQuery
 import com.multimoney.data.networking.graphql.apollomodel.InitialRequestSmartAccountMutation
 import com.multimoney.data.networking.graphql.apollomodel.ListCardVDQuery
 import com.multimoney.data.networking.graphql.apollomodel.ListMiniCardsQuery
+import com.multimoney.data.networking.graphql.apollomodel.ListSavedSACAccountsQuery
 import com.multimoney.data.networking.graphql.apollomodel.ListSinpeAccountQuery
+import com.multimoney.data.networking.graphql.apollomodel.LocalTransferFavoriteQuery
 import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountDeleteMutation
 import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountSaveMutation
 import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountUpdateMutation
@@ -122,6 +126,8 @@ import com.multimoney.data.networking.graphql.apollomodel.StepByStepQuery
 import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsSignedQuery
 import com.multimoney.data.networking.graphql.apollomodel.UpdateCardVDMutation
+import com.multimoney.data.networking.graphql.apollomodel.CreateCardVDMutation
+import com.multimoney.data.networking.graphql.apollomodel.CreateUserVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.UpdateFavoriteContactSmartMutation
 import com.multimoney.data.networking.graphql.apollomodel.UpdateSmartAccountStatusMutation
 import com.multimoney.data.networking.graphql.apollomodel.UpdateUserRegisterMutation
@@ -1240,6 +1246,34 @@ class GraphqlApi @Inject constructor(
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
+    fun queryACHTransferFavoriteGet(
+        user: String,
+        idBrand: Int,
+        achTransferId: Int
+    ): ApolloCall<ACHTransferFavoriteGetQuery.Data> =
+        apolloAuthorizedClient.query(
+            ACHTransferFavoriteGetQuery(
+                Optional.presentIfNotNull(user),
+                Optional.presentIfNotNull(idBrand),
+                achTransferId
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryLocalTransferFavorite(
+        idBrand: Int,
+        user: String,
+        isFavorite: Boolean,
+        idCustomer: Long
+    ): ApolloCall<LocalTransferFavoriteQuery.Data> =
+        apolloAuthorizedClient.query(
+            LocalTransferFavoriteQuery(
+                Optional.presentIfNotNull(idBrand),
+                Optional.presentIfNotNull(user),
+                Optional.presentIfNotNull(isFavorite),
+                Optional.presentIfNotNull(idCustomer)
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
     fun queryGeneralEconomicActivity(
         user: String,
         idBrand: Int
@@ -1306,14 +1340,16 @@ class GraphqlApi @Inject constructor(
         identification: String,
         phone: String,
         pkUser: String,
-        idBrand: Int
+        idBrand: Int,
+        user: String
     ): ApolloCall<ChangePhoneMutation.Data> =
         apolloAuthorizedClient.mutation(
             ChangePhoneMutation(
                 identification,
                 phone,
                 pkUser.toLong(),
-                idBrand
+                idBrand,
+                user
             )
         )
             .fetchPolicy(FetchPolicy.NetworkOnly)
@@ -1776,6 +1812,56 @@ class GraphqlApi @Inject constructor(
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 
+    fun mutationCreateCardVD(
+        identification: String,
+        cardTokenID: String,
+        default: Boolean,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<CreateCardVDMutation.Data> = apolloAuthorizedClient.mutation(
+        CreateCardVDMutation(
+            identification = identification,
+            cardTokenID = cardTokenID,
+            default = default,
+            user = user,
+            idBrand = idBrand
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationCreateUserVD(
+        identification: String,
+        firstName: String,
+        secondName: String,
+        lastName: String,
+        secondLastName: String,
+        email: String,
+        callerId: String,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<CreateUserVDMutation.Data> = apolloAuthorizedClient.mutation(
+        CreateUserVDMutation(
+            identification = identification,
+            firstName = firstName,
+            secondName = secondName,
+            lastName = lastName,
+            secondLastName = secondLastName,
+            email = email,
+            callerId = callerId,
+            user = user,
+            idBrand = idBrand
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryGetParametersMobileByCategory(
+        idBrand: Int,
+        category: String
+    ): ApolloCall<GetParametersMobileByCategoryQuery.Data> = apolloAuthorizedClient.query(
+        GetParametersMobileByCategoryQuery(
+            idBrand = idBrand,
+            category = category
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
     fun mutationPayCreditVD(
         identification: String,
         currency: String,
@@ -1970,18 +2056,18 @@ class GraphqlApi @Inject constructor(
 
     fun mutationSaveLogTracking(
         identification: String,
-        pkUser: Int,
+        pkUser: Int?,
         keySearch: String,
         data: String,
-        idBrand: Int
+        idBrand: Int?
     ): ApolloCall<SaveLogTrackingMutation.Data> =
         apolloAuthorizedClient.mutation(
             SaveLogTrackingMutation(
-                identification = identification,
-                pkUser = pkUser,
+                identification = Optional.Present(identification),
+                pkUser = Optional.Present(pkUser),
                 keySearch = keySearch,
                 data = data,
-                idBrand = idBrand
+                idBrand = Optional.Present(idBrand)
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -2188,18 +2274,19 @@ class GraphqlApi @Inject constructor(
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryACHTransferFavoriteList(
-        idBrand: Int,
         user: String,
+        idBrand: Int,
         isFavorite: Boolean,
         identificationNumber: String
-    ): ApolloCall<ACHTransferFavoriteListQuery.Data> = apolloAuthorizedClient.query(
-        ACHTransferFavoriteListQuery(
-            idBrand = idBrand,
-            user = user,
-            isFavorite = isFavorite,
-            identificationNumber = identificationNumber
-        )
-    ).fetchPolicy(FetchPolicy.NetworkOnly)
+    ): ApolloCall<ACHTransferFavoriteListQuery.Data> =
+        apolloAuthorizedClient.query(
+            ACHTransferFavoriteListQuery(
+                user,
+                idBrand,
+                isFavorite,
+                identificationNumber
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationProcessTransfer365(
         identification: String,
@@ -2234,6 +2321,7 @@ class GraphqlApi @Inject constructor(
         phoneNumber: String,
         destinationBankId: String,
         typeAccountId: String,
+        destinationType: String,
         destinationName: String,
         destinationLastName: String,
         amount: Double,
@@ -2251,7 +2339,8 @@ class GraphqlApi @Inject constructor(
             destinationLastName = destinationLastName,
             typeAccountId = typeAccountId,
             amount = amount,
-            motive = motive
+            motive = motive,
+            destinationType = destinationType
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -2367,6 +2456,20 @@ class GraphqlApi @Inject constructor(
             asset,
             cryptoNetwork,
             amount
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun querySavedSACAccountsSmart(
+        idBrand: Int,
+        user: String,
+        isFavorite: Boolean,
+        idCustomer: Long
+    ): ApolloCall<ListSavedSACAccountsQuery.Data> = apolloAuthorizedClient.query(
+        ListSavedSACAccountsQuery(
+            idBrand,
+            user,
+            isFavorite,
+            idCustomer
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 

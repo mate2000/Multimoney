@@ -17,6 +17,7 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.credit.QueryAccountStatementUseCase
 import com.multimoney.domain.interaction.credit.QueryGetPagedCreditMovementsUseCase
 import com.multimoney.domain.model.credit.CreditMovement
+import com.multimoney.domain.model.metrics.BaseEventDataDto
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -33,17 +34,22 @@ import com.multimoney.multimoney.presentation.ui.credit.movements.workmanager.Do
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.OPTION_BTN_6
 import com.multimoney.multimoney.presentation.util.PAGE_SIZE
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CreditMovementsViewModel @Inject constructor(
     private val queryGetPagedCreditMovements: QueryGetPagedCreditMovementsUseCase,
     private val queryAccountStatementUseCase: QueryAccountStatementUseCase,
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
 
     // UIState
@@ -87,6 +93,12 @@ class CreditMovementsViewModel @Inject constructor(
             USER to user,
             ID_BRAND to idBrand
         )
+        viewModelScope.launch {
+            if (dataStorePreferences.isAdjustFirstAccountStatusEventRegister().first()) {
+                registerAdjustEvent(AdjustEventType.HOME_CTA_FIRST_REQUEST_ACCOUNT_STATUS_5035, applyAdjust = false, data = BaseEventDataDto(user = user, idBrand = idBrand, idLoanClient = idLoanClient).toJson())
+                dataStorePreferences.isAdjustFirstAccountStatusEventRegister(false)
+            }
+        }
 
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)

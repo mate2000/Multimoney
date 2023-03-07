@@ -176,7 +176,8 @@ interface SecurityRepository {
         identification: String,
         phone: String,
         pkUser: String,
-        idBrand: Int
+        idBrand: Int,
+        user: String
     ): Flow<MultimoneyResult<ChangePhone>>
 
     suspend fun mutationChangeEmail(
@@ -219,9 +220,9 @@ interface SecurityRepository {
 
     suspend fun mutationSaveLogTracking(
         identification: String,
-        pkUser: Int,
+        pkUser: Int?,
         keySearch: String,
         data: String,
-        idBrand: Int
+        idBrand: Int?
     ): Flow<MultimoneyResult<SaveLogTracking>>
 }

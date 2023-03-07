@@ -3,10 +3,10 @@ package com.multimoney.multimoney.presentation.uielement
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
@@ -116,18 +117,22 @@ fun CustomDialog(
         topPaddingButtons = 34.dp
     }
 
-    Dialog(onDismissRequest = {
-        if (isCancelable) {
-            onDismissAction()
-            openDialogCustom.value = false
-        }
-    }) {
+    Dialog(
+        properties = DialogProperties(usePlatformDefaultWidth = false),
+        onDismissRequest = {
+            if (isCancelable) {
+                onDismissAction()
+                openDialogCustom.value = false
+            }
+        },
+    ) {
         Card(
             shape = shape,
             backgroundColor = backgroundColor,
             modifier = Modifier
                 .defaultMinSize(minHeight = 123.dp)
-                .fillMaxWidth().pointerInput(Unit) {
+                .fillMaxWidth(0.76f)
+                .pointerInput(Unit) {
                     detectTapAndPressUnconsumed(
                         onTap = {
                             activity?.onUserInteraction()

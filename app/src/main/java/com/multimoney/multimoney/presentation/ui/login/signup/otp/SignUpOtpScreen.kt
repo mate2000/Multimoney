@@ -57,6 +57,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.OtpTextField
 import com.multimoney.multimoney.presentation.uielement.SystemBroadcastReceiver
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.transformation.PhoneNumberTransformation
@@ -93,7 +94,8 @@ fun SignUpOtpScreen(
                 id = R.string.whatsapp_deep_link,
                 PHONE_HARDCODED
             ),
-            stringResource(id = R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts)
+            stringResource(id = R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts),
+            sharedViewModel.idBrand
         )
     )
 
@@ -171,7 +173,7 @@ fun SignUpOtpScreen(
                                 }
                             )
                         )
-                        viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SignUpFour)
+                        sharedViewModel.logEvents(FireBaseEvents.SignUpFour, AdjustEventType.SIGNUP_4_2004)
                     },
                     nextStep = viewModel.getNextStep(isOnFidoVerified).id,
                     previousStep = SignUpStep.Three.id
@@ -188,7 +190,7 @@ fun SignUpOtpScreen(
                         sharedViewModel.onUIEvent(
                             SignUpViewModel.UIEvent.OnLoadingValueChange(false)
                         )
-                    }, it)
+                    }, it, sharedViewModel.userData)
                 )
             }.onMessage {
                 sharedViewModel.onUIEvent(
@@ -262,7 +264,7 @@ fun SignUpOtpScreen(
 
         Text(
             style = Typography.body2.copy(color = MultimoneyTheme.colors.subTitleText),
-            text = stringResource(id = R.string.sign_up_otp_subtitle),
+            text = stringResource(id = viewModel.uiState.subtitleResource),
             textAlign = TextAlign.Start,
             modifier = Modifier
                 .fillMaxWidth()

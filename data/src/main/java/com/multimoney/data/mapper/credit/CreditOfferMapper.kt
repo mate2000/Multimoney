@@ -24,10 +24,14 @@ private fun CreditOfferQuery.Product.mapToDomainModel() = Product(
     paymentDate = fECHA_PAGO ?: "",
     currencyName = nOMBRE_MONEDA ?: "",
     messageConditions = mensaje_Condiciones ?: "",
-    isFormalizationRequired = bIT_REQUIERE_FORMALIZACION ?: ""
+    isFormalizationRequired = bIT_REQUIERE_FORMALIZACION ?: "",
+    idPromotion = pK_PSE_CAT_PROMOCION_PLAZO ?: ""
 )
 
 private fun CreditOfferQuery.CreditOffer.mapToDomainModel() =
-    CreditOffer(idUserRequest = idUserRequest as Int, products = products?.map { it.mapToDomainModel() } ?: listOf())
+    CreditOffer(
+        idUserRequest = idUserRequest as Int,
+        products = products?.map { it.mapToDomainModel() } ?: listOf(),
+        isCrosseling = isCrosseling ?: false)
 
 fun CreditOfferQuery.Data.mapToDomainModel() = creditOffer.mapToDomainModel()

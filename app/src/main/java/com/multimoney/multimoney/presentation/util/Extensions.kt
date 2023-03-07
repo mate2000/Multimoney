@@ -19,9 +19,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.gson.Gson
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
+import com.multimoney.multimoney.presentation.util.catalog.AddVisaCardErrors
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.All
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Colon
@@ -34,13 +36,13 @@ import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.Vis
 import com.multimoney.multimoney.presentation.util.catalog.PhoneCountryCode
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeType
 import com.novopayment.sdk.vts.module.payment.apdu.PaymentService
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.Locale
 import kotlin.time.Duration
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flow
 
 fun Context.openWhatsAppDeepLink(link: String, onFailure: () -> Unit = {}) {
     try {
@@ -260,12 +262,12 @@ val Int.boolean
 fun getNavParam(param: String, value: Any?) = "?$param=$value"
 
 fun getDeviceManufacture(): String = (
-        if (Build.MODEL.startsWith(Build.MANUFACTURER, ignoreCase = true)) {
-            Build.MODEL
-        } else {
-            "${Build.MANUFACTURER} ${Build.MODEL}"
-        }
-        ).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+    if (Build.MODEL.startsWith(Build.MANUFACTURER, ignoreCase = true)) {
+        Build.MODEL
+    } else {
+        "${Build.MANUFACTURER} ${Build.MODEL}"
+    }
+    ).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
 
 fun Context.getAndroidId(): String {
     return Secure.getString(
@@ -305,9 +307,9 @@ fun Double.toCurrencyFormatWithoutNegatives(
     formatter.maximumFractionDigits = amountOfDecimals
     // remove the default dollar symbol from the custom symbol property
     return "$symbol${
-        formatter.format(this)
-            .replace(Dollar.symbol, "")
-            .replace("-", "")
+    formatter.format(this)
+        .replace(Dollar.symbol, "")
+        .replace("-", "")
     }"
 }
 
@@ -393,6 +395,30 @@ fun getCountryCodeByIdBrand(idBrand: Int): String {
 fun String.capitalizedAllWords(): String =
     splitByWhiteSpace().joinToString(WHITE_SPACE_SEPARATOR.toString()) { it.capitalized() }
 
+fun String.getAddCardErrorFromValue(): AddVisaCardErrors =
+    when (this) {
+        AddVisaCardErrors.SystemMalfunction.value -> AddVisaCardErrors.SystemMalfunction
+        AddVisaCardErrors.UnableToInclude.value -> AddVisaCardErrors.UnableToInclude
+        AddVisaCardErrors.InvalidCardAccountValidation.value -> AddVisaCardErrors.InvalidCardAccountValidation
+        AddVisaCardErrors.InvalidPaymentAccountValidation.value -> AddVisaCardErrors.InvalidPaymentAccountValidation
+        AddVisaCardErrors.InvalidRequestPaymentAccountValidation.value -> AddVisaCardErrors.InvalidRequestPaymentAccountValidation
+        AddVisaCardErrors.YouHaveReachedTheMaximum.value -> AddVisaCardErrors.YouHaveReachedTheMaximum
+        AddVisaCardErrors.ExpiredCard.value -> AddVisaCardErrors.ExpiredCard
+        AddVisaCardErrors.TooManyCardsPerUserMax.value -> AddVisaCardErrors.TooManyCardsPerUserMax
+        AddVisaCardErrors.InvalidCardVerification.value -> AddVisaCardErrors.InvalidCardVerification
+        AddVisaCardErrors.InvalidVerificationValue.value -> AddVisaCardErrors.InvalidVerificationValue
+        AddVisaCardErrors.InvalidCard.value -> AddVisaCardErrors.InvalidCard
+        AddVisaCardErrors.MaxUsersSameCard.value -> AddVisaCardErrors.MaxUsersSameCard
+        AddVisaCardErrors.AlreadyExist.value -> AddVisaCardErrors.AlreadyExist
+        AddVisaCardErrors.UserBlocked.value -> AddVisaCardErrors.UserBlocked
+        AddVisaCardErrors.InvalidUsernameOrPassword.value -> AddVisaCardErrors.InvalidUsernameOrPassword
+        AddVisaCardErrors.InvalidApplication.value -> AddVisaCardErrors.InvalidApplication
+        AddVisaCardErrors.Null.value -> AddVisaCardErrors.Null
+        AddVisaCardErrors.EditFailed.value -> AddVisaCardErrors.EditFailed
+        else -> AddVisaCardErrors.Default
+    }
+
+
 /**
  * Format a phone number with a  "+Code Number" structure when you have
  * a Phone Number with a country code and a phone number without a
@@ -403,6 +429,11 @@ fun String.capitalizedAllWords(): String =
  */
 fun formatPhoneNumber(phoneWithCode: String?, phoneWithoutCode: String?) =
     phoneWithCode?.replace(phoneWithoutCode ?: "", " ").plus(phoneWithoutCode)
+
+/**
+ * Convert any data class in json String using Gson library
+ */
+fun Any.toJson(): String = Gson().toJson(this)
 
 private const val HEX_FORMAT = "#%02x%02x%02x"
 private const val NUMBER_FORMAT_REGEX = "[^0-9,.\\s]"

@@ -172,7 +172,7 @@ fun OriginationVoucherScreen(
                             .background(MultimoneyTheme.colors.dividerWhite16, shape = DottedShape(step = 10.dp))
                     )
                     Text(
-                        text = stringResource(string.payment_voucher_from_label),
+                        text = stringResource(string.origination_voucher_to_account),
                         modifier = Modifier.padding(top = 16.dp, start = 24.dp),
                         style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
                         color = MultimoneyTheme.colors.labelText
@@ -181,7 +181,7 @@ fun OriginationVoucherScreen(
                     VoucherAccountInfo(
                         modifier = Modifier.padding(start = 27.dp, top = 24.dp),
                         icon = drawable.ic_bank,
-                        title = stringResource(string.origination_voucher_destiny_account),
+                        title = viewModel.uiState.infoDeposit?.bankName ?: "",
                         subTitle = getMaskedAccount(
                             viewModel.uiState.infoDeposit?.accountNumber ?: "",
                             stringResource(id = string.payment_account_masked_text)
@@ -191,7 +191,7 @@ fun OriginationVoucherScreen(
                     VoucherNumberInfo(
                         modifier = Modifier.padding(start = 27.dp, top = 32.dp),
                         icon = drawable.ic_receipt,
-                        title = stringResource(string.payment_voucher_reference_number_label),
+                        title = stringResource(string.origination_voucher_reference),
                         subTitle = viewModel.uiState.infoDeposit?.referenceNumber ?: ""
                     )
 

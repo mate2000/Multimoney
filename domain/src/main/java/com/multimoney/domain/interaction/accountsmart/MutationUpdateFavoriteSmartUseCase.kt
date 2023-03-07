@@ -17,6 +17,6 @@ interface MutationUpdateFavoriteSmartUseCase {
         active: Boolean,
         isFavorite: Boolean,
         phoneNumber: String?,
-        idCurrencyAccount: Int?,
+        idCurrencyAccount: Int?
     ): Flow<MultimoneyResult<SmartFavoriteResult?>>
 }

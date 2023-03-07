@@ -1,0 +1,31 @@
+mutation CreateCardVD(
+    $identification: String!,
+    $cardTokenID: String!,
+    $default: Boolean!,
+    $user: String!,
+    $idBrand: Int!
+)
+{
+    createCardVD(
+        createCardVDInput: {
+            identification: $identification,
+            cardTokenID: $cardTokenID,
+            default: $default,
+            user: $user,
+            idBrand: $idBrand
+        }
+    ) {
+        idCard
+        creationDate
+        verified
+        detail
+        cardMasked
+        verificationValue
+        expirationMonth
+        expirationYear
+        cardTokenId
+        currencyDescription
+        country
+        default
+    }
+}

@@ -455,10 +455,10 @@ class SecurityRepositoryImpl @Inject constructor(
 
     override suspend fun mutationSaveLogTracking(
         identification: String,
-        pkUser: Int,
+        pkUser: Int?,
         keySearch: String,
         data: String,
-        idBrand: Int
+        idBrand: Int?
     ): Flow<MultimoneyResult<SaveLogTracking>> =
         fetchData(
             apolloCall = graphqlApi.mutationSaveLogTracking(
@@ -477,10 +477,11 @@ class SecurityRepositoryImpl @Inject constructor(
         identification: String,
         phone: String,
         pkUser: String,
-        idBrand: Int
+        idBrand: Int,
+        user: String
     ): Flow<MultimoneyResult<ChangePhone>> =
         fetchData(
-            apolloCall = graphqlApi.mutationChangePhone(identification, phone, pkUser, idBrand),
+            apolloCall = graphqlApi.mutationChangePhone(identification, phone, pkUser, idBrand,user),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
             }

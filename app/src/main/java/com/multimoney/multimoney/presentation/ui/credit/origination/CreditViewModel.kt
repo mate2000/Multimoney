@@ -287,7 +287,10 @@ class CreditViewModel @Inject constructor(
                     idPrint = it.idPrint
                     if (isCrosseling) {
                         if (idBrand.toInt() == Brand.ElSalvador.id || it.idPrint == 0L) {
-                            uiState = uiState.copy(showSVProcessSendSuccessfully = true)
+                            uiState = uiState.copy(
+                                showSVProcessSendSuccessfully = true,
+                                isLoading = false
+                            )
                         } else {
                             creditSubscriptionManager.startCreditSubscription(idBrand.toInt(), idPrint)
                             delay(DELAY_TO_NAVIGATE_TO_SIGN_PROCESS)

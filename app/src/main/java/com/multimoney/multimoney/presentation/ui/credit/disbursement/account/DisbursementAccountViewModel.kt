@@ -7,12 +7,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.credit.MutationProcessCreditExtensionDetailUseCase
 import com.multimoney.domain.interaction.credit.QueryGetClientBankAccountUseCase
 import com.multimoney.domain.interaction.credit.QueryGetExchangeRateCreditUseCase
 import com.multimoney.domain.model.credit.ClientBankAccount
+import com.multimoney.domain.model.metrics.BaseEventDataDto
 import com.multimoney.domain.model.util.error.MessageError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -52,15 +54,18 @@ import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.Dis
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel
 import com.multimoney.multimoney.presentation.util.API_DATE_FORMAT
 import com.multimoney.multimoney.presentation.util.BAR_DIVIDER_FORMAT_YEAR_TWO_DIGITS
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.formattedTwoDecimalsNumber
 import com.multimoney.multimoney.presentation.util.getCardDateFormat
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
+import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
@@ -268,15 +273,37 @@ class DisbursementAccountViewModel @Inject constructor(
         uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Hidden))
     }
 
-    private fun onNavigateToVoucher(referenceNumber: String?) = navigateTo(
-        route = "${Screen.DisbursementVoucherScreen.baseRoute}/${encodeData(uiState.clientBankAccountSelected)}/${
+    private fun onNavigateToVoucher(referenceNumber: String?) {
+        logAdjustEvent()
+        navigateTo(
+            route = "${Screen.DisbursementVoucherScreen.baseRoute}/${encodeData(uiState.clientBankAccountSelected)}/${
             if (shouldDisplayExchangeRate()) {
                 getCurrentAmountExchangedFormatted()
             } else {
                 getCurrentAmountFormatted()
             }
-        }/${getExchangeRateFormatted()}/${shouldDisplayExchangeRate()}/${referenceNumber ?: ""}/${getCurrentAmountFormatted()}"
-    )
+            }/${getExchangeRateFormatted()}/${shouldDisplayExchangeRate()}/${referenceNumber ?: ""}/${getCurrentAmountFormatted()}"
+        )
+    }
+
+    private fun logAdjustEvent() {
+        viewModelScope.launch {
+            if (dataStorePreferences.isAdjustFirstDisbursementSuccessEventRegister().first()) {
+                registerAdjustEvent(
+                    AdjustEventType.HOME_CTA_FIRST_START_PAYMENT_5034,
+                    applyAdjust = false,
+                    data = BaseEventDataDto(
+                        user = user,
+                        idBrand = idBrand,
+                        idClient = idClient,
+                        idLoanClient = idLoanClient.toInt(),
+                        identification = identification
+                    ).toJson()
+                )
+                dataStorePreferences.isAdjustFirstDisbursementSuccessEventRegister(false)
+            }
+        }
+    }
 
     private fun onNavigateBack() = navigateBack(popTo = Screen.DisbursementAmountScreen.route, isRestart = false)
 
@@ -309,24 +336,24 @@ class DisbursementAccountViewModel @Inject constructor(
 
     fun getCurrentAmountFormatted() =
         "${idCurrency?.getCurrencyFromId()?.symbol ?: ""}${
-            selectedAmount?.stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
+        selectedAmount?.stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
         }"
 
     fun getCurrentAmountExchangedFormatted() =
         "${uiState.clientBankAccountSelected?.idCurrency?.getCurrencyFromId()?.symbol ?: ""}${
-            uiState.exchangeConvertedAmount.formattedTwoDecimalsNumber().toString()
-                .stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
+        uiState.exchangeConvertedAmount.formattedTwoDecimalsNumber().toString()
+            .stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
         }"
 
     fun getExchangeRateFormatted() =
         "${idCurrency?.getCurrencyFromId()?.symbol ?: ""}${
-            uiState.exchangeRateLabel.toString()
-                .stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
+        uiState.exchangeRateLabel.toString()
+            .stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
         }"
 
     fun getQuotaTotalFormatted() =
         "${idCurrency?.getCurrencyFromId()?.symbol ?: ""}${
-            quotaTotal?.stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString()) ?: ""
+        quotaTotal?.stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString()) ?: ""
         }"
 
     fun getQuotaNextDateFormatted() =

@@ -9,9 +9,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.AnnotatedString
 import androidx.lifecycle.SavedStateHandle
-import com.multimoney.data.util.catalog.Brand
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.virtualcard.MutationActivatedCardAutomaticDebitUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationPayCreditVDUseCase
+import com.multimoney.domain.model.metrics.BaseEventDataDto
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
@@ -46,11 +48,15 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.Pay
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnMinimumPaymentButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnPayClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.isValidAmount
+import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.presentation.util.transformation.CurrencyDoubleTransformation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -58,7 +64,8 @@ import javax.inject.Inject
 class PaymentAmountCardViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val mutationPayCreditVDUseCase: MutationPayCreditVDUseCase,
-    private val mutationActivatedCardAutomaticDebitUseCase: MutationActivatedCardAutomaticDebitUseCase
+    private val mutationActivatedCardAutomaticDebitUseCase: MutationActivatedCardAutomaticDebitUseCase,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
 
     // uiState
@@ -159,6 +166,7 @@ class PaymentAmountCardViewModel @Inject constructor(
     }
 
     private fun onNavigateToPaymentCardVoucher() {
+        logAdjustEvent()
         popAndNavigateTo(
             "${Screen.PaymentCardVoucherScreen.baseRoute}/$user/$idBrand/$identification/$idClient/$idLoanClient/${
             encodeData(
@@ -167,6 +175,31 @@ class PaymentAmountCardViewModel @Inject constructor(
             }/${getCurrentAmountFormatted()}/${uiState.isAutomaticProgrammedPaymentChecked}/${payCreditVisa?.referenceAuthorization}/$paymentDate",
             Screen.PaymentAmountCardsScreen.route
         )
+    }
+
+    private fun logAdjustEvent() {
+        viewModelScope.launch {
+            if (dataStorePreferences.isAdjustFirstPaymentSuccessEventRegister().first()) {
+                registerAdjustEvent(
+                    AdjustEventType.HOME_CTA_FIRST_START_PAYMENT_5034,
+                    applyAdjust = false,
+                    data = BaseEventDataDto(
+                        user = user,
+                        idBrand = idBrand,
+                        idClient = idClient,
+                        idLoanClient = idLoanClient,
+                        identification = identification
+                    ).toJson()
+                )
+                dataStorePreferences.isAdjustFirstPaymentSuccessEventRegister(false)
+            }
+            restartMetricsPreferences()
+        }
+    }
+
+    private suspend fun restartMetricsPreferences() {
+        dataStorePreferences.isAdjustFirstPaymentSuccessEventRegister(true)
+        dataStorePreferences.isAdjustFirstPaymentEventRegister(true)
     }
 
     private fun onNavigateBack() =

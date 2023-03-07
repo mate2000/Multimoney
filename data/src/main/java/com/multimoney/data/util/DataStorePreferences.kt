@@ -372,6 +372,21 @@ class DataStorePreferences @Inject constructor(
 
     fun isAdjustFirstOriginationNonPreApprovedApprovedEventRegister(): Flow<Boolean> = getData(ORIGINATION_NON_PREAPPROVED_SUCCESS_FIRST_TIME_ADJUST_KEY, true)
 
+    suspend fun isAdjustFirstDisbursementEventRegister(register: Boolean) =
+        setData(DISBURSEMENT_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstDisbursementEventRegister(): Flow<Boolean> = getData(DISBURSEMENT_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstDisbursementSuccessEventRegister(register: Boolean) =
+        setData(DISBURSEMENT_SUCCESS_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstDisbursementSuccessEventRegister(): Flow<Boolean> = getData(DISBURSEMENT_SUCCESS_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstPaymentSuccessEventRegister(register: Boolean) =
+        setData(PAYMENT_SUCCESS_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstPaymentSuccessEventRegister(): Flow<Boolean> = getData(PAYMENT_SUCCESS_FIRST_TIME_ADJUST_KEY, true)
+
     // Adjust Crypto events
     suspend fun setAdjustCryptoHomeFirstTime(firstTimeHomeCrypto: Boolean) =
         setData(ADJUST_CRYPTO_HOME_FIRST_TIME, firstTimeHomeCrypto)
@@ -479,6 +494,9 @@ class DataStorePreferences @Inject constructor(
         private val ORIGINATION_NON_PREAPPROVED_INFO_EXTRA_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_nonpreapproved_info_extra")
         private val ORIGINATION_NON_PREAPPROVED_REJECTED_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_nonpreapproved_rejected")
         private val ORIGINATION_NON_PREAPPROVED_SUCCESS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_nonpreapproved_success")
+        private val DISBURSEMENT_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("disbursement_first_time")
+        private val DISBURSEMENT_SUCCESS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("disbursement_success_first_time")
+        private val PAYMENT_SUCCESS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("payment_success_first_time")
         private val ADJUST_CRYPTO_HOME_FIRST_TIME = booleanPreferencesKey("adjust_crypto_home_first_time")
         private val ADJUST_CRYPTO_PURCHASE_FIRST_TIME = booleanPreferencesKey("adjust_crypto_purchase_first_time")
         private val ADJUST_CRYPTO_SUCCESS_PURCHASE_FIRST_TIME = booleanPreferencesKey("adjust_crypto_success_purchase_first_time")

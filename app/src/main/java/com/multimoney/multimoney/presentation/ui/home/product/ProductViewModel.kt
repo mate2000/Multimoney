@@ -328,8 +328,8 @@ class ProductViewModel @Inject constructor(
             else -> {
                 navigateTo(
                     "${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
-                            "${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}/$comingFromCrypto/" +
-                            "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}"
+                        "${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}/$comingFromCrypto/" +
+                        "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}"
                 )
             }
         }
@@ -547,7 +547,8 @@ class ProductViewModel @Inject constructor(
         helper.shareTextPlain("$clientLabel: ${userName.uppercase()}\n$accountLabel: $ibanAccount")
     }
 
-    private fun onNavigateToDisbursement() =
+    private fun onNavigateToDisbursement() {
+        logEvents(AdjustEventType.DISBURSEMENT_FIRST_INIT_PROCESS_5021)
         navigateTo(
             route = "${Screen.DisbursementAmountScreen.baseRoute}/${uiState.idBrand}/$email/${uiState.userStatus?.infoCredit?.idClient}/${
             encodeData(
@@ -555,6 +556,7 @@ class ProductViewModel @Inject constructor(
             )
             }/$pkUser/${balanceCredit?.getFirstCredit()?.creditNumber}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/$identification"
         )
+    }
 
     private fun onNavigateToGtSvNonPreApproved() =
         navigateTo(
@@ -1026,9 +1028,20 @@ class ProductViewModel @Inject constructor(
             AdjustEventType.HOME_CTA_FIRST_ACTIVATE_MM_VISA_5036 -> {
                 getActivateMMVisaEvent(baseAdjustEvent)
             }
+            AdjustEventType.DISBURSEMENT_FIRST_INIT_PROCESS_5021 -> {
+                getStartDisbursementEvent(baseAdjustEvent)
+            }
             else -> suspend {}
         }
     }
+
+    private fun getStartDisbursementEvent(baseAdjustEvent: BaseEventDataDto): suspend () -> Unit =
+        suspend {
+            if (dataStorePreferences.isAdjustFirstDisbursementEventRegister().first()) {
+                registerAdjustEvent(AdjustEventType.DISBURSEMENT_FIRST_INIT_PROCESS_5021, data = baseAdjustEvent.toJson())
+                dataStorePreferences.isAdjustFirstDisbursementEventRegister(false)
+            }
+        }
 
     private fun getStartPaymentEvent(baseAdjustEvent: BaseEventDataDto): suspend () -> Unit =
         suspend {

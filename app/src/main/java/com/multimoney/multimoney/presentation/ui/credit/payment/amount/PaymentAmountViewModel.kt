@@ -7,12 +7,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.credit.MutationActivateClientAutomaticDebitUseCase
 import com.multimoney.domain.interaction.credit.MutationProcessPaymentListUseCase
 import com.multimoney.domain.interaction.credit.QueryGetExchangeRateCreditUseCase
 import com.multimoney.domain.model.balance.Summary
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.DestinyAccount
+import com.multimoney.domain.model.metrics.BaseEventDataDto
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
@@ -44,12 +47,16 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAm
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnNavigateToVoucher
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnPaymentButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnProcessPayment
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.formattedTwoDecimalsNumber
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.isValidAmount
 import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
+import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
@@ -59,7 +66,8 @@ class PaymentAmountViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val mutationProcessPaymentUseCase: MutationProcessPaymentListUseCase,
     private val queryGetExchangeRateCreditUseCase: QueryGetExchangeRateCreditUseCase,
-    private val mutationActivateClientAutomaticDebitUseCase: MutationActivateClientAutomaticDebitUseCase
+    private val mutationActivateClientAutomaticDebitUseCase: MutationActivateClientAutomaticDebitUseCase,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())
@@ -209,9 +217,37 @@ class PaymentAmountViewModel @Inject constructor(
 
     private fun onNavigateBackHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
 
-    private fun onNavigateToVoucher() = navigateTo(
-        route = "${Screen.PaymentVoucherScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/${encodeData(uiState.clientBankAccount)}/$paymentDate/${if (isMultiCurrency()) getMultiCurrencyAmountIncludingExchangeFormatted() else getCurrentAmountFormatted()}/${if (uiState.isMinimumSelected) uiState.minimumPaymentLabel else uiState.maximumPaymentLabel}/${formattedExchangeRateLabel()}/${shouldDisplayExchangeRate()}/${isMultiCurrency()}/${uiState.isAutomaticProgrammedPaymentChecked}/$referenceNumber"
-    )
+    private fun onNavigateToVoucher() {
+        logAdjustEvent()
+        navigateTo(
+            route = "${Screen.PaymentVoucherScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/${encodeData(uiState.clientBankAccount)}/$paymentDate/${if (isMultiCurrency()) getMultiCurrencyAmountIncludingExchangeFormatted() else getCurrentAmountFormatted()}/${if (uiState.isMinimumSelected) uiState.minimumPaymentLabel else uiState.maximumPaymentLabel}/${formattedExchangeRateLabel()}/${shouldDisplayExchangeRate()}/${isMultiCurrency()}/${uiState.isAutomaticProgrammedPaymentChecked}/$referenceNumber"
+        )
+    }
+
+    private fun logAdjustEvent() {
+        viewModelScope.launch {
+            if (dataStorePreferences.isAdjustFirstPaymentSuccessEventRegister().first()) {
+                registerAdjustEvent(
+                    AdjustEventType.HOME_CTA_FIRST_START_PAYMENT_5034,
+                    applyAdjust = false,
+                    data = BaseEventDataDto(
+                        user = user,
+                        idBrand = idBrand,
+                        idClient = idClient,
+                        idLoanClient = idLoanClient,
+                        identification = identification
+                    ).toJson()
+                )
+                dataStorePreferences.isAdjustFirstPaymentSuccessEventRegister(false)
+            }
+            restartMetricsPreferences()
+        }
+    }
+
+    private suspend fun restartMetricsPreferences() {
+        dataStorePreferences.isAdjustFirstPaymentSuccessEventRegister(true)
+        dataStorePreferences.isAdjustFirstPaymentEventRegister(true)
+    }
 
     private fun formattedExchangeRateLabel() = uiState.exchangeRateLabel.formattedTwoDecimalsNumber().toString()
 

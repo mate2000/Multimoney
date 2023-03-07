@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.multimoney.data.base.BaseDataStorePreferences
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.crypto.ReleaseTransferUseCase
 import com.multimoney.domain.model.util.onFailure
@@ -14,13 +13,12 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.CRYPTO_ASSET
 import com.multimoney.multimoney.presentation.navigation.ID_TRANSACTION
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class AmountExceededViewModel @Inject constructor(
@@ -73,42 +71,39 @@ class AmountExceededViewModel @Inject constructor(
         }
     }
 
-    private fun onReleaseDeposit() {
-        /*executeUseCase {
-            uiState = uiState.copy(isLoading = true)
-            releaseTransferUseCase(
-                identification,
-                user,
-                market,
-                uiState.name,
-                uiState.reason,
-                uiState.platformName,
-                idTransaction
-            ).collectLatest { result ->
-                uiState = uiState.copy(isLoading = false)
-                result.onSuccess {
-                    it.hasError?.let {
-                        uiState = uiState.copy(isAlertResultVisible = true)
-                    }
-                    if (it.withHeld) {
-                        uiState = uiState.copy(isAmountExceeded = true)
-                    } else {
-                        navigateToHome()
-                    }
-                }
-                result.onFailure {
+    private fun onReleaseDeposit() = executeUseCase {
+        uiState = uiState.copy(isLoading = true)
+        releaseTransferUseCase(
+            identification,
+            user,
+            market,
+            uiState.name,
+            uiState.reason,
+            uiState.platformName,
+            idTransaction
+        ).collectLatest { result ->
+            uiState = uiState.copy(isLoading = false)
+            result.onSuccess {
+                it.hasError?.let {
                     uiState = uiState.copy(isAlertResultVisible = true)
                 }
+                if (it.withHeld) {
+                    uiState = uiState.copy(isAmountExceeded = true)
+                } else {
+                    navigateToHome()
+                }
             }
-        }*/
-        navigateToHome()
+            result.onFailure {
+                uiState = uiState.copy(isAlertResultVisible = true)
+            }
+        }
     }
 
     private fun navigateToHome() {
         popAndNavigateTo(
             Screen.HomeScreen.route,
             Screen.ReleaseTransactionScreen.route,
-             true
+            true
         )
     }
 

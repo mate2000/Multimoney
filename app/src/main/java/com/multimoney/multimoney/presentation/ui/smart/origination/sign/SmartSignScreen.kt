@@ -10,6 +10,7 @@ import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.BaseEvent.SimulateUserInteraction
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnShowDialogInformation
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnStartListenerSubscriptionSmartContractEvent
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
@@ -55,6 +56,22 @@ fun SmartSignScreen(
         }
         VALIDATE_IDENTITY.value -> {
             SmartValidateIdentityScreen(viewModel = viewModel)
+        }
+    }
+
+    if (viewModel.uiState.isAlertResultVisible) {
+        viewModel.uiState.apply {
+            AlertResult(
+                iconResource = alertResultIconResource,
+                titleResource = alertResultTitleResource,
+                descriptionResource = alertResultDescriptionResource,
+                buttonTextResource = alertResultButtonResource,
+                isTopNavBarVisible = true,
+                isRightButtonVisible = alertResultIsRightButtonVisible,
+                isLeftButtonVisible = alertResultIsLeftButtonVisible,
+                onRightButtonClick = alertResultRightButtonClick,
+                onButtonClick = alertResultButtonAction
+            )
         }
     }
 

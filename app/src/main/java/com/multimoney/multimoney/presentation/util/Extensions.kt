@@ -23,6 +23,7 @@ import com.google.gson.Gson
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
+import com.multimoney.multimoney.presentation.util.catalog.AddVisaCardErrors
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.All
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Colon
@@ -393,6 +394,30 @@ fun getCountryCodeByIdBrand(idBrand: Int): String {
 
 fun String.capitalizedAllWords(): String =
     splitByWhiteSpace().joinToString(WHITE_SPACE_SEPARATOR.toString()) { it.capitalized() }
+
+fun String.getAddCardErrorFromValue(): AddVisaCardErrors =
+    when (this) {
+        AddVisaCardErrors.SystemMalfunction.value -> AddVisaCardErrors.SystemMalfunction
+        AddVisaCardErrors.UnableToInclude.value -> AddVisaCardErrors.UnableToInclude
+        AddVisaCardErrors.InvalidCardAccountValidation.value -> AddVisaCardErrors.InvalidCardAccountValidation
+        AddVisaCardErrors.InvalidPaymentAccountValidation.value -> AddVisaCardErrors.InvalidPaymentAccountValidation
+        AddVisaCardErrors.InvalidRequestPaymentAccountValidation.value -> AddVisaCardErrors.InvalidRequestPaymentAccountValidation
+        AddVisaCardErrors.YouHaveReachedTheMaximum.value -> AddVisaCardErrors.YouHaveReachedTheMaximum
+        AddVisaCardErrors.ExpiredCard.value -> AddVisaCardErrors.ExpiredCard
+        AddVisaCardErrors.TooManyCardsPerUserMax.value -> AddVisaCardErrors.TooManyCardsPerUserMax
+        AddVisaCardErrors.InvalidCardVerification.value -> AddVisaCardErrors.InvalidCardVerification
+        AddVisaCardErrors.InvalidVerificationValue.value -> AddVisaCardErrors.InvalidVerificationValue
+        AddVisaCardErrors.InvalidCard.value -> AddVisaCardErrors.InvalidCard
+        AddVisaCardErrors.MaxUsersSameCard.value -> AddVisaCardErrors.MaxUsersSameCard
+        AddVisaCardErrors.AlreadyExist.value -> AddVisaCardErrors.AlreadyExist
+        AddVisaCardErrors.UserBlocked.value -> AddVisaCardErrors.UserBlocked
+        AddVisaCardErrors.InvalidUsernameOrPassword.value -> AddVisaCardErrors.InvalidUsernameOrPassword
+        AddVisaCardErrors.InvalidApplication.value -> AddVisaCardErrors.InvalidApplication
+        AddVisaCardErrors.Null.value -> AddVisaCardErrors.Null
+        AddVisaCardErrors.EditFailed.value -> AddVisaCardErrors.EditFailed
+        else -> AddVisaCardErrors.Default
+    }
+
 
 /**
  * Format a phone number with a  "+Code Number" structure when you have

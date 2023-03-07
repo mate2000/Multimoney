@@ -69,9 +69,11 @@ fun SignDocumentProcessScreen(
             } else if (viewModel.evisertiaStatus == CreditOnFidoOrFirmStatus.REJECTED.status) {
                 viewModel.logEvents(AdjustEventType.ORIGINATION_RETRY_SCREEN_EVICERTIA_5016)
             }
-            DocumentGenerationScreen(onGetLinkAgain = {
-                viewModel.onUIEvent(OnCallGetLinkCreditContractSecondTime)
-            })
+            DocumentGenerationScreen(
+                idBran = viewModel.idBrand,
+                onGetLinkAgain = {
+                    viewModel.onUIEvent(OnCallGetLinkCreditContractSecondTime)
+                })
         }
         SIGN_DOCUMENTS_STEP.value -> {
             SignDocumentScreen(viewModel = viewModel)

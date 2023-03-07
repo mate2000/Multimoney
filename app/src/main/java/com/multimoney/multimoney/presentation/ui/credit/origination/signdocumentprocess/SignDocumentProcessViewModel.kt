@@ -113,8 +113,10 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     private fun onEvaluateWitchRequestCall() {
-        onShouldStartSubscription()
-        onShouldCallGetLinkCreditContract()
+        if (idBrand != Brand.ElSalvador.id) {
+            onShouldStartSubscription()
+            onShouldCallGetLinkCreditContract()
+        }
     }
 
     private fun onShouldCallGetLinkCreditContract() {
@@ -135,12 +137,14 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     private fun onListenCreditContractEventSubscription() {
-        creditSubscriptionManager.subscriptionSubscribe(getCreditSubscriptionListener())
-        if (creditSubscriptionManager.hasEvisertiaLink()) {
-            uiState = uiState.copy(
-                signDocumentProcessStep = SIGN_DOCUMENTS_STEP.value,
-                signDocumentUrl = creditSubscriptionManager.getEvisertioLink() ?: ""
-            )
+        if (idBrand != Brand.ElSalvador.id) {
+            creditSubscriptionManager.subscriptionSubscribe(getCreditSubscriptionListener())
+            if (creditSubscriptionManager.hasEvisertiaLink()) {
+                uiState = uiState.copy(
+                    signDocumentProcessStep = SIGN_DOCUMENTS_STEP.value,
+                    signDocumentUrl = creditSubscriptionManager.getEvisertioLink() ?: ""
+                )
+            }
         }
     }
 

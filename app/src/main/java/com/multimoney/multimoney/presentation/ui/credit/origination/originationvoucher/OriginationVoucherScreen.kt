@@ -172,7 +172,7 @@ fun OriginationVoucherScreen(
                             .background(MultimoneyTheme.colors.dividerWhite16, shape = DottedShape(step = 10.dp))
                     )
                     Text(
-                        text = stringResource(string.payment_voucher_from_label),
+                        text = stringResource(string.origination_voucher_to_account),
                         modifier = Modifier.padding(top = 16.dp, start = 24.dp),
                         style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
                         color = MultimoneyTheme.colors.labelText

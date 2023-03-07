@@ -12,6 +12,14 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven {
+            // All of React Native (JS, Android binaries) is installed from npm
+            url ("$rootDir/react_native_dependencies/node_modules/react-native/android")
+        }
+        maven {
+            // Android JSC is installed from npm
+            url("$rootDir/react_native_dependencies/node_modules/jsc-android/dist")
+        }
         maven { url 'https://maven.applanga.com/' }
         maven { url 'https://jitpack.io' }
         maven {

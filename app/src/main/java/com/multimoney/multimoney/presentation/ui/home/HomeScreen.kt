@@ -29,6 +29,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.extension.findActivity
@@ -56,7 +57,8 @@ fun HomeScreen(
     navController: NavHostController,
     onInnerNavigate: (innerNavController: NavHostController, NavEvent.InnerNavigate) -> Unit = { _, _ -> },
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit,
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    shouldShowReleaseToast: Boolean = false
 ) {
     val activity = LocalContext.current.findActivity()
     val innerNavController = rememberNavController()
@@ -219,6 +221,9 @@ fun HomeScreen(
             onPositiveAction = viewModel.uiState.openDialog.positiveAction,
             isCancelable = viewModel.uiState.openDialog.isCancelable
         )
+    }
+    if(shouldShowReleaseToast){
+        Toast.makeText(LocalContext.current,  stringResource(id = R.string.amount_exceeded_transaction_released), Toast.LENGTH_LONG).show()
     }
 }
 

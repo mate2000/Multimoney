@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.GrayScale500
 import com.multimoney.multimoney.presentation.theme.GrayScale800
 import com.multimoney.multimoney.presentation.theme.Primary500
@@ -48,11 +49,11 @@ fun CustomRadioButton(
         var radioUnSelectedColor = GrayScale500
         var textColor = GrayScale800
         if (isSystemInDarkTheme()) {
-            radioSelectedColor = Primary500
+            radioSelectedColor = DefaultWhite
             radioUnSelectedColor = GrayScale500
             textColor = WhiteTransparency70
         } else {
-            radioSelectedColor = Primary500
+            radioSelectedColor = DefaultWhite
             radioUnSelectedColor = GrayScale500
             textColor = WhiteTransparency70
         }

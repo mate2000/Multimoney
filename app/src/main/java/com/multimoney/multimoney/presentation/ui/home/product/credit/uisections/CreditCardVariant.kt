@@ -355,50 +355,56 @@ fun CardWithCreditInProcess(
                 indication = null
             ) {
                 action.invoke()
-            }
+            },
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
-        CustomInformativeChip(
-            text = stringResource(id = chipText),
-            textStyle = Typography.body2.copy(
-                fontWeight = FontWeight.SemiBold,
+        Column(modifier = Modifier.fillMaxWidth()) {
+            CustomInformativeChip(
+                text = stringResource(id = chipText),
+                textStyle = Typography.body2.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    color = MultimoneyTheme.colors.text
+                ),
+                modifier = Modifier.padding(top = 12.dp),
+                shape = RoundedCornerShape(12.dp),
+                background = backgroundShip,
+                startIcon = startIcon,
+                startIconTint = MultimoneyTheme.colors.iconColor
+            )
+            Text(
+                text = title,
+                modifier = Modifier.padding(top = 14.dp),
+                style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                 color = MultimoneyTheme.colors.text
-            ),
-            modifier = Modifier.padding(top = 12.dp),
-            shape = RoundedCornerShape(12.dp),
-            background = backgroundShip,
-            startIcon = startIcon,
-            startIconTint = MultimoneyTheme.colors.iconColor
-        )
-        Text(
-            text = title,
-            modifier = Modifier.padding(top = 14.dp),
-            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.text
-        )
-        Text(
-            text = description,
-            modifier = Modifier.padding(top = 8.dp),
-            style = Typography.caption,
-            color = MultimoneyTheme.colors.text
-        )
-        actionText?.let {
-            if (it.isNotBlank()) {
-                CustomImage(
-                    modifier = Modifier
-                        .padding(top = 21.dp)
-                        .align(Alignment.CenterHorizontally),
-                    drawableResource = drawable.ic_chevron_up
-                )
+            )
+            Text(
+                text = description,
+                modifier = Modifier.padding(top = 8.dp),
+                style = Typography.caption,
+                color = MultimoneyTheme.colors.text
+            )
+        }
 
-                Text(
-                    text = actionText,
-                    modifier = Modifier
-                        .padding(bottom = 12.dp)
-                        .align(Alignment.CenterHorizontally),
-                    style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                    color = MultimoneyTheme.colors.text,
-                    textAlign = TextAlign.Center
-                )
+        Column(modifier = Modifier.fillMaxWidth()) {
+            actionText?.let {
+                if (it.isNotBlank()) {
+                    CustomImage(
+                        modifier = Modifier
+                            .padding(top = 21.dp)
+                            .align(Alignment.CenterHorizontally),
+                        drawableResource = drawable.ic_chevron_up
+                    )
+
+                    Text(
+                        text = actionText,
+                        modifier = Modifier
+                            .padding(bottom = 12.dp)
+                            .align(Alignment.CenterHorizontally),
+                        style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
+                        color = MultimoneyTheme.colors.text,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
     }
@@ -555,9 +561,9 @@ fun OngoingCredit(
                                     .clip(CircleShape)
                                     .background(
                                         if ((
-                                            viewModel.balanceCredit?.getFirstSummary()?.daysExpired
-                                                ?: 0
-                                            ) > 0
+                                                    viewModel.balanceCredit?.getFirstSummary()?.daysExpired
+                                                        ?: 0
+                                                    ) > 0
                                         ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor
                                     )
                             )

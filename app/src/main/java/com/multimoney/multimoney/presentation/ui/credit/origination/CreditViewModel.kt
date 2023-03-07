@@ -56,6 +56,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetCloseDialogTexts
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnShowBottomSheet
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnUpdateIsCrosselingValue
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnUpdateScreenConfigData
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.CreditSubscriptionManager
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
@@ -656,6 +657,7 @@ class CreditViewModel @Inject constructor(
             is NavigateToAccountScreen -> onNavigateToAccountScreen()
             is OnRestartCrosselingNewAccount -> onRestartCrosselingNewAccount()
             is OnSetBankListEmpty -> onSetBankListEmpty(event.ifBankListEmpty)
+            is OnUpdateIsCrosselingValue -> crosseling = event.isCrosseling
         }
     }
 
@@ -690,6 +692,7 @@ class CreditViewModel @Inject constructor(
         object OnNavigateToHome : UIEvent()
         object NavigateToAccountScreen : UIEvent()
         object OnRestartCrosselingNewAccount : UIEvent()
+        data class OnUpdateIsCrosselingValue(val isCrosseling: Boolean) : UIEvent()
     }
 
     sealed class BaseEvent {

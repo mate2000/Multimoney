@@ -1,20 +1,14 @@
 package com.multimoney.multimoney.presentation.ui.smart.origination.sign
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
-import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCase
-import com.multimoney.domain.interaction.accountsmart.SubscriptionAccountSmartContractUseCase
 import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
 import com.multimoney.domain.model.credit.CreditContractEvent
 import com.multimoney.domain.model.util.error.HttpError
-import com.multimoney.domain.model.util.onFailure
-import com.multimoney.domain.model.util.onLoading
-import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -29,10 +23,10 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_GET_EVICERTIA_LINK
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_GLOBAL_ID
-import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.ui.smart.origination.SmartSubscriptionManager
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.BaseEvent.SimulateUserInteraction
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnChangeScreen
@@ -216,7 +210,6 @@ class SmartSignViewModel @Inject constructor(
     }
 
     private fun onShouldStartSubscription() {
-        Log.v("consultas running", smartSubscriptionManager.isSubcriptionRunning.not().toString())
         if (smartSubscriptionManager.isSubcriptionRunning.not() || shouldGetEvicertiaLink) {
             smartSubscriptionManager.cancelSubscription()
             uiState = uiState.copy(isLoading = true)
@@ -226,12 +219,12 @@ class SmartSignViewModel @Inject constructor(
 
     private fun onNavigateToHome() {
         smartSubscriptionManager.destroySubscription()
-        /*emitBaseEvent(SimulateUserInteraction)
+        emitBaseEvent(SimulateUserInteraction)
         navigateBack(
             popTo = Screen.HomeScreen.route,
             isRestart = true,
             homeState = HomeState.COLLAPSED
-        )*/
+        )
     }
 
     private fun onNavigateToOnfidoAndEvicertiaError(error: String) {
@@ -249,24 +242,6 @@ class SmartSignViewModel @Inject constructor(
             popTo = Screen.SmartSignScreen.route
         )
     }
-
-/*    private fun callMutationSaveSmartAccount() {
-        executeUseCase {
-            mutationSaveSmartAccount.invoke(
-                user = user,
-                idBrand = idBrand,
-                identificationNumber = identification,
-                idRequest = globalId ?: 0
-            ).collectLatest { result ->
-                result.onSuccess {
-                    onShouldCallSubscription(
-                        it?.idAccount ?: 0L,
-                        idBrand
-                    )
-                }
-            }
-        }
-    }*/
 
     private fun isEvisertiaOverCounted(evisertiaStatus: String?) =
         evisertiaStatus?.lowercase() == CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase()

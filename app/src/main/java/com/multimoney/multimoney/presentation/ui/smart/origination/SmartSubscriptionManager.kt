@@ -1,14 +1,11 @@
 package com.multimoney.multimoney.presentation.ui.smart.origination
 
-import com.multimoney.domain.interaction.accountsmart.MutationAccountStatusUseCase
 import com.multimoney.domain.interaction.accountsmart.SubscriptionAccountSmartContractUseCase
 import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
-import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.util.catalog.CreditSubscriptionStep
-import com.onfido.api.client.Utils.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -37,7 +34,7 @@ class SmartSubscriptionManager(var subscriptionSmartContractEventUseCase: Subscr
                         }
                     }.onFailure {
                         if (numAttemptsToStartSubscription < MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION) {
-                            startSmartSubscription(idSysRequest,idBrand)
+                            startSmartSubscription(idSysRequest, idBrand)
                             numAttemptsToStartSubscription++
                         } else {
                             isSubcriptionRunning = false

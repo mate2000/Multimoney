@@ -9,10 +9,13 @@ import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
 import com.multimoney.domain.interaction.accountsmart.MutationAccountStatusUseCase
+import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCase
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCase
 import com.multimoney.domain.interaction.security.MutationOnfidoCheckProcessUseCase
+import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
 import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.util.MultimoneyResult
+import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.BuildConfig
@@ -34,6 +37,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.Companion.URL_EMPTY
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.smart.origination.SmartSubscriptionManager
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnCallInFidoToken
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnCloseClick
@@ -50,8 +54,10 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartO
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.RefreshOnFidoToken
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.AppFlow
+import com.multimoney.multimoney.presentation.util.catalog.CreditSubscriptionStep
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
+import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import com.multimoney.multimoney.presentation.util.onfido.OnFidoHelper
 import com.onfido.android.sdk.capture.ExitCode
@@ -62,6 +68,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
 @HiltViewModel
@@ -72,7 +80,8 @@ class SmartOnfidoViewModel @Inject constructor(
     private val mutationOnfidoCheckProcessUseCase: MutationOnfidoCheckProcessUseCase,
     val countDownTimer: MMCountDownTimer,
     private val smartSubscriptionManager: SmartSubscriptionManager,
-    private val mutationAccountStatusUseCase: MutationAccountStatusUseCase
+    private val mutationAccountStatusUseCase: MutationAccountStatusUseCase,
+    private val mutationSaveSmartAccount: MutationSaveAutomatedSmartAccountUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -118,11 +127,54 @@ class SmartOnfidoViewModel @Inject constructor(
     val onFidoTokenEvent = MutableSharedFlow<MultimoneyResult<OnfidoToken?>>()
 
     private fun onStartSubscription() {
-        smartSubscriptionManager.startSmartSubscription(
-            this.idRequestSysde,
-            idBrand ?: Brand.CostaRica.id,
-        )
-        if (evicertiaUrl == URL_EMPTY || evicertiaUrl.isBlank()) onCallMutationAccountStatusUseCase()
+        if (idRequestSysde != 0L) {
+            onCallMutationAccountStatusUseCase()
+            smartSubscriptionManager.idSubscriptionSubscribe(getSmartSubscriptionListener())
+            smartSubscriptionManager.startSmartSubscription(
+                idRequestSysde,
+                idBrand ?: Brand.CostaRica.id
+            )
+        } else {
+            callMutationSaveSmartAccount()
+        }
+    }
+
+    private fun getSmartSubscriptionListener() =
+        object : SmartSubscriptionManager.SubscriptionEventListener {
+            override fun onCapturedEvent(smartContractEvent: AccountSmartContractResult?) {
+                handleSubscriptionsSteps(smartContractEvent = smartContractEvent)
+            }
+
+            override fun onSubscriptionFailToConnect(httpError: HttpError) {
+
+            }
+        }
+
+    private fun handleSubscriptionsSteps(smartContractEvent: AccountSmartContractResult?) {
+        when (smartContractEvent?.currentStep) {
+            CreditSubscriptionStep.LinkGenerated.step -> {
+                evicertiaUrl = smartContractEvent.link ?: ""
+            }
+        }
+    }
+
+    private fun callMutationSaveSmartAccount() {
+        executeUseCase {
+            mutationSaveSmartAccount.invoke(
+                user = user,
+                idBrand = idBrand ?: Brand.CostaRica.id,
+                identificationNumber = identification,
+                idRequest = globalId ?: 0L
+            ).collectLatest { result ->
+                result.onSuccess {
+                    smartSubscriptionManager.idSubscriptionSubscribe(getSmartSubscriptionListener())
+                    smartSubscriptionManager.startSmartSubscription(
+                        it?.idAccount ?: 0L,
+                        idBrand ?: Brand.CostaRica.id,
+                    )
+                }
+            }
+        }
     }
 
     private fun onCallMutationAccountStatusUseCase() = executeUseCase {
@@ -137,7 +189,7 @@ class SmartOnfidoViewModel @Inject constructor(
                 ?: 0L
         ).collectLatest { result ->
             result.onSuccess {
-                evicertiaUrl = it?.urlFirmDocument ?: ""
+                evicertiaUrl = it?.urlFirmDocument ?: URL_EMPTY
             }
         }
     }
@@ -262,9 +314,12 @@ class SmartOnfidoViewModel @Inject constructor(
     }
 
     private fun navigateToCorrectScreen() {
+        if (evicertiaUrl.isBlank()) evicertiaUrl = URL_EMPTY
         val signDocumentStep =
             if (evicertiaStatus.lowercase() == SmartOnFidoOrFirmStatus.FIRMED.status.lowercase()) {
                 VALIDATE_IDENTITY.value
+            } else if (evicertiaUrl.isNotBlank()) {
+                SIGN_DOCUMENTS_STEP.value
             } else {
                 GENERATE_DOCUMENT_STEP.value
             }
@@ -272,9 +327,13 @@ class SmartOnfidoViewModel @Inject constructor(
     }
 
     private fun onNavigateToSignDocumentScreen(signDocumentStep: String) {
-        if (evicertiaUrl.isBlank()) evicertiaUrl = URL_EMPTY
         popAndNavigateTo(
-            route = "${Screen.SmartSignScreen.baseRoute}/$signDocumentStep/$evicertiaUrl/$idBrand/$pkUser/$identification/$email/${idRequestSysde}/$firstName/$lastName/${true}/$globalId/$user/$comingFromCrypto/${!smartSubscriptionManager.hasEvisertiaLink()}",
+            route = "${Screen.SmartSignScreen.baseRoute}/$signDocumentStep/${
+                URLEncoder.encode(
+                    evicertiaUrl,
+                    StandardCharsets.UTF_8.toString()
+                )
+            }/$idBrand/$pkUser/$identification/$email/${idRequestSysde}/$firstName/$lastName/${true}/$globalId/$user/$comingFromCrypto/${!smartSubscriptionManager.hasEvisertiaLink()}",
             popTo = Screen.SmartOnfidoScreen.route
         )
     }
@@ -359,9 +418,5 @@ class SmartOnfidoViewModel @Inject constructor(
         data class OnOpenOnfidoSdk(val onOpenOnfidoSdk: () -> Unit) : UIEvent()
 
         object OnStartSubscription : UIEvent()
-    }
-
-    companion object {
-        const val ID_PRINT_EMPTY = 0L
     }
 }

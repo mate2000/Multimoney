@@ -6,6 +6,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.OpenWhatsAppLink
@@ -21,6 +22,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.signdocument
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.PROCESSING_TRANSACTION
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
@@ -62,6 +64,11 @@ fun SignDocumentProcessScreen(
 
     when (viewModel.uiState.signDocumentProcessStep) {
         GENERATE_DOCUMENT_STEP.value -> {
+            if (viewModel.evisertiaStatus == CreditOnFidoOrFirmStatus.PENDING.status) {
+                viewModel.logEvents(AdjustEventType.ORIGINATION_WAIT_SCREEN_EVICERTIA_5015)
+            } else if (viewModel.evisertiaStatus == CreditOnFidoOrFirmStatus.REJECTED.status) {
+                viewModel.logEvents(AdjustEventType.ORIGINATION_RETRY_SCREEN_EVICERTIA_5016)
+            }
             DocumentGenerationScreen(onGetLinkAgain = {
                 viewModel.onUIEvent(OnCallGetLinkCreditContractSecondTime)
             })

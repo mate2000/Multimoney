@@ -44,7 +44,6 @@ import com.multimoney.multimoney.presentation.theme.PoppinsFontFamily
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.BaseEvent.OnOpenConditionOfCreditDialog
-import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.ID_PROMOTION
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.SLIDER_TOTAL
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.TERMS_AND_CONDITIONS_CURRENT_FLOW
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCallMutationSaveTermsAndConditionsCreditUseCase
@@ -60,6 +59,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomSlider
 import com.multimoney.multimoney.presentation.uielement.CustomToggleButton
 import com.multimoney.multimoney.presentation.uielement.Size.Large
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.transformation.formatMoney
 
 @Composable
@@ -118,7 +118,21 @@ fun CreditAmountScreen(
                         }
                     )
                 )
+                sharedViewModel.logEvents(
+                    if (sharedViewModel.crosseling) {
+                        AdjustEventType.CROSSELLING_FIRST_ENTER_AMOUNT_5027
+                    } else {
+                        AdjustEventType.ORIGINATION_FIRST_ENTER_AMOUNT_5003
+                    }
+                )
             }, nextStep = CreditStep.Two.id, previousStep = CreditStep.One.id)
+        )
+        sharedViewModel.logEvents(
+            if (sharedViewModel.crosseling) {
+                AdjustEventType.CROSSELLING_OFFER_FIRST_TIME_5024
+            } else {
+                AdjustEventType.ORIGINATION_OFFER_FIRST_TIME_5000
+            }
         )
 
         viewModel.onUIEvent(
@@ -321,6 +335,13 @@ fun CreditAmountScreen(
                             CreditAmountViewModel.UIEvent.OnTermAndConditionCheckedChange(
                                 it
                             )
+                        )
+                        sharedViewModel.logEvents(
+                            if (sharedViewModel.crosseling) {
+                                AdjustEventType.CROSSELLING_FIRST_CHECK_TERMS_5026
+                            } else {
+                                AdjustEventType.ORIGINATION_FIRST_CHECK_TERMS_5002
+                            }
                         )
                     },
                     text = stringResource(id = R.string.credit_amount_term_and_conditions_first)

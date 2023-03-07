@@ -38,39 +38,45 @@ enum class AdjustEventType(val stgToken: String, val prodToken: String, val even
     FORGOT_SUCCESS_4004("", "", "cambiar_contraseña_exito"),
 
     // ORIGINATION
-    ORIGINATION_OFFER_FIRST_TIME("", "", ""),
-    ORIGINATION_OFFER("", "", ""),
-    ORIGINATION_FIRST_CHECK_TERMS("", "", ""),
-    ORIGINATION_FIRST_ENTER_AMOUNT("", "", ""),
-    ORIGINATION_FIRST_FILL_ACCOUNT("", "", ""),
-    ORIGINATION_FIRST_FILL_MONTHLY_AMOUNT("", "", ""),
-    ORIGINATION_FIRST_FILL_COMPANY_INFORMATION("", "", ""),
-    ORIGINATION_FIRST_FILL_OWN_ADDRESS("", "", ""),
-    ORIGINATION_FIRST_FILL_PEP("", "", ""),
-    ORIGINATION_FIRST_START_ON_FIDO("", "", ""),
-    ORIGINATION_FIRST_ADD_DOCUMENT_ON_FIDO("", "", ""),
-    ORIGINATION_FIRST_FINNISH_ON_FIDO("", "", ""),
-    ORIGINATION_FIRST_FINNISH_EVICERTIA("", "", ""),
-    ORIGINATION_WAIT_SCREEN_EVICERTIA("", "", ""),
-    ORIGINATION_FIRST_CUSTOMER_REJECTED("", "", ""),
-    ORIGINATION_FIRST_CUSTOMER_COMPLETE_REQUEST("", "", ""),
-    ORIGINATION_FIRST_NON_PRE_APPROVED_INFORMATION("", "", ""),
-    ORIGINATION_FIRST_NON_PRE_APPROVED_IS_APPROVED("", "", ""),
-    ORIGINATION_FIRST_NON_PRE_APPROVED_IS_REJECTED("", "", ""),
+    ORIGINATION_OFFER_FIRST_TIME_5000("4azypp", "zgw6pc", "cre_org_primer_vista"),
+    ORIGINATION_OFFER_5001("", "", "cre_org_vista_oferta"),
+    ORIGINATION_FIRST_CHECK_TERMS_5002("", "", "cre_org_check_terminos"),
+    ORIGINATION_FIRST_ENTER_AMOUNT_5003("24ak4f", "udmx9k", "cre_org_monto"),
+    ORIGINATION_FIRST_FILL_ACCOUNT_5004("obkahg", "myilmc", "cre_org_cuenta"),
+    ORIGINATION_FIRST_FILL_MONTHLY_AMOUNT_5005("ecelza", "wdip42", "cre_org_kyc1"),
+    ORIGINATION_FIRST_FILL_COMPANY_INFORMATION_5006("qcg17z", "peaiqe", "cre_org_kyc2"),
+    ORIGINATION_FIRST_FILL_COMPANY_ADDRESS_5007("rz7kb7", "678yyj", "cre_org_kyc3"),
+    ORIGINATION_FIRST_FILL_OWN_ADDRESS_5008("7atsgd", "8z4od9", "cre_org_kyc4"),
+    ORIGINATION_FIRST_FILL_PEP_5009("6k0k9v", "q4ohib", "cre_org_kyc5"),
+    ORIGINATION_FIRST_START_ON_FIDO_5010("sz6s17", "wjo7q6", "cre_onfido_inicio"),
+    ORIGINATION_FIRST_ADD_DOCUMENT_ON_FIDO_5011("einf12", "gshnv0", "cre_onfido_documento"),
+    ORIGINATION_FIRST_ADD_SELFIE_ON_FIDO_5012("o3a35o", "pe7497", "cre_onfido_selfie"),
+    ORIGINATION_FIRST_FINNISH_ON_FIDO_5013("dvivcx", "axnj1d", "cre_onfido_fin"),
+    ORIGINATION_FIRST_SIGN_CONTRACT_EVICERTIA_5014("jzzngt", "g7x0gh", "cre_evicertia"),
+    ORIGINATION_WAIT_SCREEN_EVICERTIA_5015("", "", "cre_espera"),
+    ORIGINATION_RETRY_SCREEN_EVICERTIA_5016("", "", "cre_reintento"),
+    ORIGINATION_FIRST_CUSTOMER_REJECTED_5017("6cy7gn", "dohmsi", "cre_rechazo"),
+    ORIGINATION_FIRST_SUCCESS_EVICERTIA_5018("cfxcy5", "rjdui3", "cre_exitosa"),
+    ORIGINATION_FIRST_NON_PRE_APPROVED_INFORMATION_5019("9pywch", "lv5n0z", "cre_nopreaprobado_infoextra"),
+    ORIGINATION_FIRST_NON_PRE_APPROVED_IS_APPROVED_5020("8xqgwc", "xx5wby", "cre_nopreaprobado_exitoso"),
+    ORIGINATION_FIRST_NON_PRE_APPROVED_IS_REJECTED_5021("jo160u", "myvafe", "cre_nopreaprobado_rechazo"),
 
     // DISBURSEMENT
-    DISBURSEMENT_FIRST_INIT_PROCESS("", "", ""),
-    DISBURSEMENT_FIRST_FINISH_PROCESS_SUCCESS("", "", ""),
+    DISBURSEMENT_FIRST_INIT_PROCESS_5021("6wbmy9", "efvhsa", "cre_amplia_inicio"),
+    DISBURSEMENT_FIRST_FINISH_PROCESS_SUCCESS_5022("a6v2bd", "bl9o8o", "cre_amplia_exitoso"),
+
+    // PAYMENT
+    PAYMENT_FIRST_FINISH_PROCESS_SUCCESS_5023("n2cow9", "chkvf4", "cre_pago_exitoso"),
 
     // CROSSELLING
-    CROSSELLING_OFFER_FIRST_TIME("", "", ""),
-    CROSSELLING_OFFER("", "", ""),
-    CROSSELLING_FIRST_CHECK_TERMS("", "", ""),
-    CROSSELLING_FIRST_ENTER_AMOUNT("", "", ""),
-    CROSSELLING_FIRST_FILL_ACCOUNT("", "", ""),
-    CROSSELLING_FIRST_EXTRA_INFORMATION("", "", ""),
-    CROSSELLING_FIRST_FINNISH_EVICERTIA("", "", ""),
-    CROSSELLING_FIRST_CUSTOMER_COMPLETE_REQUEST("", "", ""),
+    CROSSELLING_OFFER_FIRST_TIME_5024("iwnceu", "8bylhy", "cre_org_cs_primer_vista"),
+    CROSSELLING_OFFER_5025("", "", "cre_org_cs_vista_oferta"),
+    CROSSELLING_FIRST_CHECK_TERMS_5026("ldghm9", "gf91gp", "cre_org_cs_check_terminos"),
+    CROSSELLING_FIRST_ENTER_AMOUNT_5027("mtwq71", "u7qx3l", "cre_org_cs_monto"),
+    CROSSELLING_FIRST_FILL_ACCOUNT_5028("gmpeab", "g4lsu6", "cre_org_cs_cuenta"),
+    CROSSELLING_FIRST_EXTRA_INFORMATION_5029("243oud", "v8yhf1", "cre_org_cs_info"),
+    CROSSELLING_FIRST_FINNISH_EVICERTIA_5030("do3kx9", "swvoz2", "cre_cs_evicertia"),
+    CROSSELLING_FIRST_CUSTOMER_COMPLETE_REQUEST_5031("m5nnl3", "gpmqb9", "cre_cs_exitosa"),
 
     // HOME CREDIT
     HOME_CTA_ENABLED_FIRST_AUTOMATIC_PAYMENT_5032("", "", "cre_cta_primer_pago_automatico"),
@@ -97,23 +103,23 @@ enum class AdjustEventType(val stgToken: String, val prodToken: String, val even
     SETTINGS_CTA_FIRST_VALIDATED_FLOW_CARD_8009("", "", "settings_cta_verifica_tarjeta"),
 
     // HOME CRYPTO
-    HOME_CRYPTO_FIST_TIME_ENTER_TO_HOME("nkqtow", "elb9ue","cri_primer_vista"),
-    HOME_CRYPTO_PAXOS_IN_MAINTENANCE("", "","cri_pantalla_mantenimiento"),
+    HOME_CRYPTO_FIST_TIME_ENTER_TO_HOME("nkqtow", "elb9ue", "cri_primer_vista"),
+    HOME_CRYPTO_PAXOS_IN_MAINTENANCE("", "", "cri_pantalla_mantenimiento"),
 
     // PURCHASE CRYPTO
-    PURCHASE_CRYPTO_FIRST_TIME_PRESS_BUY_BUTTON("b1ww5c", "4ne0lu","cri_cta_primera_compra"),
-    PURCHASE_CRYPTO_FIRST_TIME_SUCCESS_PURCHASE("a5ohj7", "b79ays","cri_primera_compra_exitosa"),
+    PURCHASE_CRYPTO_FIRST_TIME_PRESS_BUY_BUTTON("b1ww5c", "4ne0lu", "cri_cta_primera_compra"),
+    PURCHASE_CRYPTO_FIRST_TIME_SUCCESS_PURCHASE("a5ohj7", "b79ays", "cri_primera_compra_exitosa"),
 
     // SELL CRYPTO
-    SELL_CRYPTO_FIRST_TIME_PRESS_SELL_BUTTON("b863zi", "aem40p","cri_cta_primera_venta"),
-    SELL_CRYPTO_FIRST_TIME_SUCCESS_SELL("wwz72o", "vvm693","cri_primera_venta_exitosa"),
+    SELL_CRYPTO_FIRST_TIME_PRESS_SELL_BUTTON("b863zi", "aem40p", "cri_cta_primera_venta"),
+    SELL_CRYPTO_FIRST_TIME_SUCCESS_SELL("wwz72o", "vvm693", "cri_primera_venta_exitosa"),
 
     // SEND CRYPTO
-    SEND_CRYPTO_FIRST_TIME_PRESS_SEND_BUTTON("477ggy", "rqvkuq","cri_cta_primer_envio"),
-    SEND_CRYPTO_FIRST_TIME_SUCCESS_SEND("us6gm5", "kukvye","cri_primer_envio_exitoso"),
+    SEND_CRYPTO_FIRST_TIME_PRESS_SEND_BUTTON("477ggy", "rqvkuq", "cri_cta_primer_envio"),
+    SEND_CRYPTO_FIRST_TIME_SUCCESS_SEND("us6gm5", "kukvye", "cri_primer_envio_exitoso"),
 
     // RECEIVE CRYPTO
-    RECEIVE_CRYPTO_FIRST_TIME_PRESS_RECEIVE_BUTTON("vmqdy2", "vvj95q","cri_cta_primera_recepcion"),
-    RECEIVE_CRYPTO_PRESS_SHARE_BUTTON("", "","cri_cta_compartir"),
-    RECEIVE_CRYPTO_ENTER_QR_SCREEN("", "","cri_pantalla_qr"),
+    RECEIVE_CRYPTO_FIRST_TIME_PRESS_RECEIVE_BUTTON("vmqdy2", "vvj95q", "cri_cta_primera_recepcion"),
+    RECEIVE_CRYPTO_PRESS_SHARE_BUTTON("", "", "cri_cta_compartir"),
+    RECEIVE_CRYPTO_ENTER_QR_SCREEN("", "", "cri_pantalla_qr"),
 }

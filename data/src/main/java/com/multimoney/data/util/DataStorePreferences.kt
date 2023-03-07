@@ -252,6 +252,126 @@ class DataStorePreferences @Inject constructor(
 
     fun isAdjustFirstActivatedMMVisaEventRegister(): Flow<Boolean> = getData(HOME_ACTIVATED_MM_VISA_FIRST_TIME_ADJUST_KEY, true)
 
+    suspend fun isAdjustFirstOriginationFirstScreenEventRegister(register: Boolean) =
+        setData(ORIGINATION_FIRST_SCREEN_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstOriginationFirstScreenEventRegister(): Flow<Boolean> = getData(ORIGINATION_FIRST_SCREEN_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstOriginationCrosselingFirstScreenEventRegister(register: Boolean) =
+        setData(ORIGINATION_CROSSELING_FIRST_SCREEN_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstOriginationCrosselingFirstScreenEventRegister(): Flow<Boolean> = getData(ORIGINATION_CROSSELING_FIRST_SCREEN_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstOriginationCheckTermsEventRegister(register: Boolean) =
+        setData(ORIGINATION_CHECK_TERMS_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstOriginationCheckTermsEventRegister(): Flow<Boolean> = getData(ORIGINATION_CHECK_TERMS_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstOriginationCrosselingCheckTermsEventRegister(register: Boolean) =
+        setData(ORIGINATION_CROSSELING_CHECK_TERMS_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstOriginationCrosselingCheckTermsEventRegister(): Flow<Boolean> = getData(ORIGINATION_CROSSELING_CHECK_TERMS_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstOriginationConfirmAmountEventRegister(register: Boolean) =
+        setData(ORIGINATION_ENTER_AMOUNT_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstOriginationConfirmAmountEventRegister(): Flow<Boolean> = getData(ORIGINATION_ENTER_AMOUNT_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstOriginationCrosselingConfirmAmountEventRegister(register: Boolean) =
+        setData(ORIGINATION_CROSSELING_ENTER_AMOUNT_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstOriginationCrosselingConfirmAmountEventRegister(): Flow<Boolean> = getData(ORIGINATION_CROSSELING_ENTER_AMOUNT_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstOriginationFillAccountEventRegister(register: Boolean) =
+        setData(ORIGINATION_FILL_ACCOUNT_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstOriginationFillAccountEventRegister(): Flow<Boolean> = getData(ORIGINATION_FILL_ACCOUNT_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstOriginationCrosselingFillAccountEventRegister(register: Boolean) =
+        setData(ORIGINATION_CROSSELING_FILL_ACCOUNT_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstOriginationCrosselingFillAccountEventRegister(): Flow<Boolean> = getData(ORIGINATION_CROSSELING_FILL_ACCOUNT_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstOriginationMonthlyIncomeEventRegister(register: Boolean) =
+        setData(ORIGINATION_MONTHLY_INCOME_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstOriginationMonthlyIncomeEventRegister(): Flow<Boolean> = getData(ORIGINATION_MONTHLY_INCOME_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstOriginationJobInformationEventRegister(register: Boolean) =
+        setData(ORIGINATION_JOB_INFO_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstOriginationJobInformationEventRegister(): Flow<Boolean> = getData(ORIGINATION_JOB_INFO_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstOriginationCrosselingJobInformationEventRegister(register: Boolean) =
+        setData(ORIGINATION_CROSSELING_JOB_INFO_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstOriginationCrosselingJobInformationEventRegister(): Flow<Boolean> = getData(ORIGINATION_CROSSELING_JOB_INFO_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstOriginationJobAddressEventRegister(register: Boolean) =
+        setData(ORIGINATION_JOB_ADDRESS_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstOriginationJobAddressEventRegister(): Flow<Boolean> = getData(ORIGINATION_JOB_ADDRESS_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstOriginationOwnAddressEventRegister(register: Boolean) =
+        setData(ORIGINATION_OWN_ADDRESS_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstOriginationOwnAddressEventRegister(): Flow<Boolean> = getData(ORIGINATION_OWN_ADDRESS_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstOriginationPEPEventRegister(register: Boolean) =
+        setData(ORIGINATION_PEP_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstOriginationPEPEventRegister(): Flow<Boolean> = getData(ORIGINATION_PEP_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstOriginationOnfidoStartsEventRegister(register: Boolean) =
+        setData(ORIGINATION_ONFIDO_STARTS_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstOriginationOnfidoStartsEventRegister(): Flow<Boolean> = getData(ORIGINATION_ONFIDO_STARTS_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstOriginationOnfidoFinishEventRegister(register: Boolean) =
+        setData(ORIGINATION_ONFIDO_FINISH_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstOriginationOnfidoFinishEventRegister(): Flow<Boolean> = getData(ORIGINATION_ONFIDO_FINISH_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstOriginationEvicertiaSignDocumentEventRegister(register: Boolean) =
+        setData(ORIGINATION_EVICERTIA_SIGN_DOCUMENT_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstOriginationEvicertiaSignDocumentEventRegister(): Flow<Boolean> = getData(ORIGINATION_EVICERTIA_SIGN_DOCUMENT_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstOriginationCrosselingEvicertiaSignDocumentEventRegister(register: Boolean) =
+        setData(ORIGINATION_CROSSELING_EVICERTIA_SIGN_DOCUMENT_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstOriginationCrosselingEvicertiaSignDocumentEventRegister(): Flow<Boolean> = getData(ORIGINATION_CROSSELING_EVICERTIA_SIGN_DOCUMENT_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstOriginationEvicertiaCustomerRejectedEventRegister(register: Boolean) =
+        setData(ORIGINATION_EVICERTIA_CUSTOMER_REJECTED_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstOriginationEvicertiaCustomerRejectedEventRegister(): Flow<Boolean> = getData(ORIGINATION_EVICERTIA_CUSTOMER_REJECTED_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstOriginationEvicertiaSuccessEventRegister(register: Boolean) =
+        setData(ORIGINATION_EVICERTIA_CUSTOMER_SUCCESS_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstOriginationEvicertiaSuccessEventRegister(): Flow<Boolean> = getData(ORIGINATION_EVICERTIA_CUSTOMER_SUCCESS_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstOriginationCrosselingEvicertiaSuccessEventRegister(register: Boolean) =
+        setData(ORIGINATION_CROSSELING_EVICERTIA_CUSTOMER_SUCCESS_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstOriginationCrosselingEvicertiaSuccessEventRegister(): Flow<Boolean> = getData(ORIGINATION_CROSSELING_EVICERTIA_CUSTOMER_SUCCESS_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstOriginationNonPreApprovedInfoExtraEventRegister(register: Boolean) =
+        setData(ORIGINATION_NON_PREAPPROVED_INFO_EXTRA_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstOriginationNonPreApprovedInfoExtraEventRegister(): Flow<Boolean> = getData(ORIGINATION_NON_PREAPPROVED_INFO_EXTRA_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstOriginationNonPreApprovedRejectedEventRegister(register: Boolean) =
+        setData(ORIGINATION_NON_PREAPPROVED_REJECTED_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstOriginationNonPreApprovedRejectedEventRegister(): Flow<Boolean> = getData(ORIGINATION_NON_PREAPPROVED_REJECTED_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFirstOriginationNonPreApprovedApprovedEventRegister(register: Boolean) =
+        setData(ORIGINATION_NON_PREAPPROVED_SUCCESS_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustFirstOriginationNonPreApprovedApprovedEventRegister(): Flow<Boolean> = getData(ORIGINATION_NON_PREAPPROVED_SUCCESS_FIRST_TIME_ADJUST_KEY, true)
+
     // Adjust Crypto events
     suspend fun setAdjustCryptoHomeFirstTime(firstTimeHomeCrypto: Boolean) =
         setData(ADJUST_CRYPTO_HOME_FIRST_TIME, firstTimeHomeCrypto)
@@ -335,6 +455,30 @@ class DataStorePreferences @Inject constructor(
         private val HOME_ACTIVATE_MM_VISA_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("home_first_activate_mm_visa")
         private val HOME_LINK_MM_VISA_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("home_first_link_mm_visa")
         private val HOME_ACTIVATED_MM_VISA_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("home_first_activated_mm_visa")
+        private val ORIGINATION_FIRST_SCREEN_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_first_screen")
+        private val ORIGINATION_CROSSELING_FIRST_SCREEN_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_crosseling_first_screen")
+        private val ORIGINATION_CHECK_TERMS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_check_terms")
+        private val ORIGINATION_CROSSELING_CHECK_TERMS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_crosseling_check_terms")
+        private val ORIGINATION_ENTER_AMOUNT_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_enter_amount")
+        private val ORIGINATION_CROSSELING_ENTER_AMOUNT_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_crosseling_enter_amount")
+        private val ORIGINATION_FILL_ACCOUNT_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_fill_account")
+        private val ORIGINATION_CROSSELING_FILL_ACCOUNT_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_crosseling_fill_account")
+        private val ORIGINATION_MONTHLY_INCOME_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_monthly_income")
+        private val ORIGINATION_JOB_INFO_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_job_info")
+        private val ORIGINATION_CROSSELING_JOB_INFO_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_crosseling_job_info")
+        private val ORIGINATION_JOB_ADDRESS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_job_address")
+        private val ORIGINATION_OWN_ADDRESS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_job_address")
+        private val ORIGINATION_PEP_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_pep")
+        private val ORIGINATION_ONFIDO_STARTS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_onfido_starts")
+        private val ORIGINATION_ONFIDO_FINISH_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_onfido_finish")
+        private val ORIGINATION_EVICERTIA_SIGN_DOCUMENT_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_evicertia_sign_document")
+        private val ORIGINATION_CROSSELING_EVICERTIA_SIGN_DOCUMENT_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_crosseling_evicertia_sign_document")
+        private val ORIGINATION_EVICERTIA_CUSTOMER_REJECTED_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_evicertia_customer_rejected")
+        private val ORIGINATION_EVICERTIA_CUSTOMER_SUCCESS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_evicertia_customer_success")
+        private val ORIGINATION_CROSSELING_EVICERTIA_CUSTOMER_SUCCESS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_crosseling_evicertia_customer_success")
+        private val ORIGINATION_NON_PREAPPROVED_INFO_EXTRA_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_nonpreapproved_info_extra")
+        private val ORIGINATION_NON_PREAPPROVED_REJECTED_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_nonpreapproved_rejected")
+        private val ORIGINATION_NON_PREAPPROVED_SUCCESS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_nonpreapproved_success")
         private val ADJUST_CRYPTO_HOME_FIRST_TIME = booleanPreferencesKey("adjust_crypto_home_first_time")
         private val ADJUST_CRYPTO_PURCHASE_FIRST_TIME = booleanPreferencesKey("adjust_crypto_purchase_first_time")
         private val ADJUST_CRYPTO_SUCCESS_PURCHASE_FIRST_TIME = booleanPreferencesKey("adjust_crypto_success_purchase_first_time")

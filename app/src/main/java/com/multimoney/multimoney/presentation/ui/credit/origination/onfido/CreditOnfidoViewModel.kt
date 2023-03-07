@@ -6,10 +6,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCase
 import com.multimoney.domain.interaction.security.MutationOnfidoCheckProcessUseCase
+import com.multimoney.domain.model.metrics.OriginationEventDataDto
 import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.onFailure
@@ -34,22 +36,25 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.Credi
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.CreditSubscriptionManager
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.AppFlow
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.onfido.OnFidoHelper
+import com.multimoney.multimoney.presentation.util.toJson
 import com.onfido.android.sdk.capture.ExitCode
 import com.onfido.android.sdk.capture.Onfido.OnfidoResultListener
 import com.onfido.android.sdk.capture.errors.OnfidoException
 import com.onfido.android.sdk.capture.upload.Captures
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class CreditOnfidoViewModel @Inject constructor(
@@ -58,7 +63,8 @@ class CreditOnfidoViewModel @Inject constructor(
     private val mutationOnFidoInitialProcessUseCase: MutationOnFidoInitialProcessUseCase,
     private val mutationOnfidoCheckProcessUseCase: MutationOnfidoCheckProcessUseCase,
     val countDownTimer: MMCountDownTimer,
-    private val creditSubscriptionManager: CreditSubscriptionManager
+    private val creditSubscriptionManager: CreditSubscriptionManager,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
 
     // UIState
@@ -123,7 +129,7 @@ class CreditOnfidoViewModel @Inject constructor(
                 identification,
                 BuildConfig.APPLICATION_ID,
                 idBrand ?: 0,
-                user,
+                user
             ).collectLatest { result ->
                 result.onSuccess {
                     applicantId = it?.applicantId
@@ -149,7 +155,7 @@ class CreditOnfidoViewModel @Inject constructor(
                 identification,
                 BuildConfig.APPLICATION_ID,
                 idBrand ?: 0,
-                user,
+                user
             ).collectLatest { result ->
                 onFidoTokenEvent.emit(result)
             }
@@ -171,8 +177,9 @@ class CreditOnfidoViewModel @Inject constructor(
                             idBrand
                                 ?: 0,
                             idUserRequest,
-                            email,
+                            email
                         )
+                        logEvents(AdjustEventType.ORIGINATION_FIRST_FINNISH_ON_FIDO_5013)
                         navigateToCorrectScreen()
                     }
 
@@ -186,11 +193,11 @@ class CreditOnfidoViewModel @Inject constructor(
                             isContinueEnabled = false,
                             openDialog = DialogParameters(
                                 description = onFidoError,
-                                isActive = mutableStateOf(true),
-                            ),
+                                isActive = mutableStateOf(true)
+                            )
                         )
                     }
-                },
+                }
             )
     }
 
@@ -214,7 +221,7 @@ class CreditOnfidoViewModel @Inject constructor(
                 pkUser,
                 idUserRequest,
                 idBrand,
-                user,
+                user
             ).collectLatest { result ->
                 result.onSuccess {
                     // nothing to do here
@@ -254,7 +261,7 @@ class CreditOnfidoViewModel @Inject constructor(
                 .plus(getNavParam(CROSSELING, false))
                 .plus(getNavParam(SHOULD_GET_EVICERTIA_LINK, false))
                 .plus(getNavParam(EVICERTIA_STATUS, evicertiaStatus)),
-            Screen.CreditOnfidoScreen.route,
+            Screen.CreditOnfidoScreen.route
         )
     }
 
@@ -277,6 +284,59 @@ class CreditOnfidoViewModel @Inject constructor(
         navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
     }
 
+    private fun onContinue() {
+        logEvents(AdjustEventType.ORIGINATION_FIRST_START_ON_FIDO_5010)
+        continueAction()
+    }
+
+    fun logEvents(adjustEventType: AdjustEventType) {
+        viewModelScope.launch {
+            getAdjustEvent(adjustEventType).invoke()
+        }
+    }
+
+    private fun getAdjustEvent(adjustEventType: AdjustEventType): suspend () -> Unit {
+        val originationDto = OriginationEventDataDto(
+            user = email,
+            idBrand = idBrand,
+            identification = identification,
+            idUserRequest = idUserRequest.toInt(),
+            pkUser = pkUser.toString(),
+            idPrint = idPrint
+        )
+        return when (adjustEventType) {
+            AdjustEventType.ORIGINATION_FIRST_START_ON_FIDO_5010 -> {
+                getStartOnfidoOriginationEvent(originationDto)
+            }
+            AdjustEventType.ORIGINATION_FIRST_FINNISH_ON_FIDO_5013 -> {
+                getFinishOnfidoOriginationEvent(originationDto)
+            }
+            else -> suspend {}
+        }
+    }
+
+    private fun getFinishOnfidoOriginationEvent(originationDto: OriginationEventDataDto): suspend () -> Unit =
+        suspend {
+            if (dataStorePreferences.isAdjustFirstOriginationOnfidoFinishEventRegister().first()) {
+                registerAdjustEvent(
+                    adjustEventType = AdjustEventType.ORIGINATION_FIRST_FINNISH_ON_FIDO_5013,
+                    data = originationDto.toJson()
+                )
+                dataStorePreferences.isAdjustFirstOriginationOnfidoFinishEventRegister(false)
+            }
+        }
+
+    private fun getStartOnfidoOriginationEvent(originationDto: OriginationEventDataDto): suspend () -> Unit =
+        suspend {
+            if (dataStorePreferences.isAdjustFirstOriginationOnfidoStartsEventRegister().first()) {
+                registerAdjustEvent(
+                    adjustEventType = AdjustEventType.ORIGINATION_FIRST_START_ON_FIDO_5010,
+                    data = originationDto.toJson()
+                )
+                dataStorePreferences.isAdjustFirstOriginationOnfidoStartsEventRegister(false)
+            }
+        }
+
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is UIEvent.OnSetCloseDialogTexts -> onInitializeTexts(event.title, event.description)
@@ -298,12 +358,13 @@ class CreditOnfidoViewModel @Inject constructor(
             )
             is UIEvent.OnOpenDialogValueChange -> uiState = uiState.copy(openDialog = event.openDialog)
             is UIEvent.OnCloseClick -> onCloseClick()
-            is UIEvent.OnContinueClick -> continueAction()
+            is UIEvent.OnContinueClick -> onContinue()
             is UIEvent.OnContinueEnable -> uiState = uiState.copy(isContinueEnabled = event.isEnable)
             is UIEvent.OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
             is UIEvent.OnNavigateToHome -> onNavigateToHome()
-            is UIEvent.OnFailureWithDialog -> uiState =
-                uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
+            is UIEvent.OnFailureWithDialog ->
+                uiState =
+                    uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is UIEvent.OnOpenOnfidoSdk -> onOpenOnfidoSdk(event.onOpenOnfidoSdk)
             is OnStartSubscription -> onStartSubscription()
         }
@@ -328,7 +389,7 @@ class CreditOnfidoViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnConfigureOnFidoSdk(
-            val result: ActivityResult,
+            val result: ActivityResult
         ) : UIEvent()
 
         data class OnOpenDialogValueChange(val openDialog: DialogParameters) : UIEvent()

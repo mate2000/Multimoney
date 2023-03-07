@@ -290,7 +290,7 @@ class DisbursementAccountViewModel @Inject constructor(
         viewModelScope.launch {
             if (dataStorePreferences.isAdjustFirstDisbursementSuccessEventRegister().first()) {
                 registerAdjustEvent(
-                    AdjustEventType.HOME_CTA_FIRST_START_PAYMENT_5034,
+                    AdjustEventType.DISBURSEMENT_FIRST_FINISH_PROCESS_SUCCESS_5022,
                     applyAdjust = false,
                     data = BaseEventDataDto(
                         user = user,

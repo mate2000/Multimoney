@@ -228,7 +228,7 @@ class PaymentAmountViewModel @Inject constructor(
         viewModelScope.launch {
             if (dataStorePreferences.isAdjustFirstPaymentSuccessEventRegister().first()) {
                 registerAdjustEvent(
-                    AdjustEventType.HOME_CTA_FIRST_START_PAYMENT_5034,
+                    AdjustEventType.PAYMENT_FIRST_FINISH_PROCESS_SUCCESS_5023,
                     applyAdjust = false,
                     data = BaseEventDataDto(
                         user = user,

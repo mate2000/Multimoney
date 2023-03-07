@@ -65,7 +65,7 @@ class MyContactsTransferAmountViewModel @Inject constructor(
                 ),
                 destinyAccountDisplay = DisplayAccount(
                     sheetTitle = phoneAccount?.titular,
-                    sheetSubtitle = if (phoneAccount?.number != null) {
+                    sheetSubtitle = if (phoneAccount?.number.isNullOrEmpty().not()) {
                         phoneAccount?.number?.plus(
                             if (idBrand == ElSalvador.id) ""
                             else SEPARATOR.plus(destinyCurrency?.stringName)

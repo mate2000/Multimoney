@@ -11,6 +11,12 @@ plugins {
 }
 apply from: '../dependencies.gradle'
 
+project.ext.react = [
+        enableHermes: true,  // clean and rebuild if changing
+]
+
+def enableHermes = project.ext.react.get("enableHermes", false);
+
 android {
     compileSdk compile_sdk_version
 
@@ -66,11 +72,13 @@ android {
             shrinkResources false
             applicationIdSuffix ".cr"
             signingConfig signingConfigs.production
+            matchingFallbacks = ['release']
         }
         staging {
             applicationIdSuffix ".dev"
             testCoverageEnabled true
             signingConfig signingConfigs.production
+            matchingFallbacks = ['debug']
         }
         debug {
             applicationIdSuffix ".dev"
@@ -237,6 +245,16 @@ dependencies {
     }
     productionImplementation(novo.novo_prod) {
         exclude group: "com.novopayment.sdk.android", module: "visa-sensory-branding"
+    }
+
+    implementation react_native.react_native
+
+    if (enableHermes) {
+        implementation("com.facebook.react:hermes-engine:+") {
+            exclude group: 'com.facebook.fbjni'
+        }
+    } else {
+        implementation webkit.webkit
     }
 
     // CameraX

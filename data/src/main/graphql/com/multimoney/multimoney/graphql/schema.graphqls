@@ -6028,6 +6028,8 @@ type AppUser {
 
   phone: String!
 
+  countryCode: String!
+
   birthDate: DateTime
 
   idClient: Long!

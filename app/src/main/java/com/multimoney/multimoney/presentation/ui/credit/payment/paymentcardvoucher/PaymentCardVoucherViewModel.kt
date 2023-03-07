@@ -3,19 +3,19 @@ package com.multimoney.multimoney.presentation.ui.credit.payment.paymentcardvouc
 import android.view.View
 import androidx.compose.ui.geometry.Rect
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.domain.model.security.InfoUser
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
 import com.multimoney.multimoney.presentation.navigation.navgraph.CURRENT_AMOUNT_VALUE
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.INFO_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOMATIC_PAYMENT_CHECKED
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.REFERENCE_NUMBER
-import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentcardvoucher.PaymentCardVoucherViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentcardvoucher.PaymentCardVoucherViewModel.UIEvent.OnScheduleAutomaticPayment
@@ -41,18 +41,16 @@ class PaymentCardVoucherViewModel @Inject constructor(
     var currentTime: String = ""
     var card: CardVisaDirect? = null
     var isAutomaticProgrammedPaymentChecked: Boolean? = false
-    private var user: String = ""
-    private var idBrand: Int = 0
     private var idClient: Int = 0
     private var idLoanClient: Int = 0
     private var identification: String? = null
     private var paymentDate: String? = ""
+    private var infoUser: InfoUser? = null
 
     init {
+        infoUser = savedStateHandle[INFO_USER]
         referenceNumber = savedStateHandle[REFERENCE_NUMBER] ?: ""
         currentAmountValueString = savedStateHandle[CURRENT_AMOUNT_VALUE]
-        user = savedStateHandle[USER] ?: ""
-        idBrand = savedStateHandle[ID_BRAND] ?: 0
         idClient = savedStateHandle[ID_CLIENT] ?: 0
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: 0
         identification = savedStateHandle[IDENTIFICATION] ?: ""
@@ -74,11 +72,15 @@ class PaymentCardVoucherViewModel @Inject constructor(
         navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
 
     private fun onScheduleAutomaticPayment() = navigateTo(
-        route = "${Screen.PaymentScheduleCardScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/${
-        encodeData(
-            card
-        )
-        }/$paymentDate/${false}/${Screen.PaymentCardVoucherScreen.baseRoute}/${false}/$identification"
+        route = "${Screen.PaymentScheduleCardScreen.baseRoute}/$idClient/$idLoanClient/${
+            encodeData(
+                card
+            )
+        }/$paymentDate/${false}/${Screen.PaymentCardVoucherScreen.baseRoute}/${false}/$identification/${
+            encodeData(
+                infoUser
+            )
+        }"
     )
 
     fun onUIEvent(event: UIEvent) {

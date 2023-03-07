@@ -66,6 +66,7 @@ import com.multimoney.data.networking.graphql.apollomodel.GetHistoricClientBalan
 import com.multimoney.data.networking.graphql.apollomodel.GetHistoricalCurrencyPricesQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetInfoDepositQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetLinkCreditContractQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetParametersMobileByCategoryQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPaymentPointsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPricesQuoteAndCommissionQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPromissoryNoteDetailQuery
@@ -125,6 +126,8 @@ import com.multimoney.data.networking.graphql.apollomodel.StepByStepQuery
 import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsSignedQuery
 import com.multimoney.data.networking.graphql.apollomodel.UpdateCardVDMutation
+import com.multimoney.data.networking.graphql.apollomodel.CreateCardVDMutation
+import com.multimoney.data.networking.graphql.apollomodel.CreateUserVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.UpdateFavoriteContactSmartMutation
 import com.multimoney.data.networking.graphql.apollomodel.UpdateSmartAccountStatusMutation
 import com.multimoney.data.networking.graphql.apollomodel.UpdateUserRegisterMutation
@@ -1806,6 +1809,56 @@ class GraphqlApi @Inject constructor(
             default = default,
             user = user,
             idBrand = idBrand
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationCreateCardVD(
+        identification: String,
+        cardTokenID: String,
+        default: Boolean,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<CreateCardVDMutation.Data> = apolloAuthorizedClient.mutation(
+        CreateCardVDMutation(
+            identification = identification,
+            cardTokenID = cardTokenID,
+            default = default,
+            user = user,
+            idBrand = idBrand
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationCreateUserVD(
+        identification: String,
+        firstName: String,
+        secondName: String,
+        lastName: String,
+        secondLastName: String,
+        email: String,
+        callerId: String,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<CreateUserVDMutation.Data> = apolloAuthorizedClient.mutation(
+        CreateUserVDMutation(
+            identification = identification,
+            firstName = firstName,
+            secondName = secondName,
+            lastName = lastName,
+            secondLastName = secondLastName,
+            email = email,
+            callerId = callerId,
+            user = user,
+            idBrand = idBrand
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryGetParametersMobileByCategory(
+        idBrand: Int,
+        category: String
+    ): ApolloCall<GetParametersMobileByCategoryQuery.Data> = apolloAuthorizedClient.query(
+        GetParametersMobileByCategoryQuery(
+            idBrand = idBrand,
+            category = category
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 

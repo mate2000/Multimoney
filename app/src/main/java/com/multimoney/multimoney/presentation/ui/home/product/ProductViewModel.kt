@@ -377,13 +377,13 @@ class ProductViewModel @Inject constructor(
                 encodeData(listOf(creditSummary?.firstOrNull { (it.currentBalance ?: ZERO) > ZERO }))
             }/$identification/$userName/${balanceCredit?.getFirstSummary()?.paymentDate}/${Screen.HomeScreen.route}"
         } else {
-            "${Screen.PaymentOptionsScreen.baseRoute}/${uiState.idBrand}/${balanceCredit?.getFirstCredit()?.creditNumber}/${
+            "${Screen.PaymentOptionsScreen.baseRoute}/${balanceCredit?.getFirstCredit()?.creditNumber}/${
                 encodeData(configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true })
             }/${encodeData(configurationVersion?.configuration?.credit?.transferAccount)}/" +
                     "${balanceCredit?.getFirstSummary()?.minPayment}/${balanceCredit?.getFirstSummary()?.minPaymentLabel}/" +
                     "${balanceCredit?.getFirstSummary()?.currentBalance}/${balanceCredit?.getFirstSummary()?.currentBalanceLabel}/" +
-                    "$identification/$email/$idClient/${infoCredit?.idLoanClient}/${balanceCredit?.getFirstSummary()?.idCurrency}/" +
-                    "${balanceCredit?.getFirstSummary()?.paymentDate}"
+                    "$identification/$idClient/${infoCredit?.idLoanClient}/${balanceCredit?.getFirstSummary()?.idCurrency}/" +
+                    "${balanceCredit?.getFirstSummary()?.paymentDate}/${encodeData(uiState.userStatus?.infoUser)}"
         }
         navigateTo(route)
     }
@@ -398,9 +398,15 @@ class ProductViewModel @Inject constructor(
             )
         } else {
             navigateTo(
-                route = "${Screen.PaymentScheduleCardScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
-                    encodeData(CardVisaDirect())
-                }/${balanceCredit?.getFirstSummary()?.paymentDate}/${false}/${Screen.HomeScreen.route}/$isEditSchedule/$identification"
+                route = "${Screen.PaymentScheduleCardScreen.baseRoute}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
+                    encodeData(
+                        CardVisaDirect()
+                    )
+                }/${balanceCredit?.getFirstSummary()?.paymentDate}/${false}/${Screen.HomeScreen.route}/$isEditSchedule/$identification/${
+                    encodeData(
+                        uiState.userStatus?.infoUser
+                    )
+                }"
             )
         }
     }

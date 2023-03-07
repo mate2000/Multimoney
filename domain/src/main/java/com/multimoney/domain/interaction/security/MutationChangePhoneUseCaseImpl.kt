@@ -14,11 +14,13 @@ class MutationChangePhoneUseCaseImpl(
         phone : String,
         pkUser: String,
         idBrand: Int,
+        user: String
 
     ): Flow<MultimoneyResult<ChangePhone>> = securityRepository.mutationChangePhone(
         identification,
         phone,
         pkUser,
         idBrand,
+        user
     )
 }

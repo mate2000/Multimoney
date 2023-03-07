@@ -108,13 +108,13 @@ import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.util.NovoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -321,16 +321,13 @@ class ProductViewModel @Inject constructor(
     ) {
         // TODO Implement navigation on smart cards
         when (smartStep) {
-            SMART_ONFIDO_PROCESS.workflow -> {
-                // TODO get the new evicertia url
-            }
             SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS.workflow -> onIntent()
             PENDING.status -> onCallMutationAccountStatusUseCase(comingFromCrypto)
             else -> {
                 navigateTo(
                     "${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
                             "${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}/$comingFromCrypto/" +
-                            "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}"
+                            "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}"
                 )
             }
         }
@@ -919,7 +916,7 @@ class ProductViewModel @Inject constructor(
     private fun getSmartContent() {
         val workflow = uiState.userStatus?.infoBankAccount?.wording?.workflow
         uiState = uiState.copy(
-            smartContent = if (workflow == SmartWorkflow.SMART_INITIAL_CARD.workflow || workflow == SmartWorkflow.SMART_STEP_PENDING.workflow || workflow == SmartWorkflow.SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS.workflow || workflow == SmartWorkflow.SMART_CONTRACT_PROCESS.workflow || workflow == SmartWorkflow.SMART_FIRMED_ONFIDO_PENDING.workflow || workflow == SmartWorkflow.SMART_FIRMED_ONFIDO_REJECTED.workflow || workflow == SmartWorkflow.SMART_APPROVED_BY_ONFIDO.workflow || workflow == SmartWorkflow.SMART_ONFIDO_PROCESS.workflow) {
+            smartContent = if (workflow == SmartWorkflow.SMART_INITIAL_CARD.workflow || workflow == SmartWorkflow.SMART_STEP_PENDING.workflow || workflow == SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS.workflow || workflow == SmartWorkflow.SMART_CONTRACT_PROCESS.workflow || workflow == SmartWorkflow.SMART_FIRMED_ONFIDO_PENDING.workflow || workflow == SmartWorkflow.SMART_FIRMED_ONFIDO_REJECTED.workflow || workflow == SmartWorkflow.SMART_APPROVED_BY_ONFIDO.workflow || workflow == SMART_ONFIDO_PROCESS.workflow) {
                 Pair(true, workflow)
             } else {
                 Pair(false, "")

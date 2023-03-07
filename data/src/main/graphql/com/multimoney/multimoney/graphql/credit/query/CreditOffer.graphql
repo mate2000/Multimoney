@@ -23,6 +23,7 @@ query CreditOffer($pkUser: Long!,$idBrand: Int!){
             cuota_Real
             pLAZO_NUMERICO
             bIT_REQUIERE_FORMALIZACION
+            pK_PSE_CAT_PROMOCION_PLAZO
         }
     }
 }

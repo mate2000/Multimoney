@@ -93,7 +93,6 @@ fun CreditAmountScreen(
                         currentFlow = TERMS_AND_CONDITIONS_CURRENT_FLOW,
                         identification = sharedViewModel.identification,
                         descPromotion = "",
-                        idPromotion = ID_PROMOTION,
                         onSuccess = { screenConfigData ->
                             sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnUpdateScreenConfigData(screenConfigData))
                             sharedViewModel.onUIEvent(

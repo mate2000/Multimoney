@@ -21,13 +21,14 @@ android {
     compileSdk compile_sdk_version
 
     def getVersionCode = { ->
-        def isBitrise = System.getenv("BITRISE_BUILD_NUMBER") != null;
+        def isBitrise = System.getenv("BITRISE_BUILD_NUMBER") != null
 
         if (isBitrise) {
             try {
                 def bitriseBuildNumber = Integer.parseInt(System.getenv("BITRISE_BUILD_NUMBER"))
                 return bitriseBuildNumber
             } catch (e) {
+                print(e)
                 // ignore
             }
         }
@@ -39,22 +40,29 @@ android {
         minSdk min_sdk_version
         targetSdk target_sdk_version
         versionCode getVersionCode()
-        versionName System.getenv("VERSION_NAME") ? String.valueOf(System.getenv("VERSION_NAME")) : versionNameDebug
+        versionName appVersionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
         }
 
-        buildConfigField "String", "APP_ENVIRONMENT", System.env.APP_ENVIRONMENT ? "\"${System.env.APP_ENVIRONMENT}\"" : appEnvironment
+        buildConfigField "String", "APP_ENVIRONMENT", appEnvironment
+        buildConfigField "String", "SENTRY_DSN", sentryDsn
+        buildConfigField "String", "ADJUST_APP_TOKEN", adjustAppToken
+        buildConfigField "String", "NOVO_CLIENT_ID", novoClientId
+        buildConfigField "String", "NOVO_API_URL", novoApiUrl
+        buildConfigField "String", "NOVO_SOCKET_URL", novoSocketUrl
+        buildConfigField "String", "NOVO_API_KEY", novoApiKey
+        buildConfigField "String", "NOVO_VCEH_URL", novoVcehUrl
     }
 
     signingConfigs {
         production {
-            keyAlias System.env.KEYSTORE_ALIAS ? System.env.KEYSTORE_ALIAS : keystoreAliasMM
-            keyPassword System.env.KEY_PASSWORD ? System.env.KEY_PASSWORD : keyPasswordMM
-            storeFile rootProject.file(System.env.ANDROID_KEYSTORE_PATH ? System.env.ANDROID_KEYSTORE_PATH : keystorePathMM)
-            storePassword System.env.KEYSTORE_PASSWORD ? System.env.KEYSTORE_PASSWORD : keystorePasswordMM
+            keyAlias keystoreAliasMM
+            keyPassword keyPasswordMM
+            storeFile rootProject.file(keystorePathMM)
+            storePassword keystorePasswordMM
         }
     }
 
@@ -63,45 +71,18 @@ android {
             minifyEnabled false
             shrinkResources false
             applicationIdSuffix ".cr"
-            buildConfigField "String", "SENTRY_DSN", System.env.PRODUCTION_SENTRY_DSN ? "\"${System.env.PRODUCTION_SENTRY_DSN}\"" : sentryDsn
-            buildConfigField "String", "ONFIDO_API_TOKEN", System.env.PRODUCTION_ONFIDO_API_TOKEN ? "\"${System.env.PRODUCTION_ONFIDO_API_TOKEN}\"" : onfidoApiToken
-            buildConfigField "String", "ONFIDO_APPLICATION_ID", System.env.ONFIDO_APPLICATION_ID ? "\"${System.env.ONFIDO_APPLICATION_ID}\"" : onfidoApplicationId
-            buildConfigField "String", "ADJUST_APP_TOKEN", System.env.PRODUCTION_ADJUST_APP_TOKEN ? "\"${System.env.PRODUCTION_ADJUST_APP_TOKEN}\"" : adjustAppToken
-            buildConfigField "String", "NOVO_CLIENT_ID", System.env.PRODUCTION_NOVO_CLIENT_ID ? "\"${System.env.PRODUCTION_NOVO_CLIENT_ID}\"" : novoClintId
-            buildConfigField "String", "NOVO_API_URL", System.env.PRODUCTION_NOVO_API_ULR ? "\"${System.env.PRODUCTION_NOVO_API_ULR}\"" : novoApiUrl
-            buildConfigField "String", "NOVO_SOCKET_URL", System.env.PRODUCTION_NOVO_SOCKET_URL ? "\"${System.env.PRODUCTION_NOVO_SOCKET_URL}\"" : novoSocketUrl
-            buildConfigField "String", "NOVO_API_KEY", System.env.PRODUCTION_NOVO_API_KEY ? "\"${System.env.PRODUCTION_NOVO_API_KEY}\"" : novoApiKey
-            buildConfigField "String", "NOVO_VCEH_URL", System.env.PRODUCTION_NOVO_VCEH_URL ? "\"${System.env.PRODUCTION_NOVO_VCEH_URL}\"" : novoVcehUrl
             signingConfig signingConfigs.production
             matchingFallbacks = ['release']
         }
         staging {
             applicationIdSuffix ".dev"
             testCoverageEnabled true
-            buildConfigField "String", "SENTRY_DSN", System.env.STAGING_SENTRY_DSN ? "\"${System.env.STAGING_SENTRY_DSN}\"" : sentryDsn
-            buildConfigField "String", "ONFIDO_API_TOKEN", System.env.STAGING_ONFIDO_API_TOKEN ? "\"${System.env.STAGING_ONFIDO_API_TOKEN}\"" : onfidoApiToken
-            buildConfigField "String", "ONFIDO_APPLICATION_ID", System.env.ONFIDO_APPLICATION_ID ? "\"${System.env.ONFIDO_APPLICATION_ID}\"" : onfidoApplicationId
-            buildConfigField "String", "ADJUST_APP_TOKEN", System.env.STAGING_ADJUST_APP_TOKEN ? "\"${System.env.STAGING_ADJUST_APP_TOKEN}\"" : adjustAppToken
-            buildConfigField "String", "NOVO_CLIENT_ID", System.env.STAGING_NOVO_CLIENT_ID ? "\"${System.env.STAGING_NOVO_CLIENT_ID}\"" : novoClintId
-            buildConfigField "String", "NOVO_API_URL", System.env.STAGING_NOVO_API_ULR ? "\"${System.env.STAGING_NOVO_API_ULR}\"" : novoApiUrl
-            buildConfigField "String", "NOVO_SOCKET_URL", System.env.STAGING_NOVO_SOCKET_URL ? "\"${System.env.STAGING_NOVO_SOCKET_URL}\"" : novoSocketUrl
-            buildConfigField "String", "NOVO_API_KEY", System.env.STAGING_NOVO_API_KEY ? "\"${System.env.STAGING_NOVO_API_KEY}\"" : novoApiKey
-            buildConfigField "String", "NOVO_VCEH_URL", System.env.STAGING_NOVO_VCEH_URL ? "\"${System.env.STAGING_NOVO_VCEH_URL}\"" : novoVcehUrl
             signingConfig signingConfigs.production
             matchingFallbacks = ['debug']
         }
         debug {
             applicationIdSuffix ".dev"
             testCoverageEnabled true
-            buildConfigField "String", "SENTRY_DSN", System.env.DEVELOPMENT_SENTRY_DSN ? "\"${System.env.DEVELOPMENT_SENTRY_DSN}\"" : sentryDsn
-            buildConfigField "String", "ONFIDO_API_TOKEN", System.env.DEVELOPMENT_ONFIDO_API_TOKEN ? "\"${System.env.DEVELOPMENT_ONFIDO_API_TOKEN}\"" : onfidoApiToken
-            buildConfigField "String", "ONFIDO_APPLICATION_ID", System.env.ONFIDO_APPLICATION_ID ? "\"${System.env.ONFIDO_APPLICATION_ID}\"" : onfidoApplicationId
-            buildConfigField "String", "ADJUST_APP_TOKEN", System.env.DEVELOPMENT_ADJUST_APP_TOKEN ? "\"${System.env.DEVELOPMENT_ADJUST_APP_TOKEN}\"" : adjustAppToken
-            buildConfigField "String", "NOVO_CLIENT_ID", System.env.DEVELOPMENT_NOVO_CLIENT_ID ? "\"${System.env.DEVELOPMENT_NOVO_CLIENT_ID}\"" : novoClintId
-            buildConfigField "String", "NOVO_API_URL", System.env.DEVELOPMENT_NOVO_API_ULR ? "\"${System.env.DEVELOPMENT_NOVO_API_ULR}\"" : novoApiUrl
-            buildConfigField "String", "NOVO_SOCKET_URL", System.env.DEVELOPMENT_NOVO_SOCKET_URL ? "\"${System.env.DEVELOPMENT_NOVO_SOCKET_URL}\"" : novoSocketUrl
-            buildConfigField "String", "NOVO_API_KEY", System.env.DEVELOPMENT_NOVO_API_KEY ? "\"${System.env.DEVELOPMENT_NOVO_API_KEY}\"" : novoApiKey
-            buildConfigField "String", "NOVO_VCEH_URL", System.env.DEVELOPMENT_NOVO_VCEH_URL ? "\"${System.env.DEVELOPMENT_NOVO_VCEH_URL}\"" : novoVcehUrl
             signingConfig signingConfigs.production
         }
     }

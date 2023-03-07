@@ -90,6 +90,27 @@ class ShareHelper @Inject constructor(
         context.startActivity(chooser)
     }
 
+    fun shareTextWithImage(text: String, bitmap: Bitmap) {
+        val bmpUri: Uri? = getLocalBitmapUri(bitmap)
+        val intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(
+                Intent.EXTRA_TEXT,
+                text
+            )
+            putExtra(
+                Intent.EXTRA_STREAM,
+                bmpUri
+            )
+            type = IMAGE_INTENT_SEND_TYPE
+            addFlags(FLAG_GRANT_READ_URI_PERMISSION)
+            addFlags(FLAG_ACTIVITY_NEW_TASK)
+        }
+        val chooser = Intent.createChooser(intent, context.getString(R.string.shared))
+        chooser.addFlags(FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(chooser)
+    }
+
     companion object {
         const val IMAGE_NAME = "share_image_"
         const val IMAGE_TYPE = ".png"

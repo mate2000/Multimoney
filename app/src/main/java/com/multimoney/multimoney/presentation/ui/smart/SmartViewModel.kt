@@ -32,6 +32,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_GLOBAL_REQUEST
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
@@ -85,13 +86,14 @@ class SmartViewModel @Inject constructor(
     val firstName: String = savedStateHandle[FIRST_NAME] ?: ""
     val lastName: String = savedStateHandle[LAST_NAME] ?: ""
     var idGlobalRequest: Long = savedStateHandle[ID_GLOBAL_REQUEST] ?: 0
+    var idSysRequest: Long = savedStateHandle[ID_USER_REQUEST] ?: 0
 
     // Stateless
     private var overridePreviousAction: (() -> Unit)? = null
     private var closeDialogDescription: String = ""
     private var nextStep: Int = SmartSteps.One.id
     private var previousStep: Int = SmartSteps.One.id
-    private var idSysRequest: Long = 0
+
     var accountSmartData: AccountSmartData? = null
     var isOnFidoVerified = true
     var nextAction: () -> Unit = {}
@@ -279,7 +281,7 @@ class SmartViewModel @Inject constructor(
                     idSysRequest = it?.idSysRequest?.toLong() ?: 0L
                     idGlobalRequest = it?.idGlobalRequest ?: 0
                     onUIEvent(OnLoadingValueChange(false))
-                    if (isLastStep) navigateToOnfido() else onUIEvent(OnNextStep)
+                    if (isLastStep) callMutationSaveSmartAccount() else onUIEvent(OnNextStep)
                 }
                 result.onFailure {
                     onUIEvent(OnLoadingValueChange(false))
@@ -443,7 +445,7 @@ class SmartViewModel @Inject constructor(
 
     private fun onNavigateToSignDocumentScreen(signDocumentStep: String) {
         navigateTo(
-            route = "${Screen.SmartSignScreen.baseRoute}/$signDocumentStep/$URL_EMPTY/$idSysRequest/$idBrand/$pkUser/$identification/$email/$idSysRequest/$firstName/$lastName/${true}/${idGlobalRequest}/{$user}/{$comingFromCrypto}"
+            route = "${Screen.SmartSignScreen.baseRoute}/$signDocumentStep/$URL_EMPTY/$idBrand/$pkUser/$identification/$email/$idSysRequest/$firstName/$lastName/${true}/$idGlobalRequest/$user/${comingFromCrypto}/${false}"
         )
     }
 
@@ -456,6 +458,26 @@ class SmartViewModel @Inject constructor(
             uiState.copy(
                 bottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Expanded)
             )
+        }
+    }
+
+    private fun callMutationSaveSmartAccount() {
+        executeUseCase {
+            mutationSaveSmartAccount.invoke(
+                user = user,
+                idBrand = idBrand.toIntOrNull() ?: 0,
+                identificationNumber = identification,
+                idRequest = idGlobalRequest
+            ).collectLatest { result ->
+                result.onSuccess {
+                    onUIEvent(OnLoadingValueChange(false))
+                    idSysRequest = it?.idAccount ?: 0L
+                    navigateToOnfido()
+                }
+                result.onLoading {
+                    onUIEvent(OnLoadingValueChange(true))
+                }
+            }
         }
     }
 

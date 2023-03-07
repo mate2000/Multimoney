@@ -759,9 +759,7 @@
     <string name="credit_origination_id_validation_two" translatable="false">Tené a mano tu documento de identificación</string>
     <string name="credit_origination_id_validation_two_sv" translatable="false">Ten a mano tu documento de identificación</string>
     <string name="credit_origination_id_validation_two_gt" translatable="false">Ten a mano tu documento de identificación (DPI)</string>
-    <string name="credit_origination_id_validation_three" translatable="false">Tomate una selfie sin lentes o accesorios</string>
-    <string name="credit_origination_id_validation_three_sv" translatable="false">Tomaté una selfie sin lentes o accesorios</string>
-
+    <string name="credit_origination_id_validation_three" translatable="false">Tómate una selfie sin lentes o accesorios</string>
 
     <!-- Generate Document -->
     <string name="document_generation_title" translatable="false">Estamos creando tus documentos</string>
@@ -967,6 +965,11 @@
     <string name="smart_card_monthly_profit" translatable="false">Ganancia mensual</string>
     <string name="smart_card_monthly_profit_label" translatable="false">%1$s %2$s ganancia %3$s</string>
 
+
+    <!-- Smart Evercita Escenario-->
+    <string name="smart_evercita_title" translatable="false">¡Estás a una firma de abrir tu cuenta!</string>
+    <string name="smart_evercita_subtitle" translatable="false">Este es el último paso para abrir tu cuenta.</string>
+
     <!-- Smart Account -->
     <string name="smart_account_document_title" translatable="false">Cuéntanos sobre ti</string>
     <string name="smart_account_date_placeholder" translatable="false">00 | 00 | 0000</string>
@@ -1026,7 +1029,8 @@
     <string name="smart_other_source_of_income_label" translatable="false">Especificá tu fuente de ingresos</string>
     <string name="smart_other_source_of_income_required" translatable="false">Fuente de ingresos requerido</string>
     <string name="smart_other_generating_document_title" translatable="false">Estamos generando tus documentos</string>
-    <string name="smart_other_generating_document_subtitle" translatable="false">Al firmar tu contrato podrás utilizar tu MultiMoney Smart</string>
+    <string name="smart_other_generating_document_subtitle" translatable="false">Después de firmar tu contrato podés empezar a utilizar tu cuenta.</string>
+    <string name="smart_loading_label" translatable="false">Generando documentos...</string>
     <string name="smart_other_income_cr_placeholder" translatable="false">₡000,000</string>
     <string name="smart_other_income_sv_placeholder" translatable="false">$000</string>
 
@@ -1485,6 +1489,7 @@
     <string name="smart_payment_sheet_equivalent" translatable="false">Equivalente a %1$s</string>
 
     <!-- Smart SAC Transfer -->
+    <string name="sac_account" translatable="false">"Cuenta SAC</string>
     <string name="smart_sac_transfer_contact_rationale_title" translatable="false">Lo sentimos</string>
     <string name="smart_sac_transfer_contact_rationale_message" translatable="false">Necesitamos acceso a tus contactos para que podás realizar envíos</string>
     <string name="smart_sac_transfer_contact_rationale_button" translatable="false">Permitir acceso a contactos</string>

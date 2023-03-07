@@ -52,7 +52,7 @@ fun SignUpPersonalDataScreen(
     viewModel: SignUpPersonalDataViewModel = hiltViewModel(),
     sharedViewModel: SignUpViewModel = hiltViewModel()
 ) {
-    val fragmentActivity = LocalContext.current as FragmentActivity
+    val context = LocalContext.current
 
     viewModel.apply {
         isOnRestart = isRestart
@@ -86,6 +86,7 @@ fun SignUpPersonalDataScreen(
                                 firstLastName = userData?.firstLastName ?: "",
                                 secondLastName = userData?.secondLastName ?: "",
                                 fullName = userData?.fullName ?: "",
+                                iso3Country = context.resources.configuration.locale.isO3Country,
                                 updateNationality = { nationality, idBrand ->
                                     sharedViewModel.onUIEvent(
                                         OnNationalityValueChange(nationality, idBrand)

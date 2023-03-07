@@ -387,6 +387,11 @@ class DataStorePreferences @Inject constructor(
 
     fun isAdjustFirstPaymentSuccessEventRegister(): Flow<Boolean> = getData(PAYMENT_SUCCESS_FIRST_TIME_ADJUST_KEY, true)
 
+    suspend fun isAdjustAddAccountEventRegister(register: Boolean) =
+        setData(ADD_ACCOUNT_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustAddAccountEventRegister(): Flow<Boolean> = getData(ADD_ACCOUNT_FIRST_TIME_ADJUST_KEY, true)
+
     // Adjust Crypto events
     suspend fun setAdjustCryptoHomeFirstTime(firstTimeHomeCrypto: Boolean) =
         setData(ADJUST_CRYPTO_HOME_FIRST_TIME, firstTimeHomeCrypto)
@@ -497,6 +502,7 @@ class DataStorePreferences @Inject constructor(
         private val DISBURSEMENT_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("disbursement_first_time")
         private val DISBURSEMENT_SUCCESS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("disbursement_success_first_time")
         private val PAYMENT_SUCCESS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("payment_success_first_time")
+        private val ADD_ACCOUNT_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("add_account_first_time")
         private val ADJUST_CRYPTO_HOME_FIRST_TIME = booleanPreferencesKey("adjust_crypto_home_first_time")
         private val ADJUST_CRYPTO_PURCHASE_FIRST_TIME = booleanPreferencesKey("adjust_crypto_purchase_first_time")
         private val ADJUST_CRYPTO_SUCCESS_PURCHASE_FIRST_TIME = booleanPreferencesKey("adjust_crypto_success_purchase_first_time")

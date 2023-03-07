@@ -4,9 +4,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.credit.QueryGetClientBankAccountUseCase
 import com.multimoney.domain.model.balance.Summary
 import com.multimoney.domain.model.credit.ClientBankAccount
+import com.multimoney.domain.model.metrics.BaseEventDataDto
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -30,17 +33,22 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentA
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnClientBankAccountSelected
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnNavigateBackHome
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
+import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class PaymentAccountViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val queryGetClientBankAccountUseCase: QueryGetClientBankAccountUseCase
+    private val queryGetClientBankAccountUseCase: QueryGetClientBankAccountUseCase,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
 
     // uiState
@@ -149,9 +157,46 @@ class PaymentAccountViewModel @Inject constructor(
 
     private fun onNavigateBackHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
 
-    private fun onAddAccountClick() = navigateTo(
-        route = "${Screen.AddIbanAccountScreen.baseRoute}/$user/$idBrand/$identification/${Screen.PaymentAccountScreen.baseRoute}/$idClient/$idLoanClient"
-    )
+    private fun onAddAccountClick() {
+        logEvents(AdjustEventType.SETTINGS_FIRST_ADD_ACCOUNT_8003)
+        navigateTo(
+            route = "${Screen.AddIbanAccountScreen.baseRoute}/$user/$idBrand/$identification/${Screen.PaymentAccountScreen.baseRoute}/$idClient/$idLoanClient"
+        )
+    }
+
+    fun logEvents(adjustEventType: AdjustEventType) {
+        viewModelScope.launch {
+            getAdjustEvent(adjustEventType).invoke()
+        }
+    }
+
+    private fun getAdjustEvent(adjustEventType: AdjustEventType): suspend () -> Unit {
+        val baseAdjustEvent = BaseEventDataDto(
+            user = user,
+            idBrand = idBrand,
+            idClient = idClient,
+            idLoanClient = idLoanClient,
+            identification = identification
+        )
+        return when (adjustEventType) {
+            AdjustEventType.SETTINGS_FIRST_ADD_ACCOUNT_8003 -> {
+                getAddAccountEvent(baseAdjustEvent)
+            }
+            else -> suspend {}
+        }
+    }
+
+    private fun getAddAccountEvent(baseAdjustEvent: BaseEventDataDto) =
+        suspend {
+            if (dataStorePreferences.isAdjustAddAccountEventRegister().first()) {
+                registerAdjustEvent(
+                    AdjustEventType.SETTINGS_FIRST_ADD_ACCOUNT_8003,
+                    applyAdjust = false,
+                    data = baseAdjustEvent.toJson()
+                )
+                dataStorePreferences.isAdjustAddAccountEventRegister(false)
+            }
+        }
 
     data class UIState(
         // Interactions

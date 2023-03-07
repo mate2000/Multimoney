@@ -274,7 +274,7 @@ class DisbursementAccountViewModel @Inject constructor(
     }
 
     private fun onNavigateToVoucher(referenceNumber: String?) {
-        logAdjustEvent()
+        logEvents(AdjustEventType.DISBURSEMENT_FIRST_FINISH_PROCESS_SUCCESS_5022)
         navigateTo(
             route = "${Screen.DisbursementVoucherScreen.baseRoute}/${encodeData(uiState.clientBankAccountSelected)}/${
             if (shouldDisplayExchangeRate()) {
@@ -286,37 +286,70 @@ class DisbursementAccountViewModel @Inject constructor(
         )
     }
 
-    private fun logAdjustEvent() {
+    fun logEvents(adjustEventType: AdjustEventType) {
         viewModelScope.launch {
+            getAdjustEvent(adjustEventType).invoke()
+        }
+    }
+
+    private fun getAdjustEvent(adjustEventType: AdjustEventType): suspend () -> Unit {
+        val baseAdjustEvent = BaseEventDataDto(
+            user = user,
+            idBrand = idBrand,
+            idClient = idClient,
+            idLoanClient = idLoanClient.toInt(),
+            identification = identification
+        )
+        return when (adjustEventType) {
+            AdjustEventType.DISBURSEMENT_FIRST_FINISH_PROCESS_SUCCESS_5022 -> {
+                getSuccessDisbursementEvent(baseAdjustEvent)
+            }
+            AdjustEventType.SETTINGS_FIRST_ADD_ACCOUNT_8003 -> {
+                getAddAccountEvent(baseAdjustEvent)
+            }
+            else -> suspend {}
+        }
+    }
+
+    private fun getAddAccountEvent(baseAdjustEvent: BaseEventDataDto) =
+        suspend {
+            if (dataStorePreferences.isAdjustAddAccountEventRegister().first()) {
+                registerAdjustEvent(
+                    AdjustEventType.SETTINGS_FIRST_ADD_ACCOUNT_8003,
+                    applyAdjust = false,
+                    data = baseAdjustEvent.toJson()
+                )
+                dataStorePreferences.isAdjustAddAccountEventRegister(false)
+            }
+        }
+
+    private fun getSuccessDisbursementEvent(baseAdjustEvent: BaseEventDataDto) =
+        suspend {
             if (dataStorePreferences.isAdjustFirstDisbursementSuccessEventRegister().first()) {
                 registerAdjustEvent(
                     AdjustEventType.DISBURSEMENT_FIRST_FINISH_PROCESS_SUCCESS_5022,
                     applyAdjust = false,
-                    data = BaseEventDataDto(
-                        user = user,
-                        idBrand = idBrand,
-                        idClient = idClient,
-                        idLoanClient = idLoanClient.toInt(),
-                        identification = identification
-                    ).toJson()
+                    data = baseAdjustEvent.toJson()
                 )
                 dataStorePreferences.isAdjustFirstDisbursementSuccessEventRegister(false)
             }
         }
-    }
 
     private fun onNavigateBack() = navigateBack(popTo = Screen.DisbursementAmountScreen.route, isRestart = false)
 
     private fun onNavigateBackHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
 
-    private fun onNavigateToDisbursementAddAccount() = if (idBrand == Brand.CostaRica.id) {
-        navigateTo(
-            route = "${Screen.AddIbanAccountScreen.baseRoute}/$user/$idBrand/$identification/${Screen.DisbursementAccountScreen.baseRoute}/$idClient/$idLoanClient"
-        )
-    } else {
-        navigateTo(
-            route = "${Screen.DisbursementAddAccountScreen.baseRoute}/$idBrand/$pkUser/$user/$idUserRequest/$idClient/$idLoanClient/$idCurrency"
-        )
+    private fun onNavigateToDisbursementAddAccount() {
+        logEvents(AdjustEventType.SETTINGS_FIRST_ADD_ACCOUNT_8003)
+        if (idBrand == Brand.CostaRica.id) {
+            navigateTo(
+                route = "${Screen.AddIbanAccountScreen.baseRoute}/$user/$idBrand/$identification/${Screen.DisbursementAccountScreen.baseRoute}/$idClient/$idLoanClient"
+            )
+        } else {
+            navigateTo(
+                route = "${Screen.DisbursementAddAccountScreen.baseRoute}/$idBrand/$pkUser/$user/$idUserRequest/$idClient/$idLoanClient/$idCurrency"
+            )
+        }
     }
 
     private fun onMaxAccountNumberDialog() {

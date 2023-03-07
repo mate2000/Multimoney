@@ -3,9 +3,12 @@ package com.multimoney.multimoney.presentation.ui.smart.origination.sign
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -65,7 +68,7 @@ fun SmartDocumentGenerationScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CustomImage(drawableResource = icon ?: drawable.ic_logo_multimoney3)
+            CustomImage(drawableResource = icon ?: drawable.ic_logo_multimoney)
             Text(
                 text = stringResource(id = title ?: string.document_generation_title),
                 modifier = Modifier.padding(top = 24.dp),
@@ -92,7 +95,6 @@ fun SmartDocumentGenerationScreen(
             viewModel.uiState.isLoading,
             stringResource(id = R.string.smart_loading_label)
         )
-
     }
 
 

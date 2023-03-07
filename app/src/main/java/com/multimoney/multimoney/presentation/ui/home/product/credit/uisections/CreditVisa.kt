@@ -36,7 +36,7 @@ fun CreditVisa(
                     onNavigateToVisaActivateScreen()
                 },
                 type = CreditCard(cardInformation.cardNumber ?: ""),
-                idBrand = uiState.idBrand.toInt()
+                idBrand = uiState.idBrand.toIntOrNull() ?: 0
             )
         } ?: run {
             if (balance?.getFirstSummary()?.applyCommerce == true && balance.getFirstSummary()?.applyCreateCard == true) {
@@ -44,7 +44,7 @@ fun CreditVisa(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     onClick = { onCreateMultimoneyVisa() },
                     type = RequestCreditCard,
-                    idBrand = uiState.idBrand.toInt()
+                    idBrand = uiState.idBrand.toIntOrNull() ?: 0
                 )
             }
         }

@@ -708,6 +708,12 @@ class ProductViewModel @Inject constructor(
         account: Account?,
         onLoadingValueChange: (isLoading: Boolean) -> Unit
     ) {
+        viewModelScope.launch {
+            if (dataStorePreferences.isAdjustSmartSavingBtnEventRegistered().first()) {
+                registerAdjustEvent(adjustEventType = AdjustEventType.HOME_CTA_FIRST_SAVING_6016)
+                dataStorePreferences.isAdjustSmartSavingBtnEventRegistered(false)
+            }
+        }
         if (uiState.idBrand == Brand.ElSalvador.id.toString()) {
             val smartIds = encodeData(
                 SmartAccountID(
@@ -788,6 +794,14 @@ class ProductViewModel @Inject constructor(
                 customerId = account?.customerId
             )
         )
+
+        viewModelScope.launch {
+            if (dataStorePreferences.isAdjustSmartSendingBtnEventRegistered().first()) {
+                registerAdjustEvent(adjustEventType = AdjustEventType.HOME_CTA_FIRST_SENDING_6017)
+                dataStorePreferences.isAdjustSmartSendingBtnEventRegistered(false)
+            }
+        }
+
         navigateTo(
             "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$userName/${uiState.idBrand}/$identification" +
                 "/${encodeData(smartAccount)}/$secondAccountSend/$idClient/${Screen.HomeScreen.route}"

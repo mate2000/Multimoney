@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Rect
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.accountsmart.MutationProcessSinpeTransferUseCase
 import com.multimoney.domain.interaction.accountsmart.QuerySmartExchangeRateUseCase
@@ -34,6 +35,7 @@ import com.multimoney.multimoney.presentation.navigation.TRANSFER_TYPE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.ShareHelper
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Dollar
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -60,6 +62,9 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
 
     @Inject
     protected lateinit var querySmartExchangeRateUseCase: QuerySmartExchangeRateUseCase
+
+    @Inject
+    protected lateinit var dataStorePreferences: DataStorePreferences
 
     @Inject
     protected lateinit var shareHelper: ShareHelper
@@ -328,6 +333,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                             currentTime = getCurrentTime(Calendar.getInstance().time).lowercase(),
                             referenceNumber = it?.referenceNumber ?: ""
                         )
+                        registerFirstSmartSaving()
                     }
                 }
                 result.onFailure {
@@ -353,6 +359,15 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                         paymentSuccess = false
                     )
                 }
+            }
+        }
+    }
+
+    protected fun registerFirstSmartSaving() {
+        viewModelScope.launch {
+            if (dataStorePreferences.isAdjustFirstSavingEventRegistered().first()) {
+                registerAdjustEvent(adjustEventType = AdjustEventType.SMART_CTA_FIRST_SAVING_SUCCESSFULLY_6018)
+                dataStorePreferences.isAdjustFirstSavingEventRegistered(false)
             }
         }
     }

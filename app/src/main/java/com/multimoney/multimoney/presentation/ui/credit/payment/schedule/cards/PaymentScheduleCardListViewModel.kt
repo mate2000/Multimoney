@@ -31,10 +31,11 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.P
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCardSelected
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnNavigateBackHome
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnHandleAddCardResponse
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnStopTimer
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnRestartTimer
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnResumeTimer
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.AddVisaCardErrors
@@ -191,7 +192,7 @@ class PaymentScheduleCardListViewModel @Inject constructor(
         }
     }
 
-    private fun onNavigateToVisaVerifyInformation(response: String) = navigateTo(
+    private fun onNavigateToVisaVerifyInformation(response: String) = popAndNavigateTo(
         route = Screen.VisaVerifyInformationScreen.baseRoute
             .plus(
                 getNavParam(IDENTIFICATION, identification)
@@ -213,7 +214,8 @@ class PaymentScheduleCardListViewModel @Inject constructor(
             )
             .plus(
                 getNavParam(USER_NAME, infoUser?.userName.orEmpty())
-            )
+            ),
+        popTo = Screen.PaymentScheduleCardListScreen.route
     )
 
     private fun onCardSelected(card: CardVisaDirect?) = popAndNavigateTo(
@@ -246,6 +248,9 @@ class PaymentScheduleCardListViewModel @Inject constructor(
 
     private fun onNavigateBack() = navigateBack(popTo = Screen.PaymentScheduleCardScreen.route, isRestart = false)
 
+    private fun onNavigateBackHome(isRestart: Boolean) =
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = isRestart)
+
     private fun onCloseClick() {
         uiState = uiState.copy(
             openDialog = DialogParameters(
@@ -265,8 +270,8 @@ class PaymentScheduleCardListViewModel @Inject constructor(
         )
     }
 
-    private fun onRestartTimer() {
-        countDownTimer.restartTimer()
+    private fun onResumeTimer() {
+        countDownTimer.resumeTimer()
     }
 
     private fun onStopTimer() {
@@ -291,13 +296,14 @@ class PaymentScheduleCardListViewModel @Inject constructor(
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnNavigateBack -> onNavigateBack()
+            is OnNavigateBackHome -> onNavigateBackHome(false)
             is OnCloseClick -> onCloseClick()
             is OnCallQueryGetCards -> onCallQueryGetCardsUseCase()
             is OnCardSelected -> onCardSelected(uiEvent.card)
             is OnStart -> onStart()
             is OnHandleAddCardResponse -> onHandleAddCardResponse(uiEvent.response, uiEvent.isError)
             is OnStopTimer -> onStopTimer()
-            is OnRestartTimer -> onRestartTimer()
+            is OnResumeTimer -> onResumeTimer()
         }
     }
 
@@ -305,10 +311,11 @@ class PaymentScheduleCardListViewModel @Inject constructor(
         object OnCallQueryGetCards : UIEvent()
         class OnCardSelected(val card: CardVisaDirect?) : UIEvent()
         object OnNavigateBack : UIEvent()
+        object OnNavigateBackHome : UIEvent()
         object OnCloseClick : UIEvent()
         object OnStart : UIEvent()
         object OnStopTimer : UIEvent()
-        object OnRestartTimer : UIEvent()
+        object OnResumeTimer : UIEvent()
         data class OnHandleAddCardResponse(val response: String, val isError: Boolean) : UIEvent()
     }
 

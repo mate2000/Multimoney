@@ -1340,14 +1340,16 @@ class GraphqlApi @Inject constructor(
         identification: String,
         phone: String,
         pkUser: String,
-        idBrand: Int
+        idBrand: Int,
+        user: String
     ): ApolloCall<ChangePhoneMutation.Data> =
         apolloAuthorizedClient.mutation(
             ChangePhoneMutation(
                 identification,
                 phone,
                 pkUser.toLong(),
-                idBrand
+                idBrand,
+                user
             )
         )
             .fetchPolicy(FetchPolicy.NetworkOnly)

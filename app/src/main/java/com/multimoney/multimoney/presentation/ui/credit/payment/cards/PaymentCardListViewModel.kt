@@ -40,7 +40,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCar
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnHandleAddCardResponse
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnStopTimer
-import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnRestartTimer
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnResumeTimer
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.AddVisaCardErrors
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -227,8 +227,8 @@ class PaymentCardListViewModel @Inject constructor(
 
     private fun onNavigateBackHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
 
-    private fun onRestartTimer() {
-        countDownTimer.restartTimer()
+    private fun onResumeTimer() {
+        countDownTimer.resumeTimer()
     }
 
     private fun onStopTimer() {
@@ -301,7 +301,7 @@ class PaymentCardListViewModel @Inject constructor(
             is OnStart -> onStart()
             is OnHandleAddCardResponse -> onHandleAddCardResponse(uiEvent.response, uiEvent.isError)
             is OnStopTimer -> onStopTimer()
-            is OnRestartTimer -> onRestartTimer()
+            is OnResumeTimer -> onResumeTimer()
         }
     }
 
@@ -313,7 +313,7 @@ class PaymentCardListViewModel @Inject constructor(
         object OnNavigateBackHome : UIEvent()
         object OnStart : UIEvent()
         object OnStopTimer : UIEvent()
-        object OnRestartTimer : UIEvent()
+        object OnResumeTimer : UIEvent()
         data class OnHandleAddCardResponse(val response: String, val isError: Boolean) : UIEvent()
     }
 

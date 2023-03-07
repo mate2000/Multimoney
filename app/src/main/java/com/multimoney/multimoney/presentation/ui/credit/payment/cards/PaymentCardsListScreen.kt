@@ -47,9 +47,10 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCar
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.Companion.RESPONSE_VALUE
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnHandleAddCardResponse
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnNavigateBackHome
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnStopTimer
-import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnRestartTimer
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnResumeTimer
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
@@ -108,7 +109,7 @@ fun PaymentCardsListContent(
         val addCardActivityResult = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.StartActivityForResult()
         ) {
-            viewModel.onUIEvent(OnRestartTimer)
+            viewModel.onUIEvent(OnResumeTimer)
             when (it.resultCode) {
                 RESULT_CODE_PROCESS_FINISHED -> {
                     val response: String? = it.data?.getStringExtra(RESPONSE_VALUE)
@@ -121,7 +122,7 @@ fun PaymentCardsListContent(
                     )
                 }
                 RESULT_CODE_PROCESS_INCOMPLETE -> {
-                    viewModel.onUIEvent(OnNavigateBack)
+                    viewModel.onUIEvent(OnNavigateBackHome)
                 }
                 else -> return@rememberLauncherForActivityResult
             }

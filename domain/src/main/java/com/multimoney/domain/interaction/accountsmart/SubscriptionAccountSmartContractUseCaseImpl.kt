@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.Flow
 class SubscriptionAccountSmartContractUseCaseImpl(val repository: SmartAccountRepository) :
     SubscriptionAccountSmartContractUseCase {
     override suspend fun invoke(
-        idBrand: Int,
-        idRequestSys: Long
+        idRequestSys: Long,
+        idBrand: Int
     ): Flow<MultimoneyResult<AccountSmartContractResult?>> =
         repository.subscriptionAccountContractEvent(idBrand, idRequestSys)
 }

@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -28,6 +29,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.Companion.TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.uielement.CustomImage
+import com.multimoney.multimoney.presentation.uielement.loadingProgressIndicator
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -78,29 +80,23 @@ fun SmartDocumentGenerationScreen(
                 textAlign = TextAlign.Center
             )
             Text(
-                text = stringResource(id = subtitle ?: string.document_generation_subtitle),
-                modifier = Modifier.padding(top = 8.dp),
+                text = stringResource(
+                    id = subtitle ?: string.smart_other_generating_document_subtitle
+                ),
+                modifier = Modifier.padding(top = 10.dp),
                 style = Typography.body1,
                 color = MultimoneyTheme.colors.text,
                 textAlign = TextAlign.Center
             )
         }
-        Row(
-            modifier = Modifier.padding(bottom = 30.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(32.dp),
-                color = MultimoneyTheme.colors.primary
-            )
-            Text(
-                text = stringResource(id = string.document_generation_info),
-                modifier = Modifier.padding(start = 12.dp),
-                style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.text
-            )
-        }
+
+        //LoadingIndicator(viewModel.uiState.isLoading)
+        loadingProgressIndicator(
+            viewModel.uiState.isLoading,
+            stringResource(id = R.string.smart_loading_label)
+        )
     }
+
 
     // this is required to execute the debounce
     val openStepFlowValue by openStepFlow.collectAsState(false)

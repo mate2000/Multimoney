@@ -129,6 +129,7 @@ const val USER_DATA = "user_data"
 const val PROFILE_CARD_LIST_ORIGIN = "profile_card_list_origin"
 const val CROSSELING = "crosseling"
 const val OTP_METHOD = "otp_method"
+const val SYS_ID_ACCOUNT_REQUEST = "sys_id_request"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -144,9 +145,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     // LoginNavGraph Screens
     object SplashScreen : Screen("splash_screen")
     object OnBoardingScreen : Screen("onboarding_screen")
-    object SignInScreen : Screen("sign_in_screen?$FORCE_CHANGE_DEVICE={$FORCE_CHANGE_DEVICE}", "sign_in_screen")
+    object SignInScreen :
+        Screen("sign_in_screen?$FORCE_CHANGE_DEVICE={$FORCE_CHANGE_DEVICE}", "sign_in_screen")
 
-    object SignUpScreen : Screen("sign_up_screen/{$SIGN_UP_STEP}?$ID_BRAND={$ID_BRAND}", "sign_up_screen")
+    object SignUpScreen :
+        Screen("sign_up_screen/{$SIGN_UP_STEP}?$ID_BRAND={$ID_BRAND}", "sign_up_screen")
+
     object RequestForgotPassword : Screen(
         "request_forgot_password_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}",
         "request_forgot_password_screen"
@@ -317,7 +321,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SmartSignScreen : Screen(
-        "smart_sign_document_process_screen/{$SIGN_DOCUMENT_STEP_ARG}/{$SIGN_DOCUMENT_URL}/{$SIGN_DOCUMENT_ID_PRINT}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$IS_SMART_EVICERTIA}/{$SIGN_DOCUMENT_GLOBAL_ID}/{$USER}/{$COMING_FROM_CRYPTO}",
+        "smart_sign_document_process_screen/{$SIGN_DOCUMENT_STEP_ARG}/{$SIGN_DOCUMENT_URL}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$IS_SMART_EVICERTIA}/{$SIGN_DOCUMENT_GLOBAL_ID}/{$USER}/{$COMING_FROM_CRYPTO}/{$SHOULD_GET_EVICERTIA_LINK}",
         "smart_sign_document_process_screen"
     )
 
@@ -465,12 +469,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // Smart
     object SmartScreen : Screen(
-        "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$FIRST_NAME}/{$LAST_NAME}/{$COMING_FROM_CRYPTO}/{$ID_GLOBAL_REQUEST}",
+        "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$FIRST_NAME}/{$LAST_NAME}/{$COMING_FROM_CRYPTO}/{$ID_GLOBAL_REQUEST}/{$ID_USER_REQUEST}",
         "smart_screen"
     )
 
     object SmartOnfidoScreen : Screen(
-        "smart_onfido_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$FIRST_NAME}/{$LAST_NAME}/{$SIGN_DOCUMENT_ID_PRINT}/{$SIGN_DOCUMENT_GLOBAL_ID}/{$SIGN_DOCUMENT_URL}/{$COMING_FROM_CRYPTO}",
+        "smart_onfido_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$FIRST_NAME}/{$LAST_NAME}/{$SYS_ID_ACCOUNT_REQUEST}/{$SIGN_DOCUMENT_GLOBAL_ID}/{$SIGN_DOCUMENT_URL}/{$COMING_FROM_CRYPTO}",
         "smart_onfido_screen"
     )
 

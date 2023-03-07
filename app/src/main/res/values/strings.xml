@@ -965,6 +965,11 @@
     <string name="smart_card_monthly_profit" translatable="false">Ganancia mensual</string>
     <string name="smart_card_monthly_profit_label" translatable="false">%1$s %2$s ganancia %3$s</string>
 
+
+    <!-- Smart Evercita Escenario-->
+    <string name="smart_evercita_title" translatable="false">¡Estás a una firma de abrir tu cuenta!</string>
+    <string name="smart_evercita_subtitle" translatable="false">Este es el último paso para abrir tu cuenta.</string>
+
     <!-- Smart Account -->
     <string name="smart_account_document_title" translatable="false">Cuéntanos sobre ti</string>
     <string name="smart_account_date_placeholder" translatable="false">00 | 00 | 0000</string>
@@ -1024,7 +1029,8 @@
     <string name="smart_other_source_of_income_label" translatable="false">Especificá tu fuente de ingresos</string>
     <string name="smart_other_source_of_income_required" translatable="false">Fuente de ingresos requerido</string>
     <string name="smart_other_generating_document_title" translatable="false">Estamos generando tus documentos</string>
-    <string name="smart_other_generating_document_subtitle" translatable="false">Al firmar tu contrato podrás utilizar tu MultiMoney Smart</string>
+    <string name="smart_other_generating_document_subtitle" translatable="false">Después de firmar tu contrato podés empezar a utilizar tu cuenta.</string>
+    <string name="smart_loading_label" translatable="false">Generando documentos...</string>
     <string name="smart_other_income_cr_placeholder" translatable="false">₡000,000</string>
     <string name="smart_other_income_sv_placeholder" translatable="false">$000</string>
 

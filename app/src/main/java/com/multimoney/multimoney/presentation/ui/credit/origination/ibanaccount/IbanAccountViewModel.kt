@@ -5,11 +5,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.text.isDigitsOnly
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.interaction.accountsmart.MutationSaveSinpeAccountUseCase
 import com.multimoney.domain.interaction.security.QueryValidateBankAccountUseCase
 import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.security.ValidateAccount
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -18,19 +20,22 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnLoadCreditSteps
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnOpenInformativeDialog
+import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnSaveSinpeAccount
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnUpdateUserInfo
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnValidForm
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.capitalized
 import com.multimoney.multimoney.presentation.util.catalog.BankAccountType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class IbanAccountViewModel @Inject constructor(
-    val queryValidateBankAccountUseCase: QueryValidateBankAccountUseCase
+    val queryValidateBankAccountUseCase: QueryValidateBankAccountUseCase,
+    private val mutationSaveSinpeAccountUseCase: MutationSaveSinpeAccountUseCase,
 ) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())
@@ -47,6 +52,7 @@ class IbanAccountViewModel @Inject constructor(
         nextStepAction: () -> Unit,
         saveCreditStepsHelper: SaveCreditStepsHelper
     ) {
+        //saveIbanAccount(user, )
         saveCreditStepsHelper.saveStepOneCR(
             user,
             "${Brand.CostaRica.iban}${uiState.accountNumber}"
@@ -130,6 +136,42 @@ class IbanAccountViewModel @Inject constructor(
         }
     }
 
+    private fun saveIbanAccount(
+        user: String?,
+        onLoadingValueChange: (Boolean) -> Unit,
+        onFailureWithDialog: (Boolean, DialogParameters) -> Unit,
+        onSuccessAction: () -> Unit
+    ) = executeUseCase {
+        mutationSaveSinpeAccountUseCase(
+            user = user ?: "",
+            idBrand = idBrand,
+            identification = identification ?: "",
+            accountNumber = Brand.CostaRica.iban.plus(uiState.accountNumber),
+            idCurrency = validateAccount?.currency?.getCurrencyFromId()?.id?.toLong() ?: 0,
+            nameAccount = validateAccount?.name ?: "",
+            country = Brand.CostaRica.countryCode,
+            idAccount = null,
+            option = null,
+            email = null,
+            isFavorite = false
+        ).collectLatest {
+            it.onSuccess {
+                onLoadingValueChange(false)
+                onSuccessAction()
+            }.onFailure { error ->
+                onFailureWithDialog(
+                    false,
+                    DialogParameters(
+                        description = error.getError() ?: "",
+                        isActive = mutableStateOf(true)
+                    )
+                )
+            }.onLoading {
+                onLoadingValueChange(false)
+            }
+        }
+    }
+
     private fun onUpdateUserInfo(
         identification: String,
         email: String,
@@ -207,6 +249,7 @@ class IbanAccountViewModel @Inject constructor(
                 )
             )
             is OnLoadCreditSteps -> onLoadStep(uiEvent.list, uiEvent.onFailureWithDialog)
+            is OnSaveSinpeAccount -> saveIbanAccount(uiEvent.user, uiEvent.onLoadingValueChange, uiEvent.onFailureWithDialog, uiEvent.onSuccessAction)
         }
     }
 
@@ -233,6 +276,13 @@ class IbanAccountViewModel @Inject constructor(
         data class OnLoadCreditSteps(
             val list: List<CreditCatalog?>?,
             val onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
+        ) : UIEvent()
+
+        data class OnSaveSinpeAccount(
+            val user: String?,
+            val onLoadingValueChange: (Boolean) -> Unit,
+            val onFailureWithDialog: (Boolean, DialogParameters) -> Unit,
+            val onSuccessAction: () -> Unit
         ) : UIEvent()
     }
 

@@ -102,6 +102,14 @@ enum class AdjustEventType(val stgToken: String, val prodToken: String, val even
     SETTINGS_CTA_FIRST_FINISH_FLOW_CARD_8008("", "", "settings_cta_fin_tarjeta"),
     SETTINGS_CTA_FIRST_VALIDATED_FLOW_CARD_8009("", "", "settings_cta_verifica_tarjeta"),
 
+    // SECURITY
+    SECURITY_LOGIN_BLACK_LIST_9000("", "", "alerta_metadatos"),
+    SECURITY_SIGN_UP_CHANGE_DEVICE_9001("", "", "alerta_cambio_device_registro"),
+    SECURITY_LOGIN_CHANGE_DEVICE_9002("", "", "alerta_cambio_device_login"),
+    SECURITY_LOGIN_SUCCESS_CHANGE_DEVICE_9003("", "", "alerta_cambio_device_exitoso"),
+    SECURITY_LOGIN_RESEND_OTP_CHANGE_DEVICE_9004("", "", "alerta_cambio_device_reenvio_otp"),
+    SECURITY_LOGIN_OTP_BY_CALL_CHANGE_DEVICE_9005("", "", "alerta_cambio_device_llamada"),
+
     // HOME CRYPTO
     HOME_CRYPTO_FIST_TIME_ENTER_TO_HOME("nkqtow", "elb9ue", "cri_primer_vista"),
     HOME_CRYPTO_PAXOS_IN_MAINTENANCE("", "", "cri_pantalla_mantenimiento"),

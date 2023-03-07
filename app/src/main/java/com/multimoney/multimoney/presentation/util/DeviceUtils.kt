@@ -140,4 +140,3 @@ private fun getDeviceTypeFromPhysicalSize(context: Context): DeviceType {
 }
 
 const val GET_IP_ADDRESS_URL = "https://api.ipify.org"
-const val GET_IP_INFO_URL = "http://ip-api.com/json"

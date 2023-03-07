@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
 import com.multimoney.domain.interaction.security.QueryValidatePinUseCase
@@ -16,7 +17,6 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnCallMutationSendPinProcess
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnCallMutationSendPinProcessSuccess
@@ -60,13 +60,21 @@ class SignUpOtpViewModel @Inject constructor(
     // Stateless
     var linkWhatsapp = ""
     var userBlockedForMaxAttend = ""
+    private var numberOfPinForwards = 0
 
     // Events
     val onCallMutationSendPinProcessEvent = MutableSharedFlow<MultimoneyResult<SendPinProcess?>>()
 
-    private fun onStart(linkWhatsapp: String, userBlockedForMaxAttend: String) {
+    private fun onStart(linkWhatsapp: String, userBlockedForMaxAttend: String, idBrand: Int?) {
         this.linkWhatsapp = linkWhatsapp
         this.userBlockedForMaxAttend = userBlockedForMaxAttend
+        uiState = uiState.copy(
+            subtitleResource = if (idBrand == Brand.CostaRica.id) {
+                R.string.sign_up_otp_subtitle_cr
+            } else {
+                R.string.sign_up_otp_subtitle
+            }
+        )
     }
 
     private fun getOtpFromMessage(message: String) {
@@ -112,6 +120,18 @@ class SignUpOtpViewModel @Inject constructor(
             remainingTimeText = newRemainingTime.format(),
             phaseCount = uiState.phaseCount.plus(1)
         )
+
+        if (this.numberOfPinForwards == PHASE_THREE) {
+            uiState = uiState.copy(
+                openUserBlockedDialog = DialogParameters(
+                    titleResource = R.string.sign_up_email_blocked_dialog_title,
+                    description = userBlockedForMaxAttend,
+                    isActive = mutableStateOf(true),
+                    positiveResource = R.string.contact,
+                    negativeResource = R.string.cancel
+                )
+            )
+        }
     }
 
     fun getPhaseResourceString() = when (uiState.phaseCount) {
@@ -210,13 +230,15 @@ class SignUpOtpViewModel @Inject constructor(
                     }
                     .onMessage {
                         if (it?.messageError?.status == SIGN_UP_FAILED_CODE) {
-                            uiState = uiState.copy(openUserBlockedDialog = DialogParameters(
-                                titleResource = R.string.sign_up_email_blocked_dialog_title,
-                                description = userBlockedForMaxAttend,
-                                isActive = mutableStateOf(true),
-                                positiveResource = R.string.contact,
-                                negativeResource = R.string.cancel,
-                            ))
+                            uiState = uiState.copy(
+                                openUserBlockedDialog = DialogParameters(
+                                    titleResource = R.string.sign_up_email_blocked_dialog_title,
+                                    description = userBlockedForMaxAttend,
+                                    isActive = mutableStateOf(true),
+                                    positiveResource = R.string.contact,
+                                    negativeResource = R.string.cancel
+                                )
+                            )
                         } else {
                             uiState = uiState.copy(
                                 otpError = Pair(true, R.string.sign_up_otp_code_not_valid)
@@ -246,6 +268,7 @@ class SignUpOtpViewModel @Inject constructor(
         getPhaseAction()
         onExecuteTimer()
         onLoadingValueChange.invoke()
+        this.numberOfPinForwards = pinProcess?.numberOfPinForwards?.toInt() ?: 1
     }
 
     private fun onOtpValueChange(value: String) {
@@ -286,6 +309,7 @@ class SignUpOtpViewModel @Inject constructor(
         val otpResend: String? = "",
         val otpError: Pair<Boolean, Int> = Pair(false, R.string.sign_up_otp_code_not_valid),
         val openUserBlockedDialog: DialogParameters = DialogParameters(),
+        val subtitleResource: Int = R.string.empty,
 
         // Interactions
         val phaseCount: Int = PHASE_ONE,
@@ -297,7 +321,7 @@ class SignUpOtpViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is OnStart -> onStart(event.linkWhatsapp, event.userBlockedForMaxAttends)
+            is OnStart -> onStart(event.linkWhatsapp, event.userBlockedForMaxAttends, event.idBrand)
             is OnNextActionClick -> onNextActionClick(
                 event.pkUser,
                 event.idBrand,
@@ -334,7 +358,8 @@ class SignUpOtpViewModel @Inject constructor(
     sealed class UIEvent {
         data class OnStart(
             val linkWhatsapp: String,
-            val userBlockedForMaxAttends: String
+            val userBlockedForMaxAttends: String,
+            val idBrand: Int?
         ) : UIEvent()
 
         data class OnNextActionClick(

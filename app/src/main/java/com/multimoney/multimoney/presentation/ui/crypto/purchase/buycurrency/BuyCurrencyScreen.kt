@@ -45,6 +45,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.util.calculateAmountPlusFee
 import com.multimoney.multimoney.presentation.util.calculateConfirmationBaseAmount
 import com.multimoney.multimoney.presentation.util.calculateConfirmationQuoteAmount
+import com.multimoney.multimoney.presentation.util.calculateConfirmationQuoteAmountForVoucher
 import com.multimoney.multimoney.presentation.util.calculateConvertedCurrencyBalance
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
@@ -128,11 +129,11 @@ fun BuyCurrencyScreen(
                         currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price
                     ),
                     totalDebitedAmount = calculateAmountPlusFee(
-                        amount = calculateConfirmationQuoteAmount(
+                        amount = calculateConfirmationQuoteAmountForVoucher(
                             quoteAmount = viewModel.uiState.quoteAmount.value,
                             baseAmount = viewModel.uiState.baseAmount.value,
                             currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price
-                        ).drop(1),
+                        ),
                         fee = viewModel.uiState.pricesQuoteAndCommissions?.totalFee
                     ).toCurrencyFormat(),
                     exchangeRate = viewModel.uiState.exchangeRate.toCurrencyFormat(
@@ -148,6 +149,7 @@ fun BuyCurrencyScreen(
                     referenceNumber = viewModel.uiState.referenceNumber ?: ""
                 )
             )
+            viewModel.onUIEvent(BuyCurrencyScreenViewModel.UIEvent.OnRegisterAdjustPurchase)
             sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNextStep)
         }
         PurchaseStatus.FAILED -> {

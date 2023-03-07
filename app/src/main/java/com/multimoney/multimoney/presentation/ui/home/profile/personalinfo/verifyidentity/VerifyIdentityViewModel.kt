@@ -87,7 +87,7 @@ class VerifyIdentityViewModel @Inject constructor(
             else -> if (uiState.questionOneValue) SEND_EMAIL_METHOD else SEND_PHONE_METHOD
         }
         val newValue = when (uiState.changingField) {
-            FieldToChange.PHONE.value -> uiState.newPhoneNumber
+            FieldToChange.PHONE.value -> uiState.phoneCode.plus(uiState.newPhoneNumber)
             else -> uiState.newEmail
         }
         navigateTo("${Screen.ProfileValidateOTPScreen.baseRoute}/${uiState.idClient}/${uiState.changingField}/${newValue}/${sendMethod}/${uiState.identification}/${uiState.firstName}/${uiState.email}/${uiState.phoneNumber}/${uiState.pkUser}/${uiState.idBrand}/${uiState.userName}/${uiState.newPhoneNumberCode}")

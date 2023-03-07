@@ -81,7 +81,7 @@ fun DisbursementAmountScreen(
         }
     }
 
-    if (viewModel.uiState.isLoading && viewModel.uiState.isContinue.not()) {
+    if (viewModel.uiState.isSkeletonLoading) {
         DisbursementAmountScreenSkeleton()
     } else {
         Column(

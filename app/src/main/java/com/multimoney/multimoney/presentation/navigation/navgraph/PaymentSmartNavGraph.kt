@@ -21,6 +21,7 @@ import com.multimoney.multimoney.presentation.navigation.navtype.payment.SinpeAc
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SinpeAccountNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAccountIDListNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAccountIDNavType
+import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAccountScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountsScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsScreen
@@ -156,6 +157,9 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
             )
         ) {
             SmartPaymentAccountsScreen(
+                isRestart = navController.currentBackStackEntry?.savedStateHandle?.get(
+                    PREVIOUS_IS_RESTART
+                ) ?: true,
                 onNavigate = {
                     navController.navigate(it.route)
                 },
@@ -222,6 +226,35 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
                         HOME_STATE,
                         it.homeState
                     )
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
+        }
+        composable(
+            route = Screen.AddIbanAccountScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_CLIENT) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_LOAN_CLIENT) {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            AddIbanAccountScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,

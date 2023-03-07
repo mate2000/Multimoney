@@ -11,9 +11,11 @@ import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.COMING_FROM_CRYPTO
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
@@ -21,8 +23,8 @@ import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfidoscenarios.onfidoapproved.ApprovedByOnfidoViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class ApprovedByOnfidoViewModel @Inject constructor(
@@ -45,12 +47,14 @@ class ApprovedByOnfidoViewModel @Inject constructor(
     var identification: String = ""
     var email: String = ""
     var idBrand: Int = 0
+    var comingFromCrypto: Boolean = false
 
     init {
         pkUser = savedStateHandle[PK_USER] ?: ""
         email = savedStateHandle[EMAIL] ?: ""
         identification = savedStateHandle[IDENTIFICATION] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
+        comingFromCrypto = savedStateHandle[COMING_FROM_CRYPTO] ?: false
     }
 
     private fun onNavigateToHome() =
@@ -59,8 +63,10 @@ class ApprovedByOnfidoViewModel @Inject constructor(
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is OnNavigateToHome -> onNavigateToHome()
-            is UIEvent.OnMakeFirstSavingTransfer -> onMakeFirstSavingTransfer()
+            is UIEvent.OnFirsButtonClick -> onFirsButtonClick()
+            is UIEvent.OnSecondButtonClick -> onSecondButtonClick()
             is UIEvent.OnCallQueryGetUserStatusInfo -> onCallQueryGetUserInfo()
+            is UIEvent.OnSetUpDialogData -> onSetUpDialog()
         }
     }
 
@@ -116,6 +122,7 @@ class ApprovedByOnfidoViewModel @Inject constructor(
             cardStatus = cardStatus
         ).collectLatest { result ->
             result.onSuccess { balance ->
+                uiState = uiState.copy(isLoading = false)
                 balance?.let {
                     balance.balanceAccountSmart?.firstOrNull()?.let { account ->
                         userSmartAccount = account.accountNumber.orEmpty()
@@ -141,7 +148,27 @@ class ApprovedByOnfidoViewModel @Inject constructor(
         )
     }
 
-    private fun onMakeFirstSavingTransfer() {
+    private fun onFirsButtonClick() {
+        if (comingFromCrypto) {
+            navigateToHomeCrypto()
+        } else {
+            navigateToFirstSavingTransfer()
+        }
+    }
+
+    private fun onSecondButtonClick() {
+        if (comingFromCrypto) {
+            navigateToFirstSavingTransfer()
+        } else {
+            onNavigateToHome()
+        }
+    }
+
+    private fun navigateToHomeCrypto() {
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.EXPANDED)
+    }
+
+    private fun navigateToFirstSavingTransfer() {
         if (idBrand == Brand.CostaRica.id) {
             navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/$email/$idBrand/$identification/${Screen.SmartPaymentOptionsScreenCR.baseRoute}/$idClient/$idLoanClient")
         } else {
@@ -149,15 +176,30 @@ class ApprovedByOnfidoViewModel @Inject constructor(
         }
     }
 
+    private fun onSetUpDialog() {
+        uiState = uiState.copy(
+            alertTitleResource = if (comingFromCrypto) R.string.crypto_finish_smart_alert_title else R.string.approved_by_onfido_title,
+            alertButtonTextResource = if (comingFromCrypto) R.string.crypto_finish_smart_alert_btn_discover_crypto else R.string.approved_by_onfido_buttton_text,
+            alertMessageResource = if (comingFromCrypto) R.string.crypto_finish_smart_alert_description else R.string.empty,
+            alertSecondButtonTextResource = if (comingFromCrypto) R.string.crypto_finish_smart_alert_btn_saving_smart else R.string.finalize
+        )
+    }
+
     data class UIState(
         // Fields
         var isLoading: Boolean = false,
-        val openDialog: DialogParameters = DialogParameters()
+        val openDialog: DialogParameters = DialogParameters(),
+        val alertTitleResource: Int = R.string.approved_by_onfido_title,
+        val alertMessageResource: Int = R.string.empty,
+        val alertButtonTextResource: Int = R.string.approved_by_onfido_buttton_text,
+        val alertSecondButtonTextResource: Int = R.string.finalize,
     )
 
     sealed class UIEvent {
         object OnNavigateToHome : UIEvent()
-        object OnMakeFirstSavingTransfer : UIEvent()
+        object OnFirsButtonClick : UIEvent()
+        object OnSecondButtonClick : UIEvent()
         object OnCallQueryGetUserStatusInfo : UIEvent()
+        object OnSetUpDialogData: UIEvent()
     }
 }

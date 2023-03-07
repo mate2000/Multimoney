@@ -10,6 +10,7 @@ import com.multimoney.multimoney.presentation.navigation.HOME_STATE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.SMART_ROUTE
+import com.multimoney.multimoney.presentation.navigation.SYS_ID_ACCOUNT_REQUEST
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.SmartMovementsScreen
 import com.multimoney.multimoney.presentation.ui.smart.SmartScreen
@@ -31,7 +32,9 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
         composable(
             Screen.SmartScreen.route,
             arguments = listOf(
-                navArgument(ID_GLOBAL_REQUEST) { type = NavType.LongType }
+                navArgument(ID_GLOBAL_REQUEST) { type = NavType.LongType },
+                navArgument(COMING_FROM_CRYPTO) { type = NavType.BoolType },
+                navArgument(ID_USER_REQUEST) { type = NavType.LongType }
             )
         ) {
             SmartScreen(
@@ -60,8 +63,9 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(PK_USER) { type = NavType.LongType },
-                navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType },
-                navArgument(SIGN_DOCUMENT_GLOBAL_ID) { type = NavType.LongType }
+                navArgument(SYS_ID_ACCOUNT_REQUEST) { type = NavType.LongType },
+                navArgument(SIGN_DOCUMENT_GLOBAL_ID) { type = NavType.LongType },
+                navArgument(COMING_FROM_CRYPTO) { type = NavType.BoolType }
             )
         ) {
             SmartOnfidoScreen(
@@ -105,12 +109,13 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
         composable(
             route = Screen.SmartSignScreen.route,
             arguments = listOf(
-                navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType },
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(ID_USER_REQUEST) { type = NavType.LongType },
                 navArgument(PK_USER) { type = NavType.LongType },
                 navArgument(IS_SMART_EVICERTIA) { type = NavType.BoolType },
-                navArgument(SIGN_DOCUMENT_GLOBAL_ID) { type = NavType.LongType }
+                navArgument(SIGN_DOCUMENT_GLOBAL_ID) { type = NavType.LongType },
+                navArgument(COMING_FROM_CRYPTO) { type = NavType.BoolType },
+                navArgument(SHOULD_GET_EVICERTIA_LINK) { type = NavType.BoolType }
             )
         ) {
             SmartSignScreen(
@@ -136,7 +141,8 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(PK_USER) { type = NavType.LongType },
-                navArgument(ID_USER_REQUEST) { type = NavType.LongType }
+                navArgument(ID_USER_REQUEST) { type = NavType.LongType },
+                navArgument(COMING_FROM_CRYPTO) { type = NavType.BoolType }
             )
         ) {
             OnfidoAndEvicertiaErrorsScreen(
@@ -160,7 +166,8 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
         composable(
             route = Screen.ApprovedByOnfidoScreen.route,
             arguments = listOf(
-                navArgument(ID_BRAND) { type = NavType.IntType }
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(COMING_FROM_CRYPTO) { type = NavType.BoolType }
             )
         ) {
             ApprovedByOnfidoScreen(

@@ -129,6 +129,7 @@ const val USER_DATA = "user_data"
 const val PROFILE_CARD_LIST_ORIGIN = "profile_card_list_origin"
 const val CROSSELING = "crosseling"
 const val OTP_METHOD = "otp_method"
+const val SYS_ID_ACCOUNT_REQUEST = "sys_id_request"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -146,9 +147,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     // LoginNavGraph Screens
     object SplashScreen : Screen("splash_screen")
     object OnBoardingScreen : Screen("onboarding_screen")
-    object SignInScreen : Screen("sign_in_screen?$FORCE_CHANGE_DEVICE={$FORCE_CHANGE_DEVICE}", "sign_in_screen")
+    object SignInScreen :
+        Screen("sign_in_screen?$FORCE_CHANGE_DEVICE={$FORCE_CHANGE_DEVICE}", "sign_in_screen")
 
-    object SignUpScreen : Screen("sign_up_screen/{$SIGN_UP_STEP}?$ID_BRAND={$ID_BRAND}", "sign_up_screen")
+    object SignUpScreen :
+        Screen("sign_up_screen/{$SIGN_UP_STEP}?$ID_BRAND={$ID_BRAND}", "sign_up_screen")
+
     object RequestForgotPassword : Screen(
         "request_forgot_password_screen?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}",
         "request_forgot_password_screen"
@@ -314,17 +318,17 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SignDocumentProcessScreen : Screen(
-        "sign_document_process_screen?$SIGN_DOCUMENT_STEP_ARG={$SIGN_DOCUMENT_STEP_ARG}?$SIGN_DOCUMENT_ID_PRINT={$SIGN_DOCUMENT_ID_PRINT}?$ID_BRAND={$ID_BRAND}?$PK_USER={$PK_USER}?$IDENTIFICATION={$IDENTIFICATION}?$EMAIL={$EMAIL}?$ID_USER_REQUEST={$ID_USER_REQUEST}?$FIRST_NAME={$FIRST_NAME}?$LAST_NAME={$LAST_NAME}?$CROSSELING={$CROSSELING}?$SHOULD_GET_EVICERTIA_LINK={$SHOULD_GET_EVICERTIA_LINK}",
+        "sign_document_process_screen?$SIGN_DOCUMENT_STEP_ARG={$SIGN_DOCUMENT_STEP_ARG}?$SIGN_DOCUMENT_ID_PRINT={$SIGN_DOCUMENT_ID_PRINT}?$ID_BRAND={$ID_BRAND}?$PK_USER={$PK_USER}?$IDENTIFICATION={$IDENTIFICATION}?$EMAIL={$EMAIL}?$ID_USER_REQUEST={$ID_USER_REQUEST}?$FIRST_NAME={$FIRST_NAME}?$LAST_NAME={$LAST_NAME}?$CROSSELING={$CROSSELING}?$SHOULD_GET_EVICERTIA_LINK={$SHOULD_GET_EVICERTIA_LINK}?$EVICERTIA_STATUS={$EVICERTIA_STATUS}",
         "sign_document_process_screen"
     )
 
     object SmartSignScreen : Screen(
-        "smart_sign_document_process_screen/{$SIGN_DOCUMENT_STEP_ARG}/{$SIGN_DOCUMENT_URL}/{$SIGN_DOCUMENT_ID_PRINT}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$IS_SMART_EVICERTIA}/{$SIGN_DOCUMENT_GLOBAL_ID}/{$USER}",
+        "smart_sign_document_process_screen/{$SIGN_DOCUMENT_STEP_ARG}/{$SIGN_DOCUMENT_URL}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$IS_SMART_EVICERTIA}/{$SIGN_DOCUMENT_GLOBAL_ID}/{$USER}/{$COMING_FROM_CRYPTO}/{$SHOULD_GET_EVICERTIA_LINK}",
         "smart_sign_document_process_screen"
     )
 
     object SmartOnfidoAndEvicertiaErrorsScreen : Screen(
-        "smart_onfido_and_evicertia_errors_screen/{$ONFIDO_AND_EVICERTIA_ERROR}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}",
+        "smart_onfido_and_evicertia_errors_screen/{$ONFIDO_AND_EVICERTIA_ERROR}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$COMING_FROM_CRYPTO}",
         "smart_onfido_and_evicertia_errors_screen"
     )
 
@@ -338,12 +342,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object ApprovedByOnfidoScreen : Screen(
-        "approved_by_onfido_screen/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_BRAND}",
+        "approved_by_onfido_screen/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_BRAND}/{$COMING_FROM_CRYPTO}",
         "approved_by_onfido_screen"
     )
 
     object OnfidoAndEvicertiaErrorsScreen : Screen(
-        "onfido_and_evicertia_errors_screen/{$ONFIDO_AND_EVICERTIA_ERROR}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}",
+        "onfido_and_evicertia_errors_screen/{$ONFIDO_AND_EVICERTIA_ERROR}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$EVICERTIA_STATUS}",
         "onfido_and_evicertia_errors_screen"
     )
 
@@ -467,12 +471,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // Smart
     object SmartScreen : Screen(
-        "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$FIRST_NAME}/{$LAST_NAME}/{$COMING_FROM_CRYPTO}/{$ID_GLOBAL_REQUEST}",
+        "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$FIRST_NAME}/{$LAST_NAME}/{$COMING_FROM_CRYPTO}/{$ID_GLOBAL_REQUEST}/{$ID_USER_REQUEST}",
         "smart_screen"
     )
 
     object SmartOnfidoScreen : Screen(
-        "smart_onfido_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$FIRST_NAME}/{$LAST_NAME}/{$SIGN_DOCUMENT_ID_PRINT}/{$SIGN_DOCUMENT_GLOBAL_ID}/{$SIGN_DOCUMENT_URL}",
+        "smart_onfido_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$FIRST_NAME}/{$LAST_NAME}/{$SYS_ID_ACCOUNT_REQUEST}/{$SIGN_DOCUMENT_GLOBAL_ID}/{$SIGN_DOCUMENT_URL}/{$COMING_FROM_CRYPTO}",
         "smart_onfido_screen"
     )
 
@@ -587,10 +591,10 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
      * @param ORIGIN_ACCOUNT: Origin smart account
      * @param DESTINY_ACCOUNT: Destiny contact phone account
      * @param TRANSFER_TYPE: Int id indicating transfer type (SmartToContact)
-     * @param ID_BRAND: Int of brand id
+     * @param PREVIOUS_SCREEN: String Screen Base Route from where it's navigating
      */
     object MyContactsTransferAmountScreen : Screen(
-        "my_contacts_amount_screen/{$ORIGIN_ACCOUNT}/{$DESTINY_ACCOUNT}/{$TRANSFER_TYPE}/{$ID_BRAND}/{$PREVIOUS_SCREEN}",
+        "my_contacts_amount_screen/{$ORIGIN_ACCOUNT}/{$DESTINY_ACCOUNT}/{$TRANSFER_TYPE}/{$PREVIOUS_SCREEN}",
         "my_contacts_amount_screen"
     )
 
@@ -625,13 +629,20 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "smart_ach_account_list"
     )
 
-    object SmartTransferFavoriteAccountScreen : Screen(
-        "transfer_favorite_account_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$SMART_ACCOUNT}",
-        "transfer_favorite_account_screen"
+    object SmartTransferFavoriteAccountSVScreen : Screen(
+        "smart_transfer_favorite_account_sv_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$SMART_ACCOUNT}",
+        "smart_transfer_favorite_account_sv_screen"
+    )
+
+    object SmartTransferFavoriteAccountCRScreen : Screen(
+        "transfer_favorite_account_screen_cr/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$SMART_ACCOUNT}",
+        "transfer_favorite_account_screen_cr"
     )
 
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")
+
+    object ListenerScreen : Screen("listener_screen")
     object ChartScreen : Screen("chart_screen/{$}")
 
     // Crypto

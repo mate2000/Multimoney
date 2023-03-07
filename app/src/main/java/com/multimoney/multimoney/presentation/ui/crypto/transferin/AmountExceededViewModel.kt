@@ -90,7 +90,7 @@ class AmountExceededViewModel @Inject constructor(
                 if (it.withHeld) {
                     uiState = uiState.copy(isAmountExceeded = true)
                 } else {
-                    navigateToHome()
+                    navigateToHome(true)
                 }
             }
             result.onFailure {
@@ -99,11 +99,11 @@ class AmountExceededViewModel @Inject constructor(
         }
     }
 
-    private fun navigateToHome() {
+    private fun navigateToHome(showToast: Boolean = false) {
         popAndNavigateTo(
             Screen.HomeScreen.route,
             Screen.ReleaseTransactionScreen.route,
-            true
+            showToast
         )
     }
 
@@ -158,7 +158,7 @@ class AmountExceededViewModel @Inject constructor(
         data class OnPlatformNameChange(val platformName: String) : UIEvent
         data class OnReasonChange(val reason: String) : UIEvent
         object OnReleaseDeposit : UIEvent
-        object OnNavigateToHome : UIEvent
+        data class OnNavigateToHome(val showToast: Boolean) : UIEvent
         object OnCloseAlert : UIEvent
         object OnSetUserData : UIEvent
         object OnNavigateBack : UIEvent

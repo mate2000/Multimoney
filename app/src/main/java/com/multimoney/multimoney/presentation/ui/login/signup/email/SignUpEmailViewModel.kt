@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.fragment.app.FragmentActivity
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.data.util.catalog.UserStatus
@@ -16,25 +17,20 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.BaseEvent.OnFormValidateCompleted
-import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnHandleUserStatus
-import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnNextActionClick
-import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnShowAnotherDeviceAlreadyRegisteredDialog
-import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnStart
-import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnUserEmailValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnValidateForm
-import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnValidateUserEmail
+import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.*
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.getDeviceId
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 @HiltViewModel
 class SignUpEmailViewModel @Inject constructor(
-    private val queryValidateUserExistsUseCase: QueryValidateUserExistsUseCase
+    private val queryValidateUserExistsUseCase: QueryValidateUserExistsUseCase,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(false) {
 
     // UIState
@@ -83,7 +79,7 @@ class SignUpEmailViewModel @Inject constructor(
         executeUseCase {
             queryValidateUserExistsUseCase(
                 email = email,
-                getDeviceId(activity)
+                dataStorePreferences.getDeviceId().first()
             ).collectLatest { result ->
                 onValidateUserExistsEvent.emit(result)
             }
@@ -169,11 +165,10 @@ class SignUpEmailViewModel @Inject constructor(
             currentStep = sharedViewModel.uiState.currentStep,
             userData = userData,
             onUseDataValueChange = {
-                val idBrand = Brand.Search.getIdBrandByNationality(userData?.nationality)
                 sharedViewModel.onUIEvent(
                     SignUpViewModel.UIEvent.OnUseDataValueChange(
                         userData?.copy(email = uiState.userEmail),
-                        idBrand
+                        userData?.idBrand
                     )
                 )
             },

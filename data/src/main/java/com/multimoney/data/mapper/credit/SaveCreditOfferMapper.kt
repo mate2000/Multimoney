@@ -24,7 +24,8 @@ private fun SaveCreditOfferMutation.Product.mapToDomainModel() = Product(
     paymentDate = fECHA_PAGO ?: "",
     currencyName = nOMBRE_MONEDA ?: "",
     messageConditions = mensaje_Condiciones ?: "",
-    isFormalizationRequired = bIT_REQUIERE_FORMALIZACION ?: ""
+    isFormalizationRequired = bIT_REQUIERE_FORMALIZACION ?: "",
+    idPromotion = pK_PSE_CAT_PROMOCION_PLAZO
 )
 
 private fun SaveCreditOfferMutation.SaveCreditOffer.mapToDomainModel() = SaveCreditOffer(

@@ -132,7 +132,7 @@ fun AccountList(
                 title = account?.description ?: "",
                 subtitle = account?.destinationBankDescription ?: "",
                 subtitle2 = getMaskedAccount(
-                    prefix = Brand.ElSalvador.countryCode.uppercase(),
+                    prefix = "",
                     accountNumber = account?.accountNumber ?: ""
                 ),
                 modifier = Modifier

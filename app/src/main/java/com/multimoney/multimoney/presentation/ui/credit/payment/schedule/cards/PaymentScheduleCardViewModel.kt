@@ -207,6 +207,7 @@ class PaymentScheduleCardViewModel @Inject constructor(
     private fun onOpenDisclaimerDialog() {
         uiState = uiState.copy(
             openDialog = DialogParameters(
+                titleResource = R.string.empty,
                 descriptionResource = R.string.payment_schedule_card_info_dialog_description,
                 positiveResource = R.string.understood,
                 isActive = mutableStateOf(true)

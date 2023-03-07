@@ -4,17 +4,13 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import androidx.navigation.navArgument
 import com.multimoney.multimoney.presentation.navigation.HOME_ROUTE
 import com.multimoney.multimoney.presentation.navigation.HOME_STATE
-import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.RELEASE_TOAST
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAccountScreen
 import com.multimoney.multimoney.presentation.ui.home.HomeScreen
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
@@ -57,42 +53,6 @@ fun NavGraphBuilder.homeNavGraph(
                 shouldShowReleaseToast = navController.currentBackStackEntry?.savedStateHandle?.getLiveData<Boolean>(
                     RELEASE_TOAST
                 )?.observeAsState()?.value ?: false,
-            )
-        }
-
-        composable(
-            route = Screen.AddIbanAccountScreen.route,
-            arguments = listOf(
-                navArgument(ID_BRAND) {
-                    type = NavType.IntType
-                },
-                navArgument(ID_CLIENT) {
-                    type = NavType.IntType
-                },
-                navArgument(ID_LOAN_CLIENT) {
-                    type = NavType.IntType
-                }
-            )
-        ) {
-            AddIbanAccountScreen(
-                onNavigate = {
-                    navController.navigate(it.route)
-                },
-                onPopBackStack = {
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
-                        PREVIOUS_IS_RESTART,
-                        it.isRestart
-                    )
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
-                        HOME_STATE,
-                        it.homeState
-                    )
-                    navController.popBackStack(
-                        route = it.popTo,
-                        inclusive = false,
-                        saveState = false
-                    )
-                }
             )
         }
     }

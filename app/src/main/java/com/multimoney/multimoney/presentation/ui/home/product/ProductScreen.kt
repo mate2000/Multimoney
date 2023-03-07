@@ -103,6 +103,7 @@ import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.MotionLayoutMM
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
+import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalMaterialApi::class)
@@ -200,6 +201,13 @@ fun ProductScreen(
                 }
             }
         }
+    }
+
+    // execute adjust maintenance event if paxos is in maintenance
+    LaunchedEffect(sharedViewModel.uiState.balance?.balanceCryptoAccount?.outOfService ?: false) {
+        viewModel.onUIEvent(
+            ProductViewModel.UIEvent.OnRegisterAdjustPaxosInMaintenance
+        )
     }
 
     // Pager
@@ -481,6 +489,7 @@ fun ProductContent(
     viewModel: ProductViewModel,
     sharedViewModel: HomeViewModel
 ) {
+    val context = LocalContext.current
     val pagerCount = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES
     Column(modifier = modifier) {
         HorizontalPager(
@@ -505,7 +514,11 @@ fun ProductContent(
                     cryptoEmptyState = profileEnable,
                     clientBalanceHistory = sharedViewModel.uiState.cryptoHistoricalBalance,
                     openSmartCryptoAction = {
-                        viewModel.onUIEvent(OnNavigateToSmartOriginationFlow(comingFromCrypto = true))
+                        viewModel.onUIEvent(OnNavigateToSmartOriginationFlow(
+                            comingFromCrypto = true,
+                            smartStep = viewModel.uiState.smartContent.second,
+                            onIntent = { context.openWhatsAppDeepLink(viewModel.uiState.userStatus?.infoBankAccount?.wording?.link ?: "") }
+                        ))
                     }
                 )
             }
@@ -533,6 +546,7 @@ fun ProductContentExpanded(
     viewModel: ProductViewModel,
     sharedViewModel: HomeViewModel
 ) {
+    val context = LocalContext.current
     val pagerCount = viewModel.uiState.expandedProductPageList?.count() ?: DEFAULT_PRODUCT_PAGES
     Column(modifier = modifier) {
         HorizontalPager(
@@ -557,7 +571,13 @@ fun ProductContentExpanded(
                     cryptoEmptyState = profileEnable,
                     clientBalanceHistory = sharedViewModel.uiState.cryptoHistoricalBalance,
                     openSmartCryptoAction = {
-                        viewModel.onUIEvent(OnNavigateToSmartOriginationFlow(comingFromCrypto = true))
+                        viewModel.onUIEvent(
+                            OnNavigateToSmartOriginationFlow(
+                                comingFromCrypto = true,
+                                smartStep = viewModel.uiState.smartContent.second,
+                                onIntent = { context.openWhatsAppDeepLink(viewModel.uiState.userStatus?.infoBankAccount?.wording?.link ?: "") }
+                            )
+                        )
                     }
                 )
             }
@@ -660,6 +680,9 @@ fun ProductFooterExpanded(
                     viewModel.onUIEvent(
                         OnNavigateToReleaseTransaction(it)
                     )
+                },
+                registerAdjustEvent = {
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustCryptoHomeFistTime)
                 }
             )
         }
@@ -709,18 +732,23 @@ fun ProductCtaFooterExpanded(
                             )
                         }
                     }
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustPressPurchaseFirstTime)
                 },
                 hasBalanceAction = {
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToPurchaseCryptoFlow)
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustPressPurchaseFirstTime)
                 },
                 onSendActionClicked = {
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSendCryptoFlow)
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustPressSendFirstTime)
                 },
                 onSellActionClicked = {
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSellCryptoFlow)
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustPressSellFirstTime)
                 },
                 onGiveActionClicked = {
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToGiveCryptoFlow)
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustPressReceiveFirstTime)
                 },
                 isCryptoTransferEnabled = viewModel.uiState.isCryptoTransferEnabled,
             )

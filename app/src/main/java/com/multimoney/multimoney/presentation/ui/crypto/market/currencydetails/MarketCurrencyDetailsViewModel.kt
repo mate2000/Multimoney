@@ -34,6 +34,7 @@ import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
 import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
@@ -41,6 +42,7 @@ import com.multimoney.multimoney.presentation.util.getPreviousDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -194,6 +196,42 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
         navigateTo("${Screen.CryptoReceiveFlowScreen.baseRoute}/${uiState.user}/${uiState.idBrand}?$ITEM_CRYPTO_MARKET=${encodeData(uiState.selectedCryptoCoin)}")
     }
 
+    private fun registerAdjustFirstPressPurchaseEvent() = viewModelScope.launch {
+        if (dataStorePreferences.isAdjustCryptoPressPurchaseFirstTime().firstOrNull() == false) {
+            dataStorePreferences.setAdjustCryptoPressPurchaseFirstTime(true)
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.PURCHASE_CRYPTO_FIRST_TIME_PRESS_BUY_BUTTON
+            )
+        }
+    }
+
+    private fun registerAdjustFirstPressSellEvent() = viewModelScope.launch {
+        if (dataStorePreferences.isAdjustCryptoPressSellFirstTime().firstOrNull() == false) {
+            dataStorePreferences.setAdjustCryptoPressSellFirstTime(true)
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.SELL_CRYPTO_FIRST_TIME_PRESS_SELL_BUTTON
+            )
+        }
+    }
+
+    private fun registerAdjustFirstPressSendEvent() = viewModelScope.launch {
+        if (dataStorePreferences.isAdjustCryptoPressSendFirstTime().firstOrNull() == false) {
+            dataStorePreferences.setAdjustCryptoPressSendFirstTime(true)
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.SEND_CRYPTO_FIRST_TIME_PRESS_SEND_BUTTON
+            )
+        }
+    }
+
+    private fun registerAdjustFirstPressReceiveEvent() = viewModelScope.launch {
+        if (dataStorePreferences.isAdjustCryptoPressReceiveFirstTime().firstOrNull() == false) {
+            dataStorePreferences.setAdjustCryptoPressReceiveFirstTime(true)
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.RECEIVE_CRYPTO_FIRST_TIME_PRESS_RECEIVE_BUTTON
+            )
+        }
+    }
+
     data class UiState(
         val user: String? = null,
         val idBrand: Int? = null,
@@ -235,6 +273,10 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
             is UIEvent.OnShowDisclaimer -> uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded))
             is UIEvent.OnHideDisclaimer -> uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Hidden))
             is UIEvent.OnNavigateToCryptoSendFlow -> onNavigateToCryptoSendFlow()
+            UIEvent.OnRegisterAdjustPressPurchaseFirstTime -> registerAdjustFirstPressPurchaseEvent()
+            UIEvent.OnRegisterAdjustPressReceiveFirstTime -> registerAdjustFirstPressReceiveEvent()
+            UIEvent.OnRegisterAdjustPressSellFirstTime -> registerAdjustFirstPressSellEvent()
+            UIEvent.OnRegisterAdjustPressSendFirstTime -> registerAdjustFirstPressSendEvent()
         }
     }
 
@@ -264,6 +306,10 @@ class MarketCurrencyDetailsViewModel @Inject constructor(
         object OnNavigateToCryptoSendFlow : UIEvent()
         object OnNavigateToSellCrypto : UIEvent()
         object OnNavigateToReceiveCrypto : UIEvent()
+        object OnRegisterAdjustPressPurchaseFirstTime : UIEvent()
+        object OnRegisterAdjustPressSellFirstTime : UIEvent()
+        object OnRegisterAdjustPressSendFirstTime : UIEvent()
+        object OnRegisterAdjustPressReceiveFirstTime : UIEvent()
     }
 }
 

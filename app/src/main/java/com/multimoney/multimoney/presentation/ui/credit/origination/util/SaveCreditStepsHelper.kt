@@ -4,6 +4,7 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.credit.CreditCatalogOption
 import com.multimoney.domain.model.credit.CreditInfoQuestion
+import com.multimoney.domain.model.credit.RegularExpression
 import javax.inject.Inject
 
 class SaveCreditStepsHelper @Inject constructor() {
@@ -27,17 +28,37 @@ class SaveCreditStepsHelper @Inject constructor() {
         user: String?,
         bank: CreditCatalog?,
         bankAccountSelected: CreditCatalogOption?,
-        accountType: String,
+        accountType: RegularExpression?,
         accountNumber: String,
-        idIdentificatorCatalogue: String
     ) {
         val accountNumberQuestion = getScreenConfigQuestion(ACCOUNT_NUMBER, accountNumber)
-        val accountTypeQuestion = getScreenConfigQuestion(ACCOUNT_TYPE, accountType)
+        val accountTypeQuestion = getScreenConfigQuestion(ACCOUNT_TYPE, accountType?.key ?: "")
 
         saveScreenQuestionData(selectionQuestion(user, bank, bankAccountSelected))
 
         val creditInfoQuestionAccountType =
-            textByDropdownQuestion(user, accountType, accountTypeQuestion, idIdentificatorCatalogue)
+            textByDropdownQuestion(user, accountType, accountTypeQuestion)
+        saveScreenQuestionData(creditInfoQuestionAccountType)
+
+        val creditInfoQuestionAccountNumber = textQuestion(user, accountNumber, accountNumberQuestion)
+        saveScreenQuestionData(creditInfoQuestionAccountNumber)
+    }
+
+    fun saveStepOneCrossseling(
+        user: String,
+        bank: CreditCatalog?,
+        bankSelected: CreditCatalogOption?,
+        accountTypeValue: String,
+        accountNumber: String,
+        accountTypeKey: String?
+    ) {
+        val accountNumberQuestion = getScreenConfigQuestion(ACCOUNT_NUMBER, accountNumber)
+        val accountTypeQuestion = getScreenConfigQuestion(ACCOUNT_TYPE, accountTypeKey ?: "")
+
+        saveScreenQuestionData(selectionQuestion(user, bank, bankSelected))
+
+        val creditInfoQuestionAccountType =
+            textByDropdownQuestion(user, accountTypeValue, accountTypeQuestion, accountTypeKey)
         saveScreenQuestionData(creditInfoQuestionAccountType)
 
         val creditInfoQuestionAccountNumber = textQuestion(user, accountNumber, accountNumberQuestion)
@@ -312,25 +333,48 @@ class SaveCreditStepsHelper @Inject constructor() {
      */
     private fun textByDropdownQuestion(
         user: String?,
-        value: String,
-        textQuestionData: CreditCatalog?,
-        idIdentificatorCatalogue: String
+        expression: RegularExpression?,
+        textQuestionData: CreditCatalog?
     ): CreditInfoQuestion {
         return CreditInfoQuestion(
             idQuestionRequestCredit = textQuestionData?.fkQuestion,
             idOptionQuestionRequestCredit = textQuestionData?.pkQuestionOption,
             createUser = user,
             updateUser = user,
-            identificator = textQuestionData?.pkCatalog ?: "",
-            value = value,
+            identificator = textQuestionData?.pkQuestionOption?.toString().orEmpty(),
+            value = "",
             controlType = textQuestionData?.controlType,
-            isCoreCatalogue = textQuestionData?.isCoreCatalog,
+            isCoreCatalogue = true,
             isBranchOfficeCatalogue = textQuestionData?.isCatalogBrandOffice,
             useValue = textQuestionData?.useValue,
             maximumAmount = textQuestionData?.maximumAmount ?: "",
-            description = value,
+            description = expression?.key ?: "",
             valueCatalogue = "",
-            idIdentificatorCatalogue = idIdentificatorCatalogue
+            idIdentificatorCatalogue = expression?.pkRegularExpression?.toString()
+        )
+    }
+
+    private fun textByDropdownQuestion(
+        user: String?,
+        accountType: String?,
+        textQuestionData: CreditCatalog?,
+        idIdentificatorCatalogue: String?
+    ): CreditInfoQuestion {
+        return CreditInfoQuestion(
+            idQuestionRequestCredit = textQuestionData?.fkQuestion,
+            idOptionQuestionRequestCredit = textQuestionData?.pkQuestionOption,
+            createUser = user,
+            updateUser = user,
+            identificator = textQuestionData?.pkQuestionOption?.toString().orEmpty(),
+            value = "",
+            controlType = textQuestionData?.controlType,
+            isCoreCatalogue = true,
+            isBranchOfficeCatalogue = textQuestionData?.isCatalogBrandOffice,
+            useValue = textQuestionData?.useValue,
+            maximumAmount = textQuestionData?.maximumAmount ?: "",
+            description = accountType ?: "",
+            valueCatalogue = "",
+            idIdentificatorCatalogue = idIdentificatorCatalogue.toString()
         )
     }
 
@@ -365,7 +409,7 @@ class SaveCreditStepsHelper @Inject constructor() {
                 ""
             },
             idIdentificatorCatalogue = if (selectionQuestionData?.isCatalogBrandOffice?.not()
-                ?: false.or(
+                    ?: false.or(
                         selectionQuestionData?.useValue?.not() == true
                     )
             ) {

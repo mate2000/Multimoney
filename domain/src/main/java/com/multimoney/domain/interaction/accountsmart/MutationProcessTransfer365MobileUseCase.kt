@@ -15,6 +15,7 @@ interface MutationProcessTransfer365MobileUseCase {
         amount: Double,
         motive: String,
         user: String,
-        idBrand: Int
+        idBrand: Int,
+        destinationType: String
     ): Flow<MultimoneyResult<Transfer365Result?>>
 }

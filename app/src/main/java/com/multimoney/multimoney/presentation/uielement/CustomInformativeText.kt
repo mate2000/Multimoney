@@ -47,7 +47,10 @@ fun CustomInformativeText(
     alignmentVertical: Alignment.Vertical = CenterVertically,
     iconSize: Dp = 16.dp
 ) {
-    Row(modifier = modifier, horizontalArrangement = Arrangement.SpaceBetween) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
         leadingIcon?.let {
             Image(
                 modifier = Modifier
@@ -63,8 +66,8 @@ fun CustomInformativeText(
             text = text,
             style = textStyle,
             modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .padding(start = 9.dp)
+                .weight(1f, false)
+                .padding(start = 9.dp, end = 9.dp)
                 .align(alignmentVertical)
         )
         trailingIcon?.let {
@@ -87,7 +90,7 @@ fun CustomInformativeTextPreview() {
     CustomInformativeText(
         modifier = Modifier.padding(top = 24.dp, start = 7.dp, end = 16.dp).fillMaxWidth(),
         text = "This is a two line test text to see fitment",
-        trailingIcon = R.drawable.ic_information_chip,
+        leadingIcon = R.drawable.ic_information_chip,
         iconSize = 44.dp,
         textStyle = Typography.h6.copy(color = MultimoneyTheme.colors.text)
     )

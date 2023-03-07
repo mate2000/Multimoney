@@ -207,6 +207,10 @@ class ValidateOTPViewModel @Inject constructor(
             remainingTimeText = newRemainingTime.format()
         )
         updateMessageStatus()
+
+        if (uiState.phaseCount == PHASE_THREE) {
+            openMaxAttemptsReachedDialog()
+        }
     }
 
     private fun updateMessageStatus() {
@@ -286,9 +290,9 @@ class ValidateOTPViewModel @Inject constructor(
             }
     }
 
-    private fun onChangePhone(identification: String, phone: String, pkUser: String, idBrand: Int) =
+    private fun onChangePhone(identification: String, phone: String, pkUser: String, idBrand: Int,user: String) =
         executeUseCase {
-            mutationChangePhoneUseCase.invoke(identification, phone, pkUser, idBrand)
+            mutationChangePhoneUseCase.invoke(identification, phone, pkUser, idBrand,user)
                 .collectLatest {
                     processChangePhoneResult(it)
                 }
@@ -359,9 +363,10 @@ class ValidateOTPViewModel @Inject constructor(
                 FieldToChange.PHONE.value -> {
                     onChangePhone(
                         uiState.identification.toString(),
-                        uiState.newValue.toString(),
+                        uiState.newPhoneNumberCode.plus(uiState.newValue.toString()),
                         uiState.pkUser ?: "",
-                        uiState.idBrand ?: 0
+                        uiState.idBrand ?: 0,
+                        uiState.userName ?: ""
                     )
                 }
                 else -> {
@@ -378,15 +383,30 @@ class ValidateOTPViewModel @Inject constructor(
                 }
             }
         }.onMessage {
-            uiState = uiState.copy(
-                isLoading = false,
-                otpError = Pair(true, R.string.profile_error_phone_code_not_valid)
-            )
+            if (it?.messageError?.status == VALIDATE_OTP_FAILED_CODE) {
+                openMaxAttemptsReachedDialog()
+            } else {
+                uiState = uiState.copy(
+                    isLoading = false,
+                    otpError = Pair(true, R.string.profile_error_phone_code_not_valid)
+                )
+            }
         }
             .onFailure {
                 uiState = uiState.copy(isLoading = false, isAlertResultVisible = true)
             }
             .onLoading { uiState = uiState.copy(isLoading = true) }
+    }
+
+    private fun openMaxAttemptsReachedDialog() {
+        uiState = uiState.copy(openmaxAttemptsReachedDialog = DialogParameters(
+            titleResource = R.string.sign_up_email_blocked_dialog_title,
+            description = userBlockedForMaxAttend,
+            isActive = mutableStateOf(true),
+            positiveResource = R.string.contact,
+            negativeResource = R.string.cancel,
+            negativeAction = { onLogout() }
+        ))
     }
 
     data class UIState(
@@ -420,7 +440,8 @@ class ValidateOTPViewModel @Inject constructor(
         val alertTextResource: Int = R.string.empty,
         val enterTheCodeTextResource: Int = R.string.empty,
         val statusTextResource: Int = R.string.empty,
-        val destination: String? = null
+        val destination: String? = null,
+        val openmaxAttemptsReachedDialog: DialogParameters = DialogParameters(),
 
     )
 
@@ -459,6 +480,7 @@ class ValidateOTPViewModel @Inject constructor(
                         messageStatus = OTPMessageStatus.COULD_NOT_VERIFY_ID
                     )
             is UIEvent.OnContinueButtonClicked -> onValidateOTP(uiState.email, uiState.otp)
+            is UIEvent.OpenMaxAttemptsReachedDialog -> openMaxAttemptsReachedDialog()
         }
     }
 
@@ -494,6 +516,7 @@ class ValidateOTPViewModel @Inject constructor(
         object OnValidateForm : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnContinueButtonClicked : UIEvent()
+        object OpenMaxAttemptsReachedDialog: UIEvent()
     }
 
     companion object {
@@ -504,5 +527,7 @@ class ValidateOTPViewModel @Inject constructor(
         const val TIMER_DURATION = 0L
         const val TIMER_DELAY = 1L
         const val APP_SOURCE = 2
+
+        private const val VALIDATE_OTP_FAILED_CODE = 2104
     }
 }

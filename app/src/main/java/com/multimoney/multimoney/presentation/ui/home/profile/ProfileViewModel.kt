@@ -44,7 +44,6 @@ class ProfileViewModel @Inject constructor(
         uiState = uiState.copy(
             userName = savedStateHandle[USER_NAME],
             email = savedStateHandle[EMAIL],
-            phoneNumber = savedStateHandle[PHONE_NUMBER],
             identification = savedStateHandle[IDENTIFICATION],
             pkUser = savedStateHandle[PK_USER],
             idClient = savedStateHandle[ID_CLIENT],
@@ -53,13 +52,14 @@ class ProfileViewModel @Inject constructor(
         )
         viewModelScope.launch {
             uiState = uiState.copy(
-                phoneNumberWithCode = dataStorePreferences.getUserPhoneNumberWithCode().first()
+                phoneNumberWithCode = dataStorePreferences.getUserPhoneNumberWithCode().first(),
+                phoneNumber = dataStorePreferences.getUserPhoneNumber().first(),
             )
         }
     }
 
     private fun navigateToPersonalInfoScreen() {
-        navigateTo("${Screen.ProfilePersonalInfoScreen.baseRoute}/${uiState.idClient}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
+        navigateTo("${Screen.ProfilePersonalInfoScreen.baseRoute}/${uiState.idClient}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumberWithCode}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
     }
 
     private fun navigateToSettingsScreen() {

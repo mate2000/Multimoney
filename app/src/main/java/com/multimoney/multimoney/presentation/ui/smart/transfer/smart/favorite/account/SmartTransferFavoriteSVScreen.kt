@@ -36,11 +36,12 @@ import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.SEPARATOR
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 
 @Composable
-fun SmartTransferFavoriteScreen(
+fun SmartTransferFavoriteSVScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: SmartTransferFavoriteSVViewModel = hiltViewModel()
@@ -136,13 +137,20 @@ fun ACHFavoriteContentList(
                 onClick = {
                     achFavorite?.let { onACHFavoriteClick(it) }
                 },
-                    titleIcon = R.drawable.ic_star_filled
+                titleIcon = R.drawable.ic_star_filled
             )
         }
         items(localFavoriteList) { localFavorite ->
             CustomInfoButton(
                 title = localFavorite?.accountName.orEmpty(),
-                subtitle = localFavorite?.phoneNumber.orEmpty(),
+                subtitle = if (localFavorite?.phoneNumber.isNullOrEmpty().not()) {
+                    localFavorite?.phoneNumber.orEmpty()
+                } else { stringResource(string.sac_account) }.plus(SEPARATOR)
+                    .plus(localFavorite?.currencyAccount),
+                subtitle2 = getMaskedAccount(
+                    accountNumber = localFavorite?.accountNumber.orEmpty(),
+                    prefix = ""
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()

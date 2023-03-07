@@ -50,9 +50,9 @@ import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.PROC
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
+import javax.inject.Inject
 
 @HiltViewModel
 class SignDocumentProcessViewModel @Inject constructor(
@@ -99,6 +99,8 @@ class SignDocumentProcessViewModel @Inject constructor(
                 titleResource = if (idBrand == Brand.CostaRica.id) string.sign_credit_dialog_title_cr else string.sign_credit_dialog_title,
                 descriptionResource = if (idBrand == Brand.CostaRica.id) string.sign_credit_dialog_description_cr else string.sign_credit_dialog_description,
                 positiveResource = string.sign_credit_dialog_continue,
+                negativeResource = string.payment_points_dialog_negative_button,
+                negativeAction = { onUIEvent(OnNavigateToHome) },
                 isActive = mutableStateOf(true)
             )
         )
@@ -113,7 +115,9 @@ class SignDocumentProcessViewModel @Inject constructor(
         if (evisertiaStatus.lowercase() != CreditOnFidoOrFirmStatus.FIRMED.status.lowercase()
             && evisertiaStatus.lowercase() != CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase()
         ) {
-            if (shouldGetEvicertiaLink || (creditSubscriptionManager.hasEvisertiaLink().not() && isCrosseling.not())) {
+            if (shouldGetEvicertiaLink || (creditSubscriptionManager.hasEvisertiaLink()
+                    .not() && isCrosseling.not())
+            ) {
                 callQueryGetLinkCreditContractUseCase()
             }
         }
@@ -136,16 +140,17 @@ class SignDocumentProcessViewModel @Inject constructor(
         }
     }
 
-    private fun getCreditSubscriptionListener() = object : CreditSubscriptionManager.SubscriptionEventListener {
-        override fun onCapturedEvent(creditContractEvent: CreditContractEvent?) {
-            handleSubscriptionsSteps(creditContractEvent = creditContractEvent)
-            Timber.wtf("${LOG_SUBSCRIPTION_TAG}: ${creditContractEvent?.currentStep}")
-        }
+    private fun getCreditSubscriptionListener() =
+        object : CreditSubscriptionManager.SubscriptionEventListener {
+            override fun onCapturedEvent(creditContractEvent: CreditContractEvent?) {
+                handleSubscriptionsSteps(creditContractEvent = creditContractEvent)
+                Timber.wtf("${LOG_SUBSCRIPTION_TAG}: ${creditContractEvent?.currentStep}")
+            }
 
-        override fun onSubscriptionFailToConnect(httpError: HttpError) {
-            showSubscriptionError()
+            override fun onSubscriptionFailToConnect(httpError: HttpError) {
+                showSubscriptionError()
+            }
         }
-    }
 
     private fun callQueryGetLinkCreditContractUseCase(isSecondTime: Boolean = false) =
         executeUseCase {
@@ -299,7 +304,11 @@ class SignDocumentProcessViewModel @Inject constructor(
 
     private fun onNavigateToHome() {
         creditSubscriptionManager.destroySubscription()
-        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
+        navigateBack(
+            popTo = Screen.HomeScreen.route,
+            isRestart = true,
+            homeState = HomeState.COLLAPSED
+        )
     }
 
     data class UIState(
@@ -324,7 +333,8 @@ class SignDocumentProcessViewModel @Inject constructor(
             is OnCallGetLinkCreditContractEvent -> onEvaluateWitchRequestCall()
             is OnCallGetLinkCreditContractSecondTime -> callQueryGetLinkCreditContractUseCase(true)
             is OnStartListenerSubscriptionCreditContractEvent -> onListenCreditContractEventSubscription()
-            is OnChangeScreen -> uiState = uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
+            is OnChangeScreen -> uiState =
+                uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
             is OnShowDialogInformation -> createDialog()
             is OnNavigateToHome -> onNavigateToHome()
             is OnNavigateToContinueValidatingIdentity -> onNavigateToContinueValidatingIdentity()

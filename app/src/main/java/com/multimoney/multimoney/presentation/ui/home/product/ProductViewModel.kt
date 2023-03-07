@@ -916,10 +916,18 @@ class ProductViewModel @Inject constructor(
     private fun getSmartContent() {
         val workflow = uiState.userStatus?.infoBankAccount?.wording?.workflow
         uiState = uiState.copy(
-            smartContent = if (workflow == SmartWorkflow.SMART_INITIAL_CARD.workflow || workflow == SmartWorkflow.SMART_STEP_PENDING.workflow || workflow == SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS.workflow || workflow == SmartWorkflow.SMART_CONTRACT_PROCESS.workflow || workflow == SmartWorkflow.SMART_FIRMED_ONFIDO_PENDING.workflow || workflow == SmartWorkflow.SMART_FIRMED_ONFIDO_REJECTED.workflow || workflow == SmartWorkflow.SMART_APPROVED_BY_ONFIDO.workflow || workflow == SMART_ONFIDO_PROCESS.workflow) {
-                Pair(true, workflow)
-            } else {
-                Pair(false, "")
+            smartContent = when (workflow) {
+                SmartWorkflow.SMART_INITIAL_CARD.workflow, SmartWorkflow.SMART_STEP_PENDING.workflow, SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS.workflow,
+                SmartWorkflow.SMART_CONTRACT_PROCESS.workflow, SmartWorkflow.SMART_FIRMED_ONFIDO_PENDING.workflow, SmartWorkflow.SMART_FIRMED_ONFIDO_REJECTED.workflow,
+                SmartWorkflow.SMART_APPROVED_BY_ONFIDO.workflow, SMART_ONFIDO_PROCESS.workflow -> {
+                    Pair(true, workflow)
+                }
+                "" -> {
+                    Pair(true, SMART_CARD_NO_ACTION)
+                }
+                else -> {
+                    Pair(false, "")
+                }
             }
         )
     }
@@ -1269,5 +1277,6 @@ class ProductViewModel @Inject constructor(
         const val DEFAULT_NEW_STATE = "PG"
         const val DEFAULT_TYPE_STATE = "S"
         private const val CARD_INFORMATION_STATUS = 1
+        const val SMART_CARD_NO_ACTION = "smart_card_no_action"
     }
 }

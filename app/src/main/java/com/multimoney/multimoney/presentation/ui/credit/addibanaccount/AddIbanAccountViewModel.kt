@@ -27,6 +27,7 @@ import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAc
 import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAccountViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAccountViewModel.UIEvent.OnEditAccount
 import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAccountViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.capitalized
 import com.multimoney.multimoney.presentation.util.catalog.BankAccountType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -245,9 +246,10 @@ class AddIbanAccountViewModel @Inject constructor(
                 Screen.SmartPaymentAccountScreenCR.route,
                 true
             )
-            Screen.HomeBNScreen.baseRoute -> navigateBack(
-                Screen.SmartPaymentAccountScreenCR.route,
-                true
+            Screen.HomeScreen.route -> navigateBack(
+                Screen.HomeScreen.route,
+                true,
+                HomeState.COLLAPSED
             )
             Screen.SmartPaymentOptionsScreenCR.baseRoute -> navigateBack(
                 Screen.SmartPaymentOptionsScreenCR.route,

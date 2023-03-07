@@ -764,6 +764,7 @@
 
     <!-- Generate Document -->
     <string name="document_generation_title" translatable="false">Estamos creando tus documentos</string>
+    <string name="document_generation_subtitle_cr" translatable="false">Firmá el contrato y recibe tu crédito</string>
     <string name="document_generation_subtitle" translatable="false">Firma el contrato y recibe tu crédito</string>
     <string name="document_generation_info" translatable="false">Generando documentos…</string>
     <string name="document_generation_error_description" translatable="false">Contactanos para ayudarte a abrir tu cuenta</string>
@@ -804,6 +805,7 @@
     <!-- Origination Voucher -->
     <string name="origination_voucher_amount" translatable="false">Has recibido</string>
     <string name="origination_voucher_destiny_account" translatable="false">Cuenta de destino</string>
+    <string name="origination_voucher_to_account" translatable="false">Hacia</string>
     <string name="origination_voucher_reference" translatable="false">Nº de pagaré</string>
 
     <!-- Visa -->
@@ -966,6 +968,11 @@
     <string name="smart_card_monthly_profit" translatable="false">Ganancia mensual</string>
     <string name="smart_card_monthly_profit_label" translatable="false">%1$s %2$s ganancia %3$s</string>
 
+
+    <!-- Smart Evercita Escenario-->
+    <string name="smart_evercita_title" translatable="false">¡Estás a una firma de abrir tu cuenta!</string>
+    <string name="smart_evercita_subtitle" translatable="false">Este es el último paso para abrir tu cuenta.</string>
+
     <!-- Smart Account -->
     <string name="smart_account_document_title" translatable="false">Cuéntanos sobre ti</string>
     <string name="smart_account_date_placeholder" translatable="false">00 | 00 | 0000</string>
@@ -1025,7 +1032,8 @@
     <string name="smart_other_source_of_income_label" translatable="false">Especificá tu fuente de ingresos</string>
     <string name="smart_other_source_of_income_required" translatable="false">Fuente de ingresos requerido</string>
     <string name="smart_other_generating_document_title" translatable="false">Estamos generando tus documentos</string>
-    <string name="smart_other_generating_document_subtitle" translatable="false">Al firmar tu contrato podrás utilizar tu MultiMoney Smart</string>
+    <string name="smart_other_generating_document_subtitle" translatable="false">Después de firmar tu contrato podés empezar a utilizar tu cuenta.</string>
+    <string name="smart_loading_label" translatable="false">Generando documentos...</string>
     <string name="smart_other_income_cr_placeholder" translatable="false">₡000,000</string>
     <string name="smart_other_income_sv_placeholder" translatable="false">$000</string>
 
@@ -1484,6 +1492,7 @@
     <string name="smart_payment_sheet_equivalent" translatable="false">Equivalente a %1$s</string>
 
     <!-- Smart SAC Transfer -->
+    <string name="sac_account" translatable="false">"Cuenta SAC</string>
     <string name="smart_sac_transfer_contact_rationale_title" translatable="false">Lo sentimos</string>
     <string name="smart_sac_transfer_contact_rationale_message" translatable="false">Necesitamos acceso a tus contactos para que podás realizar envíos</string>
     <string name="smart_sac_transfer_contact_rationale_button" translatable="false">Permitir acceso a contactos</string>
@@ -1742,6 +1751,50 @@
     <string name="visa_verified_dialog_title" translatable="false">Cancelar proceso</string>
     <string name="visa_verified_dialog_description" translatable="false">¿Estás segur@ de cancelar el proceso de agregar una tarjeta?</string>
 
+    <!-- Add Visa Card Dialog -->
+    <string name="visa_add_card_dialog_title" translatable="false">Cancelar proceso</string>
+    <string name="visa_add_card_dialog_description" translatable="false">¿Estás segur@ de cancelar el proceso de agregar una tarjeta?</string>
+
+    <!-- Add Visa Card Errors   -->
+    <string name="visa_add_card_error_default_title" translatable="false">¡Oh no! Error de conexión</string>
+    <string name="visa_add_card_error_default_description" translatable="false">No pudimos agregar tu tarjeta. Intentalo de nuevo.</string>
+    <string name="visa_add_card_error_system_malfunction_title" translatable="false">¡Oh no! Error de conexión</string>
+    <string name="visa_add_card_error_system_malfunction_description" translatable="false">Hay un error de conexión con el sistema. Intentálo de nuevo más tarde.</string>
+    <string name="visa_add_card_error_unable_to_include_title" translatable="false">Oh no! Tarjeta inválida</string>
+    <string name="visa_add_card_error_unable_to_include_description" translatable="false">No hemos podido agregar tu tarjeta. Revisá la información agregada o intentá con otra.</string>
+    <string name="visa_add_card_error_invalid_card_account_validation_title" translatable="false">¡Oh no! Tarjeta inválida</string>
+    <string name="visa_add_card_error_invalid_card_account_validation_description" translatable="false">La tarjeta que ingresaste no se ha podido validar correctamente. Intentá con otra.</string>
+    <string name="visa_add_card_error_invalid_payment_account_validation_title" translatable="false">¡Oh no! Información incorrecta</string>
+    <string name="visa_add_card_error_invalid_payment_account_validation_description" translatable="false">La información que ingresaste no es la correcta. Intentalo de nuevo.</string>
+    <string name="visa_add_card_error_invalid_request_payment_account_validation_title" translatable="false">¡Ups! Información incorrecta</string>
+    <string name="visa_add_card_error_invalid_request_payment_account_validation_description" translatable="false">La información que ingresaste no es la correcta. Inténtalo de nuevo.</string>
+    <string name="visa_add_card_error_you_have_reached_the_maximum_title" translatable="false">¡Oh oh! No puedes agregar más tarjetas</string>
+    <string name="visa_add_card_error_you_have_reached_the_maximum_description" translatable="false">Llegaste al máximo de tarjetas VISA que podés agregar a MultiMoney</string>
+    <string name="visa_add_card_error_expired_card_title" translatable="false">¡Oh no! Tu tarjeta se encuentra vencida</string>
+    <string name="visa_add_card_error_expired_card_description" translatable="false">No podés ingresar una tarjeta que se encuentra vencida</string>
+    <string name="visa_add_card_error_too_many_cards_per_user_max_title" translatable="false">¡Oh oh! No podés agregar más tarjetas</string>
+    <string name="visa_add_card_error_too_many_cards_per_user_max_description" translatable="false">Llegaste al máximo de tarjetas VISA que podés agregar a MultiMoney</string>
+    <string name="visa_add_card_error_invalid_card_verification_title" translatable="false">¡Oh oh! No se pudo agregar tu tarjeta</string>
+    <string name="visa_add_card_error_invalid_card_verification_description" translatable="false">Revisá que la información de tu tarjeta sea correcta e intentá de nuevo</string>
+    <string name="visa_add_card_error_invalid_verification_value_title" translatable="false">¡Oh oh! No se pudo agregar tu tarjeta</string>
+    <string name="visa_add_card_error_invalid_verification_value_description" translatable="false">Revisá que la información de tu tarjeta sea correcta e intentá de nuevo</string>
+    <string name="visa_add_card_error_invalid_card_title" translatable="false">¡Oh oh! La tarjeta presenta un error</string>
+    <string name="visa_add_card_error_invalid_card_description" translatable="false">Esta tarjeta es inválida, intentalo de nuevo con otra</string>
+    <string name="visa_add_card_error_max_users_same_card_title" translatable="false">¡Ups! Esta tarjeta ya ha sido agregada</string>
+    <string name="visa_add_card_error_max_users_same_card_description" translatable="false">Si no fuiste vos quien ha agregado esta tarjeta, contactanos</string>
+    <string name="visa_add_card_error_already_exist_title" translatable="false">Ya tenés esta tarjeta agregada</string>
+    <string name="visa_add_card_error_already_exist_description" translatable="false">Puedes verla en tu perfil en "Tus tarjetas débito Visa"</string>
+    <string name="visa_add_card_error_user_blocked_title" translatable="false">¡Oh no! Algo salió mal con tu cuenta</string>
+    <string name="visa_add_card_error_user_blocked_description" translatable="false">Contactá nuestro servicio al cliente para desbloquearla.</string>
+    <string name="visa_add_card_error_invalid_username_or_password_title" translatable="false">¡Oh no! Información inválida</string>
+    <string name="visa_add_card_error_invalid_username_or_password_description" translatable="false">Tu usuario y contraseña no coinciden. Intentalo de nuevo.</string>
+    <string name="visa_add_card_error_invalid_application_title" translatable="false">¡Oh no! Error de conexión</string>
+    <string name="visa_add_card_error_invalid_application_description" translatable="false">Hay un error de conexión con el sistema. Intentalo de nuevo más tarde</string>
+    <string name="visa_add_card_error_null_title" translatable="false">¡Oh no!</string>
+    <string name="visa_add_card_error_null_description" translatable="false">No pudimos agregar tu tarjeta</string>
+    <string name="visa_add_card_error_edit_failed_title" translatable="false">¡Oh no!</string>
+    <string name="visa_add_card_error_edit_failed_description" translatable="false">No pudimos actualizar los datos de tu tarjeta. Contactanos para ayudarte</string>
+
     <!-- Transfer In Amount Exceeded Form -->
     <string name="amount_exceeded_title" translatable="false">Transferencia Cripto</string>
     <string name="amount_exceeded_message" translatable="false">Has recibido una transferencia mayor a $1,000 necesitamos verificar el depósito.</string>
@@ -1754,4 +1807,5 @@
     <string name="amount_exceeded_release_error_title" translatable="false">¡Oh no! Hubo un error al liberar el despósito</string>
     <string name="amount_exceeded_release_error_message" translatable="false">Lo sentimos, volvé a intentarlo más tarde</string>
     <string name="amount_exceeded_release_error_button" translatable="false">Ir al inicio</string>
+    <string name="amount_exceeded_transaction_released" translatable="false">Transacción liberada exitosamente</string>
 </resources>

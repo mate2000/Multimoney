@@ -97,6 +97,8 @@ class SmartSignViewModel @Inject constructor(
                 titleResource = string.sign_credit_dialog_title,
                 description = dialogDescription,
                 positiveResource = string.sign_credit_dialog_continue,
+                negativeResource = string.payment_points_dialog_negative_button,
+                negativeAction = { onUIEvent(OnNavigateToHome) },
                 isActive = mutableStateOf(true)
             )
         )

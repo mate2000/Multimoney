@@ -115,9 +115,7 @@ class SignDocumentProcessViewModel @Inject constructor(
         if (evisertiaStatus.lowercase() != CreditOnFidoOrFirmStatus.FIRMED.status.lowercase()
             && evisertiaStatus.lowercase() != CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase()
         ) {
-            if (shouldGetEvicertiaLink || (creditSubscriptionManager.hasEvisertiaLink()
-                    .not() && isCrosseling.not())
-            ) {
+            if (shouldGetEvicertiaLink || (creditSubscriptionManager.hasEvisertiaLink().not() && isCrosseling.not())) {
                 callQueryGetLinkCreditContractUseCase()
             }
         }
@@ -140,17 +138,16 @@ class SignDocumentProcessViewModel @Inject constructor(
         }
     }
 
-    private fun getCreditSubscriptionListener() =
-        object : CreditSubscriptionManager.SubscriptionEventListener {
-            override fun onCapturedEvent(creditContractEvent: CreditContractEvent?) {
-                handleSubscriptionsSteps(creditContractEvent = creditContractEvent)
-                Timber.wtf("${LOG_SUBSCRIPTION_TAG}: ${creditContractEvent?.currentStep}")
-            }
-
-            override fun onSubscriptionFailToConnect(httpError: HttpError) {
-                showSubscriptionError()
-            }
+    private fun getCreditSubscriptionListener() = object : CreditSubscriptionManager.SubscriptionEventListener {
+        override fun onCapturedEvent(creditContractEvent: CreditContractEvent?) {
+            handleSubscriptionsSteps(creditContractEvent = creditContractEvent)
+            Timber.wtf("${LOG_SUBSCRIPTION_TAG}: ${creditContractEvent?.currentStep}")
         }
+
+        override fun onSubscriptionFailToConnect(httpError: HttpError) {
+            showSubscriptionError()
+        }
+    }
 
     private fun callQueryGetLinkCreditContractUseCase(isSecondTime: Boolean = false) =
         executeUseCase {
@@ -304,11 +301,7 @@ class SignDocumentProcessViewModel @Inject constructor(
 
     private fun onNavigateToHome() {
         creditSubscriptionManager.destroySubscription()
-        navigateBack(
-            popTo = Screen.HomeScreen.route,
-            isRestart = true,
-            homeState = HomeState.COLLAPSED
-        )
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
     }
 
     data class UIState(
@@ -333,8 +326,7 @@ class SignDocumentProcessViewModel @Inject constructor(
             is OnCallGetLinkCreditContractEvent -> onEvaluateWitchRequestCall()
             is OnCallGetLinkCreditContractSecondTime -> callQueryGetLinkCreditContractUseCase(true)
             is OnStartListenerSubscriptionCreditContractEvent -> onListenCreditContractEventSubscription()
-            is OnChangeScreen -> uiState =
-                uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
+            is OnChangeScreen -> uiState = uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
             is OnShowDialogInformation -> createDialog()
             is OnNavigateToHome -> onNavigateToHome()
             is OnNavigateToContinueValidatingIdentity -> onNavigateToContinueValidatingIdentity()

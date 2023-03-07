@@ -1762,4 +1762,5 @@
     <string name="amount_exceeded_release_error_title" translatable="false">¡Oh no! Hubo un error al liberar el despósito</string>
     <string name="amount_exceeded_release_error_message" translatable="false">Lo sentimos, volvé a intentarlo más tarde</string>
     <string name="amount_exceeded_release_error_button" translatable="false">Ir al inicio</string>
+    <string name="amount_exceeded_transaction_released" translatable="false">Transacción liberada exitosamente</string>
 </resources>

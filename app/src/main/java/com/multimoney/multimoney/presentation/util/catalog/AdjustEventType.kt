@@ -86,6 +86,10 @@ enum class AdjustEventType(val stgToken: String, val prodToken: String, val even
     // HOME
     HOME_CTA_FIRST_ACTIVATE_MM_VISA_5036("", "", "cre_cta_primer_act_mmvisa"),
 
+    HOME_CTA_FIRST_SAVING_6016("i3og6f","dv6nx6","sm_cta_primer_ahorro"),
+    HOME_CTA_FIRST_SENDING_6017("yrq3i2","kylyjw","sm_cta_primer_envío"),
+    SMART_CTA_FIRST_SAVING_SUCCESSFULLY_6018("6mzjg9","wvkwcr","sm_primer_ahorro_exitoso"),
+
     // MM VISA
     MM_VISA_CTA_FIRST_LINK_MM_VISA_5038("", "", "cre_cta_primer_vinc_mmvisa"),
     MM_VISA_CTA_FIRST_MM_VISA_ACTIVATED_5040("f5mpk6", "4hw55d", "cre_primer_mmvisa_activa"),

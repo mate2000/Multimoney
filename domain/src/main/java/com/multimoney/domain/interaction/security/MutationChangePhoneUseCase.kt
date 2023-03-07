@@ -10,7 +10,7 @@ interface MutationChangePhoneUseCase {
         identification: String,
         phone : String,
         pkUser : String,
-        idBrand : Int
-
+        idBrand : Int,
+        user: String
     ): Flow<MultimoneyResult<ChangePhone>>
 }

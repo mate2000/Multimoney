@@ -75,7 +75,7 @@ fun ProfileContent(viewModel: ProfileViewModel = hiltViewModel()) {
                 ProfileHeader(
                     userName = uiState.userName.orEmpty().capitalizedAllWords(),
                     email = uiState.email.orEmpty(),
-                    phoneNumber = formatPhoneNumber(uiState.phoneNumberWithCode, uiState.phoneNumber),
+                    phoneNumber = formatPhoneNumber(uiState.phoneNumberWithCode,uiState.phoneNumber),
                     onUpdateClick = { onUIEvent(OnUpdateProfileClick) }
                 )
                 ProfileOptions(

@@ -433,6 +433,21 @@ class DataStorePreferences @Inject constructor(
 
     fun isAdjustCryptoPressReceiveFirstTime(): Flow<Boolean> = getData(ADJUST_CRYPTO_RECEIVE_FIRST_TIME, false)
 
+    suspend fun isAdjustSmartSavingBtnEventRegistered(isFirstSaving: Boolean) =
+        setData(SMART_FIRST_SAVING_BTN_KEY, isFirstSaving)
+
+    fun isAdjustSmartSavingBtnEventRegistered(): Flow<Boolean> = getData(SMART_FIRST_SAVING_BTN_KEY, true)
+
+    suspend fun isAdjustSmartSendingBtnEventRegistered(isFirstSent: Boolean) =
+        setData(SMART_FIRST_SENDING_KEY, isFirstSent)
+
+    fun isAdjustSmartSendingBtnEventRegistered(): Flow<Boolean> = getData(SMART_FIRST_SENDING_KEY, true)
+
+    suspend fun isAdjustFirstSavingEventRegistered(isFirstSaving: Boolean) =
+        setData(SMART_FIRST_SAVING_KEY, isFirstSaving)
+
+    fun isAdjustFirstSavingEventRegistered(): Flow<Boolean> = getData(SMART_FIRST_SAVING_KEY, true)
+
     companion object {
         private val UNIQUE_ID = stringPreferencesKey("unique_id")
         private val DEVICE_ID = stringPreferencesKey("device_id")
@@ -511,5 +526,8 @@ class DataStorePreferences @Inject constructor(
         private val ADJUST_CRYPTO_SEND_FIRST_TIME = booleanPreferencesKey("adjust_crypto_send_first_time")
         private val ADJUST_CRYPTO_SUCCESS_SEND_FIRST_TIME = booleanPreferencesKey("adjust_crypto_success_send_first_time")
         private val ADJUST_CRYPTO_RECEIVE_FIRST_TIME = booleanPreferencesKey("adjust_crypto_receive_first_time")
+        private val SMART_FIRST_SAVING_BTN_KEY = booleanPreferencesKey("smart_first_saving_btn_key")
+        private val SMART_FIRST_SENDING_KEY = booleanPreferencesKey("smart_first_sending_key")
+        private val SMART_FIRST_SAVING_KEY = booleanPreferencesKey("smart_first_saving_key")
     }
 }

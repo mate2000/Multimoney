@@ -77,7 +77,7 @@ class AmountExceededViewModel @Inject constructor(
     }
 
     private fun onReleaseDeposit() {
-        /*executeUseCase {
+        executeUseCase {
             uiState = uiState.copy(isLoading = true)
             releaseTransferUseCase(
                 identification,
@@ -103,16 +103,13 @@ class AmountExceededViewModel @Inject constructor(
                     uiState = uiState.copy(isAlertResultVisible = true)
                 }
             }
-        }*/
+        }
         navigateToHome()
     }
 
     private fun navigateToHome() {
         navigateBack(Screen.HomeScreen.route, false)
-        /*viewModelScope.launch {
-        delay(3000)
         emitBaseEvent(Any())
-        }*/
     }
 
     private fun onReasonChanged(reason: String) {

@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.crypto.transferin
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,9 +29,11 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.SellCryptoStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.crypto.sell.SellCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
@@ -51,6 +54,7 @@ fun AmountExceededFormScreen(
     viewModel: AmountExceededViewModel = hiltViewModel(),
     sharedViewModel: HomeViewModel
 ) {
+    val focusManager = LocalFocusManager.current
 
     LaunchedEffect(true){
         viewModel.onUIEvent(OnSetUserData)
@@ -64,7 +68,11 @@ fun AmountExceededFormScreen(
         }
     }
 
-    val focusManager = LocalFocusManager.current
+    BackHandler {
+        focusManager.clearFocus()
+        viewModel.onUIEvent(OnNavigateBack)
+    }
+
 
     Scaffold(
         backgroundColor = MultimoneyTheme.colors.background,
@@ -73,6 +81,7 @@ fun AmountExceededFormScreen(
                 isLeftButtonVisible = true,
                 isRightButtonVisible = false,
                 onLeftButtonClick = {
+                    focusManager.clearFocus()
                     viewModel.onUIEvent(OnNavigateBack)
                 },
             )
@@ -172,6 +181,7 @@ fun AmountExceededFormScreen(
                     .fillMaxWidth()
                     .height(48.dp),
                 onClick = {
+                    focusManager.clearFocus()
                     viewModel.onUIEvent(AmountExceededViewModel.UIEvent.OnReleaseDeposit)
                 },
                 buttonType = CustomButtonType.PrimaryPrimary,
@@ -190,13 +200,13 @@ fun AmountExceededFormScreen(
                 viewModel.onUIEvent(AmountExceededViewModel.UIEvent.OnCloseAlert)
             },
             onButtonClick = {
-                viewModel.onUIEvent(AmountExceededViewModel.UIEvent.OnNavigateToHome(false))
+                viewModel.onUIEvent(AmountExceededViewModel.UIEvent.OnNavigateToHome)
             }
         )
     }
     if (viewModel.uiState.isAmountExceeded) {
         LimitExceededDialog {
-            viewModel.onUIEvent(AmountExceededViewModel.UIEvent.OnNavigateToHome(false))
+            viewModel.onUIEvent(AmountExceededViewModel.UIEvent.OnNavigateToHome)
         }
     }
 }

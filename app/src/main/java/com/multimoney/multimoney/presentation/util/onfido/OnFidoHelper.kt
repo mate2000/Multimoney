@@ -35,7 +35,8 @@ class OnFidoHelper @Inject constructor(
     ).withLocale(
         when (idBrand) {
             Brand.CostaRica.id -> Locale.forLanguageTag(CR_LANGUAGE_TAG)
-            else -> Locale.getDefault()
+            Brand.ElSalvador.id -> Locale.forLanguageTag(SV_LANGUAGE_TAG)
+            else -> Locale.forLanguageTag(SV_LANGUAGE_TAG)
         }
     ).build()
 
@@ -104,5 +105,6 @@ class OnFidoHelper @Inject constructor(
     }
     companion object {
         const val CR_LANGUAGE_TAG = "es-CR"
+        const val SV_LANGUAGE_TAG = "es-SV"
     }
 }

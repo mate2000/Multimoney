@@ -214,9 +214,11 @@
     <string name="sign_up_otp_resend" translatable="false">Reenviar código</string>
     <string name="sign_up_otp_call" translatable="false">Recibir código por llamada</string>
     <string name="sign_up_otp_sms" translatable="false">Recibir código por sms</string>
-    <string name="sign_up_otp_expiration_time_phase_one" translatable="false">Código expira en </string>
-    <string name="sign_up_otp_expiration_time_phase_three" translatable="false">Código reenviado expira en </string>
-    <string name="sign_up_otp_expiration_time_phase_five" translatable="false">Código expira en </string>
+    <string name="sign_up_otp_expiration_time_phase_one_cr" translatable="false">Esperá %s segundos para reenviar el código</string>
+    <string name="sign_up_otp_expiration_time_phase_three_cr" translatable="false">Código enviado. Esperá %s segundos para reenviar</string>
+    <string name="sign_up_otp_expiration_time_phase_one" translatable="false">Espera %s segundos para reenviar el código</string>
+    <string name="sign_up_otp_expiration_time_phase_three" translatable="false">Código enviado. Espera %s segundos para reenviar</string>
+    <string name="sign_up_otp_expiration_time_phase_five" translatable="false">Código expira en %s segundos.</string>
     <string name="sign_up_otp_expiration_time_phase_six" translatable="false">Su número de teléfono no ha podido ser verificado.</string>
     <string name="sign_up_otp_expiration_time_phase_seconds" translatable="false"> segundos.</string>
     <string name="sign_up_otp_code_placeholder" translatable="false">0</string>

@@ -981,7 +981,6 @@
     <string name="smart_account_document_birthdate_age_error" translatable="false">Debes ser mayor de 18 años</string>
     <string name="smart_account_document_birthdate_age_limit_error" translatable="false">Validá tu fecha de nacimiento.</string>
     <string name="smart_account_document_issue_date_required" translatable="false">Fecha de nacimiento requerida</string>
-    <string name="smart_account_smart_account_document_date_required_date_valid" translatable="false">Validá la fecha de emisión</string>
     <string name="smart_account_document_expiration_title" translatable="false">Fecha de vencimiento de tu DUI</string>
     <string name="smart_account_document_expiration_date_required" translatable="false">Fecha de vencimiento requerida</string>
     <string name="smart_account_retired_title" translatable="false">Jubilado</string>
@@ -997,6 +996,10 @@
     <string name="smart_account_formal_select_profession" translatable="false">Selecciona tu profesión</string>
     <string name="smart_account_no_internet_error_description" translatable="false">No pudimos guardar tu información por un problema de conexión</string>
     <string name="smart_decimal_income_placeholder" translatable="false">%s00.0</string>
+    <string name="smart_account_carne_emission_label" translatable="false">Fecha de emisión de carné de residencia</string>
+    <string name="smart_account_carne_expiration_label" translatable="false">Fecha de vencimiento de carné de residencia</string>
+    <string name="smart_account_carne_date_error" translatable="false">Tu carné de residente debe estar vigente</string>
+    <string name="smart_account_origin_country_label" translatable="false">País de origen</string>
 
     <!-- Smart Account - Beneficiary -->
     <string name="smart_account_beneficiaries_title" translatable="false">Mis beneficiarios</string>

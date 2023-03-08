@@ -392,6 +392,26 @@ class DataStorePreferences @Inject constructor(
 
     fun isAdjustAddAccountEventRegister(): Flow<Boolean> = getData(ADD_ACCOUNT_FIRST_TIME_ADJUST_KEY, true)
 
+    suspend fun isAdjustAddCardEventRegister(register: Boolean) =
+        setData(ADD_CARD_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustAddCardEventRegister(): Flow<Boolean> = getData(ADD_CARD_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFlowAddCardEventRegister(register: Boolean) =
+        setData(ADD_CARD_FIRST_TIME_FLOW_ADJUST_KEY, register)
+
+    fun isAdjustFlowAddCardEventRegister(): Flow<Boolean> = getData(ADD_CARD_FIRST_TIME_FLOW_ADJUST_KEY, true)
+
+    suspend fun isAdjustFinishFlowAddCardEventRegister(register: Boolean) =
+        setData(ADD_CARD_FIRST_TIME_FINISH_FLOW_ADJUST_KEY, register)
+
+    fun isAdjustFinishFlowAddCardEventRegister(): Flow<Boolean> = getData(ADD_CARD_FIRST_TIME_FINISH_FLOW_ADJUST_KEY, true)
+
+    suspend fun isAdjustAddCardVerifiedEventRegister(register: Boolean) =
+        setData(ADD_CARD_FIRST_TIME_VERIFIED_ADJUST_KEY, register)
+
+    fun isAdjustAddCardVerifiedEventRegister(): Flow<Boolean> = getData(ADD_CARD_FIRST_TIME_VERIFIED_ADJUST_KEY, true)
+
     // Adjust Crypto events
     suspend fun setAdjustCryptoHomeFirstTime(firstTimeHomeCrypto: Boolean) =
         setData(ADJUST_CRYPTO_HOME_FIRST_TIME, firstTimeHomeCrypto)
@@ -434,19 +454,93 @@ class DataStorePreferences @Inject constructor(
     fun isAdjustCryptoPressReceiveFirstTime(): Flow<Boolean> = getData(ADJUST_CRYPTO_RECEIVE_FIRST_TIME, false)
 
     suspend fun isAdjustSmartSavingBtnEventRegistered(isFirstSaving: Boolean) =
-        setData(SMART_FIRST_SAVING_BTN_KEY, isFirstSaving)
+        setData(ADJUST_SMART_FIRST_SAVING_BTN_KEY, isFirstSaving)
 
-    fun isAdjustSmartSavingBtnEventRegistered(): Flow<Boolean> = getData(SMART_FIRST_SAVING_BTN_KEY, true)
+    fun isAdjustSmartSavingBtnEventRegistered(): Flow<Boolean> = getData(ADJUST_SMART_FIRST_SAVING_BTN_KEY, true)
 
     suspend fun isAdjustSmartSendingBtnEventRegistered(isFirstSent: Boolean) =
-        setData(SMART_FIRST_SENDING_KEY, isFirstSent)
+        setData(ADJUST_SMART_FIRST_SENDING_KEY, isFirstSent)
 
-    fun isAdjustSmartSendingBtnEventRegistered(): Flow<Boolean> = getData(SMART_FIRST_SENDING_KEY, true)
+    fun isAdjustSmartSendingBtnEventRegistered(): Flow<Boolean> = getData(ADJUST_SMART_FIRST_SENDING_KEY, true)
 
     suspend fun isAdjustFirstSavingEventRegistered(isFirstSaving: Boolean) =
-        setData(SMART_FIRST_SAVING_KEY, isFirstSaving)
+        setData(ADJUST_SMART_FIRST_SAVING_KEY, isFirstSaving)
 
-    fun isAdjustFirstSavingEventRegistered(): Flow<Boolean> = getData(SMART_FIRST_SAVING_KEY, true)
+    fun isAdjustFirstSavingEventRegistered(): Flow<Boolean> = getData(ADJUST_SMART_FIRST_SAVING_KEY, true)
+
+    suspend fun setAdjustSmartFirstTime(isFirstTime: Boolean) =
+        setData(ADJUST_ORIGINATION_SMART_FIRST_TIME, isFirstTime)
+
+    fun isAdjustSmartFirstTime(): Flow<Boolean> = getData(ADJUST_ORIGINATION_SMART_FIRST_TIME, true)
+
+    suspend fun setAdjustSmartFirstTimePersonal(isFirstTime: Boolean) =
+        setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_PERSONAL, isFirstTime)
+
+    fun isAdjustSmartFirstTimePersonal(): Flow<Boolean> = getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_PERSONAL, true)
+
+    suspend fun setAdjustSmartFirstTimeHome(isFirstTime: Boolean) =
+        setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_HOME, isFirstTime)
+
+    fun isAdjustSmartFirstTimeHome(): Flow<Boolean> = getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_HOME, true)
+
+    suspend fun setAdjustSmartFirstTimeIncome(isFirstTime: Boolean) =
+        setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_INCOME, isFirstTime)
+
+    fun isAdjustSmartFirstTimeIncome(): Flow<Boolean> =
+        getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_INCOME, true)
+
+    suspend fun setAdjustSmartFirstTimeIncomeInformation(isFirstTime: Boolean) =
+        setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_INCOME_INFORMATION, isFirstTime)
+
+    fun isAdjustSmartFirstTimeIncomeInformation(): Flow<Boolean> =
+        getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_INCOME_INFORMATION, true)
+
+    suspend fun setAdjustSmartFirstTimeBeneficiary(isFirstTime: Boolean) =
+        setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_BENEFICIARY, isFirstTime)
+
+    fun isAdjustSmartFirstTimeBeneficiary(): Flow<Boolean> =
+        getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_BENEFICIARY, true)
+
+    suspend fun setAdjustSmartFirstTimePep(isFirstTime: Boolean) =
+        setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_PEP, isFirstTime)
+
+    fun isAdjustSmartFirstTimePep(): Flow<Boolean> = getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_PEP, true)
+
+    suspend fun setAdjustSmartFirstTimeOnfidoStart(isFirstTime: Boolean) =
+        setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_INICIO, isFirstTime)
+
+    fun isAdjustSmartFirstTimeOnfidoStart(): Flow<Boolean> =
+        getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_INICIO, true)
+
+    suspend fun setAdjustSmartFirstTimeOnfidoDocument(isFirstTime: Boolean) =
+        setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_DOCUMENT, isFirstTime)
+
+    fun isAdjustSmartFirstTimeOnfidoDocument(): Flow<Boolean> = getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_DOCUMENT, true)
+
+    suspend fun setAdjustSmartFirstTimeOnfidoSelfie(isFirstTime: Boolean) =
+        setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_SELFIE, isFirstTime)
+
+    fun isAdjustSmartFirstTimeOnfidoSelfie(): Flow<Boolean> = getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_SELFIE, true)
+
+    suspend fun setAdjustSmartFirstTimeOnfidoDone(isFirstTime: Boolean) =
+        setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_DONE, isFirstTime)
+
+    fun isAdjustSmartFirstTimeOnfidoDone(): Flow<Boolean> = getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_DONE, true)
+
+    suspend fun setAdjustSmartFirstTimeEvicertiaDone(isFirstTime: Boolean) =
+        setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_EVICERTIA_DONE, isFirstTime)
+
+    fun isAdjustSmartFirstTimeEvicertiaDone(): Flow<Boolean> = getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_EVICERTIA_DONE, true)
+
+    suspend fun setAdjustSmartFirstTimeRejected(isFirstTime: Boolean) =
+        setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_REJECTED, isFirstTime)
+
+    fun isAdjustSmartFirstTimeRejected(): Flow<Boolean> = getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_REJECTED, true)
+
+    suspend fun setAdjustSmartFirstTimeSuccessful(isFirstTime: Boolean) =
+        setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_SUCCESSFUL, isFirstTime)
+
+    fun isAdjustSmartFirstTimeSuccessful(): Flow<Boolean> = getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_SUCCESSFUL, true)
 
     companion object {
         private val UNIQUE_ID = stringPreferencesKey("unique_id")
@@ -518,6 +612,10 @@ class DataStorePreferences @Inject constructor(
         private val DISBURSEMENT_SUCCESS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("disbursement_success_first_time")
         private val PAYMENT_SUCCESS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("payment_success_first_time")
         private val ADD_ACCOUNT_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("add_account_first_time")
+        private val ADD_CARD_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("add_card_first_time")
+        private val ADD_CARD_FIRST_TIME_FLOW_ADJUST_KEY = booleanPreferencesKey("add_card_first_time_flow")
+        private val ADD_CARD_FIRST_TIME_FINISH_FLOW_ADJUST_KEY = booleanPreferencesKey("add_card_first_time_flow_finished")
+        private val ADD_CARD_FIRST_TIME_VERIFIED_ADJUST_KEY = booleanPreferencesKey("add_card_first_time_verified")
         private val ADJUST_CRYPTO_HOME_FIRST_TIME = booleanPreferencesKey("adjust_crypto_home_first_time")
         private val ADJUST_CRYPTO_PURCHASE_FIRST_TIME = booleanPreferencesKey("adjust_crypto_purchase_first_time")
         private val ADJUST_CRYPTO_SUCCESS_PURCHASE_FIRST_TIME = booleanPreferencesKey("adjust_crypto_success_purchase_first_time")
@@ -526,8 +624,25 @@ class DataStorePreferences @Inject constructor(
         private val ADJUST_CRYPTO_SEND_FIRST_TIME = booleanPreferencesKey("adjust_crypto_send_first_time")
         private val ADJUST_CRYPTO_SUCCESS_SEND_FIRST_TIME = booleanPreferencesKey("adjust_crypto_success_send_first_time")
         private val ADJUST_CRYPTO_RECEIVE_FIRST_TIME = booleanPreferencesKey("adjust_crypto_receive_first_time")
-        private val SMART_FIRST_SAVING_BTN_KEY = booleanPreferencesKey("smart_first_saving_btn_key")
-        private val SMART_FIRST_SENDING_KEY = booleanPreferencesKey("smart_first_sending_key")
-        private val SMART_FIRST_SAVING_KEY = booleanPreferencesKey("smart_first_saving_key")
+
+        // Adjust Smart Events
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME = booleanPreferencesKey("adjust_origination_smart_first_time")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_PERSONAL = booleanPreferencesKey("adjust_origination_smart_first_time_personal")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_HOME = booleanPreferencesKey("adjust_origination_smart_first_time_home")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_INCOME = booleanPreferencesKey("adjust_origination_smart_first_time_income")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_INCOME_INFORMATION = booleanPreferencesKey("adjust_origination_smart_first_time_income_information")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_BENEFICIARY = booleanPreferencesKey("adjust_origination_smart_first_time_beneficiary")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_PEP = booleanPreferencesKey("adjust_origination_smart_first_time_pep")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_INICIO = booleanPreferencesKey("adjust_origination_smart_first_time_onfido_inicio")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_DOCUMENT = booleanPreferencesKey("adjust_origination_smart_first_time_onfido_document")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_SELFIE = booleanPreferencesKey("adjust_origination_smart_first_time_onfido_selfie")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_DONE = booleanPreferencesKey("adjust_origination_smart_first_time_onfido_done")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_EVICERTIA_DONE = booleanPreferencesKey("adjust_origination_smart_first_time_evicertia_done")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_REJECTED = booleanPreferencesKey("adjust_origination_smart_first_time_rejected")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_SUCCESSFUL = booleanPreferencesKey("adjust_origination_smart_first_time_successful")
+
+        private val ADJUST_SMART_FIRST_SAVING_BTN_KEY = booleanPreferencesKey("adjust_smart_first_saving_btn_key")
+        private val ADJUST_SMART_FIRST_SENDING_KEY = booleanPreferencesKey("adjust_smart_first_sending_key")
+        private val ADJUST_SMART_FIRST_SAVING_KEY = booleanPreferencesKey("adjust_smart_first_saving_key")
     }
 }

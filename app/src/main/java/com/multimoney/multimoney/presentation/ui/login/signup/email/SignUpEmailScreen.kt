@@ -99,6 +99,7 @@ fun SignUpEmailScreen(
                             viewModel.onSuccessValidation(context, sharedViewModel, userData)
                         }
                     )
+                    sharedViewModel.logEvents(null, AdjustEventType.SECURITY_SIGN_UP_CHANGE_DEVICE_9001)
                 } else {
                     viewModel.onSuccessValidation(context, sharedViewModel, userData)
                 }

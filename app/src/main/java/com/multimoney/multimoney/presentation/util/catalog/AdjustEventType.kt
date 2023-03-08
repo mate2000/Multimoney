@@ -106,6 +106,14 @@ enum class AdjustEventType(val stgToken: String, val prodToken: String, val even
     SETTINGS_CTA_FIRST_FINISH_FLOW_CARD_8008("", "", "settings_cta_fin_tarjeta"),
     SETTINGS_CTA_FIRST_VALIDATED_FLOW_CARD_8009("", "", "settings_cta_verifica_tarjeta"),
 
+    // SECURITY
+    SECURITY_LOGIN_BLACK_LIST_9000("", "", "alerta_metadatos"),
+    SECURITY_SIGN_UP_CHANGE_DEVICE_9001("", "", "alerta_cambio_device_registro"),
+    SECURITY_LOGIN_CHANGE_DEVICE_9002("", "", "alerta_cambio_device_login"),
+    SECURITY_LOGIN_SUCCESS_CHANGE_DEVICE_9003("", "", "alerta_cambio_device_exitoso"),
+    SECURITY_LOGIN_RESEND_OTP_CHANGE_DEVICE_9004("", "", "alerta_cambio_device_reenvio_otp"),
+    SECURITY_LOGIN_OTP_BY_CALL_CHANGE_DEVICE_9005("", "", "alerta_cambio_device_llamada"),
+
     // HOME CRYPTO
     HOME_CRYPTO_FIST_TIME_ENTER_TO_HOME("nkqtow", "elb9ue", "cri_primer_vista"),
     HOME_CRYPTO_PAXOS_IN_MAINTENANCE("", "", "cri_pantalla_mantenimiento"),
@@ -126,4 +134,35 @@ enum class AdjustEventType(val stgToken: String, val prodToken: String, val even
     RECEIVE_CRYPTO_FIRST_TIME_PRESS_RECEIVE_BUTTON("vmqdy2", "vvj95q", "cri_cta_primera_recepcion"),
     RECEIVE_CRYPTO_PRESS_SHARE_BUTTON("", "", "cri_cta_compartir"),
     RECEIVE_CRYPTO_ENTER_QR_SCREEN("", "", "cri_pantalla_qr"),
+
+    // SMART
+    ORIGINATION_SMART_FIRST_TIME("putkgb", "vygb1t", "sm_org_primer_vista"),
+    ORIGINATION_SMART_FIRST_TIME_PERSONAL("fkqss1", "wvpjvr", "sm_org_kyc1"),
+    ORIGINATION_SMART_FIRST_TIME_HOME("q55jgv", "wygxg4", "sm_org_kyc2"),
+    ORIGINATION_SMART_FIRST_TIME_INCOME("3gn0w6", "g7tnj3", "sm_org_kyc3"),
+    ORIGINATION_SMART_FIRST_TIME_INCOME_INFORMATION("d8u43a", "sb1i0a", "sm_org_kyc4"),
+    ORIGINATION_SMART_FIRST_TIME_BENEFICIARY("uh7ivd", "w7zqzy", "sm_org_kyc5"),
+    ORIGINATION_SMART_FIRST_TIME_PEP("or9i1k", "8fiaa1", "sm_org_kyc6"),
+    ORIGINATION_SMART_FIRST_TIME_ONFIDO_INICIO("yaijn0", "37y58m", "sm_onfido_inicio"),
+    ORIGINATION_SMART_FIRST_TIME_ONFIDO_DOCUMENT("26ya0r", "edkcsz", "sm_onfido_documento"),
+    ORIGINATION_SMART_FIRST_TIME_ONFIDO_SELFIE("mpu1mv", "dprja0", "sm_onfido_selfie"),
+    ORIGINATION_SMART_FIRST_TIME_ONFIDO_DONE("qymu5o", "lek3qg", "sm_onfido_fin"),
+    ORIGINATION_SMART_FIRST_TIME_EVICERTIA_DONE("ii55rn", "ydqs6f", "sm_evicertia"),
+
+    ORIGINATION_SMART_WAITING("", "", "sm_espera"),
+    ORIGINATION_SMART_RETRY_EVICERTIA("", "", "sm_reintento "),
+    ORIGINATION_SMART_FIRST_TIME_REJECTED("q7ll5n", "ti7vp7", "sm_rechazo"),
+    ORIGINATION_SMART_FIRST_TIME_SUCCESSFUL("93ch8t", "ccod23", "sm_exitosa"),
+    HOME_SMART_FIRST_TIME_SAVING("", "", ""),
+    HOME_SMART_FIRST_TIME_SEND("", "", ""),
+    HOME_SMART_FIRST_TIME_SUCCESSFUL_SAVING("", "", ""),
+
+    ORIGINATION_SMART_FIRS_TIME_CROSSELING_REQUIREMENT("", "", ""),
+    ORIGINATION_SMART_FIRS_TIME_CROSSELING_INCOME("", "", ""),
+    ORIGINATION_SMART_FIRS_TIME_CROSSELING_INCOME_DATA("", "", ""),
+    ORIGINATION_SMART_FIRS_TIME_CROSSELING_PERSONAL("", "", ""),
+    ORIGINATION_SMART_FIRS_TIME_CROSSELING_BENEFICIARIES("", "", ""),
+    ORIGINATION_SMART_FIRS_TIME_CROSSELING_EVICERTIA("", "", ""),
+    ORIGINATION_SMART_FIRS_TIME_CROSSELING_SUCCESFUL("", "", "")
+
 }

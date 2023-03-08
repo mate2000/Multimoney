@@ -287,7 +287,7 @@ class SignInViewModel @Inject constructor(
         dataStorePreferences.setPkUser(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_PK_USER))
         dataStorePreferences.setIdentification(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_IDENTIFICATION))
         dataStorePreferences.setUserEmail(uiState.userEmail)
-          //dataStorePreferences.setUserPhoneNumberWithCode(authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.phoneNumber() }?.value.orEmpty())
+        // dataStorePreferences.setUserPhoneNumberWithCode(authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.phoneNumber() }?.value.orEmpty())
     }
 
     private fun isFormValid() {
@@ -596,6 +596,7 @@ class SignInViewModel @Inject constructor(
         uiState.userName.isNotEmpty() && uiState.userEmail == biometricUserEmail
 
     private fun onNavigateToOTPScreen() {
+        registerAdjustEvent(AdjustEventType.SECURITY_LOGIN_CHANGE_DEVICE_9002, isLoggedIn = false, applyAdjust = false, data = EmailDto(uiState.userEmail).toJson())
         popAndNavigateTo(
             "${Screen.SignInOTPScreen.baseRoute}/${uiState.userEmail}/${uiState.userPassword}/$deviceId/$uniqueId/$ipAddress/$deviceType/$deviceName/$appVersion/$deviceBrand/$deviceModel/$isEmulator",
             Screen.SignInOTPScreen.baseRoute

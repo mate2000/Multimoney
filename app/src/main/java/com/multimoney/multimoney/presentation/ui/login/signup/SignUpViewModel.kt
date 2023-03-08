@@ -250,8 +250,10 @@ class SignUpViewModel @Inject constructor(
         this.idBrand = idBrand
     }
 
-    fun logEvents(fireBaseEvents: FireBaseEvents, adjustEventType: AdjustEventType) {
-        provideFireBaseEventHelper.logEvent(fireBaseEvents)
+    fun logEvents(fireBaseEvents: FireBaseEvents?, adjustEventType: AdjustEventType) {
+        fireBaseEvents?.let {
+            provideFireBaseEventHelper.logEvent(it)
+        }
         viewModelScope.launch {
             getAdjustEvent(adjustEventType).invoke()
         }
@@ -316,6 +318,16 @@ class SignUpViewModel @Inject constructor(
                     )
                     dataStorePreferences.isAdjustSingUp5EventRegister(false)
                 }
+            }
+        }
+        AdjustEventType.SECURITY_SIGN_UP_CHANGE_DEVICE_9001 -> {
+            suspend {
+                registerAdjustEvent(
+                    adjustEventType = AdjustEventType.SECURITY_SIGN_UP_CHANGE_DEVICE_9001,
+                    isLoggedIn = false,
+                    data = userData?.toJson() ?: "",
+                    applyAdjust = false
+                )
             }
         }
 

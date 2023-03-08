@@ -299,7 +299,12 @@ class ProductViewModel @Inject constructor(
                             )
                         )
                         .plus(getNavParam(SHOULD_GET_EVICERTIA_LINK, true))
-                        .plus(getNavParam(EVICERTIA_STATUS, uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm))
+                        .plus(
+                            getNavParam(
+                                EVICERTIA_STATUS,
+                                uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm
+                            )
+                        )
                 )
             }
             else -> {
@@ -1242,6 +1247,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToMaintenanceAlert : UIEvent()
         data class OnNavigateToReleaseTransaction(val cryptoItem: CryptoCurrencyMovement?) :
             UIEvent()
+
         object OnRegisterAdjustCryptoHomeFistTime : UIEvent()
         object OnRegisterAdjustPressPurchaseFirstTime : UIEvent()
         object OnRegisterAdjustPressSellFirstTime : UIEvent()

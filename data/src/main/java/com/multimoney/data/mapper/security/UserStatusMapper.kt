@@ -100,6 +100,7 @@ private fun ValidateUserStatusQuery.Wording2.mapToDomainModel() = Wording(
     textOne = textOne,
     textTwo = textTwo,
     cTA = cTA,
+    link = link ?: "",
     workflow = workFlow
 )
 
@@ -110,6 +111,7 @@ private fun ValidateUserStatusQuery.Wording3.mapToDomainModel() = Wording(
     workflow = workFlow
 )
 
-private fun ValidateUserStatusQuery.InfoVirtualCard.mapToDomainModel() = InfoVirtualCard(status = status)
+private fun ValidateUserStatusQuery.InfoVirtualCard.mapToDomainModel() =
+    InfoVirtualCard(status = status)
 
 fun ValidateUserStatusQuery.Data.mapToDomainModel() = validateUserStatus.mapToDomainModel()

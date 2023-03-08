@@ -8,7 +8,6 @@ import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStep
-import com.multimoney.domain.interaction.accountsmart.MutationSaveSinpeAccountUseCase
 import com.multimoney.domain.interaction.credit.MutationSaveCreditFlowStepUseCase
 import com.multimoney.domain.interaction.credit.MutationSaveCreditOperationUseCase
 import com.multimoney.domain.interaction.credit.QueryScreenConfigUseCase

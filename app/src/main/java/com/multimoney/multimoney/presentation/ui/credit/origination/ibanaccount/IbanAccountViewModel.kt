@@ -19,8 +19,8 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnAccountValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnLoadCreditSteps
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnNextActionClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnNextActionClickCrosseling
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnOpenInformativeDialog
-import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnSaveSinpeAccount
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnUpdateUserInfo
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnValidForm
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
@@ -52,7 +52,6 @@ class IbanAccountViewModel @Inject constructor(
         nextStepAction: () -> Unit,
         saveCreditStepsHelper: SaveCreditStepsHelper
     ) {
-        //saveIbanAccount(user, )
         saveCreditStepsHelper.saveStepOneCR(
             user,
             "${Brand.CostaRica.iban}${uiState.accountNumber}"
@@ -136,28 +135,29 @@ class IbanAccountViewModel @Inject constructor(
         }
     }
 
-    private fun saveIbanAccount(
-        user: String?,
+    private fun onSaveIbanAccount(
+        user: String,
         onLoadingValueChange: (Boolean) -> Unit,
         onFailureWithDialog: (Boolean, DialogParameters) -> Unit,
-        onSuccessAction: () -> Unit
+        nextStepAction: () -> Unit,
+        saveCreditStepsHelper: SaveCreditStepsHelper
     ) = executeUseCase {
         mutationSaveSinpeAccountUseCase(
-            user = user ?: "",
+            user = user,
             idBrand = idBrand,
-            identification = identification ?: "",
+            identification = identification,
             accountNumber = Brand.CostaRica.iban.plus(uiState.accountNumber),
             idCurrency = validateAccount?.currency?.getCurrencyFromId()?.id?.toLong() ?: 0,
             nameAccount = validateAccount?.name ?: "",
             country = Brand.CostaRica.countryCode,
             idAccount = null,
             option = null,
-            email = null,
+            email = user,
             isFavorite = false
         ).collectLatest {
             it.onSuccess {
                 onLoadingValueChange(false)
-                onSuccessAction()
+                onNextActionClick(user, nextStepAction, saveCreditStepsHelper)
             }.onFailure { error ->
                 onFailureWithDialog(
                     false,
@@ -167,7 +167,7 @@ class IbanAccountViewModel @Inject constructor(
                     )
                 )
             }.onLoading {
-                onLoadingValueChange(false)
+                onLoadingValueChange(true)
             }
         }
     }
@@ -231,6 +231,13 @@ class IbanAccountViewModel @Inject constructor(
                 uiEvent.nextStepAction,
                 uiEvent.saveCreditStepsHelper
             )
+            is OnNextActionClickCrosseling -> onSaveIbanAccount(
+                user = uiEvent.user,
+                onLoadingValueChange = uiEvent.onLoadingValueChange,
+                onFailureWithDialog = uiEvent.onFailureWithDialog,
+                nextStepAction = uiEvent.nextStepAction,
+                saveCreditStepsHelper = uiEvent.saveCreditStepsHelper
+            )
             is OnAccountValueChange -> onAccountValueValueChange(
                 uiEvent.account,
                 uiEvent.onFailureWithDialog
@@ -249,7 +256,6 @@ class IbanAccountViewModel @Inject constructor(
                 )
             )
             is OnLoadCreditSteps -> onLoadStep(uiEvent.list, uiEvent.onFailureWithDialog)
-            is OnSaveSinpeAccount -> saveIbanAccount(uiEvent.user, uiEvent.onLoadingValueChange, uiEvent.onFailureWithDialog, uiEvent.onSuccessAction)
         }
     }
 
@@ -258,6 +264,14 @@ class IbanAccountViewModel @Inject constructor(
             val user: String,
             val nextStepAction: () -> Unit,
             val saveCreditStepsHelper: SaveCreditStepsHelper
+        ) : UIEvent()
+
+        data class OnNextActionClickCrosseling(
+            val user: String,
+            val nextStepAction: () -> Unit,
+            val saveCreditStepsHelper: SaveCreditStepsHelper,
+            val onLoadingValueChange: (Boolean) -> Unit,
+            val onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
         ) : UIEvent()
 
         data class OnUpdateUserInfo(
@@ -276,13 +290,6 @@ class IbanAccountViewModel @Inject constructor(
         data class OnLoadCreditSteps(
             val list: List<CreditCatalog?>?,
             val onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
-        ) : UIEvent()
-
-        data class OnSaveSinpeAccount(
-            val user: String?,
-            val onLoadingValueChange: (Boolean) -> Unit,
-            val onFailureWithDialog: (Boolean, DialogParameters) -> Unit,
-            val onSuccessAction: () -> Unit
         ) : UIEvent()
     }
 

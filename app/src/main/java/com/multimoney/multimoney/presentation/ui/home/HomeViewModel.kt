@@ -513,7 +513,8 @@ class HomeViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { validateUserStatus ->
                 apiCallCount++
-                dataStorePreferences.setUserPhoneNumberWithCode(validateUserStatus?.infoUser?.phone.orEmpty())
+                dataStorePreferences.setUserPhoneNumberWithCode(validateUserStatus?.infoUser?.countryCode.plus(validateUserStatus?.infoUser?.phone.orEmpty()))
+                dataStorePreferences.setUserPhoneNumber(validateUserStatus?.infoUser?.phone.orEmpty())
                 uiState = uiState.copy(validateUserStatus = validateUserStatus)
                 callQueryBalanceUseCase(
                     user = email,

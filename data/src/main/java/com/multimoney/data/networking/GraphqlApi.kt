@@ -1339,6 +1339,7 @@ class GraphqlApi @Inject constructor(
     fun mutationChangePhone(
         identification: String,
         phone: String,
+        countryCode: String,
         pkUser: String,
         idBrand: Int,
         user: String
@@ -1347,6 +1348,7 @@ class GraphqlApi @Inject constructor(
             ChangePhoneMutation(
                 identification,
                 phone,
+                countryCode,
                 pkUser.toLong(),
                 idBrand,
                 user

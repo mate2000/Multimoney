@@ -6,7 +6,6 @@ import android.content.res.Configuration
 import android.os.Build
 import android.provider.Settings
 import android.util.DisplayMetrics
-import android.util.Patterns
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.multimoney.data.util.catalog.DeviceType

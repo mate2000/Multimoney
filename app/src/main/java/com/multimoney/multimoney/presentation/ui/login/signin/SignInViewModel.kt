@@ -47,6 +47,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import javax.inject.Inject
+
 @HiltViewModel
 class SignInViewModel @Inject constructor(
     private val biometricHelper: BiometricHelper,
@@ -287,7 +288,6 @@ class SignInViewModel @Inject constructor(
         dataStorePreferences.setPkUser(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_PK_USER))
         dataStorePreferences.setIdentification(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_IDENTIFICATION))
         dataStorePreferences.setUserEmail(uiState.userEmail)
-        // dataStorePreferences.setUserPhoneNumberWithCode(authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.phoneNumber() }?.value.orEmpty())
     }
 
     private fun isFormValid() {

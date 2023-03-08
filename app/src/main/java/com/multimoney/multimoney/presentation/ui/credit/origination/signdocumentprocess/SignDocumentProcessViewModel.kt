@@ -107,6 +107,8 @@ class SignDocumentProcessViewModel @Inject constructor(
                 titleResource = if (idBrand == Brand.CostaRica.id) string.sign_credit_dialog_title_cr else string.sign_credit_dialog_title,
                 descriptionResource = if (idBrand == Brand.CostaRica.id) string.sign_credit_dialog_description_cr else string.sign_credit_dialog_description,
                 positiveResource = string.sign_credit_dialog_continue,
+                negativeResource = string.payment_points_dialog_negative_button,
+                negativeAction = { onUIEvent(OnNavigateToHome) },
                 isActive = mutableStateOf(true)
             )
         )

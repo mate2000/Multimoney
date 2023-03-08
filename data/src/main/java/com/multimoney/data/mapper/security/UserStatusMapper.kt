@@ -31,7 +31,7 @@ private fun ValidateUserStatusQuery.InfoUser.mapToDomainModel() = InfoUser(
     lastName = lastName,
     secondLastName = secondLastName,
     phone = phone,
-    countryCode = countryCode,
+    countryCode = countryCode?: "",
     visaDirectId = vISADirect_ID,
     visaDirectUser = vISADirect_Usuario,
     statusOnfido = statusOnfido
@@ -100,6 +100,7 @@ private fun ValidateUserStatusQuery.Wording2.mapToDomainModel() = Wording(
     textOne = textOne,
     textTwo = textTwo,
     cTA = cTA,
+    link = link ?: "",
     workflow = workFlow
 )
 
@@ -110,6 +111,7 @@ private fun ValidateUserStatusQuery.Wording3.mapToDomainModel() = Wording(
     workflow = workFlow
 )
 
-private fun ValidateUserStatusQuery.InfoVirtualCard.mapToDomainModel() = InfoVirtualCard(status = status)
+private fun ValidateUserStatusQuery.InfoVirtualCard.mapToDomainModel() =
+    InfoVirtualCard(status = status)
 
 fun ValidateUserStatusQuery.Data.mapToDomainModel() = validateUserStatus.mapToDomainModel()

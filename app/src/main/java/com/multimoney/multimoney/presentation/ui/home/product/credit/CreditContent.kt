@@ -49,43 +49,31 @@ fun CreditContent(viewModel: ProductViewModel) {
                     CreditWorkflow.CREDIT_ONFIDO_PROCESS.workflow,
                     CreditWorkflow.CREDIT_CONTRACT_PROCESS.workflow,
                     CreditWorkflow.CONTACT_ERROR.workflow -> {
-                        CustomProductBackground(
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp),
-                            type = Primary
-                        ) {
-                            CardWithCreditInProcess(
-                                type = getCardWithCreditInProcessType(infoCredit?.wording?.workflow ?: ""),
-                                idBrand = viewModel.uiState.idBrand.toInt(),
-                                action = getCardAction(
-                                    workflow = infoCredit?.wording?.workflow ?: "",
-                                    whatsAppLink = whatsAppLink,
-                                    context = context,
-                                    viewModel = viewModel
-                                ),
-                                wording = infoCredit?.wording
-                            )
-                        }
+                        CardWithCreditInProcess(
+                            type = getCardWithCreditInProcessType(infoCredit?.wording?.workflow ?: ""),
+                            idBrand = viewModel.uiState.idBrand.toInt(),
+                            action = getCardAction(
+                                workflow = infoCredit?.wording?.workflow ?: "",
+                                whatsAppLink = whatsAppLink,
+                                context = context,
+                                viewModel = viewModel
+                            ),
+                            wording = infoCredit?.wording
+                        )
                     }
                     CreditWorkflow.CREDIT_PENDING.workflow -> {
                         CardCreditFirmedAndOnfidoPending()
                     }
                     CreditWorkflow.CREDIT_NOT_PREAPROVED.workflow -> {
-                        CustomProductBackground(
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp),
-                            type = Primary
-                        ) {
-                            CardNonPreApprovedCredit(
-                                idBrand = viewModel.uiState.idBrand.toInt(),
-                                action = getCardAction(
-                                    workflow = infoCredit?.wording?.workflow ?: "",
-                                    whatsAppLink = whatsAppLink,
-                                    context = context,
-                                    viewModel = viewModel
-                                )
+                        CardNonPreApprovedCredit(
+                            idBrand = viewModel.uiState.idBrand.toInt(),
+                            action = getCardAction(
+                                workflow = infoCredit?.wording?.workflow ?: "",
+                                whatsAppLink = whatsAppLink,
+                                context = context,
+                                viewModel = viewModel
                             )
-                        }
+                        )
                     }
                     CreditWorkflow.CREDIT_REJECTED.workflow -> {
                         CardGtSvCreditRejected(

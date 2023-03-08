@@ -29,10 +29,12 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnCallMutationSaveCreditFlowStep
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnFailureWithDialog
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnAccountValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnLoadCreditSteps
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnNextActionClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnNextActionClickCrosseling
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnOpenInformativeDialog
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnUpdateUserInfo
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnValidForm
@@ -76,13 +78,29 @@ fun IbanAccountScreen(
             CreditViewModel.UIEvent.OnSetNavigation(
                 nextAction = {
                     viewModel.onUIEvent(
-                        OnNextActionClick(
-                            user = sharedViewModel.email,
-                            nextStepAction = {
-                                sharedViewModel.onUIEvent(OnCallMutationSaveCreditFlowStep)
-                            },
-                            saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
-                        )
+                        if (sharedViewModel.crosseling) {
+                            OnNextActionClickCrosseling(
+                                user = sharedViewModel.email,
+                                nextStepAction = {
+                                    sharedViewModel.onUIEvent(OnCallMutationSaveCreditFlowStep)
+                                },
+                                saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper,
+                                onLoadingValueChange = { isLoading ->
+                                    sharedViewModel.onUIEvent(OnLoadingValueChange(isLoading))
+                                },
+                                onFailureWithDialog = { isLoading, dialogParameters ->
+                                    sharedViewModel.onUIEvent(OnFailureWithDialog(isLoading, dialogParameters))
+                                }
+                            )
+                        } else {
+                            OnNextActionClick(
+                                user = sharedViewModel.email,
+                                nextStepAction = {
+                                    sharedViewModel.onUIEvent(OnCallMutationSaveCreditFlowStep)
+                                },
+                                saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
+                            )
+                        }
                     )
                     sharedViewModel.logEvents(
                         AdjustEventType.ORIGINATION_FIRST_FILL_ACCOUNT_5004

@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.SMART_CARD_NO_ACTION
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.CardInactiveSmartProduct
@@ -16,7 +17,7 @@ import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 
 @Composable
-fun SmartContent(viewModel: ProductViewModel, index: Int, whatsAppLink: String = "") {
+fun SmartContent(viewModel: ProductViewModel, index: Int) {
     LaunchedEffect(key1 = true) {
         viewModel.onUIEvent(UIEvent.OnGetSmartContent)
     }
@@ -30,18 +31,27 @@ fun SmartContent(viewModel: ProductViewModel, index: Int, whatsAppLink: String =
         viewModel.uiState.userStatus?.apply {
             when (viewModel.uiState.smartContent.first) {
                 true -> {
+                    val step = viewModel.uiState.smartContent.second
                     viewModel.uiState.userStatus?.infoBankAccount?.wording.let {
                         CardInactiveSmartProduct(
                             it?.textOne.toString(),
                             it?.textTwo.toString(),
-                            it?.cTA.toString()
+                            it?.cTA.toString(),
+                            step != SMART_CARD_NO_ACTION
                         ) {
-                            viewModel.onUIEvent(
-                                OnNavigateToSmartOriginationFlow(
-                                    smartStep = viewModel.uiState.smartContent.second,
-                                    onIntent = { context.openWhatsAppDeepLink(viewModel.uiState.userStatus?.infoBankAccount?.wording?.link ?: "") }
+                            if (step != SMART_CARD_NO_ACTION) {
+                                viewModel.onUIEvent(
+                                    OnNavigateToSmartOriginationFlow(
+                                        smartStep = step,
+                                        onIntent = {
+                                            context.openWhatsAppDeepLink(
+                                                viewModel.uiState.userStatus?.infoBankAccount?.wording?.link
+                                                    ?: ""
+                                            )
+                                        }
+                                    )
                                 )
-                            )
+                            }
                         }
                     }
                 }

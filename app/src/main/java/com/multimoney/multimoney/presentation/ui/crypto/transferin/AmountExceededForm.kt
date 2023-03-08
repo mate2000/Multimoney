@@ -190,13 +190,13 @@ fun AmountExceededFormScreen(
                 viewModel.onUIEvent(AmountExceededViewModel.UIEvent.OnCloseAlert)
             },
             onButtonClick = {
-                viewModel.onUIEvent(AmountExceededViewModel.UIEvent.OnNavigateToHome)
+                viewModel.onUIEvent(AmountExceededViewModel.UIEvent.OnNavigateToHome(false))
             }
         )
     }
     if (viewModel.uiState.isAmountExceeded) {
         LimitExceededDialog {
-            viewModel.onUIEvent(AmountExceededViewModel.UIEvent.OnNavigateToHome)
+            viewModel.onUIEvent(AmountExceededViewModel.UIEvent.OnNavigateToHome(false))
         }
     }
 }

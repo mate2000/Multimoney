@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
@@ -26,11 +27,13 @@ fun CryptoFooterExpanded(
     balance: Balance?,
     userStatus: ValidateUserStatus?,
     cryptoMovements: Flow<PagingData<CryptoCurrencyMovement>>,
+    registerAdjustEvent: () -> Unit,
     actionMarket: () -> Unit,
     actionWallet: () -> Unit,
     onShowAllClick: () -> Unit,
     onNavigateToReleaseTransaction: ( CryptoCurrencyMovement?) -> Unit
 ) {
+    LaunchedEffect(key1 = true) { registerAdjustEvent() }
     if (userStatus?.infoCrypto?.status == CryptoAccountStatus.ACTIVE.status) {
         CryptoFooterExpandedContent(
             balance,

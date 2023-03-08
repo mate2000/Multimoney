@@ -10,6 +10,7 @@ query GetInfoDeposit($idBrand:Int, $idPrint:Long!, $user:String){
     numeroReferencia
     pagare
     fecha
+    bankName
     status
     message
     detail

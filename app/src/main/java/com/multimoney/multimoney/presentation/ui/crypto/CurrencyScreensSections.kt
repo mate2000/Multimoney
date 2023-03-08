@@ -35,6 +35,7 @@ import com.multimoney.multimoney.presentation.ui.crypto.sell.sellcurrency.WHITE_
 import com.multimoney.multimoney.presentation.uielement.CryptoCurrencyInputLayout
 import com.multimoney.multimoney.presentation.util.calculateAssetEstimated
 import com.multimoney.multimoney.presentation.util.calculateDollarEstimated
+import com.multimoney.multimoney.presentation.util.calculateDollarEstimatedWithoutFormat
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 
 @Composable
@@ -185,7 +186,25 @@ fun AmountInputSection(
             errorText = getTextFromStringRes(textRes = errorText, arg = textArg),
             isTransformationCurrency = isTransformationCurrencyValue,
             onValueChanged = onAmountChanged,
-            onImeClick = { keyboardController?.hide() }
+            onImeClick = { keyboardController?.hide() },
+            onSwitchClick = {
+                isTransformationCurrency.value = !isTransformationCurrency.value
+                if (isTransformationCurrency.value.not()) {
+                    // if empty or 0, set empty string to show hint
+                    quoteAmountText.value = if (
+                        baseAmountText.value.isEmpty() || baseAmountText.value == "0"
+                    ) "" else calculateDollarEstimatedWithoutFormat(
+                        baseAmount = baseAmountText.value,
+                        currencyPrice = currencyPrice
+                    )
+                } else {
+                    // if empty, set empty string to show hint
+                    baseAmountText.value = if (quoteAmountText.value.isEmpty()) "" else calculateAssetEstimated(
+                        quoteAmount = quoteAmountText.value,
+                        currencyPrice = currencyPrice
+                    )
+                }
+            }
         )
         Text(
             text = if (isTransformationCurrencyValue.value.not()) {

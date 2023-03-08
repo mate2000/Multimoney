@@ -1,6 +1,5 @@
-package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account
+package com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.cr
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,36 +15,35 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.accountsmart.ACHAccount
+import com.multimoney.domain.model.accountsmart.LocalSACAccount
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.SmartTransferFavoriteViewModel.UIEvent.OnCallQueryACHTransferFavoriteListUseCase
-import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.SmartTransferFavoriteViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.SmartTransferFavoriteViewModel.UIEvent.OnNavigateToHome
-import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.SmartTransferFavoriteViewModel.UIEvent.OnOptionsClick
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.cr.SmartTransferFavoriteCRViewModel.UIEvent.GetFavoritesLists
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.cr.SmartTransferFavoriteCRViewModel.UIEvent.OnAccountSelected
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.cr.SmartTransferFavoriteCRViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.cr.SmartTransferFavoriteCRViewModel.UIEvent.OnNavigateToHome
+import com.multimoney.multimoney.presentation.ui.smart.transfer.smart.favorite.account.cr.SmartTransferFavoriteCRViewModel.UIEvent.OnOptionsClick
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.SEPARATOR
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 
 @Composable
-fun SmartTransferFavoriteScreen(
+fun SmartTransferFavoriteCRScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
-    viewModel: SmartTransferFavoriteViewModel = hiltViewModel()
+    viewModel: SmartTransferFavoriteCRViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
-        viewModel.onUIEvent(OnCallQueryACHTransferFavoriteListUseCase)
+        viewModel.onUIEvent(GetFavoritesLists)
         viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
-    }
-
-    BackHandler {
-        viewModel.onUIEvent(OnNavigateBack)
     }
 
     Column(
@@ -54,13 +52,12 @@ fun SmartTransferFavoriteScreen(
             .fillMaxSize()
     ) {
         TopNavBar(
-            isRightButtonVisible = true,
             onRightButtonClick = { viewModel.onUIEvent(OnNavigateToHome) },
             onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) }
         )
         Text(
             modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
-            text = stringResource(string.smart_favorite_transfer_accounts_title),
+            text = stringResource(R.string.smart_favorite_transfer_accounts_title),
             style = Typography.h5.copy(
                 fontWeight = FontWeight.SemiBold,
                 color = MultimoneyTheme.colors.text
@@ -68,17 +65,14 @@ fun SmartTransferFavoriteScreen(
         )
 
         if (!viewModel.uiState.isLoading) {
-            ACHFavoriteContentList(
-                AHCFavoriteList = viewModel.uiState.ACHFavoriteAccountList,
+            FavoritesContentList(
+                localFavoritesList = viewModel.uiState.localFavoriteList,
+                aCHFavoriteList = viewModel.uiState.aCHFavoriteAccountList,
                 onEndIconClick = { favorite ->
                     viewModel.onUIEvent(OnOptionsClick(favorite))
                 },
                 onFavoriteClick = { favorite ->
-                    viewModel.onUIEvent(
-                        SmartTransferFavoriteViewModel.UIEvent.OnFavoriteClick(
-                            favorite
-                        )
-                    )
+                    viewModel.onUIEvent(OnAccountSelected(favorite))
                 }
             )
         }
@@ -98,30 +92,56 @@ fun SmartTransferFavoriteScreen(
 }
 
 @Composable
-fun ACHFavoriteContentList(
-    AHCFavoriteList: Map<String, List<ACHAccount?>>,
-    onEndIconClick: (contact: ACHAccount) -> Unit,
-    onFavoriteClick: (contact: ACHAccount) -> Unit
+fun FavoritesContentList(
+    localFavoritesList: List<LocalSACAccount?>,
+    aCHFavoriteList: List<ACHAccount?>,
+    onEndIconClick: (account: Any?) -> Unit,
+    onFavoriteClick: (account: Any?) -> Unit
 ) {
     LazyColumn(modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp)) {
-        AHCFavoriteList.forEach { (_, favorite) ->
+        localFavoritesList.forEach { favorite ->
             item {
                 CustomInfoButton(
-                    title = favorite.firstOrNull()?.description.orEmpty(),
-                    subtitle = favorite.firstOrNull()?.destinationBankDescription.orEmpty(),
+                    title = favorite?.accountName.orEmpty(),
+                    subtitle = favorite?.phoneNumber.orEmpty().plus(SEPARATOR)
+                        .plus(favorite?.currency),
                     subtitle2 = getMaskedAccount(
-                        favorite.firstOrNull()?.accountNumber.orEmpty()
+                        accountNumber = favorite?.accountNumber.orEmpty(),
+                        prefix = Brand.CostaRica.iban
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
                         .padding(top = 12.dp),
                     endIcon = R.drawable.ic_options,
-                    startIcon = favorite.first()?.destinationAccountCurrencyId?.getCurrencyFromId()?.accountIcon,
+                    startIcon = favorite?.idCurrency?.getCurrencyFromId()?.accountIcon,
                     titleIcon = R.drawable.ic_star_filled,
-                    onEndIconClick = { favorite.firstOrNull()?.let { onEndIconClick(it) } },
+                    onEndIconClick = { favorite?.let { onEndIconClick(it) } },
                     onClick = {
-                       favorite.firstOrNull()?.let { onFavoriteClick(it) }
+                        onFavoriteClick(favorite)
+                    }
+                )
+            }
+        }
+
+        aCHFavoriteList.forEach { favorite ->
+            item {
+                CustomInfoButton(
+                    title = favorite?.description.orEmpty(),
+                    subtitle = favorite?.destinationBankDescription.orEmpty(),
+                    subtitle2 = getMaskedAccount(
+                        favorite?.accountNumber.orEmpty()
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(top = 12.dp),
+                    endIcon = R.drawable.ic_options,
+                    startIcon = favorite?.destinationAccountCurrencyId?.getCurrencyFromId()?.accountIcon,
+                    titleIcon = R.drawable.ic_star_filled,
+                    onEndIconClick = { favorite?.let { onEndIconClick(it) } },
+                    onClick = {
+                        onFavoriteClick(favorite)
                     }
                 )
             }

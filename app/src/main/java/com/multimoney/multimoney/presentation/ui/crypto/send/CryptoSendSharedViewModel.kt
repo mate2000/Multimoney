@@ -82,6 +82,7 @@ class CryptoSendSharedViewModel @Inject constructor(
         if (currentFlowStep == CryptoSendSteps.One.pageNumber) {
             navigateBackToHome()
         } else {
+            uiState.previousAction()
             currentFlowStep--
             uiState = uiState.copy(
                 currentStep = currentFlowStep
@@ -130,7 +131,8 @@ class CryptoSendSharedViewModel @Inject constructor(
         var sendCryptoAmount: String = "",
         val sendCurrentDate: String? = null,
         val sendCurrentTime: String? = null,
-        val openDialog: DialogParameters = DialogParameters()
+        val openDialog: DialogParameters = DialogParameters(),
+        var previousAction: () -> Unit = {}
     )
 
     fun onUIEvent(event: UIEvent) {

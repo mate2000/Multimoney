@@ -7,6 +7,7 @@ data class GetInfoDeposit(
     val referenceNumber: String?,
     val creditNumber: String?,
     val date: String?,
+    val bankName: String?,
     var message: String?,
     var status: Int?,
     var detail: String?

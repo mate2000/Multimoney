@@ -17,6 +17,7 @@ import com.multimoney.domain.model.security.OnfidoCheckProcess
 import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.security.QuickActions
 import com.multimoney.domain.model.security.RequestChangeDevice
+import com.multimoney.domain.model.security.SaveLogTracking
 import com.multimoney.domain.model.security.SendPinProcess
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.security.UserPhoneMobileSave
@@ -452,14 +453,35 @@ class SecurityRepositoryImpl @Inject constructor(
             }
         )
 
+    override suspend fun mutationSaveLogTracking(
+        identification: String,
+        pkUser: Int,
+        keySearch: String,
+        data: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<SaveLogTracking>> =
+        fetchData(
+            apolloCall = graphqlApi.mutationSaveLogTracking(
+                identification,
+                pkUser,
+                keySearch,
+                data,
+                idBrand
+            ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+
     override suspend fun mutationChangePhone(
         identification: String,
         phone: String,
         pkUser: String,
-        idBrand: Int
+        idBrand: Int,
+        user: String
     ): Flow<MultimoneyResult<ChangePhone>> =
         fetchData(
-            apolloCall = graphqlApi.mutationChangePhone(identification, phone, pkUser, idBrand),
+            apolloCall = graphqlApi.mutationChangePhone(identification, phone, pkUser, idBrand,user),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
             }
@@ -472,8 +494,6 @@ class SecurityRepositoryImpl @Inject constructor(
                 Success(data.mapToDomainModel())
             }
         )
-
-
 
     override suspend fun mutationChangeEmail(
         idClient: Int,
@@ -500,8 +520,6 @@ class SecurityRepositoryImpl @Inject constructor(
                 Success(data.mapToDomainModel())
             }
         )
-
-
 
     companion object {
         private const val ANOTHER_DEVICE_ALREADY_REGISTERED_CODE = 3102

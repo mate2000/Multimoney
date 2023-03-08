@@ -9,12 +9,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.OpenWhatsAppLink
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.SimulateUserInteraction
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.Companion.PHONE_HARDCODED
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallGetLinkCreditContractEvent
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallSubscriptionCreditContractEvent
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallGetLinkCreditContractSecondTime
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnShowDialogInformation
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnStartListenerSubscriptionCreditContractEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.documentgeneration.DocumentGenerationScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.processingtransaction.ProcessingTransactionScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.signdocument.SignDocumentScreen
@@ -45,11 +44,10 @@ fun SignDocumentProcessScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)
-            onUIEvent(OnCallSubscriptionCreditContractEvent)
+            onUIEvent(OnStartListenerSubscriptionCreditContractEvent)
             onUIEvent(OnCallGetLinkCreditContractEvent)
             baseEvent.collectLatest { event ->
                 when (event) {
-                    is SimulateUserInteraction -> activity?.onUserInteraction()
                     is OpenWhatsAppLink -> context.openWhatsAppDeepLink(whatsAppLink)
                 }
             }
@@ -64,9 +62,11 @@ fun SignDocumentProcessScreen(
 
     when (viewModel.uiState.signDocumentProcessStep) {
         GENERATE_DOCUMENT_STEP.value -> {
-            DocumentGenerationScreen(onNavigateToHome = {
-                viewModel.onUIEvent(OnNavigateToHome)
-            })
+            DocumentGenerationScreen(
+                idBran = viewModel.idBrand,
+                onGetLinkAgain = {
+                    viewModel.onUIEvent(OnCallGetLinkCreditContractSecondTime)
+                })
         }
         SIGN_DOCUMENTS_STEP.value -> {
             SignDocumentScreen(viewModel = viewModel)

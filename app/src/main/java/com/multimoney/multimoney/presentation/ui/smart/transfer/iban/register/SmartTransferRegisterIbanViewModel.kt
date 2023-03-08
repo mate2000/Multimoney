@@ -71,7 +71,8 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
         if (bankAccount.isDigitsOnly() && bankAccount.length <= IBAN_MAX_LENGTH) {
             uiState = uiState.copy(
                 ibanAccountNumber = bankAccount,
-                accountValidationError = null
+                accountValidationError = null,
+                accountError = Pair(false, R.string.empty)
             )
             if (bankAccount.length == AddIbanAccountViewModel.IBAN_MAX_LENGTH) {
                 validateIbanAccount()
@@ -85,7 +86,7 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
         val bankAccount = uiState.ibanAccountNumber
         uiState = uiState.copy(
             accountError = if (bankAccount.length < AddIbanAccountViewModel.IBAN_MAX_LENGTH) {
-                Pair(true, R.string.smart_iban_register_account_error)
+                Pair(true, R.string.smart_iban_register_account_length_error)
             } else {
                 Pair(false, R.string.empty)
             }
@@ -97,9 +98,10 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
             accountInformation = Pair(true, R.string.iban_account_loading),
             validationFinish = false
         )
+        // To validate non personal accounts we have to pass the identification as empty
         queryValidateBankAccountUseCase(
             account = "${Brand.CostaRica.iban}${uiState.ibanAccountNumber}",
-            identification = identification ?: "",
+            identification = "",
             queryType = null,
             user = user.orEmpty(),
             idBrand = idBrand ?: 0
@@ -294,5 +296,6 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
 
     companion object {
         const val IBAN_MAX_LENGTH = 20
+        const val DEBOUNCE_VALIDATION_TIME = 5000L
     }
 }

@@ -64,15 +64,19 @@ fun BalanceTextView(
                 }
             }
         )
-        Box(contentAlignment = Alignment.Center) {
-            Text(
-                modifier = Modifier.offset(y = fontPadding),
-                text = buildAnnotatedString {
-                    append(decimalSeparator)
-                    append(splitText[1])
-                },
-                style = currencyDecimalStyle
-            )
+        if (splitText.size > SPLIT_TEXT_NO_DECIMAL_SIZE) {
+            Box(contentAlignment = Alignment.Center) {
+                Text(
+                    modifier = Modifier.offset(y = fontPadding),
+                    text = buildAnnotatedString {
+                        append(decimalSeparator)
+                        append(splitText[1])
+                    },
+                    style = currencyDecimalStyle
+                )
+            }
         }
     }
 }
+
+const val SPLIT_TEXT_NO_DECIMAL_SIZE = 1

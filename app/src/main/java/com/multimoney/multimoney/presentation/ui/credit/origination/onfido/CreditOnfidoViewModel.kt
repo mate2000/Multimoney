@@ -30,6 +30,8 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_GET_EVICERTIA_LINK
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnStartSubscription
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.CreditSubscriptionManager
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.AppFlow
@@ -55,7 +57,8 @@ class CreditOnfidoViewModel @Inject constructor(
     val onFidoHelper: OnFidoHelper,
     private val mutationOnFidoInitialProcessUseCase: MutationOnFidoInitialProcessUseCase,
     private val mutationOnfidoCheckProcessUseCase: MutationOnfidoCheckProcessUseCase,
-    val countDownTimer: MMCountDownTimer
+    val countDownTimer: MMCountDownTimer,
+    private val creditSubscriptionManager: CreditSubscriptionManager
 ) : BaseViewModel(true) {
 
     // UIState
@@ -94,6 +97,12 @@ class CreditOnfidoViewModel @Inject constructor(
 
     // Events
     val onFidoTokenEvent = MutableSharedFlow<MultimoneyResult<OnfidoToken?>>()
+
+    private fun onStartSubscription() {
+        if (idBrand != Brand.ElSalvador.id && idPrint != ID_PRINT_EMPTY) {
+            creditSubscriptionManager.startCreditSubscription(idBrand ?: 0, idPrint)
+        }
+    }
 
     private fun onInitializeTexts(title: Int, description: String) {
         closeDialogTitle = title
@@ -243,7 +252,8 @@ class CreditOnfidoViewModel @Inject constructor(
                 .plus(getNavParam(FIRST_NAME, firstName))
                 .plus(getNavParam(LAST_NAME, lastName))
                 .plus(getNavParam(CROSSELING, false))
-                .plus(getNavParam(SHOULD_GET_EVICERTIA_LINK, true)),
+                .plus(getNavParam(SHOULD_GET_EVICERTIA_LINK, false))
+                .plus(getNavParam(EVICERTIA_STATUS, evicertiaStatus)),
             Screen.CreditOnfidoScreen.route,
         )
     }
@@ -295,6 +305,7 @@ class CreditOnfidoViewModel @Inject constructor(
             is UIEvent.OnFailureWithDialog -> uiState =
                 uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is UIEvent.OnOpenOnfidoSdk -> onOpenOnfidoSdk(event.onOpenOnfidoSdk)
+            is OnStartSubscription -> onStartSubscription()
         }
     }
 
@@ -336,6 +347,7 @@ class CreditOnfidoViewModel @Inject constructor(
         data class OnContinueEnable(val isEnable: Boolean) : UIEvent()
         data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) : UIEvent()
         data class OnOpenOnfidoSdk(val onOpenOnfidoSdk: () -> Unit) : UIEvent()
+        object OnStartSubscription : UIEvent()
     }
 
     companion object {

@@ -55,15 +55,16 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnShowBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnUpdateScreenConfigData
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.CreditSubscriptionManager
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
 import com.multimoney.multimoney.presentation.util.getNavParam
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
-import javax.inject.Inject
 
 @HiltViewModel
 class CreditViewModel @Inject constructor(
@@ -73,6 +74,7 @@ class CreditViewModel @Inject constructor(
     private val mutationSaveCreditFlowStepUseCase: MutationSaveCreditFlowStepUseCase,
     val queryScreenConfigUseCase: QueryScreenConfigUseCase,
     private val mutationSaveCreditOperationUseCase: MutationSaveCreditOperationUseCase,
+    private val creditSubscriptionManager: CreditSubscriptionManager
 ) : BaseViewModel(true) {
 
     // UIState
@@ -145,7 +147,7 @@ class CreditViewModel @Inject constructor(
                 description = closeDialogDescription,
                 positiveResource = string.crosseling_close_dialog_positive_button_text,
                 negativeResource = string.crosseling_close_dialog_negative_button_text,
-                negativeAction = {
+                positiveAction = {
                     onNavigateToHome()
                 },
                 isActive = mutableStateOf(true),
@@ -286,6 +288,8 @@ class CreditViewModel @Inject constructor(
                         if (idBrand.toInt() == Brand.ElSalvador.id || it.idPrint == 0L) {
                             uiState = uiState.copy(showSVProcessSendSuccessfully = true)
                         } else {
+                            creditSubscriptionManager.startCreditSubscription(idBrand.toInt(), idPrint)
+                            delay(DELAY_TO_NAVIGATE_TO_SIGN_PROCESS)
                             popAndNavigateTo(
                                 Screen.SignDocumentProcessScreen.baseRoute
                                     .plus(
@@ -303,7 +307,8 @@ class CreditViewModel @Inject constructor(
                                     .plus(getNavParam(FIRST_NAME, firstName))
                                     .plus(getNavParam(LAST_NAME, lastName))
                                     .plus(getNavParam(CROSSELING, crosseling))
-                                    .plus(getNavParam(SHOULD_GET_EVICERTIA_LINK, false)),
+                                    .plus(getNavParam(SHOULD_GET_EVICERTIA_LINK, false))
+                                    .plus(getNavParam(EVICERTIA_STATUS, statusEvicertia)),
                                 Screen.CreditScreen.route,
                             )
                         }
@@ -477,5 +482,6 @@ class CreditViewModel @Inject constructor(
         const val CREDIT_TOTAL_STEPS = 7
         const val CREDIT_INDICATOR_TOTAL_STEPS = 6
         const val BANNER_TIME = 2000L
+        const val DELAY_TO_NAVIGATE_TO_SIGN_PROCESS = 200L
     }
 }

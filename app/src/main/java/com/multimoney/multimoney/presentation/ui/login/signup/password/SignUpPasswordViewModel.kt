@@ -8,26 +8,31 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewModelScope
 import com.amplifyframework.auth.AuthUserAttribute
 import com.amplifyframework.auth.AuthUserAttributeKey
-import com.amplifyframework.auth.options.AuthSignUpOptions
+import com.amplifyframework.auth.cognito.options.AWSCognitoAuthSignUpOptions
 import com.amplifyframework.core.Amplify
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.util.MultimoneyResult
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnCallCognitoSignUp
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnCallPasswordSave
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnConfirmPasswordValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnFingerprintCheckedChanged
-import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnInitializeDialogTexts
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnIsBiometricAvailable
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnPasswordValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnShowBiometricPromptForEncryption
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnValidForm
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.checkIfEmulator
+import com.multimoney.multimoney.presentation.util.getAppVersion
+import com.multimoney.multimoney.presentation.util.getDeviceBrand
+import com.multimoney.multimoney.presentation.util.getDeviceModel
+import com.multimoney.multimoney.presentation.util.getIPAddress
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeConsecutiveLetterOrNumber
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeEqualConsecutiveLetterOrNumber
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeLettersOrNumbers
@@ -38,8 +43,10 @@ import com.multimoney.multimoney.presentation.util.passwordHasMinimumCharacters
 import com.multimoney.multimoney.presentation.util.passwordHasSpecialCharacterValidation
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -61,6 +68,15 @@ class SignUpPasswordViewModel @Inject constructor(
     private var biometricDialogSuccessDescription = ""
     private var biometricDialogFailureDescription = ""
     private var isBiometricAvailable = false
+    private var deviceId = ""
+    private var uniqueId = ""
+    private var ipAddress = ""
+    private var deviceType = ""
+    private var deviceName = ""
+    private var appVersion = getAppVersion()
+    private var deviceBrand = getDeviceBrand()
+    private var deviceModel = getDeviceModel()
+    private var isEmulator = checkIfEmulator()
 
     // Events
     var onPasswordSaveEvents = MutableSharedFlow<MultimoneyResult<ValidateSecurity?>>()
@@ -70,28 +86,57 @@ class SignUpPasswordViewModel @Inject constructor(
         biometricPromptDescription: String,
         biometricPromptNegative: String,
         biometricDialogSuccessDescription: String,
-        biometricDialogFailureDescription: String
+        biometricDialogFailureDescription: String,
+        idBrand: Int?
     ) {
         this.biometricPromptTitle = biometricPromptTitle
         this.biometricPromptDescription = biometricPromptDescription
         this.biometricPromptNegative = biometricPromptNegative
         this.biometricDialogSuccessDescription = biometricDialogSuccessDescription
         this.biometricDialogFailureDescription = biometricDialogFailureDescription
+        uiState = uiState.copy(
+            titleResource = if (idBrand == Brand.CostaRica.id) {
+                R.string.sign_up_password_title_cr
+            } else {
+                R.string.sign_up_password_title
+            }
+        )
     }
 
     private fun isFormValid(): Boolean {
         return uiState.oneLowercaseState ?: false && uiState.oneUppercaseState ?: false && uiState.oneNumberState ?: false &&
-            uiState.oneCharacterState ?: false && passwordHasMinimumCharacters(uiState.password) &&
-            (uiState.confirmPassword == uiState.password) && !uiState.confirmPasswordError.first
+                uiState.oneCharacterState ?: false && passwordHasMinimumCharacters(uiState.password) &&
+                (uiState.confirmPassword == uiState.password) && !uiState.confirmPasswordError.first
     }
 
-    private fun onPasswordValueChange(password: String, onContinueEnable: (isEnable: Boolean) -> Unit) {
+    private fun onSetupDeviceInfo(
+        deviceName: String,
+        deviceType: String,
+    ) {
+        viewModelScope.launch {
+            deviceId = dataStorePreferences.getDeviceId().first()
+            uniqueId = dataStorePreferences.getUniqueId().first()
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            ipAddress = getIPAddress() ?: ""
+        }
+        this.deviceName = deviceName
+        this.deviceType = deviceType
+    }
+
+    private fun onPasswordValueChange(
+        password: String,
+        onContinueEnable: (isEnable: Boolean) -> Unit
+    ) {
         uiState = uiState.copy(password = password)
         validatePassword()
         onContinueEnable(isFormValid())
     }
 
-    private fun onConfirmPasswordValueChange(confirmPassword: String, onContinueEnable: (isEnable: Boolean) -> Unit) {
+    private fun onConfirmPasswordValueChange(
+        confirmPassword: String,
+        onContinueEnable: (isEnable: Boolean) -> Unit
+    ) {
         uiState = uiState.copy(confirmPassword = confirmPassword)
         validatePassword()
         onContinueEnable(isFormValid())
@@ -193,9 +238,20 @@ class SignUpPasswordViewModel @Inject constructor(
             AuthUserAttributeKey.custom(COGNITO_CUSTOM_IDENTIFICATION) to identification,
             AuthUserAttributeKey.custom(COGNITO_CUSTOM_PK_USER) to pkUser,
             AuthUserAttributeKey.custom(COGNITO_CUSTOM_STATUS) to status,
-            AuthUserAttributeKey.custom(COGNITO_CUSTOM_ID_BRAND) to idBrand.toString()
+            AuthUserAttributeKey.custom(COGNITO_CUSTOM_ID_BRAND) to idBrand.toString(),
         )
-        val options = AuthSignUpOptions.builder()
+        val metaData = mapOf(
+            COGNITO_DEVICE_ID to deviceId,
+            COGNITO_BRAND to deviceBrand,
+            COGNITO_UNIQUE_ID to uniqueId,
+            COGNITO_MODEL to deviceModel,
+            COGNITO_DEVICE_NAME to deviceName,
+            COGNITO_APP_VERSION to appVersion,
+            COGNITO_IS_EMULATOR to isEmulator.toString(),
+            COGNITO_IP_ADDRESS to ipAddress,
+        )
+
+        val options = AWSCognitoAuthSignUpOptions.builder().validationData(metaData)
             .userAttributes(attrs.map { AuthUserAttribute(it.key, it.value) })
             .build()
         Amplify.Auth.signUp(email, uiState.password, options, {
@@ -319,6 +375,7 @@ class SignUpPasswordViewModel @Inject constructor(
 
     data class UIState(
         // Fields
+        val titleResource: Int = R.string.empty,
         var password: String = "",
         var passwordError: Pair<Boolean, Int> = Pair(false, string.error_empty),
         var confirmPassword: String = "",
@@ -334,15 +391,19 @@ class SignUpPasswordViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnInitializeDialogTexts -> onInitializeDialogTexts(
+            is UIEvent.OnInitializeDialogTexts -> onInitializeDialogTexts(
                 uiEvent.biometricPromptTitle,
                 uiEvent.biometricPromptDescription,
                 uiEvent.biometricPromptNegative,
                 uiEvent.biometricDialogSuccessDescription,
-                uiEvent.biometricDialogFailureDescription
+                uiEvent.biometricDialogFailureDescription,
+                uiEvent.idBrand
             )
             is OnNextActionClick -> uiEvent.nextStepAction.invoke()
-            is OnPasswordValueChange -> onPasswordValueChange(uiEvent.password, uiEvent.onContinueEnable)
+            is OnPasswordValueChange -> onPasswordValueChange(
+                uiEvent.password,
+                uiEvent.onContinueEnable
+            )
             is OnConfirmPasswordValueChange -> onConfirmPasswordValueChange(
                 uiEvent.confirmPassword,
                 uiEvent.onContinueEnable
@@ -361,8 +422,26 @@ class SignUpPasswordViewModel @Inject constructor(
                 uiEvent.onFailureWithDialog
             )
             is OnValidForm -> uiEvent.onContinueEnable(isFormValid())
-            is OnCallPasswordSave -> callQuerySavePassword(uiEvent.pkUser, uiEvent.user, uiEvent.idBrant)
-            is OnFingerprintCheckedChanged -> onFingerprintCheckedChanged(uiEvent.value, uiEvent.showDialog, uiEvent.idBrand)
+            is OnCallPasswordSave -> callQuerySavePassword(
+                uiEvent.pkUser,
+                uiEvent.user,
+                uiEvent.idBrant
+            )
+            is OnFingerprintCheckedChanged -> onFingerprintCheckedChanged(
+                uiEvent.value,
+                uiEvent.showDialog,
+                uiEvent.idBrand
+            )
+            is OnCallPasswordSave -> callQuerySavePassword(
+                uiEvent.pkUser,
+                uiEvent.user,
+                uiEvent.idBrant
+            )
+            is OnFingerprintCheckedChanged -> onFingerprintCheckedChanged(
+                uiEvent.value,
+                uiEvent.showDialog,
+                uiEvent.idBrand
+            )
             is OnShowBiometricPromptForEncryption -> onShowBiometricPromptForEncryption(
                 uiEvent.fragmentActivity,
                 uiEvent.userEmail,
@@ -370,6 +449,10 @@ class SignUpPasswordViewModel @Inject constructor(
                 uiEvent.onNextStep
             )
             is OnIsBiometricAvailable -> isBiometricAvailable = uiEvent.value
+            is UIEvent.OnSetupDeviceInfo -> onSetupDeviceInfo(
+                uiEvent.deviceName,
+                uiEvent.deviceType
+            )
         }
     }
 
@@ -405,6 +488,11 @@ class SignUpPasswordViewModel @Inject constructor(
             val idBrant: Int
         ) : UIEvent()
 
+        data class OnSetupDeviceInfo(
+            val deviceName: String,
+            val deviceType: String
+        ) : UIEvent()
+
         data class OnValidForm(val onContinueEnable: (isEnable: Boolean) -> Unit) : UIEvent()
 
         data class OnFingerprintCheckedChanged(
@@ -418,7 +506,8 @@ class SignUpPasswordViewModel @Inject constructor(
             val biometricPromptDescription: String,
             val biometricPromptNegative: String,
             val biometricDialogSuccessDescription: String,
-            val biometricDialogFailureDescription: String
+            val biometricDialogFailureDescription: String,
+            val idBrand: Int?
         ) : UIEvent()
 
         data class OnShowBiometricPromptForEncryption(
@@ -441,5 +530,13 @@ class SignUpPasswordViewModel @Inject constructor(
         const val COGNITO_CUSTOM_STATUS = "custom:Status"
         const val COGNITO_CUSTOM_ID_BRAND = "custom:IdBrand"
         const val COGNITO_CHANGE_PASSWORD_REQUIRED = "passwordChangeRequired"
+        const val COGNITO_DEVICE_ID = "DeviceId"
+        const val COGNITO_UNIQUE_ID = "UniqueId"
+        const val COGNITO_BRAND = "Brand"
+        const val COGNITO_MODEL = "Model"
+        const val COGNITO_APP_VERSION = "AppVersion"
+        const val COGNITO_IS_EMULATOR = "IsEmulator"
+        const val COGNITO_DEVICE_NAME = "DeviceName"
+        const val COGNITO_IP_ADDRESS = "IpAddress"
     }
 }

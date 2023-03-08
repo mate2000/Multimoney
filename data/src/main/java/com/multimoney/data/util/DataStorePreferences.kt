@@ -433,6 +433,80 @@ class DataStorePreferences @Inject constructor(
 
     fun isAdjustCryptoPressReceiveFirstTime(): Flow<Boolean> = getData(ADJUST_CRYPTO_RECEIVE_FIRST_TIME, false)
 
+    suspend fun setAdjustSmartFirstTime(isFirstTime: Boolean) =
+        setData(ADJUST_ORIGINATION_SMART_FIRST_TIME, isFirstTime)
+
+    fun isAdjustSmartFirstTime(): Flow<Boolean> = getData(ADJUST_ORIGINATION_SMART_FIRST_TIME, true)
+
+    suspend fun setAdjustSmartFirstTimePersonal(isFirstTime: Boolean) =
+        setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_PERSONAL, isFirstTime)
+
+    fun isAdjustSmartFirstTimePersonal(): Flow<Boolean> = getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_PERSONAL, true)
+
+    suspend fun setAdjustSmartFirstTimeHome(isFirstTime: Boolean) =
+        setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_HOME, isFirstTime)
+
+    fun isAdjustSmartFirstTimeHome(): Flow<Boolean> = getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_HOME, true)
+
+    suspend fun setAdjustSmartFirstTimeIncome(isFirstTime: Boolean) =
+        setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_INCOME, isFirstTime)
+
+    fun isAdjustSmartFirstTimeIncome(): Flow<Boolean> =
+        getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_INCOME, true)
+
+    suspend fun setAdjustSmartFirstTimeIncomeInformation(isFirstTime: Boolean) =
+        setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_INCOME_INFORMATION, isFirstTime)
+
+    fun isAdjustSmartFirstTimeIncomeInformation(): Flow<Boolean> =
+        getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_INCOME_INFORMATION, true)
+
+    suspend fun setAdjustSmartFirstTimeBeneficiary(isFirstTime: Boolean) =
+        setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_BENEFICIARY, isFirstTime)
+
+    fun isAdjustSmartFirstTimeBeneficiary(): Flow<Boolean> =
+        getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_BENEFICIARY, true)
+
+    suspend fun setAdjustSmartFirstTimePep(isFirstTime: Boolean) =
+        setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_PEP, isFirstTime)
+
+    fun isAdjustSmartFirstTimePep(): Flow<Boolean> = getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_PEP, true)
+
+    suspend fun setAdjustSmartFirstTimeOnfidoStart(isFirstTime: Boolean) =
+        setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_INICIO, isFirstTime)
+
+    fun isAdjustSmartFirstTimeOnfidoStart(): Flow<Boolean> =
+        getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_INICIO, true)
+
+    suspend fun setAdjustSmartFirstTimeOnfidoDocument(isFirstTime: Boolean) =
+        setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_DOCUMENT, isFirstTime)
+
+    fun isAdjustSmartFirstTimeOnfidoDocument(): Flow<Boolean> = getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_DOCUMENT, true)
+
+    suspend fun setAdjustSmartFirstTimeOnfidoSelfie(isFirstTime: Boolean) =
+        setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_SELFIE, isFirstTime)
+
+    fun isAdjustSmartFirstTimeOnfidoSelfie(): Flow<Boolean> = getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_SELFIE, true)
+
+    suspend fun setAdjustSmartFirstTimeOnfidoDone(isFirstTime: Boolean) =
+        setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_DONE, isFirstTime)
+
+    fun isAdjustSmartFirstTimeOnfidoDone(): Flow<Boolean> = getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_DONE, true)
+
+    suspend fun setAdjustSmartFirstTimeEvicertiaDone(isFirstTime: Boolean) =
+        setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_EVICERTIA_DONE, isFirstTime)
+
+    fun isAdjustSmartFirstTimeEvicertiaDone(): Flow<Boolean> = getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_EVICERTIA_DONE, true)
+
+    suspend fun setAdjustSmartFirstTimeRejected(isFirstTime: Boolean) =
+        setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_REJECTED, isFirstTime)
+
+    fun isAdjustSmartFirstTimeRejected(): Flow<Boolean> = getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_REJECTED, true)
+
+    suspend fun setAdjustSmartFirstTimeSuccessful(isFirstTime: Boolean) =
+        setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_SUCCESSFUL, isFirstTime)
+
+    fun isAdjustSmartFirstTimeSuccessful(): Flow<Boolean> = getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_SUCCESSFUL, true)
+
     companion object {
         private val UNIQUE_ID = stringPreferencesKey("unique_id")
         private val DEVICE_ID = stringPreferencesKey("device_id")
@@ -511,5 +585,21 @@ class DataStorePreferences @Inject constructor(
         private val ADJUST_CRYPTO_SEND_FIRST_TIME = booleanPreferencesKey("adjust_crypto_send_first_time")
         private val ADJUST_CRYPTO_SUCCESS_SEND_FIRST_TIME = booleanPreferencesKey("adjust_crypto_success_send_first_time")
         private val ADJUST_CRYPTO_RECEIVE_FIRST_TIME = booleanPreferencesKey("adjust_crypto_receive_first_time")
+
+        // Adjust Smart Events
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME = booleanPreferencesKey("adjust_origination_smart_first_time")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_PERSONAL = booleanPreferencesKey("adjust_origination_smart_first_time_personal")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_HOME = booleanPreferencesKey("adjust_origination_smart_first_time_home")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_INCOME = booleanPreferencesKey("adjust_origination_smart_first_time_income")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_INCOME_INFORMATION = booleanPreferencesKey("adjust_origination_smart_first_time_income_information")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_BENEFICIARY = booleanPreferencesKey("adjust_origination_smart_first_time_beneficiary")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_PEP = booleanPreferencesKey("adjust_origination_smart_first_time_pep")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_INICIO = booleanPreferencesKey("adjust_origination_smart_first_time_onfido_inicio")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_DOCUMENT = booleanPreferencesKey("adjust_origination_smart_first_time_onfido_document")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_SELFIE = booleanPreferencesKey("adjust_origination_smart_first_time_onfido_selfie")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_DONE = booleanPreferencesKey("adjust_origination_smart_first_time_onfido_done")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_EVICERTIA_DONE = booleanPreferencesKey("adjust_origination_smart_first_time_evicertia_done")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_REJECTED = booleanPreferencesKey("adjust_origination_smart_first_time_rejected")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_SUCCESSFUL = booleanPreferencesKey("adjust_origination_smart_first_time_successful")
     }
 }

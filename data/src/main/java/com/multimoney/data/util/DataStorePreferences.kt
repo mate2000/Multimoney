@@ -392,6 +392,26 @@ class DataStorePreferences @Inject constructor(
 
     fun isAdjustAddAccountEventRegister(): Flow<Boolean> = getData(ADD_ACCOUNT_FIRST_TIME_ADJUST_KEY, true)
 
+    suspend fun isAdjustAddCardEventRegister(register: Boolean) =
+        setData(ADD_CARD_FIRST_TIME_ADJUST_KEY, register)
+
+    fun isAdjustAddCardEventRegister(): Flow<Boolean> = getData(ADD_CARD_FIRST_TIME_ADJUST_KEY, true)
+
+    suspend fun isAdjustFlowAddCardEventRegister(register: Boolean) =
+        setData(ADD_CARD_FIRST_TIME_FLOW_ADJUST_KEY, register)
+
+    fun isAdjustFlowAddCardEventRegister(): Flow<Boolean> = getData(ADD_CARD_FIRST_TIME_FLOW_ADJUST_KEY, true)
+
+    suspend fun isAdjustFinishFlowAddCardEventRegister(register: Boolean) =
+        setData(ADD_CARD_FIRST_TIME_FINISH_FLOW_ADJUST_KEY, register)
+
+    fun isAdjustFinishFlowAddCardEventRegister(): Flow<Boolean> = getData(ADD_CARD_FIRST_TIME_FINISH_FLOW_ADJUST_KEY, true)
+
+    suspend fun isAdjustAddCardVerifiedEventRegister(register: Boolean) =
+        setData(ADD_CARD_FIRST_TIME_VERIFIED_ADJUST_KEY, register)
+
+    fun isAdjustAddCardVerifiedEventRegister(): Flow<Boolean> = getData(ADD_CARD_FIRST_TIME_VERIFIED_ADJUST_KEY, true)
+
     // Adjust Crypto events
     suspend fun setAdjustCryptoHomeFirstTime(firstTimeHomeCrypto: Boolean) =
         setData(ADJUST_CRYPTO_HOME_FIRST_TIME, firstTimeHomeCrypto)
@@ -577,6 +597,10 @@ class DataStorePreferences @Inject constructor(
         private val DISBURSEMENT_SUCCESS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("disbursement_success_first_time")
         private val PAYMENT_SUCCESS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("payment_success_first_time")
         private val ADD_ACCOUNT_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("add_account_first_time")
+        private val ADD_CARD_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("add_card_first_time")
+        private val ADD_CARD_FIRST_TIME_FLOW_ADJUST_KEY = booleanPreferencesKey("add_card_first_time_flow")
+        private val ADD_CARD_FIRST_TIME_FINISH_FLOW_ADJUST_KEY = booleanPreferencesKey("add_card_first_time_flow_finished")
+        private val ADD_CARD_FIRST_TIME_VERIFIED_ADJUST_KEY = booleanPreferencesKey("add_card_first_time_verified")
         private val ADJUST_CRYPTO_HOME_FIRST_TIME = booleanPreferencesKey("adjust_crypto_home_first_time")
         private val ADJUST_CRYPTO_PURCHASE_FIRST_TIME = booleanPreferencesKey("adjust_crypto_purchase_first_time")
         private val ADJUST_CRYPTO_SUCCESS_PURCHASE_FIRST_TIME = booleanPreferencesKey("adjust_crypto_success_purchase_first_time")

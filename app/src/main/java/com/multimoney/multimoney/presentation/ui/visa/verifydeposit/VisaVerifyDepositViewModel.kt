@@ -5,8 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.virtualcard.MutationMicroDepositVDUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationResendMicroDepositVDUseCase
+import com.multimoney.domain.model.metrics.BaseEventDataDto
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
@@ -30,16 +32,20 @@ import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDe
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnMicroDepositValueChange
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnResendClick
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.format
 import com.multimoney.multimoney.presentation.util.tickerFlow
+import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import javax.inject.Inject
 import kotlin.time.Duration
@@ -50,7 +56,8 @@ import kotlin.time.DurationUnit.SECONDS
 class VisaVerifyDepositViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val mutationResendMicroDepositVDUseCase: MutationResendMicroDepositVDUseCase,
-    private val mutationMicroDepositVDUseCase: MutationMicroDepositVDUseCase
+    private val mutationMicroDepositVDUseCase: MutationMicroDepositVDUseCase,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(false) {
 
     // UIState
@@ -234,6 +241,7 @@ class VisaVerifyDepositViewModel @Inject constructor(
             idBrand = idBrand
         ).collectLatest { result ->
             result.onSuccess {
+                logEvents(AdjustEventType.SETTINGS_CTA_FIRST_VALIDATED_FLOW_CARD_8009)
                 setSuccessAlertResult()
             }.onMessage {
                 if (it?.messageError?.status == MICRO_DEPOSIT_ERROR) {
@@ -294,6 +302,45 @@ class VisaVerifyDepositViewModel @Inject constructor(
             },
             isLoading = false
         )
+    }
+
+    fun logEvents(adjustEventType: AdjustEventType) {
+        viewModelScope.launch {
+            getAdjustEvent(adjustEventType).invoke()
+        }
+    }
+
+    private fun getAdjustEvent(adjustEventType: AdjustEventType): suspend () -> Unit {
+        val baseAdjustEvent = BaseEventDataDto(
+            user = user,
+            idBrand = idBrand,
+            identification = identification
+        )
+        return when (adjustEventType) {
+            AdjustEventType.SETTINGS_CTA_FIRST_VALIDATED_FLOW_CARD_8009 -> {
+                getVerifiedCardEvent(baseAdjustEvent)
+            }
+            else -> suspend {}
+        }
+    }
+
+    private fun getVerifiedCardEvent(baseAdjustEvent: BaseEventDataDto) =
+        suspend {
+            if (dataStorePreferences.isAdjustAddCardVerifiedEventRegister().first()) {
+                registerAdjustEvent(
+                    AdjustEventType.SETTINGS_CTA_FIRST_VALIDATED_FLOW_CARD_8009,
+                    data = baseAdjustEvent.toJson()
+                )
+                dataStorePreferences.isAdjustAddCardVerifiedEventRegister(false)
+            }
+            restartMetricsPreferences()
+        }
+
+    private suspend fun restartMetricsPreferences() {
+        dataStorePreferences.isAdjustAddCardEventRegister(true)
+        dataStorePreferences.isAdjustFlowAddCardEventRegister(true)
+        dataStorePreferences.isAdjustFinishFlowAddCardEventRegister(true)
+        dataStorePreferences.isAdjustAddCardVerifiedEventRegister(true)
     }
 
     data class UIState(

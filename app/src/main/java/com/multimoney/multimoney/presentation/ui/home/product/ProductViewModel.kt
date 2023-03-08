@@ -108,13 +108,13 @@ import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.util.NovoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -303,6 +303,9 @@ class ProductViewModel @Inject constructor(
                 )
             }
             else -> {
+                if (workflow == CreditWorkflow.CREDIT_ONFIDO_PROCESS.workflow) {
+                    lastStep = CreditStep.Eight.id
+                }
                 navigateTo(
                     "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
                             "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}/${uiState.userStatus?.infoUser?.firstName}/" +
@@ -1242,6 +1245,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToMaintenanceAlert : UIEvent()
         data class OnNavigateToReleaseTransaction(val cryptoItem: CryptoCurrencyMovement?) :
             UIEvent()
+
         object OnRegisterAdjustCryptoHomeFistTime : UIEvent()
         object OnRegisterAdjustPressPurchaseFirstTime : UIEvent()
         object OnRegisterAdjustPressSellFirstTime : UIEvent()

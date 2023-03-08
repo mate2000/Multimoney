@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.smart.payment.cards
 
 import android.content.Intent
+import android.os.Bundle
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
@@ -27,11 +28,10 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.ReactActivity
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel
-import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnAddCard
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnCardSelected
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnHandleAddCardResponse
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnSetAddCardActivityOnResult
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiary
@@ -48,9 +48,6 @@ fun SmartPaymentCardsScreen(
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: SmartPaymentCardsViewModel = hiltViewModel()
 ) {
-
-    val context = LocalContext.current
-
     // Navigation
     viewModel.apply {
         isOnRestart = isRestart
@@ -62,6 +59,29 @@ fun SmartPaymentCardsScreen(
             }
         }
     }
+
+    BackHandler {
+        viewModel.onUIEvent(OnNavigateBack)
+    }
+
+    Column(
+        modifier = Modifier
+            .background(MultimoneyTheme.colors.background)
+            .fillMaxSize()
+    ) {
+        TopNavBar(
+            onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
+            isRightButtonVisible = false
+        )
+        PaymentCardsListContent(viewModel)
+    }
+}
+
+@Composable
+fun PaymentCardsListContent(
+    viewModel: SmartPaymentCardsViewModel
+) {
+    val context = LocalContext.current
 
     val addCardActivityResult = rememberLauncherForActivityResult(
         contract = StartActivityForResult()
@@ -88,33 +108,6 @@ fun SmartPaymentCardsScreen(
         }
     }
 
-    viewModel.onUIEvent(OnSetAddCardActivityOnResult {
-        val intent = Intent(context, ReactActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
-        addCardActivityResult.launch(intent)
-    })
-
-    BackHandler {
-        viewModel.onUIEvent(OnNavigateBack)
-    }
-
-    Column(
-        modifier = Modifier
-            .background(MultimoneyTheme.colors.background)
-            .fillMaxSize()
-    ) {
-        TopNavBar(
-            onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
-            isRightButtonVisible = false
-        )
-        PaymentCardsListContent(viewModel)
-    }
-}
-
-@Composable
-fun PaymentCardsListContent(
-    viewModel: SmartPaymentCardsViewModel
-) {
     Column(Modifier.padding(horizontal = 16.dp)) {
         Text(
             modifier = Modifier.padding(top = 32.dp),
@@ -135,7 +128,16 @@ fun PaymentCardsListContent(
             modifier = Modifier
                 .padding(top = 32.dp)
                 .fillMaxWidth(),
-            onClick = { viewModel.onUIEvent(OnAddCard) },
+            onClick = {
+                val intent = Intent(context, ReactActivity::class.java)
+                val bundle = Bundle()
+                bundle.putString(PaymentScheduleCardViewModel.APPLICATION_NAME, viewModel.reactApplicationName)
+                bundle.putString(PaymentScheduleCardViewModel.VISA_USER_NAME, viewModel.reactUserName)
+                bundle.putString(PaymentScheduleCardViewModel.VISA_USER_PASS, viewModel.reactUserPass)
+                bundle.putString(PaymentScheduleCardViewModel.ENDPOINT, viewModel.reactEndPoint)
+                intent.putExtras(bundle)
+                addCardActivityResult.launch(intent)
+            },
             buttonType = PrimaryTertiary,
             trailingIcon = R.drawable.ic_plus
         )

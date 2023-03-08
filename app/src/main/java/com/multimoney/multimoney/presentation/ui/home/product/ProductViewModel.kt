@@ -299,7 +299,12 @@ class ProductViewModel @Inject constructor(
                             )
                         )
                         .plus(getNavParam(SHOULD_GET_EVICERTIA_LINK, true))
-                        .plus(getNavParam(EVICERTIA_STATUS, uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm))
+                        .plus(
+                            getNavParam(
+                                EVICERTIA_STATUS,
+                                uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm
+                            )
+                        )
                 )
             }
             else -> {

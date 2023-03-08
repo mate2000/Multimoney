@@ -481,6 +481,7 @@ class ValidateOTPViewModel @Inject constructor(
                     )
             is UIEvent.OnContinueButtonClicked -> onValidateOTP(uiState.email, uiState.otp)
             is UIEvent.OpenMaxAttemptsReachedDialog -> openMaxAttemptsReachedDialog()
+            is UIEvent.OnError -> uiState = uiState.copy(isAlertResultVisible = true)
         }
     }
 
@@ -490,6 +491,7 @@ class ValidateOTPViewModel @Inject constructor(
             val userBlockedForMaxAttends: String
         ) : UIEvent()
 
+        object OnError : UIEvent()
         object OnNavigateTLogOut : UIEvent()
         data class OnGetOtpFromMessage(val message: String) : UIEvent()
         data class OnCallMutationSendPinProcess(

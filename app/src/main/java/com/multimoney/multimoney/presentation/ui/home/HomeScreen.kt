@@ -57,8 +57,7 @@ fun HomeScreen(
     navController: NavHostController,
     onInnerNavigate: (innerNavController: NavHostController, NavEvent.InnerNavigate) -> Unit = { _, _ -> },
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit,
-    viewModel: HomeViewModel = hiltViewModel(),
-    shouldShowReleaseToast: Boolean = false
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val activity = LocalContext.current.findActivity()
     val innerNavController = rememberNavController()
@@ -157,6 +156,10 @@ fun HomeScreen(
         Toast.makeText(activity, unlinkedToastText, Toast.LENGTH_LONG).show()
         viewModel.onUIEvent(HomeViewModel.UIEvent.OnHideUnlinkToast)
     }
+    if (viewModel.uiState.releaseToastIsVisible) {
+        Toast.makeText(activity, stringResource(id = R.string.amount_exceeded_transaction_released), Toast.LENGTH_LONG).show()
+        viewModel.onUIEvent(HomeViewModel.UIEvent.OnHideReleaseToast)
+    }
 
     Scaffold(bottomBar = {
         MMBottomNavigation(
@@ -170,6 +173,7 @@ fun HomeScreen(
                 navController = navController,
                 innerNavController = innerNavController
             )
+
         }
     }
 
@@ -221,9 +225,6 @@ fun HomeScreen(
             onPositiveAction = viewModel.uiState.openDialog.positiveAction,
             isCancelable = viewModel.uiState.openDialog.isCancelable
         )
-    }
-    if(shouldShowReleaseToast){
-        Toast.makeText(LocalContext.current,  stringResource(id = R.string.amount_exceeded_transaction_released), Toast.LENGTH_LONG).show()
     }
 }
 

@@ -39,14 +39,17 @@ import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.ui.crypto.transferin.AmountExceededViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.ui.crypto.transferin.AmountExceededViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import kotlinx.coroutines.flow.collectLatest
 
 
 @Composable
 fun AmountExceededFormScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
-    viewModel: AmountExceededViewModel = hiltViewModel()
+    viewModel: AmountExceededViewModel = hiltViewModel(),
+    sharedViewModel: HomeViewModel
 ) {
 
     LaunchedEffect(true){
@@ -56,6 +59,9 @@ fun AmountExceededFormScreen(
             onPopAndNavigate = onPopAndNavigate,
             onPopBackStack = onPopBackStack
         )
+        viewModel.baseEvent.collect {
+            sharedViewModel.onUIEvent(HomeViewModel.UIEvent.OnShowReleaseToast)
+        }
     }
 
     val focusManager = LocalFocusManager.current

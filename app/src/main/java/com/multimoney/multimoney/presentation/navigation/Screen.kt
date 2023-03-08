@@ -192,7 +192,9 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object SignUpCompleted : Screen("sign_up_completed")
 
     // HomeNavGraph Screens
-    object HomeScreen : Screen("home_screen")
+    object HomeScreen : Screen(
+         "home_screen"
+    )
 
     object ProfileScreen : Screen(
         "profile_screen/{$ID_CLIENT}/{$ID_BRAND}/{$FIRST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$IDENTIFICATION}/{$PK_USER}/{$USER_NAME}",

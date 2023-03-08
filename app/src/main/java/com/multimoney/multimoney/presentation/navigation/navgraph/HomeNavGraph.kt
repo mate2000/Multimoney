@@ -27,6 +27,7 @@ fun NavGraphBuilder.homeNavGraph(
         route = HOME_ROUTE
     ) {
         composable(route = Screen.HomeScreen.route) { backStackEntry ->
+
             val viewModel = hiltViewModel<HomeViewModel>()
             HomeScreen(
                 isRestart = navController.currentBackStackEntry?.savedStateHandle?.getLiveData<Boolean>(
@@ -53,10 +54,7 @@ fun NavGraphBuilder.homeNavGraph(
                         popUpTo(it.popTo) { inclusive = true }
                     }
                 },
-                viewModel = viewModel,
-                shouldShowReleaseToast = navController.currentBackStackEntry?.savedStateHandle?.getLiveData<Boolean>(
-                    RELEASE_TOAST
-                )?.observeAsState()?.value ?: false,
+                viewModel = viewModel
             )
         }
 

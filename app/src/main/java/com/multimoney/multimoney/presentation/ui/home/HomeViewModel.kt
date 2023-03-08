@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -42,6 +43,7 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.BuildConfig
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.RELEASE_TOAST
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
@@ -112,7 +114,7 @@ class HomeViewModel @Inject constructor(
                 pkUser = dataStorePreferences.getPkUser().firstOrNull() ?: "",
                 identification = dataStorePreferences.getIdentification().firstOrNull() ?: "",
                 email = dataStorePreferences.getUserEmail().firstOrNull() ?: "",
-                userName = dataStorePreferences.getUserName().firstOrNull() ?: ""
+                userName = dataStorePreferences.getUserName().firstOrNull() ?: "",
             )
             callQueryValidateUserStatus(
                 uiState.pkUser.toInt(),
@@ -123,6 +125,8 @@ class HomeViewModel @Inject constructor(
             callQueryGetConfigurationVersion(uiState.idBrand.toInt())
         }
     }
+
+
 
     private fun onSetHomeState(homeState: HomeState) {
         uiState = uiState.copy(
@@ -846,6 +850,7 @@ class HomeViewModel @Inject constructor(
         val creditMovementsList: List<CreditMovementsResult> = emptyList(),
         val showCardIssuanceError: Boolean = false,
         val toastIsVisible: Boolean = false,
+        val releaseToastIsVisible: Boolean = false,
         var isExpandedByClick: Boolean = false
     )
 
@@ -898,6 +903,12 @@ class HomeViewModel @Inject constructor(
                 uiState = uiState.copy(isExpandedByClick = uiEvent.isExpandedByClick)
             is UIEvent.OnSetupSessionListener -> onSetupSessionListener(uiEvent.activity)
             is UIEvent.OnSessionDuplicated -> onSessionDuplicated()
+            is UIEvent.OnHideReleaseToast -> {
+                uiState = uiState.copy(releaseToastIsVisible = false)
+            }
+            is UIEvent.OnShowReleaseToast -> {
+                uiState = uiState.copy(releaseToastIsVisible = true)
+            }
         }
     }
 
@@ -932,6 +943,8 @@ class HomeViewModel @Inject constructor(
         data class OnShowTimerDialog(val time: Long, val activity: Activity?) : UIEvent()
         object OnShowUnlinkToast : UIEvent()
         object OnHideUnlinkToast : UIEvent()
+        object OnShowReleaseToast : UIEvent()
+        object OnHideReleaseToast : UIEvent()
         object OnShowAutomaticPaymentEdit : UIEvent()
         object OnHideAutomaticPaymentEdit : UIEvent()
         object OnEditAutomaticPayment : UIEvent()

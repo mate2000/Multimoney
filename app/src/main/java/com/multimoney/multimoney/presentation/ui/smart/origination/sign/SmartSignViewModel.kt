@@ -26,7 +26,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.OpenWhatsAppLink
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.ui.smart.origination.SmartSubscriptionManager
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.BaseEvent.SimulateUserInteraction
@@ -192,10 +191,10 @@ class SmartSignViewModel @Inject constructor(
     }
 
     private fun handleOnfidoStatus(
-        creditContractEvent: AccountSmartContractResult?
+        smartContractEvent: AccountSmartContractResult?
     ) {
         emitBaseEvent(SimulateUserInteraction)
-        when (creditContractEvent?.statusOnfido?.lowercase()) {
+        when (smartContractEvent?.statusOnfido?.lowercase()) {
             SmartOnFidoOrFirmStatus.PENDING.status.lowercase() -> {
                 uiState = uiState.copy(
                     signDocumentProcessStep = VALIDATE_IDENTITY.value
@@ -236,7 +235,7 @@ class SmartSignViewModel @Inject constructor(
     private fun onNavigateToOnfidoAndEvicertiaError(error: String) {
         smartSubscriptionManager.destroySubscription()
         popAndNavigateTo(
-            route = "${Screen.SmartOnfidoAndEvicertiaErrorsScreen.baseRoute}/$error/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$comingFromCrypto",
+            route = "${Screen.SmartOnfidoAndEvicertiaErrorsScreen.baseRoute}/$error/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$comingFromCrypto/$user/$globalId",
             popTo = Screen.SmartSignScreen.route
         )
     }

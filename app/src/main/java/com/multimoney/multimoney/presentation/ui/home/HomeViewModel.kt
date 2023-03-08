@@ -127,8 +127,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-
-
     private fun onSetHomeState(homeState: HomeState) {
         uiState = uiState.copy(
             homeState = homeState

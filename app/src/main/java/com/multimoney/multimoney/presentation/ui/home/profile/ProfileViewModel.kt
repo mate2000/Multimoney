@@ -21,6 +21,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProfileCardListOrigin
+import com.multimoney.multimoney.presentation.util.formatPhoneNumber
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -53,13 +54,13 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             uiState = uiState.copy(
                 phoneNumberWithCode = dataStorePreferences.getUserPhoneNumberWithCode().first(),
-                phoneNumber = dataStorePreferences.getUserPhoneNumber().first(),
+                phoneNumber = dataStorePreferences.getUserPhoneNumber().first()
             )
         }
     }
 
     private fun navigateToPersonalInfoScreen() {
-        navigateTo("${Screen.ProfilePersonalInfoScreen.baseRoute}/${uiState.idClient}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumberWithCode}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
+        navigateTo("${Screen.ProfilePersonalInfoScreen.baseRoute}/${uiState.idClient}/${uiState.idBrand}/${uiState.pkUser}/${formatPhoneNumber(uiState.phoneNumberWithCode,uiState.phoneNumber)}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
     }
 
     private fun navigateToSettingsScreen() {
@@ -109,8 +110,8 @@ class ProfileViewModel @Inject constructor(
         // Fields
         val userName: String? = null,
         val email: String? = null,
-        val phoneNumber: String? = null,
         val phoneNumberWithCode: String? = null,
+        val phoneNumber: String? = null,
         val identification: String? = null,
         val idBrand: Int? = null,
         val pkUser: String? = null,

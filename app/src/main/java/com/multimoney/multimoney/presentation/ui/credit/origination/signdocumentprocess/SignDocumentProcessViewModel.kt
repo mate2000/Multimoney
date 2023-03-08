@@ -50,9 +50,9 @@ import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.PROC
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
+import javax.inject.Inject
 
 @HiltViewModel
 class SignDocumentProcessViewModel @Inject constructor(
@@ -99,14 +99,18 @@ class SignDocumentProcessViewModel @Inject constructor(
                 titleResource = if (idBrand == Brand.CostaRica.id) string.sign_credit_dialog_title_cr else string.sign_credit_dialog_title,
                 descriptionResource = if (idBrand == Brand.CostaRica.id) string.sign_credit_dialog_description_cr else string.sign_credit_dialog_description,
                 positiveResource = string.sign_credit_dialog_continue,
+                negativeResource = string.payment_points_dialog_negative_button,
+                negativeAction = { onUIEvent(OnNavigateToHome) },
                 isActive = mutableStateOf(true)
             )
         )
     }
 
     private fun onEvaluateWitchRequestCall() {
-        onShouldStartSubscription()
-        onShouldCallGetLinkCreditContract()
+        if (idBrand != Brand.ElSalvador.id) {
+            onShouldStartSubscription()
+            onShouldCallGetLinkCreditContract()
+        }
     }
 
     private fun onShouldCallGetLinkCreditContract() {
@@ -127,12 +131,14 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     private fun onListenCreditContractEventSubscription() {
-        creditSubscriptionManager.subscriptionSubscribe(getCreditSubscriptionListener())
-        if (creditSubscriptionManager.hasEvisertiaLink()) {
-            uiState = uiState.copy(
-                signDocumentProcessStep = SIGN_DOCUMENTS_STEP.value,
-                signDocumentUrl = creditSubscriptionManager.getEvisertioLink() ?: ""
-            )
+        if (idBrand != Brand.ElSalvador.id) {
+            creditSubscriptionManager.subscriptionSubscribe(getCreditSubscriptionListener())
+            if (creditSubscriptionManager.hasEvisertiaLink()) {
+                uiState = uiState.copy(
+                    signDocumentProcessStep = SIGN_DOCUMENTS_STEP.value,
+                    signDocumentUrl = creditSubscriptionManager.getEvisertioLink() ?: ""
+                )
+            }
         }
     }
 

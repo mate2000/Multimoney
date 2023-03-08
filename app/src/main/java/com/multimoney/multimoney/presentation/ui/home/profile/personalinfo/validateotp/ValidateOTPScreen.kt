@@ -31,6 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
+import com.multimoney.data.util.catalog.FieldToChange
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
@@ -202,7 +203,7 @@ fun ValidateOTPScreen(
     //full screen dialog
     if (viewModel.uiState.isAlertResultVisible) {
         AlertResult(
-            titleString = stringResource(id = R.string.profile_error_changing_phone_title),
+            titleString = stringResource(id = if(viewModel.uiState.changingField == FieldToChange.PHONE.value) R.string.profile_error_changing_phone_title else R.string.profile_error_changing_email_title),
             descriptionString = stringResource(viewModel.uiState.alertTextResource),
             buttonTextResource = R.string.profile_error_changing_phone_button,
             isLeftButtonVisible = false,

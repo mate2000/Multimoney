@@ -3,9 +3,9 @@ package com.multimoney.multimoney.presentation.ui.login.signup.personaldata
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.Nationalities
 import com.multimoney.domain.interaction.security.MutationUserValidationUseCase
 import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCase
@@ -42,6 +42,9 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnUpdateAllNames
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnValidateDocument
+import com.multimoney.multimoney.presentation.util.ISO3_COSTA_RICA
+import com.multimoney.multimoney.presentation.util.ISO3_EL_SALVADOR
+import com.multimoney.multimoney.presentation.util.ISO3_GUATEMALA
 import com.multimoney.multimoney.presentation.util.catalog.SvDocuments
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.validCarne
@@ -53,6 +56,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 @HiltViewModel
 class SignUpPersonalDataViewModel @Inject constructor(
@@ -94,34 +98,30 @@ class SignUpPersonalDataViewModel @Inject constructor(
         )
     )
 
-    private fun getCountry(
-        nationality: String,
-        updateNationality: (nationality: String, idBrand: Int) -> Unit,
-        onLoadingValueChange: (isLoading: Boolean) -> Unit
-    ): String? {
-        onSuccessCountry?.countryList?.forEach {
-            if (it.countryDescription?.lowercase() == nationality.lowercase()) {
-                setDefaultCountry(nationality, updateNationality, onLoadingValueChange)
-                return it.countryDescription
-            }
-        }
-        return ""
-    }
-
     private fun setDefaultCountry(
-        nationality: String,
+        iso3Country: String,
         updateNationality: (nationality: String, idBrand: Int) -> Unit,
         onLoadingValueChange: (isLoading: Boolean) -> Unit
     ) {
-        callQueryCatalogDocumentType(
-            onSuccessCountry?.countryList?.find { it.countryDescription == nationality }?.idBrand ?: 0,
-            onLoadingValueChange
-        )
-        updateNationality.invoke(
-            onSuccessCountry?.countryList?.find { it.countryDescription == nationality }?.countryDescription
-                ?: "",
-            onSuccessCountry?.countryList?.find { it.countryDescription == nationality }?.idBrand ?: 0
-        )
+        val deviceCountry = when (iso3Country) {
+            ISO3_COSTA_RICA -> Brand.CostaRica
+            ISO3_GUATEMALA -> Brand.Guatemala
+            ISO3_EL_SALVADOR -> Brand.ElSalvador
+            else -> Brand.Default
+        }
+        onSuccessCountry?.countryList?.find {
+            (it.idBrand ?: 0) == deviceCountry.id
+        }?.let {
+            callQueryCatalogDocumentType(
+                it.idBrand ?: 0,
+                onLoadingValueChange
+            )
+            updateNationality.invoke(
+                it.countryDescription ?: "",
+                it.idBrand ?: 0
+            )
+            uiState = uiState.copy(nationalityValue = it.countryDescription ?: "")
+        }
     }
 
     private fun getDocumentLength(documentType: String, isFromBackend: Boolean = false) {
@@ -306,25 +306,23 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private fun onCallMutationUserValidationUseCase(
         email: String,
         nextStep: String,
-        idBrand: Int,
-        activity: FragmentActivity
-    ) =
-        executeUseCase {
-            mutationUserValidationUseCase(
-                email = email,
-                currentStep = nextStep,
-                idBrand = idBrand,
-                idDocument = uiState.identificationIdSelected,
-                identification = uiState.personalDocumentValue,
-                firstName = uiState.firstNameValue,
-                secondName = uiState.secondNameValue,
-                firstSurname = uiState.firstLastNameValue,
-                secondSurname = uiState.secondLastNameValue,
-                deviceId = deviceId
-            ).collectLatest { result ->
-                onUserDataValidationEvent.emit(result)
-            }
+        idBrand: Int
+    ) = executeUseCase {
+        mutationUserValidationUseCase(
+            email = email,
+            currentStep = nextStep,
+            idBrand = idBrand,
+            idDocument = uiState.identificationIdSelected,
+            identification = uiState.personalDocumentValue,
+            firstName = uiState.firstNameValue,
+            secondName = uiState.secondNameValue,
+            firstSurname = uiState.firstLastNameValue,
+            secondSurname = uiState.secondLastNameValue,
+            deviceId = deviceId
+        ).collectLatest { result ->
+            onUserDataValidationEvent.emit(result)
         }
+    }
 
     private fun onStart(
         nationality: String,
@@ -335,15 +333,16 @@ class SignUpPersonalDataViewModel @Inject constructor(
         firstLastName: String,
         secondLastName: String,
         fullName: String,
+        iso3Country: String,
         updateNationality: (nationality: String, idBrand: Int) -> Unit,
         onLoadingValueChange: (isLoading: Boolean) -> Unit
     ) {
         viewModelScope.launch {
             deviceId = dataStorePreferences.getDeviceId().first()
         }
-        val countryValue = getCountry(nationality, updateNationality, onLoadingValueChange) ?: ""
+        if (nationality.isEmpty()) setDefaultCountry(iso3Country, updateNationality, onLoadingValueChange)
+
         uiState = uiState.copy(
-            nationalityValue = countryValue,
             identificationValueType = identificationType,
             personalDocumentValue = identificationValue,
             firstNameValue = firstName,
@@ -467,12 +466,11 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private fun onNextActionClick(
         email: String,
         nextStep: String,
-        idBrand: Int,
-        activity: FragmentActivity
+        idBrand: Int
     ) {
         previousEmail = email
         this.idBrand = idBrand
-        onCallMutationUserValidationUseCase(email, nextStep, idBrand, activity)
+        onCallMutationUserValidationUseCase(email, nextStep, idBrand)
     }
 
     private fun validateDocument(email: String?) {
@@ -599,6 +597,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 event.firstLastName,
                 event.secondLastName,
                 event.fullName,
+                event.iso3Country,
                 event.updateNationality,
                 event.onLoadingValueChange
             )
@@ -635,7 +634,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 event.identification,
                 event.identificationShareViewModelChange
             )
-            is OnNextActionClick -> onNextActionClick(event.email, event.nextStep, event.idBrand, event.activity)
+            is OnNextActionClick -> onNextActionClick(event.email, event.nextStep, event.idBrand)
             is OnValidateDocument -> validateDocument(event.document)
             is OnCallQueryGetCountry -> callQueryGetCountryUseCase(
                 event.user,
@@ -655,6 +654,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
             val firstLastName: String,
             val secondLastName: String,
             val fullName: String,
+            val iso3Country: String,
             val updateNationality: (nationality: String, idBrand: Int) -> Unit,
             val onLoadingValueChange: (isLoading: Boolean) -> Unit
         ) : UIEvent()
@@ -703,8 +703,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
         data class OnNextActionClick(
             val email: String,
             val nextStep: String,
-            val idBrand: Int,
-            val activity: FragmentActivity
+            val idBrand: Int
         ) : UIEvent()
 
         data class OnValidateDocument(
@@ -729,7 +728,6 @@ class SignUpPersonalDataViewModel @Inject constructor(
         const val DUI_VERIFICATION_MODULE = 10
         const val FORMAT_VALUE = '0'
         const val SINGLE_DOCUMENT = 1
-        const val STEP_TO_MOVE = 4
         const val ANOTHER_DEVICE_ALREADY_REGISTERED = 3102
     }
 }

@@ -108,13 +108,13 @@ import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.util.NovoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -303,6 +303,9 @@ class ProductViewModel @Inject constructor(
                 )
             }
             else -> {
+                if (workflow == CreditWorkflow.CREDIT_ONFIDO_PROCESS.workflow) {
+                    lastStep = CreditStep.Eight.id
+                }
                 navigateTo(
                     "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
                             "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}/${uiState.userStatus?.infoUser?.firstName}/" +
@@ -733,7 +736,7 @@ class ProductViewModel @Inject constructor(
     private fun navigateToAddIbanAccount() {
         val infoCredit = uiState.userStatus?.infoCredit
         navigateTo(
-            route = "${Screen.AddIbanAccountScreen.baseRoute}/$email/${uiState.idBrand}/$identification/${Screen.HomeBNScreen.baseRoute}/$idClient/${infoCredit?.idLoanClient}"
+            route = "${Screen.AddIbanAccountScreen.baseRoute}/$email/${uiState.idBrand.toIntOrNull() ?: 0}/$identification/${Screen.HomeScreen.route}/$idClient/${infoCredit?.idLoanClient}"
         )
     }
 
@@ -916,10 +919,18 @@ class ProductViewModel @Inject constructor(
     private fun getSmartContent() {
         val workflow = uiState.userStatus?.infoBankAccount?.wording?.workflow
         uiState = uiState.copy(
-            smartContent = if (workflow == SmartWorkflow.SMART_INITIAL_CARD.workflow || workflow == SmartWorkflow.SMART_STEP_PENDING.workflow || workflow == SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS.workflow || workflow == SmartWorkflow.SMART_CONTRACT_PROCESS.workflow || workflow == SmartWorkflow.SMART_FIRMED_ONFIDO_PENDING.workflow || workflow == SmartWorkflow.SMART_FIRMED_ONFIDO_REJECTED.workflow || workflow == SmartWorkflow.SMART_APPROVED_BY_ONFIDO.workflow || workflow == SMART_ONFIDO_PROCESS.workflow) {
-                Pair(true, workflow)
-            } else {
-                Pair(false, "")
+            smartContent = when (workflow) {
+                SmartWorkflow.SMART_INITIAL_CARD.workflow, SmartWorkflow.SMART_STEP_PENDING.workflow, SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS.workflow,
+                SmartWorkflow.SMART_CONTRACT_PROCESS.workflow, SmartWorkflow.SMART_FIRMED_ONFIDO_PENDING.workflow, SmartWorkflow.SMART_FIRMED_ONFIDO_REJECTED.workflow,
+                SmartWorkflow.SMART_APPROVED_BY_ONFIDO.workflow, SMART_ONFIDO_PROCESS.workflow -> {
+                    Pair(true, workflow)
+                }
+                "" -> {
+                    Pair(true, SMART_CARD_NO_ACTION)
+                }
+                else -> {
+                    Pair(false, "")
+                }
             }
         )
     }
@@ -1234,6 +1245,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToMaintenanceAlert : UIEvent()
         data class OnNavigateToReleaseTransaction(val cryptoItem: CryptoCurrencyMovement?) :
             UIEvent()
+
         object OnRegisterAdjustCryptoHomeFistTime : UIEvent()
         object OnRegisterAdjustPressPurchaseFirstTime : UIEvent()
         object OnRegisterAdjustPressSellFirstTime : UIEvent()
@@ -1269,5 +1281,6 @@ class ProductViewModel @Inject constructor(
         const val DEFAULT_NEW_STATE = "PG"
         const val DEFAULT_TYPE_STATE = "S"
         private const val CARD_INFORMATION_STATUS = 1
+        const val SMART_CARD_NO_ACTION = "smart_card_no_action"
     }
 }

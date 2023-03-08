@@ -1,8 +1,9 @@
-mutation ChangePhone($identification:String!, $phone:String!, $pkUser:Long!, $idBrand:Int!,$user:String!){
+mutation ChangePhone($identification:String!, $phone:String!,$countryCode:String! $pkUser:Long!, $idBrand:Int!,$user:String!){
     changePhone(
         changePhoneInputType: {
             identification: $identification,
             phone:  $phone,
+            countryCode: $countryCode,
             pkUser: $pkUser,
             idBrand: $idBrand,
             user: $user

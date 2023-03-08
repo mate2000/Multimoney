@@ -24,6 +24,7 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.BaseEvent.OnOpenConditionOfCreditDialog
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.BaseEvent.OnUpdateIsCrosseling
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCallMutationSaveCreditApplicationUseCase
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCallMutationSaveTermsAndConditionsCreditUseCase
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCallQueryCreditOfferUseCase
@@ -141,6 +142,7 @@ class CreditAmountViewModel @Inject constructor(
                 currencyItems = products?.map { it?.currency ?: "" }
                 onExecuteTimer()
                 setCreditOffer(INITIAL_CURRENCY_INDEX)
+                emitBaseEvent(OnUpdateIsCrosseling(creditOffer?.isCrosseling ?: false))
                 uiState = uiState.copy(isLoading = false)
             }.onFailure {
                 onFailureWithDialog(
@@ -654,6 +656,7 @@ class CreditAmountViewModel @Inject constructor(
     sealed class BaseEvent {
         data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()
         data class OnOpenConditionOfCreditDialog(val dialogParameters: DialogParameters) : BaseEvent()
+        data class OnUpdateIsCrosseling(val isCrosseling: Boolean) : BaseEvent()
     }
 
     companion object {

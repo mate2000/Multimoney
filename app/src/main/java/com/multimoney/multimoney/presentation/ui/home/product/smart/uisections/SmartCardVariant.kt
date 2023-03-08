@@ -48,6 +48,7 @@ fun CardInactiveSmartProduct(
     textOne: String = "",
     textTwo: String = "",
     cTA: String = "",
+    showAction: Boolean = true,
     onClick: () -> Unit = {}
 ) {
     Column(
@@ -92,12 +93,14 @@ fun CardInactiveSmartProduct(
             style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.text
         )
-        CustomImage(
-            modifier = Modifier
-                .padding(top = 20.dp)
-                .align(Alignment.CenterHorizontally),
-            drawableResource = R.drawable.ic_chevron_up
-        )
+        if (showAction) {
+            CustomImage(
+                modifier = Modifier
+                    .padding(top = 20.dp)
+                    .align(Alignment.CenterHorizontally),
+                drawableResource = R.drawable.ic_chevron_up
+            )
+        }
         Text(
             text = cTA,
             modifier = Modifier

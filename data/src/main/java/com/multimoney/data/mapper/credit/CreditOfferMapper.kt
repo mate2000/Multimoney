@@ -29,6 +29,9 @@ private fun CreditOfferQuery.Product.mapToDomainModel() = Product(
 )
 
 private fun CreditOfferQuery.CreditOffer.mapToDomainModel() =
-    CreditOffer(idUserRequest = idUserRequest as Int, products = products?.map { it.mapToDomainModel() } ?: listOf())
+    CreditOffer(
+        idUserRequest = idUserRequest as Int,
+        products = products?.map { it.mapToDomainModel() } ?: listOf(),
+        isCrosseling = isCrosseling ?: false)
 
 fun CreditOfferQuery.Data.mapToDomainModel() = creditOffer.mapToDomainModel()

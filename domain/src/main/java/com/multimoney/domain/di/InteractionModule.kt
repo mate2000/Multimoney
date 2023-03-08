@@ -248,6 +248,10 @@ import com.multimoney.domain.interaction.virtualcard.MutationCardBlockingUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationCardBlockingUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.MutationCardUnblockingUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationCardUnblockingUseCaseImpl
+import com.multimoney.domain.interaction.virtualcard.MutationCreateCardVDUseCase
+import com.multimoney.domain.interaction.virtualcard.MutationCreateCardVDUseCaseImpl
+import com.multimoney.domain.interaction.virtualcard.MutationCreateUserVDUseCase
+import com.multimoney.domain.interaction.virtualcard.MutationCreateUserVDUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.MutationDeleteCardVDUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationDeleteCardVDUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.MutationMicroDepositVDUseCase
@@ -258,6 +262,8 @@ import com.multimoney.domain.interaction.virtualcard.MutationResendMicroDepositV
 import com.multimoney.domain.interaction.virtualcard.MutationResendMicroDepositVDUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.MutationUpdateCardVDUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationUpdateCardVDUseCaseImpl
+import com.multimoney.domain.interaction.virtualcard.QueryGetParametersMobileByCategoryUseCase
+import com.multimoney.domain.interaction.virtualcard.QueryGetParametersMobileByCategoryUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCase
 import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCaseImpl
 import com.multimoney.domain.repository.BalanceRepository
@@ -804,6 +810,21 @@ class InteractionModule {
     @Singleton
     fun provideMutationUpdateCardVDUseCase(virtualCardRepository: VirtualCardRepository): MutationUpdateCardVDUseCase =
         MutationUpdateCardVDUseCaseImpl(virtualCardRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationCreateCardVDUseCase(virtualCardRepository: VirtualCardRepository): MutationCreateCardVDUseCase =
+        MutationCreateCardVDUseCaseImpl(virtualCardRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationCreateUserVDUseCase(virtualCardRepository: VirtualCardRepository): MutationCreateUserVDUseCase =
+        MutationCreateUserVDUseCaseImpl(virtualCardRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryGetParametersMobileByCategoryUseCase(virtualCardRepository: VirtualCardRepository): QueryGetParametersMobileByCategoryUseCase =
+        QueryGetParametersMobileByCategoryUseCaseImpl(virtualCardRepository)
 
     @Provides
     @Singleton

@@ -7,7 +7,6 @@ import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
 import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
-import com.multimoney.domain.model.credit.CreditContractEvent
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
@@ -26,6 +25,8 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.OpenWhatsAppLink
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.ui.smart.origination.SmartSubscriptionManager
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.BaseEvent.SimulateUserInteraction
@@ -96,6 +97,8 @@ class SmartSignViewModel @Inject constructor(
                 titleResource = string.sign_credit_dialog_title,
                 description = dialogDescription,
                 positiveResource = string.sign_credit_dialog_continue,
+                negativeResource = string.payment_points_dialog_negative_button,
+                negativeAction = { onUIEvent(OnNavigateToHome) },
                 isActive = mutableStateOf(true)
             )
         )
@@ -131,50 +134,53 @@ class SmartSignViewModel @Inject constructor(
                     signDocumentUrl = smartContractEvent.link ?: ""
                 )
             }
+            CreditSubscriptionStep.DocumentsFirmed.step -> {
+                emitBaseEvent(SimulateUserInteraction)
+                handleOnfidoStatus(smartContractEvent)
+            }
             CreditSubscriptionStep.DocumentsRejected.step -> {
+                emitBaseEvent(SimulateUserInteraction)
                 if (isEvisertiaOverCounted(smartContractEvent.statusEvicertia)) {
                     onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_SECOND_TIME.value)
                 } else {
                     onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_FIRST_TIME.value)
                 }
             }
+            CreditSubscriptionStep.AccountActivated.step -> {
+                setSuccessAlertResult()
+            }
+            CreditSubscriptionStep.ErrorActivatingAccount.step, CreditSubscriptionStep.DocumentsFailed.step -> {
+                showSubscriptionError()
+            }
         }
     }
 
-    private fun handleEvents(smartContractEvent: CreditContractEvent?) {
-        when (uiState.signDocumentProcessStep) {
-            GENERATE_DOCUMENT_STEP.value -> {
-                if (smartContractEvent?.link.isNullOrEmpty().not()) {
-                    emitBaseEvent(SimulateUserInteraction)
-                    uiState = uiState.copy(
-                        signDocumentProcessStep = SIGN_DOCUMENTS_STEP.value,
-                        signDocumentUrl = smartContractEvent?.link ?: ""
-                    )
-                }
+    private fun showSubscriptionError() {
+        uiState = uiState.copy(
+            isAlertResultVisible = true,
+            alertResultIsRightButtonVisible = true,
+            alertResultIconResource = drawable.ic_error_symbol,
+            alertResultTitleResource = string.rejected_by_onfido_title,
+            alertResultDescriptionResource = string.smart_rejected_by_onfido_subtitle,
+            alertResultButtonResource = string.contact,
+            alertResultRightButtonClick = { onUIEvent(OnNavigateToHome) },
+            alertResultButtonAction = {
+                emitBaseEvent(OpenWhatsAppLink)
+                onUIEvent(OnNavigateToHome)
             }
-            SIGN_DOCUMENTS_STEP.value -> {
-                when (smartContractEvent?.statusEvicertia?.lowercase()) {
-                    SmartOnFidoOrFirmStatus.FIRMED.status.lowercase() -> {
-                        emitBaseEvent(SimulateUserInteraction)
-                        handleOnfidoStatus(smartContractEvent)
-                    }
-                    SmartOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {
-                        emitBaseEvent(SimulateUserInteraction)
-                        onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_FIRST_TIME.value)
-                    }
-                    SmartOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase() -> {
-                        emitBaseEvent(SimulateUserInteraction)
-                        onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_SECOND_TIME.value)
-                    }
-                }
-            }
-            VALIDATE_IDENTITY.value -> {
-                emitBaseEvent(SimulateUserInteraction)
-                if (smartContractEvent?.active == true) {
-                    navigateToApprovedByOnfido()
-                }
-            }
-        }
+        )
+    }
+
+    private fun setSuccessAlertResult() {
+        uiState = uiState.copy(
+            isAlertResultVisible = true,
+            alertResultIsRightButtonVisible = true,
+            alertResultIconResource = drawable.ic_success_symbol,
+            alertResultTitleResource = string.approved_by_onfido_title,
+            alertResultButtonResource = string.understood,
+            alertResultRightButtonClick = { onUIEvent(OnNavigateToHome) },
+            alertResultButtonAction = { onUIEvent(OnNavigateToHome) }
+        )
     }
 
     private fun navigateToApprovedByOnfido() {
@@ -186,7 +192,7 @@ class SmartSignViewModel @Inject constructor(
     }
 
     private fun handleOnfidoStatus(
-        creditContractEvent: CreditContractEvent?
+        creditContractEvent: AccountSmartContractResult?
     ) {
         emitBaseEvent(SimulateUserInteraction)
         when (creditContractEvent?.statusOnfido?.lowercase()) {
@@ -254,7 +260,16 @@ class SmartSignViewModel @Inject constructor(
         val signDocumentUrl: String = "",
         val loadingIcon: Int = drawable.ic_logo_multimoney3,
         val loadingTitle: Int = string.document_generation_title,
-        val loadingSubtitle: Int = string.smart_other_generating_document_subtitle
+        val loadingSubtitle: Int = string.smart_other_generating_document_subtitle,
+        val isAlertResultVisible: Boolean = false,
+        val alertResultIconResource: Int = 0,
+        val alertResultIsLeftButtonVisible: Boolean = false,
+        val alertResultIsRightButtonVisible: Boolean = false,
+        val alertResultTitleResource: Int = string.empty,
+        val alertResultDescriptionResource: Int = string.empty,
+        val alertResultButtonResource: Int = string.empty,
+        val alertResultRightButtonClick: () -> Unit = {},
+        val alertResultButtonAction: () -> Unit = {}
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

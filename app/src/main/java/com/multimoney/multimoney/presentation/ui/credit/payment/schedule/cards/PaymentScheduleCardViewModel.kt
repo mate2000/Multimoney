@@ -6,7 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.domain.interaction.credit.QueryGetCardAutomaticDebitUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationActivatedCardAutomaticDebitUseCase
+import com.multimoney.domain.interaction.virtualcard.MutationCreateUserVDUseCase
+import com.multimoney.domain.interaction.virtualcard.QueryGetParametersMobileByCategoryUseCase
 import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCase
+import com.multimoney.domain.model.security.InfoUser
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
@@ -14,40 +17,55 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.USER_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.ADD_CARD_RESPONSE
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_CARD_VISA_DIRECT
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CARD
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.INFO_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_PAYMENT_SCHEDULE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnAlertButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnAlertCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnEditCardVisaDirect
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnGetClientCardVisaDirect
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnNavigateToAddCard
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnOpenDisclaimerDialog
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnProgramClick
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnHandleAddCardResponse
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnStopTimer
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnResumeTimer
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.API_DATE_FORMAT
+import com.multimoney.multimoney.presentation.util.catalog.AddVisaCardErrors
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.getAddCardErrorFromValue
 import com.multimoney.multimoney.presentation.util.getDayFromString
+import com.multimoney.multimoney.presentation.util.getNavParam
+import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @HiltViewModel
 class PaymentScheduleCardViewModel @Inject constructor(
+    val countDownTimer: MMCountDownTimer,
     val savedStateHandle: SavedStateHandle,
     private val queryListCardVDUseCase: QueryListCardVDUseCase,
     private val mutationActivatedCardAutomaticDebitUseCase: MutationActivatedCardAutomaticDebitUseCase,
-    private val getCardAutomaticDebitUseCase: QueryGetCardAutomaticDebitUseCase
+    private val getCardAutomaticDebitUseCase: QueryGetCardAutomaticDebitUseCase,
+    private val mutationCreateUserVDUseCase: MutationCreateUserVDUseCase,
+    private val queryGetParametersMobileByCategoryUseCase: QueryGetParametersMobileByCategoryUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -55,9 +73,7 @@ class PaymentScheduleCardViewModel @Inject constructor(
         private set
 
     // Stateless
-    private var user: String = ""
     private var identification: String = ""
-    private var idBrand: Int = 0
     private var idClient: Int = 0
     private var idLoanClient: Int = 0
     private var isEditBankAccount: Boolean = false
@@ -67,11 +83,15 @@ class PaymentScheduleCardViewModel @Inject constructor(
     private var getCardAttempts = 0
     private var getPaymentScheduleAttempts = 0
     private var setPaymentScheduleAttempts = 0
+    private var infoUser: InfoUser? = null
+    var reactApplicationName: String = ""
+    var reactUserName: String = ""
+    var reactUserPass: String = ""
+    var reactEndPoint: String = ""
 
     init {
-        user = savedStateHandle[USER] ?: ""
+        infoUser = savedStateHandle[INFO_USER]
         identification = savedStateHandle[IDENTIFICATION] ?: ""
-        idBrand = savedStateHandle[ID_BRAND] ?: 0
         idClient = savedStateHandle[ID_CLIENT] ?: 0
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: 0
         paymentDate = savedStateHandle[PAYMENT_DATE]
@@ -94,8 +114,8 @@ class PaymentScheduleCardViewModel @Inject constructor(
 
     private fun onCallQueryGetCardsUseCase() = executeUseCase {
         queryListCardVDUseCase.invoke(
-            user = user,
-            idBrand = idBrand,
+            user = infoUser?.email.orEmpty(),
+            idBrand = infoUser?.idBrand ?: 0,
             identification = identification
         ).collectLatest { result ->
             result.onSuccess { cardsList ->
@@ -114,9 +134,9 @@ class PaymentScheduleCardViewModel @Inject constructor(
 
     private fun onCallGetCardsAutomaticDebitUseCase() = executeUseCase {
         getCardAutomaticDebitUseCase.invoke(
-            user = user,
+            user = infoUser?.email.orEmpty(),
             identification = identification,
-            idBrand = idBrand,
+            idBrand = infoUser?.idBrand ?: 0,
             idClient = idClient.toLong(),
             idLoanClient = idLoanClient.toLong()
         ).collectLatest { result ->
@@ -137,8 +157,8 @@ class PaymentScheduleCardViewModel @Inject constructor(
 
     private fun onCallMutationActivatedCardAutomaticDebitUseCase() = executeUseCase {
         mutationActivatedCardAutomaticDebitUseCase.invoke(
-            user = user,
-            idBrand = idBrand,
+            user = infoUser?.email.orEmpty(),
+            idBrand = infoUser?.idBrand ?: 0,
             idClient = idClient,
             idLoanClient = idLoanClient,
             idCard = uiState.cardVisaDirect?.idCard?.toLong() ?: 0,
@@ -158,6 +178,91 @@ class PaymentScheduleCardViewModel @Inject constructor(
             }.onLoading {
                 uiState = uiState.copy(isLoading = true)
             }
+        }
+    }
+
+    private fun onCallMutationCreateUserVDUseCase() = executeUseCase {
+        mutationCreateUserVDUseCase.invoke(
+            identification =  identification,
+            firstName = infoUser?.firstName.orEmpty(),
+            secondName = infoUser?.secondName.orEmpty(),
+            lastName = infoUser?.lastName.orEmpty(),
+            secondLastName = infoUser?.secondLastName.orEmpty(),
+            email = infoUser?.email.orEmpty(),
+            callerId = infoUser?.countryCode?.replace("+", "").plus(infoUser?.phone.orEmpty()),
+            user = infoUser?.userName.orEmpty(),
+            idBrand = infoUser?.idBrand ?: 0
+        ).collectLatest { result ->
+            result.onSuccess {
+                uiState = uiState.copy(isLoading = false)
+                reactUserName = it?.userName ?: ""
+                reactUserPass = it?.password ?: ""
+                onCallGetParametersMobileByCategoryUseCase()
+            }.onFailure {
+                uiState = uiState.copy(
+                    isLoading = false,
+                    openDialog = DialogParameters(
+                        description = it.getError() ?: "",
+                        isActive = mutableStateOf(true)
+                    )
+                )
+            }.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
+    private fun onCallGetParametersMobileByCategoryUseCase() = executeUseCase {
+        queryGetParametersMobileByCategoryUseCase.invoke(
+            idBrand = infoUser?.idBrand ?: 0,
+            category = VISA_DIRECT_CATEGORY
+        ).collectLatest { result ->
+            result.onSuccess { parameters ->
+                uiState = uiState.copy(
+                    isLoading = false,
+                )
+                if (parameters?.isNotEmpty() == true) {
+                    val applicationName = parameters.find {
+                        it?.searchKey.equals(
+                        SEARCH_KEY_APPLICATION_NAME) }
+                    reactApplicationName = applicationName?.value ?: ""
+
+                    val endpoint = parameters.find {
+                        it?.searchKey.equals(
+                            SEARCH_KEY_ENDPOINT) }
+                    reactEndPoint = endpoint?.value ?: ""
+
+                }
+                getClientCardVisaDirect()
+            }.onFailure {
+                uiState = uiState.copy(
+                    isLoading = false,
+                    openDialog = DialogParameters(
+                        description = it.getError() ?: "",
+                        isActive = mutableStateOf(true)
+                    )
+                )
+            }.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
+    private fun onStart() {
+        if (infoUser?.visaDirectUser.isNullOrEmpty() && infoUser?.visaDirectId.isNullOrEmpty()) {
+            onCallMutationCreateUserVDUseCase()
+        } else {
+            reactUserName =  infoUser?.visaDirectUser ?: ""
+            reactUserPass =  infoUser?.visaDirectId ?: ""
+            onCallGetParametersMobileByCategoryUseCase()
+        }
+    }
+
+    private fun onHandleAddCardResponse(response: String, isError: Boolean) {
+        if (isError) {
+            setErrorAlertResultAddCard(response.getAddCardErrorFromValue())
+        } else {
+            onNavigateToVisaVerifyInformation(response)
         }
     }
 
@@ -200,8 +305,27 @@ class PaymentScheduleCardViewModel @Inject constructor(
         )
     }
 
+    private fun setErrorAlertResultAddCard(
+        addVisaCardErrors: AddVisaCardErrors
+    ) {
+        uiState = uiState.copy(
+            isAlertResultVisible = true,
+            isAlertResultVisaError = true,
+            isAlertResultSuccess = false,
+            alertResultIconResource = R.drawable.ic_error_symbol,
+            alertResultTitleResource = addVisaCardErrors.title,
+            alertResultDescriptionResource = addVisaCardErrors.description,
+            alertResultButtonResource = R.string.payment_schedule_error_alert_button_two,
+            isLoading = false
+        )
+    }
+
     private fun onEditCardVisaDirect() = navigateTo(
-        route = "${Screen.PaymentScheduleCardListScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/$paymentDate/$previousScreen/$identification"
+        route = "${Screen.PaymentScheduleCardListScreen.baseRoute}/$idClient/$idLoanClient/$paymentDate/$previousScreen/$identification/${
+            encodeData(
+                infoUser
+            )
+        }"
     )
 
     private fun onOpenDisclaimerDialog() {
@@ -224,14 +348,36 @@ class PaymentScheduleCardViewModel @Inject constructor(
         else -> onNavigateBackHome(true)
     }
 
-    private fun onNavigateToAddCard() {
-        // TODO - navigate to add card screen
-    }
+    private fun onNavigateToVisaVerifyInformation(response: String) = navigateTo(
+        route = Screen.VisaVerifyInformationScreen.baseRoute
+            .plus(
+                getNavParam(IDENTIFICATION, identification)
+            )
+            .plus(
+                getNavParam(ID_CARD, "")
+            )
+            .plus(
+                getNavParam(USER, infoUser?.email.orEmpty())
+            )
+            .plus(
+                getNavParam(ID_BRAND, infoUser?.idBrand ?: 0)
+            )
+            .plus(
+                getNavParam(PREVIOUS_SCREEN, Screen.ProfileCardListScreen.baseRoute)
+            )
+            .plus(
+                getNavParam(ADD_CARD_RESPONSE, response)
+            )
+            .plus(
+                getNavParam(USER_NAME, infoUser?.userName.orEmpty())
+            )
+    )
 
     private fun onNavigateBackHome(isRestart: Boolean) =
         navigateBack(popTo = Screen.HomeScreen.route, isRestart = isRestart)
 
     private fun onAlertButtonClick() = when {
+        uiState.isAlertResultVisaError ->  navigateBack(popTo = Screen.HomeScreen.route, isRestart = true)
         uiState.isAlertResultSuccess -> navigateBack(popTo = Screen.HomeScreen.route, isRestart = true)
         uiState.isAlertResultSuccess.not() && (getPaymentScheduleAttempts == ATTEMPT_ONE || setPaymentScheduleAttempts == ATTEMPT_ONE) ->
             uiState =
@@ -239,7 +385,7 @@ class PaymentScheduleCardViewModel @Inject constructor(
         else -> navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
     }
 
-    private fun onAlertCloseClick() = if (uiState.isAlertResultSuccess) {
+    private fun onAlertCloseClick() = if (uiState.isAlertResultSuccess || uiState.isAlertResultVisaError) {
         navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
     } else {
         navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
@@ -263,11 +409,20 @@ class PaymentScheduleCardViewModel @Inject constructor(
         )
     }
 
+    private fun onResumeTimer() {
+        countDownTimer.resumeTimer()
+    }
+
+    private fun onStopTimer() {
+        countDownTimer.stopTimer()
+    }
+
     data class UIState(
         // Interactions
         val cardVisaDirect: CardVisaDirect? = null,
         val day: String = "",
         val isAlertResultSuccess: Boolean = true,
+        val isAlertResultVisaError: Boolean = false,
         val isAlertResultVisible: Boolean = false,
         val alertResultIconResource: Int = 0,
         val alertResultTitleResource: Int = R.string.empty,
@@ -289,7 +444,10 @@ class PaymentScheduleCardViewModel @Inject constructor(
             is OnEditCardVisaDirect -> onEditCardVisaDirect()
             is OnOpenDisclaimerDialog -> onOpenDisclaimerDialog()
             is OnNavigateBack -> onNavigateBack()
-            is OnNavigateToAddCard -> onNavigateToAddCard()
+            is OnStart-> onStart()
+            is OnHandleAddCardResponse -> onHandleAddCardResponse(uiEvent.response, uiEvent.isError)
+            is OnStopTimer -> onStopTimer()
+            is OnResumeTimer -> onResumeTimer()
         }
     }
 
@@ -302,10 +460,24 @@ class PaymentScheduleCardViewModel @Inject constructor(
         object OnEditCardVisaDirect : UIEvent()
         object OnOpenDisclaimerDialog : UIEvent()
         object OnNavigateBack : UIEvent()
-        object OnNavigateToAddCard : UIEvent()
+        object OnStart : UIEvent()
+        object OnStopTimer : UIEvent()
+        object OnResumeTimer : UIEvent()
+        data class OnHandleAddCardResponse(val response: String, val isError: Boolean) : UIEvent()
     }
 
     companion object {
         const val ATTEMPT_ONE = 1
+        const val RESULT_CODE_PROCESS_FINISHED = 200
+        const val RESULT_CODE_PROCESS_INCOMPLETE = 400
+        const val RESPONSE_VALUE = "response_value_key"
+        const val RESPONSE_IS_ERROR = "response_error_key"
+        const val VISA_DIRECT_CATEGORY = "VISA_DIRECT"
+        const val APPLICATION_NAME = "applicationName"
+        const val VISA_USER_NAME = "userName"
+        const val VISA_USER_PASS = "userPassword"
+        const val ENDPOINT = "endpoint"
+        const val SEARCH_KEY_ENDPOINT = "FTT_SERVER_VISADIRECT"
+        const val SEARCH_KEY_APPLICATION_NAME = "APPLICATIONNAME_VISADIRECT"
     }
 }

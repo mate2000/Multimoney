@@ -43,8 +43,9 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.PoppinsFontFamily
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnUpdateIsCrosselingValue
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.BaseEvent.OnOpenConditionOfCreditDialog
-import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.ID_PROMOTION
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.BaseEvent.OnUpdateIsCrosseling
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.SLIDER_TOTAL
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.TERMS_AND_CONDITIONS_CURRENT_FLOW
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCallMutationSaveTermsAndConditionsCreditUseCase
@@ -93,7 +94,6 @@ fun CreditAmountScreen(
                         currentFlow = TERMS_AND_CONDITIONS_CURRENT_FLOW,
                         identification = sharedViewModel.identification,
                         descPromotion = "",
-                        idPromotion = ID_PROMOTION,
                         onSuccess = { screenConfigData ->
                             sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnUpdateScreenConfigData(screenConfigData))
                             sharedViewModel.onUIEvent(
@@ -144,6 +144,7 @@ fun CreditAmountScreen(
                         event.dialogParameters
                     )
                 )
+                is OnUpdateIsCrosseling -> sharedViewModel.onUIEvent(OnUpdateIsCrosselingValue(event.isCrosseling))
             }
         }
     }

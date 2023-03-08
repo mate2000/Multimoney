@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.crypto.receive.cryptoaddress
 
+import android.graphics.Bitmap
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,6 +13,7 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
 import com.multimoney.multimoney.presentation.util.ShareHelper
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -75,8 +77,8 @@ class CryptoReceiveAddressViewModel @Inject constructor(
         }
     }
 
-    private fun shareCryptoReceiveAddress(address: String) {
-        helper.shareTextPlain(text = address)
+    private fun shareCryptoReceiveAddress(address: String, bitmap: Bitmap) {
+        helper.shareTextWithImage(text = address, bitmap = bitmap)
     }
 
     fun onUIEvent(event: UIEvent) {
@@ -89,8 +91,16 @@ class CryptoReceiveAddressViewModel @Inject constructor(
                 event.cryptoNetwork
             )
             is UIEvent.OnGetCryptoReceiveAddress -> getCryptoReceiveAddress()
-            is UIEvent.OnShareCryptoReceiveAddress -> shareCryptoReceiveAddress(event.address)
+            is UIEvent.OnShareCryptoReceiveAddress -> shareCryptoReceiveAddress(event.address, event.bitmap)
             is UIEvent.OnSetOpenMaintenanceAction -> openMaintenanceAction = event.action
+            UIEvent.OnRegisterAdjustEnterReceiveQRScreen -> registerAdjustEvent(
+                applyAdjust = false,
+                adjustEventType = AdjustEventType.RECEIVE_CRYPTO_ENTER_QR_SCREEN
+            )
+            UIEvent.OnRegisterAdjustPressShareAddressButton -> registerAdjustEvent(
+                applyAdjust = false,
+                adjustEventType = AdjustEventType.RECEIVE_CRYPTO_PRESS_SHARE_BUTTON
+            )
         }
     }
 
@@ -125,8 +135,11 @@ class CryptoReceiveAddressViewModel @Inject constructor(
         ) : UIEvent
         object OnGetCryptoReceiveAddress : UIEvent
         data class OnShareCryptoReceiveAddress(
-            val address: String
+            val address: String,
+            val bitmap: Bitmap
         ) : UIEvent
         data class OnSetOpenMaintenanceAction(val action: () -> Unit) : UIEvent
+        object OnRegisterAdjustEnterReceiveQRScreen : UIEvent
+        object OnRegisterAdjustPressShareAddressButton : UIEvent
     }
 }

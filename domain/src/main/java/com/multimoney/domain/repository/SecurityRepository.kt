@@ -14,6 +14,7 @@ import com.multimoney.domain.model.security.OnfidoCheckProcess
 import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.security.QuickActions
 import com.multimoney.domain.model.security.RequestChangeDevice
+import com.multimoney.domain.model.security.SaveLogTracking
 import com.multimoney.domain.model.security.SendPinProcess
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.security.UserPhoneMobileSave
@@ -163,7 +164,7 @@ interface SecurityRepository {
     ): Flow<MultimoneyResult<QuickActions?>>
 
     suspend fun queryGetCountryPhoneCodes(
-        idBrand: Int,
+        idBrand: Int
     ): Flow<MultimoneyResult<CountryPhoneCodes>>
 
     suspend fun mutationValidateOTP(
@@ -174,8 +175,10 @@ interface SecurityRepository {
     suspend fun mutationChangePhone(
         identification: String,
         phone: String,
+        countryCode: String,
         pkUser: String,
-        idBrand: Int
+        idBrand: Int,
+        user: String
     ): Flow<MultimoneyResult<ChangePhone>>
 
     suspend fun mutationChangeEmail(
@@ -215,4 +218,12 @@ interface SecurityRepository {
         email: String,
         otp: String
     ): Flow<MultimoneyResult<ChangeDevice>>
+
+    suspend fun mutationSaveLogTracking(
+        identification: String,
+        pkUser: Int,
+        keySearch: String,
+        data: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<SaveLogTracking>>
 }

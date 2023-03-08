@@ -66,6 +66,7 @@ import com.multimoney.data.networking.graphql.apollomodel.GetHistoricClientBalan
 import com.multimoney.data.networking.graphql.apollomodel.GetHistoricalCurrencyPricesQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetInfoDepositQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetLinkCreditContractQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetParametersMobileByCategoryQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPaymentPointsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPricesQuoteAndCommissionQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPromissoryNoteDetailQuery
@@ -113,6 +114,7 @@ import com.multimoney.data.networking.graphql.apollomodel.SaveCreditExtensionDet
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditFlowInputMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOfferMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOperationMutation
+import com.multimoney.data.networking.graphql.apollomodel.SaveLogTrackingMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveTermsAndConditionsCreditMutation
 import com.multimoney.data.networking.graphql.apollomodel.ScreenConfigQuery
 import com.multimoney.data.networking.graphql.apollomodel.SellCryptoCurrencyMutation
@@ -124,6 +126,8 @@ import com.multimoney.data.networking.graphql.apollomodel.StepByStepQuery
 import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsSignedQuery
 import com.multimoney.data.networking.graphql.apollomodel.UpdateCardVDMutation
+import com.multimoney.data.networking.graphql.apollomodel.CreateCardVDMutation
+import com.multimoney.data.networking.graphql.apollomodel.CreateUserVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.UpdateFavoriteContactSmartMutation
 import com.multimoney.data.networking.graphql.apollomodel.UpdateSmartAccountStatusMutation
 import com.multimoney.data.networking.graphql.apollomodel.UpdateUserRegisterMutation
@@ -1335,15 +1339,19 @@ class GraphqlApi @Inject constructor(
     fun mutationChangePhone(
         identification: String,
         phone: String,
+        countryCode: String,
         pkUser: String,
-        idBrand: Int
+        idBrand: Int,
+        user: String
     ): ApolloCall<ChangePhoneMutation.Data> =
         apolloAuthorizedClient.mutation(
             ChangePhoneMutation(
                 identification,
                 phone,
+                countryCode,
                 pkUser.toLong(),
-                idBrand
+                idBrand,
+                user
             )
         )
             .fetchPolicy(FetchPolicy.NetworkOnly)
@@ -1806,6 +1814,56 @@ class GraphqlApi @Inject constructor(
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 
+    fun mutationCreateCardVD(
+        identification: String,
+        cardTokenID: String,
+        default: Boolean,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<CreateCardVDMutation.Data> = apolloAuthorizedClient.mutation(
+        CreateCardVDMutation(
+            identification = identification,
+            cardTokenID = cardTokenID,
+            default = default,
+            user = user,
+            idBrand = idBrand
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationCreateUserVD(
+        identification: String,
+        firstName: String,
+        secondName: String,
+        lastName: String,
+        secondLastName: String,
+        email: String,
+        callerId: String,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<CreateUserVDMutation.Data> = apolloAuthorizedClient.mutation(
+        CreateUserVDMutation(
+            identification = identification,
+            firstName = firstName,
+            secondName = secondName,
+            lastName = lastName,
+            secondLastName = secondLastName,
+            email = email,
+            callerId = callerId,
+            user = user,
+            idBrand = idBrand
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryGetParametersMobileByCategory(
+        idBrand: Int,
+        category: String
+    ): ApolloCall<GetParametersMobileByCategoryQuery.Data> = apolloAuthorizedClient.query(
+        GetParametersMobileByCategoryQuery(
+            idBrand = idBrand,
+            category = category
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
     fun mutationPayCreditVD(
         identification: String,
         currency: String,
@@ -1995,6 +2053,23 @@ class GraphqlApi @Inject constructor(
             ChangeDeviceMutation(
                 email = email,
                 otp = otp
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationSaveLogTracking(
+        identification: String,
+        pkUser: Int,
+        keySearch: String,
+        data: String,
+        idBrand: Int
+    ): ApolloCall<SaveLogTrackingMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            SaveLogTrackingMutation(
+                identification = identification,
+                pkUser = pkUser,
+                keySearch = keySearch,
+                data = data,
+                idBrand = idBrand
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

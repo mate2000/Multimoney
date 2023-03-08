@@ -290,9 +290,9 @@ class ValidateOTPViewModel @Inject constructor(
             }
     }
 
-    private fun onChangePhone(identification: String, phone: String, pkUser: String, idBrand: Int) =
+    private fun onChangePhone(identification: String, phone: String,countryCode: String, pkUser: String, idBrand: Int,user: String) =
         executeUseCase {
-            mutationChangePhoneUseCase.invoke(identification, phone, pkUser, idBrand)
+            mutationChangePhoneUseCase.invoke(identification, phone,countryCode, pkUser, idBrand,user)
                 .collectLatest {
                     processChangePhoneResult(it)
                 }
@@ -328,7 +328,6 @@ class ValidateOTPViewModel @Inject constructor(
         result.onSuccess {
             uiState = uiState.copy(isLoading = false)
             viewModelScope.launch {
-                dataStorePreferences.setUserPhoneNumber(uiState.newValue ?: "")
                 dataStorePreferences.setUserPhoneNumberWithCode(
                     uiState.newPhoneNumberCode?.plus(
                         uiState.newValue
@@ -364,8 +363,10 @@ class ValidateOTPViewModel @Inject constructor(
                     onChangePhone(
                         uiState.identification.toString(),
                         uiState.newValue.toString(),
+                        uiState.newPhoneNumberCode.toString(),
                         uiState.pkUser ?: "",
-                        uiState.idBrand ?: 0
+                        uiState.idBrand ?: 0,
+                        uiState.userName ?: ""
                     )
                 }
                 else -> {

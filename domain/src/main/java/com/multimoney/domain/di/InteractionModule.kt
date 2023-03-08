@@ -164,6 +164,8 @@ import com.multimoney.domain.interaction.crypto.GetBalanceCryptoAccountUseCase
 import com.multimoney.domain.interaction.crypto.GetBalanceCryptoAccountUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCase
 import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCaseImpl
+import com.multimoney.domain.interaction.crypto.GetCryptoReceiveAddressUseCase
+import com.multimoney.domain.interaction.crypto.GetCryptoReceiveAddressUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetCurrencyHistoricalPricesUseCase
 import com.multimoney.domain.interaction.crypto.GetCurrencyHistoricalPricesUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetCurrencyNewsUseCase
@@ -172,18 +174,16 @@ import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCas
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetPriceQuoteAndCommissionUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetPriceQuoteAndCommissionsUseCase
-import com.multimoney.domain.interaction.crypto.ReleaseTransferUseCase
-import com.multimoney.domain.interaction.crypto.ReleaseTransferUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetTransferCommissionUseCase
 import com.multimoney.domain.interaction.crypto.GetTransferCommissionUseCaseImpl
+import com.multimoney.domain.interaction.crypto.ReleaseTransferUseCase
+import com.multimoney.domain.interaction.crypto.ReleaseTransferUseCaseImpl
 import com.multimoney.domain.interaction.crypto.SellCryptoCurrencyUseCase
 import com.multimoney.domain.interaction.crypto.SellCryptoCurrencyUseCaseImpl
-import com.multimoney.domain.interaction.crypto.ValidateDepositAddressUseCase
-import com.multimoney.domain.interaction.crypto.ValidateDepositAddressUseCaseImpl
 import com.multimoney.domain.interaction.crypto.SendCryptoToAddressUseCase
 import com.multimoney.domain.interaction.crypto.SendCryptoToAddressUseCaseImpl
-import com.multimoney.domain.interaction.crypto.GetCryptoReceiveAddressUseCase
-import com.multimoney.domain.interaction.crypto.GetCryptoReceiveAddressUseCaseImpl
+import com.multimoney.domain.interaction.crypto.ValidateDepositAddressUseCase
+import com.multimoney.domain.interaction.crypto.ValidateDepositAddressUseCaseImpl
 import com.multimoney.domain.interaction.mmvisa.MutationDeleteTokenDeviceNVUseCase
 import com.multimoney.domain.interaction.mmvisa.MutationDeleteTokenDeviceNVUseCaseImpl
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
@@ -204,6 +204,8 @@ import com.multimoney.domain.interaction.security.MutationOnfidoCheckProcessUseC
 import com.multimoney.domain.interaction.security.MutationOnfidoCheckProcessUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationRequestChangeDeviceUseCase
 import com.multimoney.domain.interaction.security.MutationRequestChangeDeviceUseCaseImpl
+import com.multimoney.domain.interaction.security.MutationSaveLogTrackingUseCase
+import com.multimoney.domain.interaction.security.MutationSaveLogTrackingUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCase
@@ -246,6 +248,10 @@ import com.multimoney.domain.interaction.virtualcard.MutationCardBlockingUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationCardBlockingUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.MutationCardUnblockingUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationCardUnblockingUseCaseImpl
+import com.multimoney.domain.interaction.virtualcard.MutationCreateCardVDUseCase
+import com.multimoney.domain.interaction.virtualcard.MutationCreateCardVDUseCaseImpl
+import com.multimoney.domain.interaction.virtualcard.MutationCreateUserVDUseCase
+import com.multimoney.domain.interaction.virtualcard.MutationCreateUserVDUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.MutationDeleteCardVDUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationDeleteCardVDUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.MutationMicroDepositVDUseCase
@@ -256,6 +262,8 @@ import com.multimoney.domain.interaction.virtualcard.MutationResendMicroDepositV
 import com.multimoney.domain.interaction.virtualcard.MutationResendMicroDepositVDUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.MutationUpdateCardVDUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationUpdateCardVDUseCaseImpl
+import com.multimoney.domain.interaction.virtualcard.QueryGetParametersMobileByCategoryUseCase
+import com.multimoney.domain.interaction.virtualcard.QueryGetParametersMobileByCategoryUseCaseImpl
 import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCase
 import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCaseImpl
 import com.multimoney.domain.repository.BalanceRepository
@@ -361,6 +369,11 @@ class InteractionModule {
     @Singleton
     fun provideMutationUserPhoneMobileUseCase(securityRepository: SecurityRepository): MutationUserPhoneMobileSaveUseCase =
         MutationUserPhoneMobileSaveUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationSaveLogTrackingUseCase(securityRepository: SecurityRepository): MutationSaveLogTrackingUseCase =
+        MutationSaveLogTrackingUseCaseImpl(securityRepository)
 
     // Balance
 
@@ -797,6 +810,21 @@ class InteractionModule {
     @Singleton
     fun provideMutationUpdateCardVDUseCase(virtualCardRepository: VirtualCardRepository): MutationUpdateCardVDUseCase =
         MutationUpdateCardVDUseCaseImpl(virtualCardRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationCreateCardVDUseCase(virtualCardRepository: VirtualCardRepository): MutationCreateCardVDUseCase =
+        MutationCreateCardVDUseCaseImpl(virtualCardRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationCreateUserVDUseCase(virtualCardRepository: VirtualCardRepository): MutationCreateUserVDUseCase =
+        MutationCreateUserVDUseCaseImpl(virtualCardRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryGetParametersMobileByCategoryUseCase(virtualCardRepository: VirtualCardRepository): QueryGetParametersMobileByCategoryUseCase =
+        QueryGetParametersMobileByCategoryUseCaseImpl(virtualCardRepository)
 
     @Provides
     @Singleton

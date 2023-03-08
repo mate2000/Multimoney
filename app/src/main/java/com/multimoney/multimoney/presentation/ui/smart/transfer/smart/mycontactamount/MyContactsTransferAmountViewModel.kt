@@ -25,6 +25,7 @@ import com.multimoney.multimoney.presentation.util.catalog.DisplayAccount
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getCurrentTime
+import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -64,10 +65,17 @@ class MyContactsTransferAmountViewModel @Inject constructor(
                 ),
                 destinyAccountDisplay = DisplayAccount(
                     sheetTitle = phoneAccount?.titular,
-                    sheetSubtitle = phoneAccount?.number?.plus(
-                        if (idBrand == ElSalvador.id) ""
-                        else SEPARATOR.plus(destinyCurrency?.stringName)
-                    )
+                    sheetSubtitle = if (phoneAccount?.number.isNullOrEmpty().not()) {
+                        phoneAccount?.number?.plus(
+                            if (idBrand == ElSalvador.id) ""
+                            else SEPARATOR.plus(destinyCurrency?.stringName)
+                        )
+                    } else {
+                        getMaskedAccount(
+                            accountNumber = phoneAccount?.accountNumber.orEmpty(),
+                            prefix = ""
+                        )
+                    }
                 ),
                 currency = destinyCurrency?.symbol ?: Dollar.symbol,
                 placeholder = if (destinyCurrency == Dollar) {

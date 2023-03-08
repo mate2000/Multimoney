@@ -12,13 +12,21 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven {
+            // All of React Native (JS, Android binaries) is installed from npm
+            url ("$rootDir/react_native_dependencies/node_modules/react-native/android")
+        }
+        maven {
+            // Android JSC is installed from npm
+            url("$rootDir/react_native_dependencies/node_modules/jsc-android/dist")
+        }
         maven { url 'https://maven.applanga.com/' }
         maven { url 'https://jitpack.io' }
         maven {
             url "https://nexus-public.novopayment.net/repository/maven-public/"
             credentials {
-                username = System.env.NOVO_DEPENDENCY_USER ? System.env.NOVO_DEPENDENCY_USER : dependencyUser
-                password = System.env.NOVO_DEPENDENCY_PASSWORD ? System.env.NOVO_DEPENDENCY_PASSWORD : dependencyPassword
+                username = novoDependencyUser
+                password = novoDependencyPassword
             }
         }
     }

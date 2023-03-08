@@ -9,8 +9,9 @@ interface MutationChangePhoneUseCase {
     suspend operator fun invoke(
         identification: String,
         phone : String,
+        countryCode: String,
         pkUser : String,
-        idBrand : Int
-
+        idBrand : Int,
+        user: String
     ): Flow<MultimoneyResult<ChangePhone>>
 }

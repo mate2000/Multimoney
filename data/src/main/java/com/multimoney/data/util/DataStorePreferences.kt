@@ -453,6 +453,21 @@ class DataStorePreferences @Inject constructor(
 
     fun isAdjustCryptoPressReceiveFirstTime(): Flow<Boolean> = getData(ADJUST_CRYPTO_RECEIVE_FIRST_TIME, false)
 
+    suspend fun isAdjustSmartSavingBtnEventRegistered(isFirstSaving: Boolean) =
+        setData(ADJUST_SMART_FIRST_SAVING_BTN_KEY, isFirstSaving)
+
+    fun isAdjustSmartSavingBtnEventRegistered(): Flow<Boolean> = getData(ADJUST_SMART_FIRST_SAVING_BTN_KEY, true)
+
+    suspend fun isAdjustSmartSendingBtnEventRegistered(isFirstSent: Boolean) =
+        setData(ADJUST_SMART_FIRST_SENDING_KEY, isFirstSent)
+
+    fun isAdjustSmartSendingBtnEventRegistered(): Flow<Boolean> = getData(ADJUST_SMART_FIRST_SENDING_KEY, true)
+
+    suspend fun isAdjustFirstSavingEventRegistered(isFirstSaving: Boolean) =
+        setData(ADJUST_SMART_FIRST_SAVING_KEY, isFirstSaving)
+
+    fun isAdjustFirstSavingEventRegistered(): Flow<Boolean> = getData(ADJUST_SMART_FIRST_SAVING_KEY, true)
+
     suspend fun setAdjustSmartFirstTime(isFirstTime: Boolean) =
         setData(ADJUST_ORIGINATION_SMART_FIRST_TIME, isFirstTime)
 
@@ -625,5 +640,9 @@ class DataStorePreferences @Inject constructor(
         private val ADJUST_ORIGINATION_SMART_FIRST_TIME_EVICERTIA_DONE = booleanPreferencesKey("adjust_origination_smart_first_time_evicertia_done")
         private val ADJUST_ORIGINATION_SMART_FIRST_TIME_REJECTED = booleanPreferencesKey("adjust_origination_smart_first_time_rejected")
         private val ADJUST_ORIGINATION_SMART_FIRST_TIME_SUCCESSFUL = booleanPreferencesKey("adjust_origination_smart_first_time_successful")
+
+        private val ADJUST_SMART_FIRST_SAVING_BTN_KEY = booleanPreferencesKey("adjust_smart_first_saving_btn_key")
+        private val ADJUST_SMART_FIRST_SENDING_KEY = booleanPreferencesKey("adjust_smart_first_sending_key")
+        private val ADJUST_SMART_FIRST_SAVING_KEY = booleanPreferencesKey("adjust_smart_first_saving_key")
     }
 }

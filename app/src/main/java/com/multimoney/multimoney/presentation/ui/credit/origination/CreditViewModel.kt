@@ -172,7 +172,7 @@ class CreditViewModel @Inject constructor(
         emitBaseEvent(BaseEvent.OnHideBottomSheet)
     }
 
-    fun onShowBottomSheet() {
+    private fun onShowBottomSheet() {
         uiState = uiState.copy(
             isBottomSheetVisible = true,
         )

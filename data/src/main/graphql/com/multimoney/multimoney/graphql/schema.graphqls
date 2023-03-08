@@ -130,6 +130,11 @@ type Query {
   verifiedExternalAccount(verifiedExternalAccountInput: VerifiedExternalAccountDtoInput!): VerifiedExternalAccount
 
   """
+  AccountSmart
+  """
+  listAccountsTransfer365(listAccountsTransfer365Input: ListAccountsTransfer365DtoInput!): [AccountsTransfer365List!]
+
+  """
   Balance
   """
   balanceCredit(balanceCreditInput: balanceCreditInput!): [PromissoryNoteMobile!]
@@ -731,6 +736,11 @@ type Mutation {
   """
   Security
   """
+  unlockPinUser(userDto: UpdateUserDtoInput!): ResponseApi!
+
+  """
+  Security
+  """
   processforgotPassword(processforgotPasswordInputType: ProcessForgotPasswordDtoInput!): ProcessForgotPassword!
 
   """
@@ -758,6 +768,11 @@ type Mutation {
   Security
   """
   userPhoneMobileSave(userPhoneMobileSaveInput: UserPhoneMobileSaveDtoInput!): UserEventMobile!
+
+  """
+  Security
+  """
+  userEventMobileSave(userEventMobileSaveInput: UserEventMobileSaveDtoInput!): UserEventMobile!
 
   """
   Security
@@ -1612,6 +1627,44 @@ type VerifiedExternalAccount {
 
 input VerifiedExternalAccountDtoInput {
   identification: String!
+
+  idBrand: Int
+
+  user: String
+}
+
+type AccountsTransfer365List {
+  pk_Ban_Mtr_Cuenta_Transferencia: Int
+
+  fk_Banco_Destino: Int
+
+  nombre_Banco_Destino: String
+
+  decripcion_Tipo_Cuenta: String
+
+  numero_Cuenta: String
+
+  nombre_Titular: String
+
+  email_Notificacion: String
+
+  numero_Identificacion_Destino: String
+
+  alias: String
+
+  es_Favorita: String
+
+  fk_Tipo_Identificacion: Int
+}
+
+input ListAccountsTransfer365DtoInput {
+  idTransferAccount: Int!
+
+  state: Int!
+
+  identification: String!
+
+  isFavorite: Boolean!
 
   idBrand: Int
 
@@ -2670,6 +2723,8 @@ input ValidateSecurityDtoInput {
   pkUser: Int!
 
   password: String!
+
+  onlyValidate: Boolean
 
   idBrand: Int
 
@@ -4765,7 +4820,7 @@ input UpdateUserDtoInput {
 
   secondLastName: String
 
-  pkUser: String!
+  pkUser: String
 
   userName: String
 
@@ -4883,13 +4938,13 @@ type LogTracking {
 }
 
 input LogTrackingDtoInput {
-  identification: String!
+  identification: String
 
-  pkUser: Int!
+  pkUser: Int
 
-  keySearch: String!
+  keySearch: String
 
-  data: String!
+  data: String
 
   idBrand: Int
 
@@ -5029,6 +5084,8 @@ input ChangePhoneDtoInput {
 
   pkUser: Long!
 
+  countryCode: String
+
   idBrand: Int
 
   user: String
@@ -5064,6 +5121,36 @@ input UserPhoneMobileSaveDtoInput {
   idWalletCard: String!
 
   pkUser: Long!
+
+  idBrand: Int
+
+  user: String
+}
+
+input UserEventMobileSaveDtoInput {
+  pK_SUV_LOG_USUARIO_EVENTO_MOBILE: Long!
+
+  fK_SUV_MTR_USUARIO: Int!
+
+  plataforma: String!
+
+  uuid: String!
+
+  version_Dispositivo: String!
+
+  manofactura: String!
+
+  nombre_Dispositivo: String!
+
+  numero_Serie: String!
+
+  direccion_Ip: String!
+
+  latitud: String!
+
+  longitud: String!
+
+  tokenNotificationsPush: String!
 
   idBrand: Int
 
@@ -6027,8 +6114,6 @@ type AppUser {
   email: String!
 
   phone: String!
-
-  countryCode: String!
 
   birthDate: DateTime
 

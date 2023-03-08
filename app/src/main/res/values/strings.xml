@@ -481,6 +481,7 @@
     <string name="profile_code_expires_in_template" translatable="false">Código expira en %1$s segundos</string>
     <string name="profile_code_resend_expires_in_template" translatable="false">Código reenviado expira en %1$s segundos</string>
     <string name="profile_error_changing_phone_title" translatable="false">No pudimos cambiar tu teléfono</string>
+    <string name="profile_error_changing_email_title" translatable="false">No pudimos cambiar tu correo</string>
     <string name="profile_error_changing_phone" translatable="false">Lo sentimos, vuelve a intentarlo más tarde</string>
     <string name="profile_error_changing_phone_sv" translatable="false">Lo sentimos, volvé a intentarlo más tarde</string>
     <string name="profile_error_changing_phone_button" translatable="false">Ir al inicio</string>

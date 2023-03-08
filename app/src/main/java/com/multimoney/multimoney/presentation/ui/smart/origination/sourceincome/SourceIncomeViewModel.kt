@@ -3,6 +3,8 @@ package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelOneUseCase
@@ -23,18 +25,22 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.UIEvent.OnGetUserData
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.util.ADDRESS_MAX_LENGTH
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType.Retired
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SourceIncomeViewModel @Inject constructor(
     val addressLevelOneUseCase: QueryAddressLevelOneUseCase,
     val addressLevelTwoUseCase: QueryAddressLevelTwoUseCase,
-    val addressLevelThreeUseCase: QueryAddressLevelThreeUseCase
+    val addressLevelThreeUseCase: QueryAddressLevelThreeUseCase,
+    val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(false) {
 
     // UIState
@@ -301,6 +307,11 @@ class SourceIncomeViewModel @Inject constructor(
 
     private fun onValidateForm() = emitBaseEvent(OnFormValidateCompleted(isFormValid()))
 
+    private fun onSourceOfIncomeOptionSelected(selectedOption: Int) {
+        trackOriginationSmartFirstTimeIncome()
+        uiState = uiState.copy(selectedOption = selectedOption)
+    }
+
     fun isFormValid() = uiState.divisionOneSelected != null &&
         uiState.divisionTwoSelected != null &&
         uiState.divisionThreeSelected != null &&
@@ -327,9 +338,9 @@ class SourceIncomeViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is UIEvent.OnNavigateToSelectedSourceOfIncomeOption -> {
-                uiState = uiState.copy(selectedOption = uiEvent.selectedOption)
-            }
+            is UIEvent.OnNavigateToSelectedSourceOfIncomeOption -> onSourceOfIncomeOptionSelected(
+                uiEvent.selectedOption
+            )
             is OnDivisionOneValueChange -> {
                 onDivisionOneValueChange(
                     uiEvent.user,
@@ -356,6 +367,15 @@ class SourceIncomeViewModel @Inject constructor(
                 onLoadCurrentStepData(uiEvent.user, uiEvent.idBrand, uiEvent.accountSmartData)
             }
             is OnValidateForm -> onValidateForm()
+        }
+    }
+
+    private fun trackOriginationSmartFirstTimeIncome() {
+        viewModelScope.launch {
+            if (dataStorePreferences.isAdjustSmartFirstTimeIncome().first()) {
+                dataStorePreferences.setAdjustSmartFirstTimeIncome(false)
+                registerAdjustEvent(AdjustEventType.ORIGINATION_SMART_FIRST_TIME_INCOME)
+            }
         }
     }
 

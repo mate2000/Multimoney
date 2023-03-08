@@ -394,6 +394,7 @@
     <string name="sell_crypto_voucher_amount_credited" translatable="false">Total recibido</string>
     <string name="sell_crypto_voucher_to_account" translatable="false">Hacia</string>
     <string name="sell_crypto_voucher_you_have_sold" translatable="false">Has vendido</string>
+    <string name="sell_crypto_voucher_value_in_currency_template" translatable="false">Valor en %1$s al momento de la venta</string>
 
 
     <!-- send crypto -->

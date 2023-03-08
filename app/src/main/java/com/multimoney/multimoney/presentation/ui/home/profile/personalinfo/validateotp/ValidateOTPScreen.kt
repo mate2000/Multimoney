@@ -171,16 +171,7 @@ fun ValidateOTPScreen(
                             }
                         )))
             }.onFailure {
-                ValidateOTPViewModel.UIEvent.OnFailureWithDialog(
-                    false,
-                    DialogParameters(
-                        titleResource = R.string.something_went_wrong,
-                        description = it.getError() ?: "",
-                        isActive = mutableStateOf(true),
-                        positiveResource = R.string.button_continue,
-                    )
-                )
-
+                viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnError)
             }.onLoading {
                 viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnLoadingValueChange(true))
             }

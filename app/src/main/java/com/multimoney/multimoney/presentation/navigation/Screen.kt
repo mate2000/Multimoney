@@ -337,7 +337,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SmartOnfidoAndEvicertiaErrorsScreen : Screen(
-        "smart_onfido_and_evicertia_errors_screen/{$ONFIDO_AND_EVICERTIA_ERROR}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$COMING_FROM_CRYPTO}",
+        "smart_onfido_and_evicertia_errors_screen/{$ONFIDO_AND_EVICERTIA_ERROR}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$COMING_FROM_CRYPTO}/{$USER}/{$SIGN_DOCUMENT_GLOBAL_ID}",
         "smart_onfido_and_evicertia_errors_screen"
     )
 

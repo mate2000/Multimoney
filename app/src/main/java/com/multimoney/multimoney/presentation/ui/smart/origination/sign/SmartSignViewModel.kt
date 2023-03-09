@@ -265,7 +265,7 @@ class SmartSignViewModel @Inject constructor(
     private fun navigateToSignDocument() {
         uiState = uiState.copy(
             signDocumentProcessStep = SIGN_DOCUMENTS_STEP.value,
-            signDocumentUrl = smartSubscriptionManager.getEvisertioLink() ?: ""
+            signDocumentUrl = smartSubscriptionManager.getEvicertiaLink() ?: ""
         )
     }
 
@@ -334,7 +334,7 @@ class SmartSignViewModel @Inject constructor(
         }
     }
 
-    private fun buildParamsListFromCreditContractEvent(smartContractEvent: AccountSmartContractResult?) : List<Pair<String, String>> {
+    private fun buildParamsListFromCreditContractEvent(smartContractEvent: AccountSmartContractResult?): List<Pair<String, String>> {
         return buildList<Pair<String, String>> {
             add(ID_PRINT to smartContractEvent?.idBrand.toString())
             add(LINK to (smartContractEvent?.link ?: ""))

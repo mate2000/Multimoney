@@ -32,6 +32,7 @@ import com.multimoney.domain.model.balance.Summary
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditMovementsResult
 import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
+import com.multimoney.domain.model.metrics.BaseEventDataDto
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.domain.model.util.onFailure
@@ -106,6 +107,7 @@ import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
+import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.NovoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -334,8 +336,8 @@ class ProductViewModel @Inject constructor(
             else -> {
                 navigateTo(
                     "${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
-                            "${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}/$comingFromCrypto/" +
-                            "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}"
+                        "${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}/$comingFromCrypto/" +
+                        "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}"
                 )
             }
         }
@@ -372,6 +374,8 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToPaymentScreen() {
         val creditSummary = balanceCredit?.balanceCredit?.first()?.summary
         val infoCredit = uiState.userStatus?.infoCredit
+        logEvents(AdjustEventType.HOME_CTA_FIRST_START_PAYMENT_5034)
+
         val route = if (
             (creditSummary?.size ?: 0) > 1 &&
             validateQuotas(creditSummary) &&
@@ -398,6 +402,7 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToAutomaticPaymentScheduleScreen(isEditSchedule: Boolean) {
         val infoCredit = uiState.userStatus?.infoCredit
+        logEvents(AdjustEventType.HOME_CTA_ENABLED_FIRST_AUTOMATIC_PAYMENT_5032)
         if (uiState.idBrand.toInt() == Brand.CostaRica.id) {
             navigateTo(
                 route = "${Screen.PaymentScheduleScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
@@ -456,6 +461,7 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToHomeMultimoneyVisa() {
         val infoCredit = uiState.userStatus?.infoCredit
+        logEvents(AdjustEventType.HOME_CTA_FIRST_ACTIVATE_MM_VISA_5036)
         navigateTo(
             "${Screen.VisaCardScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/${uiState.userStatus?.infoUser?.phone}/${
             encodeData(balanceCredit?.balanceCardInformation)
@@ -555,7 +561,8 @@ class ProductViewModel @Inject constructor(
         helper.shareTextPlain("$clientLabel: ${userName.uppercase()}\n$accountLabel: $ibanAccount")
     }
 
-    private fun onNavigateToDisbursement() =
+    private fun onNavigateToDisbursement() {
+        logEvents(AdjustEventType.DISBURSEMENT_FIRST_INIT_PROCESS_5021)
         navigateTo(
             route = "${Screen.DisbursementAmountScreen.baseRoute}/${uiState.idBrand}/$email/${uiState.userStatus?.infoCredit?.idClient}/${
             encodeData(
@@ -563,6 +570,7 @@ class ProductViewModel @Inject constructor(
             )
             }/$pkUser/${balanceCredit?.getFirstCredit()?.creditNumber}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/$identification"
         )
+    }
 
     private fun onNavigateToGtSvNonPreApproved() =
         navigateTo(
@@ -710,6 +718,12 @@ class ProductViewModel @Inject constructor(
         account: Account?,
         onLoadingValueChange: (isLoading: Boolean) -> Unit
     ) {
+        viewModelScope.launch {
+            if (dataStorePreferences.isAdjustSmartSavingBtnEventRegistered().first()) {
+                registerAdjustEvent(adjustEventType = AdjustEventType.HOME_CTA_FIRST_SAVING_6016)
+                dataStorePreferences.isAdjustSmartSavingBtnEventRegistered(false)
+            }
+        }
         if (uiState.idBrand == Brand.ElSalvador.id.toString()) {
             val smartIds = encodeData(
                 SmartAccountID(
@@ -790,6 +804,14 @@ class ProductViewModel @Inject constructor(
                 customerId = account?.customerId
             )
         )
+
+        viewModelScope.launch {
+            if (dataStorePreferences.isAdjustSmartSendingBtnEventRegistered().first()) {
+                registerAdjustEvent(adjustEventType = AdjustEventType.HOME_CTA_FIRST_SENDING_6017)
+                dataStorePreferences.isAdjustSmartSendingBtnEventRegistered(false)
+            }
+        }
+
         navigateTo(
             "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$userName/${uiState.idBrand}/$identification" +
                 "/${encodeData(smartAccount)}/$secondAccountSend/$idClient/${Screen.HomeScreen.route}"
@@ -1024,6 +1046,64 @@ class ProductViewModel @Inject constructor(
             )
         }
     }
+
+    fun logEvents(adjustEventType: AdjustEventType) {
+        viewModelScope.launch {
+            getAdjustEvent(adjustEventType).invoke()
+        }
+    }
+
+    private fun getAdjustEvent(adjustEventType: AdjustEventType): suspend () -> Unit {
+        val infoCredit = uiState.userStatus?.infoCredit
+        val baseAdjustEvent = BaseEventDataDto(user = email, idBrand = uiState.idBrand.toInt(), idClient = idClient, idLoanClient = infoCredit?.idLoanClient, identification = identification)
+        return when (adjustEventType) {
+            AdjustEventType.HOME_CTA_FIRST_START_PAYMENT_5034 -> {
+                getStartPaymentEvent(baseAdjustEvent)
+            }
+            AdjustEventType.HOME_CTA_ENABLED_FIRST_AUTOMATIC_PAYMENT_5032 -> {
+                getScheduledPaymentEvent(baseAdjustEvent)
+            }
+            AdjustEventType.HOME_CTA_FIRST_ACTIVATE_MM_VISA_5036 -> {
+                getActivateMMVisaEvent(baseAdjustEvent)
+            }
+            AdjustEventType.DISBURSEMENT_FIRST_INIT_PROCESS_5021 -> {
+                getStartDisbursementEvent(baseAdjustEvent)
+            }
+            else -> suspend {}
+        }
+    }
+
+    private fun getStartDisbursementEvent(baseAdjustEvent: BaseEventDataDto): suspend () -> Unit =
+        suspend {
+            if (dataStorePreferences.isAdjustFirstDisbursementEventRegister().first()) {
+                registerAdjustEvent(AdjustEventType.DISBURSEMENT_FIRST_INIT_PROCESS_5021, data = baseAdjustEvent.toJson())
+                dataStorePreferences.isAdjustFirstDisbursementEventRegister(false)
+            }
+        }
+
+    private fun getStartPaymentEvent(baseAdjustEvent: BaseEventDataDto): suspend () -> Unit =
+        suspend {
+            if (dataStorePreferences.isAdjustFirstPaymentEventRegister().first()) {
+                registerAdjustEvent(AdjustEventType.HOME_CTA_FIRST_START_PAYMENT_5034, applyAdjust = false, data = baseAdjustEvent.toJson())
+                dataStorePreferences.isAdjustFirstPaymentEventRegister(false)
+            }
+        }
+
+    private fun getScheduledPaymentEvent(baseAdjustEvent: BaseEventDataDto): suspend () -> Unit =
+        suspend {
+            if (dataStorePreferences.isAdjustFirstSchedulePaymentEventRegister().first()) {
+                registerAdjustEvent(AdjustEventType.HOME_CTA_ENABLED_FIRST_AUTOMATIC_PAYMENT_5032, applyAdjust = false, data = baseAdjustEvent.toJson())
+                dataStorePreferences.isAdjustFirstSchedulePaymentEventRegister(false)
+            }
+        }
+
+    private fun getActivateMMVisaEvent(baseAdjustEvent: BaseEventDataDto): suspend () -> Unit =
+        suspend {
+            if (dataStorePreferences.isAdjustFirstActivateMMVisaEventRegister().first()) {
+                registerAdjustEvent(AdjustEventType.HOME_CTA_FIRST_ACTIVATE_MM_VISA_5036, applyAdjust = false, data = baseAdjustEvent.toJson())
+                dataStorePreferences.isAdjustFirstActivateMMVisaEventRegister(false)
+            }
+        }
 
     data class UIState(
         // Fields

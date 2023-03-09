@@ -21,10 +21,10 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.BaseEvent.OnOpenConditionOfCreditDialog
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.BaseEvent.OnUpdateIsCrosseling
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnAnimationFinish
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCallMutationSaveCreditApplicationUseCase
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCallMutationSaveTermsAndConditionsCreditUseCase
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCallQueryCreditOfferUseCase
@@ -79,8 +79,7 @@ class CreditAmountViewModel @Inject constructor(
     private var conditionModalDescription: String = ""
     private var fee: Double? = 0.0
     private var sliderFactor = 0.0
-    private var remainingTime: Duration = TIMER_DURATION.milliseconds
-    private var isTimerRunning: Boolean = false
+    var isAnimationRunning: Boolean = false
     private var idUserRequest = 0
 
     private fun isFormValid() = emitBaseEvent(
@@ -94,40 +93,9 @@ class CreditAmountViewModel @Inject constructor(
         )
     )
 
-    private fun isTimerTick() =
-        remainingTime.inWholeMilliseconds > 0
-
-    private fun onTimerTick() {
-        remainingTime = remainingTime.minus(TIMER_DELAY.milliseconds)
-        uiState = uiState.copy(sliderValue = uiState.sliderValue + SLIDER_ANIMATION_VALUE)
-    }
-
-    private fun onTimerFinish() {
-        isTimerRunning = false
+    private fun onSliderAnimationFinished() {
+        isAnimationRunning = false
         uiState = uiState.copy(sliderValue = getSliderValue(maximumDisbursement, uiState.progressFactor))
-    }
-
-    private fun onExecuteTimer() {
-        isTimerRunning = true
-        tickerFlow(
-            period = TIMER_DELAY.milliseconds,
-            duration = TIMER_DURATION.milliseconds
-        )
-            .takeWhile { isTimerRunning }
-            .map {
-                LocalDateTime.now()
-            }
-            .distinctUntilChanged { old, new ->
-                old.nano == new.nano
-            }
-            .onEach {
-                if (isTimerTick()) {
-                    onTimerTick()
-                } else if (isTimerRunning) {
-                    onTimerFinish()
-                }
-            }
-            .launchIn(viewModelScope)
     }
 
     private fun callQueryCreditOfferUseCase(
@@ -140,10 +108,10 @@ class CreditAmountViewModel @Inject constructor(
                 idUserRequest = creditOffer?.idUserRequest ?: 0
                 products = creditOffer?.products
                 currencyItems = products?.map { it?.currency ?: "" }
-                onExecuteTimer()
+                isAnimationRunning = true
                 setCreditOffer(INITIAL_CURRENCY_INDEX)
                 emitBaseEvent(OnUpdateIsCrosseling(creditOffer?.isCrosseling ?: false))
-                uiState = uiState.copy(isLoading = false)
+                uiState = uiState.copy(isLoading = false, startAnimation = true)
             }.onFailure {
                 onFailureWithDialog(
                     false,
@@ -342,7 +310,7 @@ class CreditAmountViewModel @Inject constructor(
                     isMultipleCurrency = (products?.lastIndex ?: INITIAL_CURRENCY_INDEX) > INITIAL_CURRENCY_INDEX,
                     currencyIndex = productIndex,
                     sliderValueRangeInitial = getSliderValue(minimumDisbursement?.toFloat(), progressFactor),
-                    sliderValue = if (isTimerRunning.not()) {
+                    sliderValue = if (isAnimationRunning.not()) {
                         getSliderValue(maximumDisbursement?.toFloat(), progressFactor)
                     } else {
                         uiState.sliderValue
@@ -393,7 +361,7 @@ class CreditAmountViewModel @Inject constructor(
         onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
     ) {
-        if (isTimerRunning.not()) {
+        if (isAnimationRunning.not()) {
             if (value.isEmpty() || value.toFloat() < (minimumDisbursement ?: 0F)) {
                 uiState = uiState.copy(
                     disbursementError = Pair(true, minimumDisbursementErrorMessage),
@@ -437,7 +405,7 @@ class CreditAmountViewModel @Inject constructor(
     }
 
     private fun onSliderValueChange(value: Float) {
-        uiState = if (isTimerRunning.not()) {
+        uiState = if (isAnimationRunning.not()) {
             val sliderFactorTimes = (value / sliderFactor).roundToInt()
             val disbursement = if (value == 0f) {
                 minimumDisbursement?.roundToInt().toString()
@@ -459,7 +427,7 @@ class CreditAmountViewModel @Inject constructor(
         onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
     ) {
         uiState = uiState.copy(disbursementError = Pair(false, R.string.empty))
-        if (uiState.disbursementError.first.not() && isTimerRunning.not()) {
+        if (uiState.disbursementError.first.not() && isAnimationRunning.not()) {
             callQueryPaymentAmountUseCase(
                 uiState.disbursement.toDouble().toInt(),
                 user,
@@ -528,7 +496,8 @@ class CreditAmountViewModel @Inject constructor(
         val commissionDisbursementLabel: String? = "",
         val isTermAndConditionChecked: Boolean = false,
         val isTermAndConditionDialogActive: MutableState<Boolean> = mutableStateOf(false),
-        val isLoading: Boolean = true
+        val isLoading: Boolean = true,
+        val startAnimation: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -587,6 +556,7 @@ class CreditAmountViewModel @Inject constructor(
                 uiEvent.onLoadingValueChange,
                 uiEvent.onFailureWithDialog
             )
+            is OnAnimationFinish -> onSliderAnimationFinished()
         }
     }
 
@@ -651,6 +621,7 @@ class CreditAmountViewModel @Inject constructor(
         object OnValidateForm : UIEvent()
         object OnOpenConditionCreditDialog : UIEvent()
         object OnOpenTermAndCondition : UIEvent()
+        object OnAnimationFinish : UIEvent()
     }
 
     sealed class BaseEvent {
@@ -664,10 +635,9 @@ class CreditAmountViewModel @Inject constructor(
         const val CURRENCY_SEPARATOR = ','
         const val SLIDER_TOTAL = 1
         const val SLIDER_INITIAL_VALUE = 0.0F
-        const val SLIDER_ANIMATION_VALUE = 0.05F
-        const val TIMER_DURATION = 20L
-        const val TIMER_DELAY = 1L
         const val TERMS_AND_CONDITIONS_CURRENT_FLOW = "TC VENTAS"
         const val ID_PROMOTION = 1
+        const val SLIDER_ANIMATION_TIME = 500
+        const val SLIDER_TOTAL_ANIMATION_VALUE = 1f
     }
 }

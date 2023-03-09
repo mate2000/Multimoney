@@ -37,6 +37,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.homeaddress.
 import com.multimoney.multimoney.presentation.ui.credit.origination.homeaddress.HomeAddressViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 
 @Composable
 fun HomeAddressScreen(
@@ -91,6 +92,7 @@ fun HomeAddressScreen(
                             saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
                         )
                     )
+                    sharedViewModel.logEvents(AdjustEventType.ORIGINATION_FIRST_FILL_OWN_ADDRESS_5008)
                 },
                 nextStep = if (sharedViewModel.idBrand.toInt() == Brand.Guatemala.id) {
                     CreditStep.Eight.id

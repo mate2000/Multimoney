@@ -13,6 +13,7 @@ import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.PENDING
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.data.util.catalog.CreditWorkflow
 import com.multimoney.data.util.catalog.MyProductStatus
+import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus.NOT_SIGNED
 import com.multimoney.data.util.catalog.SmartWorkflow
 import com.multimoney.data.util.catalog.SmartWorkflow.SMART_CONTRACT_PROCESS
 import com.multimoney.data.util.catalog.SmartWorkflow.SMART_FIRMED_ONFIDO_PENDING
@@ -337,10 +338,17 @@ class ProductViewModel @Inject constructor(
             SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS.workflow -> onIntent()
             PENDING.status -> onCallMutationAccountStatusUseCase(comingFromCrypto)
             else -> {
+                val firmStatus =
+                    if (uiState.userStatus?.infoBankAccount?.statusFirm.isNullOrBlank().not()) {
+                        uiState.userStatus?.infoBankAccount?.statusFirm
+                    } else {
+                        NOT_SIGNED.status
+                    }
                 navigateTo(
                     "${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
-                            "${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}/$comingFromCrypto/" +
-                            "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/${uiState.userStatus?.infoBankAccount?.statusFirm}/$smartStep/${uiState.userStatus?.infoBankAccount?.wording?.workflow}"
+                        "${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}/$comingFromCrypto/" +
+                        "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/" +
+                        "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/$firmStatus/${uiState.userStatus?.infoBankAccount?.wording?.workflow}"
                 )
             }
         }
@@ -1058,7 +1066,13 @@ class ProductViewModel @Inject constructor(
 
     private fun getAdjustEvent(adjustEventType: AdjustEventType): suspend () -> Unit {
         val infoCredit = uiState.userStatus?.infoCredit
-        val baseAdjustEvent = BaseEventDataDto(user = email, idBrand = uiState.idBrand.toInt(), idClient = idClient, idLoanClient = infoCredit?.idLoanClient, identification = identification)
+        val baseAdjustEvent = BaseEventDataDto(
+            user = email,
+            idBrand = uiState.idBrand.toInt(),
+            idClient = idClient,
+            idLoanClient = infoCredit?.idLoanClient,
+            identification = identification
+        )
         return when (adjustEventType) {
             AdjustEventType.HOME_CTA_FIRST_START_PAYMENT_5034 -> {
                 getStartPaymentEvent(baseAdjustEvent)
@@ -1079,7 +1093,10 @@ class ProductViewModel @Inject constructor(
     private fun getStartDisbursementEvent(baseAdjustEvent: BaseEventDataDto): suspend () -> Unit =
         suspend {
             if (dataStorePreferences.isAdjustFirstDisbursementEventRegister().first()) {
-                registerAdjustEvent(AdjustEventType.DISBURSEMENT_FIRST_INIT_PROCESS_5021, data = baseAdjustEvent.toJson())
+                registerAdjustEvent(
+                    AdjustEventType.DISBURSEMENT_FIRST_INIT_PROCESS_5021,
+                    data = baseAdjustEvent.toJson()
+                )
                 dataStorePreferences.isAdjustFirstDisbursementEventRegister(false)
             }
         }
@@ -1087,7 +1104,11 @@ class ProductViewModel @Inject constructor(
     private fun getStartPaymentEvent(baseAdjustEvent: BaseEventDataDto): suspend () -> Unit =
         suspend {
             if (dataStorePreferences.isAdjustFirstPaymentEventRegister().first()) {
-                registerAdjustEvent(AdjustEventType.HOME_CTA_FIRST_START_PAYMENT_5034, applyAdjust = false, data = baseAdjustEvent.toJson())
+                registerAdjustEvent(
+                    AdjustEventType.HOME_CTA_FIRST_START_PAYMENT_5034,
+                    applyAdjust = false,
+                    data = baseAdjustEvent.toJson()
+                )
                 dataStorePreferences.isAdjustFirstPaymentEventRegister(false)
             }
         }
@@ -1095,7 +1116,11 @@ class ProductViewModel @Inject constructor(
     private fun getScheduledPaymentEvent(baseAdjustEvent: BaseEventDataDto): suspend () -> Unit =
         suspend {
             if (dataStorePreferences.isAdjustFirstSchedulePaymentEventRegister().first()) {
-                registerAdjustEvent(AdjustEventType.HOME_CTA_ENABLED_FIRST_AUTOMATIC_PAYMENT_5032, applyAdjust = false, data = baseAdjustEvent.toJson())
+                registerAdjustEvent(
+                    AdjustEventType.HOME_CTA_ENABLED_FIRST_AUTOMATIC_PAYMENT_5032,
+                    applyAdjust = false,
+                    data = baseAdjustEvent.toJson()
+                )
                 dataStorePreferences.isAdjustFirstSchedulePaymentEventRegister(false)
             }
         }
@@ -1103,7 +1128,11 @@ class ProductViewModel @Inject constructor(
     private fun getActivateMMVisaEvent(baseAdjustEvent: BaseEventDataDto): suspend () -> Unit =
         suspend {
             if (dataStorePreferences.isAdjustFirstActivateMMVisaEventRegister().first()) {
-                registerAdjustEvent(AdjustEventType.HOME_CTA_FIRST_ACTIVATE_MM_VISA_5036, applyAdjust = false, data = baseAdjustEvent.toJson())
+                registerAdjustEvent(
+                    AdjustEventType.HOME_CTA_FIRST_ACTIVATE_MM_VISA_5036,
+                    applyAdjust = false,
+                    data = baseAdjustEvent.toJson()
+                )
                 dataStorePreferences.isAdjustFirstActivateMMVisaEventRegister(false)
             }
         }

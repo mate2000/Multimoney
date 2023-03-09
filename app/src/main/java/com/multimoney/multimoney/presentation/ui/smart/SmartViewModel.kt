@@ -34,6 +34,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_GLOBAL_REQUEST_NAV
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
@@ -89,7 +90,7 @@ class SmartViewModel @Inject constructor(
     val email: String = savedStateHandle[EMAIL] ?: ""
     val firstName: String = savedStateHandle[FIRST_NAME] ?: ""
     val lastName: String = savedStateHandle[LAST_NAME] ?: ""
-    var idGlobalRequest: Long = savedStateHandle[ID_GLOBAL_REQUEST] ?: 0
+    var idGlobalRequest: Long = savedStateHandle[ID_GLOBAL_REQUEST_NAV] ?: 0
     var idSysRequest: Long = savedStateHandle[ID_USER_REQUEST] ?: 0
     var workflow: String = savedStateHandle[WORK_FLOW] ?: ""
     var evicertiaStatus: String = savedStateHandle[EVICERTIA_STATUS] ?: ""

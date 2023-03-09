@@ -69,7 +69,7 @@ fun SmartSignScreen(
                 isTopNavBarVisible = true,
                 isRightButtonVisible = alertResultIsRightButtonVisible,
                 isLeftButtonVisible = alertResultIsLeftButtonVisible,
-                onRightButtonClick = alertResultRightButtonClick,
+                onRightButtonClick = alertResultSecondButtonClick,
                 onButtonClick = alertResultButtonAction
             )
         }

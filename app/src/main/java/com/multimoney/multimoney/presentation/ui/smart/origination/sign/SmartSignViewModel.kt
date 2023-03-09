@@ -154,7 +154,7 @@ class SmartSignViewModel @Inject constructor(
                 }
             }
             CreditSubscriptionStep.AccountActivated.step -> {
-                setSuccessAlertResult()
+                navigateToApprovedByOnfido()
             }
             CreditSubscriptionStep.ErrorActivatingAccount.step, CreditSubscriptionStep.DocumentsFailed.step -> {
                 showSubscriptionError()
@@ -170,7 +170,7 @@ class SmartSignViewModel @Inject constructor(
             alertResultTitleResource = string.rejected_by_onfido_title,
             alertResultDescriptionResource = string.smart_rejected_by_onfido_subtitle,
             alertResultButtonResource = string.contact,
-            alertResultRightButtonClick = { onUIEvent(OnNavigateToHome) },
+            alertResultSecondButtonClick = { onUIEvent(OnNavigateToHome) },
             alertResultButtonAction = {
                 emitBaseEvent(OpenWhatsAppLink)
                 onUIEvent(OnNavigateToHome)
@@ -181,11 +181,12 @@ class SmartSignViewModel @Inject constructor(
     private fun setSuccessAlertResult() {
         uiState = uiState.copy(
             isAlertResultVisible = true,
-            alertResultIsRightButtonVisible = true,
+            alertResultIsRightButtonVisible = false,
             alertResultIconResource = drawable.ic_success_symbol,
-            alertResultTitleResource = string.approved_by_onfido_title,
-            alertResultButtonResource = string.understood,
-            alertResultRightButtonClick = { onUIEvent(OnNavigateToHome) },
+            alertResultTitleResource = string.approved_sign_by_onfido_title,
+            alertResultButtonResource = string.approved_by_onfido_buttton_text,
+            alertResultSecondButtonResource = string.finalize,
+            alertResultSecondButtonClick = { onUIEvent(OnNavigateToHome) },
             alertResultButtonAction = { onUIEvent(OnNavigateToHome) }
         )
     }
@@ -373,7 +374,8 @@ class SmartSignViewModel @Inject constructor(
         val alertResultTitleResource: Int = string.empty,
         val alertResultDescriptionResource: Int = string.empty,
         val alertResultButtonResource: Int = string.empty,
-        val alertResultRightButtonClick: () -> Unit = {},
+        val alertResultSecondButtonResource: Int = string.empty,
+        val alertResultSecondButtonClick: () -> Unit = {},
         val alertResultButtonAction: () -> Unit = {}
     )
 

@@ -178,7 +178,7 @@ class ApprovedByOnfidoViewModel @Inject constructor(
 
     private fun onSetUpDialog() {
         uiState = uiState.copy(
-            alertTitleResource = if (comingFromCrypto) R.string.crypto_finish_smart_alert_title else R.string.approved_by_onfido_title,
+            alertTitleResource = if (comingFromCrypto) R.string.crypto_finish_smart_alert_title else R.string.approved_sign_by_onfido_title,
             alertButtonTextResource = if (comingFromCrypto) R.string.crypto_finish_smart_alert_btn_discover_crypto else R.string.approved_by_onfido_buttton_text,
             alertMessageResource = if (comingFromCrypto) R.string.crypto_finish_smart_alert_description else R.string.empty,
             alertSecondButtonTextResource = if (comingFromCrypto) R.string.crypto_finish_smart_alert_btn_saving_smart else R.string.finalize

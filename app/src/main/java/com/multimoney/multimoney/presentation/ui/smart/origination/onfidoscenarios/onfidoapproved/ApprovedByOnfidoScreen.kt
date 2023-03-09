@@ -36,6 +36,7 @@ fun ApprovedByOnfidoScreen(
         descriptionResource = viewModel.uiState.alertMessageResource,
         buttonTextResource = viewModel.uiState.alertButtonTextResource,
         isLeftButtonVisible = false,
+        isRightButtonVisible = viewModel.comingFromCrypto,
         onRightButtonClick = { viewModel.onUIEvent(OnNavigateToHome) },
         onButtonClick = { viewModel.onUIEvent(OnFirsButtonClick) },
         isSecondaryButtonVisible = true,

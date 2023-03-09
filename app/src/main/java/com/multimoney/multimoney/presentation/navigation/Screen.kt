@@ -196,7 +196,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "sign_in_otp_screen"
     )
 
-    object SignUpCompleted : Screen("sign_up_completed")
+    object SignUpCompleted : Screen("sign_up_completed/{$EMAIL}/{$PASSWORD}", "sign_up_completed")
 
     // HomeNavGraph Screens
     object HomeScreen : Screen(

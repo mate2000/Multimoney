@@ -46,8 +46,8 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
@@ -67,6 +67,7 @@ class SignUpViewModel @Inject constructor(
     var strIdIdentification = ""
     var countryCode = ""
     var nextAction: () -> Unit = {}
+    private var pass = ""
     private var nextStep: Int = SignUpStep.One.id
     private var previousStep: Int = SignUpStep.One.id
 
@@ -113,7 +114,7 @@ class SignUpViewModel @Inject constructor(
     }
 
     private fun completedProcessAction() = popAndNavigateTo(
-        route = Screen.SignUpCompleted.route,
+        route = "${Screen.SignUpCompleted.baseRoute}/${userData?.email}/$pass",
         popTo = Screen.SignUpScreen.route
     )
 
@@ -308,6 +309,7 @@ class SignUpViewModel @Inject constructor(
             is UIEvent.OnSetIdBrand -> onSetIdBrand(event.idBrand)
             is UIEvent.OnExit -> onExit()
             is UIEvent.OnUpdateIso3Country -> uiState = uiState.copy(isO3Country = event.iso3Country)
+            is UIEvent.OnUpdatePassword -> pass = event.pass
         }
     }
 
@@ -366,6 +368,7 @@ class SignUpViewModel @Inject constructor(
         data class OnSetIdBrand(val idBrand: Int) : UIEvent()
         object OnExit : UIEvent()
         data class OnUpdateIso3Country(val iso3Country: String) : UIEvent()
+        data class OnUpdatePassword(val pass: String) : UIEvent()
     }
 
     companion object {

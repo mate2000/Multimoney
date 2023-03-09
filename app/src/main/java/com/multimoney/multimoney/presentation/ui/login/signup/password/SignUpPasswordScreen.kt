@@ -39,6 +39,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCloseClick
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUpdatePassword
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
@@ -73,7 +74,7 @@ fun SignUpPasswordScreen(
         viewModel.onUIEvent(
             SignUpPasswordViewModel.UIEvent.OnSetupDeviceInfo(
                 getDeviceName(fragmentActivity) ?: "",
-                getDeviceType(fragmentActivity).value ?: "",
+                getDeviceType(fragmentActivity).value ?: ""
             )
         )
     }
@@ -134,6 +135,7 @@ fun SignUpPasswordScreen(
                         )
                     )
                     viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SignUpFive)
+                    sharedViewModel.onUIEvent(OnUpdatePassword(viewModel.uiState.password))
                 }, nextStep = SignUpStep.Seven.id, previousStep = SignUpStep.Three.id)
             )
         }

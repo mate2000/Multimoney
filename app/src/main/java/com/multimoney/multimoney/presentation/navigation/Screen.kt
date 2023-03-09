@@ -1,12 +1,10 @@
 package com.multimoney.multimoney.presentation.navigation
 
 import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN
-import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN_CREDIT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ADD_CARD_RESPONSE
 import com.multimoney.multimoney.presentation.navigation.navgraph.AMOUNT_ORIGINAL_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALANCE_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_INFORMATION
-import com.multimoney.multimoney.presentation.navigation.navgraph.CALLER_ID
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_CARD_VISA_DIRECT
@@ -57,8 +55,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_SCHEDULE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.QUOTA_TOTAL
 import com.multimoney.multimoney.presentation.navigation.navgraph.REFERENCE_NUMBER
-import com.multimoney.multimoney.presentation.navigation.navgraph.SECOND_NAME
-import com.multimoney.multimoney.presentation.navigation.navgraph.SECOND_LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.SELECTED_AMOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_DISPLAY_EXCHANGE_RATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_GET_EVICERTIA_LINK
@@ -72,7 +68,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SMART_PAYMENT_
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.TRANSFER_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.navigation.navgraph.VISA_DIRECT_USER
 
 // Route
 const val LOGIN_ROUTE = "log_in_route"
@@ -200,7 +195,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "sign_in_otp_screen"
     )
 
-    object SignUpCompleted : Screen("sign_up_completed")
+    object SignUpCompleted : Screen("sign_up_completed/{$EMAIL}/{$PASSWORD}", "sign_up_completed")
 
     // HomeNavGraph Screens
     object HomeScreen : Screen("home_screen")

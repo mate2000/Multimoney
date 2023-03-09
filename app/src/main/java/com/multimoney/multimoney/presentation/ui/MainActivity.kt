@@ -54,9 +54,9 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
             MultimoneyTheme {
                 Navigation()
                 LaunchedEffect(key1 = true) {
-                    if (dataStorePreferences.getDeviceId().first().isEmpty()){
-                        val deviceId : String = getDeviceId(activity as MainActivity)
-                        if(deviceId.isEmpty()){
+                    if (dataStorePreferences.getDeviceId().first().isEmpty()) {
+                        val deviceId: String = getDeviceId(activity as MainActivity)
+                        if (deviceId.isEmpty()) {
                             FirebaseMessaging.getInstance().token.addOnCompleteListener {
                                 saveToken(it.result)
                             }.addOnCanceledListener {
@@ -64,8 +64,7 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
                             }.addOnFailureListener {
                                 saveToken(getDeviceId(activity = activity as MainActivity))
                             }
-                        }
-                        else{
+                        } else {
                             saveToken(deviceId)
                         }
                     }

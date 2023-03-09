@@ -36,11 +36,11 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnBirthDateValueChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnCallQueryCivilStatusUseCase
-import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnCallQueryProfessionUseCase
+import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnGetDropdownLists
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnCivilStateChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnGenderChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnLoadCurrentStepData
+import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnNationalityChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnProfessionChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
@@ -104,11 +104,21 @@ fun SmartDocumentScreen(
                                             stringProfessionType = viewModel.uiState.profession,
                                             idGender = viewModel.uiState.genderId,
                                             strGenre = viewModel.uiState.gender,
-                                            expirationDate = getFormatDateByString(
-                                                viewModel.uiState.expirationDate,
+                                            dateOfIssue = getFormatDateByString(
+                                                viewModel.uiState.carneEmissionDate.orEmpty(),
                                                 DAY_MONTH_YEAR_PATTERN_BAR_FORMAT,
                                                 ISO_8601_API_FORMAT_PATTERN
                                             ),
+                                            expirationDate = getFormatDateByString(
+                                                if (viewModel.uiState.isDUIRegistration == true) {
+                                                    viewModel.uiState.expirationDate
+                                                } else {
+                                                    viewModel.uiState.carneExpirationDate.orEmpty()
+                                                },
+                                                DAY_MONTH_YEAR_PATTERN_BAR_FORMAT,
+                                                ISO_8601_API_FORMAT_PATTERN
+                                            ),
+                                            placeOfIssue = viewModel.uiState.nationalityName,
                                             birthday = getFormatDateByString(
                                                 viewModel.uiState.birthdate,
                                                 DAY_MONTH_YEAR_PATTERN_BAR_FORMAT,
@@ -130,14 +140,10 @@ fun SmartDocumentScreen(
                 previousStep = SmartSteps.One.id
             )
         )
+
         viewModel.onUIEvent(
-            OnCallQueryCivilStatusUseCase(
-                sharedViewModel.accountSmartData?.user.orEmpty(),
-                sharedViewModel.accountSmartData?.idBrand ?: 0
-            )
-        )
-        viewModel.onUIEvent(
-            OnCallQueryProfessionUseCase(
+           OnGetDropdownLists(
+                sharedViewModel.identification,
                 sharedViewModel.accountSmartData?.user.orEmpty(),
                 sharedViewModel.accountSmartData?.idBrand ?: 0
             )
@@ -238,77 +244,204 @@ fun SmartDocumentScreen(
             placeHolder = stringResource(id = R.string.select)
         )
 
-        CustomDropdown(
-            modifier = Modifier
-                .padding(top = 16.dp)
-                .wrapContentSize(Alignment.TopStart)
-                .focusable(false),
-            items = viewModel.uiState.civilStatusList.map { it?.maritalStatusDescription.orEmpty() },
-            value = viewModel.uiState.civilState,
-            onValueChange = { valueSelected, _ ->
-                viewModel.onUIEvent(OnCivilStateChange(valueSelected))
-            },
-            labelText = stringResource(id = R.string.civil_state),
-            placeHolder = stringResource(id = R.string.select)
-        )
-
-        CustomDropdown(
-            modifier = Modifier
-                .padding(top = 16.dp)
-                .wrapContentSize(Alignment.TopStart)
-                .focusable(false),
-            items = viewModel.uiState.professionSmartList.map { it?.name.orEmpty() },
-            value = viewModel.uiState.profession,
-            onValueChange = { valueSelected, _ ->
-                viewModel.onUIEvent(OnProfessionChange(valueSelected))
-            },
-            labelText = stringResource(id = R.string.profession),
-            placeHolder = stringResource(id = R.string.select)
-        )
-
-        CustomOutlinedTextField(
-            trailingIcon = R.drawable.ic_calendar_credit_questions,
-            modifier = Modifier
-                .padding(top = 32.dp),
-            labelText = stringResource(id = R.string.smart_account_document_expiration_title),
-            placeHolder = stringResource(id = R.string.smart_account_date_placeholder),
-            value = viewModel.uiState.expirationDate,
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Next
-            ),
-            keyboardActions = KeyboardActions(onNext = {
-                focusManager.clearFocus()
-            }),
-            isRequired = true,
-            isRequiredMessage = stringResource(id = R.string.smart_account_document_expiration_date_required),
-            onClick = {
-                focusManager.clearFocus()
-                val calendar = Calendar.getInstance()
-                val datePicker = DatePickerDialog(
-                    context,
-                    R.style.CustomDarkDatePickerStyle,
-                    { _, year, month, day ->
-                        val date = getPickedDateAsString(
-                            year,
-                            month,
-                            day,
-                            DAY_MONTH_YEAR_PATTERN_BAR_FORMAT
-                        )
-                        viewModel.onUIEvent(UIEvent.OnExpirationDateValueChange(date))
-                    },
-                    calendar.get(Calendar.YEAR),
-                    calendar.get(Calendar.MONTH),
-                    calendar.get(Calendar.DAY_OF_MONTH)
-                )
-                calendar.set(
-                    BIRTH_DATE_MIN_YEAR,
-                    BIRTH_DATE_MIN_MONTH,
-                    BIRTH_DATE_MIN_DAY
-                )
-                datePicker.datePicker.minDate = Date().time
-                datePicker.show()
-            },
-            isClickable = true
-        )
+        if (viewModel.uiState.isDUIRegistration == true) {
+            DUIUserSection(viewModel)
+        } else {
+            CarneUserSection(viewModel)
+        }
     }
+}
+
+@Composable
+fun CarneUserSection(viewModel: SmartDocumentViewModel = hiltViewModel()) {
+    val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
+
+    CustomDropdown(
+        modifier = Modifier
+            .padding(top = 16.dp)
+            .wrapContentSize(Alignment.TopStart)
+            .focusable(false),
+        items = viewModel.uiState.nationalitiesList.map { it?.name.orEmpty() },
+        value = viewModel.uiState.nationalityName.orEmpty(),
+        onValueChange = { valueSelected, _ ->
+            viewModel.onUIEvent(OnNationalityChange(valueSelected))
+        },
+        labelText = stringResource(id = R.string.smart_account_origin_country_label),
+        placeHolder = stringResource(id = R.string.select)
+    )
+
+    CustomOutlinedTextField(
+        trailingIcon = R.drawable.ic_calendar_credit_questions,
+        modifier = Modifier
+            .padding(top = 32.dp),
+        labelText = stringResource(id = R.string.smart_account_carne_emission_label),
+        placeHolder = stringResource(id = R.string.smart_account_date_placeholder),
+        errorMessage = stringResource(id = R.string.smart_account_carne_date_error),
+        isError = viewModel.uiState.isCarneEmissionError,
+        value = viewModel.uiState.carneEmissionDate,
+        keyboardOptions = KeyboardOptions(
+            imeAction = ImeAction.Next
+        ),
+        keyboardActions = KeyboardActions(onNext = {
+            focusManager.clearFocus()
+        }),
+        isRequired = true,
+        isRequiredMessage = stringResource(id = R.string.smart_account_carne_emission_date_required),
+        onClick = {
+            focusManager.clearFocus()
+            val calendar = Calendar.getInstance()
+            val datePicker = DatePickerDialog(
+                context,
+                R.style.CustomDarkDatePickerStyle,
+                { _, year, month, day ->
+                    val date = getPickedDateAsString(
+                        year,
+                        month,
+                        day,
+                        DAY_MONTH_YEAR_PATTERN_BAR_FORMAT
+                    )
+                    viewModel.onUIEvent(UIEvent.OnCarneEmissionDateValueChange(date))
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+            )
+            calendar.set(
+                BIRTH_DATE_MIN_YEAR,
+                BIRTH_DATE_MIN_MONTH,
+                BIRTH_DATE_MIN_DAY
+            )
+            datePicker.datePicker.minDate = calendar.timeInMillis
+            datePicker.datePicker.maxDate = Date().time
+            datePicker.show()
+        },
+        isClickable = true
+    )
+
+    CustomOutlinedTextField(
+        trailingIcon = R.drawable.ic_calendar_credit_questions,
+        modifier = Modifier
+            .padding(top = 32.dp),
+        labelText = stringResource(id = R.string.smart_account_carne_expiration_label),
+        placeHolder = stringResource(id = R.string.smart_account_date_placeholder),
+        errorMessage = stringResource(id = R.string.smart_account_carne_date_error),
+        isError = viewModel.uiState.isCarneExpirationError,
+        value = viewModel.uiState.carneExpirationDate,
+        keyboardOptions = KeyboardOptions(
+            imeAction = ImeAction.Next
+        ),
+        keyboardActions = KeyboardActions(onNext = {
+            focusManager.clearFocus()
+        }),
+        isRequired = true,
+        isRequiredMessage = stringResource(id = R.string.smart_account_carne_date_error),
+        onClick = {
+            focusManager.clearFocus()
+            val calendar = Calendar.getInstance()
+            val datePicker = DatePickerDialog(
+                context,
+                R.style.CustomDarkDatePickerStyle,
+                { _, year, month, day ->
+                    val date = getPickedDateAsString(
+                        year,
+                        month,
+                        day,
+                        DAY_MONTH_YEAR_PATTERN_BAR_FORMAT
+                    )
+                    viewModel.onUIEvent(UIEvent.OnCarneExpirationDateValueChange(date))
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+            )
+            calendar.set(
+                BIRTH_DATE_MIN_YEAR,
+                BIRTH_DATE_MIN_MONTH,
+                BIRTH_DATE_MIN_DAY
+            )
+            datePicker.datePicker.minDate = Date().time
+            datePicker.show()
+        },
+        isClickable = true
+    )
+}
+
+@Composable
+fun DUIUserSection(viewModel: SmartDocumentViewModel = hiltViewModel()) {
+    val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
+
+    CustomDropdown(
+        modifier = Modifier
+            .padding(top = 16.dp)
+            .wrapContentSize(Alignment.TopStart)
+            .focusable(false),
+        items = viewModel.uiState.civilStatusList.map { it?.maritalStatusDescription.orEmpty() },
+        value = viewModel.uiState.civilState.orEmpty(),
+        onValueChange = { valueSelected, _ ->
+            viewModel.onUIEvent(OnCivilStateChange(valueSelected))
+        },
+        labelText = stringResource(id = R.string.civil_state),
+        placeHolder = stringResource(id = R.string.select)
+    )
+
+    CustomDropdown(
+        modifier = Modifier
+            .padding(top = 16.dp)
+            .wrapContentSize(Alignment.TopStart)
+            .focusable(false),
+        items = viewModel.uiState.professionSmartList.map { it?.name.orEmpty() },
+        value = viewModel.uiState.profession.orEmpty(),
+        onValueChange = { valueSelected, _ ->
+            viewModel.onUIEvent(OnProfessionChange(valueSelected))
+        },
+        labelText = stringResource(id = R.string.profession),
+        placeHolder = stringResource(id = R.string.select)
+    )
+
+    CustomOutlinedTextField(
+        trailingIcon = R.drawable.ic_calendar_credit_questions,
+        modifier = Modifier
+            .padding(top = 32.dp),
+        labelText = stringResource(id = R.string.smart_account_document_expiration_title),
+        placeHolder = stringResource(id = R.string.smart_account_date_placeholder),
+        value = viewModel.uiState.expirationDate,
+        keyboardOptions = KeyboardOptions(
+            imeAction = ImeAction.Next
+        ),
+        keyboardActions = KeyboardActions(onNext = {
+            focusManager.clearFocus()
+        }),
+        isRequired = true,
+        isRequiredMessage = stringResource(id = R.string.smart_account_document_expiration_date_required),
+        onClick = {
+            focusManager.clearFocus()
+            val calendar = Calendar.getInstance()
+            val datePicker = DatePickerDialog(
+                context,
+                R.style.CustomDarkDatePickerStyle,
+                { _, year, month, day ->
+                    val date = getPickedDateAsString(
+                        year,
+                        month,
+                        day,
+                        DAY_MONTH_YEAR_PATTERN_BAR_FORMAT
+                    )
+                    viewModel.onUIEvent(UIEvent.OnExpirationDateValueChange(date))
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+            )
+            calendar.set(
+                BIRTH_DATE_MIN_YEAR,
+                BIRTH_DATE_MIN_MONTH,
+                BIRTH_DATE_MIN_DAY
+            )
+            datePicker.datePicker.minDate = Date().time
+            datePicker.show()
+        },
+        isClickable = true
+    )
 }

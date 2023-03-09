@@ -253,6 +253,8 @@ class SmartViewModel @Inject constructor(
                 idCivilStatusType = accountSmartData?.idCivilStatusType,
                 idProfessionType = accountSmartData?.idProfessionType,
                 expirationDate = accountSmartData?.expirationDate,
+                nationality = accountSmartData?.placeOfIssue,
+                dateOfEmission = accountSmartData?.dateOfIssue,
                 idAddressLevel1 = accountSmartData?.idAddressLevel1,
                 idAddressLevel2 = accountSmartData?.idAddressLevel2,
                 idAddressLevel3 = accountSmartData?.idAddressLevel3,

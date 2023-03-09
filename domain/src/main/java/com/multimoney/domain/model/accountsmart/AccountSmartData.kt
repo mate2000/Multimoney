@@ -18,6 +18,8 @@ data class AccountSmartData(
     val strGenre: String? = null,
     val strMaritalStatus: String? = null,
     val stringProfessionType: String? = null,
+    val dateOfIssue: String? = null,
+    val placeOfIssue: String? = null,
     val strAddressLevel1: String? = null,
     val strAddressLevel2: String? = null,
     val strAddressLevel3: String? = null,

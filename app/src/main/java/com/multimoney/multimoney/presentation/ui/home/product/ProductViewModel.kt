@@ -13,7 +13,10 @@ import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.PENDING
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.data.util.catalog.CreditWorkflow
 import com.multimoney.data.util.catalog.MyProductStatus
+import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus.NOT_SIGNED
 import com.multimoney.data.util.catalog.SmartWorkflow
+import com.multimoney.data.util.catalog.SmartWorkflow.SMART_CONTRACT_PROCESS
+import com.multimoney.data.util.catalog.SmartWorkflow.SMART_FIRMED_ONFIDO_PENDING
 import com.multimoney.data.util.catalog.SmartWorkflow.SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS
 import com.multimoney.data.util.catalog.SmartWorkflow.SMART_ONFIDO_PROCESS
 import com.multimoney.domain.interaction.accountsmart.MutationAccountStatusUseCase
@@ -32,6 +35,7 @@ import com.multimoney.domain.model.balance.Summary
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditMovementsResult
 import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
+import com.multimoney.domain.model.metrics.BaseEventDataDto
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.InfoUser
 import com.multimoney.domain.model.security.ValidateUserStatus
@@ -102,11 +106,13 @@ import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.ProfileCardListOrigin
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
+import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
+import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.NovoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -300,7 +306,12 @@ class ProductViewModel @Inject constructor(
                             )
                         )
                         .plus(getNavParam(SHOULD_GET_EVICERTIA_LINK, true))
-                        .plus(getNavParam(EVICERTIA_STATUS, uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm))
+                        .plus(
+                            getNavParam(
+                                EVICERTIA_STATUS,
+                                uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm
+                            )
+                        )
                 )
             }
             else -> {
@@ -323,15 +334,21 @@ class ProductViewModel @Inject constructor(
         comingFromCrypto: Boolean = false,
         onIntent: () -> Unit? = { }
     ) {
-        // TODO Implement navigation on smart cards
         when (smartStep) {
             SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS.workflow -> onIntent()
             PENDING.status -> onCallMutationAccountStatusUseCase(comingFromCrypto)
             else -> {
+                val firmStatus =
+                    if (uiState.userStatus?.infoBankAccount?.statusFirm.isNullOrBlank().not()) {
+                        uiState.userStatus?.infoBankAccount?.statusFirm
+                    } else {
+                        NOT_SIGNED.status
+                    }
                 navigateTo(
                     "${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
-                            "${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}/$comingFromCrypto/" +
-                            "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}"
+                        "${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}/$comingFromCrypto/" +
+                        "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/" +
+                        "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/$firmStatus/$smartStep"
                 )
             }
         }
@@ -368,6 +385,8 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToPaymentScreen() {
         val creditSummary = balanceCredit?.balanceCredit?.first()?.summary
         val infoCredit = uiState.userStatus?.infoCredit
+        logEvents(AdjustEventType.HOME_CTA_FIRST_START_PAYMENT_5034)
+
         val route = if (
             (creditSummary?.size ?: 0) > 1 &&
             validateQuotas(creditSummary) &&
@@ -382,18 +401,19 @@ class ProductViewModel @Inject constructor(
             }/$identification/$userName/${balanceCredit?.getFirstSummary()?.paymentDate}/${Screen.HomeScreen.route}"
         } else {
             "${Screen.PaymentOptionsScreen.baseRoute}/${balanceCredit?.getFirstCredit()?.creditNumber}/${
-                encodeData(configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true })
+            encodeData(configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true })
             }/${encodeData(configurationVersion?.configuration?.credit?.transferAccount)}/" +
-                    "${balanceCredit?.getFirstSummary()?.minPayment}/${balanceCredit?.getFirstSummary()?.minPaymentLabel}/" +
-                    "${balanceCredit?.getFirstSummary()?.currentBalance}/${balanceCredit?.getFirstSummary()?.currentBalanceLabel}/" +
-                    "$identification/$idClient/${infoCredit?.idLoanClient}/${balanceCredit?.getFirstSummary()?.idCurrency}/" +
-                    "${balanceCredit?.getFirstSummary()?.paymentDate}/${encodeData(uiState.userStatus?.infoUser)}"
+                "${balanceCredit?.getFirstSummary()?.minPayment}/${balanceCredit?.getFirstSummary()?.minPaymentLabel}/" +
+                "${balanceCredit?.getFirstSummary()?.currentBalance}/${balanceCredit?.getFirstSummary()?.currentBalanceLabel}/" +
+                "$identification/$idClient/${infoCredit?.idLoanClient}/${balanceCredit?.getFirstSummary()?.idCurrency}/" +
+                "${balanceCredit?.getFirstSummary()?.paymentDate}/${encodeData(uiState.userStatus?.infoUser)}"
         }
         navigateTo(route)
     }
 
     private fun onNavigateToAutomaticPaymentScheduleScreen(isEditSchedule: Boolean) {
         val infoCredit = uiState.userStatus?.infoCredit
+        logEvents(AdjustEventType.HOME_CTA_ENABLED_FIRST_AUTOMATIC_PAYMENT_5032)
         if (uiState.idBrand.toInt() == Brand.CostaRica.id) {
             navigateTo(
                 route = "${Screen.PaymentScheduleScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
@@ -403,13 +423,13 @@ class ProductViewModel @Inject constructor(
         } else {
             navigateTo(
                 route = "${Screen.PaymentScheduleCardScreen.baseRoute}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
-                    encodeData(
-                        CardVisaDirect()
-                    )
+                encodeData(
+                    CardVisaDirect()
+                )
                 }/${balanceCredit?.getFirstSummary()?.paymentDate}/${false}/${Screen.HomeScreen.route}/$isEditSchedule/$identification/${
-                    encodeData(
-                        uiState.userStatus?.infoUser
-                    )
+                encodeData(
+                    uiState.userStatus?.infoUser
+                )
                 }"
             )
         }
@@ -452,6 +472,7 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToHomeMultimoneyVisa() {
         val infoCredit = uiState.userStatus?.infoCredit
+        logEvents(AdjustEventType.HOME_CTA_FIRST_ACTIVATE_MM_VISA_5036)
         navigateTo(
             "${Screen.VisaCardScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/${uiState.userStatus?.infoUser?.phone}/${
             encodeData(balanceCredit?.balanceCardInformation)
@@ -551,7 +572,8 @@ class ProductViewModel @Inject constructor(
         helper.shareTextPlain("$clientLabel: ${userName.uppercase()}\n$accountLabel: $ibanAccount")
     }
 
-    private fun onNavigateToDisbursement() =
+    private fun onNavigateToDisbursement() {
+        logEvents(AdjustEventType.DISBURSEMENT_FIRST_INIT_PROCESS_5021)
         navigateTo(
             route = "${Screen.DisbursementAmountScreen.baseRoute}/${uiState.idBrand}/$email/${uiState.userStatus?.infoCredit?.idClient}/${
             encodeData(
@@ -559,6 +581,7 @@ class ProductViewModel @Inject constructor(
             )
             }/$pkUser/${balanceCredit?.getFirstCredit()?.creditNumber}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/$identification"
         )
+    }
 
     private fun onNavigateToGtSvNonPreApproved() =
         navigateTo(
@@ -706,6 +729,12 @@ class ProductViewModel @Inject constructor(
         account: Account?,
         onLoadingValueChange: (isLoading: Boolean) -> Unit
     ) {
+        viewModelScope.launch {
+            if (dataStorePreferences.isAdjustSmartSavingBtnEventRegistered().first()) {
+                registerAdjustEvent(adjustEventType = AdjustEventType.HOME_CTA_FIRST_SAVING_6016)
+                dataStorePreferences.isAdjustSmartSavingBtnEventRegistered(false)
+            }
+        }
         if (uiState.idBrand == Brand.ElSalvador.id.toString()) {
             val smartIds = encodeData(
                 SmartAccountID(
@@ -786,6 +815,14 @@ class ProductViewModel @Inject constructor(
                 customerId = account?.customerId
             )
         )
+
+        viewModelScope.launch {
+            if (dataStorePreferences.isAdjustSmartSendingBtnEventRegistered().first()) {
+                registerAdjustEvent(adjustEventType = AdjustEventType.HOME_CTA_FIRST_SENDING_6017)
+                dataStorePreferences.isAdjustSmartSendingBtnEventRegistered(false)
+            }
+        }
+
         navigateTo(
             "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$userName/${uiState.idBrand}/$identification" +
                 "/${encodeData(smartAccount)}/$secondAccountSend/$idClient/${Screen.HomeScreen.route}"
@@ -1020,6 +1057,85 @@ class ProductViewModel @Inject constructor(
             )
         }
     }
+
+    fun logEvents(adjustEventType: AdjustEventType) {
+        viewModelScope.launch {
+            getAdjustEvent(adjustEventType).invoke()
+        }
+    }
+
+    private fun getAdjustEvent(adjustEventType: AdjustEventType): suspend () -> Unit {
+        val infoCredit = uiState.userStatus?.infoCredit
+        val baseAdjustEvent = BaseEventDataDto(
+            user = email,
+            idBrand = uiState.idBrand.toInt(),
+            idClient = idClient,
+            idLoanClient = infoCredit?.idLoanClient,
+            identification = identification
+        )
+        return when (adjustEventType) {
+            AdjustEventType.HOME_CTA_FIRST_START_PAYMENT_5034 -> {
+                getStartPaymentEvent(baseAdjustEvent)
+            }
+            AdjustEventType.HOME_CTA_ENABLED_FIRST_AUTOMATIC_PAYMENT_5032 -> {
+                getScheduledPaymentEvent(baseAdjustEvent)
+            }
+            AdjustEventType.HOME_CTA_FIRST_ACTIVATE_MM_VISA_5036 -> {
+                getActivateMMVisaEvent(baseAdjustEvent)
+            }
+            AdjustEventType.DISBURSEMENT_FIRST_INIT_PROCESS_5021 -> {
+                getStartDisbursementEvent(baseAdjustEvent)
+            }
+            else -> suspend {}
+        }
+    }
+
+    private fun getStartDisbursementEvent(baseAdjustEvent: BaseEventDataDto): suspend () -> Unit =
+        suspend {
+            if (dataStorePreferences.isAdjustFirstDisbursementEventRegister().first()) {
+                registerAdjustEvent(
+                    AdjustEventType.DISBURSEMENT_FIRST_INIT_PROCESS_5021,
+                    data = baseAdjustEvent.toJson()
+                )
+                dataStorePreferences.isAdjustFirstDisbursementEventRegister(false)
+            }
+        }
+
+    private fun getStartPaymentEvent(baseAdjustEvent: BaseEventDataDto): suspend () -> Unit =
+        suspend {
+            if (dataStorePreferences.isAdjustFirstPaymentEventRegister().first()) {
+                registerAdjustEvent(
+                    AdjustEventType.HOME_CTA_FIRST_START_PAYMENT_5034,
+                    applyAdjust = false,
+                    data = baseAdjustEvent.toJson()
+                )
+                dataStorePreferences.isAdjustFirstPaymentEventRegister(false)
+            }
+        }
+
+    private fun getScheduledPaymentEvent(baseAdjustEvent: BaseEventDataDto): suspend () -> Unit =
+        suspend {
+            if (dataStorePreferences.isAdjustFirstSchedulePaymentEventRegister().first()) {
+                registerAdjustEvent(
+                    AdjustEventType.HOME_CTA_ENABLED_FIRST_AUTOMATIC_PAYMENT_5032,
+                    applyAdjust = false,
+                    data = baseAdjustEvent.toJson()
+                )
+                dataStorePreferences.isAdjustFirstSchedulePaymentEventRegister(false)
+            }
+        }
+
+    private fun getActivateMMVisaEvent(baseAdjustEvent: BaseEventDataDto): suspend () -> Unit =
+        suspend {
+            if (dataStorePreferences.isAdjustFirstActivateMMVisaEventRegister().first()) {
+                registerAdjustEvent(
+                    AdjustEventType.HOME_CTA_FIRST_ACTIVATE_MM_VISA_5036,
+                    applyAdjust = false,
+                    data = baseAdjustEvent.toJson()
+                )
+                dataStorePreferences.isAdjustFirstActivateMMVisaEventRegister(false)
+            }
+        }
 
     data class UIState(
         // Fields
@@ -1273,13 +1389,6 @@ class ProductViewModel @Inject constructor(
         const val SEPARATOR = " + "
 
         // Smart
-        const val SMART_IDENTITY_INCOMPLETE = "CONTACT"
-        const val SMART_ONFIDO_REJECTED = "SMART_ONFIDO_PROCESS"
-        const val SMART_INITIAL_CARD = "SMART_ORIGIN"
-        const val SMART_APPROVED_BY_ONFIDO = "SMART_APPROVED_BY_ONFIDO"
-        const val SMART_ONFIDO_MAX_ATTEMPTS = "CONTACT"
-        const val SMART_FIRMED_ONFIDO_PENDING = "SMART_FIRMED_ONFIDO_PENDING"
-        const val SMART_STEP_PENDING = "SMART_PROCESS"
         const val PENDING_TO_CHECK_STATUS = "Pendiente Revision"
         const val DEFAULT_NEW_STATE = "PG"
         const val DEFAULT_TYPE_STATE = "S"

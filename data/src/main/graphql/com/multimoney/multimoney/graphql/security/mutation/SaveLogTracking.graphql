@@ -1,4 +1,4 @@
-mutation SaveLogTracking($identification: String!, $pkUser: Int!, $keySearch: String!, $data: String!, $idBrand: Int!) {
+mutation SaveLogTracking($identification: String, $pkUser: Int, $keySearch: String!, $data: String!, $idBrand: Int) {
     saveLogTracking(
         saveLogTrackingInputType: {
             identification: $identification

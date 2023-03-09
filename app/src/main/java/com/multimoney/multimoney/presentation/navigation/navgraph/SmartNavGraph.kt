@@ -22,7 +22,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSig
 
 const val ACCOUNT_TOKEN = "account_token"
 const val SMART_PAYMENT_ACCOUNTS = "smart_payment_accounts"
-const val ID_GLOBAL_REQUEST = "id_global_request"
+const val ID_GLOBAL_REQUEST_NAV = "id_global_request"
 
 fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
     navigation(
@@ -32,7 +32,7 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
         composable(
             Screen.SmartScreen.route,
             arguments = listOf(
-                navArgument(ID_GLOBAL_REQUEST) { type = NavType.LongType },
+                navArgument(ID_GLOBAL_REQUEST_NAV) { type = NavType.LongType },
                 navArgument(COMING_FROM_CRYPTO) { type = NavType.BoolType },
                 navArgument(ID_USER_REQUEST) { type = NavType.LongType }
             )
@@ -142,7 +142,8 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(PK_USER) { type = NavType.LongType },
                 navArgument(ID_USER_REQUEST) { type = NavType.LongType },
-                navArgument(COMING_FROM_CRYPTO) { type = NavType.BoolType }
+                navArgument(COMING_FROM_CRYPTO) { type = NavType.BoolType },
+                navArgument(SIGN_DOCUMENT_GLOBAL_ID){ type = NavType.LongType }
             )
         ) {
             OnfidoAndEvicertiaErrorsScreen(

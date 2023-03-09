@@ -18,7 +18,10 @@ import com.multimoney.multimoney.presentation.ui.login.registereduser.otpoptions
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otpoptions.RegisteredUserOtpOptionsViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otpoptions.RegisteredUserOtpOptionsViewModel.UIEvent.OnOtpOptionSelected
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otpoptions.RegisteredUserOtpOptionsViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
+import com.multimoney.multimoney.presentation.util.catalog.SendOtpMethod
 import com.multimoney.multimoney.presentation.util.getNavParam
+import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -74,18 +77,25 @@ class RegisteredUserOtpOptionsViewModel @Inject constructor(savedStateHandle: Sa
         isRestart = false
     )
 
-    private fun onContinueClick() = navigateTo(
-        route = Screen.RegisteredUserOtpScreen.baseRoute
-            .plus(
-                getNavParam(ID_BRAND, idBrand)
-            )
-            .plus(
-                getNavParam(USER_DATA, encodeData(userData))
-            )
-            .plus(
-                getNavParam(OTP_METHOD, uiState.otpOption)
-            )
-    )
+    private fun onContinueClick() {
+        if (uiState.otpOption == SendOtpMethod.Email.value) {
+            registerAdjustEvent(adjustEventType = AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_EMAIL_2010, isLoggedIn = false, data = userData?.toJson() ?: "", applyAdjust = false)
+        } else {
+            registerAdjustEvent(adjustEventType = AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_SMS_2011, isLoggedIn = false, data = userData?.toJson() ?: "", applyAdjust = false)
+        }
+        navigateTo(
+            route = Screen.RegisteredUserOtpScreen.baseRoute
+                .plus(
+                    getNavParam(ID_BRAND, idBrand)
+                )
+                .plus(
+                    getNavParam(USER_DATA, encodeData(userData))
+                )
+                .plus(
+                    getNavParam(OTP_METHOD, uiState.otpOption)
+                )
+        )
+    }
 
     data class UIState(
         // Fields

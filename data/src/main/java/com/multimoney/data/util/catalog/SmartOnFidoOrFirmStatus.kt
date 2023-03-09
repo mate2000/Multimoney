@@ -6,5 +6,6 @@ enum class SmartOnFidoOrFirmStatus(val status: String) {
     FIRMED("FIRMADO"),
     REJECTED("RECHAZADO"),
     OVER_COUNTER("EXCEDIO_CONTADOR"),
-    FAILED("FALLIDO")
+    FAILED("FALLIDO"),
+    NOT_SIGNED("NO FIRMADO")
 }

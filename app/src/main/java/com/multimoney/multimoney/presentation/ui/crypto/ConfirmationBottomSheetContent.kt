@@ -292,7 +292,7 @@ private fun AccountInfoSection(
                     CurrencyType.Dollar.symbol
                 }
             ),
-            subtitle = if (idBrand == Brand.CostaRica.id) ibanAccountNumber else "",
+            subtitle = ibanAccountNumber,
             enable = false
         )
     }

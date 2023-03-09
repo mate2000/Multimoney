@@ -45,6 +45,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobI
 import com.multimoney.multimoney.presentation.uielement.CustomDatePicker
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.getPickedDateAsString
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
 import com.multimoney.multimoney.presentation.util.transformation.VisualTransformationMasks.PHONE_TRANSFORMATION_MASK
@@ -69,6 +70,13 @@ fun JobInfoScreen(
                             },
                             saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
                         )
+                    )
+                    sharedViewModel.logEvents(
+                        if (sharedViewModel.crosseling) {
+                            AdjustEventType.CROSSELLING_FIRST_EXTRA_INFORMATION_5029
+                        } else {
+                            AdjustEventType.ORIGINATION_FIRST_FILL_COMPANY_INFORMATION_5006
+                        }
                     )
                 },
                 nextStep = if (sharedViewModel.idBrand.toInt() == Brand.CostaRica.id) {

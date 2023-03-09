@@ -60,7 +60,7 @@ fun MyContactsTransferSuccess(
                 title = viewModel.amountUIState.destinyAccountDisplay?.sheetTitle ?: "",
                 subtitle = if (Brand.CostaRica.id == viewModel.idBrand) {
                     getMaskedAccountIban(
-                        viewModel.phoneAccount?.ibanNumber ?: ""
+                        viewModel.phoneAccount?.accountNumber ?: ""
                     )
                 } else {
                     getMaskedAccount(

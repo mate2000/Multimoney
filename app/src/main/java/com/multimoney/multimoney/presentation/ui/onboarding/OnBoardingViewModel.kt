@@ -19,6 +19,7 @@ import com.multimoney.multimoney.presentation.util.ISO3_GUATEMALA
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -86,7 +87,7 @@ class OnBoardingViewModel @Inject constructor(
     private fun getStepContent(step: Int, context: Context): List<Int> = when (step) {
         STEP_ONE -> {
             provideFireBaseEventHelper.logEvent(FireBaseEvents.OnboardingOne)
-            registerAdjustEvent(AdjustEventType.ON_BOARDING_1, isLoggedIn = false)
+            registerAdjustEvent(AdjustEventType.ON_BOARDING_1_1002, isLoggedIn = false)
             when (context.resources.configuration.locale.isO3Country) {
                 ISO3_COSTA_RICA -> listOf(
                     R.string.onboarding_costa_rica_step_one_title,
@@ -107,7 +108,7 @@ class OnBoardingViewModel @Inject constructor(
         }
         STEP_TWO -> {
             provideFireBaseEventHelper.logEvent(FireBaseEvents.OnboardingTwo)
-            registerAdjustEvent(AdjustEventType.ON_BOARDING_2, isLoggedIn = false)
+            registerAdjustEvent(AdjustEventType.ON_BOARDING_2_1003, isLoggedIn = false)
             when (context.resources.configuration.locale.isO3Country) {
                 ISO3_COSTA_RICA -> listOf(
                     R.string.onboarding_costa_rica_step_two_title,
@@ -128,7 +129,7 @@ class OnBoardingViewModel @Inject constructor(
         }
         else -> {
             provideFireBaseEventHelper.logEvent(FireBaseEvents.OnboardingThree)
-            registerAdjustEvent(AdjustEventType.ON_BOARDING_3, isLoggedIn = false)
+            registerAdjustEvent(AdjustEventType.ON_BOARDING_3_1004, isLoggedIn = false)
             when (context.resources.configuration.locale.isO3Country) {
                 ISO3_COSTA_RICA -> listOf(
                     R.string.onboarding_costa_rica_step_three_title,
@@ -152,6 +153,11 @@ class OnBoardingViewModel @Inject constructor(
     private fun navigateToNextScreen(screen: String) {
         viewModelScope.launch {
             dataStorePreferences.isOnBoardingEnabled(false)
+            if (dataStorePreferences.isAdjustSingUpButtonClickedEventRegister().first()) {
+                registerAdjustEvent(adjustEventType = AdjustEventType.SIGNUP_FIRST_BUTTON_CLICKED_2000, isLoggedIn = false)
+                dataStorePreferences.isAdjustSingUpButtonClickedEventRegister(false)
+            }
+
             popAndNavigateTo(
                 route = if (screen == Screen.SignUpScreen.baseRoute) {
                     "$screen/".plus(0)

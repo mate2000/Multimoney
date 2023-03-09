@@ -397,14 +397,8 @@
 
 
     <!-- Sign Up General-->
-    <string
-    name="sign_up_splash_come_back"
-    translatable="false"
-  >¡Nos alegra\nverte de nuevo!</string>
-    <string
-    name="sign_up_general_close_dialog_title"
-    translatable="false"
-  >¿Estás segur@ de que quieres salir? ¡Ya casi terminamos!</string>
+    <string name="sign_up_splash_come_back" translatable="false">¡Nos alegra\nverte de nuevo!</string>
+    <string name="sign_up_general_close_dialog_title" translatable="false">¿Estás seguro de que quieres salir? ¡Ya casi terminamos!</string>
 
     <string
     name="sign_up_close_dialog_description"
@@ -428,14 +422,8 @@
   >Ir al inicio</string>
 
     <!-- Sign Up Costa rica-->
-    <string
-    name="sign_up_general_close_dialog_title_costa_rica"
-    translatable="false"
-  >¿Estás segur@ de que querés salir? ¡Ya casi terminamos!</string>
-    <string
-    name="sign_up_close_dialog_description_costa_rica"
-    translatable="false"
-  >Podés retomar el registro cuando querás</string>
+    <string name="sign_up_general_close_dialog_title_costa_rica" translatable="false">¿Estás seguro de que querés salir? ¡Ya casi terminamos!</string>
+    <string name="sign_up_close_dialog_description_costa_rica" translatable="false">Podés retomar el registro cuando querás</string>
 
     <!-- Sign Up El Salvador-->
     <string
@@ -537,67 +525,27 @@
   >Llamada</string>
 
     <!-- Sign Up Otp -->
-    <string
-    name="sign_up_otp_title"
-    translatable="false"
-  >Te enviamos un SMS \nal %s</string>
-    <string
-    name="sign_up_otp_subtitle"
-    translatable="false"
-  >Ingresa el código para conectar tu teléfono a tu cuenta</string>
-    <string
-    name="sign_up_otp_subtitle_cr"
-    translatable="false"
-  >Ingresá el código para conectar tu teléfono a tu cuenta</string>
-    <string
-    name="sign_up_otp_change_phone"
-    translatable="false"
-  >Corregir celular</string>
-    <string
-    name="sign_up_otp_resend"
-    translatable="false"
-  >Reenviar código</string>
-    <string
-    name="sign_up_otp_call"
-    translatable="false"
-  >Recibir código por llamada</string>
-    <string
-    name="sign_up_otp_sms"
-    translatable="false"
-  >Recibir código por sms</string>
-    <string
-    name="sign_up_otp_expiration_time_phase_one"
-    translatable="false"
-  >Código expira en </string>
-    <string
-    name="sign_up_otp_expiration_time_phase_three"
-    translatable="false"
-  >Código reenviado expira en </string>
-    <string
-    name="sign_up_otp_expiration_time_phase_five"
-    translatable="false"
-  >Código expira en </string>
-    <string
-    name="sign_up_otp_expiration_time_phase_six"
-    translatable="false"
-  >Su número de teléfono no ha podido ser verificado.</string>
-    <string
-    name="sign_up_otp_expiration_time_phase_seconds"
-    translatable="false"
-  > segundos.</string>
+    <string name="sign_up_otp_title" translatable="false">Te enviamos un SMS \nal %s</string>
+    <string name="sign_up_otp_subtitle" translatable="false">Ingresa el código para conectar tu teléfono a tu cuenta</string>
+    <string name="sign_up_otp_subtitle_cr" translatable="false">Ingresá el código para conectar tu teléfono a tu cuenta</string>
+    <string name="sign_up_otp_change_phone" translatable="false">Corregir celular</string>
+    <string name="sign_up_otp_resend" translatable="false">Reenviar código</string>
+    <string name="sign_up_otp_call" translatable="false">Recibir código por llamada</string>
+    <string name="sign_up_otp_sms" translatable="false">Recibir código por sms</string>
+    <string name="sign_up_otp_expiration_time_phase_one_cr" translatable="false">Esperá %s segundos para reenviar el código</string>
+    <string name="sign_up_otp_expiration_time_phase_three_cr" translatable="false">Código enviado. Esperá %s segundos para reenviar</string>
+    <string name="sign_up_otp_expiration_time_phase_one" translatable="false">Espera %s segundos para reenviar el código</string>
+    <string name="sign_up_otp_expiration_time_phase_three" translatable="false">Código enviado. Espera %s segundos para reenviar</string>
+    <string name="sign_up_otp_expiration_time_phase_five" translatable="false">Código expira en %s segundos.</string>
+    <string name="sign_up_otp_expiration_time_phase_six" translatable="false">Su número de teléfono no ha podido ser verificado.</string>
     <string name="sign_up_otp_code_placeholder" translatable="false">0</string>
-    <string
-    name="sign_up_otp_code_required"
-    translatable="false"
-  >Código de verificación requerido</string>
-    <string
-    name="sign_up_otp_code_not_valid"
-    translatable="false"
-  >Código de verificación incorrecto</string>
-    <string
-    name="sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts"
-    translatable="false"
-  >No hemos podido verificar tu teléfono. Por tu seguridad no podés realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
+    <string name="sign_up_otp_code_required" translatable="false">Código de verificación requerido</string>
+    <string name="sign_up_otp_code_not_valid" translatable="false">Código de verificación incorrecto</string>
+    <string name="sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no podés realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
+    <string name="sign_in_otp_expiration_time_phase_one" translatable="false">Código expira en </string>
+    <string name="sign_in_otp_expiration_time_phase_three" translatable="false">Código reenviado expira en </string>
+    <string name="sign_in_otp_expiration_time_phase_five" translatable="false">Código expira en </string>
+    <string name="sign_in_otp_expiration_time_phase_seconds" translatable="false"> segundos.</string>
 
     <!-- Sign Up Personal Data -->
     <string
@@ -1143,22 +1091,11 @@
   >%1$s %2$s</string>
 
     <!-- sell crypto -->
-    <string
-    name="sell_crypto_voucher_value_in_dollars_template"
-    translatable="false"
-  >Valor en dólares al momento de la venta</string>
-    <string
-    name="sell_crypto_voucher_amount_credited"
-    translatable="false"
-  >Total recibido</string>
-    <string
-    name="sell_crypto_voucher_to_account"
-    translatable="false"
-  >Hacia</string>
-    <string
-    name="sell_crypto_voucher_you_have_sold"
-    translatable="false"
-  >Has vendido</string>
+    <string name="sell_crypto_voucher_value_in_dollars_template" translatable="false">Valor en dólares al momento de la venta</string>
+    <string name="sell_crypto_voucher_amount_credited" translatable="false">Total recibido</string>
+    <string name="sell_crypto_voucher_to_account" translatable="false">Hacia</string>
+    <string name="sell_crypto_voucher_you_have_sold" translatable="false">Has vendido</string>
+    <string name="sell_crypto_voucher_value_in_currency_template" translatable="false">Valor en %1$s al momento de la venta</string>
 
 
     <!-- send crypto -->
@@ -2404,46 +2341,19 @@
   >Procesando transacción…</string>
 
     <!-- Onfido errors -->
-    <string
-    name="onfido_rejected_first_time_title"
-    translatable="false"
-  >Hubo un error al validar tu identidad</string>
-    <string
-    name="onfido_rejected_first_time_subtitle"
-    translatable="false"
-  >Intentá de nuevo</string>
-    <string
-    name="onfido_rejected_first_time_subtitle_sv"
-    translatable="false"
-  >Intenta de nuevo</string>
-    <string
-    name="onfido_rejected_second_time_title"
-    translatable="false"
-  > No fue posible verificar tu identidad</string>
-    <string
-    name="onfido_rejected_second_time_subtitle"
-    translatable="false"
-  >Comunícate con nosotros para activar tu crédito.</string>
-    <string
-    name="onfido_rejected_action"
-    translatable="false"
-  >Confirmar mi identidad</string>
-    <string
-    name="onfido_rejected_action_second_time"
-    translatable="false"
-  >Contactar</string>
-    <string
-    name="smart_onfido_rejected_second_time_title"
-    translatable="false"
-  > No fue posible verificar tu identidad</string>
-    <string
-    name="smart_onfido_rejected_second_time_subtitle"
-    translatable="false"
-  >Comunícate con nosotros para activar tu crédito.</string>
-    <string
-    name="smart_onfido_rejected_action_second_time"
-    translatable="false"
-  >Contactar</string>
+    <string name="onfido_rejected_first_time_title" translatable="false">Hubo un error al validar tu identidad</string>
+    <string name="onfido_rejected_first_time_subtitle" translatable="false">Intentá de nuevo</string>
+    <string name="onfido_rejected_first_time_subtitle_sv" translatable="false">Intenta de nuevo</string>
+    <string name="onfido_rejected_second_time_title" translatable="false"> No fue posible verificar tu identidad</string>
+    <string name="onfido_rejected_second_time_subtitle" translatable="false">Comunícate con nosotros para activar tu crédito.</string>
+    <string name="onfido_rejected_action" translatable="false">Confirmar mi identidad</string>
+    <string name="onfido_rejected_action_second_time" translatable="false">Contactar</string>
+    <string name="smart_onfido_rejected_second_time_title" translatable="false"> No fue posible verificar tu identidad</string>
+    <string name="smart_onfido_rejected_second_time_subtitle" translatable="false">Comunícate con nosotros para activar tu crédito.</string>
+    <string name="smart_onfido_rejected_action_second_time" translatable="false">Contactar</string>
+    <string name="smart_onfido_identity_verification_subtitle_sv" translatable="false">Recomendamos:</string>
+    <string name="smart_onfido_identity_verification_subtitle_cr" translatable="false">Recomendaciones:</string>
+
     <!-- Sign Credit Web View -->
     <string
     name="sign_credit_dialog_title_cr"
@@ -3026,8 +2936,8 @@
 
 
     <!-- Smart Evercita Escenario-->
-    <string name="smart_evercita_title" translatable="false">¡Estás a una firma de abrir tu cuenta!</string>
-    <string name="smart_evercita_subtitle" translatable="false">Este es el último paso para abrir tu cuenta.</string>
+    <string name="smart_evicertia_rejected_title" translatable="false">¡Estás a una firma de abrir tu cuenta!</string>
+    <string name="smart_evicertia_rejected_subtitle" translatable="false">Este es el último paso para abrir tu cuenta.</string>
 
     <!-- Smart Account -->
     <string
@@ -3991,46 +3901,16 @@
   >Te vamos a extrañar</string>
 
     <!-- Validate identity -->
-    <string
-    name="validate_identity_title"
-    translatable="false"
-  >Estamos verificando tu identidad</string>
-    <string
-    name="validate_identity_subtitle"
-    translatable="false"
-  >Esto solo toma unos minutos</string>
-    <string
-    name="validate_document_generation_title"
-    translatable="false"
-  >Estamos generando tus documentos</string>
-    <string
-    name="validate_document_generation_subtitle"
-    translatable="false"
-  >Al firmar tu contrato podrás utilizar tu Multinoney Smart</string>
-    <string
-    name="approved_by_onfido_title"
-    translatable="false"
-  >¡Tu MultiMoney Smart ya está activa!</string>
-    <string
-    name="approved_by_onfido_buttton_text"
-    translatable="false"
-  >Hacer mi primer abono</string>
-    <string
-    name="rejected_by_onfido_title"
-    translatable="false"
-  >No pudimos validar tu identidad</string>
-    <string
-    name="rejected_by_onfido_buttton_text"
-    translatable="false"
-  >Validar mi identidad</string>
-    <string
-    name="smart_continue_validating_identity_title"
-    translatable="false"
-  >Ya casi tenés tu MultiMoney Smart</string>
-    <string
-    name="smart_rejected_by_onfido_subtitle"
-    translatable="false"
-  >Inténtalo nuevamente</string>
+    <string name="validate_identity_title" translatable="false">Estamos verificando tu identidad</string>
+    <string name="validate_identity_subtitle" translatable="false">Esto solo toma unos minutos</string>
+    <string name="validate_document_generation_title" translatable="false">Estamos generando tus documentos</string>
+    <string name="validate_document_generation_subtitle" translatable="false">Al firmar tu contrato podrás utilizar tu Multinoney Smart</string>
+    <string name="approved_by_onfido_title" translatable="false">¡Tu MultiMoney Smart ya está activa!</string>
+    <string name="approved_by_onfido_buttton_text" translatable="false">Hacer mi primer abono</string>
+    <string name="rejected_by_onfido_title" translatable="false">¡Oh no! Hubo un error</string>
+    <string name="rejected_by_onfido_buttton_text" translatable="false">Validar mi identidad</string>
+    <string name="smart_continue_validating_identity_title" translatable="false">Ya casi tenés tu MultiMoney Smart</string>
+    <string name="smart_rejected_by_onfido_subtitle" translatable="false">Debemos validar tu identidad, por favor intentá de nuevo.</string>
 
     <!-- Credit Schedule Automatic Payment -->
     <string
@@ -5459,52 +5339,19 @@
   >El monto mínimo de venta es de $5</string>
 
     <!-- Visa Verified -->
-    <string
-    name="visa_verified_title"
-    translatable="false"
-  >Verifiquemos tu tarjeta</string>
-    <string
-    name="visa_verified_description_1_bold"
-    translatable="false"
-  >Revisa los movimientos</string>
-    <string
-    name="visa_verified_description_1"
-    translatable="false"
-  >de la\ncuenta asociada a tu tarjeta</string>
-    <string
-    name="visa_verified_description_2_bold"
-    translatable="false"
-  >Busca el monto </string>
-    <string
-    name="visa_verified_description_2"
-    translatable="false"
-  >del depósito que\nte hicimos</string>
-    <string
-    name="visa_verified_description_3_bold"
-    translatable="false"
-  >Escribe el monto</string>
-    <string
-    name="visa_verified_description_3"
-    translatable="false"
-  >en el siguiente\npaso</string>
-    <string
-    name="visa_verified_dialog_title"
-    translatable="false"
-  >Cancelar proceso</string>
-    <string
-    name="visa_verified_dialog_description"
-    translatable="false"
-  >¿Estás segur@ de cancelar el proceso de agregar una tarjeta?</string>
+    <string name="visa_verified_title" translatable="false">Verifiquemos tu tarjeta</string>
+    <string name="visa_verified_description_1_bold" translatable="false">Revisa los movimientos</string>
+    <string name="visa_verified_description_1" translatable="false">de la\ncuenta asociada a tu tarjeta</string>
+    <string name="visa_verified_description_2_bold" translatable="false">Busca el monto </string>
+    <string name="visa_verified_description_2" translatable="false">del depósito que\nte hicimos</string>
+    <string name="visa_verified_description_3_bold" translatable="false">Escribe el monto</string>
+    <string name="visa_verified_description_3" translatable="false">en el siguiente\npaso</string>
+    <string name="visa_verified_dialog_title" translatable="false">Cancelar proceso</string>
+    <string name="visa_verified_dialog_description" translatable="false">¿Estás seguro de cancelar el proceso de agregar una tarjeta?</string>
 
     <!-- Add Visa Card Dialog -->
-    <string
-    name="visa_add_card_dialog_title"
-    translatable="false"
-  >Cancelar proceso</string>
-    <string
-    name="visa_add_card_dialog_description"
-    translatable="false"
-  >¿Estás segur@ de cancelar el proceso de agregar una tarjeta?</string>
+    <string name="visa_add_card_dialog_title" translatable="false">Cancelar proceso</string>
+    <string name="visa_add_card_dialog_description" translatable="false">¿Estás seguro de cancelar el proceso de agregar una tarjeta?</string>
 
     <!-- Add Visa Card Errors   -->
     <string

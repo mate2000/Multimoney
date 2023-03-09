@@ -1,8 +1,14 @@
 package com.multimoney.multimoney.presentation.ui.smart.origination.evicertia.screen
 
-import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,10 +27,9 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSig
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomImage
-import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 
 @Composable
-fun EvercitaDenyContratScreen(
+fun EvicertiaDenyContractScreen(
     icon: Int? = null,
     title: Int? = null,
     subtitle: Int? = null,
@@ -46,7 +51,7 @@ fun EvercitaDenyContratScreen(
         ) {
             CustomImage(drawableResource = icon ?: R.drawable.ic_alert)
             Text(
-                text = stringResource(id = title ?: R.string.smart_evercita_title),
+                text = stringResource(id = title ?: R.string.smart_evicertia_rejected_title),
                 modifier = Modifier.padding(top = 24.dp),
                 style = Typography.h5.copy(
                     fontWeight = FontWeight.SemiBold,
@@ -57,7 +62,7 @@ fun EvercitaDenyContratScreen(
             )
             Text(
                 text = stringResource(
-                    id = subtitle ?: R.string.smart_evercita_subtitle
+                    id = subtitle ?: R.string.smart_evicertia_rejected_subtitle
                 ),
                 modifier = Modifier.padding(top = 10.dp),
                 style = Typography.body1,
@@ -68,7 +73,7 @@ fun EvercitaDenyContratScreen(
         Row(
             modifier = Modifier
                 .padding(top = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             CustomButton(
                 onClick = { viewModel.onUIEvent(UIEvent.OnNavigateToHome) },
@@ -82,4 +87,3 @@ fun EvercitaDenyContratScreen(
         }
     }
 }
-

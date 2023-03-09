@@ -116,7 +116,7 @@ class SmartSignViewModel @Inject constructor(
     private fun onListenSmartContractEventSubscription() {
         onShouldStartSubscription()
         smartSubscriptionManager.idSubscriptionSubscribe(getSmartSubscriptionListener())
-        if (smartSubscriptionManager.hasEvisertiaLink()) {
+        if (smartSubscriptionManager.hasEvicertiaLink()) {
             mmCountDownTimer.startTimer(WAIT_TIME)
         }
     }
@@ -128,7 +128,7 @@ class SmartSignViewModel @Inject constructor(
             }
 
             override fun onSubscriptionFailToConnect(httpError: HttpError) {
-
+                showSubscriptionError()
             }
         }
 
@@ -386,8 +386,9 @@ class SmartSignViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnChangeScreen -> uiState =
-                uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
+            is OnChangeScreen -> uiState = uiState.copy(
+                signDocumentProcessStep = uiEvent.signDocumentStep
+            )
             is OnInitializeText -> dialogDescription = uiEvent.dialogDescription
             is OnCloseClick -> onNavigateToHome()
             is OnShowDialogInformation -> createDialog()

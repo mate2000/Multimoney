@@ -1,12 +1,10 @@
 package com.multimoney.multimoney.presentation.navigation
 
 import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN
-import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN_CREDIT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ADD_CARD_RESPONSE
 import com.multimoney.multimoney.presentation.navigation.navgraph.AMOUNT_ORIGINAL_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALANCE_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_INFORMATION
-import com.multimoney.multimoney.presentation.navigation.navgraph.CALLER_ID
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_CARD_VISA_DIRECT
@@ -57,8 +55,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_SCHEDULE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.QUOTA_TOTAL
 import com.multimoney.multimoney.presentation.navigation.navgraph.REFERENCE_NUMBER
-import com.multimoney.multimoney.presentation.navigation.navgraph.SECOND_NAME
-import com.multimoney.multimoney.presentation.navigation.navgraph.SECOND_LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.SELECTED_AMOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_DISPLAY_EXCHANGE_RATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_GET_EVICERTIA_LINK
@@ -72,7 +68,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SMART_PAYMENT_
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.TRANSFER_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.navigation.navgraph.VISA_DIRECT_USER
 
 // Route
 const val LOGIN_ROUTE = "log_in_route"
@@ -137,6 +132,7 @@ const val PROFILE_CARD_LIST_ORIGIN = "profile_card_list_origin"
 const val CROSSELING = "crosseling"
 const val OTP_METHOD = "otp_method"
 const val SYS_ID_ACCOUNT_REQUEST = "sys_id_request"
+const val WORK_FLOW = "work_flow"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -204,7 +200,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // HomeNavGraph Screens
     object HomeScreen : Screen(
-         "home_screen"
+        "home_screen"
     )
 
     object ProfileScreen : Screen(
@@ -480,12 +476,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // Smart
     object SmartScreen : Screen(
-        "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$FIRST_NAME}/{$LAST_NAME}/{$COMING_FROM_CRYPTO}/{$ID_GLOBAL_REQUEST}/{$ID_USER_REQUEST}",
+        "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$FIRST_NAME}/{$LAST_NAME}/{$COMING_FROM_CRYPTO}/{$ID_GLOBAL_REQUEST}/{$ID_USER_REQUEST}/{$EVICERTIA_STATUS}/{$WORK_FLOW}",
         "smart_screen"
     )
 
     object SmartOnfidoScreen : Screen(
-        "smart_onfido_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$FIRST_NAME}/{$LAST_NAME}/{$SYS_ID_ACCOUNT_REQUEST}/{$SIGN_DOCUMENT_GLOBAL_ID}/{$SIGN_DOCUMENT_URL}/{$COMING_FROM_CRYPTO}",
+        "smart_onfido_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$FIRST_NAME}/{$LAST_NAME}/{$SYS_ID_ACCOUNT_REQUEST}/{$SIGN_DOCUMENT_GLOBAL_ID}/{$SIGN_DOCUMENT_URL}/{$COMING_FROM_CRYPTO}/{$EVICERTIA_STATUS}/{$WORK_FLOW}",
         "smart_onfido_screen"
     )
 

@@ -980,8 +980,8 @@
 
 
     <!-- Smart Evercita Escenario-->
-    <string name="smart_evercita_title" translatable="false">¡Estás a una firma de abrir tu cuenta!</string>
-    <string name="smart_evercita_subtitle" translatable="false">Este es el último paso para abrir tu cuenta.</string>
+    <string name="smart_evicertia_rejected_title" translatable="false">¡Estás a una firma de abrir tu cuenta!</string>
+    <string name="smart_evicertia_rejected_subtitle" translatable="false">Este es el último paso para abrir tu cuenta.</string>
 
     <!-- Smart Account -->
     <string name="smart_account_document_title" translatable="false">Cuéntanos sobre ti</string>

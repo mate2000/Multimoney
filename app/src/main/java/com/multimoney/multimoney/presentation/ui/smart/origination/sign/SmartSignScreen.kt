@@ -36,9 +36,7 @@ fun SmartSignScreen(
                     viewModel.onUIEvent(UIEvent.NavigateToSignUpDocument)
                 }
 
-                override fun onMaxTimeUsed(millisMainUntilFinished: Long) {
-                    // Nothing to do here
-                }
+                override fun onMaxTimeUsed(millisMainUntilFinished: Long) = Unit
             })
             onUIEvent(OnStartListenerSubscriptionSmartContractEvent)
             executeNavigation(onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)

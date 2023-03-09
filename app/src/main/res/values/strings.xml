@@ -1000,6 +1000,8 @@
     <string name="smart_account_carne_expiration_label" translatable="false">Fecha de vencimiento de carné de residencia</string>
     <string name="smart_account_carne_date_error" translatable="false">Tu carné de residente debe estar vigente</string>
     <string name="smart_account_origin_country_label" translatable="false">País de origen</string>
+    <string name="smart_account_carne_emission_date_required" translatable="false">Fecha de emisión requerida</string>
+    <string name="smart_account_carne_expiration_date_required" translatable="false">Fecha de vencimiento requerida</string>
 
     <!-- Smart Account - Beneficiary -->
     <string name="smart_account_beneficiaries_title" translatable="false">Mis beneficiarios</string>

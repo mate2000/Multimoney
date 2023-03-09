@@ -70,10 +70,11 @@ fun SignDocumentProcessScreen(
                 viewModel.logEvents(AdjustEventType.ORIGINATION_RETRY_SCREEN_EVICERTIA_5016)
             }
             DocumentGenerationScreen(
-                idBran = viewModel.idBrand,
+                idBrand = viewModel.idBrand,
                 onGetLinkAgain = {
                     viewModel.onUIEvent(OnCallGetLinkCreditContractSecondTime)
-                })
+                }
+            )
         }
         SIGN_DOCUMENTS_STEP.value -> {
             SignDocumentScreen(viewModel = viewModel)

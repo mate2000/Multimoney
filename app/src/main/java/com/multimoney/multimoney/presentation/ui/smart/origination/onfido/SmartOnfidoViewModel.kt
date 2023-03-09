@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.smart.origination.onfido
 
-import android.util.Log
 import androidx.activity.result.ActivityResult
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -11,6 +10,7 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.SmartWorkflow.SMART_FIRMED_ONFIDO_PENDING
+import com.multimoney.data.util.catalog.SmartWorkflow
 import com.multimoney.domain.interaction.accountsmart.MutationAccountStatusUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCase
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCase
@@ -27,6 +27,7 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.SYS_ID_ACCOUNT_REQUEST
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.WORK_FLOW
 import com.multimoney.multimoney.presentation.navigation.navgraph.COMING_FROM_CRYPTO
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
@@ -40,7 +41,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.Companion.URL_EMPTY
-import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.smart.origination.SmartSubscriptionManager
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnCallInFidoToken
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnCloseClick
@@ -53,6 +53,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartO
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnOpenDialogValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnOpenOnfidoSdk
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnSetCloseDialogTexts
+import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnStartSubscription
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.RefreshOnFidoToken
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
@@ -114,6 +115,7 @@ class SmartOnfidoViewModel @Inject constructor(
     var user: String = ""
     var globalId: Long? = 0
     var comingFromCrypto: Boolean = false
+    var workflow: String = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -128,10 +130,19 @@ class SmartOnfidoViewModel @Inject constructor(
         evicertiaStatus = savedStateHandle[EVICERTIA_STATUS] ?: ""
         globalId = savedStateHandle[SIGN_DOCUMENT_GLOBAL_ID] ?: 0
         comingFromCrypto = savedStateHandle[COMING_FROM_CRYPTO] ?: false
+        workflow = savedStateHandle[WORK_FLOW] ?: ""
     }
 
     // Events
     val onFidoTokenEvent = MutableSharedFlow<MultimoneyResult<OnfidoToken?>>()
+
+    private fun onStart() {
+        if (workflow == SmartWorkflow.SMART_CONTRACT_PROCESS.workflow) {
+            onCallMutationAccountStatusUseCase(true)
+        } else {
+            onStartSubscription()
+        }
+    }
 
     private fun onStartSubscription() {
         if (idRequestSysde != 0L) {
@@ -153,7 +164,6 @@ class SmartOnfidoViewModel @Inject constructor(
             }
 
             override fun onSubscriptionFailToConnect(httpError: HttpError) {
-
             }
         }
 
@@ -177,14 +187,16 @@ class SmartOnfidoViewModel @Inject constructor(
                     smartSubscriptionManager.idSubscriptionSubscribe(getSmartSubscriptionListener())
                     smartSubscriptionManager.startSmartSubscription(
                         it?.idAccount ?: 0L,
-                        idBrand ?: Brand.CostaRica.id,
+                        idBrand ?: Brand.CostaRica.id
                     )
                 }
             }
         }
     }
 
-    private fun onCallMutationAccountStatusUseCase() = executeUseCase {
+    private fun onCallMutationAccountStatusUseCase(
+        navigateToEvicertia: Boolean = false
+    ) = executeUseCase {
         mutationAccountStatusUseCase.invoke(
             user = user,
             idBrand = idBrand ?: Brand.CostaRica.id,
@@ -197,6 +209,9 @@ class SmartOnfidoViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess {
                 evicertiaUrl = it?.urlFirmDocument ?: URL_EMPTY
+                if (navigateToEvicertia) {
+                    navigateToCorrectScreen()
+                }
             }
         }
     }
@@ -310,6 +325,7 @@ class SmartOnfidoViewModel @Inject constructor(
                 user
             ).collectLatest { result ->
                 result.onSuccess {
+                    it.id
                     // nothing to do here
                 }
                 result.onFailure {
@@ -337,11 +353,8 @@ class SmartOnfidoViewModel @Inject constructor(
     private fun onNavigateToSignDocumentScreen(signDocumentStep: String) {
         popAndNavigateTo(
             route = "${Screen.SmartSignScreen.baseRoute}/$signDocumentStep/${
-                URLEncoder.encode(
-                    evicertiaUrl,
-                    StandardCharsets.UTF_8.toString()
-                )
-            }/$idBrand/$pkUser/$identification/$email/${idRequestSysde}/$firstName/$lastName/${true}/$globalId/$user/$comingFromCrypto/${!smartSubscriptionManager.hasEvisertiaLink()}",
+            URLEncoder.encode(evicertiaUrl, StandardCharsets.UTF_8.toString())
+            }/$idBrand/$pkUser/$identification/$email/$idRequestSysde/$firstName/$lastName/${true}/$globalId/$user/$comingFromCrypto/${!smartSubscriptionManager.hasEvicertiaLink()}",
             popTo = Screen.SmartOnfidoScreen.route
         )
     }
@@ -422,6 +435,7 @@ class SmartOnfidoViewModel @Inject constructor(
                     uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnOpenOnfidoSdk -> onOpenOnfidoSdk(event.onOpenOnfidoSdk)
             is OnStartSubscription -> onStartSubscription()
+            is OnStart -> onStart()
         }
     }
 
@@ -465,6 +479,7 @@ class SmartOnfidoViewModel @Inject constructor(
         data class OnOpenOnfidoSdk(val onOpenOnfidoSdk: () -> Unit) : UIEvent()
 
         object OnStartSubscription : UIEvent()
+        object OnStart : UIEvent()
     }
 
     private data class AdjustFirstTimeOnfidoData(

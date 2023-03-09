@@ -72,6 +72,7 @@ class SignUpOtpViewModel @Inject constructor(
         this.linkWhatsapp = linkWhatsapp
         this.userBlockedForMaxAttend = userBlockedForMaxAttend
         uiState = uiState.copy(
+            idBrand = idBrand,
             subtitleResource = if (idBrand == Brand.CostaRica.id) {
                 R.string.sign_up_otp_subtitle_cr
             } else {
@@ -138,8 +139,16 @@ class SignUpOtpViewModel @Inject constructor(
     }
 
     fun getPhaseResourceString() = when (uiState.phaseCount) {
-        PHASE_ONE -> R.string.sign_up_otp_expiration_time_phase_one
-        PHASE_THREE -> R.string.sign_up_otp_expiration_time_phase_three
+        PHASE_ONE -> {
+            if (uiState.idBrand == Brand.CostaRica.id)
+                R.string.sign_up_otp_expiration_time_phase_one_cr
+            else R.string.sign_up_otp_expiration_time_phase_one
+        }
+        PHASE_THREE -> {
+            if (uiState.idBrand == Brand.CostaRica.id)
+                R.string.sign_up_otp_expiration_time_phase_three_cr
+            else R.string.sign_up_otp_expiration_time_phase_three
+        }
         PHASE_TWO, PHASE_FOUR -> if (uiState.otpResend == ResendOtp.SMS.option) R.string.sign_up_otp_sms else R.string.sign_up_otp_call
         PHASE_FIVE -> R.string.sign_up_otp_expiration_time_phase_five
         else -> R.string.sign_up_otp_expiration_time_phase_six
@@ -325,7 +334,8 @@ class SignUpOtpViewModel @Inject constructor(
         val remainingTime: Duration = TIMER_DURATION.seconds,
         val isTimerRunning: Boolean = false,
         val remainingTimeText: String = remainingTime.format(),
-        val isOtpFromSms: Boolean = false
+        val isOtpFromSms: Boolean = false,
+        val idBrand: Int? = null
     )
 
     fun onUIEvent(event: UIEvent) {

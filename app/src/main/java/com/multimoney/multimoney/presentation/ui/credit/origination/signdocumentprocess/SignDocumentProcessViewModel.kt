@@ -177,7 +177,7 @@ class SignDocumentProcessViewModel @Inject constructor(
                                 signDocumentUrl = linkCreditContract.link ?: ""
                             )
                         }
-                        isEvisertiaOverCounted(linkCreditContract?.statusEvicertia) -> {
+                        isEvicertiaOverCounted(linkCreditContract?.statusEvicertia) -> {
                             onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_SECOND_TIME.value)
                         }
                         else -> {
@@ -220,7 +220,7 @@ class SignDocumentProcessViewModel @Inject constructor(
                 }
             }
             CreditSubscriptionStep.DocumentsRejected.step -> {
-                if (isEvisertiaOverCounted(creditContractEvent.statusEvicertia)) {
+                if (isEvicertiaOverCounted(creditContractEvent.statusEvicertia)) {
                     onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_SECOND_TIME.value)
                 } else {
                     logEvents(AdjustEventType.ORIGINATION_FIRST_CUSTOMER_REJECTED_5017)
@@ -274,8 +274,8 @@ class SignDocumentProcessViewModel @Inject constructor(
         dataStorePreferences.isAdjustFirstOriginationNonPreApprovedApprovedEventRegister(true)
     }
 
-    private fun isEvisertiaOverCounted(evisertiaStatus: String?) =
-        evisertiaStatus?.lowercase() == CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase()
+    private fun isEvicertiaOverCounted(evicertiaStatus: String?) =
+        evicertiaStatus?.lowercase() == CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase()
 
     fun showSubscriptionError() {
         uiState = uiState.copy(

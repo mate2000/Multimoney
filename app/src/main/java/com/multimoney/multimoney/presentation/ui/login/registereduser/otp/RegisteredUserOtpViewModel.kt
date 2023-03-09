@@ -140,10 +140,10 @@ class RegisteredUserOtpViewModel @Inject constructor(
     }
 
     fun getPhaseResourceString() = when (uiState.phaseCount) {
-        PHASE_ONE -> R.string.sign_up_otp_expiration_time_phase_one
-        PHASE_THREE -> R.string.sign_up_otp_expiration_time_phase_three
+        PHASE_ONE -> R.string.sign_in_otp_expiration_time_phase_one
+        PHASE_THREE -> R.string.sign_in_otp_expiration_time_phase_three
         PHASE_TWO, PHASE_FOUR -> if (uiState.otpResend == ResendOtp.SMS.option) R.string.sign_up_otp_sms else R.string.sign_up_otp_call
-        PHASE_FIVE -> R.string.sign_up_otp_expiration_time_phase_five
+        PHASE_FIVE -> R.string.sign_in_otp_expiration_time_phase_five
         else -> R.string.sign_up_otp_expiration_time_phase_six
     }
 

@@ -168,7 +168,10 @@ fun SmartOnfidoScreen(
             )
             Text(
                 modifier = Modifier.padding(top = 16.dp),
-                text = stringResource(id = string.sign_up_id_validation_subtitle),
+                text = stringResource(
+                    if (viewModel.idBrand == CostaRica.id) string.smart_onfido_identity_verification_subtitle_cr
+                    else string.smart_onfido_identity_verification_subtitle_sv
+                ),
                 style = Typography.body2.copy(
                     color = MultimoneyTheme.colors.text,
                     fontWeight = FontWeight.SemiBold

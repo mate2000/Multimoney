@@ -8,10 +8,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.BaseEvent.SimulateUserInteraction
+import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnShowDialogInformation
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnStartListenerSubscriptionSmartContractEvent
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.util.MMCountDownTimer.OnCountDownTimerEvents
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
@@ -29,6 +31,15 @@ fun SmartSignScreen(
 
     LaunchedEffect(true) {
         viewModel.apply {
+            mmCountDownTimer.subscribe(object : OnCountDownTimerEvents {
+                override fun onFinished() {
+                    viewModel.onUIEvent(UIEvent.NavigateToSignUpDocument)
+                }
+
+                override fun onMaxTimeUsed(millisMainUntilFinished: Long) {
+                    // Nothing to do here
+                }
+            })
             onUIEvent(OnStartListenerSubscriptionSmartContractEvent)
             executeNavigation(onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)
             baseEvent.collectLatest { event ->
@@ -82,7 +93,8 @@ fun SmartSignScreen(
             positiveButtonText = stringResource(id = viewModel.uiState.dialogParameters.positiveResource),
             negativeButtonText = stringResource(id = viewModel.uiState.dialogParameters.negativeResource),
             openDialogCustom = viewModel.uiState.dialogParameters.isActive,
-            onPositiveAction = viewModel.uiState.dialogParameters.positiveAction
+            onPositiveAction = viewModel.uiState.dialogParameters.positiveAction,
+            onNegativeAction = viewModel.uiState.dialogParameters.negativeAction
         )
     }
 

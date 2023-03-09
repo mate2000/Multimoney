@@ -121,7 +121,7 @@ class SmartSignViewModel @Inject constructor(
             }
 
             override fun onSubscriptionFailToConnect(httpError: HttpError) {
-
+                showSubscriptionError()
             }
         }
 
@@ -139,7 +139,7 @@ class SmartSignViewModel @Inject constructor(
             }
             CreditSubscriptionStep.DocumentsRejected.step -> {
                 emitBaseEvent(SimulateUserInteraction)
-                if (isEvisertiaOverCounted(smartContractEvent.statusEvicertia)) {
+                if (isEvicertiaOverCounted(smartContractEvent.statusEvicertia)) {
                     onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_SECOND_TIME.value)
                 } else {
                     onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_FIRST_TIME.value)
@@ -248,8 +248,8 @@ class SmartSignViewModel @Inject constructor(
         )
     }
 
-    private fun isEvisertiaOverCounted(evisertiaStatus: String?) =
-        evisertiaStatus?.lowercase() == CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase()
+    private fun isEvicertiaOverCounted(evicertiaStatus: String?) =
+        evicertiaStatus?.lowercase() == CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase()
 
     data class UIState(
         // Interactions
@@ -273,8 +273,9 @@ class SmartSignViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnChangeScreen -> uiState =
-                uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
+            is OnChangeScreen -> uiState = uiState.copy(
+                signDocumentProcessStep = uiEvent.signDocumentStep
+            )
             is OnInitializeText -> dialogDescription = uiEvent.dialogDescription
             is OnCloseClick -> onNavigateToHome()
             is OnShowDialogInformation -> createDialog()

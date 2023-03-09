@@ -63,10 +63,11 @@ fun SignDocumentProcessScreen(
     when (viewModel.uiState.signDocumentProcessStep) {
         GENERATE_DOCUMENT_STEP.value -> {
             DocumentGenerationScreen(
-                idBran = viewModel.idBrand,
+                idBrand = viewModel.idBrand,
                 onGetLinkAgain = {
                     viewModel.onUIEvent(OnCallGetLinkCreditContractSecondTime)
-                })
+                }
+            )
         }
         SIGN_DOCUMENTS_STEP.value -> {
             SignDocumentScreen(viewModel = viewModel)

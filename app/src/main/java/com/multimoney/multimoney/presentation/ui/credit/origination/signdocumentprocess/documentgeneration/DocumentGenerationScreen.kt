@@ -39,7 +39,7 @@ import kotlinx.coroutines.flow.onEach
 @OptIn(FlowPreview::class)
 @Composable
 fun DocumentGenerationScreen(
-    idBran: Int,
+    idBrand: Int,
     onGetLinkAgain: () -> Unit = {}
 ) {
     val openStepDebounce = remember { MutableStateFlow(true) }
@@ -50,7 +50,7 @@ fun DocumentGenerationScreen(
         }
     }
 
-    DocumentGenerationContent(subtitleResource = if (idBran == Brand.CostaRica.id) string.document_generation_subtitle_cr else string.document_generation_subtitle)
+    DocumentGenerationContent(subtitleResource = if (idBrand == Brand.CostaRica.id) string.document_generation_subtitle_cr else string.document_generation_subtitle)
 
     // this is required to execute the debounce
     val openStepFlowValue by openStepFlow.collectAsState(false)

@@ -334,8 +334,8 @@ class ProductViewModel @Inject constructor(
             else -> {
                 navigateTo(
                     "${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
-                            "${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}/$comingFromCrypto/" +
-                            "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}"
+                        "${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}/$comingFromCrypto/" +
+                        "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}"
                 )
             }
         }
@@ -386,12 +386,12 @@ class ProductViewModel @Inject constructor(
             }/$identification/$userName/${balanceCredit?.getFirstSummary()?.paymentDate}/${Screen.HomeScreen.route}"
         } else {
             "${Screen.PaymentOptionsScreen.baseRoute}/${balanceCredit?.getFirstCredit()?.creditNumber}/${
-                encodeData(configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true })
+            encodeData(configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true })
             }/${encodeData(configurationVersion?.configuration?.credit?.transferAccount)}/" +
-                    "${balanceCredit?.getFirstSummary()?.minPayment}/${balanceCredit?.getFirstSummary()?.minPaymentLabel}/" +
-                    "${balanceCredit?.getFirstSummary()?.currentBalance}/${balanceCredit?.getFirstSummary()?.currentBalanceLabel}/" +
-                    "$identification/$idClient/${infoCredit?.idLoanClient}/${balanceCredit?.getFirstSummary()?.idCurrency}/" +
-                    "${balanceCredit?.getFirstSummary()?.paymentDate}/${encodeData(uiState.userStatus?.infoUser)}"
+                "${balanceCredit?.getFirstSummary()?.minPayment}/${balanceCredit?.getFirstSummary()?.minPaymentLabel}/" +
+                "${balanceCredit?.getFirstSummary()?.currentBalance}/${balanceCredit?.getFirstSummary()?.currentBalanceLabel}/" +
+                "$identification/$idClient/${infoCredit?.idLoanClient}/${balanceCredit?.getFirstSummary()?.idCurrency}/" +
+                "${balanceCredit?.getFirstSummary()?.paymentDate}/${encodeData(uiState.userStatus?.infoUser)}"
         }
         navigateTo(route)
     }
@@ -407,13 +407,13 @@ class ProductViewModel @Inject constructor(
         } else {
             navigateTo(
                 route = "${Screen.PaymentScheduleCardScreen.baseRoute}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
-                    encodeData(
-                        CardVisaDirect()
-                    )
+                encodeData(
+                    CardVisaDirect()
+                )
                 }/${balanceCredit?.getFirstSummary()?.paymentDate}/${false}/${Screen.HomeScreen.route}/$isEditSchedule/$identification/${
-                    encodeData(
-                        uiState.userStatus?.infoUser
-                    )
+                encodeData(
+                    uiState.userStatus?.infoUser
+                )
                 }"
             )
         }

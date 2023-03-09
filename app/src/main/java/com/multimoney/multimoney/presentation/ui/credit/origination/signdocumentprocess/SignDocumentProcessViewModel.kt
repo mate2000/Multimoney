@@ -114,8 +114,8 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     private fun onShouldCallGetLinkCreditContract() {
-        if (evisertiaStatus.lowercase() != CreditOnFidoOrFirmStatus.FIRMED.status.lowercase()
-            && evisertiaStatus.lowercase() != CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase()
+        if (evisertiaStatus.lowercase() != CreditOnFidoOrFirmStatus.FIRMED.status.lowercase() &&
+            evisertiaStatus.lowercase() != CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase()
         ) {
             if (shouldGetEvicertiaLink || (creditSubscriptionManager.hasEvisertiaLink().not() && isCrosseling.not())) {
                 callQueryGetLinkCreditContractUseCase()
@@ -145,7 +145,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     private fun getCreditSubscriptionListener() = object : CreditSubscriptionManager.SubscriptionEventListener {
         override fun onCapturedEvent(creditContractEvent: CreditContractEvent?) {
             handleSubscriptionsSteps(creditContractEvent = creditContractEvent)
-            Timber.wtf("${LOG_SUBSCRIPTION_TAG}: ${creditContractEvent?.currentStep}")
+            Timber.wtf("$LOG_SUBSCRIPTION_TAG: ${creditContractEvent?.currentStep}")
         }
 
         override fun onSubscriptionFailToConnect(httpError: HttpError) {
@@ -169,7 +169,7 @@ class SignDocumentProcessViewModel @Inject constructor(
                                 signDocumentUrl = linkCreditContract.link ?: ""
                             )
                         }
-                        isEvisertiaOverCounted(linkCreditContract?.statusEvicertia) -> {
+                        isEvicertiaOverCounted(linkCreditContract?.statusEvicertia) -> {
                             onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_SECOND_TIME.value)
                         }
                         else -> {
@@ -210,7 +210,7 @@ class SignDocumentProcessViewModel @Inject constructor(
                 }
             }
             CreditSubscriptionStep.DocumentsRejected.step -> {
-                if (isEvisertiaOverCounted(creditContractEvent.statusEvicertia)) {
+                if (isEvicertiaOverCounted(creditContractEvent.statusEvicertia)) {
                     onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_SECOND_TIME.value)
                 } else {
                     onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_FIRST_TIME.value)
@@ -229,8 +229,8 @@ class SignDocumentProcessViewModel @Inject constructor(
         }
     }
 
-    private fun isEvisertiaOverCounted(evisertiaStatus: String?) =
-        evisertiaStatus?.lowercase() == CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase()
+    private fun isEvicertiaOverCounted(evicertiaStatus: String?) =
+        evicertiaStatus?.lowercase() == CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase()
 
     fun showSubscriptionError() {
         uiState = uiState.copy(

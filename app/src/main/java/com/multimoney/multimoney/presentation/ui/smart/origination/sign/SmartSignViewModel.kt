@@ -31,6 +31,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.signdocument
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.ui.smart.origination.SmartSubscriptionManager
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.BaseEvent.SimulateUserInteraction
+import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.NavigateToSignUpDocument
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnChangeScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnInitializeText
@@ -39,6 +40,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSig
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnShowDialogInformation
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnStartListenerSubscriptionSmartContractEvent
+import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CreditSubscriptionStep
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -59,6 +61,7 @@ import javax.inject.Inject
 class SmartSignViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val smartSubscriptionManager: SmartSubscriptionManager,
+    val mmCountDownTimer: MMCountDownTimer,
     private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
 
@@ -114,10 +117,7 @@ class SmartSignViewModel @Inject constructor(
         onShouldStartSubscription()
         smartSubscriptionManager.idSubscriptionSubscribe(getSmartSubscriptionListener())
         if (smartSubscriptionManager.hasEvicertiaLink()) {
-            uiState = uiState.copy(
-                signDocumentProcessStep = SIGN_DOCUMENTS_STEP.value,
-                signDocumentUrl = smartSubscriptionManager.getEvicertiaLink() ?: ""
-            )
+            mmCountDownTimer.startTimer(WAIT_TIME)
         }
     }
 
@@ -262,6 +262,13 @@ class SmartSignViewModel @Inject constructor(
     private fun isEvicertiaOverCounted(evicertiaStatus: String?) =
         evicertiaStatus?.lowercase() == CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase()
 
+    private fun navigateToSignDocument() {
+        uiState = uiState.copy(
+            signDocumentProcessStep = SIGN_DOCUMENTS_STEP.value,
+            signDocumentUrl = smartSubscriptionManager.getEvisertioLink() ?: ""
+        )
+    }
+
     private fun trackAdjustOriginationEvicertiaDone(smartContractEvent: AccountSmartContractResult?) {
         val parameters = buildParamsListFromCreditContractEvent(smartContractEvent)
 
@@ -389,6 +396,7 @@ class SmartSignViewModel @Inject constructor(
             is OnNavigateToContinueValidatingIdentity -> onNavigateToContinueValidatingIdentity()
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = uiEvent.isLoading)
             is OnStartListenerSubscriptionSmartContractEvent -> onListenSmartContractEventSubscription()
+            is NavigateToSignUpDocument -> navigateToSignDocument()
         }
     }
 
@@ -401,6 +409,7 @@ class SmartSignViewModel @Inject constructor(
         object OnNavigateToHome : UIEvent()
         object OnNavigateToContinueValidatingIdentity : UIEvent()
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
+        object NavigateToSignUpDocument : UIEvent()
     }
 
     sealed class BaseEvent {
@@ -408,6 +417,7 @@ class SmartSignViewModel @Inject constructor(
     }
 
     companion object {
+        const val WAIT_TIME = 5000L
         const val MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION = 3
         const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 30000L
         const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 30000L

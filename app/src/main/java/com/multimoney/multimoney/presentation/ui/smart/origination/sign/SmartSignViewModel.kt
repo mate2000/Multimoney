@@ -4,6 +4,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
 import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
@@ -26,10 +28,10 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.OpenWhatsAppLink
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.ui.smart.origination.SmartSubscriptionManager
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.BaseEvent.SimulateUserInteraction
+import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.NavigateToSignUpDocument
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnChangeScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnInitializeText
@@ -38,6 +40,8 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSig
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnShowDialogInformation
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnStartListenerSubscriptionSmartContractEvent
+import com.multimoney.multimoney.presentation.util.MMCountDownTimer
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CreditSubscriptionStep
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.EVICERTIA_REJECTED_FIRST_TIME
@@ -47,13 +51,18 @@ import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaErr
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
+import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SmartSignViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val smartSubscriptionManager: SmartSubscriptionManager
+    private val smartSubscriptionManager: SmartSubscriptionManager,
+    val mmCountDownTimer: MMCountDownTimer,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
 
     // uiState
@@ -107,11 +116,8 @@ class SmartSignViewModel @Inject constructor(
     private fun onListenSmartContractEventSubscription() {
         onShouldStartSubscription()
         smartSubscriptionManager.idSubscriptionSubscribe(getSmartSubscriptionListener())
-        if (smartSubscriptionManager.hasEvisertiaLink()) {
-            uiState = uiState.copy(
-                signDocumentProcessStep = SIGN_DOCUMENTS_STEP.value,
-                signDocumentUrl = smartSubscriptionManager.getEvisertioLink() ?: ""
-            )
+        if (smartSubscriptionManager.hasEvicertiaLink()) {
+            mmCountDownTimer.startTimer(WAIT_TIME)
         }
     }
 
@@ -122,7 +128,7 @@ class SmartSignViewModel @Inject constructor(
             }
 
             override fun onSubscriptionFailToConnect(httpError: HttpError) {
-
+                showSubscriptionError()
             }
         }
 
@@ -135,15 +141,16 @@ class SmartSignViewModel @Inject constructor(
                 )
             }
             CreditSubscriptionStep.DocumentsFirmed.step -> {
+                trackAdjustOriginationEvicertiaDone(smartContractEvent)
                 emitBaseEvent(SimulateUserInteraction)
                 handleOnfidoStatus(smartContractEvent)
             }
             CreditSubscriptionStep.DocumentsRejected.step -> {
                 emitBaseEvent(SimulateUserInteraction)
-                if (isEvisertiaOverCounted(smartContractEvent.statusEvicertia)) {
-                    onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_SECOND_TIME.value)
+                if (isEvicertiaOverCounted(smartContractEvent.statusEvicertia)) {
+                    onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_SECOND_TIME.value, smartContractEvent)
                 } else {
-                    onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_FIRST_TIME.value)
+                    onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_FIRST_TIME.value, smartContractEvent)
                 }
             }
             CreditSubscriptionStep.AccountActivated.step -> {
@@ -192,25 +199,27 @@ class SmartSignViewModel @Inject constructor(
     }
 
     private fun handleOnfidoStatus(
-        creditContractEvent: AccountSmartContractResult?
+        smartContractEvent: AccountSmartContractResult?
     ) {
         emitBaseEvent(SimulateUserInteraction)
-        when (creditContractEvent?.statusOnfido?.lowercase()) {
+        when (smartContractEvent?.statusOnfido?.lowercase()) {
             SmartOnFidoOrFirmStatus.PENDING.status.lowercase() -> {
+                trackAdjustOriginationPending(smartContractEvent)
                 uiState = uiState.copy(
                     signDocumentProcessStep = VALIDATE_IDENTITY.value
                 )
             }
             SmartOnFidoOrFirmStatus.APPROVED.status.lowercase() -> {
+                trackAdjustOriginationApproved(smartContractEvent)
                 uiState = uiState.copy(
                     signDocumentProcessStep = VALIDATE_IDENTITY.value
                 )
             }
             SmartOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {
-                onNavigateToOnfidoAndEvicertiaError(ONFIDO_REJECTED_FIRST_TIME.value)
+                onNavigateToOnfidoAndEvicertiaError(ONFIDO_REJECTED_FIRST_TIME.value, smartContractEvent)
             }
             SmartOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase() -> {
-                onNavigateToOnfidoAndEvicertiaError(ONFIDO_REJECTED_SECOND_TIME.value)
+                onNavigateToOnfidoAndEvicertiaError(ONFIDO_REJECTED_SECOND_TIME.value, smartContractEvent)
             }
         }
     }
@@ -233,10 +242,11 @@ class SmartSignViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateToOnfidoAndEvicertiaError(error: String) {
+    private fun onNavigateToOnfidoAndEvicertiaError(error: String, smartContractEvent: AccountSmartContractResult?) {
+        trackAdjustOriginationRejected(smartContractEvent)
         smartSubscriptionManager.destroySubscription()
         popAndNavigateTo(
-            route = "${Screen.SmartOnfidoAndEvicertiaErrorsScreen.baseRoute}/$error/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$comingFromCrypto",
+            route = "${Screen.SmartOnfidoAndEvicertiaErrorsScreen.baseRoute}/$error/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$comingFromCrypto/$user/$globalId",
             popTo = Screen.SmartSignScreen.route
         )
     }
@@ -249,8 +259,110 @@ class SmartSignViewModel @Inject constructor(
         )
     }
 
-    private fun isEvisertiaOverCounted(evisertiaStatus: String?) =
-        evisertiaStatus?.lowercase() == CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase()
+    private fun isEvicertiaOverCounted(evicertiaStatus: String?) =
+        evicertiaStatus?.lowercase() == CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase()
+
+    private fun navigateToSignDocument() {
+        uiState = uiState.copy(
+            signDocumentProcessStep = SIGN_DOCUMENTS_STEP.value,
+            signDocumentUrl = smartSubscriptionManager.getEvicertiaLink() ?: ""
+        )
+    }
+
+    private fun trackAdjustOriginationEvicertiaDone(smartContractEvent: AccountSmartContractResult?) {
+        val parameters = buildParamsListFromCreditContractEvent(smartContractEvent)
+
+        val data = smartContractEvent?.toJson()
+
+        viewModelScope.launch {
+            if (dataStorePreferences.isAdjustSmartFirstTimeEvicertiaDone().first()) {
+                dataStorePreferences.setAdjustSmartFirstTimeEvicertiaDone(false)
+                registerAdjustEvent(
+                    AdjustEventType.ORIGINATION_SMART_FIRST_TIME_EVICERTIA_DONE,
+                    listParameters = parameters,
+                    data = data ?: ""
+                )
+            }
+        }
+    }
+
+    private fun trackAdjustOriginationRejected(smartContractEvent: AccountSmartContractResult?) {
+        val parameters = buildParamsListFromCreditContractEvent(smartContractEvent)
+
+        val data = smartContractEvent?.toJson()
+
+        viewModelScope.launch {
+            if (dataStorePreferences.isAdjustSmartFirstTimeRejected().first()) {
+                dataStorePreferences.setAdjustSmartFirstTimeRejected(false)
+                registerAdjustEvent(
+                    AdjustEventType.ORIGINATION_SMART_FIRST_TIME_REJECTED,
+                    listParameters = parameters,
+                    data = data ?: ""
+                )
+            }
+        }
+    }
+
+    private fun trackAdjustOriginationPending(smartContractEvent: AccountSmartContractResult?) {
+        val parameters = buildParamsListFromCreditContractEvent(smartContractEvent)
+
+        val data = smartContractEvent?.toJson() ?: ""
+
+        registerAdjustEvent(
+            AdjustEventType.ORIGINATION_SMART_WAITING,
+            applyAdjust = false,
+            listParameters = parameters,
+            data = data
+        )
+    }
+
+    private fun trackAdjustOriginationApproved(smartContractEvent: AccountSmartContractResult?) {
+        val parameters = buildParamsListFromCreditContractEvent(smartContractEvent)
+
+        val data = smartContractEvent?.toJson() ?: ""
+
+        viewModelScope.launch {
+            if (dataStorePreferences.isAdjustSmartFirstTimeSuccessful().first()) {
+                dataStorePreferences.setAdjustSmartFirstTimeSuccessful(false)
+                registerAdjustEvent(
+                    AdjustEventType.ORIGINATION_SMART_FIRST_TIME_SUCCESSFUL,
+                    listParameters = parameters,
+                    data = data
+                )
+                resetOriginationSmartPreferences()
+            }
+        }
+    }
+
+    private fun buildParamsListFromCreditContractEvent(smartContractEvent: AccountSmartContractResult?) : List<Pair<String, String>> {
+        return buildList<Pair<String, String>> {
+            add(ID_PRINT to smartContractEvent?.idBrand.toString())
+            add(LINK to (smartContractEvent?.link ?: ""))
+            add(STATUS_EVICERTIA to (smartContractEvent?.statusEvicertia ?: ""))
+            add(STATUS_ONFIDO to (smartContractEvent?.statusOnfido ?: ""))
+            add(ACTIVE to smartContractEvent?.active.toString())
+            add(CURRENT_STEP to (smartContractEvent?.currentStep ?: ""))
+        }
+    }
+
+    private suspend fun resetOriginationSmartPreferences() {
+        dataStorePreferences.apply {
+            setAdjustSmartFirstTime(true)
+            setAdjustSmartFirstTimePersonal(true)
+            setAdjustSmartFirstTimeHome(true)
+            setAdjustSmartFirstTimeIncome(true)
+            setAdjustSmartFirstTimeIncomeInformation(true)
+            setAdjustSmartFirstTimeBeneficiary(true)
+            setAdjustSmartFirstTimePep(true)
+            setAdjustSmartFirstTimeOnfidoStart(true)
+            setAdjustSmartFirstTimeOnfidoDocument(true)
+            setAdjustSmartFirstTimeOnfidoSelfie(true)
+            setAdjustSmartFirstTimeOnfidoDone(true)
+            setAdjustSmartFirstTimeEvicertiaDone(true)
+            setAdjustSmartFirstTimeRejected(true)
+            setAdjustSmartFirstTimeSuccessful(true)
+        }
+    }
 
     data class UIState(
         // Interactions
@@ -274,8 +386,9 @@ class SmartSignViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnChangeScreen -> uiState =
-                uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
+            is OnChangeScreen -> uiState = uiState.copy(
+                signDocumentProcessStep = uiEvent.signDocumentStep
+            )
             is OnInitializeText -> dialogDescription = uiEvent.dialogDescription
             is OnCloseClick -> onNavigateToHome()
             is OnShowDialogInformation -> createDialog()
@@ -283,6 +396,7 @@ class SmartSignViewModel @Inject constructor(
             is OnNavigateToContinueValidatingIdentity -> onNavigateToContinueValidatingIdentity()
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = uiEvent.isLoading)
             is OnStartListenerSubscriptionSmartContractEvent -> onListenSmartContractEventSubscription()
+            is NavigateToSignUpDocument -> navigateToSignDocument()
         }
     }
 
@@ -295,6 +409,7 @@ class SmartSignViewModel @Inject constructor(
         object OnNavigateToHome : UIEvent()
         object OnNavigateToContinueValidatingIdentity : UIEvent()
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
+        object NavigateToSignUpDocument : UIEvent()
     }
 
     sealed class BaseEvent {
@@ -302,8 +417,16 @@ class SmartSignViewModel @Inject constructor(
     }
 
     companion object {
+        const val WAIT_TIME = 5000L
         const val MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION = 3
         const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 30000L
         const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 30000L
+
+        private const val ID_PRINT = "idPrint"
+        private const val LINK = "link"
+        private const val STATUS_EVICERTIA = "statusEvicertia"
+        private const val STATUS_ONFIDO = "statusOnfido"
+        private const val ACTIVE = "active"
+        private const val CURRENT_STEP = "currentStep"
     }
 }

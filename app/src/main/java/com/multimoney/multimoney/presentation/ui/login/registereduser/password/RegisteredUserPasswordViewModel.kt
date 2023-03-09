@@ -37,6 +37,7 @@ import com.multimoney.multimoney.presentation.ui.login.registereduser.password.R
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnPasswordValueChange
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnShowBiometricPromptForEncryption
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnValidForm
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.checkIfEmulator
 import com.multimoney.multimoney.presentation.util.getAppVersion
@@ -52,6 +53,7 @@ import com.multimoney.multimoney.presentation.util.passwordHasANumberValidation
 import com.multimoney.multimoney.presentation.util.passwordHasAUppercaseLetterValidation
 import com.multimoney.multimoney.presentation.util.passwordHasMinimumCharacters
 import com.multimoney.multimoney.presentation.util.passwordHasSpecialCharacterValidation
+import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -214,6 +216,15 @@ class RegisteredUserPasswordViewModel @Inject constructor(
             idBrand = idBrand
         ).collectLatest { result ->
             result.onSuccess {
+                viewModelScope.launch {
+                    if (dataStorePreferences.isAdjustSingUpAlreadyCustomerPasswordEventRegister().first()) {
+                        registerAdjustEvent(
+                            AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_CREATE_PASSWORD_2015,
+                            isLoggedIn = false
+                        )
+                        dataStorePreferences.isAdjustSingUpAlreadyCustomerPasswordEventRegister(false)
+                    }
+                }
                 onUIEvent(
                     OnCallCognitoSignUp(
                         email = userData?.email ?: "",
@@ -395,10 +406,18 @@ class RegisteredUserPasswordViewModel @Inject constructor(
         }
     }
 
-    private fun completedProcessAction() = popAndNavigateTo(
-        route = "${Screen.SignUpCompleted.baseRoute}/${userData?.email}/${uiState.password}",
-        popTo = Screen.RegisteredUserPassword.route
-    )
+    private fun completedProcessAction() {
+        registerAdjustEvent(
+            adjustEventType = AdjustEventType.SIGNUP_SUCCESS_2008,
+            isLoggedIn = false,
+            data = userData?.toJson() ?: "",
+            applyAdjust = false
+        )
+        popAndNavigateTo(
+            route = "${Screen.SignUpCompleted.baseRoute}/${userData?.email}/${uiState.password}",
+            popTo = Screen.RegisteredUserPassword.route
+        )
+    }
 
     private fun onCloseClick(focusManager: FocusManager) {
         focusManager.clearFocus()

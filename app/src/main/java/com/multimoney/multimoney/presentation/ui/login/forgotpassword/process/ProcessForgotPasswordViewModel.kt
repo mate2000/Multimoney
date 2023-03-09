@@ -8,6 +8,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.amplifyframework.core.Amplify
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
+import com.multimoney.domain.model.metrics.EmailDto
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
@@ -27,6 +28,7 @@ import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.Pr
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.ProcessForgotPasswordViewModel.UIEvent.OnOtpValueChange
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.ProcessForgotPasswordViewModel.UIEvent.OnResendOtpClick
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.ProcessForgotPasswordViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeConsecutiveLetterOrNumber
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeEqualConsecutiveLetterOrNumber
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeLettersOrNumbers
@@ -35,6 +37,7 @@ import com.multimoney.multimoney.presentation.util.passwordHasANumberValidation
 import com.multimoney.multimoney.presentation.util.passwordHasAUppercaseLetterValidation
 import com.multimoney.multimoney.presentation.util.passwordHasMinimumCharacters
 import com.multimoney.multimoney.presentation.util.passwordHasSpecialCharacterValidation
+import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -191,6 +194,8 @@ class ProcessForgotPasswordViewModel @Inject constructor(
     }
 
     private fun onConfirmResetPassword() = Amplify.Auth.confirmResetPassword(uiState.newPassword, uiState.otp, {
+        registerAdjustEvent(AdjustEventType.FORGOT_CONFIRM_CORRECT_PASSWORD_4001, isLoggedIn = false, applyAdjust = false, data = EmailDto(email).toJson())
+        registerAdjustEvent(AdjustEventType.FORGOT_SUCCESS_4004, isLoggedIn = false, applyAdjust = false, data = EmailDto(email).toJson())
         onAlertSuccess()
     }, {
         onAlertFailure(it.message == OTP_ERROR_MESSAGE)
@@ -248,6 +253,7 @@ class ProcessForgotPasswordViewModel @Inject constructor(
 
     private fun onResendOtpClick(focusManager: FocusManager) {
         focusManager.clearFocus()
+        registerAdjustEvent(AdjustEventType.FORGOT_RESEND_OTP_4002, isLoggedIn = false, applyAdjust = false, data = EmailDto(email).toJson())
         if (idBrand == Brand.Default.id) {
             emitBaseEvent(OnResendOtpToastEvent)
         } else {

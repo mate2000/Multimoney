@@ -34,9 +34,9 @@ class SplashScreenViewModel @Inject constructor(
     private fun registerSplashEvent() {
         provideFireBaseEventHelper.logEvent(FireBaseEvents.Splash)
         viewModelScope.launch {
-            if (dataStorePreferences.isAdjustSplashEventRegistered().first()) {
-                registerAdjustEvent(adjustEventType = AdjustEventType.SPLASH, isLoggedIn = false)
-                dataStorePreferences.isAdjustSplashEventRegistered(false)
+            if (dataStorePreferences.isAdjustSplashEventRegister().first()) {
+                registerAdjustEvent(adjustEventType = AdjustEventType.SPLASH_1001, isLoggedIn = false)
+                dataStorePreferences.isAdjustSplashEventRegister(false)
             }
         }
     }

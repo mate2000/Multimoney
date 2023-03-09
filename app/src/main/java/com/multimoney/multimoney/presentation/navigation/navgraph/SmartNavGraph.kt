@@ -142,7 +142,8 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(PK_USER) { type = NavType.LongType },
                 navArgument(ID_USER_REQUEST) { type = NavType.LongType },
-                navArgument(COMING_FROM_CRYPTO) { type = NavType.BoolType }
+                navArgument(COMING_FROM_CRYPTO) { type = NavType.BoolType },
+                navArgument(SIGN_DOCUMENT_GLOBAL_ID){type = NavType.LongType}
             )
         ) {
             OnfidoAndEvicertiaErrorsScreen(

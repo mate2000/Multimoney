@@ -146,10 +146,25 @@ class SignUpCompletedViewModel @Inject constructor(
     )
 
     private fun onNavigateToSignIn() {
+        restartSignUpPreferences()
         popAndNavigateTo(
             route = Screen.SignInScreen.route,
             popTo = Screen.SignUpCompleted.route
         )
+    }
+
+    private fun restartSignUpPreferences() {
+        viewModelScope.launch {
+            dataStorePreferences.isAdjustSingUpButtonClickedEventRegister(true)
+            dataStorePreferences.isAdjustSingUp1EventRegister(true)
+            dataStorePreferences.isAdjustSingUp2EventRegister(true)
+            dataStorePreferences.isAdjustSingUp3EventRegister(true)
+            dataStorePreferences.isAdjustSingUp4EventRegister(true)
+            dataStorePreferences.isAdjustSingUp5EventRegister(true)
+            dataStorePreferences.isAdjustSingUpAlreadyCustomerEmailEventRegister(true)
+            dataStorePreferences.isAdjustSingUpAlreadyCustomerOTPEventRegister(true)
+            dataStorePreferences.isAdjustSingUpAlreadyCustomerPasswordEventRegister(true)
+        }
     }
 
     fun onUIEvent(event: UIEvent) {

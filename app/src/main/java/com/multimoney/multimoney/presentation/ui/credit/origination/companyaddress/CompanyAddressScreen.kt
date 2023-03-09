@@ -36,6 +36,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.companyaddre
 import com.multimoney.multimoney.presentation.ui.credit.origination.companyaddress.CompanyAddressViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 
 @Composable
 fun CompanyAddressScreen(
@@ -90,6 +91,7 @@ fun CompanyAddressScreen(
                             saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
                         )
                     )
+                    sharedViewModel.logEvents(AdjustEventType.ORIGINATION_FIRST_FILL_COMPANY_ADDRESS_5007)
                 },
                 nextStep = CreditStep.Six.id,
                 previousStep = CreditStep.Four.id

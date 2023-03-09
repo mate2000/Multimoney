@@ -4,9 +4,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.virtualcard.MutationCreateUserVDUseCase
 import com.multimoney.domain.interaction.virtualcard.QueryGetParametersMobileByCategoryUseCase
 import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCase
+import com.multimoney.domain.model.metrics.BaseEventDataDto
 import com.multimoney.domain.model.security.InfoUser
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -15,8 +18,8 @@ import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.ADD_CARD_RESPONSE
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CARD
@@ -30,20 +33,24 @@ import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCallQueryGetCards
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCardSelected
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCloseClick
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnHandleAddCardResponse
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnNavigateBackHome
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnHandleAddCardResponse
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnResumeTimer
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnStopTimer
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnResumeTimer
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.AddVisaCardErrors
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getAddCardErrorFromValue
 import com.multimoney.multimoney.presentation.util.getNavParam
+import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -52,7 +59,8 @@ class PaymentScheduleCardListViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val queryListCardVDUseCase: QueryListCardVDUseCase,
     private val mutationCreateUserVDUseCase: MutationCreateUserVDUseCase,
-    private val queryGetParametersMobileByCategoryUseCase: QueryGetParametersMobileByCategoryUseCase
+    private val queryGetParametersMobileByCategoryUseCase: QueryGetParametersMobileByCategoryUseCase,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
 
     // uiState
@@ -107,7 +115,7 @@ class PaymentScheduleCardListViewModel @Inject constructor(
 
     private fun onCallMutationCreateUserVDUseCase() = executeUseCase {
         mutationCreateUserVDUseCase.invoke(
-            identification =  identification,
+            identification = identification,
             firstName = infoUser?.firstName.orEmpty(),
             secondName = infoUser?.secondName.orEmpty(),
             lastName = infoUser?.lastName.orEmpty(),
@@ -143,21 +151,22 @@ class PaymentScheduleCardListViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { parameters ->
                 uiState = uiState.copy(
-                    isLoading = false,
+                    isLoading = false
                 )
                 if (parameters?.isNotEmpty() == true) {
                     val applicationName = parameters.find {
                         it?.searchKey.equals(
                             SEARCH_KEY_APPLICATION_NAME
-                        ) }
+                        )
+                    }
                     reactApplicationName = applicationName?.value ?: ""
 
                     val endpoint = parameters.find {
                         it?.searchKey.equals(
                             SEARCH_KEY_ENDPOINT
-                        ) }
+                        )
+                    }
                     reactEndPoint = endpoint?.value ?: ""
-
                 }
                 onCallQueryGetCardsUseCase()
             }.onFailure {
@@ -178,6 +187,7 @@ class PaymentScheduleCardListViewModel @Inject constructor(
         if (isError) {
             setErrorAlertResultAddCard(response.getAddCardErrorFromValue())
         } else {
+            logEvents(AdjustEventType.SETTINGS_FIRST_ADD_CARD_8005)
             onNavigateToVisaVerifyInformation(response)
         }
     }
@@ -186,8 +196,8 @@ class PaymentScheduleCardListViewModel @Inject constructor(
         if (infoUser?.visaDirectUser.isNullOrEmpty() && infoUser?.visaDirectId.isNullOrEmpty()) {
             onCallMutationCreateUserVDUseCase()
         } else {
-            reactUserName =  infoUser?.visaDirectUser ?: ""
-            reactUserPass =  infoUser?.visaDirectId ?: ""
+            reactUserName = infoUser?.visaDirectUser ?: ""
+            reactUserPass = infoUser?.visaDirectId ?: ""
             onCallGetParametersMobileByCategoryUseCase()
         }
     }
@@ -220,13 +230,13 @@ class PaymentScheduleCardListViewModel @Inject constructor(
 
     private fun onCardSelected(card: CardVisaDirect?) = popAndNavigateTo(
         route = "${Screen.PaymentScheduleCardScreen.baseRoute}/$idClient/$idLoanClient/${
-            encodeData(
-                card
-            )
+        encodeData(
+            card
+        )
         }/$paymentDate/${true}/${Screen.HomeScreen.route}/${false}/$identification/${
-            encodeData(
-                infoUser
-            )
+        encodeData(
+            infoUser
+        )
         }",
         popTo = Screen.PaymentScheduleCardListScreen.route
     )
@@ -277,6 +287,69 @@ class PaymentScheduleCardListViewModel @Inject constructor(
     private fun onStopTimer() {
         countDownTimer.stopTimer()
     }
+
+    fun logEvents(adjustEventType: AdjustEventType) {
+        viewModelScope.launch {
+            getAdjustEvent(adjustEventType).invoke()
+        }
+    }
+
+    private fun getAdjustEvent(adjustEventType: AdjustEventType): suspend () -> Unit {
+        val baseAdjustEvent = BaseEventDataDto(
+            user = infoUser?.email,
+            idBrand = infoUser?.idBrand,
+            idClient = idClient,
+            idLoanClient = idLoanClient,
+            identification = identification
+        )
+        return when (adjustEventType) {
+            AdjustEventType.SETTINGS_FIRST_ADD_CARD_8005 -> {
+                getAddACardEvent(baseAdjustEvent)
+            }
+            AdjustEventType.SETTINGS_CTA_FIRST_START_FLOW_CARD_8007 -> {
+                getStartAddACardEvent(baseAdjustEvent)
+            }
+            AdjustEventType.SETTINGS_CTA_FIRST_FINISH_FLOW_CARD_8008 -> {
+                getFinishAddACardEvent(baseAdjustEvent)
+            }
+            else -> suspend {}
+        }
+    }
+
+    private fun getAddACardEvent(baseAdjustEvent: BaseEventDataDto) =
+        suspend {
+            if (dataStorePreferences.isAdjustAddCardEventRegister().first()) {
+                registerAdjustEvent(
+                    AdjustEventType.SETTINGS_FIRST_ADD_CARD_8005,
+                    data = baseAdjustEvent.toJson()
+                )
+                dataStorePreferences.isAdjustAddCardEventRegister(false)
+            }
+        }
+
+    private fun getStartAddACardEvent(baseAdjustEvent: BaseEventDataDto) =
+        suspend {
+            if (dataStorePreferences.isAdjustFlowAddCardEventRegister().first()) {
+                registerAdjustEvent(
+                    AdjustEventType.SETTINGS_CTA_FIRST_START_FLOW_CARD_8007,
+                    applyAdjust = false,
+                    data = baseAdjustEvent.toJson()
+                )
+                dataStorePreferences.isAdjustFlowAddCardEventRegister(false)
+            }
+        }
+
+    private fun getFinishAddACardEvent(baseAdjustEvent: BaseEventDataDto) =
+        suspend {
+            if (dataStorePreferences.isAdjustFinishFlowAddCardEventRegister().first()) {
+                registerAdjustEvent(
+                    AdjustEventType.SETTINGS_CTA_FIRST_FINISH_FLOW_CARD_8008,
+                    applyAdjust = false,
+                    data = baseAdjustEvent.toJson()
+                )
+                dataStorePreferences.isAdjustFinishFlowAddCardEventRegister(false)
+            }
+        }
 
     data class UIState(
         // Interactions

@@ -41,6 +41,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
@@ -115,7 +116,7 @@ fun SignUpPersonalDataScreen(
                                 idBrand = idBrand ?: 0
                             )
                         )
-                        viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SingUpTwo)
+                        sharedViewModel.logEvents(FireBaseEvents.SingUpTwo, AdjustEventType.SIGNUP_2_2002)
                     },
                     nextStep = Three.id,
                     previousStep = SignUpStep.One.id

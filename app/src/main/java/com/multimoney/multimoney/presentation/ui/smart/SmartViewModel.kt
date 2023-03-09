@@ -34,13 +34,11 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_GLOBAL_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.home.HomeState
-import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.NavigateToEvicertia
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationInitialRequest
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
@@ -63,8 +61,6 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OverridePreviousAction
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
-import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -553,7 +549,10 @@ class SmartViewModel @Inject constructor(
         }
     }
 
-    private fun trackSvAdjustOriginationEvents(parameters: List<Pair<String, String>>, data: String) {
+    private fun trackSvAdjustOriginationEvents(
+        parameters: List<Pair<String, String>>,
+        data: String
+    ) {
         viewModelScope.launch {
             when (accountSmartData?.currentStep) {
                 SmartSteps.One.name -> {
@@ -605,7 +604,10 @@ class SmartViewModel @Inject constructor(
         }
     }
 
-    private fun trackCrAdjustOriginationEvents(parameters: List<Pair<String, String>>, data: String) {
+    private fun trackCrAdjustOriginationEvents(
+        parameters: List<Pair<String, String>>,
+        data: String
+    ) {
         viewModelScope.launch {
             when (accountSmartData?.currentStep) {
                 SmartSteps.One.name -> {
@@ -690,21 +692,21 @@ class SmartViewModel @Inject constructor(
             is OnCtaAlertClick -> onCtaAlertClick(event.focusManager)
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
             is OnOpenDialogValueChange -> uiState = uiState.copy(openDialog = event.openDialog)
-            is OnFailureWithDialog ->
-                uiState =
-                    uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
+            is OnFailureWithDialog -> uiState = uiState.copy(
+                isLoading = event.isLoading,
+                openDialog = event.openDialog
+            )
             is OnNextStep -> nextStep()
             is OnPreviousStep -> previousStep()
-            is OnContinueVisible ->
-                uiState =
-                    uiState.copy(isContinueVisible = event.visible, buttonTextRes = event.textResId)
+            is OnContinueVisible -> uiState = uiState.copy(
+                isContinueVisible = event.visible,
+                buttonTextRes = event.textResId
+            )
             is OnCallMutationUpdateGlobalRequestUseCase -> onUpdateAccountSmartData(event.accountSmartData)
             is OnCallMutationInitialRequest -> callMutationInitialRequestUseCase()
             is OnOnFidoVerifiedChanged -> isOnFidoVerified = event.isOnFidoVerified
             is OnCallSaveAutomatedSmartAccount -> onCallMutationSaveSmartAccount(event.accountSmartData)
             is OverridePreviousAction -> overridePreviousAction(event.action)
-            is NavigateToEvicertia -> {
-            }
         }
     }
 
@@ -748,8 +750,6 @@ class SmartViewModel @Inject constructor(
         object OnCallMutationInitialRequest : UIEvent()
 
         data class OverridePreviousAction(val action: (() -> Unit)?) : UIEvent()
-
-        data class NavigateToEvicertia(val evicertiaStatus: String) : UIEvent()
     }
 
     companion object {
@@ -767,13 +767,13 @@ class SmartViewModel @Inject constructor(
         private const val ID_MARITAL_STATUS = "idMaritalStatus"
         private const val INSTITUTION_PENSION = "institutionPension"
         private const val NAME_COMPANY = "nameCompany"
-        private const val ABOUT_COMPANY  = "aboutCompany"
-        private const val ID_ADDRESS_LEVEL_1  = "idAddressLevel1"
-        private const val ID_ADDRESS_LEVEL_2  = "idAddressLevel2"
-        private const val ID_ADDRESS_LEVEL_3  = "idAddressLevel3"
-        private const val POSITION_JOB  = "positionJob"
-        private const val ID_ECONOMIC_ACTIVITY  = "idEconomicActivity"
-        private const val INCOME  = "income"
+        private const val ABOUT_COMPANY = "aboutCompany"
+        private const val ID_ADDRESS_LEVEL_1 = "idAddressLevel1"
+        private const val ID_ADDRESS_LEVEL_2 = "idAddressLevel2"
+        private const val ID_ADDRESS_LEVEL_3 = "idAddressLevel3"
+        private const val POSITION_JOB = "positionJob"
+        private const val ID_ECONOMIC_ACTIVITY = "idEconomicActivity"
+        private const val INCOME = "income"
         private const val ADDRESS_DETAIL = "addressDetail"
         private const val FULL_JOB_ADDRESS = "fullJobAddress"
         private const val CURRENT_STEP = "currentStep"

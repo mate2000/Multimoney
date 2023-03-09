@@ -1,5 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.credit.origination.amount
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,6 +18,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -46,8 +49,12 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnUpdateIsCrosselingValue
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.BaseEvent.OnOpenConditionOfCreditDialog
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.BaseEvent.OnUpdateIsCrosseling
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.SLIDER_ANIMATION_TIME
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.SLIDER_INITIAL_VALUE
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.SLIDER_TOTAL
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.SLIDER_TOTAL_ANIMATION_VALUE
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.TERMS_AND_CONDITIONS_CURRENT_FLOW
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnAnimationFinish
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCallMutationSaveTermsAndConditionsCreditUseCase
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCurrencyIndexChanged
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnDisbursementValueChange
@@ -61,6 +68,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomSlider
 import com.multimoney.multimoney.presentation.uielement.CustomToggleButton
 import com.multimoney.multimoney.presentation.uielement.Size.Large
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.transformation.formatMoney
 
 @Composable
@@ -72,6 +80,14 @@ fun CreditAmountScreen(
 ) {
     // Properties
     val focusManager = LocalFocusManager.current
+
+    val sliderAnimator by animateFloatAsState(
+        targetValue = if (viewModel.uiState.startAnimation) SLIDER_TOTAL_ANIMATION_VALUE else SLIDER_INITIAL_VALUE,
+        animationSpec = tween(durationMillis = SLIDER_ANIMATION_TIME),
+        finishedListener = { progress ->
+            viewModel.onUIEvent(OnAnimationFinish)
+        }
+    )
 
     viewModel.onUIEvent(
         CreditAmountViewModel.UIEvent.OnInitializeErrorMessages(
@@ -119,7 +135,21 @@ fun CreditAmountScreen(
                         }
                     )
                 )
+                sharedViewModel.logEvents(
+                    if (sharedViewModel.crosseling) {
+                        AdjustEventType.CROSSELLING_FIRST_ENTER_AMOUNT_5027
+                    } else {
+                        AdjustEventType.ORIGINATION_FIRST_ENTER_AMOUNT_5003
+                    }
+                )
             }, nextStep = CreditStep.Two.id, previousStep = CreditStep.One.id)
+        )
+        sharedViewModel.logEvents(
+            if (sharedViewModel.crosseling) {
+                AdjustEventType.CROSSELLING_OFFER_FIRST_TIME_5024
+            } else {
+                AdjustEventType.ORIGINATION_OFFER_FIRST_TIME_5000
+            }
         )
 
         viewModel.onUIEvent(
@@ -241,7 +271,7 @@ fun CreditAmountScreen(
 
             CustomSlider(
                 modifier = Modifier.padding(16.dp),
-                value = viewModel.uiState.sliderValue,
+                value = if (viewModel.isAnimationRunning) sliderAnimator else viewModel.uiState.sliderValue,
                 valueRangeInitial = viewModel.uiState.sliderValueRangeInitial,
                 valueRangeFinal = SLIDER_TOTAL.toFloat(),
                 minimumLabel = viewModel.uiState.minimumDisbursementLabel,
@@ -323,6 +353,13 @@ fun CreditAmountScreen(
                             CreditAmountViewModel.UIEvent.OnTermAndConditionCheckedChange(
                                 it
                             )
+                        )
+                        sharedViewModel.logEvents(
+                            if (sharedViewModel.crosseling) {
+                                AdjustEventType.CROSSELLING_FIRST_CHECK_TERMS_5026
+                            } else {
+                                AdjustEventType.ORIGINATION_FIRST_CHECK_TERMS_5002
+                            }
                         )
                     },
                     text = stringResource(id = R.string.credit_amount_term_and_conditions_first)

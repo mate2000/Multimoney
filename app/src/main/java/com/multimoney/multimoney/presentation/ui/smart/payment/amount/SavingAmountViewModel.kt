@@ -109,6 +109,7 @@ class SavingAmountViewModel @Inject constructor(
                             currentTime = getCurrentTime(Calendar.getInstance().time),
                             referenceNumber = it?.referenceNumber ?: ""
                         )
+                        registerFirstSmartSaving()
                     }
                 }
                 result.onFailure {

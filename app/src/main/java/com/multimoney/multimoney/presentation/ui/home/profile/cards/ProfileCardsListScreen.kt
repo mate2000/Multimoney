@@ -29,8 +29,6 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnHideToast
 import com.multimoney.multimoney.presentation.uielement.CardListDetail
-import com.multimoney.multimoney.presentation.uielement.CustomButton
-import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
@@ -197,15 +195,4 @@ fun ProfileCardList(
             )
         }
     }
-    CustomButton(
-        text = stringResource(id = string.payment_cards_list_create),
-        modifier = Modifier
-            .padding(top = 28.dp)
-            .fillMaxWidth(),
-        onClick = {
-            Toast.makeText(context, "TBD", Toast.LENGTH_SHORT).show()
-        },
-        buttonType = CustomButtonType.PrimaryTertiary,
-        trailingIcon = R.drawable.ic_plus
-    )
 }

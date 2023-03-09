@@ -9,6 +9,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartStatus
 import com.multimoney.data.util.catalog.SmartSteps
@@ -59,9 +61,15 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnPreviousStep
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OverridePreviousAction
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
+import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
+import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -71,6 +79,7 @@ class SmartViewModel @Inject constructor(
     private val mutationGlobalRequestUseCase: MutationGlobalRequestUseCase,
     private val mutationInitialRequestUseCase: MutationInitialRequestUseCase,
     private val mutationSaveSmartAccount: MutationSaveAutomatedSmartAccountUseCase,
+    private val dataStorePreferences: DataStorePreferences,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
@@ -280,6 +289,8 @@ class SmartViewModel @Inject constructor(
                 legalID = accountSmartData?.legalID
             ).collectLatest { result ->
                 result.onSuccess {
+                    trackAdjustEvents()
+
                     idSysRequest = it?.idSysRequest?.toLong() ?: 0L
                     idGlobalRequest = it?.idGlobalRequest ?: 0
                     onUIEvent(OnLoadingValueChange(false))
@@ -494,6 +505,157 @@ class SmartViewModel @Inject constructor(
         closeDialogDescription = description
     }
 
+    private fun trackAdjustEvents() {
+        val parametersList = buildList<Pair<String, String>> {
+            add(STATUS to accountSmartData?.status.toString())
+            add(ID_GLOBAL_REQUEST to accountSmartData?.idGlobalRequest.toString())
+            add(ID_PROFESSION_TYPE to accountSmartData?.idProfessionType.toString())
+            add(BIRTHDATE to (accountSmartData?.birthday ?: ""))
+            add(EXPIRATION_DATE to (accountSmartData?.expirationDate ?: ""))
+            add(ID_GENRE to accountSmartData?.idGender.toString())
+            add(ID_MARITAL_STATUS to accountSmartData?.idCivilStatusType.toString())
+            add(INSTITUTION_PENSION to (accountSmartData?.institutionPension ?: ""))
+            add(NAME_COMPANY to (accountSmartData?.companyName ?: ""))
+            add(ABOUT_COMPANY to (accountSmartData?.aboutCompany ?: ""))
+            add(ID_ADDRESS_LEVEL_1 to accountSmartData?.idAddressLevel1.toString())
+            add(ID_ADDRESS_LEVEL_2 to accountSmartData?.idAddressLevel2.toString())
+            add(ID_ADDRESS_LEVEL_3 to accountSmartData?.idAddressLevel3.toString())
+            add(POSITION_JOB to (accountSmartData?.positionJob ?: ""))
+            add(ID_ECONOMIC_ACTIVITY to accountSmartData?.idEconomicActivity.toString())
+            add(INCOME to accountSmartData?.income.toString())
+            add(ADDRESS_DETAIL to (accountSmartData?.addressDetail ?: ""))
+            add(FULL_JOB_ADDRESS to (accountSmartData?.fullJobAddress ?: ""))
+            add(CURRENT_STEP to (accountSmartData?.currentStep ?: ""))
+            add(SPECIFIES_INCOME_SOURCE to (accountSmartData?.specifiesIncomeSource ?: ""))
+            add(ENTREPRENEURSHIP to (accountSmartData?.entrepreneurship ?: ""))
+            add(LEGAL_ID to (accountSmartData?.legalID ?: ""))
+            add(IS_ACTIVITY_OF_ART_15 to accountSmartData?.isActivityOfArt15.toString())
+            add(IS_US_CITIZEN to (accountSmartData?.isUSCitizen.toString()))
+            add(IS_PEP to (accountSmartData?.isPEP.toString()))
+            add(IS_US_TAX_PAYER to (accountSmartData?.isUSTaxPayer.toString()))
+            add(IS_TAX_PAYER to (accountSmartData?.isTaxPayer.toString()))
+            add(LIST_BENEFICIARIES to (accountSmartData?.listBeneficiaries?.toJson() ?: ""))
+            add(ID_JOB_LEVEL_1 to accountSmartData?.idJobLevel1.toString())
+            add(ID_JOB_LEVEL_2 to accountSmartData?.idJobLevel2.toString())
+            add(ID_JOB_LEVEL_3 to accountSmartData?.idJobLevel3.toString())
+        }
+
+        trackAdjustEventsByIdBrand(parametersList, accountSmartData?.currentStep ?: "")
+    }
+
+    private fun trackAdjustEventsByIdBrand(parameters: List<Pair<String, String>>, data: String) {
+        viewModelScope.launch {
+            if (accountSmartData?.idBrand == Brand.ElSalvador.id) {
+                trackSvAdjustOriginationEvents(parameters, data)
+            } else {
+                trackCrAdjustOriginationEvents(parameters, data)
+            }
+        }
+    }
+
+    private fun trackSvAdjustOriginationEvents(parameters: List<Pair<String, String>>, data: String) {
+        viewModelScope.launch {
+            when (accountSmartData?.currentStep) {
+                SmartSteps.One.name -> {
+                    trackAdjustEvent(
+                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimePersonal().first(),
+                        reset = { dataStorePreferences.setAdjustSmartFirstTimePersonal(false) },
+                        adjustEventType = AdjustEventType.ORIGINATION_SMART_FIRST_TIME_PERSONAL,
+                        parameters = parameters,
+                        data = data
+                    )
+                }
+                SmartSteps.Two.name -> {
+                    trackAdjustEvent(
+                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimeHome().first(),
+                        reset = { dataStorePreferences.setAdjustSmartFirstTimeHome(false) },
+                        adjustEventType = AdjustEventType.ORIGINATION_SMART_FIRST_TIME_HOME,
+                        parameters = parameters,
+                        data = data
+                    )
+                }
+                SmartSteps.Three.name -> {
+                    trackAdjustEvent(
+                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimeIncomeInformation().first(),
+                        reset = { dataStorePreferences.setAdjustSmartFirstTimeIncomeInformation(false) },
+                        adjustEventType = AdjustEventType.ORIGINATION_SMART_FIRST_TIME_INCOME_INFORMATION,
+                        parameters = parameters,
+                        data = data
+                    )
+                }
+                SmartSteps.Four.name -> {
+                    trackAdjustEvent(
+                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimeBeneficiary().first(),
+                        reset = { dataStorePreferences.setAdjustSmartFirstTimeBeneficiary(false) },
+                        adjustEventType = AdjustEventType.ORIGINATION_SMART_FIRST_TIME_BENEFICIARY,
+                        parameters = parameters,
+                        data = data
+                    )
+                }
+                SmartSteps.Six.name -> {
+                    trackAdjustEvent(
+                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimePep().first(),
+                        reset = { dataStorePreferences.setAdjustSmartFirstTimePep(false) },
+                        adjustEventType = AdjustEventType.ORIGINATION_SMART_FIRST_TIME_PEP,
+                        parameters = parameters,
+                        data = data
+                    )
+                }
+            }
+        }
+    }
+
+    private fun trackCrAdjustOriginationEvents(parameters: List<Pair<String, String>>, data: String) {
+        viewModelScope.launch {
+            when (accountSmartData?.currentStep) {
+                SmartSteps.One.name -> {
+                    trackAdjustEvent(
+                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimeHome().first(),
+                        reset = { dataStorePreferences.setAdjustSmartFirstTimeHome(false) },
+                        adjustEventType = AdjustEventType.ORIGINATION_SMART_FIRST_TIME_HOME,
+                        parameters = parameters,
+                        data = data
+                    )
+                }
+                SmartSteps.Two.name -> {
+                    trackAdjustEvent(
+                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimeIncomeInformation().first(),
+                        reset = { dataStorePreferences.setAdjustSmartFirstTimeIncomeInformation(false) },
+                        adjustEventType = AdjustEventType.ORIGINATION_SMART_FIRST_TIME_INCOME_INFORMATION,
+                        parameters = parameters,
+                        data = data
+                    )
+                }
+                SmartSteps.Four.name -> {
+                    trackAdjustEvent(
+                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimePep().first(),
+                        reset = { dataStorePreferences.setAdjustSmartFirstTimePep(false) },
+                        adjustEventType = AdjustEventType.ORIGINATION_SMART_FIRST_TIME_PEP,
+                        parameters = parameters,
+                        data = data
+                    )
+                }
+            }
+        }
+    }
+
+    private fun trackAdjustEvent(
+        firstTimeCondition: Boolean,
+        reset: suspend () -> Unit,
+        adjustEventType: AdjustEventType,
+        parameters: List<Pair<String, String>>,
+        data: String
+    ) {
+        if (firstTimeCondition) {
+            viewModelScope.launch { reset() }
+            registerAdjustEvent(
+                adjustEventType,
+                listParameters = parameters,
+                data = data
+            )
+        }
+    }
+
     data class UIState(
         // Interactions
         val currentStep: Int = SmartSteps.One.id,
@@ -595,5 +757,37 @@ class SmartViewModel @Inject constructor(
         const val SMART_INDICATOR_CR_TOTAL_STEPS = 3
         const val DEFAULT_ID_BRAND_ERROR = -1
         const val URL_EMPTY = "url"
+
+        private const val STATUS = "status"
+        private const val ID_GLOBAL_REQUEST = "idGlobalRequest"
+        private const val ID_PROFESSION_TYPE = "idProfessionType"
+        private const val BIRTHDATE = "birthdate"
+        private const val EXPIRATION_DATE = "expirationDate"
+        private const val ID_GENRE = "idGenre"
+        private const val ID_MARITAL_STATUS = "idMaritalStatus"
+        private const val INSTITUTION_PENSION = "institutionPension"
+        private const val NAME_COMPANY = "nameCompany"
+        private const val ABOUT_COMPANY  = "aboutCompany"
+        private const val ID_ADDRESS_LEVEL_1  = "idAddressLevel1"
+        private const val ID_ADDRESS_LEVEL_2  = "idAddressLevel2"
+        private const val ID_ADDRESS_LEVEL_3  = "idAddressLevel3"
+        private const val POSITION_JOB  = "positionJob"
+        private const val ID_ECONOMIC_ACTIVITY  = "idEconomicActivity"
+        private const val INCOME  = "income"
+        private const val ADDRESS_DETAIL = "addressDetail"
+        private const val FULL_JOB_ADDRESS = "fullJobAddress"
+        private const val CURRENT_STEP = "currentStep"
+        private const val SPECIFIES_INCOME_SOURCE = "specifiesIncomeSource"
+        private const val ENTREPRENEURSHIP = "entrepreneurship"
+        private const val LEGAL_ID = "legalID"
+        private const val IS_ACTIVITY_OF_ART_15 = "isActivityOfArt15"
+        private const val IS_US_CITIZEN = "isUSCitizen"
+        private const val IS_PEP = "isPEP"
+        private const val IS_US_TAX_PAYER = "isUSTaxPayer"
+        private const val IS_TAX_PAYER = "isTaxPayer"
+        private const val LIST_BENEFICIARIES = "listBeneficiaries"
+        private const val ID_JOB_LEVEL_1 = "idJobLevel1"
+        private const val ID_JOB_LEVEL_2 = "idJobLevel2"
+        private const val ID_JOB_LEVEL_3 = "idJobLevel3"
     }
 }

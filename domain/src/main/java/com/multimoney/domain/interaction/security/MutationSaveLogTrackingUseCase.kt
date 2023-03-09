@@ -7,9 +7,9 @@ import kotlinx.coroutines.flow.Flow
 interface MutationSaveLogTrackingUseCase {
     suspend operator fun invoke(
         identification: String,
-        pkUser: Int,
+        pkUser: Int?,
         keySearch: String,
         data: String,
-        idBrand: Int
+        idBrand: Int?
     ): Flow<MultimoneyResult<SaveLogTracking>>
 }

@@ -1,6 +1,8 @@
 package com.multimoney.multimoney.presentation.ui.credit.disbursement.amount
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,6 +21,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -36,7 +39,11 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.Companion.SLIDER_ANIMATION_TIME
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.Companion.SLIDER_INITIAL_VALUE
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.Companion.SLIDER_TOTAL
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.Companion.SLIDER_TOTAL_ANIMATION_VALUE
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.UIEvent.OnAnimationFinish
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.UIEvent.OnCurrencyIndexChanged
@@ -69,6 +76,14 @@ fun DisbursementAmountScreen(
 ) {
     // Properties
     val focusManager = LocalFocusManager.current
+
+    val sliderAnimator by animateFloatAsState(
+        targetValue = if (viewModel.uiState.startAnimation) SLIDER_TOTAL_ANIMATION_VALUE else SLIDER_INITIAL_VALUE,
+        animationSpec = tween(durationMillis = SLIDER_ANIMATION_TIME),
+        finishedListener = { progress ->
+            viewModel.onUIEvent(OnAnimationFinish)
+        }
+    )
 
     viewModel.apply {
         isOnRestart = isRestart
@@ -154,7 +169,7 @@ fun DisbursementAmountScreen(
 
                 CustomSlider(
                     modifier = Modifier.padding(16.dp),
-                    value = viewModel.uiState.sliderValue,
+                    value = if (viewModel.isAnimationRunning) sliderAnimator else viewModel.uiState.sliderValue,
                     valueRangeInitial = viewModel.uiState.sliderValueRangeInitial,
                     valueRangeFinal = SLIDER_TOTAL.toFloat(),
                     minimumLabel = viewModel.uiState.minimumDisbursementLabel,

@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.SmartWorkflow
@@ -55,6 +56,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartO
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnStartSubscription
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.RefreshOnFidoToken
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.AppFlow
 import com.multimoney.multimoney.presentation.util.catalog.CreditSubscriptionStep
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -62,6 +64,7 @@ import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENE
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import com.multimoney.multimoney.presentation.util.onfido.OnFidoHelper
+import com.multimoney.multimoney.presentation.util.toJson
 import com.onfido.android.sdk.capture.ExitCode
 import com.onfido.android.sdk.capture.Onfido.OnfidoResultListener
 import com.onfido.android.sdk.capture.errors.OnfidoException
@@ -69,6 +72,7 @@ import com.onfido.android.sdk.capture.upload.Captures
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -83,7 +87,8 @@ class SmartOnfidoViewModel @Inject constructor(
     val countDownTimer: MMCountDownTimer,
     private val smartSubscriptionManager: SmartSubscriptionManager,
     private val mutationAccountStatusUseCase: MutationAccountStatusUseCase,
-    private val mutationSaveSmartAccount: MutationSaveAutomatedSmartAccountUseCase
+    private val mutationSaveSmartAccount: MutationSaveAutomatedSmartAccountUseCase,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
 
     // UIState
@@ -327,6 +332,7 @@ class SmartOnfidoViewModel @Inject constructor(
                 }
             }
         }
+        trackAdjustOnfidoFinishedEvent(applicantId, AppFlow.SMART.flow, idUserRequest)
         navigateToCorrectScreen()
     }
 
@@ -360,6 +366,45 @@ class SmartOnfidoViewModel @Inject constructor(
         )
     }
 
+    private fun trackAdjustOnfidoFinishedEvent(
+        applicantId: String?,
+        flow: String,
+        idUserRequest: Long
+    ) {
+        val parameters = buildList<Pair<String, String>> {
+            add(APPLICANT_ID to (applicantId ?: ""))
+            add(CURRENT_FLOW to flow)
+            add(ID_USER_REQUEST to idUserRequest.toString())
+        }
+
+        val data = AdjustFirstTimeOnfidoData(
+            applicantId = applicantId,
+            flow = flow,
+            idUserRequest = idUserRequest
+        ).toJson()
+
+        viewModelScope.launch {
+            if (dataStorePreferences.isAdjustSmartFirstTimeOnfidoDone().first()) {
+                dataStorePreferences.setAdjustSmartFirstTimeOnfidoDone(false)
+                registerAdjustEvent(
+                    adjustEventType = AdjustEventType.ORIGINATION_SMART_FIRST_TIME_ONFIDO_DONE,
+                    listParameters = parameters,
+                    data = data
+                )
+            }
+        }
+    }
+
+    private fun onContinueClicked() {
+        viewModelScope.launch {
+            if (dataStorePreferences.isAdjustSmartFirstTimeOnfidoStart().first()) {
+                dataStorePreferences.setAdjustSmartFirstTimeOnfidoStart(false)
+                registerAdjustEvent(adjustEventType = AdjustEventType.ORIGINATION_SMART_FIRST_TIME_ONFIDO_INICIO)
+            }
+        }
+        continueAction()
+    }
+
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is OnSetCloseDialogTexts -> onInitializeTexts(event.title, event.description)
@@ -380,7 +425,7 @@ class SmartOnfidoViewModel @Inject constructor(
             )
             is OnOpenDialogValueChange -> uiState = uiState.copy(openDialog = event.openDialog)
             is OnCloseClick -> onNavigateToHome()
-            is OnContinueClick -> continueAction()
+            is OnContinueClick -> onContinueClicked()
             is OnContinueEnable -> uiState = uiState.copy(isContinueEnabled = event.isEnable)
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
             is OnNavigateToHome -> onNavigateToHome()
@@ -434,5 +479,17 @@ class SmartOnfidoViewModel @Inject constructor(
 
         object OnStartSubscription : UIEvent()
         object OnStart : UIEvent()
+    }
+
+    private data class AdjustFirstTimeOnfidoData(
+        val applicantId: String?,
+        val flow: String,
+        val idUserRequest: Long
+    )
+
+    companion object {
+        private const val APPLICANT_ID = "applicantId"
+        private const val CURRENT_FLOW = "currentFlow"
+        private const val ID_USER_REQUEST = "idUserRequest"
     }
 }

@@ -6,6 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Rect
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -22,13 +24,15 @@ import com.multimoney.multimoney.presentation.util.ShareHelper
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getCurrentTime
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
 class DisbursementVoucherViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val shareHelper: ShareHelper
+    private val shareHelper: ShareHelper,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
 
     // UIState
@@ -63,8 +67,17 @@ class DisbursementVoucherViewModel @Inject constructor(
         shareHelper.sharedScreenShot(view, capturingBounds)
     }
 
-    private fun onNavigateToHome() =
+    private fun onNavigateToHome() {
+        restartMetricsPreferences()
         navigateBack(popTo = Screen.HomeScreen.route, isRestart = true)
+    }
+
+    private fun restartMetricsPreferences() {
+        viewModelScope.launch {
+            dataStorePreferences.isAdjustFirstDisbursementEventRegister(true)
+            dataStorePreferences.isAdjustFirstDisbursementSuccessEventRegister(true)
+        }
+    }
 
     data class UIState(
         val accountCurrency: String = "$",

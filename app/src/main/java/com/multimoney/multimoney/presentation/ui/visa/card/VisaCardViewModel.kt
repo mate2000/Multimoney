@@ -22,6 +22,7 @@ import com.multimoney.data.util.catalog.Brand.Guatemala
 import com.multimoney.domain.interaction.virtualcard.MutationCardBlockingUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationCardUnblockingUseCase
 import com.multimoney.domain.model.balance.BalanceCardInformation
+import com.multimoney.domain.model.metrics.BaseEventDataDto
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -64,9 +65,11 @@ import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIE
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnTryWithPassword
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.NfcHelper
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CardType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getNavParam
+import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.BiometricHelper
 import com.multimoney.multimoney.util.CognitoHelper
 import com.multimoney.multimoney.util.NovoHelper
@@ -75,12 +78,12 @@ import com.novopayment.sdk.vts.model.NovoError
 import com.novopayment.sdk.vts.util.error.StatusCode.ERROR_PAYMENT_CANCEL_DIALOG
 import com.novopayment.sdk.vts.util.error.StatusCode.ERROR_PAYMENT_TIMEOUT_SUBMIT_DIALOG
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
@@ -585,20 +588,28 @@ class VisaCardViewModel @Inject constructor(
             is OnNavigateBack -> navigateBack(Screen.HomeScreen.route, isNavigateBackRefresh)
             is OnNavigatePreferences -> navigateTo(
                 "${Screen.VisaPreferencesScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
-                    encodeData(
-                        balanceCardInformation
-                    )
+                encodeData(
+                    balanceCardInformation
+                )
                 }/$availableBalanceLabel/$idClient/$idLoanClient"
 
             )
             is OnAvailableAmountClick -> onAvailableAmountClick()
-            is OnNavigateToVisaTokenizationScreen -> navigateTo(
-                "${Screen.VisaTokenizationWaitingScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
+            is OnNavigateToVisaTokenizationScreen -> {
+                viewModelScope.launch {
+                    if (dataStorePreferences.isAdjustFirstLinkMMVisaEventRegister().first()) {
+                        registerAdjustEvent(AdjustEventType.MM_VISA_CTA_FIRST_LINK_MM_VISA_5038, applyAdjust = false, data = BaseEventDataDto(user = email, idBrand = idBrand, idClient = idClient, idLoanClient = idLoanClient, identification = identification).toJson())
+                        dataStorePreferences.isAdjustFirstLinkMMVisaEventRegister(false)
+                    }
+                }
+                navigateTo(
+                    "${Screen.VisaTokenizationWaitingScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
                     encodeData(
                         balanceCardInformation
                     )
-                }"
-            )
+                    }"
+                )
+            }
             is OnOpenDialogConfirmToStartTokenizationProcess -> uiState = uiState.copy(
                 dialogParameters = DialogParameters(
                     titleResource = string.visa_card_dialog_title,

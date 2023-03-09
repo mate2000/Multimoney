@@ -41,6 +41,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
 import com.multimoney.multimoney.presentation.util.transformation.VisualTransformationMasks
@@ -100,6 +101,9 @@ fun IbanAccountScreen(
                                 saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
                             )
                         }
+                    )
+                    sharedViewModel.logEvents(
+                        AdjustEventType.ORIGINATION_FIRST_FILL_ACCOUNT_5004
                     )
                 },
                 nextStep = if (sharedViewModel.crosseling) {

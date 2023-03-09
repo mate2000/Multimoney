@@ -6,7 +6,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.credit.MutationSaveCreditExtensionDetailUseCase
 import com.multimoney.domain.interaction.credit.QueryCreditExtensionAmountUseCase
@@ -30,6 +29,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUES
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.UIEvent.OnAnimationFinish
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.UIEvent.OnCurrencyIndexChanged
@@ -42,20 +42,11 @@ import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.Disb
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
-import com.multimoney.multimoney.presentation.util.tickerFlow
 import com.multimoney.multimoney.presentation.util.transformation.FORMAT_MONEY_MAX_LENGTH
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.LocalDateTime
 import javax.inject.Inject
 import kotlin.math.roundToInt
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.takeWhile
 
 @HiltViewModel
 class DisbursementAmountViewModel @Inject constructor(
@@ -78,8 +69,7 @@ class DisbursementAmountViewModel @Inject constructor(
     private var maximumDisbursementErrorMessage = R.string.credit_amount_disbursement_maximum_error_message
     private var fee: Double = 0.0
     private var sliderFactor = 0.0
-    private var remainingTime: Duration = TIMER_DURATION.milliseconds
-    private var isTimerRunning: Boolean = false
+    var isAnimationRunning: Boolean = false
     private var isFirstAnimation = true
     private var idBrand: Int? = null
     private var user: String? = ""
@@ -144,40 +134,9 @@ class DisbursementAmountViewModel @Inject constructor(
         )
     }
 
-    private fun isTimerTick() =
-        remainingTime.inWholeMilliseconds > 0
-
-    private fun onTimerTick() {
-        remainingTime = remainingTime.minus(TIMER_DELAY.milliseconds)
-        uiState = uiState.copy(sliderValue = uiState.sliderValue + SLIDER_ANIMATION_VALUE)
-    }
-
-    private fun onTimerFinish() {
-        isTimerRunning = false
+    private fun onAnimationFinished() {
+        isAnimationRunning = false
         uiState = uiState.copy(sliderValue = getSliderValue(maximumDisbursement, uiState.progressFactor))
-    }
-
-    private fun onExecuteTimer() {
-        isTimerRunning = true
-        tickerFlow(
-            period = TIMER_DELAY.milliseconds,
-            duration = TIMER_DURATION.milliseconds
-        )
-            .takeWhile { isTimerRunning }
-            .map {
-                LocalDateTime.now()
-            }
-            .distinctUntilChanged { old, new ->
-                old.nano == new.nano
-            }
-            .onEach {
-                if (isTimerTick()) {
-                    onTimerTick()
-                } else if (isTimerRunning) {
-                    onTimerFinish()
-                }
-            }
-            .launchIn(viewModelScope)
     }
 
     private fun onCurrencyIndexChange(index: Int) {
@@ -250,7 +209,8 @@ class DisbursementAmountViewModel @Inject constructor(
                 isFormValid()
                 if (isFirstAnimation) {
                     isFirstAnimation = false
-                    onExecuteTimer()
+                    isAnimationRunning = true
+                    uiState = uiState.copy(startAnimation = true)
                 }
             }.onFailure {
                 uiState = uiState.copy(
@@ -317,7 +277,7 @@ class DisbursementAmountViewModel @Inject constructor(
     }
 
     private fun onDisbursementValueChangeFinished(value: String) {
-        if (isTimerRunning.not()) {
+        if (isAnimationRunning.not()) {
             if (value.isEmpty() || value.toFloat() < minimumDisbursement) {
                 uiState = uiState.copy(
                     disbursementError = Pair(true, minimumDisbursementErrorMessage),
@@ -366,7 +326,7 @@ class DisbursementAmountViewModel @Inject constructor(
     }
 
     private fun onSliderValueChange(value: Float) {
-        uiState = if (isTimerRunning.not() && sliderFactor > 0.0) {
+        uiState = if (isAnimationRunning.not() && sliderFactor > 0.0) {
             val sliderFactorTimes = (value / sliderFactor).roundToInt()
             val disbursement = if (value == 0f) {
                 minimumDisbursement.roundToInt().toString()
@@ -383,7 +343,7 @@ class DisbursementAmountViewModel @Inject constructor(
 
     private fun onSliderValueChangeFinished() {
         uiState = uiState.copy(disbursementError = Pair(false, R.string.empty))
-        if (uiState.disbursementError.first.not() && isTimerRunning.not()) {
+        if (uiState.disbursementError.first.not() && isAnimationRunning.not()) {
             callCreditExtensionMessage()
         }
     }
@@ -430,7 +390,8 @@ class DisbursementAmountViewModel @Inject constructor(
         val commissionDisbursementLabel: String = "",
         val isSkeletonLoading: Boolean = true,
         val isContinue: Boolean = false,
-        val openDialog: DialogParameters = DialogParameters()
+        val openDialog: DialogParameters = DialogParameters(),
+        val startAnimation: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -445,6 +406,7 @@ class DisbursementAmountViewModel @Inject constructor(
             is OnSliderValueChangeFinished -> onSliderValueChangeFinished()
             is OnOpenConditionCreditDialog -> onOpenConditionCreditDialog()
             is OnContinueClick -> onContinueClick(uiEvent.focusManager)
+            is OnAnimationFinish -> onAnimationFinished()
         }
     }
 
@@ -459,15 +421,14 @@ class DisbursementAmountViewModel @Inject constructor(
         data class OnContinueClick(val focusManager: FocusManager) : UIEvent()
         object OnSliderValueChangeFinished : UIEvent()
         object OnOpenConditionCreditDialog : UIEvent()
+        object OnAnimationFinish : UIEvent()
     }
 
     companion object {
         const val INITIAL_CURRENCY_INDEX = 0
-        const val CURRENCY_SEPARATOR = ','
         const val SLIDER_TOTAL = 1
         const val SLIDER_INITIAL_VALUE = 0.0F
-        const val SLIDER_ANIMATION_VALUE = 0.05F
-        const val TIMER_DURATION = 20L
-        const val TIMER_DELAY = 1L
+        const val SLIDER_TOTAL_ANIMATION_VALUE = 1f
+        const val SLIDER_ANIMATION_TIME = 500
     }
 }

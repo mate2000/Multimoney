@@ -4,10 +4,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.accountsmart.QueryListSinpeAccountUseCase
 import com.multimoney.domain.model.accountsmart.IbanAccountID
 import com.multimoney.domain.model.accountsmart.SinpeAccount
 import com.multimoney.domain.model.accountsmart.SmartAccountID
+import com.multimoney.domain.model.metrics.BaseEventDataDto
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -26,16 +29,21 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPay
 import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountViewModel.UIEvent.OnAddAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountViewModel.UIEvent.OnInitializeAccounts
 import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
+import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SmartPaymentAccountViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val queryListSinpeAccountUseCaseImpl: QueryListSinpeAccountUseCase
+    private val queryListSinpeAccountUseCaseImpl: QueryListSinpeAccountUseCase,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
 
     // UIState
@@ -100,10 +108,45 @@ class SmartPaymentAccountViewModel @Inject constructor(
         }
 
     private fun onAddAccountClick() {
+        logEvents(AdjustEventType.SETTINGS_FIRST_ADD_ACCOUNT_8003)
         navigateTo(
             route = "${Screen.AddIbanAccountScreen.baseRoute}/$user/$idBrand/$identification/${Screen.SmartPaymentAccountScreenCR.baseRoute}/$idClient/$idLoanClient"
         )
     }
+
+    fun logEvents(adjustEventType: AdjustEventType) {
+        viewModelScope.launch {
+            getAdjustEvent(adjustEventType).invoke()
+        }
+    }
+
+    private fun getAdjustEvent(adjustEventType: AdjustEventType): suspend () -> Unit {
+        val baseAdjustEvent = BaseEventDataDto(
+            user = user,
+            idBrand = idBrand,
+            idClient = idClient?.toInt(),
+            idLoanClient = idLoanClient?.toInt(),
+            identification = identification
+        )
+        return when (adjustEventType) {
+            AdjustEventType.SETTINGS_FIRST_ADD_ACCOUNT_8003 -> {
+                getAddAccountEvent(baseAdjustEvent)
+            }
+            else -> suspend {}
+        }
+    }
+
+    private fun getAddAccountEvent(baseAdjustEvent: BaseEventDataDto) =
+        suspend {
+            if (dataStorePreferences.isAdjustAddAccountEventRegister().first()) {
+                registerAdjustEvent(
+                    AdjustEventType.SETTINGS_FIRST_ADD_ACCOUNT_8003,
+                    applyAdjust = false,
+                    data = baseAdjustEvent.toJson()
+                )
+                dataStorePreferences.isAdjustAddAccountEventRegister(false)
+            }
+        }
 
     private fun onAccountClick(selectedSinpeAccount: SinpeAccount?) {
         val ibanAccount = encodeData(
@@ -117,8 +160,8 @@ class SmartPaymentAccountViewModel @Inject constructor(
         )
         navigateTo(
             "${Screen.SmartPaymentSavingAmountCR.baseRoute}/" +
-                    "${Screen.SmartPaymentAccountScreenCR.baseRoute}/" +
-                    "$ibanAccount/${encodeData(smartAccount)}/${SmartTransferTypes.IbanToSmart.id}"
+                "${Screen.SmartPaymentAccountScreenCR.baseRoute}/" +
+                "$ibanAccount/${encodeData(smartAccount)}/${SmartTransferTypes.IbanToSmart.id}"
         )
     }
 

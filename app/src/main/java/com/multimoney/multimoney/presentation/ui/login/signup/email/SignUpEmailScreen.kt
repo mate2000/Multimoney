@@ -39,6 +39,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnShowAnotherDeviceAlreadyRegisteredDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
@@ -67,7 +68,7 @@ fun SignUpEmailScreen(
                         }
                     )
                 )
-                viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SignUpOne)
+                sharedViewModel.logEvents(FireBaseEvents.SignUpOne, AdjustEventType.SIGNUP_1_2001)
             }, nextStep = SignUpStep.Two.id, previousStep = SignUpStep.One.id)
         )
 
@@ -98,6 +99,7 @@ fun SignUpEmailScreen(
                             viewModel.onSuccessValidation(context, sharedViewModel, userData)
                         }
                     )
+                    sharedViewModel.logEvents(null, AdjustEventType.SECURITY_SIGN_UP_CHANGE_DEVICE_9001)
                 } else {
                     viewModel.onSuccessValidation(context, sharedViewModel, userData)
                 }

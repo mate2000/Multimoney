@@ -305,7 +305,7 @@
     <string name="onfido_permission_recovery_body_both">Toque en “Permisos” para dar acceso a la cámara y al micrófono</string>
     <string name="onfido_permission_recovery_body_cam">Toque en “Permisos” para dar acceso a la cámara</string>
     <string name="onfido_permission_recovery_body_mic">Toque en “Permisos” para dar acceso al micrófono</string>
-    <string name="onfido_permission_recovery_button_primary">Habilitar en la configuración</string>
+    <string name="onfido_permission_recovery_button_primary">Habilitar en configuraciones</string>
     <string name="onfido_permission_recovery_button_secondary_both">Cancelar</string>
     <string name="onfido_permission_recovery_button_secondary_cam">Cancelar</string>
     <string name="onfido_permission_recovery_button_secondary_mic">Cancelar</string>

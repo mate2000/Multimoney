@@ -43,6 +43,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.CustomPasswordRequirementLabel
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getDeviceName
 import com.multimoney.multimoney.presentation.util.getDeviceType
@@ -133,7 +134,7 @@ fun SignUpPasswordScreen(
                             idBrant = idBrand ?: 0
                         )
                     )
-                    viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SignUpFive)
+                    sharedViewModel.logEvents(FireBaseEvents.SignUpFive, AdjustEventType.SIGNUP_5_2007)
                 }, nextStep = SignUpStep.Seven.id, previousStep = SignUpStep.Three.id)
             )
         }

@@ -716,6 +716,7 @@ fun ProductCtaFooterExpanded(
                 balance = viewModel.balanceCredit,
                 cryptoMovements = viewModel.uiState.cryptoCurrencyMovements,
                 noBalanceAction = {
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustPressPurchaseFirstTime)
                     when (viewModel.uiState.idBrand) {
                         Brand.CostaRica.id.toString() -> {
                             viewModel.onUIEvent(
@@ -732,23 +733,22 @@ fun ProductCtaFooterExpanded(
                             )
                         }
                     }
-                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustPressPurchaseFirstTime)
                 },
                 hasBalanceAction = {
-                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToPurchaseCryptoFlow)
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustPressPurchaseFirstTime)
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToPurchaseCryptoFlow)
                 },
                 onSendActionClicked = {
-                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSendCryptoFlow)
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustPressSendFirstTime)
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSendCryptoFlow)
                 },
                 onSellActionClicked = {
-                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSellCryptoFlow)
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustPressSellFirstTime)
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSellCryptoFlow)
                 },
                 onGiveActionClicked = {
-                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToGiveCryptoFlow)
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustPressReceiveFirstTime)
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToGiveCryptoFlow)
                 },
                 isCryptoTransferEnabled = viewModel.uiState.isCryptoTransferEnabled,
             )

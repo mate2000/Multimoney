@@ -14,6 +14,7 @@ import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountDelete
 import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountUpdateUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryListSinpeAccountUseCase
 import com.multimoney.domain.model.accountsmart.SinpeAccount
+import com.multimoney.domain.model.metrics.BaseEventDataDto
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -23,7 +24,9 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -71,8 +74,9 @@ class MyAccountsViewModel @Inject constructor(
                 if (accounts != null) {
                     uiState = if (isFavorite) {
                         uiState.copy(favoriteAccounts = accounts.data, favoritesLoaded = true)
-                    } else
+                    } else {
                         uiState.copy(registeredAccounts = accounts.data, registeredLoaded = true)
+                    }
                 }
             }.onFailure {
                 uiState = uiState.copy(
@@ -82,8 +86,9 @@ class MyAccountsViewModel @Inject constructor(
             }.onLoading {
                 uiState = if (isFavorite) {
                     uiState.copy(favoritesLoaded = false)
-                } else
+                } else {
                     uiState.copy(registeredLoaded = false)
+                }
             }
         }
     }
@@ -121,12 +126,12 @@ class MyAccountsViewModel @Inject constructor(
         }
     }
 
-
     private fun onChangeFavorite() {
         if (uiState.selectedAccount?.isFavorite == true) {
             onOpenRemoveFavDialog()
-        } else
+        } else {
             onToggleFavorite()
+        }
     }
 
     private fun onToggleFavorite() = executeUseCase {
@@ -190,10 +195,11 @@ class MyAccountsViewModel @Inject constructor(
 
     private fun onAccountClicked(sinpeAccount: SinpeAccount) {
         uiState = uiState.copy(selectedAccount = sinpeAccount)
-        uiState = if (sinpeAccount.isFavorite)
+        uiState = if (sinpeAccount.isFavorite) {
             uiState.copy(favoriteTextResource = R.string.profile_my_accounts_delete_as_fav)
-        else
+        } else {
             uiState.copy(favoriteTextResource = R.string.profile_my_accounts_add_as_fav)
+        }
         toggleBottomSheet(ModalBottomSheetState(ModalBottomSheetValue.Expanded))
     }
 
@@ -209,10 +215,11 @@ class MyAccountsViewModel @Inject constructor(
 
     private fun validateForm() {
         uiState =
-            if (uiState.accountNickname.isNullOrEmpty() || uiState.accountNickname.isNullOrBlank())
+            if (uiState.accountNickname.isNullOrEmpty() || uiState.accountNickname.isNullOrBlank()) {
                 uiState.copy(isButtonEnabled = false)
-            else
+            } else {
                 uiState.copy(isButtonEnabled = true)
+            }
     }
 
     private fun onGoBackToMyAccounts() {
@@ -271,6 +278,9 @@ class MyAccountsViewModel @Inject constructor(
         )
         callListSinpeAccountUseCase(true)
         callListSinpeAccountUseCase(false)
+        if (uiState.registeredAccounts.isEmpty() && uiState.favoriteAccounts.isEmpty()) {
+            registerAdjustEvent(AdjustEventType.SETTINGS_USER_WITHOUT_ACCOUNT_8004, applyAdjust = false, data = BaseEventDataDto(user = user, idBrand = uiState.idBrand, identification = identification).toJson())
+        }
     }
 
     fun onUIEvent(uiEvent: UIEvent) {

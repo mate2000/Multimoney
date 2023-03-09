@@ -11,7 +11,6 @@ import androidx.lifecycle.viewModelScope
 import com.amplifyframework.auth.AuthUserAttribute
 import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.cognito.options.AWSCognitoAuthSignUpOptions
-import com.amplifyframework.auth.options.AuthSignUpOptions
 import com.amplifyframework.core.Amplify
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
@@ -38,7 +37,7 @@ import com.multimoney.multimoney.presentation.ui.login.registereduser.password.R
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnPasswordValueChange
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnShowBiometricPromptForEncryption
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnValidForm
-import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.checkIfEmulator
 import com.multimoney.multimoney.presentation.util.getAppVersion
@@ -54,6 +53,7 @@ import com.multimoney.multimoney.presentation.util.passwordHasANumberValidation
 import com.multimoney.multimoney.presentation.util.passwordHasAUppercaseLetterValidation
 import com.multimoney.multimoney.presentation.util.passwordHasMinimumCharacters
 import com.multimoney.multimoney.presentation.util.passwordHasSpecialCharacterValidation
+import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -100,7 +100,7 @@ class RegisteredUserPasswordViewModel @Inject constructor(
 
     private fun onSetupDeviceInfo(
         deviceName: String,
-        deviceType: String,
+        deviceType: String
     ) {
         viewModelScope.launch {
             deviceId = dataStorePreferences.getDeviceId().first()
@@ -160,17 +160,20 @@ class RegisteredUserPasswordViewModel @Inject constructor(
         return when {
             noMoreThanThreeEqualConsecutiveLetterOrNumber(uiState.password) -> {
                 Pair(
-                    true, string.sign_up_password_requirement_max_three_characters_or_number_consecutive
+                    true,
+                    string.sign_up_password_requirement_max_three_characters_or_number_consecutive
                 )
             }
             noMoreThanThreeConsecutiveLetterOrNumber(uiState.password) -> {
                 Pair(
-                    true, string.sign_up_password_requirement_max_three_characters_or_number_consecutive
+                    true,
+                    string.sign_up_password_requirement_max_three_characters_or_number_consecutive
                 )
             }
             noMoreThanThreeLettersOrNumbers(uiState.password) -> {
                 Pair(
-                    true, string.sign_up_password_requirement_max_three_characters_or_number_consecutive
+                    true,
+                    string.sign_up_password_requirement_max_three_characters_or_number_consecutive
                 )
             }
             (uiState.password.isNotEmpty() && uiState.confirmPassword.isNotEmpty() && uiState.confirmPassword != uiState.password) -> {
@@ -183,8 +186,10 @@ class RegisteredUserPasswordViewModel @Inject constructor(
     }
 
     private fun onFingerprintCheckedChanged(value: Boolean, showDialog: Boolean) {
-        uiState = uiState.copy(isFingerprintChecked = value,
-            openDialogCustom = DialogParameters(titleResource = if (idBrand == Brand.CostaRica.id) string.active_biometric_title_cr else string.active_biometric_title,
+        uiState = uiState.copy(
+            isFingerprintChecked = value,
+            openDialogCustom = DialogParameters(
+                titleResource = if (idBrand == Brand.CostaRica.id) string.active_biometric_title_cr else string.active_biometric_title,
                 descriptionResource = if (idBrand == Brand.CostaRica.id) string.active_biometric_message_cr else string.active_biometric_message,
                 isActive = mutableStateOf(showDialog),
                 positiveResource = string.active_biometric_positive_button_label,
@@ -197,7 +202,9 @@ class RegisteredUserPasswordViewModel @Inject constructor(
                 },
                 dismissAction = {
                     onFingerprintCheckedChanged(value = false, showDialog = false)
-                }))
+                }
+            )
+        )
     }
 
     private fun callQuerySavePassword() = executeUseCase {
@@ -208,28 +215,42 @@ class RegisteredUserPasswordViewModel @Inject constructor(
             idBrand = idBrand
         ).collectLatest { result ->
             result.onSuccess {
-                onUIEvent(OnCallCognitoSignUp(email = userData?.email ?: "",
-                    firstName = userData?.firstName ?: "",
-                    secondName = userData?.secondName ?: "",
-                    lastName = userData?.firstLastName ?: "",
-                    phone = "${if (userData?.countryCode.isNullOrEmpty()) getCountryCodeByIdBrand(idBrand) else userData?.countryCode}${userData?.phoneNumber}",
-                    identification = userData?.identification ?: "",
-                    pkUser = userData?.pkUser ?: "0",
-                    status = userData?.userStatus ?: "",
-                    idBrand = idBrand,
-                    onFailureWithDialog = { dialog ->
-                        uiState = uiState.copy(isLoading = false, openDialogCustom = dialog)
-                    }))
+                viewModelScope.launch {
+                    if (dataStorePreferences.isAdjustSingUpAlreadyCustomerPasswordEventRegister().first()) {
+                        registerAdjustEvent(AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_CREATE_PASSWORD_2015, isLoggedIn = false)
+                        dataStorePreferences.isAdjustSingUpAlreadyCustomerPasswordEventRegister(false)
+                    }
+                }
+                onUIEvent(
+                    OnCallCognitoSignUp(
+                        email = userData?.email ?: "",
+                        firstName = userData?.firstName ?: "",
+                        secondName = userData?.secondName ?: "",
+                        lastName = userData?.firstLastName ?: "",
+                        phone = "${if (userData?.countryCode.isNullOrEmpty()) getCountryCodeByIdBrand(idBrand) else userData?.countryCode}${userData?.phoneNumber}",
+                        identification = userData?.identification ?: "",
+                        pkUser = userData?.pkUser ?: "0",
+                        status = userData?.userStatus ?: "",
+                        idBrand = idBrand,
+                        onFailureWithDialog = { dialog ->
+                            uiState = uiState.copy(isLoading = false, openDialogCustom = dialog)
+                        }
+                    )
+                )
             }.onMessage {
                 uiState = uiState.copy(
-                    isLoading = false, openDialogCustom = DialogParameters(
-                        description = it?.messageError?.message ?: "", isActive = mutableStateOf(true)
+                    isLoading = false,
+                    openDialogCustom = DialogParameters(
+                        description = it?.messageError?.message ?: "",
+                        isActive = mutableStateOf(true)
                     )
                 )
             }.onFailure {
                 uiState = uiState.copy(
-                    isLoading = false, openDialogCustom = DialogParameters(
-                        description = it.getError() ?: "", isActive = mutableStateOf(true)
+                    isLoading = false,
+                    openDialogCustom = DialogParameters(
+                        description = it.getError() ?: "",
+                        isActive = mutableStateOf(true)
                     )
                 )
             }.onLoading {
@@ -270,7 +291,7 @@ class RegisteredUserPasswordViewModel @Inject constructor(
             COGNITO_DEVICE_NAME to deviceName,
             COGNITO_APP_VERSION to appVersion,
             COGNITO_IS_EMULATOR to isEmulator.toString(),
-            COGNITO_IP_ADDRESS to ipAddress,
+            COGNITO_IP_ADDRESS to ipAddress
         )
         val options =
             AWSCognitoAuthSignUpOptions.builder().validationData(metaData).userAttributes(attrs.map { AuthUserAttribute(it.key, it.value) }).build()
@@ -280,7 +301,8 @@ class RegisteredUserPasswordViewModel @Inject constructor(
         }, {
             onFailureWithDialog(
                 DialogParameters(
-                    description = it.localizedMessage ?: "", isActive = mutableStateOf(true)
+                    description = it.localizedMessage ?: "",
+                    isActive = mutableStateOf(true)
                 )
             )
         })
@@ -288,34 +310,45 @@ class RegisteredUserPasswordViewModel @Inject constructor(
 
     private fun showBiometricSuccess() {
         uiState =
-            uiState.copy(openDialogCustom = DialogParameters(titleResource = string.dialog_success_biometric_title,
-                description = biometricDialogSuccessDescription,
-                positiveResource = string.dialog_success_biometric_positive_text,
-                isActive = mutableStateOf(true),
-                positiveAction = {
-                    completedProcessAction()
-                },
-                dismissAction = {
-                    completedProcessAction()
-                }))
+            uiState.copy(
+                openDialogCustom = DialogParameters(
+                    titleResource = string.dialog_success_biometric_title,
+                    description = biometricDialogSuccessDescription,
+                    positiveResource = string.dialog_success_biometric_positive_text,
+                    isActive = mutableStateOf(true),
+                    positiveAction = {
+                        completedProcessAction()
+                    },
+                    dismissAction = {
+                        completedProcessAction()
+                    }
+                )
+            )
     }
 
     private fun showBiometricsFailed() {
         uiState =
-            uiState.copy(openDialogCustom = DialogParameters(titleResource = string.dialog_failure_biometric_title,
-                description = biometricDialogFailureDescription,
-                positiveResource = string.dialog_failure_biometric_positive_text,
-                isActive = mutableStateOf(true),
-                positiveAction = {
-                    completedProcessAction()
-                },
-                dismissAction = {
-                    completedProcessAction()
-                }))
+            uiState.copy(
+                openDialogCustom = DialogParameters(
+                    titleResource = string.dialog_failure_biometric_title,
+                    description = biometricDialogFailureDescription,
+                    positiveResource = string.dialog_failure_biometric_positive_text,
+                    isActive = mutableStateOf(true),
+                    positiveAction = {
+                        completedProcessAction()
+                    },
+                    dismissAction = {
+                        completedProcessAction()
+                    }
+                )
+            )
     }
 
     private fun biometricPromptForEncryptionSuccess(
-        result: BiometricPrompt.AuthenticationResult, userEmail: String, userPassword: String, userName: String
+        result: BiometricPrompt.AuthenticationResult,
+        userEmail: String,
+        userPassword: String,
+        userName: String
     ) {
         result.cryptoObject?.cipher?.apply {
             viewModelScope.launch {
@@ -329,21 +362,28 @@ class RegisteredUserPasswordViewModel @Inject constructor(
     }
 
     private fun onShowBiometricPromptForEncryption(
-        fragmentActivity: FragmentActivity, userEmail: String, userName: String
+        fragmentActivity: FragmentActivity,
+        userEmail: String,
+        userName: String
     ) {
         if (isBiometricAvailable && uiState.isFingerprintChecked) {
-            biometricHelper.showBiometricPrompt(title = biometricPromptTitle,
+            biometricHelper.showBiometricPrompt(
+                title = biometricPromptTitle,
                 description = biometricPromptDescription,
                 negative = biometricPromptNegative,
                 activity = fragmentActivity,
                 processSuccess = { result ->
                     biometricPromptForEncryptionSuccess(
-                        result, userEmail, uiState.password, userName
+                        result,
+                        userEmail,
+                        uiState.password,
+                        userName
                     )
                 },
                 processError = { _, _ ->
                     showBiometricsFailed()
-                })
+                }
+            )
         } else {
             completedProcessAction()
         }
@@ -361,9 +401,13 @@ class RegisteredUserPasswordViewModel @Inject constructor(
         }
     }
 
-    private fun completedProcessAction() = popAndNavigateTo(
-        route = Screen.SignUpCompleted.route, popTo = Screen.RegisteredUserPassword.route
-    )
+    private fun completedProcessAction() {
+        registerAdjustEvent(adjustEventType = AdjustEventType.SIGNUP_SUCCESS_2008, isLoggedIn = false, data = userData?.toJson() ?: "", applyAdjust = false)
+        popAndNavigateTo(
+            route = Screen.SignUpCompleted.route,
+            popTo = Screen.RegisteredUserPassword.route
+        )
+    }
 
     private fun onCloseClick(focusManager: FocusManager) {
         focusManager.clearFocus()
@@ -375,7 +419,8 @@ class RegisteredUserPasswordViewModel @Inject constructor(
                 negativeResource = string.sign_up_close_dialog_negative_button_text,
                 positiveAction = {
                     popAndNavigateTo(
-                        route = SignInScreen.route, popTo = Screen.RegisteredUserPassword.route
+                        route = SignInScreen.route,
+                        popTo = Screen.RegisteredUserPassword.route
                     )
                 },
                 isActive = mutableStateOf(true)
@@ -428,7 +473,9 @@ class RegisteredUserPasswordViewModel @Inject constructor(
             is OnCallPasswordSave -> callQuerySavePassword()
             is OnFingerprintCheckedChanged -> onFingerprintCheckedChanged(uiEvent.value, uiEvent.showDialog)
             is OnShowBiometricPromptForEncryption -> onShowBiometricPromptForEncryption(
-                uiEvent.fragmentActivity, uiEvent.userEmail, uiEvent.userName
+                uiEvent.fragmentActivity,
+                uiEvent.userEmail,
+                uiEvent.userName
             )
             is OnIsBiometricAvailable -> isBiometricAvailable = uiEvent.value
             is OnCloseClick -> onCloseClick(focusManager = uiEvent.focusManager)
@@ -470,7 +517,8 @@ class RegisteredUserPasswordViewModel @Inject constructor(
         data class OnValidForm(val onContinueEnable: (isEnable: Boolean) -> Unit) : UIEvent()
 
         data class OnFingerprintCheckedChanged(
-            val value: Boolean, val showDialog: Boolean
+            val value: Boolean,
+            val showDialog: Boolean
         ) : UIEvent()
 
         data class OnInitializeDialogTexts(
@@ -482,7 +530,9 @@ class RegisteredUserPasswordViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnShowBiometricPromptForEncryption(
-            val fragmentActivity: FragmentActivity, val userEmail: String, val userName: String
+            val fragmentActivity: FragmentActivity,
+            val userEmail: String,
+            val userName: String
         ) : UIEvent()
 
         data class OnIsBiometricAvailable(val value: Boolean) : UIEvent()

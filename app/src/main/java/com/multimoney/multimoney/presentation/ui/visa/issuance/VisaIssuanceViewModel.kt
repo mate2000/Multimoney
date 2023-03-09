@@ -4,8 +4,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.balance.BalanceCardInformation
+import com.multimoney.domain.model.metrics.BaseEventDataDto
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.EMAIL
@@ -22,13 +25,18 @@ import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceViewModel.UIEvent.OnIssuanceClick
 import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.util.NfcHelper
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
+import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class VisaIssuanceViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val nfcHelper: NfcHelper
+    private val nfcHelper: NfcHelper,
+    private val dataStorePreferences: DataStorePreferences
 ) :
     BaseViewModel(true) {
 
@@ -99,14 +107,22 @@ class VisaIssuanceViewModel @Inject constructor(
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
-            is OnIssuanceClick -> popAndNavigateTo(
-                "${Screen.VisaTokenizationWaitingScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
-                encodeData(
-                    balanceCardInformation
+            is OnIssuanceClick -> {
+                viewModelScope.launch {
+                    if (dataStorePreferences.isAdjustFirstLinkMMVisaEventRegister().first()) {
+                        registerAdjustEvent(AdjustEventType.MM_VISA_CTA_FIRST_LINK_MM_VISA_5038, applyAdjust = false, data = BaseEventDataDto(user = email, idBrand = idBrand, idClient = idClient, idLoanClient = idLoanClient, identification = identification).toJson())
+                        dataStorePreferences.isAdjustFirstLinkMMVisaEventRegister(false)
+                    }
+                }
+                popAndNavigateTo(
+                    "${Screen.VisaTokenizationWaitingScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
+                    encodeData(
+                        balanceCardInformation
+                    )
+                    }",
+                    Screen.VisaIssuanceScreen.route
                 )
-                }",
-                Screen.VisaIssuanceScreen.route
-            )
+            }
         }
     }
 

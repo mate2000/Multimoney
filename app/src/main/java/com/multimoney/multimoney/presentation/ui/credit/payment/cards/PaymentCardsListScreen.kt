@@ -38,28 +38,29 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.ReactActivity
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.Companion.APPLICATION_NAME
-import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.Companion.VISA_USER_NAME
-import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.Companion.VISA_USER_PASS
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.Companion.ENDPOINT
-import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.Companion.RESULT_CODE_PROCESS_FINISHED
-import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.Companion.RESULT_CODE_PROCESS_INCOMPLETE
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.Companion.RESPONSE_IS_ERROR
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.Companion.RESPONSE_VALUE
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.Companion.RESULT_CODE_PROCESS_FINISHED
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.Companion.RESULT_CODE_PROCESS_INCOMPLETE
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.Companion.VISA_USER_NAME
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.Companion.VISA_USER_PASS
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnHandleAddCardResponse
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnNavigateBackHome
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnResumeTimer
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnStopTimer
-import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnResumeTimer
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
-import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 
 @Composable
 fun PaymentCardsListScreen(
@@ -109,6 +110,7 @@ fun PaymentCardsListContent(
         val addCardActivityResult = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.StartActivityForResult()
         ) {
+            viewModel.logEvents(AdjustEventType.SETTINGS_CTA_FIRST_FINISH_FLOW_CARD_8008)
             viewModel.onUIEvent(OnResumeTimer)
             when (it.resultCode) {
                 RESULT_CODE_PROCESS_FINISHED -> {
@@ -159,7 +161,6 @@ fun PaymentCardsListContent(
                 )
             }
         }
-
     }
     LoadingIndicator(viewModel.uiState.isLoading)
 }
@@ -170,7 +171,6 @@ fun PaymentCardListEmptyState(
     context: Context,
     addCardActivityResult: ManagedActivityResultLauncher<Intent, ActivityResult>
 ) {
-
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -250,6 +250,7 @@ fun PaymentCardList(
             .padding(top = 18.dp)
             .fillMaxWidth(),
         onClick = {
+            viewModel.logEvents(AdjustEventType.SETTINGS_CTA_FIRST_START_FLOW_CARD_8007)
             viewModel.onUIEvent(OnStopTimer)
             val intent = Intent(context, ReactActivity::class.java)
             val bundle = Bundle()

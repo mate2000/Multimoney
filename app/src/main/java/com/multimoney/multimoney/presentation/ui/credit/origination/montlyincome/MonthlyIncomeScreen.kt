@@ -32,17 +32,13 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnCallMutationSaveCreditFlowStep
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.BaseEvent.OnFormCompleted
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.Companion.CALENDAR_MONTH
-import com.multimoney.multimoney.presentation.util.DAY_MONTH_YEAR_PATTERN
-import com.multimoney.multimoney.presentation.util.DATE_MIN_DAY
-import com.multimoney.multimoney.presentation.util.DATE_MIN_MONTH
-import com.multimoney.multimoney.presentation.util.DATE_MIN_YEAR
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnCallCatalogs
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnCompanyNameValueChange
-import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnCompanyStartDateValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnCompanyPhoneNumberValueChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnCompanyStartDateValueChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnDivisionDuiEmissionPlaceValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnDivisionOccupationValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnDivisionProfessionValueChange
-import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnDivisionDuiEmissionPlaceValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnDuiEmissionDateValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnDuiExpirationDateValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnIncomeValueChange
@@ -52,12 +48,16 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome
 import com.multimoney.multimoney.presentation.uielement.CustomDatePicker
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.util.DATE_MIN_DAY
+import com.multimoney.multimoney.presentation.util.DATE_MIN_MONTH
+import com.multimoney.multimoney.presentation.util.DATE_MIN_YEAR
+import com.multimoney.multimoney.presentation.util.DAY_MONTH_YEAR_PATTERN
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.getPickedDateAsString
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
 import com.multimoney.multimoney.presentation.util.transformation.VisualTransformationMasks.PHONE_TRANSFORMATION_MASK
 import com.multimoney.multimoney.presentation.util.transformation.formatDecimalMoney
-import com.multimoney.multimoney.presentation.util.transformation.formatMoney
 
 @Composable
 fun MonthlyIncomeScreen(
@@ -89,6 +89,9 @@ fun MonthlyIncomeScreen(
                         },
                         saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
                     )
+                )
+                sharedViewModel.logEvents(
+                    AdjustEventType.ORIGINATION_FIRST_FILL_MONTHLY_AMOUNT_5005
                 )
             }, nextStep = CreditStep.Four.id, previousStep = CreditStep.Two.id)
         )
@@ -176,7 +179,6 @@ fun MonthlyIncomeScreen(
             )
 
             if (sharedViewModel.crosseling) {
-
                 CustomOutlinedTextField(
                     modifier = Modifier.padding(top = 16.dp),
                     labelText = stringResource(id = R.string.credit_monthly_income_job_workplace_label),
@@ -252,9 +254,7 @@ fun MonthlyIncomeScreen(
                     isError = viewModel.uiState.companyPhoneNumberError.first,
                     errorMessage = stringResource(id = viewModel.uiState.companyPhoneNumberError.second)
                 )
-
             } else {
-
                 CustomDatePicker(
                     context = context,
                     modifier = Modifier.padding(top = 16.dp),

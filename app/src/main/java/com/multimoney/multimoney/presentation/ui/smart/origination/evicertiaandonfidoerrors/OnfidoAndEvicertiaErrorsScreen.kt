@@ -3,7 +3,6 @@ package com.multimoney.multimoney.presentation.ui.smart.origination.evicertiaand
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.Brand.CostaRica
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
@@ -50,24 +49,16 @@ fun OnfidoAndEvicertiaErrorsScreen(
         EVICERTIA_REJECTED_FIRST_TIME.value -> {
             AlertResult(
                 iconResource = drawable.ic_alert,
-                titleResource = string.sign_document_reject_title,
-                descriptionResource = if (viewModel.idBrand == CostaRica.id) string.sign_document_reject_description else string.sign_document_reject_description_sv,
-                buttonTextResource = string.sign,
+                titleResource = string.smart_evicertia_rejected_title,
+                descriptionResource = string.smart_evicertia_rejected_subtitle,
+                buttonTextResource = string.understood,
                 isLeftButtonVisible = false,
                 onRightButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateToHome) },
                 onButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateToHome) }
             )
         }
         EVICERTIA_REJECTED_SECOND_TIME.value -> {
-            AlertResult(
-                iconResource = drawable.ic_alert,
-                titleResource = string.sign_credit_max_attempts_title,
-                descriptionResource = if (viewModel.idBrand == CostaRica.id) string.sign_credit_max_attempts_message else string.sign_credit_max_attempts_message_sv,
-                buttonTextResource = string.understood,
-                isLeftButtonVisible = false,
-                onRightButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateToHome) },
-                onButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateToHome) }
-            )
+            viewModel.onUIEvent(UIEvent.OnNavigateToHome)
         }
     }
 }

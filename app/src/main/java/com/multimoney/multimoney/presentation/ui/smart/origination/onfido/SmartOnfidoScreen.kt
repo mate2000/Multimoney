@@ -40,7 +40,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartO
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnOpenOnfidoSdk
-import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnStartSubscription
+import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.RefreshOnFidoToken
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
@@ -61,7 +61,7 @@ fun SmartOnfidoScreen(
     val context = LocalContext.current
 
     LaunchedEffect(true) {
-        viewModel.onUIEvent(OnStartSubscription)
+        viewModel.onUIEvent(OnStart)
         viewModel.executeNavigation(
             onPopAndNavigate = onPopAndNavigate,
             onPopBackStack = onPopBackStack

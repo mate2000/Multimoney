@@ -10,7 +10,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.SmartStatus
 import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCase
@@ -27,8 +26,10 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.WORK_FLOW
 import com.multimoney.multimoney.presentation.navigation.navgraph.COMING_FROM_CRYPTO
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
+import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_GLOBAL_REQUEST
@@ -59,8 +60,6 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OverridePreviousAction
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
-import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -87,6 +86,8 @@ class SmartViewModel @Inject constructor(
     val lastName: String = savedStateHandle[LAST_NAME] ?: ""
     var idGlobalRequest: Long = savedStateHandle[ID_GLOBAL_REQUEST] ?: 0
     var idSysRequest: Long = savedStateHandle[ID_USER_REQUEST] ?: 0
+    var workflow: String = savedStateHandle[WORK_FLOW] ?: ""
+    var evicertiaStatus: String = savedStateHandle[EVICERTIA_STATUS] ?: ""
 
     // Stateless
     private var overridePreviousAction: (() -> Unit)? = null
@@ -200,8 +201,9 @@ class SmartViewModel @Inject constructor(
             currentStep == SmartSteps.Six.id && idBrandAsInt == Brand.ElSalvador.id -> navigateToOnfido()
             else -> {
                 // update the current step coming from the backend in order to navigate to the proper screen
-                uiState =
-                    uiState.copy(currentStep = SmartSteps.Search.getIdByName(stepByStep.currentStep))
+                uiState = uiState.copy(
+                    currentStep = SmartSteps.Search.getIdByName(stepByStep.currentStep)
+                )
             }
         }
     }
@@ -408,15 +410,18 @@ class SmartViewModel @Inject constructor(
                 isLoading = false
             )
         } else {
-            accountSmartData =
-                accountSmartData?.copy(currentStep = SmartSteps.Search.getNameById(nextStep))
+            accountSmartData = accountSmartData?.copy(
+                currentStep = SmartSteps.Search.getNameById(nextStep)
+            )
             callMutationGlobalRequestUseCase(true)
         }
     }
 
     private fun navigateToOnfido() {
         popAndNavigateTo(
-            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idSysRequest/$idGlobalRequest/$URL_EMPTY/$comingFromCrypto",
+            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/" +
+                "$firstName/$lastName/$idSysRequest/$idGlobalRequest/" +
+                "$URL_EMPTY/$comingFromCrypto/$evicertiaStatus/$workflow",
             Screen.SmartScreen.route
         )
     }
@@ -440,12 +445,6 @@ class SmartViewModel @Inject constructor(
                 description = error.getError() ?: "",
                 isActive = mutableStateOf(true)
             )
-        )
-    }
-
-    private fun onNavigateToSignDocumentScreen(signDocumentStep: String) {
-        navigateTo(
-            route = "${Screen.SmartSignScreen.baseRoute}/$signDocumentStep/$URL_EMPTY/$idBrand/$pkUser/$identification/$email/$idSysRequest/$firstName/$lastName/${true}/$idGlobalRequest/$user/${comingFromCrypto}/${false}"
         )
     }
 
@@ -543,13 +542,6 @@ class SmartViewModel @Inject constructor(
             is OnCallSaveAutomatedSmartAccount -> onCallMutationSaveSmartAccount(event.accountSmartData)
             is OverridePreviousAction -> overridePreviousAction(event.action)
             is NavigateToEvicertia -> {
-                val signDocumentStep =
-                    if (SmartOnFidoOrFirmStatus.FIRMED.status.lowercase() == SmartOnFidoOrFirmStatus.FIRMED.status.lowercase()) {
-                        VALIDATE_IDENTITY.value
-                    } else {
-                        GENERATE_DOCUMENT_STEP.value
-                    }
-                onNavigateToSignDocumentScreen(signDocumentStep)
             }
         }
     }
@@ -595,7 +587,7 @@ class SmartViewModel @Inject constructor(
 
         data class OverridePreviousAction(val action: (() -> Unit)?) : UIEvent()
 
-        object NavigateToEvicertia : UIEvent()
+        data class NavigateToEvicertia(val evicertiaStatus: String) : UIEvent()
     }
 
     companion object {

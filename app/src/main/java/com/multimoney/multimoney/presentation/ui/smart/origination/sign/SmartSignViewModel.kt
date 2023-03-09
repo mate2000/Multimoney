@@ -106,10 +106,10 @@ class SmartSignViewModel @Inject constructor(
     private fun onListenSmartContractEventSubscription() {
         onShouldStartSubscription()
         smartSubscriptionManager.idSubscriptionSubscribe(getSmartSubscriptionListener())
-        if (smartSubscriptionManager.hasEvisertiaLink()) {
+        if (smartSubscriptionManager.hasEvicertiaLink()) {
             uiState = uiState.copy(
                 signDocumentProcessStep = SIGN_DOCUMENTS_STEP.value,
-                signDocumentUrl = smartSubscriptionManager.getEvisertioLink() ?: ""
+                signDocumentUrl = smartSubscriptionManager.getEvicertiaLink() ?: ""
             )
         }
     }

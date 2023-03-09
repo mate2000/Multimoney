@@ -29,7 +29,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 
 @Composable
-fun EvercitaDenyContratScreen(
+fun EvicertiaDenyContractScreen(
     icon: Int? = null,
     title: Int? = null,
     subtitle: Int? = null,
@@ -51,7 +51,7 @@ fun EvercitaDenyContratScreen(
         ) {
             CustomImage(drawableResource = icon ?: R.drawable.ic_alert)
             Text(
-                text = stringResource(id = title ?: R.string.smart_evercita_title),
+                text = stringResource(id = title ?: R.string.smart_evicertia_rejected_title),
                 modifier = Modifier.padding(top = 24.dp),
                 style = Typography.h5.copy(
                     fontWeight = FontWeight.SemiBold,
@@ -62,7 +62,7 @@ fun EvercitaDenyContratScreen(
             )
             Text(
                 text = stringResource(
-                    id = subtitle ?: R.string.smart_evercita_subtitle
+                    id = subtitle ?: R.string.smart_evicertia_rejected_subtitle
                 ),
                 modifier = Modifier.padding(top = 10.dp),
                 style = Typography.body1,

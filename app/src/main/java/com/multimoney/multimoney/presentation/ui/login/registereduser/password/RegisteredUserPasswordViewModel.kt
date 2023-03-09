@@ -112,6 +112,7 @@ class RegisteredUserPasswordViewModel @Inject constructor(
         this.deviceName = deviceName
         this.deviceType = deviceType
     }
+
     private fun onInitializeDialogTexts(
         biometricPromptTitle: String,
         biometricPromptDescription: String,
@@ -217,7 +218,10 @@ class RegisteredUserPasswordViewModel @Inject constructor(
             result.onSuccess {
                 viewModelScope.launch {
                     if (dataStorePreferences.isAdjustSingUpAlreadyCustomerPasswordEventRegister().first()) {
-                        registerAdjustEvent(AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_CREATE_PASSWORD_2015, isLoggedIn = false)
+                        registerAdjustEvent(
+                            AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_CREATE_PASSWORD_2015,
+                            isLoggedIn = false
+                        )
                         dataStorePreferences.isAdjustSingUpAlreadyCustomerPasswordEventRegister(false)
                     }
                 }
@@ -294,7 +298,8 @@ class RegisteredUserPasswordViewModel @Inject constructor(
             COGNITO_IP_ADDRESS to ipAddress
         )
         val options =
-            AWSCognitoAuthSignUpOptions.builder().validationData(metaData).userAttributes(attrs.map { AuthUserAttribute(it.key, it.value) }).build()
+            AWSCognitoAuthSignUpOptions.builder().validationData(metaData)
+                .userAttributes(attrs.map { AuthUserAttribute(it.key, it.value) }).build()
         Amplify.Auth.signUp(email, uiState.password, options, {
             uiState = uiState.copy(isLoading = false)
             emitBaseEvent(BaseEvent.OnOpenBiometricDialog)
@@ -402,9 +407,14 @@ class RegisteredUserPasswordViewModel @Inject constructor(
     }
 
     private fun completedProcessAction() {
-        registerAdjustEvent(adjustEventType = AdjustEventType.SIGNUP_SUCCESS_2008, isLoggedIn = false, data = userData?.toJson() ?: "", applyAdjust = false)
+        registerAdjustEvent(
+            adjustEventType = AdjustEventType.SIGNUP_SUCCESS_2008,
+            isLoggedIn = false,
+            data = userData?.toJson() ?: "",
+            applyAdjust = false
+        )
         popAndNavigateTo(
-            route = Screen.SignUpCompleted.route,
+            route = "${Screen.SignUpCompleted.baseRoute}/${userData?.email}/${uiState.password}",
             popTo = Screen.RegisteredUserPassword.route
         )
     }

@@ -52,6 +52,7 @@ fun checkIfEmulator(): Boolean {
             || Build.MODEL.contains("google_sdk")
             || Build.MODEL.toLowerCase().contains("droid4x")
             || Build.MODEL.contains("Emulator")
+            || Build.MODEL.contains("sdk_gphone")
             || Build.MODEL.contains("Android SDK built for x86")
             || Build.HARDWARE == "goldfish"
             || Build.HARDWARE == "vbox86"

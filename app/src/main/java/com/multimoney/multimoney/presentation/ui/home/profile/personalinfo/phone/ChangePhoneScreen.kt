@@ -1,5 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.phone
 
+import android.provider.Settings
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -13,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -29,7 +32,6 @@ import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.PhoneTextField
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.togitech.ccp.data.CountryData
 import com.togitech.ccp.data.utils.getLibCountries
 
 @Preview
@@ -41,6 +43,7 @@ fun ChangePhoneScreen(
 ) {
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
+        viewModel.onUIEvent(ChangePhoneViewModel.UIEvent.OnSetupDefaultCountry)
     }
 
     BackHandler {
@@ -50,14 +53,23 @@ fun ChangePhoneScreen(
     val selectedCountry = getLibCountries.first {
         it.countryCode == viewModel.uiState.countryCode
     }
-    viewModel.onUIEvent(ChangePhoneViewModel.UIEvent.OnStart(phoneCode = selectedCountry.countryPhoneCode))
-    ChangePhoneScreenContent(viewModel, selectedCountry, focusManager)
+    val mId: String =
+        Settings.Secure.getString(LocalContext.current.contentResolver, Settings.Secure.ANDROID_ID)
+    Log.e("Android ID",mId)
+    LaunchedEffect(key1 = true){
+        viewModel.onUIEvent(
+            ChangePhoneViewModel.UIEvent.OnStart(
+                phoneCode = selectedCountry.countryPhoneCode
+            )
+        )
+    }
+
+    ChangePhoneScreenContent(viewModel, focusManager)
 }
 
 @Composable
 private fun ChangePhoneScreenContent(
     viewModel: ChangePhoneViewModel,
-    selectedCountry: CountryData,
     focusManager: FocusManager
 ) {
     ConstraintLayout(
@@ -124,7 +136,8 @@ private fun ChangePhoneScreenContent(
                 } else {
                     stringResource(id = viewModel.uiState.phoneNumberError.second)
                 },
-                defaultCountry = selectedCountry,
+                defaultCountry = getLibCountries.find { it.countryCode == viewModel.uiState.currentBrand.countryCode }
+                    ?: getLibCountries.first(),
                 pickedCountry = {
                     viewModel.onUIEvent(
                         ChangePhoneViewModel.UIEvent.OnCountryCodeValueChanged(
@@ -132,7 +145,8 @@ private fun ChangePhoneScreenContent(
                             countryCode = it.countryCode
                         )
                     )
-                }
+                },
+                countriesList = viewModel.uiState.countriesList
             )
             Text(
                 modifier = Modifier

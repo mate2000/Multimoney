@@ -7,6 +7,9 @@ import androidx.lifecycle.SavedStateHandle
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.FieldToChange
+import com.multimoney.domain.interaction.security.QueryGetCountryPhoneCodesUseCase
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
@@ -18,14 +21,21 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel
 import com.multimoney.multimoney.presentation.util.isPhoneNumberValid
 import com.multimoney.multimoney.presentation.util.transformation.PhoneNumberTransformation
+import com.togitech.ccp.data.CountryData
+import com.togitech.ccp.data.utils.getLibCountries
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class ChangePhoneViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val queryGetCountryPhoneCodesUseCase: QueryGetCountryPhoneCodesUseCase
+
 ) : BaseViewModel(true) {
     var phoneNumberTransformation: PhoneNumberTransformation? = null
 
@@ -53,6 +63,40 @@ class ChangePhoneViewModel @Inject constructor(
             )?.length
         )
     }
+
+    private fun onSetupDefaultCountry(idBrand: Int) {
+        uiState = uiState.copy(idBrand = idBrand)
+        uiState = when (uiState.idBrand) {
+            Brand.Guatemala.id -> uiState.copy(currentBrand = Brand.Guatemala)
+            Brand.ElSalvador.id -> uiState.copy(currentBrand = Brand.ElSalvador)
+            else -> uiState.copy(currentBrand = Brand.CostaRica)
+        }
+        val defaultCountry =
+            getLibCountries.find { it.countryCode == uiState.currentBrand.countryCode }
+        if (defaultCountry != null) {
+            uiState =
+                uiState.copy(countriesList = mutableListOf(defaultCountry))
+        }
+        uiState = uiState.copy(selectedCountry = uiState.countriesList?.first())
+    }
+
+    private fun callQueryGetCountryPhoneCodes(idBrand: Int) =
+        executeUseCase {
+            queryGetCountryPhoneCodesUseCase.invoke(idBrand = idBrand).collectLatest { result ->
+                result.onSuccess { response ->
+                    uiState = uiState.copy(countriesList = mutableListOf())
+                    val list = response.countryPhoneCodes.flatMap { fromApi ->
+                        getLibCountries.filter { fromApi.isoCode.lowercase(Locale.getDefault()) == it.countryCode }
+                    }
+                    uiState = uiState.copy(
+                        countriesList = list.toMutableList(),
+                        selectedCountry = list.toMutableList().first()
+                    )
+                }.onFailure {
+                    onSetupDefaultCountry(idBrand)
+                }
+            }
+        }
 
     private fun isFormValid(countryCode: String) = emitBaseEvent(
         when {
@@ -88,6 +132,7 @@ class ChangePhoneViewModel @Inject constructor(
 
     private fun onStart(phoneCode: String) {
         uiState = uiState.copy(phoneCode = phoneCode)
+        callQueryGetCountryPhoneCodes(uiState.idBrand ?: Brand.CostaRica.id)
     }
 
     private fun onCountryCodeValueChanged(phoneCode: String, countryCode: String) {
@@ -145,6 +190,7 @@ class ChangePhoneViewModel @Inject constructor(
         navigateTo("${Screen.ProfileVerifyIdentityPhoneScreen.baseRoute}/${uiState.idClient}/${FieldToChange.PHONE.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.newPhoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}/${uiState.phoneCode}")
     }
 
+
     data class UIState(
         // Fields
         val userName: String? = null,
@@ -160,8 +206,12 @@ class ChangePhoneViewModel @Inject constructor(
         val phoneCode: String = "",
         val countryCode: String? = null,
         val phoneNumberError: Pair<Boolean, Int> = Pair(false, R.string.sign_up_phone_not_valid),
-        val isButtonEnabled: Boolean = false
-    )
+        val isButtonEnabled: Boolean = false,
+        val currentBrand: Brand = Brand.CostaRica,
+        val selectedCountry: CountryData? = null,
+        val countriesList: MutableList<CountryData>? = null,
+        val isAlertResultVisible: Boolean = false,
+        )
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
@@ -175,6 +225,9 @@ class ChangePhoneViewModel @Inject constructor(
             )
             is UIEvent.OnContinueButtonClicked -> onContinueButtonClicked()
             is UIEvent.OnNavigateBack -> navigateBack(Screen.ProfilePersonalInfoScreen.route, false)
+            is UIEvent.OnSetupDefaultCountry -> onSetupDefaultCountry(uiState.idBrand ?: Brand.CostaRica.id)
+            is UIEvent.OnQueryError ->  uiState = uiState.copy(isAlertResultVisible = true)
+
         }
     }
 
@@ -191,5 +244,8 @@ class ChangePhoneViewModel @Inject constructor(
 
         object OnContinueButtonClicked : UIEvent()
         object OnNavigateBack : UIEvent()
+        object OnSetupDefaultCountry : UIEvent()
+        object OnQueryError : UIEvent()
+
     }
 }

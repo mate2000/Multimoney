@@ -53,9 +53,7 @@ fun ChangePhoneScreen(
     val selectedCountry = getLibCountries.first {
         it.countryCode == viewModel.uiState.countryCode
     }
-    val mId: String =
-        Settings.Secure.getString(LocalContext.current.contentResolver, Settings.Secure.ANDROID_ID)
-    Log.e("Android ID",mId)
+
     LaunchedEffect(key1 = true){
         viewModel.onUIEvent(
             ChangePhoneViewModel.UIEvent.OnStart(
@@ -63,7 +61,6 @@ fun ChangePhoneScreen(
             )
         )
     }
-
     ChangePhoneScreenContent(viewModel, focusManager)
 }
 

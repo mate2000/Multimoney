@@ -21,14 +21,13 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
-import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel
 import com.multimoney.multimoney.presentation.util.isPhoneNumberValid
 import com.multimoney.multimoney.presentation.util.transformation.PhoneNumberTransformation
 import com.togitech.ccp.data.CountryData
 import com.togitech.ccp.data.utils.getLibCountries
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
-import java.util.*
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -211,7 +210,7 @@ class ChangePhoneViewModel @Inject constructor(
         val selectedCountry: CountryData? = null,
         val countriesList: MutableList<CountryData>? = null,
         val isAlertResultVisible: Boolean = false,
-        )
+    )
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
@@ -225,8 +224,10 @@ class ChangePhoneViewModel @Inject constructor(
             )
             is UIEvent.OnContinueButtonClicked -> onContinueButtonClicked()
             is UIEvent.OnNavigateBack -> navigateBack(Screen.ProfilePersonalInfoScreen.route, false)
-            is UIEvent.OnSetupDefaultCountry -> onSetupDefaultCountry(uiState.idBrand ?: Brand.CostaRica.id)
-            is UIEvent.OnQueryError ->  uiState = uiState.copy(isAlertResultVisible = true)
+            is UIEvent.OnSetupDefaultCountry -> onSetupDefaultCountry(
+                uiState.idBrand ?: Brand.CostaRica.id
+            )
+            is UIEvent.OnQueryError -> uiState = uiState.copy(isAlertResultVisible = true)
 
         }
     }

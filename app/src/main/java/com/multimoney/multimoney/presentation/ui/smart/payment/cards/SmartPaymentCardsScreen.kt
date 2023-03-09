@@ -33,6 +33,8 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymen
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnHandleAddCardResponse
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnStopTimer
+import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnResumeTimer
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiary
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -86,6 +88,7 @@ fun PaymentCardsListContent(
     val addCardActivityResult = rememberLauncherForActivityResult(
         contract = StartActivityForResult()
     ) {
+        viewModel.onUIEvent(OnResumeTimer)
         when (it.resultCode) {
             PaymentScheduleCardListViewModel.RESULT_CODE_PROCESS_FINISHED -> {
                 val response: String? =
@@ -129,6 +132,7 @@ fun PaymentCardsListContent(
                 .padding(top = 32.dp)
                 .fillMaxWidth(),
             onClick = {
+                viewModel.onUIEvent(OnStopTimer)
                 val intent = Intent(context, ReactActivity::class.java)
                 val bundle = Bundle()
                 bundle.putString(PaymentScheduleCardViewModel.APPLICATION_NAME, viewModel.reactApplicationName)

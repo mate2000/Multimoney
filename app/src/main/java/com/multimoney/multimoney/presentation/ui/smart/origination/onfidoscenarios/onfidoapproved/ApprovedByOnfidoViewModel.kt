@@ -4,9 +4,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.data.networking.graphql.apollomodel.ValidateUserStatusQuery
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
+import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -19,6 +21,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.COMING_FROM_CR
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfidoscenarios.onfidoapproved.ApprovedByOnfidoViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -89,6 +92,7 @@ class ApprovedByOnfidoViewModel @Inject constructor(
                     cryptoStatus = validateUserStatus?.infoCrypto?.status ?: 0,
                     cardStatus = validateUserStatus?.infoVirtualCard?.status ?: 0
                 )
+                uiState.copy(userStatus = validateUserStatus)
             }
             result.onFailure {
                 onFailure(it)
@@ -172,7 +176,7 @@ class ApprovedByOnfidoViewModel @Inject constructor(
         if (idBrand == Brand.CostaRica.id) {
             navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/$email/$idBrand/$identification/${Screen.SmartPaymentOptionsScreenCR.baseRoute}/$idClient/$idLoanClient")
         } else {
-            navigateTo("${Screen.SmartPaymentMethodScreenSV.baseRoute}/$userSmartAccount/$accountToken/$idCurrency")
+            navigateTo("${Screen.SmartPaymentMethodScreenSV.baseRoute}/$userSmartAccount/$accountToken/$idCurrency/${encodeData(uiState.userStatus?.infoUser)}")
         }
     }
 
@@ -193,6 +197,7 @@ class ApprovedByOnfidoViewModel @Inject constructor(
         val alertMessageResource: Int = R.string.empty,
         val alertButtonTextResource: Int = R.string.approved_by_onfido_buttton_text,
         val alertSecondButtonTextResource: Int = R.string.finalize,
+        var userStatus: ValidateUserStatus? = null,
     )
 
     sealed class UIEvent {

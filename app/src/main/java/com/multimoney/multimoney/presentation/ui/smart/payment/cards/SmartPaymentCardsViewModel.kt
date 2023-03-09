@@ -34,11 +34,15 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_PAYMEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnCardSelected
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnHandleAddCardResponse
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnStopTimer
+import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnResumeTimer
+import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.AddVisaCardErrors
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Colon
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Dollar
@@ -54,6 +58,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SmartPaymentCardsViewModel @Inject constructor(
+    val countDownTimer: MMCountDownTimer,
     private val savedStateHandle: SavedStateHandle,
     private val dataStorePreferences: DataStorePreferences,
     private val queryListCardVDUseCase: QueryListCardVDUseCase,
@@ -99,7 +104,6 @@ class SmartPaymentCardsViewModel @Inject constructor(
             isEditPaymentSchedule = savedStateHandle[IS_EDIT_PAYMENT_SCHEDULE] ?: false
             currency = if (idCurrency == Dollar.id) Dollar.symbol else Colon.symbol
             previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
-            // onCallQueryGetClientCardsUseCase() //Ya no se puede usar
             getUserVDU()
         }
     }
@@ -111,7 +115,7 @@ class SmartPaymentCardsViewModel @Inject constructor(
                     cardVisaDirect = savedStateHandle[CLIENT_CARD_VISA_DIRECT],
                     isCardListEmpty = false
                 )
-        previousScreen == Screen.HomeScreen.route && isEditPaymentSchedule.not() -> onCallQueryGetCardsUseCase() // TODO
+        previousScreen == Screen.HomeScreen.route && isEditPaymentSchedule.not() -> onCallQueryGetCardsUseCase()
         else -> onCallGetCardsAutomaticDebitUseCase()
     }
 
@@ -138,6 +142,10 @@ class SmartPaymentCardsViewModel @Inject constructor(
         }
     }
 
+    private fun onAddCard(){
+
+    }
+
     private fun onCallQueryGetCardsUseCase() = executeUseCase {
         queryListCardVDUseCase.invoke(
             user = infoUser?.email.orEmpty(),
@@ -150,6 +158,9 @@ class SmartPaymentCardsViewModel @Inject constructor(
                     cardVisaDirect = cardsList?.firstOrNull(),
                     isCardListEmpty = cardsList.isNullOrEmpty()
                 )
+                if (cardsList.isNullOrEmpty()) {
+                    onAddCard()
+                }
             }.onFailure {
                 setErrorAlertResult(attempts = getCardAttempts)
             }.onLoading {
@@ -292,6 +303,14 @@ class SmartPaymentCardsViewModel @Inject constructor(
         )
     }
 
+    private fun onStopTimer() {
+        countDownTimer.stopTimer()
+    }
+
+    private fun onResumeTimer() {
+        countDownTimer.resumeTimer()
+    }
+
     private fun setErrorAlertResultAddCard(
         addVisaCardErrors: AddVisaCardErrors
     ) {
@@ -350,6 +369,8 @@ class SmartPaymentCardsViewModel @Inject constructor(
             is OnCardSelected -> onCardSelected(uiEvent.cardSelected)
             is OnStart -> onStart()
             is OnHandleAddCardResponse -> onHandleAddCardResponse(uiEvent.response, uiEvent.isError)
+            is OnStopTimer -> onStopTimer()
+            is OnResumeTimer -> onResumeTimer()
         }
     }
 
@@ -358,5 +379,7 @@ class SmartPaymentCardsViewModel @Inject constructor(
         data class OnHandleAddCardResponse(val response: String, val isError: Boolean) : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnStart : UIEvent()
+        object OnStopTimer : UIEvent()
+        object OnResumeTimer : UIEvent()
     }
 }

@@ -33,6 +33,7 @@ import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditMovementsResult
 import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
 import com.multimoney.domain.model.security.ConfigurationVersion
+import com.multimoney.domain.model.security.InfoUser
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -347,7 +348,7 @@ class ProductViewModel @Inject constructor(
                     currencyID = account?.idCurrencyAccount
                 )
             )
-            navigateTo("${Screen.SmartPaymentMethodScreenSV.baseRoute}/$smartIds")
+            navigateTo("${Screen.SmartPaymentMethodScreenSV.baseRoute}/$smartIds/${encodeData(uiState.userStatus?.infoUser)}")
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             val infoCredit = uiState.userStatus?.infoCredit
             val smartIds = encodeData(
@@ -489,7 +490,7 @@ class ProductViewModel @Inject constructor(
             ibanAccountNumber = account?.ibanAccountNumber,
             totalBalance = account?.totalBalance
         )
-        navigateTo("${Screen.SmartPaymentMethodScreenSV.baseRoute}/${encodeData(smartAccount)}")
+        navigateTo("${Screen.SmartPaymentMethodScreenSV.baseRoute}/${encodeData(smartAccount)}/${encodeData(uiState.userStatus?.infoUser)}")
     }
 
     private fun onNavigateToSmartMovements(accountToken: String) =
@@ -713,7 +714,7 @@ class ProductViewModel @Inject constructor(
                     currencyID = account?.idCurrencyAccount
                 )
             )
-            navigateTo("${Screen.SmartPaymentMethodScreenSV.baseRoute}/$smartIds")
+            navigateTo("${Screen.SmartPaymentMethodScreenSV.baseRoute}/$smartIds/${encodeData(uiState.userStatus?.infoUser)}")
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             callSinpeAccountsListUseCase(account, onLoadingValueChange)
         }

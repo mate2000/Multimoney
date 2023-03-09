@@ -480,12 +480,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // Smart
     object SmartScreen : Screen(
-        "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$FIRST_NAME}/{$LAST_NAME}/{$COMING_FROM_CRYPTO}/{$ID_GLOBAL_REQUEST}/{$ID_USER_REQUEST}",
+        "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$FIRST_NAME}/{$LAST_NAME}/{$COMING_FROM_CRYPTO}/{$ID_GLOBAL_REQUEST}/{$ID_USER_REQUEST}/{$EVICERTIA_STATUS}",
         "smart_screen"
     )
 
     object SmartOnfidoScreen : Screen(
-        "smart_onfido_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$FIRST_NAME}/{$LAST_NAME}/{$SYS_ID_ACCOUNT_REQUEST}/{$SIGN_DOCUMENT_GLOBAL_ID}/{$SIGN_DOCUMENT_URL}/{$COMING_FROM_CRYPTO}",
+        "smart_onfido_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$FIRST_NAME}/{$LAST_NAME}/{$SYS_ID_ACCOUNT_REQUEST}/{$SIGN_DOCUMENT_GLOBAL_ID}/{$SIGN_DOCUMENT_URL}/{$COMING_FROM_CRYPTO}/{$EVICERTIA_STATUS}",
         "smart_onfido_screen"
     )
 

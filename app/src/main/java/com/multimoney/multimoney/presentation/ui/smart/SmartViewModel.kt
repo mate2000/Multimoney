@@ -31,6 +31,7 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.COMING_FROM_CRYPTO
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
+import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_GLOBAL_REQUEST
@@ -94,6 +95,7 @@ class SmartViewModel @Inject constructor(
     val lastName: String = savedStateHandle[LAST_NAME] ?: ""
     var idGlobalRequest: Long = savedStateHandle[ID_GLOBAL_REQUEST] ?: 0
     var idSysRequest: Long = savedStateHandle[ID_USER_REQUEST] ?: 0
+    var idStatusFirm: String = savedStateHandle[EVICERTIA_STATUS] ?: ""
 
     // Stateless
     private var overridePreviousAction: (() -> Unit)? = null
@@ -425,7 +427,7 @@ class SmartViewModel @Inject constructor(
 
     private fun navigateToOnfido() {
         popAndNavigateTo(
-            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idSysRequest/$idGlobalRequest/$URL_EMPTY/$comingFromCrypto",
+            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idSysRequest/$idGlobalRequest/$URL_EMPTY/$comingFromCrypto/$idStatusFirm",
             Screen.SmartScreen.route
         )
     }

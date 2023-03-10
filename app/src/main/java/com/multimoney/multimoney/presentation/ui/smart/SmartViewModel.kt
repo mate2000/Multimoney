@@ -427,9 +427,7 @@ class SmartViewModel @Inject constructor(
 
     private fun navigateToOnfido() {
         popAndNavigateTo(
-            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/" +
-                "$firstName/$lastName/$idSysRequest/$idGlobalRequest/" +
-                "$URL_EMPTY/$comingFromCrypto/$evicertiaStatus/$workflow",
+            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idSysRequest/$idGlobalRequest/$URL_EMPTY/$comingFromCrypto/$evicertiaStatus/$workflow",
             Screen.SmartScreen.route
         )
     }
@@ -558,7 +556,8 @@ class SmartViewModel @Inject constructor(
             when (accountSmartData?.currentStep) {
                 SmartSteps.One.name -> {
                     trackAdjustEvent(
-                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimePersonal().first(),
+                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimePersonal()
+                            .first(),
                         reset = { dataStorePreferences.setAdjustSmartFirstTimePersonal(false) },
                         adjustEventType = AdjustEventType.ORIGINATION_SMART_FIRST_TIME_PERSONAL,
                         parameters = parameters,
@@ -567,7 +566,8 @@ class SmartViewModel @Inject constructor(
                 }
                 SmartSteps.Two.name -> {
                     trackAdjustEvent(
-                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimeHome().first(),
+                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimeHome()
+                            .first(),
                         reset = { dataStorePreferences.setAdjustSmartFirstTimeHome(false) },
                         adjustEventType = AdjustEventType.ORIGINATION_SMART_FIRST_TIME_HOME,
                         parameters = parameters,
@@ -576,8 +576,13 @@ class SmartViewModel @Inject constructor(
                 }
                 SmartSteps.Three.name -> {
                     trackAdjustEvent(
-                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimeIncomeInformation().first(),
-                        reset = { dataStorePreferences.setAdjustSmartFirstTimeIncomeInformation(false) },
+                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimeIncomeInformation()
+                            .first(),
+                        reset = {
+                            dataStorePreferences.setAdjustSmartFirstTimeIncomeInformation(
+                                false
+                            )
+                        },
                         adjustEventType = AdjustEventType.ORIGINATION_SMART_FIRST_TIME_INCOME_INFORMATION,
                         parameters = parameters,
                         data = data
@@ -585,7 +590,8 @@ class SmartViewModel @Inject constructor(
                 }
                 SmartSteps.Four.name -> {
                     trackAdjustEvent(
-                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimeBeneficiary().first(),
+                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimeBeneficiary()
+                            .first(),
                         reset = { dataStorePreferences.setAdjustSmartFirstTimeBeneficiary(false) },
                         adjustEventType = AdjustEventType.ORIGINATION_SMART_FIRST_TIME_BENEFICIARY,
                         parameters = parameters,
@@ -594,7 +600,8 @@ class SmartViewModel @Inject constructor(
                 }
                 SmartSteps.Six.name -> {
                     trackAdjustEvent(
-                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimePep().first(),
+                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimePep()
+                            .first(),
                         reset = { dataStorePreferences.setAdjustSmartFirstTimePep(false) },
                         adjustEventType = AdjustEventType.ORIGINATION_SMART_FIRST_TIME_PEP,
                         parameters = parameters,
@@ -613,7 +620,8 @@ class SmartViewModel @Inject constructor(
             when (accountSmartData?.currentStep) {
                 SmartSteps.One.name -> {
                     trackAdjustEvent(
-                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimeHome().first(),
+                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimeHome()
+                            .first(),
                         reset = { dataStorePreferences.setAdjustSmartFirstTimeHome(false) },
                         adjustEventType = AdjustEventType.ORIGINATION_SMART_FIRST_TIME_HOME,
                         parameters = parameters,
@@ -622,8 +630,13 @@ class SmartViewModel @Inject constructor(
                 }
                 SmartSteps.Two.name -> {
                     trackAdjustEvent(
-                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimeIncomeInformation().first(),
-                        reset = { dataStorePreferences.setAdjustSmartFirstTimeIncomeInformation(false) },
+                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimeIncomeInformation()
+                            .first(),
+                        reset = {
+                            dataStorePreferences.setAdjustSmartFirstTimeIncomeInformation(
+                                false
+                            )
+                        },
                         adjustEventType = AdjustEventType.ORIGINATION_SMART_FIRST_TIME_INCOME_INFORMATION,
                         parameters = parameters,
                         data = data
@@ -631,7 +644,8 @@ class SmartViewModel @Inject constructor(
                 }
                 SmartSteps.Four.name -> {
                     trackAdjustEvent(
-                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimePep().first(),
+                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimePep()
+                            .first(),
                         reset = { dataStorePreferences.setAdjustSmartFirstTimePep(false) },
                         adjustEventType = AdjustEventType.ORIGINATION_SMART_FIRST_TIME_PEP,
                         parameters = parameters,

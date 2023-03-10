@@ -9,6 +9,7 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
 import com.multimoney.domain.model.security.ValidateUserStatus
+import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -41,7 +42,7 @@ class ApprovedByOnfidoViewModel @Inject constructor(
         private set
 
     // stateLess
-    var userSmartAccount: String = ""
+    var userSmartAccounts: List<SmartAccountID>? = listOf()
     var accountToken: String = ""
     var idCurrency: Int = 0
     var idClient: Int = 0
@@ -128,10 +129,13 @@ class ApprovedByOnfidoViewModel @Inject constructor(
             result.onSuccess { balance ->
                 uiState = uiState.copy(isLoading = false)
                 balance?.let {
-                    balance.balanceAccountSmart?.firstOrNull()?.let { account ->
-                        userSmartAccount = account.accountNumber.orEmpty()
-                        accountToken = account.tokenNumber.orEmpty()
-                        idCurrency = account.idCurrencyAccount ?: 0
+                    userSmartAccounts = balance.balanceAccountSmart?.map { account ->
+                        SmartAccountID(
+                            tokenAccount = account?.tokenNumber,
+                            currencyID = account?.idCurrencyAccount,
+                            accountNumber = account?.accountNumber ?: "",
+                            ibanAccountNumber = account?.ibanAccountNumber
+                        )
                     }
                 }
             }
@@ -174,15 +178,15 @@ class ApprovedByOnfidoViewModel @Inject constructor(
 
     private fun navigateToFirstSavingTransfer() {
         if (idBrand == Brand.CostaRica.id) {
-            navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/$email/$idBrand/$identification/${Screen.SmartPaymentOptionsScreenCR.baseRoute}/$idClient/$idLoanClient")
+            navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/${encodeData(userSmartAccounts)}/$pkUser/$idBrand/$identification/$idClient/$idLoanClient")
         } else {
-            navigateTo("${Screen.SmartPaymentMethodScreenSV.baseRoute}/$userSmartAccount/$accountToken/$idCurrency/${encodeData(uiState.userStatus?.infoUser)}")
+            navigateTo("${Screen.SmartPaymentMethodScreenSV.baseRoute}/${encodeData(userSmartAccounts?.firstOrNull())}")
         }
     }
 
     private fun onSetUpDialog() {
         uiState = uiState.copy(
-            alertTitleResource = if (comingFromCrypto) R.string.crypto_finish_smart_alert_title else R.string.approved_by_onfido_title,
+            alertTitleResource = if (comingFromCrypto) R.string.crypto_finish_smart_alert_title else R.string.approved_sign_by_onfido_title,
             alertButtonTextResource = if (comingFromCrypto) R.string.crypto_finish_smart_alert_btn_discover_crypto else R.string.approved_by_onfido_buttton_text,
             alertMessageResource = if (comingFromCrypto) R.string.crypto_finish_smart_alert_description else R.string.empty,
             alertSecondButtonTextResource = if (comingFromCrypto) R.string.crypto_finish_smart_alert_btn_saving_smart else R.string.finalize

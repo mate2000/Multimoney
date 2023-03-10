@@ -29,7 +29,7 @@ fun OnfidoAndEvicertiaErrorsScreen(
                 iconResource = R.drawable.ic_error_symbol,
                 titleResource = R.string.rejected_by_onfido_title,
                 descriptionResource = R.string.smart_rejected_by_onfido_subtitle,
-                buttonTextResource = R.string.rejected_by_onfido_buttton_text,
+                buttonTextResource = R.string.error_button_try_again,
                 isLeftButtonVisible = false,
                 onRightButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateToHome) },
                 onButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateToOnfidoProcess) }

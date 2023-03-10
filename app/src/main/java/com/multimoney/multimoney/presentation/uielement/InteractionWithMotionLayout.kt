@@ -126,6 +126,14 @@ fun MotionLayoutMM(
             updateIsExpandedByClick(false)
             swipeAbleState.snapTo(COLLAPSED)
             animationProgress = ANIMATION_COLLAPSED
+        } else if (homeState == EXPANDED) {
+            updateHomeState(HomeState.OLD_STATE)
+            updateIsExpanded(false)
+            updateIsBackPressed(false)
+            updateIsExpandedByClick(false)
+            swipeAbleState.snapTo(COLLAPSED)
+            animationProgress = ANIMATION_COLLAPSED
+            updateIsExpandedByClick(true)
         }
     }
     Scaffold(

@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
+import com.multimoney.data.util.catalog.SmartWorkflow.SMART_FIRMED_ONFIDO_PENDING
 import com.multimoney.data.util.catalog.SmartWorkflow
 import com.multimoney.domain.interaction.accountsmart.MutationAccountStatusUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCase
@@ -339,7 +340,7 @@ class SmartOnfidoViewModel @Inject constructor(
     private fun navigateToCorrectScreen() {
         if (evicertiaUrl.isBlank()) evicertiaUrl = URL_EMPTY
         val signDocumentStep =
-            if (evicertiaStatus.lowercase() == SmartOnFidoOrFirmStatus.FIRMED.status.lowercase()) {
+            if (evicertiaStatus.lowercase() == SmartOnFidoOrFirmStatus.FIRMED.status.lowercase() || evicertiaStatus.lowercase() == SMART_FIRMED_ONFIDO_PENDING.workflow.lowercase()) {
                 VALIDATE_IDENTITY.value
             } else if (evicertiaUrl.isNotBlank() && evicertiaUrl != URL_EMPTY) {
                 SIGN_DOCUMENTS_STEP.value

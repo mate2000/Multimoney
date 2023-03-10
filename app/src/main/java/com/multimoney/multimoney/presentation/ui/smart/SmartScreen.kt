@@ -74,7 +74,10 @@ fun SmartScreen(
             .background(MultimoneyTheme.colors.background)
     ) {
 
-        if (viewModel.workflow != SmartWorkflow.SMART_ONFIDO_PROCESS.workflow) {
+        // avoid showing smart origination steps if onfido / evicertia status are received
+        if (viewModel.workflow != SmartWorkflow.SMART_ONFIDO_PROCESS.workflow &&
+            viewModel.workflow != SmartWorkflow.SMART_CONTRACT_PROCESS.workflow
+        ) {
             Column {
                 TopNavBar(
                     isLeftButtonVisible = viewModel.uiState.currentStep <= viewModel.getTotalStepperCounter(),

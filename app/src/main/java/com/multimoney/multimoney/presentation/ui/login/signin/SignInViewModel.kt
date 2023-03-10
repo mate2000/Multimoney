@@ -26,7 +26,6 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
-import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
 import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
@@ -234,7 +233,9 @@ class SignInViewModel @Inject constructor(
                     ),
                     isLoading = false
                 )
-        authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.BlacklistedDevice.code) == true ->
+        authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.BlacklistedDevice.code) == true || authException.cause?.message?.isCognitoErrorCode(
+            CognitoErrorCode.BlacklistedDeviceTooManyAccounts.code
+        ) == true ->
             uiState =
                 uiState.copy(
                     errorCode = CognitoErrorCode.BlacklistedDevice,
@@ -686,7 +687,8 @@ class SignInViewModel @Inject constructor(
             is UIEvent.OnUpdateToastVisibility -> onUpdateToastVisibility(event.value)
             is UIEvent.OnUpdateIso3Country -> uiState =
                 uiState.copy(isO3Country = event.iso3Country)
-            is UIEvent.OnSetupSupportLink  -> uiState = uiState.copy(linkWhatsapp = event.whatsappLink)
+            is UIEvent.OnSetupSupportLink -> uiState =
+                uiState.copy(linkWhatsapp = event.whatsappLink)
             is UIEvent.OnOpenWhatsappLink -> openWhatsAppLink(event.context)
         }
     }
@@ -719,7 +721,7 @@ class SignInViewModel @Inject constructor(
             val is03Country: String
         ) : UIEvent()
 
-        data class OnSetupSupportLink(val whatsappLink: String): UIEvent()
+        data class OnSetupSupportLink(val whatsappLink: String) : UIEvent()
         data class OnStart(
             val deviceName: String,
             val deviceType: String,

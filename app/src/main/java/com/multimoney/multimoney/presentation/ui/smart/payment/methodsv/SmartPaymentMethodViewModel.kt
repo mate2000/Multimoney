@@ -5,9 +5,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.domain.model.accountsmart.SmartAccountID
+import com.multimoney.domain.model.security.InfoUser
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.INFO_USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIState
 import com.multimoney.multimoney.presentation.ui.smart.payment.methodsv.SmartPaymentMethodViewModel.UIEvent.OnNavigateBack
@@ -26,10 +28,12 @@ class SmartPaymentMethodViewModel @Inject constructor(
         private set
 
     // stateLess
+    private var infoUser: InfoUser? = null
     private var smartAccount: SmartAccountID? = null
 
     init {
         smartAccount = savedStateHandle[SMART_ACCOUNT]
+        infoUser = savedStateHandle[INFO_USER]
     }
 
     private fun onNavigateBack() {
@@ -45,7 +49,7 @@ class SmartPaymentMethodViewModel @Inject constructor(
 
     private fun navigateToVisaScreen() {
         navigateTo(
-            "${Screen.SmartPaymentCardsScreenSV.baseRoute}/${encodeData(smartAccount)}"
+            "${Screen.SmartPaymentCardsScreenSV.baseRoute}/${encodeData(smartAccount)}/${encodeData(infoUser)}"
         )
     }
 

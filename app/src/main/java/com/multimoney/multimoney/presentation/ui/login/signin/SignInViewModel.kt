@@ -152,7 +152,7 @@ class SignInViewModel @Inject constructor(
                                                 authUserAttribute
                                             )
                                             if (payload.getString(SignUpPasswordViewModel.COGNITO_CHANGE_PASSWORD_REQUIRED)
-                                                .toBoolean()
+                                                    .toBoolean()
                                             ) {
                                                 uiState = uiState.copy(
                                                     openDialog = DialogParameters(
@@ -460,10 +460,19 @@ class SignInViewModel @Inject constructor(
     private fun navigateToHome() {
         viewModelScope.launch {
             if (dataStorePreferences.isAdjustFirstSingInEventRegister().first()) {
-                registerAdjustEvent(AdjustEventType.FIRST_LOGIN_3000, isLoggedIn = false, data = EmailDto(uiState.userEmail).toJson())
+                registerAdjustEvent(
+                    AdjustEventType.FIRST_LOGIN_3000,
+                    isLoggedIn = false,
+                    data = EmailDto(uiState.userEmail).toJson()
+                )
                 dataStorePreferences.isAdjustFirstSingInEventRegister(false)
             } else {
-                registerAdjustEvent(AdjustEventType.LOGIN_3001, isLoggedIn = false, applyAdjust = false, data = EmailDto(uiState.userEmail).toJson())
+                registerAdjustEvent(
+                    AdjustEventType.LOGIN_3001,
+                    isLoggedIn = false,
+                    applyAdjust = false,
+                    data = EmailDto(uiState.userEmail).toJson()
+                )
             }
         }
         popAndNavigateTo(
@@ -472,7 +481,8 @@ class SignInViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateToSignUp() = navigateTo(route = "${Screen.SignUpScreen.baseRoute}/".plus(0))
+    private fun onNavigateToSignUp() =
+        navigateTo(route = "${Screen.SignUpScreen.baseRoute}/".plus(0))
 
     private fun initializeBiometricPrompt(
         biometricPromptTitle: String,
@@ -614,7 +624,12 @@ class SignInViewModel @Inject constructor(
         uiState.userName.isNotEmpty() && uiState.userEmail == biometricUserEmail
 
     private fun onNavigateToOTPScreen() {
-        registerAdjustEvent(AdjustEventType.SECURITY_LOGIN_CHANGE_DEVICE_9002, isLoggedIn = false, applyAdjust = false, data = EmailDto(uiState.userEmail).toJson())
+        registerAdjustEvent(
+            AdjustEventType.SECURITY_LOGIN_CHANGE_DEVICE_9002,
+            isLoggedIn = false,
+            applyAdjust = false,
+            data = EmailDto(uiState.userEmail).toJson()
+        )
         popAndNavigateTo(
             "${Screen.SignInOTPScreen.baseRoute}/${uiState.userEmail}/${uiState.userPassword}/$deviceId/$uniqueId/$ipAddress/$deviceType/$deviceName/$appVersion/$deviceBrand/$deviceModel/$isEmulator",
             Screen.SignInOTPScreen.baseRoute
@@ -749,8 +764,6 @@ class SignInViewModel @Inject constructor(
         data class OnUpdateToastVisibility(val value: Boolean) : UIEvent()
         data class OnUpdateIso3Country(val iso3Country: String) : UIEvent()
         data class OnOpenWhatsappLink(val context: Context) : UIEvent()
-
-
     }
 
     companion object {

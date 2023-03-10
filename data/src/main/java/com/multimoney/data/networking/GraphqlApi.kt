@@ -32,6 +32,8 @@ import com.multimoney.data.networking.graphql.apollomodel.CivilStatusQuery
 import com.multimoney.data.networking.graphql.apollomodel.CompanyCantonQuery
 import com.multimoney.data.networking.graphql.apollomodel.CompanyDistrictQuery
 import com.multimoney.data.networking.graphql.apollomodel.CompanyProvinceQuery
+import com.multimoney.data.networking.graphql.apollomodel.CreateCardVDMutation
+import com.multimoney.data.networking.graphql.apollomodel.CreateUserVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.CreditContractEventSubscription
 import com.multimoney.data.networking.graphql.apollomodel.CreditExtensionAmountQuery
 import com.multimoney.data.networking.graphql.apollomodel.CreditExtensionMessageQuery
@@ -126,8 +128,6 @@ import com.multimoney.data.networking.graphql.apollomodel.StepByStepQuery
 import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsSignedQuery
 import com.multimoney.data.networking.graphql.apollomodel.UpdateCardVDMutation
-import com.multimoney.data.networking.graphql.apollomodel.CreateCardVDMutation
-import com.multimoney.data.networking.graphql.apollomodel.CreateUserVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.UpdateFavoriteContactSmartMutation
 import com.multimoney.data.networking.graphql.apollomodel.UpdateSmartAccountStatusMutation
 import com.multimoney.data.networking.graphql.apollomodel.UpdateUserRegisterMutation
@@ -1908,7 +1908,8 @@ class GraphqlApi @Inject constructor(
         idClient: Int,
         idLoanClient: Int,
         idCard: Long,
-        cardMasked: String
+        cardMasked: String,
+        identification: String
     ): ApolloCall<ActivatedCardAutomaticDebitMutation.Data> = apolloAuthorizedClient.mutation(
         ActivatedCardAutomaticDebitMutation(
             user = user,
@@ -1916,7 +1917,8 @@ class GraphqlApi @Inject constructor(
             idClient = idClient,
             idLoanClient = idLoanClient,
             idCard = idCard,
-            cardMasked = cardMasked
+            cardMasked = cardMasked,
+            identification = identification
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 

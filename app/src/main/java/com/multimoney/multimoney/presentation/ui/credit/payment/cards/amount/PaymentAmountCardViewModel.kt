@@ -13,8 +13,8 @@ import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.virtualcard.MutationActivatedCardAutomaticDebitUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationPayCreditVDUseCase
-import com.multimoney.domain.model.security.InfoUser
 import com.multimoney.domain.model.metrics.BaseEventDataDto
+import com.multimoney.domain.model.security.InfoUser
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
@@ -167,13 +167,13 @@ class PaymentAmountCardViewModel @Inject constructor(
         logAdjustEvent()
         popAndNavigateTo(
             "${Screen.PaymentCardVoucherScreen.baseRoute}/$identification/$idClient/$idLoanClient/${
-                encodeData(
-                    uiState.card
-                )
+            encodeData(
+                uiState.card
+            )
             }/${getCurrentAmountFormatted()}/${uiState.isAutomaticProgrammedPaymentChecked}/${payCreditVisa?.referenceAuthorization}/$paymentDate/${
-                encodeData(
-                    infoUser
-                )
+            encodeData(
+                infoUser
+            )
             }",
             Screen.PaymentAmountCardsScreen.route
         )
@@ -290,7 +290,8 @@ class PaymentAmountCardViewModel @Inject constructor(
             idClient = idClient ?: 0,
             idLoanClient = idLoanClient ?: 0,
             idCard = uiState.card?.idCard?.toLong() ?: 0,
-            cardMasked = uiState.card?.cardMaskedNumber.orEmpty()
+            cardMasked = uiState.card?.cardMaskedNumber.orEmpty(),
+            identification = identification.orEmpty()
         ).collectLatest { result ->
             result.onSuccess {
                 onActivateClientAutomaticDebitResult(it?.isUpdated ?: false)

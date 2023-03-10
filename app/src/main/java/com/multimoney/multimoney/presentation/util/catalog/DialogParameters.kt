@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import com.multimoney.multimoney.R
 
 data class DialogParameters(
-    val titleResource: Int = R.string.error,
+    val titleResource: Int = R.string.empty,
     val description: String = "",
     val descriptionResource: Int = R.string.empty,
     val isActive: MutableState<Boolean> = mutableStateOf(false),

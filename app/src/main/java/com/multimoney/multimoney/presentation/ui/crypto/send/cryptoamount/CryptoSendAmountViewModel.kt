@@ -130,7 +130,8 @@ class CryptoSendAmountViewModel @Inject constructor(
                 }
                 uiState = uiState.copy(
                     isError = true,
-                    isLoading = false
+                    isLoading = false,
+                    showErrorScreen = true
                 )
             }
             result.onLoading {
@@ -326,6 +327,7 @@ class CryptoSendAmountViewModel @Inject constructor(
         val sendCryptoAddressRequest: SendCryptoAddressRequest? = null,
         val failed: Boolean = false,
         val failedFirstTime: Boolean = false,
+        val showErrorScreen: Boolean = false
     )
 
     sealed class UIEvent {

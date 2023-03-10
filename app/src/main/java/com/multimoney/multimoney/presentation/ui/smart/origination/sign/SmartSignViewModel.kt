@@ -8,8 +8,11 @@ import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
+import com.multimoney.data.util.catalog.SmartWorkflow
+import com.multimoney.domain.interaction.accountsmart.MutationAccountStatusUseCase
 import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
 import com.multimoney.domain.model.util.error.HttpError
+import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -23,7 +26,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
-import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_AND_EVICERTIA_ERROR
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_GET_EVICERTIA_LINK
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_GLOBAL_ID
@@ -32,6 +34,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.OpenWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.home.HomeState
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.SmartSubscriptionManager
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.BaseEvent.SimulateUserInteraction
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.NavigateToSignUpDocument
@@ -56,16 +59,18 @@ import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class SmartSignViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val smartSubscriptionManager: SmartSubscriptionManager,
     val mmCountDownTimer: MMCountDownTimer,
-    private val dataStorePreferences: DataStorePreferences
+    private val dataStorePreferences: DataStorePreferences,
+    private val mutationAccountStatusUseCase: MutationAccountStatusUseCase
 ) : BaseViewModel(true) {
 
     // uiState
@@ -114,7 +119,10 @@ class SmartSignViewModel @Inject constructor(
                 description = dialogDescription,
                 positiveResource = string.sign_credit_dialog_continue,
                 negativeResource = string.payment_points_dialog_negative_button,
-                negativeAction = { onUIEvent(OnNavigateToHome) },
+                negativeAction = {
+                    emitBaseEvent(SimulateUserInteraction)
+                    onUIEvent(OnNavigateToHome)
+                },
                 isActive = mutableStateOf(true)
             )
         )
@@ -125,6 +133,28 @@ class SmartSignViewModel @Inject constructor(
         smartSubscriptionManager.idSubscriptionSubscribe(getSmartSubscriptionListener())
         if (smartSubscriptionManager.hasEvicertiaLink()) {
             mmCountDownTimer.startTimer(WAIT_TIME)
+        } else if (workflow.lowercase() == SmartWorkflow.SMART_CONTRACT_PROCESS.workflow) {
+            onCallMutationAccountStatusUseCase()
+        }
+    }
+
+    private fun onCallMutationAccountStatusUseCase() = executeUseCase {
+        mutationAccountStatusUseCase.invoke(
+            user = user,
+            idBrand = idBrand,
+            identificationNumber = identification,
+            newState = ProductViewModel.DEFAULT_NEW_STATE,
+            typeState = ProductViewModel.DEFAULT_TYPE_STATE,
+            idAccountSysde = idUserRequest,
+            idAccountRequest = globalId
+                ?: 0L
+        ).collectLatest { result ->
+            result.onSuccess {
+                uiState = uiState.copy(
+                    signDocumentProcessStep = SIGN_DOCUMENTS_STEP.value,
+                    signDocumentUrl = it?.urlFirmDocument ?: ""
+                )
+            }
         }
     }
 
@@ -155,9 +185,15 @@ class SmartSignViewModel @Inject constructor(
             CreditSubscriptionStep.DocumentsRejected.step -> {
                 emitBaseEvent(SimulateUserInteraction)
                 if (isEvicertiaOverCounted(smartContractEvent.statusEvicertia)) {
-                    onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_SECOND_TIME.value, smartContractEvent)
+                    onNavigateToOnfidoAndEvicertiaError(
+                        EVICERTIA_REJECTED_SECOND_TIME.value,
+                        smartContractEvent
+                    )
                 } else {
-                    onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_FIRST_TIME.value, smartContractEvent)
+                    onNavigateToOnfidoAndEvicertiaError(
+                        EVICERTIA_REJECTED_FIRST_TIME.value,
+                        smartContractEvent
+                    )
                 }
             }
             CreditSubscriptionStep.AccountActivated.step -> {
@@ -211,10 +247,16 @@ class SmartSignViewModel @Inject constructor(
                 )
             }
             SmartOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {
-                onNavigateToOnfidoAndEvicertiaError(ONFIDO_REJECTED_FIRST_TIME.value, smartContractEvent)
+                onNavigateToOnfidoAndEvicertiaError(
+                    ONFIDO_REJECTED_FIRST_TIME.value,
+                    smartContractEvent
+                )
             }
             SmartOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase() -> {
-                onNavigateToOnfidoAndEvicertiaError(ONFIDO_REJECTED_SECOND_TIME.value, smartContractEvent)
+                onNavigateToOnfidoAndEvicertiaError(
+                    ONFIDO_REJECTED_SECOND_TIME.value,
+                    smartContractEvent
+                )
             }
         }
     }
@@ -237,7 +279,10 @@ class SmartSignViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateToOnfidoAndEvicertiaError(error: String, smartContractEvent: AccountSmartContractResult?) {
+    private fun onNavigateToOnfidoAndEvicertiaError(
+        error: String,
+        smartContractEvent: AccountSmartContractResult?
+    ) {
         trackAdjustOriginationRejected(smartContractEvent)
         smartSubscriptionManager.destroySubscription()
         popAndNavigateTo(

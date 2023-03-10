@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditWorkflow
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
@@ -51,7 +52,7 @@ fun CreditContent(viewModel: ProductViewModel) {
                     CreditWorkflow.CONTACT_ERROR.workflow -> {
                         CardWithCreditInProcess(
                             type = getCardWithCreditInProcessType(infoCredit?.wording?.workflow ?: ""),
-                            idBrand = viewModel.uiState.idBrand.toInt(),
+                            idBrand = viewModel.uiState.idBrand.toIntOrNull() ?: Brand.CostaRica.id,
                             action = getCardAction(
                                 workflow = infoCredit?.wording?.workflow ?: "",
                                 whatsAppLink = whatsAppLink,

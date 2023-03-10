@@ -163,7 +163,6 @@ fun AmountInputSection(
     focusRequester: FocusRequester,
     onAmountChanged: (String) -> Unit
 ) {
-    println("Pepe: $isError, ${stringResource(id = errorText)}")
     val quoteAmountText = remember { quoteAmount }
     val baseAmountText = remember { baseAmount }
     val isTransformationCurrencyValue = remember { isTransformationCurrency }

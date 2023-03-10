@@ -239,7 +239,7 @@ class SignInViewModel @Inject constructor(
                 uiState.copy(
                     errorCode = CognitoErrorCode.BlacklistedDevice,
                     openDialog = DialogParameters(
-                        titleResource = if (uiState.isO3Country == SignUpViewModel.ISO3_COSTA_RICA) string.sign_in_session_blacklisted_title else string.sign_in_session_blacklisted_title,
+                        titleResource = if (uiState.isO3Country == SignUpViewModel.ISO3_COSTA_RICA) string.sign_in_session_blacklisted_title_cr else string.sign_in_session_blacklisted_title,
                         descriptionResource = string.sign_in_session_blocked_message,
                         positiveResource = string.sign_in_session_blacklisted_contact_support,
                         isActive = mutableStateOf(true),

@@ -154,7 +154,7 @@ class SmartSignViewModel @Inject constructor(
                 }
             }
             CreditSubscriptionStep.AccountActivated.step -> {
-                setSuccessAlertResult()
+                navigateToApprovedByOnfido()
             }
             CreditSubscriptionStep.ErrorActivatingAccount.step, CreditSubscriptionStep.DocumentsFailed.step -> {
                 showSubscriptionError()
@@ -175,18 +175,6 @@ class SmartSignViewModel @Inject constructor(
                 emitBaseEvent(OpenWhatsAppLink)
                 onUIEvent(OnNavigateToHome)
             }
-        )
-    }
-
-    private fun setSuccessAlertResult() {
-        uiState = uiState.copy(
-            isAlertResultVisible = true,
-            alertResultIsRightButtonVisible = true,
-            alertResultIconResource = drawable.ic_success_symbol,
-            alertResultTitleResource = string.approved_by_onfido_title,
-            alertResultButtonResource = string.understood,
-            alertResultRightButtonClick = { onUIEvent(OnNavigateToHome) },
-            alertResultButtonAction = { onUIEvent(OnNavigateToHome) }
         )
     }
 

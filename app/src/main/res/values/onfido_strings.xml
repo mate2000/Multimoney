@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--This default resources are for SV-->
+<!--This is a fail-safe default-->
 
 <resources>
     <string name="onfido_accessibility_liveness_confirmation_view">Su video</string>

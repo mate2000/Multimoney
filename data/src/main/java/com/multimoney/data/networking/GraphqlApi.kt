@@ -18,6 +18,7 @@ import com.multimoney.data.networking.graphql.apollomodel.AddressLevel2Query
 import com.multimoney.data.networking.graphql.apollomodel.AddressLevel3Query
 import com.multimoney.data.networking.graphql.apollomodel.BalanceCardInformationQuery
 import com.multimoney.data.networking.graphql.apollomodel.BalanceQuery
+import com.multimoney.data.networking.graphql.apollomodel.BankList365TypeAndTypeAccountQuery
 import com.multimoney.data.networking.graphql.apollomodel.BankListTransfer365Query
 import com.multimoney.data.networking.graphql.apollomodel.BanksAndRegularExpressionQuery
 import com.multimoney.data.networking.graphql.apollomodel.BuyCryptoCurrencyHQRMutation
@@ -1441,7 +1442,9 @@ class GraphqlApi @Inject constructor(
         country: String,
         idAccount: Long?,
         isFavorite: Boolean?,
-        option: String?
+        option: String?,
+        idBank: Long?,
+        typeAccount: Int?
     ): ApolloCall<ManageSinpeAccountSaveMutation.Data> =
         apolloAuthorizedClient.mutation(
             ManageSinpeAccountSaveMutation(
@@ -1454,7 +1457,9 @@ class GraphqlApi @Inject constructor(
                 country = Optional.presentIfNotNull(country),
                 id_account = Optional.presentIfNotNull(idAccount),
                 isFavorite = Optional.presentIfNotNull(isFavorite),
-                option = Optional.presentIfNotNull(option)
+                option = Optional.presentIfNotNull(option),
+                idBank = Optional.presentIfNotNull(idBank),
+                typeAccount = Optional.presentIfNotNull(typeAccount)
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -1547,7 +1552,8 @@ class GraphqlApi @Inject constructor(
         country: String,
         idAccount: Long,
         accountNumber: String,
-        isFavorite: Boolean?
+        isFavorite: Boolean?,
+        option: String?
     ): ApolloCall<ListSinpeAccountQuery.Data> =
         apolloAuthorizedClient.query(
             ListSinpeAccountQuery(
@@ -1557,7 +1563,8 @@ class GraphqlApi @Inject constructor(
                 country,
                 idAccount,
                 accountNumber,
-                Optional.presentIfNotNull(isFavorite)
+                Optional.presentIfNotNull(isFavorite),
+                Optional.presentIfNotNull(option)
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -2526,6 +2533,15 @@ class GraphqlApi @Inject constructor(
             identification,
             asset,
             crypto_network
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryGetBankList365TypeAndAccountType(
+        idBrand: Int,
+        user: String
+    ): ApolloCall<BankList365TypeAndTypeAccountQuery.Data> = apolloAuthorizedClient.query(
+        BankList365TypeAndTypeAccountQuery(
+            idBrand, user
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

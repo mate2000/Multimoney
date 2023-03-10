@@ -9,12 +9,12 @@ import com.multimoney.data.networking.GraphqlApi
 import com.multimoney.data.paging.CreditMovementsPagingSource
 import com.multimoney.domain.model.credit.AccountStatement
 import com.multimoney.domain.model.credit.AutomaticDebit
+import com.multimoney.domain.model.credit.BankList365TypeAndAccountType
 import com.multimoney.domain.model.credit.BanksAndRegularExpression
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditApplication
 import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.credit.CreditContractEvent
-import com.multimoney.domain.model.credit.LinkCreditContract
 import com.multimoney.domain.model.credit.CreditExtensionAmount
 import com.multimoney.domain.model.credit.CreditExtensionDetail
 import com.multimoney.domain.model.credit.CreditExtensionMessage
@@ -24,6 +24,7 @@ import com.multimoney.domain.model.credit.CreditOffer
 import com.multimoney.domain.model.credit.DestinyAccount
 import com.multimoney.domain.model.credit.ExchangeRate
 import com.multimoney.domain.model.credit.GetInfoDeposit
+import com.multimoney.domain.model.credit.LinkCreditContract
 import com.multimoney.domain.model.credit.PaymentAmount
 import com.multimoney.domain.model.credit.PaymentPoint
 import com.multimoney.domain.model.credit.ProcessCreditExtensionDetail
@@ -39,8 +40,8 @@ import com.multimoney.domain.model.util.MultimoneyResult.Message
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.domain.repository.CreditRepository
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class CreditRepositoryImpl @Inject constructor(
     private val graphqlApi: GraphqlApi
@@ -816,6 +817,19 @@ class CreditRepositoryImpl @Inject constructor(
         idBrand: Int
     ): Flow<MultimoneyResult<AccountStatement?>> = fetchData(
         apolloCall = graphqlApi.queryAccountStatement(creditNumber = creditNumber, user = user, idBrand = idBrand),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun queryBankList365TypeAndAccountType(
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<BankList365TypeAndAccountType?>> = fetchData(
+        apolloCall = graphqlApi.queryGetBankList365TypeAndAccountType(
+            idBrand,
+            user
+        ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }

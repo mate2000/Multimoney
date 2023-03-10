@@ -103,7 +103,7 @@ class MyAccountsViewModel @Inject constructor(
             nameAccount = uiState.accountNickname ?: "",
             isFavorite = uiState.selectedAccount?.isFavorite ?: true,
             idBank = uiState.selectedAccount?.idBank ?: 0,
-            typeAccount = uiState.selectedAccount?.typeAccount ?: 0,
+            typeAccount = uiState.selectedAccount?.accountTypeCore ?: 0,
             idAccount = uiState.selectedAccount?.accountId ?: 0
         ).collectLatest { result ->
             result.onSuccess {
@@ -145,7 +145,7 @@ class MyAccountsViewModel @Inject constructor(
             nameAccount = uiState.selectedAccount?.nameAccount ?: "",
             isFavorite = uiState.selectedAccount?.isFavorite?.not() ?: true,
             idBank = uiState.selectedAccount?.idBank ?: 0,
-            typeAccount = uiState.selectedAccount?.typeAccount ?: 0,
+            typeAccount = uiState.selectedAccount?.accountTypeCore ?: 0,
             idAccount = uiState.selectedAccount?.accountId ?: 0
         ).collectLatest { result ->
             result.onSuccess {

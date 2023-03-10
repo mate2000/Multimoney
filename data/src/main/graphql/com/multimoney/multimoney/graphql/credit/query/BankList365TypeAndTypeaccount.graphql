@@ -1,0 +1,19 @@
+query BankList365TypeAndTypeAccount($idBrand: Int!, $user: String!){
+  bankList365Type(bankList365Input: {
+    idBrand: $idBrand,
+    user: $user
+  }) {
+    bankId
+    name
+  }
+  typeAccount(typeAccountInput: {
+    idBrand: $idBrand,
+    user: $user
+  }) {
+    result {
+      id
+      name
+    }
+    status
+  }
+}

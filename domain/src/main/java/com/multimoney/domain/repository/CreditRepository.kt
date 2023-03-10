@@ -3,6 +3,7 @@ package com.multimoney.domain.repository
 import androidx.paging.PagingData
 import com.multimoney.domain.model.credit.AccountStatement
 import com.multimoney.domain.model.credit.AutomaticDebit
+import com.multimoney.domain.model.credit.BankList365TypeAndAccountType
 import com.multimoney.domain.model.credit.BanksAndRegularExpression
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditApplication
@@ -15,9 +16,9 @@ import com.multimoney.domain.model.credit.CreditInfoQuestion
 import com.multimoney.domain.model.credit.CreditMovement
 import com.multimoney.domain.model.credit.CreditOffer
 import com.multimoney.domain.model.credit.DestinyAccount
-import com.multimoney.domain.model.credit.LinkCreditContract
 import com.multimoney.domain.model.credit.ExchangeRate
 import com.multimoney.domain.model.credit.GetInfoDeposit
+import com.multimoney.domain.model.credit.LinkCreditContract
 import com.multimoney.domain.model.credit.PaymentAmount
 import com.multimoney.domain.model.credit.PaymentPoint
 import com.multimoney.domain.model.credit.ProcessCreditExtensionDetail
@@ -384,4 +385,9 @@ interface CreditRepository {
         user: String,
         idBrand: Int
     ): Flow<MultimoneyResult<AccountStatement?>>
+
+    suspend fun queryBankList365TypeAndAccountType(
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<BankList365TypeAndAccountType?>>
 }

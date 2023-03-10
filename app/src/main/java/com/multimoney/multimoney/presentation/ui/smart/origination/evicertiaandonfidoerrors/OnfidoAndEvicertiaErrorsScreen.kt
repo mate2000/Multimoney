@@ -32,7 +32,7 @@ fun OnfidoAndEvicertiaErrorsScreen(
                 buttonTextResource = R.string.error_button_try_again,
                 isLeftButtonVisible = false,
                 onRightButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateToHome) },
-                onButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateToOnfidoProcess) }
+                onButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateToHome) }
             )
         }
         OnfidoAndEvicertiaError.ONFIDO_REJECTED_SECOND_TIME.value -> {

@@ -15,12 +15,15 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.WORK_FLOW
 import com.multimoney.multimoney.presentation.navigation.navgraph.COMING_FROM_CRYPTO
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
+import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_AND_EVICERTIA_ERROR
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_GET_EVICERTIA_LINK
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_GLOBAL_ID
@@ -81,6 +84,8 @@ class SmartSignViewModel @Inject constructor(
     var globalId: Long? = 0
     var comingFromCrypto: Boolean = false
     var shouldGetEvicertiaLink = true
+    var evicertiaStatus: String = ""
+    var workflow: String = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -98,6 +103,8 @@ class SmartSignViewModel @Inject constructor(
         globalId = savedStateHandle[SIGN_DOCUMENT_GLOBAL_ID] ?: 0
         comingFromCrypto = savedStateHandle[COMING_FROM_CRYPTO] ?: false
         shouldGetEvicertiaLink = savedStateHandle[SHOULD_GET_EVICERTIA_LINK] ?: true
+        evicertiaStatus = savedStateHandle[EVICERTIA_STATUS] ?: ""
+        workflow = savedStateHandle[WORK_FLOW] ?: ""
     }
 
     private fun createDialog() {
@@ -234,7 +241,7 @@ class SmartSignViewModel @Inject constructor(
         trackAdjustOriginationRejected(smartContractEvent)
         smartSubscriptionManager.destroySubscription()
         popAndNavigateTo(
-            route = "${Screen.SmartOnfidoAndEvicertiaErrorsScreen.baseRoute}/$error/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$comingFromCrypto/$user/$globalId",
+            route = "${Screen.SmartOnfidoAndEvicertiaErrorsScreen.baseRoute}/$error/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$comingFromCrypto/$user/$globalId/$evicertiaStatus/$workflow",
             popTo = Screen.SmartSignScreen.route
         )
     }

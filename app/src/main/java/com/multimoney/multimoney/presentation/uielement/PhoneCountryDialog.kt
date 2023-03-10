@@ -83,7 +83,7 @@ fun PhoneCountryDialog(
     countryList: MutableList<CountryData>? = mutableListOf()
 ) {
     var innerCountryList = mutableListOf<CountryData>()
-    var isPickCountry by remember { mutableStateOf(defaultSelectedCountry) }
+    var isPickCountry = defaultSelectedCountry
     var isOpenDialog by remember { mutableStateOf(false) }
     var searchValue by remember { mutableStateOf("") }
     var isSearch by remember { mutableStateOf(false) }

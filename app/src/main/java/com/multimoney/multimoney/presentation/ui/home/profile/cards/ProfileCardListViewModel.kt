@@ -19,12 +19,12 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PROFILE_CARD_LIST_ORIGIN
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.ADD_CARD_RESPONSE
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CARD
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnCallQueryGetClientCards
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnCardThreePointsSelected
@@ -214,7 +214,7 @@ class ProfileCardListViewModel @Inject constructor(
                 getNavParam(IDENTIFICATION, identification)
             )
             .plus(
-                getNavParam(ID_CARD, uiState.cardSelected?.idCard ?: "")
+                getNavParam(ID_CARD, uiState.cardVDSelected?.idCard ?: "")
             )
             .plus(
                 getNavParam(USER, user)
@@ -245,8 +245,7 @@ class ProfileCardListViewModel @Inject constructor(
         val cardVDSelected: CardVisaDirect? = null,
         val toastIsVisible: Boolean = false,
         val toastMessage: Int = R.string.empty,
-        val deleteDialogIsVisible: Boolean = false,
-        val cardSelected: CardVisaDirect? = null
+        val deleteDialogIsVisible: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

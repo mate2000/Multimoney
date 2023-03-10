@@ -21,7 +21,7 @@ import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaErr
 fun OnfidoAndEvicertiaErrorsScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
-    viewModel: OnfidoAndEvicertiaErrorsViewModel = hiltViewModel(),
+    viewModel: OnfidoAndEvicertiaErrorsViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)
@@ -35,7 +35,7 @@ fun OnfidoAndEvicertiaErrorsScreen(
         },
         onNavigateToOnfido = {
             viewModel.onUIEvent(OnNavigateToOnfidoProcess)
-        },
+        }
     )
 }
 
@@ -45,7 +45,7 @@ fun OnfidoAndEvicertiaErrorsContent(
     error: String = EVICERTIA_REJECTED_FIRST_TIME.value,
     idBrand: Int = ElSalvador.id,
     onNavigateHome: () -> Unit = {},
-    onNavigateToOnfido: () -> Unit = {},
+    onNavigateToOnfido: () -> Unit = {}
 ) {
     when (error) {
         EVICERTIA_REJECTED_FIRST_TIME.value -> {
@@ -56,7 +56,7 @@ fun OnfidoAndEvicertiaErrorsContent(
                 buttonTextResource = string.sign,
                 isLeftButtonVisible = false,
                 onRightButtonClick = { onNavigateHome() },
-                onButtonClick = { onNavigateHome() },
+                onButtonClick = { onNavigateHome() }
             )
         }
         EVICERTIA_REJECTED_SECOND_TIME.value -> {
@@ -67,7 +67,7 @@ fun OnfidoAndEvicertiaErrorsContent(
                 buttonTextResource = string.understood,
                 isLeftButtonVisible = false,
                 onRightButtonClick = { onNavigateHome() },
-                onButtonClick = { onNavigateHome() },
+                onButtonClick = { onNavigateHome() }
             )
         }
         ONFIDO_REJECTED_FIRST_TIME.value -> {
@@ -78,7 +78,7 @@ fun OnfidoAndEvicertiaErrorsContent(
                 buttonTextResource = string.onfido_rejected_action,
                 isLeftButtonVisible = false,
                 onRightButtonClick = { onNavigateHome() },
-                onButtonClick = { onNavigateToOnfido() },
+                onButtonClick = { onNavigateToOnfido() }
             )
         }
         ONFIDO_REJECTED_SECOND_TIME.value -> {
@@ -89,7 +89,7 @@ fun OnfidoAndEvicertiaErrorsContent(
                 buttonTextResource = string.onfido_rejected_action,
                 isLeftButtonVisible = false,
                 onRightButtonClick = { onNavigateHome() },
-                onButtonClick = { onNavigateHome() },
+                onButtonClick = { onNavigateHome() }
             )
         }
     }

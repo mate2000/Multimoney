@@ -15,12 +15,15 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.WORK_FLOW
 import com.multimoney.multimoney.presentation.navigation.navgraph.COMING_FROM_CRYPTO
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
+import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_AND_EVICERTIA_ERROR
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_GET_EVICERTIA_LINK
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_GLOBAL_ID
@@ -31,6 +34,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.signdocument
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.ui.smart.origination.SmartSubscriptionManager
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.BaseEvent.SimulateUserInteraction
+import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.NavigateToSignUpDocument
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnChangeScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnInitializeText
@@ -39,6 +43,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSig
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnShowDialogInformation
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnStartListenerSubscriptionSmartContractEvent
+import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CreditSubscriptionStep
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -59,6 +64,7 @@ import javax.inject.Inject
 class SmartSignViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val smartSubscriptionManager: SmartSubscriptionManager,
+    val mmCountDownTimer: MMCountDownTimer,
     private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
 
@@ -78,6 +84,8 @@ class SmartSignViewModel @Inject constructor(
     var globalId: Long? = 0
     var comingFromCrypto: Boolean = false
     var shouldGetEvicertiaLink = true
+    var evicertiaStatus: String = ""
+    var workflow: String = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -95,6 +103,8 @@ class SmartSignViewModel @Inject constructor(
         globalId = savedStateHandle[SIGN_DOCUMENT_GLOBAL_ID] ?: 0
         comingFromCrypto = savedStateHandle[COMING_FROM_CRYPTO] ?: false
         shouldGetEvicertiaLink = savedStateHandle[SHOULD_GET_EVICERTIA_LINK] ?: true
+        evicertiaStatus = savedStateHandle[EVICERTIA_STATUS] ?: ""
+        workflow = savedStateHandle[WORK_FLOW] ?: ""
     }
 
     private fun createDialog() {
@@ -113,11 +123,8 @@ class SmartSignViewModel @Inject constructor(
     private fun onListenSmartContractEventSubscription() {
         onShouldStartSubscription()
         smartSubscriptionManager.idSubscriptionSubscribe(getSmartSubscriptionListener())
-        if (smartSubscriptionManager.hasEvisertiaLink()) {
-            uiState = uiState.copy(
-                signDocumentProcessStep = SIGN_DOCUMENTS_STEP.value,
-                signDocumentUrl = smartSubscriptionManager.getEvisertioLink() ?: ""
-            )
+        if (smartSubscriptionManager.hasEvicertiaLink()) {
+            mmCountDownTimer.startTimer(WAIT_TIME)
         }
     }
 
@@ -128,7 +135,7 @@ class SmartSignViewModel @Inject constructor(
             }
 
             override fun onSubscriptionFailToConnect(httpError: HttpError) {
-
+                showSubscriptionError()
             }
         }
 
@@ -147,14 +154,14 @@ class SmartSignViewModel @Inject constructor(
             }
             CreditSubscriptionStep.DocumentsRejected.step -> {
                 emitBaseEvent(SimulateUserInteraction)
-                if (isEvisertiaOverCounted(smartContractEvent.statusEvicertia)) {
+                if (isEvicertiaOverCounted(smartContractEvent.statusEvicertia)) {
                     onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_SECOND_TIME.value, smartContractEvent)
                 } else {
                     onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_FIRST_TIME.value, smartContractEvent)
                 }
             }
             CreditSubscriptionStep.AccountActivated.step -> {
-                setSuccessAlertResult()
+                navigateToApprovedByOnfido()
             }
             CreditSubscriptionStep.ErrorActivatingAccount.step, CreditSubscriptionStep.DocumentsFailed.step -> {
                 showSubscriptionError()
@@ -175,18 +182,6 @@ class SmartSignViewModel @Inject constructor(
                 emitBaseEvent(OpenWhatsAppLink)
                 onUIEvent(OnNavigateToHome)
             }
-        )
-    }
-
-    private fun setSuccessAlertResult() {
-        uiState = uiState.copy(
-            isAlertResultVisible = true,
-            alertResultIsRightButtonVisible = true,
-            alertResultIconResource = drawable.ic_success_symbol,
-            alertResultTitleResource = string.approved_by_onfido_title,
-            alertResultButtonResource = string.understood,
-            alertResultRightButtonClick = { onUIEvent(OnNavigateToHome) },
-            alertResultButtonAction = { onUIEvent(OnNavigateToHome) }
         )
     }
 
@@ -246,7 +241,7 @@ class SmartSignViewModel @Inject constructor(
         trackAdjustOriginationRejected(smartContractEvent)
         smartSubscriptionManager.destroySubscription()
         popAndNavigateTo(
-            route = "${Screen.SmartOnfidoAndEvicertiaErrorsScreen.baseRoute}/$error/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$comingFromCrypto/$user/$globalId",
+            route = "${Screen.SmartOnfidoAndEvicertiaErrorsScreen.baseRoute}/$error/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$comingFromCrypto/$user/$globalId/$evicertiaStatus/$workflow",
             popTo = Screen.SmartSignScreen.route
         )
     }
@@ -259,8 +254,15 @@ class SmartSignViewModel @Inject constructor(
         )
     }
 
-    private fun isEvisertiaOverCounted(evisertiaStatus: String?) =
-        evisertiaStatus?.lowercase() == CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase()
+    private fun isEvicertiaOverCounted(evicertiaStatus: String?) =
+        evicertiaStatus?.lowercase() == CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase()
+
+    private fun navigateToSignDocument() {
+        uiState = uiState.copy(
+            signDocumentProcessStep = SIGN_DOCUMENTS_STEP.value,
+            signDocumentUrl = smartSubscriptionManager.getEvicertiaLink() ?: ""
+        )
+    }
 
     private fun trackAdjustOriginationEvicertiaDone(smartContractEvent: AccountSmartContractResult?) {
         val parameters = buildParamsListFromCreditContractEvent(smartContractEvent)
@@ -327,7 +329,7 @@ class SmartSignViewModel @Inject constructor(
         }
     }
 
-    private fun buildParamsListFromCreditContractEvent(smartContractEvent: AccountSmartContractResult?) : List<Pair<String, String>> {
+    private fun buildParamsListFromCreditContractEvent(smartContractEvent: AccountSmartContractResult?): List<Pair<String, String>> {
         return buildList<Pair<String, String>> {
             add(ID_PRINT to smartContractEvent?.idBrand.toString())
             add(LINK to (smartContractEvent?.link ?: ""))
@@ -379,8 +381,9 @@ class SmartSignViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnChangeScreen -> uiState =
-                uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
+            is OnChangeScreen -> uiState = uiState.copy(
+                signDocumentProcessStep = uiEvent.signDocumentStep
+            )
             is OnInitializeText -> dialogDescription = uiEvent.dialogDescription
             is OnCloseClick -> onNavigateToHome()
             is OnShowDialogInformation -> createDialog()
@@ -388,6 +391,7 @@ class SmartSignViewModel @Inject constructor(
             is OnNavigateToContinueValidatingIdentity -> onNavigateToContinueValidatingIdentity()
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = uiEvent.isLoading)
             is OnStartListenerSubscriptionSmartContractEvent -> onListenSmartContractEventSubscription()
+            is NavigateToSignUpDocument -> navigateToSignDocument()
         }
     }
 
@@ -400,6 +404,7 @@ class SmartSignViewModel @Inject constructor(
         object OnNavigateToHome : UIEvent()
         object OnNavigateToContinueValidatingIdentity : UIEvent()
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
+        object NavigateToSignUpDocument : UIEvent()
     }
 
     sealed class BaseEvent {
@@ -407,6 +412,7 @@ class SmartSignViewModel @Inject constructor(
     }
 
     companion object {
+        const val WAIT_TIME = 5000L
         const val MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION = 3
         const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 30000L
         const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 30000L

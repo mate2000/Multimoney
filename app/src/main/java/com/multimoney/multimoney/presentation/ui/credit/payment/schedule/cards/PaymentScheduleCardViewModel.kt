@@ -170,7 +170,8 @@ class PaymentScheduleCardViewModel @Inject constructor(
             idClient = idClient,
             idLoanClient = idLoanClient,
             idCard = uiState.cardVisaDirect?.idCard?.toLong() ?: 0,
-            cardMasked = uiState.cardVisaDirect?.cardMaskedNumber.orEmpty()
+            cardMasked = uiState.cardVisaDirect?.cardMaskedNumber.orEmpty(),
+            identification = identification.orEmpty()
         ).collectLatest { result ->
             setPaymentScheduleAttempts++
             result.onSuccess {

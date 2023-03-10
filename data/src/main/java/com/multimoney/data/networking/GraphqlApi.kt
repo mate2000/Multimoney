@@ -1134,6 +1134,8 @@ class GraphqlApi @Inject constructor(
         idCivilStatusType: Long?,
         birthday: String?,
         expirationDate: String?,
+        nationality: String?,
+        dateOfEmission: String?,
         idGender: Long?,
         companyName: String?,
         aboutCompany: String?,
@@ -1172,6 +1174,8 @@ class GraphqlApi @Inject constructor(
                 Optional.presentIfNotNull(idAddressLevel2),
                 Optional.presentIfNotNull(birthday),
                 Optional.presentIfNotNull(expirationDate),
+                Optional.presentIfNotNull(nationality),
+                Optional.presentIfNotNull(dateOfEmission),
                 Optional.presentIfNotNull(idGender),
                 Optional.presentIfNotNull(idCivilStatusType),
                 Optional.presentIfNotNull(companyName),
@@ -1915,7 +1919,8 @@ class GraphqlApi @Inject constructor(
         idClient: Int,
         idLoanClient: Int,
         idCard: Long,
-        cardMasked: String
+        cardMasked: String,
+        identification: String
     ): ApolloCall<ActivatedCardAutomaticDebitMutation.Data> = apolloAuthorizedClient.mutation(
         ActivatedCardAutomaticDebitMutation(
             user = user,
@@ -1923,7 +1928,8 @@ class GraphqlApi @Inject constructor(
             idClient = idClient,
             idLoanClient = idLoanClient,
             idCard = idCard,
-            cardMasked = cardMasked
+            cardMasked = cardMasked,
+            identification = identification
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 

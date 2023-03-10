@@ -66,7 +66,7 @@ fun VisaVerifyDepositScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
-            OnStart(whatsAppLink)
+            onUIEvent(OnStart(whatsAppLink))
             baseEvent.collect { event ->
                 when (event) {
                     is OnOpenWhatsApp -> {

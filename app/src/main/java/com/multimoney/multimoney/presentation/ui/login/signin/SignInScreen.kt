@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.login.signin
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -37,6 +38,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiaryUnderLined
@@ -46,6 +48,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.capitalized
+import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.getDeviceName
 import com.multimoney.multimoney.presentation.util.getDeviceType
 import com.multimoney.multimoney.presentation.util.splitByWhiteSpace
@@ -63,6 +66,7 @@ fun SignInScreen(
     val fragmentActivity = LocalContext.current as FragmentActivity
     val activity = LocalContext.current.findActivity()
     val signOutToastText = stringResource(id = R.string.automatic_logout_dialog_sign_in_toast)
+    val context = LocalContext.current
 
     // Navigation
     LaunchedEffect(true) {
@@ -75,8 +79,18 @@ fun SignInScreen(
                     forceChangeDevice
                 )
             )
+            onUIEvent(SignInViewModel.UIEvent.OnUpdateIso3Country(context.resources.configuration.locale.isO3Country))
         }
+
     }
+    viewModel.onUIEvent(
+        SignInViewModel.UIEvent.OnSetupSupportLink(
+            stringResource(
+                id = R.string.whatsapp_deep_link,
+                SignUpViewModel.PHONE_HARDCODED
+            )
+        )
+    )
 
     viewModel.onUIEvent(
         SignInViewModel.UIEvent.OnInitializeBiometricPrompt(
@@ -92,13 +106,16 @@ fun SignInScreen(
         viewModel.onUIEvent(SignInViewModel.UIEvent.OnUpdateToastVisibility(false))
     }
 
-    SignInContent(viewModel, fragmentActivity)
+    SignInContent(viewModel, fragmentActivity, context)
 }
 
 @Composable
-fun SignInContent(viewModel: SignInViewModel, fragmentActivity: FragmentActivity) {
+fun SignInContent(
+    viewModel: SignInViewModel,
+    fragmentActivity: FragmentActivity,
+    context: Context
+) {
     val focusManager = LocalFocusManager.current
-    val context = LocalContext.current
 
     // View
     Column(
@@ -241,7 +258,11 @@ fun SignInContent(viewModel: SignInViewModel, fragmentActivity: FragmentActivity
             message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
             positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
             negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
-            onPositiveAction = viewModel.uiState.openDialog.positiveAction,
+            onPositiveAction = if (viewModel.uiState.errorCode == CognitoErrorCode.BlacklistedDevice) {
+                { viewModel.onUIEvent(SignInViewModel.UIEvent.OnOpenWhatsappLink(context)) }
+            } else {
+                viewModel.uiState.openDialog.positiveAction
+            },
             onNegativeAction = viewModel.uiState.openDialog.negativeAction,
             onDismissAction = viewModel.uiState.openDialog.dismissAction,
             openDialogCustom = viewModel.uiState.openDialog.isActive

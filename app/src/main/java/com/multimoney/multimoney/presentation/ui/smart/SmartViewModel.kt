@@ -12,9 +12,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.SmartStatus
 import com.multimoney.data.util.catalog.SmartSteps
+import com.multimoney.data.util.catalog.SmartWorkflow
 import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationInitialRequestUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCase
@@ -29,17 +29,18 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.WORK_FLOW
 import com.multimoney.multimoney.presentation.navigation.navgraph.COMING_FROM_CRYPTO
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
+import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_GLOBAL_REQUEST
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_GLOBAL_REQUEST_NAV
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.home.HomeState
-import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.NavigateToEvicertia
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationInitialRequest
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
@@ -62,8 +63,7 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OverridePreviousAction
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
-import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
+import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
 import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -92,8 +92,10 @@ class SmartViewModel @Inject constructor(
     val email: String = savedStateHandle[EMAIL] ?: ""
     val firstName: String = savedStateHandle[FIRST_NAME] ?: ""
     val lastName: String = savedStateHandle[LAST_NAME] ?: ""
-    var idGlobalRequest: Long = savedStateHandle[ID_GLOBAL_REQUEST] ?: 0
+    var idGlobalRequest: Long = savedStateHandle[ID_GLOBAL_REQUEST_NAV] ?: 0
     var idSysRequest: Long = savedStateHandle[ID_USER_REQUEST] ?: 0
+    var workflow: String = savedStateHandle[WORK_FLOW] ?: ""
+    var evicertiaStatus: String = savedStateHandle[EVICERTIA_STATUS] ?: ""
 
     // Stateless
     private var overridePreviousAction: (() -> Unit)? = null
@@ -163,6 +165,8 @@ class SmartViewModel @Inject constructor(
             idCivilStatusType = stepByStep.idMaritalStatus?.toLong(),
             birthday = stepByStep.birthdate,
             expirationDate = stepByStep.expirationDate,
+            dateOfIssue = stepByStep.dateOfIssue,
+            placeOfIssueId = stepByStep.placeOfIssue,
             idGender = stepByStep.idGenre?.toLong(),
             strGenre = stepByStep.strGenre,
             stringProfessionType = stepByStep.stringProfessionType,
@@ -203,12 +207,13 @@ class SmartViewModel @Inject constructor(
 
         when {
             // navigate to onfido screen after the last step obtained and idBrand matches the country id
-            currentStep == SmartSteps.Four.id && idBrandAsInt == Brand.CostaRica.id -> navigateToOnfido()
-            currentStep == SmartSteps.Six.id && idBrandAsInt == Brand.ElSalvador.id -> navigateToOnfido()
+            currentStep == SmartSteps.Four.id && idBrandAsInt == Brand.CostaRica.id -> navigateToOnfidoOrEvicertia()
+            currentStep == SmartSteps.Six.id && idBrandAsInt == Brand.ElSalvador.id -> navigateToOnfidoOrEvicertia()
             else -> {
                 // update the current step coming from the backend in order to navigate to the proper screen
-                uiState =
-                    uiState.copy(currentStep = SmartSteps.Search.getIdByName(stepByStep.currentStep))
+                uiState = uiState.copy(
+                    currentStep = SmartSteps.Search.getIdByName(stepByStep.currentStep)
+                )
             }
         }
     }
@@ -260,6 +265,8 @@ class SmartViewModel @Inject constructor(
                 idCivilStatusType = accountSmartData?.idCivilStatusType,
                 idProfessionType = accountSmartData?.idProfessionType,
                 expirationDate = accountSmartData?.expirationDate,
+                nationality = accountSmartData?.placeOfIssueId,
+                dateOfEmission = accountSmartData?.dateOfIssue,
                 idAddressLevel1 = accountSmartData?.idAddressLevel1,
                 idAddressLevel2 = accountSmartData?.idAddressLevel2,
                 idAddressLevel3 = accountSmartData?.idAddressLevel3,
@@ -417,16 +424,29 @@ class SmartViewModel @Inject constructor(
                 isLoading = false
             )
         } else {
-            accountSmartData =
-                accountSmartData?.copy(currentStep = SmartSteps.Search.getNameById(nextStep))
+            accountSmartData = accountSmartData?.copy(
+                currentStep = SmartSteps.Search.getNameById(nextStep)
+            )
             callMutationGlobalRequestUseCase(true)
         }
     }
 
-    private fun navigateToOnfido() {
+    private fun navigateToOnfidoOrEvicertia() {
+        if (workflow == SmartWorkflow.SMART_CONTRACT_PROCESS.workflow) {
+            onNavigateToSignDocumentScreen()
+        } else {
+            popAndNavigateTo(
+                "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idSysRequest/$idGlobalRequest/$URL_EMPTY/$comingFromCrypto/$evicertiaStatus/$workflow",
+                Screen.SmartScreen.route
+            )
+        }
+    }
+
+    private fun onNavigateToSignDocumentScreen() {
         popAndNavigateTo(
-            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idSysRequest/$idGlobalRequest/$URL_EMPTY/$comingFromCrypto",
-            Screen.SmartScreen.route
+            route = "${Screen.SmartSignScreen.baseRoute}/${SignDocumentStep.GENERATE_DOCUMENT_STEP.value}/$URL_EMPTY/" +
+                "$idBrand/$pkUser/$identification/$email/$idSysRequest/$firstName/$lastName/${true}/$idGlobalRequest/$user/$comingFromCrypto/${true}/$evicertiaStatus/$workflow",
+            popTo = Screen.SmartOnfidoScreen.route
         )
     }
 
@@ -449,12 +469,6 @@ class SmartViewModel @Inject constructor(
                 description = error.getError() ?: "",
                 isActive = mutableStateOf(true)
             )
-        )
-    }
-
-    private fun onNavigateToSignDocumentScreen(signDocumentStep: String) {
-        navigateTo(
-            route = "${Screen.SmartSignScreen.baseRoute}/$signDocumentStep/$URL_EMPTY/$idBrand/$pkUser/$identification/$email/$idSysRequest/$firstName/$lastName/${true}/$idGlobalRequest/$user/${comingFromCrypto}/${false}"
         )
     }
 
@@ -481,7 +495,7 @@ class SmartViewModel @Inject constructor(
                 result.onSuccess {
                     onUIEvent(OnLoadingValueChange(false))
                     idSysRequest = it?.idAccount ?: 0L
-                    navigateToOnfido()
+                    navigateToOnfidoOrEvicertia()
                 }
                 result.onLoading {
                     onUIEvent(OnLoadingValueChange(true))
@@ -552,12 +566,16 @@ class SmartViewModel @Inject constructor(
         }
     }
 
-    private fun trackSvAdjustOriginationEvents(parameters: List<Pair<String, String>>, data: String) {
+    private fun trackSvAdjustOriginationEvents(
+        parameters: List<Pair<String, String>>,
+        data: String
+    ) {
         viewModelScope.launch {
             when (accountSmartData?.currentStep) {
                 SmartSteps.One.name -> {
                     trackAdjustEvent(
-                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimePersonal().first(),
+                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimePersonal()
+                            .first(),
                         reset = { dataStorePreferences.setAdjustSmartFirstTimePersonal(false) },
                         adjustEventType = AdjustEventType.ORIGINATION_SMART_FIRST_TIME_PERSONAL,
                         parameters = parameters,
@@ -566,7 +584,8 @@ class SmartViewModel @Inject constructor(
                 }
                 SmartSteps.Two.name -> {
                     trackAdjustEvent(
-                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimeHome().first(),
+                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimeHome()
+                            .first(),
                         reset = { dataStorePreferences.setAdjustSmartFirstTimeHome(false) },
                         adjustEventType = AdjustEventType.ORIGINATION_SMART_FIRST_TIME_HOME,
                         parameters = parameters,
@@ -575,8 +594,13 @@ class SmartViewModel @Inject constructor(
                 }
                 SmartSteps.Three.name -> {
                     trackAdjustEvent(
-                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimeIncomeInformation().first(),
-                        reset = { dataStorePreferences.setAdjustSmartFirstTimeIncomeInformation(false) },
+                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimeIncomeInformation()
+                            .first(),
+                        reset = {
+                            dataStorePreferences.setAdjustSmartFirstTimeIncomeInformation(
+                                false
+                            )
+                        },
                         adjustEventType = AdjustEventType.ORIGINATION_SMART_FIRST_TIME_INCOME_INFORMATION,
                         parameters = parameters,
                         data = data
@@ -584,7 +608,8 @@ class SmartViewModel @Inject constructor(
                 }
                 SmartSteps.Four.name -> {
                     trackAdjustEvent(
-                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimeBeneficiary().first(),
+                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimeBeneficiary()
+                            .first(),
                         reset = { dataStorePreferences.setAdjustSmartFirstTimeBeneficiary(false) },
                         adjustEventType = AdjustEventType.ORIGINATION_SMART_FIRST_TIME_BENEFICIARY,
                         parameters = parameters,
@@ -593,7 +618,8 @@ class SmartViewModel @Inject constructor(
                 }
                 SmartSteps.Six.name -> {
                     trackAdjustEvent(
-                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimePep().first(),
+                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimePep()
+                            .first(),
                         reset = { dataStorePreferences.setAdjustSmartFirstTimePep(false) },
                         adjustEventType = AdjustEventType.ORIGINATION_SMART_FIRST_TIME_PEP,
                         parameters = parameters,
@@ -604,12 +630,16 @@ class SmartViewModel @Inject constructor(
         }
     }
 
-    private fun trackCrAdjustOriginationEvents(parameters: List<Pair<String, String>>, data: String) {
+    private fun trackCrAdjustOriginationEvents(
+        parameters: List<Pair<String, String>>,
+        data: String
+    ) {
         viewModelScope.launch {
             when (accountSmartData?.currentStep) {
                 SmartSteps.One.name -> {
                     trackAdjustEvent(
-                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimeHome().first(),
+                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimeHome()
+                            .first(),
                         reset = { dataStorePreferences.setAdjustSmartFirstTimeHome(false) },
                         adjustEventType = AdjustEventType.ORIGINATION_SMART_FIRST_TIME_HOME,
                         parameters = parameters,
@@ -618,8 +648,13 @@ class SmartViewModel @Inject constructor(
                 }
                 SmartSteps.Two.name -> {
                     trackAdjustEvent(
-                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimeIncomeInformation().first(),
-                        reset = { dataStorePreferences.setAdjustSmartFirstTimeIncomeInformation(false) },
+                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimeIncomeInformation()
+                            .first(),
+                        reset = {
+                            dataStorePreferences.setAdjustSmartFirstTimeIncomeInformation(
+                                false
+                            )
+                        },
                         adjustEventType = AdjustEventType.ORIGINATION_SMART_FIRST_TIME_INCOME_INFORMATION,
                         parameters = parameters,
                         data = data
@@ -627,7 +662,8 @@ class SmartViewModel @Inject constructor(
                 }
                 SmartSteps.Four.name -> {
                     trackAdjustEvent(
-                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimePep().first(),
+                        firstTimeCondition = dataStorePreferences.isAdjustSmartFirstTimePep()
+                            .first(),
                         reset = { dataStorePreferences.setAdjustSmartFirstTimePep(false) },
                         adjustEventType = AdjustEventType.ORIGINATION_SMART_FIRST_TIME_PEP,
                         parameters = parameters,
@@ -689,28 +725,21 @@ class SmartViewModel @Inject constructor(
             is OnCtaAlertClick -> onCtaAlertClick(event.focusManager)
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
             is OnOpenDialogValueChange -> uiState = uiState.copy(openDialog = event.openDialog)
-            is OnFailureWithDialog ->
-                uiState =
-                    uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
+            is OnFailureWithDialog -> uiState = uiState.copy(
+                isLoading = event.isLoading,
+                openDialog = event.openDialog
+            )
             is OnNextStep -> nextStep()
             is OnPreviousStep -> previousStep()
-            is OnContinueVisible ->
-                uiState =
-                    uiState.copy(isContinueVisible = event.visible, buttonTextRes = event.textResId)
+            is OnContinueVisible -> uiState = uiState.copy(
+                isContinueVisible = event.visible,
+                buttonTextRes = event.textResId
+            )
             is OnCallMutationUpdateGlobalRequestUseCase -> onUpdateAccountSmartData(event.accountSmartData)
             is OnCallMutationInitialRequest -> callMutationInitialRequestUseCase()
             is OnOnFidoVerifiedChanged -> isOnFidoVerified = event.isOnFidoVerified
             is OnCallSaveAutomatedSmartAccount -> onCallMutationSaveSmartAccount(event.accountSmartData)
             is OverridePreviousAction -> overridePreviousAction(event.action)
-            is NavigateToEvicertia -> {
-                val signDocumentStep =
-                    if (SmartOnFidoOrFirmStatus.FIRMED.status.lowercase() == SmartOnFidoOrFirmStatus.FIRMED.status.lowercase()) {
-                        VALIDATE_IDENTITY.value
-                    } else {
-                        GENERATE_DOCUMENT_STEP.value
-                    }
-                onNavigateToSignDocumentScreen(signDocumentStep)
-            }
         }
     }
 
@@ -754,8 +783,6 @@ class SmartViewModel @Inject constructor(
         object OnCallMutationInitialRequest : UIEvent()
 
         data class OverridePreviousAction(val action: (() -> Unit)?) : UIEvent()
-
-        object NavigateToEvicertia : UIEvent()
     }
 
     companion object {
@@ -773,13 +800,13 @@ class SmartViewModel @Inject constructor(
         private const val ID_MARITAL_STATUS = "idMaritalStatus"
         private const val INSTITUTION_PENSION = "institutionPension"
         private const val NAME_COMPANY = "nameCompany"
-        private const val ABOUT_COMPANY  = "aboutCompany"
-        private const val ID_ADDRESS_LEVEL_1  = "idAddressLevel1"
-        private const val ID_ADDRESS_LEVEL_2  = "idAddressLevel2"
-        private const val ID_ADDRESS_LEVEL_3  = "idAddressLevel3"
-        private const val POSITION_JOB  = "positionJob"
-        private const val ID_ECONOMIC_ACTIVITY  = "idEconomicActivity"
-        private const val INCOME  = "income"
+        private const val ABOUT_COMPANY = "aboutCompany"
+        private const val ID_ADDRESS_LEVEL_1 = "idAddressLevel1"
+        private const val ID_ADDRESS_LEVEL_2 = "idAddressLevel2"
+        private const val ID_ADDRESS_LEVEL_3 = "idAddressLevel3"
+        private const val POSITION_JOB = "positionJob"
+        private const val ID_ECONOMIC_ACTIVITY = "idEconomicActivity"
+        private const val INCOME = "income"
         private const val ADDRESS_DETAIL = "addressDetail"
         private const val FULL_JOB_ADDRESS = "fullJobAddress"
         private const val CURRENT_STEP = "currentStep"

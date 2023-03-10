@@ -85,13 +85,22 @@ class SmartDocumentViewModel @Inject constructor(
                 DAY_MONTH_YEAR_PATTERN_BAR_FORMAT
             )
         } ?: ""
+        val emissionDate = accountSmartData?.dateOfIssue?.let {
+            getFormatDateByString(
+                it,
+                ISO_8601_API_FORMAT_PATTERN,
+                DAY_MONTH_YEAR_PATTERN_BAR_FORMAT
+            )
+        } ?: ""
 
         val formatter = DateTimeFormatter.ofPattern(DAY_MONTH_YEAR_PATTERN)
         if (birthdate.isNotBlank()) onBirthDateValueChange(birthdate, LocalDate.parse(birthdate.replace(BAR, HYPHEN), formatter))
         if (expirationDate.isNotBlank()) onExpirationDateValueChange(expirationDate)
+        if (emissionDate.isNotBlank()) onExpirationDateValueChange(expirationDate)
         onGenderChange(accountSmartData?.strGenre.orEmpty())
         onCivilStateChange(accountSmartData?.strMaritalStatus.orEmpty())
         onProfessionChange(accountSmartData?.stringProfessionType.orEmpty())
+        onNationalityChange(accountSmartData?.strPlaceOfIssue.orEmpty())
     }
 
     private fun callQueryNationalitiesUseCase(user: String, idBrand: Int) =
@@ -220,19 +229,19 @@ class SmartDocumentViewModel @Inject constructor(
             it?.maritalStatusDescription == civilState
         }?.maritalStatusId
 
-        uiState = uiState.copy(civilState = civilState, civilStateId = civilStateId?.toLong() ?: 0)
+        uiState = uiState.copy(civilState = civilState, civilStateId = civilStateId?.toLong())
         validateForm()
     }
 
     private fun onProfessionChange(profession: String) {
         val professionId = uiState.professionSmartList.find { it?.name == profession }?.id
-        uiState = uiState.copy(profession = profession, professionId = professionId ?: 0)
+        uiState = uiState.copy(profession = profession, professionId = professionId)
         validateForm()
     }
 
     private fun onNationalityChange(nationality: String) {
         val nationalityId = uiState.nationalitiesList.find { it?.name == nationality }?.id
-        uiState = uiState.copy(nationalityName = nationality, nationalityId = nationalityId ?: 0)
+        uiState = uiState.copy(nationalityName = nationality, nationalityId = nationalityId)
         validateForm()
     }
 

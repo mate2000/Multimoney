@@ -108,7 +108,7 @@ fun SmartDocumentScreen(
                                                 viewModel.uiState.carneEmissionDate.orEmpty(),
                                                 DAY_MONTH_YEAR_PATTERN_BAR_FORMAT,
                                                 ISO_8601_API_FORMAT_PATTERN
-                                            ),
+                                            ).ifBlank { null },
                                             expirationDate = getFormatDateByString(
                                                 if (viewModel.uiState.isDUIRegistration == true) {
                                                     viewModel.uiState.expirationDate
@@ -117,13 +117,13 @@ fun SmartDocumentScreen(
                                                 },
                                                 DAY_MONTH_YEAR_PATTERN_BAR_FORMAT,
                                                 ISO_8601_API_FORMAT_PATTERN
-                                            ),
-                                            placeOfIssue = viewModel.uiState.nationalityName,
+                                            ).ifBlank { null },
+                                            placeOfIssueId = viewModel.uiState.nationalityId?.toString(),
                                             birthday = getFormatDateByString(
                                                 viewModel.uiState.birthdate,
                                                 DAY_MONTH_YEAR_PATTERN_BAR_FORMAT,
                                                 ISO_8601_API_FORMAT_PATTERN
-                                            ),
+                                            ).ifBlank { null },
                                             idCivilStatusType = viewModel.uiState.civilStateId,
                                             strMaritalStatus = viewModel.uiState.civilState,
                                             currentStep = SmartSteps.Search.getNameById(

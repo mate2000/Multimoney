@@ -66,10 +66,10 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
 import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
@@ -445,7 +445,7 @@ class SmartViewModel @Inject constructor(
     private fun onNavigateToSignDocumentScreen() {
         popAndNavigateTo(
             route = "${Screen.SmartSignScreen.baseRoute}/${SignDocumentStep.GENERATE_DOCUMENT_STEP.value}/$URL_EMPTY/" +
-                    "$idBrand/$pkUser/$identification/$email/$idSysRequest/$firstName/$lastName/${true}/$idGlobalRequest/$user/$comingFromCrypto/${true}",
+                "$idBrand/$pkUser/$identification/$email/$idSysRequest/$firstName/$lastName/${true}/$idGlobalRequest/$user/$comingFromCrypto/${true}/$evicertiaStatus/$workflow",
             popTo = Screen.SmartOnfidoScreen.route
         )
     }

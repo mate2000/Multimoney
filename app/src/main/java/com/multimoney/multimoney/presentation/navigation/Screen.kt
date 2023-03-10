@@ -328,7 +328,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SmartSignScreen : Screen(
-        "smart_sign_document_process_screen/{$SIGN_DOCUMENT_STEP_ARG}/{$SIGN_DOCUMENT_URL}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$IS_SMART_EVICERTIA}/{$SIGN_DOCUMENT_GLOBAL_ID}/{$USER}/{$COMING_FROM_CRYPTO}/{$SHOULD_GET_EVICERTIA_LINK}",
+        "smart_sign_document_process_screen/{$SIGN_DOCUMENT_STEP_ARG}/{$SIGN_DOCUMENT_URL}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$IS_SMART_EVICERTIA}/{$SIGN_DOCUMENT_GLOBAL_ID}/{$USER}/{$COMING_FROM_CRYPTO}/{$SHOULD_GET_EVICERTIA_LINK}/{$WORK_FLOW}",
         "smart_sign_document_process_screen"
     )
 

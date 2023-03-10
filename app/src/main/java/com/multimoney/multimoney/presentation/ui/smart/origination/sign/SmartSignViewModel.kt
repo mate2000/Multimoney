@@ -8,13 +8,17 @@ import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
+import com.multimoney.data.util.catalog.SmartWorkflow
+import com.multimoney.domain.interaction.accountsmart.MutationAccountStatusUseCase
 import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
 import com.multimoney.domain.model.util.error.HttpError
+import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.WORK_FLOW
 import com.multimoney.multimoney.presentation.navigation.navgraph.COMING_FROM_CRYPTO
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
@@ -29,6 +33,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.OpenWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.home.HomeState
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.SmartSubscriptionManager
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.BaseEvent.SimulateUserInteraction
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.NavigateToSignUpDocument
@@ -53,6 +58,7 @@ import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -62,7 +68,8 @@ class SmartSignViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val smartSubscriptionManager: SmartSubscriptionManager,
     val mmCountDownTimer: MMCountDownTimer,
-    private val dataStorePreferences: DataStorePreferences
+    private val dataStorePreferences: DataStorePreferences,
+    private val mutationAccountStatusUseCase: MutationAccountStatusUseCase
 ) : BaseViewModel(true) {
 
     // uiState
@@ -81,6 +88,7 @@ class SmartSignViewModel @Inject constructor(
     var globalId: Long? = 0
     var comingFromCrypto: Boolean = false
     var shouldGetEvicertiaLink = true
+    var workflow = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -98,6 +106,7 @@ class SmartSignViewModel @Inject constructor(
         globalId = savedStateHandle[SIGN_DOCUMENT_GLOBAL_ID] ?: 0
         comingFromCrypto = savedStateHandle[COMING_FROM_CRYPTO] ?: false
         shouldGetEvicertiaLink = savedStateHandle[SHOULD_GET_EVICERTIA_LINK] ?: true
+        workflow = savedStateHandle[WORK_FLOW] ?: ""
     }
 
     private fun createDialog() {
@@ -121,6 +130,28 @@ class SmartSignViewModel @Inject constructor(
         smartSubscriptionManager.idSubscriptionSubscribe(getSmartSubscriptionListener())
         if (smartSubscriptionManager.hasEvicertiaLink()) {
             mmCountDownTimer.startTimer(WAIT_TIME)
+        } else if (workflow.lowercase() == SmartWorkflow.SMART_CONTRACT_PROCESS.workflow) {
+            onCallMutationAccountStatusUseCase()
+        }
+    }
+
+    private fun onCallMutationAccountStatusUseCase() = executeUseCase {
+        mutationAccountStatusUseCase.invoke(
+            user = user,
+            idBrand = idBrand,
+            identificationNumber = identification,
+            newState = ProductViewModel.DEFAULT_NEW_STATE,
+            typeState = ProductViewModel.DEFAULT_TYPE_STATE,
+            idAccountSysde = idUserRequest,
+            idAccountRequest = globalId
+                ?: 0L
+        ).collectLatest { result ->
+            result.onSuccess {
+                uiState = uiState.copy(
+                    signDocumentProcessStep = SIGN_DOCUMENTS_STEP.value,
+                    signDocumentUrl = it?.urlFirmDocument ?: ""
+                )
+            }
         }
     }
 

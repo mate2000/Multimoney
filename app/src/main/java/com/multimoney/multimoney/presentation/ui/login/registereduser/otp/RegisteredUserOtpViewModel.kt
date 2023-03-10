@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
 import com.multimoney.domain.interaction.security.QueryValidatePinUseCase
 import com.multimoney.domain.model.security.UserData
@@ -30,18 +31,22 @@ import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.Regist
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.util.OTP_MESSAGE_REGEX
 import com.multimoney.multimoney.presentation.util.ResendOtp
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SendOtpMethod
 import com.multimoney.multimoney.presentation.util.format
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.tickerFlow
+import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -53,7 +58,8 @@ import kotlin.time.DurationUnit.SECONDS
 class RegisteredUserOtpViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val mutationSendPinProcessUseCase: MutationSendPinProcessUseCase,
-    private val queryValidatePinUseCase: QueryValidatePinUseCase
+    private val queryValidatePinUseCase: QueryValidatePinUseCase,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(false) {
 
     // UIState
@@ -134,10 +140,10 @@ class RegisteredUserOtpViewModel @Inject constructor(
     }
 
     fun getPhaseResourceString() = when (uiState.phaseCount) {
-        PHASE_ONE -> R.string.sign_up_otp_expiration_time_phase_one
-        PHASE_THREE -> R.string.sign_up_otp_expiration_time_phase_three
+        PHASE_ONE -> R.string.sign_in_otp_expiration_time_phase_one
+        PHASE_THREE -> R.string.sign_in_otp_expiration_time_phase_three
         PHASE_TWO, PHASE_FOUR -> if (uiState.otpResend == ResendOtp.SMS.option) R.string.sign_up_otp_sms else R.string.sign_up_otp_call
-        PHASE_FIVE -> R.string.sign_up_otp_expiration_time_phase_five
+        PHASE_FIVE -> R.string.sign_in_otp_expiration_time_phase_five
         else -> R.string.sign_up_otp_expiration_time_phase_six
     }
 
@@ -148,6 +154,11 @@ class RegisteredUserOtpViewModel @Inject constructor(
     }
 
     private fun resend() {
+        if (uiState.otpResend == ResendOtp.SMS.option) {
+            registerAdjustEvent(adjustEventType = AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_RESEND_OTP_2013, isLoggedIn = false, data = userData?.toJson() ?: "", applyAdjust = false)
+        } else {
+            registerAdjustEvent(adjustEventType = AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_BY_CALL_2014, isLoggedIn = false, data = userData?.toJson() ?: "", applyAdjust = false)
+        }
         uiState = uiState.copy(
             isTimerRunning = true,
             phaseCount = uiState.phaseCount.plus(1)
@@ -263,6 +274,12 @@ class RegisteredUserOtpViewModel @Inject constructor(
                 userCreate = userData?.firstName ?: ""
             ).collectLatest { result ->
                 result.onSuccess {
+                    viewModelScope.launch {
+                        if (dataStorePreferences.isAdjustSingUpAlreadyCustomerOTPEventRegister().first()) {
+                            registerAdjustEvent(AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_SUCCESS_CONFIRMATION_2012, isLoggedIn = false, data = userData?.toJson() ?: "")
+                            dataStorePreferences.isAdjustSingUpAlreadyCustomerOTPEventRegister(false)
+                        }
+                    }
                     popAndNavigateTo(
                         route = Screen.RegisteredUserPassword.baseRoute.plus(
                             getNavParam(USER_DATA, encodeData(userData)).plus(

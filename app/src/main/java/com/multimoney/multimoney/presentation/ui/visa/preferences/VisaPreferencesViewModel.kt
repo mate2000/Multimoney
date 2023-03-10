@@ -4,9 +4,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.mmvisa.MutationDeleteTokenDeviceNVUseCase
 import com.multimoney.domain.model.balance.BalanceCardInformation
+import com.multimoney.domain.model.metrics.BaseEventDataDto
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -28,16 +31,21 @@ import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.Com
 import com.multimoney.multimoney.presentation.ui.visa.preferences.VisaPreferencesViewModel.UIEvent.OnCheckedChange
 import com.multimoney.multimoney.presentation.ui.visa.preferences.VisaPreferencesViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.visa.preferences.VisaPreferencesViewModel.UIEvent.OnNavigateToVisaTokenizationScreen
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.toJson
 import com.novopayment.sdk.vts.NovoVTS
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class VisaPreferencesViewModel @Inject constructor(
     val savedStateHandle: SavedStateHandle,
-    private val mutationDeleteTokenDeviceNVUseCase: MutationDeleteTokenDeviceNVUseCase
+    private val mutationDeleteTokenDeviceNVUseCase: MutationDeleteTokenDeviceNVUseCase,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
 
     // UIState
@@ -104,13 +112,21 @@ class VisaPreferencesViewModel @Inject constructor(
 
     private fun onNavigateBack() = navigateBack(Screen.VisaCardScreen.route, false)
 
-    private fun onNavigateToVisaTokenizationScreen() = navigateTo(
-        "${Screen.VisaTokenizationWaitingScreen.baseRoute}/$idBrand/$pkUser/$identification/$user/$phone/${
-        encodeData(
-            cardInformation
+    private fun onNavigateToVisaTokenizationScreen() {
+        viewModelScope.launch {
+            if (dataStorePreferences.isAdjustFirstLinkMMVisaEventRegister().first()) {
+                registerAdjustEvent(AdjustEventType.MM_VISA_CTA_FIRST_LINK_MM_VISA_5038, applyAdjust = false, data = BaseEventDataDto(user = user, idBrand = idBrand, idClient = idClient, idLoanClient = idLoanClient, identification = identification).toJson())
+                dataStorePreferences.isAdjustFirstLinkMMVisaEventRegister(false)
+            }
+        }
+        navigateTo(
+            "${Screen.VisaTokenizationWaitingScreen.baseRoute}/$idBrand/$pkUser/$identification/$user/$phone/${
+            encodeData(
+                cardInformation
+            )
+            }"
         )
-        }"
-    )
+    }
 
     private fun onDeleteTokenDevice(onDeleteTokenBaseEvent: () -> Unit) = executeUseCase {
         mutationDeleteTokenDeviceNVUseCase.invoke(

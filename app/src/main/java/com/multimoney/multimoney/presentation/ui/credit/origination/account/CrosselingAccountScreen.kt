@@ -30,6 +30,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 
@@ -50,6 +51,9 @@ fun CrosselingAccountScreen(
                             },
                             saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
                         )
+                    )
+                    sharedViewModel.logEvents(
+                        AdjustEventType.CROSSELLING_FIRST_FILL_ACCOUNT_5028
                     )
                 },
                 nextStep = if (sharedViewModel.idBrand.toInt() == Brand.ElSalvador.id) {

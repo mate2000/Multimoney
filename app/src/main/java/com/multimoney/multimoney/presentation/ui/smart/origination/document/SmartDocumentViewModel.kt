@@ -3,6 +3,8 @@ package com.multimoney.multimoney.presentation.ui.smart.origination.document
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Gender
 import com.multimoney.domain.interaction.accountsmart.QueryCivilStatusUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCase
@@ -18,15 +20,16 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnBirthDateValueChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnCallQueryCivilStatusUseCase
-import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnCallQueryNationalitiesUseCase
-import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnCallQueryProfessionUseCase
+import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnCarneEmissionDateValueChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnCarneExpirationDateValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnCivilStateChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnExpirationDateValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnGenderChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnGetDropdownLists
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnLoadCurrentStepData
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnLoadingValueChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnNationalityChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnProfessionChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnValidateForm
@@ -35,21 +38,26 @@ import com.multimoney.multimoney.presentation.util.DAY_MONTH_YEAR_PATTERN
 import com.multimoney.multimoney.presentation.util.DAY_MONTH_YEAR_PATTERN_BAR_FORMAT
 import com.multimoney.multimoney.presentation.util.HYPHEN
 import com.multimoney.multimoney.presentation.util.ISO_8601_API_FORMAT_PATTERN
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import com.multimoney.multimoney.presentation.util.onBirthDateAgeValidation
+import com.multimoney.multimoney.presentation.util.onEmissionDateValidation
 import com.multimoney.multimoney.presentation.util.onExpirationDateValidation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SmartDocumentViewModel @Inject constructor(
     private val queryCivilStatusUseCase: QueryCivilStatusUseCase,
     private val queryProfessionUseCase: QueryProfessionUseCase,
     private val queryNationalitiesUseCase: QueryNationalitiesUseCase,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
 
     // UIState
@@ -61,6 +69,8 @@ class SmartDocumentViewModel @Inject constructor(
      * data coming from the current step (provided from the backend)
      */
     private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
+        trackOriginationSmartFirstTimeEvent()
+
         val birthdate = accountSmartData?.birthday?.let {
             getFormatDateByString(
                 it,
@@ -75,17 +85,24 @@ class SmartDocumentViewModel @Inject constructor(
                 DAY_MONTH_YEAR_PATTERN_BAR_FORMAT
             )
         } ?: ""
+        val emissionDate = accountSmartData?.dateOfIssue?.let {
+            getFormatDateByString(
+                it,
+                ISO_8601_API_FORMAT_PATTERN,
+                DAY_MONTH_YEAR_PATTERN_BAR_FORMAT
+            )
+        } ?: ""
 
         val formatter = DateTimeFormatter.ofPattern(DAY_MONTH_YEAR_PATTERN)
         if (birthdate.isNotBlank()) onBirthDateValueChange(birthdate, LocalDate.parse(birthdate.replace(BAR, HYPHEN), formatter))
         if (expirationDate.isNotBlank()) onExpirationDateValueChange(expirationDate)
+        if (emissionDate.isNotBlank()) onExpirationDateValueChange(expirationDate)
         onGenderChange(accountSmartData?.strGenre.orEmpty())
         onCivilStateChange(accountSmartData?.strMaritalStatus.orEmpty())
         onProfessionChange(accountSmartData?.stringProfessionType.orEmpty())
+        onNationalityChange(accountSmartData?.strPlaceOfIssue.orEmpty())
     }
 
-    // TODO: Currently this use case is not used,
-    //  remember to call this method from the view when you need to implement it.
     private fun callQueryNationalitiesUseCase(user: String, idBrand: Int) =
         executeUseCase {
             queryNationalitiesUseCase.invoke(
@@ -170,6 +187,19 @@ class SmartDocumentViewModel @Inject constructor(
             }
         }
 
+    private fun isDocumentDui(identification: String) =
+        identification.length == FORMATTED_DUI_LENGTH || identification.length == NON_FORMATTED_DUI_LENGTH
+
+    private fun getDropdownsLists(identification: String, user: String, idBrand: Int) {
+        uiState = uiState.copy(isDUIRegistration = isDocumentDui(identification))
+        if (uiState.isDUIRegistration == true) {
+            callQueryCivilStatusUseCase(user, idBrand)
+            callQueryProfessionUseCase(user, idBrand)
+        } else {
+            callQueryNationalitiesUseCase(user, idBrand)
+        }
+    }
+
     private fun onExpirationDateValueChange(expirationDate: String) {
         val formatter = DateTimeFormatter.ofPattern(DAY_MONTH_YEAR_PATTERN)
         if (onExpirationDateValidation(expirationDate.replace(BAR, HYPHEN), formatter)) {
@@ -199,26 +229,62 @@ class SmartDocumentViewModel @Inject constructor(
             it?.maritalStatusDescription == civilState
         }?.maritalStatusId
 
-        uiState = uiState.copy(civilState = civilState, civilStateId = civilStateId?.toLong() ?: 0)
+        uiState = uiState.copy(civilState = civilState, civilStateId = civilStateId?.toLong())
         validateForm()
     }
 
     private fun onProfessionChange(profession: String) {
         val professionId = uiState.professionSmartList.find { it?.name == profession }?.id
-        uiState = uiState.copy(profession = profession, professionId = professionId ?: 0)
+        uiState = uiState.copy(profession = profession, professionId = professionId)
+        validateForm()
+    }
+
+    private fun onNationalityChange(nationality: String) {
+        val nationalityId = uiState.nationalitiesList.find { it?.name == nationality }?.id
+        uiState = uiState.copy(nationalityName = nationality, nationalityId = nationalityId)
+        validateForm()
+    }
+
+    private fun carneExpirationDateValueChange(expirationDate: String) {
+        val formatter = DateTimeFormatter.ofPattern(DAY_MONTH_YEAR_PATTERN)
+        uiState = uiState.copy(
+            carneExpirationDate = expirationDate,
+            isCarneExpirationError = !onExpirationDateValidation(expirationDate.replace(BAR, HYPHEN), formatter)
+        )
+        validateForm()
+    }
+
+    private fun carneEmissionDateValueChange(emissionDate: String) {
+        val formatter = DateTimeFormatter.ofPattern(DAY_MONTH_YEAR_PATTERN)
+        uiState = uiState.copy(
+            carneEmissionDate = emissionDate,
+            isCarneEmissionError = onEmissionDateValidation(emissionDate.replace(BAR, HYPHEN), formatter)
+        )
         validateForm()
     }
 
     private fun validateForm() {
-        emitBaseEvent(
-            BaseEvent.OnFormValidateCompleted(
-                isFormValid = uiState.gender.isNotBlank() &&
-                        uiState.birthdate.isNotBlank() &&
-                        uiState.civilState.isNotBlank() &&
-                        uiState.profession.isNotBlank() &&
-                        uiState.expirationDate.isNotBlank() && !uiState.birthdateErrorStatus
+        if (uiState.isDUIRegistration == true) {
+            emitBaseEvent(
+                BaseEvent.OnFormValidateCompleted(
+                    isFormValid = uiState.gender.isNotBlank() &&
+                            uiState.birthdate.isNotBlank() &&
+                            uiState.civilState?.isNotBlank() == true &&
+                            uiState.profession?.isNotBlank() == true &&
+                            uiState.expirationDate.isNotBlank() && !uiState.birthdateErrorStatus
+                )
             )
-        )
+        } else {
+            emitBaseEvent(
+                BaseEvent.OnFormValidateCompleted(
+                    isFormValid = uiState.gender.isNotBlank() &&
+                            uiState.birthdate.isNotBlank() &&
+                            uiState.nationalityName?.isNotBlank() == true &&
+                            uiState.carneEmissionDate?.isNotBlank() == true && !uiState.isCarneEmissionError &&
+                            uiState.carneExpirationDate?.isNotBlank() == true && !uiState.isCarneExpirationError
+                )
+            )
+        }
     }
 
     private fun onNextActionClick(nextStepAction: () -> Unit) {
@@ -237,6 +303,15 @@ class SmartDocumentViewModel @Inject constructor(
         )
     }
 
+    private fun trackOriginationSmartFirstTimeEvent() {
+        viewModelScope.launch {
+            if (dataStorePreferences.isAdjustSmartFirstTime().first()) {
+                dataStorePreferences.setAdjustSmartFirstTime(false)
+                registerAdjustEvent(AdjustEventType.ORIGINATION_SMART_FIRST_TIME)
+            }
+        }
+    }
+
     data class UIState(
         // Fields
         val expirationDate: String = "",
@@ -245,15 +320,22 @@ class SmartDocumentViewModel @Inject constructor(
         val birthdateErrorStatus: Boolean = false,
         val gender: String = "",
         val genderId: Long = 1,
-        val civilState: String = "",
-        val civilStateId: Long = 0,
-        val profession: String = "",
-        val professionId: Int = 0,
+        val civilState: String? = null,
+        val civilStateId: Long? = null,
+        val profession: String? = null,
+        val professionId: Int? = null,
         val openDialog: DialogParameters = DialogParameters(),
         val nationalitiesList: List<Nationality?> = listOf(),
+        val nationalityName: String? = null,
+        val nationalityId: Int? = null,
         val addressLevelTwoList: List<Address?> = listOf(),
         val civilStatusList: List<CivilStatus?> = listOf(),
-        val professionSmartList: List<ProfessionSmart?> = listOf()
+        val professionSmartList: List<ProfessionSmart?> = listOf(),
+        val isDUIRegistration: Boolean? = null,
+        val isCarneEmissionError: Boolean = false,
+        val isCarneExpirationError: Boolean = false,
+        val carneExpirationDate: String? = null,
+        val carneEmissionDate: String? = null
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -263,20 +345,15 @@ class SmartDocumentViewModel @Inject constructor(
             is OnProfessionChange -> onProfessionChange(event.profession)
             is OnExpirationDateValueChange -> onExpirationDateValueChange(expirationDate = event.date)
             is OnBirthDateValueChange -> onBirthDateValueChange(event.date, event.pickedDate)
-            is OnCallQueryNationalitiesUseCase -> callQueryNationalitiesUseCase(
-                event.user,
-                event.idBrand
-            )
-            is OnCallQueryCivilStatusUseCase -> callQueryCivilStatusUseCase(
-                event.user,
-                event.idBrand
-            )
-            is OnCallQueryProfessionUseCase -> callQueryProfessionUseCase(event.user, event.idBrand)
             is OnValidateForm -> validateForm()
             is OnNextActionClick -> onNextActionClick(event.nextStepAction)
             is OnLoadCurrentStepData -> onLoadCurrentStepData(event.accountSmartData)
             is OnFailureWithDialog -> onFailureWithDialog(event.isLoading, event.openDialog)
             is OnLoadingValueChange -> onLoadingValueChange(event.isLoading)
+            is OnNationalityChange -> onNationalityChange(event.nationality)
+            is OnGetDropdownLists -> getDropdownsLists(event.identification, event.user, event.idBrand)
+            is OnCarneEmissionDateValueChange -> carneEmissionDateValueChange(event.date)
+            is OnCarneExpirationDateValueChange -> carneExpirationDateValueChange(event.date)
         }
     }
 
@@ -286,16 +363,16 @@ class SmartDocumentViewModel @Inject constructor(
         data class OnBirthDateValueChange(val date: String, val pickedDate: LocalDate) : UIEvent()
         data class OnExpirationDateValueChange(val date: String) : UIEvent()
         data class OnGenderChange(val gender: String) : UIEvent()
+        data class OnNationalityChange(val nationality: String) : UIEvent()
         data class OnCivilStateChange(val civilState: String) : UIEvent()
         data class OnProfessionChange(val profession: String) : UIEvent()
         data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) :
             UIEvent()
 
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
-        data class OnCallQueryNationalitiesUseCase(val user: String, val idBrand: Int) : UIEvent()
-
-        data class OnCallQueryCivilStatusUseCase(val user: String, val idBrand: Int) : UIEvent()
-        data class OnCallQueryProfessionUseCase(val user: String, val idBrand: Int) : UIEvent()
+        data class OnGetDropdownLists(val identification: String, val user: String, val idBrand: Int) : UIEvent()
+        data class OnCarneEmissionDateValueChange(val date: String) : UIEvent()
+        data class OnCarneExpirationDateValueChange(val date: String) : UIEvent()
         data class OnLoadCurrentStepData(
             val accountSmartData: AccountSmartData?
         ) : UIEvent()
@@ -311,5 +388,10 @@ class SmartDocumentViewModel @Inject constructor(
         ) : BaseEvent()
 
         data class OnLoadingValueChange(val isLoading: Boolean) : BaseEvent()
+    }
+
+    companion object {
+        const val FORMATTED_DUI_LENGTH = 10
+        const val NON_FORMATTED_DUI_LENGTH = 9
     }
 }

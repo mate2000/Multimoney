@@ -4,10 +4,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.domain.interaction.credit.QueryGetLinkCreditContractUseCase
 import com.multimoney.domain.model.credit.CreditContractEvent
+import com.multimoney.domain.model.metrics.OriginationEventDataDto
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -39,6 +42,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.signdocument
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnStartListenerSubscriptionCreditContractEvent
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CreditSubscriptionStep
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.EVICERTIA_REJECTED_FIRST_TIME
@@ -49,17 +53,21 @@ import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENE
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.PROCESSING_TRANSACTION
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
+import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 @HiltViewModel
 class SignDocumentProcessViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val creditSubscriptionManager: CreditSubscriptionManager,
     private val queryGetLinkCreditContractUseCase: QueryGetLinkCreditContractUseCase,
-    val mmCountDownTimer: MMCountDownTimer
+    val mmCountDownTimer: MMCountDownTimer,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
     // uiState
     var uiState by mutableStateOf(UIState())
@@ -99,6 +107,8 @@ class SignDocumentProcessViewModel @Inject constructor(
                 titleResource = if (idBrand == Brand.CostaRica.id) string.sign_credit_dialog_title_cr else string.sign_credit_dialog_title,
                 descriptionResource = if (idBrand == Brand.CostaRica.id) string.sign_credit_dialog_description_cr else string.sign_credit_dialog_description,
                 positiveResource = string.sign_credit_dialog_continue,
+                negativeResource = string.payment_points_dialog_negative_button,
+                negativeAction = { onUIEvent(OnNavigateToHome) },
                 isActive = mutableStateOf(true)
             )
         )
@@ -112,8 +122,8 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     private fun onShouldCallGetLinkCreditContract() {
-        if (evisertiaStatus.lowercase() != CreditOnFidoOrFirmStatus.FIRMED.status.lowercase()
-            && evisertiaStatus.lowercase() != CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase()
+        if (evisertiaStatus.lowercase() != CreditOnFidoOrFirmStatus.FIRMED.status.lowercase() &&
+            evisertiaStatus.lowercase() != CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase()
         ) {
             if (shouldGetEvicertiaLink || (creditSubscriptionManager.hasEvisertiaLink().not() && isCrosseling.not())) {
                 callQueryGetLinkCreditContractUseCase()
@@ -143,7 +153,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     private fun getCreditSubscriptionListener() = object : CreditSubscriptionManager.SubscriptionEventListener {
         override fun onCapturedEvent(creditContractEvent: CreditContractEvent?) {
             handleSubscriptionsSteps(creditContractEvent = creditContractEvent)
-            Timber.wtf("${LOG_SUBSCRIPTION_TAG}: ${creditContractEvent?.currentStep}")
+            Timber.wtf("$LOG_SUBSCRIPTION_TAG: ${creditContractEvent?.currentStep}")
         }
 
         override fun onSubscriptionFailToConnect(httpError: HttpError) {
@@ -167,7 +177,7 @@ class SignDocumentProcessViewModel @Inject constructor(
                                 signDocumentUrl = linkCreditContract.link ?: ""
                             )
                         }
-                        isEvisertiaOverCounted(linkCreditContract?.statusEvicertia) -> {
+                        isEvicertiaOverCounted(linkCreditContract?.statusEvicertia) -> {
                             onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_SECOND_TIME.value)
                         }
                         else -> {
@@ -200,21 +210,31 @@ class SignDocumentProcessViewModel @Inject constructor(
             }
             CreditSubscriptionStep.DocumentsFirmed.step -> {
                 if (isCrosseling) {
+                    logEvents(AdjustEventType.CROSSELLING_FIRST_FINNISH_EVICERTIA_5030)
                     uiState = uiState.copy(
                         signDocumentProcessStep = PROCESSING_TRANSACTION.value
                     )
                 } else {
+                    logEvents(AdjustEventType.ORIGINATION_FIRST_SIGN_CONTRACT_EVICERTIA_5014)
                     handleOnfidoStatus(creditContractEvent)
                 }
             }
             CreditSubscriptionStep.DocumentsRejected.step -> {
-                if (isEvisertiaOverCounted(creditContractEvent.statusEvicertia)) {
+                if (isEvicertiaOverCounted(creditContractEvent.statusEvicertia)) {
                     onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_SECOND_TIME.value)
                 } else {
+                    logEvents(AdjustEventType.ORIGINATION_FIRST_CUSTOMER_REJECTED_5017)
                     onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_FIRST_TIME.value)
                 }
             }
             CreditSubscriptionStep.AccountActivated.step -> {
+                logEvents(
+                    if (isCrosseling) {
+                        AdjustEventType.ORIGINATION_FIRST_SUCCESS_EVICERTIA_5018
+                    } else {
+                        AdjustEventType.CROSSELLING_FIRST_CUSTOMER_COMPLETE_REQUEST_5031
+                    }
+                )
                 if (idBrand == Brand.CostaRica.id && idPrint != ID_PRINT_EMPTY) {
                     navigateToProcessingTransaction()
                 } else {
@@ -227,8 +247,35 @@ class SignDocumentProcessViewModel @Inject constructor(
         }
     }
 
-    private fun isEvisertiaOverCounted(evisertiaStatus: String?) =
-        evisertiaStatus?.lowercase() == CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase()
+    private suspend fun restartMetricsPreferences() {
+        dataStorePreferences.isAdjustFirstOriginationFirstScreenEventRegister(true)
+        dataStorePreferences.isAdjustFirstOriginationCrosselingFirstScreenEventRegister(true)
+        dataStorePreferences.isAdjustFirstOriginationCheckTermsEventRegister(true)
+        dataStorePreferences.isAdjustFirstOriginationCrosselingCheckTermsEventRegister(true)
+        dataStorePreferences.isAdjustFirstOriginationConfirmAmountEventRegister(true)
+        dataStorePreferences.isAdjustFirstOriginationCrosselingConfirmAmountEventRegister(true)
+        dataStorePreferences.isAdjustFirstOriginationFillAccountEventRegister(true)
+        dataStorePreferences.isAdjustFirstOriginationCrosselingFillAccountEventRegister(true)
+        dataStorePreferences.isAdjustFirstOriginationMonthlyIncomeEventRegister(true)
+        dataStorePreferences.isAdjustFirstOriginationJobInformationEventRegister(true)
+        dataStorePreferences.isAdjustFirstOriginationCrosselingJobInformationEventRegister(true)
+        dataStorePreferences.isAdjustFirstOriginationJobAddressEventRegister(true)
+        dataStorePreferences.isAdjustFirstOriginationOwnAddressEventRegister(true)
+        dataStorePreferences.isAdjustFirstOriginationPEPEventRegister(true)
+        dataStorePreferences.isAdjustFirstOriginationOnfidoStartsEventRegister(true)
+        dataStorePreferences.isAdjustFirstOriginationOnfidoFinishEventRegister(true)
+        dataStorePreferences.isAdjustFirstOriginationEvicertiaSignDocumentEventRegister(true)
+        dataStorePreferences.isAdjustFirstOriginationCrosselingEvicertiaSignDocumentEventRegister(true)
+        dataStorePreferences.isAdjustFirstOriginationEvicertiaCustomerRejectedEventRegister(true)
+        dataStorePreferences.isAdjustFirstOriginationEvicertiaSuccessEventRegister(true)
+        dataStorePreferences.isAdjustFirstOriginationCrosselingEvicertiaSuccessEventRegister(true)
+        dataStorePreferences.isAdjustFirstOriginationNonPreApprovedInfoExtraEventRegister(true)
+        dataStorePreferences.isAdjustFirstOriginationNonPreApprovedRejectedEventRegister(true)
+        dataStorePreferences.isAdjustFirstOriginationNonPreApprovedApprovedEventRegister(true)
+    }
+
+    private fun isEvicertiaOverCounted(evicertiaStatus: String?) =
+        evicertiaStatus?.lowercase() == CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase()
 
     fun showSubscriptionError() {
         uiState = uiState.copy(
@@ -305,6 +352,113 @@ class SignDocumentProcessViewModel @Inject constructor(
         creditSubscriptionManager.destroySubscription()
         navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
     }
+
+    fun logEvents(adjustEventType: AdjustEventType) {
+        viewModelScope.launch {
+            getAdjustEvent(adjustEventType).invoke()
+        }
+    }
+
+    private fun getAdjustEvent(adjustEventType: AdjustEventType): suspend () -> Unit {
+        val originationDto = OriginationEventDataDto(
+            user = email,
+            idBrand = idBrand,
+            identification = identification,
+            idUserRequest = idUserRequest.toInt(),
+            pkUser = pkUser.toString(),
+            idPrint = idPrint
+        )
+        return when (adjustEventType) {
+            AdjustEventType.ORIGINATION_FIRST_SIGN_CONTRACT_EVICERTIA_5014,
+            AdjustEventType.CROSSELLING_FIRST_FINNISH_EVICERTIA_5030 -> {
+                getSignDocumentOriginationEvent(originationDto)
+            }
+            AdjustEventType.ORIGINATION_FIRST_CUSTOMER_REJECTED_5017 -> {
+                getRejectedCustomerOriginationEvent(originationDto)
+            }
+            AdjustEventType.ORIGINATION_FIRST_SUCCESS_EVICERTIA_5018,
+            AdjustEventType.CROSSELLING_FIRST_CUSTOMER_COMPLETE_REQUEST_5031 -> {
+                getSuccessOriginationEvent(originationDto)
+            }
+            AdjustEventType.ORIGINATION_WAIT_SCREEN_EVICERTIA_5015 -> {
+                getWaitingScreenOriginationEvent(originationDto)
+            }
+            AdjustEventType.ORIGINATION_RETRY_SCREEN_EVICERTIA_5016 -> {
+                getRetryScreenOriginationEvent(originationDto)
+            }
+            else -> suspend {}
+        }
+    }
+
+    private fun getRetryScreenOriginationEvent(originationDto: OriginationEventDataDto): suspend () -> Unit =
+        suspend {
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.ORIGINATION_RETRY_SCREEN_EVICERTIA_5016,
+                data = originationDto.toJson()
+            )
+        }
+
+    private fun getWaitingScreenOriginationEvent(originationDto: OriginationEventDataDto): suspend () -> Unit =
+        suspend {
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.ORIGINATION_WAIT_SCREEN_EVICERTIA_5015,
+                data = originationDto.toJson()
+            )
+        }
+
+    private fun getSuccessOriginationEvent(originationDto: OriginationEventDataDto): suspend () -> Unit =
+        suspend {
+            if (isCrosseling) {
+                if (dataStorePreferences.isAdjustFirstOriginationCrosselingEvicertiaSuccessEventRegister().first()) {
+                    registerAdjustEvent(
+                        adjustEventType = AdjustEventType.CROSSELLING_FIRST_CUSTOMER_COMPLETE_REQUEST_5031,
+                        data = originationDto.toJson()
+                    )
+                    dataStorePreferences.isAdjustFirstOriginationCrosselingEvicertiaSuccessEventRegister(false)
+                }
+            } else {
+                if (dataStorePreferences.isAdjustFirstOriginationEvicertiaSuccessEventRegister().first()) {
+                    registerAdjustEvent(
+                        adjustEventType = AdjustEventType.ORIGINATION_FIRST_SUCCESS_EVICERTIA_5018,
+                        data = originationDto.toJson()
+                    )
+                    dataStorePreferences.isAdjustFirstOriginationEvicertiaSuccessEventRegister(false)
+                }
+            }
+            restartMetricsPreferences()
+        }
+
+    private fun getRejectedCustomerOriginationEvent(originationDto: OriginationEventDataDto): suspend () -> Unit =
+        suspend {
+            if (dataStorePreferences.isAdjustFirstOriginationEvicertiaCustomerRejectedEventRegister().first()) {
+                registerAdjustEvent(
+                    adjustEventType = AdjustEventType.ORIGINATION_FIRST_CUSTOMER_REJECTED_5017,
+                    data = originationDto.toJson()
+                )
+                dataStorePreferences.isAdjustFirstOriginationEvicertiaCustomerRejectedEventRegister(false)
+            }
+        }
+
+    private fun getSignDocumentOriginationEvent(originationDto: OriginationEventDataDto): suspend () -> Unit =
+        suspend {
+            if (isCrosseling) {
+                if (dataStorePreferences.isAdjustFirstOriginationCrosselingEvicertiaSignDocumentEventRegister().first()) {
+                    registerAdjustEvent(
+                        adjustEventType = AdjustEventType.CROSSELLING_FIRST_FINNISH_EVICERTIA_5030,
+                        data = originationDto.toJson()
+                    )
+                    dataStorePreferences.isAdjustFirstOriginationCrosselingEvicertiaSignDocumentEventRegister(false)
+                }
+            } else {
+                if (dataStorePreferences.isAdjustFirstOriginationEvicertiaSignDocumentEventRegister().first()) {
+                    registerAdjustEvent(
+                        adjustEventType = AdjustEventType.ORIGINATION_FIRST_SIGN_CONTRACT_EVICERTIA_5014,
+                        data = originationDto.toJson()
+                    )
+                    dataStorePreferences.isAdjustFirstOriginationEvicertiaSignDocumentEventRegister(false)
+                }
+            }
+        }
 
     data class UIState(
         // Interactions

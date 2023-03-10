@@ -9,6 +9,8 @@ mutation GlobalRequest(
     $idAddressLevel2: Long
     $birthdate: DateTime
     $expirationDate: DateTime
+    $placeOfIssue: String
+    $dateOfIssue: DateTime
     $idGenre: Long
     $idMaritalStatus: Long
     $nameCompany: String
@@ -43,6 +45,8 @@ mutation GlobalRequest(
         idProfessionType: $idProfessionType,
         birthdate: $birthdate,
         expirationDate: $expirationDate,
+        placeOfIssue: $placeOfIssue,
+        dateOfIssue: $dateOfIssue,
         idGenre: $idGenre,
         idMaritalStatus: $idMaritalStatus,
         institutionPesion: $institutionPension,

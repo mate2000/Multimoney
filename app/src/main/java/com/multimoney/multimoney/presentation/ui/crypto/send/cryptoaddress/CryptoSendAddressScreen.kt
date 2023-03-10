@@ -228,7 +228,8 @@ fun CryptoSendAddressContent(
                     )
                 })
             },
-            enable = viewModel.uiState.cryptoAddress.value.isNotBlank(),
+            enable = viewModel.uiState.cryptoAddress.value.isNotBlank() &&
+                    !viewModel.uiState.showTextInputError && !viewModel.uiState.isLoading,
         )
     }
 }

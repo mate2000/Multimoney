@@ -41,6 +41,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
@@ -52,7 +53,7 @@ fun SignUpPersonalDataScreen(
     viewModel: SignUpPersonalDataViewModel = hiltViewModel(),
     sharedViewModel: SignUpViewModel = hiltViewModel()
 ) {
-    val fragmentActivity = LocalContext.current as FragmentActivity
+    val context = LocalContext.current
 
     viewModel.apply {
         isOnRestart = isRestart
@@ -86,6 +87,7 @@ fun SignUpPersonalDataScreen(
                                 firstLastName = userData?.firstLastName ?: "",
                                 secondLastName = userData?.secondLastName ?: "",
                                 fullName = userData?.fullName ?: "",
+                                iso3Country = context.resources.configuration.locale.isO3Country,
                                 updateNationality = { nationality, idBrand ->
                                     sharedViewModel.onUIEvent(
                                         OnNationalityValueChange(nationality, idBrand)
@@ -111,11 +113,10 @@ fun SignUpPersonalDataScreen(
                             OnNextActionClick(
                                 email = userData?.email ?: "",
                                 nextStep = Three.name,
-                                idBrand = idBrand ?: 0,
-                                activity = fragmentActivity
+                                idBrand = idBrand ?: 0
                             )
                         )
-                        viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SingUpTwo)
+                        sharedViewModel.logEvents(FireBaseEvents.SingUpTwo, AdjustEventType.SIGNUP_2_2002)
                     },
                     nextStep = Three.id,
                     previousStep = SignUpStep.One.id

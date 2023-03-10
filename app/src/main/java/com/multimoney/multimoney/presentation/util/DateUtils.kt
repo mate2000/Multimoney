@@ -104,6 +104,12 @@ fun onExpirationDateValidation(pickedDate: String, formatter: DateTimeFormatter)
     return periodBetweenDates >= 0
 }
 
+fun onEmissionDateValidation(pickedDate: String, formatter: DateTimeFormatter): Boolean {
+    val pickedAsDate = LocalDate.parse(pickedDate, formatter)
+    val actualDate = LocalDate.now()
+    return pickedAsDate > actualDate
+}
+
 fun getCurrentDateYMDPattern(): String {
     val date = LocalDate.now()
     return date.toString()

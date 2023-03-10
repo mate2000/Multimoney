@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartSteps
+import com.multimoney.data.util.catalog.SmartWorkflow
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
@@ -72,49 +73,55 @@ fun SmartScreen(
             .fillMaxSize()
             .background(MultimoneyTheme.colors.background)
     ) {
-        Column {
-            TopNavBar(
-                isLeftButtonVisible = viewModel.uiState.currentStep <= viewModel.getTotalStepperCounter(),
-                isRightButtonVisible = viewModel.uiState.isCloseVisible,
-                onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
-                onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) }
-            )
-            if (viewModel.uiState.currentStep <= viewModel.getTotalStepperCounter()) {
-                StepProgressBar(
-                    steps = viewModel.getTotalStepperCounter(),
-                    currentStep = viewModel.uiState.currentStep,
-                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                )
-            }
-        }
-        Column(
-            modifier = Modifier.weight(0.1f),
-            verticalArrangement = Arrangement.SpaceBetween
+
+        // avoid showing smart origination steps if onfido / evicertia status are received
+        if (viewModel.workflow != SmartWorkflow.SMART_ONFIDO_PROCESS.workflow &&
+            viewModel.workflow != SmartWorkflow.SMART_CONTRACT_PROCESS.workflow
         ) {
-            // Each country has it's own steps on the smart origination flow
-            if (viewModel.idBrandAsInt == Brand.ElSalvador.id) {
-                GetSvStepContent(
-                    step = viewModel.uiState.currentStep,
-                    viewModel = viewModel
+            Column {
+                TopNavBar(
+                    isLeftButtonVisible = viewModel.uiState.currentStep <= viewModel.getTotalStepperCounter(),
+                    isRightButtonVisible = viewModel.uiState.isCloseVisible,
+                    onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
+                    onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) }
                 )
-            } else {
-                GetCrStepContent(
-                    step = viewModel.uiState.currentStep,
-                    viewModel = viewModel
-                )
+                if (viewModel.uiState.currentStep <= viewModel.getTotalStepperCounter()) {
+                    StepProgressBar(
+                        steps = viewModel.getTotalStepperCounter(),
+                        currentStep = viewModel.uiState.currentStep,
+                        modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                    )
+                }
             }
+            Column(
+                modifier = Modifier.weight(0.1f),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                // Each country has it's own steps on the smart origination flow
+                if (viewModel.idBrandAsInt == Brand.ElSalvador.id) {
+                    GetSvStepContent(
+                        step = viewModel.uiState.currentStep,
+                        viewModel = viewModel
+                    )
+                } else {
+                    GetCrStepContent(
+                        step = viewModel.uiState.currentStep,
+                        viewModel = viewModel
+                    )
+                }
+            }
+            CustomButton(
+                onClick = { viewModel.onUIEvent(OnContinueClick(focusManager)) },
+                text = stringResource(id = viewModel.uiState.buttonTextRes),
+                modifier = Modifier
+                    .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
+                    .fillMaxWidth()
+                    .height(48.dp),
+                buttonType = PrimaryPrimary,
+                enable = viewModel.uiState.isContinueEnabled,
+                visible = viewModel.uiState.isContinueVisible
+            )
         }
-        CustomButton(
-            onClick = { viewModel.onUIEvent(OnContinueClick(focusManager)) },
-            text = stringResource(id = viewModel.uiState.buttonTextRes),
-            modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
-                .fillMaxWidth()
-                .height(48.dp),
-            buttonType = PrimaryPrimary,
-            enable = viewModel.uiState.isContinueEnabled,
-            visible = viewModel.uiState.isContinueVisible
-        )
     }
 
     LoadingIndicator(viewModel.uiState.isLoading)

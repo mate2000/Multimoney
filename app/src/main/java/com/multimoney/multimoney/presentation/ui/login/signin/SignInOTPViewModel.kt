@@ -8,6 +8,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.domain.interaction.security.MutationChangeDeviceUseCase
 import com.multimoney.domain.interaction.security.MutationRequestChangeDeviceUseCase
+import com.multimoney.domain.model.metrics.EmailDto
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
@@ -31,12 +32,15 @@ import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.valid
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel
 import com.multimoney.multimoney.presentation.util.ISO3_COSTA_RICA
 import com.multimoney.multimoney.presentation.util.OTP_MESSAGE_REGEX
+import com.multimoney.multimoney.presentation.util.ResendOtp
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OTPMessageStatus
 import com.multimoney.multimoney.presentation.util.format
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.tickerFlow
+import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -145,8 +149,9 @@ class SignInOTPViewModel @Inject constructor(
             remainingTimeText = newRemainingTime.format(),
             phaseCount = uiState.phaseCount.plus(1)
         )
-        if (uiState.phaseCount > PHASE_FIVE)
+        if (uiState.phaseCount > PHASE_FIVE) {
             onShowBlockedDialog()
+        }
     }
 
     private fun onShowBlockedDialog() {
@@ -157,13 +162,18 @@ class SignInOTPViewModel @Inject constructor(
                 descriptionResource = uiState.dialogTextResource,
                 isActive = mutableStateOf(true),
                 positiveResource = R.string.contact,
-                negativeResource = R.string.cancel,
+                negativeResource = R.string.cancel
             ),
             isButtonEnabled = false
         )
     }
 
     private fun resend() {
+        if (uiState.otpResend == ResendOtp.SMS.option) {
+            registerAdjustEvent(adjustEventType = AdjustEventType.SECURITY_LOGIN_RESEND_OTP_CHANGE_DEVICE_9004, isLoggedIn = false, data = EmailDto(email).toJson() ?: "", applyAdjust = false)
+        } else {
+            registerAdjustEvent(adjustEventType = AdjustEventType.SECURITY_LOGIN_OTP_BY_CALL_CHANGE_DEVICE_9005, isLoggedIn = false, data = EmailDto(email).toJson() ?: "", applyAdjust = false)
+        }
         uiState = uiState.copy(
             isTimerRunning = true,
             phaseCount = uiState.phaseCount.plus(1)
@@ -177,10 +187,10 @@ class SignInOTPViewModel @Inject constructor(
     }
 
     fun getPhaseResourceString() = when (uiState.phaseCount) {
-        PHASE_ONE -> R.string.sign_up_otp_expiration_time_phase_one
-        PHASE_THREE -> R.string.sign_up_otp_expiration_time_phase_three
+        PHASE_ONE -> R.string.sign_in_otp_expiration_time_phase_one
+        PHASE_THREE -> R.string.sign_in_otp_expiration_time_phase_three
         PHASE_TWO, PHASE_FOUR -> R.string.profile_otp_resend
-        PHASE_FIVE -> R.string.sign_up_otp_expiration_time_phase_three
+        PHASE_FIVE -> R.string.sign_in_otp_expiration_time_phase_three
         else -> R.string.profile_couldnt_verify_identity
     }
 
@@ -205,7 +215,7 @@ class SignInOTPViewModel @Inject constructor(
     private fun onCallMutationRequestChangeDevice() = executeUseCase {
         mutationRequestChangeDeviceUseCase.invoke(email).collectLatest { result ->
             result.onSuccess {
-                initializeTimer(if(uiState.phaseCount == PHASE_ONE) PHASE_ONE else uiState.phaseCount.plus(1), totalTime = it.otpTime?.toLong() ?: DEFAULT_OTP_DURATION)
+                initializeTimer(if (uiState.phaseCount == PHASE_ONE) PHASE_ONE else uiState.phaseCount.plus(1), totalTime = it.otpTime?.toLong() ?: DEFAULT_OTP_DURATION)
                 getPhaseAction()
                 onExecuteTimer()
                 uiState = uiState.copy(
@@ -222,13 +232,13 @@ class SignInOTPViewModel @Inject constructor(
         }
     }
 
-
     private fun onCallMutationChangeDevice() = executeUseCase {
         mutationChangeDeviceUseCase.invoke(email, uiState.otp).collectLatest { result ->
             result.onSuccess {
                 uiState = uiState.copy(isLoading = false)
                 when (it.status) {
                     SUCCESS_STATUS -> {
+                        registerAdjustEvent(AdjustEventType.SECURITY_LOGIN_SUCCESS_CHANGE_DEVICE_9003, isLoggedIn = false, applyAdjust = false, data = EmailDto(email).toJson())
                         onNavigateToLogin()
                     }
                     WRONG_CODE -> {
@@ -240,13 +250,10 @@ class SignInOTPViewModel @Inject constructor(
                             uiState.copy(otpError = Pair(true, R.string.sign_in_otp_expired_code))
                     }
                 }
-
             }.onFailure {
                 uiState = uiState.copy(isAlertResultVisible = true, isLoading = false)
-
             }.onMessage {
                 uiState = uiState.copy(isAlertResultVisible = true, isLoading = false)
-
             }.onLoading {
                 uiState = uiState.copy(isLoading = true)
             }

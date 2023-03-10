@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStep
@@ -12,6 +13,7 @@ import com.multimoney.domain.interaction.credit.MutationSaveCreditFlowStepUseCas
 import com.multimoney.domain.interaction.credit.MutationSaveCreditOperationUseCase
 import com.multimoney.domain.interaction.credit.QueryScreenConfigUseCase
 import com.multimoney.domain.model.credit.CreditCatalog
+import com.multimoney.domain.model.metrics.OriginationEventDataDto
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -59,13 +61,17 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.CreditSubscriptionManager
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.ui.home.HomeState
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
 import com.multimoney.multimoney.presentation.util.getNavParam
+import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class CreditViewModel @Inject constructor(
@@ -115,7 +121,7 @@ class CreditViewModel @Inject constructor(
         crosseling = savedStateHandle[CROSSELING] ?: false
         uiState = uiState.copy(
             lastStep = savedStateHandle[CREDIT_STEP] ?: CreditStep.One.id,
-            loadContent = true,
+            loadContent = true
         )
     }
 
@@ -151,8 +157,8 @@ class CreditViewModel @Inject constructor(
                 positiveAction = {
                     onNavigateToHome()
                 },
-                isActive = mutableStateOf(true),
-            ),
+                isActive = mutableStateOf(true)
+            )
         )
     }
 
@@ -167,14 +173,14 @@ class CreditViewModel @Inject constructor(
 
     fun onHideBottomSheet() {
         uiState = uiState.copy(
-            isBottomSheetVisible = false,
+            isBottomSheetVisible = false
         )
         emitBaseEvent(BaseEvent.OnHideBottomSheet)
     }
 
-    fun onShowBottomSheet() {
+    private fun onShowBottomSheet() {
         uiState = uiState.copy(
-            isBottomSheetVisible = true,
+            isBottomSheetVisible = true
         )
         emitBaseEvent(BaseEvent.OnShowBottomSheet)
     }
@@ -184,7 +190,7 @@ class CreditViewModel @Inject constructor(
             uiState = uiState.copy(
                 currentStep = step,
                 isCloseVisible = step >= CreditStep.One.id,
-                lastStep = CreditStep.One.id,
+                lastStep = CreditStep.One.id
             )
         } else {
             navigateToOnfido()
@@ -195,7 +201,7 @@ class CreditViewModel @Inject constructor(
         if (nextStep <= CREDIT_TOTAL_STEPS) {
             uiState = uiState.copy(
                 currentStep = nextStep,
-                isCloseVisible = nextStep >= CreditStep.One.id,
+                isCloseVisible = nextStep >= CreditStep.One.id
             )
         } else {
             navigateToOnfido()
@@ -207,7 +213,7 @@ class CreditViewModel @Inject constructor(
             uiState = uiState.copy(
                 currentStep = previousStep,
                 isCloseVisible = previousStep >= CreditStep.One.id,
-                isBottomSheetVisible = false,
+                isBottomSheetVisible = false
             )
         } else {
             navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
@@ -217,7 +223,7 @@ class CreditViewModel @Inject constructor(
     private fun navigateToOnfido() {
         popAndNavigateTo(
             "${Screen.CreditOnfidoScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$idPrint/$statusEvicertia",
-            Screen.CreditScreen.route,
+            Screen.CreditScreen.route
         )
     }
 
@@ -235,7 +241,7 @@ class CreditViewModel @Inject constructor(
                 infoQuestion = saveCreditStepsHelper.creditFlowData,
                 idLogUserRequest = idUserRequest,
                 idUser = pkUser.toInt(),
-                currentStep = CreditStep.Search.getNameById(nextStep),
+                currentStep = CreditStep.Search.getNameById(nextStep)
             ).collectLatest { result ->
                 result.onSuccess {
                     uiState = uiState.copy(isLoading = false)
@@ -249,8 +255,8 @@ class CreditViewModel @Inject constructor(
                         isLoading = false,
                         openDialog = DialogParameters(
                             description = it.getError() ?: "",
-                            isActive = mutableStateOf(true),
-                        ),
+                            isActive = mutableStateOf(true)
+                        )
                     )
                 }.onLoading {
                     uiState = uiState.copy(isLoading = true)
@@ -281,13 +287,16 @@ class CreditViewModel @Inject constructor(
                 idUserRequest.toLong(),
                 pkUser.toLong(),
                 email,
-                idBrand.toInt(),
+                idBrand.toInt()
             ).collectLatest { result ->
                 result.onSuccess {
                     idPrint = it.idPrint
                     if (isCrosseling) {
                         if (idBrand.toInt() == Brand.ElSalvador.id || it.idPrint == 0L) {
-                            uiState = uiState.copy(showSVProcessSendSuccessfully = true)
+                            uiState = uiState.copy(
+                                showSVProcessSendSuccessfully = true,
+                                isLoading = false
+                            )
                         } else {
                             creditSubscriptionManager.startCreditSubscription(idBrand.toInt(), idPrint)
                             delay(DELAY_TO_NAVIGATE_TO_SIGN_PROCESS)
@@ -296,8 +305,8 @@ class CreditViewModel @Inject constructor(
                                     .plus(
                                         getNavParam(
                                             SIGN_DOCUMENT_STEP_ARG,
-                                            SignDocumentStep.GENERATE_DOCUMENT_STEP.value,
-                                        ),
+                                            SignDocumentStep.GENERATE_DOCUMENT_STEP.value
+                                        )
                                     )
                                     .plus(getNavParam(SIGN_DOCUMENT_ID_PRINT, idPrint))
                                     .plus(getNavParam(ID_BRAND, idBrand))
@@ -310,7 +319,7 @@ class CreditViewModel @Inject constructor(
                                     .plus(getNavParam(CROSSELING, crosseling))
                                     .plus(getNavParam(SHOULD_GET_EVICERTIA_LINK, false))
                                     .plus(getNavParam(EVICERTIA_STATUS, statusEvicertia)),
-                                Screen.CreditScreen.route,
+                                Screen.CreditScreen.route
                             )
                         }
                     } else {
@@ -321,8 +330,8 @@ class CreditViewModel @Inject constructor(
                         isLoading = false,
                         openDialog = DialogParameters(
                             description = it.getError() ?: "",
-                            isActive = mutableStateOf(true),
-                        ),
+                            isActive = mutableStateOf(true)
+                        )
                     )
                 }.onLoading {
                     uiState = uiState.copy(isLoading = true)
@@ -350,8 +359,8 @@ class CreditViewModel @Inject constructor(
                             },
                             dismissAction = {
                                 onUIEvent(OnNavigateToHome)
-                            },
-                        ),
+                            }
+                        )
                     )
                 }
             }
@@ -369,21 +378,234 @@ class CreditViewModel @Inject constructor(
 
     private fun onNavigateToAccountScreen() {
         uiState = uiState.copy(
-            crosselingNewAccount = true,
+            crosselingNewAccount = true
         )
     }
 
     private fun onRestartCrosselingNewAccount() {
         uiState = uiState.copy(
-            crosselingNewAccount = false,
+            crosselingNewAccount = false
         )
     }
 
     private fun onSetBankListEmpty(ifBankListEmpty: Boolean) {
         uiState = uiState.copy(
-            crosselingIsBankAccountListEmpty = ifBankListEmpty,
+            crosselingIsBankAccountListEmpty = ifBankListEmpty
         )
     }
+
+    fun logEvents(adjustEventType: AdjustEventType) {
+        viewModelScope.launch {
+            getAdjustEvent(adjustEventType).invoke()
+        }
+    }
+
+    private fun getAdjustEvent(adjustEventType: AdjustEventType): suspend () -> Unit {
+        val originationDto = OriginationEventDataDto(
+            user = email,
+            idBrand = idBrand.toInt(),
+            identification = identification,
+            idUserRequest = idUserRequest,
+            pkUser = pkUser,
+            idPrint = idPrint
+        )
+        return when (adjustEventType) {
+            AdjustEventType.ORIGINATION_OFFER_FIRST_TIME_5000,
+            AdjustEventType.CROSSELLING_OFFER_FIRST_TIME_5024 -> {
+                getFirstOriginationEvent(originationDto)
+            }
+            AdjustEventType.ORIGINATION_FIRST_CHECK_TERMS_5002,
+            AdjustEventType.CROSSELLING_FIRST_CHECK_TERMS_5026 -> {
+                getCheckTermsOriginationEvent(originationDto)
+            }
+            AdjustEventType.ORIGINATION_FIRST_ENTER_AMOUNT_5003,
+            AdjustEventType.CROSSELLING_FIRST_ENTER_AMOUNT_5027 -> {
+                getConfirmedAmountOriginationEvent(originationDto)
+            }
+            AdjustEventType.ORIGINATION_FIRST_FILL_ACCOUNT_5004,
+            AdjustEventType.CROSSELLING_FIRST_FILL_ACCOUNT_5028 -> {
+                getFillAccountOriginationEvent(originationDto)
+            }
+            AdjustEventType.ORIGINATION_FIRST_FILL_MONTHLY_AMOUNT_5005 -> {
+                getMonthlyIncomeOriginationEvent(originationDto)
+            }
+            AdjustEventType.ORIGINATION_FIRST_FILL_COMPANY_INFORMATION_5006,
+            AdjustEventType.CROSSELLING_FIRST_EXTRA_INFORMATION_5029 -> {
+                getJobInfoOriginationEvent(originationDto)
+            }
+            AdjustEventType.ORIGINATION_FIRST_FILL_COMPANY_ADDRESS_5007 -> {
+                getJobAddressOriginationEvent(originationDto)
+            }
+            AdjustEventType.ORIGINATION_FIRST_FILL_OWN_ADDRESS_5008 -> {
+                getOwnAddressOriginationEvent(originationDto)
+            }
+            AdjustEventType.ORIGINATION_FIRST_FILL_PEP_5009 -> {
+                getPEPOriginationEvent(originationDto)
+            }
+            else -> suspend {}
+        }
+    }
+
+    private fun getPEPOriginationEvent(originationDto: OriginationEventDataDto): suspend () -> Unit =
+        suspend {
+            if (dataStorePreferences.isAdjustFirstOriginationPEPEventRegister().first()) {
+                registerAdjustEvent(
+                    adjustEventType = AdjustEventType.ORIGINATION_FIRST_FILL_PEP_5009,
+                    data = originationDto.toJson()
+                )
+                dataStorePreferences.isAdjustFirstOriginationPEPEventRegister(false)
+            }
+        }
+
+    private fun getOwnAddressOriginationEvent(originationDto: OriginationEventDataDto): suspend () -> Unit =
+        suspend {
+            if (dataStorePreferences.isAdjustFirstOriginationOwnAddressEventRegister().first()) {
+                registerAdjustEvent(
+                    adjustEventType = AdjustEventType.ORIGINATION_FIRST_FILL_OWN_ADDRESS_5008,
+                    data = originationDto.toJson()
+                )
+                dataStorePreferences.isAdjustFirstOriginationOwnAddressEventRegister(false)
+            }
+        }
+
+    private fun getJobAddressOriginationEvent(originationDto: OriginationEventDataDto): suspend () -> Unit =
+        suspend {
+            if (dataStorePreferences.isAdjustFirstOriginationJobAddressEventRegister().first()) {
+                registerAdjustEvent(
+                    adjustEventType = AdjustEventType.ORIGINATION_FIRST_FILL_COMPANY_ADDRESS_5007,
+                    data = originationDto.toJson()
+                )
+                dataStorePreferences.isAdjustFirstOriginationJobAddressEventRegister(false)
+            }
+        }
+
+    private fun getJobInfoOriginationEvent(originationDto: OriginationEventDataDto): suspend () -> Unit =
+        suspend {
+            if (crosseling) {
+                if (dataStorePreferences.isAdjustFirstOriginationCrosselingJobInformationEventRegister().first()) {
+                    registerAdjustEvent(
+                        adjustEventType = AdjustEventType.CROSSELLING_FIRST_EXTRA_INFORMATION_5029,
+                        data = originationDto.toJson()
+                    )
+                    dataStorePreferences.isAdjustFirstOriginationCrosselingJobInformationEventRegister(false)
+                }
+            } else {
+                if (dataStorePreferences.isAdjustFirstOriginationJobInformationEventRegister().first()) {
+                    registerAdjustEvent(
+                        adjustEventType = AdjustEventType.ORIGINATION_FIRST_FILL_COMPANY_INFORMATION_5006,
+                        data = originationDto.toJson()
+                    )
+                    dataStorePreferences.isAdjustFirstOriginationJobInformationEventRegister(false)
+                }
+            }
+        }
+
+    private fun getMonthlyIncomeOriginationEvent(originationDto: OriginationEventDataDto): suspend () -> Unit =
+        suspend {
+            if (dataStorePreferences.isAdjustFirstOriginationMonthlyIncomeEventRegister().first()) {
+                registerAdjustEvent(
+                    adjustEventType = AdjustEventType.ORIGINATION_FIRST_FILL_MONTHLY_AMOUNT_5005,
+                    data = originationDto.toJson()
+                )
+                dataStorePreferences.isAdjustFirstOriginationMonthlyIncomeEventRegister(false)
+            }
+        }
+
+    private fun getFillAccountOriginationEvent(originationDto: OriginationEventDataDto): suspend () -> Unit =
+        suspend {
+            if (crosseling) {
+                if (dataStorePreferences.isAdjustFirstOriginationCrosselingFillAccountEventRegister().first()) {
+                    registerAdjustEvent(
+                        adjustEventType = AdjustEventType.CROSSELLING_FIRST_FILL_ACCOUNT_5028,
+                        data = originationDto.toJson()
+                    )
+                    dataStorePreferences.isAdjustFirstOriginationCrosselingFillAccountEventRegister(false)
+                }
+            } else {
+                if (dataStorePreferences.isAdjustFirstOriginationFillAccountEventRegister().first()) {
+                    registerAdjustEvent(
+                        adjustEventType = AdjustEventType.ORIGINATION_FIRST_FILL_ACCOUNT_5004,
+                        data = originationDto.toJson()
+                    )
+                    dataStorePreferences.isAdjustFirstOriginationFillAccountEventRegister(false)
+                }
+            }
+        }
+
+    private fun getConfirmedAmountOriginationEvent(originationDto: OriginationEventDataDto): suspend () -> Unit =
+        suspend {
+            if (crosseling) {
+                if (dataStorePreferences.isAdjustFirstOriginationCrosselingConfirmAmountEventRegister().first()) {
+                    registerAdjustEvent(
+                        adjustEventType = AdjustEventType.CROSSELLING_FIRST_ENTER_AMOUNT_5027,
+                        data = originationDto.toJson()
+                    )
+                    dataStorePreferences.isAdjustFirstOriginationCrosselingConfirmAmountEventRegister(false)
+                }
+            } else {
+                if (dataStorePreferences.isAdjustFirstOriginationConfirmAmountEventRegister().first()) {
+                    registerAdjustEvent(
+                        adjustEventType = AdjustEventType.ORIGINATION_FIRST_ENTER_AMOUNT_5003,
+                        data = originationDto.toJson()
+                    )
+                    dataStorePreferences.isAdjustFirstOriginationConfirmAmountEventRegister(false)
+                }
+            }
+        }
+
+    private fun getCheckTermsOriginationEvent(originationDto: OriginationEventDataDto): suspend () -> Unit =
+        suspend {
+            if (crosseling) {
+                if (dataStorePreferences.isAdjustFirstOriginationCrosselingCheckTermsEventRegister().first()) {
+                    registerAdjustEvent(
+                        adjustEventType = AdjustEventType.CROSSELLING_FIRST_CHECK_TERMS_5026,
+                        data = originationDto.toJson()
+                    )
+                    dataStorePreferences.isAdjustFirstOriginationCrosselingCheckTermsEventRegister(false)
+                }
+            } else {
+                if (dataStorePreferences.isAdjustFirstOriginationCheckTermsEventRegister().first()) {
+                    registerAdjustEvent(
+                        adjustEventType = AdjustEventType.ORIGINATION_FIRST_CHECK_TERMS_5002,
+                        data = originationDto.toJson()
+                    )
+                    dataStorePreferences.isAdjustFirstOriginationCheckTermsEventRegister(false)
+                }
+            }
+        }
+
+    private fun getFirstOriginationEvent(originationDto: OriginationEventDataDto): suspend () -> Unit =
+        suspend {
+            if (crosseling) {
+                if (dataStorePreferences.isAdjustFirstOriginationCrosselingFirstScreenEventRegister().first()) {
+                    registerAdjustEvent(
+                        adjustEventType = AdjustEventType.CROSSELLING_OFFER_FIRST_TIME_5024,
+                        data = originationDto.toJson()
+                    )
+                    dataStorePreferences.isAdjustFirstOriginationCrosselingFirstScreenEventRegister(false)
+                } else {
+                    registerAdjustEvent(
+                        adjustEventType = AdjustEventType.CROSSELLING_OFFER_5025,
+                        applyAdjust = false,
+                        data = originationDto.toJson()
+                    )
+                }
+            } else {
+                if (dataStorePreferences.isAdjustFirstOriginationFirstScreenEventRegister().first()) {
+                    registerAdjustEvent(
+                        adjustEventType = AdjustEventType.ORIGINATION_OFFER_FIRST_TIME_5000,
+                        data = originationDto.toJson()
+                    )
+                    dataStorePreferences.isAdjustFirstOriginationFirstScreenEventRegister(false)
+                } else {
+                    registerAdjustEvent(
+                        adjustEventType = AdjustEventType.ORIGINATION_OFFER_5001,
+                        applyAdjust = false,
+                        data = originationDto.toJson()
+                    )
+                }
+            }
+        }
 
     data class UIState(
         // Interactions
@@ -399,19 +621,19 @@ class CreditViewModel @Inject constructor(
         val isBottomSheetVisible: Boolean = false,
         val crosselingNewAccount: Boolean = false,
         val crosselingIsBankAccountListEmpty: Boolean = false,
-        val showSVProcessSendSuccessfully: Boolean = false,
+        val showSVProcessSendSuccessfully: Boolean = false
     )
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is OnSetCloseDialogTexts -> onInitializeTexts(
                 event.title,
-                event.description,
+                event.description
             )
             is OnSetNavigation -> onSetNavigation(
                 event.nextAction,
                 event.nextStep,
-                event.previousStep,
+                event.previousStep
             )
             is OnBackClick -> onBackClick(event.focusManager)
             is OnCloseClick -> onCloseClick(event.focusManager)
@@ -447,7 +669,7 @@ class CreditViewModel @Inject constructor(
         data class OnSetNavigation(
             val nextAction: () -> Unit = {},
             val nextStep: Int,
-            val previousStep: Int,
+            val previousStep: Int
         ) : UIEvent()
 
         data class OnBackClick(val focusManager: FocusManager) : UIEvent()

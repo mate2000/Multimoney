@@ -49,7 +49,6 @@ import com.multimoney.multimoney.presentation.uielement.VoucherNumberInfo
 import com.multimoney.multimoney.presentation.uielement.VoucherTotalAmountInfo
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
-import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import com.multimoney.multimoney.presentation.util.shape.DottedShape
 
 @Preview
@@ -62,16 +61,15 @@ fun SellCryptoVoucherScreen(
     viewModel: SellCryptoVoucherViewModel = hiltViewModel()
 ) {
     SellCryptoVoucherContent(
-        assetAmount = sharedViewModel.uiState.voucherAssetAmount ?: "",
-        currencyName = sharedViewModel.uiState.asset ?: "",
-        approximateValue = sharedViewModel.uiState.voucherApproximateValue ?: "",
+        assetAmount = sharedViewModel.uiState.voucherAssetAmount,
+        approximateValue = sharedViewModel.uiState.voucherApproximateValue,
         accountNumber = sharedViewModel.getAccountNumber(stringResource(id = R.string.payment_account_masked_text)),
-        referenceNumber = sharedViewModel.uiState.voucherReferenceNumber ?: "",
-        currentDate = sharedViewModel.uiState.voucherSellDate ?: "",
-        currentTime = sharedViewModel.uiState.voucherSellTime ?: "",
-        exchangeRate = sharedViewModel.uiState.voucherExchangeRate ?: "",
+        referenceNumber = sharedViewModel.uiState.voucherReferenceNumber,
+        currentDate = sharedViewModel.uiState.voucherSellDate,
+        currentTime = sharedViewModel.uiState.voucherSellTime,
+        exchangeRate = sharedViewModel.uiState.voucherExchangeRate,
         totalCreditedAmountExchange = sharedViewModel.uiState.voucherTotalCreditedAmountExchange,
-        totalCreditedAmount = sharedViewModel.uiState.voucherTotalCreditedAmount ?: "",
+        totalCreditedAmount = sharedViewModel.uiState.voucherTotalCreditedAmount,
         idCurrency = sharedViewModel.uiState.idCurrency,
         viewModel = viewModel
     )
@@ -80,7 +78,6 @@ fun SellCryptoVoucherScreen(
 @Composable
 fun SellCryptoVoucherContent(
     assetAmount: String,
-    currencyName: String,
     approximateValue: String,
     accountNumber: String,
     referenceNumber: String,
@@ -191,7 +188,7 @@ fun SellCryptoVoucherContent(
                         Text(
                             modifier = Modifier.fillMaxWidth(),
                             text = stringResource(
-                                id = R.string.buy_crypto_voucher_value_in_currency_template,
+                                id = R.string.sell_crypto_voucher_value_in_currency_template,
                                 (if (idCurrency == CurrencyType.Dollar.id)
                                     CurrencyType.Dollar.stringName
                                 else CurrencyType.Colon.stringName).lowercase()

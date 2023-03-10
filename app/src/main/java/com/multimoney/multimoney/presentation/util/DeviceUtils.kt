@@ -6,7 +6,6 @@ import android.content.res.Configuration
 import android.os.Build
 import android.provider.Settings
 import android.util.DisplayMetrics
-import android.util.Patterns
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.multimoney.data.util.catalog.DeviceType
@@ -53,6 +52,7 @@ fun checkIfEmulator(): Boolean {
             || Build.MODEL.contains("google_sdk")
             || Build.MODEL.toLowerCase().contains("droid4x")
             || Build.MODEL.contains("Emulator")
+            || Build.MODEL.contains("sdk_gphone")
             || Build.MODEL.contains("Android SDK built for x86")
             || Build.HARDWARE == "goldfish"
             || Build.HARDWARE == "vbox86"

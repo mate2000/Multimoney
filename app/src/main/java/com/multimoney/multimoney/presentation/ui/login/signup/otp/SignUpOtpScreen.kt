@@ -19,6 +19,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -57,6 +59,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.OtpTextField
 import com.multimoney.multimoney.presentation.uielement.SystemBroadcastReceiver
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.transformation.PhoneNumberTransformation
@@ -172,7 +175,7 @@ fun SignUpOtpScreen(
                                 }
                             )
                         )
-                        viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SignUpFour)
+                        sharedViewModel.logEvents(FireBaseEvents.SignUpFour, AdjustEventType.SIGNUP_4_2004)
                     },
                     nextStep = viewModel.getNextStep(isOnFidoVerified).id,
                     previousStep = SignUpStep.Three.id
@@ -189,7 +192,7 @@ fun SignUpOtpScreen(
                         sharedViewModel.onUIEvent(
                             SignUpViewModel.UIEvent.OnLoadingValueChange(false)
                         )
-                    }, it)
+                    }, it, sharedViewModel.userData)
                 )
             }.onMessage {
                 sharedViewModel.onUIEvent(
@@ -299,28 +302,34 @@ fun SignUpOtpScreen(
         when (viewModel.uiState.phaseCount) {
             PHASE_ONE, PHASE_THREE, PHASE_FIVE -> {
                 Row {
+                    val text = stringResource(id = viewModel.getPhaseResourceString(), viewModel.uiState.remainingTimeText)
+                    val timerStart = text.indexOf(viewModel.uiState.remainingTimeText)
+
                     Text(
-                        text = stringResource(id = viewModel.getPhaseResourceString()),
-                        textAlign = TextAlign.Center,
+                        text = buildAnnotatedString {
+                            append(text)
+                            addStyle(
+                                style = SpanStyle(color = MultimoneyTheme.colors.textSubhead),
+                                start = 0,
+                                end = timerStart
+                            )
+                            addStyle(
+                                style = SpanStyle(
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MultimoneyTheme.colors.timerColor
+                                ),
+                                start = timerStart,
+                                end = timerStart + viewModel.uiState.remainingTimeText.length
+                            )
+                            addStyle(
+                                style = SpanStyle(color = MultimoneyTheme.colors.textSubhead),
+                                start = timerStart + viewModel.uiState.remainingTimeText.length,
+                                end = text.length
+                            )
+                        },
+                        textAlign = TextAlign.Start,
                         modifier = Modifier.padding(top = 32.dp),
-                        style = Typography.body2.copy(color = MultimoneyTheme.colors.textSubhead)
-                    )
-                    Text(
-                        text = viewModel.uiState.remainingTimeText,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .padding(top = 32.dp)
-                            .width(45.dp),
-                        style = Typography.body2.copy(
-                            color = MultimoneyTheme.colors.timerColor,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    )
-                    Text(
-                        text = stringResource(id = R.string.sign_up_otp_expiration_time_phase_seconds),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(top = 32.dp),
-                        style = Typography.body2.copy(color = MultimoneyTheme.colors.textSubhead)
+                        style = Typography.body2
                     )
                 }
             }

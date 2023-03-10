@@ -135,6 +135,11 @@ type Query {
   listAccountsTransfer365(listAccountsTransfer365Input: ListAccountsTransfer365DtoInput!): [AccountsTransfer365List!]
 
   """
+  AccountSmart
+  """
+  accountTransfer365(accountTransfer365Input: AccountTransfer365DtoInput!): AccountTransfer365
+
+  """
   Balance
   """
   balanceCredit(balanceCreditInput: balanceCreditInput!): [PromissoryNoteMobile!]
@@ -567,6 +572,21 @@ type Mutation {
   AccountSmart
   """
   saveAccountSmartContract(accountSmartContractInput: AccountSmartContractDtoInput!): AccountSmartContract
+
+  """
+  AccountSmart
+  """
+  addAccountTransfer365(addAccountTransfer365Dto: AddAccountTransfer365DtoInput!): AccountTransfer365Response
+
+  """
+  AccountSmart
+  """
+  updateAccountTransfer365(updateAccountTransfer365Dto: UpdateAccountTransfer365DtoInput!): AccountTransfer365Response
+
+  """
+  AccountSmart
+  """
+  deleteAccountTransfer365(deleteAccountTransfer365Dto: DeleteAccountTransfer365DtoInput!): DeleteAccountTransfer365Response
 
   """
   Credit
@@ -1658,6 +1678,50 @@ type AccountsTransfer365List {
 }
 
 input ListAccountsTransfer365DtoInput {
+  idTransferAccount: Int!
+
+  state: Int!
+
+  identification: String!
+
+  isFavorite: Boolean!
+
+  idBrand: Int
+
+  user: String
+}
+
+type AccountTransfer365 {
+  pk_Ban_Mtr_Cuenta_Transferencia: Int
+
+  identificacion_Banco_Destino: String
+
+  fk_Banco_Destino: Int
+
+  nombre_Banco_Destino: String
+
+  decripcion_Tipo_Cuenta: String
+
+  estado: String
+
+  estado_Transferencia: String
+
+  numero_Cuenta: String
+
+  nombre_Titular: String
+
+  email_Notificacion: String
+
+  numero_Identificacion_Destino: String
+
+  alias: String
+
+  es_Favorita: String
+
+  fk_Tipo_Identificacion: Int
+}
+
+input AccountTransfer365DtoInput {
   idTransferAccount: Int!
 
   state: Int!
@@ -3170,33 +3234,33 @@ input QuickActionsDtoInput {
 }
 
 type UserEventMobile {
-  pK_SUV_LOG_USUARIO_EVENTO_MOBILE: Long!
+  pK_SUV_LOG_USUARIO_EVENTO_MOBILE: Long
 
-  fK_SUV_MTR_USUARIO: Int!
+  fK_SUV_MTR_USUARIO: Int
 
-  plataforma: String!
+  plataforma: String
 
-  uuid: String!
+  uuid: String
 
-  version_Dispositivo: String!
+  version_Dispositivo: String
 
-  manofactura: String!
+  manofactura: String
 
-  nombre_Dispositivo: String!
+  nombre_Dispositivo: String
 
-  numero_Serie: String!
+  numero_Serie: String
 
-  direccion_Ip: String!
+  direccion_Ip: String
 
-  latitud: String!
+  latitud: String
 
-  longitud: String!
+  longitud: String
 
-  tokenNotificationsPush: String!
+  tokenNotificationsPush: String
 
-  dISPOSITIVO_TARJETA: String!
+  dISPOSITIVO_TARJETA: String
 
-  iD_BILLETERA_TARJETA: String!
+  iD_BILLETERA_TARJETA: String
 
   status: Int
 
@@ -3897,6 +3961,108 @@ input AccountSmartContractDtoInput {
   active: Boolean!
 
   currentStep: String!
+
+  idBrand: Int
+
+  user: String
+}
+
+type AccountTransfer365Response {
+  idAccountTransfer: Int
+
+  status: Boolean
+
+  identificationNumber: String
+
+  idDestinationAccountType: Int
+
+  idDestinationBank: Int
+
+  accountNumber: String
+
+  accountName: String
+
+  emailNotification: String
+
+  isFavorite: Boolean
+
+  description: String
+
+  result: Int
+}
+
+input AddAccountTransfer365DtoInput {
+  numeroIdentificacion: String!
+
+  idBancoDestino: Int!
+
+  idTipoCuentaDestino: Int!
+
+  numeroCuenta: String!
+
+  telefono: String!
+
+  nombreTitular: String!
+
+  emailNotificacion: String!
+
+  descripcion: String!
+
+  esFavorita: Boolean!
+
+  estado: Boolean!
+
+  identificacionDestino: String!
+
+  idTipoIdentificacion: Int!
+
+  idBrand: Int
+
+  user: String
+}
+
+input UpdateAccountTransfer365DtoInput {
+  idCuentaTransferencia: Int!
+
+  numeroIdentificacion: String!
+
+  idBancoDestino: Int!
+
+  idTipoCuentaDestino: Int!
+
+  numeroCuenta: String!
+
+  telefono: String!
+
+  nombreTitular: String!
+
+  emailNotificacion: String!
+
+  descripcion: String!
+
+  esFavorita: Boolean!
+
+  estado: Boolean!
+
+  identificacionDestino: String!
+
+  idTipoIdentificacion: Int!
+
+  idBrand: Int
+
+  user: String
+}
+
+type DeleteAccountTransfer365Response {
+  status: Int
+
+  message: String
+
+  detail: String
+}
+
+input DeleteAccountTransfer365DtoInput {
+  idTransferAccount: Int!
 
   idBrand: Int
 

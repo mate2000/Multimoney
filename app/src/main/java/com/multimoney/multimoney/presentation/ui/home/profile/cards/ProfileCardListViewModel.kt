@@ -9,6 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.domain.interaction.virtualcard.MutationDeleteCardVDUseCase
 import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCase
+import com.multimoney.domain.model.metrics.BaseEventDataDto
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -18,12 +19,12 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PROFILE_CARD_LIST_ORIGIN
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.ADD_CARD_RESPONSE
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CARD
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnCallQueryGetClientCards
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnCardThreePointsSelected
@@ -35,9 +36,11 @@ import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardL
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnHideToast
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.home.profile.cards.ProfileCardListViewModel.UIEvent.OnNavigateToVerifyCard
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProfileCardListOrigin
 import com.multimoney.multimoney.presentation.util.getNavParam
+import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -83,6 +86,9 @@ class ProfileCardListViewModel @Inject constructor(
                     )
                     if (fromDelete) {
                         onDeleteCardShowToast()
+                        if (cardsList.isNullOrEmpty()) {
+                            registerAdjustEvent(AdjustEventType.SETTINGS_USER_WITHOUT_CARD_8006, applyAdjust = false, data = BaseEventDataDto(user = user, idBrand = idBrand, identification = identification).toJson())
+                        }
                     }
                 }.onFailure {
                     uiState = uiState.copy(
@@ -208,7 +214,7 @@ class ProfileCardListViewModel @Inject constructor(
                 getNavParam(IDENTIFICATION, identification)
             )
             .plus(
-                getNavParam(ID_CARD, uiState.cardSelected?.idCard ?: "")
+                getNavParam(ID_CARD, uiState.cardVDSelected?.idCard ?: "")
             )
             .plus(
                 getNavParam(USER, user)
@@ -239,8 +245,7 @@ class ProfileCardListViewModel @Inject constructor(
         val cardVDSelected: CardVisaDirect? = null,
         val toastIsVisible: Boolean = false,
         val toastMessage: Int = R.string.empty,
-        val deleteDialogIsVisible: Boolean = false,
-        val cardSelected: CardVisaDirect? = null
+        val deleteDialogIsVisible: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

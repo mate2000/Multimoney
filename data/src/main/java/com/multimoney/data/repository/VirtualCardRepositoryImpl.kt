@@ -10,14 +10,14 @@ import com.multimoney.domain.model.virtualcard.AutomaticCardDebit
 import com.multimoney.domain.model.virtualcard.CardBlocking
 import com.multimoney.domain.model.virtualcard.CardUnblocking
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
-import com.multimoney.domain.model.virtualcard.GetParametersMobileByCategory
+import com.multimoney.domain.model.virtualcard.CreateCard
+import com.multimoney.domain.model.virtualcard.CreateUser
 import com.multimoney.domain.model.virtualcard.DeleteCard
+import com.multimoney.domain.model.virtualcard.GetParametersMobileByCategory
 import com.multimoney.domain.model.virtualcard.MicroDepositVD
 import com.multimoney.domain.model.virtualcard.PayCreditVisaDirect
 import com.multimoney.domain.model.virtualcard.ResendMicroDepositVD
 import com.multimoney.domain.model.virtualcard.UpdateCard
-import com.multimoney.domain.model.virtualcard.CreateUser
-import com.multimoney.domain.model.virtualcard.CreateCard
 import com.multimoney.domain.repository.VirtualCardRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -183,7 +183,8 @@ class VirtualCardRepositoryImpl @Inject constructor(
         idClient: Int,
         idLoanClient: Int,
         idCard: Long,
-        cardMasked: String
+        cardMasked: String,
+        identification: String
     ): Flow<MultimoneyResult<AutomaticCardDebit?>> =
         fetchData(
             apolloCall = graphqlApi.mutationActivatedCardAutomaticDebit(
@@ -192,7 +193,8 @@ class VirtualCardRepositoryImpl @Inject constructor(
                 idClient = idClient,
                 idLoanClient = idLoanClient,
                 idCard = idCard,
-                cardMasked = cardMasked
+                cardMasked = cardMasked,
+                identification = identification
             ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())

@@ -139,10 +139,14 @@
     <string name="sign_in_biometric_email_hint" translatable="false">Ingresá tu correo electrónico</string>
     <string name="sign_in_session_active_on_another_device_title" translatable="false">Sesión activa en otro dispositivo</string>
     <string name="sign_in_session_blocked_title" translatable="false">Cambio de dispositivo bloqueado</string>
+    <string name="sign_in_session_blacklisted_title_cr" translatable="false">¿No podés entrar a MultiMoney?</string>
+    <string name="sign_in_session_blacklisted_title" translatable="false">¿No puedes entrar a MultiMoney?</string>
+    <string name="sign_in_session_blacklisted_message" translatable="false">Hemos detectado una anomalía. por tu seguridad no puedes iniciar sesión ahora. Intentálo más tarde o contacta a soporte.</string>
     <string name="sign_in_session_blocked_message" translatable="false">No podemos hacer el cambio de dispositivo por seguridad.</string>
     <string name="sign_in_session_open_here_close_another" translatable="false">Al ingresar aquí, cerrarás la sesión que se encuentra abierta en otro dispositivo</string>
     <string name="sign_in_dialog_exit_button" translatable="false">Salir</string>
     <string name="sign_in_dialog_sign_in_here_button" translatable="false">Iniciar sesión aquí</string>
+    <string name="sign_in_session_blacklisted_contact_support" translatable="false">Contactar a soporte</string>
     <string name="sign_in_otp_wrong_code" translatable="false">Código de verificación incorrecto</string>
     <string name="sign_in_device_verification" translatable="false">Verificación de dispositivo</string>
     <string name="sign_in_otp_expired_code" translatable="false">Código de verificación ha expirado</string>

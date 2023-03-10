@@ -14,7 +14,6 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartStatus
 import com.multimoney.data.util.catalog.SmartSteps
-import com.multimoney.data.util.catalog.SmartWorkflow
 import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationInitialRequestUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCase
@@ -432,14 +431,10 @@ class SmartViewModel @Inject constructor(
     }
 
     private fun navigateToOnfidoOrEvicertia() {
-        if (workflow == SmartWorkflow.SMART_CONTRACT_PROCESS.workflow) {
-            onNavigateToSignDocumentScreen()
-        } else {
-            popAndNavigateTo(
-                "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idSysRequest/$idGlobalRequest/$URL_EMPTY/$comingFromCrypto/$evicertiaStatus/$workflow",
-                Screen.SmartScreen.route
-            )
-        }
+        popAndNavigateTo(
+            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idSysRequest/$idGlobalRequest/$URL_EMPTY/$comingFromCrypto/$evicertiaStatus/$workflow",
+            Screen.SmartScreen.route
+        )
     }
 
     private fun onNavigateToSignDocumentScreen() {

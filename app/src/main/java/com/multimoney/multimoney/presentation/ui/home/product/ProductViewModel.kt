@@ -9,7 +9,6 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.PENDING
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.data.util.catalog.CreditWorkflow
 import com.multimoney.data.util.catalog.MyProductStatus
@@ -93,6 +92,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnVisaCardExpiredDialog
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
 import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.FilterDate
 import com.multimoney.multimoney.presentation.util.NfcHelper
@@ -333,19 +333,26 @@ class ProductViewModel @Inject constructor(
         comingFromCrypto: Boolean = false,
         onIntent: () -> Unit? = { }
     ) {
+        val firmStatus =
+            if (uiState.userStatus?.infoBankAccount?.statusFirm.isNullOrBlank().not()) {
+                uiState.userStatus?.infoBankAccount?.statusFirm
+            } else {
+                NOT_SIGNED.status
+            }
+
         when (smartStep) {
             SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS.workflow -> onIntent()
-            PENDING.status -> onCallMutationAccountStatusUseCase(comingFromCrypto)
-            SMART_CONTRACT_PROCESS.workflow -> {
-                onCallMutationAccountStatusUseCase(comingFromCrypto)
+            SMART_CONTRACT_PROCESS.workflow -> onCallMutationAccountStatusUseCase(comingFromCrypto)
+            SMART_ONFIDO_PROCESS.workflow -> {
+                navigateTo(
+                    "${Screen.SmartOnfidoScreen.baseRoute}/$userName/${uiState.idBrand}/" +
+                        "$pkUser/$identification/$email/$firstName/${uiState.userStatus?.infoUser?.lastName}/" +
+                        "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/" +
+                        "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/" +
+                        "${SmartViewModel.URL_EMPTY}/$comingFromCrypto/$firmStatus/$smartStep"
+                )
             }
             else -> {
-                val firmStatus =
-                    if (uiState.userStatus?.infoBankAccount?.statusFirm.isNullOrBlank().not()) {
-                        uiState.userStatus?.infoBankAccount?.statusFirm
-                    } else {
-                        NOT_SIGNED.status
-                    }
                 navigateTo(
                     "${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
                         "${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}/$comingFromCrypto/" +

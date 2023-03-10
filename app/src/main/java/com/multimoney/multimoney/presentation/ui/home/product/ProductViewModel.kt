@@ -368,11 +368,8 @@ class ProductViewModel @Inject constructor(
                 )
             )
             navigateTo(
-                "${Screen.SmartPaymentMethodScreenSV.baseRoute}/$smartIds/${
-                encodeData(
-                    uiState.userStatus?.infoUser
-                )
-                }"
+                "${Screen.SmartPaymentMethodScreenSV.baseRoute}/$smartIds/" +
+                    "${encodeData(uiState.userStatus?.infoUser)}"
             )
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             val infoCredit = uiState.userStatus?.infoCredit

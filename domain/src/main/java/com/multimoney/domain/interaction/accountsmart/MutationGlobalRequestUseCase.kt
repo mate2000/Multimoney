@@ -16,6 +16,8 @@ interface MutationGlobalRequestUseCase {
         idCivilStatusType: Long?,
         birthday: String?,
         expirationDate: String?,
+        nationality: String?,
+        dateOfEmission: String?,
         idGender: Long?,
         companyName: String?,
         aboutCompany: String?,

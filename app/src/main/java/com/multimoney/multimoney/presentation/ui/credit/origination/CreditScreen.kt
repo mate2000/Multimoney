@@ -40,6 +40,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.additionalin
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.companyaddress.CompanyAddressScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.CreditBankScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.crosseling.CreditCrosselingBankScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.homeaddress.HomeAddressScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoScreen
@@ -263,7 +264,11 @@ fun GetStepContent(
             if (viewModel.idBrand.toInt() == Brand.CostaRica.id) {
                 IbanAccountScreen(sharedViewModel = viewModel)
             } else {
-                CreditBankScreen(sharedViewModel = viewModel)
+                if (viewModel.crosseling) {
+                    CreditCrosselingBankScreen(sharedViewModel = viewModel)
+                } else {
+                    CreditBankScreen(sharedViewModel = viewModel)
+                }
             }
         }
         CreditStep.Three.id -> MonthlyIncomeScreen(sharedViewModel = viewModel)

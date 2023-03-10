@@ -133,18 +133,10 @@ class CreditViewModel @Inject constructor(
 
     private fun onBackClick(focusManager: FocusManager) {
         focusManager.clearFocus()
-        if (crosseling && uiState.crosselingNewAccount && uiState.currentStep == CreditStep.Two.id && uiState.crosselingIsBankAccountListEmpty) {
-            previousStep()
-        } else if (crosseling && uiState.crosselingNewAccount && uiState.currentStep == CreditStep.Two.id && uiState.crosselingIsBankAccountListEmpty.not()) {
+        if (crosseling && previousStep == CreditStep.Two.id) {
             onRestartCrosselingNewAccount()
-        } else if (crosseling && uiState.crosselingNewAccount.not() && uiState.currentStep == CreditStep.Two.id) {
-            previousStep()
-        } else {
-            if (crosseling && uiState.currentStep == CreditStep.Three.id) {
-                onRestartCrosselingNewAccount()
-            }
-            previousStep()
         }
+        previousStep()
     }
 
     private fun onCloseClick(focusManager: FocusManager) {
@@ -167,8 +159,8 @@ class CreditViewModel @Inject constructor(
         navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
     }
 
-    private fun onContinueClick(focusManager: FocusManager) {
-        focusManager.clearFocus()
+    private fun onContinueClick(focusManager: FocusManager?) {
+        focusManager?.clearFocus()
         nextAction.invoke()
     }
 
@@ -676,7 +668,7 @@ class CreditViewModel @Inject constructor(
 
         data class OnBackClick(val focusManager: FocusManager) : UIEvent()
         data class OnCloseClick(val focusManager: FocusManager) : UIEvent()
-        data class OnContinueClick(val focusManager: FocusManager) : UIEvent()
+        data class OnContinueClick(val focusManager: FocusManager? = null) : UIEvent()
         data class OnContinueEnable(val enable: Boolean) : UIEvent()
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
         data class OnOpenDialogValueChange(val openDialog: DialogParameters) : UIEvent()

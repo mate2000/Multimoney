@@ -83,15 +83,7 @@ fun CreditBankScreen(
                             saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
                         )
                     )
-                }, nextStep = if (sharedViewModel.crosseling) {
-                    if (sharedViewModel.idBrand.toInt() == Brand.ElSalvador.id) {
-                        CreditStep.Three.id
-                    } else {
-                        CreditStep.Four.id
-                    }
-                } else {
-                    CreditStep.Three.id
-                }, previousStep = CreditStep.One.id
+                }, nextStep = CreditStep.Three.id, previousStep = CreditStep.One.id
             )
         )
         viewModel.onUIEvent(

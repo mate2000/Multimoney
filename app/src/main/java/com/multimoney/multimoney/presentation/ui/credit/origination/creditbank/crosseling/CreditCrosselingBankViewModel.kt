@@ -142,8 +142,17 @@ class CreditCrosselingBankViewModel @Inject constructor(
     }
 
     private fun onBankValueChanged(bankSelected: BankTransfer365?) {
+        var bankCatalogSelected = bankListCreditCatalog?.first { filter ->
+            filter?.description?.lowercase() == bankSelected?.bankName?.lowercase().orEmpty()
+        }
+        if (bankCatalogSelected == null) {
+            bankCatalogSelected = bankListCreditCatalog?.first { filter ->
+                filter?.description?.lowercase() == OTHER
+            }
+        }
         uiState = uiState.copy(
             bankSelected = bankSelected,
+            bankCatalogSelected = bankCatalogSelected,
             bankSelectedString = bankSelected?.bankName ?: "",
             accountTypeList = accountTypeList,
             accountTypeSelectedString = "",
@@ -190,13 +199,14 @@ class CreditCrosselingBankViewModel @Inject constructor(
         nextStepAction: () -> Unit,
         saveCreditStepsHelper: SaveCreditStepsHelper
     ) {
-//        saveCreditStepsHelper.saveStepOneCrosselingSv(
-//            user,
-//            bank,
-//            uiState.bankSelected,
-//            uiState.accountTypeSelected,
-//            uiState.accountNumber
-//        )
+        saveCreditStepsHelper.saveStepOneCrosselingSv(
+            user,
+            bank,
+            uiState.bankCatalogSelected,
+            uiState.accountTypeSelected?.typeName ?: "",
+            uiState.accountTypeSelected?.typeId ?: "",
+            uiState.accountNumber
+        )
         nextStepAction()
     }
 
@@ -206,6 +216,7 @@ class CreditCrosselingBankViewModel @Inject constructor(
         val bankList: List<BankTransfer365?>? = listOf(),
         val bankSelectedString: String = "",
         val bankSelected: BankTransfer365? = null,
+        val bankCatalogSelected: CreditCatalogOption? = null,
         val accountTypeList: List<SmartAccountType?>? = listOf(),
         val accountTypeSelectedString: String = "",
         val accountTypeSelectedKey: String = "",
@@ -214,7 +225,15 @@ class CreditCrosselingBankViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is OnNextActionClick -> onNextActionClick(event.user, event.nextStepAction, event.saveCreditStepsHelper)
+            is OnNextActionClick -> onSaveBankAccount(
+                idBrand = event.idBrand,
+                user = event.user,
+                identification = event.identification,
+                onLoadingValueChange = event.onLoadingValueChange,
+                onFailureWithDialog = event.onFailureWithDialog,
+                nextStepAction = event.nextStepAction,
+                saveCreditStepsHelper = event.saveCreditStepsHelper
+            )
             is OnCallQueryBankList365TypeAccountType -> onCallQueryBankList365TypeAndAccountType(
                 event.user,
                 event.idBrand,
@@ -237,9 +256,13 @@ class CreditCrosselingBankViewModel @Inject constructor(
 
     sealed class UIEvent {
         data class OnNextActionClick(
+            val idBrand: Int,
             val user: String,
+            val identification: String,
             val nextStepAction: () -> Unit,
-            val saveCreditStepsHelper: SaveCreditStepsHelper
+            val saveCreditStepsHelper: SaveCreditStepsHelper,
+            val onLoadingValueChange: (Boolean) -> Unit,
+            val onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
         ) : UIEvent()
 
         data class OnCallQueryBankList365TypeAccountType(
@@ -270,5 +293,6 @@ class CreditCrosselingBankViewModel @Inject constructor(
     companion object {
         const val MIDDLE_DASH = "-"
         const val ACCOUNT_LENGTH = 9
+        const val OTHER = "otro"
     }
 }

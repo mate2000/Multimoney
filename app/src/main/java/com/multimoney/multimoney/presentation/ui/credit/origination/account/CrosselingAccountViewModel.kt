@@ -160,15 +160,16 @@ class CrosselingAccountViewModel @Inject constructor(
         )
     }
 
-    private fun onClientBankAccountSelected(clientBankAccount: SinpeAccount?) {
+    private fun onClientBankAccountSelected(clientBankAccount: SinpeAccount?, onContinueClick: () -> Unit) {
         uiState = uiState.copy(
             bankSelected = bankList?.first { filter ->
-                filter?.description != clientBankAccount?.bank.orEmpty()
+                filter?.description?.lowercase() == clientBankAccount?.bank?.lowercase().orEmpty()
             },
             clientBankAccountSelected = clientBankAccount,
             accountTypeSelectedString = clientBankAccount?.accountType.toString(),
             accountNumber = clientBankAccount?.sinpeAccount ?: ""
         )
+        onContinueClick()
     }
 
     private fun onNextActionClick(
@@ -182,13 +183,13 @@ class CrosselingAccountViewModel @Inject constructor(
                 uiState.accountNumber
             )
         } else {
-            saveCreditStepsHelper.saveStepOneCrossseling(
+            saveCreditStepsHelper.saveStepOneCrosselingSv(
                 user,
                 bank,
                 uiState.bankSelected,
-                uiState.accountTypeSelectedString,
+                uiState.clientBankAccountSelected?.regularExpression ?: "",
+                uiState.clientBankAccountSelected?.accountTypeCore?.toString().orEmpty(),
                 uiState.accountNumber,
-                uiState.clientBankAccountSelected?.typeAccount?.toString().orEmpty()
             )
         }
         nextStepAction()
@@ -225,7 +226,7 @@ class CrosselingAccountViewModel @Inject constructor(
                 uiEvent.nextStepAction,
                 uiEvent.saveCreditStepsHelper
             )
-            is OnClientBankAccountSelected -> onClientBankAccountSelected(uiEvent.clientBankAccount)
+            is OnClientBankAccountSelected -> onClientBankAccountSelected(uiEvent.clientBankAccount, uiEvent.onContinueClick)
         }
     }
 
@@ -250,7 +251,10 @@ class CrosselingAccountViewModel @Inject constructor(
             val onSuccess: (Boolean) -> Unit
         ) : UIEvent()
 
-        class OnClientBankAccountSelected(val clientBankAccount: SinpeAccount?) : UIEvent()
+        class OnClientBankAccountSelected(
+            val clientBankAccount: SinpeAccount?,
+            val onContinueClick: () -> Unit
+        ) : UIEvent()
     }
 
     companion object {

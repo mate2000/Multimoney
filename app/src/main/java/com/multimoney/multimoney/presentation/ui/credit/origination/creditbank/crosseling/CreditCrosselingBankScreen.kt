@@ -47,7 +47,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 
 @Composable
 @Preview
-fun CreditBankScreen(
+fun CreditCrosselingBankScreen(
     sharedViewModel: CreditViewModel = hiltViewModel(),
     viewModel: CreditCrosselingBankViewModel = hiltViewModel()
 ) {
@@ -78,21 +78,25 @@ fun CreditBankScreen(
                 nextAction = {
                     viewModel.onUIEvent(
                         OnNextActionClick(
+                            idBrand = sharedViewModel.idBrand.toInt(),
                             user = sharedViewModel.email,
+                            identification = sharedViewModel.identification,
                             nextStepAction = {
                                 sharedViewModel.onUIEvent(OnCallMutationSaveCreditFlowStep)
                             },
-                            saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
+                            saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper,
+                            onLoadingValueChange = { isLoading ->
+                                sharedViewModel.onUIEvent(OnLoadingValueChange(isLoading))
+                            },
+                            onFailureWithDialog = { isLoading, dialogParameters ->
+                                sharedViewModel.onUIEvent(OnFailureWithDialog(isLoading, dialogParameters))
+                            }
                         )
                     )
-                }, nextStep = if (sharedViewModel.crosseling) {
-                    if (sharedViewModel.idBrand.toInt() == Brand.ElSalvador.id) {
-                        CreditStep.Three.id
-                    } else {
-                        CreditStep.Four.id
-                    }
-                } else {
+                }, nextStep = if (sharedViewModel.idBrand.toInt() == Brand.ElSalvador.id) {
                     CreditStep.Three.id
+                } else {
+                    CreditStep.Four.id
                 }, previousStep = CreditStep.One.id
             )
         )

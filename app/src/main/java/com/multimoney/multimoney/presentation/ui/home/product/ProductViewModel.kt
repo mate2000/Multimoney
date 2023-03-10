@@ -895,15 +895,17 @@ class ProductViewModel @Inject constructor(
                 ?: 0L
         ).collectLatest { result ->
             result.onSuccess {
-                navigateTo(
-                    "${Screen.SmartSignScreen.baseRoute}/${SIGN_DOCUMENTS_STEP.value}/" +
-                        "${URLEncoder.encode(it?.urlFirmDocument, StandardCharsets.UTF_8.toString())}/" +
-                        "${uiState.idBrand.toIntOrNull() ?: Brand.CostaRica.id}/$pkUser/$identification/$email/" +
-                        "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/$firstName/" +
-                        "${uiState.userStatus?.infoUser?.lastName}/${true}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/" +
-                        "$userName/$comingFromCrypto/${it?.urlFirmDocument.isNullOrBlank()}/${uiState.userStatus?.infoBankAccount?.statusFirm}/" +
-                        "${uiState.userStatus?.infoBankAccount?.wording?.workflow}"
-                )
+                it?.urlFirmDocument?.let { url ->
+                    navigateTo(
+                        "${Screen.SmartSignScreen.baseRoute}/${SIGN_DOCUMENTS_STEP.value}/" +
+                            "${URLEncoder.encode(url, StandardCharsets.UTF_8.toString())}/" +
+                            "${uiState.idBrand.toIntOrNull() ?: Brand.CostaRica.id}/$pkUser/$identification/$email/" +
+                            "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/$firstName/" +
+                            "${uiState.userStatus?.infoUser?.lastName}/${true}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/" +
+                            "$userName/$comingFromCrypto/${false}/${uiState.userStatus?.infoBankAccount?.statusFirm}/" +
+                            "${uiState.userStatus?.infoBankAccount?.wording?.workflow}"
+                    )
+                }
             }
         }
     }

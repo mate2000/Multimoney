@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.connectivity.Connectivity
 import com.multimoney.domain.interaction.security.MutationSaveLogTrackingUseCase
 import com.multimoney.domain.model.util.onSuccess
@@ -80,7 +81,7 @@ open class BaseViewModel @Inject constructor(
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             if (shouldObserveToken && preferences.getAuthToken().first().isEmpty()) {
-                popAndNavigateTo(Screen.SignInScreen.route, Screen.SignInScreen.route, false)
+                popAndNavigateTo(Screen.SignInScreen.route, Screen.SignInScreen.route)
             } else if (checkConnection) {
                 if (connectivity.hasNetworkAccess()) {
                     action()
@@ -114,8 +115,8 @@ open class BaseViewModel @Inject constructor(
     /**
      * Use this function to pop to specific screen and navigate to specified screen
      **/
-    fun popAndNavigateTo(route: String, popTo: String, shouldShowReleaseToast: Boolean = false) =
-        sendNavigationEvent(NavEvent.PopAndNavigate(route = route, popTo = popTo, shouldShowToast = shouldShowReleaseToast))
+    fun popAndNavigateTo(route: String, popTo: String) =
+        sendNavigationEvent(NavEvent.PopAndNavigate(route = route, popTo = popTo))
 
     fun navigateBack(popTo: String, isRestart: Boolean, homeState: HomeState = HomeState.OLD_STATE) =
         sendNavigationEvent(NavEvent.PopBackStack(popTo = popTo, isRestart = isRestart, homeState = homeState))
@@ -154,17 +155,17 @@ open class BaseViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             val mutableList = mutableListOf<Pair<String, String>>()
+            val idBrand = if (isLoggedIn) preferences.getIdBrand().firstOrNull() else null
+            val email = if (isLoggedIn) preferences.getUserEmail().firstOrNull() ?: "" else ""
+            val pkUser = if (isLoggedIn) preferences.getPkUser().firstOrNull() else null
+            val identification = if (isLoggedIn) preferences.getIdentification().firstOrNull() ?: "" else ""
             if (isLoggedIn) {
-                val idBrand = preferences.getIdBrand().firstOrNull() ?: ""
-                val email = preferences.getUserEmail().firstOrNull() ?: ""
-                val pkUser = preferences.getPkUser().firstOrNull() ?: ""
-                val identification = preferences.getIdentification().firstOrNull() ?: ""
-                mutableList.add(Pair(ID_BRAND_ADJUST_KEY, idBrand))
+                mutableList.add(Pair(ID_BRAND_ADJUST_KEY, idBrand.toString()))
                 mutableList.add(Pair(EMAIL_ADJUST_KEY, email))
-                mutableList.add(Pair(PK_USER_ADJUST_KEY, pkUser))
+                mutableList.add(Pair(PK_USER_ADJUST_KEY, pkUser.toString()))
                 mutableList.add(Pair(IDENTIFICATION_ADJUST_KEY, identification))
-                callSaveLogTracking(identification, pkUser, data, idBrand)
             }
+            callSaveLogTracking(identification, pkUser, data, idBrand, adjustEventType)
             if (applyAdjust) {
                 mutableList.addAll(listParameters)
                 adjustHelper.registerEvent(adjustEventType, mutableList)
@@ -174,16 +175,17 @@ open class BaseViewModel @Inject constructor(
 
     private fun callSaveLogTracking(
         identification: String,
-        pkUser: String,
+        pkUser: String?,
         data: String,
-        idBrand: String
+        idBrand: String?,
+        adjustEventType: AdjustEventType
     ) = executeUseCase {
         mutationSaveLogTrackingUseCase.invoke(
             identification = identification,
-            pkUser = pkUser.toInt(),
-            keySearch = DEFAULT_ADJUST_KEY,
+            pkUser = pkUser?.toInt(),
+            keySearch = adjustEventType.eventId,
             data = data,
-            idBrand = idBrand.toInt()
+            idBrand = idBrand?.toInt() ?: Brand.CostaRica.id // Default is CR following BE instructions
         ).collectLatest { result ->
             result.onSuccess {
             }
@@ -195,6 +197,5 @@ open class BaseViewModel @Inject constructor(
         private const val EMAIL_ADJUST_KEY = "email"
         private const val PK_USER_ADJUST_KEY = "pkUser"
         private const val IDENTIFICATION_ADJUST_KEY = "identification"
-        private const val DEFAULT_ADJUST_KEY = "default"
     }
 }

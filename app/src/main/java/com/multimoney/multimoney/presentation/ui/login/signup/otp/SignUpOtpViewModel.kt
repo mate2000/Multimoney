@@ -9,6 +9,7 @@ import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
 import com.multimoney.domain.interaction.security.QueryValidatePinUseCase
 import com.multimoney.domain.model.security.SendPinProcess
+import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -29,9 +30,11 @@ import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewM
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.util.OTP_MESSAGE_REGEX
 import com.multimoney.multimoney.presentation.util.ResendOtp
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.format
 import com.multimoney.multimoney.presentation.util.tickerFlow
+import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -69,6 +72,7 @@ class SignUpOtpViewModel @Inject constructor(
         this.linkWhatsapp = linkWhatsapp
         this.userBlockedForMaxAttend = userBlockedForMaxAttend
         uiState = uiState.copy(
+            idBrand = idBrand,
             subtitleResource = if (idBrand == Brand.CostaRica.id) {
                 R.string.sign_up_otp_subtitle_cr
             } else {
@@ -135,8 +139,16 @@ class SignUpOtpViewModel @Inject constructor(
     }
 
     fun getPhaseResourceString() = when (uiState.phaseCount) {
-        PHASE_ONE -> R.string.sign_up_otp_expiration_time_phase_one
-        PHASE_THREE -> R.string.sign_up_otp_expiration_time_phase_three
+        PHASE_ONE -> {
+            if (uiState.idBrand == Brand.CostaRica.id)
+                R.string.sign_up_otp_expiration_time_phase_one_cr
+            else R.string.sign_up_otp_expiration_time_phase_one
+        }
+        PHASE_THREE -> {
+            if (uiState.idBrand == Brand.CostaRica.id)
+                R.string.sign_up_otp_expiration_time_phase_three_cr
+            else R.string.sign_up_otp_expiration_time_phase_three
+        }
         PHASE_TWO, PHASE_FOUR -> if (uiState.otpResend == ResendOtp.SMS.option) R.string.sign_up_otp_sms else R.string.sign_up_otp_call
         PHASE_FIVE -> R.string.sign_up_otp_expiration_time_phase_five
         else -> R.string.sign_up_otp_expiration_time_phase_six
@@ -148,13 +160,18 @@ class SignUpOtpViewModel @Inject constructor(
         SignUpStep.Six
     }
 
-    private fun getPhaseAction() {
+    private fun getPhaseAction(userData: UserData?) {
         when (uiState.phaseCount) {
-            PHASE_TWO, PHASE_FOUR -> resend()
+            PHASE_TWO, PHASE_FOUR -> resend(userData)
         }
     }
 
-    private fun resend() {
+    private fun resend(userData: UserData?) {
+        if (uiState.otpResend == ResendOtp.SMS.option) {
+            registerAdjustEvent(adjustEventType = AdjustEventType.SIGNUP_RESEND_OTP_2005, isLoggedIn = false, data = userData?.toJson() ?: "", applyAdjust = false)
+        } else {
+            registerAdjustEvent(adjustEventType = AdjustEventType.SIGNUP_OTP_BY_CALL_2006, isLoggedIn = false, data = userData?.toJson() ?: "", applyAdjust = false)
+        }
         uiState = uiState.copy(
             isTimerRunning = true,
             phaseCount = uiState.phaseCount.plus(1)
@@ -261,11 +278,12 @@ class SignUpOtpViewModel @Inject constructor(
 
     private fun onCallMutationSendPinProcessSuccess(
         onLoadingValueChange: () -> Unit,
-        pinProcess: SendPinProcess?
+        pinProcess: SendPinProcess?,
+        userData: UserData?
     ) {
         uiState = uiState.copy(otpResend = pinProcess?.nextType)
         initializeTimer(totalTime = pinProcess?.pinExpirationTime?.toLong() ?: TIMER_DURATION)
-        getPhaseAction()
+        getPhaseAction(userData)
         onExecuteTimer()
         onLoadingValueChange.invoke()
         this.numberOfPinForwards = pinProcess?.numberOfPinForwards?.toInt() ?: 1
@@ -316,7 +334,8 @@ class SignUpOtpViewModel @Inject constructor(
         val remainingTime: Duration = TIMER_DURATION.seconds,
         val isTimerRunning: Boolean = false,
         val remainingTimeText: String = remainingTime.format(),
-        val isOtpFromSms: Boolean = false
+        val isOtpFromSms: Boolean = false,
+        val idBrand: Int? = null
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -348,7 +367,8 @@ class SignUpOtpViewModel @Inject constructor(
             is OnNavigateToSignIn -> navigateToSignIn()
             is OnCallMutationSendPinProcessSuccess -> onCallMutationSendPinProcessSuccess(
                 event.onLoadingValueChange,
-                event.pinProcess
+                event.pinProcess,
+                event.userData
             )
             is OnOtpValueChange -> onOtpValueChange(event.value)
             is OnInitializeTimer -> initializeTimer(event.phaseCount, event.time)
@@ -389,7 +409,8 @@ class SignUpOtpViewModel @Inject constructor(
 
         data class OnCallMutationSendPinProcessSuccess(
             val onLoadingValueChange: () -> Unit,
-            val pinProcess: SendPinProcess?
+            val pinProcess: SendPinProcess?,
+            val userData: UserData?
         ) : UIEvent()
 
         data class OnInitializeTimer(val phaseCount: Int, val time: Long) : UIEvent()

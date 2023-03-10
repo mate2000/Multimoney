@@ -49,9 +49,9 @@ class SmartSubscriptionManager(var subscriptionSmartContractEventUseCase: Subscr
         this.listener = listener
     }
 
-    fun hasEvisertiaLink() = evicertiaLink.isNullOrEmpty().not()
+    fun hasEvicertiaLink() = evicertiaLink.isNullOrEmpty().not()
 
-    fun getEvisertioLink() = evicertiaLink
+    fun getEvicertiaLink() = evicertiaLink
 
     fun cancelSubscription() {
         try {

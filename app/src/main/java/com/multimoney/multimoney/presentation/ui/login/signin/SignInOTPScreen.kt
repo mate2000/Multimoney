@@ -238,7 +238,7 @@ fun SignInOTPContent(viewModel: SignInOTPViewModel) {
                         )
                     )
                     Text(
-                        text = stringResource(id = R.string.sign_up_otp_expiration_time_phase_seconds),
+                        text = stringResource(id = R.string.sign_in_otp_expiration_time_phase_seconds),
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(top = 32.dp),
                         style = Typography.body2.copy(color = MultimoneyTheme.colors.textSubhead)

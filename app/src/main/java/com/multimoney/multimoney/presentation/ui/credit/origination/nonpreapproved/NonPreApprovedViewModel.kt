@@ -5,6 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.interaction.credit.MutationSaveCreditFlowStepUseCase
@@ -13,6 +15,7 @@ import com.multimoney.domain.interaction.credit.QueryEmploymentSituationUseCase
 import com.multimoney.domain.interaction.credit.QueryScreenConfigUseCase
 import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.credit.CreditCatalogOption
+import com.multimoney.domain.model.metrics.OriginationEventDataDto
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -44,15 +47,19 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapprov
 import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnUpdateScreenConfigData
 import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateMinusYears
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
+import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
-import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class NonPreApprovedViewModel @Inject constructor(
@@ -61,7 +68,8 @@ class NonPreApprovedViewModel @Inject constructor(
     private val queryEmploymentSituationUseCase: QueryEmploymentSituationUseCase,
     private val queryScreenConfigUseCase: QueryScreenConfigUseCase,
     private val mutationSaveCreditFlowStepUseCase: MutationSaveCreditFlowStepUseCase,
-    private val mutationSaveCreditOfferUseCase: MutationSaveCreditOfferUseCase
+    private val mutationSaveCreditOfferUseCase: MutationSaveCreditOfferUseCase,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
 
     // UIState
@@ -207,7 +215,6 @@ class NonPreApprovedViewModel @Inject constructor(
         }
     }
 
-
     private fun onBirthDateValueChange(birthdate: String) {
         val datePicked = LocalDate.parse(birthdate, birthdateFormatter)
         uiState = uiState.copy(
@@ -232,7 +239,7 @@ class NonPreApprovedViewModel @Inject constructor(
 
     private fun onEmploymentSituationValueChanged(employmentSituationSelected: CreditCatalogOption?) {
         uiState = uiState.copy(
-            employmentSituationSelected = employmentSituationSelected,
+            employmentSituationSelected = employmentSituationSelected
         )
         validateForm()
     }
@@ -249,6 +256,7 @@ class NonPreApprovedViewModel @Inject constructor(
     }
 
     private fun onSaveAdditionalQuestions() {
+        logEvents(AdjustEventType.ORIGINATION_FIRST_NON_PRE_APPROVED_INFORMATION_5019)
         saveCreditStepsHelper.saveAdditionalQuestionsForNonPreApprovedFlow(
             user = email,
             monthlyIncomeValue = uiState.paymentAmount,
@@ -293,7 +301,6 @@ class NonPreApprovedViewModel @Inject constructor(
             }
         }
 
-
     private fun onCallMutationSaveCreditOffer(
         pkUser: Long,
         idUserRequest: Long,
@@ -307,8 +314,10 @@ class NonPreApprovedViewModel @Inject constructor(
             result.onSuccess {
                 uiState = uiState.copy(isLoading = false)
                 if (it?.rejectedBlaze?.not() == true) {
+                    logEvents(AdjustEventType.ORIGINATION_FIRST_NON_PRE_APPROVED_IS_APPROVED_5020)
                     setSuccessAlertResult(it.products?.firstOrNull()?.maximumDisbursementLabel ?: "")
                 } else {
+                    logEvents(AdjustEventType.ORIGINATION_FIRST_NON_PRE_APPROVED_IS_REJECTED_5021)
                     setErrorAlertResult()
                 }
             }.onFailure {
@@ -333,10 +342,10 @@ class NonPreApprovedViewModel @Inject constructor(
 
     private fun onNavigateToOrigination() = popAndNavigateTo(
         route = "${Screen.CreditScreen.baseRoute}/${idBrand ?: 0}/${pkUser ?: 0}/${identification.orEmpty()}/${email.orEmpty()}/${lastStep ?: CreditStep.One.id}/" +
-                "${idUserRequest ?: 0}/${firstName.orEmpty()}/" +
-                "${lastName.orEmpty()}/${statusOnfido.orEmpty()}/" +
-                "${statusEvicertia.orEmpty()}/${idPrint ?: 0}/" +
-                "${crosseling ?: false}",
+            "${idUserRequest ?: 0}/${firstName.orEmpty()}/" +
+            "${lastName.orEmpty()}/${statusOnfido.orEmpty()}/" +
+            "${statusEvicertia.orEmpty()}/${idPrint ?: 0}/" +
+            "${crosseling ?: false}",
         popTo = Screen.NonPreApprovedScreen.route
     )
 
@@ -366,6 +375,68 @@ class NonPreApprovedViewModel @Inject constructor(
         )
     }
 
+    fun logEvents(adjustEventType: AdjustEventType) {
+        viewModelScope.launch {
+            getAdjustEvent(adjustEventType).invoke()
+        }
+    }
+
+    private fun getAdjustEvent(adjustEventType: AdjustEventType): suspend () -> Unit {
+        val originationDto = OriginationEventDataDto(
+            user = email,
+            idBrand = idBrand,
+            identification = identification,
+            idUserRequest = idUserRequest,
+            pkUser = pkUser.toString(),
+            idPrint = idPrint
+        )
+        return when (adjustEventType) {
+            AdjustEventType.ORIGINATION_FIRST_NON_PRE_APPROVED_INFORMATION_5019 -> {
+                getInfoExtraFromNonPreApprovedOriginationEvent(originationDto)
+            }
+            AdjustEventType.ORIGINATION_FIRST_NON_PRE_APPROVED_IS_APPROVED_5020 -> {
+                getApprovedFromNonPreApprovedOriginationEvent(originationDto)
+            }
+            AdjustEventType.ORIGINATION_FIRST_NON_PRE_APPROVED_IS_REJECTED_5021 -> {
+                getRejectedFromNonPreApprovedOriginationEvent(originationDto)
+            }
+            else -> suspend {}
+        }
+    }
+
+    private fun getInfoExtraFromNonPreApprovedOriginationEvent(originationDto: OriginationEventDataDto): suspend () -> Unit =
+        suspend {
+            if (dataStorePreferences.isAdjustFirstOriginationNonPreApprovedInfoExtraEventRegister().first()) {
+                registerAdjustEvent(
+                    adjustEventType = AdjustEventType.ORIGINATION_FIRST_NON_PRE_APPROVED_INFORMATION_5019,
+                    data = originationDto.toJson()
+                )
+                dataStorePreferences.isAdjustFirstOriginationNonPreApprovedInfoExtraEventRegister(false)
+            }
+        }
+
+    private fun getApprovedFromNonPreApprovedOriginationEvent(originationDto: OriginationEventDataDto): suspend () -> Unit =
+        suspend {
+            if (dataStorePreferences.isAdjustFirstOriginationNonPreApprovedApprovedEventRegister().first()) {
+                registerAdjustEvent(
+                    adjustEventType = AdjustEventType.ORIGINATION_FIRST_NON_PRE_APPROVED_IS_APPROVED_5020,
+                    data = originationDto.toJson()
+                )
+                dataStorePreferences.isAdjustFirstOriginationNonPreApprovedApprovedEventRegister(false)
+            }
+        }
+
+    private fun getRejectedFromNonPreApprovedOriginationEvent(originationDto: OriginationEventDataDto): suspend () -> Unit =
+        suspend {
+            if (dataStorePreferences.isAdjustFirstOriginationNonPreApprovedRejectedEventRegister().first()) {
+                registerAdjustEvent(
+                    adjustEventType = AdjustEventType.ORIGINATION_FIRST_NON_PRE_APPROVED_IS_REJECTED_5021,
+                    data = originationDto.toJson()
+                )
+                dataStorePreferences.isAdjustFirstOriginationNonPreApprovedRejectedEventRegister(false)
+            }
+        }
+
     data class UIState(
         val titleResource: Int = R.string.empty,
         val birthDate: String = "",
@@ -382,7 +453,7 @@ class NonPreApprovedViewModel @Inject constructor(
         val alertResultIconResource: Int = 0,
         val alertResultTitleResource: Int = R.string.empty,
         val alertResultDescriptionResource: Int = R.string.empty,
-        val alertResultButtonResource: Int = R.string.empty,
+        val alertResultButtonResource: Int = R.string.empty
     )
 
     fun onUIEvent(event: UIEvent) {

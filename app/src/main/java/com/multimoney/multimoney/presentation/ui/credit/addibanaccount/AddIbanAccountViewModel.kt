@@ -5,6 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.accountsmart.MutationSaveSinpeAccountUseCase
 import com.multimoney.domain.interaction.credit.MutationSaveClientBankAccountUseCase
@@ -33,15 +35,17 @@ import com.multimoney.multimoney.presentation.util.catalog.BankAccountType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class AddIbanAccountViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     val queryValidateBankAccountUseCase: QueryValidateBankAccountUseCase,
     val mutationSaveSinpeAccountUseCase: MutationSaveSinpeAccountUseCase,
-    private val mutationSaveClientBankAccountUseCase: MutationSaveClientBankAccountUseCase
+    private val mutationSaveClientBankAccountUseCase: MutationSaveClientBankAccountUseCase,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())
@@ -171,6 +175,7 @@ class AddIbanAccountViewModel @Inject constructor(
         ).collectLatest {
             it.onSuccess {
                 uiState = uiState.copy(isLoading = false)
+                restartMetricsPreferences()
                 navigateToPreviousScreen()
             }.onFailure { error ->
                 uiState = uiState.copy(
@@ -186,6 +191,12 @@ class AddIbanAccountViewModel @Inject constructor(
         }
     }
 
+    private fun restartMetricsPreferences() {
+        viewModelScope.launch {
+            dataStorePreferences.isAdjustAddAccountEventRegister(false)
+        }
+    }
+
     private fun saveClientBankAccount() = executeUseCase {
         mutationSaveClientBankAccountUseCase(
             idClient = idClient?.toLong() ?: 0,
@@ -198,7 +209,8 @@ class AddIbanAccountViewModel @Inject constructor(
             idBrand = idBrand ?: 0
         ).collectLatest { result ->
             result.onSuccess {
-               navigateToPreviousScreen()
+                restartMetricsPreferences()
+                navigateToPreviousScreen()
             }.onFailure {
                 uiState = uiState.copy(
                     isLoading = false,
@@ -220,7 +232,7 @@ class AddIbanAccountViewModel @Inject constructor(
             }
             Screen.HomeBNScreen.baseRoute,
             Screen.SmartPaymentOptionsScreenCR.baseRoute,
-            Screen.SmartPaymentAccountScreenCR.baseRoute-> {
+            Screen.SmartPaymentAccountScreenCR.baseRoute -> {
                 saveIbanAccount()
             }
         }

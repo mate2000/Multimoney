@@ -32,7 +32,6 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnStartSubscription
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnCallInFidoToken
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnConfigureOnFidoSdk
@@ -41,6 +40,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartO
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnOpenOnfidoSdk
+import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.RefreshOnFidoToken
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
@@ -61,7 +61,7 @@ fun SmartOnfidoScreen(
     val context = LocalContext.current
 
     LaunchedEffect(true) {
-        viewModel.onUIEvent(OnStartSubscription)
+        viewModel.onUIEvent(OnStart)
         viewModel.executeNavigation(
             onPopAndNavigate = onPopAndNavigate,
             onPopBackStack = onPopBackStack
@@ -168,7 +168,10 @@ fun SmartOnfidoScreen(
             )
             Text(
                 modifier = Modifier.padding(top = 16.dp),
-                text = stringResource(id = string.sign_up_id_validation_subtitle),
+                text = stringResource(
+                    if (viewModel.idBrand == CostaRica.id) string.smart_onfido_identity_verification_subtitle_cr
+                    else string.smart_onfido_identity_verification_subtitle_sv
+                ),
                 style = Typography.body2.copy(
                     color = MultimoneyTheme.colors.text,
                     fontWeight = FontWeight.SemiBold

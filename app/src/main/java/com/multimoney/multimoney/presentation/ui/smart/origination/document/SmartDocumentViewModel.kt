@@ -3,6 +3,8 @@ package com.multimoney.multimoney.presentation.ui.smart.origination.document
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Gender
 import com.multimoney.domain.interaction.accountsmart.QueryCivilStatusUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCase
@@ -36,6 +38,7 @@ import com.multimoney.multimoney.presentation.util.DAY_MONTH_YEAR_PATTERN
 import com.multimoney.multimoney.presentation.util.DAY_MONTH_YEAR_PATTERN_BAR_FORMAT
 import com.multimoney.multimoney.presentation.util.HYPHEN
 import com.multimoney.multimoney.presentation.util.ISO_8601_API_FORMAT_PATTERN
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import com.multimoney.multimoney.presentation.util.onBirthDateAgeValidation
@@ -46,12 +49,15 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SmartDocumentViewModel @Inject constructor(
     private val queryCivilStatusUseCase: QueryCivilStatusUseCase,
     private val queryProfessionUseCase: QueryProfessionUseCase,
-    private val queryNationalitiesUseCase: QueryNationalitiesUseCase
+    private val queryNationalitiesUseCase: QueryNationalitiesUseCase,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
 
     // UIState
@@ -63,6 +69,8 @@ class SmartDocumentViewModel @Inject constructor(
      * data coming from the current step (provided from the backend)
      */
     private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
+        trackOriginationSmartFirstTimeEvent()
+
         val birthdate = accountSmartData?.birthday?.let {
             getFormatDateByString(
                 it,
@@ -284,6 +292,15 @@ class SmartDocumentViewModel @Inject constructor(
         emitBaseEvent(
             BaseEvent.OnLoadingValueChange(isLoading)
         )
+    }
+
+    private fun trackOriginationSmartFirstTimeEvent() {
+        viewModelScope.launch {
+            if (dataStorePreferences.isAdjustSmartFirstTime().first()) {
+                dataStorePreferences.setAdjustSmartFirstTime(false)
+                registerAdjustEvent(AdjustEventType.ORIGINATION_SMART_FIRST_TIME)
+            }
+        }
     }
 
     data class UIState(

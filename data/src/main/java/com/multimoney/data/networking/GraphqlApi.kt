@@ -2062,18 +2062,18 @@ class GraphqlApi @Inject constructor(
 
     fun mutationSaveLogTracking(
         identification: String,
-        pkUser: Int,
+        pkUser: Int?,
         keySearch: String,
         data: String,
-        idBrand: Int
+        idBrand: Int?
     ): ApolloCall<SaveLogTrackingMutation.Data> =
         apolloAuthorizedClient.mutation(
             SaveLogTrackingMutation(
-                identification = identification,
-                pkUser = pkUser,
+                identification = Optional.Present(identification),
+                pkUser = Optional.Present(pkUser),
                 keySearch = keySearch,
                 data = data,
-                idBrand = idBrand
+                idBrand = Optional.Present(idBrand)
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

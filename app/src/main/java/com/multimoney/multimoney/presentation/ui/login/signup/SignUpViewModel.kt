@@ -7,6 +7,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.data.util.catalog.SignUpStep.Search
 import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCase
@@ -44,15 +46,21 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnShowPasswordBottomSheet
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUpdateUserNames
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.toJson
+import com.multimoney.multimoney.util.firebase.FireBaseEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
 class SignUpViewModel @Inject constructor(
-    private val mutationUpdateUserRegisterUseCase: MutationUpdateUserRegisterUseCase
+    private val mutationUpdateUserRegisterUseCase: MutationUpdateUserRegisterUseCase,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(false) {
 
     // UIState
@@ -67,6 +75,7 @@ class SignUpViewModel @Inject constructor(
     var strIdIdentification = ""
     var countryCode = ""
     var nextAction: () -> Unit = {}
+    private var pass = ""
     private var nextStep: Int = SignUpStep.One.id
     private var previousStep: Int = SignUpStep.One.id
 
@@ -112,10 +121,18 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-    private fun completedProcessAction() = popAndNavigateTo(
-        route = Screen.SignUpCompleted.route,
-        popTo = Screen.SignUpScreen.route
-    )
+    private fun completedProcessAction() {
+        registerAdjustEvent(
+            adjustEventType = AdjustEventType.SIGNUP_SUCCESS_2008,
+            isLoggedIn = false,
+            data = userData?.toJson() ?: "",
+            applyAdjust = false
+        )
+        popAndNavigateTo(
+            route = "${Screen.SignUpCompleted.baseRoute}/${userData?.email}/$pass",
+            popTo = Screen.SignUpScreen.route
+        )
+    }
 
     private fun onPhoneNumberChange(phoneNumber: String) {
         userData?.phoneNumber = phoneNumber
@@ -239,6 +256,90 @@ class SignUpViewModel @Inject constructor(
         this.idBrand = idBrand
     }
 
+    fun logEvents(fireBaseEvents: FireBaseEvents?, adjustEventType: AdjustEventType) {
+        fireBaseEvents?.let {
+            provideFireBaseEventHelper.logEvent(it)
+        }
+        viewModelScope.launch {
+            getAdjustEvent(adjustEventType).invoke()
+        }
+    }
+
+    private fun getAdjustEvent(adjustEventType: AdjustEventType): suspend () -> Unit = when (adjustEventType) {
+        AdjustEventType.SIGNUP_1_2001 -> {
+            suspend {
+                if (dataStorePreferences.isAdjustSingUp1EventRegister().first()) {
+                    registerAdjustEvent(
+                        adjustEventType = AdjustEventType.SIGNUP_1_2001,
+                        isLoggedIn = false,
+                        data = userData?.toJson() ?: ""
+                    )
+                    dataStorePreferences.isAdjustSingUp1EventRegister(false)
+                }
+            }
+        }
+        AdjustEventType.SIGNUP_2_2002 -> {
+            suspend {
+                if (dataStorePreferences.isAdjustSingUp2EventRegister().first()) {
+                    registerAdjustEvent(
+                        adjustEventType = AdjustEventType.SIGNUP_2_2002,
+                        isLoggedIn = false,
+                        data = userData?.toJson() ?: ""
+                    )
+                    dataStorePreferences.isAdjustSingUp2EventRegister(false)
+                }
+            }
+        }
+        AdjustEventType.SIGNUP_3_2003 -> {
+            suspend {
+                if (dataStorePreferences.isAdjustSingUp3EventRegister().first()) {
+                    registerAdjustEvent(
+                        adjustEventType = AdjustEventType.SIGNUP_3_2003,
+                        isLoggedIn = false,
+                        data = userData?.toJson() ?: ""
+                    )
+                    dataStorePreferences.isAdjustSingUp3EventRegister(false)
+                }
+            }
+        }
+        AdjustEventType.SIGNUP_4_2004 -> {
+            suspend {
+                if (dataStorePreferences.isAdjustSingUp4EventRegister().first()) {
+                    registerAdjustEvent(
+                        adjustEventType = AdjustEventType.SIGNUP_4_2004,
+                        isLoggedIn = false,
+                        data = userData?.toJson() ?: ""
+                    )
+                    dataStorePreferences.isAdjustSingUp4EventRegister(false)
+                }
+            }
+        }
+        AdjustEventType.SIGNUP_5_2007 -> {
+            suspend {
+                if (dataStorePreferences.isAdjustSingUp5EventRegister().first()) {
+                    registerAdjustEvent(
+                        adjustEventType = AdjustEventType.SIGNUP_5_2007,
+                        isLoggedIn = false,
+                        data = userData?.toJson() ?: ""
+                    )
+                    dataStorePreferences.isAdjustSingUp5EventRegister(false)
+                }
+            }
+        }
+        AdjustEventType.SECURITY_SIGN_UP_CHANGE_DEVICE_9001 -> {
+            suspend {
+                registerAdjustEvent(
+                    adjustEventType = AdjustEventType.SECURITY_SIGN_UP_CHANGE_DEVICE_9001,
+                    isLoggedIn = false,
+                    data = userData?.toJson() ?: "",
+                    applyAdjust = false
+                )
+            }
+        }
+
+        else -> suspend {}
+    }
+
     data class UIState(
         // Interactions
         val currentStep: Int = SignUpStep.One.id,
@@ -308,6 +409,7 @@ class SignUpViewModel @Inject constructor(
             is UIEvent.OnSetIdBrand -> onSetIdBrand(event.idBrand)
             is UIEvent.OnExit -> onExit()
             is UIEvent.OnUpdateIso3Country -> uiState = uiState.copy(isO3Country = event.iso3Country)
+            is UIEvent.OnUpdatePassword -> pass = event.pass
         }
     }
 
@@ -366,6 +468,7 @@ class SignUpViewModel @Inject constructor(
         data class OnSetIdBrand(val idBrand: Int) : UIEvent()
         object OnExit : UIEvent()
         data class OnUpdateIso3Country(val iso3Country: String) : UIEvent()
+        data class OnUpdatePassword(val pass: String) : UIEvent()
     }
 
     companion object {

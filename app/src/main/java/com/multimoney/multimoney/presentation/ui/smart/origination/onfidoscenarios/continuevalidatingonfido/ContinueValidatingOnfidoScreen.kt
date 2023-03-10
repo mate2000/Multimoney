@@ -20,7 +20,7 @@ fun ContinueValidatingOnfidoScreen(
     AlertResult(
         iconResource = R.drawable.ic_logo_multimoney,
         titleResource = R.string.smart_continue_validating_identity_title,
-        descriptionResource = R.string.continue_validating_identity_subtitle,
+        descriptionResource = R.string.smart_continue_validating_identity_subtitle,
         buttonTextResource = R.string.understood,
         isLeftButtonVisible = false,
         onRightButtonClick = { viewModel.onUIEvent(OnNavigateToHome) },

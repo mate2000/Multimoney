@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.navigation.navgraph
 
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
@@ -20,7 +19,6 @@ import com.multimoney.multimoney.presentation.navigation.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.ID_TRANSACTION
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
-import com.multimoney.multimoney.presentation.navigation.RELEASE_TOAST
 import com.multimoney.multimoney.presentation.navigation.STATUS_CREDIT
 import com.multimoney.multimoney.presentation.navigation.STATUS_CRYPTO
 import com.multimoney.multimoney.presentation.navigation.STATUS_SMART
@@ -355,12 +353,14 @@ fun NavGraphBuilder.cryptoNavGraph(
                     type = NavType.StringType
                 }
             )
-        ) {
+        ) { backStackEntry ->
+            val parentEntry = remember(backStackEntry) {
+                navController.getBackStackEntry(Screen.HomeScreen.route)
+            }
+            val viewModel = hiltViewModel<HomeViewModel>(parentEntry)
+
             AmountExceededFormScreen(
                 onPopAndNavigate = {
-                    navController.getBackStackEntry(it.popTo)
-                        .savedStateHandle
-                        .set(RELEASE_TOAST, it.shouldShowToast)
                     navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }
                     }
@@ -379,7 +379,8 @@ fun NavGraphBuilder.cryptoNavGraph(
                         inclusive = false,
                         saveState = false
                     )
-                }
+                },
+                sharedViewModel = viewModel
             )
         }
     }

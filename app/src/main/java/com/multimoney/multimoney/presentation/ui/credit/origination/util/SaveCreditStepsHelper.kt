@@ -44,6 +44,26 @@ class SaveCreditStepsHelper @Inject constructor() {
         saveScreenQuestionData(creditInfoQuestionAccountNumber)
     }
 
+    fun saveStepOneCrosselingSv(
+        user: String?,
+        bank: CreditCatalog?,
+        bankAccountSelected: CreditCatalogOption?,
+        accountType: RegularExpression?,
+        accountNumber: String,
+    ) {
+        val accountNumberQuestion = getScreenConfigQuestion(ACCOUNT_NUMBER, accountNumber)
+        val accountTypeQuestion = getScreenConfigQuestion(ACCOUNT_TYPE, accountType?.key ?: "")
+
+        saveScreenQuestionData(selectionQuestion(user, bank, bankAccountSelected))
+
+        val creditInfoQuestionAccountType =
+            textByDropdownQuestion(user, accountType, accountTypeQuestion)
+        saveScreenQuestionData(creditInfoQuestionAccountType)
+
+        val creditInfoQuestionAccountNumber = textQuestion(user, accountNumber, accountNumberQuestion)
+        saveScreenQuestionData(creditInfoQuestionAccountNumber)
+    }
+
     fun saveStepOneCrossseling(
         user: String,
         bank: CreditCatalog?,

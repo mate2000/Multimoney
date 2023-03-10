@@ -219,7 +219,9 @@ interface SmartAccountRepository {
         idAccount: Long?,
         option: String?,
         email: String?,
-        isFavorite: Boolean?
+        isFavorite: Boolean?,
+        idBank: Long?,
+        typeAccount: Int?
     ): Flow<MultimoneyResult<SaveSinpeAccount?>>
 
     suspend fun mutationManageSinpeAccountUpdate(

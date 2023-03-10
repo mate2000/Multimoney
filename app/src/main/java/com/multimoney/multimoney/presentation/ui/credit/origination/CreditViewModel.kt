@@ -43,6 +43,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnCurrencySymbolValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnCurrentLocationButtonValueChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnFailure
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnHideBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnLoadingValueChange
@@ -67,11 +68,11 @@ import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class CreditViewModel @Inject constructor(
@@ -661,6 +662,7 @@ class CreditViewModel @Inject constructor(
             is OnRestartCrosselingNewAccount -> onRestartCrosselingNewAccount()
             is OnSetBankListEmpty -> onSetBankListEmpty(event.ifBankListEmpty)
             is OnUpdateIsCrosselingValue -> crosseling = event.isCrosseling
+            is OnFailure -> uiState = uiState.copy(openDialog = event.openDialog)
         }
     }
 
@@ -679,6 +681,7 @@ class CreditViewModel @Inject constructor(
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
         data class OnOpenDialogValueChange(val openDialog: DialogParameters) : UIEvent()
         data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) : UIEvent()
+        data class OnFailure(val openDialog: DialogParameters) : UIEvent()
 
         data class OnCurrentLocationButtonValueChange(val isVisible: Boolean) : UIEvent()
         object OnNextStep : UIEvent()

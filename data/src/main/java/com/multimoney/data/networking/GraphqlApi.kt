@@ -18,6 +18,7 @@ import com.multimoney.data.networking.graphql.apollomodel.AddressLevel2Query
 import com.multimoney.data.networking.graphql.apollomodel.AddressLevel3Query
 import com.multimoney.data.networking.graphql.apollomodel.BalanceCardInformationQuery
 import com.multimoney.data.networking.graphql.apollomodel.BalanceQuery
+import com.multimoney.data.networking.graphql.apollomodel.BankList365TypeAndTypeAccountQuery
 import com.multimoney.data.networking.graphql.apollomodel.BankListTransfer365Query
 import com.multimoney.data.networking.graphql.apollomodel.BanksAndRegularExpressionQuery
 import com.multimoney.data.networking.graphql.apollomodel.BuyCryptoCurrencyHQRMutation
@@ -32,6 +33,8 @@ import com.multimoney.data.networking.graphql.apollomodel.CivilStatusQuery
 import com.multimoney.data.networking.graphql.apollomodel.CompanyCantonQuery
 import com.multimoney.data.networking.graphql.apollomodel.CompanyDistrictQuery
 import com.multimoney.data.networking.graphql.apollomodel.CompanyProvinceQuery
+import com.multimoney.data.networking.graphql.apollomodel.CreateCardVDMutation
+import com.multimoney.data.networking.graphql.apollomodel.CreateUserVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.CreditContractEventSubscription
 import com.multimoney.data.networking.graphql.apollomodel.CreditExtensionAmountQuery
 import com.multimoney.data.networking.graphql.apollomodel.CreditExtensionMessageQuery
@@ -126,8 +129,6 @@ import com.multimoney.data.networking.graphql.apollomodel.StepByStepQuery
 import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsSignedQuery
 import com.multimoney.data.networking.graphql.apollomodel.UpdateCardVDMutation
-import com.multimoney.data.networking.graphql.apollomodel.CreateCardVDMutation
-import com.multimoney.data.networking.graphql.apollomodel.CreateUserVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.UpdateFavoriteContactSmartMutation
 import com.multimoney.data.networking.graphql.apollomodel.UpdateSmartAccountStatusMutation
 import com.multimoney.data.networking.graphql.apollomodel.UpdateUserRegisterMutation
@@ -1437,7 +1438,9 @@ class GraphqlApi @Inject constructor(
         country: String,
         idAccount: Long?,
         isFavorite: Boolean?,
-        option: String?
+        option: String?,
+        idBank: Long?,
+        typeAccount: Int?
     ): ApolloCall<ManageSinpeAccountSaveMutation.Data> =
         apolloAuthorizedClient.mutation(
             ManageSinpeAccountSaveMutation(
@@ -1450,7 +1453,9 @@ class GraphqlApi @Inject constructor(
                 country = Optional.presentIfNotNull(country),
                 id_account = Optional.presentIfNotNull(idAccount),
                 isFavorite = Optional.presentIfNotNull(isFavorite),
-                option = Optional.presentIfNotNull(option)
+                option = Optional.presentIfNotNull(option),
+                idBank = Optional.presentIfNotNull(idBank),
+                typeAccount = Optional.presentIfNotNull(typeAccount)
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -2520,6 +2525,15 @@ class GraphqlApi @Inject constructor(
             identification,
             asset,
             crypto_network
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryGetBankList365TypeAndAccountType(
+        idBrand: Int,
+        user: String
+    ): ApolloCall<BankList365TypeAndTypeAccountQuery.Data> = apolloAuthorizedClient.query(
+        BankList365TypeAndTypeAccountQuery(
+            idBrand, user
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

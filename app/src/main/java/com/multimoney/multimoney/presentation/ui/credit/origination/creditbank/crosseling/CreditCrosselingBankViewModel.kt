@@ -3,7 +3,12 @@ package com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.interaction.accountsmart.MutationSaveSinpeAccountUseCase
+import com.multimoney.domain.interaction.credit.QueryBankList365TypeAndAccountTypeUseCase
 import com.multimoney.domain.interaction.credit.QueryBanksAndRegularExpressionUseCase
+import com.multimoney.domain.model.accountsmart.BankTransfer365
+import com.multimoney.domain.model.accountsmart.SmartAccountType
 import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.credit.CreditCatalogOption
 import com.multimoney.domain.model.credit.RegularExpression
@@ -16,50 +21,45 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.c
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.crosseling.CreditCrosselingBankViewModel.UIEvent.OnAccountNumberValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.crosseling.CreditCrosselingBankViewModel.UIEvent.OnAccountTypeValueChanged
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.crosseling.CreditCrosselingBankViewModel.UIEvent.OnBankValueChanged
+import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.crosseling.CreditCrosselingBankViewModel.UIEvent.OnCallQueryBankList365TypeAccountType
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.crosseling.CreditCrosselingBankViewModel.UIEvent.OnCallQueryBanksAndRegularExpression
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.crosseling.CreditCrosselingBankViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.crosseling.CreditCrosselingBankViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.getRegex
-import com.multimoney.multimoney.presentation.util.matchRegex
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class CreditCrosselingBankViewModel @Inject constructor(
-    private val queryBanksAndRegularExpressionUseCase: QueryBanksAndRegularExpressionUseCase
+    private val queryBanksAndRegularExpressionUseCase: QueryBanksAndRegularExpressionUseCase,
+    private val mutationSaveSinpeAccountUseCase: MutationSaveSinpeAccountUseCase,
+    private val queryBankList365TypeAndAccountTypeUseCase: QueryBankList365TypeAndAccountTypeUseCase
 ) : BaseViewModel(true) {
 
     // Stateless
     private var bank: CreditCatalog? = null
-    private var bankList: List<CreditCatalogOption?>? = listOf()
-    var accountTypeList: List<RegularExpression?>? = listOf()
+    private var bankListCreditCatalog: List<CreditCatalogOption?>? = listOf()
+    private var regularExpression: List<RegularExpression?>? = listOf()
+    private var bankList: List<BankTransfer365?>? = listOf()
+    var accountTypeList: List<SmartAccountType?>? = listOf()
 
     var uiState by mutableStateOf(UIState())
         private set
 
-    private fun onCallQueryBanksAndRegularExpressions(
-        pkUser: Int,
+    private fun onCallQueryBankList365TypeAndAccountType(
         user: String,
         idBrand: Int,
-        idUserRequest: Int,
-        list: List<CreditCatalog?>?,
         onLoadingValueChange: (isLoading: Boolean) -> Unit,
         onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
     ) = executeUseCase {
-        queryBanksAndRegularExpressionUseCase.invoke(pkUser, user, idBrand, idUserRequest).collectLatest { result ->
+        queryBankList365TypeAndAccountTypeUseCase.invoke(idBrand, user).collectLatest { result ->
             result.onSuccess {
-                bank = it.banks?.first()
-                accountTypeList = it.regularExpression
-                bankList = bank?.subOptions?.filter { filter ->
-                    filter?.description != MIDDLE_DASH
-                }
+                accountTypeList = it?.accountType?.typeList
+                bankList = it?.bankList365Type
                 uiState = uiState.copy(bankList = bankList)
-                if (!bank?.pkCatalog.isNullOrEmpty()) {
-                    loadStepsInfo(list)
-                }
                 onLoadingValueChange(false)
             }.onLoading {
                 onLoadingValueChange(true)
@@ -75,12 +75,77 @@ class CreditCrosselingBankViewModel @Inject constructor(
         }
     }
 
-    private fun onBankValueChanged(bankSelected: CreditCatalogOption?) {
+    private fun onCallQueryBanksAndRegularExpressions(
+        pkUser: Int,
+        user: String,
+        idBrand: Int,
+        idUserRequest: Int,
+        onFailureWithDialog: (dialogParameter: DialogParameters) -> Unit
+    ) = executeUseCase {
+        queryBanksAndRegularExpressionUseCase.invoke(pkUser, user, idBrand, idUserRequest).collectLatest { result ->
+            result.onSuccess {
+                bank = it.banks?.first()
+                regularExpression = it.regularExpression
+                bankListCreditCatalog = bank?.subOptions?.filter { filter ->
+                    filter?.description != MIDDLE_DASH
+                }
+            }.onFailure {
+                onFailureWithDialog(
+                    DialogParameters(
+                        description = it.getError().toString(),
+                        isActive = mutableStateOf(true)
+                    )
+                )
+            }
+        }
+    }
+
+    private fun onSaveBankAccount(
+        idBrand: Int,
+        user: String,
+        identification: String,
+        onLoadingValueChange: (Boolean) -> Unit,
+        onFailureWithDialog: (Boolean, DialogParameters) -> Unit,
+        nextStepAction: () -> Unit,
+        saveCreditStepsHelper: SaveCreditStepsHelper
+    ) = executeUseCase {
+        mutationSaveSinpeAccountUseCase(
+            user = user,
+            idBrand = idBrand,
+            identification = identification,
+            accountNumber = uiState.accountNumber,
+            idCurrency = CurrencyType.Dollar.id.toLong(),
+            nameAccount = uiState.bankSelected?.bankName ?: "",
+            country = Brand.ElSalvador.countryCode,
+            idAccount = null,
+            option = null,
+            email = user,
+            isFavorite = false,
+            idBank = uiState.bankSelected?.bankId,
+            typeAccount = uiState.accountTypeSelected?.typeId?.toInt()
+        ).collectLatest {
+            it.onSuccess {
+                onLoadingValueChange(false)
+                onNextActionClick(user, nextStepAction, saveCreditStepsHelper)
+            }.onFailure { error ->
+                onFailureWithDialog(
+                    false,
+                    DialogParameters(
+                        description = error.getError() ?: "",
+                        isActive = mutableStateOf(true)
+                    )
+                )
+            }.onLoading {
+                onLoadingValueChange(true)
+            }
+        }
+    }
+
+    private fun onBankValueChanged(bankSelected: BankTransfer365?) {
         uiState = uiState.copy(
             bankSelected = bankSelected,
-            accountTypeListFiltered = accountTypeList?.filter {
-                it?.fkRegularExpression == bankSelected?.pkCatalog?.toInt()
-            },
+            bankSelectedString = bankSelected?.bankName ?: "",
+            accountTypeList = accountTypeList,
             accountTypeSelectedString = "",
             accountTypeSelected = null,
             accountNumber = "",
@@ -89,10 +154,10 @@ class CreditCrosselingBankViewModel @Inject constructor(
         validateForm()
     }
 
-    private fun onAccountTypeValueChange(regulaExpression: RegularExpression?) {
+    private fun onAccountTypeValueChange(smartAccountType: SmartAccountType?) {
         uiState = uiState.copy(
-            accountTypeSelectedString = regulaExpression?.description ?: "",
-            accountTypeSelected = regulaExpression,
+            accountTypeSelectedString = smartAccountType?.typeName ?: "",
+            accountTypeSelected = smartAccountType,
             accountNumber = "",
             accountNumberError = Pair(false, R.string.empty)
         )
@@ -103,7 +168,7 @@ class CreditCrosselingBankViewModel @Inject constructor(
         uiState = uiState.copy(
             accountNumber = accountNumber,
             accountNumberError =
-            if (matchRegex(accountNumber, getRegex(uiState.accountTypeSelected?.regularExpression.orEmpty()))) {
+            if (accountNumber.length >= ACCOUNT_LENGTH) {
                 Pair(false, R.string.empty)
             } else {
                 Pair(true, R.string.credit_bank_account_number_error)
@@ -125,62 +190,49 @@ class CreditCrosselingBankViewModel @Inject constructor(
         nextStepAction: () -> Unit,
         saveCreditStepsHelper: SaveCreditStepsHelper
     ) {
-        saveCreditStepsHelper.saveStepOne(
-            user,
-            bank,
-            uiState.bankSelected,
-            uiState.accountTypeSelected,
-            uiState.accountNumber
-        )
+//        saveCreditStepsHelper.saveStepOneCrosselingSv(
+//            user,
+//            bank,
+//            uiState.bankSelected,
+//            uiState.accountTypeSelected,
+//            uiState.accountNumber
+//        )
         nextStepAction()
     }
 
     data class UIState(
         val accountNumber: String = "",
         val accountNumberError: Pair<Boolean, Int> = Pair(false, R.string.empty),
-        val bankList: List<CreditCatalogOption?>? = listOf(),
-        val bankSelected: CreditCatalogOption? = null,
-        val accountTypeListFiltered: List<RegularExpression?>? = listOf(),
+        val bankList: List<BankTransfer365?>? = listOf(),
+        val bankSelectedString: String = "",
+        val bankSelected: BankTransfer365? = null,
+        val accountTypeList: List<SmartAccountType?>? = listOf(),
         val accountTypeSelectedString: String = "",
         val accountTypeSelectedKey: String = "",
-        val accountTypeSelected: RegularExpression? = null
+        val accountTypeSelected: SmartAccountType? = null
     )
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is OnNextActionClick -> onNextActionClick(event.user, event.nextStepAction, event.saveCreditStepsHelper)
-            is OnCallQueryBanksAndRegularExpression -> onCallQueryBanksAndRegularExpressions(
-                event.pkUser,
+            is OnCallQueryBankList365TypeAccountType -> onCallQueryBankList365TypeAndAccountType(
                 event.user,
                 event.idBrand,
-                event.idUserRequest,
-                event.list,
                 event.onLoadingValueChange,
                 event.onFailureWithDialog
             )
             is OnValidateForm -> validateForm()
             is OnAccountNumberValueChange -> onAccountNumberValueChanged(event.accountNumber)
             is OnBankValueChanged -> onBankValueChanged(event.bankSelected)
-            is OnAccountTypeValueChanged -> onAccountTypeValueChange(event.regularExpressionSelected)
+            is OnAccountTypeValueChanged -> onAccountTypeValueChange(event.smartAccountType)
+            is OnCallQueryBanksAndRegularExpression -> onCallQueryBanksAndRegularExpressions(
+                event.pkUser,
+                event.user,
+                event.idBrand,
+                event.idUserRequest,
+                event.onFailureWithDialog
+            )
         }
-    }
-
-    private fun loadStepsInfo(list: List<CreditCatalog?>?) {
-        val bankSelected = bankList?.find { it?.pkCatalog == bank?.pkCatalog }
-        val accountType = list?.find { it?.description == SaveCreditStepsHelper.ACCOUNT_TYPE }
-        val accountTypeListFiltered =
-            accountTypeList?.filter { it?.fkRegularExpression == bankSelected?.pkCatalog?.toInt() }
-        val accountNumber = list?.find { it?.description == SaveCreditStepsHelper.ACCOUNT_NUMBER }
-        val accountTypeSelected = accountTypeListFiltered?.findLast { it?.key == accountType?.value }
-        uiState = uiState.copy(
-            bankSelected = bankSelected,
-            accountTypeListFiltered = accountTypeListFiltered,
-            accountTypeSelectedString = accountTypeSelected?.description
-                ?: "",
-            accountTypeSelected = accountTypeSelected,
-            accountNumber = accountNumber?.value ?: ""
-        )
-        validateForm()
     }
 
     sealed class UIEvent {
@@ -190,20 +242,25 @@ class CreditCrosselingBankViewModel @Inject constructor(
             val saveCreditStepsHelper: SaveCreditStepsHelper
         ) : UIEvent()
 
-        data class OnCallQueryBanksAndRegularExpression(
-            val pkUser: Int,
+        data class OnCallQueryBankList365TypeAccountType(
             val user: String,
             val idBrand: Int,
-            val idUserRequest: Int,
-            val list: List<CreditCatalog?>?,
             val onLoadingValueChange: (isLoading: Boolean) -> Unit,
             val onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
         ) : UIEvent()
 
         object OnValidateForm : UIEvent()
         data class OnAccountNumberValueChange(val accountNumber: String) : UIEvent()
-        data class OnBankValueChanged(val bankSelected: CreditCatalogOption?) : UIEvent()
-        data class OnAccountTypeValueChanged(val regularExpressionSelected: RegularExpression?) : UIEvent()
+        data class OnBankValueChanged(val bankSelected: BankTransfer365?) : UIEvent()
+        data class OnAccountTypeValueChanged(val smartAccountType: SmartAccountType?) : UIEvent()
+
+        data class OnCallQueryBanksAndRegularExpression(
+            val pkUser: Int,
+            val user: String,
+            val idBrand: Int,
+            val idUserRequest: Int,
+            val onFailureWithDialog: (dialogParameter: DialogParameters) -> Unit
+        ) : UIEvent()
     }
 
     sealed class BaseEvent {
@@ -212,5 +269,6 @@ class CreditCrosselingBankViewModel @Inject constructor(
 
     companion object {
         const val MIDDLE_DASH = "-"
+        const val ACCOUNT_LENGTH = 9
     }
 }

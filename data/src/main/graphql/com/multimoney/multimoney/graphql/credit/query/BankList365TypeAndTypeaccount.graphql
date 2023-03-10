@@ -15,10 +15,5 @@ query BankList365TypeAndTypeAccount($idBrand: Int!, $user: String!){
       name
     }
     status
-    message
-    detail
-    _HaveError
-    _ErrorMessage
-    _FullError
   }
 }

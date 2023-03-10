@@ -53,6 +53,10 @@ class CryptoSendAddressViewModel @Inject constructor(
     }
 
     private fun onContinueButtonClicked(onNextStep: () -> Unit) {
+        validateCryptoAddress(onNextStep, showContinueDialog = true)
+    }
+
+    private fun showContinueDialog(onNextStep: () -> Unit) {
         if (!notShowAgainVerifyCryptoAddress) {
             uiState = uiState.copy(
                 continueDialog = CheckboxDialogParameters(
@@ -71,11 +75,11 @@ class CryptoSendAddressViewModel @Inject constructor(
                 )
             )
         } else {
-            validateCryptoAddress(onNextStep)
+            onNextStep()
         }
     }
 
-    private fun validateCryptoAddress(onNextStep: () -> Unit) {
+    private fun validateCryptoAddress(onNextStep: () -> Unit = {}, showContinueDialog: Boolean = false) {
         // to send market we need to concatenate asset and BTC
         val market = "${uiState.asset}$BTC"
         executeUseCase {
@@ -88,7 +92,11 @@ class CryptoSendAddressViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess { validateDepositAddress ->
                     if (validateDepositAddress.result != null) {
-                        onNextStep()
+                        if (showContinueDialog) {
+                            showContinueDialog(onNextStep)
+                        } else {
+                            onNextStep()
+                        }
                     } else {
                         uiState = uiState.copy(showTextInputError = true)
                     }
@@ -129,7 +137,7 @@ class CryptoSendAddressViewModel @Inject constructor(
     private fun onGetQrCodeFromSavedState(qrCodeResult: String) {
         uiState = uiState.copy(cryptoAddress = mutableStateOf(qrCodeResult))
         if (qrCodeResult.isNotBlank()) {
-            validateCryptoAddress {}
+            validateCryptoAddress()
         }
     }
 
@@ -152,7 +160,7 @@ class CryptoSendAddressViewModel @Inject constructor(
                 event.market
             )
             is UIEvent.OnCryptoAddressChanged -> onCryptoAddressChanged(event.cryptoAddress)
-            is UIEvent.OnValidateCryptoAddress -> validateCryptoAddress() {}
+            is UIEvent.OnValidateCryptoAddress -> validateCryptoAddress()
             is UIEvent.OnSetOpenMaintenanceAction -> openMaintenanceAction = event.action
         }
     }
@@ -195,6 +203,6 @@ class CryptoSendAddressViewModel @Inject constructor(
     }
 
     companion object {
-        const val TEXT_DEBOUNCE_TIME = 1000L
+        const val TEXT_DEBOUNCE_TIME = 500L
     }
 }

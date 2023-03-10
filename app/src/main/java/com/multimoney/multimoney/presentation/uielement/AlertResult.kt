@@ -52,6 +52,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomButtonType.Primary
 @Preview
 fun AlertResult(
     iconResource: Int = R.drawable.ic_error_symbol,
+    iconModifier: Modifier = Modifier,
     titleResource: Int = R.string.empty,
     titleString: String = "",
     titleAnnotatedString: AnnotatedString = AnnotatedString(""),
@@ -90,7 +91,8 @@ fun AlertResult(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             CustomImage(
-                drawableResource = iconResource
+                drawableResource = iconResource,
+                modifier = iconModifier
             )
             Text(
                 modifier = Modifier.padding(top = 40.dp, start = 24.dp, end = 24.dp),

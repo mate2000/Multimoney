@@ -354,7 +354,7 @@ class SmartOnfidoViewModel @Inject constructor(
         popAndNavigateTo(
             route = "${Screen.SmartSignScreen.baseRoute}/$signDocumentStep/${
             URLEncoder.encode(evicertiaUrl, StandardCharsets.UTF_8.toString())
-            }/$idBrand/$pkUser/$identification/$email/$idRequestSysde/$firstName/$lastName/${true}/$globalId/$user/$comingFromCrypto/${!smartSubscriptionManager.hasEvicertiaLink()}",
+            }/$idBrand/$pkUser/$identification/$email/$idRequestSysde/$firstName/$lastName/${true}/$globalId/$user/$comingFromCrypto/${!smartSubscriptionManager.hasEvicertiaLink()}/$evicertiaStatus/$workflow",
             popTo = Screen.SmartOnfidoScreen.route
         )
     }

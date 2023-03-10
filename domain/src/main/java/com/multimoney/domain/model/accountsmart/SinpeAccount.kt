@@ -15,6 +15,7 @@ data class SinpeAccount(
     val currency: String,
     val nameAccount: String,
     val idBank: Long,
+    val idBancoCore: Long,
     val accountTypeCore: Long,
     val regularExpression: String,
     val isFavorite: Boolean,

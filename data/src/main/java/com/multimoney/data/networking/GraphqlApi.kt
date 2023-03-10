@@ -1548,7 +1548,8 @@ class GraphqlApi @Inject constructor(
         country: String,
         idAccount: Long,
         accountNumber: String,
-        isFavorite: Boolean?
+        isFavorite: Boolean?,
+        option: String?
     ): ApolloCall<ListSinpeAccountQuery.Data> =
         apolloAuthorizedClient.query(
             ListSinpeAccountQuery(
@@ -1558,7 +1559,8 @@ class GraphqlApi @Inject constructor(
                 country,
                 idAccount,
                 accountNumber,
-                Optional.presentIfNotNull(isFavorite)
+                Optional.presentIfNotNull(isFavorite),
+                Optional.presentIfNotNull(option)
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

@@ -52,7 +52,8 @@ class SaveCreditStepsHelper @Inject constructor() {
     fun saveStepOneCrosselingSv(
         user: String?,
         bank: CreditCatalog?,
-        bankAccountSelected: CreditCatalogOption?,
+        description: String?,
+        pkCatalog: String?,
         accountName: String,
         accountId: String,
         accountNumber: String,
@@ -60,7 +61,7 @@ class SaveCreditStepsHelper @Inject constructor() {
         val accountNumberQuestion = getScreenConfigQuestion(ACCOUNT_NUMBER, accountNumber)
         val accountTypeQuestion = getScreenConfigQuestion(ACCOUNT_TYPE, accountName)
 
-        saveScreenQuestionData(selectionQuestion(user, bank, bankAccountSelected))
+        saveScreenQuestionData(selectionQuestionCrosseling(user, bank, description, pkCatalog))
 
         val creditInfoQuestionAccountType =
             textByDropdownQuestion(user, accountName, accountId, accountTypeQuestion)
@@ -399,6 +400,30 @@ class SaveCreditStepsHelper @Inject constructor() {
             } else {
                 "0"
             }
+        )
+    }
+
+    private fun selectionQuestionCrosseling(
+        user: String?,
+        selectionQuestionData: CreditCatalog?,
+        description: String?,
+        pkCatalog: String?
+    ): CreditInfoQuestion {
+        return CreditInfoQuestion(
+            idQuestionRequestCredit = selectionQuestionData?.fkQuestion,
+            idOptionQuestionRequestCredit = selectionQuestionData?.pkQuestionOption,
+            createUser = user,
+            updateUser = user,
+            identificator = selectionQuestionData?.pkQuestionOption.toString(),
+            value = "",
+            controlType = selectionQuestionData?.controlType,
+            isCoreCatalogue = selectionQuestionData?.isCoreCatalog,
+            isBranchOfficeCatalogue = selectionQuestionData?.isCatalogBrandOffice,
+            useValue = selectionQuestionData?.useValue,
+            maximumAmount = selectionQuestionData?.maximumAmount ?: "",
+            description = description ?: "",
+            valueCatalogue = "",
+            idIdentificatorCatalogue = pkCatalog ?: "0"
         )
     }
 

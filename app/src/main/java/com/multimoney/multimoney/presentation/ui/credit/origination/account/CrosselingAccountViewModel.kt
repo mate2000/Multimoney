@@ -100,7 +100,9 @@ class CrosselingAccountViewModel @Inject constructor(
             idBrand = idBrand,
             country = country,
             idAccount = idAccount,
-            accountNumber = accountNumber
+            accountNumber = accountNumber,
+            option = CROSSELING
+
         ).collectLatest { result ->
             result.onSuccess { accountList ->
                 onLoadingValueChange(false)
@@ -162,9 +164,6 @@ class CrosselingAccountViewModel @Inject constructor(
 
     private fun onClientBankAccountSelected(clientBankAccount: SinpeAccount?, onContinueClick: () -> Unit) {
         uiState = uiState.copy(
-            bankSelected = bankList?.first { filter ->
-                filter?.description?.lowercase() == clientBankAccount?.bank?.lowercase().orEmpty()
-            },
             clientBankAccountSelected = clientBankAccount,
             accountTypeSelectedString = clientBankAccount?.accountType.toString(),
             accountNumber = clientBankAccount?.sinpeAccount ?: ""
@@ -186,7 +185,8 @@ class CrosselingAccountViewModel @Inject constructor(
             saveCreditStepsHelper.saveStepOneCrosselingSv(
                 user,
                 bank,
-                uiState.bankSelected,
+                uiState.clientBankAccountSelected?.bank,
+                uiState.clientBankAccountSelected?.idBancoCore.toString(),
                 uiState.clientBankAccountSelected?.regularExpression ?: "",
                 uiState.clientBankAccountSelected?.accountTypeCore?.toString().orEmpty(),
                 uiState.accountNumber,
@@ -202,7 +202,6 @@ class CrosselingAccountViewModel @Inject constructor(
         val clientBankAccountSelected: SinpeAccount? = null,
         val accountTypeSelectedString: String = "",
         val accountNumber: String = "",
-        val bankSelected: CreditCatalogOption? = null,
         val openDialog: DialogParameters = DialogParameters()
     )
 
@@ -259,5 +258,6 @@ class CrosselingAccountViewModel @Inject constructor(
 
     companion object {
         const val MIDDLE_DASH = "-"
+        const val CROSSELING = "CROSSELING"
     }
 }

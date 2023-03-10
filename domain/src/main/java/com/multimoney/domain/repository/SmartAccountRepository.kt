@@ -195,7 +195,8 @@ interface SmartAccountRepository {
         country: String,
         idAccount: Long,
         accountNumber: String,
-        isFavorite: Boolean?
+        isFavorite: Boolean?,
+        option: String?
     ): Flow<MultimoneyResult<SinpeAccountResult?>>
 
     suspend fun querySmartExchangeRate(

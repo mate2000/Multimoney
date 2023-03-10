@@ -12,6 +12,7 @@ interface QueryListSinpeAccountUseCase {
         country: String,
         idAccount: Long,
         accountNumber: String,
-        isFavorite: Boolean? = null
+        isFavorite: Boolean? = null,
+        option:String? = ""
     ): Flow<MultimoneyResult<SinpeAccountResult?>>
 }

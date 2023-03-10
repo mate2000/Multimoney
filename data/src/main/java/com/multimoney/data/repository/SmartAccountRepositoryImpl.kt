@@ -409,7 +409,8 @@ class SmartAccountRepositoryImpl @Inject constructor(
         country: String,
         idAccount: Long,
         accountNumber: String,
-        isFavorite: Boolean?
+        isFavorite: Boolean?,
+        option: String?
     ): Flow<MultimoneyResult<SinpeAccountResult?>> {
         return fetchData(
             apolloCall = graphqlApi.queryListSinpeAccount(
@@ -419,7 +420,8 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 country,
                 idAccount,
                 accountNumber,
-                isFavorite
+                isFavorite,
+                option
             ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())

@@ -49,15 +49,15 @@ fun SmartSignScreen(
     }
 
     when (viewModel.uiState.signDocumentProcessStep) {
-        /*GENERATE_DOCUMENT_STEP.value -> {
+        GENERATE_DOCUMENT_STEP.value -> {
             SmartDocumentGenerationScreen(
                 viewModel = viewModel,
                 icon = viewModel.uiState.loadingIcon,
                 title = viewModel.uiState.loadingTitle,
                 subtitle = viewModel.uiState.loadingSubtitle
             )
-        }*/
-        SIGN_DOCUMENTS_STEP.value, GENERATE_DOCUMENT_STEP.value -> {
+        }
+        SIGN_DOCUMENTS_STEP.value -> {
             SmartSignDocumentScreen(viewModel = viewModel)
             LaunchedEffect(key1 = true) {
                 viewModel.onUIEvent(OnShowDialogInformation)

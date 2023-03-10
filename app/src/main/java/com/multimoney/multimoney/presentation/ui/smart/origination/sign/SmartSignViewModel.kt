@@ -21,6 +21,7 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.WORK_FLOW
 import com.multimoney.multimoney.presentation.navigation.navgraph.COMING_FROM_CRYPTO
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
+import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
@@ -58,10 +59,10 @@ import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class SmartSignViewModel @Inject constructor(
@@ -88,7 +89,8 @@ class SmartSignViewModel @Inject constructor(
     var globalId: Long? = 0
     var comingFromCrypto: Boolean = false
     var shouldGetEvicertiaLink = true
-    var workflow = ""
+    var evicertiaStatus: String = ""
+    var workflow: String = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -106,6 +108,7 @@ class SmartSignViewModel @Inject constructor(
         globalId = savedStateHandle[SIGN_DOCUMENT_GLOBAL_ID] ?: 0
         comingFromCrypto = savedStateHandle[COMING_FROM_CRYPTO] ?: false
         shouldGetEvicertiaLink = savedStateHandle[SHOULD_GET_EVICERTIA_LINK] ?: true
+        evicertiaStatus = savedStateHandle[EVICERTIA_STATUS] ?: ""
         workflow = savedStateHandle[WORK_FLOW] ?: ""
     }
 
@@ -194,7 +197,7 @@ class SmartSignViewModel @Inject constructor(
                 }
             }
             CreditSubscriptionStep.AccountActivated.step -> {
-                setSuccessAlertResult()
+                navigateToApprovedByOnfido()
             }
             CreditSubscriptionStep.ErrorActivatingAccount.step, CreditSubscriptionStep.DocumentsFailed.step -> {
                 showSubscriptionError()
@@ -215,18 +218,6 @@ class SmartSignViewModel @Inject constructor(
                 emitBaseEvent(OpenWhatsAppLink)
                 onUIEvent(OnNavigateToHome)
             }
-        )
-    }
-
-    private fun setSuccessAlertResult() {
-        uiState = uiState.copy(
-            isAlertResultVisible = true,
-            alertResultIsRightButtonVisible = true,
-            alertResultIconResource = drawable.ic_success_symbol,
-            alertResultTitleResource = string.approved_by_onfido_title,
-            alertResultButtonResource = string.understood,
-            alertResultRightButtonClick = { onUIEvent(OnNavigateToHome) },
-            alertResultButtonAction = { onUIEvent(OnNavigateToHome) }
         )
     }
 
@@ -295,7 +286,7 @@ class SmartSignViewModel @Inject constructor(
         trackAdjustOriginationRejected(smartContractEvent)
         smartSubscriptionManager.destroySubscription()
         popAndNavigateTo(
-            route = "${Screen.SmartOnfidoAndEvicertiaErrorsScreen.baseRoute}/$error/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$comingFromCrypto/$user/$globalId",
+            route = "${Screen.SmartOnfidoAndEvicertiaErrorsScreen.baseRoute}/$error/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$comingFromCrypto/$user/$globalId/$evicertiaStatus/$workflow",
             popTo = Screen.SmartSignScreen.route
         )
     }

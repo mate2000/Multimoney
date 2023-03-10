@@ -14,6 +14,7 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartStatus
 import com.multimoney.data.util.catalog.SmartSteps
+import com.multimoney.data.util.catalog.SmartWorkflow
 import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationInitialRequestUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCase
@@ -62,6 +63,7 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OverridePreviousAction
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
 import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -163,6 +165,8 @@ class SmartViewModel @Inject constructor(
             idCivilStatusType = stepByStep.idMaritalStatus?.toLong(),
             birthday = stepByStep.birthdate,
             expirationDate = stepByStep.expirationDate,
+            dateOfIssue = stepByStep.dateOfIssue,
+            placeOfIssueId = stepByStep.placeOfIssue,
             idGender = stepByStep.idGenre?.toLong(),
             strGenre = stepByStep.strGenre,
             stringProfessionType = stepByStep.stringProfessionType,
@@ -203,8 +207,8 @@ class SmartViewModel @Inject constructor(
 
         when {
             // navigate to onfido screen after the last step obtained and idBrand matches the country id
-            currentStep == SmartSteps.Four.id && idBrandAsInt == Brand.CostaRica.id -> navigateToOnfido()
-            currentStep == SmartSteps.Six.id && idBrandAsInt == Brand.ElSalvador.id -> navigateToOnfido()
+            currentStep == SmartSteps.Four.id && idBrandAsInt == Brand.CostaRica.id -> navigateToOnfidoOrEvicertia()
+            currentStep == SmartSteps.Six.id && idBrandAsInt == Brand.ElSalvador.id -> navigateToOnfidoOrEvicertia()
             else -> {
                 // update the current step coming from the backend in order to navigate to the proper screen
                 uiState = uiState.copy(
@@ -261,6 +265,8 @@ class SmartViewModel @Inject constructor(
                 idCivilStatusType = accountSmartData?.idCivilStatusType,
                 idProfessionType = accountSmartData?.idProfessionType,
                 expirationDate = accountSmartData?.expirationDate,
+                nationality = accountSmartData?.placeOfIssueId,
+                dateOfEmission = accountSmartData?.dateOfIssue,
                 idAddressLevel1 = accountSmartData?.idAddressLevel1,
                 idAddressLevel2 = accountSmartData?.idAddressLevel2,
                 idAddressLevel3 = accountSmartData?.idAddressLevel3,
@@ -425,10 +431,22 @@ class SmartViewModel @Inject constructor(
         }
     }
 
-    private fun navigateToOnfido() {
+    private fun navigateToOnfidoOrEvicertia() {
+        if (workflow == SmartWorkflow.SMART_CONTRACT_PROCESS.workflow) {
+            onNavigateToSignDocumentScreen()
+        } else {
+            popAndNavigateTo(
+                "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idSysRequest/$idGlobalRequest/$URL_EMPTY/$comingFromCrypto/$evicertiaStatus/$workflow",
+                Screen.SmartScreen.route
+            )
+        }
+    }
+
+    private fun onNavigateToSignDocumentScreen() {
         popAndNavigateTo(
-            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idSysRequest/$idGlobalRequest/$URL_EMPTY/$comingFromCrypto/$evicertiaStatus/$workflow",
-            Screen.SmartScreen.route
+            route = "${Screen.SmartSignScreen.baseRoute}/${SignDocumentStep.GENERATE_DOCUMENT_STEP.value}/$URL_EMPTY/" +
+                "$idBrand/$pkUser/$identification/$email/$idSysRequest/$firstName/$lastName/${true}/$idGlobalRequest/$user/$comingFromCrypto/${true}/$evicertiaStatus/$workflow",
+            popTo = Screen.SmartOnfidoScreen.route
         )
     }
 
@@ -477,7 +495,7 @@ class SmartViewModel @Inject constructor(
                 result.onSuccess {
                     onUIEvent(OnLoadingValueChange(false))
                     idSysRequest = it?.idAccount ?: 0L
-                    navigateToOnfido()
+                    navigateToOnfidoOrEvicertia()
                 }
                 result.onLoading {
                     onUIEvent(OnLoadingValueChange(true))

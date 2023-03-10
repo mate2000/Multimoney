@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.login.signin
 
 import android.provider.Settings
+import android.content.Context
 import androidx.biometric.BiometricPrompt
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -28,6 +29,7 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
@@ -41,6 +43,7 @@ import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.isCognitoErrorCode
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import com.multimoney.multimoney.presentation.util.toJson
+import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -149,7 +152,7 @@ class SignInViewModel @Inject constructor(
                                                 authUserAttribute
                                             )
                                             if (payload.getString(SignUpPasswordViewModel.COGNITO_CHANGE_PASSWORD_REQUIRED)
-                                                .toBoolean()
+                                                    .toBoolean()
                                             ) {
                                                 uiState = uiState.copy(
                                                     openDialog = DialogParameters(
@@ -183,36 +186,34 @@ class SignInViewModel @Inject constructor(
                                             }
                                         }
                                     }, {
-                                        callQueryValidationUserExistsUseCase(activity)
+                                        callQueryValidationUserExistsUseCase()
                                     })
                                 }
-                                AuthSessionResult.Type.FAILURE -> callQueryValidationUserExistsUseCase(
-                                    activity
-                                )
+                                AuthSessionResult.Type.FAILURE -> callQueryValidationUserExistsUseCase()
                             }
                         }, {
-                            callQueryValidationUserExistsUseCase(activity)
+                            callQueryValidationUserExistsUseCase()
                         })
                     } else {
-                        callQueryValidationUserExistsUseCase(activity)
+                        callQueryValidationUserExistsUseCase()
                     }
                 },
                 {
-                    checkSessionState(it, activity)
-                }
-            )
+                    checkSessionState(it)
+                })
         }, {
-            callQueryValidationUserExistsUseCase(activity)
+            callQueryValidationUserExistsUseCase()
         })
     }
 
     private fun onNavigateToChangePassword(idBrand: Int, pkUser: String, userName: String) =
         navigateTo("${Screen.ProfileChangePasswordScreen.baseRoute}/$idBrand/$pkUser/$userName/${Screen.SignInScreen.baseRoute}")
 
-    private fun checkSessionState(authException: AuthException, activity: FragmentActivity) = when {
+    private fun checkSessionState(authException: AuthException) = when {
         authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.SessionActive.code) == true ->
             uiState =
                 uiState.copy(
+                    errorCode = CognitoErrorCode.SessionActive,
                     openDialog = DialogParameters(
                         titleResource = string.sign_in_session_active_on_another_device_title,
                         descriptionResource = string.sign_in_session_open_here_close_another,
@@ -228,6 +229,7 @@ class SignInViewModel @Inject constructor(
         authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.SessionBlocked.code) == true ->
             uiState =
                 uiState.copy(
+                    errorCode = CognitoErrorCode.SessionBlocked,
                     openDialog = DialogParameters(
                         titleResource = string.sign_in_session_blocked_title,
                         descriptionResource = string.sign_in_session_blocked_message,
@@ -235,10 +237,24 @@ class SignInViewModel @Inject constructor(
                     ),
                     isLoading = false
                 )
-        else -> callQueryValidationUserExistsUseCase(activity)
+        authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.BlacklistedDevice.code) == true || authException.cause?.message?.isCognitoErrorCode(
+            CognitoErrorCode.BlacklistedDeviceTooManyAccounts.code
+        ) == true ->
+            uiState =
+                uiState.copy(
+                    errorCode = CognitoErrorCode.BlacklistedDevice,
+                    openDialog = DialogParameters(
+                        titleResource = if (uiState.isO3Country == SignUpViewModel.ISO3_COSTA_RICA) string.sign_in_session_blacklisted_title_cr else string.sign_in_session_blacklisted_title,
+                        descriptionResource = string.sign_in_session_blocked_message,
+                        positiveResource = string.sign_in_session_blacklisted_contact_support,
+                        isActive = mutableStateOf(true),
+                    ),
+                    isLoading = false
+                )
+        else -> callQueryValidationUserExistsUseCase()
     }
 
-    private fun callQueryValidationUserExistsUseCase(activity: FragmentActivity) = executeUseCase {
+    private fun callQueryValidationUserExistsUseCase() = executeUseCase {
         queryValidateUserExistsUseCase(
             email = uiState.userEmail,
             deviceId = dataStorePreferences.getDeviceId().first()
@@ -444,10 +460,19 @@ class SignInViewModel @Inject constructor(
     private fun navigateToHome() {
         viewModelScope.launch {
             if (dataStorePreferences.isAdjustFirstSingInEventRegister().first()) {
-                registerAdjustEvent(AdjustEventType.FIRST_LOGIN_3000, isLoggedIn = false, data = EmailDto(uiState.userEmail).toJson())
+                registerAdjustEvent(
+                    AdjustEventType.FIRST_LOGIN_3000,
+                    isLoggedIn = false,
+                    data = EmailDto(uiState.userEmail).toJson()
+                )
                 dataStorePreferences.isAdjustFirstSingInEventRegister(false)
             } else {
-                registerAdjustEvent(AdjustEventType.LOGIN_3001, isLoggedIn = false, applyAdjust = false, data = EmailDto(uiState.userEmail).toJson())
+                registerAdjustEvent(
+                    AdjustEventType.LOGIN_3001,
+                    isLoggedIn = false,
+                    applyAdjust = false,
+                    data = EmailDto(uiState.userEmail).toJson()
+                )
             }
         }
         popAndNavigateTo(
@@ -456,7 +481,8 @@ class SignInViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateToSignUp() = navigateTo(route = "${Screen.SignUpScreen.baseRoute}/".plus(0))
+    private fun onNavigateToSignUp() =
+        navigateTo(route = "${Screen.SignUpScreen.baseRoute}/".plus(0))
 
     private fun initializeBiometricPrompt(
         biometricPromptTitle: String,
@@ -598,7 +624,12 @@ class SignInViewModel @Inject constructor(
         uiState.userName.isNotEmpty() && uiState.userEmail == biometricUserEmail
 
     private fun onNavigateToOTPScreen() {
-        registerAdjustEvent(AdjustEventType.SECURITY_LOGIN_CHANGE_DEVICE_9002, isLoggedIn = false, applyAdjust = false, data = EmailDto(uiState.userEmail).toJson())
+        registerAdjustEvent(
+            AdjustEventType.SECURITY_LOGIN_CHANGE_DEVICE_9002,
+            isLoggedIn = false,
+            applyAdjust = false,
+            data = EmailDto(uiState.userEmail).toJson()
+        )
         popAndNavigateTo(
             "${Screen.SignInOTPScreen.baseRoute}/${uiState.userEmail}/${uiState.userPassword}/$deviceId/$uniqueId/$ipAddress/$deviceType/$deviceName/$appVersion/$deviceBrand/$deviceModel/$isEmulator",
             Screen.SignInOTPScreen.baseRoute
@@ -610,6 +641,15 @@ class SignInViewModel @Inject constructor(
             uiState = uiState.copy(toastIsVisible = value)
             dataStorePreferences.isSignOutOnBackground(value)
         }
+    }
+
+    private fun openWhatsAppLink(context: Context) {
+        context.openWhatsAppDeepLink(uiState.linkWhatsapp)
+        onNavigateBack()
+    }
+
+    private fun onNavigateBack() {
+        navigateBack(Screen.HomeScreen.route, isRestart = true)
     }
 
     data class UIState(
@@ -633,7 +673,10 @@ class SignInViewModel @Inject constructor(
         val showBiometricSignIn: Boolean = false,
         val isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
-        val toastIsVisible: Boolean = false
+        val toastIsVisible: Boolean = false,
+        val isO3Country: String = "",
+        val linkWhatsapp: String = "",
+        val errorCode: CognitoErrorCode? = null
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -671,6 +714,11 @@ class SignInViewModel @Inject constructor(
             is UIEvent.OnNavigateToOTPScreen -> onNavigateToOTPScreen()
             is UIEvent.OnNavigateToSignUp -> onNavigateToSignUp()
             is UIEvent.OnUpdateToastVisibility -> onUpdateToastVisibility(event.value)
+            is UIEvent.OnUpdateIso3Country -> uiState =
+                uiState.copy(isO3Country = event.iso3Country)
+            is UIEvent.OnSetupSupportLink -> uiState =
+                uiState.copy(linkWhatsapp = event.whatsappLink)
+            is UIEvent.OnOpenWhatsappLink -> openWhatsAppLink(event.context)
         }
     }
 
@@ -702,6 +750,7 @@ class SignInViewModel @Inject constructor(
             val is03Country: String
         ) : UIEvent()
 
+        data class OnSetupSupportLink(val whatsappLink: String) : UIEvent()
         data class OnStart(
             val deviceName: String,
             val deviceType: String,
@@ -713,6 +762,8 @@ class SignInViewModel @Inject constructor(
         object OnNavigateToForgotPassword : UIEvent()
         object OnNavigateToSignUp : UIEvent()
         data class OnUpdateToastVisibility(val value: Boolean) : UIEvent()
+        data class OnUpdateIso3Country(val iso3Country: String) : UIEvent()
+        data class OnOpenWhatsappLink(val context: Context) : UIEvent()
     }
 
     companion object {

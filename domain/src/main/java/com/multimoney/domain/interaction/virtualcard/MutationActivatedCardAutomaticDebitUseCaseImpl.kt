@@ -14,7 +14,8 @@ class MutationActivatedCardAutomaticDebitUseCaseImpl(private val virtualCardRepo
         idClient: Int,
         idLoanClient: Int,
         idCard: Long,
-        cardMasked: String
+        cardMasked: String,
+        identification: String
     ): Flow<MultimoneyResult<AutomaticCardDebit?>> =
         virtualCardRepository.mutationActivatedCardAutomaticDebit(
             user,
@@ -22,6 +23,7 @@ class MutationActivatedCardAutomaticDebitUseCaseImpl(private val virtualCardRepo
             idClient,
             idLoanClient,
             idCard,
-            cardMasked
+            cardMasked,
+            identification
         )
 }

@@ -328,12 +328,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SmartSignScreen : Screen(
-        "smart_sign_document_process_screen/{$SIGN_DOCUMENT_STEP_ARG}/{$SIGN_DOCUMENT_URL}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$IS_SMART_EVICERTIA}/{$SIGN_DOCUMENT_GLOBAL_ID}/{$USER}/{$COMING_FROM_CRYPTO}/{$SHOULD_GET_EVICERTIA_LINK}/{$WORK_FLOW}",
+        "smart_sign_document_process_screen/{$SIGN_DOCUMENT_STEP_ARG}/{$SIGN_DOCUMENT_URL}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$IS_SMART_EVICERTIA}/{$SIGN_DOCUMENT_GLOBAL_ID}/{$USER}/{$COMING_FROM_CRYPTO}/{$SHOULD_GET_EVICERTIA_LINK}/{$EVICERTIA_STATUS}/{$WORK_FLOW}",
         "smart_sign_document_process_screen"
     )
 
     object SmartOnfidoAndEvicertiaErrorsScreen : Screen(
-        "smart_onfido_and_evicertia_errors_screen/{$ONFIDO_AND_EVICERTIA_ERROR}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$COMING_FROM_CRYPTO}/{$USER}/{$SIGN_DOCUMENT_GLOBAL_ID}",
+        "smart_onfido_and_evicertia_errors_screen/{$ONFIDO_AND_EVICERTIA_ERROR}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$COMING_FROM_CRYPTO}/{$USER}/{$SIGN_DOCUMENT_GLOBAL_ID}/{$EVICERTIA_STATUS}/{$WORK_FLOW}",
         "smart_onfido_and_evicertia_errors_screen"
     )
 
@@ -503,12 +503,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SmartPaymentMethodScreenSV : Screen(
-        "smart_payment_method_screen/{$SMART_ACCOUNT}",
+        "smart_payment_method_screen/{$SMART_ACCOUNT}/{$INFO_USER}",
         "smart_payment_method_screen"
     )
 
     object SmartPaymentCardsScreenSV : Screen(
-        "smart_payment_cards_screen/{$SMART_ACCOUNT}",
+        "smart_payment_cards_screen/{$SMART_ACCOUNT}/{$INFO_USER}",
         "smart_payment_cards_screen"
     )
 

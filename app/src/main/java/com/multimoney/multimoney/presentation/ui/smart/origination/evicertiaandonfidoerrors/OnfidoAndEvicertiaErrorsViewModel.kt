@@ -7,8 +7,10 @@ import androidx.lifecycle.SavedStateHandle
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.WORK_FLOW
 import com.multimoney.multimoney.presentation.navigation.navgraph.COMING_FROM_CRYPTO
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
+import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
@@ -41,6 +43,8 @@ class OnfidoAndEvicertiaErrorsViewModel @Inject constructor(
     var comingFromCrypto: Boolean = false
     var user: String = ""
     var globalId: Long? = 0
+    var evicertiaStatus: String = ""
+    var workflow: String = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -54,6 +58,8 @@ class OnfidoAndEvicertiaErrorsViewModel @Inject constructor(
         comingFromCrypto = savedStateHandle[COMING_FROM_CRYPTO] ?: false
         user = savedStateHandle[USER] ?: ""
         globalId = savedStateHandle[SIGN_DOCUMENT_GLOBAL_ID] ?: 0
+        evicertiaStatus = savedStateHandle[EVICERTIA_STATUS] ?: ""
+        workflow = savedStateHandle[WORK_FLOW] ?: ""
     }
 
     private fun onNavigateToHome() =
@@ -61,7 +67,7 @@ class OnfidoAndEvicertiaErrorsViewModel @Inject constructor(
 
     private fun onNavigateToOnfidoProcess() {
         popAndNavigateTo(
-            route = "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$PRINT_EMPTY/$globalId/${URL_EMPTY}/$comingFromCrypto",
+            route = "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$PRINT_EMPTY/$globalId/${URL_EMPTY}/$comingFromCrypto/$evicertiaStatus/$workflow",
             popTo = Screen.SmartOnfidoAndEvicertiaErrorsScreen.route
         )
     }

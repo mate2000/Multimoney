@@ -18,6 +18,7 @@ import com.multimoney.multimoney.presentation.ui.login.registereduser.email.Regi
 import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailViewModel.UIEvent.OnEmailValueChange
 import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailViewModel.UIEvent.OnValidateEmail
+import com.multimoney.multimoney.presentation.util.capitalized
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.isEmailValid
@@ -74,12 +75,16 @@ class RegisteredUserEmailViewModel @Inject constructor(
         isRestart = false
     )
 
-    private fun onContinueClick() = if (uiState.email != (userData?.email ?: "")) {
+    private fun onContinueClick() = if (uiState.email.capitalized() != (userData?.email?.capitalized() ?: "")) {
         uiState = uiState.copy(emailError = Pair(true, R.string.registered_user_email_different))
     } else {
         viewModelScope.launch {
             if (dataStorePreferences.isAdjustSingUpAlreadyCustomerEmailEventRegister().first()) {
-                registerAdjustEvent(AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_EMAIL_2009, isLoggedIn = false, data = userData?.toJson() ?: "")
+                registerAdjustEvent(
+                    AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_EMAIL_2009,
+                    isLoggedIn = false,
+                    data = userData?.toJson() ?: ""
+                )
                 dataStorePreferences.isAdjustSingUpAlreadyCustomerEmailEventRegister(false)
             }
         }

@@ -24,7 +24,7 @@
     <string name="profession" translatable="false">Profesión</string>
     <string name="relationship" translatable="false">Parentesco</string>
     <string name="into" translatable="false">Ingresar</string>
-    <string name="empty" translatable="false"></string>
+    <string name="empty" translatable="false" />
     <string name="understood" translatable="false">Entendido</string>
     <string name="activate" translatable="false">Activar</string>
     <string name="locked" translatable="false">Bloquear</string>
@@ -81,11 +81,10 @@
     <string name="smart_transfer_abandon_dialog_message_sv" translatable="false">¿Estás seguro que quieres cancelar el envío?</string>
     <string name="smart_transfer_abandon_dialog_message_cr" translatable="false">¿Estás seguro que querés cancelar el envío?</string>
     <string name="common_percentage_format" translatable="false">%s\%%</string>
-
     <string name="content_description_more_info" translatable="false">Más información</string>
 
     <!-- Errors -->
-    <string name="error_empty" translatable="false"></string>
+    <string name="error_empty" translatable="false" />
     <string name="error_empty_field" translatable="false">Este campo no puede ser vacío</string>
     <string name="error_no_internet_title" translatable="false">¡Oh no! Error de \nconexión</string>
     <string name="error_occurred_title" translatable="false">"¡Oh no! hubo un error"</string>
@@ -140,10 +139,14 @@
     <string name="sign_in_biometric_email_hint" translatable="false">Ingresá tu correo electrónico</string>
     <string name="sign_in_session_active_on_another_device_title" translatable="false">Sesión activa en otro dispositivo</string>
     <string name="sign_in_session_blocked_title" translatable="false">Cambio de dispositivo bloqueado</string>
+    <string name="sign_in_session_blacklisted_title_cr" translatable="false">¿No podés entrar a MultiMoney?</string>
+    <string name="sign_in_session_blacklisted_title" translatable="false">¿No puedes entrar a MultiMoney?</string>
+    <string name="sign_in_session_blacklisted_message" translatable="false">Hemos detectado una anomalía. por tu seguridad no puedes iniciar sesión ahora. Intentálo más tarde o contacta a soporte.</string>
     <string name="sign_in_session_blocked_message" translatable="false">No podemos hacer el cambio de dispositivo por seguridad.</string>
     <string name="sign_in_session_open_here_close_another" translatable="false">Al ingresar aquí, cerrarás la sesión que se encuentra abierta en otro dispositivo</string>
     <string name="sign_in_dialog_exit_button" translatable="false">Salir</string>
     <string name="sign_in_dialog_sign_in_here_button" translatable="false">Iniciar sesión aquí</string>
+    <string name="sign_in_session_blacklisted_contact_support" translatable="false">Contactar a soporte</string>
     <string name="sign_in_otp_wrong_code" translatable="false">Código de verificación incorrecto</string>
     <string name="sign_in_device_verification" translatable="false">Verificación de dispositivo</string>
     <string name="sign_in_otp_expired_code" translatable="false">Código de verificación ha expirado</string>
@@ -628,7 +631,7 @@
     <string name="credit_amount_condition_of_credit_info" translatable="false">Condiciones</string>
     <string name="credit_amount_condition_of_credit_modal_description" translatable="false">La cuota e interés pueden variar según su evaluación crediticia.</string>
     <string name="credit_amount_monthly_fee" translatable="false">Cuota mensual:\u00A0</string>
-    <string name="credit_amount_interest" translatable="false">Interés:\u00A0</string>
+    <string name="credit_amount_interest" translatable="false">Interés mensual nominal:\u00A0</string>
     <string name="credit_amount_interest_origination" translatable="false">Interés corriente:\u00A0</string>
     <string name="credit_amount_term" translatable="false">Plazo:\u00A0</string>
     <string name="credit_amount_term_value" translatable="false">%1$s meses</string>
@@ -990,7 +993,6 @@
     <string name="smart_account_document_birthdate_age_error" translatable="false">Debes ser mayor de 18 años</string>
     <string name="smart_account_document_birthdate_age_limit_error" translatable="false">Validá tu fecha de nacimiento.</string>
     <string name="smart_account_document_issue_date_required" translatable="false">Fecha de nacimiento requerida</string>
-    <string name="smart_account_smart_account_document_date_required_date_valid" translatable="false">Validá la fecha de emisión</string>
     <string name="smart_account_document_expiration_title" translatable="false">Fecha de vencimiento de tu DUI</string>
     <string name="smart_account_document_expiration_date_required" translatable="false">Fecha de vencimiento requerida</string>
     <string name="smart_account_retired_title" translatable="false">Jubilado</string>
@@ -1006,6 +1008,12 @@
     <string name="smart_account_formal_select_profession" translatable="false">Selecciona tu profesión</string>
     <string name="smart_account_no_internet_error_description" translatable="false">No pudimos guardar tu información por un problema de conexión</string>
     <string name="smart_decimal_income_placeholder" translatable="false">%s00.0</string>
+    <string name="smart_account_carne_emission_label" translatable="false">Fecha de emisión de carné de residencia</string>
+    <string name="smart_account_carne_expiration_label" translatable="false">Fecha de vencimiento de carné de residencia</string>
+    <string name="smart_account_carne_date_error" translatable="false">Tu carné de residente debe estar vigente</string>
+    <string name="smart_account_origin_country_label" translatable="false">País de origen</string>
+    <string name="smart_account_carne_emission_date_required" translatable="false">Fecha de emisión requerida</string>
+    <string name="smart_account_carne_expiration_date_required" translatable="false">Fecha de vencimiento requerida</string>
 
     <!-- Smart Account - Beneficiary -->
     <string name="smart_account_beneficiaries_title" translatable="false">Mis beneficiarios</string>
@@ -1302,6 +1310,7 @@
     <string name="validate_document_generation_title" translatable="false">Estamos generando tus documentos</string>
     <string name="validate_document_generation_subtitle" translatable="false">Al firmar tu contrato podrás utilizar tu Multinoney Smart</string>
     <string name="approved_by_onfido_title" translatable="false">¡Tu MultiMoney Smart ya está activa!</string>
+    <string name="approved_sign_by_onfido_title" translatable="false">¡Tu cuenta ya está\nactiva!</string>
     <string name="approved_by_onfido_buttton_text" translatable="false">Hacer mi primer abono</string>
     <string name="rejected_by_onfido_title" translatable="false">¡Oh no! Hubo un error</string>
     <string name="rejected_by_onfido_buttton_text" translatable="false">Validar mi identidad</string>

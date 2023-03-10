@@ -19,12 +19,14 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 fun ApprovedByOnfidoScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
+    onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: ApprovedByOnfidoViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(true) {
         viewModel.executeNavigation(
             onPopAndNavigate = onPopAndNavigate,
-            onPopBackStack = onPopBackStack
+            onPopBackStack = onPopBackStack,
+            onNavigate = onNavigate
         )
         viewModel.onUIEvent(OnCallQueryGetUserStatusInfo)
         viewModel.onUIEvent(OnSetUpDialogData)
@@ -36,6 +38,7 @@ fun ApprovedByOnfidoScreen(
         descriptionResource = viewModel.uiState.alertMessageResource,
         buttonTextResource = viewModel.uiState.alertButtonTextResource,
         isLeftButtonVisible = false,
+        isRightButtonVisible = viewModel.comingFromCrypto,
         onRightButtonClick = { viewModel.onUIEvent(OnNavigateToHome) },
         onButtonClick = { viewModel.onUIEvent(OnFirsButtonClick) },
         isSecondaryButtonVisible = true,

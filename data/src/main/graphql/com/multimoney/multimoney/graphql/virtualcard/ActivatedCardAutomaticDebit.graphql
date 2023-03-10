@@ -1,4 +1,4 @@
-mutation ActivatedCardAutomaticDebit($user: String!, $idBrand: Int! $idClient: Long!, $idLoanClient: Long!, $idCard: Long!,$cardMasked: String!){
+mutation ActivatedCardAutomaticDebit($user: String!, $idBrand: Int! $idClient: Long!, $idLoanClient: Long!, $idCard: Long!,$cardMasked: String!, $identification: String!){
     activatedCardAutomaticDebit(
         cardAutomaticDebitInput: {
             user: $user
@@ -7,6 +7,7 @@ mutation ActivatedCardAutomaticDebit($user: String!, $idBrand: Int! $idClient: L
             id_Prestamo: $idLoanClient
             idCard: $idCard
             cardMasked: $cardMasked
+            identification: $identification
         }
     ) {
         isUpdate

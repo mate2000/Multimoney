@@ -11,6 +11,7 @@ interface MutationActivatedCardAutomaticDebitUseCase {
         idClient: Int,
         idLoanClient: Int,
         idCard: Long,
-        cardMasked: String
+        cardMasked: String,
+        identification: String
     ): Flow<MultimoneyResult<AutomaticCardDebit?>>
 }

@@ -85,7 +85,8 @@ interface VirtualCardRepository {
         idClient: Int,
         idLoanClient: Int,
         idCard: Long,
-        cardMasked: String
+        cardMasked: String,
+        identification: String
     ): Flow<MultimoneyResult<AutomaticCardDebit?>>
 
     suspend fun mutationCardBlocking(

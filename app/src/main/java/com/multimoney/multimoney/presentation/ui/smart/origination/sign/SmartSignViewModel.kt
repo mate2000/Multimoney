@@ -107,7 +107,10 @@ class SmartSignViewModel @Inject constructor(
                 description = dialogDescription,
                 positiveResource = string.sign_credit_dialog_continue,
                 negativeResource = string.payment_points_dialog_negative_button,
-                negativeAction = { onUIEvent(OnNavigateToHome) },
+                negativeAction = {
+                    emitBaseEvent(SimulateUserInteraction)
+                    onUIEvent(OnNavigateToHome)
+                },
                 isActive = mutableStateOf(true)
             )
         )
@@ -148,9 +151,15 @@ class SmartSignViewModel @Inject constructor(
             CreditSubscriptionStep.DocumentsRejected.step -> {
                 emitBaseEvent(SimulateUserInteraction)
                 if (isEvicertiaOverCounted(smartContractEvent.statusEvicertia)) {
-                    onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_SECOND_TIME.value, smartContractEvent)
+                    onNavigateToOnfidoAndEvicertiaError(
+                        EVICERTIA_REJECTED_SECOND_TIME.value,
+                        smartContractEvent
+                    )
                 } else {
-                    onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_FIRST_TIME.value, smartContractEvent)
+                    onNavigateToOnfidoAndEvicertiaError(
+                        EVICERTIA_REJECTED_FIRST_TIME.value,
+                        smartContractEvent
+                    )
                 }
             }
             CreditSubscriptionStep.AccountActivated.step -> {
@@ -216,10 +225,16 @@ class SmartSignViewModel @Inject constructor(
                 )
             }
             SmartOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {
-                onNavigateToOnfidoAndEvicertiaError(ONFIDO_REJECTED_FIRST_TIME.value, smartContractEvent)
+                onNavigateToOnfidoAndEvicertiaError(
+                    ONFIDO_REJECTED_FIRST_TIME.value,
+                    smartContractEvent
+                )
             }
             SmartOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase() -> {
-                onNavigateToOnfidoAndEvicertiaError(ONFIDO_REJECTED_SECOND_TIME.value, smartContractEvent)
+                onNavigateToOnfidoAndEvicertiaError(
+                    ONFIDO_REJECTED_SECOND_TIME.value,
+                    smartContractEvent
+                )
             }
         }
     }
@@ -242,7 +257,10 @@ class SmartSignViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateToOnfidoAndEvicertiaError(error: String, smartContractEvent: AccountSmartContractResult?) {
+    private fun onNavigateToOnfidoAndEvicertiaError(
+        error: String,
+        smartContractEvent: AccountSmartContractResult?
+    ) {
         trackAdjustOriginationRejected(smartContractEvent)
         smartSubscriptionManager.destroySubscription()
         popAndNavigateTo(

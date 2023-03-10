@@ -40,8 +40,7 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(SMART_ACCOUNT) { type = SmartAccountIDNavType() },
                 navArgument(INFO_USER) {
-                    type =
-                        InfoUserNavType()
+                    type = InfoUserNavType()
                 }
             )
         ) {

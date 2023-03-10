@@ -107,8 +107,7 @@ fun onExpirationDateValidation(pickedDate: String, formatter: DateTimeFormatter)
 fun onEmissionDateValidation(pickedDate: String, formatter: DateTimeFormatter): Boolean {
     val pickedAsDate = LocalDate.parse(pickedDate, formatter)
     val actualDate = LocalDate.now()
-    val periodBetweenDates = Period.between(pickedAsDate, actualDate).years
-    return periodBetweenDates > TWO_YEARS_VALUE
+    return pickedAsDate > actualDate
 }
 
 fun getCurrentDateYMDPattern(): String {
@@ -231,7 +230,6 @@ const val BIRTH_DATE_MIN_YEAR = 1902
 const val BIRTH_DATE_MIN_MONTH = 0
 const val BIRTH_DATE_MIN_DAY = 1
 const val EIGHTEEN_YEARS_VALUE = 18
-const val TWO_YEARS_VALUE = 2
 const val ONE_HUNDRED_TWENTY_YEARS_VALUE = 120
 const val DATE_MIN_YEAR = 0
 const val DATE_MIN_MONTH = 0

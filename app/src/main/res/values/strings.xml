@@ -1302,11 +1302,13 @@
     <string name="validate_document_generation_title" translatable="false">Estamos generando tus documentos</string>
     <string name="validate_document_generation_subtitle" translatable="false">Al firmar tu contrato podrás utilizar tu Multinoney Smart</string>
     <string name="approved_by_onfido_title" translatable="false">¡Tu MultiMoney Smart ya está activa!</string>
+    <string name="approved_sign_by_onfido_title" translatable="false">¡Tu cuenta ya está\nactiva!</string>
     <string name="approved_by_onfido_buttton_text" translatable="false">Hacer mi primer abono</string>
     <string name="rejected_by_onfido_title" translatable="false">¡Oh no! Hubo un error</string>
     <string name="rejected_by_onfido_buttton_text" translatable="false">Validar mi identidad</string>
-    <string name="smart_continue_validating_identity_title" translatable="false">Ya casi tenés tu MultiMoney Smart</string>
-    <string name="smart_rejected_by_onfido_subtitle" translatable="false">Debemos validar tu identidad, por favor intentá de nuevo.</string>
+    <string name="smart_continue_validating_identity_title" translatable="false">¡Ya terminaste el proceso!</string>
+    <string name="smart_continue_validating_identity_subtitle" translatable="false">Estamos terminando de confirmar tus datos. Pronto te informaremos del proceso.</string>
+    <string name="smart_rejected_by_onfido_subtitle" translatable="false">Debemos validar tu identidad, por favor intenta de nuevo.</string>
 
     <!-- Credit Schedule Automatic Payment -->
     <string name="schedule_automatic_payment_credit_button" translatable="false">Programar pago automático</string>

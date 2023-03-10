@@ -185,7 +185,10 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
                         inclusive = false,
                         saveState = false
                     )
-                }
+                },
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
             )
         }
 

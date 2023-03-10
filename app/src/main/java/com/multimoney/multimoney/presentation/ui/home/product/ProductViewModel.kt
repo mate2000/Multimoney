@@ -878,7 +878,7 @@ class ProductViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess {
                 popAndNavigateTo(
-                    "${Screen.SmartSignScreen.baseRoute}/${SIGN_DOCUMENTS_STEP.value}/${it?.urlFirmDocument}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/${uiState.idBrand.toInt()}/$pkUser/$identification/$email/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/$firstName/${uiState.userStatus?.infoUser?.lastName}/${true}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/$userName/$comingFromCrypto",
+                    "${Screen.SmartSignScreen.baseRoute}/${SIGN_DOCUMENTS_STEP.value}/${it?.urlFirmDocument}/${uiState.idBrand.toIntOrNull() ?: Brand.CostaRica.id}/$pkUser/$identification/$email/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/$firstName/${uiState.userStatus?.infoUser?.lastName}/${true}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/$userName/$comingFromCrypto/${it?.urlFirmDocument.isNullOrBlank()}/${uiState.userStatus?.infoBankAccount?.statusFirm}/${uiState.userStatus?.infoBankAccount?.wording?.workflow}",
                     Screen.HomeScreen.route
                 )
             }.onFailure {

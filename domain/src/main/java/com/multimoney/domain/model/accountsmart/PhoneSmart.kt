@@ -14,5 +14,6 @@ data class PhoneSmart(
     val idCurrency: String?,
     val currency: String?,
     val ibanNumber: String?,
-    val isFavorite: Boolean = false
+    val isFavorite: Boolean = false,
+    val areaCode: String?
 ) : Parcelable

@@ -193,7 +193,8 @@ class SmartAddAccountViewModel @Inject constructor(
                                 ?: CurrencyType.Dollar.id.toString(),
                             currency = registeredAccount.idCurrencyAccount?.getCurrencyFromId()?.currency
                                 ?: CurrencyType.Dollar.currency,
-                            ibanNumber = ""
+                            ibanNumber = "",
+                            areaCode = registeredAccount.areaCode
                         )
                     } else {
                         PhoneSmart(
@@ -205,7 +206,8 @@ class SmartAddAccountViewModel @Inject constructor(
                             email = uiState.email,
                             idCurrency = CurrencyType.Dollar.id.toString(),
                             currency = CurrencyType.Dollar.currency,
-                            ibanNumber = ""
+                            ibanNumber = "",
+                            areaCode = ""
                         )
                     }
                     uiState = uiState.copy(isLoading = false)

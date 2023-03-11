@@ -37,6 +37,8 @@ import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.SEPARATOR
+import com.multimoney.multimoney.presentation.util.catalog.PLUS
+import com.multimoney.multimoney.presentation.util.catalog.SPACE
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 
@@ -141,11 +143,16 @@ fun ACHFavoriteContentList(
             )
         }
         items(localFavoriteList) { localFavorite ->
+            val prefix =
+                if (localFavorite?.phoneNumber?.take(3) == localFavorite?.areaCode?.takeLast(3)) PLUS
+                else localFavorite?.areaCode.plus(SPACE)
             CustomInfoButton(
                 title = localFavorite?.accountName.orEmpty(),
                 subtitle = if (localFavorite?.phoneNumber.isNullOrEmpty().not()) {
-                    localFavorite?.phoneNumber.orEmpty()
-                } else { stringResource(string.sac_account) }.plus(SEPARATOR)
+                    prefix.plus(localFavorite?.phoneNumber.orEmpty())
+                } else {
+                    stringResource(string.sac_account)
+                }.plus(SEPARATOR)
                     .plus(localFavorite?.currencyAccount),
                 subtitle2 = getMaskedAccount(
                     accountNumber = localFavorite?.accountNumber.orEmpty(),

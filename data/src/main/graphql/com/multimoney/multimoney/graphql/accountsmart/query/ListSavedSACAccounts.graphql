@@ -26,6 +26,7 @@ query ListSavedSACAccounts(
             ibanNumber
             isFavorite
             identification
+            areaCode
         }
         status
         message

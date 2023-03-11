@@ -32,6 +32,8 @@ import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.SEPARATOR
+import com.multimoney.multimoney.presentation.util.catalog.PLUS
+import com.multimoney.multimoney.presentation.util.catalog.SPACE
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 
@@ -100,11 +102,14 @@ fun FavoritesContentList(
 ) {
     LazyColumn(modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp)) {
         localFavoritesList.forEach { favorite ->
+            val prefix =
+                if (favorite?.phoneNumber?.take(3) == favorite?.areaCode?.takeLast(3)) PLUS
+                else favorite?.areaCode.plus(SPACE)
             item {
                 CustomInfoButton(
                     title = favorite?.accountName.orEmpty(),
-                    subtitle = favorite?.phoneNumber.orEmpty().plus(SEPARATOR)
-                        .plus(favorite?.currency),
+                    subtitle = prefix.plus(favorite?.phoneNumber.orEmpty())
+                        .plus(SEPARATOR).plus(favorite?.currency),
                     subtitle2 = getMaskedAccount(
                         accountNumber = favorite?.accountNumber.orEmpty(),
                         prefix = Brand.CostaRica.iban

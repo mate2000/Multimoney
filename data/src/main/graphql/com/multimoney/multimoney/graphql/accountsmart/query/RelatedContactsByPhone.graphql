@@ -13,17 +13,18 @@ query relatedContactsByPhone(
         status
         message
         result {
-        phones{
-        number
-        titular
-        bankName
-        identification
-        accountNumber
-        email
-        id_Currency
-        currency
-        ibanNumber
-        }
+            phones{
+                number
+                titular
+                bankName
+                identification
+                accountNumber
+                email
+                id_Currency
+                currency
+                ibanNumber
+                areaCode
+            }
         }
     }
 }

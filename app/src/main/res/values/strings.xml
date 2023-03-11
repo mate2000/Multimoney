@@ -1336,7 +1336,7 @@
     <string name="payment_cards_list_title" translatable="false">Mis tarjetas</string>
     <string name="payment_cards_verified_list_title" translatable="false">Tarjetas registradas</string>
     <string name="payment_cards_not_verified_list_title" translatable="false">Tarjetas con verificación pendiente</string>
-    <string name="payment_cards_resume_bottom_sheet" translatable="false">Tarjetas con verificación pendiente</string>
+    <string name="payment_cards_resume_bottom_sheet" translatable="false">Retomar verificación</string>
     <string name="smart_payment_cards_list_card_title" translatable="false">Seleccioná la tarjeta con la que querés ahorrar</string>
 
     <!-- Payment Amount Card -->

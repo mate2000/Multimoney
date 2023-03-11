@@ -9,6 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.data.util.catalog.SignUpStep.Search
 import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCase
@@ -216,8 +217,8 @@ class SignUpViewModel @Inject constructor(
         focusManager.clearFocus()
         uiState = uiState.copy(
             openDialog = DialogParameters(
-                titleResource = if (uiState.isO3Country == ISO3_COSTA_RICA) string.sign_up_general_close_dialog_title_costa_rica else string.sign_up_general_close_dialog_title,
-                descriptionResource = if (uiState.isO3Country == ISO3_COSTA_RICA) string.sign_up_close_dialog_description_costa_rica else string.sign_up_close_dialog_description_el_salvador,
+                titleResource = if (idBrand == Brand.CostaRica.id) string.sign_up_general_close_dialog_title_costa_rica else string.sign_up_general_close_dialog_title,
+                descriptionResource = if (idBrand == Brand.CostaRica.id) string.sign_up_close_dialog_description_costa_rica else string.sign_up_close_dialog_description_el_salvador,
                 positiveResource = string.sign_up_close_dialog_positive_button_text,
                 negativeResource = string.sign_up_close_dialog_negative_button_text,
                 positiveAction = {

@@ -632,8 +632,8 @@
     <string name="credit_amount_condition_of_credit_info" translatable="false">Condiciones</string>
     <string name="credit_amount_condition_of_credit_modal_description" translatable="false">La cuota e interés pueden variar según su evaluación crediticia.</string>
     <string name="credit_amount_monthly_fee" translatable="false">Cuota mensual:\u00A0</string>
-    <string name="credit_amount_interest" translatable="false">Interés mensual nominal:\u00A0</string>
-    <string name="credit_amount_interest_origination" translatable="false">Interés corriente:\u00A0</string>
+    <string name="credit_amount_interest" translatable="false">Interés:\u00A0</string>
+    <string name="credit_amount_interest_origination" translatable="false">Interés mensual nominal:\u00A0</string>
     <string name="credit_amount_term" translatable="false">Plazo:\u00A0</string>
     <string name="credit_amount_term_value" translatable="false">%1$s meses</string>
     <string name="credit_amount_commission_for_disbursement" translatable="false">Comisión por desembolso:\u00A0</string>

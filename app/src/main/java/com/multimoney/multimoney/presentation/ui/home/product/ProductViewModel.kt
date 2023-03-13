@@ -93,6 +93,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnVisaCardExpiredDialog
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.Companion
 import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.FilterDate
 import com.multimoney.multimoney.presentation.util.NfcHelper
@@ -104,6 +105,7 @@ import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.ProfileCardListOrigin
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
+import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
 import com.multimoney.multimoney.presentation.util.getNavParam
@@ -895,17 +897,20 @@ class ProductViewModel @Inject constructor(
                 ?: 0L
         ).collectLatest { result ->
             result.onSuccess {
-                it?.urlFirmDocument?.let { url ->
-                    navigateTo(
-                        "${Screen.SmartSignScreen.baseRoute}/${SIGN_DOCUMENTS_STEP.value}/" +
-                            "${URLEncoder.encode(url, StandardCharsets.UTF_8.toString())}/" +
+                navigateTo(
+                    "${Screen.SmartSignScreen.baseRoute}/${if (it?.urlFirmDocument.isNullOrBlank()) GENERATE_DOCUMENT_STEP.value else SIGN_DOCUMENTS_STEP.value}/" +
+                            "${
+                                URLEncoder.encode(
+                                    it?.urlFirmDocument ?: SmartViewModel.URL_EMPTY,
+                                    StandardCharsets.UTF_8.toString()
+                                )
+                            }/" +
                             "${uiState.idBrand.toIntOrNull() ?: Brand.CostaRica.id}/$pkUser/$identification/$email/" +
                             "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/$firstName/" +
                             "${uiState.userStatus?.infoUser?.lastName}/${true}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/" +
                             "$userName/$comingFromCrypto/${false}/${uiState.userStatus?.infoBankAccount?.statusFirm}/" +
                             "${uiState.userStatus?.infoBankAccount?.wording?.workflow}"
-                    )
-                }
+                )
             }
         }
     }

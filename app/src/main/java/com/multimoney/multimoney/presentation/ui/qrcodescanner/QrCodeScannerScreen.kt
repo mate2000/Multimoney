@@ -157,11 +157,9 @@ fun QrCodeScannerContent(context: Context, onPopBackStack: (String) -> Unit) {
                         }
                         val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
                         val barcodeAnalyser = QrCodeAnalyser { barcodes ->
-                            barcodes.forEach { barcode ->
-                                barcode.rawValue?.let { barcodeValue ->
-                                    barCodeVal.value = barcodeValue
-                                    onPopBackStack(barcodeValue)
-                                }
+                            barcodes.first().rawValue?.let { barcodeValue ->
+                                barCodeVal.value = barcodeValue
+                                onPopBackStack(barcodeValue)
                             }
                         }
                         val imageAnalysis: ImageAnalysis = ImageAnalysis.Builder()

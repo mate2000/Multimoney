@@ -6,3 +6,6 @@ const val ISO3_COSTA_RICA = "CRI"
 const val ISO3_GUATEMALA = "GTM"
 const val ISO3_EL_SALVADOR = "SLV"
 const val DUPLICATED_SESSION = 403
+const val ONE = 1
+const val TWO = 2
+const val SPACE = " "

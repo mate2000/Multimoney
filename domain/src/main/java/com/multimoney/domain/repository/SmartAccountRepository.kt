@@ -107,6 +107,8 @@ interface SmartAccountRepository {
         idCivilStatusType: Long?,
         birthday: String?,
         expirationDate: String?,
+        nationality: String?,
+        dateOfEmission: String?,
         idGender: Long?,
         companyName: String?,
         aboutCompany: String?,
@@ -195,7 +197,8 @@ interface SmartAccountRepository {
         country: String,
         idAccount: Long,
         accountNumber: String,
-        isFavorite: Boolean?
+        isFavorite: Boolean?,
+        option: String?
     ): Flow<MultimoneyResult<SinpeAccountResult?>>
 
     suspend fun querySmartExchangeRate(
@@ -219,7 +222,9 @@ interface SmartAccountRepository {
         idAccount: Long?,
         option: String?,
         email: String?,
-        isFavorite: Boolean?
+        isFavorite: Boolean?,
+        idBank: Long?,
+        typeAccount: Int?
     ): Flow<MultimoneyResult<SaveSinpeAccount?>>
 
     suspend fun mutationManageSinpeAccountUpdate(

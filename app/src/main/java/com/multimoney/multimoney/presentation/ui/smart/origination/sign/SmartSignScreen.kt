@@ -92,7 +92,8 @@ fun SmartSignScreen(
             negativeButtonText = stringResource(id = viewModel.uiState.dialogParameters.negativeResource),
             openDialogCustom = viewModel.uiState.dialogParameters.isActive,
             onPositiveAction = viewModel.uiState.dialogParameters.positiveAction,
-            onNegativeAction = viewModel.uiState.dialogParameters.negativeAction
+            onNegativeAction = viewModel.uiState.dialogParameters.negativeAction,
+            isCancelable = false
         )
     }
 

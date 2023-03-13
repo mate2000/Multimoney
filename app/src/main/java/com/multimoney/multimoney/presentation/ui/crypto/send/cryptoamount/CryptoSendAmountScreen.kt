@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.crypto.send.cryptoamount
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -27,6 +28,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -43,6 +45,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.AmountInputSection
 import com.multimoney.multimoney.presentation.ui.crypto.NativeLoaderScreen
 import com.multimoney.multimoney.presentation.ui.crypto.send.CryptoSendSharedViewModel
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
@@ -57,11 +60,14 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CryptoSendAmountScreen(
     viewModel: CryptoSendAmountViewModel = hiltViewModel(),
     sharedViewModel: CryptoSendSharedViewModel
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     LaunchedEffect(key1 = true) {
         viewModel.onUIEvent(
             CryptoSendAmountViewModel.UIEvent.OnSetUserData(
@@ -98,7 +104,8 @@ fun CryptoSendAmountScreen(
         TransferStatus.IDLE -> {
             CryptoSendAmountScreenContent(
                 sharedViewModel = sharedViewModel,
-                viewModel = viewModel
+                viewModel = viewModel,
+                keyboardController = keyboardController
             )
         }
         TransferStatus.LOADING -> {
@@ -151,6 +158,23 @@ fun CryptoSendAmountScreen(
             )
         }
     }
+
+    if (viewModel.uiState.showErrorScreen) {
+        keyboardController?.hide()
+        sharedViewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnSetFlowStep(SendCryptoStep.SEND_ERROR))
+        AlertResult(
+            iconResource = R.drawable.ic_error_symbol,
+            titleResource = R.string.error_connection_title,
+            descriptionResource = R.string.error_button_try_later,
+            buttonTextResource = R.string.common_go_home,
+            isLeftButtonVisible = false,
+            onRightButtonClick = { sharedViewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnNavigateHome) },
+            onButtonClick = { sharedViewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnNavigateHome) }
+        )
+        BackHandler {
+            sharedViewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnNavigateHome)
+        }
+    }
 }
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class, FlowPreview::class,
@@ -159,10 +183,10 @@ fun CryptoSendAmountScreen(
 @Composable
 fun CryptoSendAmountScreenContent(
     sharedViewModel: CryptoSendSharedViewModel,
-    viewModel: CryptoSendAmountViewModel
+    viewModel: CryptoSendAmountViewModel,
+    keyboardController: SoftwareKeyboardController?
 ) {
     val focusRequester = remember { FocusRequester() }
-    val keyboardController = LocalSoftwareKeyboardController.current
     val coroutineScope = rememberCoroutineScope()
     val modalBottomSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,

@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.credit.origination.creditbank
+package com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.crosseling
 
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Column
@@ -30,24 +30,26 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnCallMutationSaveCreditFlowStep
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnFailure
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnLoadingValueChange
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.CreditBankViewModel.BaseEvent.OnFormCompleted
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.CreditBankViewModel.UIEvent.OnAccountNumberValueChange
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.CreditBankViewModel.UIEvent.OnAccountTypeValueChanged
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.CreditBankViewModel.UIEvent.OnBankValueChanged
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.CreditBankViewModel.UIEvent.OnCallQueryBanksAndRegularExpression
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.CreditBankViewModel.UIEvent.OnNextActionClick
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.CreditBankViewModel.UIEvent.OnValidateForm
+import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.crosseling.CreditCrosselingBankViewModel.BaseEvent.OnFormCompleted
+import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.crosseling.CreditCrosselingBankViewModel.UIEvent.OnAccountNumberValueChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.crosseling.CreditCrosselingBankViewModel.UIEvent.OnAccountTypeValueChanged
+import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.crosseling.CreditCrosselingBankViewModel.UIEvent.OnBankValueChanged
+import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.crosseling.CreditCrosselingBankViewModel.UIEvent.OnCallQueryBankList365TypeAccountType
+import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.crosseling.CreditCrosselingBankViewModel.UIEvent.OnCallQueryBanksAndRegularExpression
+import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.crosseling.CreditCrosselingBankViewModel.UIEvent.OnNextActionClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.crosseling.CreditCrosselingBankViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 
 @Composable
 @Preview
-fun CreditBankScreen(
+fun CreditCrosselingBankScreen(
     sharedViewModel: CreditViewModel = hiltViewModel(),
-    viewModel: CreditBankViewModel = hiltViewModel()
+    viewModel: CreditCrosselingBankViewModel = hiltViewModel()
 ) {
     val focusManager = LocalFocusManager.current
     var title = R.string.empty
@@ -76,28 +78,48 @@ fun CreditBankScreen(
                 nextAction = {
                     viewModel.onUIEvent(
                         OnNextActionClick(
+                            idBrand = sharedViewModel.idBrand.toInt(),
                             user = sharedViewModel.email,
+                            identification = sharedViewModel.identification,
                             nextStepAction = {
                                 sharedViewModel.onUIEvent(OnCallMutationSaveCreditFlowStep)
                             },
-                            saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
+                            saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper,
+                            onLoadingValueChange = { isLoading ->
+                                sharedViewModel.onUIEvent(OnLoadingValueChange(isLoading))
+                            },
+                            onFailureWithDialog = { isLoading, dialogParameters ->
+                                sharedViewModel.onUIEvent(OnFailureWithDialog(isLoading, dialogParameters))
+                            }
                         )
                     )
-                }, nextStep = CreditStep.Three.id, previousStep = CreditStep.One.id
+                }, nextStep = if (sharedViewModel.idBrand.toInt() == Brand.ElSalvador.id) {
+                    CreditStep.Three.id
+                } else {
+                    CreditStep.Four.id
+                }, previousStep = CreditStep.One.id
             )
         )
         viewModel.onUIEvent(
-            OnCallQueryBanksAndRegularExpression(
-                sharedViewModel.pkUser.toInt(),
+            OnCallQueryBankList365TypeAccountType(
                 sharedViewModel.email,
                 sharedViewModel.idBrand.toInt(),
-                sharedViewModel.idUserRequest,
-                sharedViewModel.saveCreditStepsHelper.inputTextInfoList,
                 onLoadingValueChange = { isLoading ->
                     sharedViewModel.onUIEvent(OnLoadingValueChange(isLoading))
                 },
                 onFailureWithDialog = { isLoading, dialogParameter ->
                     sharedViewModel.onUIEvent(OnFailureWithDialog(isLoading, dialogParameter))
+                }
+            )
+        )
+        viewModel.onUIEvent(
+            OnCallQueryBanksAndRegularExpression(
+                pkUser = sharedViewModel.pkUser.toInt(),
+                user = sharedViewModel.email,
+                idBrand = sharedViewModel.idBrand.toInt(),
+                idUserRequest = sharedViewModel.idUserRequest,
+                onFailureWithDialog = {
+                    sharedViewModel.onUIEvent(OnFailure(it))
                 }
             )
         )
@@ -130,12 +152,12 @@ fun CreditBankScreen(
                 .wrapContentSize(Alignment.TopStart)
                 .focusable(false)
                 .padding(top = 32.dp),
-            items = viewModel.uiState.bankList,
-            onValueChange = {
-                viewModel.onUIEvent(OnBankValueChanged(it))
+            items = viewModel.uiState.bankList?.map { it?.bankName ?: "" } ?: listOf(),
+            onValueChange = { _, index ->
+                viewModel.onUIEvent(OnBankValueChanged(viewModel.uiState.bankList?.get(index)))
             },
             labelText = stringResource(id = R.string.credit_bank_account_destiny),
-            value = viewModel.uiState.bankSelected,
+            value = viewModel.uiState.bankSelectedString,
             placeHolder = stringResource(id = R.string.credit_bank_select)
         )
 
@@ -144,11 +166,11 @@ fun CreditBankScreen(
                 .wrapContentSize(Alignment.TopStart)
                 .focusable(false)
                 .padding(top = 16.dp),
-            items = viewModel.uiState.accountTypeListFiltered?.map { it?.description ?: "" } ?: listOf(),
-            onValueChange = { valueSelected, _ ->
+            items = viewModel.uiState.accountTypeList?.map { it?.typeName ?: "" } ?: listOf(),
+            onValueChange = { _, index ->
                 viewModel.onUIEvent(
                     OnAccountTypeValueChanged(
-                        viewModel.uiState.accountTypeListFiltered?.findLast { it?.description == valueSelected }
+                        viewModel.uiState.accountTypeList?.get(index)
                     )
                 )
             },

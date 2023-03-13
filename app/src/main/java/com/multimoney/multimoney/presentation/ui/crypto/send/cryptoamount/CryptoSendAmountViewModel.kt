@@ -106,35 +106,40 @@ class CryptoSendAmountViewModel @Inject constructor(
         isError()
     }
 
-    private fun onCalculateAmountTransferCommission() = executeUseCase {
-        getTransferCommissionUseCase.invoke(
-            user,
-            idBrand,
-            destinationAddress,
-            asset,
-            cryptoNetWork,
-            uiState.sendCryptoAmount,
-        ).collectLatest { result ->
-            result.onSuccess {
-                uiState = uiState.copy(
-                    transferCommission = it,
-                    feeCalculated = true,
-                    isLoading = false
-                )
-                validateAmountPlusFee()
-            }
-            result.onFailure {
-                if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
-                    openMaintenanceAction()
-                    return@onFailure
+    private fun onCalculateAmountTransferCommission() {
+        if (uiState.sendCryptoAmount > 0) {
+            executeUseCase {
+                getTransferCommissionUseCase.invoke(
+                    user,
+                    idBrand,
+                    destinationAddress,
+                    asset,
+                    cryptoNetWork,
+                    uiState.sendCryptoAmount,
+                ).collectLatest { result ->
+                    result.onSuccess {
+                        uiState = uiState.copy(
+                            transferCommission = it,
+                            feeCalculated = true,
+                            isLoading = false
+                        )
+                        validateAmountPlusFee()
+                    }
+                    result.onFailure {
+                        if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                            openMaintenanceAction()
+                            return@onFailure
+                        }
+                        uiState = uiState.copy(
+                            isError = true,
+                            isLoading = false,
+                            showErrorScreen = true
+                        )
+                    }
+                    result.onLoading {
+                        uiState = uiState.copy(isLoading = true, showTextInputError = false)
+                    }
                 }
-                uiState = uiState.copy(
-                    isError = true,
-                    isLoading = false
-                )
-            }
-            result.onLoading {
-                uiState = uiState.copy(isLoading = true, showTextInputError = false)
             }
         }
     }
@@ -326,6 +331,7 @@ class CryptoSendAmountViewModel @Inject constructor(
         val sendCryptoAddressRequest: SendCryptoAddressRequest? = null,
         val failed: Boolean = false,
         val failedFirstTime: Boolean = false,
+        val showErrorScreen: Boolean = false
     )
 
     sealed class UIEvent {

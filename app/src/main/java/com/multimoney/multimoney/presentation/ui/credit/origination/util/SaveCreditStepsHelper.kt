@@ -37,28 +37,34 @@ class SaveCreditStepsHelper @Inject constructor() {
         saveScreenQuestionData(selectionQuestion(user, bank, bankAccountSelected))
 
         val creditInfoQuestionAccountType =
-            textByDropdownQuestion(user, accountType, accountTypeQuestion)
+            textByDropdownQuestion(
+                user,
+                accountType?.key,
+                accountType?.pkRegularExpression?.toString().orEmpty(),
+                accountTypeQuestion
+            )
         saveScreenQuestionData(creditInfoQuestionAccountType)
 
         val creditInfoQuestionAccountNumber = textQuestion(user, accountNumber, accountNumberQuestion)
         saveScreenQuestionData(creditInfoQuestionAccountNumber)
     }
 
-    fun saveStepOneCrossseling(
-        user: String,
+    fun saveStepOneCrosselingSv(
+        user: String?,
         bank: CreditCatalog?,
-        bankSelected: CreditCatalogOption?,
-        accountTypeValue: String,
+        description: String?,
+        pkCatalog: String?,
+        accountName: String,
+        accountId: String,
         accountNumber: String,
-        accountTypeKey: String?
     ) {
         val accountNumberQuestion = getScreenConfigQuestion(ACCOUNT_NUMBER, accountNumber)
-        val accountTypeQuestion = getScreenConfigQuestion(ACCOUNT_TYPE, accountTypeKey ?: "")
+        val accountTypeQuestion = getScreenConfigQuestion(ACCOUNT_TYPE, accountName)
 
-        saveScreenQuestionData(selectionQuestion(user, bank, bankSelected))
+        saveScreenQuestionData(selectionQuestionCrosseling(user, bank, description, pkCatalog))
 
         val creditInfoQuestionAccountType =
-            textByDropdownQuestion(user, accountTypeValue, accountTypeQuestion, accountTypeKey)
+            textByDropdownQuestion(user, accountName, accountId, accountTypeQuestion)
         saveScreenQuestionData(creditInfoQuestionAccountType)
 
         val creditInfoQuestionAccountNumber = textQuestion(user, accountNumber, accountNumberQuestion)
@@ -333,7 +339,8 @@ class SaveCreditStepsHelper @Inject constructor() {
      */
     private fun textByDropdownQuestion(
         user: String?,
-        expression: RegularExpression?,
+        description: String?,
+        idIdentificatorCatalogue: String?,
         textQuestionData: CreditCatalog?
     ): CreditInfoQuestion {
         return CreditInfoQuestion(
@@ -348,33 +355,9 @@ class SaveCreditStepsHelper @Inject constructor() {
             isBranchOfficeCatalogue = textQuestionData?.isCatalogBrandOffice,
             useValue = textQuestionData?.useValue,
             maximumAmount = textQuestionData?.maximumAmount ?: "",
-            description = expression?.key ?: "",
+            description = description,
             valueCatalogue = "",
-            idIdentificatorCatalogue = expression?.pkRegularExpression?.toString()
-        )
-    }
-
-    private fun textByDropdownQuestion(
-        user: String?,
-        accountType: String?,
-        textQuestionData: CreditCatalog?,
-        idIdentificatorCatalogue: String?
-    ): CreditInfoQuestion {
-        return CreditInfoQuestion(
-            idQuestionRequestCredit = textQuestionData?.fkQuestion,
-            idOptionQuestionRequestCredit = textQuestionData?.pkQuestionOption,
-            createUser = user,
-            updateUser = user,
-            identificator = textQuestionData?.pkQuestionOption?.toString().orEmpty(),
-            value = "",
-            controlType = textQuestionData?.controlType,
-            isCoreCatalogue = true,
-            isBranchOfficeCatalogue = textQuestionData?.isCatalogBrandOffice,
-            useValue = textQuestionData?.useValue,
-            maximumAmount = textQuestionData?.maximumAmount ?: "",
-            description = accountType ?: "",
-            valueCatalogue = "",
-            idIdentificatorCatalogue = idIdentificatorCatalogue.toString()
+            idIdentificatorCatalogue = idIdentificatorCatalogue
         )
     }
 
@@ -417,6 +400,30 @@ class SaveCreditStepsHelper @Inject constructor() {
             } else {
                 "0"
             }
+        )
+    }
+
+    private fun selectionQuestionCrosseling(
+        user: String?,
+        selectionQuestionData: CreditCatalog?,
+        description: String?,
+        pkCatalog: String?
+    ): CreditInfoQuestion {
+        return CreditInfoQuestion(
+            idQuestionRequestCredit = selectionQuestionData?.fkQuestion,
+            idOptionQuestionRequestCredit = selectionQuestionData?.pkQuestionOption,
+            createUser = user,
+            updateUser = user,
+            identificator = selectionQuestionData?.pkQuestionOption.toString(),
+            value = "",
+            controlType = selectionQuestionData?.controlType,
+            isCoreCatalogue = selectionQuestionData?.isCoreCatalog,
+            isBranchOfficeCatalogue = selectionQuestionData?.isCatalogBrandOffice,
+            useValue = selectionQuestionData?.useValue,
+            maximumAmount = selectionQuestionData?.maximumAmount ?: "",
+            description = description ?: "",
+            valueCatalogue = "",
+            idIdentificatorCatalogue = pkCatalog ?: "0"
         )
     }
 

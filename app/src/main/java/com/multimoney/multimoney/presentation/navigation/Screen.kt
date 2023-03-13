@@ -503,12 +503,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SmartPaymentMethodScreenSV : Screen(
-        "smart_payment_method_screen/{$SMART_ACCOUNT}",
+        "smart_payment_method_screen/{$SMART_ACCOUNT}/{$INFO_USER}",
         "smart_payment_method_screen"
     )
 
     object SmartPaymentCardsScreenSV : Screen(
-        "smart_payment_cards_screen/{$SMART_ACCOUNT}",
+        "smart_payment_cards_screen/{$SMART_ACCOUNT}/{$INFO_USER}",
         "smart_payment_cards_screen"
     )
 

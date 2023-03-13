@@ -118,19 +118,21 @@ fun IbanAccountScreen(
                 previousStep = CreditStep.One.id
             )
         )
-        viewModel.onUIEvent(
-            OnLoadCreditSteps(
-                list = sharedViewModel.saveCreditStepsHelper.inputTextInfoList,
-                onFailureWithDialog = { isLoading, dialogParameters ->
-                    sharedViewModel.onUIEvent(
-                        OnFailureWithDialog(
-                            isLoading,
-                            dialogParameters
+        if (sharedViewModel.crosseling.not()) {
+            viewModel.onUIEvent(
+                OnLoadCreditSteps(
+                    list = sharedViewModel.saveCreditStepsHelper.inputTextInfoList,
+                    onFailureWithDialog = { isLoading, dialogParameters ->
+                        sharedViewModel.onUIEvent(
+                            OnFailureWithDialog(
+                                isLoading,
+                                dialogParameters
+                            )
                         )
-                    )
-                }
+                    }
+                )
             )
-        )
+        }
     }
 
     Column(

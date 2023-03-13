@@ -57,7 +57,7 @@ class VisaVerifyInformationViewModel @Inject constructor(
 
     private fun onCallMutationCreateCardVDUseCase() = executeUseCase {
         mutationCreateCardVDUseCase.invoke(
-            identification =  identification,
+            identification = identification,
             cardTokenID = getCardTokenId(addCardResponse),
             default = true,
             user = userName,
@@ -80,7 +80,7 @@ class VisaVerifyInformationViewModel @Inject constructor(
         }
     }
 
-    fun getCardTokenId(response: String) : String {
+    fun getCardTokenId(response: String): String {
         return parseResponse(response)?.cardTokenId ?: ""
     }
 

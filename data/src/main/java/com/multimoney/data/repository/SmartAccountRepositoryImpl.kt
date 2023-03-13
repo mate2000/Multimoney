@@ -196,6 +196,8 @@ class SmartAccountRepositoryImpl @Inject constructor(
         idCivilStatusType: Long?,
         birthday: String?,
         expirationDate: String?,
+        nationality: String?,
+        dateOfEmission: String?,
         idGender: Long?,
         companyName: String?,
         aboutCompany: String?,
@@ -232,6 +234,8 @@ class SmartAccountRepositoryImpl @Inject constructor(
             idCivilStatusType = idCivilStatusType,
             birthday = birthday,
             expirationDate = expirationDate,
+            nationality = nationality,
+            dateOfEmission = dateOfEmission,
             idGender = idGender,
             companyName = companyName,
             aboutCompany = aboutCompany,
@@ -409,7 +413,8 @@ class SmartAccountRepositoryImpl @Inject constructor(
         country: String,
         idAccount: Long,
         accountNumber: String,
-        isFavorite: Boolean?
+        isFavorite: Boolean?,
+        option: String?
     ): Flow<MultimoneyResult<SinpeAccountResult?>> {
         return fetchData(
             apolloCall = graphqlApi.queryListSinpeAccount(
@@ -419,7 +424,8 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 country,
                 idAccount,
                 accountNumber,
-                isFavorite
+                isFavorite,
+                option
             ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
@@ -464,7 +470,9 @@ class SmartAccountRepositoryImpl @Inject constructor(
         idAccount: Long?,
         option: String?,
         email: String?,
-        isFavorite: Boolean?
+        isFavorite: Boolean?,
+        idBank: Long?,
+        typeAccount: Int?
     ): Flow<MultimoneyResult<SaveSinpeAccount?>> = fetchData(
         apolloCall = graphqlApi.mutationManageSinpeAccountSave(
             user,
@@ -476,7 +484,9 @@ class SmartAccountRepositoryImpl @Inject constructor(
             country,
             idAccount,
             isFavorite,
-            option
+            option,
+            idBank,
+            typeAccount
         ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())

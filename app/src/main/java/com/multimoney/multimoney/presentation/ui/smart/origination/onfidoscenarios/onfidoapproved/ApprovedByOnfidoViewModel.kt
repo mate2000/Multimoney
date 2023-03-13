@@ -4,9 +4,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.data.networking.graphql.apollomodel.ValidateUserStatusQuery
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
+import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
@@ -91,6 +93,7 @@ class ApprovedByOnfidoViewModel @Inject constructor(
                     cryptoStatus = validateUserStatus?.infoCrypto?.status ?: 0,
                     cardStatus = validateUserStatus?.infoVirtualCard?.status ?: 0
                 )
+                uiState.copy(userStatus = validateUserStatus)
             }
             result.onFailure {
                 onFailure(it)
@@ -198,6 +201,7 @@ class ApprovedByOnfidoViewModel @Inject constructor(
         val alertMessageResource: Int = R.string.empty,
         val alertButtonTextResource: Int = R.string.approved_by_onfido_buttton_text,
         val alertSecondButtonTextResource: Int = R.string.finalize,
+        var userStatus: ValidateUserStatus? = null,
     )
 
     sealed class UIEvent {

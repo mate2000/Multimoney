@@ -14,7 +14,6 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartStatus
 import com.multimoney.data.util.catalog.SmartSteps
-import com.multimoney.data.util.catalog.SmartWorkflow
 import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationInitialRequestUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCase
@@ -66,10 +65,10 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
 import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
@@ -165,6 +164,8 @@ class SmartViewModel @Inject constructor(
             idCivilStatusType = stepByStep.idMaritalStatus?.toLong(),
             birthday = stepByStep.birthdate,
             expirationDate = stepByStep.expirationDate,
+            dateOfIssue = stepByStep.dateOfIssue,
+            placeOfIssueId = stepByStep.placeOfIssue,
             idGender = stepByStep.idGenre?.toLong(),
             strGenre = stepByStep.strGenre,
             stringProfessionType = stepByStep.stringProfessionType,
@@ -263,6 +264,8 @@ class SmartViewModel @Inject constructor(
                 idCivilStatusType = accountSmartData?.idCivilStatusType,
                 idProfessionType = accountSmartData?.idProfessionType,
                 expirationDate = accountSmartData?.expirationDate,
+                nationality = accountSmartData?.placeOfIssueId,
+                dateOfEmission = accountSmartData?.dateOfIssue,
                 idAddressLevel1 = accountSmartData?.idAddressLevel1,
                 idAddressLevel2 = accountSmartData?.idAddressLevel2,
                 idAddressLevel3 = accountSmartData?.idAddressLevel3,
@@ -428,20 +431,16 @@ class SmartViewModel @Inject constructor(
     }
 
     private fun navigateToOnfidoOrEvicertia() {
-        if (workflow == SmartWorkflow.SMART_CONTRACT_PROCESS.workflow) {
-            onNavigateToSignDocumentScreen()
-        } else {
-            popAndNavigateTo(
-                "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idSysRequest/$idGlobalRequest/$URL_EMPTY/$comingFromCrypto/$evicertiaStatus/$workflow",
-                Screen.SmartScreen.route
-            )
-        }
+        popAndNavigateTo(
+            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idSysRequest/$idGlobalRequest/$URL_EMPTY/$comingFromCrypto/$evicertiaStatus/$workflow",
+            Screen.SmartScreen.route
+        )
     }
 
     private fun onNavigateToSignDocumentScreen() {
         popAndNavigateTo(
             route = "${Screen.SmartSignScreen.baseRoute}/${SignDocumentStep.GENERATE_DOCUMENT_STEP.value}/$URL_EMPTY/" +
-                    "$idBrand/$pkUser/$identification/$email/$idSysRequest/$firstName/$lastName/${true}/$idGlobalRequest/$user/$comingFromCrypto/${true}",
+                "$idBrand/$pkUser/$identification/$email/$idSysRequest/$firstName/$lastName/${true}/$idGlobalRequest/$user/$comingFromCrypto/${true}/$evicertiaStatus/$workflow",
             popTo = Screen.SmartOnfidoScreen.route
         )
     }

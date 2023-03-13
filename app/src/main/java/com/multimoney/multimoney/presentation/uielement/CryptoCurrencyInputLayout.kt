@@ -258,7 +258,7 @@ fun validateTextFormat(
             onValueChanged(newValue.dropLast(ONE_LENGTH))
             newValue.dropLast(ONE_LENGTH)
         }
-        newValue.count {
+        newValue.first() == '0' && newValue.count {
             it.toString() == SIMPLE_DOT
         } < ONE_LENGTH && newValue.count {
             it.toString() == ZERO_STRING

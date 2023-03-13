@@ -18,7 +18,9 @@ class MutationSaveSinpeAccountUseCaseImpl(val repository: SmartAccountRepository
         idAccount: Long?,
         option: String?,
         email: String?,
-        isFavorite: Boolean?
+        isFavorite: Boolean?,
+        idBank: Long?,
+        typeAccount: Int?
     ): Flow<MultimoneyResult<SaveSinpeAccount?>> = repository.mutationManageSinpeAccountSave(
         user = user,
         idBrand = idBrand,
@@ -30,6 +32,8 @@ class MutationSaveSinpeAccountUseCaseImpl(val repository: SmartAccountRepository
         idAccount = idAccount,
         option = option,
         email = email,
-        isFavorite = isFavorite
+        isFavorite = isFavorite,
+        idBank = idBank,
+        typeAccount = typeAccount
     )
 }

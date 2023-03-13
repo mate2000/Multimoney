@@ -15,7 +15,8 @@ class QueryListSinpeAccountUseCaseImpl(val repository: SmartAccountRepository) :
         country: String,
         idAccount: Long,
         accountNumber: String,
-        isFavorite: Boolean?
+        isFavorite: Boolean?,
+        option:String?
     ): Flow<MultimoneyResult<SinpeAccountResult?>> =
         repository.querySinpeAccount(
             user,
@@ -24,6 +25,7 @@ class QueryListSinpeAccountUseCaseImpl(val repository: SmartAccountRepository) :
             country,
             idAccount,
             accountNumber,
-            isFavorite
+            isFavorite,
+            option
         )
 }

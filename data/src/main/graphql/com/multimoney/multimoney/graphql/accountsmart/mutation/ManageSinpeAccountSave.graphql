@@ -9,6 +9,8 @@ mutation ManageSinpeAccountSave(
     $id_account: Long,
     $isFavorite: Boolean,
     $option: String
+    $idBank: Long,
+    $typeAccount:Int
 ){
     manageSinpeAccountSave(
         manageSinpeAccountSaveInput: {
@@ -22,6 +24,8 @@ mutation ManageSinpeAccountSave(
             id_account: $id_account
             isFavorite: $isFavorite
             option: $option
+            id_Bank: $idBank
+            type_Account: $typeAccount
         }
     ) {
         result {

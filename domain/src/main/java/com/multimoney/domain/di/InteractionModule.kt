@@ -102,6 +102,8 @@ import com.multimoney.domain.interaction.credit.MutationSendCreditContractEventU
 import com.multimoney.domain.interaction.credit.MutationSendCreditContractEventUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryAccountStatementUseCase
 import com.multimoney.domain.interaction.credit.QueryAccountStatementUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryBankList365TypeAndAccountTypeUseCase
+import com.multimoney.domain.interaction.credit.QueryBankList365TypeAndAccountTypeUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryBanksAndRegularExpressionUseCase
 import com.multimoney.domain.interaction.credit.QueryBanksAndRegularExpressionUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryCompanyCantonUseCase
@@ -960,6 +962,11 @@ class InteractionModule {
 
     @Provides
     @Singleton
-    fun provideQueryLocalTransferFavoriteUseCase(smartAccountRepository: SmartAccountRepository): QueryLocalTransferFavoriteUseCase  =
+    fun provideQueryLocalTransferFavoriteUseCase(smartAccountRepository: SmartAccountRepository): QueryLocalTransferFavoriteUseCase =
         QueryLocalTransferFavoriteUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryBankLis365TypeAndTypeAccountUseCase(creditRepository: CreditRepository): QueryBankList365TypeAndAccountTypeUseCase =
+        QueryBankList365TypeAndAccountTypeUseCaseImpl(creditRepository)
 }

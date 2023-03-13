@@ -5,7 +5,8 @@ query listSinpeAccount(
     $country: String!,
     $idAccount: Long!,
     $accountNumber: String!,
-    $isFavorite: Boolean
+    $isFavorite: Boolean,
+    $option: String
 ) {
     listSinpeAccount(
         listSinpeAccountInput: {
@@ -15,7 +16,8 @@ query listSinpeAccount(
             country: $country,
             id_account: $idAccount,
             account_number: $accountNumber,
-            isFavorite: $isFavorite
+            isFavorite: $isFavorite,
+            option: $option
         }
     ) {
         result {
@@ -27,8 +29,10 @@ query listSinpeAccount(
             active: activo
             currencyId: id_Moneda
             currency: moneda
-            idBank: id_Banco,
-            typeAccount: tipo_Cuenta_CORE
+            idBank: id_Banco
+            idBankCore: id_Banco_CORE
+            accountTypeCore: tipo_Cuenta_CORE
+            regularExpression: expresion_Regular
             isFavorite: es_Favorita
             nameAccount: nombre_Cuenta
             accountType: tipo_Cuenta

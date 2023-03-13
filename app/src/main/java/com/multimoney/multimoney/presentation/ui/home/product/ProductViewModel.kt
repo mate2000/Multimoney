@@ -9,14 +9,12 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.PENDING
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.data.util.catalog.CreditWorkflow
 import com.multimoney.data.util.catalog.MyProductStatus
 import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus.NOT_SIGNED
 import com.multimoney.data.util.catalog.SmartWorkflow
 import com.multimoney.data.util.catalog.SmartWorkflow.SMART_CONTRACT_PROCESS
-import com.multimoney.data.util.catalog.SmartWorkflow.SMART_FIRMED_ONFIDO_PENDING
 import com.multimoney.data.util.catalog.SmartWorkflow.SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS
 import com.multimoney.data.util.catalog.SmartWorkflow.SMART_ONFIDO_PROCESS
 import com.multimoney.domain.interaction.accountsmart.MutationAccountStatusUseCase
@@ -106,7 +104,6 @@ import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.ProfileCardListOrigin
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
-import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
 import com.multimoney.multimoney.presentation.util.getNavParam
@@ -121,6 +118,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
 @HiltViewModel
@@ -334,16 +333,26 @@ class ProductViewModel @Inject constructor(
         comingFromCrypto: Boolean = false,
         onIntent: () -> Unit? = { }
     ) {
+        val firmStatus =
+            if (uiState.userStatus?.infoBankAccount?.statusFirm.isNullOrBlank().not()) {
+                uiState.userStatus?.infoBankAccount?.statusFirm
+            } else {
+                NOT_SIGNED.status
+            }
+
         when (smartStep) {
             SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS.workflow -> onIntent()
-            PENDING.status -> onCallMutationAccountStatusUseCase(comingFromCrypto)
+            SMART_CONTRACT_PROCESS.workflow -> onCallMutationAccountStatusUseCase(comingFromCrypto)
+            SMART_ONFIDO_PROCESS.workflow -> {
+                navigateTo(
+                    "${Screen.SmartOnfidoScreen.baseRoute}/$userName/${uiState.idBrand}/" +
+                        "$pkUser/$identification/$email/$firstName/${uiState.userStatus?.infoUser?.lastName}/" +
+                        "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/" +
+                        "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/" +
+                        "${SmartViewModel.URL_EMPTY}/$comingFromCrypto/$firmStatus/$smartStep"
+                )
+            }
             else -> {
-                val firmStatus =
-                    if (uiState.userStatus?.infoBankAccount?.statusFirm.isNullOrBlank().not()) {
-                        uiState.userStatus?.infoBankAccount?.statusFirm
-                    } else {
-                        NOT_SIGNED.status
-                    }
                 navigateTo(
                     "${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
                         "${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}/$comingFromCrypto/" +
@@ -365,7 +374,10 @@ class ProductViewModel @Inject constructor(
                     currencyID = account?.idCurrencyAccount
                 )
             )
-            navigateTo("${Screen.SmartPaymentMethodScreenSV.baseRoute}/$smartIds")
+            navigateTo(
+                "${Screen.SmartPaymentMethodScreenSV.baseRoute}/$smartIds/" +
+                    "${encodeData(uiState.userStatus?.infoUser)}"
+            )
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             val infoCredit = uiState.userStatus?.infoCredit
             val smartIds = encodeData(
@@ -511,7 +523,10 @@ class ProductViewModel @Inject constructor(
             ibanAccountNumber = account?.ibanAccountNumber,
             totalBalance = account?.totalBalance
         )
-        navigateTo("${Screen.SmartPaymentMethodScreenSV.baseRoute}/${encodeData(smartAccount)}")
+        navigateTo(
+            "${Screen.SmartPaymentMethodScreenSV.baseRoute}/" +
+                "${encodeData(smartAccount)}/${encodeData(uiState.userStatus?.infoUser)}"
+        )
     }
 
     private fun onNavigateToSmartMovements(accountToken: String) =
@@ -743,7 +758,10 @@ class ProductViewModel @Inject constructor(
                     currencyID = account?.idCurrencyAccount
                 )
             )
-            navigateTo("${Screen.SmartPaymentMethodScreenSV.baseRoute}/$smartIds")
+            navigateTo(
+                "${Screen.SmartPaymentMethodScreenSV.baseRoute}/$smartIds/" +
+                    "${encodeData(uiState.userStatus?.infoUser)}"
+            )
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             callSinpeAccountsListUseCase(account, onLoadingValueChange)
         }
@@ -877,11 +895,17 @@ class ProductViewModel @Inject constructor(
                 ?: 0L
         ).collectLatest { result ->
             result.onSuccess {
-                popAndNavigateTo(
-                    "${Screen.SmartSignScreen.baseRoute}/${SIGN_DOCUMENTS_STEP.value}/${it?.urlFirmDocument}/${uiState.idBrand.toIntOrNull() ?: Brand.CostaRica.id}/$pkUser/$identification/$email/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/$firstName/${uiState.userStatus?.infoUser?.lastName}/${true}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/$userName/$comingFromCrypto/${it?.urlFirmDocument.isNullOrBlank()}/${uiState.userStatus?.infoBankAccount?.statusFirm}/${uiState.userStatus?.infoBankAccount?.wording?.workflow}",
-                    Screen.HomeScreen.route
-                )
-            }.onFailure {
+                it?.urlFirmDocument?.let { url ->
+                    navigateTo(
+                        "${Screen.SmartSignScreen.baseRoute}/${SIGN_DOCUMENTS_STEP.value}/" +
+                            "${URLEncoder.encode(url, StandardCharsets.UTF_8.toString())}/" +
+                            "${uiState.idBrand.toIntOrNull() ?: Brand.CostaRica.id}/$pkUser/$identification/$email/" +
+                            "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/$firstName/" +
+                            "${uiState.userStatus?.infoUser?.lastName}/${true}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/" +
+                            "$userName/$comingFromCrypto/${false}/${uiState.userStatus?.infoBankAccount?.statusFirm}/" +
+                            "${uiState.userStatus?.infoBankAccount?.wording?.workflow}"
+                    )
+                }
             }
         }
     }

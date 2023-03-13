@@ -151,8 +151,7 @@ fun ACHFavoriteContentList(
                     )
                 } else {
                     stringResource(string.sac_account)
-                }.plus(SEPARATOR)
-                    .plus(localFavorite?.currencyAccount),
+                }.plus(SEPARATOR).plus(localFavorite?.currencyAccount),
                 subtitle2 = getMaskedAccount(
                     accountNumber = localFavorite?.accountNumber.orEmpty(),
                     prefix = ""

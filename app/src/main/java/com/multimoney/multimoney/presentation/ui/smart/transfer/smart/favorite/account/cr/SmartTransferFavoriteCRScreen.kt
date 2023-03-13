@@ -32,6 +32,7 @@ import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.SEPARATOR
+import com.multimoney.multimoney.presentation.util.formatStringPhoneNumber
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 
@@ -103,8 +104,10 @@ fun FavoritesContentList(
             item {
                 CustomInfoButton(
                     title = favorite?.accountName.orEmpty(),
-                    subtitle = favorite?.phoneNumber.orEmpty().plus(SEPARATOR)
-                        .plus(favorite?.currency),
+                    subtitle = formatStringPhoneNumber(
+                        favorite?.phoneNumber.orEmpty(),
+                        favorite?.areaCode.orEmpty()
+                    ).plus(SEPARATOR).plus(favorite?.currency),
                     subtitle2 = getMaskedAccount(
                         accountNumber = favorite?.accountNumber.orEmpty(),
                         prefix = Brand.CostaRica.iban

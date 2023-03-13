@@ -12,7 +12,8 @@ data class LocalSACAccount(
     val currency: String?,
     val ibanNumber: String?,
     val isFavorite: Boolean?,
-    val identification: String?
+    val identification: String?,
+    val areaCode: String?
 )
 
 data class LocalTransferFavorite(val accounts: List<LocalSACAccount>?)

@@ -19,5 +19,6 @@ fun RelatedContactsByPhoneQuery.Phone.mapToDomainModel() = PhoneSmart(
     email = email,
     idCurrency = id_Currency,
     currency = currency,
-    ibanNumber = ibanNumber
+    ibanNumber = ibanNumber,
+    areaCode = areaCode
 )

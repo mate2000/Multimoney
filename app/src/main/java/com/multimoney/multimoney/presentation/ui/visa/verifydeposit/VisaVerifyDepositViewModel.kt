@@ -224,7 +224,7 @@ class VisaVerifyDepositViewModel @Inject constructor(
                 titleResource = R.string.visa_verified_dialog_title,
                 descriptionResource = R.string.visa_verified_dialog_description,
                 positiveResource = R.string.cancel,
-                positiveAction = { onNavigateBackHome() },
+                negativeAction = { onNavigateBackHome() },
                 negativeResource = R.string.button_continue,
                 isActive = mutableStateOf(true)
             )

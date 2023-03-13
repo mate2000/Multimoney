@@ -127,4 +127,3 @@ const val DOCUMENT_FORMAT_VALUE = '0'
 const val SEPARATOR = " | "
 const val PHONE_NUMBER_LENGTH = 8
 const val SPACE = " "
-const val PLUS = "+"

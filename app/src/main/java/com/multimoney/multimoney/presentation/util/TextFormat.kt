@@ -107,7 +107,7 @@ fun formatStringPhoneNumber(number: String, areaCode: String): String {
         spacedNumber = stringBuilder.append(number).insert(number.length / 2, SPACE).toString()
         return stringBuilder.clear().append(areaCode).append(SPACE).append(spacedNumber).toString()
     }
-    if (number.take(AREA_CODE_LENGTH) == areaCode.takeLast(AREA_CODE_LENGTH)) {
+    if (number.take(areaCode.length - 1) == areaCode.takeLast(areaCode.length - 1)) {
         spacedNumber = stringBuilder.append(number.takeLast(PHONE_NUMBER_LENGTH))
             .insert(PHONE_NUMBER_LENGTH / 2, SPACE).toString()
         return stringBuilder.clear().append(areaCode).append(SPACE).append(spacedNumber).toString()
@@ -125,7 +125,6 @@ const val ACCOUNT_MASK = "••••"
 const val VISA_MASK = "Visa"
 const val DOCUMENT_FORMAT_VALUE = '0'
 const val SEPARATOR = " | "
-const val AREA_CODE_LENGTH = 3
 const val PHONE_NUMBER_LENGTH = 8
 const val SPACE = " "
 const val PLUS = "+"

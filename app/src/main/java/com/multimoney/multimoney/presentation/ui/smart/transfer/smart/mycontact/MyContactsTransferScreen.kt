@@ -69,8 +69,7 @@ import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.capitalizedAllWords
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Dollar
-import com.multimoney.multimoney.presentation.util.catalog.PLUS
-import com.multimoney.multimoney.presentation.util.catalog.SPACE
+import com.multimoney.multimoney.presentation.util.formatStringPhoneNumber
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 
@@ -264,9 +263,6 @@ fun ContactList(
     LazyColumn(modifier = Modifier.padding(top = 20.dp, start = 16.dp, end = 16.dp)) {
         contactList.forEach { (_, contact) ->
             contact.firstOrNull()?.let { firstAccount ->
-                val prefix =
-                    if (firstAccount.number?.take(3) == firstAccount.areaCode?.takeLast(3)) PLUS
-                    else firstAccount.areaCode.plus(SPACE)
                 item {
                     val randomColor = colors.coloredInitialChar
                     val colorSubtitle by remember { mutableStateOf(randomColor.random()) }
@@ -274,7 +270,10 @@ fun ContactList(
                     if (firstAccount.titular?.contains(searchedString, true) == true) {
                         CustomInfoButton(
                             title = firstAccount.titular.orEmpty().capitalizedAllWords(),
-                            subtitle = prefix.plus(firstAccount.number),
+                            subtitle = formatStringPhoneNumber(
+                                firstAccount.number.orEmpty(),
+                                firstAccount.areaCode.orEmpty()
+                            ),
                             modifier = Modifier.fillMaxWidth(),
                             startIcon = null,
                             composableIcon = { modifier ->
@@ -325,7 +324,10 @@ fun ContactBottomSheet(
                     )
                 )
                 Text(
-                    text = contact.areaCode?.plus(SPACE).plus(contact.number.orEmpty()),
+                    text = formatStringPhoneNumber(
+                        contact.number.orEmpty(),
+                        contact.areaCode.orEmpty()
+                    ),
                     style = Typography.subHead.copy(
                         color = colors.subTitleText
                     )

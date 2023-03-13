@@ -5,7 +5,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -43,7 +42,6 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.BuildConfig
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.RELEASE_TOAST
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
@@ -115,7 +113,7 @@ class HomeViewModel @Inject constructor(
                 pkUser = dataStorePreferences.getPkUser().firstOrNull() ?: "",
                 identification = dataStorePreferences.getIdentification().firstOrNull() ?: "",
                 email = dataStorePreferences.getUserEmail().firstOrNull() ?: "",
-                userName = dataStorePreferences.getUserName().firstOrNull() ?: "",
+                userName = dataStorePreferences.getUserName().firstOrNull() ?: ""
             )
             callQueryValidateUserStatus(
                 uiState.pkUser.toInt(),
@@ -927,10 +925,10 @@ class HomeViewModel @Inject constructor(
                 uiState = uiState.copy(productScreenPagerState = uiEvent.page)
             is UIEvent.OnLoadingValueChanged ->
                 uiState = uiState.copy(isLoading = uiEvent.isLoading)
-            is UIEvent.OnShowCardIssuanceError -> uiState =
-                uiState.copy(showCardIssuanceError = true)
-            is UIEvent.OnCloseCardIssuanceError -> uiState =
-                uiState.copy(showCardIssuanceError = false)
+            is UIEvent.OnShowCardIssuanceError ->
+                uiState = uiState.copy(showCardIssuanceError = true)
+            is UIEvent.OnCloseCardIssuanceError ->
+                uiState = uiState.copy(showCardIssuanceError = false)
             is UIEvent.OnStartBiometrics -> onStartBiometrics()
             is UIEvent.OnInitializeBiometricPrompt -> initializeBiometricPrompt(
                 uiEvent.biometricPromptTitle,

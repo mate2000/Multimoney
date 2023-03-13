@@ -5,6 +5,3 @@ enum class PhoneCountryCode(val code: String) {
     COSTA_RICA("+506"),
     GUATEMALA("+502")
 }
-
-const val SPACE = " "
-const val PLUS = "+"

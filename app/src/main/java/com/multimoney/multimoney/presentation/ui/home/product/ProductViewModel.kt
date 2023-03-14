@@ -352,7 +352,9 @@ class ProductViewModel @Inject constructor(
         when (smartStep) {
             SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS.workflow -> onIntent()
             SMART_CONTRACT_PROCESS.workflow -> onStartSubscription(comingFromCrypto)
-            SMART_ONFIDO_PROCESS.workflow, SMART_FIRMED_ONFIDO_PENDING.workflow, SMART_FIRMED_ONFIDO_REJECTED.workflow -> {
+            SMART_ONFIDO_PROCESS.workflow,
+            SMART_FIRMED_ONFIDO_PENDING.workflow,
+            SMART_FIRMED_ONFIDO_REJECTED.workflow -> {
                 navigateTo(
                     "${Screen.SmartOnfidoScreen.baseRoute}/$userName/${uiState.idBrand}/" +
                         "$pkUser/$identification/$email/$firstName/${uiState.userStatus?.infoUser?.lastName}/" +

@@ -22,6 +22,7 @@ import com.multimoney.domain.interaction.accountsmart.QueryListSinpeAccountUseCa
 import com.multimoney.domain.interaction.balance.QueryBalanceCardInformationUseCase
 import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCase
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
+import com.multimoney.domain.interaction.security.MutationUserEventMobileSaveUseCase
 import com.multimoney.domain.model.accountsmart.SinpeAccount
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.accountsmart.SmartAccountSmall
@@ -106,11 +107,14 @@ import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
+import com.multimoney.multimoney.presentation.util.getDeviceManufacture
+import com.multimoney.multimoney.presentation.util.getDeviceModel
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.NovoHelper
+import com.multimoney.multimoney.util.firebase.FirebaseHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
@@ -133,7 +137,9 @@ class ProductViewModel @Inject constructor(
     private val queryListSinpeAccountUseCaseImpl: QueryListSinpeAccountUseCase,
     private val queryGetCryptoCurrencyMovementsUseCase: GetCryptoCurrencyMovementsUseCase,
     private val mutationAccountStatusUseCase: MutationAccountStatusUseCase,
-    private val cryptoHelper: CryptoHelper
+    private val cryptoHelper: CryptoHelper,
+    private val firebaseHelper: FirebaseHelper,
+    private val mutationUserEventMobileSaveUseCase: MutationUserEventMobileSaveUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -190,6 +196,27 @@ class ProductViewModel @Inject constructor(
                 shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first(),
                 isCryptoTransferEnabled = cryptoHelper.isCryptoTransferEnabled()
             )
+        }
+        firebaseHelper.registerFCMDevice { token ->
+            viewModelScope.launch {
+                mutationUserEventMobileSaveUseCase.invoke(
+                    idBrand = idBrand.toInt(),
+                    user = email,
+                    pkSuvLogUserEventMobile = 0, // TODO validate if always is 0
+                    fkSuvMtrUser = pkUser.toInt(),
+                    platform = "Android",
+                    uuid = dataStorePreferences.getDeviceId().first(),
+                    deviceVersion = android.os.Build.VERSION.SDK_INT.toString(),
+                    manufacture = getDeviceManufacture(),
+                    deviceName = getDeviceModel(),
+                    seriesNumber = "",
+                    ipAddress = "",
+                    latitude = "",
+                    longitude = "",
+                    tokenNotificationsPush = token ?: ""
+                ).collectLatest {
+                }
+            }
         }
     }
 

@@ -640,9 +640,11 @@ class DataStorePreferences @Inject constructor(
         private val ADJUST_ORIGINATION_SMART_FIRST_TIME_EVICERTIA_DONE = booleanPreferencesKey("adjust_origination_smart_first_time_evicertia_done")
         private val ADJUST_ORIGINATION_SMART_FIRST_TIME_REJECTED = booleanPreferencesKey("adjust_origination_smart_first_time_rejected")
         private val ADJUST_ORIGINATION_SMART_FIRST_TIME_SUCCESSFUL = booleanPreferencesKey("adjust_origination_smart_first_time_successful")
-
         private val ADJUST_SMART_FIRST_SAVING_BTN_KEY = booleanPreferencesKey("adjust_smart_first_saving_btn_key")
         private val ADJUST_SMART_FIRST_SENDING_KEY = booleanPreferencesKey("adjust_smart_first_sending_key")
         private val ADJUST_SMART_FIRST_SAVING_KEY = booleanPreferencesKey("adjust_smart_first_saving_key")
+
+        // Firebase
+        private val FIREBASE_FCM_TOKEN_KEY = stringPreferencesKey("firebase_token_key")
     }
 }

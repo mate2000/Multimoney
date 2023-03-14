@@ -22,6 +22,7 @@ import com.multimoney.domain.interaction.credit.QueryGetCardAutomaticDebitUseCas
 import com.multimoney.domain.interaction.credit.QueryGetClientAutomaticDebitUseCase
 import com.multimoney.domain.interaction.credit.QueryGetPromissoryNoteDetail
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCase
+import com.multimoney.domain.interaction.profile.QueryCountryContactUseCase
 import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCase
 import com.multimoney.domain.interaction.security.QueryGetQuickActionsUseCase
 import com.multimoney.domain.interaction.security.QueryMiniCardsUseCase
@@ -30,6 +31,7 @@ import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.credit.CreditMovementsResult
 import com.multimoney.domain.model.crypto.HistoricalBalanceClient
+import com.multimoney.domain.model.profile.CountryContact
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.MiniCardsItem
 import com.multimoney.domain.model.security.QuickAction
@@ -87,6 +89,7 @@ class HomeViewModel @Inject constructor(
     private val mutationDeactivateCardAutomaticDebitUseCase: MutationDeactivateCardAutomaticDebitUseCase,
     private val queryGetCoreBankMovements: QueryGetCoreBankMovementsUseCase,
     private val queryGetPromissoryNoteDetail: QueryGetPromissoryNoteDetail,
+    private val queryCountryContactUseCase: QueryCountryContactUseCase,
     private val biometricHelper: BiometricHelper,
     private val cognitoHelper: CognitoHelper,
     private val cryptoHelper: CryptoHelper
@@ -99,6 +102,7 @@ class HomeViewModel @Inject constructor(
     private var biometricPromptNegative = ""
     private var isBiometricActive = false
     private var apiCallCount = 0
+    var contactCountryInfo: CountryContact? = null
 
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -122,6 +126,7 @@ class HomeViewModel @Inject constructor(
                 uiState.idBrand.toInt()
             )
             callQueryGetConfigurationVersion(uiState.idBrand.toInt())
+            getContactInfo()
         }
     }
 
@@ -130,6 +135,18 @@ class HomeViewModel @Inject constructor(
             homeState = homeState
         )
     }
+
+    private fun getContactInfo() =
+        executeUseCase {
+            queryCountryContactUseCase.invoke(
+                user = uiState.email,
+                idBrand = uiState.idBrand.toInt()
+            ).collectLatest { result ->
+                result.onSuccess { contactInfo ->
+                    contactCountryInfo = contactInfo
+                }
+            }
+        }
 
     private fun onGetSmartMovements(
         user: String,
@@ -513,7 +530,11 @@ class HomeViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { validateUserStatus ->
                 apiCallCount++
-                dataStorePreferences.setUserPhoneNumberWithCode(validateUserStatus?.infoUser?.countryCode.plus(validateUserStatus?.infoUser?.phone.orEmpty()))
+                dataStorePreferences.setUserPhoneNumberWithCode(
+                    validateUserStatus?.infoUser?.countryCode.plus(
+                        validateUserStatus?.infoUser?.phone.orEmpty()
+                    )
+                )
                 dataStorePreferences.setUserPhoneNumber(validateUserStatus?.infoUser?.phone.orEmpty())
                 uiState = uiState.copy(validateUserStatus = validateUserStatus)
                 callQueryBalanceUseCase(
@@ -999,6 +1020,7 @@ class HomeViewModel @Inject constructor(
             val biometricPromptDescription: String,
             val biometricPromptNegative: String
         ) : UIEvent()
+
         object OnRegisterAdjustPressPurchaseFirstTime : UIEvent()
         object OnRegisterAdjustPressSellFirstTime : UIEvent()
         object OnRegisterAdjustPressSendFirstTime : UIEvent()

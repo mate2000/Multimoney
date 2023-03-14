@@ -126,6 +126,7 @@ fun ProductScreen(
             identification = sharedViewModel.uiState.identification,
             email = sharedViewModel.uiState.email,
             userName = sharedViewModel.uiState.userName,
+            countryContact = sharedViewModel.contactCountryInfo,
             validateUserStatus = sharedViewModel.uiState.validateUserStatus,
             configurationVersion = sharedViewModel.uiState.configurationVersion,
             productPageList = sharedViewModel.uiState.productPageList,
@@ -411,24 +412,31 @@ fun TipsAndOffer(
             Row(modifier = Modifier.padding(end = 16.dp)) {
                 Icon(
                     painter = painterResource(R.drawable.ic_notification),
-                    modifier = Modifier.size(32.dp).clickable {
-                        // todo action
-                    },
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clickable {
+                            // todo action
+                        },
                     contentDescription = "",
                     tint = MultimoneyTheme.colors.iconColor
                 )
                 Icon(
                     painter = painterResource(R.drawable.ic_profile),
-                    modifier = Modifier.padding(start = 16.dp).size(32.dp).clickable {
-                        viewModel.onUIEvent(OnNavigateToProfileScreen)
-                    },
+                    modifier = Modifier
+                        .padding(start = 16.dp)
+                        .size(32.dp)
+                        .clickable {
+                            viewModel.onUIEvent(OnNavigateToProfileScreen)
+                        },
                     contentDescription = "",
                     tint = MultimoneyTheme.colors.iconColor
                 )
             }
         }
         LazyRow(
-            modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
         ) {
             sharedViewModel.uiState.miniCardList?.let { miniCardList ->
                 items(items = miniCardList, itemContent = {
@@ -446,13 +454,19 @@ fun ProductHeader(
 ) {
     Column {
         TipsAndOffer(
-            modifier = Modifier.padding(start = 16.dp, top = 20.dp).fillMaxWidth().wrapContentHeight(),
+            modifier = Modifier
+                .padding(start = 16.dp, top = 20.dp)
+                .fillMaxWidth()
+                .wrapContentHeight(),
             viewModel = viewModel,
             sharedViewModel = sharedViewModel
         )
         Text(
             text = stringResource(id = viewModel.getProductScreenTitle()),
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 24.dp).fillMaxWidth().wrapContentHeight(),
+            modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp, top = 24.dp)
+                .fillMaxWidth()
+                .wrapContentHeight(),
             style = Typography.body1.copy(
                 fontWeight = FontWeight.SemiBold
             ),
@@ -517,14 +531,20 @@ fun ProductContent(
                         viewModel.onUIEvent(OnNavigateToSmartOriginationFlow(
                             comingFromCrypto = true,
                             smartStep = viewModel.uiState.smartContent.second,
-                            onIntent = { context.openWhatsAppDeepLink(viewModel.uiState.userStatus?.infoBankAccount?.wording?.link ?: "") }
+                            onIntent = {
+                                context.openWhatsAppDeepLink(
+                                    viewModel.uiState.userStatus?.infoBankAccount?.wording?.link ?: ""
+                                )
+                            }
                         ))
                     }
                 )
             }
         }
         Row(
-            Modifier.fillMaxWidth().padding(top = 16.dp),
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
             horizontalArrangement = Arrangement.Center
         ) {
             CustomDotsIndicator(
@@ -575,7 +595,11 @@ fun ProductContentExpanded(
                             OnNavigateToSmartOriginationFlow(
                                 comingFromCrypto = true,
                                 smartStep = viewModel.uiState.smartContent.second,
-                                onIntent = { context.openWhatsAppDeepLink(viewModel.uiState.userStatus?.infoBankAccount?.wording?.link ?: "") }
+                                onIntent = {
+                                    context.openWhatsAppDeepLink(
+                                        viewModel.uiState.userStatus?.infoBankAccount?.wording?.link ?: ""
+                                    )
+                                }
                             )
                         )
                     }
@@ -583,7 +607,9 @@ fun ProductContentExpanded(
             }
         }
         Row(
-            Modifier.fillMaxWidth().padding(top = 16.dp),
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
             horizontalArrangement = Arrangement.Center
         ) {
             CustomDotsIndicator(
@@ -663,7 +689,8 @@ fun ProductFooterExpanded(
                 balance = viewModel.balanceCredit,
                 cryptoMovements = viewModel.uiState.cryptoCurrencyMovements,
                 onShowAllClick = { viewModel.onUIEvent(OnNavigateToCryptoMovements) },
-                actionMarket = { if (viewModel.balanceCredit?.balanceCryptoAccount?.outOfService == true) {
+                actionMarket = {
+                    if (viewModel.balanceCredit?.balanceCryptoAccount?.outOfService == true) {
                         viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToMaintenanceAlert)
                     } else {
                         viewModel.onUIEvent(OnNavigateToCryptoMarket)
@@ -760,15 +787,19 @@ fun ProductCtaFooterExpanded(
 fun TipAndOfferItem(miniCardsItem: MiniCardsItem) {
     TipBox {
         Box(
-            Modifier.fillMaxSize().clickable {
-                // TODO: Call appropriate screen when all flows are available
-                // TODO, mocking the first item in order to navigate to the smart origination flow
-            }
+            Modifier
+                .fillMaxSize()
+                .clickable {
+                    // TODO: Call appropriate screen when all flows are available
+                    // TODO, mocking the first item in order to navigate to the smart origination flow
+                }
         ) {
             Image(
                 painter = rememberAsyncImagePainter(miniCardsItem.imageUrl),
                 contentDescription = "",
-                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(26.dp)),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(26.dp)),
                 contentScale = ContentScale.Crop
             )
         }
@@ -778,9 +809,11 @@ fun TipAndOfferItem(miniCardsItem: MiniCardsItem) {
 @Composable
 fun TipBox(content: @Composable () -> Unit) {
     Box(
-        modifier = Modifier.size(152.dp, 140.dp).padding(
-            end = 12.dp
-        )
+        modifier = Modifier
+            .size(152.dp, 140.dp)
+            .padding(
+                end = 12.dp
+            )
     ) {
         CustomImage(
             drawableResource = R.drawable.ic_tip_background,

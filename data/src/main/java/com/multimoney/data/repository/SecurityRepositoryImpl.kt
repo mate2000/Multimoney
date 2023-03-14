@@ -20,6 +20,7 @@ import com.multimoney.domain.model.security.RequestChangeDevice
 import com.multimoney.domain.model.security.SaveLogTracking
 import com.multimoney.domain.model.security.SendPinProcess
 import com.multimoney.domain.model.security.UserData
+import com.multimoney.domain.model.security.UserEventMobileSave
 import com.multimoney.domain.model.security.UserPhoneMobileSave
 import com.multimoney.domain.model.security.ValidateOTP
 import com.multimoney.domain.model.security.ValidatePin
@@ -467,6 +468,44 @@ class SecurityRepositoryImpl @Inject constructor(
                 keySearch,
                 data,
                 idBrand
+            ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+
+    override suspend fun mutationUserEventMobileSave(
+        idBrand: Int,
+        user: String,
+        pkSuvLogUserEventMobile: Long,
+        fkSuvMtrUser: Int,
+        platform: String,
+        uuid: String,
+        deviceVersion: String,
+        manufacture: String,
+        deviceName: String,
+        seriesNumber: String,
+        ipAddress: String,
+        latitude: String,
+        longitude: String,
+        tokenNotificationsPush: String
+    ): Flow<MultimoneyResult<UserEventMobileSave>> =
+        fetchData(
+            apolloCall = graphqlApi.mutationUserEventMobileSave(
+                idBrand,
+                user,
+                pkSuvLogUserEventMobile,
+                fkSuvMtrUser,
+                platform,
+                uuid,
+                deviceVersion,
+                manufacture,
+                deviceName,
+                seriesNumber,
+                ipAddress,
+                latitude,
+                longitude,
+                tokenNotificationsPush
             ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())

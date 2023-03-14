@@ -69,6 +69,7 @@ import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.capitalizedAllWords
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Dollar
+import com.multimoney.multimoney.presentation.util.formatStringPhoneNumber
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 
@@ -81,7 +82,8 @@ fun MyContactsTransferScreen(
 ) {
     val focusManager = LocalFocusManager.current
     val activity = LocalContext.current.findActivity()
-    val accountAddedToFavoriteToastText = stringResource(id = string.smart_account_transfer_added_To_Favorite_title)
+    val accountAddedToFavoriteToastText =
+        stringResource(string.smart_account_transfer_added_To_Favorite_title)
 
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnCallQueryRelatedContactsByPhoneUseCase)
@@ -220,7 +222,6 @@ fun MyContactsTransferScreen(
         Toast.makeText(activity, accountAddedToFavoriteToastText, Toast.LENGTH_LONG).show()
         viewModel.onUIEvent(OnHideAccountAddedToFavoriteToast)
     }
-
 }
 
 @Composable
@@ -261,39 +262,39 @@ fun ContactList(
 ) {
     LazyColumn(modifier = Modifier.padding(top = 20.dp, start = 16.dp, end = 16.dp)) {
         contactList.forEach { (_, contact) ->
-            val firstAccount = contact.firstOrNull()
-            item {
-                val randomColor = colors.coloredInitialChar
-                val colorSubtitle by remember { mutableStateOf(randomColor.random()) }
+            contact.firstOrNull()?.let { firstAccount ->
+                item {
+                    val randomColor = colors.coloredInitialChar
+                    val colorSubtitle by remember { mutableStateOf(randomColor.random()) }
 
-                if (firstAccount != null && firstAccount.titular?.contains(
-                        searchedString,
-                        true
-                    ) == true
-                ) {
-                    CustomInfoButton(
-                        title = firstAccount.titular.orEmpty().capitalizedAllWords(),
-                        subtitle = firstAccount.number.orEmpty(),
-                        modifier = Modifier.fillMaxWidth(),
-                        startIcon = null,
-                        composableIcon = { modifier ->
-                            CustomContactIcon(
-                                name = firstAccount.titular.orEmpty(),
-                                color = colorSubtitle,
-                                modifier = modifier
-                            )
-                        },
-                        endIcon = R.drawable.ic_options,
-                        onEndIconClick = {
-                            onEndIconClick(contact)
-                        },
-                        onClick = {
-                            onContactClick(contact)
-                        },
-                        showBorder = false,
-                        transparent = true
-                    )
-                    Divider(color = colors.dividerWhite30, thickness = 1.dp)
+                    if (firstAccount.titular?.contains(searchedString, true) == true) {
+                        CustomInfoButton(
+                            title = firstAccount.titular.orEmpty().capitalizedAllWords(),
+                            subtitle = formatStringPhoneNumber(
+                                firstAccount.number.orEmpty(),
+                                firstAccount.areaCode.orEmpty()
+                            ),
+                            modifier = Modifier.fillMaxWidth(),
+                            startIcon = null,
+                            composableIcon = { modifier ->
+                                CustomContactIcon(
+                                    name = firstAccount.titular.orEmpty(),
+                                    color = colorSubtitle,
+                                    modifier = modifier
+                                )
+                            },
+                            endIcon = R.drawable.ic_options,
+                            onEndIconClick = {
+                                onEndIconClick(contact)
+                            },
+                            onClick = {
+                                onContactClick(contact)
+                            },
+                            showBorder = false,
+                            transparent = true
+                        )
+                        Divider(color = colors.dividerWhite30, thickness = 1.dp)
+                    }
                 }
             }
         }
@@ -313,17 +314,20 @@ fun ContactBottomSheet(
         modalBottomSheetState = sheetState,
         coroutineScope = rememberCoroutineScope()
     ) {
-        if (selectedContact.isNotEmpty()) {
+        selectedContact.firstOrNull()?.let { contact ->
             Column(Modifier.padding(vertical = 16.dp)) {
                 Text(
-                    text = selectedContact.firstOrNull()?.titular?.capitalizedAllWords().orEmpty(),
+                    text = contact.titular?.capitalizedAllWords().orEmpty(),
                     style = Typography.subHead.copy(
                         fontWeight = FontWeight.SemiBold,
                         color = colors.text
                     )
                 )
                 Text(
-                    text = selectedContact.firstOrNull()?.number.orEmpty(),
+                    text = formatStringPhoneNumber(
+                        contact.number.orEmpty(),
+                        contact.areaCode.orEmpty()
+                    ),
                     style = Typography.subHead.copy(
                         color = colors.subTitleText
                     )
@@ -333,8 +337,7 @@ fun ContactBottomSheet(
                         modifier = Modifier.fillMaxWidth(),
                         currency = it.idCurrency?.getCurrencyFromId() ?: Dollar,
                         maskedAccountNumber = getMaskedAccountIban(
-                            it.accountNumber.orEmpty(),
-                            stringResource(string.payment_account_masked_text)
+                            it.ibanNumber.orEmpty()
                         ),
                         onClick = { onAccountClick(it) }
                     )

@@ -241,40 +241,5 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
                 }
             )
         }
-        composable(
-            route = Screen.AddIbanAccountScreen.route,
-            arguments = listOf(
-                navArgument(ID_BRAND) {
-                    type = NavType.IntType
-                },
-                navArgument(ID_CLIENT) {
-                    type = NavType.IntType
-                },
-                navArgument(ID_LOAN_CLIENT) {
-                    type = NavType.IntType
-                }
-            )
-        ) {
-            AddIbanAccountScreen(
-                onNavigate = {
-                    navController.navigate(it.route)
-                },
-                onPopBackStack = {
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
-                        PREVIOUS_IS_RESTART,
-                        it.isRestart
-                    )
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
-                        HOME_STATE,
-                        it.homeState
-                    )
-                    navController.popBackStack(
-                        route = it.popTo,
-                        inclusive = false,
-                        saveState = false
-                    )
-                }
-            )
-        }
     }
 }

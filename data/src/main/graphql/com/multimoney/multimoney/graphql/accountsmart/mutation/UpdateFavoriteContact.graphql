@@ -41,6 +41,7 @@ mutation UpdateFavoriteContactSmart(
             idCurrencyAccount
             currencyAccount
             identification
+            areaCode
         }
     }
 }

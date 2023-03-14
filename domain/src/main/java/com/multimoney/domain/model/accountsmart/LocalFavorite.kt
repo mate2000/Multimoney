@@ -12,5 +12,6 @@ data class LocalFavorite(
     val idCurrencyAccount: Int?,
     val currencyAccount: String,
     val ibanNumber: String,
-    val isFavorite: Boolean
+    val isFavorite: Boolean,
+    val areaCode: String
 )

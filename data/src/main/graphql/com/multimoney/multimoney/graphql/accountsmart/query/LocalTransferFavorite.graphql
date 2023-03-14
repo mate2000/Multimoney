@@ -25,6 +25,7 @@ query localTransferFavorite(
             currencyAccount
             ibanNumber
             isFavorite
+            areaCode
         }
     }
 }

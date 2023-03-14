@@ -15,7 +15,8 @@ private fun UpdateFavoriteContactSmartMutation.Result.mapToDomainModel() = Smart
     phoneNumber = phoneNumber,
     idCustomer = idCustomer.toString().toLong(),
     currencyAccount = currencyAccount,
-    identification = identification
+    identification = identification,
+    areaCode = areaCode
 )
 
 private fun UpdateFavoriteContactSmartMutation.LocalTransferFavoriteMan.mapToDomainModel() =

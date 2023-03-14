@@ -36,7 +36,8 @@ fun String.stringToIntegerFormat(separator: String? = null): String =
             INTEGER_FORMAT.replace(
                 INTEGER_FORMAT_SEPARATOR,
                 separator
-            ), DecimalFormatSymbols.getInstance(Locale.ENGLISH)
+            ),
+            DecimalFormatSymbols.getInstance(Locale.ENGLISH)
         ).format(toDouble())
     } else {
         this
@@ -82,7 +83,10 @@ fun getMaskedAccountIban(accountNumber: String, maskedText: String = ACCOUNT_MAS
             .plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
     )
 
-fun formatDocumentPlaceholder(originFormat: String, outputFormat: Char = DOCUMENT_FORMAT_VALUE): String {
+fun formatDocumentPlaceholder(
+    originFormat: String,
+    outputFormat: Char = DOCUMENT_FORMAT_VALUE
+): String {
     return if (originFormat.isNotBlank()) {
         originFormat.replace(
             originFormat.last(),
@@ -92,6 +96,23 @@ fun formatDocumentPlaceholder(originFormat: String, outputFormat: Char = DOCUMEN
     } else {
         ""
     }
+}
+
+fun formatStringPhoneNumber(number: String, areaCode: String): String {
+    if (number.isBlank()) return number
+
+    val stringBuilder = StringBuilder()
+    val spacedNumber: String
+    if (number.length <= PHONE_NUMBER_LENGTH) {
+        spacedNumber = stringBuilder.append(number).insert(number.length / TWO, SPACE).toString()
+        return stringBuilder.clear().append(areaCode).append(SPACE).append(spacedNumber).toString()
+    }
+    if (number.take(areaCode.length - ONE) == areaCode.takeLast(areaCode.length - ONE)) {
+        spacedNumber = stringBuilder.append(number.takeLast(PHONE_NUMBER_LENGTH))
+            .insert(PHONE_NUMBER_LENGTH / TWO, SPACE).toString()
+        return stringBuilder.clear().append(areaCode).append(SPACE).append(spacedNumber).toString()
+    }
+    return ""
 }
 
 const val ACCOUNT_IBAN_FIRST_DIGITS = 0
@@ -104,3 +125,4 @@ const val ACCOUNT_MASK = "••••"
 const val VISA_MASK = "Visa"
 const val DOCUMENT_FORMAT_VALUE = '0'
 const val SEPARATOR = " | "
+const val PHONE_NUMBER_LENGTH = 8

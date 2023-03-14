@@ -118,6 +118,7 @@ fun getCardAction(
     CreditWorkflow.CREDIT_NOT_PREAPROVED.workflow -> {
         { viewModel.onUIEvent(OnNavigateToGtSvNonPreApproved) }
     }
+    CreditWorkflow.CREDIT_REJECTED.workflow,
     CreditWorkflow.CONTACT_EVICERTIA_MAX.workflow,
     CreditWorkflow.CONTACT_ERROR.workflow,
     CreditWorkflow.CONTACT_CREDIT_ERROR.workflow -> {

@@ -354,7 +354,6 @@ class ProductViewModel @Inject constructor(
                         "${SmartViewModel.URL_EMPTY}/$comingFromCrypto/$firmStatus/$smartStep"
                 )
             }
-            SMART_FIRMED_ONFIDO_PENDING.workflow -> {}
             else -> {
                 navigateTo(
                     "${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +

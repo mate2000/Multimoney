@@ -23,6 +23,7 @@ import com.google.gson.Gson
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
 import com.multimoney.multimoney.presentation.util.catalog.AddVisaCardErrors
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.All
@@ -325,9 +326,10 @@ fun String.formatExpirationDate() = if (this.length == 3) {
     this
 }
 
-fun String.encodeURLToUTF(): String {
-    return URLEncoder.encode(this, StandardCharsets.UTF_8.toString())
-}
+fun String?.encodeURLToUTF(): String = URLEncoder.encode(
+    this ?: SmartViewModel.URL_EMPTY,
+    StandardCharsets.UTF_8.toString()
+)
 
 fun String.decodeURLFromUTF(): String {
     return URLDecoder.decode(this, StandardCharsets.UTF_8.toString())

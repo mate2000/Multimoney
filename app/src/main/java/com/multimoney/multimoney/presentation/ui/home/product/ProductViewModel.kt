@@ -111,6 +111,7 @@ import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
+import com.multimoney.multimoney.presentation.util.encodeURLToUTF
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.getPreviousDate
@@ -910,12 +911,7 @@ class ProductViewModel @Inject constructor(
     private fun navigateToSignScreen(url: String? = null, comingFromCrypto: Boolean){
         navigateTo(
             "${Screen.SmartSignScreen.baseRoute}/${if (url.isNullOrBlank()) GENERATE_DOCUMENT_STEP.value else SIGN_DOCUMENTS_STEP.value}/" +
-                    "${
-                        URLEncoder.encode(
-                            url ?: SmartViewModel.URL_EMPTY,
-                            StandardCharsets.UTF_8.toString()
-                        )
-                    }/" +
+                    "${url?.encodeURLToUTF()}/" +
                     "${uiState.idBrand.toIntOrNull() ?: Brand.CostaRica.id}/$pkUser/$identification/$email/" +
                     "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/$firstName/" +
                     "${uiState.userStatus?.infoUser?.lastName}/${true}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/" +
@@ -1192,8 +1188,7 @@ class ProductViewModel @Inject constructor(
                 handleSubscriptionsSteps(smartContractEvent = smartContractEvent)
             }
 
-            override fun onSubscriptionFailToConnect(httpError: HttpError) {
-            }
+            override fun onSubscriptionFailToConnect(httpError: HttpError) = Unit
         }
 
     private fun handleSubscriptionsSteps(smartContractEvent: AccountSmartContractResult?) {

@@ -24,6 +24,7 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.CROSSELING
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.WHATSAPP_LINK
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
@@ -51,15 +52,18 @@ import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateMinusYears
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
+import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class NonPreApprovedViewModel @Inject constructor(
@@ -94,6 +98,7 @@ class NonPreApprovedViewModel @Inject constructor(
     private var birthdayMinDate: LocalDate? = null
     private var birthdayMaxDate: LocalDate? = null
     private var birthdateFormatter: DateTimeFormatter? = null
+    private var whatsAppLink: String = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND]
@@ -108,6 +113,7 @@ class NonPreApprovedViewModel @Inject constructor(
         idPrint = savedStateHandle[SIGN_DOCUMENT_ID_PRINT]
         lastStep = savedStateHandle[CREDIT_STEP]
         crosseling = savedStateHandle[CROSSELING]
+        whatsAppLink = savedStateHandle[WHATSAPP_LINK] ?: ""
         getTextResources()
         setBirthdayMinAndMaxDates(minDate = DATE_MIN_YEARS, maxDate = DATE_MAX_YEARS)
     }
@@ -340,14 +346,32 @@ class NonPreApprovedViewModel @Inject constructor(
             popTo = Screen.HomeScreen.route
         )
 
-    private fun onNavigateToOrigination() = popAndNavigateTo(
-        route = "${Screen.CreditScreen.baseRoute}/${idBrand ?: 0}/${pkUser ?: 0}/${identification.orEmpty()}/${email.orEmpty()}/${lastStep ?: CreditStep.One.id}/" +
-            "${idUserRequest ?: 0}/${firstName.orEmpty()}/" +
-            "${lastName.orEmpty()}/${statusOnfido.orEmpty()}/" +
-            "${statusEvicertia.orEmpty()}/${idPrint ?: 0}/" +
-            "${crosseling ?: false}",
-        popTo = Screen.NonPreApprovedScreen.route
-    )
+    private fun onNavigateToOrigination() =
+        popAndNavigateTo(
+            Screen.CreditScreen.baseRoute
+                .plus(getNavParam(ID_BRAND, idBrand ?: 0))
+                .plus(getNavParam(PK_USER, pkUser ?: 0))
+                .plus(getNavParam(IDENTIFICATION, identification.orEmpty()))
+                .plus(getNavParam(EMAIL, email.orEmpty()))
+                .plus(getNavParam(CREDIT_STEP, lastStep ?: CreditStep.One.id))
+                .plus(getNavParam(ID_USER_REQUEST, idUserRequest ?: 0))
+                .plus(getNavParam(FIRST_NAME, firstName.orEmpty()))
+                .plus(getNavParam(LAST_NAME, lastName.orEmpty()))
+                .plus(getNavParam(ONFIDO_STATUS, statusOnfido.orEmpty()))
+                .plus(getNavParam(EVICERTIA_STATUS, statusEvicertia.orEmpty()))
+                .plus(getNavParam(SIGN_DOCUMENT_ID_PRINT, idPrint ?: 0))
+                .plus(getNavParam(CROSSELING, crosseling ?: false))
+                .plus(
+                    getNavParam(
+                        WHATSAPP_LINK,
+                        URLEncoder.encode(
+                            whatsAppLink,
+                            StandardCharsets.UTF_8.toString()
+                        ).orEmpty()
+                    )
+                ),
+            popTo = Screen.NonPreApprovedScreen.route
+        )
 
     private fun setSuccessAlertResult(amount: String) {
         uiState = uiState.copy(

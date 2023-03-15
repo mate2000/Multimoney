@@ -7,8 +7,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.presentation.extension.findActivity
+import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.BaseEvent.OpenWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.BaseEvent.SimulateUserInteraction
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent
+import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnCallCountryContact
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnShowDialogInformation
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnStartListenerSubscriptionSmartContractEvent
 import com.multimoney.multimoney.presentation.uielement.AlertResult
@@ -18,6 +20,7 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
+import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -28,6 +31,11 @@ fun SmartSignScreen(
 ) {
     val context = LocalContext.current
     val activity = context.findActivity()
+
+
+    LaunchedEffect(true) {
+        viewModel.onUIEvent(OnCallCountryContact)
+    }
 
     LaunchedEffect(true) {
         viewModel.apply {
@@ -43,6 +51,7 @@ fun SmartSignScreen(
             baseEvent.collectLatest { event ->
                 when (event) {
                     is SimulateUserInteraction -> activity?.onUserInteraction()
+                    is OpenWhatsAppLink -> context.openWhatsAppDeepLink(event.whatsAppLink)
                 }
             }
         }

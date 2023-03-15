@@ -47,12 +47,15 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.CROSSELING
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.WHATSAPP_LINK
+import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_GET_EVICERTIA_LINK
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
@@ -114,15 +117,15 @@ import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.NovoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
-import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -323,11 +326,43 @@ class ProductViewModel @Inject constructor(
                     lastStep = CreditStep.Eight.id
                 }
                 navigateTo(
-                    "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
-                            "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/${uiState.userStatus?.infoUser?.firstName}/" +
-                            "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
-                            "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0}/" +
-                            "${uiState.userStatus?.infoCredit?.infoPreApprove?.crosseling ?: false}"
+                    Screen.CreditScreen.baseRoute
+                        .plus(getNavParam(ID_BRAND, uiState.idBrand.toInt()))
+                        .plus(getNavParam(PK_USER, pkUser))
+                        .plus(getNavParam(IDENTIFICATION, identification))
+                        .plus(getNavParam(EMAIL, email))
+                        .plus(getNavParam(CREDIT_STEP, lastStep))
+                        .plus(
+                            getNavParam(
+                                ID_USER_REQUEST,
+                                uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0
+                            )
+                        )
+                        .plus(getNavParam(FIRST_NAME, uiState.userStatus?.infoUser?.firstName))
+                        .plus(getNavParam(LAST_NAME, uiState.userStatus?.infoUser?.lastName))
+                        .plus(getNavParam(ONFIDO_STATUS, uiState.userStatus?.infoUser?.statusOnfido))
+                        .plus(getNavParam(EVICERTIA_STATUS, uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm))
+                        .plus(
+                            getNavParam(
+                                SIGN_DOCUMENT_ID_PRINT,
+                                uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0
+                            )
+                        )
+                        .plus(
+                            getNavParam(
+                                CROSSELING,
+                                uiState.userStatus?.infoCredit?.infoPreApprove?.crosseling ?: false
+                            )
+                        )
+                        .plus(
+                            getNavParam(
+                                WHATSAPP_LINK,
+                                URLEncoder.encode(
+                                    countryContact?.whatsappLink,
+                                    StandardCharsets.UTF_8.toString()
+                                ).orEmpty()
+                            )
+                        )
                 )
             }
         }
@@ -605,10 +640,43 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToGtSvNonPreApproved() =
         navigateTo(
-            "${Screen.NonPreApprovedScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
-                    "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/${uiState.userStatus?.infoUser?.firstName}/" +
-                    "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
-                    "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0}/${uiState.userStatus?.infoCredit?.infoPreApprove?.crosseling ?: false}"
+            Screen.NonPreApprovedScreen.baseRoute
+                .plus(getNavParam(ID_BRAND, uiState.idBrand.toInt()))
+                .plus(getNavParam(PK_USER, pkUser))
+                .plus(getNavParam(IDENTIFICATION, identification))
+                .plus(getNavParam(EMAIL, email))
+                .plus(getNavParam(CREDIT_STEP, lastStep))
+                .plus(
+                    getNavParam(
+                        ID_USER_REQUEST,
+                        uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0
+                    )
+                )
+                .plus(getNavParam(FIRST_NAME, uiState.userStatus?.infoUser?.firstName))
+                .plus(getNavParam(LAST_NAME, uiState.userStatus?.infoUser?.lastName))
+                .plus(getNavParam(ONFIDO_STATUS, uiState.userStatus?.infoUser?.statusOnfido))
+                .plus(getNavParam(EVICERTIA_STATUS, uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm))
+                .plus(
+                    getNavParam(
+                        SIGN_DOCUMENT_ID_PRINT,
+                        uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0
+                    )
+                )
+                .plus(
+                    getNavParam(
+                        CROSSELING,
+                        uiState.userStatus?.infoCredit?.infoPreApprove?.crosseling ?: false
+                    )
+                )
+                .plus(
+                    getNavParam(
+                        WHATSAPP_LINK,
+                        URLEncoder.encode(
+                            countryContact?.whatsappLink,
+                            StandardCharsets.UTF_8.toString()
+                        ).orEmpty()
+                    )
+                )
         )
 
     fun getCreditBalanceLabel(balanceCredit: List<BalanceCredit?>?): String {

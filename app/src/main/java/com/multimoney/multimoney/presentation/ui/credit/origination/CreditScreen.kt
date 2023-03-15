@@ -18,6 +18,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -55,6 +56,7 @@ import com.multimoney.multimoney.presentation.uielement.LoadingMultiMoney
 import com.multimoney.multimoney.presentation.uielement.StepProgressBar
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -65,6 +67,7 @@ fun CreditScreen(
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: CreditViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
     val coroutineScope = rememberCoroutineScope()
@@ -159,6 +162,20 @@ fun CreditScreen(
                 }
             }
         }
+    }
+
+    if (viewModel.uiState.isAlertResultVisible) {
+        AlertResult(
+            titleString = stringResource(id = string.save_credit_operation_error_title),
+            descriptionString = stringResource(id = string.save_credit_operation_error_subtitle),
+            buttonTextResource = string.save_credit_operation_error_action,
+            isLeftButtonVisible = false,
+            onRightButtonClick = { viewModel.onUIEvent(OnNavigateToHome) },
+            onButtonClick = {
+                context.openWhatsAppDeepLink(viewModel.whatsAppLink)
+                viewModel.onUIEvent(OnNavigateToHome)
+            }
+        )
     }
 
     if (viewModel.uiState.showSVProcessSendSuccessfully) {

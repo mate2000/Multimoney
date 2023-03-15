@@ -340,7 +340,6 @@ class CreditOnfidoViewModel @Inject constructor(
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is UIEvent.OnSetCloseDialogTexts -> onInitializeTexts(event.title, event.description)
-            is UIEvent.OnSetWhatsAppLink -> whatsAppLink = event.whatsAppLink
             is UIEvent.OnConfigureOnFidoSdk -> onConfigureOnFidoSDK(event.result)
             is UIEvent.OnCallInFidoToken -> callMutationOnFidoInitialProcess(
                 event.firstName,
@@ -361,7 +360,6 @@ class CreditOnfidoViewModel @Inject constructor(
             is UIEvent.OnContinueClick -> onContinue()
             is UIEvent.OnContinueEnable -> uiState = uiState.copy(isContinueEnabled = event.isEnable)
             is UIEvent.OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
-            is UIEvent.OnNavigateToHome -> onNavigateToHome()
             is UIEvent.OnFailureWithDialog ->
                 uiState =
                     uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
@@ -374,12 +372,10 @@ class CreditOnfidoViewModel @Inject constructor(
         val isLoading: Boolean = false,
         val isAlertVisible: Boolean = false,
         val isContinueEnabled: Boolean = false,
-        val openDialog: DialogParameters = DialogParameters(),
-        var isAlertResultVisible: Boolean = false
+        val openDialog: DialogParameters = DialogParameters()
     )
 
     sealed class UIEvent {
-        data class OnSetWhatsAppLink(val whatsAppLink: String) : UIEvent()
         data class OnSetCloseDialogTexts(val title: Int, val description: String) : UIEvent()
         data class OnCallInFidoToken(
             val firstName: String,
@@ -400,8 +396,6 @@ class CreditOnfidoViewModel @Inject constructor(
             val user: String,
             val injectNewToken: (String?) -> Unit
         ) : UIEvent()
-
-        object OnNavigateToHome : UIEvent()
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
         object OnCloseClick : UIEvent()
         object OnContinueClick : UIEvent()

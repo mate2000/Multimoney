@@ -133,6 +133,7 @@ const val CROSSELING = "crosseling"
 const val OTP_METHOD = "otp_method"
 const val SYS_ID_ACCOUNT_REQUEST = "sys_id_request"
 const val WORK_FLOW = "work_flow"
+const val WHATSAPP_LINK = "whatsapp_link"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -302,13 +303,13 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // CreditNavGraph Screens
     object CreditScreen : Screen(
-        "credit_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$ONFIDO_STATUS}/{$EVICERTIA_STATUS}/{$SIGN_DOCUMENT_ID_PRINT}/{$CROSSELING}",
+        "credit_screen?$ID_BRAND={$ID_BRAND}?$PK_USER={$PK_USER}?$IDENTIFICATION={$IDENTIFICATION}?$EMAIL={$EMAIL}?$CREDIT_STEP={$CREDIT_STEP}?$ID_USER_REQUEST={$ID_USER_REQUEST}?$FIRST_NAME={$FIRST_NAME}?$LAST_NAME={$LAST_NAME}?$ONFIDO_STATUS={$ONFIDO_STATUS}?$EVICERTIA_STATUS={$EVICERTIA_STATUS}?$SIGN_DOCUMENT_ID_PRINT={$SIGN_DOCUMENT_ID_PRINT}?$CROSSELING={$CROSSELING}?$WHATSAPP_LINK={$WHATSAPP_LINK}",
         "credit_screen"
     )
 
     // Non Pre-Approved Screen
     object NonPreApprovedScreen : Screen(
-        "non_pre_approved_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$ONFIDO_STATUS}/{$EVICERTIA_STATUS}/{$SIGN_DOCUMENT_ID_PRINT}/{$CROSSELING}",
+        "non_pre_approved_screen?$ID_BRAND={$ID_BRAND}?$PK_USER={$PK_USER}?$IDENTIFICATION={$IDENTIFICATION}?$EMAIL={$EMAIL}?$CREDIT_STEP={$CREDIT_STEP}?$ID_USER_REQUEST={$ID_USER_REQUEST}?$FIRST_NAME={$FIRST_NAME}?$LAST_NAME={$LAST_NAME}?$ONFIDO_STATUS={$ONFIDO_STATUS}?$EVICERTIA_STATUS={$EVICERTIA_STATUS}?$SIGN_DOCUMENT_ID_PRINT={$SIGN_DOCUMENT_ID_PRINT}?$CROSSELING={$CROSSELING}?$WHATSAPP_LINK={$WHATSAPP_LINK}",
         "non_pre_approved_screen"
     )
 

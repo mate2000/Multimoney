@@ -22,6 +22,7 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.CROSSELING
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.WHATSAPP_LINK
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
@@ -107,6 +108,7 @@ class CreditViewModel @Inject constructor(
     var statusOnfido: String = ""
     var statusEvicertia: String = ""
     var crosseling: Boolean = false
+    var whatsAppLink: String = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: ""
@@ -120,6 +122,7 @@ class CreditViewModel @Inject constructor(
         statusEvicertia = savedStateHandle[EVICERTIA_STATUS] ?: ""
         idPrint = savedStateHandle[SIGN_DOCUMENT_ID_PRINT] ?: 0
         crosseling = savedStateHandle[CROSSELING] ?: false
+        whatsAppLink = savedStateHandle[WHATSAPP_LINK] ?: ""
         uiState = uiState.copy(
             lastStep = savedStateHandle[CREDIT_STEP] ?: CreditStep.One.id,
             loadContent = true
@@ -319,13 +322,7 @@ class CreditViewModel @Inject constructor(
                         nextStep()
                     }
                 }.onFailure {
-                    uiState = uiState.copy(
-                        isLoading = false,
-                        openDialog = DialogParameters(
-                            description = it.getError() ?: "",
-                            isActive = mutableStateOf(true)
-                        )
-                    )
+                    uiState.isAlertResultVisible = true
                 }.onLoading {
                     uiState = uiState.copy(isLoading = true)
                 }
@@ -614,7 +611,8 @@ class CreditViewModel @Inject constructor(
         val isBottomSheetVisible: Boolean = false,
         val crosselingNewAccount: Boolean = false,
         val crosselingIsBankAccountListEmpty: Boolean = false,
-        val showSVProcessSendSuccessfully: Boolean = false
+        val showSVProcessSendSuccessfully: Boolean = false,
+        var isAlertResultVisible: Boolean = false
     )
 
     fun onUIEvent(event: UIEvent) {

@@ -91,6 +91,7 @@ class SmartSignViewModel @Inject constructor(
     var shouldGetEvicertiaLink = true
     var evicertiaStatus: String = ""
     var workflow: String = ""
+    var isDialogShowed: Boolean = false
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -113,19 +114,22 @@ class SmartSignViewModel @Inject constructor(
     }
 
     private fun createDialog() {
-        uiState = uiState.copy(
-            dialogParameters = DialogParameters(
-                titleResource = string.sign_credit_dialog_title,
-                description = dialogDescription,
-                positiveResource = string.sign_credit_dialog_continue,
-                negativeResource = string.payment_points_dialog_negative_button,
-                negativeAction = {
-                    emitBaseEvent(SimulateUserInteraction)
-                    onUIEvent(OnNavigateToHome)
-                },
-                isActive = mutableStateOf(true)
+        if (!isDialogShowed) {
+            isDialogShowed = true
+            uiState = uiState.copy(
+                dialogParameters = DialogParameters(
+                    titleResource = string.sign_credit_dialog_title,
+                    description = dialogDescription,
+                    positiveResource = string.sign_credit_dialog_continue,
+                    negativeResource = string.payment_points_dialog_negative_button,
+                    negativeAction = {
+                        emitBaseEvent(SimulateUserInteraction)
+                        onUIEvent(OnNavigateToHome)
+                    },
+                    isActive = mutableStateOf(true)
+                )
             )
-        )
+        }
     }
 
     private fun onListenSmartContractEventSubscription() {

@@ -148,17 +148,19 @@ fun PaymentAccountList(
                         )
                     })
             }
+            item {
+                CustomButton(
+                    text = stringResource(id = R.string.payment_account_create),
+                    modifier = Modifier
+                        .padding(top = 32.dp)
+                        .fillMaxWidth(),
+                    onClick = {
+                        sharedViewModel.onUIEvent(CreditViewModel.UIEvent.NavigateToAccountScreen)
+                    },
+                    buttonType = CustomButtonType.PrimaryTertiary,
+                    trailingIcon = R.drawable.ic_plus
+                )
+            }
         }
     }
-    CustomButton(
-        text = stringResource(id = R.string.payment_account_create),
-        modifier = Modifier
-            .padding(top = 32.dp)
-            .fillMaxWidth(),
-        onClick = {
-            sharedViewModel.onUIEvent(CreditViewModel.UIEvent.NavigateToAccountScreen)
-        },
-        buttonType = CustomButtonType.PrimaryTertiary,
-        trailingIcon = R.drawable.ic_plus
-    )
 }

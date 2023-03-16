@@ -59,7 +59,7 @@ class CrosselingAccountViewModel @Inject constructor(
 
         getTextResources()
 
-        onCallQueryListSinpeAccount(
+        getFullSinpeAccountList(
             user = user,
             identification = identification,
             idBrand = idBrand,
@@ -83,6 +83,49 @@ class CrosselingAccountViewModel @Inject constructor(
         }
     }
 
+    private fun getFullSinpeAccountList(
+        user: String,
+        identification: String,
+        idBrand: Int,
+        country: String,
+        idAccount: Long,
+        accountNumber: String,
+        onSuccess: (Boolean) -> Unit,
+        onLoadingValueChange: (isLoading: Boolean) -> Unit,
+        onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
+    ) = executeUseCase {
+        // Reset state
+        uiState = uiState.copy(clientBankAccountList = listOf())
+
+        // Call favorites accounts
+        onCallQueryListSinpeAccount(
+            user,
+            identification,
+            idBrand,
+            country,
+            idAccount,
+            accountNumber,
+            true,
+            onSuccess,
+            onLoadingValueChange,
+            onFailureWithDialog
+        )
+
+        // Call non favorites accounts
+        onCallQueryListSinpeAccount(
+            user,
+            identification,
+            idBrand,
+            country,
+            idAccount,
+            accountNumber,
+            false,
+            onSuccess,
+            onLoadingValueChange,
+            onFailureWithDialog
+        )
+    }
+
     private fun onCallQueryListSinpeAccount(
         user: String,
         identification: String,
@@ -90,6 +133,7 @@ class CrosselingAccountViewModel @Inject constructor(
         country: String,
         idAccount: Long,
         accountNumber: String,
+        isFavorite: Boolean,
         onSuccess: (Boolean) -> Unit,
         onLoadingValueChange: (isLoading: Boolean) -> Unit,
         onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
@@ -101,14 +145,16 @@ class CrosselingAccountViewModel @Inject constructor(
             country = country,
             idAccount = idAccount,
             accountNumber = accountNumber,
-            option = CROSSELING
-
+            option = CROSSELING,
+            isFavorite = isFavorite
         ).collectLatest { result ->
             result.onSuccess { accountList ->
                 onLoadingValueChange(false)
                 onSuccess(accountList?.data?.isEmpty() == true)
                 accountList?.data?.let {
-                    uiState = uiState.copy(clientBankAccountList = it)
+                    uiState = uiState.copy(
+                        clientBankAccountList = uiState.clientBankAccountList + it
+                    )
                 }
             }
             result.onFailure {
@@ -198,7 +244,7 @@ class CrosselingAccountViewModel @Inject constructor(
     data class UIState(
         // Interactions
         val titleResource: Int = R.string.empty,
-        val clientBankAccountList: List<SinpeAccount?>? = null,
+        val clientBankAccountList: List<SinpeAccount?> = listOf(),
         val clientBankAccountSelected: SinpeAccount? = null,
         val accountTypeSelectedString: String = "",
         val accountNumber: String = "",

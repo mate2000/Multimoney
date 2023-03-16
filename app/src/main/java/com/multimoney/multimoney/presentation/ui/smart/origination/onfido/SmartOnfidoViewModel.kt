@@ -9,8 +9,8 @@ import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
-import com.multimoney.data.util.catalog.SmartWorkflow.SMART_FIRMED_ONFIDO_PENDING
 import com.multimoney.data.util.catalog.SmartWorkflow
+import com.multimoney.data.util.catalog.SmartWorkflow.SMART_FIRMED_ONFIDO_PENDING
 import com.multimoney.domain.interaction.accountsmart.MutationAccountStatusUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCase
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCase
@@ -64,6 +64,7 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
+import com.multimoney.multimoney.presentation.util.encodeURLToUTF
 import com.multimoney.multimoney.presentation.util.onfido.OnFidoHelper
 import com.multimoney.multimoney.presentation.util.toJson
 import com.onfido.android.sdk.capture.ExitCode
@@ -75,8 +76,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
 @HiltViewModel
@@ -352,9 +351,9 @@ class SmartOnfidoViewModel @Inject constructor(
 
     private fun onNavigateToSignDocumentScreen(signDocumentStep: String) {
         popAndNavigateTo(
-            route = "${Screen.SmartSignScreen.baseRoute}/$signDocumentStep/${
-            URLEncoder.encode(evicertiaUrl, StandardCharsets.UTF_8.toString())
-            }/$idBrand/$pkUser/$identification/$email/$idRequestSysde/$firstName/$lastName/${true}/$globalId/$user/$comingFromCrypto/${!smartSubscriptionManager.hasEvicertiaLink()}/$evicertiaStatus/$workflow",
+            route = "${Screen.SmartSignScreen.baseRoute}/$signDocumentStep/${evicertiaUrl.encodeURLToUTF()}" +
+                    "/$idBrand/$pkUser/$identification/$email/$idRequestSysde/$firstName/$lastName/${true}/" +
+                    "$globalId/$user/$comingFromCrypto/${!smartSubscriptionManager.hasEvicertiaLink()}/$evicertiaStatus/$workflow",
             popTo = Screen.SmartOnfidoScreen.route
         )
     }

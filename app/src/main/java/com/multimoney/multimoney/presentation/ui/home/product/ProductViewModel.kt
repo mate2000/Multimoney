@@ -15,6 +15,7 @@ import com.multimoney.data.util.catalog.MyProductStatus
 import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus.NOT_SIGNED
 import com.multimoney.data.util.catalog.SmartWorkflow
 import com.multimoney.data.util.catalog.SmartWorkflow.SMART_CONTRACT_PROCESS
+import com.multimoney.data.util.catalog.SmartWorkflow.SMART_FIRMED_ONFIDO_PENDING
 import com.multimoney.data.util.catalog.SmartWorkflow.SMART_FIRMED_ONFIDO_REJECTED
 import com.multimoney.data.util.catalog.SmartWorkflow.SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS
 import com.multimoney.data.util.catalog.SmartWorkflow.SMART_ONFIDO_PROCESS
@@ -23,6 +24,7 @@ import com.multimoney.domain.interaction.accountsmart.QueryListSinpeAccountUseCa
 import com.multimoney.domain.interaction.balance.QueryBalanceCardInformationUseCase
 import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCase
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
+import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
 import com.multimoney.domain.model.accountsmart.SinpeAccount
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.accountsmart.SmartAccountSmall
@@ -35,9 +37,9 @@ import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditMovementsResult
 import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
 import com.multimoney.domain.model.metrics.BaseEventDataDto
-import com.multimoney.domain.model.profile.CountryContact
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.ValidateUserStatus
+import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -47,7 +49,6 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.CROSSELING
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.WHATSAPP_LINK
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
@@ -98,18 +99,22 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnVisaCardExpiredDialog
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
+import com.multimoney.multimoney.presentation.ui.smart.origination.SmartSubscriptionManager
 import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.FilterDate
 import com.multimoney.multimoney.presentation.util.NfcHelper
 import com.multimoney.multimoney.presentation.util.PAGE_SIZE
 import com.multimoney.multimoney.presentation.util.ShareHelper
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
+import com.multimoney.multimoney.presentation.util.catalog.CreditSubscriptionStep
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.ProfileCardListOrigin
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
+import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
+import com.multimoney.multimoney.presentation.util.encodeURLToUTF
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.getPreviousDate
@@ -117,8 +122,6 @@ import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.NovoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
@@ -138,6 +141,7 @@ class ProductViewModel @Inject constructor(
     private val queryListSinpeAccountUseCaseImpl: QueryListSinpeAccountUseCase,
     private val queryGetCryptoCurrencyMovementsUseCase: GetCryptoCurrencyMovementsUseCase,
     private val mutationAccountStatusUseCase: MutationAccountStatusUseCase,
+    private val smartSubscriptionManager: SmartSubscriptionManager,
     private val cryptoHelper: CryptoHelper
 ) : BaseViewModel(true) {
 
@@ -372,8 +376,10 @@ class ProductViewModel @Inject constructor(
 
         when (smartStep) {
             SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS.workflow -> onIntent()
-            SMART_CONTRACT_PROCESS.workflow -> onCallMutationAccountStatusUseCase(comingFromCrypto)
-            SMART_ONFIDO_PROCESS.workflow, SMART_FIRMED_ONFIDO_REJECTED.workflow -> {
+            SMART_CONTRACT_PROCESS.workflow -> onStartSubscription(comingFromCrypto)
+            SMART_ONFIDO_PROCESS.workflow,
+            SMART_FIRMED_ONFIDO_PENDING.workflow,
+            SMART_FIRMED_ONFIDO_REJECTED.workflow -> {
                 navigateTo(
                     "${Screen.SmartOnfidoScreen.baseRoute}/$userName/${uiState.idBrand}/" +
                             "$pkUser/$identification/$email/$firstName/${uiState.userStatus?.infoUser?.lastName}/" +
@@ -949,19 +955,21 @@ class ProductViewModel @Inject constructor(
                 ?: 0L
         ).collectLatest { result ->
             result.onSuccess {
-                it?.urlFirmDocument?.let { url ->
-                    navigateTo(
-                        "${Screen.SmartSignScreen.baseRoute}/${SIGN_DOCUMENTS_STEP.value}/" +
-                                "${URLEncoder.encode(url, StandardCharsets.UTF_8.toString())}/" +
-                                "${uiState.idBrand.toIntOrNull() ?: Brand.CostaRica.id}/$pkUser/$identification/$email/" +
-                                "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/$firstName/" +
-                                "${uiState.userStatus?.infoUser?.lastName}/${true}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/" +
-                                "$userName/$comingFromCrypto/${false}/${uiState.userStatus?.infoBankAccount?.statusFirm}/" +
-                                "${uiState.userStatus?.infoBankAccount?.wording?.workflow}"
-                    )
-                }
+                navigateToSignScreen(it?.urlFirmDocument, comingFromCrypto)
             }
         }
+    }
+
+    private fun navigateToSignScreen(url: String? = null, comingFromCrypto: Boolean){
+        navigateTo(
+            "${Screen.SmartSignScreen.baseRoute}/${if (url.isNullOrBlank()) GENERATE_DOCUMENT_STEP.value else SIGN_DOCUMENTS_STEP.value}/" +
+                    "${url?.encodeURLToUTF()}/" +
+                    "${uiState.idBrand.toIntOrNull() ?: Brand.CostaRica.id}/$pkUser/$identification/$email/" +
+                    "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/$firstName/" +
+                    "${uiState.userStatus?.infoUser?.lastName}/${true}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/" +
+                    "$userName/$comingFromCrypto/${!url.isNullOrBlank()}/${uiState.userStatus?.infoBankAccount?.statusFirm}/" +
+                    "${uiState.userStatus?.infoBankAccount?.wording?.workflow}"
+        )
     }
 
     private fun onCallQueryBalanceCardInformation(onLoadingValueChange: (isLoading: Boolean) -> Unit) {
@@ -1214,6 +1222,34 @@ class ProductViewModel @Inject constructor(
                 dataStorePreferences.isAdjustFirstActivateMMVisaEventRegister(false)
             }
         }
+
+    private fun onStartSubscription(comingFromCrypto: Boolean) {
+        if (uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde != 0L) {
+            onCallMutationAccountStatusUseCase(comingFromCrypto)
+            smartSubscriptionManager.idSubscriptionSubscribe(getSmartSubscriptionListener())
+            smartSubscriptionManager.startSmartSubscription(
+                uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde ?: 0L,
+                uiState.userStatus?.infoUser?.idBrand ?: Brand.CostaRica.id
+            )
+        }
+    }
+
+    private fun getSmartSubscriptionListener() =
+        object : SmartSubscriptionManager.SubscriptionEventListener {
+            override fun onCapturedEvent(smartContractEvent: AccountSmartContractResult?) {
+                handleSubscriptionsSteps(smartContractEvent = smartContractEvent)
+            }
+
+            override fun onSubscriptionFailToConnect(httpError: HttpError) = Unit
+        }
+
+    private fun handleSubscriptionsSteps(smartContractEvent: AccountSmartContractResult?) {
+        when (smartContractEvent?.currentStep) {
+            CreditSubscriptionStep.LinkGenerated.step -> {
+                navigateToSignScreen(smartContractEvent.link, false)
+            }
+        }
+    }
 
     data class UIState(
         // Fields

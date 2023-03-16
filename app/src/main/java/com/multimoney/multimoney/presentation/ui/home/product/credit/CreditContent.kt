@@ -5,11 +5,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditWorkflow
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMaxAttemptsCardClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToGtSvNonPreApproved
@@ -24,7 +22,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnfidoReject
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditStartProcessIncomplete
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.OngoingCredit
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Primary
 
@@ -32,10 +29,6 @@ import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Pr
 fun CreditContent(viewModel: ProductViewModel) {
     viewModel.uiState.userStatus?.apply {
         val context = LocalContext.current
-        val whatsAppLink = stringResource(
-            id = R.string.whatsapp_deep_link,
-            SignUpViewModel.PHONE_HARDCODED
-        )
         if (infoCredit?.wording?.display == true) {
             CustomProductBackground(
                 modifier = Modifier.padding(horizontal = 16.dp),
@@ -55,7 +48,7 @@ fun CreditContent(viewModel: ProductViewModel) {
                             idBrand = viewModel.uiState.idBrand.toIntOrNull() ?: Brand.CostaRica.id,
                             action = getCardAction(
                                 workflow = infoCredit?.wording?.workflow ?: "",
-                                whatsAppLink = whatsAppLink,
+                                whatsAppLink = viewModel.whatsAppLink,
                                 context = context,
                                 viewModel = viewModel
                             ),
@@ -70,7 +63,7 @@ fun CreditContent(viewModel: ProductViewModel) {
                             idBrand = viewModel.uiState.idBrand.toInt(),
                             action = getCardAction(
                                 workflow = infoCredit?.wording?.workflow ?: "",
-                                whatsAppLink = whatsAppLink,
+                                whatsAppLink = viewModel.whatsAppLink,
                                 context = context,
                                 viewModel = viewModel
                             )
@@ -81,7 +74,7 @@ fun CreditContent(viewModel: ProductViewModel) {
                             action = getCardAction(
                                 workflow = infoCredit?.wording?.workflow ?: "",
                                 whatsAppLink = viewModel.uiState.userStatus?.infoCredit?.wording?.link
-                                    ?: whatsAppLink,
+                                    ?: viewModel.whatsAppLink,
                                 context = context,
                                 viewModel = viewModel
                             ),
@@ -95,7 +88,7 @@ fun CreditContent(viewModel: ProductViewModel) {
                             action = {
                                 viewModel.onUIEvent(
                                     OnMaxAttemptsCardClick(
-                                        whatsAppLink = whatsAppLink,
+                                        whatsAppLink = viewModel.whatsAppLink,
                                         context = context
                                     )
                                 )

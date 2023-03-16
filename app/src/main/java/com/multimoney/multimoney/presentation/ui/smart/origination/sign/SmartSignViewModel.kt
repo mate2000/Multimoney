@@ -32,14 +32,15 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.OpenWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.SmartSubscriptionManager
+import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.BaseEvent.OpenWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.BaseEvent.SimulateUserInteraction
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.NavigateToSignUpDocument
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnChangeScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnCloseClick
+import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnGetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnInitializeText
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnNavigateToContinueValidatingIdentity
@@ -91,6 +92,7 @@ class SmartSignViewModel @Inject constructor(
     var shouldGetEvicertiaLink = true
     var evicertiaStatus: String = ""
     var workflow: String = ""
+    var whatsAppLink: String = ""
     var isDialogShowed: Boolean = false
 
     init {
@@ -219,7 +221,7 @@ class SmartSignViewModel @Inject constructor(
             alertResultButtonResource = string.contact,
             alertResultRightButtonClick = { onUIEvent(OnNavigateToHome) },
             alertResultButtonAction = {
-                emitBaseEvent(OpenWhatsAppLink)
+                emitBaseEvent(OpenWhatsAppLink(whatsAppLink ?: ""))
                 onUIEvent(OnNavigateToHome)
             }
         )
@@ -378,6 +380,12 @@ class SmartSignViewModel @Inject constructor(
         }
     }
 
+    private fun onGetWhatsAppLink() {
+        viewModelScope.launch {
+            whatsAppLink = dataStorePreferences.getWhatsAppLink().first()
+        }
+    }
+
     private fun buildParamsListFromCreditContractEvent(smartContractEvent: AccountSmartContractResult?): List<Pair<String, String>> {
         return buildList<Pair<String, String>> {
             add(ID_PRINT to smartContractEvent?.idBrand.toString())
@@ -441,6 +449,7 @@ class SmartSignViewModel @Inject constructor(
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = uiEvent.isLoading)
             is OnStartListenerSubscriptionSmartContractEvent -> onListenSmartContractEventSubscription()
             is NavigateToSignUpDocument -> navigateToSignDocument()
+            is OnGetWhatsAppLink -> onGetWhatsAppLink()
         }
     }
 
@@ -454,9 +463,11 @@ class SmartSignViewModel @Inject constructor(
         object OnNavigateToContinueValidatingIdentity : UIEvent()
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
         object NavigateToSignUpDocument : UIEvent()
+        object OnGetWhatsAppLink : UIEvent()
     }
 
     sealed class BaseEvent {
+        data class OpenWhatsAppLink(val whatsAppLink: String) : BaseEvent()
         object SimulateUserInteraction : BaseEvent()
     }
 

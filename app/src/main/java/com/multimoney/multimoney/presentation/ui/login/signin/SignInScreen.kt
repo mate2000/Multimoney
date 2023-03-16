@@ -38,8 +38,6 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiaryUnderLined
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -51,6 +49,7 @@ import com.multimoney.multimoney.presentation.util.capitalized
 import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.getDeviceName
 import com.multimoney.multimoney.presentation.util.getDeviceType
+import com.multimoney.multimoney.presentation.util.getUserCountry
 import com.multimoney.multimoney.presentation.util.splitByWhiteSpace
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
@@ -80,17 +79,9 @@ fun SignInScreen(
                 )
             )
             onUIEvent(SignInViewModel.UIEvent.OnUpdateIso3Country(context.resources.configuration.locale.isO3Country))
+            onUIEvent(SignInViewModel.UIEvent.OnSetCountryCode(context.getUserCountry()))
         }
-
     }
-    viewModel.onUIEvent(
-        SignInViewModel.UIEvent.OnSetupSupportLink(
-            stringResource(
-                id = R.string.whatsapp_deep_link,
-                SignUpViewModel.PHONE_HARDCODED
-            )
-        )
-    )
 
     viewModel.onUIEvent(
         SignInViewModel.UIEvent.OnInitializeBiometricPrompt(

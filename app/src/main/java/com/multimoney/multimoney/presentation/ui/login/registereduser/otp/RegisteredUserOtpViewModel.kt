@@ -6,8 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.domain.interaction.profile.QueryCountryContactUseCase
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
 import com.multimoney.domain.interaction.security.QueryValidatePinUseCase
+import com.multimoney.domain.model.profile.CountryContact
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -22,6 +24,7 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.USER_DATA
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnBackClick
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnCallCountryContact
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnCallMutationSendPinProcess
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnGetOtpFromMessage
@@ -39,6 +42,12 @@ import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDateTime
+import java.util.regex.Pattern
+import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit.SECONDS
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -47,18 +56,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import java.util.regex.Pattern
-import javax.inject.Inject
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit.SECONDS
 
 @HiltViewModel
 class RegisteredUserOtpViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val mutationSendPinProcessUseCase: MutationSendPinProcessUseCase,
     private val queryValidatePinUseCase: QueryValidatePinUseCase,
+    private val queryCountryContactUseCase: QueryCountryContactUseCase,
     private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(false) {
 
@@ -70,7 +74,7 @@ class RegisteredUserOtpViewModel @Inject constructor(
     private var idBrand: Int = 0
     private var otpMethod: String = ""
     var userData: UserData? = null
-    var linkWhatsapp = ""
+    var countryContact: CountryContact? = null
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -78,8 +82,7 @@ class RegisteredUserOtpViewModel @Inject constructor(
         otpMethod = savedStateHandle[OTP_METHOD] ?: ""
     }
 
-    private fun onStart(linkWhatsapp: String) {
-        this.linkWhatsapp = linkWhatsapp
+    private fun onStart() {
         uiState = when (otpMethod) {
             SendOtpMethod.Email.value -> uiState.copy(
                 titleResource = R.string.registered_user_otp_title_email,
@@ -93,6 +96,18 @@ class RegisteredUserOtpViewModel @Inject constructor(
             )
         }
     }
+
+    private fun getContactInfo() =
+        executeUseCase {
+            queryCountryContactUseCase.invoke(
+                user = userData?.email ?: "",
+                idBrand = idBrand
+            ).collectLatest { result ->
+                result.onSuccess { contactInfo ->
+                    countryContact = contactInfo
+                }
+            }
+        }
 
     private fun getOtpFromMessage(message: String) {
         val otpMatcher = Pattern.compile(OTP_MESSAGE_REGEX).matcher(message)
@@ -155,9 +170,19 @@ class RegisteredUserOtpViewModel @Inject constructor(
 
     private fun resend() {
         if (uiState.otpResend == ResendOtp.SMS.option) {
-            registerAdjustEvent(adjustEventType = AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_RESEND_OTP_2013, isLoggedIn = false, data = userData?.toJson() ?: "", applyAdjust = false)
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_RESEND_OTP_2013,
+                isLoggedIn = false,
+                data = userData?.toJson() ?: "",
+                applyAdjust = false
+            )
         } else {
-            registerAdjustEvent(adjustEventType = AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_BY_CALL_2014, isLoggedIn = false, data = userData?.toJson() ?: "", applyAdjust = false)
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_BY_CALL_2014,
+                isLoggedIn = false,
+                data = userData?.toJson() ?: "",
+                applyAdjust = false
+            )
         }
         uiState = uiState.copy(
             isTimerRunning = true,
@@ -218,7 +243,7 @@ class RegisteredUserOtpViewModel @Inject constructor(
 
     private fun onUserBlocked() {
         navigateToSignIn()
-        emitBaseEvent(BaseEvent.OnOpenWhatsApp(linkWhatsapp))
+        emitBaseEvent(BaseEvent.OnOpenWhatsApp(countryContact?.whatsappLink ?: ""))
     }
 
     private fun navigateToSignIn() = popAndNavigateTo(
@@ -276,7 +301,11 @@ class RegisteredUserOtpViewModel @Inject constructor(
                 result.onSuccess {
                     viewModelScope.launch {
                         if (dataStorePreferences.isAdjustSingUpAlreadyCustomerOTPEventRegister().first()) {
-                            registerAdjustEvent(AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_SUCCESS_CONFIRMATION_2012, isLoggedIn = false, data = userData?.toJson() ?: "")
+                            registerAdjustEvent(
+                                AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_SUCCESS_CONFIRMATION_2012,
+                                isLoggedIn = false,
+                                data = userData?.toJson() ?: ""
+                            )
                             dataStorePreferences.isAdjustSingUpAlreadyCustomerOTPEventRegister(false)
                         }
                     }
@@ -315,7 +344,7 @@ class RegisteredUserOtpViewModel @Inject constructor(
                 isActive = mutableStateOf(true),
                 positiveResource = string.contact,
                 positiveAction = {
-                    emitBaseEvent(BaseEvent.OnOpenWhatsApp(linkWhatsapp))
+                    emitBaseEvent(BaseEvent.OnOpenWhatsApp(countryContact?.whatsappLink ?: ""))
                 }
             )
         )
@@ -343,7 +372,7 @@ class RegisteredUserOtpViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is OnStart -> onStart(event.linkWhatsapp)
+            is OnStart -> onStart()
             is OnOtpValueChange -> onOtpValueChange(event.value)
             is OnBackClick -> onBackClick()
             is OnContinueClick -> onContinueClick()
@@ -351,11 +380,12 @@ class RegisteredUserOtpViewModel @Inject constructor(
             is OnCallMutationSendPinProcess -> callMutationSendPinProcess()
             is OnInitializeTimer -> initializeTimer(event.phaseCount, event.time)
             is OnOtherPhoneNumberClick -> onOtherPhoneNumberClick()
+            is OnCallCountryContact -> getContactInfo()
         }
     }
 
     sealed class UIEvent {
-        data class OnStart(val linkWhatsapp: String) : UIEvent()
+        object OnStart : UIEvent()
         data class OnOtpValueChange(val value: String) : UIEvent()
         data class OnGetOtpFromMessage(val message: String) : UIEvent()
         data class OnInitializeTimer(val phaseCount: Int, val time: Long) : UIEvent()
@@ -363,6 +393,7 @@ class RegisteredUserOtpViewModel @Inject constructor(
         object OnBackClick : UIEvent()
         object OnContinueClick : UIEvent()
         object OnOtherPhoneNumberClick : UIEvent()
+        object OnCallCountryContact : UIEvent()
     }
 
     sealed class BaseEvent {

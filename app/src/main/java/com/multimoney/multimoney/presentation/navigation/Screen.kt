@@ -100,8 +100,6 @@ const val VERSION = "version"
 const val TRANSFER_TYPE = "transfer_type"
 const val ORIGIN_ACCOUNT = "origin_account"
 const val DESTINY_ACCOUNT = "destiny_account"
-const val SMART_ACCOUNTS_LIST = "smart_accounts_list"
-const val USER_CRYPTO_BALANCES = "user_crypto_balances"
 const val SMART_ACCOUNTS_ID_LIST = "smart_id_list"
 const val SMART_ACCOUNT = "smart_account"
 const val SECOND_SMART_ACCOUNT = "second_smart_account"
@@ -133,15 +131,11 @@ const val CROSSELING = "crosseling"
 const val OTP_METHOD = "otp_method"
 const val SYS_ID_ACCOUNT_REQUEST = "sys_id_request"
 const val WORK_FLOW = "work_flow"
-const val WHATSAPP_LINK = "whatsapp_link"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
 const val HOME_STATE = "home_state"
-const val PREVIOUS_IS_RETURN_TO_HOME = "previous_is_return_to_home"
 const val QR_CODE_RESULT = "qr_code"
-
-const val RELEASE_TOAST = "transaction_released_toast"
 
 /**
  * Use this class to declare all your new screens and their routes

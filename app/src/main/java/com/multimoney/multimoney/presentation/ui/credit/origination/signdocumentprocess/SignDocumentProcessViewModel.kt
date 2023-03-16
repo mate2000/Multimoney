@@ -9,10 +9,8 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.domain.interaction.credit.QueryGetLinkCreditContractUseCase
-import com.multimoney.domain.interaction.profile.QueryCountryContactUseCase
 import com.multimoney.domain.model.credit.CreditContractEvent
 import com.multimoney.domain.model.metrics.OriginationEventDataDto
-import com.multimoney.domain.model.profile.CountryContact
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -35,7 +33,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_GET_EVI
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.OpenWhatsAppLink
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallCountryContact
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnGetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallGetLinkCreditContractEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallGetLinkCreditContractSecondTime
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnChangeScreen
@@ -69,7 +67,6 @@ class SignDocumentProcessViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val creditSubscriptionManager: CreditSubscriptionManager,
     private val queryGetLinkCreditContractUseCase: QueryGetLinkCreditContractUseCase,
-    private val queryCountryContactUseCase: QueryCountryContactUseCase,
     val mmCountDownTimer: MMCountDownTimer,
     private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
@@ -87,7 +84,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     var isCrosseling: Boolean = false
     var shouldGetEvicertiaLink = true
     var evisertiaStatus: String = ""
-    var contactCountryInfo: CountryContact? = null
+    var whatsAppLink: String? = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -252,16 +249,9 @@ class SignDocumentProcessViewModel @Inject constructor(
         }
     }
 
-    private fun getContactInfo() =
-        executeUseCase {
-            queryCountryContactUseCase.invoke(
-                user = email,
-                idBrand = idBrand
-            ).collectLatest { result ->
-                result.onSuccess { contactInfo ->
-                    contactCountryInfo = contactInfo
-                }
-            }
+    private fun onGetWhatsAppLink() =
+        viewModelScope.launch {
+            whatsAppLink = dataStorePreferences.getWhatsAppLink().first()
         }
 
     private suspend fun restartMetricsPreferences() {
@@ -304,7 +294,7 @@ class SignDocumentProcessViewModel @Inject constructor(
             alertResultButtonResource = string.contact,
             alertResultRightButtonClick = { onUIEvent(OnNavigateToHome) },
             alertResultButtonAction = {
-                emitBaseEvent(OpenWhatsAppLink(contactCountryInfo?.whatsappLink ?: ""))
+                emitBaseEvent(OpenWhatsAppLink(whatsAppLink ?: ""))
                 onUIEvent(OnNavigateToHome)
             }
         )
@@ -503,7 +493,7 @@ class SignDocumentProcessViewModel @Inject constructor(
             is OnShowDialogInformation -> createDialog()
             is OnNavigateToHome -> onNavigateToHome()
             is OnNavigateToContinueValidatingIdentity -> onNavigateToContinueValidatingIdentity()
-            is OnCallCountryContact -> getContactInfo()
+            is OnGetWhatsAppLink -> onGetWhatsAppLink()
         }
     }
 
@@ -515,7 +505,7 @@ class SignDocumentProcessViewModel @Inject constructor(
         data class OnChangeScreen(val signDocumentStep: String) : UIEvent()
         object OnNavigateToHome : UIEvent()
         object OnNavigateToContinueValidatingIdentity : UIEvent()
-        object OnCallCountryContact : UIEvent()
+        object OnGetWhatsAppLink : UIEvent()
     }
 
     sealed class BaseEvent {

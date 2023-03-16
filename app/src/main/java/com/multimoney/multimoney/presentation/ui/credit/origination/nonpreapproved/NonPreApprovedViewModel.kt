@@ -98,7 +98,6 @@ class NonPreApprovedViewModel @Inject constructor(
     private var birthdayMinDate: LocalDate? = null
     private var birthdayMaxDate: LocalDate? = null
     private var birthdateFormatter: DateTimeFormatter? = null
-    private var whatsAppLink: String = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND]
@@ -113,7 +112,6 @@ class NonPreApprovedViewModel @Inject constructor(
         idPrint = savedStateHandle[SIGN_DOCUMENT_ID_PRINT]
         lastStep = savedStateHandle[CREDIT_STEP]
         crosseling = savedStateHandle[CROSSELING]
-        whatsAppLink = savedStateHandle[WHATSAPP_LINK] ?: ""
         getTextResources()
         setBirthdayMinAndMaxDates(minDate = DATE_MIN_YEARS, maxDate = DATE_MAX_YEARS)
     }
@@ -360,16 +358,7 @@ class NonPreApprovedViewModel @Inject constructor(
                 .plus(getNavParam(ONFIDO_STATUS, statusOnfido.orEmpty()))
                 .plus(getNavParam(EVICERTIA_STATUS, statusEvicertia.orEmpty()))
                 .plus(getNavParam(SIGN_DOCUMENT_ID_PRINT, idPrint ?: 0))
-                .plus(getNavParam(CROSSELING, crosseling ?: false))
-                .plus(
-                    getNavParam(
-                        WHATSAPP_LINK,
-                        URLEncoder.encode(
-                            whatsAppLink,
-                            StandardCharsets.UTF_8.toString()
-                        ).orEmpty()
-                    )
-                ),
+                .plus(getNavParam(CROSSELING, crosseling ?: false)),
             popTo = Screen.NonPreApprovedScreen.route
         )
 

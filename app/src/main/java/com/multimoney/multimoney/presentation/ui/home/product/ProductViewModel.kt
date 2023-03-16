@@ -160,7 +160,7 @@ class ProductViewModel @Inject constructor(
     var smartMovementsList: List<SmartMovementsResult> = emptyList()
     var creditMovements: List<CreditMovementsResult> = emptyList()
     var smartAccount: SmartAccountID? = null
-    var countryContact: CountryContact? = null
+    var whatsAppLink: String = ""
 
     private fun onSetUserData(
         idBrand: String,
@@ -169,14 +169,12 @@ class ProductViewModel @Inject constructor(
         identification: String,
         email: String,
         userName: String,
-        countryContact: CountryContact?,
         validateUserStatus: ValidateUserStatus?,
         configurationVersion: ConfigurationVersion?,
         productPageList: List<ProductPage>,
         smartMovements: List<SmartMovementsResult>,
         creditMovements: List<CreditMovementsResult>
     ) {
-        this.countryContact = countryContact
         this.pkUser = pkUser
         this.identification = identification
         this.email = email
@@ -194,6 +192,7 @@ class ProductViewModel @Inject constructor(
         this.smartMovementsList = smartMovements
         this.creditMovements = creditMovements
         viewModelScope.launch {
+            whatsAppLink = preferences.getWhatsAppLink().first()
             uiState = uiState.copy(
                 shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first(),
                 isCryptoTransferEnabled = cryptoHelper.isCryptoTransferEnabled()
@@ -352,15 +351,6 @@ class ProductViewModel @Inject constructor(
                             getNavParam(
                                 CROSSELING,
                                 uiState.userStatus?.infoCredit?.infoPreApprove?.crosseling ?: false
-                            )
-                        )
-                        .plus(
-                            getNavParam(
-                                WHATSAPP_LINK,
-                                URLEncoder.encode(
-                                    countryContact?.whatsappLink,
-                                    StandardCharsets.UTF_8.toString()
-                                ).orEmpty()
                             )
                         )
                 )
@@ -666,15 +656,6 @@ class ProductViewModel @Inject constructor(
                     getNavParam(
                         CROSSELING,
                         uiState.userStatus?.infoCredit?.infoPreApprove?.crosseling ?: false
-                    )
-                )
-                .plus(
-                    getNavParam(
-                        WHATSAPP_LINK,
-                        URLEncoder.encode(
-                            countryContact?.whatsappLink,
-                            StandardCharsets.UTF_8.toString()
-                        ).orEmpty()
                     )
                 )
         )
@@ -1298,7 +1279,6 @@ class ProductViewModel @Inject constructor(
                 identification = uiEvent.identification,
                 email = uiEvent.email,
                 userName = uiEvent.userName,
-                countryContact = uiEvent.countryContact,
                 validateUserStatus = uiEvent.validateUserStatus,
                 configurationVersion = uiEvent.configurationVersion,
                 productPageList = uiEvent.productPageList,
@@ -1426,7 +1406,6 @@ class ProductViewModel @Inject constructor(
             val identification: String,
             val email: String,
             val userName: String,
-            val countryContact: CountryContact?,
             val validateUserStatus: ValidateUserStatus?,
             val configurationVersion: ConfigurationVersion?,
             val productPageList: List<ProductPage>,

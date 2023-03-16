@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.security.MutationChangeDeviceUseCase
 import com.multimoney.domain.interaction.security.MutationRequestChangeDeviceUseCase
 import com.multimoney.domain.model.metrics.EmailDto
@@ -29,6 +30,8 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.UNIQUE_ID
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPViewModel
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInOTPViewModel.UIEvent.OnGetWhatsAppLink
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel
 import com.multimoney.multimoney.presentation.util.ISO3_COSTA_RICA
 import com.multimoney.multimoney.presentation.util.OTP_MESSAGE_REGEX
@@ -42,23 +45,26 @@ import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.takeWhile
 import java.time.LocalDateTime
 import java.util.regex.Pattern
 import javax.inject.Inject
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.takeWhile
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SignInOTPViewModel @Inject constructor(
     private val mutationRequestChangeDeviceUseCase: MutationRequestChangeDeviceUseCase,
     private val mutationChangeDeviceUseCase: MutationChangeDeviceUseCase,
+    private val dataStorePreferences: DataStorePreferences,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(false) {
 
@@ -73,6 +79,7 @@ class SignInOTPViewModel @Inject constructor(
     private var deviceBrand = ""
     private var deviceModel = ""
     private var isEmulator = ""
+    var whatsAppLink: String? = ""
 
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -170,9 +177,19 @@ class SignInOTPViewModel @Inject constructor(
 
     private fun resend() {
         if (uiState.otpResend == ResendOtp.SMS.option) {
-            registerAdjustEvent(adjustEventType = AdjustEventType.SECURITY_LOGIN_RESEND_OTP_CHANGE_DEVICE_9004, isLoggedIn = false, data = EmailDto(email).toJson() ?: "", applyAdjust = false)
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.SECURITY_LOGIN_RESEND_OTP_CHANGE_DEVICE_9004,
+                isLoggedIn = false,
+                data = EmailDto(email).toJson() ?: "",
+                applyAdjust = false
+            )
         } else {
-            registerAdjustEvent(adjustEventType = AdjustEventType.SECURITY_LOGIN_OTP_BY_CALL_CHANGE_DEVICE_9005, isLoggedIn = false, data = EmailDto(email).toJson() ?: "", applyAdjust = false)
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.SECURITY_LOGIN_OTP_BY_CALL_CHANGE_DEVICE_9005,
+                isLoggedIn = false,
+                data = EmailDto(email).toJson() ?: "",
+                applyAdjust = false
+            )
         }
         uiState = uiState.copy(
             isTimerRunning = true,
@@ -215,7 +232,10 @@ class SignInOTPViewModel @Inject constructor(
     private fun onCallMutationRequestChangeDevice() = executeUseCase {
         mutationRequestChangeDeviceUseCase.invoke(email).collectLatest { result ->
             result.onSuccess {
-                initializeTimer(if (uiState.phaseCount == PHASE_ONE) PHASE_ONE else uiState.phaseCount.plus(1), totalTime = it.otpTime?.toLong() ?: DEFAULT_OTP_DURATION)
+                initializeTimer(
+                    if (uiState.phaseCount == PHASE_ONE) PHASE_ONE else uiState.phaseCount.plus(1),
+                    totalTime = it.otpTime?.toLong() ?: DEFAULT_OTP_DURATION
+                )
                 getPhaseAction()
                 onExecuteTimer()
                 uiState = uiState.copy(
@@ -238,7 +258,12 @@ class SignInOTPViewModel @Inject constructor(
                 uiState = uiState.copy(isLoading = false)
                 when (it.status) {
                     SUCCESS_STATUS -> {
-                        registerAdjustEvent(AdjustEventType.SECURITY_LOGIN_SUCCESS_CHANGE_DEVICE_9003, isLoggedIn = false, applyAdjust = false, data = EmailDto(email).toJson())
+                        registerAdjustEvent(
+                            AdjustEventType.SECURITY_LOGIN_SUCCESS_CHANGE_DEVICE_9003,
+                            isLoggedIn = false,
+                            applyAdjust = false,
+                            data = EmailDto(email).toJson()
+                        )
                         onNavigateToLogin()
                     }
                     WRONG_CODE -> {
@@ -276,18 +301,30 @@ class SignInOTPViewModel @Inject constructor(
         onCallMutationRequestChangeDevice()
     }
 
-    private fun openWhatsAppLink(context: Context, whatsAppLink: String) {
-        context.openWhatsAppDeepLink(whatsAppLink)
+    private fun openWhatsAppLink(context: Context) {
+        context.openWhatsAppDeepLink(whatsAppLink ?: "")
     }
 
     private fun onSetupResources(context: Context) {
         uiState = when (context.resources.configuration.locale.isO3Country) {
             ISO3_COSTA_RICA -> {
-                uiState.copy(weSentYouACodeTextResource = R.string.sign_in_we_sent_you_a_code_template, dialogTextResource = R.string.sign_in_verify_otp_blocked_subtitle_cr)
+                uiState.copy(
+                    weSentYouACodeTextResource = R.string.sign_in_we_sent_you_a_code_template,
+                    dialogTextResource = R.string.sign_in_verify_otp_blocked_subtitle_cr
+                )
             }
             else -> {
-                uiState.copy(weSentYouACodeTextResource = R.string.sign_in_we_sent_you_a_code_template_gt, dialogTextResource = R.string.sign_in_verify_otp_blocked_subtitle)
+                uiState.copy(
+                    weSentYouACodeTextResource = R.string.sign_in_we_sent_you_a_code_template_gt,
+                    dialogTextResource = R.string.sign_in_verify_otp_blocked_subtitle
+                )
             }
+        }
+    }
+
+    private fun onGetWhatsAppLink() {
+        viewModelScope.launch {
+            whatsAppLink = dataStorePreferences.getWhatsAppLink().first()
         }
     }
 
@@ -325,11 +362,11 @@ class SignInOTPViewModel @Inject constructor(
             is UIEvent.OnResendOTP -> onResendOTP()
             is UIEvent.OnGetOtpFromMessage -> getOtpFromMessage(uiEvent.message)
             is UIEvent.OnOpenWhatsappLink -> openWhatsAppLink(
-                uiEvent.context,
-                uiEvent.whatsAppLink
+                uiEvent.context
             )
             is UIEvent.OnShowBlockedDialog -> onShowBlockedDialog()
             is UIEvent.OnSetupResources -> onSetupResources(uiEvent.context)
+            is OnGetWhatsAppLink -> onGetWhatsAppLink()
         }
     }
 
@@ -342,13 +379,14 @@ class SignInOTPViewModel @Inject constructor(
         data class OnGetOtpFromMessage(val message: String) : UIEvent()
         object OnResendOTP : UIEvent()
         data class OnOpenWhatsappLink(
-            val whatsAppLink: String,
             val context: Context
         ) : UIEvent()
 
         data class OnSetupResources(
             val context: Context
         ) : UIEvent()
+
+        object OnGetWhatsAppLink : UIEvent()
     }
 
     companion object {

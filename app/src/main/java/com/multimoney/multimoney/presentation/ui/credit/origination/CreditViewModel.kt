@@ -22,7 +22,6 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.CROSSELING
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.WHATSAPP_LINK
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
@@ -122,7 +121,6 @@ class CreditViewModel @Inject constructor(
         statusEvicertia = savedStateHandle[EVICERTIA_STATUS] ?: ""
         idPrint = savedStateHandle[SIGN_DOCUMENT_ID_PRINT] ?: 0
         crosseling = savedStateHandle[CROSSELING] ?: false
-        whatsAppLink = savedStateHandle[WHATSAPP_LINK] ?: ""
         uiState = uiState.copy(
             lastStep = savedStateHandle[CREDIT_STEP] ?: CreditStep.One.id,
             loadContent = true
@@ -132,6 +130,9 @@ class CreditViewModel @Inject constructor(
     private fun onInitializeTexts(title: Int, description: String) {
         closeDialogTitle = title
         closeDialogDescription = description
+        viewModelScope.launch {
+            whatsAppLink = dataStorePreferences.getWhatsAppLink().first()
+        }
     }
 
     private fun onBackClick(focusManager: FocusManager) {

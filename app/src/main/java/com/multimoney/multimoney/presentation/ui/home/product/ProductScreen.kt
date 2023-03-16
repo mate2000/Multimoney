@@ -126,7 +126,6 @@ fun ProductScreen(
             identification = sharedViewModel.uiState.identification,
             email = sharedViewModel.uiState.email,
             userName = sharedViewModel.uiState.userName,
-            countryContact = sharedViewModel.contactCountryInfo,
             validateUserStatus = sharedViewModel.uiState.validateUserStatus,
             configurationVersion = sharedViewModel.uiState.configurationVersion,
             productPageList = sharedViewModel.uiState.productPageList,

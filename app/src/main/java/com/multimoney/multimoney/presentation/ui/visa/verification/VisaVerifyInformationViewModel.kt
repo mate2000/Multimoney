@@ -29,7 +29,8 @@ import javax.inject.Inject
 @HiltViewModel
 class VisaVerifyInformationViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val mutationCreateCardVDUseCase: MutationCreateCardVDUseCase
+    private val mutationCreateCardVDUseCase: MutationCreateCardVDUseCase,
+
 ) : BaseViewModel(true) {
 
     // uiState

@@ -31,7 +31,6 @@ import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.credit.CreditMovementsResult
 import com.multimoney.domain.model.crypto.HistoricalBalanceClient
-import com.multimoney.domain.model.profile.CountryContact
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.MiniCardsItem
 import com.multimoney.domain.model.security.QuickAction
@@ -63,6 +62,7 @@ import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.util.BiometricHelper
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
@@ -70,7 +70,6 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalPagerApi::class)
@@ -102,7 +101,6 @@ class HomeViewModel @Inject constructor(
     private var biometricPromptNegative = ""
     private var isBiometricActive = false
     private var apiCallCount = 0
-    var contactCountryInfo: CountryContact? = null
 
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -143,7 +141,9 @@ class HomeViewModel @Inject constructor(
                 idBrand = uiState.idBrand.toInt()
             ).collectLatest { result ->
                 result.onSuccess { contactInfo ->
-                    contactCountryInfo = contactInfo
+                    viewModelScope.launch {
+                        dataStorePreferences.setWhatsAppLink(contactInfo?.whatsappLink ?: "")
+                    }
                 }
             }
         }

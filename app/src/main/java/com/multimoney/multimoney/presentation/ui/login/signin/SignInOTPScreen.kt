@@ -58,10 +58,6 @@ fun SignInOTPScreen(
     viewModel: SignInOTPViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-    val whatsAppLink = stringResource(
-        id = R.string.whatsapp_deep_link,
-        SignUpViewModel.PHONE_HARDCODED
-    )
     val launchSmsActivityResult =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val data: Intent? = result.data
@@ -104,7 +100,6 @@ fun SignInOTPScreen(
             onPositiveAction = {
                 viewModel.onUIEvent(
                     SignInOTPViewModel.UIEvent.OnOpenWhatsappLink(
-                        whatsAppLink,
                         context
                     )
                 )

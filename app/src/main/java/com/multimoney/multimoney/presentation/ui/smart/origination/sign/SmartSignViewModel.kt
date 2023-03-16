@@ -10,9 +10,7 @@ import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.SmartWorkflow
 import com.multimoney.domain.interaction.accountsmart.MutationAccountStatusUseCase
-import com.multimoney.domain.interaction.profile.QueryCountryContactUseCase
 import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
-import com.multimoney.domain.model.profile.CountryContact
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R.drawable
@@ -40,9 +38,9 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.SmartSubscrip
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.BaseEvent.OpenWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.BaseEvent.SimulateUserInteraction
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.NavigateToSignUpDocument
-import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnCallCountryContact
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnChangeScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnCloseClick
+import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnGetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnInitializeText
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnNavigateToContinueValidatingIdentity
@@ -73,8 +71,7 @@ class SmartSignViewModel @Inject constructor(
     private val smartSubscriptionManager: SmartSubscriptionManager,
     val mmCountDownTimer: MMCountDownTimer,
     private val dataStorePreferences: DataStorePreferences,
-    private val mutationAccountStatusUseCase: MutationAccountStatusUseCase,
-    private val queryCountryContactUseCase: QueryCountryContactUseCase,
+    private val mutationAccountStatusUseCase: MutationAccountStatusUseCase
 ) : BaseViewModel(true) {
 
     // uiState
@@ -95,7 +92,7 @@ class SmartSignViewModel @Inject constructor(
     var shouldGetEvicertiaLink = true
     var evicertiaStatus: String = ""
     var workflow: String = ""
-    var contactCountryInfo: CountryContact? = null
+    var whatsAppLink: String = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -210,18 +207,6 @@ class SmartSignViewModel @Inject constructor(
         }
     }
 
-    private fun getContactInfo() =
-        executeUseCase {
-            queryCountryContactUseCase.invoke(
-                user = email,
-                idBrand = idBrand
-            ).collectLatest { result ->
-                result.onSuccess { contactInfo ->
-                    contactCountryInfo = contactInfo
-                }
-            }
-        }
-
     private fun showSubscriptionError() {
         uiState = uiState.copy(
             isAlertResultVisible = true,
@@ -232,7 +217,7 @@ class SmartSignViewModel @Inject constructor(
             alertResultButtonResource = string.contact,
             alertResultRightButtonClick = { onUIEvent(OnNavigateToHome) },
             alertResultButtonAction = {
-                emitBaseEvent(OpenWhatsAppLink(contactCountryInfo?.whatsappLink ?: ""))
+                emitBaseEvent(OpenWhatsAppLink(whatsAppLink ?: ""))
                 onUIEvent(OnNavigateToHome)
             }
         )
@@ -391,6 +376,12 @@ class SmartSignViewModel @Inject constructor(
         }
     }
 
+    private fun onGetWhatsAppLink() {
+        viewModelScope.launch {
+            whatsAppLink = dataStorePreferences.getWhatsAppLink().first()
+        }
+    }
+
     private fun buildParamsListFromCreditContractEvent(smartContractEvent: AccountSmartContractResult?): List<Pair<String, String>> {
         return buildList<Pair<String, String>> {
             add(ID_PRINT to smartContractEvent?.idBrand.toString())
@@ -454,7 +445,7 @@ class SmartSignViewModel @Inject constructor(
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = uiEvent.isLoading)
             is OnStartListenerSubscriptionSmartContractEvent -> onListenSmartContractEventSubscription()
             is NavigateToSignUpDocument -> navigateToSignDocument()
-            is OnCallCountryContact -> getContactInfo()
+            is OnGetWhatsAppLink -> onGetWhatsAppLink()
         }
     }
 
@@ -468,7 +459,7 @@ class SmartSignViewModel @Inject constructor(
         object OnNavigateToContinueValidatingIdentity : UIEvent()
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
         object NavigateToSignUpDocument : UIEvent()
-        object OnCallCountryContact : UIEvent()
+        object OnGetWhatsAppLink : UIEvent()
     }
 
     sealed class BaseEvent {

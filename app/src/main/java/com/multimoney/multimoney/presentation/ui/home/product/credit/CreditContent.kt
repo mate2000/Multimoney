@@ -48,7 +48,7 @@ fun CreditContent(viewModel: ProductViewModel) {
                             idBrand = viewModel.uiState.idBrand.toIntOrNull() ?: Brand.CostaRica.id,
                             action = getCardAction(
                                 workflow = infoCredit?.wording?.workflow ?: "",
-                                whatsAppLink = viewModel.countryContact?.whatsappLink ?: "",
+                                whatsAppLink = viewModel.whatsAppLink,
                                 context = context,
                                 viewModel = viewModel
                             ),
@@ -63,7 +63,7 @@ fun CreditContent(viewModel: ProductViewModel) {
                             idBrand = viewModel.uiState.idBrand.toInt(),
                             action = getCardAction(
                                 workflow = infoCredit?.wording?.workflow ?: "",
-                                whatsAppLink = viewModel.countryContact?.whatsappLink ?: "",
+                                whatsAppLink = viewModel.whatsAppLink,
                                 context = context,
                                 viewModel = viewModel
                             )
@@ -74,7 +74,7 @@ fun CreditContent(viewModel: ProductViewModel) {
                             action = getCardAction(
                                 workflow = infoCredit?.wording?.workflow ?: "",
                                 whatsAppLink = viewModel.uiState.userStatus?.infoCredit?.wording?.link
-                                    ?: viewModel.countryContact?.whatsappLink ?: "",
+                                    ?: viewModel.whatsAppLink,
                                 context = context,
                                 viewModel = viewModel
                             ),
@@ -88,7 +88,7 @@ fun CreditContent(viewModel: ProductViewModel) {
                             action = {
                                 viewModel.onUIEvent(
                                     OnMaxAttemptsCardClick(
-                                        whatsAppLink = viewModel.countryContact?.whatsappLink ?: "",
+                                        whatsAppLink = viewModel.whatsAppLink,
                                         context = context
                                     )
                                 )

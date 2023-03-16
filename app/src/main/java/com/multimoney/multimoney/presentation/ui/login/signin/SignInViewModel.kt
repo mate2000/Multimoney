@@ -610,7 +610,6 @@ class SignInViewModel @Inject constructor(
         executeUseCase {
             getContactInfo(Brand.Search.getIdBrandByCountryCode(countryCode))
         }
-
     }
 
     data class UIState(

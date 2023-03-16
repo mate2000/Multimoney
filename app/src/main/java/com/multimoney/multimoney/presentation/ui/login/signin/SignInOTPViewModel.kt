@@ -31,7 +31,6 @@ import com.multimoney.multimoney.presentation.navigation.UNIQUE_ID
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPViewModel
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInOTPViewModel.UIEvent.OnGetWhatsAppLink
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel
 import com.multimoney.multimoney.presentation.util.ISO3_COSTA_RICA
 import com.multimoney.multimoney.presentation.util.OTP_MESSAGE_REGEX

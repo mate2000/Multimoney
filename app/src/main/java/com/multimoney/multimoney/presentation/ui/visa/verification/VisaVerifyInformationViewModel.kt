@@ -30,7 +30,6 @@ import javax.inject.Inject
 class VisaVerifyInformationViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val mutationCreateCardVDUseCase: MutationCreateCardVDUseCase,
-
 ) : BaseViewModel(true) {
 
     // uiState

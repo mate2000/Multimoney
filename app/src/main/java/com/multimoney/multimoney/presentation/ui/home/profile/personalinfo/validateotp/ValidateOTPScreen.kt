@@ -40,6 +40,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
+import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPViewModel.UIEvent.OnGetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TOTAL_DIGITS
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -80,12 +81,14 @@ fun ValidateOTPScreen(
                 }
             }
         }
+
     LaunchedEffect(true) {
         viewModel.executeNavigation(
             onPopBackStack = onPopBackStack,
             onNavigate = onNavigate,
             onPopAndNavigate = onPopAndNavigate
         )
+        viewModel.onUIEvent(OnGetWhatsAppLink)
         requestOTP(viewModel)
     }
 

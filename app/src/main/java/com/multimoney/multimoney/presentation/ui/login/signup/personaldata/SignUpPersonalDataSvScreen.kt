@@ -35,6 +35,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.capitalized
 import com.multimoney.multimoney.presentation.util.capitalizedAllWords
 import com.multimoney.multimoney.presentation.util.catalog.CrDocuments
+import com.multimoney.multimoney.presentation.util.catalog.SvDocuments
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
 
 @Composable
@@ -109,7 +110,7 @@ fun SignUpPersonalDataSvScreen(
             }
         )
 
-        if (viewModel.uiState.identificationValueType.isNotBlank() && viewModel.uiState.identificationValueType != CrDocuments.IdDocument.document) {
+        if (viewModel.uiState.identificationValueType.isNotBlank() && viewModel.uiState.userRegistered.not()) {
             Row(
                 Modifier
                     .fillMaxWidth()

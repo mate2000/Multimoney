@@ -93,15 +93,19 @@ fun SignUpEmailScreen(
                         false
                     )
                 )
-                if (userData?.status == SignUpEmailViewModel.ANOTHER_DEVICE_ALREADY_REGISTERED) {
-                    viewModel.onUIEvent(
-                        OnShowAnotherDeviceAlreadyRegisteredDialog {
-                            viewModel.onSuccessValidation(context, sharedViewModel, userData)
-                        }
-                    )
-                    sharedViewModel.logEvents(null, AdjustEventType.SECURITY_SIGN_UP_CHANGE_DEVICE_9001)
+                if(userData?.isNewUser == false) {
+                    sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnCheckIfEmailExists(userData))
                 } else {
-                    viewModel.onSuccessValidation(context, sharedViewModel, userData)
+                    if (userData?.status == SignUpEmailViewModel.ANOTHER_DEVICE_ALREADY_REGISTERED) {
+                        viewModel.onUIEvent(
+                            OnShowAnotherDeviceAlreadyRegisteredDialog {
+                                viewModel.onSuccessValidation(context, sharedViewModel, userData)
+                            }
+                        )
+                        sharedViewModel.logEvents(null, AdjustEventType.SECURITY_SIGN_UP_CHANGE_DEVICE_9001)
+                    } else {
+                        viewModel.onSuccessValidation(context, sharedViewModel, userData)
+                    }
                 }
             }.onMessage {
                 viewModel.onUIEvent(

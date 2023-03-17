@@ -102,6 +102,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.MotionLayoutMM
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.catalog.FirebaseNotificationRoute
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import kotlinx.coroutines.launch
@@ -208,6 +209,13 @@ fun ProductScreen(
         viewModel.onUIEvent(
             ProductViewModel.UIEvent.OnRegisterAdjustPaxosInMaintenance
         )
+    }
+
+    LaunchedEffect(key1 = true) {
+        if (sharedViewModel.uiState.notificationRoute == FirebaseNotificationRoute.LOAN_MOVEMENTS.route) {
+            viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToCreditMovementsScreen)
+            sharedViewModel.restartNotificationRoutePreference()
+        }
     }
 
     // Pager
@@ -514,11 +522,13 @@ fun ProductContent(
                     cryptoEmptyState = profileEnable,
                     clientBalanceHistory = sharedViewModel.uiState.cryptoHistoricalBalance,
                     openSmartCryptoAction = {
-                        viewModel.onUIEvent(OnNavigateToSmartOriginationFlow(
-                            comingFromCrypto = true,
-                            smartStep = viewModel.uiState.smartContent.second,
-                            onIntent = { context.openWhatsAppDeepLink(viewModel.uiState.userStatus?.infoBankAccount?.wording?.link ?: "") }
-                        ))
+                        viewModel.onUIEvent(
+                            OnNavigateToSmartOriginationFlow(
+                                comingFromCrypto = true,
+                                smartStep = viewModel.uiState.smartContent.second,
+                                onIntent = { context.openWhatsAppDeepLink(viewModel.uiState.userStatus?.infoBankAccount?.wording?.link ?: "") }
+                            )
+                        )
                     }
                 )
             }
@@ -663,7 +673,8 @@ fun ProductFooterExpanded(
                 balance = viewModel.balanceCredit,
                 cryptoMovements = viewModel.uiState.cryptoCurrencyMovements,
                 onShowAllClick = { viewModel.onUIEvent(OnNavigateToCryptoMovements) },
-                actionMarket = { if (viewModel.balanceCredit?.balanceCryptoAccount?.outOfService == true) {
+                actionMarket = {
+                    if (viewModel.balanceCredit?.balanceCryptoAccount?.outOfService == true) {
                         viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToMaintenanceAlert)
                     } else {
                         viewModel.onUIEvent(OnNavigateToCryptoMarket)
@@ -750,7 +761,7 @@ fun ProductCtaFooterExpanded(
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustPressReceiveFirstTime)
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToGiveCryptoFlow)
                 },
-                isCryptoTransferEnabled = viewModel.uiState.isCryptoTransferEnabled,
+                isCryptoTransferEnabled = viewModel.uiState.isCryptoTransferEnabled
             )
         }
     }

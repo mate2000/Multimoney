@@ -1,7 +1,6 @@
 package com.multimoney.multimoney.util.firebase
 
 import android.content.Intent
-import android.util.Log
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -16,7 +15,7 @@ class CustomFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         val messageTitle = message.notification?.title
         val messageBody = message.notification?.body
-        val messageData = message.data[ROUTE_ID]
+        val messageData = message.data[ROUTE_KEY]
 
         safeLet(messageTitle, messageBody) { title, body ->
             displayLocalNotification(
@@ -32,20 +31,19 @@ class CustomFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(newToken: String) {
         super.onNewToken(newToken)
-        Log.d("FCM", "New Firebase Token: $newToken")
     }
 
     private fun getIntent(routeId: String?) =
         if (routeId?.isNotBlank() == true) {
             val intent = Intent(this, MainActivity::class.java)
             intent.also {
-                it.putExtra(ROUTE_ID, routeId)
+                it.putExtra(ROUTE_KEY, routeId)
             }
         } else {
             Intent()
         }
 
     companion object {
-        private const val ROUTE_ID = "route_id"
+        private const val ROUTE_KEY = "routeName"
     }
 }

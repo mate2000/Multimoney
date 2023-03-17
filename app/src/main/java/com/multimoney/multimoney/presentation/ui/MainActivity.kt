@@ -13,6 +13,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.Navigation
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
+import com.multimoney.multimoney.presentation.util.NotificationCommunicator
 import com.multimoney.multimoney.presentation.util.SignOutCommunicator
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getDeviceId
@@ -31,6 +32,9 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
 
     @Inject
     lateinit var mmCountDownTimer: MMCountDownTimer
+
+    @Inject
+    lateinit var notificationCommunicator: NotificationCommunicator
 
     @Inject
     lateinit var dataStorePreferences: DataStorePreferences
@@ -80,17 +84,20 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
                         title = stringResource(id = dialogParameters.value.titleResource),
                         message = stringResource(
                             id = dialogParameters.value.descriptionResource,
-                            dialogParameters.value.additionalText,
+                            dialogParameters.value.additionalText
                         ).ifEmpty { dialogParameters.value.description },
                         positiveButtonText = stringResource(id = dialogParameters.value.positiveResource),
                         openDialogCustom = dialogParameters.value.isActive,
                         onPositiveAction = dialogParameters.value.positiveAction,
-                        isCancelable = dialogParameters.value.isCancelable,
+                        isCancelable = dialogParameters.value.isCancelable
                     )
                 }
             }
         }
     }
+
+    private suspend fun obtainNotificationRoute(route: String) =
+        dataStorePreferences.setNavigationRouteByNotification(route)
 
     private fun saveToken(token: String) {
         lifecycleScope.launch {
@@ -110,6 +117,10 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
 
     override fun onResume() {
         super.onResume()
+        lifecycleScope.launch {
+            obtainNotificationRoute(intent?.getStringExtra(ROUTE_KEY) ?: "")
+            notificationCommunicator.getNavigateToRoute(intent?.getStringExtra(ROUTE_KEY) ?: "", {})
+        }
         isAppInForeground = true
     }
 
@@ -139,4 +150,8 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
     }
 
     override fun isSessionDuplicated() = isSessionAlreadyOpened
+
+    companion object {
+        private const val ROUTE_KEY = "routeName"
+    }
 }

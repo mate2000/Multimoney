@@ -46,6 +46,8 @@ import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer.OnCountDownTimerEvents
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.catalog.getFirebaseNotificationRouteByRoute
+import com.multimoney.multimoney.presentation.util.catalog.shouldRestartFirebaseNotificationRoutePreferenceInHome
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -69,6 +71,15 @@ fun HomeScreen(
         rememberModalBottomSheetState(Hidden, skipHalfExpanded = true)
     val unlinkedToastText = stringResource(id = string.card_preferences_unlinked_card_toast)
 
+    viewModel.getNotificationRoute()
+    LaunchedEffect(key1 = viewModel.uiState.notificationRoute) {
+        if (viewModel.uiState.notificationRoute.isNotEmpty()) {
+            viewModel.onUIEvent(HomeViewModel.UIEvent.OnSetHomeState(getFirebaseNotificationRouteByRoute(viewModel.uiState.notificationRoute)))
+            if (shouldRestartFirebaseNotificationRoutePreferenceInHome(viewModel.uiState.notificationRoute)) {
+                viewModel.restartNotificationRoutePreference()
+            }
+        }
+    }
     viewModel.apply {
         isOnRestart = isRestart
         LaunchedEffect(isOnRestart) {

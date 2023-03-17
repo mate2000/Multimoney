@@ -542,6 +542,11 @@ class DataStorePreferences @Inject constructor(
 
     fun isAdjustSmartFirstTimeSuccessful(): Flow<Boolean> = getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_SUCCESSFUL, true)
 
+    suspend fun setNavigationRouteByNotification(route: String) =
+        setData(FIREBASE_FCM_NAVIGATION_ROUTE, route)
+
+    fun setNavigationRouteByNotification(): Flow<String> = getData(FIREBASE_FCM_NAVIGATION_ROUTE, "")
+
     companion object {
         private val UNIQUE_ID = stringPreferencesKey("unique_id")
         private val DEVICE_ID = stringPreferencesKey("device_id")
@@ -645,6 +650,6 @@ class DataStorePreferences @Inject constructor(
         private val ADJUST_SMART_FIRST_SAVING_KEY = booleanPreferencesKey("adjust_smart_first_saving_key")
 
         // Firebase
-        private val FIREBASE_FCM_TOKEN_KEY = stringPreferencesKey("firebase_token_key")
+        private val FIREBASE_FCM_NAVIGATION_ROUTE = stringPreferencesKey("firebase_token_key")
     }
 }

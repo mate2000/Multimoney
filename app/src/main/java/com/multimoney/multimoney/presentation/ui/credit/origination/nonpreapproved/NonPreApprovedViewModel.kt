@@ -51,15 +51,16 @@ import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateMinusYears
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
+import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class NonPreApprovedViewModel @Inject constructor(
@@ -340,14 +341,23 @@ class NonPreApprovedViewModel @Inject constructor(
             popTo = Screen.HomeScreen.route
         )
 
-    private fun onNavigateToOrigination() = popAndNavigateTo(
-        route = "${Screen.CreditScreen.baseRoute}/${idBrand ?: 0}/${pkUser ?: 0}/${identification.orEmpty()}/${email.orEmpty()}/${lastStep ?: CreditStep.One.id}/" +
-            "${idUserRequest ?: 0}/${firstName.orEmpty()}/" +
-            "${lastName.orEmpty()}/${statusOnfido.orEmpty()}/" +
-            "${statusEvicertia.orEmpty()}/${idPrint ?: 0}/" +
-            "${crosseling ?: false}",
-        popTo = Screen.NonPreApprovedScreen.route
-    )
+    private fun onNavigateToOrigination() =
+        popAndNavigateTo(
+            Screen.CreditScreen.baseRoute
+                .plus(getNavParam(ID_BRAND, idBrand ?: 0))
+                .plus(getNavParam(PK_USER, pkUser ?: 0))
+                .plus(getNavParam(IDENTIFICATION, identification.orEmpty()))
+                .plus(getNavParam(EMAIL, email.orEmpty()))
+                .plus(getNavParam(CREDIT_STEP, lastStep ?: CreditStep.One.id))
+                .plus(getNavParam(ID_USER_REQUEST, idUserRequest ?: 0))
+                .plus(getNavParam(FIRST_NAME, firstName.orEmpty()))
+                .plus(getNavParam(LAST_NAME, lastName.orEmpty()))
+                .plus(getNavParam(ONFIDO_STATUS, statusOnfido.orEmpty()))
+                .plus(getNavParam(EVICERTIA_STATUS, statusEvicertia.orEmpty()))
+                .plus(getNavParam(SIGN_DOCUMENT_ID_PRINT, idPrint ?: 0))
+                .plus(getNavParam(CROSSELING, crosseling ?: false)),
+            popTo = Screen.NonPreApprovedScreen.route
+        )
 
     private fun setSuccessAlertResult(amount: String) {
         uiState = uiState.copy(

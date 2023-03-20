@@ -28,12 +28,12 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.PHONE_HARDCODED
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.BaseEvent.OnOpenWhatsApp
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.Companion.TOTAL_DIGITS
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnAlertButtonClick
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnAlertCloseClick
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnBackClick
+import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnGetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnDoNotSeeClick
@@ -58,19 +58,19 @@ fun VisaVerifyDepositScreen(
     viewModel: VisaVerifyDepositViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-    val whatsAppLink = stringResource(
-        id = string.whatsapp_deep_link,
-        PHONE_HARDCODED
-    )
+
+    LaunchedEffect(true) {
+        viewModel.onUIEvent(OnGetWhatsAppLink)
+    }
 
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
-            onUIEvent(OnStart(whatsAppLink))
+            onUIEvent(OnStart)
             baseEvent.collect { event ->
                 when (event) {
                     is OnOpenWhatsApp -> {
-                        context.openWhatsAppDeepLink(viewModel.linkWhatsapp)
+                        context.openWhatsAppDeepLink(event.linkWhatsapp)
                     }
                 }
             }
@@ -147,7 +147,9 @@ fun VisaVerifyDepositContent(
                             id = R.string.visa_direct_verify_deposit_title
                         ),
                         textAlign = TextAlign.Start,
-                        modifier = Modifier.padding(top = 24.dp).fillMaxWidth()
+                        modifier = Modifier
+                            .padding(top = 24.dp)
+                            .fillMaxWidth()
                     )
 
                     Text(

@@ -39,7 +39,7 @@ const val ID_CLIENT = "id_client"
 const val NAME_CLIENT = "name_client"
 const val ID_LOAN_CLIENT = "id_loan_client"
 const val SUMMARY_LIST = "summary_list"
-const val CARD_SELECTED = "summary_list"
+const val CARD_SELECTED = "card_selected"
 const val CLIENT_BANK_ACCOUNT = "client_bank_account"
 const val CLIENT_CARD_VISA_DIRECT = "client_card_visa_direct"
 const val PAYMENT_METHOD = "payment_method"
@@ -555,9 +555,6 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
         composable(
             Screen.PaymentCardVoucherScreen.route,
             arguments = listOf(
-                navArgument(ID_BRAND) {
-                    type = NavType.IntType
-                },
                 navArgument(ID_CLIENT) {
                     type = NavType.IntType
                 },

@@ -40,7 +40,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPViewModel.UIEvent.OnGetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TOTAL_DIGITS
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -67,10 +67,6 @@ fun ValidateOTPScreen(
         stringResource(id = R.string.profile_phone_number_changed_toast)
     val emailChangedToastText =
         stringResource(id = R.string.profile_email_changed_toast)
-    val whatsAppLink = stringResource(
-        id = R.string.whatsapp_deep_link,
-        SignUpViewModel.PHONE_HARDCODED
-    )
 
     val launchSmsActivityResult =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -85,12 +81,14 @@ fun ValidateOTPScreen(
                 }
             }
         }
+
     LaunchedEffect(true) {
         viewModel.executeNavigation(
             onPopBackStack = onPopBackStack,
             onNavigate = onNavigate,
             onPopAndNavigate = onPopAndNavigate
         )
+        viewModel.onUIEvent(OnGetWhatsAppLink)
         requestOTP(viewModel)
     }
 
@@ -122,8 +120,7 @@ fun ValidateOTPScreen(
             onPositiveAction = {
                 viewModel.onUIEvent(
                     ValidateOTPViewModel.UIEvent.OnOpenWhatsappLink(
-                        context,
-                        whatsAppLink
+                        context
                     )
                 )
             },
@@ -134,10 +131,6 @@ fun ValidateOTPScreen(
 
     viewModel.onUIEvent(
         ValidateOTPViewModel.UIEvent.OnStart(
-            stringResource(
-                id = R.string.whatsapp_deep_link,
-                SignUpViewModel.PHONE_HARDCODED
-            ),
             stringResource(viewModel.uiState.dialogTextResource)
         )
     )
@@ -163,10 +156,7 @@ fun ValidateOTPScreen(
                             },
                             positiveAction = {
                                 viewModel.onUIEvent(
-                                    ValidateOTPViewModel.UIEvent.OnOpenWhatsappLink(
-                                        context,
-                                        whatsAppLink
-                                    )
+                                    ValidateOTPViewModel.UIEvent.OnOpenWhatsappLink(context)
                                 )
                             }
                         )))
@@ -194,7 +184,7 @@ fun ValidateOTPScreen(
     //full screen dialog
     if (viewModel.uiState.isAlertResultVisible) {
         AlertResult(
-            titleString = stringResource(id = if(viewModel.uiState.changingField == FieldToChange.PHONE.value) R.string.profile_error_changing_phone_title else R.string.profile_error_changing_email_title),
+            titleString = stringResource(id = if (viewModel.uiState.changingField == FieldToChange.PHONE.value) R.string.profile_error_changing_phone_title else R.string.profile_error_changing_email_title),
             descriptionString = stringResource(viewModel.uiState.alertTextResource),
             buttonTextResource = R.string.profile_error_changing_phone_button,
             isLeftButtonVisible = false,
@@ -263,7 +253,7 @@ fun ValidateOTPContent(viewModel: ValidateOTPViewModel) {
             ),
             style = Typography.body2,
             color = MultimoneyTheme.colors.labelText,
-            )
+        )
 
         when (viewModel.uiState.messageStatus) {
             OTPMessageStatus.RESEND_OTP, OTPMessageStatus.RESEND_OTP_AGAIN -> {

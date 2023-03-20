@@ -7,10 +7,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
-import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.OpenWhatsAppLink
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.Companion.PHONE_HARDCODED
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnGetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallGetLinkCreditContractEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallGetLinkCreditContractSecondTime
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnShowDialogInformation
@@ -37,11 +35,10 @@ fun SignDocumentProcessScreen(
     viewModel: SignDocumentProcessViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-    val activity = context.findActivity()
-    val whatsAppLink = stringResource(
-        id = R.string.whatsapp_deep_link,
-        PHONE_HARDCODED
-    )
+
+    LaunchedEffect(true) {
+        viewModel.onUIEvent(OnGetWhatsAppLink)
+    }
 
     LaunchedEffect(true) {
         viewModel.apply {
@@ -50,7 +47,7 @@ fun SignDocumentProcessScreen(
             onUIEvent(OnCallGetLinkCreditContractEvent)
             baseEvent.collectLatest { event ->
                 when (event) {
-                    is OpenWhatsAppLink -> context.openWhatsAppDeepLink(whatsAppLink)
+                    is OpenWhatsAppLink -> context.openWhatsAppDeepLink(event.whatsAppLink)
                 }
             }
         }

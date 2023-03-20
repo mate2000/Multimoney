@@ -15,5 +15,5 @@ data class CardVisaDirect(
     val cardTokenId: String? = null,
     val currencyDescription: String? = null,
     val country: String? = null,
-    val debitDate: String? = null
+    val debitDate: String? = ""
 ) : Parcelable

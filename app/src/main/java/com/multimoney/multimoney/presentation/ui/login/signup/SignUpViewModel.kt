@@ -57,10 +57,10 @@ import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
@@ -84,6 +84,7 @@ class SignUpViewModel @Inject constructor(
     private var pass = ""
     private var nextStep: Int = SignUpStep.One.id
     private var previousStep: Int = SignUpStep.One.id
+    var whatsAppLink: String? = ""
 
     private fun nextStep() {
         if (nextStep <= SIGN_UP_TOTAL_STEPS) {
@@ -368,6 +369,12 @@ class SignUpViewModel @Inject constructor(
         )
     }
 
+    private fun onGetWhatsAppLink() {
+        viewModelScope.launch {
+            whatsAppLink = dataStorePreferences.getWhatsAppLink().first()
+        }
+    }
+
     data class UIState(
         // Interactions
         val currentStep: Int = SignUpStep.One.id,
@@ -441,6 +448,7 @@ class SignUpViewModel @Inject constructor(
             is UIEvent.OnUpdatePassword -> pass = event.pass
             is UIEvent.OnCheckIfEmailExists -> navigateToRegisteredUser(event.userData)
             is UIEvent.OnChangeRestartEvent -> onChangeRestartEvent(event.shouldBeOnRestart)
+            is UIEvent.OnGetWhatsAppLink -> onGetWhatsAppLink()
         }
     }
 
@@ -502,12 +510,12 @@ class SignUpViewModel @Inject constructor(
         data class OnUpdatePassword(val pass: String) : UIEvent()
         data class OnCheckIfEmailExists(val userData: UserData?): UIEvent()
         data class OnChangeRestartEvent(val shouldBeOnRestart : Boolean) : UIEvent()
+        object OnGetWhatsAppLink : UIEvent()
     }
 
     companion object {
         const val SIGN_UP_TOTAL_STEPS = 6
         const val SIGN_UP_INDICATOR_TOTAL_STEPS = 5
-        const val PHONE_HARDCODED = "50371680915"
         const val ISO3_COSTA_RICA = "CRI"
     }
 }

@@ -106,7 +106,7 @@ class DisbursementAmountViewModel @Inject constructor(
             currencyItems = currencyItems?.map { it.getCurrencyFromId().symbol } ?: listOf(),
             currencyIndex = INITIAL_CURRENCY_INDEX
         )
-        callCreditExtensionAmount()
+        callCreditExtensionAmount(true)
     }
 
     private fun onCloseClick() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
@@ -148,7 +148,7 @@ class DisbursementAmountViewModel @Inject constructor(
         callCreditExtensionAmount()
     }
 
-    private fun callCreditExtensionAmount() = executeUseCase {
+    private fun callCreditExtensionAmount(showSkeleton: Boolean = false) = executeUseCase {
         queryCreditExtensionAmountUseCase.invoke(
             idClient = idClient?.toLong() ?: 0,
             currency = currencyItems?.get(uiState.currencyIndex)?.getCurrencyFromId()?.disbursementValue.orEmpty(),
@@ -167,7 +167,7 @@ class DisbursementAmountViewModel @Inject constructor(
                     progressFactor = it?.amountTract?.toDouble() ?: 0.0,
                     disbursement = maximumDisbursement.toInt().toString()
                 )
-                callCreditExtensionMessage(true)
+                callCreditExtensionMessage(showSkeleton)
             }.onFailure {
                 uiState = uiState.copy(
                     isSkeletonLoading = false,
@@ -177,7 +177,11 @@ class DisbursementAmountViewModel @Inject constructor(
                     )
                 )
             }.onLoading {
-                uiState = uiState.copy(isSkeletonLoading = true)
+                if (showSkeleton) {
+                    uiState = uiState.copy(isSkeletonLoading = showSkeleton)
+                }else{
+                    uiState = uiState.copy(isContinue = true)
+                }
             }
         }
     }

@@ -26,6 +26,7 @@ import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDe
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnAlertButtonClick
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnAlertCloseClick
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnBackClick
+import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnGetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnDoNotSeeClick
@@ -38,6 +39,11 @@ import com.multimoney.multimoney.presentation.util.format
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDateTime
+import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit.SECONDS
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -46,11 +52,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import javax.inject.Inject
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit.SECONDS
 
 @HiltViewModel
 class VisaVerifyDepositViewModel @Inject constructor(
@@ -69,8 +70,8 @@ class VisaVerifyDepositViewModel @Inject constructor(
     private var idCard: String = ""
     private var user: String = ""
     private var idBrand: Int = 0
-    var linkWhatsapp = ""
     private var previousScreen = ""
+    private var whatsAppLink: String? = ""
 
     init {
         identification = savedStateHandle[IDENTIFICATION] ?: ""
@@ -80,8 +81,7 @@ class VisaVerifyDepositViewModel @Inject constructor(
         previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
     }
 
-    private fun onStart(linkWhatsapp: String) {
-        this.linkWhatsapp = linkWhatsapp
+    private fun onStart() {
         if (previousScreen == Screen.ProfileCardListScreen.baseRoute) {
             onResendClick()
         } else {
@@ -134,6 +134,11 @@ class VisaVerifyDepositViewModel @Inject constructor(
         )
     }
 
+    private fun onGetWhatsAppLink() =
+        viewModelScope.launch {
+            whatsAppLink = dataStorePreferences.getWhatsAppLink().first()
+        }
+
     private fun onResendClick() = executeUseCase {
         uiState = uiState.copy(isTimerRunning = false)
         mutationResendMicroDepositVDUseCase.invoke(
@@ -174,7 +179,7 @@ class VisaVerifyDepositViewModel @Inject constructor(
     }
 
     private fun onContactClick() {
-        emitBaseEvent(OnOpenWhatsApp(linkWhatsapp))
+        emitBaseEvent(OnOpenWhatsApp(whatsAppLink ?: ""))
     }
 
     private fun onMicroDepositValueChange(value: String) {
@@ -368,7 +373,7 @@ class VisaVerifyDepositViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is OnStart -> onStart(event.linkWhatsapp)
+            is OnStart -> onStart()
             is OnMicroDepositValueChange -> onMicroDepositValueChange(event.value)
             is OnDoNotSeeClick -> onDoNotSeeClick()
             is OnResendClick -> onResendClick()
@@ -377,11 +382,12 @@ class VisaVerifyDepositViewModel @Inject constructor(
             is OnContinueClick -> onContinueClick()
             is OnAlertCloseClick -> onCloseClick()
             is OnAlertButtonClick -> onCloseClick()
+            is OnGetWhatsAppLink -> onGetWhatsAppLink()
         }
     }
 
     sealed class UIEvent {
-        data class OnStart(val linkWhatsapp: String) : UIEvent()
+        object OnStart : UIEvent()
         data class OnMicroDepositValueChange(val value: String) : UIEvent()
         object OnDoNotSeeClick : UIEvent()
         object OnResendClick : UIEvent()
@@ -390,6 +396,7 @@ class VisaVerifyDepositViewModel @Inject constructor(
         object OnContinueClick : UIEvent()
         object OnAlertCloseClick : UIEvent()
         object OnAlertButtonClick : UIEvent()
+        object OnGetWhatsAppLink : UIEvent()
     }
 
     sealed class BaseEvent {

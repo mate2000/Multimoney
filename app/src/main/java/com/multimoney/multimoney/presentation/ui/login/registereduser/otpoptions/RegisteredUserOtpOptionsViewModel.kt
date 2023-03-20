@@ -65,8 +65,10 @@ class RegisteredUserOtpOptionsViewModel @Inject constructor(savedStateHandle: Sa
     }
 
     private fun onOtpOptionSelected(value: String) {
-        uiState = uiState.copy(otpOption = value)
-        uiState = uiState.copy(isFormValid = isFormValid())
+        uiState = uiState.copy(
+            otpOption = value,
+            isFormValid = isFormValid()
+        )
     }
 
     private fun onBackClick() = navigateBack(

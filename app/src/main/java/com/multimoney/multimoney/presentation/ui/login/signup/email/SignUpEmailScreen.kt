@@ -93,6 +93,7 @@ fun SignUpEmailScreen(
                         false
                     )
                 )
+                viewModel.onUIEvent(SignUpEmailViewModel.UIEvent.OnSetPreviousEmail)
                 if(userData?.isNewUser == false) {
                     sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnCheckIfEmailExists(userData))
                 } else {

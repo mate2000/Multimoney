@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.login.signup
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -61,6 +62,8 @@ fun SignUpScreen(
 ) {
     val focusManager = LocalFocusManager.current
     val coroutineScope = rememberCoroutineScope()
+    val actualStep = if(isRestart) step else DEFAULT_STEP
+    Log.d("ISRESTART VALUE", step)
 
     if (step != DEFAULT_STEP) {
         viewModel.onUIEvent(SignUpViewModel.UIEvent.OnSetIdBrand(idBrand = idBrand ?: 0))
@@ -72,8 +75,8 @@ fun SignUpScreen(
         viewModel.apply {
             executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
             onUIEvent(OnUpdateIso3Country(context.resources.configuration.locale.isO3Country))
-            if (step != DEFAULT_STEP) {
-                onUIEvent(OnMoveToStep(step.toInt()))
+            if (actualStep != DEFAULT_STEP) {
+                onUIEvent(OnMoveToStep(actualStep.toInt()))
             }
         }
     }

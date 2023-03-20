@@ -104,7 +104,6 @@ class SignUpEmailViewModel @Inject constructor(
         openSignUpSplashComeBack: () -> Unit,
         onOpenDialog: (DialogParameters) -> Unit
     ) {
-        previousUserEmail = userData?.email ?: ""
         onUseDataValueChange()
         if (userData?.status == VALID_EMAIL || userData?.status == ANOTHER_DEVICE_ALREADY_REGISTERED) {
             val step = SignUpStep.Search.getIdByName(userData.currentStep)
@@ -128,6 +127,10 @@ class SignUpEmailViewModel @Inject constructor(
                 )
             )
         }
+    }
+
+    private fun setPreviousEmail() {
+        previousUserEmail = uiState.userEmail
     }
 
     private fun onHandleUserState(
@@ -220,6 +223,7 @@ class SignUpEmailViewModel @Inject constructor(
             is OnValidateUserEmail -> isUserEmailValid()
             is OnUserEmailValueChange -> onUserEmailValueChange(event.value)
             is OnShowAnotherDeviceAlreadyRegisteredDialog -> onShowAnotherDeviceAlreadyRegisteredDialog(event.onPositiveClick)
+            is OnSetPreviousEmail -> setPreviousEmail()
         }
     }
 
@@ -244,6 +248,7 @@ class SignUpEmailViewModel @Inject constructor(
         object OnValidateForm : UIEvent()
         object OnValidateUserEmail : UIEvent()
         data class OnShowAnotherDeviceAlreadyRegisteredDialog(val onPositiveClick: () -> Unit) : UIEvent()
+        object OnSetPreviousEmail : UIEvent()
     }
 
     sealed class BaseEvent {

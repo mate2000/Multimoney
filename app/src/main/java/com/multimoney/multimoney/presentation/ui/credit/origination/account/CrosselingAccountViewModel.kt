@@ -39,6 +39,7 @@ class CrosselingAccountViewModel @Inject constructor(
     private var email: String = ""
     private var bank: CreditCatalog? = null
     private var bankList: List<CreditCatalogOption?>? = listOf()
+    private var callNumber: Int = 0
 
     private fun onStart(
         pkUser: Int,
@@ -150,14 +151,18 @@ class CrosselingAccountViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { accountList ->
                 onLoadingValueChange(false)
-                onSuccess(accountList?.data?.isEmpty() == true)
+                callNumber++
                 accountList?.data?.let {
                     uiState = uiState.copy(
                         clientBankAccountList = uiState.clientBankAccountList + it
                     )
                 }
+                if (callNumber > 1) {
+                    onSuccess(uiState.clientBankAccountList.isEmpty())
+                }
             }
             result.onFailure {
+                callNumber++
                 onLoadingValueChange(false)
                 onFailureWithDialog(
                     false,

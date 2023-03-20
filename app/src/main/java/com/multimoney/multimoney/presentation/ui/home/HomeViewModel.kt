@@ -22,6 +22,7 @@ import com.multimoney.domain.interaction.credit.QueryGetCardAutomaticDebitUseCas
 import com.multimoney.domain.interaction.credit.QueryGetClientAutomaticDebitUseCase
 import com.multimoney.domain.interaction.credit.QueryGetPromissoryNoteDetail
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCase
+import com.multimoney.domain.interaction.profile.QueryCountryContactUseCase
 import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCase
 import com.multimoney.domain.interaction.security.QueryGetQuickActionsUseCase
 import com.multimoney.domain.interaction.security.QueryMiniCardsUseCase
@@ -61,6 +62,7 @@ import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.util.BiometricHelper
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
@@ -68,7 +70,6 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalPagerApi::class)
@@ -87,6 +88,7 @@ class HomeViewModel @Inject constructor(
     private val mutationDeactivateCardAutomaticDebitUseCase: MutationDeactivateCardAutomaticDebitUseCase,
     private val queryGetCoreBankMovements: QueryGetCoreBankMovementsUseCase,
     private val queryGetPromissoryNoteDetail: QueryGetPromissoryNoteDetail,
+    private val queryCountryContactUseCase: QueryCountryContactUseCase,
     private val biometricHelper: BiometricHelper,
     private val cognitoHelper: CognitoHelper,
     private val cryptoHelper: CryptoHelper
@@ -122,6 +124,7 @@ class HomeViewModel @Inject constructor(
                 uiState.idBrand.toInt()
             )
             callQueryGetConfigurationVersion(uiState.idBrand.toInt())
+            getContactInfo()
         }
     }
 
@@ -130,6 +133,20 @@ class HomeViewModel @Inject constructor(
             homeState = homeState
         )
     }
+
+    private fun getContactInfo() =
+        executeUseCase {
+            queryCountryContactUseCase.invoke(
+                user = uiState.email,
+                idBrand = uiState.idBrand.toInt()
+            ).collectLatest { result ->
+                result.onSuccess { contactInfo ->
+                    viewModelScope.launch {
+                        dataStorePreferences.setWhatsAppLink(contactInfo?.whatsappLink ?: "")
+                    }
+                }
+            }
+        }
 
     private fun onGetSmartMovements(
         user: String,
@@ -513,7 +530,11 @@ class HomeViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { validateUserStatus ->
                 apiCallCount++
-                dataStorePreferences.setUserPhoneNumberWithCode(validateUserStatus?.infoUser?.countryCode.plus(validateUserStatus?.infoUser?.phone.orEmpty()))
+                dataStorePreferences.setUserPhoneNumberWithCode(
+                    validateUserStatus?.infoUser?.countryCode.plus(
+                        validateUserStatus?.infoUser?.phone.orEmpty()
+                    )
+                )
                 dataStorePreferences.setUserPhoneNumber(validateUserStatus?.infoUser?.phone.orEmpty())
                 uiState = uiState.copy(validateUserStatus = validateUserStatus)
                 callQueryBalanceUseCase(
@@ -1018,6 +1039,7 @@ class HomeViewModel @Inject constructor(
             val biometricPromptDescription: String,
             val biometricPromptNegative: String
         ) : UIEvent()
+
         object OnRegisterAdjustPressPurchaseFirstTime : UIEvent()
         object OnRegisterAdjustPressSellFirstTime : UIEvent()
         object OnRegisterAdjustPressSendFirstTime : UIEvent()

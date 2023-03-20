@@ -107,6 +107,7 @@ class CreditViewModel @Inject constructor(
     var statusOnfido: String = ""
     var statusEvicertia: String = ""
     var crosseling: Boolean = false
+    var whatsAppLink: String = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: ""
@@ -129,6 +130,9 @@ class CreditViewModel @Inject constructor(
     private fun onInitializeTexts(title: Int, description: String) {
         closeDialogTitle = title
         closeDialogDescription = description
+        viewModelScope.launch {
+            whatsAppLink = dataStorePreferences.getWhatsAppLink().first()
+        }
     }
 
     private fun onBackClick(focusManager: FocusManager) {
@@ -319,13 +323,7 @@ class CreditViewModel @Inject constructor(
                         nextStep()
                     }
                 }.onFailure {
-                    uiState = uiState.copy(
-                        isLoading = false,
-                        openDialog = DialogParameters(
-                            description = it.getError() ?: "",
-                            isActive = mutableStateOf(true)
-                        )
-                    )
+                    uiState.isAlertResultVisible = true
                 }.onLoading {
                     uiState = uiState.copy(isLoading = true)
                 }
@@ -614,7 +612,8 @@ class CreditViewModel @Inject constructor(
         val isBottomSheetVisible: Boolean = false,
         val crosselingNewAccount: Boolean = false,
         val crosselingIsBankAccountListEmpty: Boolean = false,
-        val showSVProcessSendSuccessfully: Boolean = false
+        val showSVProcessSendSuccessfully: Boolean = false,
+        var isAlertResultVisible: Boolean = false
     )
 
     fun onUIEvent(event: UIEvent) {

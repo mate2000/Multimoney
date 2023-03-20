@@ -12,6 +12,7 @@ import android.nfc.cardemulation.CardEmulation
 import android.os.Build
 import android.provider.ContactsContract
 import android.provider.Settings.Secure
+import android.telephony.TelephonyManager
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
@@ -23,6 +24,7 @@ import com.google.gson.Gson
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
 import com.multimoney.multimoney.presentation.util.catalog.AddVisaCardErrors
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.All
@@ -36,13 +38,32 @@ import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.Vis
 import com.multimoney.multimoney.presentation.util.catalog.PhoneCountryCode
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeType
 import com.novopayment.sdk.vts.module.payment.apdu.PaymentService
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flow
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.Locale
 import kotlin.time.Duration
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
+
+
+fun Context.getUserCountry(): String {
+    try {
+        val tm = this.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        val simCountry = tm.simCountryIso
+        if (simCountry != null && simCountry.length == 2) { // SIM country code is available
+            return simCountry.lowercase(Locale.getDefault())
+        } else if (tm.phoneType != TelephonyManager.PHONE_TYPE_CDMA) { // Device is not 3G (would be unreliable)
+            val networkCountry = tm.networkCountryIso
+            if (networkCountry != null && networkCountry.length == 2) { // network country code is available
+                return networkCountry.lowercase(Locale.getDefault())
+            }
+        }
+    } catch (e: Exception) {
+        return ""
+    }
+    return ""
+}
 
 fun Context.openWhatsAppDeepLink(link: String, onFailure: () -> Unit = {}) {
     try {
@@ -262,12 +283,12 @@ val Int.boolean
 fun getNavParam(param: String, value: Any?) = "?$param=$value"
 
 fun getDeviceManufacture(): String = (
-    if (Build.MODEL.startsWith(Build.MANUFACTURER, ignoreCase = true)) {
-        Build.MODEL
-    } else {
-        "${Build.MANUFACTURER} ${Build.MODEL}"
-    }
-    ).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+        if (Build.MODEL.startsWith(Build.MANUFACTURER, ignoreCase = true)) {
+            Build.MODEL
+        } else {
+            "${Build.MANUFACTURER} ${Build.MODEL}"
+        }
+        ).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
 
 fun Context.getAndroidId(): String {
     return Secure.getString(
@@ -296,7 +317,7 @@ fun Double.toCurrencyFormat(
     val regex = Regex(NUMBER_FORMAT_REGEX)
     formatter.maximumFractionDigits = amountOfDecimals
     // remove the default dollar symbol from the custom symbol property
-    return "$symbol${regex.replace(formatter.format(this),"")}"
+    return "$symbol${regex.replace(formatter.format(this), "")}"
 }
 
 fun Double.toCurrencyFormatWithoutNegatives(
@@ -307,9 +328,9 @@ fun Double.toCurrencyFormatWithoutNegatives(
     formatter.maximumFractionDigits = amountOfDecimals
     // remove the default dollar symbol from the custom symbol property
     return "$symbol${
-    formatter.format(this)
-        .replace(Dollar.symbol, "")
-        .replace("-", "")
+        formatter.format(this)
+            .replace(Dollar.symbol, "")
+            .replace("-", "")
     }"
 }
 
@@ -325,9 +346,10 @@ fun String.formatExpirationDate() = if (this.length == 3) {
     this
 }
 
-fun String.encodeURLToUTF(): String {
-    return URLEncoder.encode(this, StandardCharsets.UTF_8.toString())
-}
+fun String?.encodeURLToUTF(): String = URLEncoder.encode(
+    this ?: SmartViewModel.URL_EMPTY,
+    StandardCharsets.UTF_8.toString()
+)
 
 fun String.decodeURLFromUTF(): String {
     return URLDecoder.decode(this, StandardCharsets.UTF_8.toString())

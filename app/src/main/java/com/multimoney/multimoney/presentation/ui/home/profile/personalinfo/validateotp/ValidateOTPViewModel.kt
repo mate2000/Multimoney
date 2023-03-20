@@ -51,21 +51,22 @@ import com.multimoney.multimoney.presentation.util.tickerFlow
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.takeWhile
-import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.regex.Pattern
 import javax.inject.Inject
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.takeWhile
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @HiltViewModel
 class ValidateOTPViewModel @Inject constructor(
@@ -80,8 +81,8 @@ class ValidateOTPViewModel @Inject constructor(
 ) : BaseViewModel(true) {
 
     val onCallMutationSendPinProcessEvent = MutableSharedFlow<MultimoneyResult<SendPinProcess?>>()
-    var linkWhatsapp = ""
     var userBlockedForMaxAttend = ""
+    var whatsAppLink: String? = ""
 
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -254,8 +255,7 @@ class ValidateOTPViewModel @Inject constructor(
         onExecuteTimer()
     }
 
-    private fun onStart(linkWhatsapp: String, userBlockedForMaxAttend: String) {
-        this.linkWhatsapp = linkWhatsapp
+    private fun onStart(userBlockedForMaxAttend: String) {
         this.userBlockedForMaxAttend = userBlockedForMaxAttend
     }
 
@@ -273,8 +273,8 @@ class ValidateOTPViewModel @Inject constructor(
         )
     }
 
-    private fun openWhatsAppLink(context: Context, whatsAppLink: String) {
-        context.openWhatsAppDeepLink(whatsAppLink)
+    private fun openWhatsAppLink(context: Context) {
+        context.openWhatsAppDeepLink(whatsAppLink ?: "")
         onNavigateBack()
     }
 
@@ -292,9 +292,16 @@ class ValidateOTPViewModel @Inject constructor(
             }
     }
 
-    private fun onChangePhone(identification: String, phone: String,countryCode: String, pkUser: String, idBrand: Int,user: String) =
+    private fun onChangePhone(
+        identification: String,
+        phone: String,
+        countryCode: String,
+        pkUser: String,
+        idBrand: Int,
+        user: String
+    ) =
         executeUseCase {
-            mutationChangePhoneUseCase.invoke(identification, phone,countryCode, pkUser, idBrand,user)
+            mutationChangePhoneUseCase.invoke(identification, phone, countryCode, pkUser, idBrand, user)
                 .collectLatest {
                     processChangePhoneResult(it)
                 }
@@ -335,7 +342,16 @@ class ValidateOTPViewModel @Inject constructor(
                         uiState.newValue
                     ) ?: ""
                 )
-                registerAdjustEvent(AdjustEventType.SETTINGS_CHANGE_PHONE_SUCCESS_8001, applyAdjust = false, data = BaseEventDataDto(user = uiState.email, idBrand = uiState.idBrand, idClient = uiState.idClient, identification = uiState.identification).toJson())
+                registerAdjustEvent(
+                    AdjustEventType.SETTINGS_CHANGE_PHONE_SUCCESS_8001,
+                    applyAdjust = false,
+                    data = BaseEventDataDto(
+                        user = uiState.email,
+                        idBrand = uiState.idBrand,
+                        idClient = uiState.idClient,
+                        identification = uiState.identification
+                    ).toJson()
+                )
                 navigateBack(Screen.HomeScreen.route, isRestart = true)
                 emitBaseEvent(HomeViewModel.BaseEvent.OnPhoneNumberChangedToastEvent)
             }
@@ -350,7 +366,16 @@ class ValidateOTPViewModel @Inject constructor(
             uiState = uiState.copy(isLoading = false)
             viewModelScope.launch {
                 dataStorePreferences.setUserEmail(uiState.newValue ?: "")
-                registerAdjustEvent(AdjustEventType.SETTINGS_CHANGE_EMAIL_SUCCESS_8000, applyAdjust = false, data = BaseEventDataDto(user = uiState.email, idBrand = uiState.idBrand, idClient = uiState.idClient, identification = uiState.identification).toJson())
+                registerAdjustEvent(
+                    AdjustEventType.SETTINGS_CHANGE_EMAIL_SUCCESS_8000,
+                    applyAdjust = false,
+                    data = BaseEventDataDto(
+                        user = uiState.email,
+                        idBrand = uiState.idBrand,
+                        idClient = uiState.idClient,
+                        identification = uiState.identification
+                    ).toJson()
+                )
                 navigateTo("${Screen.ProfileScreen.baseRoute}/${uiState.idClient}/${uiState.idBrand}/${uiState.firstName}/${uiState.newValue}/${uiState.phoneNumber}/${uiState.identification}/${uiState.pkUser}/${uiState.userName}")
                 emitBaseEvent(HomeViewModel.BaseEvent.OnEmailChangedToastEvent)
             }
@@ -455,12 +480,18 @@ class ValidateOTPViewModel @Inject constructor(
         navigateBack(Screen.HomeScreen.route, isRestart = true)
     }
 
+    private fun onGetWhatsAppLink() {
+        viewModelScope.launch {
+            whatsAppLink = dataStorePreferences.getWhatsAppLink().first()
+        }
+    }
+
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is UIEvent.OnStart -> onStart(event.linkWhatsapp, event.userBlockedForMaxAttends)
+            is UIEvent.OnStart -> onStart(event.userBlockedForMaxAttends)
             is UIEvent.OnNavigateBack -> onNavigateBack()
             is UIEvent.OnNavigateTLogOut -> onLogout()
-            is UIEvent.OnOpenWhatsappLink -> openWhatsAppLink(event.context, event.whatsAppLink)
+            is UIEvent.OnOpenWhatsappLink -> openWhatsAppLink(event.context)
             is UIEvent.OnGetOtpFromMessage -> getOtpFromMessage(event.message)
             is UIEvent.OnCallMutationSendPinProcess -> callMutationSendPinProcess(
                 event.identification,
@@ -488,12 +519,12 @@ class ValidateOTPViewModel @Inject constructor(
             is UIEvent.OnContinueButtonClicked -> onValidateOTP(uiState.email, uiState.otp)
             is UIEvent.OpenMaxAttemptsReachedDialog -> openMaxAttemptsReachedDialog()
             is UIEvent.OnError -> uiState = uiState.copy(isAlertResultVisible = true)
+            is UIEvent.OnGetWhatsAppLink -> onGetWhatsAppLink()
         }
     }
 
     sealed class UIEvent {
         data class OnStart(
-            val linkWhatsapp: String,
             val userBlockedForMaxAttends: String
         ) : UIEvent()
 
@@ -519,12 +550,13 @@ class ValidateOTPViewModel @Inject constructor(
             UIEvent()
 
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
-        data class OnOpenWhatsappLink(val context: Context, val whatsAppLink: String) : UIEvent()
+        data class OnOpenWhatsappLink(val context: Context) : UIEvent()
         data class OnOtpValueChange(val value: String) : UIEvent()
         object OnValidateForm : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnContinueButtonClicked : UIEvent()
         object OpenMaxAttemptsReachedDialog : UIEvent()
+        object OnGetWhatsAppLink : UIEvent()
     }
 
     companion object {

@@ -47,6 +47,7 @@ import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.Regist
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.Companion.TIMER_DURATION
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.Companion.TOTAL_DIGITS
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnBackClick
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnCallCountryContact
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnCallMutationSendPinProcess
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnGetOtpFromMessage
@@ -55,7 +56,6 @@ import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.Regist
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnOtpValueChange
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIState
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.PHONE_HARDCODED
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
@@ -89,14 +89,10 @@ fun RegisteredUserOtpScreen(
             }
         }
 
-    viewModel.onUIEvent(
-        OnStart(
-            stringResource(
-                id = string.whatsapp_deep_link,
-                PHONE_HARDCODED
-            )
-        )
-    )
+    LaunchedEffect(true) {
+        viewModel.onUIEvent(OnCallCountryContact)
+        viewModel.onUIEvent(OnStart)
+    }
 
     LaunchedEffect(true) {
         viewModel.apply {
@@ -106,7 +102,7 @@ fun RegisteredUserOtpScreen(
             baseEvent.collect { event ->
                 when (event) {
                     is OnOpenWhatsApp -> {
-                        context.openWhatsAppDeepLink(viewModel.linkWhatsapp)
+                        context.openWhatsAppDeepLink(event.linkWhatsapp)
                     }
                 }
             }
@@ -178,7 +174,9 @@ fun RegisteredUserOtpContent(
                         uiState.titleOtpMethod
                     ),
                     textAlign = TextAlign.Start,
-                    modifier = Modifier.padding(top = 24.dp).fillMaxWidth()
+                    modifier = Modifier
+                        .padding(top = 24.dp)
+                        .fillMaxWidth()
                 )
 
                 Text(

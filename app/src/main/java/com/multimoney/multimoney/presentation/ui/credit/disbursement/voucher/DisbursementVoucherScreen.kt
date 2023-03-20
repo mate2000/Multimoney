@@ -80,6 +80,7 @@ fun DisbursementVoucherScreen(
             )
         },
         viewModel.disbursementLabel ?: "",
+        viewModel.clientBankAccount?.bankDescription ?: "",
         viewModel.clientBankAccount?.accountNumber ?: "",
         viewModel.reference ?: "",
         viewModel.shouldDisplayExchangeRate ?: false,
@@ -100,6 +101,7 @@ fun DisbursementVoucherContent(
     onCloseClick: () -> Unit = {},
     onShareVoucherImage: (view: View, capturingBounds: Rect) -> Unit = { _, _ -> },
     disbursementLabel: String = "",
+    bankDescription: String = "",
     accountNumber: String = "",
     reference: String = "",
     shouldDisplayExchangeRate: Boolean = false,
@@ -220,7 +222,7 @@ fun DisbursementVoucherContent(
                     VoucherAccountInfo(
                         modifier = Modifier.padding(start = 27.dp, top = 24.dp),
                         icon = drawable.ic_bank,
-                        title = stringResource(string.disbursement_voucher_origin_account_label),
+                        title = bankDescription,
                         subTitle = getMaskedAccount(
                             accountNumber,
                             stringResource(id = string.disbursement_account_masked_text)

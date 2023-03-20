@@ -8,11 +8,11 @@ import com.google.gson.reflect.TypeToken
 import com.multimoney.data.base.BaseDataStorePreferences
 import com.multimoney.data.util.cryptography.CryptographyHelper
 import com.multimoney.domain.model.security.SmartTransferLimit
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import java.util.UUID
 import javax.crypto.Cipher
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 
 class DataStorePreferences @Inject constructor(
     dataStore: DataStore<Preferences>,
@@ -164,7 +164,9 @@ class DataStorePreferences @Inject constructor(
     suspend fun setSmartTransferLimit(limits: List<SmartTransferLimit?>) {
         putListFlow(SMART_LIMITS, list = limits)
     }
-    fun getSmartTransferLimit() = getListFlow<SmartTransferLimit?>(SMART_LIMITS, object : TypeToken<List<SmartTransferLimit>>() {}.type)
+
+    fun getSmartTransferLimit() =
+        getListFlow<SmartTransferLimit?>(SMART_LIMITS, object : TypeToken<List<SmartTransferLimit>>() {}.type)
 
     // Adjust
     suspend fun isAdjustSplashEventRegister(register: Boolean) =
@@ -205,17 +207,20 @@ class DataStorePreferences @Inject constructor(
     suspend fun isAdjustSingUpAlreadyCustomerEmailEventRegister(register: Boolean) =
         setData(SIGN_UP_ALREADY_CUSTOMER_REGISTERED_EMAIL_ADJUST_KEY, register)
 
-    fun isAdjustSingUpAlreadyCustomerEmailEventRegister(): Flow<Boolean> = getData(SIGN_UP_ALREADY_CUSTOMER_REGISTERED_EMAIL_ADJUST_KEY, true)
+    fun isAdjustSingUpAlreadyCustomerEmailEventRegister(): Flow<Boolean> =
+        getData(SIGN_UP_ALREADY_CUSTOMER_REGISTERED_EMAIL_ADJUST_KEY, true)
 
     suspend fun isAdjustSingUpAlreadyCustomerOTPEventRegister(register: Boolean) =
         setData(SIGN_UP_ALREADY_CUSTOMER_REGISTERED_OTP_ADJUST_KEY, register)
 
-    fun isAdjustSingUpAlreadyCustomerOTPEventRegister(): Flow<Boolean> = getData(SIGN_UP_ALREADY_CUSTOMER_REGISTERED_OTP_ADJUST_KEY, true)
+    fun isAdjustSingUpAlreadyCustomerOTPEventRegister(): Flow<Boolean> =
+        getData(SIGN_UP_ALREADY_CUSTOMER_REGISTERED_OTP_ADJUST_KEY, true)
 
     suspend fun isAdjustSingUpAlreadyCustomerPasswordEventRegister(register: Boolean) =
         setData(SIGN_UP_ALREADY_CUSTOMER_REGISTERED_PASSWORD_ADJUST_KEY, register)
 
-    fun isAdjustSingUpAlreadyCustomerPasswordEventRegister(): Flow<Boolean> = getData(SIGN_UP_ALREADY_CUSTOMER_REGISTERED_PASSWORD_ADJUST_KEY, true)
+    fun isAdjustSingUpAlreadyCustomerPasswordEventRegister(): Flow<Boolean> =
+        getData(SIGN_UP_ALREADY_CUSTOMER_REGISTERED_PASSWORD_ADJUST_KEY, true)
 
     suspend fun isAdjustFirstSingInEventRegister(register: Boolean) =
         setData(SIGN_IN_FIRST_LOGIN_ADJUST_KEY, register)
@@ -225,7 +230,8 @@ class DataStorePreferences @Inject constructor(
     suspend fun isAdjustFirstSchedulePaymentEventRegister(register: Boolean) =
         setData(HOME_SCHEDULE_PAYMENT_FIRST_TIME_ADJUST_KEY, register)
 
-    fun isAdjustFirstSchedulePaymentEventRegister(): Flow<Boolean> = getData(HOME_SCHEDULE_PAYMENT_FIRST_TIME_ADJUST_KEY, true)
+    fun isAdjustFirstSchedulePaymentEventRegister(): Flow<Boolean> =
+        getData(HOME_SCHEDULE_PAYMENT_FIRST_TIME_ADJUST_KEY, true)
 
     suspend fun isAdjustFirstPaymentEventRegister(register: Boolean) =
         setData(HOME_PAYMENT_FIRST_TIME_ADJUST_KEY, register)
@@ -240,7 +246,8 @@ class DataStorePreferences @Inject constructor(
     suspend fun isAdjustFirstActivateMMVisaEventRegister(register: Boolean) =
         setData(HOME_ACTIVATE_MM_VISA_FIRST_TIME_ADJUST_KEY, register)
 
-    fun isAdjustFirstActivateMMVisaEventRegister(): Flow<Boolean> = getData(HOME_ACTIVATE_MM_VISA_FIRST_TIME_ADJUST_KEY, true)
+    fun isAdjustFirstActivateMMVisaEventRegister(): Flow<Boolean> =
+        getData(HOME_ACTIVATE_MM_VISA_FIRST_TIME_ADJUST_KEY, true)
 
     suspend fun isAdjustFirstLinkMMVisaEventRegister(register: Boolean) =
         setData(HOME_LINK_MM_VISA_FIRST_TIME_ADJUST_KEY, register)
@@ -250,72 +257,86 @@ class DataStorePreferences @Inject constructor(
     suspend fun isAdjustFirstActivatedMMVisaEventRegister(register: Boolean) =
         setData(HOME_ACTIVATED_MM_VISA_FIRST_TIME_ADJUST_KEY, register)
 
-    fun isAdjustFirstActivatedMMVisaEventRegister(): Flow<Boolean> = getData(HOME_ACTIVATED_MM_VISA_FIRST_TIME_ADJUST_KEY, true)
+    fun isAdjustFirstActivatedMMVisaEventRegister(): Flow<Boolean> =
+        getData(HOME_ACTIVATED_MM_VISA_FIRST_TIME_ADJUST_KEY, true)
 
     suspend fun isAdjustFirstOriginationFirstScreenEventRegister(register: Boolean) =
         setData(ORIGINATION_FIRST_SCREEN_FIRST_TIME_ADJUST_KEY, register)
 
-    fun isAdjustFirstOriginationFirstScreenEventRegister(): Flow<Boolean> = getData(ORIGINATION_FIRST_SCREEN_FIRST_TIME_ADJUST_KEY, true)
+    fun isAdjustFirstOriginationFirstScreenEventRegister(): Flow<Boolean> =
+        getData(ORIGINATION_FIRST_SCREEN_FIRST_TIME_ADJUST_KEY, true)
 
     suspend fun isAdjustFirstOriginationCrosselingFirstScreenEventRegister(register: Boolean) =
         setData(ORIGINATION_CROSSELING_FIRST_SCREEN_FIRST_TIME_ADJUST_KEY, register)
 
-    fun isAdjustFirstOriginationCrosselingFirstScreenEventRegister(): Flow<Boolean> = getData(ORIGINATION_CROSSELING_FIRST_SCREEN_FIRST_TIME_ADJUST_KEY, true)
+    fun isAdjustFirstOriginationCrosselingFirstScreenEventRegister(): Flow<Boolean> =
+        getData(ORIGINATION_CROSSELING_FIRST_SCREEN_FIRST_TIME_ADJUST_KEY, true)
 
     suspend fun isAdjustFirstOriginationCheckTermsEventRegister(register: Boolean) =
         setData(ORIGINATION_CHECK_TERMS_FIRST_TIME_ADJUST_KEY, register)
 
-    fun isAdjustFirstOriginationCheckTermsEventRegister(): Flow<Boolean> = getData(ORIGINATION_CHECK_TERMS_FIRST_TIME_ADJUST_KEY, true)
+    fun isAdjustFirstOriginationCheckTermsEventRegister(): Flow<Boolean> =
+        getData(ORIGINATION_CHECK_TERMS_FIRST_TIME_ADJUST_KEY, true)
 
     suspend fun isAdjustFirstOriginationCrosselingCheckTermsEventRegister(register: Boolean) =
         setData(ORIGINATION_CROSSELING_CHECK_TERMS_FIRST_TIME_ADJUST_KEY, register)
 
-    fun isAdjustFirstOriginationCrosselingCheckTermsEventRegister(): Flow<Boolean> = getData(ORIGINATION_CROSSELING_CHECK_TERMS_FIRST_TIME_ADJUST_KEY, true)
+    fun isAdjustFirstOriginationCrosselingCheckTermsEventRegister(): Flow<Boolean> =
+        getData(ORIGINATION_CROSSELING_CHECK_TERMS_FIRST_TIME_ADJUST_KEY, true)
 
     suspend fun isAdjustFirstOriginationConfirmAmountEventRegister(register: Boolean) =
         setData(ORIGINATION_ENTER_AMOUNT_FIRST_TIME_ADJUST_KEY, register)
 
-    fun isAdjustFirstOriginationConfirmAmountEventRegister(): Flow<Boolean> = getData(ORIGINATION_ENTER_AMOUNT_FIRST_TIME_ADJUST_KEY, true)
+    fun isAdjustFirstOriginationConfirmAmountEventRegister(): Flow<Boolean> =
+        getData(ORIGINATION_ENTER_AMOUNT_FIRST_TIME_ADJUST_KEY, true)
 
     suspend fun isAdjustFirstOriginationCrosselingConfirmAmountEventRegister(register: Boolean) =
         setData(ORIGINATION_CROSSELING_ENTER_AMOUNT_FIRST_TIME_ADJUST_KEY, register)
 
-    fun isAdjustFirstOriginationCrosselingConfirmAmountEventRegister(): Flow<Boolean> = getData(ORIGINATION_CROSSELING_ENTER_AMOUNT_FIRST_TIME_ADJUST_KEY, true)
+    fun isAdjustFirstOriginationCrosselingConfirmAmountEventRegister(): Flow<Boolean> =
+        getData(ORIGINATION_CROSSELING_ENTER_AMOUNT_FIRST_TIME_ADJUST_KEY, true)
 
     suspend fun isAdjustFirstOriginationFillAccountEventRegister(register: Boolean) =
         setData(ORIGINATION_FILL_ACCOUNT_FIRST_TIME_ADJUST_KEY, register)
 
-    fun isAdjustFirstOriginationFillAccountEventRegister(): Flow<Boolean> = getData(ORIGINATION_FILL_ACCOUNT_FIRST_TIME_ADJUST_KEY, true)
+    fun isAdjustFirstOriginationFillAccountEventRegister(): Flow<Boolean> =
+        getData(ORIGINATION_FILL_ACCOUNT_FIRST_TIME_ADJUST_KEY, true)
 
     suspend fun isAdjustFirstOriginationCrosselingFillAccountEventRegister(register: Boolean) =
         setData(ORIGINATION_CROSSELING_FILL_ACCOUNT_FIRST_TIME_ADJUST_KEY, register)
 
-    fun isAdjustFirstOriginationCrosselingFillAccountEventRegister(): Flow<Boolean> = getData(ORIGINATION_CROSSELING_FILL_ACCOUNT_FIRST_TIME_ADJUST_KEY, true)
+    fun isAdjustFirstOriginationCrosselingFillAccountEventRegister(): Flow<Boolean> =
+        getData(ORIGINATION_CROSSELING_FILL_ACCOUNT_FIRST_TIME_ADJUST_KEY, true)
 
     suspend fun isAdjustFirstOriginationMonthlyIncomeEventRegister(register: Boolean) =
         setData(ORIGINATION_MONTHLY_INCOME_FIRST_TIME_ADJUST_KEY, register)
 
-    fun isAdjustFirstOriginationMonthlyIncomeEventRegister(): Flow<Boolean> = getData(ORIGINATION_MONTHLY_INCOME_FIRST_TIME_ADJUST_KEY, true)
+    fun isAdjustFirstOriginationMonthlyIncomeEventRegister(): Flow<Boolean> =
+        getData(ORIGINATION_MONTHLY_INCOME_FIRST_TIME_ADJUST_KEY, true)
 
     suspend fun isAdjustFirstOriginationJobInformationEventRegister(register: Boolean) =
         setData(ORIGINATION_JOB_INFO_FIRST_TIME_ADJUST_KEY, register)
 
-    fun isAdjustFirstOriginationJobInformationEventRegister(): Flow<Boolean> = getData(ORIGINATION_JOB_INFO_FIRST_TIME_ADJUST_KEY, true)
+    fun isAdjustFirstOriginationJobInformationEventRegister(): Flow<Boolean> =
+        getData(ORIGINATION_JOB_INFO_FIRST_TIME_ADJUST_KEY, true)
 
     suspend fun isAdjustFirstOriginationCrosselingJobInformationEventRegister(register: Boolean) =
         setData(ORIGINATION_CROSSELING_JOB_INFO_FIRST_TIME_ADJUST_KEY, register)
 
-    fun isAdjustFirstOriginationCrosselingJobInformationEventRegister(): Flow<Boolean> = getData(ORIGINATION_CROSSELING_JOB_INFO_FIRST_TIME_ADJUST_KEY, true)
+    fun isAdjustFirstOriginationCrosselingJobInformationEventRegister(): Flow<Boolean> =
+        getData(ORIGINATION_CROSSELING_JOB_INFO_FIRST_TIME_ADJUST_KEY, true)
 
     suspend fun isAdjustFirstOriginationJobAddressEventRegister(register: Boolean) =
         setData(ORIGINATION_JOB_ADDRESS_FIRST_TIME_ADJUST_KEY, register)
 
-    fun isAdjustFirstOriginationJobAddressEventRegister(): Flow<Boolean> = getData(ORIGINATION_JOB_ADDRESS_FIRST_TIME_ADJUST_KEY, true)
+    fun isAdjustFirstOriginationJobAddressEventRegister(): Flow<Boolean> =
+        getData(ORIGINATION_JOB_ADDRESS_FIRST_TIME_ADJUST_KEY, true)
 
     suspend fun isAdjustFirstOriginationOwnAddressEventRegister(register: Boolean) =
         setData(ORIGINATION_OWN_ADDRESS_FIRST_TIME_ADJUST_KEY, register)
 
-    fun isAdjustFirstOriginationOwnAddressEventRegister(): Flow<Boolean> = getData(ORIGINATION_OWN_ADDRESS_FIRST_TIME_ADJUST_KEY, true)
+    fun isAdjustFirstOriginationOwnAddressEventRegister(): Flow<Boolean> =
+        getData(ORIGINATION_OWN_ADDRESS_FIRST_TIME_ADJUST_KEY, true)
 
     suspend fun isAdjustFirstOriginationPEPEventRegister(register: Boolean) =
         setData(ORIGINATION_PEP_FIRST_TIME_ADJUST_KEY, register)
@@ -325,52 +346,62 @@ class DataStorePreferences @Inject constructor(
     suspend fun isAdjustFirstOriginationOnfidoStartsEventRegister(register: Boolean) =
         setData(ORIGINATION_ONFIDO_STARTS_FIRST_TIME_ADJUST_KEY, register)
 
-    fun isAdjustFirstOriginationOnfidoStartsEventRegister(): Flow<Boolean> = getData(ORIGINATION_ONFIDO_STARTS_FIRST_TIME_ADJUST_KEY, true)
+    fun isAdjustFirstOriginationOnfidoStartsEventRegister(): Flow<Boolean> =
+        getData(ORIGINATION_ONFIDO_STARTS_FIRST_TIME_ADJUST_KEY, true)
 
     suspend fun isAdjustFirstOriginationOnfidoFinishEventRegister(register: Boolean) =
         setData(ORIGINATION_ONFIDO_FINISH_FIRST_TIME_ADJUST_KEY, register)
 
-    fun isAdjustFirstOriginationOnfidoFinishEventRegister(): Flow<Boolean> = getData(ORIGINATION_ONFIDO_FINISH_FIRST_TIME_ADJUST_KEY, true)
+    fun isAdjustFirstOriginationOnfidoFinishEventRegister(): Flow<Boolean> =
+        getData(ORIGINATION_ONFIDO_FINISH_FIRST_TIME_ADJUST_KEY, true)
 
     suspend fun isAdjustFirstOriginationEvicertiaSignDocumentEventRegister(register: Boolean) =
         setData(ORIGINATION_EVICERTIA_SIGN_DOCUMENT_FIRST_TIME_ADJUST_KEY, register)
 
-    fun isAdjustFirstOriginationEvicertiaSignDocumentEventRegister(): Flow<Boolean> = getData(ORIGINATION_EVICERTIA_SIGN_DOCUMENT_FIRST_TIME_ADJUST_KEY, true)
+    fun isAdjustFirstOriginationEvicertiaSignDocumentEventRegister(): Flow<Boolean> =
+        getData(ORIGINATION_EVICERTIA_SIGN_DOCUMENT_FIRST_TIME_ADJUST_KEY, true)
 
     suspend fun isAdjustFirstOriginationCrosselingEvicertiaSignDocumentEventRegister(register: Boolean) =
         setData(ORIGINATION_CROSSELING_EVICERTIA_SIGN_DOCUMENT_FIRST_TIME_ADJUST_KEY, register)
 
-    fun isAdjustFirstOriginationCrosselingEvicertiaSignDocumentEventRegister(): Flow<Boolean> = getData(ORIGINATION_CROSSELING_EVICERTIA_SIGN_DOCUMENT_FIRST_TIME_ADJUST_KEY, true)
+    fun isAdjustFirstOriginationCrosselingEvicertiaSignDocumentEventRegister(): Flow<Boolean> =
+        getData(ORIGINATION_CROSSELING_EVICERTIA_SIGN_DOCUMENT_FIRST_TIME_ADJUST_KEY, true)
 
     suspend fun isAdjustFirstOriginationEvicertiaCustomerRejectedEventRegister(register: Boolean) =
         setData(ORIGINATION_EVICERTIA_CUSTOMER_REJECTED_FIRST_TIME_ADJUST_KEY, register)
 
-    fun isAdjustFirstOriginationEvicertiaCustomerRejectedEventRegister(): Flow<Boolean> = getData(ORIGINATION_EVICERTIA_CUSTOMER_REJECTED_FIRST_TIME_ADJUST_KEY, true)
+    fun isAdjustFirstOriginationEvicertiaCustomerRejectedEventRegister(): Flow<Boolean> =
+        getData(ORIGINATION_EVICERTIA_CUSTOMER_REJECTED_FIRST_TIME_ADJUST_KEY, true)
 
     suspend fun isAdjustFirstOriginationEvicertiaSuccessEventRegister(register: Boolean) =
         setData(ORIGINATION_EVICERTIA_CUSTOMER_SUCCESS_FIRST_TIME_ADJUST_KEY, register)
 
-    fun isAdjustFirstOriginationEvicertiaSuccessEventRegister(): Flow<Boolean> = getData(ORIGINATION_EVICERTIA_CUSTOMER_SUCCESS_FIRST_TIME_ADJUST_KEY, true)
+    fun isAdjustFirstOriginationEvicertiaSuccessEventRegister(): Flow<Boolean> =
+        getData(ORIGINATION_EVICERTIA_CUSTOMER_SUCCESS_FIRST_TIME_ADJUST_KEY, true)
 
     suspend fun isAdjustFirstOriginationCrosselingEvicertiaSuccessEventRegister(register: Boolean) =
         setData(ORIGINATION_CROSSELING_EVICERTIA_CUSTOMER_SUCCESS_FIRST_TIME_ADJUST_KEY, register)
 
-    fun isAdjustFirstOriginationCrosselingEvicertiaSuccessEventRegister(): Flow<Boolean> = getData(ORIGINATION_CROSSELING_EVICERTIA_CUSTOMER_SUCCESS_FIRST_TIME_ADJUST_KEY, true)
+    fun isAdjustFirstOriginationCrosselingEvicertiaSuccessEventRegister(): Flow<Boolean> =
+        getData(ORIGINATION_CROSSELING_EVICERTIA_CUSTOMER_SUCCESS_FIRST_TIME_ADJUST_KEY, true)
 
     suspend fun isAdjustFirstOriginationNonPreApprovedInfoExtraEventRegister(register: Boolean) =
         setData(ORIGINATION_NON_PREAPPROVED_INFO_EXTRA_FIRST_TIME_ADJUST_KEY, register)
 
-    fun isAdjustFirstOriginationNonPreApprovedInfoExtraEventRegister(): Flow<Boolean> = getData(ORIGINATION_NON_PREAPPROVED_INFO_EXTRA_FIRST_TIME_ADJUST_KEY, true)
+    fun isAdjustFirstOriginationNonPreApprovedInfoExtraEventRegister(): Flow<Boolean> =
+        getData(ORIGINATION_NON_PREAPPROVED_INFO_EXTRA_FIRST_TIME_ADJUST_KEY, true)
 
     suspend fun isAdjustFirstOriginationNonPreApprovedRejectedEventRegister(register: Boolean) =
         setData(ORIGINATION_NON_PREAPPROVED_REJECTED_FIRST_TIME_ADJUST_KEY, register)
 
-    fun isAdjustFirstOriginationNonPreApprovedRejectedEventRegister(): Flow<Boolean> = getData(ORIGINATION_NON_PREAPPROVED_REJECTED_FIRST_TIME_ADJUST_KEY, true)
+    fun isAdjustFirstOriginationNonPreApprovedRejectedEventRegister(): Flow<Boolean> =
+        getData(ORIGINATION_NON_PREAPPROVED_REJECTED_FIRST_TIME_ADJUST_KEY, true)
 
     suspend fun isAdjustFirstOriginationNonPreApprovedApprovedEventRegister(register: Boolean) =
         setData(ORIGINATION_NON_PREAPPROVED_SUCCESS_FIRST_TIME_ADJUST_KEY, register)
 
-    fun isAdjustFirstOriginationNonPreApprovedApprovedEventRegister(): Flow<Boolean> = getData(ORIGINATION_NON_PREAPPROVED_SUCCESS_FIRST_TIME_ADJUST_KEY, true)
+    fun isAdjustFirstOriginationNonPreApprovedApprovedEventRegister(): Flow<Boolean> =
+        getData(ORIGINATION_NON_PREAPPROVED_SUCCESS_FIRST_TIME_ADJUST_KEY, true)
 
     suspend fun isAdjustFirstDisbursementEventRegister(register: Boolean) =
         setData(DISBURSEMENT_FIRST_TIME_ADJUST_KEY, register)
@@ -380,7 +411,8 @@ class DataStorePreferences @Inject constructor(
     suspend fun isAdjustFirstDisbursementSuccessEventRegister(register: Boolean) =
         setData(DISBURSEMENT_SUCCESS_FIRST_TIME_ADJUST_KEY, register)
 
-    fun isAdjustFirstDisbursementSuccessEventRegister(): Flow<Boolean> = getData(DISBURSEMENT_SUCCESS_FIRST_TIME_ADJUST_KEY, true)
+    fun isAdjustFirstDisbursementSuccessEventRegister(): Flow<Boolean> =
+        getData(DISBURSEMENT_SUCCESS_FIRST_TIME_ADJUST_KEY, true)
 
     suspend fun isAdjustFirstPaymentSuccessEventRegister(register: Boolean) =
         setData(PAYMENT_SUCCESS_FIRST_TIME_ADJUST_KEY, register)
@@ -515,12 +547,14 @@ class DataStorePreferences @Inject constructor(
     suspend fun setAdjustSmartFirstTimeOnfidoDocument(isFirstTime: Boolean) =
         setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_DOCUMENT, isFirstTime)
 
-    fun isAdjustSmartFirstTimeOnfidoDocument(): Flow<Boolean> = getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_DOCUMENT, true)
+    fun isAdjustSmartFirstTimeOnfidoDocument(): Flow<Boolean> =
+        getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_DOCUMENT, true)
 
     suspend fun setAdjustSmartFirstTimeOnfidoSelfie(isFirstTime: Boolean) =
         setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_SELFIE, isFirstTime)
 
-    fun isAdjustSmartFirstTimeOnfidoSelfie(): Flow<Boolean> = getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_SELFIE, true)
+    fun isAdjustSmartFirstTimeOnfidoSelfie(): Flow<Boolean> =
+        getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_SELFIE, true)
 
     suspend fun setAdjustSmartFirstTimeOnfidoDone(isFirstTime: Boolean) =
         setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_DONE, isFirstTime)
@@ -530,7 +564,8 @@ class DataStorePreferences @Inject constructor(
     suspend fun setAdjustSmartFirstTimeEvicertiaDone(isFirstTime: Boolean) =
         setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_EVICERTIA_DONE, isFirstTime)
 
-    fun isAdjustSmartFirstTimeEvicertiaDone(): Flow<Boolean> = getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_EVICERTIA_DONE, true)
+    fun isAdjustSmartFirstTimeEvicertiaDone(): Flow<Boolean> =
+        getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_EVICERTIA_DONE, true)
 
     suspend fun setAdjustSmartFirstTimeRejected(isFirstTime: Boolean) =
         setData(ADJUST_ORIGINATION_SMART_FIRST_TIME_REJECTED, isFirstTime)
@@ -542,12 +577,16 @@ class DataStorePreferences @Inject constructor(
 
     fun isAdjustSmartFirstTimeSuccessful(): Flow<Boolean> = getData(ADJUST_ORIGINATION_SMART_FIRST_TIME_SUCCESSFUL, true)
 
+    suspend fun setWhatsAppLink(whatsAppLink: String) = setData(WHATSAPP_LINK, whatsAppLink)
+    fun getWhatsAppLink(): Flow<String> = getData(WHATSAPP_LINK, "")
+
     suspend fun setNavigationRouteByNotification(route: String) =
         setData(FIREBASE_FCM_NAVIGATION_ROUTE, route)
 
     fun setNavigationRouteByNotification(): Flow<String> = getData(FIREBASE_FCM_NAVIGATION_ROUTE, "")
 
     companion object {
+        private val WHATSAPP_LINK = stringPreferencesKey("whatsapp_link")
         private val UNIQUE_ID = stringPreferencesKey("unique_id")
         private val DEVICE_ID = stringPreferencesKey("device_id")
         private val TOKEN_KEY = stringPreferencesKey("auth_token")
@@ -579,9 +618,12 @@ class DataStorePreferences @Inject constructor(
         private val SIGN_UP_3_ADJUST_KEY = booleanPreferencesKey("sign_up_3_adjust_key")
         private val SIGN_UP_4_ADJUST_KEY = booleanPreferencesKey("sign_up_4_adjust_key")
         private val SIGN_UP_5_ADJUST_KEY = booleanPreferencesKey("sign_up_5_adjust_key")
-        private val SIGN_UP_ALREADY_CUSTOMER_REGISTERED_EMAIL_ADJUST_KEY = booleanPreferencesKey("sign_up_registered_user_email_adjust_key")
-        private val SIGN_UP_ALREADY_CUSTOMER_REGISTERED_OTP_ADJUST_KEY = booleanPreferencesKey("sign_up_registered_user_otp_adjust_key")
-        private val SIGN_UP_ALREADY_CUSTOMER_REGISTERED_PASSWORD_ADJUST_KEY = booleanPreferencesKey("sign_up_registered_user_password_adjust_key")
+        private val SIGN_UP_ALREADY_CUSTOMER_REGISTERED_EMAIL_ADJUST_KEY =
+            booleanPreferencesKey("sign_up_registered_user_email_adjust_key")
+        private val SIGN_UP_ALREADY_CUSTOMER_REGISTERED_OTP_ADJUST_KEY =
+            booleanPreferencesKey("sign_up_registered_user_otp_adjust_key")
+        private val SIGN_UP_ALREADY_CUSTOMER_REGISTERED_PASSWORD_ADJUST_KEY =
+            booleanPreferencesKey("sign_up_registered_user_password_adjust_key")
         private val SIGN_IN_FIRST_LOGIN_ADJUST_KEY = booleanPreferencesKey("sign_in_first_login")
         private val HOME_SCHEDULE_PAYMENT_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("home_credit_first_schedule")
         private val HOME_PAYMENT_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("home_credit_first_payment")
@@ -590,29 +632,42 @@ class DataStorePreferences @Inject constructor(
         private val HOME_LINK_MM_VISA_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("home_first_link_mm_visa")
         private val HOME_ACTIVATED_MM_VISA_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("home_first_activated_mm_visa")
         private val ORIGINATION_FIRST_SCREEN_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_first_screen")
-        private val ORIGINATION_CROSSELING_FIRST_SCREEN_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_crosseling_first_screen")
+        private val ORIGINATION_CROSSELING_FIRST_SCREEN_FIRST_TIME_ADJUST_KEY =
+            booleanPreferencesKey("origination_crosseling_first_screen")
         private val ORIGINATION_CHECK_TERMS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_check_terms")
-        private val ORIGINATION_CROSSELING_CHECK_TERMS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_crosseling_check_terms")
+        private val ORIGINATION_CROSSELING_CHECK_TERMS_FIRST_TIME_ADJUST_KEY =
+            booleanPreferencesKey("origination_crosseling_check_terms")
         private val ORIGINATION_ENTER_AMOUNT_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_enter_amount")
-        private val ORIGINATION_CROSSELING_ENTER_AMOUNT_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_crosseling_enter_amount")
+        private val ORIGINATION_CROSSELING_ENTER_AMOUNT_FIRST_TIME_ADJUST_KEY =
+            booleanPreferencesKey("origination_crosseling_enter_amount")
         private val ORIGINATION_FILL_ACCOUNT_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_fill_account")
-        private val ORIGINATION_CROSSELING_FILL_ACCOUNT_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_crosseling_fill_account")
+        private val ORIGINATION_CROSSELING_FILL_ACCOUNT_FIRST_TIME_ADJUST_KEY =
+            booleanPreferencesKey("origination_crosseling_fill_account")
         private val ORIGINATION_MONTHLY_INCOME_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_monthly_income")
         private val ORIGINATION_JOB_INFO_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_job_info")
-        private val ORIGINATION_CROSSELING_JOB_INFO_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_crosseling_job_info")
+        private val ORIGINATION_CROSSELING_JOB_INFO_FIRST_TIME_ADJUST_KEY =
+            booleanPreferencesKey("origination_crosseling_job_info")
         private val ORIGINATION_JOB_ADDRESS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_job_address")
         private val ORIGINATION_OWN_ADDRESS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_job_address")
         private val ORIGINATION_PEP_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_pep")
         private val ORIGINATION_ONFIDO_STARTS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_onfido_starts")
         private val ORIGINATION_ONFIDO_FINISH_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_onfido_finish")
-        private val ORIGINATION_EVICERTIA_SIGN_DOCUMENT_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_evicertia_sign_document")
-        private val ORIGINATION_CROSSELING_EVICERTIA_SIGN_DOCUMENT_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_crosseling_evicertia_sign_document")
-        private val ORIGINATION_EVICERTIA_CUSTOMER_REJECTED_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_evicertia_customer_rejected")
-        private val ORIGINATION_EVICERTIA_CUSTOMER_SUCCESS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_evicertia_customer_success")
-        private val ORIGINATION_CROSSELING_EVICERTIA_CUSTOMER_SUCCESS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_crosseling_evicertia_customer_success")
-        private val ORIGINATION_NON_PREAPPROVED_INFO_EXTRA_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_nonpreapproved_info_extra")
-        private val ORIGINATION_NON_PREAPPROVED_REJECTED_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_nonpreapproved_rejected")
-        private val ORIGINATION_NON_PREAPPROVED_SUCCESS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("origination_nonpreapproved_success")
+        private val ORIGINATION_EVICERTIA_SIGN_DOCUMENT_FIRST_TIME_ADJUST_KEY =
+            booleanPreferencesKey("origination_evicertia_sign_document")
+        private val ORIGINATION_CROSSELING_EVICERTIA_SIGN_DOCUMENT_FIRST_TIME_ADJUST_KEY =
+            booleanPreferencesKey("origination_crosseling_evicertia_sign_document")
+        private val ORIGINATION_EVICERTIA_CUSTOMER_REJECTED_FIRST_TIME_ADJUST_KEY =
+            booleanPreferencesKey("origination_evicertia_customer_rejected")
+        private val ORIGINATION_EVICERTIA_CUSTOMER_SUCCESS_FIRST_TIME_ADJUST_KEY =
+            booleanPreferencesKey("origination_evicertia_customer_success")
+        private val ORIGINATION_CROSSELING_EVICERTIA_CUSTOMER_SUCCESS_FIRST_TIME_ADJUST_KEY =
+            booleanPreferencesKey("origination_crosseling_evicertia_customer_success")
+        private val ORIGINATION_NON_PREAPPROVED_INFO_EXTRA_FIRST_TIME_ADJUST_KEY =
+            booleanPreferencesKey("origination_nonpreapproved_info_extra")
+        private val ORIGINATION_NON_PREAPPROVED_REJECTED_FIRST_TIME_ADJUST_KEY =
+            booleanPreferencesKey("origination_nonpreapproved_rejected")
+        private val ORIGINATION_NON_PREAPPROVED_SUCCESS_FIRST_TIME_ADJUST_KEY =
+            booleanPreferencesKey("origination_nonpreapproved_success")
         private val DISBURSEMENT_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("disbursement_first_time")
         private val DISBURSEMENT_SUCCESS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("disbursement_success_first_time")
         private val PAYMENT_SUCCESS_FIRST_TIME_ADJUST_KEY = booleanPreferencesKey("payment_success_first_time")
@@ -623,7 +678,8 @@ class DataStorePreferences @Inject constructor(
         private val ADD_CARD_FIRST_TIME_VERIFIED_ADJUST_KEY = booleanPreferencesKey("add_card_first_time_verified")
         private val ADJUST_CRYPTO_HOME_FIRST_TIME = booleanPreferencesKey("adjust_crypto_home_first_time")
         private val ADJUST_CRYPTO_PURCHASE_FIRST_TIME = booleanPreferencesKey("adjust_crypto_purchase_first_time")
-        private val ADJUST_CRYPTO_SUCCESS_PURCHASE_FIRST_TIME = booleanPreferencesKey("adjust_crypto_success_purchase_first_time")
+        private val ADJUST_CRYPTO_SUCCESS_PURCHASE_FIRST_TIME =
+            booleanPreferencesKey("adjust_crypto_success_purchase_first_time")
         private val ADJUST_CRYPTO_SELL_FIRST_TIME = booleanPreferencesKey("adjust_crypto_sell_first_time")
         private val ADJUST_CRYPTO_SUCCESS_SELL_FIRST_TIME = booleanPreferencesKey("adjust_crypto_success_sell_first_time")
         private val ADJUST_CRYPTO_SEND_FIRST_TIME = booleanPreferencesKey("adjust_crypto_send_first_time")
@@ -632,19 +688,33 @@ class DataStorePreferences @Inject constructor(
 
         // Adjust Smart Events
         private val ADJUST_ORIGINATION_SMART_FIRST_TIME = booleanPreferencesKey("adjust_origination_smart_first_time")
-        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_PERSONAL = booleanPreferencesKey("adjust_origination_smart_first_time_personal")
-        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_HOME = booleanPreferencesKey("adjust_origination_smart_first_time_home")
-        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_INCOME = booleanPreferencesKey("adjust_origination_smart_first_time_income")
-        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_INCOME_INFORMATION = booleanPreferencesKey("adjust_origination_smart_first_time_income_information")
-        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_BENEFICIARY = booleanPreferencesKey("adjust_origination_smart_first_time_beneficiary")
-        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_PEP = booleanPreferencesKey("adjust_origination_smart_first_time_pep")
-        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_INICIO = booleanPreferencesKey("adjust_origination_smart_first_time_onfido_inicio")
-        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_DOCUMENT = booleanPreferencesKey("adjust_origination_smart_first_time_onfido_document")
-        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_SELFIE = booleanPreferencesKey("adjust_origination_smart_first_time_onfido_selfie")
-        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_DONE = booleanPreferencesKey("adjust_origination_smart_first_time_onfido_done")
-        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_EVICERTIA_DONE = booleanPreferencesKey("adjust_origination_smart_first_time_evicertia_done")
-        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_REJECTED = booleanPreferencesKey("adjust_origination_smart_first_time_rejected")
-        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_SUCCESSFUL = booleanPreferencesKey("adjust_origination_smart_first_time_successful")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_PERSONAL =
+            booleanPreferencesKey("adjust_origination_smart_first_time_personal")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_HOME =
+            booleanPreferencesKey("adjust_origination_smart_first_time_home")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_INCOME =
+            booleanPreferencesKey("adjust_origination_smart_first_time_income")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_INCOME_INFORMATION =
+            booleanPreferencesKey("adjust_origination_smart_first_time_income_information")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_BENEFICIARY =
+            booleanPreferencesKey("adjust_origination_smart_first_time_beneficiary")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_PEP =
+            booleanPreferencesKey("adjust_origination_smart_first_time_pep")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_INICIO =
+            booleanPreferencesKey("adjust_origination_smart_first_time_onfido_inicio")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_DOCUMENT =
+            booleanPreferencesKey("adjust_origination_smart_first_time_onfido_document")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_SELFIE =
+            booleanPreferencesKey("adjust_origination_smart_first_time_onfido_selfie")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_ONFIDO_DONE =
+            booleanPreferencesKey("adjust_origination_smart_first_time_onfido_done")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_EVICERTIA_DONE =
+            booleanPreferencesKey("adjust_origination_smart_first_time_evicertia_done")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_REJECTED =
+            booleanPreferencesKey("adjust_origination_smart_first_time_rejected")
+        private val ADJUST_ORIGINATION_SMART_FIRST_TIME_SUCCESSFUL =
+            booleanPreferencesKey("adjust_origination_smart_first_time_successful")
+
         private val ADJUST_SMART_FIRST_SAVING_BTN_KEY = booleanPreferencesKey("adjust_smart_first_saving_btn_key")
         private val ADJUST_SMART_FIRST_SENDING_KEY = booleanPreferencesKey("adjust_smart_first_sending_key")
         private val ADJUST_SMART_FIRST_SAVING_KEY = booleanPreferencesKey("adjust_smart_first_saving_key")

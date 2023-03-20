@@ -26,16 +26,19 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
+import com.multimoney.multimoney.presentation.navigation.navgraph.CURRENT_AMOUNT_VALUE
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.INFO_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOMATIC_PAYMENT_CHECKED
 import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.MINIMUM_PAYMENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.MINIMUM_PAYMENT_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
+import com.multimoney.multimoney.presentation.navigation.navgraph.REFERENCE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel
@@ -50,6 +53,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.Pay
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.isValidAmount
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.presentation.util.transformation.CurrencyDoubleTransformation
@@ -166,16 +170,17 @@ class PaymentAmountCardViewModel @Inject constructor(
     private fun onNavigateToPaymentCardVoucher() {
         logAdjustEvent()
         popAndNavigateTo(
-            "${Screen.PaymentCardVoucherScreen.baseRoute}/$identification/$idClient/$idLoanClient/${
-            encodeData(
-                uiState.card
-            )
-            }/${getCurrentAmountFormatted()}/${uiState.isAutomaticProgrammedPaymentChecked}/${payCreditVisa?.referenceAuthorization}/$paymentDate/${
-            encodeData(
-                infoUser
-            )
-            }",
-            Screen.PaymentAmountCardsScreen.route
+            route = Screen.PaymentCardVoucherScreen.baseRoute
+                .plus(getNavParam(IDENTIFICATION, identification))
+                .plus(getNavParam(ID_CLIENT, idClient))
+                .plus(getNavParam(ID_LOAN_CLIENT, idLoanClient))
+                .plus(getNavParam(CARD_SELECTED, encodeData(uiState.card)))
+                .plus(getNavParam(CURRENT_AMOUNT_VALUE, getCurrentAmountFormatted()))
+                .plus(getNavParam(IS_AUTOMATIC_PAYMENT_CHECKED, uiState.isAutomaticProgrammedPaymentChecked))
+                .plus(getNavParam(REFERENCE_NUMBER, payCreditVisa?.referenceAuthorization))
+                .plus(getNavParam(PAYMENT_DATE, paymentDate))
+                .plus(getNavParam(INFO_USER, encodeData(infoUser))),
+            popTo = Screen.PaymentAmountCardsScreen.route
         )
     }
 

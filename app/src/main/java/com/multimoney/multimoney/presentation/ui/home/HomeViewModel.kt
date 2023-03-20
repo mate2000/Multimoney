@@ -48,7 +48,6 @@ import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.INDEX_ONE
 import com.multimoney.multimoney.presentation.util.LAST_THREE
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
-import com.multimoney.multimoney.presentation.util.NotificationCommunicator
 import com.multimoney.multimoney.presentation.util.OPTION_BTN_6
 import com.multimoney.multimoney.presentation.util.SignOutCommunicator
 import com.multimoney.multimoney.presentation.util.boolean
@@ -91,7 +90,7 @@ class HomeViewModel @Inject constructor(
     private val biometricHelper: BiometricHelper,
     private val cognitoHelper: CognitoHelper,
     private val cryptoHelper: CryptoHelper
-) : BaseViewModel(true), NotificationCommunicator {
+) : BaseViewModel(true) {
 
     // Stateless
     private var communicator: SignOutCommunicator? = null
@@ -862,18 +861,21 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getNotificationRoute() {
+    fun restartNotificationRoutePreference() {
         viewModelScope.launch {
+            dataStorePreferences.setNavigationRouteByNotification("")
             uiState = uiState.copy(
-                notificationRoute = dataStorePreferences.setNavigationRouteByNotification().first()
+                notificationRoute = ""
             )
         }
     }
 
-    suspend fun restartNotificationRoutePreference() {
-        dataStorePreferences.setNavigationRouteByNotification("")
+    suspend fun getNotificationRoute() =
+        dataStorePreferences.setNavigationRouteByNotification().first()
+
+    fun setNotificationRoute(route: String) {
         uiState = uiState.copy(
-            notificationRoute = ""
+            notificationRoute = route
         )
     }
 
@@ -1038,9 +1040,5 @@ class HomeViewModel @Inject constructor(
 
     companion object {
         const val API_CALLS_TOTAL = 6
-    }
-
-    override fun getNavigateToRoute(route: String, action: (String) -> Unit) {
-        action.invoke(route)
     }
 }

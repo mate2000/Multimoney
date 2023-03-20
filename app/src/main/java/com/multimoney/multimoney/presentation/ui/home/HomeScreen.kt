@@ -71,15 +71,6 @@ fun HomeScreen(
         rememberModalBottomSheetState(Hidden, skipHalfExpanded = true)
     val unlinkedToastText = stringResource(id = string.card_preferences_unlinked_card_toast)
 
-    viewModel.getNotificationRoute()
-    LaunchedEffect(key1 = viewModel.uiState.notificationRoute) {
-        if (viewModel.uiState.notificationRoute.isNotEmpty()) {
-            viewModel.onUIEvent(HomeViewModel.UIEvent.OnSetHomeState(getFirebaseNotificationRouteByRoute(viewModel.uiState.notificationRoute)))
-            if (shouldRestartFirebaseNotificationRoutePreferenceInHome(viewModel.uiState.notificationRoute)) {
-                viewModel.restartNotificationRoutePreference()
-            }
-        }
-    }
     viewModel.apply {
         isOnRestart = isRestart
         LaunchedEffect(isOnRestart) {
@@ -88,9 +79,23 @@ fun HomeScreen(
                 isOnRestart = false
             }
         }
-        LaunchedEffect(key1 = homeState) {
-            onUIEvent(HomeViewModel.UIEvent.OnSetHomeState(homeState))
+
+        LaunchedEffect(key1 = viewModel.uiState.notificationRoute) {
+            if (viewModel.uiState.notificationRoute.isNotEmpty()) {
+                viewModel.onUIEvent(HomeViewModel.UIEvent.OnSetHomeState(getFirebaseNotificationRouteByRoute(viewModel.uiState.notificationRoute)))
+                if (shouldRestartFirebaseNotificationRoutePreferenceInHome(viewModel.uiState.notificationRoute)) {
+                    viewModel.restartNotificationRoutePreference()
+                }
+            }
         }
+        LaunchedEffect(key1 = homeState) {
+            if (viewModel.getNotificationRoute().isNotEmpty()) {
+                onUIEvent(HomeViewModel.UIEvent.OnSetHomeState(getFirebaseNotificationRouteByRoute(viewModel.getNotificationRoute())))
+            } else {
+                onUIEvent(HomeViewModel.UIEvent.OnSetHomeState(homeState))
+            }
+        }
+
         LaunchedEffect(true) {
             onUIEvent(HomeViewModel.UIEvent.OnSetupSessionListener(activity))
         }

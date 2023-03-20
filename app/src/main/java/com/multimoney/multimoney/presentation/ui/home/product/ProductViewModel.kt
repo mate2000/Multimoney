@@ -101,6 +101,7 @@ import com.multimoney.multimoney.presentation.util.PAGE_SIZE
 import com.multimoney.multimoney.presentation.util.ShareHelper
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.FirebaseNotificationRoute
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.ProfileCardListOrigin
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
@@ -1188,6 +1189,16 @@ class ProductViewModel @Inject constructor(
             }
         }
 
+    private fun validateNotificationRoute(
+        notificationRoute: String,
+        restartNotificationRoute: () -> Unit
+    ) {
+        if (notificationRoute == FirebaseNotificationRoute.LOAN_MOVEMENTS.route) {
+            onNavigateToCreditMovements()
+            restartNotificationRoute.invoke()
+        }
+    }
+
     data class UIState(
         // Fields
         var idBrand: String = "0",
@@ -1318,6 +1329,7 @@ class ProductViewModel @Inject constructor(
                 applyAdjust = false,
                 adjustEventType = AdjustEventType.HOME_CRYPTO_PAXOS_IN_MAINTENANCE
             )
+            is UIEvent.OnValidateNotificationRoute -> validateNotificationRoute(uiEvent.route, uiEvent.restartNotificationRoute)
         }
     }
 
@@ -1422,6 +1434,10 @@ class ProductViewModel @Inject constructor(
         object OnRegisterAdjustPressSendFirstTime : UIEvent()
         object OnRegisterAdjustPressReceiveFirstTime : UIEvent()
         object OnRegisterAdjustPaxosInMaintenance : UIEvent()
+        data class OnValidateNotificationRoute(
+            val route: String,
+            val restartNotificationRoute: () -> Unit
+        ) : UIEvent()
     }
 
     sealed class BaseEvent {

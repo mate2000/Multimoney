@@ -102,7 +102,6 @@ import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.MotionLayoutMM
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.catalog.FirebaseNotificationRoute
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import kotlinx.coroutines.launch
@@ -211,11 +210,20 @@ fun ProductScreen(
         )
     }
 
+    LaunchedEffect(key1 = sharedViewModel.uiState.notificationRoute) {
+        viewModel.onUIEvent(
+            ProductViewModel.UIEvent.OnValidateNotificationRoute(
+                sharedViewModel.uiState.notificationRoute
+            ) { sharedViewModel.restartNotificationRoutePreference() }
+        )
+    }
+
     LaunchedEffect(key1 = true) {
-        if (sharedViewModel.uiState.notificationRoute == FirebaseNotificationRoute.LOAN_MOVEMENTS.route) {
-            viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToCreditMovementsScreen)
-            sharedViewModel.restartNotificationRoutePreference()
-        }
+        viewModel.onUIEvent(
+            ProductViewModel.UIEvent.OnValidateNotificationRoute(
+                sharedViewModel.getNotificationRoute()
+            ) { sharedViewModel.restartNotificationRoutePreference() }
+        )
     }
 
     // Pager

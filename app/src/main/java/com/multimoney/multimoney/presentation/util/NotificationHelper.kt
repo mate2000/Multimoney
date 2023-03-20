@@ -31,7 +31,7 @@ fun displayLocalNotification(
         .setPriority(NotificationCompat.PRIORITY_HIGH)
         .setAutoCancel(true)
 
-    val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+    val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     builder.setContentIntent(pendingIntent)
 
     notificationManager.notify(NOTIFICATION_ID, builder.build())

@@ -8,8 +8,6 @@ import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventU
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.CreditSubscriptionManager
 import com.multimoney.multimoney.presentation.ui.smart.origination.SmartSubscriptionManager
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
-import com.multimoney.multimoney.presentation.util.NotificationCommunicator
-import com.multimoney.multimoney.presentation.util.NotificationCommunicatorImpl
 import com.multimoney.multimoney.util.firebase.FireBaseEventHelper
 import dagger.Module
 import dagger.Provides
@@ -38,10 +36,6 @@ class AppModule {
     @Singleton
     @Provides
     fun provideCountDownTimer() = MMCountDownTimer()
-
-    @Singleton
-    @Provides
-    fun provideNotificationCommunicator(): NotificationCommunicator = NotificationCommunicatorImpl()
 
     @Singleton
     @Provides

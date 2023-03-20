@@ -354,7 +354,7 @@ class SignUpViewModel @Inject constructor(
                     getNavParam(PREVIOUS_SCREEN, Screen.SignUpScreen.baseRoute)
                 )
                 .plus(
-                    getNavParam(ID_BRAND, userData?.idBrand)
+                    getNavParam(ID_BRAND, userData?.idBrand?:0)
                 )
                 .plus(
                     getNavParam(USER_DATA, encodeData(userData))

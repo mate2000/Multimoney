@@ -31,7 +31,6 @@ import com.multimoney.multimoney.presentation.util.calculateConfirmationBaseAmou
 import com.multimoney.multimoney.presentation.util.calculateConfirmationQuoteAmount
 import com.multimoney.multimoney.presentation.util.calculateConvertedCurrencyBalance
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
-import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -117,7 +116,7 @@ fun SellConfirmationBottomSheet(
                 totalFee = viewModel.uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
             ),
             showAssetImage = false,
-            ibanAccountNumber = sharedViewModel.getAccountNumber(stringResource(id = R.string.payment_account_masked_text)),
+            accountNumber = sharedViewModel.getAccountNumber(stringResource(id = R.string.payment_account_masked_text)),
             buttonText = stringResource(id = R.string.crypto_sell_flow_confirmation_sell_screen_btn_text),
             asset = viewModel.asset,
             assetImageUrl = viewModel.assetImageUrl,

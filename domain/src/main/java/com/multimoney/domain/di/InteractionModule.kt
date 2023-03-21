@@ -212,6 +212,8 @@ import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCase
 import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCaseImpl
+import com.multimoney.domain.interaction.security.MutationUserEventMobileSaveUseCase
+import com.multimoney.domain.interaction.security.MutationUserEventMobileSaveUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationUserPhoneMobileSaveUseCase
 import com.multimoney.domain.interaction.security.MutationUserPhoneMobileSaveUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationUserValidationUseCase
@@ -236,6 +238,8 @@ import com.multimoney.domain.interaction.security.QueryMiniCardsUseCase
 import com.multimoney.domain.interaction.security.QueryMiniCardsUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryValidateBankAccountUseCase
 import com.multimoney.domain.interaction.security.QueryValidateBankAccountUseCaseImpl
+import com.multimoney.domain.interaction.security.QueryValidatePasswordStructure
+import com.multimoney.domain.interaction.security.QueryValidatePasswordStructureImpl
 import com.multimoney.domain.interaction.security.QueryValidatePinUseCase
 import com.multimoney.domain.interaction.security.QueryValidatePinUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryValidateUserExistsUseCase
@@ -376,6 +380,16 @@ class InteractionModule {
     @Singleton
     fun provideMutationSaveLogTrackingUseCase(securityRepository: SecurityRepository): MutationSaveLogTrackingUseCase =
         MutationSaveLogTrackingUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryValidatePasswordStructure(securityRepository: SecurityRepository): QueryValidatePasswordStructure =
+        QueryValidatePasswordStructureImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationUserEventMobileSaveUseCase(securityRepository: SecurityRepository): MutationUserEventMobileSaveUseCase =
+        MutationUserEventMobileSaveUseCaseImpl(securityRepository)
 
     // Balance
 

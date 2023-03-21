@@ -71,7 +71,6 @@ fun SignUpEmailScreen(
                 sharedViewModel.logEvents(FireBaseEvents.SignUpOne, AdjustEventType.SIGNUP_1_2001)
             }, nextStep = SignUpStep.Two.id, previousStep = SignUpStep.One.id)
         )
-
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is SignUpEmailViewModel.BaseEvent.OnFormValidateCompleted -> sharedViewModel.onUIEvent(
@@ -93,15 +92,20 @@ fun SignUpEmailScreen(
                         false
                     )
                 )
-                if (userData?.status == SignUpEmailViewModel.ANOTHER_DEVICE_ALREADY_REGISTERED) {
-                    viewModel.onUIEvent(
-                        OnShowAnotherDeviceAlreadyRegisteredDialog {
-                            viewModel.onSuccessValidation(context, sharedViewModel, userData)
-                        }
-                    )
-                    sharedViewModel.logEvents(null, AdjustEventType.SECURITY_SIGN_UP_CHANGE_DEVICE_9001)
+                viewModel.onUIEvent(SignUpEmailViewModel.UIEvent.OnSetPreviousEmail)
+                if(userData?.isNewUser == false) {
+                    sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnCheckIfEmailExists(userData))
                 } else {
-                    viewModel.onSuccessValidation(context, sharedViewModel, userData)
+                    if (userData?.status == SignUpEmailViewModel.ANOTHER_DEVICE_ALREADY_REGISTERED) {
+                        viewModel.onUIEvent(
+                            OnShowAnotherDeviceAlreadyRegisteredDialog {
+                                viewModel.onSuccessValidation(context, sharedViewModel, userData)
+                            }
+                        )
+                        sharedViewModel.logEvents(null, AdjustEventType.SECURITY_SIGN_UP_CHANGE_DEVICE_9001)
+                    } else {
+                        viewModel.onSuccessValidation(context, sharedViewModel, userData)
+                    }
                 }
             }.onMessage {
                 viewModel.onUIEvent(
@@ -145,10 +149,7 @@ fun SignUpEmailScreen(
     viewModel.onUIEvent(
         SignUpEmailViewModel.UIEvent.OnStart(
             userCompletedDialogDescription = stringResource(id = string.sign_up_email_user_completed_dialog_description),
-            linkWhatsapp = stringResource(
-                id = string.whatsapp_deep_link,
-                SignUpViewModel.PHONE_HARDCODED
-            ),
+            sharedViewModel.whatsAppLink ?: "",
             blockedMessage = stringResource(id = string.sign_up_email_blocked_dialog_description)
         )
     )

@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnNavigateBack
@@ -56,11 +55,7 @@ fun SmartPaymentSuccessScreen(
             SmartPaymentInfoItem(
                 verticalAlignment = Alignment.CenterVertically,
                 icon = viewModel.amountUIState.originAccountDisplay?.icon ?: 0,
-                title = if (viewModel.idBrand == Brand.ElSalvador.id) {
-                    stringResource(R.string.smart_payment_card_bank_label)
-                } else {
-                    stringResource(R.string.smart_payment_origin_account_label)
-                },
+                title = viewModel.amountUIState.originAccountDisplay?.sheetTitle.orEmpty(),
                 subtitle = viewModel.amountUIState.originAccountDisplay?.sheetSubtitle ?: ""
             )
 

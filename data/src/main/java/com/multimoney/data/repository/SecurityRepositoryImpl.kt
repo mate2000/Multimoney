@@ -20,8 +20,10 @@ import com.multimoney.domain.model.security.RequestChangeDevice
 import com.multimoney.domain.model.security.SaveLogTracking
 import com.multimoney.domain.model.security.SendPinProcess
 import com.multimoney.domain.model.security.UserData
+import com.multimoney.domain.model.security.UserEventMobileSave
 import com.multimoney.domain.model.security.UserPhoneMobileSave
 import com.multimoney.domain.model.security.ValidateOTP
+import com.multimoney.domain.model.security.ValidatePasswordStructure
 import com.multimoney.domain.model.security.ValidatePin
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.security.ValidateUserStatus
@@ -473,6 +475,44 @@ class SecurityRepositoryImpl @Inject constructor(
             }
         )
 
+    override suspend fun mutationUserEventMobileSave(
+        idBrand: Int,
+        user: String,
+        pkSuvLogUserEventMobile: Long,
+        fkSuvMtrUser: Int,
+        platform: String,
+        uuid: String,
+        deviceVersion: String,
+        manufacture: String,
+        deviceName: String,
+        seriesNumber: String,
+        ipAddress: String,
+        latitude: String,
+        longitude: String,
+        tokenNotificationsPush: String
+    ): Flow<MultimoneyResult<UserEventMobileSave>> =
+        fetchData(
+            apolloCall = graphqlApi.mutationUserEventMobileSave(
+                idBrand,
+                user,
+                pkSuvLogUserEventMobile,
+                fkSuvMtrUser,
+                platform,
+                uuid,
+                deviceVersion,
+                manufacture,
+                deviceName,
+                seriesNumber,
+                ipAddress,
+                latitude,
+                longitude,
+                tokenNotificationsPush
+            ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+
     override suspend fun mutationChangePhone(
         identification: String,
         phone: String,
@@ -521,6 +561,17 @@ class SecurityRepositoryImpl @Inject constructor(
                 Success(data.mapToDomainModel())
             }
         )
+
+    override suspend fun queryValidatePasswordStructure(
+        pkUser: Int,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<ValidatePasswordStructure>> = fetchData(
+        apolloCall = graphqlApi.queryValidatePasswordStructure(pkUser, user, idBrand),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
 
     companion object {
         private const val ANOTHER_DEVICE_ALREADY_REGISTERED_CODE = 3102

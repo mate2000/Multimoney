@@ -132,11 +132,13 @@ import com.multimoney.data.networking.graphql.apollomodel.UpdateCardVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.UpdateFavoriteContactSmartMutation
 import com.multimoney.data.networking.graphql.apollomodel.UpdateSmartAccountStatusMutation
 import com.multimoney.data.networking.graphql.apollomodel.UpdateUserRegisterMutation
+import com.multimoney.data.networking.graphql.apollomodel.UserEventMobileSaveMutation
 import com.multimoney.data.networking.graphql.apollomodel.UserPhoneMobileSaveMutation
 import com.multimoney.data.networking.graphql.apollomodel.UserValidationMutation
 import com.multimoney.data.networking.graphql.apollomodel.ValidateBankAccountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidateDepositAddressMutation
 import com.multimoney.data.networking.graphql.apollomodel.ValidateOTPMutation
+import com.multimoney.data.networking.graphql.apollomodel.ValidatePasswordStructureQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidatePinQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidateUserExistsQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidateUserStatusQuery
@@ -2086,6 +2088,41 @@ class GraphqlApi @Inject constructor(
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
+    fun mutationUserEventMobileSave(
+        idBrand: Int,
+        user: String,
+        pkSuvLogUserEventMobile: Long,
+        fkSuvMtrUser: Int,
+        platform: String,
+        uuid: String,
+        deviceVersion: String,
+        manufacture: String,
+        deviceName: String,
+        seriesNumber: String,
+        ipAddress: String,
+        latitude: String,
+        longitude: String,
+        tokenNotificationsPush: String
+    ): ApolloCall<UserEventMobileSaveMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            UserEventMobileSaveMutation(
+                idBrand,
+                user,
+                pkSuvLogUserEventMobile,
+                fkSuvMtrUser,
+                platform,
+                uuid,
+                deviceVersion,
+                manufacture,
+                deviceName,
+                seriesNumber,
+                ipAddress,
+                latitude,
+                longitude,
+                tokenNotificationsPush
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
     fun querySmartExchangeRate(
         user: String,
         identification: String,
@@ -2541,7 +2578,18 @@ class GraphqlApi @Inject constructor(
         user: String
     ): ApolloCall<BankList365TypeAndTypeAccountQuery.Data> = apolloAuthorizedClient.query(
         BankList365TypeAndTypeAccountQuery(
-            idBrand, user
+            idBrand,
+            user
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryValidatePasswordStructure(
+        pkUser: Int,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<ValidatePasswordStructureQuery.Data> = apolloAuthorizedClient.query(
+        ValidatePasswordStructureQuery(
+            pkUser, user, idBrand
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

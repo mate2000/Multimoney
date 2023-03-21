@@ -19,7 +19,11 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.USER_DATA
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCloseClick
@@ -49,13 +53,14 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
@@ -79,6 +84,7 @@ class SignUpViewModel @Inject constructor(
     private var pass = ""
     private var nextStep: Int = SignUpStep.One.id
     private var previousStep: Int = SignUpStep.One.id
+    var whatsAppLink: String? = ""
 
     private fun nextStep() {
         if (nextStep <= SIGN_UP_TOTAL_STEPS) {
@@ -341,6 +347,34 @@ class SignUpViewModel @Inject constructor(
         else -> suspend {}
     }
 
+    private fun navigateToRegisteredUser(userData: UserData?) {
+        onChangeRestartEvent(true)
+        navigateTo(
+            route = Screen.RegisteredUserOtpOptionsScreen.baseRoute
+                .plus(
+                    getNavParam(PREVIOUS_SCREEN, Screen.SignUpScreen.baseRoute)
+                )
+                .plus(
+                    getNavParam(ID_BRAND, userData?.idBrand?:0)
+                )
+                .plus(
+                    getNavParam(USER_DATA, encodeData(userData))
+                )
+        )
+    }
+
+    private fun onChangeRestartEvent(shouldBeOnRestart: Boolean) {
+        uiState = uiState.copy(
+            shouldChangeOnRestart = shouldBeOnRestart
+        )
+    }
+
+    private fun onGetWhatsAppLink() {
+        viewModelScope.launch {
+            whatsAppLink = dataStorePreferences.getWhatsAppLink().first()
+        }
+    }
+
     data class UIState(
         // Interactions
         val currentStep: Int = SignUpStep.One.id,
@@ -351,7 +385,8 @@ class SignUpViewModel @Inject constructor(
         val bottomSheetVisibleState: ModalBottomSheetState = ModalBottomSheetState(
             ModalBottomSheetValue.Hidden
         ),
-        val isO3Country: String = ""
+        val isO3Country: String = "",
+        val shouldChangeOnRestart: Boolean = false
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -411,6 +446,9 @@ class SignUpViewModel @Inject constructor(
             is UIEvent.OnExit -> onExit()
             is UIEvent.OnUpdateIso3Country -> uiState = uiState.copy(isO3Country = event.iso3Country)
             is UIEvent.OnUpdatePassword -> pass = event.pass
+            is UIEvent.OnCheckIfEmailExists -> navigateToRegisteredUser(event.userData)
+            is UIEvent.OnChangeRestartEvent -> onChangeRestartEvent(event.shouldBeOnRestart)
+            is UIEvent.OnGetWhatsAppLink -> onGetWhatsAppLink()
         }
     }
 
@@ -470,12 +508,14 @@ class SignUpViewModel @Inject constructor(
         object OnExit : UIEvent()
         data class OnUpdateIso3Country(val iso3Country: String) : UIEvent()
         data class OnUpdatePassword(val pass: String) : UIEvent()
+        data class OnCheckIfEmailExists(val userData: UserData?): UIEvent()
+        data class OnChangeRestartEvent(val shouldBeOnRestart : Boolean) : UIEvent()
+        object OnGetWhatsAppLink : UIEvent()
     }
 
     companion object {
         const val SIGN_UP_TOTAL_STEPS = 6
         const val SIGN_UP_INDICATOR_TOTAL_STEPS = 5
-        const val PHONE_HARDCODED = "50371680915"
         const val ISO3_COSTA_RICA = "CRI"
     }
 }

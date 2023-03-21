@@ -75,13 +75,13 @@ android {
             matchingFallbacks = ['release']
         }
         staging {
-            applicationIdSuffix ".dev"
+            applicationIdSuffix ""
             testCoverageEnabled true
             signingConfig signingConfigs.production
             matchingFallbacks = ['debug']
         }
         debug {
-            applicationIdSuffix ".dev"
+            applicationIdSuffix ""
             testCoverageEnabled true
             signingConfig signingConfigs.production
         }

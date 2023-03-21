@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.Nationalities
+import com.multimoney.domain.interaction.security.MutationUserEventMobileSaveUseCase
 import com.multimoney.domain.interaction.security.MutationUserValidationUseCase
 import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCase
 import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCase
@@ -48,10 +49,13 @@ import com.multimoney.multimoney.presentation.util.ISO3_EL_SALVADOR
 import com.multimoney.multimoney.presentation.util.ISO3_GUATEMALA
 import com.multimoney.multimoney.presentation.util.catalog.GtDocuments
 import com.multimoney.multimoney.presentation.util.catalog.SvDocuments
+import com.multimoney.multimoney.presentation.util.getDeviceManufacture
+import com.multimoney.multimoney.presentation.util.getDeviceModel
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.validCarne
 import com.multimoney.multimoney.presentation.util.validDui
 import com.multimoney.multimoney.presentation.util.validId
+import com.multimoney.multimoney.util.firebase.FirebaseHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -66,7 +70,9 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private val queryCatalogDocumentTypeUseCase: QueryCatalogDocumentTypeUseCase,
     private val queryGetCountryUseCase: QueryGetCountryUseCase,
     private val mutationUserValidationUseCase: MutationUserValidationUseCase,
-    private val dataStorePreferences: DataStorePreferences
+    private val mutationUserEventMobileSaveUseCase: MutationUserEventMobileSaveUseCase,
+    private val dataStorePreferences: DataStorePreferences,
+    private val firebaseHelper: FirebaseHelper
 ) : BaseViewModel(false) {
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -585,6 +591,27 @@ class SignUpPersonalDataViewModel @Inject constructor(
         sharedViewModel: SignUpViewModel,
         userData: UserData?
     ) {
+        firebaseHelper.registerFCMDevice { token ->
+            viewModelScope.launch {
+                mutationUserEventMobileSaveUseCase.invoke(
+                    idBrand = idBrand,
+                    user = userData?.email ?: "",
+                    pkSuvLogUserEventMobile = 0,
+                    fkSuvMtrUser = userData?.pkUser?.toInt() ?: 0,
+                    platform = ANDROID_LABEL,
+                    uuid = dataStorePreferences.getDeviceId().first(),
+                    deviceVersion = android.os.Build.VERSION.SDK_INT.toString(),
+                    manufacture = getDeviceManufacture(),
+                    deviceName = getDeviceModel(),
+                    seriesNumber = "",
+                    ipAddress = "",
+                    latitude = "",
+                    longitude = "",
+                    tokenNotificationsPush = token ?: ""
+                ).collect {
+                }
+            }
+        }
         onUserDataValidationSuccess(
             userData = userData,
             onUseDataValueChange = {
@@ -617,16 +644,6 @@ class SignUpPersonalDataViewModel @Inject constructor(
                     .plus(
                         getNavParam(PREVIOUS_SCREEN, Screen.SignUpScreen.baseRoute)
                     )
-                    .plus(
-                        getNavParam(ID_BRAND, idBrand)
-                    )
-                    .plus(
-                        getNavParam(USER_DATA, encodeData(userData))
-                    )
-            )
-        } else {
-            navigateTo(
-                route = Screen.RegisteredUserEmailScreen.baseRoute
                     .plus(
                         getNavParam(ID_BRAND, idBrand)
                     )
@@ -804,6 +821,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
     companion object {
         const val DUI_VERIFICATION_MODULE = 10
         const val FORMAT_VALUE = '0'
+        const val ANDROID_LABEL = "Android"
         const val SINGLE_DOCUMENT = 1
         const val ANOTHER_DEVICE_ALREADY_REGISTERED = 3102
     }

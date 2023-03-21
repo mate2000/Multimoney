@@ -100,8 +100,6 @@ const val VERSION = "version"
 const val TRANSFER_TYPE = "transfer_type"
 const val ORIGIN_ACCOUNT = "origin_account"
 const val DESTINY_ACCOUNT = "destiny_account"
-const val SMART_ACCOUNTS_LIST = "smart_accounts_list"
-const val USER_CRYPTO_BALANCES = "user_crypto_balances"
 const val SMART_ACCOUNTS_ID_LIST = "smart_id_list"
 const val SMART_ACCOUNT = "smart_account"
 const val SECOND_SMART_ACCOUNT = "second_smart_account"
@@ -137,10 +135,7 @@ const val WORK_FLOW = "work_flow"
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
 const val HOME_STATE = "home_state"
-const val PREVIOUS_IS_RETURN_TO_HOME = "previous_is_return_to_home"
 const val QR_CODE_RESULT = "qr_code"
-
-const val RELEASE_TOAST = "transaction_released_toast"
 
 /**
  * Use this class to declare all your new screens and their routes
@@ -255,7 +250,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // Profile Sub-Screens
     object ProfileSettingsScreen : Screen(
-        "profile_settings_screen/{$ID_BRAND}/{$PK_USER}/{$USER_NAME}",
+        "profile_settings_screen/{$ID_BRAND}/{$PK_USER}/{$USER_NAME}/{$EMAIL}",
         "profile_settings_screen"
     )
 
@@ -265,7 +260,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object ProfileChangePasswordScreen : Screen(
-        "profile_change_password_screen/{$ID_BRAND}/{$PK_USER}/{$USER_NAME}/{$PREVIOUS_SCREEN}",
+        "profile_change_password_screen/{$ID_BRAND}/{$PK_USER}/{$USER_NAME}/{$EMAIL}/{$PREVIOUS_SCREEN}",
         "profile_change_password_screen"
     )
 
@@ -302,13 +297,13 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // CreditNavGraph Screens
     object CreditScreen : Screen(
-        "credit_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$ONFIDO_STATUS}/{$EVICERTIA_STATUS}/{$SIGN_DOCUMENT_ID_PRINT}/{$CROSSELING}",
+        "credit_screen?$ID_BRAND={$ID_BRAND}?$PK_USER={$PK_USER}?$IDENTIFICATION={$IDENTIFICATION}?$EMAIL={$EMAIL}?$CREDIT_STEP={$CREDIT_STEP}?$ID_USER_REQUEST={$ID_USER_REQUEST}?$FIRST_NAME={$FIRST_NAME}?$LAST_NAME={$LAST_NAME}?$ONFIDO_STATUS={$ONFIDO_STATUS}?$EVICERTIA_STATUS={$EVICERTIA_STATUS}?$SIGN_DOCUMENT_ID_PRINT={$SIGN_DOCUMENT_ID_PRINT}?$CROSSELING={$CROSSELING}",
         "credit_screen"
     )
 
     // Non Pre-Approved Screen
     object NonPreApprovedScreen : Screen(
-        "non_pre_approved_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$ONFIDO_STATUS}/{$EVICERTIA_STATUS}/{$SIGN_DOCUMENT_ID_PRINT}/{$CROSSELING}",
+        "non_pre_approved_screen?$ID_BRAND={$ID_BRAND}?$PK_USER={$PK_USER}?$IDENTIFICATION={$IDENTIFICATION}?$EMAIL={$EMAIL}?$CREDIT_STEP={$CREDIT_STEP}?$ID_USER_REQUEST={$ID_USER_REQUEST}?$FIRST_NAME={$FIRST_NAME}?$LAST_NAME={$LAST_NAME}?$ONFIDO_STATUS={$ONFIDO_STATUS}?$EVICERTIA_STATUS={$EVICERTIA_STATUS}?$SIGN_DOCUMENT_ID_PRINT={$SIGN_DOCUMENT_ID_PRINT}?$CROSSELING={$CROSSELING}",
         "non_pre_approved_screen"
     )
 
@@ -470,7 +465,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object PaymentCardVoucherScreen : Screen(
-        "payment_voucher_vd_screen/{$IDENTIFICATION}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CARD_SELECTED}/{$CURRENT_AMOUNT_VALUE}/{$IS_AUTOMATIC_PAYMENT_CHECKED}/{$REFERENCE_NUMBER}/{$PAYMENT_DATE}/{$INFO_USER}",
+        "payment_voucher_vd_screen?$IDENTIFICATION={$IDENTIFICATION}?$ID_CLIENT={$ID_CLIENT}?$ID_LOAN_CLIENT={$ID_LOAN_CLIENT}?$CARD_SELECTED={$CARD_SELECTED}?$CURRENT_AMOUNT_VALUE={$CURRENT_AMOUNT_VALUE}?$IS_AUTOMATIC_PAYMENT_CHECKED={$IS_AUTOMATIC_PAYMENT_CHECKED}?$REFERENCE_NUMBER={$REFERENCE_NUMBER}?$PAYMENT_DATE={$PAYMENT_DATE}?$INFO_USER={$INFO_USER}",
         "payment_voucher_vd_screen"
     )
 

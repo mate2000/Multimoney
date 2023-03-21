@@ -9,6 +9,7 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.EMAIL
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.USER_NAME
@@ -33,7 +34,8 @@ class SettingsViewModel @Inject constructor(
         uiState = uiState.copy(
             idBrand = savedStateHandle[ID_BRAND],
             pkUser = savedStateHandle[PK_USER],
-            userName = savedStateHandle[USER_NAME]
+            userName = savedStateHandle[USER_NAME],
+            email = savedStateHandle[EMAIL]
         )
         viewModelScope.launch {
             val isBiometricActive = dataStorePreferences.isBiometricsEnabled().first()
@@ -63,7 +65,7 @@ class SettingsViewModel @Inject constructor(
     }
 
     private fun onNavigateToChangePassword() {
-        navigateTo("${Screen.ProfileChangePasswordScreen.baseRoute}/${uiState.idBrand}/${uiState.pkUser}/${uiState.userName}/${Screen.ProfileSettingsScreen.baseRoute}")
+        navigateTo("${Screen.ProfileChangePasswordScreen.baseRoute}/${uiState.idBrand}/${uiState.pkUser}/${uiState.userName}/${uiState.email}/${Screen.ProfileSettingsScreen.baseRoute}")
     }
 
     data class UIState(
@@ -72,6 +74,7 @@ class SettingsViewModel @Inject constructor(
         val idBrand: Int? = null,
         val pkUser: String? = null,
         val userName: String? = null,
+        val email: String? = null,
         val areBiometricsEnabled: Boolean? = null
     )
 

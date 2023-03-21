@@ -78,6 +78,12 @@ fun SignUpPasswordScreen(
                 getDeviceType(fragmentActivity).value ?: ""
             )
         )
+
+        viewModel.onUIEvent(SignUpPasswordViewModel.UIEvent.OnValidatePasswordStructure(
+            pkUser = sharedViewModel.userData?.pkUser?.toInt() ?: 0,
+            user = sharedViewModel.userData?.email ?: "",
+            idBrand = sharedViewModel.idBrand ?: 0,
+        ))
     }
 
     viewModel.onUIEvent(
@@ -246,7 +252,14 @@ fun SignUpPasswordScreen(
             isRequiredMessage = stringResource(id = R.string.sign_up_password_required),
             isError = viewModel.uiState.passwordError.first,
             errorMessage = if (viewModel.uiState.passwordError.first) {
-                stringResource(id = viewModel.uiState.passwordError.second)
+                if (viewModel.uiState.passwordError.second == R.string.sign_up_password_requirement_forbidden_words) {
+                    stringResource(
+                        id = R.string.sign_up_password_requirement_forbidden_words,
+                        viewModel.getForbiddenWords(viewModel.uiState.password)
+                    )
+                } else {
+                    stringResource(id = viewModel.uiState.passwordError.second)
+                }
             } else {
                 null
             }
@@ -282,7 +295,14 @@ fun SignUpPasswordScreen(
             isRequiredMessage = stringResource(id = R.string.sign_up_password_required),
             isError = viewModel.uiState.confirmPasswordError.first,
             errorMessage = if (viewModel.uiState.confirmPasswordError.first) {
-                stringResource(id = viewModel.uiState.confirmPasswordError.second)
+                if (viewModel.uiState.confirmPasswordError.second == R.string.sign_up_password_requirement_forbidden_words) {
+                    stringResource(
+                        id = R.string.sign_up_password_requirement_forbidden_words,
+                        viewModel.getForbiddenWords(viewModel.uiState.confirmPassword)
+                    )
+                } else {
+                    stringResource(id = viewModel.uiState.confirmPasswordError.second)
+                }
             } else {
                 null
             }

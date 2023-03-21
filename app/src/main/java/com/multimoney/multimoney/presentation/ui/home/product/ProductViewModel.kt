@@ -24,6 +24,7 @@ import com.multimoney.domain.interaction.accountsmart.QueryListSinpeAccountUseCa
 import com.multimoney.domain.interaction.balance.QueryBalanceCardInformationUseCase
 import com.multimoney.domain.interaction.crypto.GetCryptoCurrencyMovementsUseCase
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
+import com.multimoney.domain.interaction.security.MutationUserEventMobileSaveUseCase
 import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
 import com.multimoney.domain.model.accountsmart.SinpeAccount
 import com.multimoney.domain.model.accountsmart.SmartAccountID
@@ -49,12 +50,14 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.CROSSELING
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_GET_EVICERTIA_LINK
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
@@ -106,6 +109,7 @@ import com.multimoney.multimoney.presentation.util.ShareHelper
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CreditSubscriptionStep
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.FirebaseNotificationRoute
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.ProfileCardListOrigin
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
@@ -114,11 +118,14 @@ import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENE
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.encodeURLToUTF
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
+import com.multimoney.multimoney.presentation.util.getDeviceManufacture
+import com.multimoney.multimoney.presentation.util.getDeviceModel
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.NovoHelper
+import com.multimoney.multimoney.util.firebase.FirebaseHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
@@ -126,8 +133,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
 @HiltViewModel
@@ -141,8 +146,10 @@ class ProductViewModel @Inject constructor(
     private val queryListSinpeAccountUseCaseImpl: QueryListSinpeAccountUseCase,
     private val queryGetCryptoCurrencyMovementsUseCase: GetCryptoCurrencyMovementsUseCase,
     private val mutationAccountStatusUseCase: MutationAccountStatusUseCase,
-    private val smartSubscriptionManager: SmartSubscriptionManager,
-    private val cryptoHelper: CryptoHelper
+    private val cryptoHelper: CryptoHelper,
+    private val firebaseHelper: FirebaseHelper,
+    private val mutationUserEventMobileSaveUseCase: MutationUserEventMobileSaveUseCase,
+    private val smartSubscriptionManager: SmartSubscriptionManager
 ) : BaseViewModel(true) {
 
     // UIState
@@ -164,6 +171,7 @@ class ProductViewModel @Inject constructor(
     var smartMovementsList: List<SmartMovementsResult> = emptyList()
     var creditMovements: List<CreditMovementsResult> = emptyList()
     var smartAccount: SmartAccountID? = null
+    var whatsAppLink: String = ""
 
     private fun onSetUserData(
         idBrand: String,
@@ -195,10 +203,32 @@ class ProductViewModel @Inject constructor(
         this.smartMovementsList = smartMovements
         this.creditMovements = creditMovements
         viewModelScope.launch {
+            whatsAppLink = preferences.getWhatsAppLink().first()
             uiState = uiState.copy(
                 shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first(),
                 isCryptoTransferEnabled = cryptoHelper.isCryptoTransferEnabled()
             )
+        }
+        firebaseHelper.registerFCMDevice { token ->
+            viewModelScope.launch {
+                mutationUserEventMobileSaveUseCase.invoke(
+                    idBrand = idBrand.toInt(),
+                    user = email,
+                    pkSuvLogUserEventMobile = 0,
+                    fkSuvMtrUser = pkUser.toInt(),
+                    platform = ANDROID_LABEL,
+                    uuid = dataStorePreferences.getDeviceId().first(),
+                    deviceVersion = android.os.Build.VERSION.SDK_INT.toString(),
+                    manufacture = getDeviceManufacture(),
+                    deviceName = getDeviceModel(),
+                    seriesNumber = "",
+                    ipAddress = "",
+                    latitude = "",
+                    longitude = "",
+                    tokenNotificationsPush = token ?: ""
+                ).collect {
+                }
+            }
         }
     }
 
@@ -327,11 +357,34 @@ class ProductViewModel @Inject constructor(
                     lastStep = CreditStep.Eight.id
                 }
                 navigateTo(
-                    "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
-                        "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/${uiState.userStatus?.infoUser?.firstName}/" +
-                        "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
-                        "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0}/" +
-                        "${uiState.userStatus?.infoCredit?.infoPreApprove?.crosseling ?: false}"
+                    Screen.CreditScreen.baseRoute
+                        .plus(getNavParam(ID_BRAND, uiState.idBrand.toInt()))
+                        .plus(getNavParam(PK_USER, pkUser))
+                        .plus(getNavParam(IDENTIFICATION, identification))
+                        .plus(getNavParam(EMAIL, email))
+                        .plus(getNavParam(CREDIT_STEP, lastStep))
+                        .plus(
+                            getNavParam(
+                                ID_USER_REQUEST,
+                                uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0
+                            )
+                        )
+                        .plus(getNavParam(FIRST_NAME, uiState.userStatus?.infoUser?.firstName))
+                        .plus(getNavParam(LAST_NAME, uiState.userStatus?.infoUser?.lastName))
+                        .plus(getNavParam(ONFIDO_STATUS, uiState.userStatus?.infoUser?.statusOnfido))
+                        .plus(getNavParam(EVICERTIA_STATUS, uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm))
+                        .plus(
+                            getNavParam(
+                                SIGN_DOCUMENT_ID_PRINT,
+                                uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0
+                            )
+                        )
+                        .plus(
+                            getNavParam(
+                                CROSSELING,
+                                uiState.userStatus?.infoCredit?.infoPreApprove?.crosseling ?: false
+                            )
+                        )
                 )
             }
         }
@@ -611,10 +664,34 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToGtSvNonPreApproved() =
         navigateTo(
-            "${Screen.NonPreApprovedScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
-                "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/${uiState.userStatus?.infoUser?.firstName}/" +
-                "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
-                "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0}/${uiState.userStatus?.infoCredit?.infoPreApprove?.crosseling ?: false}"
+            Screen.NonPreApprovedScreen.baseRoute
+                .plus(getNavParam(ID_BRAND, uiState.idBrand.toInt()))
+                .plus(getNavParam(PK_USER, pkUser))
+                .plus(getNavParam(IDENTIFICATION, identification))
+                .plus(getNavParam(EMAIL, email))
+                .plus(getNavParam(CREDIT_STEP, lastStep))
+                .plus(
+                    getNavParam(
+                        ID_USER_REQUEST,
+                        uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0
+                    )
+                )
+                .plus(getNavParam(FIRST_NAME, uiState.userStatus?.infoUser?.firstName))
+                .plus(getNavParam(LAST_NAME, uiState.userStatus?.infoUser?.lastName))
+                .plus(getNavParam(ONFIDO_STATUS, uiState.userStatus?.infoUser?.statusOnfido))
+                .plus(getNavParam(EVICERTIA_STATUS, uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm))
+                .plus(
+                    getNavParam(
+                        SIGN_DOCUMENT_ID_PRINT,
+                        uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0
+                    )
+                )
+                .plus(
+                    getNavParam(
+                        CROSSELING,
+                        uiState.userStatus?.infoCredit?.infoPreApprove?.crosseling ?: false
+                    )
+                )
         )
 
     fun getCreditBalanceLabel(balanceCredit: List<BalanceCredit?>?): String {
@@ -911,15 +988,15 @@ class ProductViewModel @Inject constructor(
         }
     }
 
-    private fun navigateToSignScreen(url: String? = null, comingFromCrypto: Boolean){
+    private fun navigateToSignScreen(url: String? = null, comingFromCrypto: Boolean) {
         navigateTo(
             "${Screen.SmartSignScreen.baseRoute}/${if (url.isNullOrBlank()) GENERATE_DOCUMENT_STEP.value else SIGN_DOCUMENTS_STEP.value}/" +
-                    "${url?.encodeURLToUTF()}/" +
-                    "${uiState.idBrand.toIntOrNull() ?: Brand.CostaRica.id}/$pkUser/$identification/$email/" +
-                    "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/$firstName/" +
-                    "${uiState.userStatus?.infoUser?.lastName}/${true}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/" +
-                    "$userName/$comingFromCrypto/${!url.isNullOrBlank()}/${uiState.userStatus?.infoBankAccount?.statusFirm}/" +
-                    "${uiState.userStatus?.infoBankAccount?.wording?.workflow}"
+                "${url?.encodeURLToUTF()}/" +
+                "${uiState.idBrand.toIntOrNull() ?: Brand.CostaRica.id}/$pkUser/$identification/$email/" +
+                "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/$firstName/" +
+                "${uiState.userStatus?.infoUser?.lastName}/${true}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/" +
+                "$userName/$comingFromCrypto/${!url.isNullOrBlank()}/${uiState.userStatus?.infoBankAccount?.statusFirm}/" +
+                "${uiState.userStatus?.infoBankAccount?.wording?.workflow}"
         )
     }
 
@@ -1174,6 +1251,16 @@ class ProductViewModel @Inject constructor(
             }
         }
 
+    private fun validateNotificationRoute(
+        notificationRoute: String,
+        restartNotificationRoute: () -> Unit
+    ) {
+        if (notificationRoute == FirebaseNotificationRoute.LOAN_MOVEMENTS.route) {
+            onNavigateToCreditMovements()
+            restartNotificationRoute.invoke()
+        }
+    }
+
     private fun onStartSubscription(comingFromCrypto: Boolean) {
         if (uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde != 0L) {
             onCallMutationAccountStatusUseCase(comingFromCrypto)
@@ -1332,6 +1419,7 @@ class ProductViewModel @Inject constructor(
                 applyAdjust = false,
                 adjustEventType = AdjustEventType.HOME_CRYPTO_PAXOS_IN_MAINTENANCE
             )
+            is UIEvent.OnValidateNotificationRoute -> validateNotificationRoute(uiEvent.route, uiEvent.restartNotificationRoute)
         }
     }
 
@@ -1436,6 +1524,10 @@ class ProductViewModel @Inject constructor(
         object OnRegisterAdjustPressSendFirstTime : UIEvent()
         object OnRegisterAdjustPressReceiveFirstTime : UIEvent()
         object OnRegisterAdjustPaxosInMaintenance : UIEvent()
+        data class OnValidateNotificationRoute(
+            val route: String,
+            val restartNotificationRoute: () -> Unit
+        ) : UIEvent()
     }
 
     sealed class BaseEvent {
@@ -1447,6 +1539,7 @@ class ProductViewModel @Inject constructor(
     companion object {
         const val EMPTY_STRING = ""
         const val ERROR_CREDIT = "Error"
+        const val ANDROID_LABEL = "Android"
         const val DEFAULT_PRODUCT_PAGES = 1
         const val INITIAL_PRODUCT_PAGE = 0
         const val DEFAULT_PROGRESS = 1F

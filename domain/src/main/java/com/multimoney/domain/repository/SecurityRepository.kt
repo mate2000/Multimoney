@@ -17,9 +17,11 @@ import com.multimoney.domain.model.security.RequestChangeDevice
 import com.multimoney.domain.model.security.SaveLogTracking
 import com.multimoney.domain.model.security.SendPinProcess
 import com.multimoney.domain.model.security.UserData
+import com.multimoney.domain.model.security.UserEventMobileSave
 import com.multimoney.domain.model.security.UserPhoneMobileSave
 import com.multimoney.domain.model.security.ValidateAccount
 import com.multimoney.domain.model.security.ValidateOTP
+import com.multimoney.domain.model.security.ValidatePasswordStructure
 import com.multimoney.domain.model.security.ValidatePin
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.security.ValidateUserStatus
@@ -226,4 +228,27 @@ interface SecurityRepository {
         data: String,
         idBrand: Int?
     ): Flow<MultimoneyResult<SaveLogTracking>>
+
+    suspend fun queryValidatePasswordStructure(
+        pkUser: Int,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<ValidatePasswordStructure>>
+
+    suspend fun mutationUserEventMobileSave(
+        idBrand: Int,
+        user: String,
+        pkSuvLogUserEventMobile: Long,
+        fkSuvMtrUser: Int,
+        platform: String,
+        uuid: String,
+        deviceVersion: String,
+        manufacture: String,
+        deviceName: String,
+        seriesNumber: String,
+        ipAddress: String,
+        latitude: String,
+        longitude: String,
+        tokenNotificationsPush: String
+    ): Flow<MultimoneyResult<UserEventMobileSave>>
 }

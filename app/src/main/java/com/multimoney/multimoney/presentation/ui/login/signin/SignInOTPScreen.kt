@@ -37,7 +37,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInOTPViewModel.UIEvent.OnGetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -58,10 +58,6 @@ fun SignInOTPScreen(
     viewModel: SignInOTPViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-    val whatsAppLink = stringResource(
-        id = R.string.whatsapp_deep_link,
-        SignUpViewModel.PHONE_HARDCODED
-    )
     val launchSmsActivityResult =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val data: Intent? = result.data
@@ -79,6 +75,7 @@ fun SignInOTPScreen(
         viewModel.onUIEvent(
             SignInOTPViewModel.UIEvent.OnSetupResources(context)
         )
+        viewModel.onUIEvent(OnGetWhatsAppLink)
         viewModel.executeNavigation(
             onPopBackStack = onPopBackStack,
             onNavigate = onNavigate,
@@ -104,7 +101,6 @@ fun SignInOTPScreen(
             onPositiveAction = {
                 viewModel.onUIEvent(
                     SignInOTPViewModel.UIEvent.OnOpenWhatsappLink(
-                        whatsAppLink,
                         context
                     )
                 )

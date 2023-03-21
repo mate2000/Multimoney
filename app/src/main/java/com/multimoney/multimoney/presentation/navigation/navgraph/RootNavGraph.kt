@@ -4,16 +4,17 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.multimoney.multimoney.presentation.navigation.LOGIN_ROUTE
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 
 @Composable
-fun Navigation() {
+fun Navigation(homeViewModel: HomeViewModel) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
         startDestination = LOGIN_ROUTE
     ) {
         loginNavGraph(navController = navController)
-        homeNavGraph(navController = navController)
+        homeNavGraph(navController = navController, homeViewModel)
         creditNavGraph(navController = navController)
         disbursementNavGraph(navController = navController)
         visaNavGraph(navController = navController)

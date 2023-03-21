@@ -63,7 +63,8 @@ fun CreditMovementsScreen(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             mutableStateOf(
                 ContextCompat.checkSelfPermission(
-                    context, android.Manifest.permission.POST_NOTIFICATIONS
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS
                 ) == PackageManager.PERMISSION_GRANTED
             )
         } else mutableStateOf(true)
@@ -74,7 +75,8 @@ fun CreditMovementsScreen(
         onResult = { isGranted ->
             hasNotificationPermission.value = isGranted
             viewModel.onUIEvent(OnDownloadMovements)
-        })
+        }
+    )
 
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopBackStack = onPopBackStack)
@@ -155,7 +157,6 @@ fun CreditMovementsScreen(
                         )
                     }
                 )
-                LoadingIndicator(viewModel.uiState.isLoading)
                 MovementsList(creditMoves)
             }
             CustomButton(
@@ -173,7 +174,7 @@ fun CreditMovementsScreen(
             )
         }
     }
-
+    LoadingIndicator(viewModel.uiState.isLoading)
     BackHandler {
         viewModel.onUIEvent(OnNavigateBackToHome)
     }

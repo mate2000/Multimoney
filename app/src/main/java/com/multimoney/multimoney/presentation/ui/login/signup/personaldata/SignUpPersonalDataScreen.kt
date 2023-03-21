@@ -17,7 +17,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Nationalities
 import com.multimoney.data.util.catalog.SignUpStep
@@ -56,7 +55,7 @@ fun SignUpPersonalDataScreen(
     val context = LocalContext.current
 
     viewModel.apply {
-        isOnRestart = isRestart
+        isOnRestart = isRestart || sharedViewModel.uiState.shouldChangeOnRestart
         LaunchedEffect(isOnRestart) {
             if (isOnRestart) {
                 viewModel.executeNavigation(onNavigate = onNavigate)
@@ -66,6 +65,9 @@ fun SignUpPersonalDataScreen(
                     })
                 )
                 isOnRestart = false
+                sharedViewModel.onUIEvent(
+                    SignUpViewModel.UIEvent.OnChangeRestartEvent(false)
+                )
             }
         }
     }

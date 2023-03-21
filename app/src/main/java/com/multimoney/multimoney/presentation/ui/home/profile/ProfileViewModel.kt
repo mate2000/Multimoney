@@ -64,7 +64,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun navigateToSettingsScreen() {
-        navigateTo("${Screen.ProfileSettingsScreen.baseRoute}/${uiState.idBrand}/${uiState.pkUser}/${uiState.userName}")
+        navigateTo("${Screen.ProfileSettingsScreen.baseRoute}/${uiState.idBrand}/${uiState.pkUser}/${uiState.userName}/${uiState.email}")
     }
 
     private fun navigateToHelpAndInformation() {

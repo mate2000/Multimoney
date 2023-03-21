@@ -250,7 +250,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // Profile Sub-Screens
     object ProfileSettingsScreen : Screen(
-        "profile_settings_screen/{$ID_BRAND}/{$PK_USER}/{$USER_NAME}",
+        "profile_settings_screen/{$ID_BRAND}/{$PK_USER}/{$USER_NAME}/{$EMAIL}",
         "profile_settings_screen"
     )
 
@@ -260,7 +260,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object ProfileChangePasswordScreen : Screen(
-        "profile_change_password_screen/{$ID_BRAND}/{$PK_USER}/{$USER_NAME}/{$PREVIOUS_SCREEN}",
+        "profile_change_password_screen/{$ID_BRAND}/{$PK_USER}/{$USER_NAME}/{$EMAIL}/{$PREVIOUS_SCREEN}",
         "profile_change_password_screen"
     )
 

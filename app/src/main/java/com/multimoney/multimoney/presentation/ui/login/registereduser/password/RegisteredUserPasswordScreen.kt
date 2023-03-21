@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.login.registereduser.password
 
-import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -29,12 +28,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.flowlayout.FlowRow
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -87,6 +86,8 @@ fun RegisteredUserPasswordScreen(
     )
 
     LaunchedEffect(true) {
+        viewModel.onUIEvent(RegisteredUserPasswordViewModel.UIEvent.OnValidatePasswordStructure)
+
         viewModel.onUIEvent(
             RegisteredUserPasswordViewModel.UIEvent.OnSetupDeviceInfo(
                 getDeviceName(fragmentActivity) ?: "",
@@ -114,24 +115,14 @@ fun RegisteredUserPasswordScreen(
 
     // Content
     RegisteredUserPasswordContent(
+        viewModel = viewModel,
         onCloseClick = { viewModel.onUIEvent(OnCloseClick(focusManager = focusManager)) },
-        viewModel.uiState.password,
-        viewModel.uiState.passwordError,
         onPasswordChange = { viewModel.onUIEvent(OnPasswordValueChange(it)) },
-        viewModel.uiState.confirmPassword,
-        viewModel.uiState.confirmPasswordError,
         onConfirmPasswordChange = { viewModel.onUIEvent(OnConfirmPasswordValueChange(it)) },
-        viewModel.uiState.eightCharactersMinimumState,
-        viewModel.uiState.oneUppercaseState,
-        viewModel.uiState.oneLowercaseState,
-        viewModel.uiState.oneNumberState,
-        viewModel.uiState.oneCharacterState,
         viewModel.biometricHelper.isBiometricAvailable(context),
-        viewModel.uiState.isFingerprintChecked,
         onFingerprintCheckedChanged = { value, showDialog ->
             viewModel.onUIEvent(OnFingerprintCheckedChanged(value, showDialog))
         },
-        viewModel.uiState.isContinueEnabled,
         onContinueClick = {
             viewModel.onUIEvent(OnCallPasswordSave)
         },
@@ -169,24 +160,13 @@ fun RegisteredUserPasswordScreen(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun RegisteredUserPasswordContent(
+    viewModel: RegisteredUserPasswordViewModel,
     onCloseClick: () -> Unit = {},
-    passwordValue: String = "",
-    passwordError: Pair<Boolean, Int> = Pair(false, string.empty),
     onPasswordChange: (String) -> Unit = {},
-    confirmPasswordValue: String = "",
-    confirmPasswordError: Pair<Boolean, Int> = Pair(false, string.empty),
     onConfirmPasswordChange: (String) -> Unit = {},
-    eightCharactersMinimumState: Boolean? = null,
-    oneUppercaseState: Boolean? = null,
-    oneLowercaseState: Boolean? = null,
-    oneNumberState: Boolean? = null,
-    oneCharacterState: Boolean? = null,
     isBiometricAvailable: Boolean = false,
-    isFingerprintChecked: Boolean = false,
     onFingerprintCheckedChanged: (Boolean, Boolean) -> Unit = { _, _ -> },
-    isContinueEnabled: Boolean = false,
     onContinueClick: () -> Unit = {},
     bottomSheetState: ModalBottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Expanded),
     coroutineScope: CoroutineScope = rememberCoroutineScope()
@@ -221,7 +201,7 @@ fun RegisteredUserPasswordContent(
                     lineHeight = 24.sp
                 )
                 CustomOutlinedTextField(
-                    value = passwordValue,
+                    value = viewModel.uiState.password,
                     onValueChange = {
                         onPasswordChange(it)
                     },
@@ -237,15 +217,22 @@ fun RegisteredUserPasswordContent(
                     modifier = Modifier.padding(top = 24.dp),
                     isRequired = true,
                     isRequiredMessage = stringResource(id = string.sign_up_password_required),
-                    isError = passwordError.first,
-                    errorMessage = if (passwordError.first) {
-                        stringResource(id = passwordError.second)
+                    isError = viewModel.uiState.passwordError.first,
+                    errorMessage = if (viewModel.uiState.passwordError.first) {
+                        if (viewModel.uiState.passwordError.second == R.string.sign_up_password_requirement_forbidden_words) {
+                            stringResource(
+                                id = R.string.sign_up_password_requirement_forbidden_words,
+                                viewModel.getForbiddenWords(viewModel.uiState.password)
+                            )
+                        } else {
+                            stringResource(id = viewModel.uiState.passwordError.second)
+                        }
                     } else {
                         null
                     }
                 )
                 CustomOutlinedTextField(
-                    value = confirmPasswordValue,
+                    value = viewModel.uiState.confirmPassword,
                     onValueChange = {
                         onConfirmPasswordChange(
                             it
@@ -263,9 +250,16 @@ fun RegisteredUserPasswordContent(
                     modifier = Modifier.padding(top = 16.dp),
                     isRequired = true,
                     isRequiredMessage = stringResource(id = string.sign_up_password_required),
-                    isError = confirmPasswordError.first,
-                    errorMessage = if (confirmPasswordError.first) {
-                        stringResource(id = confirmPasswordError.second)
+                    isError = viewModel.uiState.confirmPasswordError.first,
+                    errorMessage = if (viewModel.uiState.confirmPasswordError.first) {
+                        if (viewModel.uiState.confirmPasswordError.second == R.string.sign_up_password_requirement_forbidden_words) {
+                            stringResource(
+                                id = R.string.sign_up_password_requirement_forbidden_words,
+                                viewModel.getForbiddenWords(viewModel.uiState.confirmPassword)
+                            )
+                        } else {
+                            stringResource(id = viewModel.uiState.confirmPasswordError.second)
+                        }
                     } else {
                         null
                     }
@@ -275,28 +269,28 @@ fun RegisteredUserPasswordContent(
                 ) {
                     PasswordRequirementLabels(
                         text = stringResource(id = string.sign_up_password_requirement_eight_characters_minimum),
-                        state = eightCharactersMinimumState
+                        state = viewModel.uiState.eightCharactersMinimumState
                     )
                     PasswordRequirementLabels(
                         text = stringResource(id = string.sign_up_password_requirement_one_uppercase),
-                        state = oneUppercaseState
+                        state = viewModel.uiState.oneUppercaseState
                     )
                     PasswordRequirementLabels(
                         text = stringResource(id = string.sign_up_password_requirement_one_lowercase),
-                        state = oneLowercaseState
+                        state = viewModel.uiState.oneLowercaseState
                     )
                     PasswordRequirementLabels(
                         text = stringResource(id = string.sign_up_password_requirement_one_number),
-                        state = oneNumberState
+                        state = viewModel.uiState.oneNumberState
                     )
                     PasswordRequirementLabels(
                         text = stringResource(id = string.sign_up_password_requirement_one_characer),
-                        state = oneCharacterState
+                        state = viewModel.uiState.oneCharacterState
                     )
                 }
                 if (isBiometricAvailable) {
                     CustomCheckBox(
-                        checked = isFingerprintChecked,
+                        checked = viewModel.uiState.isFingerprintChecked,
                         onCheckedChange = {
                             onFingerprintCheckedChanged(it, it)
                         },
@@ -315,7 +309,7 @@ fun RegisteredUserPasswordContent(
                 .fillMaxWidth()
                 .height(48.dp),
             buttonType = PrimaryPrimary,
-            enable = isContinueEnabled
+            enable = viewModel.uiState.isContinueEnabled
         )
     }
     CustomModalWarningBottomSheet(

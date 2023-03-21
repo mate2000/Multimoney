@@ -29,9 +29,7 @@ import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.Pr
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.ProcessForgotPasswordViewModel.UIEvent.OnResendOtpClick
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.ProcessForgotPasswordViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
-import com.multimoney.multimoney.presentation.util.noMoreThanThreeConsecutiveLetterOrNumber
-import com.multimoney.multimoney.presentation.util.noMoreThanThreeEqualConsecutiveLetterOrNumber
-import com.multimoney.multimoney.presentation.util.noMoreThanThreeLettersOrNumbers
+import com.multimoney.multimoney.presentation.util.password.PasswordValidationHelper
 import com.multimoney.multimoney.presentation.util.passwordHasALowercaseLetterValidation
 import com.multimoney.multimoney.presentation.util.passwordHasANumberValidation
 import com.multimoney.multimoney.presentation.util.passwordHasAUppercaseLetterValidation
@@ -45,7 +43,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ProcessForgotPasswordViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val queryValidationSecurityUseCase: QueryValidationSecurityUseCase
+    private val queryValidationSecurityUseCase: QueryValidationSecurityUseCase,
+    private val passwordValidationHelper: PasswordValidationHelper
 ) : BaseViewModel(false) {
 
     var uiState by mutableStateOf(UIState())
@@ -81,16 +80,36 @@ class ProcessForgotPasswordViewModel @Inject constructor(
         navigateBack(popTo = previousScreen ?: "", isRestart = false)
     }
 
-    private fun validatePassword() {
+    private fun validatePassword(isConfirmPassword: Boolean = false) {
+        val password = if (isConfirmPassword) uiState.newPasswordConfirmation else uiState.newPassword
+
         uiState = uiState.copy(
             eightCharactersMinimumState = passwordHasMinimumCharacters(uiState.newPassword),
             oneUppercaseState = passwordHasAUppercaseLetterValidation(uiState.newPassword) && uiState.newPassword.isNotEmpty(),
             oneLowercaseState = passwordHasALowercaseLetterValidation(uiState.newPassword) && uiState.newPassword.isNotEmpty(),
             oneNumberState = passwordHasANumberValidation(uiState.newPassword) && uiState.newPassword.isNotEmpty(),
             oneCharacterState = passwordHasSpecialCharacterValidation(uiState.newPassword) && uiState.newPassword.isNotEmpty(),
-            newPasswordError = validateHasTheSameConsecutiveCharacter(),
             newPasswordConfirmationError = validatePasswordAreTheSame()
         )
+
+        uiState = if (!isConfirmPassword) {
+            uiState.copy(
+                newPasswordError = passwordValidationHelper.validateConsecutiveCharacter(
+                    value = password,
+                    password = uiState.newPassword,
+                    confirmPassword = uiState.newPasswordConfirmation
+                )
+            )
+        } else {
+            uiState.copy(
+                newPasswordConfirmationError = passwordValidationHelper.validateConsecutiveCharacter(
+                    value = password,
+                    password = uiState.newPassword,
+                    confirmPassword = uiState.newPasswordConfirmation
+                )
+            )
+        }
+
         resetValidationLabel(uiState.newPassword)
     }
 
@@ -100,32 +119,6 @@ class ProcessForgotPasswordViewModel @Inject constructor(
         } else {
             Pair(false, R.string.error_empty)
         }
-
-    private fun validateHasTheSameConsecutiveCharacter(): Pair<Boolean, Int> {
-        return when {
-            noMoreThanThreeEqualConsecutiveLetterOrNumber(uiState.newPassword) -> {
-                Pair(
-                    true,
-                    R.string.process_forgot_password_max_three_characters_or_number_consecutive
-                )
-            }
-            noMoreThanThreeConsecutiveLetterOrNumber(uiState.newPassword) -> {
-                Pair(
-                    true,
-                    R.string.process_forgot_password_max_three_characters_or_number_consecutive
-                )
-            }
-            noMoreThanThreeLettersOrNumbers(uiState.newPassword) -> {
-                Pair(
-                    true,
-                    R.string.process_forgot_password_max_three_characters_or_number_consecutive
-                )
-            }
-            else -> {
-                Pair(false, R.string.error_empty)
-            }
-        }
-    }
 
     private fun resetValidationLabel(password: String) {
         if (password.isEmpty()) {
@@ -162,7 +155,7 @@ class ProcessForgotPasswordViewModel @Inject constructor(
 
     private fun onNewPasswordConfirmationValueChange(password: String?) {
         uiState = uiState.copy(newPasswordConfirmation = password.toString())
-        validatePassword()
+        validatePassword(isConfirmPassword = true)
         uiState = uiState.copy(isFormValid = isFormValid())
     }
 
@@ -283,6 +276,17 @@ class ProcessForgotPasswordViewModel @Inject constructor(
         }
     }
 
+    private fun onValidatePasswordStructure() = executeUseCase {
+        val userPk: Int = if (pkUser.isNotBlank()) {
+            pkUser.toInt()
+        } else {
+            0
+        }
+        passwordValidationHelper.getValidatePasswordStructure(idBrand, userPk, email)
+    }
+
+    fun getForbiddenWords(value: String): String = passwordValidationHelper.getForbiddenWords(value)
+
     data class UIState(
         // Interactions
         val titleResource: Int = R.string.empty,
@@ -316,6 +320,7 @@ class ProcessForgotPasswordViewModel @Inject constructor(
             is OnNewPasswordValueChange -> onNewPasswordValueChange(uiEvent.value)
             is OnNewPasswordConfirmationValueChange -> onNewPasswordConfirmationValueChange(uiEvent.value)
             is OnStart -> onStart()
+            is UIEvent.OnValidatePasswordStructure -> onValidatePasswordStructure()
         }
     }
 
@@ -328,6 +333,7 @@ class ProcessForgotPasswordViewModel @Inject constructor(
         data class OnNewPasswordValueChange(val value: String) : UIEvent()
         data class OnNewPasswordConfirmationValueChange(val value: String) : UIEvent()
         object OnStart : UIEvent()
+        object OnValidatePasswordStructure: UIEvent()
     }
 
     sealed class BaseEvent {

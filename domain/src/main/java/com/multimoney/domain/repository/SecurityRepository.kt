@@ -20,6 +20,7 @@ import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.security.UserPhoneMobileSave
 import com.multimoney.domain.model.security.ValidateAccount
 import com.multimoney.domain.model.security.ValidateOTP
+import com.multimoney.domain.model.security.ValidatePasswordStructure
 import com.multimoney.domain.model.security.ValidatePin
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.security.ValidateUserStatus
@@ -226,4 +227,10 @@ interface SecurityRepository {
         data: String,
         idBrand: Int?
     ): Flow<MultimoneyResult<SaveLogTracking>>
+
+    suspend fun queryValidatePasswordStructure(
+        pkUser: Int,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<ValidatePasswordStructure>>
 }

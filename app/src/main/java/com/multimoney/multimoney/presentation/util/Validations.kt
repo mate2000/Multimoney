@@ -125,60 +125,23 @@ fun passwordHasSpecialCharacterValidation(value: String): Boolean {
     return matchRegex(value, getRegex(ONE_CHARACTER_REGEX))
 }
 
-fun stringHasOnlyDigitOrLetter(value: String) =
-    value.all { it.isDigit() } || value.all { it.isLetter() }
-
-fun noMoreThanThreeLettersOrNumbers(value: String): Boolean {
-    var error = false
-    if (value.isNotEmpty() && value.length > CHARACTER_NEED_TO_VALIDATE) {
-        val valueChunked = value.chunked(INVALID_CHARACTERS_CHUNKS)
-        if (stringHasOnlyDigitOrLetter(valueChunked.first())) {
-            error = true
-        }
-        if (error.not()) {
-            val newValue = value.drop(1)
-            return noMoreThanThreeLettersOrNumbers(newValue)
-        }
-    }
-    return error
+fun haveMoreThanThreeConsecutiveLetterOrNumber(value: String): Boolean {
+    val regEx = Regex(FOUR_REPEATED_CHARS_REGEX)
+    return regEx.containsMatchIn(value)
 }
 
-fun noMoreThanThreeConsecutiveLetterOrNumber(value: String): Boolean {
-    var error = false
-    if (value.isNotEmpty() && value.length > CHARACTER_NEED_TO_VALIDATE) {
-        val valueChunked = value.chunkedSequence(INVALID_CHARACTERS_CHUNKS)
-        if (stringHasOnlyDigitOrLetter(valueChunked.first())) {
-            val valueSplit = valueChunked.first().lowercase().toCharArray()
-            error =
-                valueSplit.first().code.plus(1) == valueSplit[1].code &&
-                valueSplit[1].code.plus(1) == valueSplit[2].code &&
-                valueSplit[2].code.plus(1) == valueSplit.last().code
-        }
-        if (error.not()) {
-            val newValue = value.drop(1)
-            return noMoreThanThreeConsecutiveLetterOrNumber(newValue)
-        }
-    }
-    return error
+fun haveMoreThanThreeSequentialLetterOrNumber(value: String): Boolean {
+    val regExAsc = Regex(FOUR_SEQUENTIAL_ASC_CHARS_REGEX)
+    val regExDsc = Regex(FOUR_SEQUENTIAL_DESC_CHARS_REGEX)
+    return regExAsc.containsMatchIn(value) || regExDsc.containsMatchIn(value)
 }
 
-fun noMoreThanThreeEqualConsecutiveLetterOrNumber(value: String): Boolean {
-    var error = false
-    if (value.isNotEmpty() && value.length > CHARACTER_NEED_TO_VALIDATE) {
-        val valueChunked = value.chunkedSequence(INVALID_CHARACTERS_CHUNKS)
-        if (stringHasOnlyDigitOrLetter(valueChunked.first())) {
-            val valueSplit = valueChunked.first().lowercase().toCharArray()
-            error =
-                valueSplit.first().code == valueSplit[1].code &&
-                valueSplit[1].code == valueSplit[2].code &&
-                valueSplit[2].code == valueSplit.last().code
-        }
-        if (error.not()) {
-            val newValue = value.drop(1)
-            return noMoreThanThreeEqualConsecutiveLetterOrNumber(newValue)
-        }
+fun containForbiddenWords(value: String, forbiddenWords: List<String>): Boolean {
+    if (forbiddenWords.isEmpty() || value.isEmpty()) {
+        return false
     }
-    return error
+
+    return forbiddenWords.any { value.contains(it, ignoreCase = true) }
 }
 
 fun validateDecimalIncome(value: String): Boolean {

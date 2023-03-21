@@ -61,6 +61,7 @@ fun BuyCurrencyScreen(
     viewModel: BuyCurrencyScreenViewModel = hiltViewModel()
 ) {
 
+    val accountMask = stringResource(id = R.string.payment_account_masked_text)
     LaunchedEffect(key1 = true) {
         viewModel.onUIEvent(
             BuyCurrencyScreenViewModel.UIEvent.OnSetUserData(
@@ -76,7 +77,7 @@ fun BuyCurrencyScreen(
                 side = sharedViewModel.side,
                 assetImageUrl = sharedViewModel.uiState.assetImageBaseUrl,
                 smartAccountAvailableBalance = sharedViewModel.uiState.smartAccountAvailableBalance,
-                ibanAccountNumber = sharedViewModel.uiState.ibanAccountNumber,
+                ibanAccountNumber = sharedViewModel.getAccountNumber(accountMask),
                 openMaintenanceAction = {
                     sharedViewModel.onUIEvent(
                         PurchaseCryptoSharedViewModel.BaseEvent.OnShowMaintenance
@@ -105,7 +106,7 @@ fun BuyCurrencyScreen(
     }
     when (viewModel.uiState.purchaseStatus) {
         PurchaseStatus.IDLE -> {
-            BuyCurrencyScreenContent(viewModel, sharedViewModel)
+            BuyCurrencyScreenContent(viewModel)
         }
         PurchaseStatus.LOADING -> {
             sharedViewModel.onUIEvent(
@@ -195,8 +196,7 @@ fun BuyCurrencyScreen(
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun BuyCurrencyScreenContent(
-    viewModel: BuyCurrencyScreenViewModel,
-    sharedViewModel: PurchaseCryptoSharedViewModel
+    viewModel: BuyCurrencyScreenViewModel
 ) {
     val coroutineScope = rememberCoroutineScope()
     val focusRequester = remember { FocusRequester() }
@@ -213,8 +213,7 @@ fun BuyCurrencyScreenContent(
             PurchaseConfirmationBottomSheet(
                 modalBottomSheetState = modalBottomSheetState,
                 coroutineScope = coroutineScope,
-                viewModel = viewModel,
-                sharedViewModel = sharedViewModel
+                viewModel = viewModel
             )
         }
     ) {

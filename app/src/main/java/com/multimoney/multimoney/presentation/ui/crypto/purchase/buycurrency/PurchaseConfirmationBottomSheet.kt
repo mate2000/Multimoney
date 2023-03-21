@@ -26,7 +26,6 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.ConfirmationBottomSheetContent
-import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.util.calculateConfirmationBaseAmount
 import com.multimoney.multimoney.presentation.util.calculateConfirmationQuoteAmount
 import com.multimoney.multimoney.presentation.util.calculateConvertedCurrencyBalance
@@ -44,8 +43,7 @@ const val MANY_ASSET_LENGTH = 4
 fun PurchaseConfirmationBottomSheet(
     modalBottomSheetState: ModalBottomSheetState,
     coroutineScope: CoroutineScope,
-    viewModel: BuyCurrencyScreenViewModel,
-    sharedViewModel: PurchaseCryptoSharedViewModel
+    viewModel: BuyCurrencyScreenViewModel
 ) {
     Column(modifier = Modifier
         .wrapContentSize()
@@ -97,7 +95,7 @@ fun PurchaseConfirmationBottomSheet(
                     append(viewModel.asset)
                 }
             },
-            accountNumber = sharedViewModel.getAccountNumber(stringResource(id = R.string.payment_account_masked_text)),
+            accountNumber = viewModel.accountNumber,
             buttonText = stringResource(id = R.string.crypto_purchase_flow_confirmation_btn_buy),
             showTotalToReceive = false,
             showBottomExchangeInfo = viewModel.idCurrencyAccount == CurrencyType.Colon.id,

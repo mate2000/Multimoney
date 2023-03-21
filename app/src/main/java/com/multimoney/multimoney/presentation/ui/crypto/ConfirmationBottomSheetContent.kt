@@ -50,7 +50,7 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
  * @param showTotalToReceive - boolean to determine if the total to receive section should be displayed
  * @param showBottomExchangeInfo - boolean to determine if the bottom exchange info section should be displayed
  * @param amountToReceive - number to display in the total to receive section
- * @param ibanAccountNumber - number to display in the account info section
+ * @param accountNumber - number to display in the account info section
  * @param buttonText - text to display in the button
  * @param asset - text of the crypto currency asset
  * @param assetImageUrl - url of the crypto currency asset image
@@ -73,7 +73,7 @@ fun ConfirmationBottomSheetContent(
     showTotalToReceive: Boolean = false,
     showBottomExchangeInfo: Boolean = false,
     amountToReceive: String = DEFAULT_AMOUNT,
-    ibanAccountNumber: String = "",
+    accountNumber: String = "",
     buttonText: String = "",
     asset: String = "",
     assetImageUrl: String = "",
@@ -114,8 +114,7 @@ fun ConfirmationBottomSheetContent(
         )
         AccountInfoSection(
             idCurrency = idCurrency,
-            ibanAccountNumber = ibanAccountNumber,
-            idBrand = idBrand,
+            ibanAccountNumber = accountNumber,
             labelText = accountInfoLabel
         )
         if (showBottomExchangeInfo) {
@@ -263,7 +262,6 @@ private fun InfoSection(
 private fun AccountInfoSection(
     idCurrency: Int,
     ibanAccountNumber: String,
-    idBrand: Int,
     @StringRes labelText: Int,
 ) {
     Column(

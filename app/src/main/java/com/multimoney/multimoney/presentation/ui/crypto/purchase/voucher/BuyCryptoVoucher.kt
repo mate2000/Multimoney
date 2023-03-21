@@ -66,14 +66,14 @@ fun BuyCryptoVoucherScreen(
         quoteAmount = sharedViewModel.uiState.voucherQuoteAmount ?: "",
         currencyName = sharedViewModel.uiState.asset ?: "",
         baseAmount = sharedViewModel.uiState.voucherBaseAmount ?: "",
-        accountNumber = sharedViewModel.uiState.ibanAccountNumber,
+        accountNumber = sharedViewModel.getAccountNumber(stringResource(id = R.string.payment_account_masked_text)),
         referenceNumber = sharedViewModel.uiState.voucherReferenceNumber ?: "",
         currentDate = sharedViewModel.uiState.purchaseCurrentDate ?: "",
         currentTime = sharedViewModel.uiState.purchaseCurrentTime ?: "",
         exchangeRate = sharedViewModel.uiState.voucherExchangeRate ?: "",
         totalDebitedExchange = sharedViewModel.uiState.voucherTotalDebitedExchange ?: "",
         totalDebitedAmount = sharedViewModel.uiState.voucherTotalDebitedAmount ?: "",
-        idCurrency = sharedViewModel.uiState.idCurrency ?: CurrencyType.Dollar.id,
+        idCurrency = sharedViewModel.uiState.idCurrency,
         viewModel = viewModel
     )
 }

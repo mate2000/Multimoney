@@ -61,6 +61,7 @@ fun BuyCurrencyScreen(
     viewModel: BuyCurrencyScreenViewModel = hiltViewModel()
 ) {
 
+    val accountMask = stringResource(id = R.string.payment_account_masked_text)
     LaunchedEffect(key1 = true) {
         viewModel.onUIEvent(
             BuyCurrencyScreenViewModel.UIEvent.OnSetUserData(
@@ -76,7 +77,7 @@ fun BuyCurrencyScreen(
                 side = sharedViewModel.side,
                 assetImageUrl = sharedViewModel.uiState.assetImageBaseUrl,
                 smartAccountAvailableBalance = sharedViewModel.uiState.smartAccountAvailableBalance,
-                ibanAccountNumber = sharedViewModel.uiState.ibanAccountNumber,
+                ibanAccountNumber = sharedViewModel.getAccountNumber(accountMask),
                 openMaintenanceAction = {
                     sharedViewModel.onUIEvent(
                         PurchaseCryptoSharedViewModel.BaseEvent.OnShowMaintenance

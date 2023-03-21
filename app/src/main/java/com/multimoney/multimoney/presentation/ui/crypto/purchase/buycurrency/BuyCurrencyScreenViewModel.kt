@@ -60,7 +60,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
     var assetImageUrl = ""
     var idCurrencyAccount = CurrencyType.Colon.id
     var smartAccountAvailableBalance = 0.0
-    var ibanAccountNumber = ""
+    var accountNumber = ""
     var openMaintenanceAction = {}
 
     private fun onSetUserData(
@@ -91,7 +91,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         this.accountToken = accountToken
         this.side = side
         this.assetImageUrl = assetImageUrl ?: ""
-        this.ibanAccountNumber = ibanAccountNumber
+        this.accountNumber = ibanAccountNumber
         if (idCurrencyAccount == CurrencyType.Colon.id) {
             convertColonesToDollars(smartAccountAvailableBalance)
         } else {

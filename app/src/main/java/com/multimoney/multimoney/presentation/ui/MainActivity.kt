@@ -57,8 +57,7 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
         isSessionAlreadyOpened = dataStorePreferences.isSessionDuplicated()
         setContent {
             MultimoneyTheme {
-                val viewModel = hiltViewModel<HomeViewModel>()
-                homeViewModel = viewModel
+                homeViewModel = hiltViewModel<HomeViewModel>()
                 homeViewModel?.let {
                     Navigation(it)
                     LaunchedEffect(key1 = true) {

@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.Nationalities
+import com.multimoney.domain.interaction.security.MutationUserEventMobileSaveUseCase
 import com.multimoney.domain.interaction.security.MutationUserValidationUseCase
 import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCase
 import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCase
@@ -29,7 +30,6 @@ import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnGetCountriesSuccess
-import com.multimoney.multimoney.presentation.util.catalog.CrDocuments
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnCallQueryGetCountry
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstLastNameChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstNameChange
@@ -45,12 +45,16 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.util.ISO3_COSTA_RICA
 import com.multimoney.multimoney.presentation.util.ISO3_EL_SALVADOR
 import com.multimoney.multimoney.presentation.util.ISO3_GUATEMALA
+import com.multimoney.multimoney.presentation.util.catalog.CrDocuments
 import com.multimoney.multimoney.presentation.util.catalog.GtDocuments
 import com.multimoney.multimoney.presentation.util.catalog.SvDocuments
+import com.multimoney.multimoney.presentation.util.getDeviceManufacture
+import com.multimoney.multimoney.presentation.util.getDeviceModel
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.validCarne
 import com.multimoney.multimoney.presentation.util.validDui
 import com.multimoney.multimoney.presentation.util.validId
+import com.multimoney.multimoney.util.firebase.FirebaseHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -65,7 +69,9 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private val queryCatalogDocumentTypeUseCase: QueryCatalogDocumentTypeUseCase,
     private val queryGetCountryUseCase: QueryGetCountryUseCase,
     private val mutationUserValidationUseCase: MutationUserValidationUseCase,
-    private val dataStorePreferences: DataStorePreferences
+    private val mutationUserEventMobileSaveUseCase: MutationUserEventMobileSaveUseCase,
+    private val dataStorePreferences: DataStorePreferences,
+    private val firebaseHelper: FirebaseHelper
 ) : BaseViewModel(false) {
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -159,7 +165,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 personalDocumentValue.length
             )
         }
-        if(status.first.not()){
+        if (status.first.not()) {
             closeKeyboard = true
             if (uiState.identificationValueType == SvDocuments.DuiDocument.document || uiState.identificationValueType == SvDocuments.CarneDocument.document) {
                 callQueryDataInformationClient(
@@ -169,8 +175,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                     user
                 )
             }
-        }
-        else {
+        } else {
             if (uiState.dataInformationClient?.name.isNullOrBlank().not()) {
                 uiState = uiState.copy(dataInformationClient = null)
             }
@@ -178,14 +183,14 @@ class SignUpPersonalDataViewModel @Inject constructor(
         return status
     }
 
-    private fun validateGtDocument(user: String): Pair<Boolean,Int>{
+    private fun validateGtDocument(user: String): Pair<Boolean, Int> {
         val status = validId(
             Nationalities.Guatemala.documentSize,
             R.string.sign_up_personal_data_id_not_valid,
             uiState.personalDocumentValue.length
         )
         uiState = uiState.copy(dataInformationClient = null)
-        if(status.first.not()){
+        if (status.first.not()) {
             closeKeyboard = true
             if (uiState.identificationValueType == GtDocuments.DPI.document) {
                 callQueryDataInformationClient(
@@ -195,8 +200,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                     user
                 )
             }
-        }
-        else {
+        } else {
             if (uiState.dataInformationClient?.name.isNullOrBlank().not()) {
                 uiState = uiState.copy(dataInformationClient = null)
             }
@@ -242,7 +246,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 user
             ).collectLatest { result ->
                 result.onSuccess {
-                    uiState = uiState.copy(isLoading = false, userRegistered = true,dataInformationClient = it)
+                    uiState = uiState.copy(isLoading = false, userRegistered = true, dataInformationClient = it)
                     isFormValid()
                 }
                 result.onFailure {
@@ -523,7 +527,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
             personalIdError = if (uiState.personalDocumentValue.isNotBlank()) {
                 when (uiState.nationalityValue) {
                     Nationalities.CostaRicaId.country -> validateCrDocument(email ?: "")
-                    Nationalities.ElSalvadorDui.country -> validateSvDocument(email ?: "",uiState.personalDocumentValue)
+                    Nationalities.ElSalvadorDui.country -> validateSvDocument(email ?: "", uiState.personalDocumentValue)
                     else -> validateGtDocument(email ?: "")
                 }
             } else {
@@ -550,6 +554,27 @@ class SignUpPersonalDataViewModel @Inject constructor(
         sharedViewModel: SignUpViewModel,
         userData: UserData?
     ) {
+        firebaseHelper.registerFCMDevice { token ->
+            viewModelScope.launch {
+                mutationUserEventMobileSaveUseCase.invoke(
+                    idBrand = idBrand,
+                    user = userData?.email ?: "",
+                    pkSuvLogUserEventMobile = 0,
+                    fkSuvMtrUser = userData?.pkUser?.toInt() ?: 0,
+                    platform = ANDROID_LABEL,
+                    uuid = dataStorePreferences.getDeviceId().first(),
+                    deviceVersion = android.os.Build.VERSION.SDK_INT.toString(),
+                    manufacture = getDeviceManufacture(),
+                    deviceName = getDeviceModel(),
+                    seriesNumber = "",
+                    ipAddress = "",
+                    latitude = "",
+                    longitude = "",
+                    tokenNotificationsPush = token ?: ""
+                ).collect {
+                }
+            }
+        }
         onUserDataValidationSuccess(
             userData = userData,
             onUseDataValueChange = {
@@ -769,6 +794,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
     companion object {
         const val DUI_VERIFICATION_MODULE = 10
         const val FORMAT_VALUE = '0'
+        const val ANDROID_LABEL = "Android"
         const val SINGLE_DOCUMENT = 1
         const val ANOTHER_DEVICE_ALREADY_REGISTERED = 3102
     }

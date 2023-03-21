@@ -2,7 +2,6 @@ package com.multimoney.multimoney.util.firebase
 
 import android.content.ContentValues.TAG
 import android.content.Context
-import android.util.Log
 import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.messaging.FirebaseMessaging
 import com.multimoney.multimoney.presentation.util.createNotificationChannel
@@ -44,7 +43,6 @@ class FirebaseHelper @Inject constructor(
                 Timber.w(TAG, "Fetching FCM registration token failed", task.exception)
                 return@addOnCompleteListener
             }
-            Log.d("FCM", "FCM registration token " + task.result)
             onResult(task.result)
         }
     }

@@ -322,6 +322,9 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
         composable(
             route = Screen.PaymentVoucherScreen.route,
             arguments = listOf(
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                },
                 navArgument(ID_CLIENT) {
                     type = NavType.IntType
                 },

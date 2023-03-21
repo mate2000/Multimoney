@@ -167,7 +167,6 @@ class HomeViewModel @Inject constructor(
                 result.onSuccess {
                     it?.let { movements ->
                         movements.accountToken = tokenNumber
-                        uiState = uiState.copy(smartMovementsList = emptyList())
                         uiState = uiState.copy(
                             smartMovementsList = uiState.smartMovementsList + movements,
                             isLoading = false

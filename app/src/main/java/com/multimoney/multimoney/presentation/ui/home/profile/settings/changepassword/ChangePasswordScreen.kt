@@ -91,6 +91,8 @@ fun ChangePasswordScreen(
     }
 
     LaunchedEffect(key1 = true) {
+        viewModel.onUIEvent(ChangePasswordViewModel.UIEvent.OnValidatePasswordStructure)
+
         viewModel.onPasswordSaveEvents.collect { event ->
             event.onSuccess { response ->
                 when (response?.messageError?.status) {
@@ -239,7 +241,14 @@ fun ChangePasswordContent(
                     isRequiredMessage = stringResource(id = R.string.sign_up_password_required),
                     isError = viewModel.uiState.newPasswordError.first,
                     errorMessage = if (viewModel.uiState.newPasswordError.first) {
-                        stringResource(id = viewModel.uiState.newPasswordError.second)
+                        if (viewModel.uiState.newPasswordError.second == R.string.sign_up_password_requirement_forbidden_words) {
+                            stringResource(
+                                id = R.string.sign_up_password_requirement_forbidden_words,
+                                viewModel.getForbiddenWords(viewModel.uiState.newPassword)
+                            )
+                        } else {
+                            stringResource(id = viewModel.uiState.newPasswordError.second)
+                        }
                     } else {
                         null
                     }
@@ -268,7 +277,14 @@ fun ChangePasswordContent(
                     isRequiredMessage = stringResource(id = R.string.sign_up_password_required),
                     isError = viewModel.uiState.newPasswordConfirmationError.first,
                     errorMessage = if (viewModel.uiState.newPasswordConfirmationError.first) {
-                        stringResource(id = viewModel.uiState.newPasswordConfirmationError.second)
+                        if (viewModel.uiState.newPasswordConfirmationError.second == R.string.sign_up_password_requirement_forbidden_words) {
+                            stringResource(
+                                id = R.string.sign_up_password_requirement_forbidden_words,
+                                viewModel.getForbiddenWords(viewModel.uiState.newPasswordConfirmation)
+                            )
+                        } else {
+                            stringResource(id = viewModel.uiState.newPasswordConfirmationError.second)
+                        }
                     } else {
                         null
                     }

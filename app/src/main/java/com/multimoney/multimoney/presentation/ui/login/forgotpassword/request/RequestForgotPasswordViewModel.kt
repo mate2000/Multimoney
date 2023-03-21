@@ -103,7 +103,8 @@ class RequestForgotPasswordViewModel @Inject constructor(
                 deviceId = dataStorePreferences.getDeviceId().first()
             ).collectLatest { result ->
                 result.onSuccess {
-                    idBrand = Brand.Default.id
+                    idBrand = it?.idBrand ?: Brand.Default.id
+                    pkUser = it?.pkUser.orEmpty()
                     uiState = uiState.copy(isAlertResultVisible = true, isLoading = false)
                 }.onMessage {
                     idBrand = it?.idBrand ?: Brand.Default.id

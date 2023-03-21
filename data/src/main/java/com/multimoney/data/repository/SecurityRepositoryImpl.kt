@@ -23,6 +23,7 @@ import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.security.UserEventMobileSave
 import com.multimoney.domain.model.security.UserPhoneMobileSave
 import com.multimoney.domain.model.security.ValidateOTP
+import com.multimoney.domain.model.security.ValidatePasswordStructure
 import com.multimoney.domain.model.security.ValidatePin
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.security.ValidateUserStatus
@@ -560,6 +561,17 @@ class SecurityRepositoryImpl @Inject constructor(
                 Success(data.mapToDomainModel())
             }
         )
+
+    override suspend fun queryValidatePasswordStructure(
+        pkUser: Int,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<ValidatePasswordStructure>> = fetchData(
+        apolloCall = graphqlApi.queryValidatePasswordStructure(pkUser, user, idBrand),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
 
     companion object {
         private const val ANOTHER_DEVICE_ALREADY_REGISTERED_CODE = 3102

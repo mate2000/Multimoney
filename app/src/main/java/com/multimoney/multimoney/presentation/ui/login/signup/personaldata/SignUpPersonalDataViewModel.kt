@@ -614,16 +614,6 @@ class SignUpPersonalDataViewModel @Inject constructor(
                         getNavParam(USER_DATA, encodeData(userData))
                     )
             )
-        } else {
-            navigateTo(
-                route = Screen.RegisteredUserEmailScreen.baseRoute
-                    .plus(
-                        getNavParam(ID_BRAND, idBrand)
-                    )
-                    .plus(
-                        getNavParam(USER_DATA, encodeData(userData))
-                    )
-            )
         }
     }
 

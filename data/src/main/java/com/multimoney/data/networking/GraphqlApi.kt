@@ -138,6 +138,7 @@ import com.multimoney.data.networking.graphql.apollomodel.UserValidationMutation
 import com.multimoney.data.networking.graphql.apollomodel.ValidateBankAccountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidateDepositAddressMutation
 import com.multimoney.data.networking.graphql.apollomodel.ValidateOTPMutation
+import com.multimoney.data.networking.graphql.apollomodel.ValidatePasswordStructureQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidatePinQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidateUserExistsQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidateUserStatusQuery
@@ -2579,6 +2580,16 @@ class GraphqlApi @Inject constructor(
         BankList365TypeAndTypeAccountQuery(
             idBrand,
             user
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryValidatePasswordStructure(
+        pkUser: Int,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<ValidatePasswordStructureQuery.Data> = apolloAuthorizedClient.query(
+        ValidatePasswordStructureQuery(
+            pkUser, user, idBrand
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

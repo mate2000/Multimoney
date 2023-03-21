@@ -43,7 +43,6 @@ class FirebaseHelper @Inject constructor(
                 Timber.w(TAG, "Fetching FCM registration token failed", task.exception)
                 return@addOnCompleteListener
             }
-            Timber.w(TAG, "FCM registration token", task.result)
             onResult(task.result)
         }
     }

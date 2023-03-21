@@ -882,6 +882,24 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun restartNotificationRoutePreference() {
+        viewModelScope.launch {
+            dataStorePreferences.setNavigationRouteByNotification("")
+            uiState = uiState.copy(
+                notificationRoute = ""
+            )
+        }
+    }
+
+    suspend fun getNotificationRoute() =
+        dataStorePreferences.setNavigationRouteByNotification().first()
+
+    fun setNotificationRoute(route: String) {
+        uiState = uiState.copy(
+            notificationRoute = route
+        )
+    }
+
     data class UIState(
         // Fields
         var isLoading: Boolean = false,
@@ -906,7 +924,8 @@ class HomeViewModel @Inject constructor(
         val showCardIssuanceError: Boolean = false,
         val toastIsVisible: Boolean = false,
         val releaseToastIsVisible: Boolean = false,
-        var isExpandedByClick: Boolean = false
+        var isExpandedByClick: Boolean = false,
+        var notificationRoute: String = ""
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

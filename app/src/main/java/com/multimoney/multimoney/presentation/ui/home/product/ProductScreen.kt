@@ -210,6 +210,22 @@ fun ProductScreen(
         )
     }
 
+    LaunchedEffect(key1 = sharedViewModel.uiState.notificationRoute) {
+        viewModel.onUIEvent(
+            ProductViewModel.UIEvent.OnValidateNotificationRoute(
+                sharedViewModel.uiState.notificationRoute
+            ) { sharedViewModel.restartNotificationRoutePreference() }
+        )
+    }
+
+    LaunchedEffect(key1 = true) {
+        viewModel.onUIEvent(
+            ProductViewModel.UIEvent.OnValidateNotificationRoute(
+                sharedViewModel.getNotificationRoute()
+            ) { sharedViewModel.restartNotificationRoutePreference() }
+        )
+    }
+
     // Pager
     val headerExpandedPagerState = rememberPagerState()
     val contentPagerState = rememberPagerState()
@@ -776,7 +792,7 @@ fun ProductCtaFooterExpanded(
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustPressReceiveFirstTime)
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToGiveCryptoFlow)
                 },
-                isCryptoTransferEnabled = viewModel.uiState.isCryptoTransferEnabled,
+                isCryptoTransferEnabled = viewModel.uiState.isCryptoTransferEnabled
             )
         }
     }

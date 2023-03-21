@@ -580,6 +580,11 @@ class DataStorePreferences @Inject constructor(
     suspend fun setWhatsAppLink(whatsAppLink: String) = setData(WHATSAPP_LINK, whatsAppLink)
     fun getWhatsAppLink(): Flow<String> = getData(WHATSAPP_LINK, "")
 
+    suspend fun setNavigationRouteByNotification(route: String) =
+        setData(FIREBASE_FCM_NAVIGATION_ROUTE, route)
+
+    fun setNavigationRouteByNotification(): Flow<String> = getData(FIREBASE_FCM_NAVIGATION_ROUTE, "")
+
     companion object {
         private val WHATSAPP_LINK = stringPreferencesKey("whatsapp_link")
         private val UNIQUE_ID = stringPreferencesKey("unique_id")
@@ -713,5 +718,8 @@ class DataStorePreferences @Inject constructor(
         private val ADJUST_SMART_FIRST_SAVING_BTN_KEY = booleanPreferencesKey("adjust_smart_first_saving_btn_key")
         private val ADJUST_SMART_FIRST_SENDING_KEY = booleanPreferencesKey("adjust_smart_first_sending_key")
         private val ADJUST_SMART_FIRST_SAVING_KEY = booleanPreferencesKey("adjust_smart_first_saving_key")
+
+        // Firebase
+        private val FIREBASE_FCM_NAVIGATION_ROUTE = stringPreferencesKey("firebase_token_key")
     }
 }

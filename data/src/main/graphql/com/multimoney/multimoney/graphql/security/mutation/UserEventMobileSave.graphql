@@ -1,0 +1,53 @@
+mutation userEventMobileSave(
+    $idBrand : Int!,
+    $user : String!,
+    $pK_SUV_LOG_USUARIO_EVENTO_MOBILE :Long!,
+    $fK_SUV_MTR_USUARIO :Int!,
+    $plataforma :String!,
+    $uuid :String!,
+    $version_Dispositivo :String!,
+    $manofactura :String!,
+    $nombre_Dispositivo: String!,
+    $numero_Serie :String!,
+    $direccion_Ip :String!,
+    $latitud :String!,
+    $longitud :String!,
+    $tokenNotificationsPush :String!
+) {
+    userEventMobileSave(
+        userEventMobileSaveInput: {
+            idBrand: $idBrand,
+            user: $user,
+            pK_SUV_LOG_USUARIO_EVENTO_MOBILE: $pK_SUV_LOG_USUARIO_EVENTO_MOBILE,
+            fK_SUV_MTR_USUARIO: $fK_SUV_MTR_USUARIO,
+            plataforma: $plataforma,
+            uuid: $uuid,
+            version_Dispositivo: $version_Dispositivo,
+            manofactura: $manofactura,
+            nombre_Dispositivo: $nombre_Dispositivo,
+            numero_Serie: $numero_Serie,
+            direccion_Ip: $direccion_Ip,
+            latitud: $latitud,
+            longitud: $longitud,
+            tokenNotificationsPush: $tokenNotificationsPush
+        }
+    ){
+        pK_SUV_LOG_USUARIO_EVENTO_MOBILE
+        fK_SUV_MTR_USUARIO
+        plataforma
+        uuid
+        version_Dispositivo
+        manofactura
+        nombre_Dispositivo
+        numero_Serie
+        direccion_Ip
+        latitud
+        longitud
+        tokenNotificationsPush
+        dISPOSITIVO_TARJETA
+        iD_BILLETERA_TARJETA
+        status
+        message
+        detail
+    }
+}

@@ -28,10 +28,10 @@ fun displayLocalNotification(
         .setContentTitle(title)
         .setStyle(NotificationCompat.BigTextStyle())
         .setContentText(body)
-        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        .setPriority(NotificationCompat.PRIORITY_HIGH)
         .setAutoCancel(true)
 
-    val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+    val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     builder.setContentIntent(pendingIntent)
 
     notificationManager.notify(NOTIFICATION_ID, builder.build())
@@ -42,7 +42,7 @@ fun createNotificationChannel(context: Context) {
     // Create the NotificationChannel, but only on API 26+ because
     // the NotificationChannel class is new and not in the support library
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val importance = NotificationManager.IMPORTANCE_HIGH
         val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance).apply {
             description = CHANNEL_DESCRIPTION
         }

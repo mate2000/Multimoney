@@ -3432,6 +3432,10 @@ type Card {
   isUpdate: Boolean
 
   fechaDebito: String
+
+  status: Int
+
+  message: String
 }
 
 input CardDtoInput {
@@ -5349,29 +5353,33 @@ input SaveRegisterCoreLogDtoInput {
 }
 
 type CreateCard {
-  idCard: Long!
+  idCard: Long
 
-  creationDate: DateTime!
+  creationDate: DateTime
 
-  verified: Boolean!
+  verified: Boolean
 
-  detail: String!
+  cardMasked: String
 
-  cardMasked: String!
+  verificationValue: String
 
-  verificationValue: String!
+  expirationMonth: String
 
-  expirationMonth: String!
+  expirationYear: String
 
-  expirationYear: String!
+  cardTokenId: String
 
-  cardTokenId: String!
+  currencyDescription: String
 
-  currencyDescription: String!
+  country: String
 
-  country: String!
+  default: Boolean
 
-  default: Boolean!
+  status: Int
+
+  message: String
+
+  detail: String
 }
 
 input CreateCardDtoInput {
@@ -5452,6 +5460,12 @@ type ApplyAFT {
   originCurrency: String!
 
   idMovement: Long!
+
+  status: Int
+
+  message: String
+
+  detail: String
 }
 
 input ApplyAFTDtoInput {
@@ -5473,9 +5487,11 @@ input ApplyAFTDtoInput {
 }
 
 type MicroDeposit {
-  status: Int!
+  status: Int
 
-  message: String!
+  message: String
+
+  detail: String
 }
 
 input MicroDepositDtoInput {
@@ -5579,9 +5595,11 @@ input DeleteCardDtoInput {
 }
 
 type ResendMicroDeposit {
-  status: Int!
+  status: Int
 
-  message: String!
+  message: String
+
+  detail: String
 }
 
 input ResendMicroDepositDtoInput {
@@ -5643,11 +5661,15 @@ input PayCreditVisaDirectDtoInput {
 }
 
 type DeleteCardNV {
-  code: String!
+  code: String
 
-  message: String!
+  message: String
 
-  datetime: String!
+  datetime: String
+
+  status: Int
+
+  detail: String
 }
 
 input DeleteCardNVDtoInput {
@@ -6763,7 +6785,7 @@ type PromissoryNoteResumeMobile {
 
   id_Moneda: Int!
 
-  aplica_Ampli_Comercio: Boolean!
+  aplica_Ampli_Comercio: Boolean
 
   expired_Debito_Aut_Card: Boolean
 }

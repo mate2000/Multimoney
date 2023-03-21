@@ -46,6 +46,8 @@ import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer.OnCountDownTimerEvents
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.catalog.getFirebaseNotificationRouteByRoute
+import com.multimoney.multimoney.presentation.util.catalog.shouldRestartFirebaseNotificationRoutePreferenceInHome
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -77,9 +79,23 @@ fun HomeScreen(
                 isOnRestart = false
             }
         }
-        LaunchedEffect(key1 = homeState) {
-            onUIEvent(HomeViewModel.UIEvent.OnSetHomeState(homeState))
+
+        LaunchedEffect(key1 = viewModel.uiState.notificationRoute) {
+            if (viewModel.uiState.notificationRoute.isNotEmpty()) {
+                viewModel.onUIEvent(HomeViewModel.UIEvent.OnSetHomeState(getFirebaseNotificationRouteByRoute(viewModel.uiState.notificationRoute)))
+                if (shouldRestartFirebaseNotificationRoutePreferenceInHome(viewModel.uiState.notificationRoute)) {
+                    viewModel.restartNotificationRoutePreference()
+                }
+            }
         }
+        LaunchedEffect(key1 = homeState) {
+            if (viewModel.getNotificationRoute().isNotEmpty()) {
+                onUIEvent(HomeViewModel.UIEvent.OnSetHomeState(getFirebaseNotificationRouteByRoute(viewModel.getNotificationRoute())))
+            } else {
+                onUIEvent(HomeViewModel.UIEvent.OnSetHomeState(homeState))
+            }
+        }
+
         LaunchedEffect(true) {
             onUIEvent(HomeViewModel.UIEvent.OnSetupSessionListener(activity))
         }

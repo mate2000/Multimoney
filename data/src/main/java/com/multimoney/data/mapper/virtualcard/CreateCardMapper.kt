@@ -18,4 +18,4 @@ private fun CreateCardVDMutation.CreateCardVD.mapToDomainModel() = CreateCard(
     default = default
 )
 
-fun CreateCardVDMutation.Data.mapToDomainModel() =  createCardVD.mapToDomainModel()
+fun CreateCardVDMutation.Data.mapToDomainModel() = createCardVD.mapToDomainModel()

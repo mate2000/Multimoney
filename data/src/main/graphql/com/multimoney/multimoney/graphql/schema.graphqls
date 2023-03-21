@@ -452,6 +452,11 @@ type Query {
   countryPhoneCodes(getCountryPhone: GetCountryPhoneCodeDtoInput!): [GetCountryPhoneCode!]!
 
   """
+  Security
+  """
+  validatePasswordStructure(validatePasswordStructureDto: ValidatePasswordStructureDtoInput!): ValidatePasswordStructureResult!
+
+  """
   VirtualCard
   """
   listCardVD(listCardVDInput: ListCardDtoInput!): [ListCard!]!
@@ -6159,6 +6164,24 @@ input BeneficiaryRequestDtoInput {
   authorizationSysde: String
 
   fullName: String
+}
+
+type ValidatePasswordStructureResult {
+  data: [String!]
+
+  status: Int
+
+  message: String
+
+  detail: String
+}
+
+input ValidatePasswordStructureDtoInput {
+    user: String
+
+    idBrand: Int
+
+    pkUser: Int
 }
 
 type GlobalRequest_Response_Result {

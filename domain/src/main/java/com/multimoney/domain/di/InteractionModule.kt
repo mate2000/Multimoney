@@ -236,6 +236,8 @@ import com.multimoney.domain.interaction.security.QueryMiniCardsUseCase
 import com.multimoney.domain.interaction.security.QueryMiniCardsUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryValidateBankAccountUseCase
 import com.multimoney.domain.interaction.security.QueryValidateBankAccountUseCaseImpl
+import com.multimoney.domain.interaction.security.QueryValidatePasswordStructure
+import com.multimoney.domain.interaction.security.QueryValidatePasswordStructureImpl
 import com.multimoney.domain.interaction.security.QueryValidatePinUseCase
 import com.multimoney.domain.interaction.security.QueryValidatePinUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryValidateUserExistsUseCase
@@ -376,6 +378,12 @@ class InteractionModule {
     @Singleton
     fun provideMutationSaveLogTrackingUseCase(securityRepository: SecurityRepository): MutationSaveLogTrackingUseCase =
         MutationSaveLogTrackingUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryValidatePasswordStructure(securityRepository: SecurityRepository): QueryValidatePasswordStructure =
+        QueryValidatePasswordStructureImpl(securityRepository)
+
 
     // Balance
 

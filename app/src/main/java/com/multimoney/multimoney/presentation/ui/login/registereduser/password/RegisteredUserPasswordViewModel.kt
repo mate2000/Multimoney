@@ -45,9 +45,7 @@ import com.multimoney.multimoney.presentation.util.getCountryCodeByIdBrand
 import com.multimoney.multimoney.presentation.util.getDeviceBrand
 import com.multimoney.multimoney.presentation.util.getDeviceModel
 import com.multimoney.multimoney.presentation.util.getIPAddress
-import com.multimoney.multimoney.presentation.util.noMoreThanThreeConsecutiveLetterOrNumber
-import com.multimoney.multimoney.presentation.util.noMoreThanThreeEqualConsecutiveLetterOrNumber
-import com.multimoney.multimoney.presentation.util.noMoreThanThreeLettersOrNumbers
+import com.multimoney.multimoney.presentation.util.password.PasswordValidationHelper
 import com.multimoney.multimoney.presentation.util.passwordHasALowercaseLetterValidation
 import com.multimoney.multimoney.presentation.util.passwordHasANumberValidation
 import com.multimoney.multimoney.presentation.util.passwordHasAUppercaseLetterValidation
@@ -67,7 +65,8 @@ class RegisteredUserPasswordViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     val biometricHelper: BiometricHelper,
     private val dataStorePreferences: DataStorePreferences,
-    private val queryValidationSecurityUseCase: QueryValidationSecurityUseCase
+    private val queryValidationSecurityUseCase: QueryValidationSecurityUseCase,
+    private val passwordValidationHelper: PasswordValidationHelper
 ) : BaseViewModel(false) {
 
     // UIState
@@ -141,49 +140,40 @@ class RegisteredUserPasswordViewModel @Inject constructor(
 
     private fun onConfirmPasswordValueChange(confirmPassword: String) {
         uiState = uiState.copy(confirmPassword = confirmPassword)
-        validatePassword()
+        validatePassword(isConfirmPassword = true)
         uiState = uiState.copy(isContinueEnabled = isFormValid())
     }
 
-    private fun validatePassword() {
+    private fun validatePassword(isConfirmPassword: Boolean = false) {
+        val password = if (isConfirmPassword) uiState.confirmPassword else uiState.password
+
         uiState = uiState.copy(
             eightCharactersMinimumState = passwordHasMinimumCharacters(uiState.password),
             oneUppercaseState = passwordHasAUppercaseLetterValidation(uiState.password) && uiState.password.isNotEmpty(),
             oneLowercaseState = passwordHasALowercaseLetterValidation(uiState.password) && uiState.password.isNotEmpty(),
             oneNumberState = passwordHasANumberValidation(uiState.password) && uiState.password.isNotEmpty(),
             oneCharacterState = passwordHasSpecialCharacterValidation(uiState.password) && uiState.password.isNotEmpty(),
-            confirmPasswordError = validateHasTheSameConsecutiveCharacter()
         )
-        resetValidationLabel(uiState.password)
-    }
 
-    private fun validateHasTheSameConsecutiveCharacter(): Pair<Boolean, Int> {
-        return when {
-            noMoreThanThreeEqualConsecutiveLetterOrNumber(uiState.password) -> {
-                Pair(
-                    true,
-                    string.sign_up_password_requirement_max_three_characters_or_number_consecutive
+        uiState = if (!isConfirmPassword) {
+            uiState.copy(
+                passwordError = passwordValidationHelper.validateConsecutiveCharacter(
+                    value = password,
+                    password = uiState.password,
+                    confirmPassword = uiState.confirmPassword
                 )
-            }
-            noMoreThanThreeConsecutiveLetterOrNumber(uiState.password) -> {
-                Pair(
-                    true,
-                    string.sign_up_password_requirement_max_three_characters_or_number_consecutive
+            )
+        } else {
+            uiState.copy(
+                confirmPasswordError = passwordValidationHelper.validateConsecutiveCharacter(
+                    value = password,
+                    password = uiState.password,
+                    confirmPassword = uiState.confirmPassword
                 )
-            }
-            noMoreThanThreeLettersOrNumbers(uiState.password) -> {
-                Pair(
-                    true,
-                    string.sign_up_password_requirement_max_three_characters_or_number_consecutive
-                )
-            }
-            (uiState.password.isNotEmpty() && uiState.confirmPassword.isNotEmpty() && uiState.confirmPassword != uiState.password) -> {
-                Pair(true, string.sign_up_password_confirm_password_error)
-            }
-            else -> {
-                Pair(false, string.error_empty)
-            }
+            )
         }
+
+        resetValidationLabel(uiState.password)
     }
 
     private fun onFingerprintCheckedChanged(value: Boolean, showDialog: Boolean) {
@@ -438,6 +428,22 @@ class RegisteredUserPasswordViewModel @Inject constructor(
         )
     }
 
+    private fun onValidatePasswordStructure() = executeUseCase {
+        val userPk: Int = if (userData?.pkUser?.isNotBlank() == true) {
+            userData?.pkUser?.toInt() ?: 0
+        } else {
+            0
+        }
+
+        passwordValidationHelper.getValidatePasswordStructure(
+            idBrand,
+            userPk,
+            userData?.email ?: ""
+        )
+    }
+
+    fun getForbiddenWords(value: String): String = passwordValidationHelper.getForbiddenWords(value)
+
     data class UIState(
         // Fields
         var password: String = "",
@@ -493,6 +499,7 @@ class RegisteredUserPasswordViewModel @Inject constructor(
                 uiEvent.deviceName,
                 uiEvent.deviceType
             )
+            is UIEvent.OnValidatePasswordStructure -> onValidatePasswordStructure()
         }
     }
 
@@ -547,6 +554,7 @@ class RegisteredUserPasswordViewModel @Inject constructor(
 
         data class OnIsBiometricAvailable(val value: Boolean) : UIEvent()
         data class OnCloseClick(val focusManager: FocusManager) : UIEvent()
+        object OnValidatePasswordStructure : UIEvent()
     }
 
     sealed class BaseEvent {

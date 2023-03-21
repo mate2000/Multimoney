@@ -79,6 +79,8 @@ fun ProcessForgotPasswordScreen(
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(true) {
+        viewModel.onUIEvent(ProcessForgotPasswordViewModel.UIEvent.OnValidatePasswordStructure)
+
         viewModel.apply {
             executeNavigation(onPopBackStack = onPopBackStack)
             onUIEvent(OnStart)
@@ -103,6 +105,7 @@ fun ProcessForgotPasswordScreen(
         }
     }
     ProcessForgotPasswordContent(
+        viewModel = viewModel,
         focusManager = focusManager,
         uiState = viewModel.uiState,
         onCloseClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) },
@@ -119,8 +122,8 @@ fun ProcessForgotPasswordScreen(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-@Preview
 fun ProcessForgotPasswordContent(
+    viewModel: ProcessForgotPasswordViewModel,
     focusManager: FocusManager = LocalFocusManager.current,
     uiState: UIState = UIState(),
     onCloseClick: () -> Unit = {},
@@ -205,7 +208,14 @@ fun ProcessForgotPasswordContent(
                     isRequiredMessage = stringResource(id = string.process_forgot_password_new_password_required),
                     isError = uiState.newPasswordError.first,
                     errorMessage = if (uiState.newPasswordError.first) {
-                        stringResource(id = uiState.newPasswordError.second)
+                        if (viewModel.uiState.newPasswordError.second == R.string.sign_up_password_requirement_forbidden_words) {
+                            stringResource(
+                                id = R.string.sign_up_password_requirement_forbidden_words,
+                                viewModel.getForbiddenWords(viewModel.uiState.newPassword)
+                            )
+                        } else {
+                            stringResource(id = viewModel.uiState.newPasswordError.second)
+                        }
                     } else {
                         null
                     }
@@ -230,7 +240,14 @@ fun ProcessForgotPasswordContent(
                     isRequiredMessage = stringResource(id = string.process_forgot_password_new_password_confirmation_required),
                     isError = uiState.newPasswordConfirmationError.first,
                     errorMessage = if (uiState.newPasswordConfirmationError.first) {
-                        stringResource(id = uiState.newPasswordConfirmationError.second)
+                        if (viewModel.uiState.newPasswordConfirmationError.second == R.string.sign_up_password_requirement_forbidden_words) {
+                            stringResource(
+                                id = R.string.sign_up_password_requirement_forbidden_words,
+                                viewModel.getForbiddenWords(viewModel.uiState.newPasswordConfirmation)
+                            )
+                        } else {
+                            stringResource(id = viewModel.uiState.newPasswordConfirmationError.second)
+                        }
                     } else {
                         null
                     }

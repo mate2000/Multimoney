@@ -15,6 +15,7 @@ import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.EMAIL
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.USER_NAME
@@ -24,9 +25,7 @@ import com.multimoney.multimoney.presentation.ui.home.profile.settings.changepas
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.getNavParam
-import com.multimoney.multimoney.presentation.util.noMoreThanThreeConsecutiveLetterOrNumber
-import com.multimoney.multimoney.presentation.util.noMoreThanThreeEqualConsecutiveLetterOrNumber
-import com.multimoney.multimoney.presentation.util.noMoreThanThreeLettersOrNumbers
+import com.multimoney.multimoney.presentation.util.password.PasswordValidationHelper
 import com.multimoney.multimoney.presentation.util.passwordHasALowercaseLetterValidation
 import com.multimoney.multimoney.presentation.util.passwordHasANumberValidation
 import com.multimoney.multimoney.presentation.util.passwordHasAUppercaseLetterValidation
@@ -47,7 +46,8 @@ class ChangePasswordViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val queryValidationSecurityUseCase: QueryValidationSecurityUseCase,
     private val cognitoHelper: CognitoHelper,
-    private val mmCountDownTimer: MMCountDownTimer
+    private val mmCountDownTimer: MMCountDownTimer,
+    private val passwordValidationHelper: PasswordValidationHelper
 ) : BaseViewModel(true) {
 
     // UIState
@@ -63,50 +63,42 @@ class ChangePasswordViewModel @Inject constructor(
         uiState = uiState.copy(
             idBrand = savedStateHandle[ID_BRAND] ?: 0,
             pkUser = savedStateHandle[PK_USER] ?: "",
-            userName = savedStateHandle[USER_NAME] ?: ""
+            userName = savedStateHandle[USER_NAME] ?: "",
+            email = savedStateHandle[EMAIL] ?: ""
         )
         previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
     }
 
-    private fun validatePassword() {
+    private fun validatePassword(isConfirmPassword: Boolean = false) {
+        val password = if (isConfirmPassword) uiState.newPasswordConfirmation else uiState.newPassword
+
         uiState = uiState.copy(
             eightCharactersMinimumState = passwordHasMinimumCharacters(uiState.newPassword),
             oneUppercaseState = passwordHasAUppercaseLetterValidation(uiState.newPassword) && uiState.newPassword.isNotEmpty(),
             oneLowercaseState = passwordHasALowercaseLetterValidation(uiState.newPassword) && uiState.newPassword.isNotEmpty(),
             oneNumberState = passwordHasANumberValidation(uiState.newPassword) && uiState.newPassword.isNotEmpty(),
-            oneCharacterState = passwordHasSpecialCharacterValidation(uiState.newPassword) && uiState.newPassword.isNotEmpty(),
-            newPasswordConfirmationError = validateHasTheSameConsecutiveCharacter()
+            oneCharacterState = passwordHasSpecialCharacterValidation(uiState.newPassword) && uiState.newPassword.isNotEmpty()
         )
-        resetValidationLabel(uiState.newPassword)
-    }
 
-    private fun validateHasTheSameConsecutiveCharacter(): Pair<Boolean, Int> {
-        return when {
-            noMoreThanThreeEqualConsecutiveLetterOrNumber(uiState.newPassword) -> {
-                Pair(
-                    true,
-                    R.string.profile_password_requirement_max_three_characters_or_number_consecutive
+        uiState = if (!isConfirmPassword) {
+            uiState.copy(
+                newPasswordError = passwordValidationHelper.validateConsecutiveCharacter(
+                    value = password,
+                    password = uiState.newPassword,
+                    confirmPassword = uiState.newPasswordConfirmation
                 )
-            }
-            noMoreThanThreeConsecutiveLetterOrNumber(uiState.newPassword) -> {
-                Pair(
-                    true,
-                    R.string.profile_password_requirement_max_three_characters_or_number_consecutive
+            )
+        } else {
+            uiState.copy(
+                newPasswordConfirmationError = passwordValidationHelper.validateConsecutiveCharacter(
+                    value = password,
+                    password = uiState.newPassword,
+                    confirmPassword = uiState.newPasswordConfirmation
                 )
-            }
-            noMoreThanThreeLettersOrNumbers(uiState.newPassword) -> {
-                Pair(
-                    true,
-                    R.string.profile_password_requirement_max_three_characters_or_number_consecutive
-                )
-            }
-            (uiState.newPassword.isNotEmpty() && uiState.newPasswordConfirmation.isNotEmpty() && uiState.newPasswordConfirmation != uiState.newPassword) -> {
-                Pair(true, R.string.sign_up_password_confirm_password_error)
-            }
-            else -> {
-                Pair(false, R.string.error_empty)
-            }
+            )
         }
+
+        resetValidationLabel(uiState.newPassword)
     }
 
     private fun resetValidationLabel(password: String) {
@@ -135,7 +127,7 @@ class ChangePasswordViewModel @Inject constructor(
 
     private fun onNewPasswordConfirmationValueChange(password: String?) {
         uiState = uiState.copy(newPasswordConfirmation = password.toString())
-        validatePassword()
+        validatePassword(isConfirmPassword = true)
         uiState = uiState.copy(isButtonEnabled = isFormValid())
     }
 
@@ -266,6 +258,16 @@ class ChangePasswordViewModel @Inject constructor(
         navigateBack(Screen.SignInScreen.route, isRestart = false)
     }
 
+    private fun onValidatePasswordStructure() = executeUseCase {
+        passwordValidationHelper.getValidatePasswordStructure(
+            pkUser = uiState.pkUser.toInt(),
+            user = uiState.email,
+            idBrand = uiState.idBrand
+        )
+    }
+
+    fun getForbiddenWords(value: String): String = passwordValidationHelper.getForbiddenWords(value)
+
     data class UIState(
         // Fields
         val currentPassword: String = "",
@@ -284,6 +286,7 @@ class ChangePasswordViewModel @Inject constructor(
         val idBrand: Int = 0,
         val pkUser: String = "",
         val userName: String = "",
+        val email: String = "",
         val isLoading: Boolean = false,
 
         var eightCharactersMinimumState: Boolean? = null,
@@ -312,6 +315,7 @@ class ChangePasswordViewModel @Inject constructor(
             is UIEvent.OnShowAlertDialog -> onShowAlertDialog()
             is UIEvent.OnAlertButtonClick -> onAlertButtonClick()
             is OnNavigateToForgotPassword -> onNavigateToForgotPassword()
+            is UIEvent.OnValidatePasswordStructure -> onValidatePasswordStructure()
         }
     }
 
@@ -340,6 +344,7 @@ class ChangePasswordViewModel @Inject constructor(
         object OnUpdateLocallyStoredPassword : UIEvent()
         object OnUpdatePassword : UIEvent()
         object OnNavigateToForgotPassword : UIEvent()
+        object OnValidatePasswordStructure: UIEvent()
     }
 
     companion object {

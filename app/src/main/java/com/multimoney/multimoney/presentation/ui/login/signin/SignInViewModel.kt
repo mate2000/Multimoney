@@ -193,7 +193,7 @@ class SignInViewModel @Inject constructor(
     }
 
     private fun onNavigateToChangePassword(idBrand: Int, pkUser: String, userName: String) =
-        navigateTo("${Screen.ProfileChangePasswordScreen.baseRoute}/$idBrand/$pkUser/$userName/${Screen.SignInScreen.baseRoute}")
+        navigateTo("${Screen.ProfileChangePasswordScreen.baseRoute}/$idBrand/$pkUser/$userName/${uiState.userEmail}/${Screen.SignInScreen.baseRoute}")
 
     private fun checkSessionState(authException: AuthException) = when {
         authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.SessionActive.code) == true -> uiState =

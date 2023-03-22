@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.home
 
 import android.app.Activity
+import android.content.Intent
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -62,7 +63,6 @@ import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.util.BiometricHelper
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
@@ -70,6 +70,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalPagerApi::class)
@@ -730,6 +731,13 @@ class HomeViewModel @Inject constructor(
         emitBaseEvent(BaseEvent.OnQuickActionClicked(flow))
     }
 
+    private fun openMiniCardActionFlow(
+        miniCard: MiniCardsItem,
+        openIntent: (Intent) -> Unit
+    ) {
+        emitBaseEvent(BaseEvent.OnMiniCardsClicked(miniCard, openIntent))
+    }
+
     private fun signOut(activity: Activity?) {
         hideTimerDialog()
         activity?.let { safeActivity ->
@@ -939,6 +947,10 @@ class HomeViewModel @Inject constructor(
             is UIEvent.OnSetUserData -> onsetUserData()
             is UIEvent.OnSetHomeState -> onSetHomeState(uiEvent.homeState)
             is UIEvent.OnOpenQuickActionFlow -> openQuickActionFlow(flow = uiEvent.flow)
+            is UIEvent.OnOpenMiniCardActionFlow -> openMiniCardActionFlow(
+                miniCard = uiEvent.miniCard,
+                openIntent = uiEvent.openIntent
+            )
             is UIEvent.OnGetSmartMovements -> onGetSmartMovements(
                 uiEvent.user,
                 uiEvent.idBrand,
@@ -995,6 +1007,10 @@ class HomeViewModel @Inject constructor(
     sealed class UIEvent {
         data class OnUpdateIsExpandedByClick(val isExpandedByClick: Boolean) : UIEvent()
         data class OnOpenQuickActionFlow(val flow: String) : UIEvent()
+        data class OnOpenMiniCardActionFlow(
+            val miniCard: MiniCardsItem,
+            val openIntent: (Intent) -> Unit
+        ) : UIEvent()
         data class OnBottomNavigationItemClick(
             val innerNavHostController: NavHostController,
             val route: String
@@ -1050,7 +1066,10 @@ class HomeViewModel @Inject constructor(
         object OnOpenQuickActionsBottomSheet : BaseEvent()
         object OnOpenMyProductsBottomSheet : BaseEvent()
         data class OnQuickActionClicked(val flow: String)
-        data class OnMiniCardsClicked(val flow: String)
+        data class OnMiniCardsClicked(
+            val miniCard: MiniCardsItem,
+            val openIntent: (Intent) -> Unit
+        )
         object OnShowAutomaticPaymentEditBottomSheet : BaseEvent()
         object OnHideAutomaticPaymentEditBottomSheet : BaseEvent()
         object OnEditAutomaticPaymentEvent : BaseEvent()

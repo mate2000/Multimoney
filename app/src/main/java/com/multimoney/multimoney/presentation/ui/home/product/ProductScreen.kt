@@ -103,6 +103,7 @@ import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.MotionLayoutMM
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
+import com.multimoney.multimoney.presentation.util.openIntent
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import kotlinx.coroutines.launch
 
@@ -182,7 +183,12 @@ fun ProductScreen(
                     }
                 }
                 is HomeViewModel.BaseEvent.OnMiniCardsClicked -> {
-                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnMiniCardsClicked(event.flow))
+                    viewModel.onUIEvent(
+                        ProductViewModel.UIEvent.OnMiniCardsClicked(
+                            miniCard = event.miniCard,
+                            openIntent = event.openIntent
+                        )
+                    )
                 }
                 is HomeViewModel.BaseEvent.OnEditAutomaticPaymentEvent -> {
                     viewModel.onUIEvent(OnNavigateToScheduleAutomaticPaymentScreen(true))
@@ -394,6 +400,7 @@ fun TipsAndOffer(
     viewModel: ProductViewModel,
     sharedViewModel: HomeViewModel
 ) {
+    val context = LocalContext.current
     val poppinsRegularFontFamily = FontFamily(
         Font(R.font.poppins_regular)
     )
@@ -455,7 +462,21 @@ fun TipsAndOffer(
         ) {
             sharedViewModel.uiState.miniCardList?.let { miniCardList ->
                 items(items = miniCardList, itemContent = {
-                    TipAndOfferItem(it)
+                    TipAndOfferItem(it) {
+                        sharedViewModel.onUIEvent(
+                            UIEvent.OnOpenMiniCardActionFlow(
+                                miniCard = it,
+                                openIntent = { intent ->
+                                    context.openIntent(
+                                        intent = intent,
+                                        onFailure = {
+                                            viewModel.onUIEvent(ProductViewModel.UIEvent.OnIntentFailure)
+                                        }
+                                    )
+                                }
+                            )
+                        )
+                    }
                 })
             }
         }
@@ -799,14 +820,16 @@ fun ProductCtaFooterExpanded(
 }
 
 @Composable
-fun TipAndOfferItem(miniCardsItem: MiniCardsItem) {
+fun TipAndOfferItem(
+    miniCardsItem: MiniCardsItem,
+    onClick: () -> Unit
+) {
     TipBox {
         Box(
             Modifier
                 .fillMaxSize()
                 .clickable {
-                    // TODO: Call appropriate screen when all flows are available
-                    // TODO, mocking the first item in order to navigate to the smart origination flow
+                    onClick()
                 }
         ) {
             Image(

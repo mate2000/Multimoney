@@ -3,7 +3,6 @@ package com.multimoney.multimoney.presentation.ui.login.signup.personaldata
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
@@ -34,8 +33,6 @@ import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.capitalized
 import com.multimoney.multimoney.presentation.util.capitalizedAllWords
-import com.multimoney.multimoney.presentation.util.catalog.CrDocuments
-import com.multimoney.multimoney.presentation.util.catalog.GtDocuments
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
 
 @Composable
@@ -110,7 +107,7 @@ fun SignUpPersonalDataGtScreen(
             }
         )
 
-        if (viewModel.uiState.identificationValueType.isNotBlank() && viewModel.uiState.userRegistered.not()) {
+        if (viewModel.uiState.identificationValueType.isNotBlank() && viewModel.uiState.personalIdError.first.not() && viewModel.uiState.dataInformationClient == null && viewModel.uiState.userRegistered.not() && viewModel.uiState.isLoading.not()) {
             Row(
                 Modifier
                     .fillMaxWidth()
@@ -298,7 +295,8 @@ fun SignUpPersonalDataGtScreen(
                 }
                 Text(
                     modifier = Modifier.padding(top = 8.dp, start = 4.dp),
-                    text = viewModel.uiState.dataInformationClient?.name.toString().capitalizedAllWords(),
+                    text = viewModel.uiState.dataInformationClient?.name.toString()
+                        .capitalizedAllWords(),
                     style = Typography.body2.copy(color = MultimoneyTheme.colors.text)
                 )
             }

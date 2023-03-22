@@ -61,7 +61,11 @@ fun SignUpPersonalDataScreen(
                 viewModel.executeNavigation(onNavigate = onNavigate)
                 viewModel.onUIEvent(
                     OnCallQueryGetCountry("", onLoadingValueChange = { isLoading ->
-                        sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(isLoading))
+                        sharedViewModel.onUIEvent(
+                            SignUpViewModel.UIEvent.OnLoadingValueChange(
+                                isLoading
+                            )
+                        )
                     })
                 )
                 isOnRestart = false
@@ -82,7 +86,8 @@ fun SignUpPersonalDataScreen(
                         viewModel.onUIEvent(
                             SignUpPersonalDataViewModel.UIEvent.OnStart(
                                 nationality = userData?.nationality ?: "",
-                                identificationType = userData?.strIdIdentification ?: strIdIdentification,
+                                identificationType = userData?.strIdIdentification
+                                    ?: strIdIdentification,
                                 identificationValue = userData?.identification ?: "",
                                 firstName = userData?.firstName ?: "",
                                 secondName = userData?.secondName ?: "",
@@ -96,12 +101,19 @@ fun SignUpPersonalDataScreen(
                                     )
                                 },
                                 onLoadingValueChange = { isLoading ->
-                                    sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(isLoading))
+                                    sharedViewModel.onUIEvent(
+                                        SignUpViewModel.UIEvent.OnLoadingValueChange(
+                                            isLoading
+                                        )
+                                    )
                                 }
                             )
                         )
                     }
                 }
+                is SignUpPersonalDataViewModel.BaseEvent.IsLoading -> sharedViewModel.onUIEvent(
+                    SignUpViewModel.UIEvent.OnLoadingValueChange(event.isLoading)
+                )
             }
         }
     }
@@ -118,7 +130,10 @@ fun SignUpPersonalDataScreen(
                                 idBrand = idBrand ?: 0
                             )
                         )
-                        sharedViewModel.logEvents(FireBaseEvents.SingUpTwo, AdjustEventType.SIGNUP_2_2002)
+                        sharedViewModel.logEvents(
+                            FireBaseEvents.SingUpTwo,
+                            AdjustEventType.SIGNUP_2_2002
+                        )
                     },
                     nextStep = Three.id,
                     previousStep = SignUpStep.One.id
@@ -188,7 +203,11 @@ fun SignUpPersonalDataScreen(
                             )
                         },
                         onLoadingValueChange = { isLoading ->
-                            sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(isLoading))
+                            sharedViewModel.onUIEvent(
+                                SignUpViewModel.UIEvent.OnLoadingValueChange(
+                                    isLoading
+                                )
+                            )
                         }
                     )
                 )

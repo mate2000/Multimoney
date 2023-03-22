@@ -296,7 +296,8 @@ fun SignUpPersonalDataCrScreen(
                 }
                 Text(
                     modifier = Modifier.padding(top = 8.dp, start = 4.dp),
-                    text = viewModel.uiState.dataInformationClient?.name.toString().capitalizedAllWords(),
+                    text = viewModel.uiState.dataInformationClient?.name.toString()
+                        .capitalizedAllWords(),
                     style = Typography.body2.copy(color = MultimoneyTheme.colors.text)
                 )
             }

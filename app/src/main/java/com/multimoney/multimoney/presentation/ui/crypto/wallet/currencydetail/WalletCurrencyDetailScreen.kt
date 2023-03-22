@@ -9,6 +9,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -37,18 +41,20 @@ import com.multimoney.multimoney.presentation.theme.LocalMultimoneyColors
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoCurrencyMovementItem
-import com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail.WalletCryptoCurrencyDetailsViewModel.Companion.TODAY_TEXT
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.DateFilterDWMYSection
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.MarketCurrencyDetailsGraphic
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.selectaccount.ConfirmationBottomSheet
-import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoActionsSection
+import com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail.WalletCryptoCurrencyDetailsViewModel.Companion.TODAY_TEXT
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail.WalletCryptoCurrencyDetailsViewModel.UIEvent.OnNavigateToReleaseTransaction
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoActionsSection
 import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.addTextStyleToTextPortion
+import com.multimoney.multimoney.presentation.util.roundToEightDecimalPlaces
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
+import com.multimoney.multimoney.presentation.util.toCurrencyFormatWithoutNegatives
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -193,10 +199,31 @@ fun CurrencyDetailContent(
         modifier = Modifier.fillMaxSize(),
         backgroundColor = MultimoneyTheme.colors.background,
     ) {
+
+        // to show correctly the invested balance and percentage invested
+        val balanceContainsNegativeSymbol =
+            uiState.cryptoItem?.investedBalanceCurrency?.contains(
+                stringResource(id = R.string.crypto_losses_symbol)
+            ) ?: false && uiState.cryptoItem?.percentageInvestedCurrency?.contains(
+                stringResource(id = R.string.crypto_losses_symbol)
+            ) ?: false
+        val symbol = if (balanceContainsNegativeSymbol) {
+            stringResource(id = R.string.crypto_losses_symbol)
+        } else {
+            stringResource(id = R.string.crypto_gains_symbol)
+        }
+        val investedBalance = "${symbol}${uiState.cryptoItem?.investedBalanceCurrency?.toDouble()?.toCurrencyFormatWithoutNegatives()}"
+        val percentageInvested = uiState.cryptoItem?.percentageInvestedCurrency?.replace("-", "") ?: ""
         Box(modifier = Modifier.padding(it)) {
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+            Column(modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .verticalScroll(rememberScrollState())
+            ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Image(
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .size(32.dp, 32.dp),
                         painter = rememberAsyncImagePainter(uiState.cryptoItem?.url_image),
                         contentDescription = ""
                     )
@@ -227,15 +254,15 @@ fun CurrencyDetailContent(
                     )
                 }
                 Text(
-                    text = "${uiState.cryptoItem?.available} ${uiState.cryptoItem?.asset}",
+                    text = "${uiState.cryptoItem?.available?.roundToEightDecimalPlaces()} ${uiState.cryptoItem?.asset}",
                     style = Typography.body2,
                     color = LocalMultimoneyColors.current.labelText
                 )
                 Text(
                     text = stringResource(
                         id = R.string.currency_detail_daily_invest,
-                        uiState.cryptoItem?.investedBalanceCurrency ?: "",
-                        uiState.cryptoItem?.percentageInvestedCurrency ?: ""
+                        investedBalance,
+                        percentageInvested
                     ).addTextStyleToTextPortion(
                         textToStyle = TODAY_TEXT,
                         style = Typography.body2.copy(color = LocalMultimoneyColors.current.subTitleText)
@@ -279,10 +306,10 @@ fun CurrencyDetailContent(
                     }
                 }
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    movements.itemSnapshotList.items.take(3).forEach {
+                    movements.itemSnapshotList.items.take(3).forEach { movement ->
                         CryptoCurrencyMovementItem(
-                            cryptoCurrencyMovement = it,
-                            onReleaseTransactionClick = { onReleaseTransactionClick(it) }
+                            cryptoCurrencyMovement = movement,
+                            onReleaseTransactionClick = { onReleaseTransactionClick(movement) }
                         )
                     }
                 }

@@ -62,13 +62,13 @@ class SmartTransferFavoriteCRViewModel @Inject constructor(
             idBrand = idBrand,
             isFavorite = true
         ).collectLatest { result ->
-            result.onSuccess { ACHFavoriteAccountList ->
-                ACHFavoriteAccountList?.data?.let { ACHFavoriteAccounts ->
+            result.onSuccess { aCHFavoriteAccountList ->
+                aCHFavoriteAccountList?.data?.let { aCHFavoriteAccounts ->
                     uiState =
                         uiState.copy(
                             isLoading = false,
-                            aCHFavoriteAccountList = ACHFavoriteAccounts.sortedBy { ACHFavoriteAccount ->
-                                ACHFavoriteAccount?.description.orEmpty()
+                            aCHFavoriteAccountList = aCHFavoriteAccounts.sortedBy { aCHFavoriteAccount ->
+                                aCHFavoriteAccount?.description.orEmpty()
                             }
                         )
                 }
@@ -117,6 +117,7 @@ class SmartTransferFavoriteCRViewModel @Inject constructor(
     private fun onFailure(error: HttpError) {
         uiState = uiState.copy(
             isLoading = false,
+            achLoading = false,
             openDialog = DialogParameters(
                 description = error.getError() ?: "",
                 isActive = mutableStateOf(true)
@@ -172,7 +173,7 @@ class SmartTransferFavoriteCRViewModel @Inject constructor(
                             nameAccount = achAccountFull?.titularName
                         )
                     )
-                    uiState = uiState.copy(isLoading = false)
+                    uiState = uiState.copy(achLoading = false)
                     navigateTo(
                         "${Screen.SmartTransferAmountScreen.baseRoute}/" +
                             "${encodeData(smartAccount)}/$ibanAccount/" +
@@ -180,7 +181,7 @@ class SmartTransferFavoriteCRViewModel @Inject constructor(
                     )
                 }
                 result.onFailure { onFailure(it) }
-                result.onLoading { uiState = uiState.copy(isLoading = true) }
+                result.onLoading { uiState = uiState.copy(achLoading = true) }
             }
         }
     }
@@ -216,9 +217,10 @@ class SmartTransferFavoriteCRViewModel @Inject constructor(
 
     data class UIState(
         val openDialog: DialogParameters = DialogParameters(),
-        var isLoading: Boolean = false,
-        var aCHFavoriteAccountList: List<ACHAccount?> = listOf(),
-        var localFavoriteList: List<LocalSACAccount?> = listOf()
+        val isLoading: Boolean = false,
+        val achLoading: Boolean = false,
+        val aCHFavoriteAccountList: List<ACHAccount?> = listOf(),
+        val localFavoriteList: List<LocalSACAccount?> = listOf()
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

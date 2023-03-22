@@ -1342,7 +1342,7 @@
     <string name="automatic_payment_edit_bottom_sheet_delete_toast" translatable="false">Tu pago automático fue eliminado</string>
 
     <!-- Payment Cards List -->
-    <string name="payment_cards_list_empty_state_description" translatable="false">Agregá una tarjeta para que podás realizar tus abonos</string>
+    <string name="payment_cards_list_empty_state_description" translatable="false">Agrega una tarjeta para que puedas realizar tus abonos</string>
     <string name="payment_cards_list_create" translatable="false">Agregar tarjeta</string>
     <string name="payment_cards_list_title" translatable="false">Mis tarjetas</string>
     <string name="payment_cards_verified_list_title" translatable="false">Tarjetas registradas</string>

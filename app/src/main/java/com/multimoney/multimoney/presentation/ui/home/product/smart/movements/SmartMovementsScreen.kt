@@ -93,10 +93,9 @@ fun SmartMovementsScreen(
                 )
             }
         )
-        LoadingIndicator(viewModel.uiState.isLoading)
         MovementsList(smartMoves)
     }
-
+    LoadingIndicator(viewModel.uiState.isLoading)
     BackHandler {
         viewModel.onUIEvent(OnNavigateBackToHome)
     }

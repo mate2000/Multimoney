@@ -182,7 +182,7 @@ fun QuickActionsRow(
                     backgroundColor = quickActionsBackgroundColor,
                     itemWidth = quickActionItemWidth
                 ) {
-                    when(quickActions[index].flow) {
+                    when (quickActions[index].flow) {
                         QuickActionFlow.BUY_CRYPTO.flow -> {
                             shareViewModel.onUIEvent(
                                 HomeViewModel.UIEvent.OnRegisterAdjustPressPurchaseFirstTime
@@ -222,7 +222,7 @@ fun QuickActionItem(
     quickActionDummy: QuickActionDummy,
     backgroundColor: Color,
     itemWidth: Dp,
-    action: () -> Unit = {},
+    action: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier

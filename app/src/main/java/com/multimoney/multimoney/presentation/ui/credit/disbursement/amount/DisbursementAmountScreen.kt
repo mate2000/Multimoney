@@ -34,7 +34,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -80,7 +79,7 @@ fun DisbursementAmountScreen(
     val sliderAnimator by animateFloatAsState(
         targetValue = if (viewModel.uiState.startAnimation) SLIDER_TOTAL_ANIMATION_VALUE else SLIDER_INITIAL_VALUE,
         animationSpec = tween(durationMillis = SLIDER_ANIMATION_TIME),
-        finishedListener = { progress ->
+        finishedListener = {
             viewModel.onUIEvent(OnAnimationFinish)
         }
     )
@@ -135,7 +134,7 @@ fun DisbursementAmountScreen(
                 CurrencyAmountInput(
                     value = viewModel.uiState.disbursement,
                     placeHolder = stringResource(
-                        id = R.string.credit_amount_disbursement_placeholder,
+                        id = string.credit_amount_disbursement_placeholder,
                         viewModel.uiState.currencyItems[viewModel.uiState.currencyIndex]
                     ),
                     onValueChange = {
@@ -154,7 +153,7 @@ fun DisbursementAmountScreen(
                         Modifier.padding(top = 0.dp, start = 16.dp, end = 16.dp)
                     },
                     isRequired = true,
-                    isRequiredMessage = stringResource(id = R.string.credit_amount_disbursement_minimum_error_message),
+                    isRequiredMessage = stringResource(id = string.credit_amount_disbursement_minimum_error_message),
                     isError = viewModel.uiState.disbursementError.first,
                     errorMessage = stringResource(
                         id = viewModel.uiState.disbursementError.second,
@@ -190,13 +189,13 @@ fun DisbursementAmountScreen(
                     color = MultimoneyTheme.colors.dividerWhite16
                 )
                 CustomInformativeChip(
-                    text = stringResource(id = R.string.disbursement_amount_info),
+                    text = stringResource(id = string.disbursement_amount_info),
                     textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.labelText),
                     modifier = Modifier.padding(top = 16.dp),
                     onClick = { viewModel.onUIEvent(OnOpenConditionCreditDialog) },
                     shape = RoundedCornerShape(24.dp),
                     background = MultimoneyTheme.colors.backgroundInformativeChip,
-                    startIcon = R.drawable.ic_information,
+                    startIcon = drawable.ic_information,
                     startIconTint = MultimoneyTheme.colors.textInformation,
                     size = Large
                 )

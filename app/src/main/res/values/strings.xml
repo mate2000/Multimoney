@@ -434,7 +434,7 @@
     <string name="profile_terms_and_conditions_title_template" translatable="false">Términos y condiciones: %1$s</string>
     <string name="profile_terms_and_conditions_version_template" translatable="false">Versión: %1$s</string>
     <string name="profile_change_email_address" translatable="false">Cambio de correo electrónico</string>
-    <string name="profile_change_password" translatable="false">Cambio de contarseña</string>
+    <string name="profile_change_password" translatable="false">Cambio de contraseña</string>
     <string name="profile_notifications" translatable="false">Notificationes</string>
     <string name="profile_biometrics" translatable="false">Biométricos</string>
     <string name="profile_enter_the_app_with_biometrics" translatable="false">Ingresa al app con tus biométricos</string>

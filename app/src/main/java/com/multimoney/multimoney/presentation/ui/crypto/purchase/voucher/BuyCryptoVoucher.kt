@@ -49,7 +49,6 @@ import com.multimoney.multimoney.presentation.uielement.VoucherNumberInfo
 import com.multimoney.multimoney.presentation.uielement.VoucherTotalAmountInfo
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
-import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import com.multimoney.multimoney.presentation.util.shape.DottedShape
 
 @Preview

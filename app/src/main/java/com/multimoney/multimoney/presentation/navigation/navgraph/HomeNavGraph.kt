@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.navigation.navgraph
 
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -15,14 +16,15 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 
 fun NavGraphBuilder.homeNavGraph(
     navController: NavHostController,
-    homeViewModel: HomeViewModel
+    setViewModel: (HomeViewModel) -> Unit = {}
 ) {
     navigation(
         startDestination = Screen.HomeScreen.route,
         route = HOME_ROUTE
     ) {
         composable(route = Screen.HomeScreen.route) { backStackEntry ->
-
+            val homeViewModel = hiltViewModel<HomeViewModel>()
+            setViewModel.invoke(homeViewModel)
             HomeScreen(
                 isRestart = navController.currentBackStackEntry?.savedStateHandle?.getLiveData<Boolean>(
                     PREVIOUS_IS_RESTART

@@ -79,7 +79,7 @@ fun SmartTransferFavoriteCRScreen(
         }
     }
 
-    LoadingIndicator(viewModel.uiState.isLoading)
+    LoadingIndicator(viewModel.uiState.isLoading || viewModel.uiState.achLoading)
 
     if (viewModel.uiState.openDialog.isActive.value) {
         CustomDialog(

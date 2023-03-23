@@ -224,6 +224,11 @@ fun CryptoSendAddressContent(
             onClick = {
                 viewModel.onUIEvent(CryptoSendAddressViewModel.UIEvent.OnContinueButtonClicked {
                     sharedViewModel.onUIEvent(
+                        CryptoSendSharedViewModel.UIEvent.OnSetCryptoAddress(
+                            viewModel.uiState.cryptoAddress.value
+                        )
+                    )
+                    sharedViewModel.onUIEvent(
                         CryptoSendSharedViewModel.UIEvent.OnNextStep
                     )
                 })

@@ -594,7 +594,7 @@ fun OngoingCredit(
 sealed class CreditProcessStarted {
     object CreditStartProcessIncomplete : CreditProcessStarted()
     object CreditProcessOnFidoIncomplete : CreditProcessStarted()
-    object CreditProcessFirmIncomplete : CreditProcessStarted()
+    object CreditManualProcess : CreditProcessStarted()
     object CreditProcessFirmReject : CreditProcessStarted()
     object CreditProcessFirmMaxAttempts : CreditProcessStarted()
     object CreditProcessOnfidoReject : CreditProcessStarted()

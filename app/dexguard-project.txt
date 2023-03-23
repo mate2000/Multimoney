@@ -28,6 +28,7 @@
 }
 
 # Code Obfuscation
+-dontshrink
 -obfuscatecode,high class com.multimoney.**
 
 # Code Virtualization

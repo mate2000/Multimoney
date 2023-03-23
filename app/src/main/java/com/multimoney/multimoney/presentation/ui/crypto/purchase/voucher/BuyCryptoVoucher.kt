@@ -238,10 +238,7 @@ fun BuyCryptoVoucherContent(
                                 CurrencyType.Dollar.symbol
                             }
                         ),
-                        subTitle = getMaskedAccount(
-                            accountNumber,
-                            stringResource(id = R.string.payment_account_masked_text)
-                        )
+                        subTitle = accountNumber
                     )
 
                     VoucherNumberInfo(

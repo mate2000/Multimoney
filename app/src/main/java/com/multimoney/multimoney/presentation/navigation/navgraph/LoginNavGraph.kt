@@ -191,7 +191,7 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
         }
 
         composable(
-            Screen.RegisteredUserEmailScreen.route,
+            route = Screen.RegisteredUserEmailScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(USER_DATA) { type = UserDataNavType() }

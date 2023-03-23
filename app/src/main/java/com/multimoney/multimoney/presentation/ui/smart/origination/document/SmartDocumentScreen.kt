@@ -119,6 +119,7 @@ fun SmartDocumentScreen(
                                                 ISO_8601_API_FORMAT_PATTERN
                                             ).ifBlank { null },
                                             placeOfIssueId = viewModel.uiState.nationalityId?.toString(),
+                                            strPlaceOfIssue = viewModel.uiState.nationalityName,
                                             birthday = getFormatDateByString(
                                                 viewModel.uiState.birthdate,
                                                 DAY_MONTH_YEAR_PATTERN_BAR_FORMAT,

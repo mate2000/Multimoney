@@ -7,14 +7,14 @@ import com.multimoney.multimoney.presentation.navigation.LOGIN_ROUTE
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 
 @Composable
-fun Navigation(homeViewModel: HomeViewModel) {
+fun Navigation(setViewModel: (HomeViewModel) -> Unit = {}) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
         startDestination = LOGIN_ROUTE
     ) {
         loginNavGraph(navController = navController)
-        homeNavGraph(navController = navController, homeViewModel)
+        homeNavGraph(navController = navController, setViewModel)
         creditNavGraph(navController = navController)
         disbursementNavGraph(navController = navController)
         visaNavGraph(navController = navController)

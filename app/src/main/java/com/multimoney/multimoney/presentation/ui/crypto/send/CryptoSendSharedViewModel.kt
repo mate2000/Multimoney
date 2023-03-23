@@ -140,6 +140,7 @@ class CryptoSendSharedViewModel @Inject constructor(
             is UIEvent.OnGetUserInfo -> setUserData()
             is UIEvent.OnPreviousStep -> previousStep()
             is UIEvent.OnNextStep -> nextStep()
+            is UIEvent.OnSetCryptoAddress -> uiState = uiState.copy(destinationAddress = event.cryptoAddress)
             is UIEvent.OnCryptoSelected -> onCryptoSelected(event.cryptoAccount)
             is UIEvent.OnSetupVoucherDetails -> uiState = uiState.copy(
                 sendDollarAmount = event.sendDollarAmount,
@@ -181,6 +182,7 @@ class CryptoSendSharedViewModel @Inject constructor(
         object OnNavigateHome : UIEvent
         object OnCloseClick : UIEvent
         data class SetPaxosMaintenanceState(val isPaxosInMaintenance: Boolean) : UIEvent
+        data class OnSetCryptoAddress(val cryptoAddress: String) : UIEvent
     }
 
     companion object {

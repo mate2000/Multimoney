@@ -1478,7 +1478,7 @@
 
     <!-- Currency Detail Screen -->
     <string name="currency_detail_title" translatable="false">Inversión en %s</string>
-    <string name="currency_detail_daily_invest" translatable="false">Hoy %1$s (%2$s)</string>
+    <string name="currency_detail_daily_invest" translatable="false">Hoy %1s (%2s\%%)</string>
     <string name="currency_detail_my_movements" translatable="false">Mis movimientos</string>
     <string name="currency_detail_see_all" translatable="false">Ver todos</string>
 

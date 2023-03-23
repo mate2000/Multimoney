@@ -166,6 +166,7 @@ class SmartViewModel @Inject constructor(
             expirationDate = stepByStep.expirationDate,
             dateOfIssue = stepByStep.dateOfIssue,
             placeOfIssueId = stepByStep.placeOfIssue,
+            strPlaceOfIssue = stepByStep.strPlaceOfIssue,
             idGender = stepByStep.idGenre?.toLong(),
             strGenre = stepByStep.strGenre,
             stringProfessionType = stepByStep.stringProfessionType,

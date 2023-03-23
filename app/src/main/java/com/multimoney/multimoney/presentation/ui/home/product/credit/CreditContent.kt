@@ -15,6 +15,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardGtSvCreditRejected
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardNonPreApprovedCredit
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardWithCreditInProcess
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditManualProcess
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessCreateAccountFailure
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessFirmMaxAttempts
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessFirmReject
@@ -95,7 +96,13 @@ fun CreditContent(viewModel: ProductViewModel) {
                             }
                         )
                     }
-                    else -> Unit
+                    else -> {
+                        CardWithCreditInProcess(
+                            type = CreditManualProcess,
+                            idBrand = viewModel.uiState.idBrand.toInt(),
+                            wording = viewModel.uiState.userStatus?.infoCredit?.wording
+                        )
+                    }
                 }
             }
         }

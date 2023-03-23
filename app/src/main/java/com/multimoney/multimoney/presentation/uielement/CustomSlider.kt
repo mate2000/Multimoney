@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.uielement
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -19,9 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.theme.BlackTransparency10
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
-import com.multimoney.multimoney.presentation.theme.GrayScale700
 import com.multimoney.multimoney.presentation.theme.Primary400
 import com.multimoney.multimoney.presentation.theme.Secondary500
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -45,7 +42,7 @@ import com.smarttoolfactory.slider.SliderBrushColor
  * **/
 
 @OptIn(
-    ExperimentalFoundationApi::class, kotlinx.coroutines.FlowPreview::class,
+    kotlinx.coroutines.FlowPreview::class,
     kotlinx.coroutines.ExperimentalCoroutinesApi::class
 )
 @Composable
@@ -60,7 +57,6 @@ fun CustomSlider(
     onValueChange: (value: Float) -> Unit = {},
     onValueChangeFinished: () -> Unit = {}
 ) {
-
     // Set colors depending on system theme
     val textColor: Color
     val inactiveTrackColor: Color
@@ -76,7 +72,7 @@ fun CustomSlider(
     Column(modifier = modifier) {
         ColorfulIconSlider(
             value = value,
-            onValueChange = { progressValue, offset ->
+            onValueChange = { progressValue, _ ->
                 onValueChange(progressValue)
             },
             onValueChangeFinished = { onValueChangeFinished() },
@@ -89,7 +85,7 @@ fun CustomSlider(
                         colors = listOf(Primary400, Secondary500),
                         start = Offset(0f, Float.POSITIVE_INFINITY),
                         end = Offset(Float.POSITIVE_INFINITY, 0f)
-                    ),
+                    )
                 )
             )
         ) {

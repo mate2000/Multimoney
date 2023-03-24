@@ -21,7 +21,6 @@ import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.account.PaymentScheduleAccountViewModel.UIEvent.OnCallQueryGetClientBankAccount
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.account.PaymentScheduleAccountViewModel.UIEvent.OnClientBankAccountSelected
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.account.PaymentScheduleAccountViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.account.PaymentScheduleAccountViewModel.UIEvent.OnShowCloseConfirmationDialog
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -93,14 +92,6 @@ class PaymentScheduleAccountViewModel @Inject constructor(
         popTo = Screen.PaymentScheduleAccountScreen.baseRoute
     )
 
-    private fun onShowCloseConfirmationDialog(){
-        uiState = uiState.copy(
-            openDialog = DialogParameters(
-
-            )
-        )
-    }
-
     private fun onNavigateBack() = navigateBack(popTo = Screen.PaymentScheduleScreen.route, isRestart = false)
 
     private fun onCloseClick() =
@@ -119,7 +110,6 @@ class PaymentScheduleAccountViewModel @Inject constructor(
             is UIEvent.OnCloseClick -> onCloseClick()
             is OnCallQueryGetClientBankAccount -> onCallQueryGetClientBankAccountUseCase()
             is OnClientBankAccountSelected -> onClientBankAccountSelected(uiEvent.clientBankAccount)
-            is OnShowCloseConfirmationDialog -> onShowCloseConfirmationDialog()
         }
     }
 
@@ -128,6 +118,5 @@ class PaymentScheduleAccountViewModel @Inject constructor(
         class OnClientBankAccountSelected(val clientBankAccount: ClientBankAccount?) : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnCloseClick : UIEvent()
-        object OnShowCloseConfirmationDialog : UIEvent()
     }
 }

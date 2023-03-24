@@ -1170,6 +1170,8 @@
     <string name="payment_schedule_error_alert_subtitle_two" translatable="false">Tu pago no pudo ser programado por un problema de conexión, intentalo más tarde.</string>
     <string name="payment_schedule_error_alert_button_one" translatable="false">Intentar</string>
     <string name="payment_schedule_error_alert_button_two" translatable="false">Ir al inicio</string>
+    <string name="payment_schedule_close_dialog_title" translatable="false">¿Estás seguro de que querés salir?</string>
+    <string name="payment_schedule_close_dialog_subtitle" translatable="false">Podés programar tu pago automático cuando querás.</string>
 
     <!-- Payment Schedule Account-->
     <string name="payment_schedule_account_title" translatable="false">Seleccioná una cuenta para programar tu pago</string>

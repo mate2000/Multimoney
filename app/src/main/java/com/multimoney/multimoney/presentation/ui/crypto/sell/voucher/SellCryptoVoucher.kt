@@ -224,7 +224,14 @@ fun SellCryptoVoucherContent(
                     VoucherAccountInfo(
                         modifier = Modifier.padding(start = 27.dp, top = 24.dp),
                         icon = R.drawable.ic_multimoney_voucher_gray,
-                        title = stringResource(R.string.payment_voucher_origin_account_label),
+                        title = stringResource(
+                            id = R.string.buy_crypto_multimoney_smart_account_template,
+                            if (idCurrency == CurrencyType.Colon.id) {
+                                CurrencyType.Colon.symbol
+                            } else {
+                                CurrencyType.Dollar.symbol
+                            }
+                        ),
                         subTitle = accountNumber
                     )
 

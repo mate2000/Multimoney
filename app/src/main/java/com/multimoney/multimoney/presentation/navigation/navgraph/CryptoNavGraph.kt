@@ -58,14 +58,15 @@ fun NavGraphBuilder.cryptoNavGraph(
                     type = MarketCryptoNavType()
                 }
             )
-        ) {
-            val parent = remember(it) {
+        ) { backStackEntry ->
+            val parent = remember(backStackEntry) {
                 navController.getBackStackEntry(Screen.HomeScreen.route)
             }
             val viewModel = hiltViewModel<HomeViewModel>(parent)
             val accountsSmart =
-                viewModel.uiState.balance?.balanceAccountSmart?.map { it.toSmartAccountSmall() }
-                    ?: emptyList()
+                viewModel.uiState.balance?.balanceAccountSmart?.map { account ->
+                    account.toSmartAccountSmall()
+                } ?: emptyList()
             PurchaseCryptoFlow(
                 onNavigate = {
                     navController.navigate(it.route)
@@ -290,13 +291,13 @@ fun NavGraphBuilder.cryptoNavGraph(
                     type = MarketCryptoNavType()
                 },
             )
-        ) {
-            val parent = remember(it) {
+        ) { backStackEntry ->
+            val parent = remember(backStackEntry) {
                 navController.getBackStackEntry(Screen.HomeScreen.route)
             }
             val viewModel = hiltViewModel<HomeViewModel>(parent)
-            val accountsSmart = viewModel.uiState.balance?.balanceAccountSmart?.map {
-                it.toSmartAccountSmall()
+            val accountsSmart = viewModel.uiState.balance?.balanceAccountSmart?.map { account ->
+                account.toSmartAccountSmall()
             } ?: emptyList()
             val balances = viewModel.uiState.balance?.balanceCryptoAccount?.items ?: emptyList()
             SellCryptoFlow(

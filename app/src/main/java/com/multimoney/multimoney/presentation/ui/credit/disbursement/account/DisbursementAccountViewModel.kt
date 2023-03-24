@@ -21,6 +21,7 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -40,6 +41,7 @@ import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnCallQueryGetClientBankAccount
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnCallQueryGetExchangeRateCredit
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnClientBankAccountSelected
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnDisclaimerClick
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnHideDisbursementBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnLoadingValueChange
@@ -117,8 +119,8 @@ class DisbursementAccountViewModel @Inject constructor(
     private fun getTextResources() {
         uiState = uiState.copy(
             titleResource = when (idBrand) {
-                Brand.CostaRica.id -> R.string.disbursement_account_cr_title
-                else -> R.string.disbursement_account_sv_title
+                Brand.CostaRica.id -> string.disbursement_account_cr_title
+                else -> string.disbursement_account_sv_title
             }
         )
     }
@@ -176,9 +178,9 @@ class DisbursementAccountViewModel @Inject constructor(
             uiState = uiState.copy(
                 isAlertResultVisible = true,
                 alertResultIconResource = R.drawable.ic_success_symbol,
-                alertResultTitleResource = R.string.disbursement_account_process_success_title,
-                alertResultDescriptionResource = R.string.disbursement_account_process_success_description,
-                alertButtonTextResource = R.string.understood
+                alertResultTitleResource = string.disbursement_account_process_success_title,
+                alertResultDescriptionResource = string.disbursement_account_process_success_description,
+                alertButtonTextResource = string.understood
             )
         }
     }
@@ -238,7 +240,7 @@ class DisbursementAccountViewModel @Inject constructor(
             identification ?: "",
             idCurrency?.toString() ?: "",
             uiState.clientBankAccountSelected?.idCurrency?.toString() ?: "",
-            selectedAmount?.toDouble() ?: 0.0
+            selectedAmount?.toDoubleOrNull() ?: 0.0
 
         ).collectLatest { result ->
             result.onSuccess {
@@ -355,13 +357,13 @@ class DisbursementAccountViewModel @Inject constructor(
     private fun onMaxAccountNumberDialog() {
         uiState = uiState.copy(
             openDialog = DialogParameters(
-                titleResource = R.string.disbursement_account_max_number_title,
+                titleResource = string.disbursement_account_max_number_title,
                 descriptionResource = if (idBrand == Brand.CostaRica.id) {
-                    R.string.disbursement_account_max_number_description_cr
+                    string.disbursement_account_max_number_description_cr
                 } else {
-                    R.string.disbursement_account_max_number_description
+                    string.disbursement_account_max_number_description
                 },
-                positiveResource = R.string.understood,
+                positiveResource = string.understood,
                 isActive = mutableStateOf(true)
             )
         )
@@ -392,9 +394,23 @@ class DisbursementAccountViewModel @Inject constructor(
     fun getQuotaNextDateFormatted() =
         getCardDateFormat(nextPaymentDate, BAR_DIVIDER_FORMAT_YEAR_TWO_DIGITS, API_DATE_FORMAT)
 
+    fun onCloseClick() {
+        uiState = uiState.copy(
+            openDialog = DialogParameters(
+                titleResource = if (idBrand == Brand.CostaRica.id) string.credit_amount_disbursement_exit_confirm_title_cr
+                else string.credit_amount_disbursement_exit_confirm_title_sv,
+                descriptionResource = string.credit_amount_disbursement_exit_confirm_description,
+                negativeResource = string.common_leave,
+                positiveResource = string.button_continue,
+                negativeAction = { onNavigateBackHome() },
+                isActive = mutableStateOf(true)
+            )
+        )
+    }
+
     data class UIState(
         // Interactions
-        val titleResource: Int = R.string.empty,
+        val titleResource: Int = string.empty,
         val clientBankAccountList: List<ClientBankAccount?>? = null,
         val clientBankAccountSelected: ClientBankAccount? = null,
         val isLoading: Boolean = false,
@@ -404,9 +420,9 @@ class DisbursementAccountViewModel @Inject constructor(
         val alertResultIconResource: Int = R.drawable.ic_error_symbol,
         val alertResultTitle: String = "",
         val alertResultDescription: String = "",
-        val alertResultTitleResource: Int = R.string.empty,
-        val alertResultDescriptionResource: Int = R.string.empty,
-        val alertButtonTextResource: Int = R.string.empty,
+        val alertResultTitleResource: Int = string.empty,
+        val alertResultDescriptionResource: Int = string.empty,
+        val alertButtonTextResource: Int = string.empty,
         val exchangeRateLabel: Double = 0.0,
         val exchangeConvertedAmount: Double = 0.0
     )
@@ -427,6 +443,7 @@ class DisbursementAccountViewModel @Inject constructor(
             is OnProcessCreditExtension -> onProcessCreditExtension()
             is OnDisclaimerClick -> onMaxAccountNumberDialog()
             is OnNavigateToVoucher -> onNavigateToVoucher(uiEvent.reference)
+            is OnCloseClick -> onCloseClick()
         }
     }
 
@@ -445,6 +462,7 @@ class DisbursementAccountViewModel @Inject constructor(
         object OnProcessCreditExtension : UIEvent()
         data class OnMessageProcessCreditExtension(val error: MessageError?) : UIEvent()
         object OnDisclaimerClick : UIEvent()
+        object OnCloseClick : UIEvent()
     }
 
     companion object {

@@ -44,9 +44,9 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.transformation.FORMAT_MONEY_MAX_LENGTH
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 import kotlin.math.roundToInt
-import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class DisbursementAmountViewModel @Inject constructor(
@@ -64,9 +64,11 @@ class DisbursementAmountViewModel @Inject constructor(
     private var minimumDisbursement = 0F
     private var maximumDisbursement = 0F
     private var disbursementProgressFactorErrorMessage =
-        R.string.credit_amount_disbursement_progress_factor_error_message
-    private var minimumDisbursementErrorMessage = R.string.credit_amount_disbursement_minimum_error_message
-    private var maximumDisbursementErrorMessage = R.string.credit_amount_disbursement_maximum_error_message
+        string.credit_amount_disbursement_progress_factor_error_message
+    private var minimumDisbursementErrorMessage =
+        string.credit_amount_disbursement_minimum_error_message
+    private var maximumDisbursementErrorMessage =
+        string.credit_amount_disbursement_maximum_error_message
     private var fee: Double = 0.0
     private var sliderFactor = 0.0
     var isAnimationRunning: Boolean = false
@@ -90,7 +92,7 @@ class DisbursementAmountViewModel @Inject constructor(
         idClient = savedStateHandle[ID_CLIENT]
         summary = savedStateHandle.get<Array<Summary>>(SUMMARY_LIST)?.toList()
         currencyItems = savedStateHandle.get<Array<Summary>>(SUMMARY_LIST)?.toList()?.map { it.idCurrency ?: 0 }
-        pkUser = savedStateHandle.get<String>(PK_USER)?.toInt()
+        pkUser = savedStateHandle.get<String>(PK_USER)?.toIntOrNull()
         creditNumber = savedStateHandle[CREDIT_NUMBER]
         idUserRequest = savedStateHandle[ID_USER_REQUEST]
         identification = savedStateHandle[IDENTIFICATION] ?: ""
@@ -99,8 +101,8 @@ class DisbursementAmountViewModel @Inject constructor(
     private fun onStart() {
         uiState = uiState.copy(
             titleResource = when (idBrand) {
-                Brand.CostaRica.id -> R.string.disbursement_amount_title
-                else -> R.string.disbursement_amount_sv_title
+                Brand.CostaRica.id -> string.disbursement_amount_title
+                else -> string.disbursement_amount_sv_title
             },
             isMultipleCurrency = (currencyItems?.lastIndex ?: INITIAL_CURRENCY_INDEX) > INITIAL_CURRENCY_INDEX,
             currencyItems = currencyItems?.map { it.getCurrencyFromId().symbol } ?: listOf(),
@@ -114,7 +116,8 @@ class DisbursementAmountViewModel @Inject constructor(
     private fun onExitConfirmDialog() {
         uiState = uiState.copy(
             openDialog = DialogParameters(
-                titleResource = string.credit_amount_disbursement_exit_confirm_title,
+                titleResource = if (idBrand == Brand.CostaRica.id) string.credit_amount_disbursement_exit_confirm_title_cr
+                else string.credit_amount_disbursement_exit_confirm_title_sv,
                 descriptionResource = string.credit_amount_disbursement_exit_confirm_description,
                 negativeResource = string.common_leave,
                 positiveResource = string.button_continue,
@@ -143,7 +146,7 @@ class DisbursementAmountViewModel @Inject constructor(
         uiState = uiState.copy(
             currencyIndex = index,
             sliderValue = SLIDER_TOTAL.toFloat(),
-            disbursementError = Pair(false, R.string.error_empty)
+            disbursementError = Pair(false, string.error_empty)
         )
         callCreditExtensionAmount()
     }
@@ -151,7 +154,8 @@ class DisbursementAmountViewModel @Inject constructor(
     private fun callCreditExtensionAmount(showSkeleton: Boolean = false) = executeUseCase {
         queryCreditExtensionAmountUseCase.invoke(
             idClient = idClient?.toLong() ?: 0,
-            currency = currencyItems?.get(uiState.currencyIndex)?.getCurrencyFromId()?.disbursementValue.orEmpty(),
+            currency = currencyItems?.get(uiState.currencyIndex)
+                ?.getCurrencyFromId()?.disbursementValue.orEmpty(),
             user = user ?: "",
             idBrand = idBrand ?: 0
         ).collectLatest { result ->
@@ -163,7 +167,10 @@ class DisbursementAmountViewModel @Inject constructor(
                 uiState = uiState.copy(
                     minimumDisbursementLabel = it?.labelAmountMinAvailable ?: "",
                     maximumDisbursementLabel = it?.labelAmountMaxAvailable ?: "",
-                    sliderValueRangeInitial = getSliderValue(minimumDisbursement, it?.amountTract?.toDouble() ?: 0.0),
+                    sliderValueRangeInitial = getSliderValue(
+                        minimumDisbursement,
+                        it?.amountTract?.toDouble() ?: 0.0
+                    ),
                     progressFactor = it?.amountTract?.toDouble() ?: 0.0,
                     disbursement = maximumDisbursement.toInt().toString()
                 )
@@ -177,10 +184,10 @@ class DisbursementAmountViewModel @Inject constructor(
                     )
                 )
             }.onLoading {
-                if (showSkeleton) {
-                    uiState = uiState.copy(isSkeletonLoading = showSkeleton)
-                }else{
-                    uiState = uiState.copy(isContinue = true)
+                uiState = if (showSkeleton) {
+                    uiState.copy(isSkeletonLoading = showSkeleton)
+                } else {
+                    uiState.copy(isContinue = true)
                 }
             }
         }
@@ -189,10 +196,11 @@ class DisbursementAmountViewModel @Inject constructor(
     private fun callCreditExtensionMessage(showSkeleton: Boolean = false) = executeUseCase {
         queryCreditExtensionMessageUseCase.invoke(
             idClient = idClient?.toLong() ?: 0,
-            currency = currencyItems?.get(uiState.currencyIndex)?.getCurrencyFromId()?.disbursementValue.orEmpty(),
+            currency = currencyItems?.get(uiState.currencyIndex)
+                ?.getCurrencyFromId()?.disbursementValue.orEmpty(),
             user = user ?: "",
             idBrand = idBrand ?: 0,
-            amountRequest = uiState.disbursement.toDouble(),
+            amountRequest = uiState.disbursement.toDoubleOrNull() ?: 0.0,
             idLoanClient = creditExtensionAmount?.idLoanClient ?: 0,
             quotaMax = creditExtensionAmount?.quotaMax ?: 0.0,
             idProductBase = creditExtensionAmount?.idProductBase ?: 0,
@@ -200,7 +208,7 @@ class DisbursementAmountViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess {
                 creditExtensionMessage = it
-                val product = it?.product?.first()
+                val product = it?.product?.firstOrNull()
                 fee = product?.quotaTotal ?: 0.0
                 uiState = uiState.copy(
                     isSkeletonLoading = false,
@@ -234,21 +242,21 @@ class DisbursementAmountViewModel @Inject constructor(
     }
 
     private fun callMutationSaveCreditExtensionDetail() = executeUseCase {
-        val product = creditExtensionMessage?.product?.first()
+        val product = creditExtensionMessage?.product?.firstOrNull()
         mutationSaveCreditExtensionDetailUseCase(
             pkUser = pkUser ?: 0,
             idBrand = idBrand ?: 0,
             user = user.orEmpty(),
             accountNumber = creditNumber.orEmpty(),
-            amount = uiState.disbursement.toDouble(),
-            month = product?.month?.toInt() ?: 0,
+            amount = uiState.disbursement.toDoubleOrNull() ?: 0.0,
+            month = product?.month?.toIntOrNull() ?: 0,
             pkPromotionMonth = creditExtensionMessage?.pkPromotionMonth ?: 0,
             nextPaymentDate = product?.datePayActuality.orEmpty(),
             quota = product?.quota ?: 0.0,
             quotaTotal = product?.quotaTotal ?: 0.0,
-            comissionDisbursement = product?.comissionDisbursement?.toDouble() ?: 0.0,
-            rateInterestNormalLoan = product?.rateInterestNormal?.toDouble() ?: 0.0,
-            rateInterestNormalRegular = product?.rateInterestNormal?.toDouble() ?: 0.0,
+            comissionDisbursement = product?.comissionDisbursement?.toDoubleOrNull() ?: 0.0,
+            rateInterestNormalLoan = product?.rateInterestNormal?.toDoubleOrNull() ?: 0.0,
+            rateInterestNormalRegular = product?.rateInterestNormal?.toDoubleOrNull() ?: 0.0,
             cicle = product?.cicle ?: 0,
             idProduct = creditExtensionAmount?.idProductBase ?: 0,
             descriptionPromotionTerm = product?.descriptionPromotionTerm.orEmpty(),
@@ -260,11 +268,11 @@ class DisbursementAmountViewModel @Inject constructor(
                 )
                 creditExtensionDetail = it
                 navigateTo(
-                    route = "${Screen.DisbursementAccountScreen.baseRoute}/$idBrand/$user/$idClient/${it?.nextPayment}/${it?.quotaTotal}/${it?.selectedAmount}/${pkUser?.toString() ?: ""}/${idUserRequest ?: 0}/$identification/$creditNumber/${it?.fkFlowControl ?: 0}/${
-                        currencyItems?.get(
-                            uiState.currencyIndex
-                        )
-                    }/${creditExtensionAmount?.idLoanClient ?: 0}"
+                    route = "${Screen.DisbursementAccountScreen.baseRoute}/$idBrand/$user/$idClient/" +
+                        "${it?.nextPayment}/${it?.quotaTotal}/${it?.selectedAmount}/" +
+                        "${pkUser?.toString() ?: ""}/${idUserRequest ?: 0}/$identification/" +
+                        "$creditNumber/${it?.fkFlowControl ?: 0}/${currencyItems?.get(uiState.currencyIndex)}/" +
+                        "${creditExtensionAmount?.idLoanClient ?: 0}"
                 )
             }.onFailure {
                 uiState = uiState.copy(
@@ -280,27 +288,28 @@ class DisbursementAmountViewModel @Inject constructor(
         }
     }
 
-    private fun onDisbursementValueChangeFinished(value: String) {
+    private fun onDisbursementValueChangeFinished(strValue: String) {
+        val value = strValue.toFloatOrNull() ?: 0f
         if (isAnimationRunning.not()) {
-            if (value.isEmpty() || value.toFloat() < minimumDisbursement) {
+            if (strValue.isEmpty() || value < minimumDisbursement) {
                 uiState = uiState.copy(
                     disbursementError = Pair(true, minimumDisbursementErrorMessage),
                     sliderValue = uiState.sliderValueRangeInitial
                 )
-            } else if (value.toFloat() > maximumDisbursement) {
+            } else if (value > maximumDisbursement) {
                 uiState = uiState.copy(
                     disbursementError = Pair(true, maximumDisbursementErrorMessage),
                     sliderValue = SLIDER_TOTAL.toFloat()
                 )
-            } else if (isDisbursementMultipleOfProgressFactor(value.toFloat()).not()) {
+            } else if (isDisbursementMultipleOfProgressFactor(value).not()) {
                 uiState = uiState.copy(
                     disbursementError = Pair(true, disbursementProgressFactorErrorMessage),
-                    sliderValue = getSliderValue(value.toFloat(), uiState.progressFactor)
+                    sliderValue = getSliderValue(value, uiState.progressFactor)
                 )
             } else {
                 uiState = uiState.copy(
-                    disbursementError = Pair(false, R.string.error_empty),
-                    sliderValue = getSliderValue(value.toFloat(), uiState.progressFactor)
+                    disbursementError = Pair(false, string.error_empty),
+                    sliderValue = getSliderValue(value, uiState.progressFactor)
                 )
                 callCreditExtensionMessage()
             }
@@ -346,7 +355,7 @@ class DisbursementAmountViewModel @Inject constructor(
     }
 
     private fun onSliderValueChangeFinished() {
-        uiState = uiState.copy(disbursementError = Pair(false, R.string.empty))
+        uiState = uiState.copy(disbursementError = Pair(false, string.empty))
         if (uiState.disbursementError.first.not() && isAnimationRunning.not()) {
             callCreditExtensionMessage()
         }
@@ -376,7 +385,7 @@ class DisbursementAmountViewModel @Inject constructor(
 
     data class UIState(
         // Fields
-        val titleResource: Int = R.string.empty,
+        val titleResource: Int = string.empty,
         val isFormValid: Boolean = false,
         val isMultipleCurrency: Boolean = false,
         val currencyIndex: Int = 0,

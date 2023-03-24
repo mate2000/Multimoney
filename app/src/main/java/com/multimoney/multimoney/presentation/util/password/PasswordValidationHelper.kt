@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 class PasswordValidationHelper @Inject constructor(private val queryValidatePasswordStructure: QueryValidatePasswordStructure) {
 
-    private lateinit var forbiddenWords: List<String>
+    private var forbiddenWords: List<String> = emptyList()
 
     suspend fun getValidatePasswordStructure(idBrand: Int, pkUser: Int, user: String) {
         queryValidatePasswordStructure.invoke(pkUser = pkUser, user = user, idBrand = idBrand)

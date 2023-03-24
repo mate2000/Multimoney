@@ -12,7 +12,6 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.multimoney.presentation.navigation.navgraph.Navigation
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.SignOutCommunicator
@@ -41,6 +40,7 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
     lateinit var cognitoHelper: CognitoHelper
 
     var dialogParameters = mutableStateOf(DialogParameters())
+    var notificationState = mutableStateOf(false)
 
     var isSessionAlreadyOpened: Flow<Boolean> = flowOf(false)
 
@@ -48,18 +48,13 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
 
     private var activity: AppCompatActivity? = null
 
-    private var homeViewModel: HomeViewModel? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity = this
         isSessionAlreadyOpened = dataStorePreferences.isSessionDuplicated()
         setContent {
             MultimoneyTheme {
-                Navigation {
-                    homeViewModel = it
-                }
-
+                Navigation(notificationState)
                 LaunchedEffect(key1 = true) {
                     obtainNotificationRoute(intent?.getStringExtra(ROUTE_KEY) ?: "")
                     if (dataStorePreferences.getDeviceId().first().isEmpty()) {
@@ -127,7 +122,11 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
     override fun onResume() {
         super.onResume()
         lifecycleScope.launch {
-            homeViewModel?.setNotificationRoute(intent?.getStringExtra(ROUTE_KEY) ?: "")
+            notificationState.value = false
+            if (intent?.getStringExtra(ROUTE_KEY)?.isNotEmpty() == true) {
+                obtainNotificationRoute(intent?.getStringExtra(ROUTE_KEY) ?: "")
+                notificationState.value = true
+            }
         }
         isAppInForeground = true
     }

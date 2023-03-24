@@ -203,7 +203,7 @@ fun PaymentVoucherScreen(
                     VoucherAccountInfo(
                         modifier = Modifier.padding(start = 24.dp, top = 16.dp),
                         icon = drawable.ic_bank_account_colon,
-                        title = stringResource(string.payment_voucher_origin_account_label),
+                        title = viewModel.clientBankAccount?.bankDescription ?: "",
                         subTitle = getMaskedAccount(
                             viewModel.clientBankAccount?.accountNumber ?: "",
                             stringResource(id = string.payment_account_masked_text)

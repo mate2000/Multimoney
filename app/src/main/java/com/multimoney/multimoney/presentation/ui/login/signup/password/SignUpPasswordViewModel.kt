@@ -28,6 +28,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPas
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnShowBiometricPromptForEncryption
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnValidForm
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.ValidationSecurityPassword
 import com.multimoney.multimoney.presentation.util.checkIfEmulator
 import com.multimoney.multimoney.presentation.util.getAppVersion
 import com.multimoney.multimoney.presentation.util.getDeviceBrand
@@ -41,12 +42,12 @@ import com.multimoney.multimoney.presentation.util.passwordHasMinimumCharacters
 import com.multimoney.multimoney.presentation.util.passwordHasSpecialCharacterValidation
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class SignUpPasswordViewModel @Inject constructor(
@@ -199,7 +200,8 @@ class SignUpPasswordViewModel @Inject constructor(
             pkUser = pkUser,
             password = uiState.password,
             user = user,
-            idBrand = idBrant
+            idBrand = idBrant,
+            actionSecurity = ValidationSecurityPassword.OnlySave.actionSecurity
         ).collectLatest { result ->
             onPasswordSaveEvents.emit(result)
         }
@@ -522,7 +524,7 @@ class SignUpPasswordViewModel @Inject constructor(
             val pkUser: Int,
             val user: String,
             val idBrand: Int
-        ): UIEvent()
+        ) : UIEvent()
     }
 
     sealed class BaseEvent {

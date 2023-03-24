@@ -39,6 +39,8 @@ import com.multimoney.multimoney.presentation.ui.login.registereduser.password.R
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnValidForm
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.ValidationSecurityPassword
+import com.multimoney.multimoney.presentation.util.catalog.ValidationSecurityPassword.OnlySave
 import com.multimoney.multimoney.presentation.util.checkIfEmulator
 import com.multimoney.multimoney.presentation.util.getAppVersion
 import com.multimoney.multimoney.presentation.util.getCountryCodeByIdBrand
@@ -203,7 +205,8 @@ class RegisteredUserPasswordViewModel @Inject constructor(
             pkUser = userData?.pkUser ?: "",
             password = uiState.password,
             user = userData?.email ?: "",
-            idBrand = idBrand
+            idBrand = idBrand,
+            actionSecurity = OnlySave.actionSecurity
         ).collectLatest { result ->
             result.onSuccess {
                 viewModelScope.launch {

@@ -9,6 +9,7 @@ interface QueryValidationSecurityUseCase {
         pkUser: String,
         password: String,
         user: String,
-        idBrand: Int
+        idBrand: Int,
+        actionSecurity: Int
     ): Flow<MultimoneyResult<ValidateSecurity?>>
 }

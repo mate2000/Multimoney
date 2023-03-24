@@ -75,7 +75,8 @@ interface SecurityRepository {
         pkIUser: String,
         password: String,
         user: String,
-        idBrand: Int
+        idBrand: Int,
+        actionSecurity: Int
     ): Flow<MultimoneyResult<ValidateSecurity?>>
 
     suspend fun queryDataInformationClient(

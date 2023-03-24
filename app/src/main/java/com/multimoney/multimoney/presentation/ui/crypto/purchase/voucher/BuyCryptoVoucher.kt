@@ -49,7 +49,6 @@ import com.multimoney.multimoney.presentation.uielement.VoucherNumberInfo
 import com.multimoney.multimoney.presentation.uielement.VoucherTotalAmountInfo
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
-import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import com.multimoney.multimoney.presentation.util.shape.DottedShape
 
 @Preview
@@ -230,11 +229,15 @@ fun BuyCryptoVoucherContent(
                     VoucherAccountInfo(
                         modifier = Modifier.padding(start = 27.dp, top = 24.dp),
                         icon = R.drawable.ic_multimoney_voucher_gray,
-                        title = stringResource(R.string.payment_voucher_origin_account_label),
-                        subTitle = getMaskedAccount(
-                            accountNumber,
-                            stringResource(id = R.string.payment_account_masked_text)
-                        )
+                        title = stringResource(
+                            id = R.string.buy_crypto_multimoney_smart_account_template,
+                            if (idCurrency == CurrencyType.Colon.id) {
+                                CurrencyType.Colon.symbol
+                            } else {
+                                CurrencyType.Dollar.symbol
+                            }
+                        ),
+                        subTitle = accountNumber
                     )
 
                     VoucherNumberInfo(

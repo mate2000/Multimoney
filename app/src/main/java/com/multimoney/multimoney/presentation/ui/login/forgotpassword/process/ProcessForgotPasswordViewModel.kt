@@ -182,7 +182,7 @@ class ProcessForgotPasswordViewModel @Inject constructor(
             result.onSuccess {
                 onConfirmResetPassword()
             }.onMessage {
-                onPasswordSameAsPrevious(it?.messageError?.message)
+                onPasswordSameAsPrevious(it?.messageError?.detail)
             }.onFailure {
                 onAlertFailure()
             }.onLoading {

@@ -102,7 +102,7 @@ fun ChangePasswordScreen(
                 }
             }.onMessage {
                 viewModel.onUIEvent(ChangePasswordViewModel.UIEvent.OnUpdateLoadingState(false))
-                viewModel.onUIEvent(ChangePasswordViewModel.UIEvent.OnPasswordSameAsPrevious)
+                viewModel.onUIEvent(ChangePasswordViewModel.UIEvent.OnPasswordSameAsPrevious(it?.messageError?.detail))
             }.onFailure {
                 viewModel.onUIEvent(ChangePasswordViewModel.UIEvent.OnShowAlertDialog)
             }
@@ -283,7 +283,7 @@ fun ChangePasswordContent(
                                 viewModel.getForbiddenWords(viewModel.uiState.newPasswordConfirmation)
                             )
                         } else {
-                            stringResource(id = viewModel.uiState.newPasswordConfirmationError.second)
+                            viewModel.uiState.newPasswordConfirmationError.third.ifEmpty { stringResource(id = viewModel.uiState.newPasswordConfirmationError.second) }
                         }
                     } else {
                         null

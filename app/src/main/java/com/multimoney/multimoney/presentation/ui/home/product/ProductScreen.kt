@@ -102,6 +102,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.MotionLayoutMM
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.catalog.MiniCardActionFlow
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
 import com.multimoney.multimoney.presentation.util.openIntent
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
@@ -462,20 +463,23 @@ fun TipsAndOffer(
         ) {
             sharedViewModel.uiState.miniCardList?.let { miniCardList ->
                 items(items = miniCardList, itemContent = {
-                    TipAndOfferItem(it) {
-                        sharedViewModel.onUIEvent(
-                            UIEvent.OnOpenMiniCardActionFlow(
-                                miniCard = it,
-                                openIntent = { intent ->
-                                    context.openIntent(
-                                        intent = intent,
-                                        onFailure = {
-                                            viewModel.onUIEvent(ProductViewModel.UIEvent.OnIntentFailure)
-                                        }
-                                    )
-                                }
+                    when {
+                        it.flow == MiniCardActionFlow.PAYOUT.flow && viewModel.uiState.canExpandCredit.not() -> Unit
+                        else -> TipAndOfferItem(it) {
+                            sharedViewModel.onUIEvent(
+                                UIEvent.OnOpenMiniCardActionFlow(
+                                    miniCard = it,
+                                    openIntent = { intent ->
+                                        context.openIntent(
+                                            intent = intent,
+                                            onFailure = {
+                                                viewModel.onUIEvent(ProductViewModel.UIEvent.OnIntentFailure)
+                                            }
+                                        )
+                                    }
+                                )
                             )
-                        )
+                        }
                     }
                 })
             }

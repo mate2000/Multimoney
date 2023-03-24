@@ -227,7 +227,7 @@ fun ProductScreen(
     LaunchedEffect(key1 = true) {
         viewModel.onUIEvent(
             ProductViewModel.UIEvent.OnValidateNotificationRoute(
-                sharedViewModel.getNotificationRoute()
+                sharedViewModel.uiState.notificationRoute
             ) { sharedViewModel.restartNotificationRoutePreference() }
         )
     }
@@ -564,15 +564,17 @@ fun ProductContent(
                     cryptoEmptyState = profileEnable,
                     clientBalanceHistory = sharedViewModel.uiState.cryptoHistoricalBalance,
                     openSmartCryptoAction = {
-                        viewModel.onUIEvent(OnNavigateToSmartOriginationFlow(
-                            comingFromCrypto = true,
-                            smartStep = viewModel.uiState.smartContent.second,
-                            onIntent = {
-                                context.openWhatsAppDeepLink(
-                                    viewModel.uiState.userStatus?.infoBankAccount?.wording?.link ?: ""
-                                )
-                            }
-                        ))
+                        viewModel.onUIEvent(
+                            OnNavigateToSmartOriginationFlow(
+                                comingFromCrypto = true,
+                                smartStep = viewModel.uiState.smartContent.second,
+                                onIntent = {
+                                    context.openWhatsAppDeepLink(
+                                        viewModel.uiState.userStatus?.infoBankAccount?.wording?.link ?: ""
+                                    )
+                                }
+                            )
+                        )
                     }
                 )
             }

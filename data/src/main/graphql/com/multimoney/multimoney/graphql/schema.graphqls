@@ -454,7 +454,12 @@ type Query {
   """
   Security
   """
-  validatePasswordStructure(validatePasswordStructureDto: ValidatePasswordStructureDtoInput!): ValidatePasswordStructureResult!
+  validatePasswordStructure(validatePasswordStructureDto: ValidatePasswordStructureDtoInput!): ValidatePasswordStructure!
+
+  """
+  Security
+  """
+  token: GetToken!
 
   """
   VirtualCard
@@ -773,6 +778,9 @@ type Mutation {
   """
   valideOTP(valideOTPInputType: ValideOTPDtoInput!): ValideOTP!
 
+  """
+  Security
+  """
   logOut(logOutInputType: LogOutDtoInput!): LogOut!
 
   """
@@ -785,8 +793,14 @@ type Mutation {
   """
   sendOTP(sendOTPInputType: SendOTPDtoInput!): SendOTP!
 
+  """
+  Security
+  """
   changePhone(changePhoneInputType: ChangePhoneDtoInput!): ChangePhone!
 
+  """
+  Security
+  """
   changeEmail(changeEmailInputType: ChangeEmailDtoInput!): ChangeEmail!
 
   """
@@ -2216,6 +2230,12 @@ type CreditExtension {
   currency: String
 
   promissoryNote: String
+
+  status: Int
+
+  message: String
+
+  detail: String
 }
 
 type PromissoryNoteDetailList {
@@ -2795,6 +2815,8 @@ input ValidateSecurityDtoInput {
 
   onlyValidate: Boolean
 
+  actionSecurity: Int
+
   idBrand: Int
 
   user: String
@@ -3046,6 +3068,8 @@ input UserValidationDtoInput {
   secondSurname: String
 
   deviceId: String
+
+  origin: String
 
   idBrand: Int
 
@@ -3300,6 +3324,38 @@ input GetCountryPhoneCodeDtoInput {
   idBrand: Int
 
   user: String
+}
+
+type ValidatePasswordStructure {
+  data: [String!]!
+
+  status: Int
+
+  message: String
+
+  detail: String
+}
+
+input ValidatePasswordStructureDtoInput {
+  pkUser: Int!
+
+  idBrand: Int
+
+  user: String
+}
+
+type GetToken {
+  access_token: String!
+
+  expires_in: Int!
+
+  token_type: String!
+
+  status: Int
+
+  message: String
+
+  detail: String
 }
 
 type ListCard {
@@ -6186,24 +6242,6 @@ input BeneficiaryRequestDtoInput {
   authorizationSysde: String
 
   fullName: String
-}
-
-type ValidatePasswordStructureResult {
-  data: [String!]
-
-  status: Int
-
-  message: String
-
-  detail: String
-}
-
-input ValidatePasswordStructureDtoInput {
-    user: String
-
-    idBrand: Int
-
-    pkUser: Int
 }
 
 type GlobalRequest_Response_Result {

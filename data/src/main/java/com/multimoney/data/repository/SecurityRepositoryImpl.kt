@@ -157,9 +157,10 @@ class SecurityRepositoryImpl @Inject constructor(
         pkIUser: String,
         password: String,
         user: String,
-        idBrand: Int
+        idBrand: Int,
+        actionSecurity: Int
     ): Flow<MultimoneyResult<ValidateSecurity?>> = fetchData(
-        apolloCall = graphqlApi.queryValidationSecurity(pkIUser.toInt(), password, user, idBrand),
+        apolloCall = graphqlApi.queryValidationSecurity(pkIUser.toInt(), password, user, idBrand, actionSecurity),
         apolloCallMapper = { data ->
             if (data.validateSecurity.status == null || data.validateSecurity.status == 0) {
                 Success(data.mapToDomainModel())

@@ -46,7 +46,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.profile.settings.changepassword.ChangePasswordViewModel.UIEvent.OnNavigateToForgotPassword
-import com.multimoney.multimoney.presentation.ui.home.profile.settings.changepassword.ChangePasswordViewModel.UIEvent.OnUpdatePassword
+import com.multimoney.multimoney.presentation.ui.home.profile.settings.changepassword.ChangePasswordViewModel.UIEvent.OnValidatePassword
 import com.multimoney.multimoney.presentation.ui.login.signup.password.PasswordRequirementLabels
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -102,7 +102,7 @@ fun ChangePasswordScreen(
                 }
             }.onMessage {
                 viewModel.onUIEvent(ChangePasswordViewModel.UIEvent.OnUpdateLoadingState(false))
-                viewModel.onUIEvent(ChangePasswordViewModel.UIEvent.OnPasswordSameAsPrevious)
+                viewModel.onUIEvent(ChangePasswordViewModel.UIEvent.OnPasswordSameAsPrevious(it?.messageError?.detail))
             }.onFailure {
                 viewModel.onUIEvent(ChangePasswordViewModel.UIEvent.OnShowAlertDialog)
             }
@@ -283,7 +283,7 @@ fun ChangePasswordContent(
                                 viewModel.getForbiddenWords(viewModel.uiState.newPasswordConfirmation)
                             )
                         } else {
-                            stringResource(id = viewModel.uiState.newPasswordConfirmationError.second)
+                            viewModel.uiState.newPasswordConfirmationError.third.ifEmpty { stringResource(id = viewModel.uiState.newPasswordConfirmationError.second) }
                         }
                     } else {
                         null
@@ -338,7 +338,7 @@ fun ChangePasswordContent(
                 text = stringResource(id = R.string.profile_settings_change_password_button),
                 enable = viewModel.uiState.isButtonEnabled,
                 onClick = {
-                    viewModel.onUIEvent(OnUpdatePassword)
+                    viewModel.onUIEvent(OnValidatePassword)
                 }
             )
         }

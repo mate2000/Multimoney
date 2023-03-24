@@ -251,7 +251,7 @@ fun ProcessForgotPasswordContent(
                             viewModel.getForbiddenWords(viewModel.uiState.newPasswordConfirmation)
                         )
                     } else {
-                        stringResource(id = viewModel.uiState.newPasswordConfirmationError.second)
+                        viewModel.uiState.newPasswordConfirmationError.third.ifEmpty { stringResource(id = viewModel.uiState.newPasswordConfirmationError.second) }
                     }
                 } else {
                     null
